@@ -524,7 +524,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         var formatter = formatters[type] || this._formatParameterAsValue;
 
         const fragment = document.createDocumentFragment();
-        formatter.call(this, parameter, fragment);
+        formatter.call(this, parameter, fragment, forceObjectFormat);
         return fragment;
     }
 

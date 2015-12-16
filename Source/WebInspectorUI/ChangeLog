@@ -1,5 +1,16 @@
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION: Web Inspector: console.dir(...) should force allowing object expansion
+        https://bugs.webkit.org/show_bug.cgi?id=152328
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatParameter):
+        Propogate the force parameter down.
+
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve copy of console messages with multiple arguments - console.log(obj1, obj2)
         https://bugs.webkit.org/show_bug.cgi?id=152330
 
