@@ -1,5 +1,17 @@
 2015-12-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard's cycler page should use v3 UI
+        https://bugs.webkit.org/show_bug.cgi?id=152324
+
+        Reviewed by Chris Dumez.
+
+        Use the v3 UI in cycler.html after r194130.
+
+        * public/cycler.html:
+        * public/v3/index.html: Removed the reference to a non-existent platform-selector.js.
+
+2015-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add v3 UI to perf dashboard
         https://bugs.webkit.org/show_bug.cgi?id=152311
 

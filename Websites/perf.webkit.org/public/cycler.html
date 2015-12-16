@@ -27,10 +27,9 @@ request.onreadystatechange = function () {
     var dashboards = [];
     for (var dashboardName in manifest.dashboards)
         dashboards.push(dashboardName);
-    dashboards = dashboards.sort();
 
     for (var dashboardName of dashboards)
-        urls.push('/v2/#/dashboard/' + dashboardName);
+        urls.push('/v3/#/dashboard/' + dashboardName);
 
     loadURLAt(0);
 }
@@ -40,14 +39,10 @@ function loadURLAt(i) {
     var newIframe = document.createElement('iframe');
     document.body.appendChild(newIframe);
     newIframe.src = urls[i];
-    newIframe.onload = showNewFrameIfLoaded.bind(window, i, newIframe);
+    newIframe.onload = showNewFrame.bind(window, i, newIframe);
 }
 
-function showNewFrameIfLoaded(i, iframe) {
-    var doc = iframe.contentDocument;
-    if ((!doc.querySelector('.chart') && !doc.querySelector('.failure')) || doc.querySelector('.progress'))
-        return setTimeout(showNewFrameIfLoaded.bind(window, i, iframe), 500);
-
+function showNewFrame(i, iframe) {
     if (oldIframe)
         document.body.removeChild(oldIframe);
     oldIframe = iframe;
