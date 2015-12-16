@@ -247,6 +247,7 @@ bool doesGC(Graph& graph, Node* node)
     case MakeRope:
     case NewArrowFunction:
     case NewFunction:
+    case NewGeneratorFunction:
     case NewTypedArray:
     case ThrowReferenceError:
     case GetPropertyEnumerator:

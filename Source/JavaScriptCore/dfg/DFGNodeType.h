@@ -312,6 +312,7 @@ namespace JSC { namespace DFG {
     macro(NewFunction, NodeResultJS) \
     \
     macro(NewArrowFunction, NodeResultJS) \
+    macro(NewGeneratorFunction, NodeResultJS) \
     \
     /* These aren't terminals but always exit */ \
     macro(Throw, NodeMustGenerate) \

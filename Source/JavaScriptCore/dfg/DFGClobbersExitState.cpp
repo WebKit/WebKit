@@ -77,6 +77,7 @@ bool clobbersExitState(Graph& graph, Node* node)
 
     case NewArrowFunction:
     case NewFunction:
+    case NewGeneratorFunction:
         // Like above, but with the JSFunction allocation caveat.
         return node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid();
 

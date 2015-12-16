@@ -1,3 +1,96 @@
+2015-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Handle new_generator_func / new_generator_func_exp in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=152227
+
+        Reviewed by Saam Barati.
+
+        This patch introduces new_generator_func / new_generator_func_exp into DFG and FTL.
+        We add a new DFG Node, NewGeneratorFunction. It will construct a function with GeneratorFunction's structure.
+        The structure of GeneratorFunction is different from one of Function because GeneratorFunction has the different __proto__.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomNewFunction):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::isFunctionAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewFunction):
+        * tests/stress/generator-function-create-optimized.js: Added.
+        (shouldBe):
+        (g):
+        (test.return.gen):
+        (test):
+        (test2.gen):
+        (test2):
+        * tests/stress/generator-function-declaration-sinking-no-double-allocate.js: Added.
+        (shouldBe):
+        (GeneratorFunctionPrototype):
+        (call):
+        (f):
+        (sink):
+        * tests/stress/generator-function-declaration-sinking-osrexit.js: Added.
+        (shouldBe):
+        (GeneratorFunctionPrototype):
+        (g):
+        (f):
+        (sink):
+        * tests/stress/generator-function-declaration-sinking-put.js: Added.
+        (shouldBe):
+        (GeneratorFunctionPrototype):
+        (g):
+        (f):
+        (sink):
+        * tests/stress/generator-function-expression-sinking-no-double-allocate.js: Added.
+        (shouldBe):
+        (GeneratorFunctionPrototype):
+        (call):
+        (f):
+        (sink):
+        * tests/stress/generator-function-expression-sinking-osrexit.js: Added.
+        (shouldBe):
+        (GeneratorFunctionPrototype):
+        (g):
+        (sink):
+        * tests/stress/generator-function-expression-sinking-put.js: Added.
+        (shouldBe):
+        (GeneratorFunctionPrototype):
+        (g):
+        (sink):
+
 2015-12-15  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix broken 32-bit JSC tests.  Just need to assign a scratch register.

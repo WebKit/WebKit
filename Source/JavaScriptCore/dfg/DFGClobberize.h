@@ -1033,6 +1033,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     
     case NewArrowFunction:
     case NewFunction:
+    case NewGeneratorFunction:
         if (node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid())
             write(Watchpoint_fire);
         read(HeapObjectCount);

@@ -209,7 +209,8 @@ private:
         case GetSetter:
         case GetCallee:
         case NewArrowFunction:
-        case NewFunction: {
+        case NewFunction:
+        case NewGeneratorFunction: {
             changed |= setPrediction(SpecFunction);
             break;
         }
