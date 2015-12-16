@@ -204,8 +204,8 @@ bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& l
     if (request.allowsFrameScrollbars()) {
         // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
         // so we need to test ScrollView scrollbars separately here.
-        Scrollbar* frameScrollbar = frameView().scrollbarAtPoint(location.roundedPoint());
-        if (frameScrollbar) {
+        IntPoint windowPoint = frameView().contentsToWindow(location.roundedPoint());
+        if (Scrollbar* frameScrollbar = frameView().scrollbarAtPoint(windowPoint)) {
             result.setScrollbar(frameScrollbar);
             return true;
         }

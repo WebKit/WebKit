@@ -1,3 +1,28 @@
+2015-12-16  Beth Dakin  <bdakin@apple.com>
+
+        Legacy style scrollbars do not change color when you mouse over them if you 
+        are scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=152319
+        -and corresponding-
+        rdar://problem/23317668
+
+        Reviewed by Darin Adler.
+
+        The scrollbar’s frameRect is in window coordinates, so we need to compare a 
+        point in window coordinates when we test this.
+
+        The call to convertFromContainingWindow does not return a point in view 
+        coordinates, so we should not call the variable viewPoint. We do still need 
+        to call it for subframes. convertFromContainingWindow doesn’t do anything for 
+        the root ScrollView (for Mac WK2 at least).
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarAtPoint):
+
+        HitTestLocation is in contents coordinates. It needs to be converted to 
+        window coordinates
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::hitTest):
+
 2015-12-08  Sergio Villar Senin  <svillar@igalia.com>
 
         Fix computation of min|max-content contribution of non-replaced blocks
