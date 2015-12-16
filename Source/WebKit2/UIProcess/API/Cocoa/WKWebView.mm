@@ -1911,6 +1911,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     return [_wkView performDragOperation:sender];
 }
+
 #endif // PLATFORM(MAC)
 
 #if ENABLE(VIDEO)

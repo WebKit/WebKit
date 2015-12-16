@@ -59,16 +59,31 @@ static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
     return location;
 }
 
-NativeWebGestureEvent::NativeWebGestureEvent(NSEvent *event, NSView *view)
+static CGFloat distanceForTouches(Vector<NSTouch *> touches)
+{
+    if (touches.size() < 2)
+        return -1;
+
+    NSPoint firstTouchPosition = touches[0].normalizedPosition;
+    NSPoint secondTouchPosition = touches[1].normalizedPosition;
+
+    CGFloat dx = secondTouchPosition.x - firstTouchPosition.x;
+    CGFloat dy = secondTouchPosition.y - firstTouchPosition.y;
+
+    return sqrtf(dx * dx + dy * dy);
+}
+
+NativeWebGestureEvent::NativeWebGestureEvent(NSEvent *event, NSView *view, Vector<NSTouch *> touches)
     : WebGestureEvent(
         webEventTypeForNSEvent(event),
         static_cast<Modifiers>(0),
         event.timestamp,
         WebCore::IntPoint(pointForEvent(event, view)),
-        event.type == NSEventTypeMagnify ? event.magnification : 0,
+        distanceForTouches(touches),
         event.type == NSEventTypeRotate ? event.rotation : 0)
     , m_nativeEvent(event)
 {
+
 }
 
 } // namespace WebKit

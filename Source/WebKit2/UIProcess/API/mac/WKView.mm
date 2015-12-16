@@ -288,6 +288,9 @@ struct WKViewInterpretKeyEventsParameters {
 #if WK_API_ENABLED
     _WKThumbnailView *_thumbnailView;
 #endif
+
+    Vector<RetainPtr<id <NSObject, NSCopying>>> _activeTouchIdentities;
+    RetainPtr<NSArray> _lastTouches;
 }
 
 @end
@@ -3257,6 +3260,54 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 }
 
+- (Vector<NSTouch *>)_touchesOrderedByAge
+{
+    Vector<NSTouch *> touches;
+
+    for (auto& touchIdentity : _data->_activeTouchIdentities) {
+        for (NSTouch *touch in _data->_lastTouches.get()) {
+            if (![touch.identity isEqual:touchIdentity.get()])
+                continue;
+            touches.append(touch);
+            break;
+        }
+    }
+
+    return touches;
+}
+
+- (void)touchesBeganWithEvent:(NSEvent *)event
+{
+    _data->_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:self].allObjects;
+    for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseBegan inView:self])
+        _data->_activeTouchIdentities.append(touch.identity);
+}
+
+- (void)touchesMovedWithEvent:(NSEvent *)event
+{
+    _data->_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:self].allObjects;
+}
+
+- (void)touchesEndedWithEvent:(NSEvent *)event
+{
+    _data->_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:self].allObjects;
+    for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseEnded inView:self]) {
+        size_t identityIndex = _data->_activeTouchIdentities.find(touch.identity);
+        ASSERT(identityIndex != notFound);
+        _data->_activeTouchIdentities.remove(identityIndex);
+    }
+}
+
+- (void)touchesCancelledWithEvent:(NSEvent *)event
+{
+    _data->_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:self].allObjects;
+    for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseCancelled inView:self]) {
+        size_t identityIndex = _data->_activeTouchIdentities.find(touch.identity);
+        ASSERT(identityIndex != notFound);
+        _data->_activeTouchIdentities.remove(identityIndex);
+    }
+}
+
 - (void)_setTextIndicator:(TextIndicator&)textIndicator
 {
     [self _setTextIndicator:textIndicator withLifetime:TextIndicatorLifetime::Permanent];
@@ -3793,6 +3844,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self _registerDraggedTypes];
 
     self.wantsLayer = YES;
+    self.acceptsTouchEvents = YES;
 
     // Explicitly set the layer contents placement so AppKit will make sure that our layer has masksToBounds set to YES.
     self.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
@@ -4546,7 +4598,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     if (!_data->_allowsMagnification) {
 #if ENABLE(MAC_GESTURE_EVENTS)
-        NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
+        NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self, [self _touchesOrderedByAge]);
         _data->_page->handleGestureEvent(webEvent);
 #endif
         [super magnifyWithEvent:event];
@@ -4563,7 +4615,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return;
     }
 
-    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
+    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self, [self _touchesOrderedByAge]);
     _data->_page->handleGestureEvent(webEvent);
 #else
     _data->_gestureController->handleMagnificationGestureEvent(event, [self convertPoint:event.locationInWindow fromView:nil]);
@@ -4573,7 +4625,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if ENABLE(MAC_GESTURE_EVENTS)
 - (void)rotateWithEvent:(NSEvent *)event
 {
-    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
+    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self, [self _touchesOrderedByAge]);
     _data->_page->handleGestureEvent(webEvent);
 }
 #endif
