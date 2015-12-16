@@ -101,6 +101,8 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
 
         wpt_testharnessjs_file = self._filesystem.join(self._doc_root, "resources", "testharness.js")
         layout_tests_testharnessjs_file = self._filesystem.join(self._layout_root, "resources", "testharness.js")
+        # FIXME: Next line to be removed once all bots have wpt_testharnessjs_file updated correctly. See https://bugs.webkit.org/show_bug.cgi?id=152257.
+        self._filesystem.copyfile(layout_tests_testharnessjs_file, wpt_testharnessjs_file)
         if (not self._filesystem.compare(wpt_testharnessjs_file, layout_tests_testharnessjs_file)):
             _log.warning("\n//////////\nWPT tests are not using the same testharness.js file as other WebKit Layout tests.\nWebKit testharness.js might need to be updated according WPT testharness.js.\n//////////\n")
 

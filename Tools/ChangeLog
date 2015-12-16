@@ -1,5 +1,15 @@
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Enforce temporarily bots to sync WebKit and WPT testharness.js
+        https://bugs.webkit.org/show_bug.cgi?id=152334
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer._copy_webkit_test_files): Temporarily overwrite wpt testharness.js with WebKit testharness.js.
+
+2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Fetch API] Add fetch API compile time flag
         https://bugs.webkit.org/show_bug.cgi?id=152254
 
