@@ -1,3 +1,43 @@
+2015-12-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        Fix computation of min|max-content contribution of non-replaced blocks
+        https://bugs.webkit.org/show_bug.cgi?id=152004
+
+        Reviewed by Darin Adler.
+
+        WebKit currently always returns the min preferred logical
+        width for the min-content contribution (and the max preferred
+        logical width for the max-content contribution) for
+        non-replaced blocks. That is not correct according to specs
+        https://drafts.csswg.org/css-sizing/#block-intrinsic.
+
+        The min-content and max-content contributions actually depend
+        on the computed inline size of the block:
+        * for min-content,max-content or definite sizes: min-content
+        and max-content contributions are the inline size plus border,
+        margin and padding.
+        * otherwise: min-content contribution is the min-content size
+        and max-content contribution is the max-content size (in both
+        cases plus border, padding and margin).
+
+        Tests: fast/css-intrinsic-dimensions/auto-maxcontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/auto-mincontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/fillavailable-maxcontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/fillavailable-mincontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/fitcontent-maxcontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/fitcontent-mincontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/fixed-inlinesize-contribution-nonreplaced-blocks-1.html
+               fast/css-intrinsic-dimensions/fixed-inlinesize-contribution-nonreplaced-blocks-2.html
+               fast/css-intrinsic-dimensions/indefinite-percent-maxcontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/indefinite-percent-mincontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/maxcontent-maxcontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/maxcontent-mincontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/mincontent-maxcontent-inlinesize-contribution-nonreplaced-blocks.html
+               fast/css-intrinsic-dimensions/mincontent-mincontent-inlinesize-contribution-nonreplaced-blocks.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add fetch API compile time flag

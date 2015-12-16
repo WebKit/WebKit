@@ -1,3 +1,45 @@
+2015-12-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        Fix computation of min|max-content contribution of non-replaced blocks
+        https://bugs.webkit.org/show_bug.cgi?id=152004
+
+        Reviewed by Darin Adler.
+
+        * fast/css-intrinsic-dimensions/auto-maxcontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/auto-maxcontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/auto-mincontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/auto-mincontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/fillavailable-maxcontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/fillavailable-maxcontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/fillavailable-mincontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/fillavailable-mincontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/fitcontent-maxcontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/fitcontent-maxcontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/fitcontent-mincontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/fitcontent-mincontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/fixed-inlinesize-contribution-nonreplaced-blocks-1-expected.html: Added.
+        * fast/css-intrinsic-dimensions/fixed-inlinesize-contribution-nonreplaced-blocks-1.html: Added.
+        * fast/css-intrinsic-dimensions/fixed-inlinesize-contribution-nonreplaced-blocks-2-expected.html: Added.
+        * fast/css-intrinsic-dimensions/fixed-inlinesize-contribution-nonreplaced-blocks-2.html: Added.
+        * fast/css-intrinsic-dimensions/indefinite-percent-maxcontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/indefinite-percent-maxcontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/indefinite-percent-mincontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/indefinite-percent-mincontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/maxcontent-maxcontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/maxcontent-maxcontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/maxcontent-mincontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/maxcontent-mincontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/mincontent-maxcontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/mincontent-maxcontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/mincontent-mincontent-inlinesize-contribution-nonreplaced-blocks-expected.html: Added.
+        * fast/css-intrinsic-dimensions/mincontent-mincontent-inlinesize-contribution-nonreplaced-blocks.html: Added.
+        * fast/css-intrinsic-dimensions/resources/intrinsic-size-contribution.css: Added.
+        (.container):
+        (.item):
+        (.border):
+        (.padding):
+        (.margin):
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Mac EWS bots frequently fail several wpt tests
