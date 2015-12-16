@@ -1,3 +1,11 @@
+2015-12-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        Added imported tests to Streams API watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove default copy of wpt testharness.js when launching wpt server

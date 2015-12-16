@@ -307,6 +307,7 @@
         },
         "StreamsAPI": {
             "filename": r"Source/WebCore/Modules/streams/"
+                        r"|LayoutTests/imported/w3c/web-platform-tests/streams-api/"
                         r"|LayoutTests/streams/",
         },
         "MacAndIOSTextLayoutAndRendering": {
