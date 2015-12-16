@@ -1,5 +1,21 @@
 2015-12-16  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix when using NETWORK_SESSION after r193972.
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        Renamed NetworkSessionDelegate to WKNetworkSessionDelegate to conform to the 
+        newly-enforced style rule in check-for-inappropriate-objc-class-names.
+
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (toNSURLSessionAuthChallengeDisposition):
+        (-[WKNetworkSessionDelegate initWithNetworkSession:]):
+        (WebKit::NetworkSession::NetworkSession):
+        (-[NetworkSessionDelegate initWithNetworkSession:]): Deleted.
+
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
         Implement Web Timing when using NETWORK_SESSION
         https://bugs.webkit.org/show_bug.cgi?id=152285
 

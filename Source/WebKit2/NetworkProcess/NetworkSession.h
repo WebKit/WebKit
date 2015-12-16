@@ -29,7 +29,7 @@
 OBJC_CLASS NSURLSession;
 OBJC_CLASS NSURLSessionDataTask;
 OBJC_CLASS NSOperationQueue;
-OBJC_CLASS NetworkSessionDelegate;
+OBJC_CLASS WKNetworkSessionDelegate;
 
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/SessionID.h>
@@ -119,7 +119,7 @@ private:
     HashMap<uint64_t, NetworkDataTask*> m_dataTaskMap;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSession> m_session;
-    RetainPtr<NetworkSessionDelegate> m_sessionDelegate;
+    RetainPtr<WKNetworkSessionDelegate> m_sessionDelegate;
 #endif
 };
 

@@ -70,7 +70,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
     }
 }
 
-@interface NetworkSessionDelegate : NSObject <NSURLSessionDataDelegate> {
+@interface WKNetworkSessionDelegate : NSObject <NSURLSessionDataDelegate> {
     WebKit::NetworkSession* _session;
 }
 
@@ -78,7 +78,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 @end
 
-@implementation NetworkSessionDelegate
+@implementation WKNetworkSessionDelegate
 
 - (id)initWithNetworkSession:(WebKit::NetworkSession&)session
 {
@@ -213,7 +213,7 @@ NetworkSession& NetworkSession::defaultSession()
 NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID)
     : m_sessionID(sessionID)
 {
-    m_sessionDelegate = adoptNS([[NetworkSessionDelegate alloc] initWithNetworkSession:*this]);
+    m_sessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this]);
 
     NSURLSessionConfiguration *configuration = configurationForType(type);
 
