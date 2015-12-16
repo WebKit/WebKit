@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 16: MockPageOverlayClient::mouseEvent location (105, 495)
+CONSOLE MESSAGE: line 17: MockPageOverlayClient::mouseEvent location (105, 495)
+CONSOLE MESSAGE: line 18: MockPageOverlayClient::mouseEvent location (105, 495)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 0, 10, 10)
+View-relative:
+(GraphicsLayer
+)
+
+
+Document-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (position 100.00 100.00)
+      (anchor 0.00 0.00)
+      (bounds 10.00 10.00)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+    )
+  )
+)
+

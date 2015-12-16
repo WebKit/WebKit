@@ -1,3 +1,12 @@
+2015-12-15  Timothy Horton  <timothy_horton@apple.com>
+
+        Rebaseline some page overlay tests for WK1
+
+        * platform/mac-wk1/pageoverlay/overlay-installation-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-large-document-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-large-document-scrolled-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-small-frame-mouse-events-expected.txt: Added.
+
 2015-12-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Localize "global code" and "eval code" strings
