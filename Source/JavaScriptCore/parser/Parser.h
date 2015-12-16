@@ -764,6 +764,13 @@ private:
             m_class = classification;
         }
 
+        void reclassifyExpressionError(ExpressionErrorClass oldClassification, ExpressionErrorClass classification)
+        {
+            if (m_class != oldClassification)
+                return;
+            m_class = classification;
+        }
+
         void propagateExpressionErrorClass()
         {
             if (m_previous && m_class != ErrorIndicatesNothing)
@@ -782,6 +789,12 @@ private:
     {
         if (m_expressionErrorClassifier)
             m_expressionErrorClassifier->classifyExpressionError(classification);
+    }
+
+    ALWAYS_INLINE void reclassifyExpressionError(ExpressionErrorClass oldClassification, ExpressionErrorClass classification)
+    {
+        if (m_expressionErrorClassifier)
+            m_expressionErrorClassifier->reclassifyExpressionError(oldClassification, classification);
     }
 
     ALWAYS_INLINE DestructuringKind destructuringKindFromDeclarationType(DeclarationType type)

@@ -1,3 +1,26 @@
+2015-12-16  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] fix error message for eval/arguments CoverInitializedName in strict code
+        https://bugs.webkit.org/show_bug.cgi?id=152304
+
+        Reviewed by Darin Adler.
+
+        Because the error was originally classified as indicating a Pattern, the
+        error in AssignmentPattern parsing causes the reported message to revert to
+        the original Expression error message, which in this case is incorrect.
+
+        This change modifies the implementation of the strict code
+        error slightly, and reclassifies the error to prevent the message revert,
+        which improves the clarity of the message overall.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentElement):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        * parser/Parser.h:
+        (JSC::Parser::ExpressionErrorClassifier::reclassifyExpressionError):
+        (JSC::Parser::reclassifyExpressionError):
+        * tests/stress/destructuring-assignment-syntax.js:
+
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Builtin source should be minified more

@@ -59,13 +59,11 @@ testSyntaxError("[null] = []", "SyntaxError: Invalid destructuring assignment ta
 testSyntaxError("[n\\u{75}ll] = []", "SyntaxError: Invalid destructuring assignment target.");
 
 testSyntaxError("'use strict'; ({ eval } = {})", "SyntaxError: Cannot modify 'eval' in strict mode.");
-// FIXME: support CoverInitializedName properly.
-//testSyntaxError("'use strict'; ({ eval = 0 } = {})", "SyntaxError: Cannot modify 'eval' in strict mode.");
+testSyntaxError("'use strict'; ({ eval = 0 } = {})", "SyntaxError: Cannot modify 'eval' in strict mode.");
 testSyntaxError("'use strict'; ({ a: eval } = {})", "SyntaxError: Cannot modify 'eval' in strict mode.");
 testSyntaxError("'use strict'; ({ a: eval = 0 } = {})", "SyntaxError: Cannot modify 'eval' in strict mode.");
 testSyntaxError("'use strict'; ({ arguments } = {})", "SyntaxError: Cannot modify 'arguments' in strict mode.");
-// FIXME: support CoverInitializedName properly.
-//testSyntaxError("'use strict'; ({ arguments = 0 } = {})", "SyntaxError: Cannot modify 'arguments' in strict mode.");
+testSyntaxError("'use strict'; ({ arguments = 0 } = {})", "SyntaxError: Cannot modify 'arguments' in strict mode.");
 testSyntaxError("'use strict'; ({ a: arguments } = {})", "SyntaxError: Cannot modify 'arguments' in strict mode.");
 testSyntaxError("'use strict'; ({ a: arguments = 0 } = {})", "SyntaxError: Cannot modify 'arguments' in strict mode.");
 testSyntaxError("'use strict'; ([ eval ] = [])", "SyntaxError: Cannot modify 'eval' in strict mode.");

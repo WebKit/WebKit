@@ -843,8 +843,8 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseAs
     semanticFailIfFalse(element && context.isAssignmentLocation(element), "Invalid destructuring assignment target");
 
     if (strictMode() && m_lastIdentifier && context.isResolve(element)) {
-        failIfTrueIfStrict(m_vm->propertyNames->eval == *m_lastIdentifier, "Cannot modify 'eval' in strict mode");
-        failIfTrueIfStrict(m_vm->propertyNames->arguments == *m_lastIdentifier, "Cannot modify 'arguments' in strict mode");
+        bool isEvalOrArguments = m_vm->propertyNames->eval == *m_lastIdentifier || m_vm->propertyNames->arguments == *m_lastIdentifier;
+        failIfTrueIfStrict(isEvalOrArguments, "Cannot modify '", m_lastIdentifier->impl(), "' in strict mode");
     }
 
     return createAssignmentElement(context, element, startPosition, lastTokenEndPosition());
@@ -931,9 +931,11 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 if (consume(COLON))
                     innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 else {
-                    if (kind == DestructureToExpressions && strictMode()) {
-                        failIfTrueIfStrict(m_vm->propertyNames->eval == *propertyName, "Cannot modify 'eval' in strict mode");
-                        failIfTrueIfStrict(m_vm->propertyNames->arguments == *propertyName, "Cannot modify 'arguments' in strict mode");
+                    if (kind == DestructureToExpressions) {
+                        bool isEvalOrArguments = m_vm->propertyNames->eval == *propertyName || m_vm->propertyNames->arguments == *propertyName;
+                        if (isEvalOrArguments && strictMode())
+                            reclassifyExpressionError(ErrorIndicatesPattern, ErrorIndicatesNothing);
+                        failIfTrueIfStrict(isEvalOrArguments, "Cannot modify '", propertyName->impl(), "' in strict mode");
                     }
                     innerPattern = createBindingPattern(context, kind, exportType, *propertyName, identifierToken, bindingContext, duplicateIdentifier);
                 }
