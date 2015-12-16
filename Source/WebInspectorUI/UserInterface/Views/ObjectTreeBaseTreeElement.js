@@ -190,7 +190,8 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
                 contextMenu.appendSeparator();
         }             
 
-        if (!this.resolvedValue())
+        let resolvedValue = this.resolvedValue();
+        if (!resolvedValue)
             return;
 
         if (this._property && this._property.symbol)

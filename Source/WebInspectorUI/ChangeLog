@@ -1,3 +1,14 @@
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: ReferenceError: Can't find variable: resolvedValue
+        https://bugs.webkit.org/show_bug.cgi?id=152326
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._contextMenuHandler):
+        This identifier is used later on, so assign it here.
+
 2015-12-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Localize "global code" and "eval code" strings
