@@ -41,20 +41,21 @@ namespace IDBClient {
 Ref<IDBOpenDBRequest> IDBOpenDBRequest::createDeleteRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context, const IDBDatabaseIdentifier& databaseIdentifier)
 {
     ASSERT(databaseIdentifier.isValid());
-    return adoptRef(*new IDBOpenDBRequest(connection, context, databaseIdentifier, 0));
+    return adoptRef(*new IDBOpenDBRequest(connection, context, databaseIdentifier, 0, IndexedDB::RequestType::Delete));
 }
 
 Ref<IDBOpenDBRequest> IDBOpenDBRequest::createOpenRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
 {
     ASSERT(databaseIdentifier.isValid());
-    return adoptRef(*new IDBOpenDBRequest(connection, context, databaseIdentifier, version));
+    return adoptRef(*new IDBOpenDBRequest(connection, context, databaseIdentifier, version, IndexedDB::RequestType::Open));
 }
     
-IDBOpenDBRequest::IDBOpenDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
+IDBOpenDBRequest::IDBOpenDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version, IndexedDB::RequestType requestType)
     : IDBRequest(connection, context)
     , m_databaseIdentifier(databaseIdentifier)
     , m_version(version)
 {
+    m_requestType = requestType;
 }
 
 IDBOpenDBRequest::~IDBOpenDBRequest()

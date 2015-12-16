@@ -100,6 +100,8 @@ public:
     void setSource(IDBCursor&);
     void setVersionChangeTransaction(IDBTransaction&);
 
+    IndexedDB::RequestType requestType() const { return m_requestType; }
+
 protected:
     IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
@@ -126,6 +128,7 @@ protected:
     bool m_shouldExposeTransactionToDOM { true };
     RefPtr<DOMError> m_domError;
     IDBError m_idbError;
+    IndexedDB::RequestType m_requestType = { IndexedDB::RequestType::Other };
 
 private:
     void onError();

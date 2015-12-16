@@ -109,6 +109,7 @@ bool UniqueIDBDatabase::maybeDeleteDatabase(IDBServerOperation* newestDeleteOper
 
     for (auto& operation : m_pendingDeleteDatabaseOperations) {
         ASSERT(m_databaseInfo);
+        ASSERT(operation->isDeleteRequest());
         operation->connection().didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(operation->requestData().requestIdentifier(), *m_databaseInfo));
     }
 
@@ -158,10 +159,10 @@ void UniqueIDBDatabase::handleOpenDatabaseOperations()
         return;
     }
 
-    ASSERT(!m_versionChangeOperation);
+    ASSERT(!m_currentOperation);
     ASSERT(!m_versionChangeDatabaseConnection);
 
-    m_versionChangeOperation = adoptRef(operation.leakRef());
+    m_currentOperation = WTF::move(operation);
     m_versionChangeDatabaseConnection = rawConnection;
 
     // 3.3.7 "versionchange" transaction steps
@@ -175,7 +176,7 @@ void UniqueIDBDatabase::handleOpenDatabaseOperations()
     notifyConnectionsOfVersionChangeForUpgrade();
 
     // And we notify this OpenDBRequest that it is blocked until those connections close.
-    m_versionChangeDatabaseConnection->connectionToClient().notifyOpenDBRequestBlocked(m_versionChangeOperation->requestData().requestIdentifier(), m_databaseInfo->version(), requestedVersion);
+    m_versionChangeDatabaseConnection->connectionToClient().notifyOpenDBRequestBlocked(m_currentOperation->requestData().requestIdentifier(), m_databaseInfo->version(), requestedVersion);
 }
 
 bool UniqueIDBDatabase::hasAnyOpenConnections() const
@@ -245,11 +246,11 @@ void UniqueIDBDatabase::startVersionChangeTransaction()
     LOG(IndexedDB, "(main) UniqueIDBDatabase::startVersionChangeTransaction");
 
     ASSERT(!m_versionChangeTransaction);
-    ASSERT(m_versionChangeOperation);
+    ASSERT(m_currentOperation);
+    ASSERT(m_currentOperation->isOpenRequest());
     ASSERT(m_versionChangeDatabaseConnection);
 
-    auto operation = m_versionChangeOperation;
-    m_versionChangeOperation = nullptr;
+    auto operation = WTF::move(m_currentOperation);
 
     uint64_t requestedVersion = operation->requestData().requestedVersion();
     if (!requestedVersion)
@@ -275,10 +276,11 @@ void UniqueIDBDatabase::beginTransactionInBackingStore(const IDBTransactionInfo&
 
 void UniqueIDBDatabase::notifyConnectionsOfVersionChangeForUpgrade()
 {
-    ASSERT(m_versionChangeOperation);
+    ASSERT(m_currentOperation);
+    ASSERT(m_currentOperation->isOpenRequest());
     ASSERT(m_versionChangeDatabaseConnection);
 
-    notifyConnectionsOfVersionChange(m_versionChangeOperation->requestData().requestedVersion());
+    notifyConnectionsOfVersionChange(m_currentOperation->requestData().requestedVersion());
 }
 
 void UniqueIDBDatabase::notifyConnectionsOfVersionChange(uint64_t requestedVersion)
@@ -921,7 +923,7 @@ void UniqueIDBDatabase::operationAndTransactionTimerFired()
 
     // If the database was not deleted in the previous step, try to run a transaction now.
     if (m_pendingTransactions.isEmpty()) {
-        if (!hasAnyOpenConnections() && m_versionChangeOperation) {
+        if (!hasAnyOpenConnections() && m_currentOperation) {
             startVersionChangeTransaction();
             return;
         }

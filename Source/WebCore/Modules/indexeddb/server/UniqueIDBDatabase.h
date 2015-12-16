@@ -173,11 +173,11 @@ private:
     
     Deque<Ref<IDBServerOperation>> m_pendingOpenDatabaseOperations;
     Deque<Ref<IDBServerOperation>> m_pendingDeleteDatabaseOperations;
+    RefPtr<IDBServerOperation> m_currentOperation;
 
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_closePendingDatabaseConnections;
 
-    RefPtr<IDBServerOperation> m_versionChangeOperation;
     RefPtr<UniqueIDBDatabaseConnection> m_versionChangeDatabaseConnection;
     UniqueIDBDatabaseTransaction* m_versionChangeTransaction { nullptr };
 

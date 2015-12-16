@@ -43,6 +43,9 @@ public:
     IDBConnectionToClient& connection() { return m_connection; }
     const IDBRequestData& requestData() const { return m_requestData; }
 
+    bool isOpenRequest() const;
+    bool isDeleteRequest() const;
+
 private:
     IDBServerOperation(IDBConnectionToClient&, const IDBRequestData&);
 

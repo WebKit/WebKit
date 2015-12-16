@@ -30,6 +30,7 @@
 
 #include "IDBDatabaseIdentifier.h"
 #include "IDBResourceIdentifier.h"
+#include "IndexedDB.h"
 
 namespace WebCore {
 
@@ -61,6 +62,9 @@ public:
     const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
     uint64_t requestedVersion() const;
 
+    bool isOpenRequest() const { return m_requestType == IndexedDB::RequestType::Open; }
+    bool isDeleteRequest() const { return m_requestType == IndexedDB::RequestType::Delete; }
+
     IDBRequestData isolatedCopy();
 
 private:
@@ -74,6 +78,8 @@ private:
 
     IDBDatabaseIdentifier m_databaseIdentifier;
     uint64_t m_requestedVersion { 0 };
+
+    IndexedDB::RequestType m_requestType { IndexedDB::RequestType::Other };
 };
 
 } // namespace WebCore

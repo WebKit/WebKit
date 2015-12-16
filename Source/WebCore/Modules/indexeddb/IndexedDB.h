@@ -99,6 +99,12 @@ enum KeyType {
     Min,
 };
 
+enum class RequestType {
+    Open,
+    Delete,
+    Other,
+};
+
 } // namespace IndexedDB
 
 } // namespace WebCore

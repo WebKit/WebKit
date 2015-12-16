@@ -44,6 +44,16 @@ IDBServerOperation::IDBServerOperation(IDBConnectionToClient& connection, const 
 {
 }
 
+bool IDBServerOperation::isOpenRequest() const
+{
+    return m_requestData.isOpenRequest();
+}
+
+bool IDBServerOperation::isDeleteRequest() const
+{
+    return m_requestData.isDeleteRequest();
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

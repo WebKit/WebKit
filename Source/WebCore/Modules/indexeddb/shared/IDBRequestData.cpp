@@ -38,6 +38,7 @@ IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionToServer& connectio
     , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connection, request))
     , m_databaseIdentifier(request.databaseIdentifier())
     , m_requestedVersion(request.version())
+    , m_requestType(request.requestType())
 {
 }
 
@@ -62,6 +63,7 @@ IDBRequestData::IDBRequestData(const IDBRequestData& other)
     , m_indexRecordType(other.m_indexRecordType)
     , m_databaseIdentifier(other.m_databaseIdentifier)
     , m_requestedVersion(other.m_requestedVersion)
+    , m_requestType(other.m_requestType)
 {
     if (other.m_requestIdentifier)
         m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_requestIdentifier);
