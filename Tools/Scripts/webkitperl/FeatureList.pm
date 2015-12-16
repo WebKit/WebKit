@@ -75,6 +75,7 @@ my (
     $directoryUploadSupport,
     $dom4EventsConstructor,
     $downloadAttributeSupport,
+    $fetchAPISupport,
     $fontLoadEventsSupport,
     $ftpDirSupport,
     $fullscreenAPISupport,
@@ -252,6 +253,9 @@ my @features = (
 
     { option => "download-attribute", desc => "Toggle Download Attribute support",
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => isEfl(), value => \$downloadAttributeSupport },
+
+    { option => "fetch-api", desc => "Toggle Fetch API support",
+      define => "ENABLE_FETCH_API", default => 1, value => \$fetchAPISupport },
 
     { option => "font-load-events", desc => "Toggle Font Load Events support",
       define => "ENABLE_FONT_LOAD_EVENTS", default => 0, value => \$fontLoadEventsSupport },

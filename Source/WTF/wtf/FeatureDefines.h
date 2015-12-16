@@ -459,6 +459,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_ENCRYPTED_MEDIA_V2 0
 #endif
 
+#if !defined(ENABLE_FETCH_API)
+#define ENABLE_FETCH_API 1
+#endif
+
 #if !defined(ENABLE_FILTERS_LEVEL_2)
 #define ENABLE_FILTERS_LEVEL_2 0
 #endif
