@@ -34,6 +34,9 @@ class TimeSeriesChart extends ComponentBase {
         if (!this._canvas) {
             this._canvas = this._createCanvas();
             this._canvas.style.display = 'block';
+            this._canvas.style.position = 'absolute';
+            this._canvas.style.left = '0px';
+            this._canvas.style.top = '0px';
             this._canvas.style.width = '100%';
             this._canvas.style.height = '100%';
             this.content().appendChild(this._canvas);
@@ -534,8 +537,9 @@ class TimeSeriesChart extends ComponentBase {
     {
         var canvas = this._ensureCanvas();
 
-        var newWidth = canvas.clientWidth;
-        var newHeight = canvas.clientHeight;
+        var newWidth = this.element().clientWidth;
+        var newHeight = this.element().clientHeight;
+
         if (!newWidth || !newHeight || (newWidth == this._width && newHeight == this._height))
             return false;
 

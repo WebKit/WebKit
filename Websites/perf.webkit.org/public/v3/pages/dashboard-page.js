@@ -201,9 +201,12 @@ class DashboardPage extends PageWithCharts {
                 height: 100%;
                 border: 0;
             }
-            .dashboard-table td > * {
-                display: inline-block;
-                width: 20rem;
+            .dashboard-table td time-series-chart {
+                height: 10rem;
+            }
+            .dashboard-table td > chart-status-view {
+                display: block;
+                width: 100%;
             }
 
             .dashboard-table td *:first-child {

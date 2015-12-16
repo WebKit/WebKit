@@ -1,5 +1,24 @@
 2015-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        v3 dashboard doesn't stretch charts to fill the screen
+        https://bugs.webkit.org/show_bug.cgi?id=152354
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by a workaround to avoid canvas stretching table cell too much.
+
+        Fix the problem instead by making the canvas absolutely positioned inside the "time-series-chart" element
+        so that it does not contribute to the intrinsic/natural width of the cell.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype._ensureCanvas): Make the canvas absolutely positioned inside the shadow root.
+        (TimeSeriesChart.prototype._updateCanvasSizeIfClientSizeChanged): Use the container element's size now that
+        the canvas does not resize with it.
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.cssTemplate): Updated the CSS so that the chart stretches all the way.
+
+2015-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         The chart status on v3 UI sometimes show wrong revision ranges
         https://bugs.webkit.org/show_bug.cgi?id=152331
 
