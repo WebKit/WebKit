@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1152: XMLHttpRequest.timeout cannot be set for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 1151: XMLHttpRequest.timeout cannot be set for synchronous HTTP(S) requests made from the window context.
 CONSOLE MESSAGE: line 21: Synchronous XMLHttpRequests must not have a timeout value set.
 
 PASS setting timeout attribute on sync request 

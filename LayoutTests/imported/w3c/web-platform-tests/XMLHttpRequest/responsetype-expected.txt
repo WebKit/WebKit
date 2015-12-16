@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 1152: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
-CONSOLE MESSAGE: line 1152: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
-CONSOLE MESSAGE: line 1152: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
-CONSOLE MESSAGE: line 1152: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
-CONSOLE MESSAGE: line 1152: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
-CONSOLE MESSAGE: line 1152: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 1151: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 1151: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 1151: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 1151: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 1151: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 1151: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
 
 PASS Initial value of responseType 
 PASS Set responseType to "" when readyState is UNSENT. 

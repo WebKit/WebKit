@@ -271,6 +271,11 @@ webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Document-contentTy
 webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02.html [ Pass Failure ]
 webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode.xhtml [ Pass Failure ]
 webkit.org/b/152257 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure ]
+webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/interfaces.html [ Pass Failure ]
+webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/responsetype.html [ Pass Failure ]
+webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-sync.htm [ Pass Failure ]
+webkit.org/b/152257 imported/w3c/web-platform-tests/dom/interfaces.html [ Pass Failure ]
+webkit.org/b/152257 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure ]
 
 # Skip W3C tests that are too slow in debug builds.
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/interfaces.html [ Skip ]
