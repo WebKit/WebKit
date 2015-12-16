@@ -1,5 +1,11 @@
 2015-12-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix v2 UI after r194093.
+
+        * public/v2/data.js:
+
+2015-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add /api/measurement-set for v3 UI
         https://bugs.webkit.org/show_bug.cgi?id=152312
 
