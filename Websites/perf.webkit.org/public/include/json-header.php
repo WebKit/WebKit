@@ -53,12 +53,29 @@ function camel_case_words_separated_by_underscore($name) {
 
 function require_format($name, $value, $pattern) {
     if (!preg_match($pattern, $value))
-        exit_with_error('Invalid' . $name, array('value' => $value));
+        exit_with_error('Invalid' . camel_case_words_separated_by_underscore($name), array('value' => $value));
 }
 
 function require_match_one_of_values($name, $value, $valid_values) {
     if (!in_array($value, $valid_values))
-        exit_with_error('Invalid' . $name, array('value' => $value));
+        exit_with_error('Invalid' . camel_case_words_separated_by_underscore($name), array('value' => $value));
+}
+
+function validate_arguments($array, $list_of_arguments) {
+    $result = array();
+    foreach ($list_of_arguments as $name => $pattern) {
+        $value = array_get($array, $name, '');
+        if ($pattern == 'int') {
+            require_format($name, $value, '/^\d+$/');
+            $value = intval($value);
+        } else if ($pattern == 'int?') {
+            require_format($name, $value, '/^\d*$/');
+            $value = $value ? intval($value) : null;
+        } else
+            require_format($name, $value, $pattern);
+        $result[$name] = $value;
+    }
+    return $result;
 }
 
 function require_existence_of($array, $list_of_arguments, $prefix = '') {

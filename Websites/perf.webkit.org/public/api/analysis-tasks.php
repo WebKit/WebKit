@@ -10,8 +10,10 @@ function main($path) {
     if (count($path) > 1)
         exit_with_error('InvalidRequest');
 
-    if (count($path) > 0 && $path[0]) {
-        $task_id = intval($path[0]);
+    $task_id = count($path) > 0 && $path[0] ? $path[0] : array_get($_GET, 'id');
+
+    if ($task_id) {
+        $task_id = intval($task_id);
         $task = $db->select_first_row('analysis_tasks', 'task', array('id' => $task_id));
         if (!$task)
             exit_with_error('TaskNotFound', array('id' => $task_id));
@@ -73,6 +75,35 @@ function fetch_and_push_bugs_to_tasks($db, &$tasks) {
         $task['finishedBuildRequestCount'] = $build_count['finished'];
     }
 
+    $run_ids = array();
+    $task_by_run = array();
+    foreach ($tasks as &$task) {
+        if ($task['startRun']) {
+            array_push($run_ids, $task['startRun']);
+            $task_by_run[$task['startRun']] = &$task;
+        }
+        if ($task['endRun']) {
+            array_push($run_ids, $task['endRun']);
+            $task_by_run[$task['endRun']] = &$task;
+        }
+    }
+
+    // FIXME: This query is quite expensive. We may need to store this directly in analysis_tasks table instead.
+    $build_revision_times = $db->query_and_fetch_all('SELECT run_id, build_time, max(commit_time) AS revision_time
+            FROM builds
+                LEFT OUTER JOIN build_commits ON commit_build = build_id
+                LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
+            WHERE run_build = build_id AND run_id = ANY($1) GROUP BY build_id, run_id',
+        array('{' . implode(', ', $run_ids) . '}'));
+    foreach ($build_revision_times as &$row) {
+        $time = $row['revision_time'] or $row['build_time'];
+        $id = $row['run_id'];
+        if ($task_by_run[$id]['startRun'] == $id)
+            $task_by_run[$id]['startRunTime'] = Database::to_js_time($time);
+        if ($task_by_run[$id]['endRun'] == $id)
+            $task_by_run[$id]['endRunTime'] = Database::to_js_time($time);
+    }
+
     return $bugs;
 }
 
@@ -88,6 +119,7 @@ function format_task($task_row) {
         'metric' => $task_row['task_metric'],
         'startRun' => $task_row['task_start_run'],
         'endRun' => $task_row['task_end_run'],
+        'category' => $task_row['task_result'] ? 'bisecting' : 'unconfirmed',
         'result' => $task_row['task_result'],
         'needed' => $task_row['task_needed'] ? Database::is_true($task_row['task_needed']) : null,
         'bugs' => array(),
