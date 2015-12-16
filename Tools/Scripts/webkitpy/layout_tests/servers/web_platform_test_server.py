@@ -101,9 +101,6 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
 
         wpt_testharnessjs_file = self._filesystem.join(self._doc_root, "resources", "testharness.js")
         layout_tests_testharnessjs_file = self._filesystem.join(self._layout_root, "resources", "testharness.js")
-        # FIXME: Next two lines are a temp hack for this patch to land smoothly on bots. They should be removed once patch landed and each bot runs these lines once.
-        if (not self._filesystem.isfile(wpt_testharnessjs_file)):
-            self._filesystem.copyfile(layout_tests_testharnessjs_file, wpt_testharnessjs_file)
         if (not self._filesystem.compare(wpt_testharnessjs_file, layout_tests_testharnessjs_file)):
             _log.warning("\n//////////\nWPT tests are not using the same testharness.js file as other WebKit Layout tests.\nWebKit testharness.js might need to be updated according WPT testharness.js.\n//////////\n")
 
