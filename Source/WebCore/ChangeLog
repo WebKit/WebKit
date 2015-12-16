@@ -1,3 +1,23 @@
+2015-12-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r191080.
+
+    2015-10-14  Tim Horton  <timothy_horton@apple.com>
+
+            Move some EventHandler initialization to the header
+            https://bugs.webkit.org/show_bug.cgi?id=150139
+
+            Reviewed by Andreas Kling.
+
+            No new tests, just cleanup.
+
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::EventHandler): Deleted.
+            * page/EventHandler.h:
+            Also found one member which was unused, and a few that were uninitialized.
+            It's likely the uninitialized ones didn't actually cause any trouble because
+            they are reset in lots of places, but this seems better.
+
 2015-12-14  Harris Papadopoulos  <cpapadopoulos@apple.com>
 
         Merge r192270. rdar://problem/23435543
