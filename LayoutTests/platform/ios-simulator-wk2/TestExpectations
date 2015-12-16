@@ -9,7 +9,7 @@
 fast/harness/ui-side-scripts.html [ Pass ]
 fast/harness/concurrent-ui-side-scripts.html [ Pass ]
 fast/zooming/ios [ Pass ]
-
+fast/viewport/ios [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -2040,5 +2040,3 @@ webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-she
 # eventSender.mouseDown is not implemented
 fast/loader/location-hash-user-gesture.html [ Skip ]
 
-# 4 out of the 5 tests in this directory were failing. Re-enabling the one that was passing here
-webkit.org/b/152135 fast/viewport/ios/width-is-device-width.html [ Pass ]

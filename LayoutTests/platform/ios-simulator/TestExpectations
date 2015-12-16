@@ -2834,10 +2834,5 @@ webkit.org/b/152141 fast/picture/image-picture-1x.html [ Failure ]
 webkit.org/b/152141 fast/picture/image-picture-invalid.html [ Failure ]
 webkit.org/b/152141 fast/picture/image-picture-nested.html [ Failure ]
 
-webkit.org/b/152135 fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Failure ]
-webkit.org/b/152135 fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden.html [ Failure ]
-webkit.org/b/152135 fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit.html [ Failure ]
-webkit.org/b/152135 fast/viewport/ios/width-is-device-width-overflowing.html [ Failure ]
-
 webkit.org/b/152279 http/tests/misc/large-js-program.php [ Pass Crash ]
 webkit.org/b/152279 js/dom/line-column-numbers.html [ Pass Crash ]
