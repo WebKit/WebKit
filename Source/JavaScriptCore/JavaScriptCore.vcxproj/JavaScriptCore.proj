@@ -28,7 +28,7 @@
     <ProgramFilesAAS64>Program Files\Common Files\Apple\Apple Application Support</ProgramFilesAAS64>
     <ConfigurationBuildDir>$(OBJROOT)\$(CONFIG)</ConfigurationBuildDir>  
     <OutputDirectory>$(DSTROOT)</OutputDirectory>
-	<CMakeCommandCommon>cmake $(SRCROOT)/JavaScriptCore -DPORT=AppleWin $(DebugSuffixDefinition) -DWEBKIT_LIBRARIES_DIR=$(WebKit_Libraries.Replace('\','/')) -DCMAKE_MODULE_PATH=$(SRCROOT.Replace('\','/'))/AppleInternal/tools/cmake -DCMAKE_BINARY_DIR=$(OBJROOT.Replace('\','/'))/$(CONFIG) -DJAVASCRIPTCORE_DIR=$(SRCROOT.Replace('\','/'))/JavaScriptCore</CMakeCommandCommon>
+	<CMakeCommandCommon>cmake $(SRCROOT) -DPORT=AppleWin $(DebugSuffixDefinition) -DWEBKIT_LIBRARIES_DIR=$(WebKit_Libraries.Replace('\','/')) -DCMAKE_MODULE_PATH=$(SRCROOT.Replace('\','/'))/AppleInternal/tools/cmake -DCMAKE_BINARY_DIR=$(OBJROOT.Replace('\','/'))/$(CONFIG) -DJAVASCRIPTCORE_DIR=$(SRCROOT.Replace('\','/'))</CMakeCommandCommon>
   </PropertyGroup>
  
   <!-- Prepare for build -->

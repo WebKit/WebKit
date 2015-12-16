@@ -1,3 +1,13 @@
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=152364
+        rdar://problem/23928759
+
+        Reviewed by Tim Horton.
+
+        * WTF.vcxproj/WTF.proj:
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add fetch API compile time flag

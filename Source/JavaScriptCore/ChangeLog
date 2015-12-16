@@ -1,3 +1,12 @@
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=152364
+
+        Reviewed by Tim Horton.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+
 2015-12-16  Filip Pizlo  <fpizlo@apple.com>
 
         Improve JSObject::put performance

@@ -1,3 +1,13 @@
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=152364
+        rdar://problem/23928759
+
+        Reviewed by Tim Horton.
+
+        * WebCore.vcxproj/WebCore.proj:
+
 2015-12-16  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Refactor UniqueIDBDatabase in preparation for consolidation open and delete requests.
