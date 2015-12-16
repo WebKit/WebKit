@@ -139,7 +139,7 @@ public:
     // once it is escaped if it still has pointers to it in order to
     // replace any use of those pointers by the corresponding
     // materialization
-    enum class Kind { Escaped, Object, Activation, Function, ArrowFunction, GeneratorFunction };
+    enum class Kind { Escaped, Object, Activation, Function, NewArrowFunction };
 
     explicit Allocation(Node* identifier = nullptr, Kind kind = Kind::Escaped)
         : m_identifier(identifier)
@@ -233,7 +233,12 @@ public:
 
     bool isFunctionAllocation() const
     {
-        return m_kind == Kind::Function || m_kind == Kind::ArrowFunction || m_kind == Kind::GeneratorFunction;
+        return m_kind == Kind::Function || m_kind == Kind::NewArrowFunction;
+    }
+    
+    bool isArrowFunctionAllocation() const
+    {
+        return m_kind == Kind::NewArrowFunction;
     }
 
     bool operator==(const Allocation& other) const
@@ -269,12 +274,8 @@ public:
             out.print("Function");
             break;
                 
-        case Kind::ArrowFunction:
-            out.print("ArrowFunction");
-            break;
-
-        case Kind::GeneratorFunction:
-            out.print("GeneratorFunction");
+        case Kind::NewArrowFunction:
+            out.print("NewArrowFunction");
             break;
 
         case Kind::Activation:
@@ -836,19 +837,13 @@ private:
             break;
 
         case NewFunction:
-        case NewArrowFunction:
-        case NewGeneratorFunction: {
+        case NewArrowFunction: {
             if (node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid()) {
                 m_heap.escape(node->child1().node());
                 break;
             }
             
-            if (node->op() == NewGeneratorFunction)
-                target = &m_heap.newAllocation(node, Allocation::Kind::GeneratorFunction);
-            else if (node->op() == NewArrowFunction)
-                target = &m_heap.newAllocation(node, Allocation::Kind::ArrowFunction);
-            else
-                target = &m_heap.newAllocation(node, Allocation::Kind::Function);
+            target = &m_heap.newAllocation(node, Allocation::Kind::Function);
             writes.add(FunctionExecutablePLoc, LazyNode(node->cellOperand()));
             writes.add(FunctionActivationPLoc, LazyNode(node->child1().node()));
             break;
@@ -1451,14 +1446,11 @@ private:
                 OpInfo(set), OpInfo(data), 0, 0);
         }
 
-        case Allocation::Kind::ArrowFunction:
-        case Allocation::Kind::GeneratorFunction:
+        case Allocation::Kind::NewArrowFunction:
         case Allocation::Kind::Function: {
             FrozenValue* executable = allocation.identifier()->cellOperand();
             
-            NodeType nodeType =
-                allocation.kind() == Allocation::Kind::ArrowFunction ? NewArrowFunction :
-                allocation.kind() == Allocation::Kind::GeneratorFunction ? NewGeneratorFunction : NewFunction;
+            NodeType nodeType = allocation.kind() == Allocation::Kind::NewArrowFunction ? NewArrowFunction : NewFunction;
             
             return m_graph.addNode(
                 allocation.identifier()->prediction(), nodeType,
@@ -1790,7 +1782,6 @@ private:
 
                     case NewArrowFunction:
                     case NewFunction:
-                    case NewGeneratorFunction:
                         node->convertToPhantomNewFunction();
                         break;
 
@@ -2042,8 +2033,7 @@ private:
         }
         
         case NewFunction:
-        case NewArrowFunction:
-        case NewGeneratorFunction: {
+        case NewArrowFunction: {
             Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
             ASSERT(locations.size() == 2);
                 

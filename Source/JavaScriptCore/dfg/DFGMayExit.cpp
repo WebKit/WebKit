@@ -143,7 +143,6 @@ ExitMode mayExit(Graph& graph, Node* node)
     case MaterializeNewObject:
     case NewFunction:
     case NewArrowFunction:
-    case NewGeneratorFunction:
     case NewStringObject:
     case CreateActivation:
         result = ExitsForExceptions;

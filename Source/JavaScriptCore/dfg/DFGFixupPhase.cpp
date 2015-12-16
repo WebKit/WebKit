@@ -1387,8 +1387,7 @@ private:
 
         case CreateScopedArguments:
         case CreateActivation:
-        case NewFunction:
-        case NewGeneratorFunction: {
+        case NewFunction: {
             fixEdge<CellUse>(node->child1());
             break;
         }

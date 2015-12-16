@@ -146,9 +146,6 @@ public:
                 case NewFunction:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->functionStructure());
                     break;
-                case NewGeneratorFunction:
-                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->generatorFunctionStructure());
-                    break;
                     
                 default:
                     break;

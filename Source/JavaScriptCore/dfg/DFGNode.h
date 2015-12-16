@@ -585,7 +585,7 @@ struct Node {
 
     void convertToPhantomNewFunction()
     {
-        ASSERT(m_op == NewFunction || m_op == NewArrowFunction || m_op == NewGeneratorFunction);
+        ASSERT(m_op == NewFunction || m_op == NewArrowFunction);
         m_op = PhantomNewFunction;
         m_flags |= NodeMustGenerate;
         m_opInfo = 0;
@@ -1356,7 +1356,6 @@ struct Node {
         case CheckCell:
         case NewFunction:
         case NewArrowFunction:
-        case NewGeneratorFunction:
         case CreateActivation:
         case MaterializeCreateActivation:
             return true;
@@ -1575,7 +1574,6 @@ struct Node {
         switch (op()) {
         case NewArrowFunction:
         case NewFunction:
-        case NewGeneratorFunction:
             return true;
         default:
             return false;

@@ -268,7 +268,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PutToArguments:
     case NewArrowFunction:
     case NewFunction:
-    case NewGeneratorFunction:
     case Jump:
     case Branch:
     case Switch:

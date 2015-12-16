@@ -111,7 +111,6 @@ inline CapabilityLevel canCompile(Node* node)
     case CreateActivation:
     case NewArrowFunction:
     case NewFunction:
-    case NewGeneratorFunction:
     case GetClosureVar:
     case PutClosureVar:
     case CreateDirectArguments:

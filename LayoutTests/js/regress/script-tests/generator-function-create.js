@@ -7,12 +7,6 @@ function createGeneratorFunction()
     }
     return gen;
 }
-function test()
-{
-    for (var i = 0; i < 500; ++i)
-        createGeneratorFunction();
-}
-noInline(test);
-
+noInline(createGeneratorFunction);
 for (var i = 0; i < 1e4; ++i)
-    test();
+    createGeneratorFunction();
