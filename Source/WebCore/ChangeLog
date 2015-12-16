@@ -1,5 +1,24 @@
 2015-12-16  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Refactor UniqueIDBDatabase in preparation for consolidation open and delete requests.
+        https://bugs.webkit.org/show_bug.cgi?id=152355
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, existing tests pass).
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::openDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::didOpenBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleOpenDatabaseOperations): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+2015-12-16  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Have IDBServerOperations know whether they represent an open or delete request.
         https://bugs.webkit.org/show_bug.cgi?id=152351
 

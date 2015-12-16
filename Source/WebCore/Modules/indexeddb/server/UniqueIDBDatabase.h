@@ -104,7 +104,9 @@ public:
 private:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);
     
-    void handleOpenDatabaseOperations();
+    void handleDatabaseOperations();
+    void performCurrentOpenOperation();
+    void performCurrentDeleteOperation();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
     bool maybeDeleteDatabase(IDBServerOperation*);
     bool hasAnyOpenConnections() const;
