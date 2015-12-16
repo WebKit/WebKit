@@ -29,6 +29,7 @@
 
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
+#include "CFNetworkSPI.h"
 #include "CredentialStorage.h"
 #include "CachedResourceLoader.h"
 #include "FormDataStreamCFNet.h"

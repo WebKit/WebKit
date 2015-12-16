@@ -29,6 +29,7 @@
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
 #import "BlockExceptions.h"
+#import "CFNetworkSPI.h"
 #import "CookieStorage.h"
 #import "CredentialStorage.h"
 #import "CachedResourceLoader.h"

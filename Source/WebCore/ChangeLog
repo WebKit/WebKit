@@ -1,5 +1,13 @@
 2015-12-16  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix after r194156.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/network/mac/ResourceHandleMac.mm:
+        Include definition of _TimingDataOptionsEnableW3CNavigationTiming
+
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
         Implement Web Timing when using NETWORK_SESSION
         https://bugs.webkit.org/show_bug.cgi?id=152285
 
