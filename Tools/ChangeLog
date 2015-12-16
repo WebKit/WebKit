@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Added files that have impact in building Streams API to the watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2015-12-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
         Added imported tests to Streams API watchlist.
 
         * Scripts/webkitpy/common/config/watchlist:
