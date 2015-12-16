@@ -1,3 +1,40 @@
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Implement Web Timing when using NETWORK_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=152285
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceLoadTiming.h:
+        (WebCore::ResourceLoadTiming::encode):
+        Moved setCollectsTimingData from ResourceHandle to ResourceLoadTiming.h to be shared 
+        with WebKit2 when using NETWORK_SESSION, which does not use ResourceHandle.
+        Also moved getConnectionTimingData to copyTimingData in ResourceLoadTiming for the same reason.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::start):
+        Use the proper definition of _TimingDataOptionsEnableW3CNavigationTiming.
+        * platform/network/cocoa/ResourceLoadTiming.mm: Added.
+        (WebCore::timingValue):
+        (WebCore::copyTimingData):
+        Moved from getConnectionTimingData, and use objectForKey instead of valueForKey,
+        and check to see if there is no object in the dictionary with the given key.
+        This should never happen with the current CFNetwork implementation, but it's good to check dictionaries.
+        (WebCore::setCollectsTimingData):
+        Use _collectTimingDataWithOptions, which should be a slight performance improvement on Mavericks
+        because we are not collecting unused timing data. Hooray!
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::getConnectionTimingData):
+        (WebCore::ResourceHandle::setCollectsTimingData): Deleted.
+        * platform/spi/cf/CFNetworkSPI.h:
+        * platform/spi/cocoa/NSURLConnectionSPI.h:
+        Moved definitions of SPI to proper SPI headers.
+
 2015-12-16  Beth Dakin  <bdakin@apple.com>
 
         Legacy style scrollbars do not change color when you mouse over them if you 

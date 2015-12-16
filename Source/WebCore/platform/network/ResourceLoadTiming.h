@@ -27,6 +27,10 @@
 #ifndef ResourceLoadTiming_h
 #define ResourceLoadTiming_h
 
+#if PLATFORM(COCOA)
+OBJC_CLASS NSDictionary;
+#endif
+
 namespace WebCore {
     
 class ResourceLoadTiming {
@@ -94,6 +98,14 @@ public:
     int secureConnectionStart;
 };
 
+#if PLATFORM(COCOA)
+WEBCORE_EXPORT void copyTimingData(NSDictionary *timingData, ResourceLoadTiming&);
+#endif
+
+#if PLATFORM(COCOA) && !HAVE(TIMINGDATAOPTIONS)
+WEBCORE_EXPORT void setCollectsTimingData();
+#endif
+    
 template<class Encoder>
 void ResourceLoadTiming::encode(Encoder& encoder) const
 {

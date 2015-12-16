@@ -51,7 +51,18 @@ extern "C" {
 #endif
 #endif // defined(__OBJC__) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
 
-#else
+#else // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
+
+#if defined(__OBJC__)
+@interface NSURLSessionTask (TimingData)
+- (NSDictionary *)_timingData;
+@end
+#endif
+
+typedef CF_ENUM(int64_t, _TimingDataOptions)
+{
+    _TimingDataOptionsEnableW3CNavigationTiming = (1 << 0)
+};
 
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;

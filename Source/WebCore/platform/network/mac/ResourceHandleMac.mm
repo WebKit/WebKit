@@ -66,17 +66,6 @@ CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
 }
 #endif // USE(CFNETWORK)
 
-#if __has_include(<Foundation/NSURLConnectionPrivate.h>)
-#import <Foundation/NSURLConnectionPrivate.h>
-#else
-@interface NSURLConnection (TimingData)
-#if !HAVE(TIMINGDATAOPTIONS)
-+ (void)_setCollectsTimingData:(BOOL)collect;
-#endif
-- (NSDictionary *)_timingData;
-@end
-#endif
-
 #if PLATFORM(IOS)
 #import "CFNetworkSPI.h"
 #import "RuntimeApplicationChecksIOS.h"
@@ -145,7 +134,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior schedulingBehavior, NSDictionary *connectionProperties)
 #endif
 {
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) && !HAVE(TIMINGDATAOPTIONS)
     setCollectsTimingData();
 #endif
 
@@ -224,8 +213,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     const bool usesCache = true;
 #endif
 #if HAVE(TIMINGDATAOPTIONS)
-    const int64_t TimingDataOptionsEnableW3CNavigationTiming = (1 << 0);
-    [propertyDictionary setObject:@{@"_kCFURLConnectionPropertyTimingDataOptions": @(TimingDataOptionsEnableW3CNavigationTiming)} forKey:@"kCFURLConnectionURLConnectionProperties"];
+    [propertyDictionary setObject:@{@"_kCFURLConnectionPropertyTimingDataOptions": @(_TimingDataOptionsEnableW3CNavigationTiming)} forKey:@"kCFURLConnectionURLConnectionProperties"];
 #endif
     d->m_connection = adoptNS([[NSURLConnection alloc] _initWithRequest:nsRequest delegate:delegate usesCache:usesCache maxContentLength:0 startImmediately:NO connectionProperties:propertyDictionary]);
 }
@@ -739,55 +727,19 @@ void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
 #endif // !USE(CFNETWORK)
     
 #if ENABLE(WEB_TIMING)
-    
-void ResourceHandle::getConnectionTimingData(NSDictionary *timingData, ResourceLoadTiming& timing)
-{
-    if (!timingData)
-        return;
-
-    // This is not the navigationStart time in monotonic time, but the other times are relative to this time
-    // and only the differences between times are stored.
-    double referenceStart = [[timingData valueForKey:@"_kCFNTimingDataFetchStart"] doubleValue];
-            
-    double domainLookupStart = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupStart"] doubleValue];
-    double domainLookupEnd = [[timingData valueForKey:@"_kCFNTimingDataDomainLookupEnd"] doubleValue];
-    double connectStart = [[timingData valueForKey:@"_kCFNTimingDataConnectStart"] doubleValue];
-    double secureConnectionStart = [[timingData valueForKey:@"_kCFNTimingDataSecureConnectionStart"] doubleValue];
-    double connectEnd = [[timingData valueForKey:@"_kCFNTimingDataConnectEnd"] doubleValue];
-    double requestStart = [[timingData valueForKey:@"_kCFNTimingDataRequestStart"] doubleValue];
-    double responseStart = [[timingData valueForKey:@"_kCFNTimingDataResponseStart"] doubleValue];
-        
-    timing.domainLookupStart = domainLookupStart <= 0 ? -1 : (domainLookupStart - referenceStart) * 1000;
-    timing.domainLookupEnd = domainLookupEnd <= 0 ? -1 : (domainLookupEnd - referenceStart) * 1000;
-    timing.connectStart = connectStart <= 0 ? -1 : (connectStart - referenceStart) * 1000;
-    timing.secureConnectionStart = secureConnectionStart <= 0 ? -1 : (secureConnectionStart - referenceStart) * 1000;
-    timing.connectEnd = connectEnd <= 0 ? -1 : (connectEnd - referenceStart) * 1000;
-    timing.requestStart = requestStart <= 0 ? 0 : (requestStart - referenceStart) * 1000;
-    timing.responseStart = responseStart <= 0 ? 0 : (responseStart - referenceStart) * 1000;
-}
-
-void ResourceHandle::setCollectsTimingData()
-{
-#if !HAVE(TIMINGDATAOPTIONS)
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [NSURLConnection _setCollectsTimingData:YES];
-    });
-#endif
-}
 
 #if USE(CFNETWORK)
     
 void ResourceHandle::getConnectionTimingData(CFURLConnectionRef connection, ResourceLoadTiming& timing)
 {
-    getConnectionTimingData((__bridge NSDictionary*)(adoptCF(_CFURLConnectionCopyTimingData(connection)).get()), timing);
+    copyTimingData((__bridge NSDictionary*)adoptCF(_CFURLConnectionCopyTimingData(connection)).get(), timing);
 }
     
 #else
     
 void ResourceHandle::getConnectionTimingData(NSURLConnection *connection, ResourceLoadTiming& timing)
 {
-    getConnectionTimingData([connection _timingData], timing);
+    copyTimingData([connection _timingData], timing);
 }
     
 #endif

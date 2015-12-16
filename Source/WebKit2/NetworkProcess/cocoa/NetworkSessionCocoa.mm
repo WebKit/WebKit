@@ -37,6 +37,7 @@
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceError.h>
+#import <WebCore/ResourceLoadTiming.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SharedBuffer.h>
@@ -142,6 +143,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         if (auto* client = networkingTask->client()) {
             ASSERT(isMainThread());
             WebCore::ResourceResponse resourceResponse(response);
+            copyTimingData([dataTask _timingData], resourceResponse.resourceLoadTiming());
             auto completionHandlerCopy = Block_copy(completionHandler);
             client->didReceiveResponse(resourceResponse, [completionHandlerCopy](WebCore::PolicyAction policyAction)
                 {
@@ -214,6 +216,13 @@ NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID)
     m_sessionDelegate = adoptNS([[NetworkSessionDelegate alloc] initWithNetworkSession:*this]);
 
     NSURLSessionConfiguration *configuration = configurationForType(type);
+
+#if HAVE(TIMINGDATAOPTIONS)
+    configuration._timingDataOptions = _TimingDataOptionsEnableW3CNavigationTiming;
+#else
+    setCollectsTimingData();
+#endif
+
     if (auto* storageSession = SessionTracker::storageSession(sessionID)) {
         if (CFHTTPCookieStorageRef storage = storageSession->cookieStorage().get())
             configuration.HTTPCookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];

@@ -29,9 +29,21 @@
 
 #else
 
+enum {
+    TimingDataCollectionDefault = 0,
+    TimingDataCollectionNStatsOff = 1,
+    TimingDataCollectionConnectionDataOff = 2,
+};
+typedef NSUInteger TimingDataCollection;
+
 @interface NSURLConnection ()
 + (CFRunLoopRef)resourceLoaderRunLoop;
 - (void)setDefersCallbacks:(BOOL)defers;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
++ (void)_setCollectsTimingData:(BOOL)collect;
++ (void)_collectTimingDataWithOptions:(TimingDataCollection)options;
+#endif
+- (NSDictionary *)_timingData;
 @end
 
 #endif
