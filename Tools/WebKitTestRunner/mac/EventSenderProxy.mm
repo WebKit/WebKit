@@ -111,6 +111,7 @@ struct WKTRCGSEventRecord {
     _eventSender_eventNumber = eventNumber;
     _eventSender_window = window;
 #if defined(__LP64__) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101003
+    self->_type = NSEventTypePressure;
     _eventSender_type = NSEventTypePressure;
 #endif
 

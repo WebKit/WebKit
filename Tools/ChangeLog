@@ -1,3 +1,15 @@
+2015-12-16  Tim Horton  <timothy_horton@apple.com>
+
+        [mac-wk2] fast/events force click tests crashing
+        https://bugs.webkit.org/show_bug.cgi?id=152339
+
+        Reviewed by Beth Dakin.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (-[EventSenderSyntheticEvent initPressureEventAtLocation:globalLocation:stage:pressure:stageTransition:phase:time:eventNumber:window:]):
+        Set the NSEvent's _type member in addition to overriding -type,
+        because there are assertions in touch event handling code that depend on it.
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Enforce temporarily bots to sync WebKit and WPT testharness.js
