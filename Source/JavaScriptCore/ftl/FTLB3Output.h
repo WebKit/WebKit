@@ -413,7 +413,16 @@ public:
     void check(LValue condition, WeightedTarget taken) { CRASH(); }
 
     template<typename VectorType>
-    void switchInstruction(LValue value, const VectorType& cases, LBasicBlock fallThrough, Weight fallThroughWeight) { CRASH(); }
+    void switchInstruction(LValue value, const VectorType& cases, LBasicBlock fallThrough, Weight fallThroughWeight)
+    {
+        B3::SwitchValue* switchValue = m_block->appendNew<B3::SwitchValue>(
+            m_proc, origin(), value, B3::FrequentedBlock(fallThrough));
+        for (const SwitchCase& switchCase : cases) {
+            int64_t value = switchCase.value()->asInt();
+            B3::FrequentedBlock target(switchCase.target(), switchCase.weight().frequencyClass());
+            switchValue->appendCase(B3::SwitchCase(value, target));
+        }
+    }
 
     void ret(LValue value) { m_block->appendNew<B3::ControlValue>(m_proc, B3::Return, origin(), value); }
 

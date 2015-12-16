@@ -80,7 +80,7 @@ NO_RETURN_DUE_TO_CRASH static void ftlUnreachable()
 {
     CRASH();
 }
-#elif !FTL_USES_B3
+#else
 NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
     CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex)
 {
@@ -10065,22 +10065,19 @@ private:
         UNUSED_PARAM(blockIndex);
         UNUSED_PARAM(nodeIndex);
 #else
-#if FTL_USES_B3
-        UNUSED_PARAM(blockIndex);
-        UNUSED_PARAM(nodeIndex);
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
-#else
         m_out.call(
             m_out.voidType,
+#if FTL_USES_B3
+            m_out.constIntPtr(ftlUnreachable),
+#else // FTL_USES_B3
             m_out.intToPtr(
                 m_out.constIntPtr(ftlUnreachable),
                 pointerType(
                     functionType(
                         m_out.voidType, m_out.intPtr, m_out.int32, m_out.int32))),
+#endif // FTL_USES_B3
             m_out.constIntPtr(codeBlock()), m_out.constInt32(blockIndex),
             m_out.constInt32(nodeIndex));
-#endif
 #endif
         m_out.unreachable();
     }

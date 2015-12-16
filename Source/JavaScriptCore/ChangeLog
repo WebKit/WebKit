@@ -1,3 +1,21 @@
+2015-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should support switches
+        https://bugs.webkit.org/show_bug.cgi?id=152360
+
+        Reviewed by Geoffrey Garen.
+
+        I implemented this because I was hoping it would less us run V8/crypto, but instead it just led
+        me to file a fun bug: https://bugs.webkit.org/show_bug.cgi?id=152365.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::check):
+        (JSC::FTL::Output::switchInstruction):
+        (JSC::FTL::Output::ret):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::ftlUnreachable):
+        (JSC::FTL::DFG::LowerDFGToLLVM::crash):
+
 2015-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal Windows build
