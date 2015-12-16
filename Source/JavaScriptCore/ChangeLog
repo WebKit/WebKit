@@ -1,3 +1,20 @@
+2015-12-16  Saam barati  <sbarati@apple.com>
+
+        Add "explicit operator bool" to ScratchRegisterAllocator::PreservedState
+        https://bugs.webkit.org/show_bug.cgi?id=152337
+
+        Reviewed by Mark Lam.
+
+        If we have a default constructor, we should also have a way
+        to tell if a PreservedState is invalid.
+
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        * jit/ScratchRegisterAllocator.h:
+        (JSC::ScratchRegisterAllocator::PreservedState::PreservedState):
+        (JSC::ScratchRegisterAllocator::PreservedState::operator bool):
+
 2015-12-16  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] fix error message for eval/arguments CoverInitializedName in strict code

@@ -70,20 +70,23 @@ public:
 
     struct PreservedState {
         PreservedState()
-            : PreservedState(0)
+            : numberOfBytesPreserved(std::numeric_limits<unsigned>::max())
+            , extraStackSpaceRequirement(ExtraStackSpace::SpaceForCCall)
         { }
 
-        PreservedState(unsigned numberOfBytes, ExtraStackSpace extraStackSpace = ExtraStackSpace::NoExtraSpace)
+        PreservedState(unsigned numberOfBytes, ExtraStackSpace extraStackSpace)
             : numberOfBytesPreserved(numberOfBytes)
             , extraStackSpaceRequirement(extraStackSpace)
         { }
+
+        explicit operator bool() const { return numberOfBytesPreserved != std::numeric_limits<unsigned>::max(); }
 
         unsigned numberOfBytesPreserved;
         ExtraStackSpace extraStackSpaceRequirement;
     };
 
     PreservedState preserveReusedRegistersByPushing(MacroAssembler& jit, ExtraStackSpace);
-    void restoreReusedRegistersByPopping(MacroAssembler& jit, PreservedState);
+    void restoreReusedRegistersByPopping(MacroAssembler& jit, const PreservedState&);
     
     RegisterSet usedRegistersForCall() const;
     

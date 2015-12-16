@@ -125,8 +125,9 @@ ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReuse
     return PreservedState(stackAdjustmentSize, extraStackSpace);
 }
 
-void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, const ScratchRegisterAllocator::PreservedState preservedState)
+void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, const ScratchRegisterAllocator::PreservedState& preservedState)
 {
+    RELEASE_ASSERT(preservedState);
     if (!didReuseRegisters())
         return;
 
