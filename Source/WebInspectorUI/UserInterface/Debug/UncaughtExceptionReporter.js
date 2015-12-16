@@ -53,7 +53,7 @@ function unblockEventHandlers() {
 function handleUncaughtException(event) {
     let exceptionRecord = {
         message: event.message,
-        url: event.url,
+        url: parseURL(event.filename).lastPathComponent,
         lineNumber: event.lineno,
         columnNumber: event.colno
     };

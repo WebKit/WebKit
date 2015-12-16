@@ -1,5 +1,16 @@
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Uncaught Exception View has undefined exception URL
+        https://bugs.webkit.org/show_bug.cgi?id=152327
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (handleUncaughtException):
+        Use ErrorEvent's filename property, not url which is undefined.
+
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Uncaught Exception: ReferenceError: Can't find variable: resolvedValue
         https://bugs.webkit.org/show_bug.cgi?id=152326
 
