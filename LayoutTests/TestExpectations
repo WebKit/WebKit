@@ -270,7 +270,7 @@ imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-if
 webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01.html [ Pass Failure ]
 webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02.html [ Pass Failure ]
 webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode.xhtml [ Pass Failure ]
-webkit.org/b/152257 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure ]
+webkit.org/b/152257 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure Timeout ]
 webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/interfaces.html [ Pass Failure Timeout ]
 webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/responsetype.html [ Pass Failure Timeout ]
 webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-sync.htm [ Pass Failure Timeout ]

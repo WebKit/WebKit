@@ -1,5 +1,14 @@
 2015-12-16  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Adding timout expectation to one more wpt test that I missed in the last commit.
+        https://bugs.webkit.org/show_bug.cgi?id=152335
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2015-12-16  Ryan Haddad  <ryanhaddad@apple.com>
+
         Adding timeout to wpt TestExpectations due to WK/WPT testharness.js issues.
         https://bugs.webkit.org/show_bug.cgi?id=152335
 
