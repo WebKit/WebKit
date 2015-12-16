@@ -2,10 +2,8 @@
 <html>
 <div>Test passes if it does not induce a crash.</div>
 <script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-
 test(function() {
     var cue = new TextTrackCue(0, 1, '<c>x\0');
     window.fragment = cue.getCueAsHTML();

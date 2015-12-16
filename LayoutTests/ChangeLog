@@ -1,3 +1,17 @@
+2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Align WebKit testharness.js with WPT testharness.js
+        https://bugs.webkit.org/show_bug.cgi?id=152297
+
+        Reviewed by Darin Adler.
+
+        Cosmetic changes (output:true is overriden by WK testharnessreport.js)
+        To remove the warning "WPT tests are not using the same testharness.js file as other WebKit Layout tests."
+
+        * media/track/getCueAsHTMLCrash.html: Adding testharnessreport.js and removing call to dumpAsText.
+        * media/track/getCueAsHTMLCrash-expected.txt: Rebasing as tests are now outputting results.
+        * resources/testharness.js:
+
 2015-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Handle new_generator_func / new_generator_func_exp in DFG / FTL

@@ -15,10 +15,9 @@ policies and contribution forms [3].
 (function ()
 {
     var debug = false;
-
     // default timeout is 10 seconds, test can override if needed
     var settings = {
-        output:false,
+        output:true,
         harness_timeout:{
             "normal":10000,
             "long":60000
