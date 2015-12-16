@@ -1,5 +1,20 @@
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve copy of console messages with multiple arguments - console.log(obj1, obj2)
+        https://bugs.webkit.org/show_bug.cgi?id=152330
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype.toClipboardString):
+        Copy the inner text of the extra arguments list as well, for
+        console messages with multiple objects. Rearrange the sections
+        that, if there is a stack trace it comes at the end after
+        multiple arguments. If there is no stack trace, include the
+        location info next to the top line, before multiple arguments.
+
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve copy of console message containing Array and Map output
         https://bugs.webkit.org/show_bug.cgi?id=152329
 

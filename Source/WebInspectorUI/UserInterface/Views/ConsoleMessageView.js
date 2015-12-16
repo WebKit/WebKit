@@ -193,13 +193,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             clipboardString = "console.trace()";
 
         let hasStackTrace = this._shouldShowStackTrace();
-        if (hasStackTrace) {
-            this._message.stackTrace.callFrames.forEach(function(frame) {
-                clipboardString += "\n\t" + (frame.functionName || WebInspector.UIString("(anonymous function)"));
-                if (frame.sourceCodeLocation)
-                    clipboardString += " (" + frame.sourceCodeLocation.originalLocationString() + ")";
-            });
-        } else {
+        if (!hasStackTrace) {
             let repeatString = this.repeatCount > 1 ? "x" + this.repeatCount : "";
             let urlLine = "";
             if (this._message.url) {
@@ -215,6 +209,17 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                 lines[0] += urlLine;
                 clipboardString = lines.join("\n");
             }
+        }
+
+        if (this._extraElementsList)
+            clipboardString += "\n" + this._extraElementsList.innerText.removeWordBreakCharacters().trim();
+
+        if (hasStackTrace) {
+            this._message.stackTrace.callFrames.forEach(function(frame) {
+                clipboardString += "\n\t" + (frame.functionName || WebInspector.UIString("(anonymous function)"));
+                if (frame.sourceCodeLocation)
+                    clipboardString += " (" + frame.sourceCodeLocation.originalLocationString() + ")";
+            });
         }
 
         if (!isPrefixOptional || this._enforcesClipboardPrefixString())
