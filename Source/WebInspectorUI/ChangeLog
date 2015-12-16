@@ -1,5 +1,26 @@
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Typing object literal in the console causes a parse error
+        https://bugs.webkit.org/show_bug.cgi?id=141737
+
+        Reviewed by Timothy Hatcher.
+
+        Provide a convenience in console evaluations for JSON object like input.
+        If the console input starts with '{' and ends with '}' wrap the input
+        in parenthesis to force evaluation as an expression.
+
+        For example, input "{a:1}" would be convenience wrapped to "({a:1})"
+        and produce the expected object. This helps avoid the unusual treatment
+        of "{a:1}" as program containing a labeled statement, which is often
+        not what the user expects. And in more realistic cases, like "{a:1, b:2}",
+        produce a SyntaxError.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        Detect and convenience wrap the given expression.
+
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Uncaught Exception View has undefined exception URL
         https://bugs.webkit.org/show_bug.cgi?id=152327
 

@@ -1,0 +1,22 @@
+Tests for the Runtime.parse command.
+
+
+== Running test suite: RuntimeManager
+-- Running test case: RuntimeManager.prototype.evaluateInInspectedWindow.ObjectLiteralConvenience
+Source: {a:1}
+PASS: Evaluation should produce an object.
+Source: {a:1, b:2}
+PASS: Evaluation should produce an object.
+Source:    {a:1, b:2}  
+PASS: Evaluation should produce an object.
+Source: { let a = 1; a += 1; a }
+PASS: Evaluation should produce an exception.
+Source: ;{a:1}
+PASS: Evaluation should produce the labeled statement's value.
+Source: {a:1};
+PASS: Evaluation should produce the labeled statement's value.
+Source: ;{a:1, b:2}
+PASS: Evaluation should produce an exception.
+Source: ;{ let a = 1; a += 1; a }
+PASS: Evaluation should produce the labeled statement's value.
+

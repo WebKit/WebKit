@@ -40,6 +40,9 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         if (!expression) {
             // There is no expression, so the completion should happen against global properties.
             expression = "this";
+        } else if (/^\s*\{/.test(expression) && /\}\s*$/.test(expression)) {
+            // Transform {a:1} to ({a:1}) so it is treated like an object literal instead of a block with a label.
+            expression = "(" + expression + ")";
         }
 
         expression = appendWebInspectorSourceURL(expression);

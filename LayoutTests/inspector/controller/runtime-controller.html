@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("RuntimeManager");
+
+    suite.addTestCase({
+        name: "RuntimeManager.prototype.evaluateInInspectedWindow.ObjectLiteralConvenience",
+        description: "Test evaluating an object literal string conveniently converts wraps it in parenthesis to avoid misinterpretation as a program with a block and labeled statement.",
+        test: (resolve, reject) => {
+            function testSource(expression, callback) {
+                const objectGroup = "test";
+                const includeCommandLineAPI = false;
+                const ignorePauseOnExceptionsAndMute = false;
+                const shouldReturnByValue = false;
+                const shouldGeneratePreview = false;
+                const shouldSaveResult = false;
+                WebInspector.runtimeManager.evaluateInInspectedWindow(expression, objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, (result, wasThrown) => {
+                    InspectorTest.log("Source: " + expression);
+                    callback(result, wasThrown);
+                });
+            }
+
+            function expectObject(result, wasThrown) {
+                InspectorTest.expectThat(result.type === "object", "Evaluation should produce an object.");
+            }
+
+            function expectException(result, wasThrown) {
+                InspectorTest.expectThat(wasThrown, "Evaluation should produce an exception.");
+            }
+
+            function expectValue(value) {
+                return function(result, wasThrown) {
+                    InspectorTest.expectThat(result.value === value, "Evaluation should produce the labeled statement's value.");
+                }
+            }
+
+            // The convenience will detect these and make them objects.
+            testSource("{a:1}", expectObject);
+            testSource("{a:1, b:2}", expectObject);
+            testSource("   {a:1, b:2}  ", expectObject);
+
+            // The convenience will incorrectly apply to these that would otherwise have been valid programs.
+            testSource("{ let a = 1; a += 1; a }", expectException);
+
+            // Test we can run non-convenience cases by not starting / ending with characters other than curly braces.
+            testSource(";{a:1}", expectValue(1));
+            testSource("{a:1};", expectValue(1));
+            testSource(";{a:1, b:2}", expectException);
+            testSource(";{ let a = 1; a += 1; a }", expectValue(2));
+
+            InspectorBackend.runAfterPendingDispatches(resolve);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the Runtime.parse command.</p>
+</body>
+</html>
