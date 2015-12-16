@@ -1,3 +1,20 @@
+2015-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Call DatabaseManager directly from WKBundle.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=152317
+
+        Reviewed by Tim Horton.
+
+        This is in preparation for getting rid of some old database manager code.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleClearAllDatabases):
+        (WKBundleSetDatabaseQuota):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::clearAllDatabases): Deleted.
+        (WebKit::InjectedBundle::setDatabaseQuota): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2015-12-15  Daniel Bates  <dabates@apple.com>
 
         Guard code that uses class LayerTreeHost with USE(COORDINATED_GRAPHICS) or USE(TEXTURE_MAPPER)

@@ -37,7 +37,9 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
+#include <WebCore/DatabaseManager.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 WKTypeID WKBundleGetTypeID()
@@ -198,14 +200,16 @@ void WKBundleReportException(JSContextRef context, JSValueRef exception)
     InjectedBundle::reportException(context, exception);
 }
 
-void WKBundleClearAllDatabases(WKBundleRef bundleRef)
+void WKBundleClearAllDatabases(WKBundleRef)
 {
-    toImpl(bundleRef)->clearAllDatabases();
+    DatabaseManager::singleton().deleteAllDatabases();
 }
 
 void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
 {
-    toImpl(bundleRef)->setDatabaseQuota(quota);
+    // Historically, we've used the following (somewhat non-sensical) string
+    // for the databaseIdentifier of local files.
+    DatabaseManager::singleton().setQuota(SecurityOrigin::createFromDatabaseIdentifier("file__0").ptr(), quota);
 }
 
 WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data)

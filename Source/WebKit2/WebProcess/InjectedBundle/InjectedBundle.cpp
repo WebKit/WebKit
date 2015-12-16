@@ -342,18 +342,6 @@ void InjectedBundle::setAsynchronousSpellCheckingEnabled(WebPageGroupProxy* page
         (*iter)->settings().setAsynchronousSpellCheckingEnabled(enabled);
 }
 
-void InjectedBundle::clearAllDatabases()
-{
-    WebProcess::singleton().supplement<WebDatabaseManager>()->deleteAllDatabases();
-}
-
-void InjectedBundle::setDatabaseQuota(uint64_t quota)
-{
-    // Historically, we've used the following (somewhat non-sensical) string
-    // for the databaseIdentifier of local files.
-    WebProcess::singleton().supplement<WebDatabaseManager>()->setQuotaForOrigin("file__0", quota);
-}
-
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
 {
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
