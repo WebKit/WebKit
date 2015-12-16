@@ -45,8 +45,6 @@ class ChartStatusView extends ComponentBase {
         var previousPoint;
 
         if (this._chart instanceof InteractiveTimeSeriesChart) {
-            currentPoint = this._chart.currentPoint();
-
             var selection = this._chart.currentSelection();
             if (selection && this._usedSelection == selection)
                 return false;
@@ -61,8 +59,10 @@ class ChartStatusView extends ComponentBase {
                     currentPoint = data[data.length - 1];
                     previousPoint = data[0];
                 }
-            } else if (currentPoint)
-                previousPoint = currentPoint.series.previousPoint(currentPoint);
+            } else  {
+                currentPoint = this._chart.currentPoint();
+                previousPoint = this._chart.currentPoint(-1);
+            }
         } else {
             var data = this._chart.sampledTimeSeriesData('current');
             if (!data)

@@ -1,3 +1,17 @@
+2015-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The chart status on v3 UI sometimes show wrong revision ranges
+        https://bugs.webkit.org/show_bug.cgi?id=152331
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by the status view not taking the data sampling that happens in TimeSeriesChart into account
+        when finding the previous point. Take this into account by using InteractiveTimeSeries.currentPoint(-1) which
+        finds the sampled data point immediately preceding the current point (at which the indicator is shown).
+
+        * public/v3/components/chart-status-view.js:
+        (ChartStatusView.prototype.updateStatusIfNeeded):
+
 2015-12-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard's cycler page should use v3 UI
