@@ -1,3 +1,10 @@
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r194156.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+
 2015-12-16  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Combine handling open requests, delete requests, and transactions into one timer.
