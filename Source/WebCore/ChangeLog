@@ -1,3 +1,25 @@
+2015-12-16  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Combine handling open requests, delete requests, and transactions into one timer.
+        https://bugs.webkit.org/show_bug.cgi?id=152344
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, existing tests pass).
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabase::enqueueTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformActivateTransactionInBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::inProgressTransactionCompleted):
+        (WebCore::IDBServer::UniqueIDBDatabase::invokeDeleteOrRunTransactionTimer): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteOrRunTransactionsTimerFired): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2015-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r194156.

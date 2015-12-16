@@ -47,8 +47,7 @@ namespace IDBServer {
 UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentifier& identifier)
     : m_server(server)
     , m_identifier(identifier)
-    , m_deleteOrRunTransactionsTimer(*this, &UniqueIDBDatabase::deleteOrRunTransactionsTimerFired)
-    , m_handleOpenDatabaseOperationsTimer(*this, &UniqueIDBDatabase::handleOpenDatabaseOperations)
+    , m_operationAndTransactionTimer(*this, &UniqueIDBDatabase::operationAndTransactionTimerFired)
 {
 }
 
@@ -793,8 +792,7 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
         m_versionChangeTransaction = nullptr;
         m_versionChangeDatabaseConnection = nullptr;
 
-        if (!m_handleOpenDatabaseOperationsTimer.isActive())
-            m_handleOpenDatabaseOperationsTimer.startOneShot(0);
+        invokeOperationAndTransactionTimer();
     }
 
     uint64_t callbackID = storeCallback(callback);
@@ -892,7 +890,7 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
     }
 
     // Now that a database connection has closed, previously blocked operations might be runnable.
-    invokeDeleteOrRunTransactionTimer();
+    invokeOperationAndTransactionTimer();
 }
 
 void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& transaction)
@@ -903,18 +901,20 @@ void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& t
 
     m_pendingTransactions.append(WTF::move(transaction));
 
-    invokeDeleteOrRunTransactionTimer();
+    invokeOperationAndTransactionTimer();
 }
 
-void UniqueIDBDatabase::invokeDeleteOrRunTransactionTimer()
+void UniqueIDBDatabase::invokeOperationAndTransactionTimer()
 {
-    if (!m_deleteOrRunTransactionsTimer.isActive())
-        m_deleteOrRunTransactionsTimer.startOneShot(0);
+    if (!m_operationAndTransactionTimer.isActive())
+        m_operationAndTransactionTimer.startOneShot(0);
 }
 
-void UniqueIDBDatabase::deleteOrRunTransactionsTimerFired()
+void UniqueIDBDatabase::operationAndTransactionTimerFired()
 {
-    LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteOrRunTransactionsTimerFired");
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::operationAndTransactionTimerFired");
+
+    handleOpenDatabaseOperations();
 
     if (m_deletePending && maybeDeleteDatabase(nullptr))
         return;
@@ -939,7 +939,7 @@ void UniqueIDBDatabase::deleteOrRunTransactionsTimerFired()
 
         // If no transactions were deferred, it's possible we can start another transaction right now.
         if (!hadDeferredTransactions)
-            invokeDeleteOrRunTransactionTimer();
+            invokeOperationAndTransactionTimer();
     }
 }
 
@@ -970,7 +970,7 @@ void UniqueIDBDatabase::didPerformActivateTransactionInBackingStore(uint64_t cal
 {
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformActivateTransactionInBackingStore");
 
-    invokeDeleteOrRunTransactionTimer();
+    invokeOperationAndTransactionTimer();
 
     performErrorCallback(callbackIdentifier, error);
 }
@@ -1046,7 +1046,7 @@ void UniqueIDBDatabase::inProgressTransactionCompleted(const IDBResourceIdentifi
         m_closePendingDatabaseConnections.remove(&transaction->databaseConnection());
 
     // Previously blocked operations might be runnable.
-    invokeDeleteOrRunTransactionTimer();
+    invokeOperationAndTransactionTimer();
 }
 
 void UniqueIDBDatabase::performErrorCallback(uint64_t callbackIdentifier, const IDBError& error)

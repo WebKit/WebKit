@@ -164,8 +164,8 @@ private:
 
     bool hasAnyPendingCallbacks() const;
 
-    void invokeDeleteOrRunTransactionTimer();
-    void deleteOrRunTransactionsTimerFired();
+    void invokeOperationAndTransactionTimer();
+    void operationAndTransactionTimerFired();
     RefPtr<UniqueIDBDatabaseTransaction> takeNextRunnableTransaction(bool& hadDeferredTransactions);
 
     IDBServer& m_server;
@@ -190,8 +190,7 @@ private:
     HashMap<uint64_t, GetResultCallback> m_getResultCallbacks;
     HashMap<uint64_t, CountCallback> m_countCallbacks;
 
-    Timer m_deleteOrRunTransactionsTimer;
-    Timer m_handleOpenDatabaseOperationsTimer;
+    Timer m_operationAndTransactionTimer;
 
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
