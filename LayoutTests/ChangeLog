@@ -1,3 +1,12 @@
+2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Mac EWS bots frequently fail several wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=152257
+
+        Unreviewed.
+
+        * TestExpectations: marking some tests as flaky.
+
 2015-12-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194135.

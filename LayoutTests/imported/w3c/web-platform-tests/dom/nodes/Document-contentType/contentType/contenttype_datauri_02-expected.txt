@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1381: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
+CONSOLE MESSAGE: line 1380: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
 
 
 FAIL Data URI document.contentType === 'text/html' when data URI MIME type is set null is not an object (evaluating 'iframe.contentDocument.contentType')
