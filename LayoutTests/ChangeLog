@@ -1,3 +1,14 @@
+2015-12-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Re-baseline pageoverlay/overlay* tests for mac-wk1
+        https://bugs.webkit.org/show_bug.cgi?id=152338
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/pageoverlay/overlay-large-document-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-large-document-scrolled-expected.txt:
+        * platform/mac-wk1/pageoverlay/overlay-small-frame-mouse-events-expected.txt:
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Mark additional wpt tests as flaky due to WK/WPT testharness.js
