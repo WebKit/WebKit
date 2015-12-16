@@ -1,3 +1,27 @@
+2015-12-15  Zalan Bujtas  <zalan@apple.com>
+
+        FontCascade cleanup: Remove ::drawSimpleText and ::drawComplexText.
+        https://bugs.webkit.org/show_bug.cgi?id=152323
+
+        Reviewed by Myles C. Maxfield.
+
+        Platform code for ::drawComplexText() is redundant and has 
+        no platform dependent logic. Move it all to ::drawText()
+
+        No change in functionality.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::glyphBufferForTextRun):
+        (WebCore::FontCascade::drawText):
+        (WebCore::FontCascade::drawSimpleText): Deleted.
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::drawComplexText): Deleted.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawComplexText): Deleted.
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::FontCascade::drawComplexText): Deleted.
+
 2015-12-15  Tim Horton  <timothy_horton@apple.com>
 
         [Mac] Gesture Events should not have negative scale
