@@ -509,12 +509,12 @@ void JIT::emitBitBinaryOpFastPath(Instruction* currentInstruction)
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
-    GPRReg scratchGPR = GPRInfo::regT2;
+    GPRReg scratchGPR = regT2;
 #else
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
-    GPRReg scratchGPR = InvalidGPRReg;
+    GPRReg scratchGPR = regT4;
 #endif
 
     SnippetOperand leftOperand;
