@@ -587,14 +587,13 @@ void PDFPlugin::updateScrollbars()
     } else if (m_size.height() < m_pdfDocumentSize.height())
         m_verticalScrollbar = createScrollbar(VerticalScrollbar);
 
-    int horizontalScrollbarHeight = (m_horizontalScrollbar && !m_horizontalScrollbar->isOverlayScrollbar()) ? m_horizontalScrollbar->height() : 0;
-    int verticalScrollbarWidth = (m_verticalScrollbar && !m_verticalScrollbar->isOverlayScrollbar()) ? m_verticalScrollbar->width() : 0;
+    IntSize scrollbarSpace = scrollbarIntrusion();
 
     int pageStep = m_pageBoxes.isEmpty() ? 0 : m_pageBoxes[0].height();
 
     if (m_horizontalScrollbar) {
         m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_horizontalScrollbar->setProportion(m_size.width() - verticalScrollbarWidth, m_pdfDocumentSize.width());
+        m_horizontalScrollbar->setProportion(m_size.width() - scrollbarSpace.width(), m_pdfDocumentSize.width());
         IntRect scrollbarRect(pluginView()->x(), pluginView()->y() + m_size.height() - m_horizontalScrollbar->height(), m_size.width(), m_horizontalScrollbar->height());
         if (m_verticalScrollbar)
             scrollbarRect.contract(m_verticalScrollbar->width(), 0);
@@ -602,7 +601,7 @@ void PDFPlugin::updateScrollbars()
     }
     if (m_verticalScrollbar) {
         m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_verticalScrollbar->setProportion(m_size.height() - horizontalScrollbarHeight, m_pdfDocumentSize.height());
+        m_verticalScrollbar->setProportion(m_size.height() - scrollbarSpace.height(), m_pdfDocumentSize.height());
         IntRect scrollbarRect(IntRect(pluginView()->x() + m_size.width() - m_verticalScrollbar->width(), pluginView()->y(), m_verticalScrollbar->width(), m_size.height()));
         if (m_horizontalScrollbar)
             scrollbarRect.contract(0, m_horizontalScrollbar->height());
@@ -796,10 +795,9 @@ IntPoint PDFPlugin::minimumScrollPosition() const
 
 IntPoint PDFPlugin::maximumScrollPosition() const
 {
-    int horizontalScrollbarHeight = (m_horizontalScrollbar && !m_horizontalScrollbar->isOverlayScrollbar()) ? m_horizontalScrollbar->height() : 0;
-    int verticalScrollbarWidth = (m_verticalScrollbar && !m_verticalScrollbar->isOverlayScrollbar()) ? m_verticalScrollbar->width() : 0;
+    IntSize scrollbarSpace = scrollbarIntrusion();
 
-    IntPoint maximumOffset(m_pdfDocumentSize.width() - m_size.width() + verticalScrollbarWidth, m_pdfDocumentSize.height() - m_size.height() + horizontalScrollbarHeight);
+    IntPoint maximumOffset(m_pdfDocumentSize.width() - m_size.width() + scrollbarSpace.width(), m_pdfDocumentSize.height() - m_size.height() + scrollbarSpace.height());
     maximumOffset.clampNegativeToZero();
     return maximumOffset;
 }

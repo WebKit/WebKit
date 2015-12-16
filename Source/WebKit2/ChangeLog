@@ -1,3 +1,21 @@
+2015-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify isOverlayScrollbar() logic
+        https://bugs.webkit.org/show_bug.cgi?id=152357
+
+        Reviewed by Beth Dakin.
+
+        Replace code that checks for isOverlayScrollbar() explicitly with calls to new
+        occupiedWidth()/occupiedHeight() functions on Scrollbar, which do the overlay
+        scrollbar check internally.
+        
+        Add ScrollableArea::scrollbarIntrusion() which returns an IntSize with the occupiedWidth
+        and occupiedHeight of any scrollbars, and use it in a few places.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::updateScrollbars):
+        (WebKit::PDFPlugin::maximumScrollPosition):
+
 2015-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Build fix when using NETWORK_SESSION after r193972.

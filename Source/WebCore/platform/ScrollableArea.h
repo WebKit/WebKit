@@ -173,6 +173,8 @@ public:
     {
         return scrollbar->Widget::convertFromContainingView(parentPoint);
     }
+    
+    WEBCORE_EXPORT IntSize scrollbarIntrusion() const;
 
     virtual Scrollbar* horizontalScrollbar() const { return 0; }
     virtual Scrollbar* verticalScrollbar() const { return 0; }

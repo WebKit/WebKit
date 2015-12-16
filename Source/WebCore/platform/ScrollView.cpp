@@ -275,17 +275,11 @@ IntSize ScrollView::unscaledVisibleContentSizeIncludingObscuredArea(VisibleConte
         return m_fixedVisibleContentRect.size();
 #endif
 
-    int verticalScrollbarWidth = 0;
-    int horizontalScrollbarHeight = 0;
+    IntSize scrollbarSpace;
+    if (scrollbarInclusion == ExcludeScrollbars)
+        scrollbarSpace = scrollbarIntrusion();
 
-    if (scrollbarInclusion == ExcludeScrollbars) {
-        if (Scrollbar* verticalBar = verticalScrollbar())
-            verticalScrollbarWidth = !verticalBar->isOverlayScrollbar() ? verticalBar->width() : 0;
-        if (Scrollbar* horizontalBar = horizontalScrollbar())
-            horizontalScrollbarHeight = !horizontalBar->isOverlayScrollbar() ? horizontalBar->height() : 0;
-    }
-
-    return IntSize(width() - verticalScrollbarWidth, height() - horizontalScrollbarHeight).expandedTo(IntSize());
+    return IntSize(width() - scrollbarSpace.width(), height() - scrollbarSpace.height()).expandedTo(IntSize());
 }
     
 IntSize ScrollView::unscaledUnobscuredVisibleContentSize(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
@@ -1249,28 +1243,25 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect)
 
 void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect)
 {
-    int verticalScrollbarWidth = (verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar())
-        ? verticalScrollbar()->width() : 0;
-    int horizontalScrollbarHeight = (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar())
-        ? horizontalScrollbar()->height() : 0;
+    IntSize scrollbarSpace = scrollbarIntrusion();
 
     int physicalScrollY = scrollPosition().y() + scrollOrigin().y();
     if (physicalScrollY < 0) {
         horizontalOverhangRect = frameRect();
         horizontalOverhangRect.setHeight(-physicalScrollY);
-        horizontalOverhangRect.setWidth(horizontalOverhangRect.width() - verticalScrollbarWidth);
+        horizontalOverhangRect.setWidth(horizontalOverhangRect.width() - scrollbarSpace.width());
     } else if (totalContentsSize().height() && physicalScrollY > totalContentsSize().height() - visibleHeight()) {
         int height = physicalScrollY - (totalContentsSize().height() - visibleHeight());
         horizontalOverhangRect = frameRect();
-        horizontalOverhangRect.setY(frameRect().maxY() - height - horizontalScrollbarHeight);
+        horizontalOverhangRect.setY(frameRect().maxY() - height - scrollbarSpace.height());
         horizontalOverhangRect.setHeight(height);
-        horizontalOverhangRect.setWidth(horizontalOverhangRect.width() - verticalScrollbarWidth);
+        horizontalOverhangRect.setWidth(horizontalOverhangRect.width() - scrollbarSpace.width());
     }
 
     int physicalScrollX = scrollPosition().x() + scrollOrigin().x();
     if (physicalScrollX < 0) {
         verticalOverhangRect.setWidth(-physicalScrollX);
-        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height() - horizontalScrollbarHeight);
+        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height() - scrollbarSpace.height());
         verticalOverhangRect.setX(frameRect().x());
         if (horizontalOverhangRect.y() == frameRect().y())
             verticalOverhangRect.setY(frameRect().y() + horizontalOverhangRect.height());
@@ -1279,8 +1270,8 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     } else if (contentsWidth() && physicalScrollX > contentsWidth() - visibleWidth()) {
         int width = physicalScrollX - (contentsWidth() - visibleWidth());
         verticalOverhangRect.setWidth(width);
-        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height() - horizontalScrollbarHeight);
-        verticalOverhangRect.setX(frameRect().maxX() - width - verticalScrollbarWidth);
+        verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height() - scrollbarSpace.height());
+        verticalOverhangRect.setX(frameRect().maxX() - width - scrollbarSpace.width());
         if (horizontalOverhangRect.y() == frameRect().y())
             verticalOverhangRect.setY(frameRect().y() + horizontalOverhangRect.height());
         else

@@ -97,6 +97,16 @@ Scrollbar::~Scrollbar()
     theme().unregisterScrollbar(*this);
 }
 
+int Scrollbar::occupiedWidth() const
+{
+    return isOverlayScrollbar() ? 0 : width();
+}
+
+int Scrollbar::occupiedHeight() const
+{
+    return isOverlayScrollbar() ? 0 : height();
+}
+
 void Scrollbar::offsetDidChange()
 {
     float position = static_cast<float>(m_scrollableArea.scrollPosition(this));

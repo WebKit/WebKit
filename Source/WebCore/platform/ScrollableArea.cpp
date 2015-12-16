@@ -516,6 +516,13 @@ bool ScrollableArea::isPinnedVerticallyInDirection(int verticalScrollDelta) cons
 }
 #endif // PLATFORM(IOS)
 
+IntSize ScrollableArea::scrollbarIntrusion() const
+{
+    return IntSize(
+        verticalScrollbar() ? verticalScrollbar()->occupiedWidth() : 0,
+        horizontalScrollbar() ? horizontalScrollbar()->occupiedHeight() : 0);
+}
+
 IntPoint ScrollableArea::scrollPosition() const
 {
     int x = horizontalScrollbar() ? horizontalScrollbar()->value() : 0;
@@ -582,9 +589,9 @@ IntRect ScrollableArea::visibleContentRectInternal(VisibleContentRectIncludesScr
 
     if (scrollbarInclusion == IncludeScrollbars) {
         if (Scrollbar* verticalBar = verticalScrollbar())
-            verticalScrollbarWidth = !verticalBar->isOverlayScrollbar() ? verticalBar->width() : 0;
+            verticalScrollbarWidth = verticalBar->occupiedWidth();
         if (Scrollbar* horizontalBar = horizontalScrollbar())
-            horizontalScrollbarHeight = !horizontalBar->isOverlayScrollbar() ? horizontalBar->height() : 0;
+            horizontalScrollbarHeight = horizontalBar->occupiedHeight();
     }
 
     return IntRect(scrollPosition().x(),

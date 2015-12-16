@@ -69,6 +69,9 @@ public:
     int totalSize() const { return m_totalSize; }
     int maximum() const { return m_totalSize - m_visibleSize; }
     ScrollbarControlSize controlSize() const { return m_controlSize; }
+    
+    int occupiedWidth() const;
+    int occupiedHeight() const;
 
     int lineStep() const { return m_lineStep; }
     int pageStep() const { return m_pageStep; }
