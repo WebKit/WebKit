@@ -1,5 +1,64 @@
 2015-12-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Improve JSObject::put performance
+        https://bugs.webkit.org/show_bug.cgi?id=152347
+
+        Reviewed by Geoffrey Garen.
+
+        This adds a new benchmark called dynbench, which just uses the C++ API to create, modify, and
+        query objects. This also adds some optimizations to make the JSObject::put code faster by making
+        it inlinable in places that really need the performance, like JITOperations and LLIntSlowPaths.
+        Inlining it is optional because the put() method is large. If you want it inlined, call
+        putInline(). There's a putInline() variant of both JSObject::put() and JSValue::put().
+
+        This is up to a 20% improvement for JSObject::put calls that get inlined all the way (like from
+        JITOperations and the new benchmark) and it's also a speed-up, albeit a smaller one, for
+        JSObject::put calls that don't get inlined (i.e. those from the DOM and the JSC C++ library code).
+        Specific speed-ups are as follows. Note that "dynamic context" means that we told PutPropertySlot
+        that we're not a static put_by_id, which turns off some type inference.
+
+        Get By Id: 2% faster
+        Put By Id Replace: 23% faster
+        Put By Id Transition + object allocation: 11% faster
+        Get By Id w/ dynamic context: 5% faster
+        Put By Id Replace w/ dynamic context: 25% faster
+        Put By Id Transition + object allocation w/ dynamic context: 10% faster
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dynbench.cpp: Added.
+        (JSC::benchmarkImpl):
+        (main):
+        * jit/CallFrameShuffler32_64.cpp:
+        * jit/CallFrameShuffler64.cpp:
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ClassInfo.h:
+        (JSC::ClassInfo::hasStaticProperties):
+        * runtime/ConsoleClient.cpp:
+        * runtime/CustomGetterSetter.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        (JSC::addErrorInfoAndGetBytecodeOffset): Deleted.
+        * runtime/GetterSetter.h:
+        (JSC::asGetterSetter):
+        * runtime/JSCInlines.h:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::put):
+        (JSC::JSValue::putInternal):
+        (JSC::JSValue::putByIndex):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::putByIndex):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::get):
+        (JSC::JSObject::putDirectInternal):
+
+2015-12-16  Filip Pizlo  <fpizlo@apple.com>
+
         Work around a bug in LLVM by flipping the unification order
         https://bugs.webkit.org/show_bug.cgi?id=152341
         rdar://problem/23920749

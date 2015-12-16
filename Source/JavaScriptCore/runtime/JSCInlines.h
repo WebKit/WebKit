@@ -45,6 +45,7 @@
 #include "JSArrayBufferViewInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunctionInlines.h"
+#include "JSObjectInlines.h"
 #include "JSProxy.h"
 #include "JSString.h"
 #include "Operations.h"

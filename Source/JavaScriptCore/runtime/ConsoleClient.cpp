@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ConsoleClient.h"
 
+#include "JSCInlines.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"

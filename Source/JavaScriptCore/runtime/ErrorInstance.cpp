@@ -128,50 +128,6 @@ private:
     unsigned m_index;
 };
 
-static bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bool useCurrentFrame, CallFrame*& callFrame, unsigned &bytecodeOffset)
-{
-    Vector<StackFrame> stackTrace = Vector<StackFrame>();
-
-    if (exec && stackTrace.isEmpty())
-        vm.interpreter->getStackTrace(stackTrace);
-
-    if (!stackTrace.isEmpty()) {
-
-        ASSERT(exec == vm.topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
-
-        StackFrame* stackFrame;
-        for (unsigned i = 0 ; i < stackTrace.size(); ++i) {
-            stackFrame = &stackTrace.at(i);
-            if (stackFrame->bytecodeOffset)
-                break;
-        }
-
-        if (bytecodeOffset) {
-            FindFirstCallerFrameWithCodeblockFunctor functor(exec);
-            vm.topCallFrame->iterate(functor);
-            callFrame = functor.foundCallFrame();
-            unsigned stackIndex = functor.index();
-            bytecodeOffset = stackTrace.at(stackIndex).bytecodeOffset;
-        }
-        
-        unsigned line;
-        unsigned column;
-        stackFrame->computeLineAndColumn(line, column);
-        obj->putDirect(vm, vm.propertyNames->line, jsNumber(line), ReadOnly | DontDelete);
-        obj->putDirect(vm, vm.propertyNames->column, jsNumber(column), ReadOnly | DontDelete);
-
-        if (!stackFrame->sourceURL.isEmpty())
-            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, stackFrame->sourceURL), ReadOnly | DontDelete);
-    
-        if (!useCurrentFrame)
-            stackTrace.remove(0);
-        obj->putDirect(vm, vm.propertyNames->stack, vm.interpreter->stackTraceAsString(vm.topCallFrame, stackTrace), DontEnum);
-
-        return true;
-    }
-    return false;
-}
-
 void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& message, bool useCurrentFrame)
 {
     Base::finishCreation(vm);

@@ -277,6 +277,7 @@ public:
     bool getPropertySlot(ExecState*, PropertyName, PropertySlot&) const;
 
     void put(ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    void putInline(ExecState*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE void putToPrimitive(ExecState*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE void putToPrimitiveByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
     void putByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);

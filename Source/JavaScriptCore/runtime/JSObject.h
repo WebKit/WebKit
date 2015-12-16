@@ -140,7 +140,9 @@ public:
             return 0;
         return m_butterfly.get(this)->vectorLength();
     }
-        
+    
+    static void putInline(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    
     JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         
@@ -852,11 +854,13 @@ private:
     template<PutMode>
     bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
 
+    JS_EXPORT_PRIVATE NEVER_INLINE void putInlineSlow(ExecState*, PropertyName, JSValue, PutPropertySlot&);
+
     bool inlineGetOwnPropertySlot(VM&, Structure&, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
     void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned, Structure&);
 
-    const HashTableValue* findPropertyHashEntry(PropertyName) const;
+    JS_EXPORT_PRIVATE const HashTableValue* findPropertyHashEntry(PropertyName) const;
         
     void putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
         
@@ -1090,13 +1094,23 @@ ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(VM& vm, Structure& structu
         return false;
 
     JSValue value = getDirect(offset);
-    if (structure.hasGetterSetterProperties() && value.isGetterSetter())
-        fillGetterPropertySlot(slot, value, attributes, offset);
-    else if (structure.hasCustomGetterSetterProperties() && value.isCustomGetterSetter())
-        fillCustomGetterPropertySlot(slot, value, attributes, structure);
-    else
-        slot.setValue(this, attributes, value, offset);
-
+    if (value.isCell()) {
+        ASSERT(value);
+        JSCell* cell = value.asCell();
+        JSType type = cell->type();
+        switch (type) {
+        case GetterSetterType:
+            fillGetterPropertySlot(slot, value, attributes, offset);
+            return true;
+        case CustomGetterSetterType:
+            fillCustomGetterPropertySlot(slot, value, attributes, structure);
+            return true;
+        default:
+            break;
+        }
+    }
+    
+    slot.setValue(this, attributes, value, offset);
     return true;
 }
 
@@ -1187,7 +1201,7 @@ inline JSValue JSObject::get(ExecState* exec, unsigned propertyName) const
 }
 
 template<JSObject::PutMode mode>
-inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
+ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
 {
     ASSERT(value);
     ASSERT(value.isGetterSetter() == !!(attributes & Accessor));

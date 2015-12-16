@@ -25,6 +25,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				0F93275D1C20BF3A00CF6564 /* PBXTargetDependency */,
 				0FEC85B11BDB5D8F0080FF74 /* PBXTargetDependency */,
 				5D6B2A4F152B9E23005231DE /* PBXTargetDependency */,
 				5D6B2A51152B9E23005231DE /* PBXTargetDependency */,
@@ -482,6 +483,10 @@
 		0F919D2615853CE3004A4E7D /* Watchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F919D2315853CDE004A4E7D /* Watchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F919D2815856773004A4E7D /* SymbolTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F919D2715856770004A4E7D /* SymbolTable.cpp */; };
 		0F93274D1C1F66AA00CF6564 /* GPRInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */; };
+		0F9327521C20BCBA00CF6564 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
+		0F9327531C20BCBA00CF6564 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
+		0F93275B1C20BCDF00CF6564 /* dynbench.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93275A1C20BCDF00CF6564 /* dynbench.cpp */; };
+		0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93329D14CA7DC30085F3C6 /* CallLinkStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */; };
 		0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */; };
@@ -2057,6 +2062,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0F93275C1C20BF3A00CF6564 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0F93274E1C20BCBA00CF6564;
+			remoteInfo = dynbench;
+		};
 		0FCEFABC1805D66300472CE4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2594,6 +2606,9 @@
 		0F919D2315853CDE004A4E7D /* Watchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchpoint.h; sourceTree = "<group>"; };
 		0F919D2715856770004A4E7D /* SymbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable.cpp; sourceTree = "<group>"; };
 		0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPRInfo.cpp; sourceTree = "<group>"; };
+		0F9327591C20BCBA00CF6564 /* dynbench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dynbench; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F93275A1C20BCDF00CF6564 /* dynbench.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynbench.cpp; sourceTree = "<group>"; };
+		0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectInlines.h; sourceTree = "<group>"; };
 		0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkStatus.cpp; sourceTree = "<group>"; };
 		0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkStatus.h; sourceTree = "<group>"; };
 		0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetByIdStatus.cpp; sourceTree = "<group>"; };
@@ -4252,6 +4267,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0F9327511C20BCBA00CF6564 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F9327521C20BCBA00CF6564 /* Foundation.framework in Frameworks */,
+				0F9327531C20BCBA00CF6564 /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0FCEFAB31805D61600472CE4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4339,6 +4363,7 @@
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				0FEC85AD1BDB5CF10080FF74 /* testb3 */,
 				6511230514046A4C002B101D /* testRegExp */,
+				0F9327591C20BCBA00CF6564 /* dynbench */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4348,14 +4373,15 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
-				6529FB3018B2D63900C61102 /* generate-bytecode-files */,
 				8604F4F2143A6C4400B295F5 /* ChangeLog */,
+				F68EBB8C0255D4C601FF60F7 /* config.h */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
-				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
-				F68EBB8C0255D4C601FF60F7 /* config.h */,
-				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
+				0F93275A1C20BCDF00CF6564 /* dynbench.cpp */,
+				6529FB3018B2D63900C61102 /* generate-bytecode-files */,
+				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
+				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
 				A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */,
 				1432EBD70A34CAD400717B9F /* API */,
 				9688CB120ED12B4E001D649F /* assembler */,
@@ -4364,9 +4390,12 @@
 				A7D8019F1880D66E0026C39B /* builtins */,
 				969A078F0ED1D3AE00F1F681 /* bytecode */,
 				7E39D81D0EC38EFA003AF11A /* bytecompiler */,
+				1C90513E0BA9E8830081E9D0 /* Configurations */,
 				1480DB9A0DDC2231003CFDF2 /* debugger */,
+				650FDF8D09D0FCA700769E54 /* Derived Sources */,
 				86EC9DB31328DF44002B2AD7 /* dfg */,
 				0FF4272E158EBCCE004CB9FF /* disassembler */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				0FEA09FC1705137F00BB722C /* ftl */,
 				142E312A134FF0A600AFADB5 /* heap */,
 				A5BA15DF1823409200A82E69 /* inspector */,
@@ -4375,19 +4404,16 @@
 				0F46809C14BA7F4D00BFE272 /* llint */,
 				0FCEFAAD1805CA4400472CE4 /* llvm */,
 				7E39D8370EC3A388003AF11A /* parser */,
+				034768DFFF38A50411DB9C8B /* Products */,
 				95AB831A0DA42C6900BC83F3 /* profiler */,
 				99E45A0C18A01E930026D88F /* replay */,
+				932FC3C20824BB70005B3C75 /* Resources */,
 				7EF6E0BB0EB7A1EC0079AFAF /* runtime */,
+				9959E9251BD17F1E001AA413 /* Scripts */,
 				141211000A48772600480255 /* tests */,
 				8603CEF014C753EF00AE59E3 /* tools */,
 				7B98D1331B60CD1E0023B1A4 /* wasm */,
 				86EAC48C0F93E8B9008EC948 /* yarr */,
-				650FDF8D09D0FCA700769E54 /* Derived Sources */,
-				932FC3C20824BB70005B3C75 /* Resources */,
-				9959E9251BD17F1E001AA413 /* Scripts */,
-				0867D69AFE84028FC02AAC07 /* Frameworks */,
-				034768DFFF38A50411DB9C8B /* Products */,
-				1C90513E0BA9E8830081E9D0 /* Configurations */,
 			);
 			name = JavaScriptCore;
 			sourceTree = "<group>";
@@ -5523,9 +5549,9 @@
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
 				E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */,
 				E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */,
+				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
 				A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */,
 				A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */,
-				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
 				BC11667A0E199C05008066DD /* InternalFunction.h */,
 				A1B9E2331B4E0D6700BC7FED /* IntlCollator.cpp */,
@@ -5614,9 +5640,9 @@
 				A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */,
 				BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */,
 				BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */,
+				0F2B66C917B6B5AB00A7AE3F /* JSInt8Array.h */,
 				0F2B66CA17B6B5AB00A7AE3F /* JSInt16Array.h */,
 				0F2B66CB17B6B5AB00A7AE3F /* JSInt32Array.h */,
-				0F2B66C917B6B5AB00A7AE3F /* JSInt8Array.h */,
 				E33F507E1B8429A400413856 /* JSInternalPromise.cpp */,
 				E33F507F1B8429A400413856 /* JSInternalPromise.h */,
 				E33F50761B84225700413856 /* JSInternalPromiseConstructor.cpp */,
@@ -5647,6 +5673,7 @@
 				A72700770DAC605600E548D7 /* JSNotAnObject.h */,
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
+				0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */,
 				A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */,
 				A7F9935D0FD7325100A0B2D0 /* JSONObject.h */,
 				7C184E1817BEDBD3007CB63A /* JSPromise.cpp */,
@@ -5694,10 +5721,10 @@
 				53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */,
 				53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */,
 				6507D2970E871E4A00D7D896 /* JSTypeInfo.h */,
-				0F2B66D417B6B5AB00A7AE3F /* JSUint16Array.h */,
-				0F2B66D517B6B5AB00A7AE3F /* JSUint32Array.h */,
 				0F2B66D217B6B5AB00A7AE3F /* JSUint8Array.h */,
 				0F2B66D317B6B5AB00A7AE3F /* JSUint8ClampedArray.h */,
+				0F2B66D417B6B5AB00A7AE3F /* JSUint16Array.h */,
+				0F2B66D517B6B5AB00A7AE3F /* JSUint32Array.h */,
 				A7CA3AE117DA41AE006538AF /* JSWeakMap.cpp */,
 				A7CA3AE217DA41AE006538AF /* JSWeakMap.h */,
 				709FB8611AE335C60039D069 /* JSWeakSet.cpp */,
@@ -5871,11 +5898,11 @@
 				0F2D4DE019832D91007D4B19 /* TypeProfilerLog.h */,
 				0F2D4DE319832D91007D4B19 /* TypeSet.cpp */,
 				0F2D4DE419832D91007D4B19 /* TypeSet.h */,
+				A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */,
+				A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */,
 				A7A8AF3217ADB5F3005AB174 /* Uint16Array.h */,
 				866739D113BFDE710023D87C /* Uint16WithFraction.h */,
 				A7A8AF3317ADB5F3005AB174 /* Uint32Array.h */,
-				A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */,
-				A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */,
 				0FE050231AA9095600D33B33 /* VarOffset.cpp */,
 				0FE050241AA9095600D33B33 /* VarOffset.h */,
 				E18E3A570DF9278C00D90B34 /* VM.cpp */,
@@ -7752,6 +7779,7 @@
 				0F5780A218FE1E98001E72D9 /* PureNaN.h in Headers */,
 				0F15CD231BA5F9860031FFD3 /* PutByIdFlags.h in Headers */,
 				0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */,
+				0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */,
 				0F93B4AA18B92C4D00178A3F /* PutByIdVariant.h in Headers */,
 				0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */,
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
@@ -7950,6 +7978,22 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0F93274E1C20BCBA00CF6564 /* dynbench */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0F9327541C20BCBA00CF6564 /* Build configuration list for PBXNativeTarget "dynbench" */;
+			buildPhases = (
+				0F93274F1C20BCBA00CF6564 /* Sources */,
+				0F9327511C20BCBA00CF6564 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = dynbench;
+			productName = testapi;
+			productReference = 0F9327591C20BCBA00CF6564 /* dynbench */;
+			productType = "com.apple.product-type.tool";
+		};
 		0FCEFAB51805D61600472CE4 /* llvmForJSC */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0FCEFAB71805D61600472CE4 /* Build configuration list for PBXNativeTarget "llvmForJSC" */;
@@ -8140,6 +8184,7 @@
 				651122F714046A4C002B101D /* testRegExp */,
 				0FEC85941BDB5CF10080FF74 /* testb3 */,
 				5D6B2A47152B9E17005231DE /* Test Tools */,
+				0F93274E1C20BCBA00CF6564 /* dynbench */,
 			);
 		};
 /* End PBXProject section */
@@ -8376,6 +8421,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0F93274F1C20BCBA00CF6564 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F93275B1C20BCDF00CF6564 /* dynbench.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0FCEFAB21805D61600472CE4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -9235,6 +9288,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0F93275D1C20BF3A00CF6564 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0F93274E1C20BCBA00CF6564 /* dynbench */;
+			targetProxy = 0F93275C1C20BF3A00CF6564 /* PBXContainerItemProxy */;
+		};
 		0FCEFABD1805D66300472CE4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0FCEFAB51805D61600472CE4 /* llvmForJSC */;
@@ -9338,6 +9396,34 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Production;
+		};
+		0F9327551C20BCBA00CF6564 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		0F9327561C20BCBA00CF6564 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		0F9327571C20BCBA00CF6564 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+			};
+			name = Profiling;
+		};
+		0F9327581C20BCBA00CF6564 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
 			};
 			name = Production;
 		};
@@ -9738,6 +9824,17 @@
 				0F4680AE14BA7FD900BFE272 /* Release */,
 				0F4680AF14BA7FD900BFE272 /* Profiling */,
 				0F4680B014BA7FD900BFE272 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		0F9327541C20BCBA00CF6564 /* Build configuration list for PBXNativeTarget "dynbench" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F9327551C20BCBA00CF6564 /* Debug */,
+				0F9327561C20BCBA00CF6564 /* Release */,
+				0F9327571C20BCBA00CF6564 /* Profiling */,
+				0F9327581C20BCBA00CF6564 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

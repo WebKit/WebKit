@@ -181,7 +181,7 @@ struct ClassInfo {
         return false;
     }
 
-    bool hasStaticSetterOrReadonlyProperties() const;
+    JS_EXPORT_PRIVATE bool hasStaticSetterOrReadonlyProperties() const;
 
     const HashTable* staticPropHashTable;
 

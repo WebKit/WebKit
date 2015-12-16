@@ -70,7 +70,7 @@ private:
     CustomSetter m_setter;
 };
 
-void callCustomSetter(ExecState*, JSValue customGetterSetter, JSObject* base, JSValue thisValue, JSValue value);
+JS_EXPORT_PRIVATE void callCustomSetter(ExecState*, JSValue customGetterSetter, JSObject* base, JSValue thisValue, JSValue value);
 
 } // namespace JSC
 

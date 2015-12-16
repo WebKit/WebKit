@@ -620,7 +620,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     if (pc[8].u.putByIdFlags & PutByIdIsDirect)
         asObject(baseValue)->putDirect(vm, ident, LLINT_OP_C(3).jsValue(), slot);
     else
-        baseValue.put(exec, ident, LLINT_OP_C(3).jsValue(), slot);
+        baseValue.putInline(exec, ident, LLINT_OP_C(3).jsValue(), slot);
     LLINT_CHECK_EXCEPTION();
     
     if (!LLINT_ALWAYS_ACCESS_SLOW

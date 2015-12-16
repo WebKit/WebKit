@@ -144,7 +144,7 @@ inline GetterSetter* asGetterSetter(JSValue value)
 }
 
 JSValue callGetter(ExecState*, JSValue base, JSValue getterSetter);
-void callSetter(ExecState*, JSValue base, JSValue getterSetter, JSValue, ECMAMode);
+JS_EXPORT_PRIVATE void callSetter(ExecState*, JSValue base, JSValue getterSetter, JSValue, ECMAMode);
 
 } // namespace JSC
 

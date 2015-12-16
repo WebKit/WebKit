@@ -258,7 +258,7 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
         
     // Will just the prototype chain intercept this property access?
-    bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
+    JS_EXPORT_PRIVATE bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
         
     Structure* previousID() const
     {
