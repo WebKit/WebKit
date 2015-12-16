@@ -102,10 +102,10 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
 GPRReg ScratchRegisterAllocator::allocateScratchGPR() { return allocateScratch<GPRInfo>(); }
 FPRReg ScratchRegisterAllocator::allocateScratchFPR() { return allocateScratch<FPRInfo>(); }
 
-unsigned ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler& jit, ExtraStackSpace extraStackSpace)
+ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler& jit, ExtraStackSpace extraStackSpace)
 {
     if (!didReuseRegisters())
-        return 0;
+        return PreservedState(0, extraStackSpace);
 
     RegisterSet registersToSpill;
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
@@ -122,10 +122,10 @@ unsigned ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembl
     unsigned extraStackBytesAtTopOfStack = extraStackSpace == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
     unsigned stackAdjustmentSize = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraStackBytesAtTopOfStack);
 
-    return stackAdjustmentSize;
+    return PreservedState(stackAdjustmentSize, extraStackSpace);
 }
 
-void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, unsigned numberOfBytesUsedToPreserveReusedRegisters, ExtraStackSpace extraStackSpace)
+void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, const ScratchRegisterAllocator::PreservedState preservedState)
 {
     if (!didReuseRegisters())
         return;
@@ -142,9 +142,11 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& j
             registersToFill.set(reg);
     }
 
-    unsigned extraStackBytesAtTopOfStack = extraStackSpace == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
+    unsigned extraStackBytesAtTopOfStack =
+        preservedState.extraStackSpaceRequirement == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
     RegisterSet dontRestore; // Empty set. We want to restore everything.
-    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToFill, dontRestore, numberOfBytesUsedToPreserveReusedRegisters, extraStackBytesAtTopOfStack);
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToFill, dontRestore,
+        preservedState.numberOfBytesPreserved, extraStackBytesAtTopOfStack);
 }
 
 RegisterSet ScratchRegisterAllocator::usedRegistersForCall() const

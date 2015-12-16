@@ -33,6 +33,7 @@
 #include "MacroAssembler.h"
 #include "ObjectPropertyConditionSet.h"
 #include "Opcode.h"
+#include "ScratchRegisterAllocator.h"
 #include "Structure.h"
 #include <wtf/Vector.h>
 
@@ -349,7 +350,7 @@ struct AccessGenerationState {
     }
     CCallHelpers* jit { nullptr };
     ScratchRegisterAllocator* allocator;
-    unsigned numberOfBytesUsedToPreserveReusedRegisters { 0 };
+    ScratchRegisterAllocator::PreservedState preservedReusedRegisterState;
     PolymorphicAccess* access { nullptr };
     StructureStubInfo* stubInfo { nullptr };
     MacroAssembler::JumpList success;

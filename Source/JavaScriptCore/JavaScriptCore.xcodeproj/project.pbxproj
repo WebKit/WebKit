@@ -158,7 +158,7 @@
 		0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54817EE274900ABB217 /* TempRegisterSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54917EE274900ABB217 /* Repatch.cpp */; };
 		0F24E55117EE274900ABB217 /* Repatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54A17EE274900ABB217 /* Repatch.h */; };
-		0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */; };
+		0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55517F0B71C00ABB217 /* InlineCallFrameSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E55317F0B71C00ABB217 /* InlineCallFrameSet.cpp */; };
 		0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55817F74EDB00ABB217 /* ValueRecovery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E55717F74EDB00ABB217 /* ValueRecovery.cpp */; };

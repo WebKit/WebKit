@@ -54,7 +54,7 @@ Watchpoint* AccessGenerationState::addWatchpoint(const ObjectPropertyCondition& 
 
 void AccessGenerationState::restoreScratch()
 {
-    allocator->restoreReusedRegistersByPopping(*jit, numberOfBytesUsedToPreserveReusedRegisters, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    allocator->restoreReusedRegistersByPopping(*jit, preservedReusedRegisterState);
 }
 
 void AccessGenerationState::succeed()
@@ -727,7 +727,7 @@ void AccessCase::generate(AccessGenerationState& state)
 
             done.link(&jit);
 
-            jit.addPtr(CCallHelpers::TrustedImm32((jit.codeBlock()->stackPointerOffset() * sizeof(Register)) - state.numberOfBytesUsedToPreserveReusedRegisters - state.numberOfStackBytesUsedForRegisterPreservation()),
+            jit.addPtr(CCallHelpers::TrustedImm32((jit.codeBlock()->stackPointerOffset() * sizeof(Register)) - state.preservedReusedRegisterState.numberOfBytesPreserved - state.numberOfStackBytesUsedForRegisterPreservation()),
                 GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
             state.restoreLiveRegistersFromStackForCall(isGetter());
 
@@ -886,12 +886,13 @@ void AccessCase::generate(AccessGenerationState& state)
         else
             scratchGPR3 = InvalidGPRReg;
 
-        size_t numberOfBytesUsedToPreserveReusedRegisters = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+        ScratchRegisterAllocator::PreservedState preservedState =
+            allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
         ASSERT(structure()->transitionWatchpointSetHasBeenInvalidated());
 
         bool scratchGPRHasStorage = false;
-        bool needsToMakeRoomOnStackForCCall = !numberOfBytesUsedToPreserveReusedRegisters && codeBlock->jitType() == JITCode::FTLJIT;
+        bool needsToMakeRoomOnStackForCCall = !preservedState.numberOfBytesPreserved && codeBlock->jitType() == JITCode::FTLJIT;
 
         if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
             size_t newSize = newStructure()->outOfLineCapacity() * sizeof(JSValue);
@@ -1016,12 +1017,12 @@ void AccessCase::generate(AccessGenerationState& state)
                 });
         }
         
-        allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
         state.succeed();
 
         if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
             slowPath.link(&jit);
-            allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
             allocator.preserveUsedRegistersToScratchBufferForCall(jit, scratchBuffer, scratchGPR);
             if (needsToMakeRoomOnStackForCCall)
                 jit.makeSpaceOnStackForCCall();
@@ -1245,7 +1246,8 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     CCallHelpers jit(&vm, codeBlock);
     state.jit = &jit;
 
-    state.numberOfBytesUsedToPreserveReusedRegisters = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    state.preservedReusedRegisterState =
+        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
     bool allGuardedByStructureCheck = true;
     bool hasJSGetterSetterCall = false;
@@ -1315,7 +1317,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
         MacroAssembler::Label makeshiftCatchHandler = jit.label();
 
         int stackPointerOffset = codeBlock->stackPointerOffset() * sizeof(EncodedJSValue);
-        stackPointerOffset -= state.numberOfBytesUsedToPreserveReusedRegisters;
+        stackPointerOffset -= state.preservedReusedRegisterState.numberOfBytesPreserved;
         stackPointerOffset -= state.numberOfStackBytesUsedForRegisterPreservation();
 
         jit.loadPtr(vm.addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);

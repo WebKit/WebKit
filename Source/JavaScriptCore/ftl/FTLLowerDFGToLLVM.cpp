@@ -9342,7 +9342,7 @@ private:
                         GPRReg scratch1 = scratchRegisterAllocator.allocateScratchGPR();
                         GPRReg scratch2 = scratchRegisterAllocator.allocateScratchGPR();
 
-                        unsigned bytesPushed =
+                        ScratchRegisterAllocator::PreservedState preservedState =
                             scratchRegisterAllocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
                         // We've already saved these, so when we make a slow path call, we don't have
@@ -9365,7 +9365,7 @@ private:
                                 scratch1, scratch2, CCallHelpers::ScalePtr,
                                 static_cast<int32_t>(-sizeof(void*))));
 
-                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, bytesPushed, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, preservedState);
 
                         params.doneJumps.append(jit.jump());
 
@@ -9374,7 +9374,7 @@ private:
                             usedRegisters, jit, params.lazySlowPath->callSiteIndex(),
                             params.exceptionJumps, operationFlushWriteBarrierBuffer, InvalidGPRReg,
                             baseGPR);
-                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, bytesPushed, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, preservedState);
                         params.doneJumps.append(jit.jump());
                     });
             },

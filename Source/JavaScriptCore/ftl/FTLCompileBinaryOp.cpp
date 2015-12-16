@@ -178,7 +178,7 @@ void generateBinaryBitOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     SnippetGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
         JSValueRegs(left), JSValueRegs(right), scratchGPR);
 
-    unsigned numberOfBytesUsedToPreserveReusedRegisters =
+    ScratchRegisterAllocator::PreservedState preservedState =
         allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
     context.initializeRegisters(jit);
@@ -188,14 +188,12 @@ void generateBinaryBitOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     gen.endJumpList().link(&jit);
 
     context.restoreRegisters(jit);
-    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
-        ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    allocator.restoreReusedRegistersByPopping(jit, preservedState);
     done = jit.jump();
 
     gen.slowPathJumpList().link(&jit);
     context.restoreRegisters(jit);
-    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
-        ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    allocator.restoreReusedRegistersByPopping(jit, preservedState);
     slowPathStart = jit.jump();
 }
 
@@ -214,7 +212,7 @@ static void generateRightShiftFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit
     JITRightShiftGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
         JSValueRegs(left), JSValueRegs(right), leftFPR, scratchGPR, InvalidFPRReg, shiftType);
 
-    unsigned numberOfBytesUsedToPreserveReusedRegisters =
+    ScratchRegisterAllocator::PreservedState preservedState =
         allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
     context.initializeRegisters(jit);
@@ -223,14 +221,12 @@ static void generateRightShiftFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit
     ASSERT(gen.didEmitFastPath());
     gen.endJumpList().link(&jit);
     context.restoreRegisters(jit);
-    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
-        ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    allocator.restoreReusedRegistersByPopping(jit, preservedState);
     done = jit.jump();
 
     gen.slowPathJumpList().link(&jit);
     context.restoreRegisters(jit);
-    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
-        ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    allocator.restoreReusedRegistersByPopping(jit, preservedState);
     slowPathStart = jit.jump();
 }
 
@@ -253,7 +249,7 @@ void generateBinaryArithOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     BinaryArithOpGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
         JSValueRegs(left), JSValueRegs(right), leftFPR, rightFPR, scratchGPR, scratchFPR);
 
-    unsigned numberOfBytesUsedToPreserveReusedRegisters =
+    ScratchRegisterAllocator::PreservedState preservedState =
         allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
     context.initializeRegisters(jit);
@@ -262,14 +258,12 @@ void generateBinaryArithOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     ASSERT(gen.didEmitFastPath());
     gen.endJumpList().link(&jit);
     context.restoreRegisters(jit);
-    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
-        ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    allocator.restoreReusedRegistersByPopping(jit, preservedState);
     done = jit.jump();
 
     gen.slowPathJumpList().link(&jit);
     context.restoreRegisters(jit);
-    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
-        ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    allocator.restoreReusedRegistersByPopping(jit, preservedState);
     slowPathStart = jit.jump();
 }
 

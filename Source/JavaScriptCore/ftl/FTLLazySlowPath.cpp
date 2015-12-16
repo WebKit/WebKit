@@ -79,7 +79,8 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
     params.lazySlowPath = this;
 
 #if !FTL_USES_B3
-    unsigned bytesSaved = m_scratchRegisterAllocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    ScratchRegisterAllocator::PreservedState preservedState =
+        m_scratchRegisterAllocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
     // This is needed because LLVM may create a stackmap location that is the register SP.
     // But on arm64, SP is also the same register number as ZR, so LLVM is telling us that it has
     // proven something is zero. Our MASM isn't universally compatible with arm64's context dependent
@@ -94,9 +95,9 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
 #if !FTL_USES_B3
     CCallHelpers::Label doneLabel;
     CCallHelpers::Jump jumpToEndOfPatchpoint;
-    if (bytesSaved) {
+    if (preservedState.numberOfBytesPreserved) {
         doneLabel = jit.label();
-        m_scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, bytesSaved, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+        m_scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, preservedState);
         jumpToEndOfPatchpoint = jit.jump();
     }
 #endif // !FTL_USES_B3
@@ -105,7 +106,7 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
 #if FTL_USES_B3
     linkBuffer.link(params.doneJumps, m_done);
 #else // FTL_USES_B3
-    if (bytesSaved) {
+    if (preservedState.numberOfBytesPreserved) {
         linkBuffer.link(params.doneJumps, linkBuffer.locationOf(doneLabel));
         linkBuffer.link(jumpToEndOfPatchpoint, m_patchpoint.labelAtOffset(MacroAssembler::maxJumpReplacementSize()));
     } else

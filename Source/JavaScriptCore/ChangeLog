@@ -1,5 +1,43 @@
 2015-12-15  Mark Lam  <mark.lam@apple.com>
 
+        Introducing ScratchRegisterAllocator::PreservedState.
+        https://bugs.webkit.org/show_bug.cgi?id=152315
+
+        Reviewed by Geoffrey Garen.
+
+        restoreReusedRegistersByPopping() should always be called with 2 values that
+        matches the expectation of preserveReusedRegistersByPushing().  Those 2 values
+        are the number of bytes preserved and the ExtraStackSpace requirement.  By
+        encapsulating them in a ScratchRegisterAllocator::PreservedState, we can make
+        it less error prone when calling restoreReusedRegistersByPopping().  Now, we only
+        need to pass it the appropriate PreservedState that its matching
+        preserveReusedRegistersByPushing() returned.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::restoreScratch):
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::AccessGenerationState):
+        * ftl/FTLCompileBinaryOp.cpp:
+        (JSC::FTL::generateBinaryBitOpFastPath):
+        (JSC::FTL::generateRightShiftFastPath):
+        (JSC::FTL::generateBinaryArithOpFastPath):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitStoreBarrier):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::allocateScratchGPR):
+        (JSC::ScratchRegisterAllocator::allocateScratchFPR):
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        * jit/ScratchRegisterAllocator.h:
+        (JSC::ScratchRegisterAllocator::usedRegisters):
+        (JSC::ScratchRegisterAllocator::PreservedState::PreservedState):
+
+2015-12-15  Mark Lam  <mark.lam@apple.com>
+
         Polymorphic operand types for DFG and FTL bit operators.
         https://bugs.webkit.org/show_bug.cgi?id=152191
 
