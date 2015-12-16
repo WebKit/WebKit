@@ -1,3 +1,12 @@
+2015-12-16  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Correct the wrong expectation introduced in r194106
+        https://bugs.webkit.org/show_bug.cgi?id=152325
+
+        Unreviewed GTK gardening
+
+        * platform/gtk/http/tests/plugins/plugin-javascript-access-expected.txt:
+
 2015-12-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/viewport/ios tests for ios-simulator, remove failure expectation and re-enable test directory.
