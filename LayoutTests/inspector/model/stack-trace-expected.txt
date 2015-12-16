@@ -1,0 +1,23 @@
+Tests for the WebInspector.StackTrace model object.
+
+
+== Running test suite: WebInspector.StackTrace
+-- Running test case: WebInspector.ConsoleMessage.StackTrace
+PASS: ConsoleMessage type should be Trace.
+PASS: ConsoleMessage should have StackTrace.
+PASS: CallFrame in StackTrace has no identifier.
+PASS: CallFrame in StackTrace has no thisObject.
+PASS: CallFrame in StackTrace has no scopeChain.
+StackTrace: 11
+  1: foo - nativeCode (true) programCode (false)
+  2: Eval Code - nativeCode (true) programCode (true)
+  3: eval - nativeCode (true) programCode (false)
+  4: Global Code (stack-trace.html:2) - nativeCode (false) programCode (true)
+  5: appendChild - nativeCode (true) programCode (false)
+  6: triggerConsoleMessage (stack-trace.html:9) - nativeCode (false) programCode (false)
+  7: Eval Code - nativeCode (true) programCode (true)
+  8: eval - nativeCode (true) programCode (false)
+  9: _evaluateOn - nativeCode (true) programCode (false)
+  10: _evaluateAndWrap - nativeCode (true) programCode (false)
+  11: evaluate - nativeCode (true) programCode (false)
+

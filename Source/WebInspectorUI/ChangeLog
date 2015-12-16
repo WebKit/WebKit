@@ -1,3 +1,15 @@
+2015-12-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Localize "global code" and "eval code" strings
+        https://bugs.webkit.org/show_bug.cgi?id=152313
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.fromPayload):
+        Localize the strings given to use from the backend.
+
 2015-12-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Convert Sidebar classes to use View

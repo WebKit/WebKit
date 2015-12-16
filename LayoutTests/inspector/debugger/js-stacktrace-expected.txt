@@ -19,7 +19,7 @@ console.trace():
     {
         "lineNumber": null,
         "columnNumber": null,
-        "functionName": "eval code",
+        "functionName": "Eval Code",
         "nativeCode": true,
         "programCode": true
     }
@@ -73,7 +73,7 @@ console.trace():
     {
         "lineNumber": null,
         "columnNumber": null,
-        "functionName": "eval code",
+        "functionName": "Eval Code",
         "nativeCode": true,
         "programCode": true
     }

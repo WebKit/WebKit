@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerConsoleMessage() {
+    let script = document.createElement("script");
+    script.textContent = "//# sourceURL=inline-script.js\neval('function foo() { console.trace(); }; foo();')";
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    function logStackTrace(stackTrace) {
+        InspectorTest.log(`StackTrace: ${stackTrace.callFrames.length}`);
+        for (let i = 0; i < stackTrace.callFrames.length; ++i) {
+            let callFrame = stackTrace.callFrames[i];
+            let string = `  ${i + 1}: ${callFrame.functionName}`;
+            if (callFrame.sourceCodeLocation)
+                string += ` (${callFrame.sourceCodeLocation.originalLocationString()})`;
+            string += " -";
+            string += ` nativeCode (${callFrame.nativeCode})`;
+            string += ` programCode (${callFrame.programCode})`;
+            InspectorTest.log(string);
+        }
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WebInspector.StackTrace");
+
+    suite.addTestCase({
+        name: "WebInspector.ConsoleMessage.StackTrace",
+        description: "Test we can create a StackTrace from console messages (Console.StackTrace).",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("triggerConsoleMessage()");
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, function addListener(event) {
+                // Trace message should always have a stack trace.
+                let consoleMessage = event.data.message;
+                let stackTrace = consoleMessage.stackTrace;
+                InspectorTest.expectThat(consoleMessage.type === WebInspector.ConsoleMessage.MessageType.Trace, "ConsoleMessage type should be Trace.");
+                InspectorTest.expectThat(stackTrace instanceof WebInspector.StackTrace, "ConsoleMessage should have StackTrace.");
+
+                // Console message stack trace call frame's do not have debugging information.
+                InspectorTest.expectThat(stackTrace.callFrames[0].id === null, "CallFrame in StackTrace has no identifier.");
+                InspectorTest.expectThat(stackTrace.callFrames[0].thisObject === null, "CallFrame in StackTrace has no thisObject.");
+                InspectorTest.expectThat(!stackTrace.callFrames[0].scopeChain.length, "CallFrame in StackTrace has no scopeChain.");
+
+                logStackTrace(consoleMessage.stackTrace);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the WebInspector.StackTrace model object.</p>
+</body>
+</html>

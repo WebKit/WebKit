@@ -114,7 +114,7 @@ function test()
         var index = 0;
         for (var frame of stackTrace) {
             index++;
-            if (frame.nativeCode && frame.functionName === "eval code")
+            if (frame.programCode)
                 break;
         }
         return stackTrace.slice(0, index);
