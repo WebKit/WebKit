@@ -137,6 +137,9 @@ private:
 
     virtual PassRefPtr<ViewSnapshot> takeViewSnapshot() override;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
+#if ENABLE(MAC_GESTURE_EVENTS)
+    virtual void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) override;
+#endif
 
     virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
 

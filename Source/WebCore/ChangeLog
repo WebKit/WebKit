@@ -1,5 +1,45 @@
 2015-12-16  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r191299.
+
+    2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+            Add magnify and rotate gesture event support for Mac
+            https://bugs.webkit.org/show_bug.cgi?id=150179
+            <rdar://problem/8036240>
+
+            Reviewed by Darin Adler.
+
+            No new tests.
+
+            * Configurations/FeatureDefines.xcconfig:
+            New feature flag.
+
+            * Configurations/WebCore.xcconfig:
+            Don't exclude generated gesture sources; they are already #ifdef-guarded.
+
+            * DerivedSources.make:
+            Add GestureEvent.idl for ENABLE_MAC_GESTURE_EVENTS too.
+
+            * WebCore.xcodeproj/project.pbxproj:
+            Add GestureEvents.cpp.
+
+            * bindings/objc/DOMEvents.mm:
+            (kitClass):
+            Support DOMGestureEvent on Mac if the new flag is enabled.
+
+            * dom/mac/GestureEvents.cpp: Added.
+            * page/mac/EventHandlerMac.mm:
+
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::clear):
+            * page/EventHandler.h:
+            Enable some gesture-related code on Mac if the new flag is enabled.
+
+            * platform/PlatformEvent.h:
+
+2015-12-16  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r191121.
 
     2015-10-15  Tim Horton  <timothy_horton@apple.com>

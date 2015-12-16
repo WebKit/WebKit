@@ -1,3 +1,18 @@
+2015-12-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r191299.
+
+    2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+            Add magnify and rotate gesture event support for Mac
+            https://bugs.webkit.org/show_bug.cgi?id=150179
+            <rdar://problem/8036240>
+
+            Reviewed by Darin Adler.
+
+            * Configurations/FeatureDefines.xcconfig:
+            New feature flag.
+
 2015-12-08  Harris Papadopoulos  <cpapadopoulos@apple.com>
 
         Merge r188386. rdar://problem/23816165

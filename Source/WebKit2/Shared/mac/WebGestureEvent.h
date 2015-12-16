@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventConversion_h
-#define WebEventConversion_h
-
-#include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PlatformWheelEvent.h>
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-#include <WebKitAdditions/PlatformTouchEventIOS.h>
-#elif ENABLE(TOUCH_EVENTS)
-#include <WebCore/PlatformTouchEvent.h>
-#include <WebCore/PlatformTouchPoint.h>
-#endif
+#ifndef WebGestureEvent_h
+#define WebGestureEvent_h
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-#include <WebKitAdditions/PlatformGestureEventMac.h>
-#endif
+
+#include "WebEvent.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/IntSize.h>
+#include <wtf/text/WTFString.h>
+
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-class WebMouseEvent;
-class WebWheelEvent;
-class WebKeyboardEvent;
+class WebGestureEvent : public WebEvent {
+public:
+    WebGestureEvent() { }
+    WebGestureEvent(WebEvent::Type type, Modifiers modifiers, double timestamp, WebCore::IntPoint position, float gestureScale, float gestureRotation)
+        : WebEvent(type, modifiers, timestamp)
+        , m_position(position)
+        , m_gestureScale(gestureScale)
+        , m_gestureRotation(gestureRotation)
+    {
+        ASSERT(isGestureEventType(type));
+    }
 
-#if ENABLE(TOUCH_EVENTS)
-class WebTouchEvent;
-class WebTouchPoint;
-#endif
+    WebCore::IntPoint position() const { return m_position; }
 
-#if ENABLE(MAC_GESTURE_EVENTS)
-class WebGestureEvent;
-#endif
+    float gestureScale() const { return m_gestureScale; }
+    float gestureRotation() const { return m_gestureRotation; }
 
-WebCore::PlatformMouseEvent platform(const WebMouseEvent&);
-WebCore::PlatformWheelEvent platform(const WebWheelEvent&);
-WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, WebGestureEvent&);
+    
+private:
+    bool isGestureEventType(Type) const;
 
-#if ENABLE(TOUCH_EVENTS)
-WebCore::PlatformTouchEvent platform(const WebTouchEvent&);
-#if !ENABLE(IOS_TOUCH_EVENTS)
-WebCore::PlatformTouchPoint platform(const WebTouchPoint&);
-#endif
-#endif
-
-#if ENABLE(MAC_GESTURE_EVENTS)
-WebCore::PlatformGestureEvent platform(const WebGestureEvent&);
-#endif
+    WebCore::IntPoint m_position;
+    float m_gestureScale;
+    float m_gestureRotation;
+};
 
 } // namespace WebKit
 
-#endif // WebEventConversion_h
+#endif // ENABLE(MAC_GESTURE_EVENTS)
+
+#endif // WebGestureEvent_h

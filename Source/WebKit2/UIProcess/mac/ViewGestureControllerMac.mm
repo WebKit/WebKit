@@ -158,11 +158,20 @@ void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect 
     m_frameHandlesMagnificationGesture = frameHandlesMagnificationGesture;
 }
 
-void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint origin)
+void ViewGestureController::gestureEventWasNotHandledByWebCore(NSEvent *event, FloatPoint origin)
+{
+    if (event.type == NSEventTypeMagnify)
+        handleMagnificationGestureEvent(event, origin);
+}
+
+void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, FloatPoint origin)
 {
     ASSERT(m_activeGestureType == ViewGestureType::None || m_activeGestureType == ViewGestureType::Magnification);
 
     if (m_activeGestureType == ViewGestureType::None) {
+        if (event.phase != NSEventPhaseBegan)
+            return;
+
         // FIXME: We drop the first frame of the gesture on the floor, because we don't have the visible content bounds yet.
         m_magnification = m_webPageProxy.pageScaleFactor();
         m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), m_webPageProxy.pageID());
@@ -177,6 +186,7 @@ void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint 
 
     m_activeGestureType = ViewGestureType::Magnification;
 
+    double scale = event.magnification;
     double scaleWithResistance = resistanceForDelta(scale, m_magnification) * scale;
 
     m_magnification += m_magnification * scaleWithResistance;
@@ -188,6 +198,9 @@ void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint 
         m_webPageProxy.scalePage(m_magnification, roundedIntPoint(origin));
     else
         m_webPageProxy.drawingArea()->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(origin, m_magnification));
+
+    if (event.phase == NSEventPhaseEnded || event.phase == NSEventPhaseCancelled)
+        endMagnificationGesture();
 }
 
 void ViewGestureController::endMagnificationGesture()

@@ -91,7 +91,7 @@ JAVASCRIPTCORE_PRIVATE_HEADERS_engineering = $(BUILT_PRODUCTS_DIR)/JavaScriptCor
 EXCLUDED_SOURCE_FILE_NAMES_FOR_TOUCH_EVENTS = $(EXCLUDED_SOURCE_FILE_NAMES_FOR_TOUCH_EVENTS_IF_ENABLED_$(ENABLE_TOUCH_EVENTS));
 EXCLUDED_SOURCE_FILE_NAMES_FOR_TOUCH_EVENTS_IF_ENABLED_ = JSTouch* DOMTouch*;
 
-EXCLUDED_SOURCE_FILE_NAMES_FOR_GESTURE_EVENTS = $(EXCLUDED_SOURCE_FILE_NAMES_FOR_GESTURE_EVENTS_IF_ENABLED_$(ENABLE_IOS_GESTURE_EVENTS));
+EXCLUDED_SOURCE_FILE_NAMES_FOR_GESTURE_EVENTS = $(EXCLUDED_SOURCE_FILE_NAMES_FOR_GESTURE_EVENTS_IF_ENABLED_$(ENABLE_IOS_GESTURE_EVENTS)$(ENABLE_MAC_GESTURE_EVENTS));
 EXCLUDED_SOURCE_FILE_NAMES_FOR_GESTURE_EVENTS_IF_ENABLED_ = JSGesture* DOMGesture*;
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *.tiff *Cursor.png AccessibilityObjectMac.mm AXObjectCacheMac.mm ColorMac.mm Cursor.cpp CursorMac.mm DataTransferMac.mm EditorMac.mm EventHandlerMac.mm EventLoopMac.mm GeolocationServiceMac.mm GraphicsContext3DOpenGLES.cpp IconDatabase.cpp IconMac.mm KillRingMac.mm LocalCurrentGraphicsContext.mm MIMETypeRegistryMac.mm MediaPlayerPrivateQTKit.mm NSScrollerImpDetails.mm NetworkStateNotifierMac.cpp PasteboardMac.mm PlatformEventFactoryMac.mm PlatformMouseEventMac.mm PlatformPasteboardMac.mm PlatformScreenMac.mm PlatformSpeechSynthesizerMac.mm RunLoopMac.mm SSLKeyGeneratorMac.cpp ScrollViewMac.mm ScrollbarThemeMac.mm SharedTimerMac.mm SoundMac.mm SystemTimeMac.cpp ThemeMac.mm ThreadCheck.mm UserAgentMac.mm WebAccessibilityObjectWrapperMac.mm WebCoreSystemInterface.mm WebCoreView.m WebVideoFullscreenController.mm WebVideoFullscreenHUDWindowController.mm WebWindowAnimation.mm WidgetMac.mm DisplayRefreshMonitorMac.cpp $(EXCLUDED_SOURCE_FILE_NAMES_FOR_TOUCH_EVENTS) $(EXCLUDED_SOURCE_FILE_NAMES_FOR_GESTURE_EVENTS);

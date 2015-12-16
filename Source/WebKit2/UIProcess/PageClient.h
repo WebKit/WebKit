@@ -179,6 +179,9 @@ public:
     virtual LayerOrView *acceleratedCompositingRootLayer() const = 0;
     virtual PassRefPtr<ViewSnapshot> takeViewSnapshot() = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
+#if ENABLE(MAC_GESTURE_EVENTS)
+    virtual void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) = 0;
+#endif
     virtual void selectionDidChange() = 0;
 #endif
 

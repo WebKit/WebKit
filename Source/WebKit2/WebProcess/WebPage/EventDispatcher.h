@@ -28,14 +28,18 @@
 
 #include "Connection.h"
 
+#include "WebEvent.h"
 #include <WebCore/WheelEventDeltaTracker.h>
-#include <WebEvent.h>
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SpinLock.h>
 #include <wtf/ThreadingPrimitives.h>
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+#include "WebGestureEvent.h"
+#endif
 
 namespace WebCore {
 class ThreadedScrollingTree;
@@ -77,12 +81,18 @@ private:
 #if ENABLE(IOS_TOUCH_EVENTS)
     void touchEvent(uint64_t pageID, const WebTouchEvent&);
 #endif
+#if ENABLE(MAC_GESTURE_EVENTS)
+    void gestureEvent(uint64_t pageID, const WebGestureEvent&);
+#endif
 
 
     // This is called on the main thread.
     void dispatchWheelEvent(uint64_t pageID, const WebWheelEvent&);
 #if ENABLE(IOS_TOUCH_EVENTS)
     void dispatchTouchEvents();
+#endif
+#if ENABLE(MAC_GESTURE_EVENTS)
+    void dispatchGestureEvent(uint64_t pageID, const WebGestureEvent&);
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !TARGET_OS_IPHONE
+
 #import <WebKit/WKBase.h>
 #import <WebKit/WKImmediateActionTypes.h>
 #import <WebKit/WKLayoutMode.h>
@@ -35,32 +37,9 @@
 
 @property (readonly) WKPageRef pageRef;
 
-#if TARGET_OS_IPHONE
-- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
-- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage;
-#else
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage;
 - (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configuration;
-#endif
-
-#if TARGET_OS_IPHONE
-
-@property (nonatomic) CGSize minimumLayoutSizeOverride;
-
-// Define the inset of the scrollview unusable by the web page.
-@property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
-
-@property (nonatomic, setter=_setBackgroundExtendsBeyondPage:) BOOL _backgroundExtendsBeyondPage;
-
-// This is deprecated and should be removed entirely: <rdar://problem/16294704>.
-@property (readonly) UIColor *_pageExtendedBackgroundColor;
-
-- (void)_beginInteractiveObscuredInsetsChange;
-- (void)_endInteractiveObscuredInsetsChange;
-- (void)_didRelaunchProcess;
-
-#else
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
@@ -155,6 +134,9 @@
 - (void)_dismissContentRelativeChildWindowsWithAnimation:(BOOL)withAnimation;
 
 - (void)_didChangeContentSize:(NSSize)newSize;
-#endif
+
+- (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
 
 @end
+
+#endif // !TARGET_OS_IPHONE

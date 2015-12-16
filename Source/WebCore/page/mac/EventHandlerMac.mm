@@ -50,6 +50,7 @@
 #include "Range.h"
 #include "RenderLayer.h"
 #include "RenderListBox.h"
+#include "RenderView.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
 #include "ScrollAnimator.h"
@@ -63,6 +64,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ObjcRuntimeExtras.h>
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+#import <WebKitAdditions/EventHandlerMacGesture.cpp>
+#endif
 
 namespace WebCore {
 
