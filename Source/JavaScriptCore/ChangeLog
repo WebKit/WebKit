@@ -1,5 +1,15 @@
 2015-12-17  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r191343.
+
+    2015-10-20  Tim Horton  <timothy_horton@apple.com>
+
+            Try to fix the build by disabling MAC_GESTURE_EVENTS on 10.9 and 10.10
+
+            * Configurations/FeatureDefines.xcconfig:
+
+2015-12-17  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r191305.
 
     2015-10-19  Tim Horton  <timothy_horton@apple.com>
