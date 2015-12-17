@@ -70,7 +70,7 @@ void JSJobMicrotask::run(ExecState* exec)
     MarkedArgumentBuffer handlerArguments;
     for (unsigned index = 0, length = m_arguments->length(); index < length; ++index)
         handlerArguments.append(m_arguments->JSArray::get(exec, index));
-    call(exec, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
+    profiledCall(exec, ProfilingReason::Microtask, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
 }
 
 } // namespace JSC

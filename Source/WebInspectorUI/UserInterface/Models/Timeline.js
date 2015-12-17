@@ -95,6 +95,11 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
         cookie[WebInspector.Timeline.TimelineTypeCookieKey] = this._type;
     }
 
+    refresh()
+    {
+        this.dispatchEventToListeners(WebInspector.Timeline.Event.Refreshed);
+    }
+
     // Private
 
     _updateTimesIfNeeded(record)
@@ -124,7 +129,8 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
 WebInspector.Timeline.Event = {
     Reset: "timeline-reset",
     RecordAdded: "timeline-record-added",
-    TimesUpdated: "timeline-times-updated"
+    TimesUpdated: "timeline-times-updated",
+    Refreshed: "timeline-refreshed",
 };
 
 WebInspector.Timeline.TimelineTypeCookieKey = "timeline-type";

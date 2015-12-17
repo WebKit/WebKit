@@ -1,3 +1,31 @@
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add JSContext Script Profiling
+        https://bugs.webkit.org/show_bug.cgi?id=151899
+
+        Reviewed by Brian Burg.
+
+        Tests: inspector/script-profiler/event-type-API.html
+               inspector/script-profiler/event-type-Microtask.html
+               inspector/script-profiler/tracking.html
+
+        * ForwardingHeaders/inspector/agents/InspectorScriptProfilerAgent.h: Added.
+
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        Create the new agent, even if we don't use it yet for Page inspection.
+
+        (WebCore::InspectorController::willCallInjectedScriptFunction): Deleted.
+        (WebCore::InspectorController::didCallInjectedScriptFunction): Deleted.
+        No longer needed, implementation was pushed up into InjectedScriptBase.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::buildInspectorObjectForSession):
+        Disambiguate types.
+
 2015-12-17  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Refactor open/delete requests to exist in the same queue.

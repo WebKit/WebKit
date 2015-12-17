@@ -93,7 +93,12 @@ public:
     {
         openAccessors().pushInteger(value);
     }
-    
+
+    void addItem(double value)
+    {
+        openAccessors().pushDouble(value);
+    }
+
     static Ref<Array<T>> create()
     {
         return adoptRef(*new Array<T>());

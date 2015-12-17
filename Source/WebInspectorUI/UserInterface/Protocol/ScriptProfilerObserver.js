@@ -23,40 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptInstrument = class ScriptInstrument extends WebInspector.Instrument
+WebInspector.ScriptProfilerObserver = class ScriptProfilerObserver
 {
-    // Protected
+    // Events defined by the "ScriptProfiler" domain.
 
-    get timelineRecordType()
+    trackingStart(timestamp)
     {
-        return WebInspector.TimelineRecord.Type.Script;
+        WebInspector.timelineManager.scriptProfilerTrackingStarted(timestamp);
     }
 
-    startInstrumentation()
+    trackingUpdate(event)
     {
-        // COMPATIBILITY (iOS 9): Legacy backends did not have ScriptProfilerAgent. They use TimelineAgent.
-        // FIXME: ScriptProfilerAgent is only enabled for JavaScript debuggables until we transition TimelineAgent for Web debuggables.
-        if (!window.ScriptProfilerAgent || WebInspector.debuggableType !== WebInspector.DebuggableType.JavaScript) {
-            super.startInstrumentation();
-            return;
-        }
-
-        // FIXME: Make this some UI visible option.
-        const includeProfiles = true;
-
-        ScriptProfilerAgent.startTracking(includeProfiles);
+        WebInspector.timelineManager.scriptProfilerTrackingUpdated(event);
     }
 
-    stopInstrumentation()
+    trackingComplete(profiles)
     {
-        // COMPATIBILITY (iOS 9): Legacy backends did not have ScriptProfilerAgent. They use TimelineAgent.
-        // FIXME: ScriptProfilerAgent is only enabled for JavaScript debuggables until we transition TimelineAgent for Web debuggables.
-        if (!window.ScriptProfilerAgent || WebInspector.debuggableType !== WebInspector.DebuggableType.JavaScript) {
-            super.stopInstrumentation();
-            return;
-        }
-
-        ScriptProfilerAgent.stopTracking();
+        WebInspector.timelineManager.scriptProfilerTrackingCompleted(profiles);
     }
-
 };

@@ -1,3 +1,108 @@
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add JSContext Script Profiling
+        https://bugs.webkit.org/show_bug.cgi?id=151899
+
+        Reviewed by Brian Burg.
+
+        Extend JSC::Debugger to include a profiling client interface
+        that the Inspector can implement to be told about script execution
+        entry and exit points. Add new profiledCall/Evaluate/Construct
+        methods that are entry points that will notify the profiling
+        client if it exists.
+
+        By putting the profiling client on Debugger it avoids having
+        special code paths for a JSGlobalObject being JSContext inspected
+        or a JSGlobalObject in a Page being Web inspected. In either case
+        the JSGlobalObject can go through its debugger() which always
+        reaches the correct inspector instance.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Handle new files.
+
+        * runtime/CallData.cpp:
+        (JSC::profiledCall):
+        * runtime/CallData.h:
+        * runtime/Completion.cpp:
+        (JSC::profiledEvaluate):
+        * runtime/Completion.h:
+        (JSC::profiledEvaluate):
+        * runtime/ConstructData.cpp:
+        (JSC::profiledConstruct):
+        * runtime/ConstructData.h:
+        (JSC::profiledConstruct):
+        Create profiled versions of interpreter entry points. If a profiler client is
+        available, this will automatically inform it of entry/exit. Include a reason
+        why this is being profiled. Currently all reasons in JavaScriptCore are enumerated
+        (API, Microtask) and Other is to be used by WebCore or future clients.
+
+        * debugger/ScriptProfilingScope.h: Added.
+        (JSC::ScriptProfilingScope::ScriptProfilingScope):
+        (JSC::ScriptProfilingScope::~ScriptProfilingScope):
+        (JSC::ScriptProfilingScope::shouldStartProfile):
+        (JSC::ScriptProfilingScope::shouldEndProfile):
+        At profiled entry points inform the profiling client if needed.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        * API/JSObjectRef.cpp:
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * runtime/JSJob.cpp:
+        (JSC::JSJobMicrotask::run):
+        Use the profiled functions for API and Microtask execution entry points.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::hasProfiler):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::hasProfiler):
+        Extend hasProfiler to also check the new Debugger script profiler.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::setProfilingClient):
+        (JSC::Debugger::willEvaluateScript):
+        (JSC::Debugger::didEvaluateScript):
+        * debugger/Debugger.h:
+        Pass through to the profiling client.
+
+        * inspector/protocol/ScriptProfiler.json: Added.
+        * inspector/agents/InspectorScriptProfilerAgent.cpp: Added.
+        (Inspector::InspectorScriptProfilerAgent::InspectorScriptProfilerAgent):
+        (Inspector::InspectorScriptProfilerAgent::~InspectorScriptProfilerAgent):
+        (Inspector::InspectorScriptProfilerAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorScriptProfilerAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorScriptProfilerAgent::startTracking):
+        (Inspector::InspectorScriptProfilerAgent::stopTracking):
+        (Inspector::InspectorScriptProfilerAgent::isAlreadyProfiling):
+        (Inspector::InspectorScriptProfilerAgent::willEvaluateScript):
+        (Inspector::InspectorScriptProfilerAgent::didEvaluateScript):
+        (Inspector::toProtocol):
+        (Inspector::InspectorScriptProfilerAgent::addEvent):
+        (Inspector::buildAggregateCallInfoInspectorObject):
+        (Inspector::buildInspectorObject):
+        (Inspector::buildProfileInspectorObject):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        * inspector/agents/InspectorScriptProfilerAgent.h: Added.
+        New ScriptProfiler domain to just turn on / off script profiling.
+        It introduces a start/update/complete event model which we want
+        to include in new domains.
+
+        * inspector/InspectorEnvironment.h:
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::callFunctionWithEvalEnabled):
+        Simplify this now that we want it to be the same for all clients.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        Create the new agent.
+
+        * inspector/InspectorProtocolTypes.h:
+        (Inspector::Protocol::Array::addItem):
+        Allow pushing a double onto a Protocol::Array.
+
 2015-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Handle new_generator_func / new_generator_func_exp in DFG / FTL

@@ -37,6 +37,7 @@
 #include "InspectorFrontendChannel.h"
 #include "InspectorFrontendRouter.h"
 #include "InspectorHeapAgent.h"
+#include "InspectorScriptProfilerAgent.h"
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectConsoleAgent.h"
 #include "JSGlobalObjectConsoleClient.h"
@@ -97,6 +98,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     m_agents.append(WTF::move(consoleAgent));
     m_agents.append(WTF::move(debuggerAgent));
     m_agents.append(std::make_unique<InspectorHeapAgent>(context));
+    m_agents.append(std::make_unique<InspectorScriptProfilerAgent>(context));
 
     m_executionStopwatch->start();
 }

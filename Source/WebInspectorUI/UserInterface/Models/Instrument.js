@@ -29,6 +29,8 @@ WebInspector.Instrument = class Instrument extends WebInspector.Object
 
     static startLegacyTimelineAgent()
     {
+        console.assert(window.TimelineAgent, "Attempted to start legacy timeline agent without TimelineAgent.");
+
         if (WebInspector.Instrument._legacyTimelineAgentStarted)
             return;
 

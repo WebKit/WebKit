@@ -1,0 +1,56 @@
+{
+    "domain": "ScriptProfiler",
+    "description": "Profiler domain exposes JavaScript evaluation timing and profiling.",
+    "types": [
+        {
+            "id": "EventType",
+            "type": "string",
+            "enum": ["API", "Microtask", "Other"]
+        },
+        {
+            "id": "Event",
+            "type": "object",
+            "properties": [
+                { "name": "startTime", "type": "number" },
+                { "name": "endTime", "type": "number" },
+                { "name": "type", "$ref": "EventType" }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "startTracking",
+            "description": "Start tracking script evaluations.",
+            "parameters": [
+                { "name": "profile", "type": "boolean", "optional": true, "description": "Profile script evaluations, defaults to false." }
+            ]
+        },
+        {
+            "name": "stopTracking",
+            "description": "Stop tracking script evaluations. This will produce a `trackingComplete` event."
+        }
+    ],
+    "events": [
+        {
+            "name": "trackingStart",
+            "description": "Tracking started.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        },
+        {
+            "name": "trackingUpdate",
+            "description": "While tracking is enabled the backend will periodically update the frontend with event data. The data includes tuples.",
+            "parameters": [
+                { "name": "event", "$ref": "Event" }
+            ]
+        },
+        {
+            "name": "trackingComplete",
+            "description": "When tracking is complete the backend will send any buffered data, such as profiling information.",
+            "parameters": [
+                { "name": "profiles", "type": "array", "items": { "type": "any" }, "optional": true }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+Tests that ScriptProfiler.startTracking and ScriptProfiler.stopTracking trigger trackingStart and trackingComplete events.
+
+
+== Running test suite: ScriptProfiler.startTracking and ScriptProfiler.stopTracking
+-- Running test case: StartAndStopTracking
+ScriptProfiler.trackingStart
+PASS: Should have a timestamp when starting.
+ScriptProfiler.trackingComplete
+PASS: Profiles should exist when complete.
+PASS: Should be no profiles for this session.
+

@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function triggerMicrotask() {
+    Promise.resolve(100).then(function() {
+        console.log("Promise Microtask Fired");
+    });
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.EventType.Microtask");
+
+    suite.addTestCase({
+        name: "TrackingSession",
+        description: "Start a tracking session that includes a Microtask event type.",
+        test: function(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then((messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingStart");
+            });
+
+            InspectorProtocol.addEventListener("ScriptProfiler.trackingUpdate", (messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingUpdate");
+                ProtocolTest.expectThat(messageObject.params.event.type === "Microtask", "Event type should be Microtask.");
+            });
+
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingComplete");
+                ProtocolTest.expectThat(Array.isArray(messageObject.params.profiles), "Profiles should exist when complete.");
+                ProtocolTest.expectThat(messageObject.params.profiles.length === 1, "Should be 1 profile for this session.");
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {profile: true});
+            ProtocolTest.evaluateInPage("triggerMicrotask()");
+            InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
+        }
+    });
+
+    // FIXME: <https://webkit.org/b/152193> Web Inspector: Separate Debugger enable state from being attached
+    // Debugger should not need to be enabled for profiling to work.
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for generating a ScriptProfiler.Event with ScriptProfiler.EventType.Microtask type.</p>
+</body>
+</html>

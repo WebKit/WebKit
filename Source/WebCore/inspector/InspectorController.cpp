@@ -70,6 +70,7 @@
 #include <inspector/InspectorFrontendRouter.h>
 #include <inspector/agents/InspectorAgent.h>
 #include <inspector/agents/InspectorHeapAgent.h>
+#include <inspector/agents/InspectorScriptProfilerAgent.h>
 #include <profiler/LegacyProfiler.h>
 #include <runtime/JSLock.h>
 #include <wtf/Stopwatch.h>
@@ -167,6 +168,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, m_domAgent, debuggerAgent));
     m_agents.append(std::make_unique<InspectorHeapAgent>(pageContext));
+    m_agents.append(std::make_unique<InspectorScriptProfilerAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, pageAgent));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));
 
@@ -442,16 +444,6 @@ InspectorFunctionCallHandler InspectorController::functionCallHandler() const
 InspectorEvaluateHandler InspectorController::evaluateHandler() const
 {
     return WebCore::evaluateHandlerFromAnyThread;
-}
-
-void InspectorController::willCallInjectedScriptFunction(JSC::ExecState* scriptState, const String&, int)
-{
-    LegacyProfiler::profiler()->suspendProfiling(scriptState);
-}
-
-void InspectorController::didCallInjectedScriptFunction(JSC::ExecState* scriptState)
-{
-    LegacyProfiler::profiler()->unsuspendProfiling(scriptState);
 }
 
 void InspectorController::frontendInitialized()

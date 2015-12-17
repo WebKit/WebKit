@@ -59,8 +59,17 @@ union CallData {
     } js;
 };
 
+enum class ProfilingReason {
+    API,
+    Microtask,
+    Other
+};
+
 JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&);
 JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&, NakedPtr<Exception>& returnedException);
+
+JS_EXPORT_PRIVATE JSValue profiledCall(ExecState*, ProfilingReason, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&);
+JS_EXPORT_PRIVATE JSValue profiledCall(ExecState*, ProfilingReason, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&, NakedPtr<Exception>& returnedException);
 
 } // namespace JSC
 

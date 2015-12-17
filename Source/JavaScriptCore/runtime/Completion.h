@@ -23,6 +23,7 @@
 #ifndef Completion_h
 #define Completion_h
 
+#include "CallData.h"
 #include "JSCJSValue.h"
 #include <wtf/NakedPtr.h>
 
@@ -39,11 +40,19 @@ class JSInternalPromise;
 JS_EXPORT_PRIVATE bool checkSyntax(VM&, const SourceCode&, ParserError&);
 JS_EXPORT_PRIVATE bool checkSyntax(ExecState*, const SourceCode&, JSValue* exception = 0);
 JS_EXPORT_PRIVATE bool checkModuleSyntax(ExecState*, const SourceCode&, ParserError&);
+
 JS_EXPORT_PRIVATE JSValue evaluate(ExecState*, const SourceCode&, JSValue thisValue, NakedPtr<Exception>& returnedException);
 inline JSValue evaluate(ExecState* exec, const SourceCode& sourceCode, JSValue thisValue = JSValue())
 {
     NakedPtr<Exception> unused;
     return evaluate(exec, sourceCode, thisValue, unused);
+}
+
+JS_EXPORT_PRIVATE JSValue profiledEvaluate(ExecState*, ProfilingReason, const SourceCode&, JSValue thisValue, NakedPtr<Exception>& returnedException);
+inline JSValue profiledEvaluate(ExecState* exec, ProfilingReason reason, const SourceCode& sourceCode, JSValue thisValue = JSValue())
+{
+    NakedPtr<Exception> unused;
+    return profiledEvaluate(exec, reason, sourceCode, thisValue, unused);
 }
 
 // Load the module source and evaluate it.

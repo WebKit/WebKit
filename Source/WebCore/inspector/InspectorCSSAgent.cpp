@@ -1047,7 +1047,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Inspecto
 
         auto matchingSelectors = Inspector::Protocol::Array<int>::create();
         const CSSSelectorList& selectorList = matchedRule->selectorList();
-        long index = 0;
+        int index = 0;
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
             unsigned ignoredSpecificity;
             bool matched = selectorChecker.match(selector, element, context, ignoredSpecificity);

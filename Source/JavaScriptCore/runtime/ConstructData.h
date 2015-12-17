@@ -63,6 +63,13 @@ ALWAYS_INLINE JSObject* construct(ExecState* exec, JSValue constructorObject, Co
     return construct(exec, constructorObject, constructType, constructData, args, constructorObject);
 }
 
+JS_EXPORT_PRIVATE JSObject* profiledConstruct(ExecState*, ProfilingReason, JSValue constructor, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
+
+ALWAYS_INLINE JSObject* profiledConstruct(ExecState* exec, ProfilingReason reason, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
+{
+    return profiledConstruct(exec, reason, constructorObject, constructType, constructData, args, constructorObject);
+}
+
 } // namespace JSC
 
 #endif // ConstructData_h

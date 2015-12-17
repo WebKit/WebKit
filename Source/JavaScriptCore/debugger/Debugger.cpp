@@ -226,6 +226,24 @@ void Debugger::registerCodeBlock(CodeBlock* codeBlock)
         codeBlock->setSteppingMode(CodeBlock::SteppingModeEnabled);
 }
 
+void Debugger::setProfilingClient(ProfilingClient* client)
+{
+    ASSERT(!!m_profilingClient != !!client);
+    m_profilingClient = client;
+
+    recompileAllJSFunctions();
+}
+
+double Debugger::willEvaluateScript(JSGlobalObject& globalObject)
+{
+    return m_profilingClient->willEvaluateScript(globalObject);
+}
+
+void Debugger::didEvaluateScript(JSGlobalObject& globalObject, double startTime, ProfilingReason reason)
+{
+    m_profilingClient->didEvaluateScript(globalObject, startTime, reason);
+}
+
 void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, BreakpointState enabledOrNot)
 {
     ScriptExecutable* executable = codeBlock->ownerScriptExecutable();

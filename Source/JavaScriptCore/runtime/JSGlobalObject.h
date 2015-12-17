@@ -358,7 +358,7 @@ public:
     DECLARE_EXPORT_INFO;
 
     bool hasDebugger() const { return m_debugger; }
-    bool hasProfiler() const { return globalObjectMethodTable()->supportsProfiling(this); }
+    bool hasProfiler() const;
     const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
 
 protected:

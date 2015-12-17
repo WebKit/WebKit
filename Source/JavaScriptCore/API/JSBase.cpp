@@ -65,7 +65,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     SourceCode source = makeSource(script->string(), sourceURL ? sourceURL->string() : String(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
 
     NakedPtr<Exception> evaluationException;
-    JSValue returnValue = evaluate(globalObject->globalExec(), source, jsThisObject, evaluationException);
+    JSValue returnValue = profiledEvaluate(globalObject->globalExec(), ProfilingReason::API, source, jsThisObject, evaluationException);
 
     if (evaluationException) {
         if (exception)

@@ -1,3 +1,18 @@
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add JSContext Script Profiling
+        https://bugs.webkit.org/show_bug.cgi?id=151899
+
+        Reviewed by Brian Burg.
+
+        * inspector/script-profiler/event-type-API-expected.txt: Added.
+        * inspector/script-profiler/event-type-API.html: Added.
+        * inspector/script-profiler/event-type-Microtask-expected.txt: Added.
+        * inspector/script-profiler/event-type-Microtask.html: Added.
+        * inspector/script-profiler/tracking-expected.txt: Added.
+        * inspector/script-profiler/tracking.html: Added.
+        Tests for the new ScriptProfiler domain.
+
 2015-12-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/media/mq-* tests as failing on ios-simulator

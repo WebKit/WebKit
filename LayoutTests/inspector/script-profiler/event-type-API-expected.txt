@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: Log from API Evaluated Script
+Tests for generating a ScriptProfiler.Event with ScriptProfiler.EventType.API type.
+
+
+== Running test suite: ScriptProfiler.EventType.API
+-- Running test case: TrackingSession
+ScriptProfiler.trackingStart
+ScriptProfiler.trackingUpdate
+PASS: Event type should be API.
+ScriptProfiler.trackingComplete
+PASS: Profiles should exist when complete.
+PASS: Should be 1 profile for this session.
+

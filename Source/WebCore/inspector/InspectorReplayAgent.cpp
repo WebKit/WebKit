@@ -77,7 +77,7 @@ static Ref<Inspector::Protocol::Replay::ReplaySession> buildInspectorObjectForSe
     auto segments = Inspector::Protocol::Array<SegmentIdentifier>::create();
 
     for (auto& segment : *session)
-        segments->addItem(segment->identifier());
+        segments->addItem(static_cast<int>(segment->identifier()));
 
     return Inspector::Protocol::Replay::ReplaySession::create()
         .setId(session->identifier())

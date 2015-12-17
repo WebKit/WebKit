@@ -556,7 +556,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     if (callType == CallTypeNone)
         return 0;
 
-    JSValueRef result = toRef(exec, call(exec, jsObject, callType, callData, jsThisObject, argList));
+    JSValueRef result = toRef(exec, profiledCall(exec, ProfilingReason::API, jsObject, callType, callData, jsThisObject, argList));
     if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
         result = 0;
     return result;
@@ -589,7 +589,8 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
     MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(exec, arguments[i]));
-    JSObjectRef result = toRef(construct(exec, jsObject, constructType, constructData, argList));
+
+    JSObjectRef result = toRef(profiledConstruct(exec, ProfilingReason::API, jsObject, constructType, constructData, argList));
     if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
         result = 0;
     return result;

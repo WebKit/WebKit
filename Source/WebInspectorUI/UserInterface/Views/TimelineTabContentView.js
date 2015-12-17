@@ -44,7 +44,7 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 
     static isTabAllowed()
     {
-        return !!window.TimelineAgent;
+        return !!window.TimelineAgent || !!window.ScriptProfilerAgent;
     }
 
     // Public

@@ -55,6 +55,13 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this.reset(true);
     }
 
+    // Static
+
+    static sourceCodeTimelinesSupported()
+    {
+        return WebInspector.debuggableType === WebInspector.DebuggableType.Web;
+    }
+
     // Public
 
     get displayName()
@@ -172,6 +179,11 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         return this._timelines.get(instrument.timelineRecordType);
     }
 
+    timelineForRecordType(recordType)
+    {
+        return this._timelines.get(recordType);
+    }
+
     addInstrument(instrument)
     {
         console.assert(instrument instanceof WebInspector.Instrument, instrument);
@@ -214,6 +226,9 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
         // Network and RenderingFrame records don't have source code timelines.
         if (record.type === WebInspector.TimelineRecord.Type.Network || record.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            return;
+
+        if (!WebInspector.TimelineRecording.sourceCodeTimelinesSupported())
             return;
 
         // Add the record to the source code timelines.

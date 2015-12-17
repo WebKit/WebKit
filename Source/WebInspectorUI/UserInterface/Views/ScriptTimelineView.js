@@ -71,6 +71,7 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
         this.addSubview(this._dataGrid);
 
         timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
+        timeline.addEventListener(WebInspector.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
 
         this._pendingRecords = [];
     }
@@ -217,6 +218,9 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
 
     _processPendingRecords()
     {
+        if (WebInspector.timelineManager.scriptProfilerIsTracking())
+            return;
+
         if (!this._pendingRecords.length)
             return;
 
@@ -253,6 +257,11 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
 
         this._pendingRecords.push(scriptTimelineRecord);
 
+        this.needsLayout();
+    }
+
+    _scriptTimelineRecordRefreshed(event)
+    {
         this.needsLayout();
     }
 

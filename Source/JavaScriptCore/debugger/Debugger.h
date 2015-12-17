@@ -23,6 +23,7 @@
 #define Debugger_h
 
 #include "Breakpoint.h"
+#include "CallData.h"
 #include "DebuggerCallFrame.h"
 #include "DebuggerPrimitives.h"
 #include "JSCJSValue.h"
@@ -127,6 +128,20 @@ public:
 
     void registerCodeBlock(CodeBlock*);
 
+    class ProfilingClient {
+    public:
+        virtual ~ProfilingClient() { }
+        virtual bool isAlreadyProfiling() const = 0;
+        virtual double willEvaluateScript(JSGlobalObject&) = 0;
+        virtual void didEvaluateScript(JSGlobalObject&, double startTime, ProfilingReason) = 0;
+    };
+
+    void setProfilingClient(ProfilingClient*);
+    bool hasProfilingClient() const { return m_profilingClient != nullptr; }
+    bool isAlreadyProfiling() const { return m_profilingClient && m_profilingClient->isAlreadyProfiling(); }
+    double willEvaluateScript(JSGlobalObject&);
+    void didEvaluateScript(JSGlobalObject&, double startTime, ProfilingReason);
+
 protected:
     virtual bool needPauseHandling(JSGlobalObject*) { return false; }
     virtual void handleBreakpointHit(JSGlobalObject*, const Breakpoint&) { }
@@ -214,6 +229,8 @@ private:
     SourceIDToBreakpointsMap m_sourceIDToBreakpoints;
 
     RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
+
+    ProfilingClient* m_profilingClient { nullptr };
 
     friend class DebuggerPausedScope;
     friend class TemporaryPausedState;

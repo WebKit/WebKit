@@ -55,6 +55,7 @@ class InspectorAgent;
 class InspectorConsoleAgent;
 class InspectorDebuggerAgent;
 class InspectorHeapAgent;
+class InspectorScriptProfilerAgent;
 class JSGlobalObjectConsoleClient;
 class ScriptCallStack;
 
@@ -90,8 +91,6 @@ public:
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const override { return true; }
     virtual InspectorFunctionCallHandler functionCallHandler() const override;
     virtual InspectorEvaluateHandler evaluateHandler() const override;
-    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String&, int) override { }
-    virtual void didCallInjectedScriptFunction(JSC::ExecState*) override { }
     virtual void frontendInitialized() override;
     virtual Ref<WTF::Stopwatch> executionStopwatch() override;
     virtual JSGlobalObjectScriptDebugServer& scriptDebugServer() override;

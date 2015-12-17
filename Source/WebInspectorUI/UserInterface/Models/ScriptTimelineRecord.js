@@ -71,6 +71,11 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
         cookie[WebInspector.ScriptTimelineRecord.DetailsCookieKey] = this._details;
     }
 
+    setProfilePayload(profilePayload)
+    {
+        this._profilePayload = profilePayload;
+    }
+
     // Private
 
     _initializeProfileFromPayload(payload)
@@ -155,7 +160,8 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
 
 WebInspector.ScriptTimelineRecord.EventType = {
     ScriptEvaluated: "script-timeline-record-script-evaluated",
-    EventDispatched: "script-timeline-record-event-dispatch",
+    MicrotaskDispatched: "script-timeline-record-microtask-dispatched",
+    EventDispatched: "script-timeline-record-event-dispatched",
     ProbeSampleRecorded: "script-timeline-record-probe-sample-recorded",
     TimerFired: "script-timeline-record-timer-fired",
     TimerInstalled: "script-timeline-record-timer-installed",
@@ -164,7 +170,7 @@ WebInspector.ScriptTimelineRecord.EventType = {
     AnimationFrameRequested: "script-timeline-record-animation-frame-requested",
     AnimationFrameCanceled: "script-timeline-record-animation-frame-canceled",
     ConsoleProfileRecorded: "script-timeline-record-console-profile-recorded",
-    GarbageCollected: "script-timeline-record-garbage-collected"
+    GarbageCollected: "script-timeline-record-garbage-collected",
 };
 
 WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, details, includeDetailsInMainTitle)
@@ -328,12 +334,13 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
     switch(eventType) {
     case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
         return WebInspector.UIString("Script Evaluated");
+    case WebInspector.ScriptTimelineRecord.EventType.MicrotaskDispatched:
+        return WebInspector.UIString("Microtask Dispatched");
     case WebInspector.ScriptTimelineRecord.EventType.EventDispatched:
         if (details && (details instanceof String || typeof details === "string")) {
             var eventDisplayName = WebInspector.ScriptTimelineRecord._eventDisplayNames.get(details) || details.capitalize();
             return WebInspector.UIString("%s Event Dispatched").format(eventDisplayName);
         }
-
         return WebInspector.UIString("Event Dispatched");
     case WebInspector.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
         return WebInspector.UIString("Probe Sample Recorded");

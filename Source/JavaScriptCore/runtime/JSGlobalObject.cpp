@@ -598,6 +598,14 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     resetPrototype(vm, prototype());
 }
 
+bool JSGlobalObject::hasProfiler() const
+{
+    if (m_debugger && m_debugger->hasProfilingClient())
+        return true;
+
+    return globalObjectMethodTable()->supportsProfiling(this);
+}
+
 void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);

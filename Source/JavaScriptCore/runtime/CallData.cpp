@@ -28,8 +28,9 @@
 
 #include "Executable.h"
 #include "Interpreter.h"
-#include "JSFunction.h"
 #include "JSCInlines.h"
+#include "JSFunction.h"
+#include "ScriptProfilingScope.h"
 
 namespace JSC {
 
@@ -49,6 +50,18 @@ JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const C
     }
     RELEASE_ASSERT(result);
     return result;
+}
+
+JSValue profiledCall(ExecState* exec, ProfilingReason reason, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
+{
+    ScriptProfilingScope profilingScope(exec->vmEntryGlobalObject(), reason);
+    return call(exec, functionObject, callType, callData, thisValue, args);
+}
+
+JSValue profiledCall(ExecState* exec, ProfilingReason reason, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
+{
+    ScriptProfilingScope profilingScope(exec->vmEntryGlobalObject(), reason);
+    return call(exec, functionObject, callType, callData, thisValue, args, returnedException);
 }
 
 } // namespace JSC

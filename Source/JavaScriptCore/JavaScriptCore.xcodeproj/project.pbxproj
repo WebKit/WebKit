@@ -1554,6 +1554,9 @@
 		A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A54CF2F8184EAEDA00237F19 /* ScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A54E8EB018BFFBBB00556D28 /* GCSegmentedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A343F7418A1748B0039B085 /* GCSegmentedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A343F7718A1749D0039B085 /* GCSegmentedArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A55165D21BDF0B98003B75C1 /* InspectorScriptProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55165D01BDEFDBD003B75C1 /* InspectorScriptProfilerAgent.cpp */; };
+		A55165D31BDF0B9E003B75C1 /* InspectorScriptProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A55165D11BDEFDBD003B75C1 /* InspectorScriptProfilerAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A55165D51BDF135A003B75C1 /* ScriptProfilingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = A55165D41BDF134D003B75C1 /* ScriptProfilingScope.h */; };
 		A552C37F1ADDB8FE00139726 /* JSRemoteInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A552C37D1ADDB8FE00139726 /* JSRemoteInspector.cpp */; };
 		A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = A552C37E1ADDB8FE00139726 /* JSRemoteInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A55D93A5185012A800400DED /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */; };
@@ -3725,6 +3728,9 @@
 		A54CF2F3184EAB2400237F19 /* ScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptValue.h; sourceTree = "<group>"; };
 		A54CF2F7184EAEDA00237F19 /* ScriptObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptObject.cpp; sourceTree = "<group>"; };
 		A54CF2F8184EAEDA00237F19 /* ScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptObject.h; sourceTree = "<group>"; };
+		A55165D01BDEFDBD003B75C1 /* InspectorScriptProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorScriptProfilerAgent.cpp; sourceTree = "<group>"; };
+		A55165D11BDEFDBD003B75C1 /* InspectorScriptProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorScriptProfilerAgent.h; sourceTree = "<group>"; };
+		A55165D41BDF134D003B75C1 /* ScriptProfilingScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptProfilingScope.h; sourceTree = "<group>"; };
 		A552C37D1ADDB8FE00139726 /* JSRemoteInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteInspector.cpp; sourceTree = "<group>"; };
 		A552C37E1ADDB8FE00139726 /* JSRemoteInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRemoteInspector.h; sourceTree = "<group>"; };
 		A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
@@ -5223,6 +5229,7 @@
 				FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */,
 				0F2D4DDB19832D34007D4B19 /* DebuggerScope.cpp */,
 				0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */,
+				A55165D41BDF134D003B75C1 /* ScriptProfilingScope.h */,
 			);
 			path = debugger;
 			sourceTree = "<group>";
@@ -6594,6 +6601,8 @@
 				A5339EC51BB399900054F005 /* InspectorHeapAgent.h */,
 				A50E4B5D18809DD50068A46D /* InspectorRuntimeAgent.cpp */,
 				A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */,
+				A55165D01BDEFDBD003B75C1 /* InspectorScriptProfilerAgent.cpp */,
+				A55165D11BDEFDBD003B75C1 /* InspectorScriptProfilerAgent.h */,
 				A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */,
 				A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */,
 				A57D23E71891B0770031C7FA /* JSGlobalObjectDebuggerAgent.cpp */,
@@ -7458,6 +7467,7 @@
 				A125846E1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h in Headers */,
 				A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */,
 				A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */,
+				A55165D31BDF0B9E003B75C1 /* InspectorScriptProfilerAgent.h in Headers */,
 				A12BBFF21B044A8B00664B69 /* IntlObject.h in Headers */,
 				860BD801148EA6F200112B2F /* Intrinsic.h in Headers */,
 				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
@@ -7659,6 +7669,7 @@
 				0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */,
 				0F38B01217CF078300B144D3 /* LLIntEntrypoint.h in Headers */,
 				0F4680A314BA7F8D00BFE272 /* LLIntExceptions.h in Headers */,
+				A55165D51BDF135A003B75C1 /* ScriptProfilingScope.h in Headers */,
 				0F4680CB14BBB17200BFE272 /* LLIntOfflineAsmConfig.h in Headers */,
 				FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */,
 				0F4680A514BA7F8D00BFE272 /* LLIntSlowPaths.h in Headers */,
@@ -8846,6 +8857,7 @@
 				0F235BDC17178E1C00690C7F /* FTLOSRExit.cpp in Sources */,
 				0F235BDF17178E1C00690C7F /* FTLOSRExitCompiler.cpp in Sources */,
 				0FEA0A2A1709629600BB722C /* FTLOutput.cpp in Sources */,
+				A55165D21BDF0B98003B75C1 /* InspectorScriptProfilerAgent.cpp in Sources */,
 				0F485329187DFDEC0083B687 /* FTLRecoveryOpcode.cpp in Sources */,
 				0FCEFAAB1804C13E00472CE4 /* FTLSaveRestore.cpp in Sources */,
 				0F25F1B1181635F300522F39 /* FTLSlowPathCall.cpp in Sources */,

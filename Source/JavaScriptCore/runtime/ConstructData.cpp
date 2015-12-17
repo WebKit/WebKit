@@ -28,9 +28,10 @@
 
 #include "Executable.h"
 #include "Interpreter.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSCInlines.h"
+#include "ScriptProfilingScope.h"
 
 namespace JSC {
 
@@ -38,6 +39,12 @@ JSObject* construct(ExecState* exec, JSValue constructorObject, ConstructType co
 {
     ASSERT(constructType == ConstructTypeJS || constructType == ConstructTypeHost);
     return exec->interpreter()->executeConstruct(exec, asObject(constructorObject), constructType, constructData, args, newTarget);
+}
+
+JSObject* profiledConstruct(ExecState* exec, ProfilingReason reason, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
+{
+    ScriptProfilingScope profilingScope(exec->vmEntryGlobalObject(), reason);
+    return construct(exec, constructorObject, constructType, constructData, args, newTarget);
 }
 
 } // namespace JSC

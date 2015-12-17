@@ -234,3 +234,6 @@ imported/blink/compositing/layer-creation/iframe-clip-removed.html [ Pass Timeou
 
 # ASAN test only fails on WK1:
 webgl/1.0.3/151055_asan.html [ Failure ]
+
+# Lacking WK1 TestRunner API that evaluates JavaScript through JSC APIs and not WebCore APIs
+inspector/script-profiler/event-type-API.html

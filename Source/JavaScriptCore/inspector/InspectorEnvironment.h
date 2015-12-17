@@ -51,8 +51,6 @@ public:
     virtual bool canAccessInspectedScriptState(JSC::ExecState*) const = 0;
     virtual InspectorFunctionCallHandler functionCallHandler() const = 0;
     virtual InspectorEvaluateHandler evaluateHandler() const = 0;
-    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) = 0;
-    virtual void didCallInjectedScriptFunction(JSC::ExecState*) = 0;
     virtual void frontendInitialized() = 0;
     virtual Ref<WTF::Stopwatch> executionStopwatch() = 0;
     virtual ScriptDebugServer& scriptDebugServer() = 0;

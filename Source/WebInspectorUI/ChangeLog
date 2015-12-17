@@ -1,3 +1,63 @@
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add JSContext Script Profiling
+        https://bugs.webkit.org/show_bug.cgi?id=151899
+
+        Reviewed by Brian Burg.
+
+        Enable the Timeline tab for JSContext inspection. Currently only
+        JSContext inspection will use the ScriptProfiler domain, it will
+        be enabled for Page inspection in a follow-up.
+
+        First pass at the UI creates basic ScriptTimelineRecords for
+        ScriptProfiler events. At the end of recording, when profiles
+        are downloaded, it attaches profiles to the timeline records
+        and refreshes the Scripts timeline.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.defaultInstruments):
+        (WebInspector.TimelineManager.prototype.computeElapsedTime):
+        (WebInspector.TimelineManager.prototype.scriptProfilerIsTracking):
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        (WebInspector.TimelineManager.prototype._mainResourceDidChange):
+        (WebInspector.TimelineManager.prototype._resourceWasAdded):
+        (WebInspector.TimelineManager.prototype._garbageCollected):
+        (WebInspector.TimelineManager.prototype._addRecord): Deleted.
+        * UserInterface/Main.html:
+        * UserInterface/Models/Instrument.js:
+        (WebInspector.Instrument.startLegacyTimelineAgent):
+        * UserInterface/Models/ScriptInstrument.js:
+        (WebInspector.ScriptInstrument.prototype.startInstrumentation):
+        (WebInspector.ScriptInstrument.prototype.stopInstrumentation):
+        (WebInspector.ScriptInstrument):
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.prototype.get profilePayload):
+        (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload):
+        (WebInspector.ScriptTimelineRecord):
+        (WebInspector.ScriptTimelineRecord.EventType.displayName):
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline.prototype.refresh):
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.sourceCodeTimelinesSupported):
+        (WebInspector.TimelineRecording.prototype.timelineForRecordType):
+        (WebInspector.TimelineRecording.prototype.addRecord):
+        * UserInterface/Protocol/ScriptProfilerObserver.js: Copied from Source/WebInspectorUI/UserInterface/Models/ScriptInstrument.js.
+        (WebInspector.ScriptProfilerObserver.prototype.trackingStart):
+        (WebInspector.ScriptProfilerObserver.prototype.trackingUpdate):
+        (WebInspector.ScriptProfilerObserver.prototype.trackingComplete):
+        (WebInspector.ScriptProfilerObserver):
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView):
+        (WebInspector.ScriptTimelineView.prototype._processPendingRecords):
+        (WebInspector.ScriptTimelineView.prototype._scriptTimelineRecordRefreshed):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.isTabAllowed):
+
 2015-12-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r193913): Popover covers completion suggestions

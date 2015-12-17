@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.startTracking and ScriptProfiler.stopTracking");
+
+    suite.addTestCase({
+        name: "StartAndStopTracking",
+        description: "Start and stop the ScriptProfiler should cause trackingStart and trackingComplete events.",
+        test: function(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then((messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingStart");
+                ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when starting.");
+            });
+
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingComplete");
+                ProtocolTest.expectThat(Array.isArray(messageObject.params.profiles), "Profiles should exist when complete.");
+                ProtocolTest.expectThat(!messageObject.params.profiles.length, "Should be no profiles for this session.");
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {profile: true});
+            InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that ScriptProfiler.startTracking and ScriptProfiler.stopTracking trigger trackingStart and trackingComplete events.</p>
+</body>
+</html>

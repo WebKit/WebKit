@@ -79,6 +79,7 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
             case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
                 iconStyleClass = WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
                 break;
+            case WebInspector.ScriptTimelineRecord.EventType.MicrotaskDispatched:
             case WebInspector.ScriptTimelineRecord.EventType.EventDispatched:
                 iconStyleClass = WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass;
                 break;

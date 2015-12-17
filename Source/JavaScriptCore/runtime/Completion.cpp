@@ -37,6 +37,7 @@
 #include "ModuleAnalyzer.h"
 #include "ModuleLoaderObject.h"
 #include "Parser.h"
+#include "ScriptProfilingScope.h"
 #include <wtf/WTFThreadData.h>
 
 namespace JSC {
@@ -111,6 +112,12 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, N
 
     RELEASE_ASSERT(result);
     return result;
+}
+
+JSValue profiledEvaluate(ExecState* exec, ProfilingReason reason, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)
+{
+    ScriptProfilingScope profilingScope(exec->vmEntryGlobalObject(), reason);
+    return evaluate(exec, source, thisValue, returnedException);
 }
 
 static JSValue identifierToJSValue(VM& vm, const Identifier& identifier)
