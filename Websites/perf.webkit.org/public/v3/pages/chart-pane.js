@@ -24,7 +24,7 @@ class ChartPane extends ComponentBase {
         this._paneOpenedByClick = null;
 
         this._commitLogViewer = this.content().querySelector('commit-log-viewer').component();
-        this.content().querySelector('close-button').component().setCallback(chartsPage.closePane.bind(chartsPage));
+        this.content().querySelector('close-button').component().setCallback(chartsPage.closePane.bind(chartsPage, this));
 
         if (result.error)
             return;

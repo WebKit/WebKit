@@ -1,3 +1,16 @@
+2015-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Closing a pane on v3 UI always closes the last pane
+        https://bugs.webkit.org/show_bug.cgi?id=152388
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by closePane being called without arguments. (The first argument to bind is "this" value.)
+        Fixed it by passing in "this" pane object to the first argument.
+
+        * public/v3/pages/chart-pane.js:
+        (ChartPane):
+
 2015-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf Dashboard v3 UI doesn't show recent data points on v2 UI
