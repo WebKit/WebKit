@@ -3292,9 +3292,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     _data->_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:self].allObjects;
     for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseEnded inView:self]) {
-        size_t identityIndex = _data->_activeTouchIdentities.find(touch.identity);
-        ASSERT(identityIndex != notFound);
-        _data->_activeTouchIdentities.remove(identityIndex);
+        for (size_t i = 0; i < _data->_activeTouchIdentities.size(); i++) {
+            if ([_data->_activeTouchIdentities[i] isEqual:touch.identity]) {
+                _data->_activeTouchIdentities.remove(i);
+                break;
+            }
+        }
     }
 }
 
@@ -3302,9 +3305,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     _data->_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:self].allObjects;
     for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseCancelled inView:self]) {
-        size_t identityIndex = _data->_activeTouchIdentities.find(touch.identity);
-        ASSERT(identityIndex != notFound);
-        _data->_activeTouchIdentities.remove(identityIndex);
+        for (size_t i = 0; i < _data->_activeTouchIdentities.size(); i++) {
+            if ([_data->_activeTouchIdentities[i] isEqual:touch.identity]) {
+                _data->_activeTouchIdentities.remove(i);
+                break;
+            }
+        }
     }
 }
 
