@@ -58,10 +58,8 @@ namespace WebKit {
 
 void Download::start()
 {
-#if !USE(NETWORK_SESSION)
     ASSERT(!m_nsURLDownload);
     ASSERT(!m_delegate);
-#endif
 
     m_delegate = adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
 #pragma clang diagnostic push
@@ -73,7 +71,6 @@ void Download::start()
     [m_nsURLDownload setDeletesFileUponFailure:NO];
 }
 
-#if !USE(NETWORK_SESSION)
 void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
 {
     ASSERT(!m_nsURLDownload);
@@ -89,7 +86,6 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
     // FIXME: Allow this to be changed by the client.
     [m_nsURLDownload setDeletesFileUponFailure:NO];
 }
-#endif
 
 void Download::resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
 {

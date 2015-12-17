@@ -64,9 +64,9 @@
 		00B9661618E24CBA00CE1F88 /* APIFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661518E24CBA00CE1F88 /* APIFindClient.h */; };
 		00B9661918E25AE100CE1F88 /* FindClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00B9661718E25AE100CE1F88 /* FindClient.mm */; };
 		00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661818E25AE100CE1F88 /* FindClient.h */; };
-		07297F9E1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297F9C1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp */; settings = {ASSET_TAGS = (); }; };
-		07297F9F1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */; settings = {ASSET_TAGS = (); }; };
-		07297FA21C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297FA01C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp */; settings = {ASSET_TAGS = (); }; };
+		07297F9E1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297F9C1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp */; };
+		07297F9F1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */; };
+		07297FA21C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297FA01C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp */; };
 		07297FA31C186ADB003F0735 /* WKUserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		076E884E1A13CADF005E90FC /* APIContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 076E884D1A13CADF005E90FC /* APIContextMenuClient.h */; };
 		0F0C365818C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */; };
@@ -1066,6 +1066,7 @@
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
+		5C9B86131C223EAF00110F36 /* DownloadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9B86111C223E7900110F36 /* DownloadCocoa.mm */; };
 		5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */; };
 		5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
@@ -3257,6 +3258,7 @@
 		5272B2891406985D0096A5D0 /* StatisticsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsData.h; sourceTree = "<group>"; };
 		5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkSessionCocoa.mm; path = NetworkProcess/cocoa/NetworkSessionCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSession.h; path = NetworkProcess/NetworkSession.h; sourceTree = "<group>"; };
+		5C9B86111C223E7900110F36 /* DownloadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadCocoa.mm; path = Downloads/cocoa/DownloadCocoa.mm; sourceTree = "<group>"; };
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
 		5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerEnvironmentExtractor.h; sourceTree = "<group>"; };
 		5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicLinkerEnvironmentExtractor.mm; sourceTree = "<group>"; };
@@ -5743,6 +5745,7 @@
 		518E8EF216B208F800E91429 /* Downloads */ = {
 			isa = PBXGroup;
 			children = (
+				5C9B860E1C223E5400110F36 /* cocoa */,
 				2DA944A51884E93C00ED86DB /* ios */,
 				518E8F0416B2093700E91429 /* mac */,
 				518E8EFE16B2093700E91429 /* Download.cpp */,
@@ -5894,6 +5897,14 @@
 				51D02F65132EC6D300BEAA96 /* WebIconDatabaseProxy.messages.in */,
 			);
 			name = IconDatabase;
+			sourceTree = "<group>";
+		};
+		5C9B860E1C223E5400110F36 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				5C9B86111C223E7900110F36 /* DownloadCocoa.mm */,
+			);
+			name = cocoa;
 			sourceTree = "<group>";
 		};
 		6EE849C41368D9040038D481 /* mac */ = {
@@ -10150,6 +10161,7 @@
 				BC407603124FF0270068F20A /* WKSerializedScriptValue.cpp in Sources */,
 				75A8D2D8187D304000C39C9E /* WKSessionRef.cpp in Sources */,
 				1ADE46B21954EC61000F7985 /* WKSessionStateRef.cpp in Sources */,
+				5C9B86131C223EAF00110F36 /* DownloadCocoa.mm in Sources */,
 				513E462E1AD837560016234A /* WKSharingServicePickerDelegate.mm in Sources */,
 				BC407605124FF0270068F20A /* WKString.cpp in Sources */,
 				BC407619124FF0370068F20A /* WKStringCF.mm in Sources */,

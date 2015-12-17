@@ -294,8 +294,6 @@ public:
     static void willStartUsingPrivateBrowsing();
     static void willStopUsingPrivateBrowsing();
 
-    static bool isEphemeralSession(WebCore::SessionID);
-
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
     bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }

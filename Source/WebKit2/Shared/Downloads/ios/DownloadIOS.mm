@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Download.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !USE(NETWORK_SESSION)
 
 #import "DataReference.h"
 #import <WebCore/NotImplemented.h>

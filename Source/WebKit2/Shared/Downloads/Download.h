@@ -53,15 +53,15 @@ OBJC_CLASS WKDownloadAsDelegate;
 #endif
 
 namespace IPC {
-    class DataReference;
+class DataReference;
 }
 
 namespace WebCore {
-    class AuthenticationChallenge;
-    class Credential;
-    class ResourceError;
-    class ResourceHandle;
-    class ResourceResponse;
+class AuthenticationChallenge;
+class Credential;
+class ResourceError;
+class ResourceHandle;
+class ResourceResponse;
 }
 
 namespace WebKit {
@@ -69,16 +69,23 @@ namespace WebKit {
 class DownloadAuthenticationClient;
 class DownloadManager;
 class NetworkDataTask;
+class NetworkSession;
 class WebPage;
 
 class Download : public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
+#if USE(NETWORK_SESSION)
+    Download(DownloadManager&, const NetworkSession&, uint64_t downloadID, const WebCore::ResourceRequest&);
+#else
     Download(DownloadManager&, uint64_t downloadID, const WebCore::ResourceRequest&);
+#endif
     ~Download();
 
     void start();
-#if !USE(NETWORK_SESSION)
+#if USE(NETWORK_SESSION) && PLATFORM(COCOA)
+    void dataTaskDidBecomeDownloadTask(const NetworkSession&, RetainPtr<NSURLSessionDownloadTask>&&);
+#else
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
 #endif
     void resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
@@ -128,6 +135,7 @@ private:
 
 #if PLATFORM(COCOA)
 #if USE(NETWORK_SESSION)
+    const NetworkSession& m_session;
     RetainPtr<NSURLSessionDownloadTask> m_download;
 #else
     RetainPtr<NSURLDownload> m_nsURLDownload;

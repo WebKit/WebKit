@@ -43,10 +43,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#if USE(NETWORK_SESSION)
+Download::Download(DownloadManager& downloadManager, const NetworkSession& session, uint64_t downloadID, const ResourceRequest& request)
+#else
 Download::Download(DownloadManager& downloadManager, uint64_t downloadID, const ResourceRequest& request)
+#endif
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_request(request)
+#if USE(NETWORK_SESSION)
+    , m_session(session)
+#endif
 {
     ASSERT(m_downloadID);
 
@@ -70,7 +77,7 @@ void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& 
 #if USE(NETWORK_SESSION)
     notImplemented();
 #else
-    m_downloadManager.downloadsAuthenticationManager().didReceiveAuthenticationChallenge(this, authenticationChallenge);
+    m_downloadManager.downloadsAuthenticationManager().didReceiveAuthenticationChallenge(*this, authenticationChallenge);
 #endif
 }
 

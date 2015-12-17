@@ -61,8 +61,7 @@ public:
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
     // Called for resources in the NetworkProcess (NetworkProcess enabled)
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&);
-    // Called for downloads with or without the NetworkProcess
-    void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
+    void didReceiveAuthenticationChallenge(Download&, const WebCore::AuthenticationChallenge&);
 
     void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const WebCore::CertificateInfo&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);

@@ -74,7 +74,7 @@ public:
     void convertHandleToDownload(uint64_t downloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 #endif
 
-    void resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
+    void resumeDownload(WebCore::SessionID, uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
 
     void cancelDownload(uint64_t downloadID);
 

@@ -437,9 +437,9 @@ void NetworkProcess::downloadRequest(SessionID sessionID, uint64_t downloadID, c
     downloadManager().startDownload(sessionID, downloadID, request);
 }
 
-void NetworkProcess::resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)
+void NetworkProcess::resumeDownload(SessionID sessionID, uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)
 {
-    downloadManager().resumeDownload(downloadID, resumeData, path, sandboxExtensionHandle);
+    downloadManager().resumeDownload(sessionID, downloadID, resumeData, path, sandboxExtensionHandle);
 }
 
 void NetworkProcess::cancelDownload(uint64_t downloadID)

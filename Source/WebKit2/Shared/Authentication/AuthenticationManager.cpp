@@ -160,7 +160,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
 }
 
 #if !USE(NETWORK_SESSION)
-void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download, const AuthenticationChallenge& authenticationChallenge)
+void AuthenticationManager::didReceiveAuthenticationChallenge(Download& download, const AuthenticationChallenge& authenticationChallenge)
 {
     uint64_t dummyPageID = 0;
     uint64_t challengeID = addChallengeToChallengeMap({dummyPageID, authenticationChallenge});
@@ -169,7 +169,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download
     if (shouldCoalesceChallenge(dummyPageID, challengeID, authenticationChallenge))
         return;
 
-    download->send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
+    download.send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
 }
 #endif
 

@@ -1,3 +1,47 @@
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards implementing downloads with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=152371
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::downloadRequest):
+        (WebKit::NetworkProcess::resumeDownload):
+        (WebKit::NetworkProcess::cancelDownload):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Downloads/Download.cpp:
+        (WebKit::Download::Download):
+        (WebKit::Download::didReceiveAuthenticationChallenge):
+        * Shared/Downloads/Download.h:
+        * Shared/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        (WebKit::DownloadManager::convertHandleToDownload):
+        (WebKit::DownloadManager::resumeDownload):
+        (WebKit::DownloadManager::cancelDownload):
+        (WebKit::DownloadManager::downloadFinished):
+        (WebKit::DownloadManager::didCreateDownload):
+        * Shared/Downloads/DownloadManager.h:
+        * Shared/Downloads/cocoa: Added.
+        * Shared/Downloads/cocoa/DownloadCocoa.mm: Added.
+        (WebKit::Download::start):
+        (WebKit::Download::resume):
+        (WebKit::Download::cancel):
+        (WebKit::Download::platformInvalidate):
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::resume):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::resumeDownload):
+        * UIProcess/WebProcessPool.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         ViewportConfiguration functions should return a bool to say if anything changed
