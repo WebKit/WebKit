@@ -92,7 +92,11 @@ class DashboardPage extends PageWithCharts {
             var tree = [];
             for (var group of this._tableGroups) {
                 tree.push(element('thead', element('tr',
-                    group[0].map(function (cell) { return element('td', cell.content || cell); }))));
+                    group[0].map(function (cell, cellIndex) {
+                        if (!cellIndex)
+                            return element('th', {class: 'heading-column'});
+                        return element('td', cell.content || cell);
+                    }))));
 
                 tree.push(element('tbody', group.slice(1).map(function (row) {
                     return element('tr', row.map(function (cell, cellIndex) {
@@ -164,6 +168,9 @@ class DashboardPage extends PageWithCharts {
     static cssTemplate()
     {
         return `
+            .dashboard-table {
+                table-layout: fixed;
+            }
             .dashboard-table td,
             .dashboard-table th {
                 border: none;
@@ -182,6 +189,10 @@ class DashboardPage extends PageWithCharts {
                 height: 10rem;
                 width: 2rem;
                 position: relative;
+            }
+            .dashboard-table .heading-column {
+                width: 2rem;
+                height: 1rem;
             }
             .dashboard-table th .vertical-label {
                 position: absolute;

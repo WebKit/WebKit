@@ -1,5 +1,18 @@
 2015-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Dashboard charts should have uniform widths on v3 UI
+        https://bugs.webkit.org/show_bug.cgi?id=152395
+
+        Reviewed by Chris Dumez.
+
+        Fix the bug by applying table-layout: fixed on the dashboard table.
+
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype.render): Added header-column as a class name to explicitly set the header column with.
+        (DashboardPage.cssTemplate): Adjusted CSS accordingly.
+
+2015-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Closing a pane on v3 UI always closes the last pane
         https://bugs.webkit.org/show_bug.cgi?id=152388
 
