@@ -28,6 +28,7 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
+#include <wtf/OSAllocator.h>
 #include <wtf/cf/TypeCastsCF.h>
 
 namespace WebCore {
@@ -71,6 +72,13 @@ const char* SharedBuffer::platformData() const
 unsigned SharedBuffer::platformDataSize() const
 {
     return CFDataGetLength(m_cfData.get());
+}
+
+void SharedBuffer::hintMemoryNotNeededSoon()
+{
+    if (!hasPlatformData())
+        return;
+    OSAllocator::hintMemoryNotNeededSoon(const_cast<char*>(platformData()), platformDataSize());
 }
 
 void SharedBuffer::maybeTransferPlatformData()

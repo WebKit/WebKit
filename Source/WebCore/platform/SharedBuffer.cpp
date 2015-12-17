@@ -302,6 +302,12 @@ void SharedBuffer::clearDataBuffer()
         m_buffer->data.clear();
 }
 
+#if !USE(CF)
+void SharedBuffer::hintMemoryNotNeededSoon()
+{
+}
+#endif
+
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 
 void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) const

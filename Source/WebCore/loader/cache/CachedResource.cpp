@@ -504,10 +504,14 @@ void CachedResource::decodedDataDeletionTimerFired()
 
 bool CachedResource::deleteIfPossible()
 {
-    if (canDelete() && !inCache()) {
-        InspectorInstrumentation::willDestroyCachedResource(*this);
-        delete this;
-        return true;
+    if (canDelete()) {
+        if (!inCache()) {
+            InspectorInstrumentation::willDestroyCachedResource(*this);
+            delete this;
+            return true;
+        }
+        if (m_data)
+            m_data->hintMemoryNotNeededSoon();
     }
     return false;
 }

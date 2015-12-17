@@ -164,6 +164,16 @@ void OSAllocator::decommit(void* address, size_t bytes)
 #endif
 }
 
+void OSAllocator::hintMemoryNotNeededSoon(void* address, size_t bytes)
+{
+#if HAVE(MADV_DONTNEED)
+    while (madvise(address, bytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
+#else
+    UNUSED_PARAM(address);
+    UNUSED_PARAM(bytes);
+#endif
+}
+
 void OSAllocator::releaseDecommitted(void* address, size_t bytes)
 {
     int result = munmap(address, bytes);

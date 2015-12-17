@@ -69,6 +69,9 @@ public:
     // This interface is provided since it may be possible to optimize this operation on some platforms.
     template<typename T>
     static T* reallocateCommitted(T*, size_t oldSize, size_t newSize, Usage = UnknownUsage, bool writable = true, bool executable = false);
+
+    // Hint to the OS that an address range is not expected to be accessed anytime soon.
+    WTF_EXPORT_PRIVATE static void hintMemoryNotNeededSoon(void*, size_t);
 };
 
 inline void* OSAllocator::reserveAndCommit(size_t reserveSize, size_t commitSize, Usage usage, bool writable, bool executable)

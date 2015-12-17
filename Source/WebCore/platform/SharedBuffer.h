@@ -126,6 +126,8 @@ public:
         Vector<char> data;
     };
 
+    void hintMemoryNotNeededSoon();
+
 private:
     WEBCORE_EXPORT SharedBuffer();
     explicit SharedBuffer(unsigned);

@@ -93,6 +93,10 @@ void OSAllocator::releaseDecommitted(void* address, size_t bytes)
         CRASH();
 }
 
+void OSAllocator::hintMemoryNotNeededSoon(void*, size_t)
+{
+}
+
 } // namespace WTF
 
 #endif // OS(WINDOWS)
