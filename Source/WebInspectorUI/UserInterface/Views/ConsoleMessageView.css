@@ -89,7 +89,7 @@
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
-.console-message.expandable.expanded :matches(.console-message-preview, .console-message-preview-divider) {
+.console-message.expandable.expanded :matches(.console-message-preview, .console-message-preview-divider):not(.inline-lossless) {
     display: none;
 }
 

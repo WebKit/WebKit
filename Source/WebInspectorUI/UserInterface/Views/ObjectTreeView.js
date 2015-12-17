@@ -182,6 +182,9 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         if (this._expanded)
             return;
 
+        if (this._hasLosslessPreview)
+            return;
+
         this._expanded = true;
         this._element.classList.add("expanded");
 

@@ -157,7 +157,8 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             this._element.classList.add("expanded");
 
         // Auto-expand an inner object tree if there is a single object.
-        if (this._objectTree) {
+        // For Trace messages we are auto-expanding for the call stack, don't also auto-expand an object as well.
+        if (this._objectTree && this._message.type !== WebInspector.ConsoleMessage.MessageType.Trace) {
             if (!this._extraParameters || this._extraParameters.length <= 1)
                 this._objectTree.expand();
         }
@@ -188,9 +189,6 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         let clipboardString = this._messageTextElement.innerText.removeWordBreakCharacters();
         if (this._message.savedResultIndex)
             clipboardString = clipboardString.replace(/\s*=\s*(\$\d+)$/, " = $1");
-
-        if (this._message.type === WebInspector.ConsoleMessage.MessageType.Trace)
-            clipboardString = "console.trace()";
 
         let hasStackTrace = this._shouldShowStackTrace();
         if (!hasStackTrace) {
@@ -234,8 +232,14 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         if (this._message.source === WebInspector.ConsoleMessage.MessageSource.ConsoleAPI) {
             switch (this._message.type) {
             case WebInspector.ConsoleMessage.MessageType.Trace:
-                // FIXME: We should use a better string then console.trace.
-                element.append("console.trace()");
+                var args = [WebInspector.UIString("Trace")];
+                if (this._message.parameters) {
+                    if (this._message.parameters[0].type === "string")
+                        args = [WebInspector.UIString("Trace: %s")].concat(this._message.parameters);
+                    else
+                        args = args.concat(this._message.parameters);
+                }
+                this._appendFormattedArguments(element, args);
                 break;
 
             case WebInspector.ConsoleMessage.MessageType.Assert:
@@ -462,8 +466,11 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                 previewContainer.appendChild(previewElement);
 
                 // If this preview is effectively lossless, we can avoid making this console message expandable.
-                if ((isPreviewView && preview.lossless) || (!isPreviewView && this._shouldConsiderObjectLossless(parameter)))
+                if ((isPreviewView && preview.lossless) || (!isPreviewView && this._shouldConsiderObjectLossless(parameter))) {
                     this._extraParameters = null;
+                    enclosedElement.classList.add("inline-lossless");
+                    previewContainer.classList.add("inline-lossless");
+                }
             } else {
                 // Multiple objects. Show an indicator.
                 builderElement.append(" ", enclosedElement);
