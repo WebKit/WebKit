@@ -370,10 +370,10 @@ static RetainPtr<CFDictionaryRef> smallCapsOpenTypeDictionary(CFStringRef key, i
 
 static RetainPtr<CFDictionaryRef> smallCapsTrueTypeDictionary(int rawKey, int rawValue)
 {
-    CFNumberRef key = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawKey);
-    CFNumberRef value = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue);
+    RetainPtr<CFNumberRef> key = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawKey));
+    RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue));
     CFTypeRef keys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
-    CFTypeRef values[] = { key, value };
+    CFTypeRef values[] = { key.get(), value.get() };
     return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
@@ -546,7 +546,7 @@ static inline RetainPtr<CFDictionaryRef> removedFeature(CFDictionaryRef feature)
 
 static RetainPtr<CTFontRef> createCTFontWithoutSynthesizableFeatures(CTFontRef font)
 {
-    RetainPtr<CFArrayRef> features = static_cast<CFArrayRef>(CTFontCopyAttribute(font, kCTFontFeatureSettingsAttribute));
+    RetainPtr<CFArrayRef> features = adoptCF(static_cast<CFArrayRef>(CTFontCopyAttribute(font, kCTFontFeatureSettingsAttribute)));
     if (!features)
         return font;
     CFIndex featureCount = CFArrayGetCount(features.get());
