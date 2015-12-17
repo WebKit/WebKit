@@ -1,3 +1,13 @@
+2015-12-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Remove temporary flakiness expectations for WPT tests introduced for bug 152257
+        https://bugs.webkit.org/show_bug.cgi?id=152377
+
+        Unreviewed.
+
+        * web-platform-tests/dom/interfaces-expected.txt: Rebased according latest testharness.js.
+        * web-platform-tests/html/dom/interfaces-expected.txt: Ditto.
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Mark additional wpt tests as flaky due to WK/WPT testharness.js

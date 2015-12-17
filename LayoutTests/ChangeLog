@@ -1,3 +1,12 @@
+2015-12-17  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Remove temporary flakiness expectations for WPT tests introduced for bug 152257
+        https://bugs.webkit.org/show_bug.cgi?id=152377
+
+        Unreviewed.
+
+        * TestExpectations: removing some flakiness expectations.
+
 2015-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Handle new_generator_func / new_generator_func_exp in DFG / FTL

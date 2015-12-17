@@ -266,16 +266,6 @@ imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/r
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html [ Skip ]
 
-# W3C tests temporarily marked as failing
-webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01.html [ Pass Failure ]
-webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02.html [ Pass Failure ]
-webkit.org/b/152257 imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode.xhtml [ Pass Failure ]
-webkit.org/b/152257 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Pass Failure Timeout ]
-webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/interfaces.html [ Pass Failure Timeout ]
-webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/responsetype.html [ Pass Failure Timeout ]
-webkit.org/b/152257 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-sync.htm [ Pass Failure Timeout ]
-webkit.org/b/152257 imported/w3c/web-platform-tests/dom/interfaces.html [ Pass Failure Timeout ]
-
 # Skip W3C tests that are too slow in debug builds.
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/interfaces.html [ Skip ]
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-compareBoundaryPoints.html [ Skip ]
