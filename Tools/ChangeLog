@@ -1,3 +1,13 @@
+2015-12-16  Aakash Jain  <aakash_jain@apple.com>
+
+        run-webkit-tests fails to delete Simulator device during cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=152363
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator.delete_device): Ensure that device is Shutdown before deleting it.
+
 2015-12-16  Tim Horton  <timothy_horton@apple.com>
 
         [mac-wk2] fast/events force click tests crashing

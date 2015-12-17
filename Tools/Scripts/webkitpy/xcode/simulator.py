@@ -300,6 +300,7 @@ class Simulator(object):
         return os.path.realpath(os.path.expanduser(os.path.join('~/Library/Developer/CoreSimulator/Devices', udid)))
 
     def delete_device(self, udid):
+        Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.SHUTDOWN)
         Device.delete(udid)
 
     def refresh(self):
