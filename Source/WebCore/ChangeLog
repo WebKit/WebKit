@@ -1,3 +1,21 @@
+2015-12-16  Andy Estes  <aestes@apple.com>
+
+        [iOS] Block loading external stylesheets in the Content-Disposition: attachment sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=152375
+        <rdar://problem/22020902>
+
+        Reviewed by Darin Adler.
+
+        Tests: http/tests/contentdispositionattachmentsandbox/at-import-stylesheets-disabled.html
+               http/tests/contentdispositionattachmentsandbox/external-stylesheets-disabled.html
+               http/tests/contentdispositionattachmentsandbox/xml-stylesheet-processing-instructions-disabled.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest): Moved handling of CachedResource::MainResource to canRequestInContentDispositionAttachmentSandbox().
+        (WebCore::CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox): In addition to handling CachedResource::MainResource,
+        added handling for CachedResource::CSSStyleSheet. Added a FIXME asking whether we should handle other types of resources, too.
+        * loader/cache/CachedResourceLoader.h:
+
 2015-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         ViewportConfiguration functions should return a bool to say if anything changed
