@@ -1,3 +1,20 @@
+2015-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Make SessionID use intHash
+        https://bugs.webkit.org/show_bug.cgi?id=152356
+
+        Reviewed by Darin Adler.
+
+        * page/SessionID.h:
+        (WTF::SessionIDHash::hash):
+        (WTF::SessionIDHash::equal):
+        (WTF::HashTraits<WebCore::SessionID>::emptyValue):
+        (WTF::HashTraits<WebCore::SessionID>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::SessionID>::isDeletedValue):
+        Use intHash instead of just casting a uint64_t to an unsigned.
+        This reduces hash collisions in HashTables that are usually quite small so it isn't much of a problem.
+        Also, needsDestruction hasn't been in HashTraits since r156507.
+
 2015-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the debug region overlays for RTL documents
