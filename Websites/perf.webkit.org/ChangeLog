@@ -1,5 +1,25 @@
 2015-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf Dashboard v3 UI doesn't show recent data points on v2 UI
+        https://bugs.webkit.org/show_bug.cgi?id=152368
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by the last modified date in measurement set JSON being a string instead of a POSIX timestamp,
+        which prevented the v3 UI from invalidating the cache. Specifically, the following boolean logic always evaluated
+        to false because +data['lastModified'] was NaN in MeasurementSet.prototype._fetch (/v3/models/measurement-set.js):
+
+        !clusterEndTime && useCache && +data['lastModified'] < self._lastModified
+
+        Fixed the bug by calling Database::to_js_time on the last modified date fetched from the database.
+
+        * public/api/measurement-set.php:
+        (MeasurementSetFetcher::fetch_config_list): Convert the string returned by the database to a POSIX timestamp.
+        * tests/api-measurement-set.js: Added a test to ensure the last modified date in JSON is numeric. Since the value
+        of the last modified date depends on when tests run, we can't assert it to be a certain value.
+
+2015-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         v3 UI should show and link the build number on charts page
         https://bugs.webkit.org/show_bug.cgi?id=152359
 

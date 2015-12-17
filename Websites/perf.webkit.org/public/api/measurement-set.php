@@ -85,7 +85,7 @@ class MeasurementSetFetcher {
         foreach ($config_rows as &$config_row) {
             $query = $this->execute_query($config_row['config_id']);
 
-            $this->last_modified = max($this->last_modified, $config_row['config_runs_last_modified']);
+            $this->last_modified = max($this->last_modified, Database::to_js_time($config_row['config_runs_last_modified']));
 
             $measurement_row = $this->db->fetch_next_row($query);
             if ($measurement_row) {

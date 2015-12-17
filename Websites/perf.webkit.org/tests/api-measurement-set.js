@@ -206,6 +206,7 @@ describe("/api/measurement-set", function () {
                             'revisions', 'commitTime', 'build', 'buildTime', 'buildNumber', 'builder']);
 
                         assert.equal(paresdResult['startTime'], reportWithBuildTime.startTime);
+                        assert(typeof(paresdResult['lastModified']) == 'number', 'lastModified time should be a numeric');
 
                         assert.deepEqual(Object.keys(paresdResult['configurations']), ['current']);
 
