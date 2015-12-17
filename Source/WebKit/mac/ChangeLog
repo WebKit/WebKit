@@ -1,3 +1,15 @@
+2015-12-17  Tim Horton  <timothy_horton@apple.com>
+
+        Data detector yellow highlight location is vertically mirrored in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=152216
+        <rdar://problem/23848003>
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        Match the conversion we do at every other WK1 TextIndicator construction.
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add fetch API compile time flag
