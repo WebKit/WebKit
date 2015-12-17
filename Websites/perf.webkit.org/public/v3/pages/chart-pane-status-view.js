@@ -6,6 +6,10 @@ class ChartPaneStatusView extends ChartStatusView {
         super(metric, chart);
 
         this._router = router;
+
+        this._buildLabel = null;
+        this._buildUrl = null;
+
         this._revisionList = [];
         this._currentRepository = null;
         this._revisionCallback = revisionCallback;
@@ -31,8 +35,8 @@ class ChartPaneStatusView extends ChartStatusView {
         var element = ComponentBase.createElement;
         var link = ComponentBase.createLink;
         var self = this;
-        this.renderReplace(this.content().querySelector('.chart-pane-revisions'),
-            this._revisionList.map(function (info, rowIndex) {
+        var buildInfo = this._buildInfo;
+        var tableContent = this._revisionList.map(function (info, rowIndex) {
             var selected = info.repository == self._currentRepository;
             var action = function () {
                 if (self._currentRepository == info.repository)
@@ -46,7 +50,25 @@ class ChartPaneStatusView extends ChartStatusView {
                 element('td', info.url ? link(info.label, info.label, info.url, true) : info.label),
                 element('td', {class: 'commit-viewer-opener'}, link('\u00BB', action)),
             ]);
-        }));
+        });
+
+        if (this._buildInfo) {
+            var number = this._buildInfo.buildNumber();
+            var builder = Builder.findById(this._buildInfo.builderId());
+            var url = null;
+            if (builder)
+                url = builder.urlForBuild(number);
+            var buildTime = this._buildInfo.formattedBuildTime();
+
+            tableContent.unshift(element('tr', [
+                element('td', 'Build'),
+                element('td', {colspan: 2}, [
+                    url ? link(number, `Build ${number} on "${builder.name()}"`, url, true) : number,
+                    ` (${buildTime})`]),
+            ]));
+        }
+
+        this.renderReplace(this.content().querySelector('.chart-pane-revisions'), tableContent);
     }
 
     setCurrentRepository(repository)
@@ -102,26 +124,31 @@ class ChartPaneStatusView extends ChartStatusView {
     {
         super.computeChartStatusLabels(currentPoint, previousPoint);
 
-        if (!currentPoint || !currentPoint.measurement) {
-            this._revisionList = [];
-            this._analyzeData = null;
+        this._buildInfo = null;
+        this._revisionList = [];
+        this._analyzeData = null;
+
+        if (!currentPoint)
             return;
-        }
-        
+
+        var currentMeasurement = currentPoint.measurement();
+        if (!currentMeasurement)
+            return;
+
+        if (!this._chart.currentSelection() && currentMeasurement)
+            this._buildInfo = currentMeasurement;
+
         if (currentPoint && previousPoint && this._chart.currentSelection()) {
             this._analyzeData = {
                 startPointId: previousPoint.id,
                 endPointId: currentPoint.id,
             };
-        } else
-            this._analyzeData = null;
+        }
 
         // FIXME: Rewrite the interface to obtain the list of revision changes.
         var previousMeasurement = previousPoint ? previousPoint.measurement() : null;
-        var currentMeasurement = currentPoint.measurement();
 
         var revisions = currentMeasurement.formattedRevisions(previousMeasurement);
-
         var revisionList = [];
         for (var repositoryId in revisions) {
             var repository = Repository.findById(repositoryId);
