@@ -4639,7 +4639,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
-    if (_data->_gestureController)
+    if (_data->_allowsMagnification && _data->_gestureController)
         _data->_gestureController->gestureEventWasNotHandledByWebCore(event, [self convertPoint:event.locationInWindow fromView:nil]);
 #endif
 }
