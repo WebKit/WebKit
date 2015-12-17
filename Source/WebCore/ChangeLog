@@ -1,3 +1,19 @@
+2015-12-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Prevent flashing/strobing repaints on certain hardware
+        https://bugs.webkit.org/show_bug.cgi?id=152394
+        <rdar://problem/23875302>
+
+        Reviewed by Simon Fraser.
+
+        This patch reverts a change I made in r192166, where I always set the
+        m_viewNeedsUpdate flag to true when a 'flushContext' call was made. Instead,
+        we should go back to letting the view decide when it needs to paint.
+
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        (WebCore::WKCACFViewLayerTreeHost::flushContext): Don't just claim that
+        the view needs to be updated any time we are asked to flush. 
+
 2015-12-17  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Release Direct3D swap chain object earlier.
