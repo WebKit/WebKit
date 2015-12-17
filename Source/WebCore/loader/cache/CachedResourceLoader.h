@@ -158,6 +158,8 @@ private:
 
     bool clientDefersImage(const URL&) const;
     void reloadImagesIfNotDeferred();
+
+    bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
     
     HashSet<String> m_validatedURLs;
     mutable DocumentResourceMap m_documentResources;

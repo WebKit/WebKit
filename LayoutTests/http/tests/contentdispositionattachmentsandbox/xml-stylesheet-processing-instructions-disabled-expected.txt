@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 2: Unsafe attempt to load URL data:text/css,body::after { content: 'FAIL'; } from document with Content-Disposition: attachment at URL http://127.0.0.1:8000/contentdispositionattachmentsandbox/resources/xml-stylesheet-processing-instructions-frame.php.
+This test verifies that xml-stylesheet processing instructions are disabled when 'Content-Disposition: attachment' sandboxing is enabled. A security error will be logged to the console if the test passes.
+
+
