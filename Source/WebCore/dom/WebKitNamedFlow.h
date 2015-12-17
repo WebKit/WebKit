@@ -48,16 +48,16 @@ class ScriptExecutionContext;
 
 class WebKitNamedFlow final : public RefCounted<WebKitNamedFlow>, public EventTargetWithInlineData {
 public:
-    static Ref<WebKitNamedFlow> create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName);
+    static Ref<WebKitNamedFlow> create(NamedFlowCollection& manager, const AtomicString& flowThreadName);
 
     ~WebKitNamedFlow();
 
     const AtomicString& name() const;
     bool overset() const;
     int firstEmptyRegionIndex() const;
-    PassRefPtr<NodeList> getRegionsByContent(Node*);
-    PassRefPtr<NodeList> getRegions();
-    PassRefPtr<NodeList> getContent();
+    Ref<NodeList> getRegionsByContent(Node*);
+    Ref<NodeList> getRegions();
+    Ref<NodeList> getContent();
 
     using RefCounted<WebKitNamedFlow>::ref;
     using RefCounted<WebKitNamedFlow>::deref;
@@ -81,7 +81,7 @@ public:
     void dispatchRegionOversetChangeEvent();
 
 private:
-    WebKitNamedFlow(PassRefPtr<NamedFlowCollection>, const AtomicString&);
+    WebKitNamedFlow(NamedFlowCollection&, const AtomicString&);
 
     // EventTarget implementation.
     virtual void refEventTarget() override { ref(); }
@@ -90,7 +90,7 @@ private:
     // The name of the flow thread as specified in CSS.
     AtomicString m_flowThreadName;
 
-    RefPtr<NamedFlowCollection> m_flowManager;
+    NamedFlowCollection& m_flowManager;
     RenderNamedFlowThread* m_parentFlowThread;
 };
 

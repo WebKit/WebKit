@@ -62,11 +62,11 @@ private:
 
 class StaticElementList final : public NodeList {
 public:
-    static PassRefPtr<StaticElementList> adopt(Vector<Ref<Element>>& elements)
+    static Ref<StaticElementList> adopt(Vector<Ref<Element>>& elements)
     {
-        RefPtr<StaticElementList> nodeList = adoptRef(new StaticElementList);
+        Ref<StaticElementList> nodeList = adoptRef(*new StaticElementList);
         nodeList->m_elements.swap(elements);
-        return nodeList.release();
+        return nodeList;
     }
 
     static Ref<StaticElementList> createEmpty()

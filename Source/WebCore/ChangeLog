@@ -1,3 +1,39 @@
+2015-12-16  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce PassRefPtr uses in dom - 2
+        https://bugs.webkit.org/show_bug.cgi?id=151936
+
+        Reviewed by Darin Adler.
+
+        Change PassRefPtr with RefPtr<Foo>&&, WTF::move(), Foo*, and Foo&.
+
+        * dom/ScopedEventQueue.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::registerCallback):
+        * dom/ScriptedAnimationController.h:
+        * dom/StaticNodeList.h:
+        * dom/Traversal.cpp:
+        (WebCore::NodeIteratorBase::NodeIteratorBase):
+        * dom/Traversal.h:
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::TreeWalker):
+        (WebCore::TreeWalker::setCurrentNode):
+        * dom/TreeWalker.h:
+        (WebCore::TreeWalker::create):
+        * dom/UserActionElementSet.h:
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::WebKitNamedFlow):
+        (WebCore::WebKitNamedFlow::create):
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+        (WebCore::WebKitNamedFlow::getContent):
+        * dom/WebKitNamedFlow.h:
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        (WebCore::WheelEvent::initWebKitWheelEvent):
+        * dom/WheelEvent.h:
+
 2015-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify isOverlayScrollbar() logic
