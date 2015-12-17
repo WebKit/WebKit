@@ -1,3 +1,18 @@
+2015-12-17  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Release Direct3D swap chain object earlier.
+        https://bugs.webkit.org/show_bug.cgi?id=152392
+
+        Reviewed by Alex Christensen.
+
+        Since we don't use the swap chain object to render the video to a window,
+        but render frames to Cairo bitmaps, we can let go of the swap chain object
+        earlier than we currently do. 
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::clearDesiredSampleTime):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::createVideoSamples):
+
 2015-12-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194201.
