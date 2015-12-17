@@ -1,3 +1,17 @@
+2015-12-17  Aakash Jain  <aakash_jain@apple.com>
+
+        run-webkit-tests shouldn't start multiple iOS simulators while only running one test
+        https://bugs.webkit.org/show_bug.cgi?id=152157
+        <rdar://problem/23851817>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.get_worker_count): Calculate required number of workers.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._get_test_inputs): Common method to calculate test_inputs.
+        (Manager._update_worker_count): Calculate and update required number of workers.
+
 2015-12-16  Aakash Jain  <aakash_jain@apple.com>
 
         run-webkit-tests fails to delete Simulator device during cleanup

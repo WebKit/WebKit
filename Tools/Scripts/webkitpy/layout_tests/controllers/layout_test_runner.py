@@ -78,6 +78,10 @@ class LayoutTestRunner(object):
         self._retrying = False
         self._current_run_results = None
 
+    def get_worker_count(self, test_inputs, child_process_count):
+        all_shards = self._sharder.shard_tests(test_inputs, child_process_count, self._options.fully_parallel)
+        return min(child_process_count, len(all_shards))
+
     def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, needs_web_platform_test_server, retrying):
         self._expectations = expectations
         self._test_inputs = test_inputs
@@ -106,7 +110,6 @@ class LayoutTestRunner(object):
         if (self._needs_http and self._options.http) or self._needs_web_platform_test_server:
             self.start_servers()
 
-        num_workers = min(num_workers, len(all_shards))
         self._printer.print_workers_and_shards(num_workers, len(all_shards))
 
         if self._options.dry_run:

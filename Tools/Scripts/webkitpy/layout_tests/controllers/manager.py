@@ -135,6 +135,19 @@ class Manager(object):
     def needs_servers(self, test_names):
         return any(self._is_http_test(test_name) for test_name in test_names) and self._options.http
 
+    def _get_test_inputs(self, tests_to_run, repeat_each, iterations):
+        test_inputs = []
+        for _ in xrange(iterations):
+            for test in tests_to_run:
+                for _ in xrange(repeat_each):
+                    test_inputs.append(self._test_input_for_file(test))
+        return test_inputs
+
+    def _update_worker_count(self, test_names):
+        test_inputs = self._get_test_inputs(test_names, self._options.repeat_each, self._options.iterations)
+        worker_count = self._runner.get_worker_count(test_inputs, int(self._options.child_processes))
+        self._options.child_processes = worker_count
+
     def _set_up_run(self, test_names):
         self._printer.write_update("Checking build ...")
         if not self._port.check_build(self.needs_servers(test_names)):
@@ -147,6 +160,7 @@ class Manager(object):
         if not self._port.start_helper(self._options.pixel_tests):
             return False
 
+        self._update_worker_count(test_names)
         self._port.reset_preferences()
 
         # Check that the system dependencies (themes, fonts, ...) are correct.
@@ -251,11 +265,7 @@ class Manager(object):
         needs_web_platform_test_server = any(self._is_web_platform_test(test) for test in tests_to_run)
         needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
 
-        test_inputs = []
-        for _ in xrange(iterations):
-            for test in tests_to_run:
-                for _ in xrange(repeat_each):
-                    test_inputs.append(self._test_input_for_file(test))
+        test_inputs = self._get_test_inputs(tests_to_run, repeat_each, iterations)
         return self._runner.run_tests(self._expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, needs_web_platform_test_server, retrying)
 
     def _clean_up_run(self):
