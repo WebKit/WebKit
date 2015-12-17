@@ -1,3 +1,25 @@
+2015-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the debug region overlays for RTL documents
+        https://bugs.webkit.org/show_bug.cgi?id=152372
+
+        Reviewed by Darin Adler.
+        
+        Fix document overlays to use document coordinates when painting, which requires
+        translating the CTM, and counter-translating the dirtyRect by the scroll origin.
+        This is only non-zero for RTL documents.
+        
+        While doing this, I noticed that the scroll origin was misplaced by the scrollbar
+        width when using overlay scrollbars. Fix by using occupiedWidth/Height() in
+        ScrollView::updateScrollbars(). I was not able to make a test for this change.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::drawRect):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2015-12-16  Andy Estes  <aestes@apple.com>
 
         [iOS] Block loading external stylesheets in the Content-Disposition: attachment sandbox

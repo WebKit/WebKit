@@ -659,7 +659,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (hasHorizontalScrollbar != newHasHorizontalScrollbar && (hasHorizontalScrollbar || !avoidScrollbarCreation())) {
             if (scrollOrigin().y() && !newHasHorizontalScrollbar)
-                ScrollableArea::setScrollOrigin(IntPoint(scrollOrigin().x(), scrollOrigin().y() - m_horizontalScrollbar->height()));
+                ScrollableArea::setScrollOrigin(IntPoint(scrollOrigin().x(), scrollOrigin().y() - m_horizontalScrollbar->occupiedHeight()));
             if (m_horizontalScrollbar)
                 m_horizontalScrollbar->invalidate();
 
@@ -672,7 +672,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (hasVerticalScrollbar != newHasVerticalScrollbar && (hasVerticalScrollbar || !avoidScrollbarCreation())) {
             if (scrollOrigin().x() && !newHasVerticalScrollbar)
-                ScrollableArea::setScrollOrigin(IntPoint(scrollOrigin().x() - m_verticalScrollbar->width(), scrollOrigin().y()));
+                ScrollableArea::setScrollOrigin(IntPoint(scrollOrigin().x() - m_verticalScrollbar->occupiedWidth(), scrollOrigin().y()));
             if (m_verticalScrollbar)
                 m_verticalScrollbar->invalidate();
 

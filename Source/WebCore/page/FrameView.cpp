@@ -641,7 +641,7 @@ void FrameView::adjustViewSize()
     const IntSize& size = rect.size();
     ScrollView::setScrollOrigin(IntPoint(-rect.x(), -rect.y()), !frame().document()->printing(), size == contentsSize());
 
-    LOG(Layout, "FrameView %p adjustViewSize: unscaled document size changed to %dx%d (scaled to %dx%d)", this, renderView->unscaledDocumentRect().width(), renderView->unscaledDocumentRect().height(), size.width(), size.height());
+    LOG_WITH_STREAM(Layout, stream << "FrameView " << this << " adjustViewSize: unscaled document rect changed to " << renderView->unscaledDocumentRect() << " (scaled to " << size << ")");
 
     setContentsSize(size);
 }
