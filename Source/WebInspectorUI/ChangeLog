@@ -1,3 +1,15 @@
+2015-12-17  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: control whether to collect and dump protocol messages using a WebInspector.Setting
+        https://bugs.webkit.org/show_bug.cgi?id=151635
+
+        Reviewed by Joseph Pecoraro.
+
+        Follow-up fix to stop double-logging everything.
+
+        * UserInterface/Protocol/LoggingProtocolTracer.js:
+        (WebInspector.LoggingProtocolTracer.prototype._processEntry):
+
 2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve console.trace, make it more like console.assert and inline the message
