@@ -27,8 +27,8 @@
     --z-index-highlight: 64;
     --z-index-header: 128;
     --z-index-resizer: 256;
-    --z-index-tooltip: 512;
-    --z-index-popover: 1024;
+    --z-index-popover: 512;
+    --z-index-tooltip: 1024;
     --z-index-glass-pane-for-drag: 2048;
     --z-index-uncaught-exception-sheet: 4096;
 

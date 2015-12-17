@@ -1,3 +1,14 @@
+2015-12-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r193913): Popover covers completion suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=152369
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Swap popover and tooltip z-index ordering.
+
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: console.dir(...) should force allowing object expansion
