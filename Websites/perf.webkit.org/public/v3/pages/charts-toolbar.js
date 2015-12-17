@@ -18,26 +18,8 @@ class ChartsToolbar extends DomainControlToolbar {
 
         this._paneSelector.setCallback(this._addPane.bind(this));
         this._paneSelectorOpener.addEventListener('click', this._togglePaneSelector.bind(this));
-        
-        var self = this;
-        this._paneSelectorOpener.addEventListener('mouseenter', function () {
-            self._openPaneSelector(false);
-            temporarilyIgnoreMouseleave = true;
-            setTimeout(function () { temporarilyIgnoreMouseleave = false; }, 0);
-        });
-        this._paneSelectorContainer.style.display = 'none';
 
-        var temporarilyIgnoreMouseleave = false;
-        this._paneSelectorContainer.addEventListener('mousemove', function () {
-            temporarilyIgnoreMouseleave = true; // Workaround webkit.org/b/152170
-            setTimeout(function () { temporarilyIgnoreMouseleave = false; }, 0);
-        });
-        this._paneSelectorContainer.addEventListener('mouseleave', function (event) {
-            setTimeout(function () {
-                if (!temporarilyIgnoreMouseleave)
-                    self._closePaneSelector();
-            }, 0);
-        });
+        this._paneSelectorContainer.style.display = 'none';
     }
 
     render()
@@ -75,7 +57,6 @@ class ChartsToolbar extends DomainControlToolbar {
             this._numberOfDaysCallback(numberOfDays, event.type == 'change');
     }
 
-
     _togglePaneSelector(event)
     {
         event.preventDefault();
@@ -107,11 +88,8 @@ class ChartsToolbar extends DomainControlToolbar {
 
     _addPane(platform, metric)
     {
-        if (!this._addPaneCallback)
-            return;
-
-        this._closePaneSelector();
-        this._addPaneCallback(platform, metric);
+        if (this._addPaneCallback)
+            this._addPaneCallback(platform, metric);
     }
 
 
@@ -135,6 +113,10 @@ class ChartsToolbar extends DomainControlToolbar {
     {
         return Toolbar.cssTemplate() + `
 
+            .charts-toolbar > .buttoned-toolbar:first-child {
+                margin-right: 0.5rem;
+            }
+
             .buttoned-toolbar li a.pane-selector-opener:hover {
                 background: rgba(204, 153, 51, 0.1);
             }
@@ -153,6 +135,7 @@ class ChartsToolbar extends DomainControlToolbar {
             }
 
             .start-time-slider {
+                padding-left: 1rem;
                 line-height: 1em;
                 font-size: 0.9rem;
             }
