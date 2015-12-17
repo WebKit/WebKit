@@ -489,7 +489,6 @@ Bug(GTK) css3/filters/backdrop [ Skip ]
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
 
 webkit.org/b/141423 css3/calc/line-height.html [ Failure ]
-webkit.org/b/141423 editing/pasteboard/simplfiying-markup-should-not-strip-content.html [ Failure ]
 webkit.org/b/141423 fast/css/font-shorthand-from-longhands.html [ Failure ]
 webkit.org/b/141423 fast/css/font-shorthand-line-height.html [ Failure ]
 webkit.org/b/141423 fast/css/getComputedStyle/computed-style-font.html [ Failure ]
@@ -1970,7 +1969,6 @@ webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
 webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ ImageOnlyFailure ]
 
 # Subpixel rendering: borders are reporting float values.
-webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
 webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-initial-value-001.htm [ Failure ]
 webkit.org/b/128061 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ Failure ]
@@ -2274,8 +2272,6 @@ webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
 
 webkit.org/b/136255 fast/block/float/overhanging-tall-block.html [ Failure ]
 
-webkit.org/b/136159 fast/borders/border-painting-dashed-at-all.html [ ImageOnlyFailure ]
-webkit.org/b/136159 fast/borders/border-painting-dotted-at-all.html [ ImageOnlyFailure ]
 webkit.org/b/136159 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
 webkit.org/b/136159 fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
 
@@ -2353,7 +2349,6 @@ webkit.org/b/142482 http/tests/security/mixedContent/insecure-audio-video-in-mai
 webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
 webkit.org/b/142667 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
 
-webkit.org/b/142668 fast/backgrounds/background-opaque-clipped-gradients.html [ ImageOnlyFailure ]
 webkit.org/b/142669 fast/regions/overflow/overflow-region-float.html [ ImageOnlyFailure ]
 
 webkit.org/b/143230 imported/mozilla/svg/filters/feImage-1.svg [ ImageOnlyFailure ]
@@ -2613,7 +2608,6 @@ css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 # Media controls tests are OS X only
 media/controls [ Skip ]
 
-# Mocking the system language is not implemented in GTK.
-fast/text/international/system-language [ Failure ]
-
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
+
+webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Pass ]
