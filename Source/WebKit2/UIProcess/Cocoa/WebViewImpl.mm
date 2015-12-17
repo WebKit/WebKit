@@ -3173,9 +3173,12 @@ void WebViewImpl::touchesEndedWithEvent(NSEvent *event)
 {
     m_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:m_view].allObjects;
     for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseEnded inView:m_view]) {
-        size_t identityIndex = m_activeTouchIdentities.find(touch.identity);
-        ASSERT(identityIndex != notFound);
-        m_activeTouchIdentities.remove(identityIndex);
+        for (size_t i = 0; i < m_activeTouchIdentities.size(); i++) {
+            if ([m_activeTouchIdentities[i] isEqual:touch.identity]) {
+                m_activeTouchIdentities.remove(i);
+                break;
+            }
+        }
     }
 }
 
@@ -3183,9 +3186,12 @@ void WebViewImpl::touchesCancelledWithEvent(NSEvent *event)
 {
     m_lastTouches = [event touchesMatchingPhase:NSTouchPhaseAny inView:m_view].allObjects;
     for (NSTouch *touch in [event touchesMatchingPhase:NSTouchPhaseCancelled inView:m_view]) {
-        size_t identityIndex = m_activeTouchIdentities.find(touch.identity);
-        ASSERT(identityIndex != notFound);
-        m_activeTouchIdentities.remove(identityIndex);
+        for (size_t i = 0; i < m_activeTouchIdentities.size(); i++) {
+            if ([m_activeTouchIdentities[i] isEqual:touch.identity]) {
+                m_activeTouchIdentities.remove(i);
+                break;
+            }
+        }
     }
 }
 

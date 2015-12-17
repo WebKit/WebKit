@@ -1,3 +1,17 @@
+2015-12-16  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r194125): Crashes in touchesEndedWithEvent on occasion when interacting with the page
+        https://bugs.webkit.org/show_bug.cgi?id=152366
+        <rdar://problem/23929672>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::touchesEndedWithEvent):
+        (WebKit::WebViewImpl::touchesCancelledWithEvent):
+        NSTouch identifiers aren't pointer-comparable. We need to use isEqual to
+        compare them and find the ones to remove.
+
 2015-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify isOverlayScrollbar() logic
