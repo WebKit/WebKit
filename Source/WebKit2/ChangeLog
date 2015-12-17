@@ -1,3 +1,13 @@
+2015-12-17  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r191305.
+
+    2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+            Try to fix the iOS build
+
+            * Configurations/FeatureDefines.xcconfig:
+
 2015-12-16  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r194205.
