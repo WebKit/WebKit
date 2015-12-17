@@ -3233,7 +3233,7 @@ void WebViewImpl::gestureEventWasNotHandledByWebCore(NSEvent *event)
 void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
-    if (m_gestureController)
+    if (m_allowsMagnification && m_gestureController)
         m_gestureController->gestureEventWasNotHandledByWebCore(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
 #endif
 }

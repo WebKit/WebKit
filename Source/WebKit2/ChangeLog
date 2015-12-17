@@ -1,5 +1,18 @@
 2015-12-16  Tim Horton  <timothy_horton@apple.com>
 
+        REGRESSION (r191299): Zoom gestures are enabled even if allowsMagnification=NO
+        https://bugs.webkit.org/show_bug.cgi?id=152373
+        <rdar://problem/23931998>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly):
+        Don't pass the event on to ViewGestureController if we shouldn't handle it,
+        just like we would have done in magnifyWithEvent before.
+
+2015-12-16  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r194125): Crashes in touchesEndedWithEvent on occasion when interacting with the page
         https://bugs.webkit.org/show_bug.cgi?id=152366
         <rdar://problem/23929672>
