@@ -382,8 +382,11 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
                 var labelWidth = this._annotationLabel.offsetWidth;
                 var labelHeight = this._annotationLabel.offsetHeight;
 
-                var x = Math.round(annotation.x - labelWidth / 2);
-                var y = Math.floor(annotation.y - labelHeight);
+                var centerX = annotation.x + annotation.width / 2 - labelWidth / 2;
+                var maxX = metrics.chartX + metrics.chartWidth - labelWidth - 2;
+
+                var x = Math.round(Math.min(maxX, Math.max(metrics.chartX + 2, centerX)));
+                var y = Math.floor(annotation.y - labelHeight - 1);
 
                 // Use transform: translate to position the label to avoid triggering another browser layout.
                 this._annotationLabel.style.transform = `translate(${x}px, ${y}px)`;
