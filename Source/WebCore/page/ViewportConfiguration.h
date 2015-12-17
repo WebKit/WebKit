@@ -73,15 +73,15 @@ public:
     WEBCORE_EXPORT void setDefaultConfiguration(const Parameters&);
 
     const IntSize& contentsSize() const { return m_contentSize; }
-    WEBCORE_EXPORT void setContentsSize(const IntSize&);
+    WEBCORE_EXPORT bool setContentsSize(const IntSize&);
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
-    WEBCORE_EXPORT void setMinimumLayoutSize(const FloatSize&);
+    WEBCORE_EXPORT bool setMinimumLayoutSize(const FloatSize&);
 
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
-    WEBCORE_EXPORT void setViewportArguments(const ViewportArguments&);
+    WEBCORE_EXPORT bool setViewportArguments(const ViewportArguments&);
 
-    void setCanIgnoreScalingConstraints(bool canIgnoreScalingConstraints) { m_canIgnoreScalingConstraints = canIgnoreScalingConstraints; }
+    WEBCORE_EXPORT bool setCanIgnoreScalingConstraints(bool);
     void setForceAlwaysUserScalable(bool forceAlwaysUserScalable) { m_forceAlwaysUserScalable = forceAlwaysUserScalable; }
 
     WEBCORE_EXPORT IntSize layoutSize() const;

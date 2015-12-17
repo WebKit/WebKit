@@ -228,11 +228,8 @@ FloatSize WebPage::availableScreenSize() const
 
 void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArguments)
 {
-    if (m_viewportConfiguration.viewportArguments() == viewportArguments)
-        return;
-
-    m_viewportConfiguration.setViewportArguments(viewportArguments);
-    viewportConfigurationChanged();
+    if (m_viewportConfiguration.setViewportArguments(viewportArguments))
+        viewportConfigurationChanged();
 }
 
 void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
@@ -2539,8 +2536,9 @@ void WebPage::elementDidBlur(WebCore::Node* node)
 void WebPage::setViewportConfigurationMinimumLayoutSize(const FloatSize& size)
 {
     resetTextAutosizingBeforeLayoutIfNeeded(m_viewportConfiguration.minimumLayoutSize(), size);
-    m_viewportConfiguration.setMinimumLayoutSize(size);
-    viewportConfigurationChanged();
+    
+    if (m_viewportConfiguration.setMinimumLayoutSize(size))
+        viewportConfigurationChanged();
 }
 
 void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)

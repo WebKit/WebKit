@@ -3536,10 +3536,8 @@ void WebPage::mainFrameDidLayout()
 #if PLATFORM(IOS)
     if (FrameView* frameView = mainFrameView()) {
         IntSize newContentSize = frameView->contentsSizeRespectingOverflow();
-        if (m_viewportConfiguration.contentsSize() != newContentSize) {
-            m_viewportConfiguration.setContentsSize(newContentSize);
+        if (m_viewportConfiguration.setContentsSize(newContentSize))
             viewportConfigurationChanged();
-        }
     }
     m_findController.redraw();
 #endif
@@ -4685,9 +4683,16 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     resetViewportDefaultConfiguration(frame);
     const Frame* coreFrame = frame->coreFrame();
-    m_viewportConfiguration.setContentsSize(coreFrame->view()->contentsSize());
-    m_viewportConfiguration.setViewportArguments(coreFrame->document()->viewportArguments());
-    viewportConfigurationChanged();
+    
+    bool viewportChanged = false;
+    if (m_viewportConfiguration.setContentsSize(coreFrame->view()->contentsSize()))
+        viewportChanged = true;
+
+    if (m_viewportConfiguration.setViewportArguments(coreFrame->document()->viewportArguments()))
+        viewportChanged = true;
+
+    if (viewportChanged)
+        viewportConfigurationChanged();
 #endif
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
