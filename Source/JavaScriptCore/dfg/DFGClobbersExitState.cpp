@@ -61,6 +61,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case PhantomNewObject:
     case MaterializeNewObject:
     case PhantomNewFunction:
+    case PhantomNewGeneratorFunction:
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
     case CountExecution:
@@ -77,6 +78,7 @@ bool clobbersExitState(Graph& graph, Node* node)
 
     case NewArrowFunction:
     case NewFunction:
+    case NewGeneratorFunction:
         // Like above, but with the JSFunction allocation caveat.
         return node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid();
 

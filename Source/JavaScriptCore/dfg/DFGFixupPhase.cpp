@@ -1246,6 +1246,7 @@ private:
         case BooleanToNumber:
         case PhantomNewObject:
         case PhantomNewFunction:
+        case PhantomNewGeneratorFunction:
         case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
@@ -1387,7 +1388,8 @@ private:
 
         case CreateScopedArguments:
         case CreateActivation:
-        case NewFunction: {
+        case NewFunction:
+        case NewGeneratorFunction: {
             fixEdge<CellUse>(node->child1());
             break;
         }

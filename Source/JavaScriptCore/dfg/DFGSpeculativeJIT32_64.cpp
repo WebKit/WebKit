@@ -4408,6 +4408,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case NewFunction:
     case NewArrowFunction:
+    case NewGeneratorFunction:
         compileNewFunction(node);
         break;
 
@@ -4802,6 +4803,7 @@ void SpeculativeJIT::compile(Node* node)
     case BottomValue:
     case PhantomNewObject:
     case PhantomNewFunction:
+    case PhantomNewGeneratorFunction:
     case PhantomCreateActivation:
     case PutHint:
     case CheckStructureImmediate:

@@ -1,3 +1,15 @@
+2015-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Handle new_generator_func / new_generator_func_exp in DFG / FTL
+        https://bugs.webkit.org/show_bug.cgi?id=152227
+
+        Reviewed by Saam Barati.
+
+        Make the test taking longer time.
+
+        * js/regress/script-tests/generator-function-create.js:
+        (test):
+
 2015-12-16  Andy Estes  <aestes@apple.com>
 
         [iOS] Block loading external stylesheets in the Content-Disposition: attachment sandbox

@@ -455,6 +455,7 @@ private:
                 case CheckInBounds:
                 case PhantomNewObject:
                 case PhantomNewFunction:
+                case PhantomNewGeneratorFunction:
                 case PhantomCreateActivation:
                 case GetMyArgumentByVal:
                 case PutHint:
@@ -563,6 +564,7 @@ private:
                 switch (node->op()) {
                 case PhantomNewObject:
                 case PhantomNewFunction:
+                case PhantomNewGeneratorFunction:
                 case PhantomCreateActivation:
                 case PhantomDirectArguments:
                 case PhantomClonedArguments:

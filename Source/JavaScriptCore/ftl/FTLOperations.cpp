@@ -34,6 +34,7 @@
 #include "FTLLazySlowPath.h"
 #include "InlineCallFrame.h"
 #include "JSCInlines.h"
+#include "JSGeneratorFunction.h"
 #include "JSLexicalEnvironment.h"
 
 namespace JSC { namespace FTL {
@@ -92,6 +93,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
     }
 
     case PhantomNewFunction:
+    case PhantomNewGeneratorFunction:
     case PhantomDirectArguments:
     case PhantomClonedArguments:
         // Those are completely handled by operationMaterializeObjectInOSR
@@ -160,7 +162,8 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         return result;
     }
 
-    case PhantomNewFunction: {
+    case PhantomNewFunction:
+    case PhantomNewGeneratorFunction: {
         // Figure out what the executable and activation are
         FunctionExecutable* executable = nullptr;
         JSScope* activation = nullptr;
@@ -173,10 +176,10 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         }
         RELEASE_ASSERT(executable && activation);
 
-        
-        JSFunction* result = JSFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
-
-        return result;
+        if (materialization->type() == PhantomNewFunction)
+            return JSFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
+        ASSERT(materialization->type() == PhantomNewGeneratorFunction);
+        return JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
     }
 
     case PhantomCreateActivation: {

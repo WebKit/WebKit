@@ -1025,6 +1025,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PhantomNewObject:
     case MaterializeNewObject:
     case PhantomNewFunction:
+    case PhantomNewGeneratorFunction:
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
         read(HeapObjectCount);
@@ -1033,6 +1034,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     
     case NewArrowFunction:
     case NewFunction:
+    case NewGeneratorFunction:
         if (node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid())
             write(Watchpoint_fire);
         read(HeapObjectCount);
