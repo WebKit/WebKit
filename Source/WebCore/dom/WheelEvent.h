@@ -64,16 +64,16 @@ public:
         return adoptRef(*new WheelEvent(type, initializer));
     }
 
-    static Ref<WheelEvent> create(const PlatformWheelEvent& event, AbstractView* view)
+    static Ref<WheelEvent> create(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)
     {
         return adoptRef(*new WheelEvent(event, view));
     }
 
-    void initWheelEvent(int rawDeltaX, int rawDeltaY, AbstractView*,
+    void initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<AbstractView>,
         int screenX, int screenY, int pageX, int pageY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
-    void initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, AbstractView*,
+    void initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<AbstractView>,
         int screenX, int screenY, int pageX, int pageY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
@@ -100,7 +100,7 @@ public:
 private:
     WheelEvent();
     WheelEvent(const AtomicString&, const WheelEventInit&);
-    WheelEvent(const PlatformWheelEvent&, AbstractView*);
+    WheelEvent(const PlatformWheelEvent&, PassRefPtr<AbstractView>);
 
     virtual bool isWheelEvent() const override;
 

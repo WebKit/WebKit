@@ -1,3 +1,17 @@
+2015-12-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r194201.
+        https://bugs.webkit.org/show_bug.cgi?id=152391
+
+        Caused crashes with GuardMalloc (Requested by ap|away on
+        #webkit).
+
+        Reverted changeset:
+
+        "Reduce PassRefPtr uses in dom - 2"
+        https://bugs.webkit.org/show_bug.cgi?id=151936
+        http://trac.webkit.org/changeset/194201
+
 2015-12-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix unused parameter handling in WebGLRenderingContextBase.cp

@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-TreeWalker::TreeWalker(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
+TreeWalker::TreeWalker(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
     : NodeIteratorBase(rootNode, whatToShow, WTF::move(filter))
     , m_current(root())
 {
 }
 
-void TreeWalker::setCurrentNode(Node* node, ExceptionCode& ec)
+void TreeWalker::setCurrentNode(PassRefPtr<Node> node, ExceptionCode& ec)
 {
     if (!node) {
         ec = NOT_SUPPORTED_ERR;

@@ -37,13 +37,13 @@ namespace WebCore {
 
     class TreeWalker : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
     public:
-        static Ref<TreeWalker> create(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
+        static Ref<TreeWalker> create(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
         {
             return adoptRef(*new TreeWalker(rootNode, whatToShow, WTF::move(filter)));
         }                            
 
         Node* currentNode() const { return m_current.get(); }
-        void setCurrentNode(Node*, ExceptionCode&);
+        void setCurrentNode(PassRefPtr<Node>, ExceptionCode&);
 
         Node* parentNode();
         Node* firstChild();
@@ -54,7 +54,7 @@ namespace WebCore {
         Node* nextNode();
 
     private:
-        TreeWalker(Node&, unsigned long whatToShow, RefPtr<NodeFilter>&&);
+        TreeWalker(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&);
         enum class SiblingTraversalType { Previous, Next };
         template<SiblingTraversalType> Node* traverseSiblings();
         

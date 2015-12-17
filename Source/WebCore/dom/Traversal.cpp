@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-NodeIteratorBase::NodeIteratorBase(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& nodeFilter)
+NodeIteratorBase::NodeIteratorBase(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& nodeFilter)
     : m_root(rootNode)
     , m_whatToShow(whatToShow)
     , m_filter(WTF::move(nodeFilter))

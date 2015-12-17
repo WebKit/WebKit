@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WebKitNamedFlow::WebKitNamedFlow(NamedFlowCollection& manager, const AtomicString& flowThreadName)
+WebKitNamedFlow::WebKitNamedFlow(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
     : m_flowThreadName(flowThreadName)
     , m_flowManager(manager)
     , m_parentFlowThread(nullptr)
@@ -49,10 +49,10 @@ WebKitNamedFlow::WebKitNamedFlow(NamedFlowCollection& manager, const AtomicStrin
 WebKitNamedFlow::~WebKitNamedFlow()
 {
     // The named flow is not "strong" referenced from anywhere at this time so it shouldn't be reused if the named flow is recreated.
-    m_flowManager.discardNamedFlow(this);
+    m_flowManager->discardNamedFlow(this);
 }
 
-Ref<WebKitNamedFlow> WebKitNamedFlow::create(NamedFlowCollection& manager, const AtomicString& flowThreadName)
+Ref<WebKitNamedFlow> WebKitNamedFlow::create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
 {
     return adoptRef(*new WebKitNamedFlow(manager, flowThreadName));
 }
@@ -64,8 +64,8 @@ const AtomicString& WebKitNamedFlow::name() const
 
 bool WebKitNamedFlow::overset() const
 {
-    if (m_flowManager.document())
-        m_flowManager.document()->updateLayoutIgnorePendingStylesheets();
+    if (m_flowManager->document())
+        m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
 
     // The renderer may be destroyed or created after the style update.
     // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
@@ -92,8 +92,8 @@ static inline bool inFlowThread(RenderObject* renderer, RenderNamedFlowThread* f
 
 int WebKitNamedFlow::firstEmptyRegionIndex() const
 {
-    if (m_flowManager.document())
-        m_flowManager.document()->updateLayoutIgnorePendingStylesheets();
+    if (m_flowManager->document())
+        m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
 
     if (!m_parentFlowThread)
         return -1;
@@ -117,13 +117,13 @@ int WebKitNamedFlow::firstEmptyRegionIndex() const
     return -1;
 }
 
-Ref<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
+PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
 {
     if (!contentNode)
         return StaticElementList::createEmpty();
 
-    if (m_flowManager.document())
-        m_flowManager.document()->updateLayoutIgnorePendingStylesheets();
+    if (m_flowManager->document())
+        m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
 
     // The renderer may be destroyed or created after the style update.
     // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
@@ -151,10 +151,10 @@ Ref<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
     return StaticElementList::adopt(regionElements);
 }
 
-Ref<NodeList> WebKitNamedFlow::getRegions()
+PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
 {
-    if (m_flowManager.document())
-        m_flowManager.document()->updateLayoutIgnorePendingStylesheets();
+    if (m_flowManager->document())
+        m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
 
     // The renderer may be destroyed or created after the style update.
     // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
@@ -178,10 +178,10 @@ Ref<NodeList> WebKitNamedFlow::getRegions()
     return StaticElementList::adopt(regionElements);
 }
 
-Ref<NodeList> WebKitNamedFlow::getContent()
+PassRefPtr<NodeList> WebKitNamedFlow::getContent()
 {
-    if (m_flowManager.document())
-        m_flowManager.document()->updateLayoutIgnorePendingStylesheets();
+    if (m_flowManager->document())
+        m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
 
     // The renderer may be destroyed or created after the style update.
     // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
@@ -216,17 +216,17 @@ void WebKitNamedFlow::dispatchRegionOversetChangeEvent()
     if (flowState() == FlowStateNull)
         return;
 
-    dispatchEvent(UIEvent::create(eventNames().webkitregionoversetchangeEvent, false, false, m_flowManager.document()->defaultView(), 0));
+    dispatchEvent(UIEvent::create(eventNames().webkitregionoversetchangeEvent, false, false, m_flowManager->document()->defaultView(), 0));
 }
 
 ScriptExecutionContext* WebKitNamedFlow::scriptExecutionContext() const
 {
-    return m_flowManager.document();
+    return m_flowManager->document();
 }
 
 Node* WebKitNamedFlow::ownerNode() const
 {
-    return m_flowManager.document();
+    return m_flowManager->document();
 }
 
 } // namespace WebCore

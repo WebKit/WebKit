@@ -35,17 +35,17 @@ namespace WebCore {
 
     class NodeIteratorBase {
     public:
-        Node* root() const { return &m_root; }
+        Node* root() const { return m_root.get(); }
         unsigned long whatToShow() const { return m_whatToShow; }
         NodeFilter* filter() const { return m_filter.get(); }
         bool expandEntityReferences() const { return false; }
 
     protected:
-        NodeIteratorBase(Node&, unsigned long whatToShow, RefPtr<NodeFilter>&&);
+        NodeIteratorBase(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&);
         short acceptNode(Node*) const;
 
     private:
-        Node& m_root;
+        RefPtr<Node> m_root;
         unsigned long m_whatToShow;
         RefPtr<NodeFilter> m_filter;
     };

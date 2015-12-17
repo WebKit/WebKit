@@ -76,7 +76,7 @@ Ref<WebKitNamedFlow> NamedFlowCollection::ensureFlowWithName(const String& flowN
         return *namedFlow;
     }
 
-    RefPtr<WebKitNamedFlow> newFlow = WebKitNamedFlow::create(*this, flowName);
+    RefPtr<WebKitNamedFlow> newFlow = WebKitNamedFlow::create(this, flowName);
     m_namedFlows.add(newFlow.get());
 
     InspectorInstrumentation::didCreateNamedFlow(document(), *newFlow);

@@ -1748,7 +1748,7 @@ RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToSh
         ec = TypeError;
         return nullptr;
     }
-    return TreeWalker::create(*root, whatToShow, WTF::move(filter));
+    return TreeWalker::create(root, whatToShow, WTF::move(filter));
 }
 
 RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, ExceptionCode& ec)

@@ -29,6 +29,7 @@
 #define UserActionElementSet_h
 
 #include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
