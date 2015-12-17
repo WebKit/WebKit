@@ -278,6 +278,10 @@ webkit.org/b/149246 [ Mavericks ] css3/font-variant-font-face-override.html [ Im
 [ Mavericks ] http/tests/navigation/page-cache-pending-image-load-cache-partition.html [ Skip ]
 [ Mavericks ] http/tests/navigation/page-cache-xhr.html [ Skip ]
 
+# Yosemite and El Capitan do not support font feature coverage queries.
+[ Yosemite ElCapitan ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
 
 # Skip because this platform does not support a paging mouse wheel event

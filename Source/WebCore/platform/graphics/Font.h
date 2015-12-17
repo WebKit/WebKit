@@ -35,6 +35,8 @@
 #if ENABLE(OPENTYPE_VERTICAL)
 #include "OpenTypeVerticalData.h"
 #endif
+#include <wtf/BitVector.h>
+#include <wtf/Optional.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/StringHash.h>
 
@@ -104,9 +106,13 @@ public:
     PassRefPtr<Font> emphasisMarkFont(const FontDescription&) const;
     PassRefPtr<Font> brokenIdeographFont() const;
     PassRefPtr<Font> nonSyntheticItalicFont() const;
+    const Font& noSynthesizableFeaturesFont() const;
 
     PassRefPtr<Font> variantFont(const FontDescription& description, FontVariant variant) const
     {
+#if PLATFORM(COCOA)
+        ASSERT(variant != SmallCapsVariant);
+#endif
         switch (variant) {
         case SmallCapsVariant:
             return smallCapsFont(description);
@@ -121,6 +127,8 @@ public:
         ASSERT_NOT_REACHED();
         return const_cast<Font*>(this);
     }
+
+    bool variantCapsSupportsCharacterForSynthesis(FontVariantCaps, UChar32) const;
 
     PassRefPtr<Font> verticalRightOrientationFont() const;
     PassRefPtr<Font> uprightOrientationFont() const;
@@ -194,7 +202,12 @@ public:
 #endif
 #if PLATFORM(COCOA)
     CFDictionaryRef getCFStringAttributes(bool enableKerning, FontOrientation) const;
+
     bool hasCustomTracking() const { return isSystemFont(); }
+    const BitVector& glyphsSupportedBySmallCaps() const;
+    const BitVector& glyphsSupportedByAllSmallCaps() const;
+    const BitVector& glyphsSupportedByPetiteCaps() const;
+    const BitVector& glyphsSupportedByAllPetiteCaps() const;
 #endif
 
 #if PLATFORM(COCOA) || USE(HARFBUZZ)
@@ -229,6 +242,7 @@ private:
 
     void initCharWidths();
 
+    RefPtr<Font> createFontWithoutSynthesizableFeatures() const;
     PassRefPtr<Font> createScaledFont(const FontDescription&, float scaleFactor) const;
     PassRefPtr<Font> platformCreateScaledFont(const FontDescription&, float scaleFactor) const;
 
@@ -274,6 +288,7 @@ private:
 
         bool forCustomFont;
         RefPtr<Font> smallCaps;
+        RefPtr<Font> noSynthesizableFeatures;
         RefPtr<Font> emphasisMark;
         RefPtr<Font> brokenIdeograph;
         RefPtr<Font> verticalRightOrientation;
@@ -292,6 +307,10 @@ private:
 
 #if PLATFORM(COCOA)
     mutable HashMap<unsigned, RetainPtr<CFDictionaryRef>> m_CFStringAttributes;
+    mutable Optional<BitVector> m_glyphsSupportedBySmallCaps;
+    mutable Optional<BitVector> m_glyphsSupportedByAllSmallCaps;
+    mutable Optional<BitVector> m_glyphsSupportedByPetiteCaps;
+    mutable Optional<BitVector> m_glyphsSupportedByAllPetiteCaps;
 #endif
 
 #if PLATFORM(COCOA) || USE(HARFBUZZ)

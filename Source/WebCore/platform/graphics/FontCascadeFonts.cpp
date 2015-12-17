@@ -296,15 +296,15 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 c, const FontDescription
         if (fontRanges.isNull())
             break;
         GlyphData data = fontRanges.glyphDataForCharacter(c);
-        if (data.font) {
-            // The variantFont function should not normally return 0.
-            // But if it does, we will just render the capital letter big.
-            RefPtr<Font> variantFont = data.font->variantFont(description, variant);
-            if (!variantFont)
-                return data;
+        if (!data.font)
+            continue;
+        // The variantFont function should not normally return 0.
+        // But if it does, we will just render the capital letter big.
+        RefPtr<Font> variantFont = data.font->variantFont(description, variant);
+        if (!variantFont)
+            return data;
 
-            return variantFont->glyphDataForCharacter(c);
-        }
+        return variantFont->glyphDataForCharacter(c);
     }
 
     return glyphDataForSystemFallback(c, description, variant);
@@ -317,23 +317,23 @@ GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontDescr
         if (fontRanges.isNull())
             break;
         GlyphData data = fontRanges.glyphDataForCharacter(c);
-        if (data.font) {
-            if (data.font->platformData().orientation() == Vertical && !data.font->isTextOrientationFallback()) {
-                if (!FontCascade::isCJKIdeographOrSymbol(c))
-                    return glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data);
+        if (!data.font)
+            continue;
+        if (data.font->platformData().orientation() == Vertical && !data.font->isTextOrientationFallback()) {
+            if (!FontCascade::isCJKIdeographOrSymbol(c))
+                return glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data);
 
-                if (!data.font->hasVerticalGlyphs()) {
-                    // Use the broken ideograph font data. The broken ideograph font will use the horizontal width of glyphs
-                    // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
-                    return glyphDataForVariant(c, description, BrokenIdeographVariant, fallbackIndex);
-                }
-#if PLATFORM(COCOA) || USE(CAIRO)
-                if (data.font->platformData().syntheticOblique())
-                    return glyphDataForCJKCharacterWithoutSyntheticItalic(c, data);
-#endif
+            if (!data.font->hasVerticalGlyphs()) {
+                // Use the broken ideograph font data. The broken ideograph font will use the horizontal width of glyphs
+                // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
+                return glyphDataForVariant(c, description, BrokenIdeographVariant, fallbackIndex);
             }
-            return data;
+#if PLATFORM(COCOA) || USE(CAIRO)
+            if (data.font->platformData().syntheticOblique())
+                return glyphDataForCJKCharacterWithoutSyntheticItalic(c, data);
+#endif
         }
+        return data;
     }
 
     return glyphDataForSystemFallback(c, description, NormalVariant);
