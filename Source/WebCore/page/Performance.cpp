@@ -30,10 +30,13 @@
  */
 
 #include "config.h"
+
+#if ENABLE(WEB_TIMING)
 #include "Performance.h"
 
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "Frame.h"
 #include "PerformanceEntry.h"
 #include "PerformanceNavigation.h"
 #include "PerformanceResourceTiming.h"
@@ -42,22 +45,18 @@
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 
-#if ENABLE(WEB_TIMING)
-
-#include "Frame.h"
-
 namespace WebCore {
 
 #if ENABLE(RESOURCE_TIMING)
 static const size_t defaultResourceTimingBufferSize = 150;
 #endif
 
-Performance::Performance(Frame* frame)
-    : DOMWindowProperty(frame)
+Performance::Performance(Frame& frame)
+    : DOMWindowProperty(&frame)
 #if ENABLE(RESOURCE_TIMING)
     , m_resourceTimingBufferSize(defaultResourceTimingBufferSize)
 #endif // ENABLE(RESOURCE_TIMING)
-    , m_referenceTime(frame->document()->loader()->timing().referenceMonotonicTime())
+    , m_referenceTime(frame.document()->loader() ? frame.document()->loader()->timing().referenceMonotonicTime() : monotonicallyIncreasingTime())
 #if ENABLE(USER_TIMING)
     , m_userTiming(nullptr)
 #endif // ENABLE(USER_TIMING)
@@ -72,7 +71,7 @@ Performance::~Performance()
 ScriptExecutionContext* Performance::scriptExecutionContext() const
 {
     if (!frame())
-        return 0;
+        return nullptr;
     return frame()->document();
 }
 
@@ -231,7 +230,7 @@ void Performance::webkitClearMeasures(const String& measureName)
 
 double Performance::now() const
 {
-    double nowSeconds = WTF::monotonicallyIncreasingTime() - m_referenceTime;
+    double nowSeconds = monotonicallyIncreasingTime() - m_referenceTime;
     const double resolutionSeconds = 0.000005;
     return 1000.0 * floor(nowSeconds / resolutionSeconds) * resolutionSeconds;
 }
