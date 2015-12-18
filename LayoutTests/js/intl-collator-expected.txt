@@ -119,15 +119,113 @@ PASS Intl.Collator.prototype.compare({ toString() { throw Error('6') } }, { toSt
 PASS badCalls is 0
 PASS Intl.Collator.prototype.compare('a', { toString() { throw Error('8') } }) threw exception Error: 8.
 PASS Intl.Collator.prototype.compare.call(null, 'a', 'b') is -1
-PASS Intl.Collator.prototype.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is -1
+PASS Intl.Collator.prototype.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is 1
 PASS Intl.Collator.prototype.compare.call(5, 'a', 'b') is -1
 PASS new Intl.Collator().compare.call(null, 'a', 'b') is -1
-PASS new Intl.Collator().compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is -1
+PASS new Intl.Collator().compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is 1
 PASS new Intl.Collator().compare.call(5, 'a', 'b') is -1
+PASS Intl.Collator.prototype.compare() is 0
+PASS Intl.Collator.prototype.compare('undefinec') is -1
+PASS Intl.Collator.prototype.compare('undefinee') is 1
+PASS Intl.Collator('en').compare('ä', 'z') is -1
+PASS Intl.Collator('sv').compare('ä', 'z') is 1
+PASS Intl.Collator('de').compare('ö', 'od') is -1
+PASS Intl.Collator('de-u-co-phonebk').resolvedOptions().collation != 'phonebk' || Intl.Collator('de-u-co-phonebk').compare('ö', 'od') == 1 is true
+PASS JSON.stringify(['A', 'B', 'C', 'a', 'b', 'c'].sort(sortCompare)) is '["a","A","b","B","c","C"]'
+PASS JSON.stringify(['A', 'B', 'C', 'a', 'b', 'c'].filter(x => (searchCompare(x, 'b') == 0))) is '["B","b"]'
+PASS baseCompare('a', 'b') is -1
+PASS baseCompare('a', 'ä') is 0
+PASS baseCompare('a', 'A') is 0
+PASS baseCompare('a', 'ⓐ') is 0
+PASS accentCompare('a', 'b') is -1
+PASS accentCompare('a', 'ä') is -1
+PASS accentCompare('a', 'A') is 0
+PASS accentCompare('a', 'ⓐ') is 0
+PASS caseCompare('a', 'b') is -1
+PASS caseCompare('a', 'ä') is 0
+PASS caseCompare('a', 'A') is -1
+PASS caseCompare('a', 'ⓐ') is 0
+PASS variantCompare('a', 'b') is -1
+PASS variantCompare('a', 'ä') is -1
+PASS variantCompare('a', 'A') is -1
+PASS variantCompare('a', 'ⓐ') is -1
+PASS nonNumericCompare('1', '2') is -1
+PASS nonNumericCompare('2', '10') is 1
+PASS nonNumericCompare('01', '1') is -1
+PASS nonNumericCompare('๑', '๒') is -1
+PASS nonNumericCompare('๒', '๑๐') is 1
+PASS nonNumericCompare('๐๑', '๑') is -1
+PASS numericCompare('1', '2') is -1
+PASS numericCompare('2', '10') is -1
+PASS numericCompare('01', '1') is 0
+PASS numericCompare('๑', '๒') is -1
+PASS numericCompare('๒', '๑๐') is -1
+PASS numericCompare('๐๑', '๑') is 0
+PASS Intl.Collator('en', {caseFirst: 'upper'}).compare('a', 'A') is -1
+PASS Intl.Collator('en', {caseFirst: 'lower'}).compare('a', 'A') is -1
+PASS Intl.Collator('en', {caseFirst: 'false'}).compare('a', 'A') is -1
+PASS notIgnorePunctuationCompare('ab', 'a\'a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a\'b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a\'c') is 1
+PASS ignorePunctuationCompare('ab', 'a\'a') is 1
+PASS ignorePunctuationCompare('ab', 'a\'b') is 0
+PASS ignorePunctuationCompare('ab', 'a\'c') is -1
+PASS notIgnorePunctuationCompare('ab', 'a"a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a"b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a"c') is 1
+PASS ignorePunctuationCompare('ab', 'a"a') is 1
+PASS ignorePunctuationCompare('ab', 'a"b') is 0
+PASS ignorePunctuationCompare('ab', 'a"c') is -1
+PASS notIgnorePunctuationCompare('ab', 'a:a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a:b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a:c') is 1
+PASS ignorePunctuationCompare('ab', 'a:a') is 1
+PASS ignorePunctuationCompare('ab', 'a:b') is 0
+PASS ignorePunctuationCompare('ab', 'a:c') is -1
+PASS notIgnorePunctuationCompare('ab', 'a;a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a;b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a;c') is 1
+PASS ignorePunctuationCompare('ab', 'a;a') is 1
+PASS ignorePunctuationCompare('ab', 'a;b') is 0
+PASS ignorePunctuationCompare('ab', 'a;c') is -1
+PASS notIgnorePunctuationCompare('ab', 'a,a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a,b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a,c') is 1
+PASS ignorePunctuationCompare('ab', 'a,a') is 1
+PASS ignorePunctuationCompare('ab', 'a,b') is 0
+PASS ignorePunctuationCompare('ab', 'a,c') is -1
+PASS notIgnorePunctuationCompare('ab', 'a-a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a-b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a-c') is 1
+PASS ignorePunctuationCompare('ab', 'a-a') is 1
+PASS ignorePunctuationCompare('ab', 'a-b') is 0
+PASS ignorePunctuationCompare('ab', 'a-c') is -1
+PASS notIgnorePunctuationCompare('ab', 'a!a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a!b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a!c') is 1
+PASS ignorePunctuationCompare('ab', 'a!a') is 1
+PASS ignorePunctuationCompare('ab', 'a!b') is 0
+PASS ignorePunctuationCompare('ab', 'a!c') is -1
+PASS notIgnorePunctuationCompare('ab', 'a.a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a.b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a.c') is 1
+PASS ignorePunctuationCompare('ab', 'a.a') is 1
+PASS ignorePunctuationCompare('ab', 'a.b') is 0
+PASS ignorePunctuationCompare('ab', 'a.c') is -1
+PASS notIgnorePunctuationCompare('ab', 'a?a') is 1
+PASS notIgnorePunctuationCompare('ab', 'a?b') is 1
+PASS notIgnorePunctuationCompare('ab', 'a?c') is 1
+PASS ignorePunctuationCompare('ab', 'a?a') is 1
+PASS ignorePunctuationCompare('ab', 'a?b') is 0
+PASS ignorePunctuationCompare('ab', 'a?c') is -1
+PASS ignorePunctuationCompare('ab', 'a b') is 0
+PASS Intl.Collator('en').compare('Ä', 'Ä') is 0
+PASS Intl.Collator('en').compare('Å̧', 'Å̧') is 0
 PASS Intl.Collator.prototype.resolvedOptions.length is 0
 PASS Intl.Collator.prototype.resolvedOptions() is an instance of Object
 PASS Intl.Collator.prototype.resolvedOptions() === Intl.Collator.prototype.resolvedOptions() is false
 PASS Intl.Collator.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator.
+PASS var options = Intl.Collator.prototype.resolvedOptions(); delete options['locale']; JSON.stringify(options) is '{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

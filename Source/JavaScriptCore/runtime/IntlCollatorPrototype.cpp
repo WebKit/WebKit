@@ -34,7 +34,6 @@
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSObject.h"
-#include "ObjectConstructor.h"
 #include "StructureInlines.h"
 
 namespace JSC {
@@ -84,6 +83,31 @@ bool IntlCollatorPrototype::getOwnPropertySlot(JSObject* object, ExecState* stat
     return getStaticFunctionSlot<JSObject>(state, collatorPrototypeTable, jsCast<IntlCollatorPrototype*>(object), propertyName, slot);
 }
 
+static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)
+{
+    // 10.3.4 Collator Compare Functions (ECMA-402 2.0)
+    // 1. Let collator be the this value.
+    // 2. Assert: Type(collator) is Object and collator has an [[initializedCollator]] internal slot whose value is true.
+    IntlCollator* collator = jsCast<IntlCollator*>(state->thisValue());
+
+    // 3. If x is not provided, let x be undefined.
+    // 4. If y is not provided, let y be undefined.
+    // 5. Let X be ToString(x).
+    JSString* x = state->argument(0).toString(state);
+    // 6. ReturnIfAbrupt(X).
+    if (state->hadException())
+        return JSValue::encode(jsUndefined());
+
+    // 7. Let Y be ToString(y).
+    JSString* y = state->argument(1).toString(state);
+    // 8. ReturnIfAbrupt(Y).
+    if (state->hadException())
+        return JSValue::encode(jsUndefined());
+
+    // 9. Return CompareStrings(collator, X, Y).
+    return JSValue::encode(collator->compareStrings(*state, x->view(state), y->view(state)));
+}
+
 EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(ExecState* state)
 {
     // 10.3.3 Intl.Collator.prototype.compare (ECMA-402 2.0)
@@ -120,23 +144,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(ExecState*
     if (!collator)
         return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator")));
 
-    // The function returns a new object whose properties and attributes are set as if
-    // constructed by an object literal assigning to each of the following properties the
-    // value of the corresponding internal slot of this Collator object (see 10.4): locale,
-    // usage, sensitivity, ignorePunctuation, collation, as well as those properties shown
-    // in Table 1 whose keys are included in the %Collator%[[relevantExtensionKeys]]
-    // internal slot of the standard built-in object that is the initial value of
-    // Intl.Collator.
-
-    VM& vm = state->vm();
-    JSObject* options = constructEmptyObject(state);
-    options->putDirect(vm, vm.propertyNames->locale, jsString(state, collator->locale()));
-    options->putDirect(vm, vm.propertyNames->usage, jsString(state, collator->usage()));
-    options->putDirect(vm, vm.propertyNames->sensitivity, jsString(state, collator->sensitivity()));
-    options->putDirect(vm, vm.propertyNames->ignorePunctuation, jsBoolean(collator->ignorePunctuation()));
-    options->putDirect(vm, vm.propertyNames->collation, jsString(state, collator->collation()));
-    options->putDirect(vm, vm.propertyNames->numeric, jsBoolean(collator->numeric()));
-    return JSValue::encode(options);
+    return JSValue::encode(collator->resolvedOptions(*state));
 }
 
 } // namespace JSC

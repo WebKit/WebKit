@@ -1,3 +1,12 @@
+2015-12-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [INTL] Implement Collator Compare Functions
+        https://bugs.webkit.org/show_bug.cgi?id=147604
+
+        Reviewed by Darin Adler.
+
+        * wtf/unicode/Collator.h:
+
 2015-12-16  Andreas Kling  <akling@apple.com>
 
         Give kernel VM some hints about non-live memory-cached resources.

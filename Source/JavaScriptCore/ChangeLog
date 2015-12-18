@@ -1,3 +1,59 @@
+2015-12-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [INTL] Implement Collator Compare Functions
+        https://bugs.webkit.org/show_bug.cgi?id=147604
+
+        Reviewed by Darin Adler.
+
+        This patch implements Intl.Collator.prototype.compare() according
+        to the ECMAScript 2015 Internationalization API spec (ECMA-402 2nd edition.)
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::~IntlCollator):
+        (JSC::sortLocaleData):
+        (JSC::searchLocaleData):
+        (JSC::IntlCollator::initializeCollator):
+        (JSC::IntlCollator::createCollator):
+        (JSC::IntlCollator::compareStrings):
+        (JSC::IntlCollator::usageString):
+        (JSC::IntlCollator::sensitivityString):
+        (JSC::IntlCollator::resolvedOptions):
+        (JSC::IntlCollator::setBoundCompare):
+        (JSC::IntlCollatorFuncCompare): Deleted.
+        * runtime/IntlCollator.h:
+        (JSC::IntlCollator::usage): Deleted.
+        (JSC::IntlCollator::setUsage): Deleted.
+        (JSC::IntlCollator::locale): Deleted.
+        (JSC::IntlCollator::setLocale): Deleted.
+        (JSC::IntlCollator::collation): Deleted.
+        (JSC::IntlCollator::setCollation): Deleted.
+        (JSC::IntlCollator::numeric): Deleted.
+        (JSC::IntlCollator::setNumeric): Deleted.
+        (JSC::IntlCollator::sensitivity): Deleted.
+        (JSC::IntlCollator::setSensitivity): Deleted.
+        (JSC::IntlCollator::ignorePunctuation): Deleted.
+        (JSC::IntlCollator::setIgnorePunctuation): Deleted.
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::constructIntlCollator):
+        (JSC::callIntlCollator):
+        (JSC::sortLocaleData): Deleted.
+        (JSC::searchLocaleData): Deleted.
+        (JSC::initializeCollator): Deleted.
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorFuncCompare):
+        (JSC::IntlCollatorPrototypeFuncResolvedOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::defaultLocale):
+        (JSC::convertICULocaleToBCP47LanguageTag):
+        (JSC::intlStringOption):
+        (JSC::resolveLocale):
+        (JSC::supportedLocales):
+        * runtime/IntlObject.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::intlCollatorAvailableLocales):
+        (JSC::JSGlobalObject::intlDateTimeFormatAvailableLocales):
+        (JSC::JSGlobalObject::intlNumberFormatAvailableLocales):
+
 2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Provide a way to distinguish a nested lexical block from a function's lexical block

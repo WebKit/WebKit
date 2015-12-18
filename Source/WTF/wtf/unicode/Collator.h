@@ -68,7 +68,7 @@ private:
     UCollator* m_collator;
 };
 
-UCharIterator createIterator(StringView);
+WTF_EXPORT_PRIVATE UCharIterator createIterator(StringView);
 
 #endif
 

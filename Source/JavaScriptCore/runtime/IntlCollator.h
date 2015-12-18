@@ -30,6 +30,8 @@
 
 #include "JSDestructibleObject.h"
 
+struct UCollator;
+
 namespace JSC {
 
 class IntlCollatorConstructor;
@@ -44,38 +46,38 @@ public:
 
     DECLARE_INFO;
 
-    const String& usage() const { return m_usage; }
-    void setUsage(const String& usage) { m_usage = usage; }
-    const String& locale() const { return m_locale; }
-    void setLocale(const String& locale) { m_locale = locale; }
-    const String& collation() const { return m_collation; }
-    void setCollation(const String& collation) { m_collation = collation; }
-    bool numeric() const { return m_numeric; }
-    void setNumeric(bool numeric) { m_numeric = numeric; }
-    const String& sensitivity() const { return m_sensitivity; }
-    void setSensitivity(const String& sensitivity) { m_sensitivity = sensitivity; }
-    bool ignorePunctuation() const { return m_ignorePunctuation; }
-    void setIgnorePunctuation(bool ignorePunctuation) { m_ignorePunctuation = ignorePunctuation; }
+    void initializeCollator(ExecState&, JSValue locales, JSValue optionsValue);
+    JSValue compareStrings(ExecState&, StringView, StringView);
+    JSObject* resolvedOptions(ExecState&);
+
     JSBoundFunction* boundCompare() const { return m_boundCompare.get(); }
     void setBoundCompare(VM&, JSBoundFunction*);
 
 protected:
     IntlCollator(VM&, Structure*);
+    ~IntlCollator();
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    String m_usage;
+    enum class Usage { Sort, Search };
+    enum class Sensitivity { Base, Accent, Case, Variant };
+
+    void createCollator(ExecState&);
+    static const char* usageString(Usage);
+    static const char* sensitivityString(Sensitivity);
+
+    Usage m_usage;
     String m_locale;
     String m_collation;
-    String m_sensitivity;
+    Sensitivity m_sensitivity;
     WriteBarrier<JSBoundFunction> m_boundCompare;
+    UCollator* m_collator { nullptr };
     bool m_numeric;
     bool m_ignorePunctuation;
+    bool m_initializedCollator { false };
 };
-    
-EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState*);
 
 } // namespace JSC
 

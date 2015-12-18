@@ -28,7 +28,7 @@ shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new Deri
 var testCollator = function(collator, possibleOptionDifferences) {
     var possibleOptions = possibleOptionDifferences.map(function(difference) {
         var defaultOptions = {
-            locale: "en",
+            locale: undefined,
             usage: "sort",
             sensitivity: "variant",
             ignorePunctuation: false,
@@ -228,11 +228,100 @@ shouldThrow("Intl.Collator.prototype.compare('a', { toString() { throw Error('8'
 
 // Compare is bound, so calling with alternate "this" has no effect.
 shouldBe("Intl.Collator.prototype.compare.call(null, 'a', 'b')", "-1");
-shouldBe("Intl.Collator.prototype.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a')", "-1");
+shouldBe("Intl.Collator.prototype.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a')", "1");
 shouldBe("Intl.Collator.prototype.compare.call(5, 'a', 'b')", "-1");
 shouldBe("new Intl.Collator().compare.call(null, 'a', 'b')", "-1");
-shouldBe("new Intl.Collator().compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a')", "-1");
+shouldBe("new Intl.Collator().compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a')", "1");
 shouldBe("new Intl.Collator().compare.call(5, 'a', 'b')", "-1");
+
+// Test comparing undefineds.
+shouldBe("Intl.Collator.prototype.compare()", "0");
+shouldBe("Intl.Collator.prototype.compare('undefinec')", "-1");
+shouldBe("Intl.Collator.prototype.compare('undefinee')", "1");
+
+// Test locales.
+shouldBe("Intl.Collator('en').compare('ä', 'z')", "-1");
+shouldBe("Intl.Collator('sv').compare('ä', 'z')", "1");
+
+// Test collations.
+shouldBe("Intl.Collator('de').compare('ö', 'od')", "-1");
+shouldBeTrue("Intl.Collator('de-u-co-phonebk').resolvedOptions().collation != 'phonebk' || Intl.Collator('de-u-co-phonebk').compare('ö', 'od') == 1");
+
+// Test the usage option.
+var sortCompare = Intl.Collator("en", {usage: "sort"}).compare;
+shouldBe("JSON.stringify(['A', 'B', 'C', 'a', 'b', 'c'].sort(sortCompare))", '\'["a","A","b","B","c","C"]\'');
+
+var searchCompare = Intl.Collator("en", {usage: "search", sensitivity: "base"}).compare;
+shouldBe("JSON.stringify(['A', 'B', 'C', 'a', 'b', 'c'].filter(x => (searchCompare(x, 'b') == 0)))", '\'["B","b"]\'');
+
+// Test the sensitivity option.
+var baseCompare = Intl.Collator("en", {sensitivity: "base"}).compare;
+shouldBe("baseCompare('a', 'b')", "-1");
+shouldBe("baseCompare('a', 'ä')", "0");
+shouldBe("baseCompare('a', 'A')", "0");
+shouldBe("baseCompare('a', 'ⓐ')", "0");
+
+var accentCompare = Intl.Collator("en", {sensitivity: "accent"}).compare;
+shouldBe("accentCompare('a', 'b')", "-1");
+shouldBe("accentCompare('a', 'ä')", "-1");
+shouldBe("accentCompare('a', 'A')", "0");
+shouldBe("accentCompare('a', 'ⓐ')", "0");
+
+var caseCompare = Intl.Collator("en", {sensitivity: "case"}).compare;
+shouldBe("caseCompare('a', 'b')", "-1");
+shouldBe("caseCompare('a', 'ä')", "0");
+shouldBe("caseCompare('a', 'A')", "-1");
+shouldBe("caseCompare('a', 'ⓐ')", "0");
+
+var variantCompare = Intl.Collator("en", {sensitivity: "variant"}).compare;
+shouldBe("variantCompare('a', 'b')", "-1");
+shouldBe("variantCompare('a', 'ä')", "-1");
+shouldBe("variantCompare('a', 'A')", "-1");
+shouldBe("variantCompare('a', 'ⓐ')", "-1");
+
+// Test the numeric option.
+var nonNumericCompare = Intl.Collator("en", {numeric: false}).compare;
+shouldBe("nonNumericCompare('1', '2')", "-1");
+shouldBe("nonNumericCompare('2', '10')", "1");
+shouldBe("nonNumericCompare('01', '1')", "-1");
+shouldBe("nonNumericCompare('๑', '๒')", "-1");
+shouldBe("nonNumericCompare('๒', '๑๐')", "1");
+shouldBe("nonNumericCompare('๐๑', '๑')", "-1");
+
+var numericCompare = Intl.Collator("en", {numeric: true}).compare;
+shouldBe("numericCompare('1', '2')", "-1");
+shouldBe("numericCompare('2', '10')", "-1");
+shouldBe("numericCompare('01', '1')", "0");
+shouldBe("numericCompare('๑', '๒')", "-1");
+shouldBe("numericCompare('๒', '๑๐')", "-1");
+shouldBe("numericCompare('๐๑', '๑')", "0");
+
+// Test the caseFirst option.
+// FIXME: The result of Intl.Collator('en', {caseFirst: 'upper'}).compare('a', 'A') should be 1.
+shouldBe("Intl.Collator('en', {caseFirst: 'upper'}).compare('a', 'A')", "-1");
+shouldBe("Intl.Collator('en', {caseFirst: 'lower'}).compare('a', 'A')", "-1");
+shouldBe("Intl.Collator('en', {caseFirst: 'false'}).compare('a', 'A')", "-1");
+
+// Test the ignorePunctuation option.
+var notIgnorePunctuationCompare = Intl.Collator("en", {ignorePunctuation: false}).compare;
+var ignorePunctuationCompare = Intl.Collator("en", {ignorePunctuation: true}).compare;
+var punctuations = ["\\'", "\"", ":", ";", ",", "-", "!", ".", "?"];
+for (let punctuation of punctuations) {
+    shouldBe("notIgnorePunctuationCompare('ab', 'a" + punctuation + "a')", "1");
+    shouldBe("notIgnorePunctuationCompare('ab', 'a" + punctuation + "b')", "1");
+    shouldBe("notIgnorePunctuationCompare('ab', 'a" + punctuation + "c')", "1");
+
+    shouldBe("ignorePunctuationCompare('ab', 'a" + punctuation + "a')", "1");
+    shouldBe("ignorePunctuationCompare('ab', 'a" + punctuation + "b')", "0");
+    shouldBe("ignorePunctuationCompare('ab', 'a" + punctuation + "c')", "-1");
+}
+
+// FIXME: The result of ignorePunctuationCompare('ab', 'a b') should be 1. The whitespace shouldn't be ignored.
+shouldBe("ignorePunctuationCompare('ab', 'a b')", "0");
+
+// Returns 0 for strings that are canonically equivalent.
+shouldBe("Intl.Collator('en').compare('A\u0308', '\u00c4')", "0"); // A + umlaut == A-umlaut.
+shouldBe("Intl.Collator('en').compare('A\u0327\u030a', '\u212b\u0327')", "0"); // A + cedilla + ring == A-ring + cedilla.
 
 // 10.3.5 Intl.Collator.prototype.resolvedOptions ()
 
@@ -247,3 +336,5 @@ shouldBeFalse("Intl.Collator.prototype.resolvedOptions() === Intl.Collator.proto
 // Throws on non-Collator this.
 shouldThrow("Intl.Collator.prototype.resolvedOptions.call(5)", "'TypeError: Intl.Collator.prototype.resolvedOptions called on value that\\'s not an object initialized as a Collator'");
 
+// Returns the default options.
+shouldBe("var options = Intl.Collator.prototype.resolvedOptions(); delete options['locale']; JSON.stringify(options)", '\'{"usage":"sort","sensitivity":"variant","ignorePunctuation":false,"collation":"default","numeric":false}\'');

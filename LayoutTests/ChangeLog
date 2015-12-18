@@ -1,3 +1,15 @@
+2015-12-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [INTL] Implement Collator Compare Functions
+        https://bugs.webkit.org/show_bug.cgi?id=147604
+
+        Reviewed by Darin Adler.
+
+        * js/intl-collator-expected.txt:
+        * js/intl-collator.html:
+        * js/script-tests/intl-collator.js:
+        (testCollator):
+
 2015-12-17  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Refactor when opening the backing store takes place.
