@@ -27,6 +27,13 @@ set(WebKit2_USE_PREFIX_HEADER ON)
 list(APPEND WebKit2_SOURCES
     DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp
 
+    NetworkProcess/CustomProtocols/soup/CustomProtocolManagerImpl.cpp
+    NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp
+
+    NetworkProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp
+
+    NetworkProcess/Downloads/soup/DownloadSoup.cpp
+
     NetworkProcess/cache/NetworkCacheDataSoup.cpp
     NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp
 
@@ -49,13 +56,6 @@ list(APPEND WebKit2_SOURCES
     PluginProcess/unix/PluginProcessUnix.cpp
 
     Shared/API/c/cairo/WKImageCairo.cpp
-
-    Shared/Downloads/gtk/DownloadSoupErrorsGtk.cpp
-
-    Shared/Downloads/soup/DownloadSoup.cpp
-
-    Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp
-    Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp
 
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
@@ -496,12 +496,12 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/enchant"
     "${WEBKIT2_DIR}/DatabaseProcess/unix"
+    "${WEBKIT2_DIR}/NetworkProcess/CustomProtocols/soup"
+    "${WEBKIT2_DIR}/NetworkProcess/Downloads/soup"
     "${WEBKIT2_DIR}/NetworkProcess/gtk"
     "${WEBKIT2_DIR}/NetworkProcess/unix"
     "${WEBKIT2_DIR}/Platform/IPC/glib"
     "${WEBKIT2_DIR}/Shared/API/c/gtk"
-    "${WEBKIT2_DIR}/Shared/Network/CustomProtocols/soup"
-    "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/Plugins/unix"
     "${WEBKIT2_DIR}/Shared/glib"
     "${WEBKIT2_DIR}/Shared/gtk"

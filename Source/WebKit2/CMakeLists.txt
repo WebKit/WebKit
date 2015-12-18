@@ -5,6 +5,8 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/DatabaseProcess/IndexedDB"
     "${WEBKIT2_DIR}/DatabaseProcess/IndexedDB/sqlite"
     "${WEBKIT2_DIR}/NetworkProcess"
+    "${WEBKIT2_DIR}/NetworkProcess/CustomProtocols"
+    "${WEBKIT2_DIR}/NetworkProcess/Downloads"
     "${WEBKIT2_DIR}/NetworkProcess/FileAPI"
     "${WEBKIT2_DIR}/NetworkProcess/cache"
     "${WEBKIT2_DIR}/Platform"
@@ -17,10 +19,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/CoreIPCSupport"
     "${WEBKIT2_DIR}/Shared/Databases"
     "${WEBKIT2_DIR}/Shared/Databases/IndexedDB"
-    "${WEBKIT2_DIR}/Shared/Downloads"
     "${WEBKIT2_DIR}/Shared/FileAPI"
-    "${WEBKIT2_DIR}/Shared/Network"
-    "${WEBKIT2_DIR}/Shared/Network/CustomProtocols"
     "${WEBKIT2_DIR}/Shared/Plugins"
     "${WEBKIT2_DIR}/Shared/Plugins/Netscape"
     "${WEBKIT2_DIR}/Shared/Plugins/Netscape/x11"
@@ -199,6 +198,13 @@ set(WebKit2_SOURCES
     DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp
     DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp
 
+    NetworkProcess/NetworkProcessCreationParameters.cpp
+    NetworkProcess/NetworkResourceLoadParameters.cpp
+
+    NetworkProcess/Downloads/Download.cpp
+    NetworkProcess/Downloads/DownloadAuthenticationClient.cpp
+    NetworkProcess/Downloads/DownloadManager.cpp
+
     Platform/Logging.cpp
     Platform/Module.cpp
 
@@ -316,13 +322,6 @@ set(WebKit2_SOURCES
     Shared/Databases/DatabaseProcessCreationParameters.cpp
 
     Shared/Databases/IndexedDB/IDBUtilities.cpp
-
-    Shared/Downloads/Download.cpp
-    Shared/Downloads/DownloadAuthenticationClient.cpp
-    Shared/Downloads/DownloadManager.cpp
-
-    Shared/Network/NetworkProcessCreationParameters.cpp
-    Shared/Network/NetworkResourceLoadParameters.cpp
 
     Shared/Plugins/NPIdentifierData.cpp
     Shared/Plugins/NPObjectMessageReceiver.cpp
@@ -646,6 +645,8 @@ set(WebKit2_MESSAGES_IN_FILES
 
     DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in
 
+    NetworkProcess/CustomProtocols/CustomProtocolManager.messages.in
+
     NetworkProcess/NetworkConnectionToWebProcess.messages.in
     NetworkProcess/NetworkProcess.messages.in
     NetworkProcess/NetworkResourceLoader.messages.in
@@ -658,8 +659,6 @@ set(WebKit2_MESSAGES_IN_FILES
     Shared/WebConnection.messages.in
 
     Shared/Authentication/AuthenticationManager.messages.in
-
-    Shared/Network/CustomProtocols/CustomProtocolManager.messages.in
 
     Shared/Plugins/NPObjectMessageReceiver.messages.in
 

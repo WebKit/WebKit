@@ -585,8 +585,6 @@
 		2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2984F57B164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h */; };
 		2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2984F586164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp */; };
 		2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2984F587164BA095004BC0C6 /* CustomProtocolManagerMessages.h */; };
-		2989A411167D1834004F96D2 /* CustomProtocolManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2989A410167D1834004F96D2 /* CustomProtocolManagerCocoa.mm */; };
-		2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2989A412167D184B004F96D2 /* CustomProtocolManager.h */; };
 		29AD3093164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AD3092164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h */; };
 		29AD3096164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AD3095164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm */; };
 		29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h */; };
@@ -672,7 +670,6 @@
 		2DA944A21884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9449B1884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp */; };
 		2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9449C1884E4F000ED86DB /* WebTouchEventIOS.cpp */; };
 		2DA944A41884E4F000ED86DB /* GestureTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA9449D1884E4F000ED86DB /* GestureTypes.h */; };
-		2DA944A71884E94800ED86DB /* DownloadIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944A61884E94800ED86DB /* DownloadIOS.mm */; };
 		2DA944AD1884E9BA00ED86DB /* TextCheckerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */; };
 		2DA944AF1884E9BA00ED86DB /* WebPageProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */; };
 		2DA944B01884E9BA00ED86DB /* WebProcessProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */; };
@@ -963,8 +960,6 @@
 		5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7E016138E2900D03ED3 /* NetworkProcess.h */; };
 		5179556D162877B100FA43B6 /* NetworkProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510CC7EA16138E7200D03ED3 /* NetworkProcessProxy.cpp */; };
 		5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7EB16138E7200D03ED3 /* NetworkProcessProxy.h */; };
-		51795570162877CF00FA43B6 /* NetworkProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A8A6121627F325000D90E9 /* NetworkProcessCreationParameters.cpp */; };
-		51795571162877D200FA43B6 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A8A60F1627F2BD000D90E9 /* NetworkProcessCreationParameters.h */; };
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
 		517DD5BE180DA7D30081660B /* DatabaseProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517DD5BC180DA7D30081660B /* DatabaseProcessProxy.cpp */; };
@@ -986,13 +981,6 @@
 		518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */; };
 		518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8EF416B2091C00E91429 /* AuthenticationManager.h */; };
 		518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */; };
-		518E8F0716B2093700E91429 /* Download.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8EFE16B2093700E91429 /* Download.cpp */; };
-		518E8F0816B2093700E91429 /* Download.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8EFF16B2093700E91429 /* Download.h */; };
-		518E8F0916B2093700E91429 /* DownloadAuthenticationClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0016B2093700E91429 /* DownloadAuthenticationClient.cpp */; };
-		518E8F0A16B2093700E91429 /* DownloadAuthenticationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8F0116B2093700E91429 /* DownloadAuthenticationClient.h */; };
-		518E8F0B16B2093700E91429 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0216B2093700E91429 /* DownloadManager.cpp */; };
-		518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 518E8F0316B2093700E91429 /* DownloadManager.h */; };
-		518E8F0D16B2093700E91429 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518E8F0516B2093700E91429 /* DownloadMac.mm */; };
 		51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51933DEB1965EB24008AC3EA /* MenuUtilities.h */; };
 		51933DF01965EB31008AC3EA /* MenuUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51933DEC1965EB24008AC3EA /* MenuUtilities.mm */; };
 		51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */; };
@@ -1014,8 +1002,6 @@
 		51BA24461858F55D00EA2811 /* WebCrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BA24451858F41500EA2811 /* WebCrossThreadCopier.cpp */; };
 		51C96118183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */; };
 		51C96119183D294700D2002E /* WebIDBServerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C96117183D294700D2002E /* WebIDBServerConnectionMessages.h */; };
-		51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */; };
-		51CBBA10165219B6005BE8FD /* NetworkResourceLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */; };
 		51CD1C5D1B3493AF00142CA5 /* WKSecurityOriginRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CD1C591B3493A900142CA5 /* WKSecurityOriginRef.cpp */; };
 		51CD1C5E1B3493B400142CA5 /* WKSecurityOriginRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CD1C5A1B3493A900142CA5 /* WKSecurityOriginRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51CD1C651B34B9D400142CA5 /* WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CD1C5F1B34B9C900142CA5 /* WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1064,10 +1050,25 @@
 		5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5272B2881406985D0096A5D0 /* StatisticsData.cpp */; };
 		5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272B2891406985D0096A5D0 /* StatisticsData.h */; };
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5C1426E11C23F50B00D41183 /* DownloadID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0932061C236011007AAA7C /* DownloadID.h */; };
+		5C1426EC1C23F80900D41183 /* NetworkProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */; };
+		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
+		5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */; };
+		5C1426EF1C23F80900D41183 /* NetworkResourceLoadParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */; };
+		5C1426F01C23F80900D41183 /* NetworkResourceLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */; };
+		5C1427011C23F84C00D41183 /* Download.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426F31C23F84300D41183 /* Download.cpp */; };
+		5C1427021C23F84C00D41183 /* Download.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F41C23F84300D41183 /* Download.h */; };
+		5C1427031C23F84C00D41183 /* DownloadAuthenticationClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426F51C23F84300D41183 /* DownloadAuthenticationClient.cpp */; };
+		5C1427041C23F84C00D41183 /* DownloadAuthenticationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F61C23F84300D41183 /* DownloadAuthenticationClient.h */; };
+		5C1427051C23F84C00D41183 /* DownloadID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F71C23F84300D41183 /* DownloadID.h */; };
+		5C1427061C23F84C00D41183 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426F81C23F84300D41183 /* DownloadManager.cpp */; };
+		5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F91C23F84300D41183 /* DownloadManager.h */; };
+		5C1427111C23F89E00D41183 /* DownloadIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C14270D1C23F88500D41183 /* DownloadIOS.mm */; };
+		5C1427121C23F89E00D41183 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C14270F1C23F89900D41183 /* DownloadMac.mm */; };
+		5C1427131C23F89E00D41183 /* DownloadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C1427091C23F86900D41183 /* DownloadCocoa.mm */; };
+		5C1427181C23F8B700D41183 /* CustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1427141C23F8B000D41183 /* CustomProtocolManager.h */; };
+		5C14271D1C23F8CF00D41183 /* CustomProtocolManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C14271B1C23F8CC00D41183 /* CustomProtocolManagerCocoa.mm */; };
 		5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
-		5C9B86131C223EAF00110F36 /* DownloadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9B86111C223E7900110F36 /* DownloadCocoa.mm */; };
 		5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */; };
 		5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
@@ -1651,7 +1652,6 @@
 		BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF18637167D071E00A1A85A /* CacheModel.cpp */; };
-		BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF4DE22168E4BD500C94AFC /* NetworkProcessSupplement.h */; };
 		BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF4DE24168FA44800C94AFC /* WebContextSupplement.h */; };
 		BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF50726124329AA005955AE /* WebCertificateInfo.h */; };
 		BCF69F9A1176CED600471A52 /* WebNavigationDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69F981176CED600471A52 /* WebNavigationDataStore.h */; };
@@ -2730,9 +2730,6 @@
 		2984F57B164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomProtocolManagerProxyMessages.h; sourceTree = "<group>"; };
 		2984F586164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomProtocolManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		2984F587164BA095004BC0C6 /* CustomProtocolManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomProtocolManagerMessages.h; sourceTree = "<group>"; };
-		2989A410167D1834004F96D2 /* CustomProtocolManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomProtocolManagerCocoa.mm; sourceTree = "<group>"; };
-		2989A412167D184B004F96D2 /* CustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManager.h; path = Network/CustomProtocols/CustomProtocolManager.h; sourceTree = "<group>"; };
-		2989A413167D184B004F96D2 /* CustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomProtocolManager.messages.in; path = Network/CustomProtocols/CustomProtocolManager.messages.in; sourceTree = "<group>"; };
 		29AD3092164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManagerProxy.h; path = CustomProtocols/CustomProtocolManagerProxy.h; sourceTree = "<group>"; };
 		29AD3095164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolManagerProxyMac.mm; path = CustomProtocols/mac/CustomProtocolManagerProxyMac.mm; sourceTree = "<group>"; };
 		29AD3097164B4E210072DEA9 /* CustomProtocolManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomProtocolManagerProxy.messages.in; path = CustomProtocols/CustomProtocolManagerProxy.messages.in; sourceTree = "<group>"; };
@@ -2834,7 +2831,6 @@
 		2DA9449B1884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPlatformTouchPointIOS.cpp; path = ios/WebPlatformTouchPointIOS.cpp; sourceTree = "<group>"; };
 		2DA9449C1884E4F000ED86DB /* WebTouchEventIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebTouchEventIOS.cpp; path = ios/WebTouchEventIOS.cpp; sourceTree = "<group>"; };
 		2DA9449D1884E4F000ED86DB /* GestureTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GestureTypes.h; path = ios/GestureTypes.h; sourceTree = "<group>"; };
-		2DA944A61884E94800ED86DB /* DownloadIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadIOS.mm; path = Downloads/ios/DownloadIOS.mm; sourceTree = "<group>"; };
 		2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextCheckerIOS.mm; path = ios/TextCheckerIOS.mm; sourceTree = "<group>"; };
 		2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPageProxyIOS.mm; path = ios/WebPageProxyIOS.mm; sourceTree = "<group>"; };
 		2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebProcessProxyIOS.mm; path = ios/WebProcessProxyIOS.mm; sourceTree = "<group>"; };
@@ -3163,13 +3159,6 @@
 		518E8EF416B2091C00E91429 /* AuthenticationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuthenticationManager.h; path = Authentication/AuthenticationManager.h; sourceTree = "<group>"; };
 		518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AuthenticationManager.messages.in; path = Authentication/AuthenticationManager.messages.in; sourceTree = "<group>"; };
 		518E8EF716B2091C00E91429 /* AuthenticationManager.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationManager.mac.mm; sourceTree = "<group>"; };
-		518E8EFE16B2093700E91429 /* Download.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Download.cpp; path = Downloads/Download.cpp; sourceTree = "<group>"; };
-		518E8EFF16B2093700E91429 /* Download.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Download.h; path = Downloads/Download.h; sourceTree = "<group>"; };
-		518E8F0016B2093700E91429 /* DownloadAuthenticationClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadAuthenticationClient.cpp; path = Downloads/DownloadAuthenticationClient.cpp; sourceTree = "<group>"; };
-		518E8F0116B2093700E91429 /* DownloadAuthenticationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadAuthenticationClient.h; path = Downloads/DownloadAuthenticationClient.h; sourceTree = "<group>"; };
-		518E8F0216B2093700E91429 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadManager.cpp; path = Downloads/DownloadManager.cpp; sourceTree = "<group>"; };
-		518E8F0316B2093700E91429 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadManager.h; path = Downloads/DownloadManager.h; sourceTree = "<group>"; };
-		518E8F0516B2093700E91429 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadMac.mm; sourceTree = "<group>"; };
 		51933DEB1965EB24008AC3EA /* MenuUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuUtilities.h; sourceTree = "<group>"; };
 		51933DEC1965EB24008AC3EA /* MenuUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuUtilities.mm; sourceTree = "<group>"; };
 		51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsRequest.cpp; sourceTree = "<group>"; };
@@ -3183,8 +3172,6 @@
 		51A7F2F2125BF820008AEB1D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		51A7F2F4125BF8D4008AEB1D /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		51A84CE2127F386B00CA6EA4 /* WebContextMenuProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenuProxy.cpp; sourceTree = "<group>"; };
-		51A8A60F1627F2BD000D90E9 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessCreationParameters.h; path = Network/NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
-		51A8A6121627F325000D90E9 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessCreationParameters.cpp; path = Network/NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessMac.mm; sourceTree = "<group>"; };
 		51A8A6171627F5BB000D90E9 /* NetworkProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NetworkProcess.messages.in; path = NetworkProcess/NetworkProcess.messages.in; sourceTree = "<group>"; };
 		51A9E1081315CD18009E7031 /* WKKeyValueStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKKeyValueStorageManager.cpp; sourceTree = "<group>"; };
@@ -3202,8 +3189,6 @@
 		51C96115183C95FF00D2002E /* WebIDBServerConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebIDBServerConnection.messages.in; sourceTree = "<group>"; };
 		51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIDBServerConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		51C96117183D294700D2002E /* WebIDBServerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIDBServerConnectionMessages.h; sourceTree = "<group>"; };
-		51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoadParameters.cpp; path = Network/NetworkResourceLoadParameters.cpp; sourceTree = "<group>"; };
-		51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadParameters.h; path = Network/NetworkResourceLoadParameters.h; sourceTree = "<group>"; };
 		51CD1C591B3493A900142CA5 /* WKSecurityOriginRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSecurityOriginRef.cpp; sourceTree = "<group>"; };
 		51CD1C5A1B3493A900142CA5 /* WKSecurityOriginRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSecurityOriginRef.h; sourceTree = "<group>"; };
 		51CD1C5F1B34B9C900142CA5 /* WKSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSecurityOrigin.h; sourceTree = "<group>"; };
@@ -3257,10 +3242,26 @@
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoader.h; path = NetworkProcess/NetworkResourceLoader.h; sourceTree = "<group>"; };
 		5272B2881406985D0096A5D0 /* StatisticsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsData.cpp; sourceTree = "<group>"; };
 		5272B2891406985D0096A5D0 /* StatisticsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsData.h; sourceTree = "<group>"; };
-		5C0932061C236011007AAA7C /* DownloadID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadID.h; path = Downloads/DownloadID.h; sourceTree = "<group>"; };
+		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessCreationParameters.cpp; path = NetworkProcess/NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
+		5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessCreationParameters.h; path = NetworkProcess/NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
+		5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessSupplement.h; path = NetworkProcess/NetworkProcessSupplement.h; sourceTree = "<group>"; };
+		5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoadParameters.cpp; path = NetworkProcess/NetworkResourceLoadParameters.cpp; sourceTree = "<group>"; };
+		5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadParameters.h; path = NetworkProcess/NetworkResourceLoadParameters.h; sourceTree = "<group>"; };
+		5C1426F31C23F84300D41183 /* Download.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Download.cpp; path = NetworkProcess/Downloads/Download.cpp; sourceTree = "<group>"; };
+		5C1426F41C23F84300D41183 /* Download.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Download.h; path = NetworkProcess/Downloads/Download.h; sourceTree = "<group>"; };
+		5C1426F51C23F84300D41183 /* DownloadAuthenticationClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadAuthenticationClient.cpp; path = NetworkProcess/Downloads/DownloadAuthenticationClient.cpp; sourceTree = "<group>"; };
+		5C1426F61C23F84300D41183 /* DownloadAuthenticationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadAuthenticationClient.h; path = NetworkProcess/Downloads/DownloadAuthenticationClient.h; sourceTree = "<group>"; };
+		5C1426F71C23F84300D41183 /* DownloadID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadID.h; path = NetworkProcess/Downloads/DownloadID.h; sourceTree = "<group>"; };
+		5C1426F81C23F84300D41183 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadManager.cpp; path = NetworkProcess/Downloads/DownloadManager.cpp; sourceTree = "<group>"; };
+		5C1426F91C23F84300D41183 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadManager.h; path = NetworkProcess/Downloads/DownloadManager.h; sourceTree = "<group>"; };
+		5C1427091C23F86900D41183 /* DownloadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadCocoa.mm; path = NetworkProcess/Downloads/cocoa/DownloadCocoa.mm; sourceTree = "<group>"; };
+		5C14270D1C23F88500D41183 /* DownloadIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadIOS.mm; path = NetworkProcess/Downloads/ios/DownloadIOS.mm; sourceTree = "<group>"; };
+		5C14270F1C23F89900D41183 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadMac.mm; path = NetworkProcess/Downloads/mac/DownloadMac.mm; sourceTree = "<group>"; };
+		5C1427141C23F8B000D41183 /* CustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManager.h; path = NetworkProcess/CustomProtocols/CustomProtocolManager.h; sourceTree = "<group>"; };
+		5C1427151C23F8B000D41183 /* CustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomProtocolManager.messages.in; path = NetworkProcess/CustomProtocols/CustomProtocolManager.messages.in; sourceTree = "<group>"; };
+		5C14271B1C23F8CC00D41183 /* CustomProtocolManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolManagerCocoa.mm; path = NetworkProcess/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkSessionCocoa.mm; path = NetworkProcess/cocoa/NetworkSessionCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSession.h; path = NetworkProcess/NetworkSession.h; sourceTree = "<group>"; };
-		5C9B86111C223E7900110F36 /* DownloadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadCocoa.mm; path = Downloads/cocoa/DownloadCocoa.mm; sourceTree = "<group>"; };
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
 		5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerEnvironmentExtractor.h; sourceTree = "<group>"; };
 		5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicLinkerEnvironmentExtractor.mm; sourceTree = "<group>"; };
@@ -3893,7 +3894,6 @@
 		BCF04C8C11FF9B7D00F86A58 /* APIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIObject.h; sourceTree = "<group>"; };
 		BCF04C8E11FF9F6E00F86A58 /* APIString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIString.h; sourceTree = "<group>"; };
 		BCF18637167D071E00A1A85A /* CacheModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheModel.cpp; sourceTree = "<group>"; };
-		BCF4DE22168E4BD500C94AFC /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessSupplement.h; path = Network/NetworkProcessSupplement.h; sourceTree = "<group>"; };
 		BCF4DE24168FA44800C94AFC /* WebContextSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextSupplement.h; sourceTree = "<group>"; };
 		BCF5068412431861005955AE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		BCF50726124329AA005955AE /* WebCertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCertificateInfo.h; sourceTree = "<group>"; };
@@ -4709,12 +4709,10 @@
 				C01A25FF12662F2100C9ED55 /* cg */,
 				37C4C0901814B37B003688B9 /* Cocoa */,
 				51E351C2180F2C8500E53BE9 /* Databases */,
-				518E8EF216B208F800E91429 /* Downloads */,
 				BC82836816B3587900A278FE /* EntryPointUtilities */,
 				E170877216D6CFEC00F99226 /* FileAPI */,
 				2DA944961884E4DA00ED86DB /* ios */,
 				BC111B5A112F628200337BAB /* mac */,
-				51A8A60D1627F2AC000D90E9 /* Network */,
 				1AAE058C1279DCD400852418 /* Plugins */,
 				3709504918A9FAD20087AE5D /* posix */,
 				0F5947A0187B3B7100437857 /* Scrolling */,
@@ -5071,25 +5069,6 @@
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
-		2989A40E167D1813004F96D2 /* CustomProtocols */ = {
-			isa = PBXGroup;
-			children = (
-				2989A40F167D181B004F96D2 /* Cocoa */,
-				2989A412167D184B004F96D2 /* CustomProtocolManager.h */,
-				2989A413167D184B004F96D2 /* CustomProtocolManager.messages.in */,
-			);
-			name = CustomProtocols;
-			sourceTree = "<group>";
-		};
-		2989A40F167D181B004F96D2 /* Cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				2989A410167D1834004F96D2 /* CustomProtocolManagerCocoa.mm */,
-			);
-			name = Cocoa;
-			path = Network/CustomProtocols/Cocoa;
-			sourceTree = "<group>";
-		};
 		29AD3091164B4C100072DEA9 /* CustomProtocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -5143,14 +5122,6 @@
 				2DA9449A1884E4F000ED86DB /* WebIOSEventFactory.mm */,
 				2DA9449B1884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp */,
 				2DA9449C1884E4F000ED86DB /* WebTouchEventIOS.cpp */,
-			);
-			name = ios;
-			sourceTree = "<group>";
-		};
-		2DA944A51884E93C00ED86DB /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				2DA944A61884E94800ED86DB /* DownloadIOS.mm */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -5570,6 +5541,13 @@
 		510CC7DA16138E0100D03ED3 /* NetworkProcess */ = {
 			isa = PBXGroup;
 			children = (
+				5C1426F21C23F82D00D41183 /* CustomProtocols */,
+				5C1426F11C23F81700D41183 /* Downloads */,
+				5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */,
+				5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */,
+				5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */,
+				5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */,
+				5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */,
 				E489D2821A0A2BE80078C06A /* cache */,
 				7EC4F0F818E4A922008056AF /* cocoa */,
 				BC82837C16B45DA500A278FE /* EntryPoint */,
@@ -5744,23 +5722,6 @@
 			name = Authentication;
 			sourceTree = "<group>";
 		};
-		518E8EF216B208F800E91429 /* Downloads */ = {
-			isa = PBXGroup;
-			children = (
-				5C0932061C236011007AAA7C /* DownloadID.h */,
-				5C9B860E1C223E5400110F36 /* cocoa */,
-				2DA944A51884E93C00ED86DB /* ios */,
-				518E8F0416B2093700E91429 /* mac */,
-				518E8EFE16B2093700E91429 /* Download.cpp */,
-				518E8EFF16B2093700E91429 /* Download.h */,
-				518E8F0016B2093700E91429 /* DownloadAuthenticationClient.cpp */,
-				518E8F0116B2093700E91429 /* DownloadAuthenticationClient.h */,
-				518E8F0216B2093700E91429 /* DownloadManager.cpp */,
-				518E8F0316B2093700E91429 /* DownloadManager.h */,
-			);
-			name = Downloads;
-			sourceTree = "<group>";
-		};
 		518E8EF616B2091C00E91429 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -5768,28 +5729,6 @@
 			);
 			name = mac;
 			path = Authentication/mac;
-			sourceTree = "<group>";
-		};
-		518E8F0416B2093700E91429 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				518E8F0516B2093700E91429 /* DownloadMac.mm */,
-			);
-			name = mac;
-			path = Downloads/mac;
-			sourceTree = "<group>";
-		};
-		51A8A60D1627F2AC000D90E9 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				2989A40E167D1813004F96D2 /* CustomProtocols */,
-				51A8A6121627F325000D90E9 /* NetworkProcessCreationParameters.cpp */,
-				51A8A60F1627F2BD000D90E9 /* NetworkProcessCreationParameters.h */,
-				BCF4DE22168E4BD500C94AFC /* NetworkProcessSupplement.h */,
-				51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */,
-				51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */,
-			);
-			name = Network;
 			sourceTree = "<group>";
 		};
 		51B15A7D138439B200321AD8 /* unix */ = {
@@ -5902,12 +5841,63 @@
 			name = IconDatabase;
 			sourceTree = "<group>";
 		};
-		5C9B860E1C223E5400110F36 /* cocoa */ = {
+		5C1426F11C23F81700D41183 /* Downloads */ = {
 			isa = PBXGroup;
 			children = (
-				5C9B86111C223E7900110F36 /* DownloadCocoa.mm */,
+				5C14270C1C23F87700D41183 /* ios */,
+				5C14270B1C23F87100D41183 /* mac */,
+				5C1427081C23F85200D41183 /* cocoa */,
+				5C1426F31C23F84300D41183 /* Download.cpp */,
+				5C1426F41C23F84300D41183 /* Download.h */,
+				5C1426F51C23F84300D41183 /* DownloadAuthenticationClient.cpp */,
+				5C1426F61C23F84300D41183 /* DownloadAuthenticationClient.h */,
+				5C1426F71C23F84300D41183 /* DownloadID.h */,
+				5C1426F81C23F84300D41183 /* DownloadManager.cpp */,
+				5C1426F91C23F84300D41183 /* DownloadManager.h */,
+			);
+			name = Downloads;
+			sourceTree = "<group>";
+		};
+		5C1426F21C23F82D00D41183 /* CustomProtocols */ = {
+			isa = PBXGroup;
+			children = (
+				5C14271A1C23F8BF00D41183 /* Cocoa */,
+				5C1427141C23F8B000D41183 /* CustomProtocolManager.h */,
+				5C1427151C23F8B000D41183 /* CustomProtocolManager.messages.in */,
+			);
+			name = CustomProtocols;
+			sourceTree = "<group>";
+		};
+		5C1427081C23F85200D41183 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				5C1427091C23F86900D41183 /* DownloadCocoa.mm */,
 			);
 			name = cocoa;
+			sourceTree = "<group>";
+		};
+		5C14270B1C23F87100D41183 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				5C14270F1C23F89900D41183 /* DownloadMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
+		5C14270C1C23F87700D41183 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				5C14270D1C23F88500D41183 /* DownloadIOS.mm */,
+			);
+			name = ios;
+			sourceTree = "<group>";
+		};
+		5C14271A1C23F8BF00D41183 /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				5C14271B1C23F8CC00D41183 /* CustomProtocolManagerCocoa.mm */,
+			);
+			name = Cocoa;
 			sourceTree = "<group>";
 		};
 		6EE849C41368D9040038D481 /* mac */ = {
@@ -7693,6 +7683,7 @@
 				7C89D2B41A6B068C003A5FDE /* APIUserContentExtension.h in Headers */,
 				7C3A06A81AAB903E009D74BA /* APIUserContentExtensionStore.h in Headers */,
 				F6113E25126CE1820057D0A7 /* APIUserContentURLPattern.h in Headers */,
+				5C1426F01C23F80900D41183 /* NetworkResourceLoadParameters.h in Headers */,
 				7C89D2941A67122F003A5FDE /* APIUserScript.h in Headers */,
 				2D8786241BDB58FF00D02ABB /* APIUserStyleSheet.h in Headers */,
 				C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */,
@@ -7738,7 +7729,6 @@
 				CDC3830C17212282008A2FC3 /* CookieStorageShimLibrary.h in Headers */,
 				CE1A0BD31A48E6C60054EF74 /* CorePDFSPI.h in Headers */,
 				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
-				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
 				2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */,
 				29AD3093164B4C5D0072DEA9 /* CustomProtocolManagerProxy.h in Headers */,
 				2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */,
@@ -7751,10 +7741,7 @@
 				CE1A0BD41A48E6C60054EF74 /* DataDetectorsUISPI.h in Headers */,
 				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
-				518E8F0816B2093700E91429 /* Download.h in Headers */,
-				518E8F0A16B2093700E91429 /* DownloadAuthenticationClient.h in Headers */,
 				A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */,
-				518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */,
 				1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */,
 				1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */,
 				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
@@ -7864,15 +7851,12 @@
 				839149651BEA838500D2D953 /* NetworkLoadParameters.h in Headers */,
 				5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */,
 				517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */,
-				51795571162877D200FA43B6 /* NetworkProcessCreationParameters.h in Headers */,
 				5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */,
 				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
 				513A163D163088F6005D7D22 /* NetworkProcessProxyMessages.h in Headers */,
-				BCF4DE23168E4BD500C94AFC /* NetworkProcessSupplement.h in Headers */,
 				51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */,
 				E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */,
-				51CBBA10165219B6005BE8FD /* NetworkResourceLoadParameters.h in Headers */,
 				5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */,
 				31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */,
 				3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */,
@@ -7889,6 +7873,7 @@
 				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
 				BCCF672D12C7EDF7008F9C35 /* OriginAndDatabases.h in Headers */,
+				5C1427181C23F8B700D41183 /* CustomProtocolManager.h in Headers */,
 				7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */,
 				BC6EDAA6111271C600E7678B /* PageClient.h in Headers */,
 				0FCB4E6218BBE3D9000FCFC9 /* PageClientImpl.h in Headers */,
@@ -8132,6 +8117,7 @@
 				BC032D8F10F437A00058C15A /* WebPage.h in Headers */,
 				8372DB291A67562800C697C5 /* WebPageDiagnosticLoggingClient.h in Headers */,
 				BC7B6206129A0A6700D174A4 /* WebPageGroup.h in Headers */,
+				5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */,
 				BC7B625212A43C9600D174A4 /* WebPageGroupData.h in Headers */,
 				BC7B621512A4219A00D174A4 /* WebPageGroupProxy.h in Headers */,
 				29D55DF2161BF9F10031A2E3 /* WebPageGroupProxyMessages.h in Headers */,
@@ -8255,6 +8241,7 @@
 				1AB474DA184D44250051B622 /* WKBundlePageResourceLoadClient.h in Headers */,
 				1AB474DE184D44590051B622 /* WKBundlePageUIClient.h in Headers */,
 				BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */,
+				5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */,
 				BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */,
 				BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */,
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
@@ -8305,6 +8292,7 @@
 				C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */,
 				C54256B818BEC18C00DE4179 /* WKFormPopover.h in Headers */,
 				C54256BA18BEC18C00DE4179 /* WKFormSelectControl.h in Headers */,
+				5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */,
 				BCE4695A1214EDF4000B98EB /* WKFormSubmissionListener.h in Headers */,
 				37DFA7001810BB92001F4A9F /* WKFoundation.h in Headers */,
 				BCD0139B110FA420003B8A67 /* WKFrame.h in Headers */,
@@ -8315,7 +8303,6 @@
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */,
 				CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */,
-				5C1426E11C23F50B00D41183 /* DownloadID.h in Headers */,
 				BC54CC1212D674EE005C67B0 /* WKGeolocationManager.h in Headers */,
 				BC06F44E12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h in Headers */,
 				BC0E619812D6CD120012A72A /* WKGeolocationPosition.h in Headers */,
@@ -8384,6 +8371,7 @@
 				8372DB251A674C8F00C697C5 /* WKPageDiagnosticLoggingClient.h in Headers */,
 				1AB8A1F418400B8F00E9AE69 /* WKPageFindClient.h in Headers */,
 				1AB8A1F618400B9D00E9AE69 /* WKPageFindMatchesClient.h in Headers */,
+				5C1427051C23F84C00D41183 /* DownloadID.h in Headers */,
 				1AB8A1F018400B0000E9AE69 /* WKPageFormClient.h in Headers */,
 				BC7B633712A45ABA00D174A4 /* WKPageGroup.h in Headers */,
 				2D9EA30D1A96CB59002D2807 /* WKPageInjectedBundleClient.h in Headers */,
@@ -8468,6 +8456,7 @@
 				BC8699B5116AADAA002A925B /* WKView.h in Headers */,
 				BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */,
 				2D28A4971AF965A100F190C9 /* WKViewLayoutStrategy.h in Headers */,
+				5C1427021C23F84C00D41183 /* Download.h in Headers */,
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
 				C5E1AFE916B20B75006CC1F2 /* WKWebArchive.h in Headers */,
 				C5E1AFEB16B20B7E006CC1F2 /* WKWebArchiveResource.h in Headers */,
@@ -8493,6 +8482,7 @@
 				1F7506B51859165400EC0FF7 /* WKWebProcessPlugInScriptWorldInternal.h in Headers */,
 				1A4832CC1A9BC465008B4DFE /* WKWebsiteDataRecord.h in Headers */,
 				1A4832CE1A9BC484008B4DFE /* WKWebsiteDataRecordInternal.h in Headers */,
+				5C1427041C23F84C00D41183 /* DownloadAuthenticationClient.h in Headers */,
 				1AA654D11B14F71400BF1D3E /* WKWebsiteDataRecordPrivate.h in Headers */,
 				75A8D2C8187CCFAB00C39C9E /* WKWebsiteDataStore.h in Headers */,
 				75A8D2D6187D1C0E00C39C9E /* WKWebsiteDataStoreInternal.h in Headers */,
@@ -9496,13 +9486,13 @@
 				5106D7C218BDBE73000AB166 /* ContextMenuContextData.cpp in Sources */,
 				CDC3831017212440008A2FC3 /* CookieStorageShim.mm in Sources */,
 				B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */,
-				2989A411167D1834004F96D2 /* CustomProtocolManagerCocoa.mm in Sources */,
 				2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */,
 				29AD3096164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm in Sources */,
 				2984F57C164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp in Sources */,
 				51E351FF180F5D0F00E53BE9 /* DatabaseProcess.cpp in Sources */,
 				515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */,
 				51D0D431183B34130097041D /* DatabaseProcessIDBConnection.cpp in Sources */,
+				5C1427031C23F84C00D41183 /* DownloadAuthenticationClient.cpp in Sources */,
 				51D0D436183B353D0097041D /* DatabaseProcessIDBConnectionMessageReceiver.cpp in Sources */,
 				E115C714190F89E400ECC516 /* DatabaseProcessIOS.mm in Sources */,
 				51E35202180F5D1E00E53BE9 /* DatabaseProcessMac.mm in Sources */,
@@ -9517,12 +9507,7 @@
 				1AC7537F183BE50F0072CB15 /* DataReference.cpp in Sources */,
 				2D3494641BCC2EC30064F0BE /* DeprecatedPDFPlugin.mm in Sources */,
 				83891B6D1A68C30B0030F386 /* DiagnosticLoggingClient.mm in Sources */,
-				518E8F0716B2093700E91429 /* Download.cpp in Sources */,
-				518E8F0916B2093700E91429 /* DownloadAuthenticationClient.cpp in Sources */,
 				A1DF631218E0B7C8003A3E2A /* DownloadClient.mm in Sources */,
-				2DA944A71884E94800ED86DB /* DownloadIOS.mm in Sources */,
-				518E8F0D16B2093700E91429 /* DownloadMac.mm in Sources */,
-				518E8F0B16B2093700E91429 /* DownloadManager.cpp in Sources */,
 				1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */,
 				1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */,
 				1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */,
@@ -9606,6 +9591,7 @@
 				1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */,
 				1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */,
 				1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */,
+				5C1427061C23F84C00D41183 /* DownloadManager.cpp in Sources */,
 				E1798C7916E6818800240139 /* NetworkBlobRegistry.cpp in Sources */,
 				E4436ECA1A0D03FA00EAD204 /* NetworkCache.cpp in Sources */,
 				E49D40D91AD3FB210066B7B9 /* NetworkCacheBlobStorage.cpp in Sources */,
@@ -9633,7 +9619,6 @@
 				7EC4F0FB18E4ACBB008056AF /* NetworkProcessCocoa.mm in Sources */,
 				5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */,
 				517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */,
-				51795570162877CF00FA43B6 /* NetworkProcessCreationParameters.cpp in Sources */,
 				2DA944BD188511E700ED86DB /* NetworkProcessIOS.mm in Sources */,
 				51795567162876CB00FA43B6 /* NetworkProcessMac.mm in Sources */,
 				BC82838416B45DA500A278FE /* NetworkProcessMain.mm in Sources */,
@@ -9645,7 +9630,6 @@
 				51FD18B51651FBAD00DBE1CE /* NetworkResourceLoader.cpp in Sources */,
 				51E3B67F16F266B3009968DC /* NetworkResourceLoaderMac.mm in Sources */,
 				E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
-				51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */,
 				BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */,
 				5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */,
 				31A2EC551489982E00810D71 /* NotificationPermissionRequest.cpp in Sources */,
@@ -9718,6 +9702,7 @@
 				BC111B1D112F5FE600337BAB /* ProcessLauncherMac.mm in Sources */,
 				86E67A261910B9D900004AB7 /* ProcessThrottler.cpp in Sources */,
 				A118A9EE1907AD6F00F7C92B /* QuickLookDocumentData.cpp in Sources */,
+				5C1427131C23F89E00D41183 /* DownloadCocoa.mm in Sources */,
 				2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */,
 				2DDF731618E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm in Sources */,
 				1AB16AE9164B3A8800290D62 /* RemoteLayerTreeContext.mm in Sources */,
@@ -9939,6 +9924,7 @@
 				BC7B621612A4219A00D174A4 /* WebPageGroupProxy.cpp in Sources */,
 				29D55DF1161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp in Sources */,
 				2D9EA3111A96D9EB002D2807 /* WebPageInjectedBundleClient.cpp in Sources */,
+				5C1426EC1C23F80900D41183 /* NetworkProcessCreationParameters.cpp in Sources */,
 				2DA944BA1884EA3C00ED86DB /* WebPageIOS.mm in Sources */,
 				BC963D6E113DD1A500574BE2 /* WebPageMac.mm in Sources */,
 				C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */,
@@ -9951,8 +9937,10 @@
 				512127C31908239A00DAF35C /* WebPasteboardOverrides.cpp in Sources */,
 				7C4694D01A51E36800AD5845 /* WebPasteboardProxy.cpp in Sources */,
 				7C4694CC1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm in Sources */,
+				5C1426EF1C23F80900D41183 /* NetworkResourceLoadParameters.cpp in Sources */,
 				7C4694C91A4B4EA100AD5845 /* WebPasteboardProxyMessageReceiver.cpp in Sources */,
 				1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */,
+				5C1427011C23F84C00D41183 /* Download.cpp in Sources */,
 				C0337DDD127A521C008FF4F4 /* WebPlatformTouchPoint.cpp in Sources */,
 				2DA944A21884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp in Sources */,
 				31D5929E166E060000E6BF02 /* WebPlugInClient.cpp in Sources */,
@@ -10002,6 +9990,7 @@
 				2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */,
 				BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */,
 				1AAF08AD1926936700B6390C /* WebUserContentController.cpp in Sources */,
+				5C14271D1C23F8CF00D41183 /* CustomProtocolManagerCocoa.mm in Sources */,
 				1AAF08B719269E6D00B6390C /* WebUserContentControllerMessageReceiver.cpp in Sources */,
 				1AAF08A1192681D100B6390C /* WebUserContentControllerProxy.cpp in Sources */,
 				7C361D78192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp in Sources */,
@@ -10048,11 +10037,13 @@
 				EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */,
 				BC60C57A1240A546008C5E29 /* WKBundleRangeHandle.cpp in Sources */,
 				BC14DF9E120B635F00826C0C /* WKBundleScriptWorld.cpp in Sources */,
+				5C1427121C23F89E00D41183 /* DownloadMac.mm in Sources */,
 				BC4075F5124FF0270068F20A /* WKCertificateInfo.cpp in Sources */,
 				BC407628124FF0400068F20A /* WKCertificateInfoMac.mm in Sources */,
 				BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */,
 				BC4A6296147313A0006C681A /* WKConnectionRef.cpp in Sources */,
 				0FCB4E4D18BBE044000FCFC9 /* WKContentView.mm in Sources */,
+				5C1427111C23F89E00D41183 /* DownloadIOS.mm in Sources */,
 				0FCB4E6D18BBF26A000FCFC9 /* WKContentViewInteraction.mm in Sources */,
 				BCB9E24C1120E15C00A137E0 /* WKContext.cpp in Sources */,
 				1AE52F971920263300A1FA37 /* WKContextConfigurationRef.cpp in Sources */,
@@ -10165,7 +10156,6 @@
 				BC407603124FF0270068F20A /* WKSerializedScriptValue.cpp in Sources */,
 				75A8D2D8187D304000C39C9E /* WKSessionRef.cpp in Sources */,
 				1ADE46B21954EC61000F7985 /* WKSessionStateRef.cpp in Sources */,
-				5C9B86131C223EAF00110F36 /* DownloadCocoa.mm in Sources */,
 				513E462E1AD837560016234A /* WKSharingServicePickerDelegate.mm in Sources */,
 				BC407605124FF0270068F20A /* WKString.cpp in Sources */,
 				BC407619124FF0370068F20A /* WKStringCF.mm in Sources */,

@@ -1,3 +1,67 @@
+2015-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        Move networking code from Shared to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=152421
+
+        Reviewed by Antti Koivisto.
+
+        Since recently removing the non-NetworkProcess configurations, this code is no longer shared with the WebProcess.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * NetworkProcess/CustomProtocols: Copied from Source/WebKit2/Shared/Network/CustomProtocols.
+        * NetworkProcess/Downloads: Copied from Source/WebKit2/Shared/Downloads.
+        * NetworkProcess/Downloads/Download.cpp: Copied from Source/WebKit2/Shared/Downloads/Download.cpp.
+        * NetworkProcess/Downloads/Download.h: Copied from Source/WebKit2/Shared/Downloads/Download.h.
+        * NetworkProcess/Downloads/DownloadID.h: Copied from Source/WebKit2/Shared/Downloads/DownloadID.h.
+        * NetworkProcess/Downloads/DownloadManager.cpp: Copied from Source/WebKit2/Shared/Downloads/DownloadManager.cpp.
+        * NetworkProcess/Downloads/DownloadManager.h: Copied from Source/WebKit2/Shared/Downloads/DownloadManager.h.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp: Copied from Source/WebKit2/Shared/Network/NetworkProcessCreationParameters.cpp.
+        * NetworkProcess/NetworkProcessCreationParameters.h: Copied from Source/WebKit2/Shared/Network/NetworkProcessCreationParameters.h.
+        * NetworkProcess/NetworkProcessSupplement.h: Copied from Source/WebKit2/Shared/Network/NetworkProcessSupplement.h.
+        * NetworkProcess/NetworkResourceLoadParameters.cpp: Copied from Source/WebKit2/Shared/Network/NetworkResourceLoadParameters.cpp.
+        * NetworkProcess/NetworkResourceLoadParameters.h: Copied from Source/WebKit2/Shared/Network/NetworkResourceLoadParameters.h.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * Shared/Downloads: Removed.
+        * Shared/Downloads/Download.cpp: Removed.
+        * Shared/Downloads/Download.h: Removed.
+        * Shared/Downloads/DownloadAuthenticationClient.cpp: Removed.
+        * Shared/Downloads/DownloadAuthenticationClient.h: Removed.
+        * Shared/Downloads/DownloadID.h: Removed.
+        * Shared/Downloads/DownloadManager.cpp: Removed.
+        * Shared/Downloads/DownloadManager.h: Removed.
+        * Shared/Downloads/cocoa: Removed.
+        * Shared/Downloads/cocoa/DownloadCocoa.mm: Removed.
+        * Shared/Downloads/efl: Removed.
+        * Shared/Downloads/efl/DownloadSoupErrorsEfl.cpp: Removed.
+        * Shared/Downloads/gtk: Removed.
+        * Shared/Downloads/gtk/DownloadSoupErrorsGtk.cpp: Removed.
+        * Shared/Downloads/ios: Removed.
+        * Shared/Downloads/ios/DownloadIOS.mm: Removed.
+        * Shared/Downloads/mac: Removed.
+        * Shared/Downloads/mac/DownloadMac.mm: Removed.
+        * Shared/Downloads/soup: Removed.
+        * Shared/Downloads/soup/DownloadSoup.cpp: Removed.
+        * Shared/Downloads/soup/DownloadSoupErrors.h: Removed.
+        * Shared/Network: Removed.
+        * Shared/Network/CustomProtocols: Removed.
+        * Shared/Network/CustomProtocols/Cocoa: Removed.
+        * Shared/Network/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm: Removed.
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h: Removed.
+        * Shared/Network/CustomProtocols/CustomProtocolManager.messages.in: Removed.
+        * Shared/Network/CustomProtocols/soup: Removed.
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp: Removed.
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.h: Removed.
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp: Removed.
+        * Shared/Network/NetworkProcessCreationParameters.cpp: Removed.
+        * Shared/Network/NetworkProcessCreationParameters.h: Removed.
+        * Shared/Network/NetworkProcessSupplement.h: Removed.
+        * Shared/Network/NetworkResourceLoadParameters.cpp: Removed.
+        * Shared/Network/NetworkResourceLoadParameters.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         LayerTreeHostGtk triggers -Wunused-private-field

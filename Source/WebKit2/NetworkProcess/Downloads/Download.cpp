@@ -29,8 +29,8 @@
 #include "AuthenticationManager.h"
 #include "Connection.h"
 #include "DataReference.h"
-#include "DownloadProxyMessages.h"
 #include "DownloadManager.h"
+#include "DownloadProxyMessages.h"
 #include "SandboxExtension.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/NotImplemented.h>
