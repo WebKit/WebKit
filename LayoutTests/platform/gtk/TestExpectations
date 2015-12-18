@@ -2577,6 +2577,7 @@ webkit.org/b/152057 accessibility/textarea-selected-text-range.html [ Failure Ti
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # This tests are passing on GTK+ but they do not in the Apple ports
+css3/flexbox/multiline-reverse-wrap-baseline.html [ Pass ]
 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 mathml/presentation/style-changed.html [ Pass ]
