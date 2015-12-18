@@ -1,3 +1,14 @@
+2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        LayerTreeHostGtk triggers -Wunused-private-field
+        https://bugs.webkit.org/show_bug.cgi?id=152410
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the unused member variable.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2015-12-18  Alex Christensen  <achristensen@webkit.org>
 
         Add types for DownloadID and TaskIdentifier

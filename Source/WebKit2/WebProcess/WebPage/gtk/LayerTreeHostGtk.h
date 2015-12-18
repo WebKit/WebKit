@@ -117,7 +117,6 @@ private:
     std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     std::unique_ptr<WebCore::GLContext> m_context;
-    double m_lastImmediateFlushTime;
     bool m_layerFlushSchedulingEnabled;
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
     WebCore::TransformationMatrix m_scaleMatrix;
