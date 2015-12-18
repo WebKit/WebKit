@@ -34,6 +34,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "Opcode.h"
 #include "PropertyOffset.h"
+#include "WriteBarrier.h"
 
 namespace JSC { namespace LLInt {
 
@@ -154,6 +155,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(FunctionCode == 2);
     ASSERT(ModuleCode == 3);
 
+    ASSERT(!(reinterpret_cast<ptrdiff_t>((reinterpret_cast<WriteBarrier<JSCell>*>(0x4000)->slot())) - 0x4000));
     static_assert(PutByIdPrimaryTypeMask == 0x6, "LLInt assumes PutByIdPrimaryTypeMask is == 0x6");
     static_assert(PutByIdPrimaryTypeSecondary == 0x0, "LLInt assumes PutByIdPrimaryTypeSecondary is == 0x0");
     static_assert(PutByIdPrimaryTypeObjectWithStructure == 0x2, "LLInt assumes PutByIdPrimaryTypeObjectWithStructure is == 0x2");

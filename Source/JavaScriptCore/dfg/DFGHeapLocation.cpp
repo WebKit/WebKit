@@ -95,9 +95,13 @@ void printInternal(PrintStream& out, LocationKind kind)
     case ButterflyReadOnlyLoc:
         out.print("ButterflyReadOnlyLoc");
         return;
-        
-    case CheckHasInstanceLoc:
-        out.print("CheckHasInstanceLoc");
+
+    case CheckTypeInfoFlagsLoc:
+        out.print("CheckTypeInfoFlagsLoc");
+        return;
+
+    case OverridesHasInstanceLoc:
+        out.print("OverridesHasInstanceLoc");
         return;
         
     case ClosureVariableLoc:

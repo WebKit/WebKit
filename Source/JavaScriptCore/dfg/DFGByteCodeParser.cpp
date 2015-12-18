@@ -3505,9 +3505,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_check_tdz);
         }
 
-        case op_check_has_instance:
-            addToGraph(CheckHasInstance, get(VirtualRegister(currentInstruction[3].u.operand)));
-            NEXT_OPCODE(op_check_has_instance);
+        case op_overrides_has_instance: {
+            JSFunction* defaultHasInstanceSymbolFunction = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin())->functionProtoHasInstanceSymbolFunction();
+
+            Node* constructor = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* hasInstanceValue = get(VirtualRegister(currentInstruction[3].u.operand));
+
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(OverridesHasInstance, OpInfo(m_graph.freeze(defaultHasInstanceSymbolFunction)), constructor, hasInstanceValue));
+            NEXT_OPCODE(op_overrides_has_instance);
+        }
 
         case op_instanceof: {
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
@@ -3515,7 +3521,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(InstanceOf, value, prototype));
             NEXT_OPCODE(op_instanceof);
         }
-            
+
+        case op_instanceof_custom: {
+            Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* constructor = get(VirtualRegister(currentInstruction[3].u.operand));
+            Node* hasInstanceValue = get(VirtualRegister(currentInstruction[4].u.operand));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(InstanceOfCustom, value, constructor, hasInstanceValue));
+            NEXT_OPCODE(op_instanceof_custom);
+        }
+
         case op_is_undefined: {
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IsUndefined, value));

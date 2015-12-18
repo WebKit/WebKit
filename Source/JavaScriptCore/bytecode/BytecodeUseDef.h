@@ -73,6 +73,7 @@ void computeUsesForBytecodeOffset(
     case op_dec:
     case op_inc:
     case op_resume: {
+        ASSERT(opcodeLengths[opcodeID] >= 1);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
@@ -85,12 +86,14 @@ void computeUsesForBytecodeOffset(
     case op_jngreatereq:
     case op_jless:
     case op_copy_rest: {
+        ASSERT(opcodeLengths[opcodeID] >= 2);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         return;
     }
     case op_put_by_val_direct:
     case op_put_by_val: {
+        ASSERT(opcodeLengths[opcodeID] >= 3);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
@@ -100,17 +103,20 @@ void computeUsesForBytecodeOffset(
     case op_put_by_id:
     case op_put_to_scope:
     case op_put_to_arguments: {
+        ASSERT(opcodeLengths[opcodeID] >= 3);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
     }
     case op_put_getter_by_id:
     case op_put_setter_by_id: {
+        ASSERT(opcodeLengths[opcodeID] >= 4);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
         return;
     }
     case op_put_getter_setter_by_id: {
+        ASSERT(opcodeLengths[opcodeID] >= 5);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[5].u.operand);
@@ -118,6 +124,7 @@ void computeUsesForBytecodeOffset(
     }
     case op_put_getter_by_val:
     case op_put_setter_by_val: {
+        ASSERT(opcodeLengths[opcodeID] >= 4);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
@@ -159,6 +166,7 @@ void computeUsesForBytecodeOffset(
     case op_get_parent_scope:
     case op_create_scoped_arguments:
     case op_get_from_arguments: {
+        ASSERT(opcodeLengths[opcodeID] >= 2);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         return;
     }
@@ -168,8 +176,8 @@ void computeUsesForBytecodeOffset(
     case op_enumerator_generic_pname:
     case op_get_by_val:
     case op_in:
+    case op_overrides_has_instance:
     case op_instanceof:
-    case op_check_has_instance:
     case op_add:
     case op_mul:
     case op_div:
@@ -191,20 +199,24 @@ void computeUsesForBytecodeOffset(
     case op_eq:
     case op_push_with_scope:
     case op_del_by_val: {
+        ASSERT(opcodeLengths[opcodeID] > 3);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
     }
+    case op_instanceof_custom:
     case op_has_structure_property:
     case op_construct_varargs:
     case op_call_varargs:
     case op_tail_call_varargs: {
+        ASSERT(opcodeLengths[opcodeID] > 4);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
         return;
     }
     case op_get_direct_pname: {
+        ASSERT(opcodeLengths[opcodeID] > 5);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
@@ -214,6 +226,7 @@ void computeUsesForBytecodeOffset(
     case op_switch_string:
     case op_switch_char:
     case op_switch_imm: {
+        ASSERT(opcodeLengths[opcodeID] > 3);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
     }
@@ -350,8 +363,9 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_construct:
     case op_get_by_id:
     case op_get_array_length:
-    case op_check_has_instance:
+    case op_overrides_has_instance:
     case op_instanceof:
+    case op_instanceof_custom:
     case op_get_by_val:
     case op_typeof:
     case op_is_undefined:
@@ -402,10 +416,12 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_unsigned:
     case op_get_from_arguments: 
     case op_get_rest_length: {
+        ASSERT(opcodeLengths[opcodeID] > 1);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
     case op_catch: {
+        ASSERT(opcodeLengths[opcodeID] > 2);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         return;

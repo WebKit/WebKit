@@ -127,7 +127,7 @@ protected:
 
 public:
     typedef Parent Base;
-    static const unsigned StructureFlags = Base::StructureFlags | ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | OverridesHasInstance | OverridesGetPropertyNames | TypeOfShouldCallGetCallData;
+    static const unsigned StructureFlags = Base::StructureFlags | ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | OverridesHasInstanceFlag | OverridesGetPropertyNames | TypeOfShouldCallGetCallData;
 
     ~JSCallbackObject();
 

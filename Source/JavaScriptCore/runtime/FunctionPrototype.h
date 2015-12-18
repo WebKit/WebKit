@@ -36,7 +36,7 @@ public:
         return prototype;
     }
 
-    void addFunctionProperties(ExecState*, JSGlobalObject*, JSFunction** callFunction, JSFunction** applyFunction);
+    void addFunctionProperties(ExecState*, JSGlobalObject*, JSFunction** callFunction, JSFunction** applyFunction, JSFunction** hasInstanceSymbolFunction);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {

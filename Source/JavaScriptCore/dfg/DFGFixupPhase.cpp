@@ -1111,10 +1111,29 @@ private:
             fixEdge<FunctionUse>(node->child1());
             break;
         }
+
+        case OverridesHasInstance: {
+            if (node->child2().node()->isCellConstant()) {
+                if (node->child2().node()->asCell() != m_graph.globalObjectFor(node->origin.semantic)->functionProtoHasInstanceSymbolFunction()) {
+
+                    m_graph.convertToConstant(node, jsBoolean(true));
+                    break;
+                }
+
+                if (!m_graph.hasExitSite(node->origin.semantic, BadTypeInfoFlags)) {
+                    // Here we optimistically assume that we will not see an bound/C-API function here.
+                    m_insertionSet.insertNode(m_indexInBlock, SpecNone, CheckTypeInfoFlags, node->origin, OpInfo(ImplementsDefaultHasInstance), Edge(node->child1().node(), CellUse));
+                    m_graph.convertToConstant(node, jsBoolean(false));
+                    break;
+                }
+            }
+
+            fixEdge<CellUse>(node->child1());
+            break;
+        }
             
         case CheckStructure:
         case CheckCell:
-        case CheckHasInstance:
         case CreateThis:
         case GetButterfly:
         case GetButterflyReadOnly: {
@@ -1175,7 +1194,11 @@ private:
             fixEdge<CellUse>(node->child2());
             break;
         }
-            
+
+        case InstanceOfCustom:
+            fixEdge<CellUse>(node->child2());
+            break;
+
         case In: {
             // FIXME: We should at some point have array profiling on op_in, in which
             // case we would be able to turn this into a kind of GetByVal.
@@ -1423,6 +1446,7 @@ private:
         case NotifyWrite:
         case VarInjectionWatchpoint:
         case Call:
+        case CheckTypeInfoFlags:
         case TailCallInlinedCaller:
         case Construct:
         case CallVarargs:

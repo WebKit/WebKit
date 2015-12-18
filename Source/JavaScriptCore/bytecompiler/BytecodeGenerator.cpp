@@ -2099,14 +2099,13 @@ void BytecodeGenerator::createVariable(
     }
 }
 
-void BytecodeGenerator::emitCheckHasInstance(RegisterID* dst, RegisterID* value, RegisterID* base, Label* target)
+RegisterID* BytecodeGenerator::emitOverridesHasInstance(RegisterID* dst, RegisterID* constructor, RegisterID* hasInstanceValue)
 {
-    size_t begin = instructions().size();
-    emitOpcode(op_check_has_instance);
+    emitOpcode(op_overrides_has_instance);
     instructions().append(dst->index());
-    instructions().append(value->index());
-    instructions().append(base->index());
-    instructions().append(target->bind(begin, instructions().size()));
+    instructions().append(constructor->index());
+    instructions().append(hasInstanceValue->index());
+    return dst;
 }
 
 // Indicates the least upper bound of resolve type based on local scope. The bytecode linker
@@ -2270,6 +2269,16 @@ RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value
     instructions().append(dst->index());
     instructions().append(value->index());
     instructions().append(basePrototype->index());
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitInstanceOfCustom(RegisterID* dst, RegisterID* value, RegisterID* constructor, RegisterID* hasInstanceValue)
+{
+    emitOpcode(op_instanceof_custom);
+    instructions().append(dst->index());
+    instructions().append(value->index());
+    instructions().append(constructor->index());
+    instructions().append(hasInstanceValue->index());
     return dst;
 }
 

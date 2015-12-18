@@ -176,6 +176,7 @@ typedef int32_t JIT_OPERATION (*Z_JITOperation_EC)(ExecState*, JSCell*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_ESJss)(ExecState*, size_t, JSString*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EJ)(ExecState*, EncodedJSValue);
+typedef int32_t JIT_OPERATION (*Z_JITOperation_EJOJ)(ExecState*, EncodedJSValue, JSObject*, EncodedJSValue);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EJZ)(ExecState*, EncodedJSValue, int32_t);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EJZZ)(ExecState*, EncodedJSValue, int32_t, int32_t);
 typedef size_t JIT_OPERATION (*S_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
@@ -329,7 +330,6 @@ void JIT_OPERATION operationPushFunctionNameScope(ExecState*, int32_t, SymbolTab
 void JIT_OPERATION operationPopScope(ExecState*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationProfileDidCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationProfileWillCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState*, EncodedJSValue, EncodedJSValue baseVal) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValOptimize(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValGeneric(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValString(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo*) WTF_INTERNAL;
@@ -358,6 +358,7 @@ void JIT_OPERATION operationInitGlobalConst(ExecState*, Instruction*);
 void JIT_OPERATION operationExceptionFuzz(ExecState*);
 
 int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(ExecState*);
+int32_t JIT_OPERATION operationInstanceOfCustom(ExecState*, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance) WTF_INTERNAL;
 
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState*, EncodedJSValue, JSCell*);
 EncodedJSValue JIT_OPERATION operationHasIndexedProperty(ExecState*, JSCell*, int32_t);

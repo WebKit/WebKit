@@ -105,17 +105,29 @@ void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCas
     emitStoreCell(dst, returnValueGPR);
 }
 
-void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
+void JIT::emit_op_overrides_has_instance(Instruction* currentInstruction)
 {
-    int baseVal = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int constructor = currentInstruction[2].u.operand;
+    int hasInstanceValue = currentInstruction[3].u.operand;
 
-    emitGetVirtualRegister(baseVal, regT0);
+    emitGetVirtualRegister(hasInstanceValue, regT0);
 
-    // Check that baseVal is a cell.
-    emitJumpSlowCaseIfNotJSCell(regT0, baseVal);
+    // We don't jump if we know what Symbol.hasInstance would do.
+    Jump customhasInstanceValue = branchPtr(NotEqual, regT0, TrustedImmPtr(m_codeBlock->globalObject()->functionProtoHasInstanceSymbolFunction()));
 
-    // Check that baseVal 'ImplementsHasInstance'.
-    addSlowCase(branchTest8(Zero, Address(regT0, JSCell::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance)));
+    emitGetVirtualRegister(constructor, regT0);
+
+    // Check that constructor 'ImplementsHasInstance' i.e. the object is a C-API user or a bound function.
+    test8(Zero, Address(regT0, JSCell::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance), regT0);
+    emitTagBool(regT0);
+    Jump done = jump();
+
+    customhasInstanceValue.link(this);
+    move(TrustedImm32(ValueTrue), regT0);
+
+    done.link(this);
+    emitPutVirtualRegister(dst);
 }
 
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
@@ -129,7 +141,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitGetVirtualRegister(value, regT2);
     emitGetVirtualRegister(proto, regT1);
 
-    // Check that proto are cells.  baseVal must be a cell - this is checked by op_check_has_instance.
+    // Check that proto are cells. baseVal must be a cell - this is checked by the get_by_id for Symbol.hasInstance.
     emitJumpSlowCaseIfNotJSCell(regT2, value);
     emitJumpSlowCaseIfNotJSCell(regT1, proto);
 
@@ -155,6 +167,12 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     // isInstance jumps right down to here, to skip setting the result to false (it has already set true).
     isInstance.link(this);
     emitPutVirtualRegister(dst);
+}
+
+void JIT::emit_op_instanceof_custom(Instruction*)
+{
+    // This always goes to slow path since we expect it to be rare.
+    addSlowCase(jump());
 }
 
 void JIT::emit_op_is_undefined(Instruction* currentInstruction)
@@ -829,21 +847,6 @@ void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCase
     slowPathCall.call();
 }
 
-void JIT::emitSlow_op_check_has_instance(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
-    int baseVal = currentInstruction[3].u.operand;
-
-    linkSlowCaseIfNotJSCell(iter, baseVal);
-    linkSlowCase(iter);
-    emitGetVirtualRegister(value, regT0);
-    emitGetVirtualRegister(baseVal, regT1);
-    callOperation(operationCheckHasInstance, dst, regT0, regT1);
-
-    emitJumpSlowToHot(jump(), currentInstruction[4].u.operand);
-}
-
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int dst = currentInstruction[1].u.operand;
@@ -856,6 +859,22 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
     emitGetVirtualRegister(value, regT0);
     emitGetVirtualRegister(proto, regT1);
     callOperation(operationInstanceOf, dst, regT0, regT1);
+}
+
+void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
+    int constructor = currentInstruction[3].u.operand;
+    int hasInstanceValue = currentInstruction[4].u.operand;
+
+    linkSlowCase(iter);
+    emitGetVirtualRegister(value, regT0);
+    emitGetVirtualRegister(constructor, regT1);
+    emitGetVirtualRegister(hasInstanceValue, regT2);
+    callOperation(operationInstanceOfCustom, regT0, regT1, regT2);
+    emitTagBool(returnValueGPR);
+    emitPutVirtualRegister(dst, returnValueGPR);
 }
 
 void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

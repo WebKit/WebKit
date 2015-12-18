@@ -250,7 +250,6 @@
     macro(yield)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL_NOT_IMPLEMENTED_YET(macro)\
-    macro(hasInstance) \
     macro(isConcatSpreadable) \
     macro(match) \
     macro(replace) \
@@ -260,6 +259,7 @@
     macro(toPrimitive)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
+    macro(hasInstance) \
     macro(iterator) \
     macro(unscopables) \
     macro(toStringTag)
@@ -345,6 +345,9 @@
     macro(NumberFormat) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \
+    macro(isBoundFunction) \
+    macro(hasInstanceBoundFunction) \
+    macro(instanceOf) \
 
 
 namespace JSC {

@@ -1437,16 +1437,38 @@ const HashTableValue* JSObject::findPropertyHashEntry(PropertyName propertyName)
     return 0;
 }
 
-bool JSObject::hasInstance(ExecState* exec, JSValue value)
+bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue hasInstanceValue)
 {
     VM& vm = exec->vm();
+
+    if (!hasInstanceValue.isUndefinedOrNull() && hasInstanceValue != exec->lexicalGlobalObject()->functionProtoHasInstanceSymbolFunction()) {
+        CallData callData;
+        CallType callType = JSC::getCallData(hasInstanceValue, callData);
+        if (callType == CallTypeNone) {
+            vm.throwException(exec, createInvalidInstanceofParameterErrorhasInstanceValueNotFunction(exec, this));
+            return false;
+        }
+
+        MarkedArgumentBuffer args;
+        args.append(value);
+        JSValue result = call(exec, hasInstanceValue, callType, callData, this, args);
+        return result.toBoolean(exec);
+    }
+
     TypeInfo info = structure(vm)->typeInfo();
     if (info.implementsDefaultHasInstance())
         return defaultHasInstance(exec, value, get(exec, exec->propertyNames().prototype));
     if (info.implementsHasInstance())
         return methodTable(vm)->customHasInstance(this, exec, value);
-    vm.throwException(exec, createInvalidInstanceofParameterError(exec, this));
+    vm.throwException(exec, createInvalidInstanceofParameterErrorNotFunction(exec, this));
     return false;
+}
+
+bool JSObject::hasInstance(ExecState* exec, JSValue value)
+{
+    JSValue hasInstanceValue = get(exec, exec->propertyNames().hasInstanceSymbol);
+
+    return hasInstance(exec, value, hasInstanceValue);
 }
 
 bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
@@ -1465,6 +1487,14 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
             return true;
     }
     return false;
+}
+
+EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(ExecState* exec)
+{
+    JSValue value = exec->uncheckedArgument(0);
+    JSValue proto = exec->uncheckedArgument(1);
+
+    return JSValue::encode(jsBoolean(JSObject::defaultHasInstance(exec, value, proto)));
 }
 
 void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)

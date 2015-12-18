@@ -3,11 +3,11 @@ Test for error messages for instanceof
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'instanceof' instanceof    'instanceof' threw exception TypeError: "instanceof" is not a function. (evaluating ''instanceof' instanceof    'instanceof'').
-PASS 20 instanceof     'hello'   threw exception TypeError: 'hello' is not a function. (evaluating '20 instanceof     'hello'').
+PASS 'instanceof' instanceof    'instanceof' threw exception TypeError: Right hand side of instanceof is not an object.
+PASS 20 instanceof     'hello'   threw exception TypeError: Right hand side of instanceof is not an object.
 PASS 20 instanceof     {}   threw exception TypeError: {} is not a function. (evaluating '20 instanceof     {}').
-PASS 20 instanceof     {}.foo  threw exception TypeError: {}.foo is not a function. (evaluating '20 instanceof     {}.foo').
-PASS 20 instanceof     true       threw exception TypeError: true is not a function. (evaluating '20 instanceof     true').
+PASS 20 instanceof     {}.foo  threw exception TypeError: Right hand side of instanceof is not an object.
+PASS 20 instanceof     true       threw exception TypeError: Right hand side of instanceof is not an object.
 PASS successfullyParsed is true
 
 TEST COMPLETE

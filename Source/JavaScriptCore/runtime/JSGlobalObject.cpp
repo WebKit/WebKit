@@ -286,12 +286,14 @@ void JSGlobalObject::init(VM& vm)
     m_internalFunctionStructure.set(vm, this, InternalFunction::createStructure(vm, this, m_functionPrototype.get()));
     JSFunction* callFunction = 0;
     JSFunction* applyFunction = 0;
-    m_functionPrototype->addFunctionProperties(exec, this, &callFunction, &applyFunction);
+    JSFunction* hasInstanceSymbolFunction = 0;
+    m_functionPrototype->addFunctionProperties(exec, this, &callFunction, &applyFunction, &hasInstanceSymbolFunction);
     m_callFunction.set(vm, this, callFunction);
     m_applyFunction.set(vm, this, applyFunction);
     m_arrayProtoValuesFunction.set(vm, this, JSFunction::create(vm, this, 0, vm.propertyNames->values.string(), arrayProtoFuncValues));
     m_initializePromiseFunction.set(vm, this, JSFunction::createBuiltinFunction(vm, promiseOperationsInitializePromiseCodeGenerator(vm), this));
     m_newPromiseCapabilityFunction.set(vm, this, JSFunction::createBuiltinFunction(vm, promiseOperationsNewPromiseCapabilityCodeGenerator(vm), this));
+    m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
     m_nullGetterFunction.set(vm, this, NullGetterFunction::create(vm, NullGetterFunction::createStructure(vm, this, m_functionPrototype.get())));
     m_nullSetterFunction.set(vm, this, NullSetterFunction::create(vm, NullSetterFunction::createStructure(vm, this, m_functionPrototype.get())));
     m_objectPrototype.set(vm, this, ObjectPrototype::create(vm, this, ObjectPrototype::createStructure(vm, this, jsNull())));
@@ -521,6 +523,9 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSFunction* privateFuncToInteger = JSFunction::createBuiltinFunction(vm, globalObjectToIntegerCodeGenerator(vm), this);
     JSFunction* privateFuncTypedArrayLength = JSFunction::create(vm, this, 0, String(), typedArrayViewPrivateFuncLength);
     JSFunction* privateFuncTypedArraySort = JSFunction::create(vm, this, 0, String(), typedArrayViewPrivateFuncSort);
+    JSFunction* privateFuncIsBoundFunction = JSFunction::create(vm, this, 0, String(), isBoundFunction);
+    JSFunction* privateFuncHasInstanceBoundFunction = JSFunction::create(vm, this, 0, String(), hasInstanceBoundFunction);
+    JSFunction* privateFuncInstanceOf = JSFunction::create(vm, this, 0, String(), objectPrivateFuncInstanceOf);
 
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), DontEnum | DontDelete | ReadOnly),
@@ -535,6 +540,9 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->TypeErrorPrivateName, m_typeErrorConstructor.get(), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->typedArrayLengthPrivateName, privateFuncTypedArrayLength, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->typedArraySortPrivateName, privateFuncTypedArraySort, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->isBoundFunctionPrivateName, privateFuncIsBoundFunction, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->hasInstanceBoundFunctionPrivateName, privateFuncHasInstanceBoundFunction, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->instanceOfPrivateName, privateFuncInstanceOf, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->BuiltinLogPrivateName, builtinLog, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->ArrayPrivateName, arrayConstructor, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->NumberPrivateName, numberConstructor, DontEnum | DontDelete | ReadOnly),
@@ -840,6 +848,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_arrayProtoValuesFunction);
     visitor.append(&thisObject->m_initializePromiseFunction);
     visitor.append(&thisObject->m_newPromiseCapabilityFunction);
+    visitor.append(&thisObject->m_functionProtoHasInstanceSymbolFunction);
     visitor.append(&thisObject->m_throwTypeErrorGetterSetter);
     visitor.append(&thisObject->m_moduleLoader);
 

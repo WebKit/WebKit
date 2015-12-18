@@ -4163,22 +4163,58 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CheckHasInstance: {
+    case CheckTypeInfoFlags: {
+        compileCheckTypeInfoFlags(node);
+        break;
+    }
+
+    case OverridesHasInstance: {
+
+        Node* hasInstanceValueNode = node->child2().node();
+        JSFunction* defaultHasInstanceFunction = jsCast<JSFunction*>(node->cellOperand()->value());
+
+        MacroAssembler::Jump notDefaulthasInstanceValue;
+        MacroAssembler::Jump hasInstanceValueNotCell;
         SpeculateCellOperand base(this, node->child1());
-        GPRTemporary structure(this);
+        JSValueOperand hasInstanceValue(this, node->child2());
+        GPRTemporary result(this);
 
-        // Speculate that base 'ImplementsDefaultHasInstance'.
-        speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branchTest8(
-            MacroAssembler::Zero, 
-            MacroAssembler::Address(base.gpr(), JSCell::typeInfoFlagsOffset()), 
-            MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance)));
+        GPRReg resultGPR = result.gpr();
 
-        noResult(node);
+        // If we have proven that the constructor's Symbol.hasInstance will always be the one on
+        // Function.prototype[Symbol.hasInstance] then we don't need a runtime check here. We don't worry
+        // about the case where the constructor's Symbol.hasInstance is a constant but is not the default
+        // one as fixup should have converted this check to true.
+        ASSERT(!hasInstanceValueNode->isCellConstant() || defaultHasInstanceFunction == hasInstanceValueNode->asCell());
+        if (!hasInstanceValueNode->isCellConstant()) {
+
+            JSValueRegs hasInstanceValueRegs = hasInstanceValue.jsValueRegs();
+            hasInstanceValueNotCell = m_jit.branchIfNotCell(hasInstanceValueRegs);
+            notDefaulthasInstanceValue = m_jit.branchPtr(MacroAssembler::NotEqual, hasInstanceValueRegs.payloadGPR(), TrustedImmPtr(defaultHasInstanceFunction));
+        }
+
+        // Check that constructor 'ImplementsDefaultHasInstance'.
+        m_jit.test8(MacroAssembler::Zero, MacroAssembler::Address(base.gpr(), JSCell::typeInfoFlagsOffset()), MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance), resultGPR);
+        MacroAssembler::Jump done = m_jit.jump();
+
+        if (!hasInstanceValueNode->isCellConstant()) {
+            hasInstanceValueNotCell.link(&m_jit);
+            notDefaulthasInstanceValue.link(&m_jit);
+            moveTrueTo(resultGPR);
+        }
+
+        done.link(&m_jit);
+        booleanResult(resultGPR, node);
         break;
     }
 
     case InstanceOf: {
         compileInstanceOf(node);
+        break;
+    }
+
+    case InstanceOfCustom: {
+        compileInstanceOfCustom(node);
         break;
     }
 

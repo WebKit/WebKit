@@ -1183,7 +1183,7 @@
 - path: es6/WeakSet_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.hasInstance.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.isConcatSpreadable.js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.match.js

@@ -1,3 +1,164 @@
+2015-12-17  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add support for Symbol.hasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=151839
+
+        Reviewed by Saam Barati.
+
+        Fixed version of r193986, r193983, and r193974.
+
+        This patch adds support for Symbol.hasInstance, unfortunately in order to prevent
+        regressions several new bytecodes and DFG IR nodes were necessary. Before, Symbol.hasInstance
+        when executing an instanceof expression we would emit three bytecodes: overrides_has_instance, get_by_id,
+        then instanceof. As the spec has changed, we emit a more complicated set of bytecodes in addition to some
+        new ones. First the role of overrides_has_instance and its corresponding DFG node have changed. Now it returns
+        a js-boolean indicating whether the RHS of the instanceof expression (from here on called the constructor for simplicity)
+        needs non-default behavior for resolving the expression. i.e. The constructor has a Symbol.hasInstance that differs from the one on
+        Function.prototype[Symbol.hasInstance] or is a bound/C-API function. Once we get to the DFG this node is generally eliminated as
+        we can prove the value of Symbol.hasInstance is a constant. The second new bytecode is instanceof_custom. insntanceof_custom, just
+        emits a call to slow path code that computes the result.
+
+        In the DFG, there is also a new node, CheckTypeInfoFlags, which checks the type info flags are consistent with the ones provided and
+        OSR exits if the flags are not. Additionally, we attempt to prove that the result of CheckHasValue will be a constant and transform
+        it into a CheckTypeInfoFlags followed by a JSConstant.
+
+        * API/JSCallbackObject.h:
+        * builtins/FunctionPrototype.js:
+        (symbolHasInstance):
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::isBranch): Deleted.
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::getJumpTargetsForBytecodeOffset): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitOverridesHasInstance):
+        (JSC::BytecodeGenerator::emitInstanceOfCustom):
+        (JSC::BytecodeGenerator::emitCheckHasInstance): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InstanceOfNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::hasTypeInfoOperand):
+        (JSC::DFG::Node::typeInfoOperand):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckTypeInfoFlags):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfCustom):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileOverridesHasInstance):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckTypeInfoFlags):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInstanceOfCustom):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckHasInstance): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_instanceof_custom):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        (JSC::JIT::emit_op_check_has_instance): Deleted.
+        (JSC::JIT::emitSlow_op_check_has_instance): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_instanceof_custom):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        (JSC::JIT::emit_op_check_has_instance): Deleted.
+        (JSC::JIT::emitSlow_op_check_has_instance): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonIdentifiers.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::invalidParameterInstanceofSourceAppender):
+        (JSC::invalidParameterInstanceofNotFunctionSourceAppender):
+        (JSC::invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender):
+        (JSC::createInvalidInstanceofParameterErrorNotFunction):
+        (JSC::createInvalidInstanceofParameterErrorhasInstanceValueNotFunction):
+        (JSC::createInvalidInstanceofParameterError): Deleted.
+        * runtime/ExceptionHelpers.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/FunctionPrototype.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::isBoundFunction):
+        (JSC::hasInstanceBoundFunction):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::functionProtoHasInstanceSymbolFunction):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasInstance):
+        (JSC::objectPrivateFuncInstanceOf):
+        * runtime/JSObject.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::overridesHasInstance):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase<Unknown>::slot):
+        * tests/es6.yaml:
+        * tests/stress/instanceof-custom-hasinstancesymbol.js: Added.
+        (Constructor):
+        (value):
+        (instanceOf):
+        (body):
+        * tests/stress/symbol-hasInstance.js: Added.
+        (Constructor):
+        (value):
+        (ObjectClass.Symbol.hasInstance):
+        (NumberClass.Symbol.hasInstance):
+
 2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve names in Debugger Call Stack section when paused
