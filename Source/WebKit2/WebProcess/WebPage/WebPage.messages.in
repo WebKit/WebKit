@@ -141,7 +141,7 @@ messages -> WebPage LegacyReceiver {
 
     DidRemoveBackForwardItem(uint64_t backForwardItemID)
 
-    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, WebKit::DownloadID downloadID)
+    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, uint64_t downloadID)
 
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()

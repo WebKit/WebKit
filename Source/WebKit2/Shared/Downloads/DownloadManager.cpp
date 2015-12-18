@@ -41,7 +41,7 @@ DownloadManager::DownloadManager(Client* client)
 {
 }
 
-void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, const ResourceRequest& request)
+void DownloadManager::startDownload(SessionID sessionID, uint64_t downloadID, const ResourceRequest& request)
 {
 #if USE(NETWORK_SESSION)
     auto* networkSession = SessionTracker::networkSession(sessionID);
@@ -58,7 +58,7 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
 }
 
 #if !USE(NETWORK_SESSION)
-void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
+void DownloadManager::convertHandleToDownload(uint64_t downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
 {
     auto download = std::make_unique<Download>(*this, downloadID, request);
 
@@ -68,7 +68,7 @@ void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHan
 }
 #endif
 
-void DownloadManager::resumeDownload(SessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
+void DownloadManager::resumeDownload(WebCore::SessionID, uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
 #if USE(NETWORK_SESSION)
     notImplemented();
@@ -82,7 +82,7 @@ void DownloadManager::resumeDownload(SessionID, DownloadID downloadID, const IPC
 #endif
 }
 
-void DownloadManager::cancelDownload(DownloadID downloadID)
+void DownloadManager::cancelDownload(uint64_t downloadID)
 {
     Download* download = m_downloads.get(downloadID);
     if (!download)

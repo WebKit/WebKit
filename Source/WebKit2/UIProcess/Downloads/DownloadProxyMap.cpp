@@ -49,18 +49,18 @@ DownloadProxy* DownloadProxyMap::createDownloadProxy(WebProcessPool& processPool
     RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(*this, processPool, resourceRequest);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
 
-    m_process->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID().downloadID(), *downloadProxy);
+    m_process->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), *downloadProxy);
 
     return downloadProxy.get();
 }
 
 void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)
 {
-    auto downloadID = downloadProxy->downloadID();
+    uint64_t downloadID = downloadProxy->downloadID();
 
     ASSERT(m_downloads.contains(downloadID));
 
-    m_process->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadID.downloadID());
+    m_process->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadID);
     downloadProxy->invalidate();
     m_downloads.remove(downloadID);
 }
@@ -68,7 +68,7 @@ void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)
 void DownloadProxyMap::processDidClose()
 {
     // Invalidate all outstanding downloads.
-    for (auto it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it) {
+    for (HashMap<uint64_t, RefPtr<DownloadProxy>>::iterator::Values it = m_downloads.begin().values(), end = m_downloads.end().values(); it != end; ++it) {
         (*it)->processDidClose();
         (*it)->invalidate();
     }

@@ -28,7 +28,6 @@
 
 #include "BlockingResponseMap.h"
 #include "Connection.h"
-#include "DownloadID.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include <WebCore/ResourceLoadPriority.h>
 #include <wtf/HashSet.h>
@@ -77,8 +76,8 @@ private:
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void setDefersLoading(ResourceLoadIdentifier, bool);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::URL& redirectURL);
-    void startDownload(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&);
-    void convertMainResourceLoadToDownload(WebCore::SessionID, uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void startDownload(WebCore::SessionID, uint64_t downloadID, const WebCore::ResourceRequest&);
+    void convertMainResourceLoadToDownload(WebCore::SessionID, uint64_t mainResourceLoadIdentifier, uint64_t downloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void cookiesForDOM(WebCore::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, String& result);
     void setCookiesFromDOM(WebCore::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, const String&);

@@ -26,7 +26,6 @@
 #ifndef DownloadProxyMap_h
 #define DownloadProxyMap_h
 
-#include "DownloadID.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
@@ -57,7 +56,7 @@ public:
 
 private:
     ChildProcessProxy* m_process;
-    HashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
+    HashMap<uint64_t, RefPtr<DownloadProxy>> m_downloads;
 };
 
 } // namespace WebKit

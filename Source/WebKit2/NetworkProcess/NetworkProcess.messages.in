@@ -39,9 +39,9 @@ messages -> NetworkProcess LegacyReceiver {
     DeleteWebsiteData(WebCore::SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
     DeleteWebsiteDataForOrigins(WebCore::SessionID sessionID, uint64_t websiteDataTypes, Vector<WebCore::SecurityOriginData> origins, Vector<String> cookieHostNames, uint64_t callbackID)
 
-    DownloadRequest(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
-    ResumeDownload(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
-    CancelDownload(WebKit::DownloadID downloadID)
+    DownloadRequest(WebCore::SessionID sessionID, uint64_t downloadID, WebCore::ResourceRequest request)
+    ResumeDownload(WebCore::SessionID sessionID, uint64_t downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    CancelDownload(uint64_t downloadID)
 
     SetProcessSuppressionEnabled(bool flag)
 #if PLATFORM(COCOA)

@@ -40,7 +40,7 @@ WKTypeID WKDownloadGetTypeID()
 
 uint64_t WKDownloadGetID(WKDownloadRef download)
 {
-    return toImpl(download)->downloadID().downloadID();
+    return toImpl(download)->downloadID();
 }
 
 WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download)
