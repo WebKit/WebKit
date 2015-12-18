@@ -67,7 +67,6 @@ def main():
         "jsc",
         "LayoutTestHelper",
         "make",
-        "pboard", # FIXME: https://bugs.webkit.org/show_bug.cgi?id=81012
         "perl5.12",
         "perl5.16",
         "perl",

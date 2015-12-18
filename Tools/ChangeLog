@@ -1,3 +1,13 @@
+2015-12-18  Aakash Jain  <aakash_jain@apple.com>
+
+        Pasteboard get messed up after running kill-old-processes
+        https://bugs.webkit.org/show_bug.cgi?id=152426
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main): Do not kill pasteboard anymore.
+
 2015-12-17  Aakash Jain  <aakash_jain@apple.com>
 
         run-webkit-tests shouldn't start multiple iOS simulators while only running one test
