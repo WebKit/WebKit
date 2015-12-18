@@ -2855,3 +2855,5 @@ webkit.org/b/152137 fast/media/mq-hover-styling.html [ Failure ]
 webkit.org/b/152137 fast/media/mq-pointer-matchMedia.html [ Failure ]
 webkit.org/b/152137 fast/media/mq-pointer-styling.html [ Failure ]
 webkit.org/b/152137 fast/media/mq-pointer.html [ Failure ]
+
+webkit.org/b/152442 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
