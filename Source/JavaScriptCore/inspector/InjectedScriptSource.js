@@ -1344,7 +1344,7 @@ InjectedScript.RemoteObject.prototype = {
 InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 {
     this.callFrameId = "{\"ordinal\":" + ordinal + ",\"injectedScriptId\":" + injectedScriptId + "}";
-    this.functionName = (callFrame.type === "function" ? callFrame.functionName : "");
+    this.functionName = callFrame.functionName;
     this.location = {scriptId: String(callFrame.sourceID), lineNumber: callFrame.line, columnNumber: callFrame.column};
     this.scopeChain = this._wrapScopeChain(callFrame);
     this.this = injectedScript._wrapObject(callFrame.thisObject, "backtrace");

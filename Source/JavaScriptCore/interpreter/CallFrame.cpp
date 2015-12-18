@@ -230,6 +230,26 @@ void CallFrame::setActivation(JSLexicalEnvironment* lexicalEnvironment)
     registers()[activationRegister.offset()] = lexicalEnvironment;
 }
 
+String CallFrame::friendlyFunctionName()
+{
+    CodeBlock* codeBlock = this->codeBlock();
+    if (!codeBlock)
+        return emptyString();
+
+    switch (codeBlock->codeType()) {
+    case EvalCode:
+        return ASCIILiteral("eval code");
+    case ModuleCode:
+        return ASCIILiteral("module code");
+    case GlobalCode:
+        return ASCIILiteral("global code");
+    case FunctionCode:
+        if (callee())
+            return getCalculatedDisplayName(this, callee());
+        return emptyString();
+    }
+}
+
 void CallFrame::dump(PrintStream& out)
 {
     if (CodeBlock* codeBlock = this->codeBlock()) {

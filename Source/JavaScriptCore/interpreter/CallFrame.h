@@ -243,6 +243,8 @@ namespace JSC  {
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[JSStack::CodeBlock] = codeBlock; }
         void setReturnPC(void* value) { callerFrameAndPC().pc = reinterpret_cast<Instruction*>(value); }
 
+        String friendlyFunctionName();
+
         // CallFrame::iterate() expects a Functor that implements the following method:
         //     StackVisitor::Status operator()(StackVisitor&);
 

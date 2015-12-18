@@ -108,14 +108,43 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 
     // Static
 
+    static functionNameFromPayload(payload)
+    {
+        let functionName = payload.functionName;
+        if (functionName === "global code")
+            return WebInspector.UIString("Global Code");
+        if (functionName === "eval code")
+            return WebInspector.UIString("Eval Code");
+        if (functionName === "module code")
+            return WebInspector.UIString("Module Code");
+        return functionName;
+    }
+
+    static programCodeFromPayload(payload)
+    {
+        return payload.functionName.endsWith(" code");
+    }
+
+    static fromDebuggerPayload(payload, scopeChain, sourceCodeLocation)
+    {
+        let id = payload.callFrameId;
+        let thisObject = WebInspector.RemoteObject.fromPayload(payload.this);
+        let functionName = WebInspector.CallFrame.functionNameFromPayload(payload);
+        let nativeCode = false;
+        let programCode = WebInspector.CallFrame.programCodeFromPayload(payload);
+
+        return new WebInspector.CallFrame(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode);
+    }
+
     static fromPayload(payload)
     {
         console.assert(payload);
 
         let url = payload.url;
         let nativeCode = false;
-        let programCode = false;
         let sourceCodeLocation = null;
+        let functionName = WebInspector.CallFrame.functionNameFromPayload(payload);
+        let programCode = WebInspector.CallFrame.programCodeFromPayload(payload);
 
         if (!url || url === "[native code]") {
             nativeCode = true;
@@ -130,18 +159,6 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
                 let lineNumber = payload.lineNumber - 1;
                 sourceCodeLocation = sourceCode.createLazySourceCodeLocation(lineNumber, payload.columnNumber);
             }
-        }
-
-        let functionName = payload.functionName;
-        if (payload.functionName === "global code") {
-            functionName = WebInspector.UIString("Global Code");
-            programCode = true;
-        } else if (payload.functionName === "eval code") {
-            functionName = WebInspector.UIString("Eval Code");
-            programCode = true;
-        } else if (payload.functionName === "module code") {
-            functionName = WebInspector.UIString("Module Code");
-            programCode = true;
         }
 
         return new WebInspector.CallFrame(null, sourceCodeLocation, functionName, null, null, nativeCode, programCode);

@@ -489,9 +489,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             // Exclude the case where the call frame is in the inspector code.
             if (sourceCodeLocation.sourceCode.url && sourceCodeLocation.sourceCode.url.startsWith("__WebInspector"))
                 continue;
-            var thisObject = WebInspector.RemoteObject.fromPayload(callFramePayload.this);
-            var scopeChain = this._scopeChainFromPayload(callFramePayload.scopeChain);
-            var callFrame = new WebInspector.CallFrame(callFramePayload.callFrameId, sourceCodeLocation, callFramePayload.functionName, thisObject, scopeChain);
+
+            let scopeChain = this._scopeChainFromPayload(callFramePayload.scopeChain);
+            let callFrame = WebInspector.CallFrame.fromDebuggerPayload(callFramePayload, scopeChain, sourceCodeLocation);
             this._callFrames.push(callFrame);
         }
 

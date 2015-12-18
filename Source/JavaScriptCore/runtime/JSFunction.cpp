@@ -566,7 +566,7 @@ String getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)
         return function->calculatedDisplayName(callFrame);
     if (InternalFunction* function = jsDynamicCast<InternalFunction*>(object))
         return function->calculatedDisplayName(callFrame);
-    return "";
+    return emptyString();
 }
 
 } // namespace JSC
