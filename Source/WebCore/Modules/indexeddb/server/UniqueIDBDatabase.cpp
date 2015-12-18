@@ -75,13 +75,7 @@ void UniqueIDBDatabase::openDatabaseConnection(IDBConnectionToClient& connection
     if (m_isOpeningBackingStore)
         return;
 
-    if (m_databaseInfo) {
-        handleDatabaseOperations();
-        return;
-    }
-
-    m_isOpeningBackingStore = true;
-    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::openBackingStore, m_identifier));
+    handleDatabaseOperations();
 }
 
 bool UniqueIDBDatabase::hasAnyPendingCallbacks() const
@@ -108,6 +102,12 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
 
     ASSERT(m_currentOperation);
     ASSERT(m_currentOperation->isOpenRequest());
+
+    if (!m_databaseInfo) {
+        m_isOpeningBackingStore = true;
+        m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::openBackingStore, m_identifier));
+        return;
+    }
 
     // If we previously started a version change operation but were blocked by having open connections,
     // we might now be unblocked.
@@ -206,17 +206,23 @@ void UniqueIDBDatabase::handleDatabaseOperations()
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::handleDatabaseOperations - There are %zu pending", m_pendingDatabaseOperations.size());
 
-    if (m_pendingDatabaseOperations.isEmpty())
-        return;
-
     if (m_versionChangeDatabaseConnection || m_currentOperation) {
         // We can't start the next database operation quite yet, but we might need to notify all open connections
         // about a pending delete.
-        if (m_pendingDatabaseOperations.first()->isDeleteRequest() && !m_hasNotifiedConnectionsOfDelete) {
+        if (!m_pendingDatabaseOperations.isEmpty() && m_pendingDatabaseOperations.first()->isDeleteRequest() && !m_hasNotifiedConnectionsOfDelete) {
             m_hasNotifiedConnectionsOfDelete = true;
             notifyConnectionsOfVersionChange(0);
         }
+
+        // Some operations (such as the first open operation after a delete) require multiple passes to completely handle
+        if (m_currentOperation)
+            handleCurrentOperation();
+
+        return;
     }
+
+    if (m_pendingDatabaseOperations.isEmpty())
+        return;
 
     m_currentOperation = m_pendingDatabaseOperations.takeFirst();
     LOG(IndexedDB, "UniqueIDBDatabase::handleDatabaseOperations - Popped an operation, now there are %zu pending", m_pendingDatabaseOperations.size());

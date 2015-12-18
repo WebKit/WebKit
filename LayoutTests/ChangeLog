@@ -1,3 +1,12 @@
+2015-12-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Refactor when opening the backing store takes place.
+        https://bugs.webkit.org/show_bug.cgi?id=152405
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed gardening
