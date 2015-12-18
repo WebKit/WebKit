@@ -1,5 +1,14 @@
 2015-12-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html for ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152437
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
+2015-12-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking inspector/console/messagesCleared.html as a flaky timeout on mac-wk2 debug
         https://bugs.webkit.org/show_bug.cgi?id=152025
 
