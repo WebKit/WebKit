@@ -55,9 +55,10 @@ WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
 WebInspector.ScopeChainNode.Type = {
     Local: "scope-chain-type-local",
     Global: "scope-chain-type-global",
+    GlobalLexicalEnvironment: "scope-chain-type-global-lexical-environment",
     With: "scope-chain-type-with",
     Closure: "scope-chain-type-closure",
     Catch: "scope-chain-type-catch",
-    FunctionName: "scope-chain-type-functionName",
-    GlobalLexicalEnvironment: "scope-chain-type-globalLexicalEnvironment",
+    FunctionName: "scope-chain-type-function-name",
+    Block: "scope-chain-type-block",
 };

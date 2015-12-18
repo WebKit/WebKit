@@ -62,6 +62,8 @@ public:
     bool isCatchScope();
     bool isFunctionNameScopeObject();
 
+    bool isNestedLexicalScope();
+
     ScopeChainIterator begin();
     ScopeChainIterator end();
     JSScope* next();

@@ -2049,7 +2049,7 @@ void BlockNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (!m_statements)
         return;
-    generator.pushLexicalScope(this, true);
+    generator.pushLexicalScope(this, true, true);
     m_statements->emitBytecode(generator, dst);
     generator.popLexicalScope(this);
 }
@@ -2254,7 +2254,7 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
 
     RegisterID* forLoopSymbolTable = nullptr;
-    generator.pushLexicalScope(this, true, &forLoopSymbolTable);
+    generator.pushLexicalScope(this, true, true, &forLoopSymbolTable);
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
 
@@ -2382,7 +2382,7 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
     RefPtr<Label> end = generator.newLabel();
 
     RegisterID* forLoopSymbolTable = nullptr;
-    generator.pushLexicalScope(this, true, &forLoopSymbolTable);
+    generator.pushLexicalScope(this, true, true, &forLoopSymbolTable);
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
 
@@ -2532,7 +2532,7 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     }
 
     RegisterID* forLoopSymbolTable = nullptr;
-    generator.pushLexicalScope(this, true, &forLoopSymbolTable);
+    generator.pushLexicalScope(this, true, true, &forLoopSymbolTable);
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
     auto extractor = [this, dst](BytecodeGenerator& generator, RegisterID* value)
     {
@@ -2848,7 +2848,7 @@ void SwitchNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     RefPtr<RegisterID> r0 = generator.emitNode(m_expr);
 
-    generator.pushLexicalScope(this, false);
+    generator.pushLexicalScope(this, false, true);
     m_block->emitBytecodeForBlock(generator, r0.get(), dst);
     generator.popLexicalScope(this);
 
@@ -3181,7 +3181,7 @@ void ClassDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (!m_name.isNull())
-        generator.pushLexicalScope(this, true);
+        generator.pushLexicalScope(this, true, true);
 
     RefPtr<RegisterID> superclass;
     if (m_classHeritage) {

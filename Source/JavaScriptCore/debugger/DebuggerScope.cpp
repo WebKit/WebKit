@@ -197,6 +197,11 @@ bool DebuggerScope::isClosureScope() const
     return m_scope->isVarScope() || m_scope->isLexicalScope();
 }
 
+bool DebuggerScope::isNestedLexicalScope() const
+{
+    return m_scope->isNestedLexicalScope();
+}
+
 JSValue DebuggerScope::caughtValue(ExecState* exec) const
 {
     ASSERT(isCatchScope());

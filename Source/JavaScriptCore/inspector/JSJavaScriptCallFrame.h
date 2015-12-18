@@ -78,6 +78,7 @@ public:
     static const unsigned short CATCH_SCOPE = 4;
     static const unsigned short FUNCTION_NAME_SCOPE = 5;
     static const unsigned short GLOBAL_LEXICAL_ENVIRONMENT_SCOPE = 6;
+    static const unsigned short NESTED_LEXICAL_SCOPE = 7;
 
 protected:
     void finishCreation(JSC::VM&);

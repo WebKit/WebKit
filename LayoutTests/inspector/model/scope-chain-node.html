@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/all-scopes.js"></script>
+<script src="resources/function-name-scopes.js"></script>
+<script src="resources/block-scopes.js"></script>
+<script>
+function test()
+{
+    function firstLine(str) {
+        let newlineIndex = str.indexOf("\n");
+        if (newlineIndex !== -1)
+            return str.substr(0, newlineIndex);
+        return str;
+    }
+
+    function scopeTypeToString(type) {
+        for (let key in WebInspector.ScopeChainNode.Type) {
+            if (WebInspector.ScopeChainNode.Type[key] === type)
+                return key;
+        }
+        return "Unexpected Scope Type";
+    }
+
+    function harvestScopeChain(scopeChain) {        
+        let promises = [];
+        for (let scope of scopeChain) {
+            promises.push(new Promise((resolve, reject) => {
+                if (scope.type === WebInspector.ScopeChainNode.Type.Global)
+                    resolve({scope, propertyDescriptors: []});
+                else {
+                    scope.object.getDisplayablePropertyDescriptors((propertyDescriptors) => {
+                        resolve({scope, propertyDescriptors});
+                    });
+                }
+            }));
+        }
+        return Promise.all(promises);
+    }
+
+    function logScopeChain(scopeChain) {
+        return harvestScopeChain(scopeChain).then((results) => {
+            InspectorTest.log("SCOPE CHAIN:");
+            for (let {scope, propertyDescriptors} of results) {
+                InspectorTest.log(`    ${scopeTypeToString(scope.type)}`);
+                if (scope.type !== WebInspector.ScopeChainNode.Type.Global) {
+                    for (let descriptor of propertyDescriptors)
+                        InspectorTest.log(`      - ${descriptor.name}: ${firstLine(descriptor.value.description)}`);
+                }
+            }
+            return results;
+        });
+    }
+
+
+    let suite = InspectorTest.createAsyncSuite("WebInspector.ScopeChainNode");
+
+    InspectorTest.dumpActivityToSystemConsole = true;
+    InspectorBackend.dumpInspectorProtocolMessages = true;
+
+    suite.addTestCase({
+        name: "WebInspector.ScopeChainNode.AllTypes",
+        description: "Tests for each of the different scope chain node types.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("setTimeout(testAllScopes)");
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                let scopeChain = WebInspector.debuggerManager.activeCallFrame.scopeChain;
+                InspectorTest.expectThat(scopeChain.length === 13, "ScopeChain should have 13 scopes.");
+                logScopeChain(scopeChain).then((result) => {
+                    WebInspector.debuggerManager.resume();
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.ScopeChainNode.FunctionNameInFunctionExpression",
+        description: "Tests that there should be a FunctionName scope inside a function expression.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("setTimeout(testFunctionNameScope1)");
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                let scopeChain = WebInspector.debuggerManager.activeCallFrame.scopeChain;
+                logScopeChain(scopeChain).then((result) => {
+                    WebInspector.debuggerManager.resume();
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.ScopeChainNode.FunctionNameInClassMethod",
+        description: "Tests that there should be a FunctionName scope inside a class method.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("setTimeout(testFunctionNameScope2)");
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                let scopeChain = WebInspector.debuggerManager.activeCallFrame.scopeChain;
+                logScopeChain(scopeChain).then((result) => {
+                    WebInspector.debuggerManager.resume();
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.ScopeChainNode.BlockScopes",
+        description: "Tests for a Block scope inside all the different types of blocks.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("setTimeout(testBlockScopes)");
+            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, callFramesDidChangeListener);
+
+            let pauseCount = 0;
+            let pauseEventsExpected = 19;
+            function callFramesDidChangeListener(event) {
+                pauseCount++;
+                let scopeChain = WebInspector.debuggerManager.activeCallFrame.scopeChain;
+
+                // First, normal function scope.
+                if (pauseCount === 1) {
+                    InspectorTest.expectThat(scopeChain[0].type === WebInspector.ScopeChainNode.Type.Closure, "Pause #1 - Top scope should be normal function Closure/Local scope.");
+                    WebInspector.debuggerManager.resume();
+                    return;
+                }
+
+                // Last, normal function scope.
+                if (pauseCount === pauseEventsExpected) {
+                    InspectorTest.expectThat(scopeChain[0].type === WebInspector.ScopeChainNode.Type.Closure, `Pause #${pauseCount} - Top scope should be normal function Closure/Local scope.`);
+                    WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, callFramesDidChangeListener);
+                    WebInspector.debuggerManager.resume();
+                    resolve();
+                    return;
+                }
+
+                // The first 15 cases the top scope should be a Block scope.
+                if (pauseCount <= 15) {
+                    InspectorTest.expectThat(scopeChain[0].type === WebInspector.ScopeChainNode.Type.Block, `Pause #${pauseCount} - Top scope should be Block scope.`);
+                    WebInspector.debuggerManager.resume();
+                    return;
+                }
+
+                // Print out the full scope of the last few where there are nested or buried block scopes.
+                InspectorTest.expectThat(scopeChain.some((scopeChain) => scopeChain.type === WebInspector.ScopeChainNode.Type.Block), `Pause #${pauseCount} - Contains a Block scope.`);
+                logScopeChain(scopeChain).then((result) => {
+                    WebInspector.debuggerManager.resume();
+                });
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the WebInspector.ScopeChainNode model object.</p>
+</body>
+</html>

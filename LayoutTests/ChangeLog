@@ -1,3 +1,28 @@
+2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Provide a way to distinguish a nested lexical block from a function's lexical block
+        https://bugs.webkit.org/show_bug.cgi?id=152361
+
+        Reviewed by Saam Barati.
+
+        * inspector/debugger/breakpoint-scope-expected.txt:
+        We will soon remove the backend sending a "Local" scope.
+        The backend was just marking the first closure scope as local.
+        The frontend can do this itself and do a better job of it.
+
+        * inspector/model/resources/all-scopes.js: Added.
+        (testAllScopes.innerScope):
+        (testAllScopes):
+        * inspector/model/resources/block-scopes.js: Added.
+        (testBlockScopes):
+        (testBlockScopes.method):
+        * inspector/model/resources/function-name-scopes.js: Added.
+        (testFunctionNameScope1):
+        * inspector/model/scope-chain-node-expected.txt: Added.
+        * inspector/model/scope-chain-node.html: Added.
+        Tests for ways to get all the different scope types and
+        specific cases of certain scope types.
+
 2015-12-17  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.hasInstance

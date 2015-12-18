@@ -1,0 +1,136 @@
+CONSOLE MESSAGE: line 36: Variables
+CONSOLE MESSAGE: line 4: normal
+CONSOLE MESSAGE: line 10: if
+CONSOLE MESSAGE: line 18: else
+CONSOLE MESSAGE: line 25: while
+CONSOLE MESSAGE: line 33: do
+CONSOLE MESSAGE: line 39: for
+CONSOLE MESSAGE: line 46: for-in
+CONSOLE MESSAGE: line 53: for-of
+CONSOLE MESSAGE: line 62: case
+CONSOLE MESSAGE: line 67: default
+CONSOLE MESSAGE: line 75: try
+CONSOLE MESSAGE: line 84: catch
+CONSOLE MESSAGE: line 92: finally
+CONSOLE MESSAGE: line 99: block
+CONSOLE MESSAGE: line 106: with
+CONSOLE MESSAGE: line 119: nested blocks
+CONSOLE MESSAGE: line 130: class (method)
+CONSOLE MESSAGE: line 139: class (static)
+CONSOLE MESSAGE: line 145: normal
+Tests for the WebInspector.ScopeChainNode model object.
+
+
+== Running test suite: WebInspector.ScopeChainNode
+-- Running test case: WebInspector.ScopeChainNode.AllTypes
+PASS: ScopeChain should have 13 scopes.
+SCOPE CHAIN:
+    Closure
+      - localVariable2: 12
+    Closure
+      - localVariable1: 11
+    FunctionName
+      - functionName: function functionName() {
+    Block
+      - catchBlockVariable: 10
+    Catch
+      - exceptionVariable: 9
+    Block
+      - withBlockVariable: 8
+    With
+      - withObjectProperty: 7
+    Closure
+      - innerClosureVariable2: 6
+    Closure
+      - innerClosureVariable1: 5
+    Closure
+      - closureVariable2: 4
+    Closure
+      - closureVariable1: 3
+      - innerScope: function innerScope() {
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+
+-- Running test case: WebInspector.ScopeChainNode.FunctionNameInFunctionExpression
+SCOPE CHAIN:
+    Closure
+    FunctionName
+      - functionName: function functionName() {
+    Closure
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+
+-- Running test case: WebInspector.ScopeChainNode.FunctionNameInClassMethod
+SCOPE CHAIN:
+    Closure
+    FunctionName
+      - staticMethod: function staticMethod() {
+    Block
+      - MyClass: class MyClass
+    Closure
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+
+-- Running test case: WebInspector.ScopeChainNode.BlockScopes
+PASS: Pause #1 - Top scope should be normal function Closure/Local scope.
+PASS: Pause #2 - Top scope should be Block scope.
+PASS: Pause #3 - Top scope should be Block scope.
+PASS: Pause #4 - Top scope should be Block scope.
+PASS: Pause #5 - Top scope should be Block scope.
+PASS: Pause #6 - Top scope should be Block scope.
+PASS: Pause #7 - Top scope should be Block scope.
+PASS: Pause #8 - Top scope should be Block scope.
+PASS: Pause #9 - Top scope should be Block scope.
+PASS: Pause #10 - Top scope should be Block scope.
+PASS: Pause #11 - Top scope should be Block scope.
+PASS: Pause #12 - Top scope should be Block scope.
+PASS: Pause #13 - Top scope should be Block scope.
+PASS: Pause #14 - Top scope should be Block scope.
+PASS: Pause #15 - Top scope should be Block scope.
+PASS: Pause #16 - Contains a Block scope.
+SCOPE CHAIN:
+    Block
+      - a: 1006
+    Block
+      - a: 1005
+    Block
+      - a: 1004
+    Block
+      - a: 1003
+    Closure
+      - a: 1
+    Closure
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+PASS: Pause #17 - Contains a Block scope.
+SCOPE CHAIN:
+    Closure
+    FunctionName
+      - method: function method() {
+    Block
+      - MyClass: class MyClass
+    Closure
+      - a: 1
+    Closure
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+PASS: Pause #18 - Contains a Block scope.
+SCOPE CHAIN:
+    Closure
+    FunctionName
+      - staticMethod: function staticMethod() {
+    Block
+      - MyClassWithStaticMethod: class MyClassWithStaticMethod
+    Closure
+      - a: 1
+    Closure
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+PASS: Pause #19 - Top scope should be normal function Closure/Local scope.
+

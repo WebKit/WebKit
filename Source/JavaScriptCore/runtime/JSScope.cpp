@@ -286,6 +286,13 @@ bool JSScope::isGlobalLexicalEnvironment()
     return isScopeType<JSGlobalLexicalEnvironment, SymbolTable::ScopeType::GlobalLexicalScope>(this);
 }
 
+bool JSScope::isNestedLexicalScope()
+{
+    if (JSLexicalEnvironment* environment = jsDynamicCast<JSLexicalEnvironment*>(this))
+        return environment->symbolTable()->isNestedLexicalScope();
+    return false;
+}
+
 JSScope* JSScope::constantScopeForCodeBlock(ResolveType type, CodeBlock* codeBlock)
 {
     switch (type) {

@@ -184,6 +184,11 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                         extraPropertyDescriptor = new WebInspector.PropertyDescriptor({name: "this", value: callFrame.thisObject});
                     break;
 
+                case WebInspector.ScopeChainNode.Type.Block:
+                    title = WebInspector.UIString("Block Variables");
+                    collapsedByDefault = false;
+                    break;
+
                 case WebInspector.ScopeChainNode.Type.Closure:
                     title = WebInspector.UIString("Closure Variables");
                     collapsedByDefault = false;

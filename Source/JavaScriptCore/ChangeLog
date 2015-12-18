@@ -1,5 +1,57 @@
 2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Provide a way to distinguish a nested lexical block from a function's lexical block
+        https://bugs.webkit.org/show_bug.cgi?id=152361
+
+        Reviewed by Saam Barati.
+
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        Each of these are specialized scopes. They are not nested lexical scopes.
+        
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        Include an extra parameter to mark the SymbolTable as a nested lexical or not.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BlockNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        Each of these are cases of non-function nested lexical scopes.
+        So mark the SymbolTable as nested.
+
+        * inspector/protocol/Debugger.json:
+        * inspector/InjectedScriptSource.js:
+        Include a new scope type.
+
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::scopeType):
+        Use the new "NestedLexical" scope type for nested, non-function,
+        lexical scopes. The Inspector can use this to better describe
+        this scope in the frontend.
+
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::isNestedLexicalScope):
+        * debugger/DebuggerScope.h:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::isNestedLexicalScope):
+        * runtime/JSScope.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::SymbolTable):
+        (JSC::SymbolTable::cloneScopePart):
+        * runtime/SymbolTable.h:
+        Access the isNestedLexicalScope bit.
+
+2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed EFL Build Fix after r194247.
 
         * interpreter/CallFrame.cpp:

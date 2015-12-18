@@ -1,5 +1,24 @@
 2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Provide a way to distinguish a nested lexical block from a function's lexical block
+        https://bugs.webkit.org/show_bug.cgi?id=152361
+
+        Reviewed by Saam Barati.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateCallFramesSection):
+        New "Block Variables" string.
+
+        * UserInterface/Models/ScopeChainNode.js:
+        New "Block" scope type, and update existing types.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._scopeChainNodeFromPayload):
+        Parse the protocol type to frontend types. Use the protocol generated enum.
+
+2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve names in Debugger Call Stack section when paused
         https://bugs.webkit.org/show_bug.cgi?id=152398
 

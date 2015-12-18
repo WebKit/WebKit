@@ -91,6 +91,7 @@ public:
     bool isGlobalScope() const;
     bool isClosureScope() const;
     bool isGlobalLexicalEnvironment() const;
+    bool isNestedLexicalScope() const;
 
     JSValue caughtValue(ExecState*) const;
 
