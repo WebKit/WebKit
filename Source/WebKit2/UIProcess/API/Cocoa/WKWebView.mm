@@ -182,6 +182,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     UIInterfaceOrientation _interfaceOrientationOverride;
     BOOL _overridesInterfaceOrientation;
+    
+    BOOL _allowsViewportShrinkToFit;
 
     BOOL _hasCommittedLoadForMainFrame;
     BOOL _needsResetViewStateAfterCommitLoadForMainFrame;
@@ -1711,7 +1713,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         unobscuredRect:unobscuredRectInContentCoordinates
         unobscuredRectInScrollViewCoordinates:unobscuredRect
         scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
-        inStableState:isStableState isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively];
+        inStableState:isStableState
+        isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively];
 }
 
 - (void)_didFinishLoadForMainFrame
@@ -2790,6 +2793,16 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (BOOL)_backgroundExtendsBeyondPage
 {
     return _page->backgroundExtendsBeyondPage();
+}
+
+- (void)_setAllowsViewportShrinkToFit:(BOOL)allowShrinkToFit
+{
+    _allowsViewportShrinkToFit = allowShrinkToFit;
+}
+
+- (BOOL)_allowsViewportShrinkToFit
+{
+    return _allowsViewportShrinkToFit;
 }
 
 - (void)_beginInteractiveObscuredInsetsChange

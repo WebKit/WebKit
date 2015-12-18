@@ -37,27 +37,22 @@ namespace WebKit {
 
 class VisibleContentRectUpdateInfo {
 public:
-    VisibleContentRectUpdateInfo()
-        : m_scale(-1)
-        , m_inStableState(false)
-        , m_isChangingObscuredInsetsInteractively(false)
-        , m_lastLayerTreeTransactionID(0)
-    {
-    }
+    VisibleContentRectUpdateInfo() = default;
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTransactionId)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedRect, const WebCore::FloatRect& unobscuredRect, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect, double scale, bool inStableState, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, double timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTransactionId)
         : m_exposedRect(exposedRect)
         , m_unobscuredRect(unobscuredRect)
         , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
         , m_customFixedPositionRect(customFixedPositionRect)
+        , m_lastLayerTreeTransactionID(lastLayerTreeTransactionId)
         , m_scale(scale)
-        , m_inStableState(inStableState)
-        , m_isChangingObscuredInsetsInteractively(isChangingObscuredInsetsInteractively)
         , m_timestamp(timestamp)
         , m_horizontalVelocity(horizontalVelocity)
         , m_verticalVelocity(verticalVelocity)
         , m_scaleChangeRate(scaleChangeRate)
-        , m_lastLayerTreeTransactionID(lastLayerTreeTransactionId)
+        , m_inStableState(inStableState)
+        , m_isChangingObscuredInsetsInteractively(isChangingObscuredInsetsInteractively)
+        , m_allowShrinkToFit(allowShrinkToFit)
     {
     }
 
@@ -68,6 +63,7 @@ public:
     double scale() const { return m_scale; }
     bool inStableState() const { return m_inStableState; }
     bool isChangingObscuredInsetsInteractively() const { return m_isChangingObscuredInsetsInteractively; }
+    bool allowShrinkToFit() const { return m_allowShrinkToFit; }
 
     double timestamp() const { return m_timestamp; }
     double horizontalVelocity() const { return m_horizontalVelocity; }
@@ -84,14 +80,15 @@ private:
     WebCore::FloatRect m_unobscuredRect;
     WebCore::FloatRect m_unobscuredRectInScrollViewCoordinates;
     WebCore::FloatRect m_customFixedPositionRect;
-    double m_scale;
-    bool m_inStableState;
-    bool m_isChangingObscuredInsetsInteractively;
-    double m_timestamp;
-    double m_horizontalVelocity;
-    double m_verticalVelocity;
-    double m_scaleChangeRate;
-    uint64_t m_lastLayerTreeTransactionID;
+    uint64_t m_lastLayerTreeTransactionID { 0 };
+    double m_scale { -1 };
+    double m_timestamp { 0 };
+    double m_horizontalVelocity { 0 };
+    double m_verticalVelocity { 0 };
+    double m_scaleChangeRate { 0 };
+    bool m_inStableState { false };
+    bool m_isChangingObscuredInsetsInteractively { false };
+    bool m_allowShrinkToFit { false };
 };
 
 inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleContentRectUpdateInfo& b)
@@ -104,7 +101,8 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
         && a.horizontalVelocity() == b.horizontalVelocity()
         && a.verticalVelocity() == b.verticalVelocity()
         && a.scaleChangeRate() == b.scaleChangeRate()
-        && a.inStableState() == b.inStableState();
+        && a.inStableState() == b.inStableState()
+        && a.allowShrinkToFit() == b.allowShrinkToFit();
 }
 
 } // namespace WebKit

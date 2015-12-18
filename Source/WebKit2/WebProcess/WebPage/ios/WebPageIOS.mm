@@ -2948,6 +2948,9 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     if (scrollPosition != frameView.scrollPosition())
         m_dynamicSizeUpdateHistory.clear();
 
+    if (m_viewportConfiguration.setCanIgnoreScalingConstraints(m_ignoreViewportScalingConstraints && visibleContentRectUpdateInfo.allowShrinkToFit()))
+        viewportConfigurationChanged();
+
     frameView.setUnobscuredContentSize(visibleContentRectUpdateInfo.unobscuredRect().size());
 
     double horizontalVelocity = visibleContentRectUpdateInfo.horizontalVelocity();
