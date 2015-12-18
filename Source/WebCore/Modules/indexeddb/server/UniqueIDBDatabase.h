@@ -71,8 +71,6 @@ public:
         return adoptRef(*new UniqueIDBDatabase(server, identifier));
     }
 
-    ~UniqueIDBDatabase();
-
     void openDatabaseConnection(IDBConnectionToClient&, const IDBRequestData&);
 
     const IDBDatabaseInfo& info() const;
@@ -107,16 +105,15 @@ private:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);
     
     void handleDatabaseOperations();
-    void handleCurrentOperation();
     void performCurrentOpenOperation();
     void performCurrentDeleteOperation();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
+    bool maybeDeleteDatabase(IDBServerOperation*);
     bool hasAnyOpenConnections() const;
 
     void startVersionChangeTransaction();
     void notifyConnectionsOfVersionChangeForUpgrade();
     void notifyConnectionsOfVersionChange(uint64_t requestedVersion);
-    bool isVersionChangeInProgress();
 
     void activateTransactionInBackingStore(UniqueIDBDatabaseTransaction&);
     void inProgressTransactionCompleted(const IDBResourceIdentifier&);
@@ -176,7 +173,8 @@ private:
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
     
-    Deque<Ref<IDBServerOperation>> m_pendingDatabaseOperations;
+    Deque<Ref<IDBServerOperation>> m_pendingOpenDatabaseOperations;
+    Deque<Ref<IDBServerOperation>> m_pendingDeleteDatabaseOperations;
     RefPtr<IDBServerOperation> m_currentOperation;
 
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;

@@ -34,9 +34,6 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-class IDBDatabaseInfo;
-
 namespace IDBServer {
 
 class IDBServerOperation : public RefCounted<IDBServerOperation> {
@@ -49,17 +46,11 @@ public:
     bool isOpenRequest() const;
     bool isDeleteRequest() const;
 
-    void notifyDeleteRequestBlocked(uint64_t currentVersion);
-    void notifyDidDeleteDatabase(const IDBDatabaseInfo&);
-    bool hasNotifiedDeleteRequestBlocked() const { return m_notifiedDeleteRequestBlocked; }
-
 private:
     IDBServerOperation(IDBConnectionToClient&, const IDBRequestData&);
 
     IDBConnectionToClient& m_connection;
     IDBRequestData m_requestData;
-
-    bool m_notifiedDeleteRequestBlocked { false };
 };
 
 } // namespace IDBServer

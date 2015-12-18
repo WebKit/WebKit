@@ -1,3 +1,22 @@
+2015-12-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r194241 and r194252.
+        https://bugs.webkit.org/show_bug.cgi?id=152415
+
+        Caused crashes on GuardMalloc (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "Modern IDB: Refactor open/delete requests to exist in the
+        same queue."
+        https://bugs.webkit.org/show_bug.cgi?id=152397
+        http://trac.webkit.org/changeset/194241
+
+        "Modern IDB: Refactor when opening the backing store takes
+        place."
+        https://bugs.webkit.org/show_bug.cgi?id=152405
+        http://trac.webkit.org/changeset/194252
+
 2015-12-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         [INTL] Implement Collator Compare Functions
