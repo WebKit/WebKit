@@ -1,3 +1,9 @@
+2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, fix GtkDoc after r193620
+
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+
 2015-12-18  Dan Bernstein  <mitz@apple.com>
 
         WebPage::didCompleteUserMediaPermissionCheck and WebPage::didReceiveUserMediaPermissionDecision are exported
