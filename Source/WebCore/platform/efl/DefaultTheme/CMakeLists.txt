@@ -4,7 +4,7 @@ macro(GENERATE_THEME _target_name _name _option)
 
     add_custom_command(
         OUTPUT ${THEME_BINARY_DIR}/${_name}
-        COMMAND ${EDJE_CC_EXECUTABLE} -v ${_option} default.edc ${THEME_BINARY_DIR}/${_name}
+        COMMAND ${EDJE_CC_EXECUTABLE} ${_option} default.edc ${THEME_BINARY_DIR}/${_name}
         DEPENDS
             default.edc
             widget/button/button.edc
