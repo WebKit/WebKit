@@ -361,8 +361,6 @@ set(WebKit2_SOURCES
     UIProcess/WebContextMenuProxy.cpp
     UIProcess/WebCookieManagerProxy.cpp
     UIProcess/WebCookieManagerProxyClient.cpp
-    UIProcess/WebDatabaseManagerProxy.cpp
-    UIProcess/WebDatabaseManagerProxyClient.cpp
     UIProcess/WebEditCommandProxy.cpp
     UIProcess/WebFormClient.cpp
     UIProcess/WebFormSubmissionListenerProxy.cpp
@@ -419,7 +417,6 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKContextConfigurationRef.cpp
     UIProcess/API/C/WKCookieManager.cpp
     UIProcess/API/C/WKCredential.cpp
-    UIProcess/API/C/WKDatabaseManager.cpp
     UIProcess/API/C/WKDownload.cpp
     UIProcess/API/C/WKFormSubmissionListener.cpp
     UIProcess/API/C/WKFrame.cpp
@@ -598,7 +595,6 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebChromeClient.cpp
     WebProcess/WebCoreSupport/WebColorChooser.cpp
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp
-    WebProcess/WebCoreSupport/WebDatabaseManager.cpp
     WebProcess/WebCoreSupport/WebDeviceProximityClient.cpp
     WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp
     WebProcess/WebCoreSupport/WebDragClient.cpp
@@ -666,7 +662,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/VisitedLinkStore.messages.in
     UIProcess/WebBatteryManagerProxy.messages.in
     UIProcess/WebCookieManagerProxy.messages.in
-    UIProcess/WebDatabaseManagerProxy.messages.in
     UIProcess/WebFullScreenManagerProxy.messages.in
     UIProcess/WebGeolocationManagerProxy.messages.in
     UIProcess/WebIconDatabase.messages.in
@@ -720,8 +715,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/Storage/StorageAreaMap.messages.in
 
     WebProcess/UserContent/WebUserContentController.messages.in
-
-    WebProcess/WebCoreSupport/WebDatabaseManager.messages.in
 
     WebProcess/WebPage/DrawingArea.messages.in
     WebProcess/WebPage/EventDispatcher.messages.in

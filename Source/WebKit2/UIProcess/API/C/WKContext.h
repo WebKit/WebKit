@@ -127,7 +127,6 @@ WK_EXPORT WKWebsiteDataStoreRef WKContextGetWebsiteDataStore(WKContextRef contex
 WK_EXPORT WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef context);
 WK_EXPORT WKBatteryManagerRef WKContextGetBatteryManager(WKContextRef context);
 WK_EXPORT WKCookieManagerRef WKContextGetCookieManager(WKContextRef context);
-WK_EXPORT WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef context);
 WK_EXPORT WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef context);
 WK_EXPORT WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef context);
 WK_EXPORT WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef context);

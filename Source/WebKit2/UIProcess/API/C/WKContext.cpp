@@ -46,7 +46,6 @@
 
 // Supplements
 #include "WebCookieManagerProxy.h"
-#include "WebDatabaseManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
 #include "WebMediaCacheManagerProxy.h"
 #include "WebNotificationManagerProxy.h"
@@ -417,11 +416,6 @@ WKBatteryManagerRef WKContextGetBatteryManager(WKContextRef contextRef)
     UNUSED_PARAM(contextRef);
     return 0;
 #endif
-}
-
-WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef contextRef)
-{
-    return toAPI(toImpl(contextRef)->supplement<WebDatabaseManagerProxy>());
 }
 
 WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)

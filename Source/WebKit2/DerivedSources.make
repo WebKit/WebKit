@@ -108,8 +108,6 @@ MESSAGE_RECEIVERS = \
     WebConnection \
     WebCookieManager \
     WebCookieManagerProxy \
-    WebDatabaseManager \
-    WebDatabaseManagerProxy \
     WebFullScreenManager \
     WebFullScreenManagerProxy \
     WebGeolocationManager \

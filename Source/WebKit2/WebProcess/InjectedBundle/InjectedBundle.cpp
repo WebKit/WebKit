@@ -38,7 +38,6 @@
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebDatabaseManager.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebPage.h"

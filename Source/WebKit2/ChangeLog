@@ -1,3 +1,102 @@
+2015-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WebDatabaseManager, it's been replaced by WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=152318
+
+        Reviewed by Tim Horton.
+
+        Build fixes by Ossy.
+
+        * DerivedSources.make:
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetDatabaseManager): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKDatabaseManager.cpp: Removed.
+        (WKDatabaseManagerGetTypeID): Deleted.
+        (WKDatabaseManagerGetOriginKey): Deleted.
+        (WKDatabaseManagerGetOriginQuotaKey): Deleted.
+        (WKDatabaseManagerGetOriginUsageKey): Deleted.
+        (WKDatabaseManagerGetDatabaseDetailsKey): Deleted.
+        (WKDatabaseManagerGetDatabaseDetailsNameKey): Deleted.
+        (WKDatabaseManagerGetDatabaseDetailsDisplayNameKey): Deleted.
+        (WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey): Deleted.
+        (WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey): Deleted.
+        (WKDatabaseManagerGetDatabaseDetailsCreationTimeKey): Deleted.
+        (WKDatabaseManagerGetDatabaseDetailsModificationTimeKey): Deleted.
+        (WKDatabaseManagerSetClient): Deleted.
+        (WKDatabaseManagerGetDatabasesByOrigin): Deleted.
+        (WKDatabaseManagerGetDatabaseOrigins): Deleted.
+        (WKDatabaseManagerDeleteDatabasesWithNameForOrigin): Deleted.
+        (WKDatabaseManagerDeleteDatabasesForOrigin): Deleted.
+        (WKDatabaseManagerDeleteAllDatabases): Deleted.
+        (WKDatabaseManagerSetQuotaForOrigin): Deleted.
+        * UIProcess/API/C/WKDatabaseManager.h: Removed.
+        * UIProcess/WebDatabaseManagerProxy.cpp: Removed.
+        (WebKit::WebDatabaseManagerProxy::supplementName): Deleted.
+        (WebKit::WebDatabaseManagerProxy::originKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::originQuotaKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::originUsageKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsNameKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsDisplayNameKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsCreationTimeKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsModificationTimeKey): Deleted.
+        (WebKit::WebDatabaseManagerProxy::create): Deleted.
+        (WebKit::WebDatabaseManagerProxy::WebDatabaseManagerProxy): Deleted.
+        (WebKit::WebDatabaseManagerProxy::~WebDatabaseManagerProxy): Deleted.
+        (WebKit::WebDatabaseManagerProxy::initializeClient): Deleted.
+        (WebKit::WebDatabaseManagerProxy::processPoolDestroyed): Deleted.
+        (WebKit::WebDatabaseManagerProxy::processDidClose): Deleted.
+        (WebKit::WebDatabaseManagerProxy::shouldTerminate): Deleted.
+        (WebKit::WebDatabaseManagerProxy::refWebContextSupplement): Deleted.
+        (WebKit::WebDatabaseManagerProxy::derefWebContextSupplement): Deleted.
+        (WebKit::WebDatabaseManagerProxy::getDatabasesByOrigin): Deleted.
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin): Deleted.
+        (WebKit::WebDatabaseManagerProxy::getDatabaseOrigins): Deleted.
+        (WebKit::WebDatabaseManagerProxy::didGetDatabaseOrigins): Deleted.
+        (WebKit::WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin): Deleted.
+        (WebKit::WebDatabaseManagerProxy::deleteDatabasesForOrigin): Deleted.
+        (WebKit::WebDatabaseManagerProxy::deleteAllDatabases): Deleted.
+        (WebKit::WebDatabaseManagerProxy::setQuotaForOrigin): Deleted.
+        (WebKit::WebDatabaseManagerProxy::didModifyOrigin): Deleted.
+        (WebKit::WebDatabaseManagerProxy::didModifyDatabase): Deleted.
+        * UIProcess/WebDatabaseManagerProxy.h: Removed.
+        * UIProcess/WebDatabaseManagerProxy.messages.in: Removed.
+        * UIProcess/WebDatabaseManagerProxyClient.cpp: Removed.
+        (WebKit::WebDatabaseManagerProxyClient::didModifyOrigin): Deleted.
+        (WebKit::WebDatabaseManagerProxyClient::didModifyDatabase): Deleted.
+        * UIProcess/WebDatabaseManagerProxyClient.h: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp: Removed.
+        (WebKit::WebDatabaseManager::supplementName): Deleted.
+        (WebKit::WebDatabaseManager::WebDatabaseManager): Deleted.
+        (WebKit::WebDatabaseManager::initialize): Deleted.
+        (WebKit::WebDatabaseManager::getDatabasesByOrigin): Deleted.
+        (WebKit::WebDatabaseManager::getDatabaseOrigins): Deleted.
+        (WebKit::WebDatabaseManager::deleteDatabaseWithNameForOrigin): Deleted.
+        (WebKit::WebDatabaseManager::deleteDatabasesForOrigin): Deleted.
+        (WebKit::WebDatabaseManager::deleteAllDatabases): Deleted.
+        (WebKit::WebDatabaseManager::closeAllDatabases): Deleted.
+        (WebKit::WebDatabaseManager::setQuotaForOrigin): Deleted.
+        (WebKit::WebDatabaseManager::dispatchDidModifyOrigin): Deleted.
+        (WebKit::WebDatabaseManager::dispatchDidModifyDatabase): Deleted.
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h: Removed.
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in: Removed.
+        * WebProcess/WebCoreSupport/ios/WebDatabaseManagerIOS.mm: Removed.
+        (WebKit::WebDatabaseManager::dispatchDidAddNewOrigin): Deleted.
+        (WebKit::WebDatabaseManager::dispatchDidDeleteDatabase): Deleted.
+        (WebKit::WebDatabaseManager::dispatchDidDeleteDatabaseOrigin): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::processWillSuspendImminently):
+        (WebKit::m_webSQLiteDatabaseTracker): Deleted.
+
 2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed, fix GtkDoc after r193620

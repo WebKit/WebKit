@@ -105,7 +105,6 @@ public:
         CacheManager,
         ColorPickerResultListener,
         CookieManager,
-        DatabaseManager,
         Download,
         FormSubmissionListener,
         Frame,
