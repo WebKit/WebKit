@@ -1,3 +1,24 @@
+2015-12-18  Olivier Blin  <olivier.blin@softathome.com>
+
+        Fix the !ENABLE(VIDEO) build after r192953 for <picture> element introduction
+        https://bugs.webkit.org/show_bug.cgi?id=152431
+
+        Since r192953, HTMLSourceElement is built even if video is disabled,
+        since it is used by the picture element.
+
+        But build was broken with -no-video, since HTMLMediaElement usage
+        should be guarded by VIDEO guards, and its JS bindings were still
+        under a video conditional.
+
+        Reviewed by Alex Christensen.
+
+        No new tests, build fix only.
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::insertedInto):
+        (WebCore::HTMLSourceElement::removedFrom):
+        * html/HTMLSourceElement.idl:
+
 2015-12-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Refactor when opening the backing store takes place.
