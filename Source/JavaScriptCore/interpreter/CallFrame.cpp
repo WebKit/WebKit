@@ -248,6 +248,9 @@ String CallFrame::friendlyFunctionName()
             return getCalculatedDisplayName(this, callee());
         return emptyString();
     }
+
+    ASSERT_NOT_REACHED();
+    return emptyString();
 }
 
 void CallFrame::dump(PrintStream& out)

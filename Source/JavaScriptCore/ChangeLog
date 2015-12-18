@@ -1,3 +1,11 @@
+2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed EFL Build Fix after r194247.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::friendlyFunctionName):
+        Handle compilers that don't realize the switch handles all cases.
+
 2015-12-17  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.hasInstance
