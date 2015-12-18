@@ -3595,6 +3595,11 @@
             "webcomponents-bugzilla@chromium.org"
          ]
       },
+      "WebKitGTK+ Bugs" : {
+         "emails" : [
+            "bugs-noreply@webkitgtk.org"
+         ]
+      },
       "WebKit Review Bot" : {
          "emails" : [
             "webkit.review.bot@gmail.com"
