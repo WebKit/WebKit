@@ -1,3 +1,9 @@
+2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, update POTFILES.in after r194272
+
+        * POTFILES.in:
+
 2015-11-22  Milo Casagrande  <milo@milo.name>
 
         [GTK] [l10n] Updated Italian translation of WebKitGTK+
