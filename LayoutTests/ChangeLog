@@ -1,6 +1,17 @@
 2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed gardening
+        https://bugs.webkit.org/show_bug.cgi?id=142292
+
+        fast/images/animated-gif-body-outside-viewport.html and
+        fast/images/animated-gif-window-resizing.html are flaky; mark them
+        accordingly.
+
+        * platform/gtk/TestExpectations:
+
+2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed gardening
 
         Remove failure expectation for fast/events/drag-and-drop-autoscroll-inner-frame.html which
         has been consistently passing since r192511.
