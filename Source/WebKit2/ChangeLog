@@ -1,5 +1,16 @@
 2015-12-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188606. rdar://problem/23905024
+
+    2015-08-18  Anders Carlsson  <andersca@apple.com>
+
+            Fix build, and fix the version check.
+
+            * UIProcess/API/C/WKPage.cpp:
+            (WKPageSetPageUIClient):
+
+2015-12-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188602. rdar://problem/23905024
 
     2015-08-18  Anders Carlsson  <andersca@apple.com>

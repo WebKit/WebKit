@@ -1332,6 +1332,7 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
     toImpl(pageRef)->setPolicyClient(std::make_unique<PolicyClient>(wkClient));
 }
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
 static void fixUpBotchedPageUIClient(WKPageRef pageRef, const WKPageUIClientBase& wkClient)
 {
     struct BotchedWKPageUIClientV4 {
@@ -1463,6 +1464,7 @@ static void fixUpBotchedPageUIClient(WKPageRef pageRef, const WKPageUIClientBase
 
     WKPageSetPageUIClient(pageRef, &fixedPageUIClient.base);
 }
+#endif
 
 namespace WebKit {
 
@@ -1579,7 +1581,7 @@ void WKPageRunJavaScriptPromptResultListenerCall(WKPageRunJavaScriptPromptResult
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient)
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101100
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     if (wkClient && wkClient->version == 4) {
         fixUpBotchedPageUIClient(pageRef, *wkClient);
         return;
