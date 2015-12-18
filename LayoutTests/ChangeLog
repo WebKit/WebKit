@@ -1,5 +1,26 @@
 2015-12-17  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191076. rdar://problem/23941411
+
+    2015-10-14  Andy Estes  <aestes@apple.com>
+
+            [iOS] QuickLook documents loaded over https do not load their subresources
+            https://bugs.webkit.org/show_bug.cgi?id=150145
+            <rdar://problem/22884521>
+
+            Reviewed by Alexey Proskuryakov.
+
+            * TestExpectations: Skipped http/tests/quicklook on all platforms.
+            * http/tests/quicklook/resources/secure-document-with-subresources-expected/index.css: Added.
+            * http/tests/quicklook/resources/secure-document-with-subresources-expected/index.html: Added.
+            * http/tests/quicklook/resources/secure-document-with-subresources.pages: Added.
+            * http/tests/quicklook/resources/webkit-icon.tiff: Added.
+            * http/tests/quicklook/secure-document-with-subresources-expected.html: Added.
+            * http/tests/quicklook/secure-document-with-subresources.html: Added.
+            * platform/ios-simulator/TestExpectations: Expected http/tests/quicklook to pass on iOS.
+
+2015-12-17  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r193914. rdar://problem/23769696
 
     2015-12-10  Ryan Haddad  <ryanhaddad@apple.com>
