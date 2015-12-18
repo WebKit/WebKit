@@ -585,9 +585,6 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     {
         var type = null;
         switch (payload.type) {
-        case DebuggerAgent.ScopeType.Local:
-            type = WebInspector.ScopeChainNode.Type.Local;
-            break;
         case DebuggerAgent.ScopeType.Global:
             type = WebInspector.ScopeChainNode.Type.Global;
             break;
@@ -609,6 +606,13 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         case DebuggerAgent.ScopeType.GlobalLexicalEnvironment:
             type = WebInspector.ScopeChainNode.Type.GlobalLexicalEnvironment;
             break;
+
+        // COMPATIBILITY (iOS 9): Debugger.ScopeType.Local used to be provided by the backend.
+        // Newer backends no longer send this enum value, it should be computed by the frontend.
+        case DebuggerAgent.ScopeType.Local:
+            type = WebInspector.ScopeChainNode.Type.Local;
+            break;
+
         default:
             console.error("Unknown type: " + payload.type);
         }

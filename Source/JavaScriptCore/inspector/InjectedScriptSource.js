@@ -1363,13 +1363,12 @@ InjectedScript.CallFrameProxy.prototype = {
 
 InjectedScript.CallFrameProxy._scopeTypeNames = {
     0: "global", // GLOBAL_SCOPE
-    1: "local", // LOCAL_SCOPE
-    2: "with", // WITH_SCOPE
-    3: "closure", // CLOSURE_SCOPE
-    4: "catch", // CATCH_SCOPE
-    5: "functionName", // FUNCTION_NAME_SCOPE
-    6: "globalLexicalEnvironment", // GLOBAL_LEXICAL_ENVIRONMENT_SCOPE
-    7: "nestedLexical", // NESTED_LEXICAL_SCOPE
+    1: "with", // WITH_SCOPE
+    2: "closure", // CLOSURE_SCOPE
+    3: "catch", // CATCH_SCOPE
+    4: "functionName", // FUNCTION_NAME_SCOPE
+    5: "globalLexicalEnvironment", // GLOBAL_LEXICAL_ENVIRONMENT_SCOPE
+    6: "nestedLexical", // NESTED_LEXICAL_SCOPE
 }
 
 InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeObject, groupId)

@@ -1,5 +1,15 @@
 2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove "local" scope type from the protocol
+        https://bugs.webkit.org/show_bug.cgi?id=152409
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._scopeChainNodeFromPayload):
+
+2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: CSS warning's fake CallFrame is not creating a valid payload
         https://bugs.webkit.org/show_bug.cgi?id=152413
 
