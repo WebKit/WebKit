@@ -1492,7 +1492,6 @@ webkit.org/b/63706 plugins/mouse-events.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/cleanup-on-move.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/drag-list-item.html [ Failure ]
 webkit.org/b/63706 fast/events/ondragenter.html [ Failure ]
-webkit.org/b/63706 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Timeout ]
 webkit.org/b/63706 fast/events/drag-customData.html  [ Timeout ]
 
 # Need support for internals.settings.setDeviceSupportsMouse
