@@ -26,6 +26,7 @@
 #ifndef Download_h
 #define Download_h
 
+#include "DownloadID.h"
 #include "MessageSender.h"
 #include "SandboxExtension.h"
 #include <WebCore/ResourceRequest.h>
@@ -76,9 +77,9 @@ class Download : public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
 #if USE(NETWORK_SESSION)
-    Download(DownloadManager&, const NetworkSession&, uint64_t downloadID, const WebCore::ResourceRequest&);
+    Download(DownloadManager&, const NetworkSession&, DownloadID, const WebCore::ResourceRequest&);
 #else
-    Download(DownloadManager&, uint64_t downloadID, const WebCore::ResourceRequest&);
+    Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&);
 #endif
     ~Download();
 
@@ -91,7 +92,7 @@ public:
     void resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
     void cancel();
 
-    uint64_t downloadID() const { return m_downloadID; }
+    DownloadID downloadID() const { return m_downloadID; }
 
     void didStart();
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
@@ -128,7 +129,7 @@ private:
     void platformInvalidate();
 
     DownloadManager& m_downloadManager;
-    uint64_t m_downloadID;
+    DownloadID m_downloadID;
     WebCore::ResourceRequest m_request;
 
     RefPtr<SandboxExtension> m_sandboxExtension;

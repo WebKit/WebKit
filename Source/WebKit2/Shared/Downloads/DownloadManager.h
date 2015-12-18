@@ -26,6 +26,7 @@
 #ifndef DownloadManager_h
 #define DownloadManager_h
 
+#include "Download.h"
 #include "SandboxExtension.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/Forward.h>
@@ -69,14 +70,14 @@ public:
 
     explicit DownloadManager(Client*);
 
-    void startDownload(WebCore::SessionID, uint64_t downloadID, const WebCore::ResourceRequest&);
+    void startDownload(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&);
 #if !USE(NETWORK_SESSION)
-    void convertHandleToDownload(uint64_t downloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void convertHandleToDownload(DownloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 #endif
 
-    void resumeDownload(WebCore::SessionID, uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
+    void resumeDownload(WebCore::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
 
-    void cancelDownload(uint64_t downloadID);
+    void cancelDownload(DownloadID);
 
     void downloadFinished(Download*);
     bool isDownloading() const { return !m_downloads.isEmpty(); }
@@ -90,7 +91,7 @@ public:
 
 private:
     Client* m_client;
-    HashMap<uint64_t, std::unique_ptr<Download>> m_downloads;
+    HashMap<DownloadID, std::unique_ptr<Download>> m_downloads;
 };
 
 } // namespace WebKit

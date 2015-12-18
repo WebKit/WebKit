@@ -27,6 +27,7 @@
 #define WebFrame_h
 
 #include "APIObject.h"
+#include "DownloadID.h"
 #include "ShareableBitmap.h"
 #include "WKBase.h"
 #include "WebFrameLoaderClient.h"
@@ -80,7 +81,7 @@ public:
 
     uint64_t setUpPolicyListener(WebCore::FramePolicyFunction);
     void invalidatePolicyListener();
-    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, uint64_t downloadID);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID);
 
     void startDownload(const WebCore::ResourceRequest&);
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, WebCore::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
@@ -170,7 +171,7 @@ private:
 
     uint64_t m_policyListenerID;
     WebCore::FramePolicyFunction m_policyFunction;
-    uint64_t m_policyDownloadID;
+    DownloadID m_policyDownloadID;
 
     std::unique_ptr<WebFrameLoaderClient> m_frameLoaderClient;
     LoadListener* m_loadListener;

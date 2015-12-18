@@ -240,7 +240,7 @@ Ref<NetworkDataTask> NetworkSession::createDataTaskWithRequest(const WebCore::Re
     return adoptRef(*new NetworkDataTask(*this, client, [m_session dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)]));
 }
 
-NetworkDataTask* NetworkSession::dataTaskForIdentifier(uint64_t taskIdentifier)
+NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier)
 {
     ASSERT(isMainThread());
     return m_dataTaskMap.get(taskIdentifier);
@@ -274,7 +274,7 @@ void NetworkDataTask::resume()
     [m_task resume];
 }
 
-uint64_t NetworkDataTask::taskIdentifier()
+auto NetworkDataTask::taskIdentifier() -> TaskIdentifier
 {
     return [m_task taskIdentifier];
 }
