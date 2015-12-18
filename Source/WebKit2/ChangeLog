@@ -1,3 +1,12 @@
+2015-12-18  Dan Bernstein  <mitz@apple.com>
+
+        WebPage::didCompleteUserMediaPermissionCheck and WebPage::didReceiveUserMediaPermissionDecision are exported
+        https://bugs.webkit.org/show_bug.cgi?id=152429
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/WebPage.h: Removed WK_EXPORT specifiers from these two declarations.
+
 2015-12-18  Alex Christensen  <achristensen@webkit.org>
 
         Move networking code from Shared to NetworkProcess
