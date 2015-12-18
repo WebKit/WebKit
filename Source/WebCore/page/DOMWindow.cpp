@@ -724,7 +724,7 @@ DOMApplicationCache* DOMWindow::applicationCache() const
 Navigator* DOMWindow::navigator() const
 {
     if (!isCurrentlyDisplayedInFrame())
-        return 0;
+        return nullptr;
     if (!m_navigator)
         m_navigator = Navigator::create(m_frame);
     return m_navigator.get();
@@ -734,9 +734,9 @@ Navigator* DOMWindow::navigator() const
 Performance* DOMWindow::performance() const
 {
     if (!isCurrentlyDisplayedInFrame())
-        return 0;
+        return nullptr;
     if (!m_performance)
-        m_performance = Performance::create(m_frame);
+        m_performance = Performance::create(*m_frame);
     return m_performance.get();
 }
 #endif
