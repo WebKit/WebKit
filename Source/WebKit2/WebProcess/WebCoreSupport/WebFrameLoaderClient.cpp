@@ -694,7 +694,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function));
     bool receivedPolicyAction;
     uint64_t policyAction;
-    uint64_t downloadID;
+    DownloadID downloadID;
 
     unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
     if (WebPage::synchronousMessagesShouldSpinRunLoop())
@@ -702,7 +702,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
 
     WebCore::Frame* coreFrame = m_frame ? m_frame->coreFrame() : nullptr;
     if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), response, request, canShowMIMEType, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(receivedPolicyAction, policyAction, downloadID), std::chrono::milliseconds::max(), syncSendFlags)) {
-        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, 0);
+        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { });
         return;
     }
 
@@ -775,7 +775,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     bool receivedPolicyAction;
     uint64_t newNavigationID;
     uint64_t policyAction;
-    uint64_t downloadID;
+    DownloadID downloadID;
 
     RefPtr<WebFrame> originatingFrame;
     switch (action->navigationType()) {
@@ -814,7 +814,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     // Notify the UIProcess.
     WebCore::Frame* originatingCoreFrame = originatingFrame ? originatingFrame->coreFrame() : nullptr;
     if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), documentLoader->navigationID(), navigationActionData, originatingFrame ? originatingFrame->frameID() : 0, SecurityOriginData::fromFrame(originatingCoreFrame), navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, newNavigationID, policyAction, downloadID))) {
-        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, 0);
+        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { });
         return;
     }
 

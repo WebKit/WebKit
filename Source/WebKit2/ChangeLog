@@ -1,3 +1,97 @@
+2015-12-17  Alex Christensen  <achristensen@webkit.org>
+
+        Add types for DownloadID and TaskIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=152401
+
+        Reviewed by Brady Eidson.
+
+        DownloadID and TaskIdentifier used to both be just uint64_t's.
+        It is confusing to distinguish between them, so now they both have names.
+        We need a HashMap<TaskIdentifier, DownloadID> instead of a HashMap<uint64_t, uint64_t>.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession):
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::downloadRequest):
+        (WebKit::NetworkProcess::resumeDownload):
+        (WebKit::NetworkProcess::cancelDownload):
+        (WebKit::NetworkProcess::getNetworkProcessStatistics):
+        (WebKit::NetworkProcess::logDiagnosticMessage):
+        (WebKit::NetworkProcess::logDiagnosticMessageWithResult):
+        (WebKit::NetworkProcess::logDiagnosticMessageWithValue):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::createDataTaskWithRequest):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        (WebKit::NetworkDataTask::resume):
+        (WebKit::NetworkDataTask::taskIdentifier): Deleted.
+        * Shared/Downloads/Download.cpp:
+        (WebKit::Download::Download):
+        (WebKit::Download::messageSenderDestinationID):
+        * Shared/Downloads/Download.h:
+        (WebKit::Download::downloadID):
+        * Shared/Downloads/DownloadID.h: Added.
+        (WebKit::DownloadID::DownloadID):
+        (WebKit::DownloadID::operator==):
+        (WebKit::DownloadID::downloadID):
+        (IPC::ArgumentCoder<WebKit::DownloadID>::encode):
+        (IPC::ArgumentCoder<WebKit::DownloadID>::decode):
+        (WTF::DownloadIDHash::hash):
+        (WTF::DownloadIDHash::equal):
+        (WTF::HashTraits<WebKit::DownloadID>::emptyValue):
+        (WTF::HashTraits<WebKit::DownloadID>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::DownloadID>::isDeletedValue):
+        * Shared/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::DownloadManager):
+        (WebKit::DownloadManager::startDownload):
+        (WebKit::DownloadManager::convertHandleToDownload):
+        (WebKit::DownloadManager::resumeDownload):
+        (WebKit::DownloadManager::cancelDownload):
+        * Shared/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::isDownloading):
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadGetID):
+        (WKDownloadCopyRequest):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::downloadID):
+        (WebKit::DownloadProxy::request):
+        (WebKit::DownloadProxy::resumeData):
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        (WebKit::DownloadProxyMap::downloadFinished):
+        (WebKit::DownloadProxyMap::processDidClose):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::frameDidBecomeFrameSet):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::invalidatePolicyListener):
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSessionID):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Disable viewport "shrink to fit" outside of multitasking mode

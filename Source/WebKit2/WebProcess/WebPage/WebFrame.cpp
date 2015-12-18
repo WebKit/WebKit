@@ -215,12 +215,12 @@ void WebFrame::invalidatePolicyListener()
     if (!m_policyListenerID)
         return;
 
-    m_policyDownloadID = 0;
+    m_policyDownloadID = { };
     m_policyListenerID = 0;
     m_policyFunction = 0;
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, uint64_t downloadID)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID)
 {
     if (!m_coreFrame)
         return;
@@ -248,10 +248,10 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request)
 {
-    ASSERT(m_policyDownloadID);
+    ASSERT(m_policyDownloadID.downloadID());
 
-    uint64_t policyDownloadID = m_policyDownloadID;
-    m_policyDownloadID = 0;
+    auto policyDownloadID = m_policyDownloadID;
+    m_policyDownloadID = { };
 
     auto& webProcess = WebProcess::singleton();
     SessionID sessionID = page() ? page()->sessionID() : SessionID::defaultSessionID();
@@ -260,10 +260,10 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)
 {
-    ASSERT(m_policyDownloadID);
+    ASSERT(m_policyDownloadID.downloadID());
 
-    uint64_t policyDownloadID = m_policyDownloadID;
-    m_policyDownloadID = 0;
+    auto policyDownloadID = m_policyDownloadID;
+    m_policyDownloadID = { };
 
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 

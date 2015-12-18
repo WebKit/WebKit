@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "Connection.h"
+#include "DownloadID.h"
 #include "SandboxExtension.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
@@ -54,7 +55,7 @@ public:
     static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
     ~DownloadProxy();
 
-    uint64_t downloadID() const { return m_downloadID; }
+    DownloadID downloadID() const { return m_downloadID; }
     const WebCore::ResourceRequest& request() const { return m_request; }
     API::Data* resumeData() const { return m_resumeData.get(); }
 
@@ -87,7 +88,7 @@ private:
 
     DownloadProxyMap& m_downloadProxyMap;
     RefPtr<WebProcessPool> m_processPool;
-    uint64_t m_downloadID;
+    DownloadID m_downloadID;
 
     RefPtr<API::Data> m_resumeData;
     WebCore::ResourceRequest m_request;
