@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBResultData.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -52,6 +53,22 @@ bool IDBServerOperation::isOpenRequest() const
 bool IDBServerOperation::isDeleteRequest() const
 {
     return m_requestData.isDeleteRequest();
+}
+
+void IDBServerOperation::notifyDeleteRequestBlocked(uint64_t currentVersion)
+{
+    ASSERT(isDeleteRequest());
+    ASSERT(!m_notifiedDeleteRequestBlocked);
+
+    m_connection.notifyOpenDBRequestBlocked(m_requestData.requestIdentifier(), currentVersion, 0);
+    m_notifiedDeleteRequestBlocked = true;
+}
+
+void IDBServerOperation::notifyDidDeleteDatabase(const IDBDatabaseInfo& info)
+{
+    ASSERT(isDeleteRequest());
+
+    m_connection.didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(m_requestData.requestIdentifier(), info));
 }
 
 } // namespace IDBServer

@@ -1,3 +1,38 @@
+2015-12-17  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Refactor open/delete requests to exist in the same queue.
+        https://bugs.webkit.org/show_bug.cgi?id=152397
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, all existing tests continue to pass).
+
+        The order between incoming open and delete requests matters, and each request
+        needs to be handled individually.
+        
+        This patch does the above without changing behavior on existing passing tests,
+        while moving many currently skipped tests closer to passing.
+    
+        * Modules/indexeddb/server/IDBServerOperation.cpp:
+        (WebCore::IDBServer::IDBServerOperation::notifyDeleteRequestBlocked):
+        (WebCore::IDBServer::IDBServerOperation::notifyDidDeleteDatabase):
+        * Modules/indexeddb/server/IDBServerOperation.h:
+        (WebCore::IDBServer::IDBServerOperation::hasNotifiedDeleteRequestBlocked):
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::openDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabase::isVersionChangeInProgress):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleCurrentOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::invokeOperationAndTransactionTimer):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        (WebCore::IDBServer::UniqueIDBDatabase::maybeDeleteDatabase): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2015-12-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] edje shouldn't have verbose output
