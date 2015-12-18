@@ -1,3 +1,13 @@
+2015-12-18  Keith Miller  <keith_miller@apple.com>
+
+        verboseDFGByteCodeParsing option should show the bytecode it is parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=152434
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2015-12-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Add the missing setupArgumentsWithExecState functions after r193974

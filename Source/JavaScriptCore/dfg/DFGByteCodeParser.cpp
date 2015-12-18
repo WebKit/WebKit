@@ -3202,7 +3202,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         OpcodeID opcodeID = interpreter->getOpcodeID(currentInstruction->u.opcode);
         
         if (Options::verboseDFGByteCodeParsing())
-            dataLog("    parsing ", currentCodeOrigin(), "\n");
+            dataLog("    parsing ", currentCodeOrigin(), ": ", opcodeID, "\n");
         
         if (m_graph.compilation()) {
             addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
