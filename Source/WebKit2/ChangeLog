@@ -1,5 +1,12 @@
 2015-12-17  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix after r194250
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Change target membership from all to WebKit.
+
+2015-12-17  Alex Christensen  <achristensen@webkit.org>
+
         Add types for DownloadID and TaskIdentifier
         https://bugs.webkit.org/show_bug.cgi?id=152401
 

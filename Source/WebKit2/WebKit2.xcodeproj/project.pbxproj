@@ -1064,7 +1064,7 @@
 		5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5272B2881406985D0096A5D0 /* StatisticsData.cpp */; };
 		5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272B2891406985D0096A5D0 /* StatisticsData.h */; };
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5C0932071C236011007AAA7C /* DownloadID.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 5C0932061C236011007AAA7C /* DownloadID.h */; };
+		5C1426DE1C239F4800D41183 /* DownloadID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0932061C236011007AAA7C /* DownloadID.h */; };
 		5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C9B86131C223EAF00110F36 /* DownloadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9B86111C223E7900110F36 /* DownloadCocoa.mm */; };
@@ -2097,7 +2097,6 @@
 			dstSubfolderSpec = 1;
 			files = (
 				51A60B2A180CCEB500F3BF50 /* DatabaseProcess.app in Copy Files */,
-				5C0932071C236011007AAA7C /* DownloadID.h in Copy Files */,
 				510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in Copy Files */,
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */,
@@ -8316,6 +8315,7 @@
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */,
 				CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */,
+				5C1426DE1C239F4800D41183 /* DownloadID.h in Headers */,
 				BC54CC1212D674EE005C67B0 /* WKGeolocationManager.h in Headers */,
 				BC06F44E12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h in Headers */,
 				BC0E619812D6CD120012A72A /* WKGeolocationPosition.h in Headers */,
