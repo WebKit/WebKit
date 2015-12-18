@@ -1,3 +1,12 @@
+2015-12-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking inspector/console/messagesCleared.html as a flaky timeout on mac-wk2 debug
+        https://bugs.webkit.org/show_bug.cgi?id=152025
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-12-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Refactor when opening the backing store takes place.
