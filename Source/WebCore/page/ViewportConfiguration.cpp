@@ -66,31 +66,44 @@ void ViewportConfiguration::setDefaultConfiguration(const ViewportConfiguration:
     updateConfiguration();
 }
 
-void ViewportConfiguration::setContentsSize(const IntSize& contentSize)
+bool ViewportConfiguration::setContentsSize(const IntSize& contentSize)
 {
     if (m_contentSize == contentSize)
-        return;
+        return false;
 
     m_contentSize = contentSize;
     updateConfiguration();
+    return true;
 }
 
-void ViewportConfiguration::setMinimumLayoutSize(const FloatSize& minimumLayoutSize)
+bool ViewportConfiguration::setMinimumLayoutSize(const FloatSize& minimumLayoutSize)
 {
     if (m_minimumLayoutSize == minimumLayoutSize)
-        return;
+        return false;
 
     m_minimumLayoutSize = minimumLayoutSize;
     updateConfiguration();
+    return true;
 }
 
-void ViewportConfiguration::setViewportArguments(const ViewportArguments& viewportArguments)
+bool ViewportConfiguration::setViewportArguments(const ViewportArguments& viewportArguments)
 {
     if (m_viewportArguments == viewportArguments)
-        return;
+        return false;
 
     m_viewportArguments = viewportArguments;
     updateConfiguration();
+    return true;
+}
+
+bool ViewportConfiguration::setCanIgnoreScalingConstraints(bool canIgnoreScalingConstraints)
+{
+    if (canIgnoreScalingConstraints == m_canIgnoreScalingConstraints)
+        return false;
+    
+    m_canIgnoreScalingConstraints = canIgnoreScalingConstraints;
+    updateConfiguration();
+    return true;
 }
 
 IntSize ViewportConfiguration::layoutSize() const
