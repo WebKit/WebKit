@@ -1,3 +1,9 @@
+2015-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a typo from r194022.
+
+        * Configurations/WebKit.xcconfig: Changed PlugInProcessShim.dylib to PluginProcessShim.dylib.
+
 2015-12-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194250 and r194254.
