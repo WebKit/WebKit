@@ -1,3 +1,21 @@
+2015-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        ViewportConfiguration functions should return a bool to say if anything changed
+        https://bugs.webkit.org/show_bug.cgi?id=152353
+
+        Reviewed by Tim Horton.
+
+        Rather than callers all checking whether setting ViewportConfiguration values
+        changes state, have its functions return a bool if the values change.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::setContentsSize):
+        (WebCore::ViewportConfiguration::setMinimumLayoutSize):
+        (WebCore::ViewportConfiguration::setViewportArguments):
+        (WebCore::ViewportConfiguration::setCanIgnoreScalingConstraints):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::setCanIgnoreScalingConstraints): Deleted.
+
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add JSContext Script Profiling
