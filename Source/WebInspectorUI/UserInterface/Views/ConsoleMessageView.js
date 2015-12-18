@@ -323,6 +323,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         } else if (this._message.url && !this._shouldHideURL(this._message.url)) {
             // CSS warnings have no stack traces.
             callFrame = WebInspector.CallFrame.fromPayload({
+                functionName: "",
                 url: this._message.url,
                 lineNumber: this._message.line,
                 columnNumber: this._message.column
