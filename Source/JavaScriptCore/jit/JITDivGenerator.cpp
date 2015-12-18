@@ -106,8 +106,8 @@ void JITDivGenerator::generateFastPath(CCallHelpers& jit)
 
     notDoubleZero.link(&jit);
 #endif
-    if (m_profilingCounter)
-        jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(m_profilingCounter));
+    if (m_resultProfile)
+        jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfSpecialFastPathCount()));
     jit.boxDouble(m_leftFPR, m_result);
 }
 

@@ -452,25 +452,22 @@ public:
         return value >= Options::couldTakeSlowCaseMinimumCount();
     }
 
-    RareCaseProfile* addSpecialFastCaseProfile(int bytecodeOffset)
+    ResultProfile* addResultProfile(int bytecodeOffset)
     {
-        m_specialFastCaseProfiles.append(RareCaseProfile(bytecodeOffset));
-        return &m_specialFastCaseProfiles.last();
+        m_resultProfiles.append(ResultProfile(bytecodeOffset));
+        return &m_resultProfiles.last();
     }
-    unsigned numberOfSpecialFastCaseProfiles() { return m_specialFastCaseProfiles.size(); }
-    RareCaseProfile* specialFastCaseProfile(int index) { return &m_specialFastCaseProfiles[index]; }
-    RareCaseProfile* specialFastCaseProfileForBytecodeOffset(int bytecodeOffset)
-    {
-        return tryBinarySearch<RareCaseProfile, int>(
-            m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset,
-            getRareCaseProfileBytecodeOffset);
-    }
+    unsigned numberOfResultProfiles() { return m_resultProfiles.size(); }
+    ResultProfile* resultProfileForBytecodeOffset(int bytecodeOffset);
+
+    void updateResultProfileForBytecodeOffset(int bytecodeOffset, JSValue result);
+
     unsigned specialFastCaseProfileCountForBytecodeOffset(int bytecodeOffset)
     {
-        RareCaseProfile* profile = specialFastCaseProfileForBytecodeOffset(bytecodeOffset);
+        ResultProfile* profile = resultProfileForBytecodeOffset(bytecodeOffset);
         if (!profile)
             return 0;
-        return profile->m_counter;
+        return profile->specialFastPathCount();
     }
 
     bool couldTakeSpecialFastCase(int bytecodeOffset)
@@ -994,7 +991,8 @@ private:
     void dumpValueProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpRareCaseProfile(PrintStream&, const char* name, RareCaseProfile*, bool& hasPrintedProfiling);
-        
+    void dumpResultProfile(PrintStream&, ResultProfile*, bool& hasPrintedProfiling);
+
     bool shouldVisitStrongly();
     bool shouldJettisonDueToWeakReference();
     bool shouldJettisonDueToOldAge();
@@ -1069,7 +1067,7 @@ private:
     Vector<ValueProfile> m_argumentValueProfiles;
     Vector<ValueProfile> m_valueProfiles;
     SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
-    SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;
+    SegmentedVector<ResultProfile, 8> m_resultProfiles;
     Vector<ArrayAllocationProfile> m_arrayAllocationProfiles;
     ArrayProfileVector m_arrayProfiles;
     Vector<ObjectAllocationProfile> m_objectAllocationProfiles;

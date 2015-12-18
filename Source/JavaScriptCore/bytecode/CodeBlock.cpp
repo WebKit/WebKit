@@ -741,6 +741,15 @@ void CodeBlock::dumpRareCaseProfile(PrintStream& out, const char* name, RareCase
     out.print(name, profile->m_counter);
 }
 
+void CodeBlock::dumpResultProfile(PrintStream& out, ResultProfile* profile, bool& hasPrintedProfiling)
+{
+    if (!profile)
+        return;
+    
+    beginDumpProfiling(out, hasPrintedProfiling);
+    out.print("results: ", *profile);
+}
+
 void CodeBlock::printLocationAndOp(PrintStream& out, ExecState*, int location, const Instruction*&, const char* op)
 {
     out.printf("[%4d] %-17s ", location, op);
@@ -1651,7 +1660,7 @@ void CodeBlock::dumpBytecode(
     }
 
     dumpRareCaseProfile(out, "rare case: ", rareCaseProfileForBytecodeOffset(location), hasPrintedProfiling);
-    dumpRareCaseProfile(out, "special fast case: ", specialFastCaseProfileForBytecodeOffset(location), hasPrintedProfiling);
+    dumpResultProfile(out, resultProfileForBytecodeOffset(location), hasPrintedProfiling);
     
 #if ENABLE(DFG_JIT)
     Vector<DFG::FrequentExitSite> exitSites = exitProfile().exitSitesFor(location);
@@ -3131,7 +3140,7 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
     m_rareCaseProfiles.shrinkToFit();
-    m_specialFastCaseProfiles.shrinkToFit();
+    m_resultProfiles.shrinkToFit();
     
     if (shrinkMode == EarlyShrink) {
         m_constantRegisters.shrinkToFit();
@@ -3976,10 +3985,10 @@ void CodeBlock::dumpValueProfiles()
         RareCaseProfile* profile = rareCaseProfile(i);
         dataLogF("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
     }
-    dataLog("SpecialFastCaseProfile for ", *this, ":\n");
-    for (unsigned i = 0; i < numberOfSpecialFastCaseProfiles(); ++i) {
-        RareCaseProfile* profile = specialFastCaseProfile(i);
-        dataLogF("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
+    dataLog("ResultProfile for ", *this, ":\n");
+    for (unsigned i = 0; i < numberOfResultProfiles(); ++i) {
+        const ResultProfile& profile = *resultProfile(i);
+        dataLog("   bc = ", profile.bytecodeOffset(), ": ", profile, "\n");
     }
 }
 #endif // ENABLE(VERBOSE_VALUE_PROFILE)
@@ -4175,6 +4184,36 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(int bytecodeOffset)
     if (profile)
         return profile->m_counter;
     return 0;
+}
+
+ResultProfile* CodeBlock::resultProfileForBytecodeOffset(int bytecodeOffset)
+{
+    return tryBinarySearch<ResultProfile, int>(
+        m_resultProfiles, m_resultProfiles.size(), bytecodeOffset,
+        getResultProfileBytecodeOffset);
+}
+
+void CodeBlock::updateResultProfileForBytecodeOffset(int bytecodeOffset, JSValue result)
+{
+#if ENABLE(DFG_JIT)
+    ResultProfile* profile = resultProfileForBytecodeOffset(bytecodeOffset);
+    if (!profile)
+        profile = addResultProfile(bytecodeOffset);
+
+    if (result.isNumber()) {
+        if (!result.isInt32()) {
+            double doubleVal = result.asNumber();
+            if (!doubleVal && std::signbit(doubleVal))
+                profile->setObservedNegZeroDouble();
+            else
+                profile->setObservedNonNegZeroDouble();
+        }
+    } else
+        profile->setObservedNonNumber();
+#else
+    UNUSED_PARAM(bytecodeOffset);
+    UNUSED_PARAM(result);
+#endif
 }
 
 #if ENABLE(JIT)

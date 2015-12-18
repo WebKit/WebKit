@@ -91,7 +91,7 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
         rightNotInt = jit.branchIfNotInt32(m_right);
 
         m_slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, m_right.payloadGPR(), m_left.payloadGPR(), m_scratchGPR));
-        if (!m_profilingCounter) {
+        if (!m_resultProfile) {
             m_slowPathJumpList.append(jit.branchTest32(CCallHelpers::Zero, m_scratchGPR)); // Go slow if potential negative zero.
 
         } else {
@@ -104,7 +104,7 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
             negativeZero.link(&jit);
             // Record this, so that the speculative JIT knows that we failed speculation
             // because of a negative zero.
-            jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(m_profilingCounter));
+            jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfSpecialFastPathCount()));
             m_slowPathJumpList.append(jit.jump());
 
             notNegativeZero.link(&jit);

@@ -1,3 +1,78 @@
+2015-12-18  Mark Lam  <mark.lam@apple.com>
+
+        Replace SpecialFastCase profiles with ResultProfiles.
+        https://bugs.webkit.org/show_bug.cgi?id=152433
+
+        Reviewed by Saam Barati.
+
+        This is in preparation for upcoming work to enhance the DFG predictions to deal
+        with untyped operands.
+
+        This patch also enhances some of the arithmetic slow paths (for the LLINT and
+        baseline JIT) to collect result profiling info.  This profiling info is not put
+        to use yet. 
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpRareCaseProfile):
+        (JSC::CodeBlock::dumpResultProfile):
+        (JSC::CodeBlock::printLocationAndOp):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::dumpValueProfiles):
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeOffset):
+        (JSC::CodeBlock::resultProfileForBytecodeOffset):
+        (JSC::CodeBlock::updateResultProfileForBytecodeOffset):
+        (JSC::CodeBlock::capabilityLevel):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::addResultProfile):
+        (JSC::CodeBlock::numberOfResultProfiles):
+        (JSC::CodeBlock::specialFastCaseProfileCountForBytecodeOffset):
+        (JSC::CodeBlock::couldTakeSpecialFastCase):
+        (JSC::CodeBlock::addSpecialFastCaseProfile): Deleted.
+        (JSC::CodeBlock::numberOfSpecialFastCaseProfiles): Deleted.
+        (JSC::CodeBlock::specialFastCaseProfile): Deleted.
+        (JSC::CodeBlock::specialFastCaseProfileForBytecodeOffset): Deleted.
+        * bytecode/ValueProfile.cpp: Added.
+        (WTF::printInternal):
+        * bytecode/ValueProfile.h:
+        (JSC::getRareCaseProfileBytecodeOffset):
+        (JSC::ResultProfile::ResultProfile):
+        (JSC::ResultProfile::bytecodeOffset):
+        (JSC::ResultProfile::specialFastPathCount):
+        (JSC::ResultProfile::didObserveNonInt32):
+        (JSC::ResultProfile::didObserveDouble):
+        (JSC::ResultProfile::didObserveNonNegZeroDouble):
+        (JSC::ResultProfile::didObserveNegZeroDouble):
+        (JSC::ResultProfile::didObserveNonNumber):
+        (JSC::ResultProfile::didObserveInt32Overflow):
+        (JSC::ResultProfile::setObservedNonNegZeroDouble):
+        (JSC::ResultProfile::setObservedNegZeroDouble):
+        (JSC::ResultProfile::setObservedNonNumber):
+        (JSC::ResultProfile::setObservedInt32Overflow):
+        (JSC::ResultProfile::addressOfFlags):
+        (JSC::ResultProfile::addressOfSpecialFastPathCount):
+        (JSC::ResultProfile::hasBits):
+        (JSC::ResultProfile::setBit):
+        (JSC::getResultProfileBytecodeOffset):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+        * jit/JITDivGenerator.cpp:
+        (JSC::JITDivGenerator::generateFastPath):
+        * jit/JITDivGenerator.h:
+        (JSC::JITDivGenerator::JITDivGenerator):
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITMulGenerator.h:
+        (JSC::JITMulGenerator::JITMulGenerator):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2015-12-18  Keith Miller  <keith_miller@apple.com>
 
         verboseDFGByteCodeParsing option should show the bytecode it is parsing.

@@ -116,24 +116,32 @@ namespace JSC {
         END_IMPL();                                         \
     } while (false)
 
-#define RETURN(value) do {                \
-        JSValue rReturnValue = (value);      \
-        CHECK_EXCEPTION();                \
-        OP(1) = rReturnValue;          \
-        END_IMPL();                       \
+#define RETURN_WITH_PROFILING(value__, profilingAction__) do { \
+        JSValue returnValue__ = (value__);  \
+        CHECK_EXCEPTION();                  \
+        OP(1) = returnValue__;              \
+        profilingAction__;                  \
+        END_IMPL();                         \
     } while (false)
 
-#define RETURN_PROFILED(opcode, value) do {                  \
-        JSValue rpPeturnValue = (value);                     \
-        CHECK_EXCEPTION();                                   \
-        OP(1) = rpPeturnValue;                               \
-        PROFILE_VALUE(opcode, rpPeturnValue);                \
-        END_IMPL();                                          \
-    } while (false)
+#define RETURN(value) \
+    RETURN_WITH_PROFILING(value, { })
+
+#define RETURN_PROFILED(opcode__, value__) \
+    RETURN_WITH_PROFILING(value__, PROFILE_VALUE(opcode__, returnValue__))
 
 #define PROFILE_VALUE(opcode, value) do { \
         pc[OPCODE_LENGTH(opcode) - 1].u.profile->m_buckets[0] = \
         JSValue::encode(value);                  \
+    } while (false)
+
+#define RETURN_WITH_RESULT_PROFILING(value__) \
+    RETURN_WITH_PROFILING(value__, PROFILE_RESULT(returnValue__))
+    
+#define PROFILE_RESULT(value__) do { \
+        CodeBlock* codeBlock = exec->codeBlock();                                   \
+        unsigned bytecodeOffset = codeBlock->bytecodeOffset(pc);                    \
+        codeBlock->updateResultProfileForBytecodeOffset(bytecodeOffset, value__);   \
     } while (false)
 
 #define CALL_END_IMPL(exec, callTarget) RETURN_TWO((callTarget), (exec))
@@ -357,12 +365,12 @@ SLOW_PATH_DECL(slow_path_add)
     JSValue v2 = OP_C(3).jsValue();
     
     if (v1.isString() && !v2.isObject())
-        RETURN(jsString(exec, asString(v1), v2.toString(exec)));
+        RETURN_WITH_RESULT_PROFILING(jsString(exec, asString(v1), v2.toString(exec)));
     
     if (v1.isNumber() && v2.isNumber())
-        RETURN(jsNumber(v1.asNumber() + v2.asNumber()));
+        RETURN_WITH_RESULT_PROFILING(jsNumber(v1.asNumber() + v2.asNumber()));
     
-    RETURN(jsAddSlowCase(exec, v1, v2));
+    RETURN_WITH_RESULT_PROFILING(jsAddSlowCase(exec, v1, v2));
 }
 
 // The following arithmetic and bitwise operations need to be sure to run
@@ -374,7 +382,7 @@ SLOW_PATH_DECL(slow_path_mul)
     BEGIN();
     double a = OP_C(2).jsValue().toNumber(exec);
     double b = OP_C(3).jsValue().toNumber(exec);
-    RETURN(jsNumber(a * b));
+    RETURN_WITH_RESULT_PROFILING(jsNumber(a * b));
 }
 
 SLOW_PATH_DECL(slow_path_sub)
@@ -382,7 +390,7 @@ SLOW_PATH_DECL(slow_path_sub)
     BEGIN();
     double a = OP_C(2).jsValue().toNumber(exec);
     double b = OP_C(3).jsValue().toNumber(exec);
-    RETURN(jsNumber(a - b));
+    RETURN_WITH_RESULT_PROFILING(jsNumber(a - b));
 }
 
 SLOW_PATH_DECL(slow_path_div)
@@ -390,7 +398,7 @@ SLOW_PATH_DECL(slow_path_div)
     BEGIN();
     double a = OP_C(2).jsValue().toNumber(exec);
     double b = OP_C(3).jsValue().toNumber(exec);
-    RETURN(jsNumber(a / b));
+    RETURN_WITH_RESULT_PROFILING(jsNumber(a / b));
 }
 
 SLOW_PATH_DECL(slow_path_mod)

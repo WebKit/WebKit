@@ -206,7 +206,62 @@ inline int getRareCaseProfileBytecodeOffset(RareCaseProfile* rareCaseProfile)
     return rareCaseProfile->m_bytecodeOffset;
 }
 
+struct ResultProfile {
+private:
+    static const int numberOfFlagBits = 4;
+
+public:
+    ResultProfile(int bytecodeOffset)
+        : m_bytecodeOffsetAndFlags(bytecodeOffset << numberOfFlagBits)
+    {
+        ASSERT(((bytecodeOffset << numberOfFlagBits) >> numberOfFlagBits) == bytecodeOffset);
+    }
+
+    enum ObservedResults {
+        NonNegZeroDouble = 1 << 0,
+        NegZeroDouble    = 1 << 1,
+        NonNumber        = 1 << 2,
+        Int32Overflow    = 1 << 3,
+    };
+
+    int bytecodeOffset() const { return m_bytecodeOffsetAndFlags >> numberOfFlagBits; }
+    unsigned specialFastPathCount() const { return m_specialFastPathCount; }
+
+    bool didObserveNonInt32() const { return hasBits(NonNegZeroDouble | NegZeroDouble | NonNumber); }
+    bool didObserveDouble() const { return hasBits(NonNegZeroDouble | NegZeroDouble); }
+    bool didObserveNonNegZeroDouble() const { return hasBits(NonNegZeroDouble); }
+    bool didObserveNegZeroDouble() const { return hasBits(NegZeroDouble); }
+    bool didObserveNonNumber() const { return hasBits(NonNumber); }
+    bool didObserveInt32Overflow() const { return hasBits(Int32Overflow); }
+
+    void setObservedNonNegZeroDouble() { setBit(NonNegZeroDouble); }
+    void setObservedNegZeroDouble() { setBit(NegZeroDouble); }
+    void setObservedNonNumber() { setBit(NonNumber); }
+    void setObservedInt32Overflow() { setBit(Int32Overflow); }
+
+    void* addressOfFlags() { return &m_bytecodeOffsetAndFlags; }
+    void* addressOfSpecialFastPathCount() { return &m_specialFastPathCount; }
+
+private:
+    bool hasBits(int mask) const { return m_bytecodeOffsetAndFlags & mask; }
+    void setBit(int mask) { m_bytecodeOffsetAndFlags |= mask; }
+
+    int m_bytecodeOffsetAndFlags;
+    unsigned m_specialFastPathCount { 0 };
+};
+
+inline int getResultProfileBytecodeOffset(ResultProfile* profile)
+{
+    return profile->bytecodeOffset();
+}
+
 } // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream&, const JSC::ResultProfile&);
+
+} // namespace WTF
 
 #endif // ValueProfile_h
 

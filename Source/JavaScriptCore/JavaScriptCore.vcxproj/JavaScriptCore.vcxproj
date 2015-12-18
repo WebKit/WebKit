@@ -362,6 +362,7 @@
     <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedFunctionExecutable.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp" />
+    <ClCompile Include="..\bytecode\ValueProfile.cpp" />
     <ClCompile Include="..\bytecode\ValueRecovery.cpp" />
     <ClCompile Include="..\bytecode\VariableWriteFireDetail.cpp" />
     <ClCompile Include="..\bytecode\VirtualRegister.cpp" />

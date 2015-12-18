@@ -1524,6 +1524,9 @@
     <ClCompile Include="..\runtime\TestRunnerUtils.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\ValueProfile.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\ValueRecovery.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>

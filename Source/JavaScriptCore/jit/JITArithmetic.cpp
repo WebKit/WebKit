@@ -755,7 +755,9 @@ void JIT::emit_op_div(Instruction* currentInstruction)
 #endif
     FPRReg scratchFPR = fpRegT2;
 
-    uint32_t* profilingCounter = &m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter;
+    ResultProfile* resultProfile = nullptr;
+    if (shouldEmitProfiling())
+        resultProfile = m_codeBlock->addResultProfile(m_bytecodeOffset);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -782,7 +784,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
         emitGetVirtualRegister(op2, rightRegs);
 
     JITDivGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, fpRegT1, scratchGPR, scratchFPR, profilingCounter);
+        fpRegT0, fpRegT1, scratchGPR, scratchFPR, resultProfile);
 
     gen.generateFastPath(*this);
 
@@ -828,9 +830,9 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
-    uint32_t* profilingCounter = nullptr;
+    ResultProfile* resultProfile = nullptr;
     if (shouldEmitProfiling())
-        profilingCounter = &m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter;
+        resultProfile = m_codeBlock->addResultProfile(m_bytecodeOffset);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -848,7 +850,7 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
         emitGetVirtualRegister(op2, rightRegs);
 
     JITMulGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, fpRegT1, scratchGPR, scratchFPR, profilingCounter);
+        fpRegT0, fpRegT1, scratchGPR, scratchFPR, resultProfile);
 
     gen.generateFastPath(*this);
 

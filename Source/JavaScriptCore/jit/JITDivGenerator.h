@@ -38,7 +38,7 @@ public:
     JITDivGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,
         FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR,
-        uint32_t* profilingCounter = nullptr)
+        ResultProfile* resultProfile = nullptr)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
         , m_result(result)
@@ -48,7 +48,7 @@ public:
         , m_rightFPR(rightFPR)
         , m_scratchGPR(scratchGPR)
         , m_scratchFPR(scratchFPR)
-        , m_profilingCounter(profilingCounter)
+        , m_resultProfile(resultProfile)
     {
         ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
     }
@@ -71,7 +71,7 @@ private:
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;
     FPRReg m_scratchFPR;
-    uint32_t* m_profilingCounter;
+    ResultProfile* m_resultProfile;
     bool m_didEmitFastPath { false };
 
     CCallHelpers::JumpList m_endJumpList;
