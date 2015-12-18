@@ -1372,3 +1372,7 @@ webkit.org/b/149774 css3/font-feature-settings-rendering.html [ Pass Failure Ima
 webkit.org/b/149774 css3/font-variant-all.html [ Pass Failure ImageOnlyFailure ] 
 webkit.org/b/149774 css3/font-variant-font-face-all.html [ Pass Failure ImageOnlyFailure ] 
 webkit.org/b/149774 css3/font-variant-font-face-override.html [ Pass Failure ImageOnlyFailure ] 
+
+# Yosemite and El Capitan do not support font feature coverage queries.
+[ Yosemite ElCapitan ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]

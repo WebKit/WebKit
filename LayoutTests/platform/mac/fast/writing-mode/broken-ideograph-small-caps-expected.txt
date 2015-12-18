@@ -13,8 +13,8 @@ layer at (0,0) size 800x377
               text run at (21,1) width 176: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} Paragraph 2"
         RenderBlock {DIV} at (278,1) size 277x275 [bgcolor=#FFFFEE]
           RenderBlock {P} at (14,28) size 63x219 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
-            RenderText {#text} at (21,1) size 20x175
-              text run at (21,1) width 175: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} Paragraph 1"
+            RenderText {#text} at (21,1) size 20x156
+              text run at (21,1) width 156: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} Paragraph 1"
           RenderBlock {P} at (90,28) size 63x219 [bgcolor=#FFAAAA] [border: none (20px solid #FF8888) none (20px solid #FF8888)]
-            RenderText {#text} at (21,1) size 20x181
-              text run at (21,1) width 181: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} Paragraph 2"
+            RenderText {#text} at (21,1) size 20x162
+              text run at (21,1) width 162: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} Paragraph 2"

@@ -204,7 +204,7 @@ public:
     {
         return familiesEqualForTextAutoSizing(other)
             && m_specifiedSize == other.m_specifiedSize
-            && variantSettings() == other.other.variantSettings()
+            && variantSettings() == other.variantSettings()
             && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
 #endif
