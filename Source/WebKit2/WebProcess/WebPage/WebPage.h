@@ -1202,6 +1202,10 @@ private:
 
     bool m_mainFrameIsScrollable;
 
+#if PLATFORM(IOS)
+    bool m_ignoreViewportScalingConstraints { false };
+#endif
+
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     bool m_readyToFindPrimarySnapshottedPlugin;
     bool m_didFindPrimarySnapshottedPlugin;

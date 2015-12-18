@@ -1,3 +1,42 @@
+2015-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Disable viewport "shrink to fit" outside of multitasking mode
+        https://bugs.webkit.org/show_bug.cgi?id=152403
+        rdar://problem/23818102
+
+        Reviewed by Tim Horton.
+        
+        Plumb through a value that indicates whether the WKWebView is in split screen,
+        and use it to conditionally enable shrink-to-fit mode only in split screen.
+        
+        * Shared/VisibleContentRectUpdateInfo.cpp: Added m_allowShrinkToFit, and sort
+        the member variables, and encoding order, to optimize packing, with some initializers.
+        (WebKit::VisibleContentRectUpdateInfo::encode):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::allowShrinkToFit):
+        (WebKit::operator==):
+        * UIProcess/API/Cocoa/WKWebView.mm: Add _allowsViewportShrinkToFit member variable,
+        with getter and setter.
+        (-[WKWebView _updateVisibleContentRects]): Unwrap the line.
+        (-[WKWebView _setAllowsViewportShrinkToFit:]):
+        (-[WKWebView _allowsViewportShrinkToFit]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: _allowsViewportShrinkToFit SPI.
+        * UIProcess/WebPageProxy.h: Pass allowShrinkToFit through.
+        * UIProcess/ios/WKContentView.mm: Ditto.
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateVisibleContentRects): Padd allowShrinkToFit to the web process via the VisibleContentRectUpdateInfo.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Store m_ignoreViewportScalingConstraints in a member variable since we can't
+        get back to the prefs later.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects): This is the behavior change: call setCanIgnoreScalingConstraints()
+        on the viewport configuration, consulting the pref (via m_ignoreViewportScalingConstraints) and the new
+        visibleContentRectUpdateInfo.allowShrinkToFit().
+
 2015-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         ViewportConfiguration functions should return a bool to say if anything changed

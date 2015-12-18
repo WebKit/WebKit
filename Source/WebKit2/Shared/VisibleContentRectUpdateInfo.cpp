@@ -36,14 +36,15 @@ void VisibleContentRectUpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_unobscuredRect;
     encoder << m_unobscuredRectInScrollViewCoordinates;
     encoder << m_customFixedPositionRect;
+    encoder << m_lastLayerTreeTransactionID;
     encoder << m_scale;
-    encoder << m_inStableState;
-    encoder << m_isChangingObscuredInsetsInteractively;
     encoder << m_timestamp;
     encoder << m_horizontalVelocity;
     encoder << m_verticalVelocity;
     encoder << m_scaleChangeRate;
-    encoder << m_lastLayerTreeTransactionID;
+    encoder << m_inStableState;
+    encoder << m_isChangingObscuredInsetsInteractively;
+    encoder << m_allowShrinkToFit;
 }
 
 bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, VisibleContentRectUpdateInfo& result)
@@ -56,11 +57,9 @@ bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, Visible
         return false;
     if (!decoder.decode(result.m_customFixedPositionRect))
         return false;
+    if (!decoder.decode(result.m_lastLayerTreeTransactionID))
+        return false;
     if (!decoder.decode(result.m_scale))
-        return false;
-    if (!decoder.decode(result.m_inStableState))
-        return false;
-    if (!decoder.decode(result.m_isChangingObscuredInsetsInteractively))
         return false;
     if (!decoder.decode(result.m_timestamp))
         return false;
@@ -70,7 +69,11 @@ bool VisibleContentRectUpdateInfo::decode(IPC::ArgumentDecoder& decoder, Visible
         return false;
     if (!decoder.decode(result.m_scaleChangeRate))
         return false;
-    if (!decoder.decode(result.m_lastLayerTreeTransactionID))
+    if (!decoder.decode(result.m_inStableState))
+        return false;
+    if (!decoder.decode(result.m_isChangingObscuredInsetsInteractively))
+        return false;
+    if (!decoder.decode(result.m_allowShrinkToFit))
         return false;
 
     return true;

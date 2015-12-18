@@ -1,3 +1,15 @@
+2015-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Disable viewport "shrink to fit" outside of multitasking mode
+        https://bugs.webkit.org/show_bug.cgi?id=152403
+        rdar://problem/23818102
+
+        Reviewed by Tim Horton.
+        
+        This test no longer does shrink-to-fit, so starts with a min and initial scale of 1.
+
+        * fast/viewport/ios/width-is-device-width-overflowing-expected.txt:
+
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add JSContext Script Profiling
