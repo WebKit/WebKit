@@ -1,3 +1,17 @@
+2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Avoid triggering clang's -Wundefined-bool-conversion
+        https://bugs.webkit.org/show_bug.cgi?id=152408
+
+        Reviewed by Mark Lam.
+
+        Remove use of ASSERT(this).
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::adoptIfNeeded):
+        * page/Frame.cpp:
+        (WebCore::Frame::createView):
+
 2015-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the 'ignoreViewportScalingConstraints' Setting, which was unused

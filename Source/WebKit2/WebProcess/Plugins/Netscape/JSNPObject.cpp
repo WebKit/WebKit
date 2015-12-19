@@ -107,7 +107,7 @@ NPObject* JSNPObject::leakNPObject()
 
 JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, info());
+    ASSERT_THIS_GC_OBJECT_INHERITS(info());
     if (!m_npObject)
         return throwInvalidAccessError(exec);
 
@@ -151,7 +151,7 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
 
 JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, info());
+    ASSERT_THIS_GC_OBJECT_INHERITS(info());
     if (!m_npObject)
         return throwInvalidAccessError(exec);
 
@@ -191,7 +191,7 @@ JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
 
 JSValue JSNPObject::callConstructor(ExecState* exec)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, info());
+    ASSERT_THIS_GC_OBJECT_INHERITS(info());
     if (!m_npObject)
         return throwInvalidAccessError(exec);
 
@@ -351,7 +351,7 @@ bool JSNPObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
 
 bool JSNPObject::deleteProperty(ExecState* exec, NPIdentifier propertyName)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, info());
+    ASSERT_THIS_GC_OBJECT_INHERITS(info());
 
     // If the propertyName is symbol.
     if (!propertyName)

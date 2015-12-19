@@ -1,3 +1,15 @@
+2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Avoid triggering clang's -Wundefined-bool-conversion
+        https://bugs.webkit.org/show_bug.cgi?id=152408
+
+        Reviewed by Mark Lam.
+
+        Add ASSERT_THIS_GC_OBJECT_LOOKS_VALID and ASSERT_THIS_GC_OBJECT_INHERITS to avoid use of
+        ASSERT(this) by ASSERT_GC_OBJECT_LOOKS_VALID and ASSERT_GC_OBJECT_INHERITS.
+
+        * heap/GCAssertions.h:
+
 2015-12-18  Mark Lam  <mark.lam@apple.com>
 
         Replace SpecialFastCase profiles with ResultProfiles.

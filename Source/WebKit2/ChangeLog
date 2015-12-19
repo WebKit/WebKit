@@ -1,3 +1,18 @@
+2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Avoid triggering clang's -Wundefined-bool-conversion
+        https://bugs.webkit.org/show_bug.cgi?id=152408
+
+        Reviewed by Mark Lam.
+
+        Use ASSERT_THIS_GC_OBJECT_INHERITS where needed.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::callMethod):
+        (WebKit::JSNPObject::callObject):
+        (WebKit::JSNPObject::callConstructor):
+        (WebKit::JSNPObject::deleteProperty):
+
 2015-12-15  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WebDatabaseManager, it's been replaced by WebsiteDataStore

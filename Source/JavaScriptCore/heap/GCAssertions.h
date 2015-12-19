@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,9 +41,21 @@
     RELEASE_ASSERT(object->inherits(classInfo)); \
 } while (0)
 
+// Used to avoid triggering -Wundefined-bool-conversion.
+#define ASSERT_THIS_GC_OBJECT_LOOKS_VALID() do { \
+    RELEASE_ASSERT(this->structure()->structure() == this->structure()->structure()->structure()); \
+} while (0)
+
+#define ASSERT_THIS_GC_OBJECT_INHERITS(classInfo) do {\
+    ASSERT_THIS_GC_OBJECT_LOOKS_VALID(); \
+    RELEASE_ASSERT(this->inherits(classInfo)); \
+} while (0)
+
 #else
 #define ASSERT_GC_OBJECT_LOOKS_VALID(cell) do { (void)cell; } while (0)
 #define ASSERT_GC_OBJECT_INHERITS(object, classInfo) do { (void)object; (void)classInfo; } while (0)
+#define ASSERT_THIS_GC_OBJECT_LOOKS_VALID()
+#define ASSERT_THIS_GC_OBJECT_INHERITS(classInfo) do { (void)classInfo; } while (0)
 #endif
 
 #define STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(klass) static_assert(std::is_trivially_destructible<klass>::value, #klass " must have a trivial destructor")

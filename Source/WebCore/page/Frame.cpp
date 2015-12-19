@@ -870,7 +870,6 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
     bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
     ScrollbarMode verticalScrollbarMode, bool verticalLock)
 {
-    ASSERT(this);
     ASSERT(m_page);
 
     bool isMainFrame = this->isMainFrame();

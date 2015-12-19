@@ -284,7 +284,6 @@ Element* TreeScope::findAnchor(const String& name)
 
 void TreeScope::adoptIfNeeded(Node* node)
 {
-    ASSERT(this);
     ASSERT(node);
     ASSERT(!node->isDocumentNode());
     ASSERT(!node->m_deletionHasBegun);
