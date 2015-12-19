@@ -1,3 +1,17 @@
+2015-12-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] B3: Add indexed addressing when lowering BitwiseCast
+        https://bugs.webkit.org/show_bug.cgi?id=152432
+
+        Reviewed by Geoffrey Garen.
+
+        The MacroAssembler supports it, we should use it.
+
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testBitwiseCastOnDoubleInMemoryIndexed):
+        (JSC::B3::testBitwiseCastOnInt64InMemoryIndexed):
+
 2015-12-18  Andreas Kling  <akling@apple.com>
 
         Make JSString::SafeView less of a footgun.

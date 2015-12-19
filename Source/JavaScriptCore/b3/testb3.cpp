@@ -3570,6 +3570,23 @@ void testBitwiseCastOnDoubleInMemory(double value)
     CHECK(isIdentical(compileAndRun<int64_t>(proc, &value), bitwise_cast<int64_t>(value)));
 }
 
+void testBitwiseCastOnDoubleInMemoryIndexed(double value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* scaledOffset = root->appendNew<Value>(proc, Shl, Origin(),
+        offset,
+        root->appendNew<Const32Value>(proc, Origin(), 3));
+    Value* address = root->appendNew<Value>(proc, Add, Origin(), base, scaledOffset);
+    MemoryValue* loadDouble = root->appendNew<MemoryValue>(proc, Load, Double, Origin(), address);
+    Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadDouble);
+    root->appendNew<ControlValue>(proc, Return, Origin(), cast);
+
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, &value, 0), bitwise_cast<int64_t>(value)));
+}
+
 void testInt64BArgToDoubleBitwiseCast(int64_t value)
 {
     Procedure proc;
@@ -3620,6 +3637,23 @@ void testBitwiseCastOnInt64InMemory(int64_t value)
     root->appendNew<ControlValue>(proc, Return, Origin(), cast);
 
     CHECK(isIdentical(compileAndRun<double>(proc, &value), bitwise_cast<double>(value)));
+}
+
+void testBitwiseCastOnInt64InMemoryIndexed(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* scaledOffset = root->appendNew<Value>(proc, Shl, Origin(),
+        offset,
+        root->appendNew<Const32Value>(proc, Origin(), 3));
+    Value* address = root->appendNew<Value>(proc, Add, Origin(), base, scaledOffset);
+    MemoryValue* loadDouble = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadDouble);
+    root->appendNew<ControlValue>(proc, Return, Origin(), cast);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, &value, 0), bitwise_cast<double>(value)));
 }
 
 void testFloatImmToInt32BitwiseCast(float value)
@@ -9019,10 +9053,12 @@ void run(const char* filter)
     RUN_UNARY(testDoubleImmToInt64BitwiseCast, floatingPointOperands<double>());
     RUN_UNARY(testTwoBitwiseCastOnDouble, floatingPointOperands<double>());
     RUN_UNARY(testBitwiseCastOnDoubleInMemory, floatingPointOperands<double>());
+    RUN_UNARY(testBitwiseCastOnDoubleInMemoryIndexed, floatingPointOperands<double>());
     RUN_UNARY(testInt64BArgToDoubleBitwiseCast, int64Operands());
     RUN_UNARY(testInt64BImmToDoubleBitwiseCast, int64Operands());
     RUN_UNARY(testTwoBitwiseCastOnInt64, int64Operands());
     RUN_UNARY(testBitwiseCastOnInt64InMemory, int64Operands());
+    RUN_UNARY(testBitwiseCastOnInt64InMemoryIndexed, int64Operands());
     RUN_UNARY(testFloatImmToInt32BitwiseCast, floatingPointOperands<float>());
     RUN_UNARY(testBitwiseCastOnFloatInMemory, floatingPointOperands<float>());
     RUN_UNARY(testInt32BArgToFloatBitwiseCast, int32Operands());

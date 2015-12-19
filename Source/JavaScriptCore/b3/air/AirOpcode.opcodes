@@ -380,18 +380,22 @@ MoveZeroToDouble D:F
 64: Move64ToDouble U:G, D:F
     Tmp, Tmp
     Addr, Tmp as loadDouble
+    Index, Tmp as loadDouble
 
 MoveInt32ToPacked U:G, D:F
     Tmp, Tmp
     Addr, Tmp as loadFloat
+    Index, Tmp as loadFloat
 
 64: MoveDoubleTo64 U:F, D:G
     Tmp, Tmp
     Addr, Tmp as load64
+    Index, Tmp as load64
 
 MovePackedToInt32 U:F, D:G
     Tmp, Tmp
     Addr, Tmp as load32
+    Index, Tmp as load32
 
 Load8 U:G, D:G
     Addr, Tmp
