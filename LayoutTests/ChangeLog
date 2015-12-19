@@ -1,3 +1,11 @@
+2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Mark fast/regions/overflow/overflow-region-float.html as passing
+
+        Unreviewed test gardening. This test has been passing since r191658.
+
+        * platform/gtk/TestExpectations:
+
 2015-12-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping fast/scrolling/rtl-point-in-iframe.html on ios-simulator since it tests wheel events.

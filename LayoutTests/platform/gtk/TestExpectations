@@ -2348,8 +2348,6 @@ webkit.org/b/142482 http/tests/security/mixedContent/insecure-audio-video-in-mai
 webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
 webkit.org/b/142667 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
 
-webkit.org/b/142669 fast/regions/overflow/overflow-region-float.html [ ImageOnlyFailure ]
-
 webkit.org/b/143230 imported/mozilla/svg/filters/feImage-1.svg [ ImageOnlyFailure ]
 
 webkit.org/b/143468 accessibility/plugin.html [ Failure ]
