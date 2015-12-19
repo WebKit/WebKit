@@ -1,5 +1,49 @@
 2015-12-19  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Streamline Tmp indexing inside the register allocator
+        https://bugs.webkit.org/show_bug.cgi?id=152420
+
+        Reviewed by Filip Pizlo.
+
+        AirIteratedRegisterCoalescing has been accumulating a bit of mess over time.
+
+        When it started, every map addressed by Tmp was using Tmp hashing.
+        That caused massive performance problems. Everything perf sensitive was moved
+        to direct array addressing by the absolute Tmp index. This left the code
+        with half of the function using Tmp, the other half using indices.
+
+        With this patch, almost everything is moved to absolute indexing.
+        There are a few advantages to this:
+        -No more conversion churn for Floating Point registers.
+        -Most of the functions can now be shared between GP and FP.
+        -A bit of clean up since the core algorithm only deals with integers now.
+
+        This patch also changes the index type to be a template argument.
+        That will allow future specialization of "m_interferenceEdges" based
+        on the expected problem size.
+
+        Finally, the code related to the program modification (register assignment
+        and spilling) was moved to the wrapper "IteratedRegisterCoalescing".
+
+        The current split is:
+        -AbstractColoringAllocator: common core. Share as much as possible between
+         GP and FP.
+        -ColoringAllocator: the remaining parts of the algorithm, everything that
+         is specific to GP, FP.
+        -IteratedRegisterCoalescing: the "iterated" part of the algorithm.
+         Try to allocate and modify the code as needed.
+
+        The long term plan is:
+        -Move selectSpill() and the coloring loop to AbstractColoringAllocator.
+        -Specialize m_interferenceEdges to make it faster.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirTmpInlines.h:
+        (JSC::B3::Air::AbsoluteTmpMapper<Arg::GP>::lastMachineRegisterIndex):
+        (JSC::B3::Air::AbsoluteTmpMapper<Arg::FP>::lastMachineRegisterIndex):
+
+2015-12-19  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] FTLB3Output generates some invalid ZExt32
         https://bugs.webkit.org/show_bug.cgi?id=151905
 

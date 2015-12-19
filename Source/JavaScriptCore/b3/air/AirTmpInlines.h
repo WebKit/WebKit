@@ -57,6 +57,11 @@ struct AbsoluteTmpMapper<Arg::GP> {
         return absoluteIndex(Tmp::gpTmpForIndex(tmpIndex));
     }
 
+    static unsigned lastMachineRegisterIndex()
+    {
+        return absoluteIndex(Tmp(MacroAssembler::lastRegister()));
+    }
+
     static Tmp tmpFromAbsoluteIndex(unsigned tmpIndex)
     {
         return Tmp::tmpForInternalValue(tmpIndex);
@@ -75,6 +80,11 @@ struct AbsoluteTmpMapper<Arg::FP> {
     static unsigned absoluteIndex(unsigned tmpIndex)
     {
         return absoluteIndex(Tmp::fpTmpForIndex(tmpIndex));
+    }
+
+    static unsigned lastMachineRegisterIndex()
+    {
+        return absoluteIndex(Tmp(MacroAssembler::lastFPRegister()));
     }
 
     static Tmp tmpFromAbsoluteIndex(unsigned tmpIndex)
