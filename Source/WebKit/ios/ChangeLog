@@ -1,3 +1,19 @@
+2015-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Turn off "shrink-to-fit" viewport scaling in UIWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=152451
+        rdar://problem/23960882
+
+        Reviewed by Tim Horton.
+        
+        Disable the "shrink to fit" behavior in UIWebViews. This disables it entirely,
+        even when the page has "shrink-to-fit=yes" in the viewport meta tag.
+        
+        Not testable because we can't test actual UIWebView scaling behavior.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (dictionaryForViewportArguments):
+
 2015-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ColorSpace argument to all the drawing calls

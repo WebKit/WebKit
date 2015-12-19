@@ -164,7 +164,7 @@ static inline NSDictionary* dictionaryForViewportArguments(const WebCore::Viewpo
               @"minimum-scale":@(arguments.minZoom),
               @"maximum-scale":@(arguments.maxZoom),
               @"user-scalable":@(arguments.userZoom),
-              @"shrink-to-fit":@(arguments.shrinkToFit),
+              @"shrink-to-fit":@(0),
               @"width":@(arguments.width),
               @"height":@(arguments.height) };
 }
