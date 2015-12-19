@@ -700,11 +700,13 @@ namespace JSC {
 
         OpcodeID lastOpcodeID() const { return m_lastOpcodeID; }
 
+        enum class TDZCheckOptimization { Optimize, DoNotOptimize };
+        enum class NestedScopeType { IsNested, IsNotNested };
     private:
         enum class TDZRequirement { UnderTDZ, NotUnderTDZ };
         enum class ScopeType { CatchScope, LetConstScope, FunctionNameScope };
         enum class ScopeRegisterType { Var, Block };
-        void pushLexicalScopeInternal(VariableEnvironment&, bool canOptimizeTDZChecks, bool isNestedLexicalScope, RegisterID** constantSymbolTableResult, TDZRequirement, ScopeType, ScopeRegisterType);
+        void pushLexicalScopeInternal(VariableEnvironment&, TDZCheckOptimization, NestedScopeType, RegisterID** constantSymbolTableResult, TDZRequirement, ScopeType, ScopeRegisterType);
         void popLexicalScopeInternal(VariableEnvironment&, TDZRequirement);
         template<typename LookUpVarKindFunctor>
         bool instantiateLexicalVariables(const VariableEnvironment&, SymbolTable*, ScopeRegisterType, LookUpVarKindFunctor);
@@ -715,7 +717,7 @@ namespace JSC {
         void emitNewFunctionExpressionCommon(RegisterID*, BaseFuncExprNode*);
 
     public:
-        void pushLexicalScope(VariableEnvironmentNode*, bool canOptimizeTDZChecks, bool isNestedLexicalScope = false, RegisterID** constantSymbolTableResult = nullptr);
+        void pushLexicalScope(VariableEnvironmentNode*, TDZCheckOptimization, NestedScopeType = NestedScopeType::IsNotNested, RegisterID** constantSymbolTableResult = nullptr);
         void popLexicalScope(VariableEnvironmentNode*);
         void prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode*, RegisterID* loopSymbolTable);
         int labelScopeDepth() const;

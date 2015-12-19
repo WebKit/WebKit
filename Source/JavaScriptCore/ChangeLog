@@ -1,3 +1,32 @@
+2015-12-18  Saam barati  <sbarati@apple.com>
+
+        BytecodeGenerator::pushLexicalScopeInternal and pushLexicalScope should use enums instead of bools
+        https://bugs.webkit.org/show_bug.cgi?id=152450
+
+        Reviewed by Geoffrey Garen and Joseph Pecoraro.
+
+        This makes comprehending the call sites of these functions
+        easier without looking up the header of the function.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::emitPrefillStackTDZVariables):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::lastOpcodeID):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BlockNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+
 2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Avoid triggering clang's -Wundefined-bool-conversion
