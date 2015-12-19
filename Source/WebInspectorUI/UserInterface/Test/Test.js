@@ -87,6 +87,8 @@ WebInspector.contentLoaded = function()
     InspectorFrontendHost.loaded();
 }
 
+WebInspector.isDebugUIEnabled = () => false;
+
 WebInspector.UIString = (string) => string;
 
 // Add stubs that are called by the frontend API.

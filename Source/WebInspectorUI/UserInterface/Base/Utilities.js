@@ -1112,6 +1112,16 @@ function appendWebInspectorSourceURL(string)
     return string + "\n//# sourceURL=__WebInspectorInternal__\n";
 }
 
+function isWebInspectorInternalScript(url)
+{
+    return url === "__WebInspectorInternal__";
+}
+
+function isWebInspectorDebugScript(url)
+{
+    return url && url.startsWith("__WebInspector");
+}
+
 function isFunctionStringNativeCode(str)
 {
     return str.endsWith("{\n    [native code]\n}");

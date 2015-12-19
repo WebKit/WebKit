@@ -1,3 +1,60 @@
+2015-12-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Make it possible to debug injected scripts when the Debug UI is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=152445
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        Added function to check for debug UI.
+
+        * UserInterface/Base/Object.js:
+        Added notification for debug UI enabled state change.
+
+        * UserInterface/Base/Utilities.js:
+        (isWebInspectorInternalScript):
+        (isWebInspectorDebugScript):
+        Added functions to check for internal and debug inspector scripts.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager):
+        Maintain a list of inspector debug scripts, so that the manager can
+        add and remove them when the debug UI is enabled/disabled.
+        (WebInspector.DebuggerManager.prototype.get knownNonResourceScripts):
+        (WebInspector.DebuggerManager.prototype.reset):
+        Clear the list of inspector debug scripts.
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        Skip internal inspector scripts. Debug inspector scripts are tracked,
+        and an added event is dispatched if the debug UI is enabled.
+        (WebInspector.DebuggerManager.prototype._debugUIEnabledDidChange):
+        Dispatch added/removed events for inspector debug scripts.
+
+        * UserInterface/Debug/Bootstrap.js:
+        (WebInspector.runBootstrapOperations):
+        Expose changes to the debug UI setting to the reset of the UI, by dispatching
+        a WebInspector.Notification.DebugUIEnabledDidChange event.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.findFunctionSourceCodeLocation):
+        Only resolve inspector debug source locations when the debug UI is enabled.
+
+        * UserInterface/Test/Test.js:
+        Reimplemented debug UI check for tests. Always returns false.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addScript):
+        Removed check for inspector debug scripts. DebuggerManager filters scripts as needed.
+        (WebInspector.DebuggerSidebarPanel.prototype._scriptRemoved):
+        Handle DebuggerManager ScriptRemoved events. Only applies to debug scripts.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasRemoved):
+        Handle DebuggerManager ScriptRemoved events. Only applies to debug scripts.
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        Removed check for inspector debug scripts. DebuggerManager filters scripts as needed.
+
 2015-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove "local" scope type from the protocol

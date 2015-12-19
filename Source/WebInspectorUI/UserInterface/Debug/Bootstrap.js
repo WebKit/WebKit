@@ -52,6 +52,10 @@ WebInspector.runBootstrapOperations = function() {
         debugInspectorToolbarButton.hidden = !WebInspector.showDebugUISetting.value;
     }
 
-    WebInspector.showDebugUISetting.addEventListener(WebInspector.Setting.Event.Changed, updateDebugUI);
+    WebInspector.showDebugUISetting.addEventListener(WebInspector.Setting.Event.Changed, () => {
+        updateDebugUI();
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.Notification.DebugUIEnabledDidChange);
+    });
+
     updateDebugUI();
 }

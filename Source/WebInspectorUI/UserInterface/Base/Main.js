@@ -1369,8 +1369,7 @@ WebInspector._contextMenuRequested = function(event)
     let proposedContextMenu;
 
     // This is setting is only defined in engineering builds.
-    let showDebugUI = WebInspector.showDebugUISetting && WebInspector.showDebugUISetting.value;
-    if (showDebugUI) {
+    if (WebInspector.isDebugUIEnabled()) {
         proposedContextMenu = WebInspector.ContextMenu.createFromEvent(event);
         proposedContextMenu.appendSeparator();
         proposedContextMenu.appendItem(WebInspector.unlocalizedString("Reload Web Inspector"), () => {
@@ -1384,6 +1383,11 @@ WebInspector._contextMenuRequested = function(event)
     if (proposedContextMenu)
         proposedContextMenu.show();
 };
+
+WebInspector.isDebugUIEnabled = function()
+{
+    return WebInspector.showDebugUISetting && WebInspector.showDebugUISetting.value;
+}
 
 WebInspector._undock = function(event)
 {

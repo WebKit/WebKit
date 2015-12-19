@@ -511,7 +511,7 @@ WebInspector.RemoteObject = class RemoteObject
             var location = response.location;
             var sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
 
-            if (!sourceCode || sourceCode.url.startsWith("__WebInspector")) {
+            if (!sourceCode || (!WebInspector.isDebugUIEnabled() && isWebInspectorDebugScript(sourceCode.url))) {
                 result.resolve(WebInspector.RemoteObject.SourceCodeLocationPromise.NoSourceFound);
                 return;
             }

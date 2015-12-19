@@ -209,4 +209,5 @@ WebInspector.Notification = {
     PageArchiveEnded: "page-archive-ended",
     ExtraDomainsActivated: "extra-domains-activated",
     TabTypesChanged: "tab-types-changed",
+    DebugUIEnabledDidChange: "debug-ui-enabled-did-change",
 };
