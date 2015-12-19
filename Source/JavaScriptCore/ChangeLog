@@ -1,5 +1,18 @@
 2015-12-19  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] FTLB3Output generates some invalid ZExt32
+        https://bugs.webkit.org/show_bug.cgi?id=151905
+
+        Reviewed by Filip Pizlo.
+
+        FTLLowerDFGToLLVM calls zeroExt() to int32 in some cases.
+        We were generating ZExt32 with Int32 as return type :(
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::zeroExt):
+
+2015-12-19  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Add EqualOrUnordered to B3
         https://bugs.webkit.org/show_bug.cgi?id=152425
 
