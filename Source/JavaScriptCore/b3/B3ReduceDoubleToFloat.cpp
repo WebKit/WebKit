@@ -106,6 +106,7 @@ void reduceDoubleToFloat(Procedure& procedure)
             case GreaterThan:
             case LessEqual:
             case GreaterEqual:
+            case EqualOrUnordered:
                 if (value->child(0)->opcode() == FloatToDouble && value->child(1)->opcode() == FloatToDouble) {
                     value->child(0) = value->child(0)->child(0);
                     value->child(1) = value->child(1)->child(0);

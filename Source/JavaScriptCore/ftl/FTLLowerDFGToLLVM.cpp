@@ -7305,7 +7305,7 @@ private:
         case Int32Use:
             return m_out.notZero32(lowInt32(edge));
         case DoubleRepUse:
-            return m_out.doubleNotEqual(lowDouble(edge), m_out.doubleZero);
+            return m_out.doubleNotEqualAndOrdered(lowDouble(edge), m_out.doubleZero);
         case ObjectOrOtherUse:
             return m_out.bitNot(
                 equalNullOrUndefined(
@@ -7399,9 +7399,7 @@ private:
                 unsure(doubleCase), unsure(notDoubleCase));
             
             m_out.appendTo(doubleCase, notDoubleCase);
-            // Note that doubleNotEqual() really means not-equal-and-ordered. It will return false
-            // if value is NaN.
-            LValue doubleIsTruthy = m_out.doubleNotEqual(
+            LValue doubleIsTruthy = m_out.doubleNotEqualAndOrdered(
                 unboxDouble(value), m_out.constDouble(0));
             results.append(m_out.anchor(doubleIsTruthy));
             m_out.jump(continuation);

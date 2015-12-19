@@ -145,6 +145,7 @@ public:
     virtual TriState belowConstant(const Value* other) const;
     virtual TriState aboveEqualConstant(const Value* other) const;
     virtual TriState belowEqualConstant(const Value* other) const;
+    virtual TriState equalOrUnorderedConstant(const Value* other) const;
 
     // If the value is a comparison then this returns the inverted form of that comparison, if
     // possible. It can be impossible for double comparisons, where for example LessThan and

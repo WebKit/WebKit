@@ -123,6 +123,9 @@ enum Opcode : int16_t {
     AboveEqual,
     BelowEqual,
 
+    // Unordered floating point compare: values are equal or either one is NaN.
+    EqualOrUnordered,
+
     // SSA form of conditional move. The first child is evaluated for truthiness. If true, the second child
     // is returned. Otherwise, the third child is returned.
     Select,

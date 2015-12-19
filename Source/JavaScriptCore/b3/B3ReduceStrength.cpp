@@ -1010,6 +1010,19 @@ private:
                     m_value->child(0)->belowEqualConstant(m_value->child(1))));
             break;
 
+        case EqualOrUnordered:
+            handleCommutativity();
+
+            // Turn this: Equal(const1, const2)
+            // Into this: isunordered(const1, const2) || const1 == const2.
+            // Turn this: Equal(value, const_NaN)
+            // Into this: 1.
+            replaceWithNewValue(
+                m_proc.addBoolConstant(
+                    m_value->origin(),
+                    m_value->child(1)->equalOrUnorderedConstant(m_value->child(0))));
+            break;
+
         case CheckAdd:
             if (replaceWithNewValue(m_value->child(0)->checkAddConstant(m_proc, m_value->child(1))))
                 break;

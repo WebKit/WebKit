@@ -158,6 +158,17 @@ TriState ConstDoubleValue::greaterEqualConstant(const Value* other) const
     return triState(m_value >= other->asDouble());
 }
 
+TriState ConstDoubleValue::equalOrUnorderedConstant(const Value* other) const
+{
+    if (std::isnan(m_value))
+        return TrueTriState;
+
+    if (!other->hasDouble())
+        return MixedTriState;
+    double otherValue = other->asDouble();
+    return triState(std::isunordered(m_value, otherValue) || m_value == otherValue);
+}
+
 void ConstDoubleValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(comma);

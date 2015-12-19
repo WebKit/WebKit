@@ -215,6 +215,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case BelowEqual:
         out.print("BelowEqual");
         return;
+    case EqualOrUnordered:
+        out.print("EqualOrUnordered");
+        return;
     case Select:
         out.print("Select");
         return;

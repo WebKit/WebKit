@@ -1154,6 +1154,9 @@ private:
                 return createRelCond(MacroAssembler::LessThanOrEqual, MacroAssembler::DoubleLessThanOrEqual);
             case GreaterEqual:
                 return createRelCond(MacroAssembler::GreaterThanOrEqual, MacroAssembler::DoubleGreaterThanOrEqual);
+            case EqualOrUnordered:
+                // The integer condition is never used in this case.
+                return createRelCond(MacroAssembler::Equal, MacroAssembler::DoubleEqualOrUnordered);
             case Above:
                 // We use a bogus double condition because these integer comparisons won't got down that
                 // path anyway.
@@ -1841,7 +1844,8 @@ private:
         case Above:
         case Below:
         case AboveEqual:
-        case BelowEqual: {
+        case BelowEqual:
+        case EqualOrUnordered: {
             m_insts.last().append(createCompare(m_value));
             return;
         }

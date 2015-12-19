@@ -286,6 +286,11 @@ TriState Value::belowEqualConstant(const Value*) const
     return MixedTriState;
 }
 
+TriState Value::equalOrUnorderedConstant(const Value*) const
+{
+    return MixedTriState;
+}
+
 Value* Value::invertedCompare(Procedure& proc) const
 {
     if (!numChildren())
@@ -315,6 +320,7 @@ bool Value::returnsBool() const
     case Below:
     case AboveEqual:
     case BelowEqual:
+    case EqualOrUnordered:
         return true;
     case Phi:
         // FIXME: We should have a story here.
@@ -390,6 +396,7 @@ Effects Value::effects() const
     case Below:
     case AboveEqual:
     case BelowEqual:
+    case EqualOrUnordered:
     case Select:
         break;
     case Div:
@@ -484,6 +491,7 @@ ValueKey Value::key() const
     case Below:
     case AboveEqual:
     case BelowEqual:
+    case EqualOrUnordered:
     case CheckAdd:
     case CheckSub:
     case CheckMul:
@@ -578,6 +586,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case Below:
     case AboveEqual:
     case BelowEqual:
+    case EqualOrUnordered:
         return Int32;
     case SExt32:
     case ZExt32:

@@ -1,5 +1,53 @@
 2015-12-19  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Add EqualOrUnordered to B3
+        https://bugs.webkit.org/show_bug.cgi?id=152425
+
+        Reviewed by Mark Lam.
+
+        Add EqualOrUnordered to B3 and use it to implements
+        FTL::Output's NotEqualAndOrdered.
+
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::equalOrUnordered):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceDoubleToFloat.cpp:
+        (JSC::B3::reduceDoubleToFloat):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::equalOrUnordered):
+        (JSC::B3::Value::returnsBool):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testBranchEqualOrUnorderedArgs):
+        (JSC::B3::testBranchNotEqualAndOrderedArgs):
+        (JSC::B3::testBranchEqualOrUnorderedDoubleArgImm):
+        (JSC::B3::testBranchEqualOrUnorderedFloatArgImm):
+        (JSC::B3::testBranchEqualOrUnorderedDoubleImms):
+        (JSC::B3::testBranchEqualOrUnorderedFloatImms):
+        (JSC::B3::testBranchEqualOrUnorderedFloatWithUselessDoubleConversion):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doubleNotEqualAndOrdered):
+        (JSC::FTL::Output::doubleNotEqual): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::boolify):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleNotEqualAndOrdered):
+        (JSC::FTL::Output::doubleNotEqual): Deleted.
+
+2015-12-19  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] B3: Add indexed addressing when lowering BitwiseCast
         https://bugs.webkit.org/show_bug.cgi?id=152432
 
