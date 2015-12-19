@@ -220,7 +220,7 @@ static UseDecision makeUseDecision(const Entry& entry, const WebCore::ResourceRe
 {
     // The request is conditional so we force revalidation from the network. We merely check the disk cache
     // so we can update the cache entry.
-    if (request.isConditional())
+    if (request.isConditional() && !entry.redirectRequest())
         return UseDecision::Validate;
 
     if (!verifyVaryingRequestHeaders(entry.varyingRequestHeaders(), request))
@@ -236,7 +236,7 @@ static UseDecision makeUseDecision(const Entry& entry, const WebCore::ResourceRe
     if (!entry.response().hasCacheValidatorFields())
         return UseDecision::NoDueToMissingValidatorFields;
 
-    return UseDecision::Validate;
+    return entry.redirectRequest() ? UseDecision::NoDueToExpiredRedirect : UseDecision::Validate;
 }
 
 static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& request)
@@ -343,35 +343,35 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     return StoreDecision::Yes;
 }
 
-void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, const GlobalFrameID& frameID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
 {
     ASSERT(isEnabled());
-    ASSERT(originalRequest.url().protocolIsInHTTPFamily());
+    ASSERT(request.url().protocolIsInHTTPFamily());
 
-    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", originalRequest.url().string().ascii().data(), static_cast<int>(originalRequest.priority()));
+    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", request.url().string().ascii().data(), static_cast<int>(request.priority()));
 
     if (m_statistics)
         m_statistics->recordRetrievalRequest(frameID.first);
 
-    Key storageKey = makeCacheKey(originalRequest);
+    Key storageKey = makeCacheKey(request);
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (m_speculativeLoadManager)
-        m_speculativeLoadManager->registerLoad(frameID, originalRequest, storageKey);
+        m_speculativeLoadManager->registerLoad(frameID, request, storageKey);
 #endif
 
-    auto retrieveDecision = makeRetrieveDecision(originalRequest);
+    auto retrieveDecision = makeRetrieveDecision(request);
     if (retrieveDecision != RetrieveDecision::Yes) {
         if (m_statistics)
-            m_statistics->recordNotUsingCacheForRequest(frameID.first, storageKey, originalRequest, retrieveDecision);
+            m_statistics->recordNotUsingCacheForRequest(frameID.first, storageKey, request, retrieveDecision);
 
         completionHandler(nullptr);
         return;
     }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (m_speculativeLoadManager && m_speculativeLoadManager->retrieve(frameID, storageKey, [originalRequest, completionHandler](std::unique_ptr<Entry> entry) {
-        if (entry && verifyVaryingRequestHeaders(entry->varyingRequestHeaders(), originalRequest))
+    if (m_speculativeLoadManager && m_speculativeLoadManager->retrieve(frameID, storageKey, [request, completionHandler](std::unique_ptr<Entry> entry) {
+        if (entry && verifyVaryingRequestHeaders(entry->varyingRequestHeaders(), request))
             completionHandler(WTF::move(entry));
         else
             completionHandler(nullptr);
@@ -380,14 +380,14 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, const Glob
 #endif
 
     auto startTime = std::chrono::system_clock::now();
-    auto priority = static_cast<unsigned>(originalRequest.priority());
+    auto priority = static_cast<unsigned>(request.priority());
 
-    m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, frameID](std::unique_ptr<Storage::Record> record) {
+    m_storage->retrieve(storageKey, priority, [this, request, completionHandler, startTime, storageKey, frameID](std::unique_ptr<Storage::Record> record) {
         if (!record) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
 
             if (m_statistics)
-                m_statistics->recordRetrievalFailure(frameID.first, storageKey, originalRequest);
+                m_statistics->recordRetrievalFailure(frameID.first, storageKey, request);
 
             completionHandler(nullptr);
             return false;
@@ -397,7 +397,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, const Glob
 
         auto entry = Entry::decodeStorageRecord(*record);
 
-        auto useDecision = entry ? makeUseDecision(*entry, originalRequest) : UseDecision::NoDueToDecodeFailure;
+        auto useDecision = entry ? makeUseDecision(*entry, request) : UseDecision::NoDueToDecodeFailure;
         switch (useDecision) {
         case UseDecision::Use:
             break;
@@ -410,34 +410,27 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, const Glob
 
 #if !LOG_DISABLED
         auto elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
-        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(originalRequest.priority()), elapsedMS);
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.priority()), elapsedMS);
 #endif
         completionHandler(WTF::move(entry));
 
         if (m_statistics)
-            m_statistics->recordRetrievedCachedEntry(frameID.first, storageKey, originalRequest, useDecision);
+            m_statistics->recordRetrievedCachedEntry(frameID.first, storageKey, request, useDecision);
         return useDecision != UseDecision::NoDueToDecodeFailure;
     });
 }
 
-std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, std::function<void (MappedBody&)> completionHandler)
+std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::SharedBuffer>&& responseData, std::function<void (MappedBody&)> completionHandler)
 {
     ASSERT(isEnabled());
     ASSERT(responseData);
 
-#if !LOG_DISABLED
-#if ENABLE(CACHE_PARTITIONING)
-    CString partition = originalRequest.cachePartition().latin1();
-#else
-    CString partition = "No partition";
-#endif
-    LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", originalRequest.url().string().latin1().data(), partition.data());
-#endif // !LOG_DISABLED
+    LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", request.url().string().latin1().data(), makeCacheKey(request).partition().latin1().data());
 
-    StoreDecision storeDecision = makeStoreDecision(originalRequest, response);
+    StoreDecision storeDecision = makeStoreDecision(request, response);
     if (storeDecision != StoreDecision::Yes) {
         LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", static_cast<int>(storeDecision));
-        auto key = makeCacheKey(originalRequest);
+        auto key = makeCacheKey(request);
 
         auto isSuccessfulRevalidation = response.httpStatusCode() == 304;
         if (!isSuccessfulRevalidation) {
@@ -451,7 +444,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& originalRequ
         return nullptr;
     }
 
-    std::unique_ptr<Entry> cacheEntry = std::make_unique<Entry>(makeCacheKey(originalRequest), response, WTF::move(responseData), collectVaryingRequestHeaders(originalRequest, response));
+    std::unique_ptr<Entry> cacheEntry = std::make_unique<Entry>(makeCacheKey(request), response, WTF::move(responseData), collectVaryingRequestHeaders(request, response));
 
     auto record = cacheEntry->encodeAsStorageRecord();
 
@@ -468,6 +461,31 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& originalRequ
         LOG(NetworkCache, "(NetworkProcess) stored");
     });
 
+    return cacheEntry;
+}
+
+std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
+{
+    ASSERT(isEnabled());
+
+    LOG(NetworkCache, "(NetworkProcess) storing redirect %s -> %s", request.url().string().latin1().data(), redirectRequest.url().string().latin1().data());
+
+    StoreDecision storeDecision = makeStoreDecision(request, response);
+    if (storeDecision != StoreDecision::Yes) {
+        LOG(NetworkCache, "(NetworkProcess) didn't store redirect, storeDecision=%d", static_cast<int>(storeDecision));
+        auto key = makeCacheKey(request);
+        if (m_statistics)
+            m_statistics->recordNotCachingResponse(key, storeDecision);
+
+        return nullptr;
+    }
+
+    std::unique_ptr<Entry> cacheEntry = std::make_unique<Entry>(makeCacheKey(request), response, redirectRequest, collectVaryingRequestHeaders(request, response));
+
+    auto record = cacheEntry->encodeAsStorageRecord();
+
+    m_storage->store(record, nullptr);
+    
     return cacheEntry;
 }
 

@@ -1,0 +1,122 @@
+Test redirect caching
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+running 12 tests
+
+--------Testing loads from disk cache--------
+response headers: {"Status":"301","Location":"unique-cacheable"}
+response source: Disk cache
+
+response headers: {"Status":"302","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"303","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"307","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"301","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"302","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"303","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"307","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"301","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Disk cache
+
+response headers: {"Status":"302","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Disk cache
+
+response headers: {"Status":"303","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Disk cache
+
+response headers: {"Status":"307","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Disk cache
+
+--------Testing loads through memory cache (XHR behavior)--------
+response headers: {"Status":"301","Location":"unique-cacheable"}
+response source: Memory cache
+
+response headers: {"Status":"302","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"303","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"307","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"301","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"302","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"303","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"307","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"301","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Status":"302","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Status":"303","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Status":"307","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Memory cache
+
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Status":"301","Location":"unique-cacheable"}
+response source: Memory cache
+
+response headers: {"Status":"302","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"303","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"307","Location":"unique-cacheable"}
+response source: Network
+
+response headers: {"Status":"301","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"302","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"303","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"307","Location":"unique-cacheable","Cache-control":"max-age=0"}
+response source: Network
+
+response headers: {"Status":"301","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Status":"302","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Status":"303","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Memory cache
+
+response headers: {"Status":"307","Location":"unique-cacheable","Cache-control":"max-age=100"}
+response source: Memory cache
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

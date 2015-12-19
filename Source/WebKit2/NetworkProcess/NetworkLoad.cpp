@@ -149,8 +149,9 @@ void NetworkLoad::sharedWillSendRedirectedRequest(const ResourceRequest& request
     ASSERT(!redirectResponse.isNull());
     ASSERT(RunLoop::isMain());
 
+    auto oldRequest = m_currentRequest;
     m_currentRequest = request;
-    m_client.willSendRedirectedRequest(request, redirectResponse);
+    m_client.willSendRedirectedRequest(oldRequest, request, redirectResponse);
 }
 
 #if USE(NETWORK_SESSION)

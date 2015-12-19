@@ -107,6 +107,19 @@ NetworkResourceLoader::~NetworkResourceLoader()
     ASSERT(!isSynchronous() || !m_synchronousLoadData->delayedReply);
 }
 
+#if ENABLE(NETWORK_CACHE)
+bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
+{
+    if (!NetworkCache::singleton().isEnabled())
+        return false;
+    if (sessionID().isEphemeral())
+        return false;
+    if (!request.url().protocolIsInHTTPFamily())
+        return false;
+    return true;
+}
+#endif
+
 bool NetworkResourceLoader::isSynchronous() const
 {
     return !!m_synchronousLoadData;
@@ -120,23 +133,36 @@ void NetworkResourceLoader::start()
         return;
 
 #if ENABLE(NETWORK_CACHE)
-    if (!NetworkCache::singleton().isEnabled() || sessionID().isEphemeral() || !originalRequest().url().protocolIsInHTTPFamily()) {
-        startNetworkLoad();
+    if (canUseCache(originalRequest())) {
+        retrieveCacheEntry(originalRequest());
         return;
     }
+#endif
+
+    startNetworkLoad(originalRequest());
+}
+
+#if ENABLE(NETWORK_CACHE)
+void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
+{
+    ASSERT(canUseCache(request));
 
     RefPtr<NetworkResourceLoader> loader(this);
-    NetworkCache::singleton().retrieve(originalRequest(), { m_parameters.webPageID, m_parameters.webFrameID }, [loader](std::unique_ptr<NetworkCache::Entry> entry) {
+    NetworkCache::singleton().retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [loader, request](std::unique_ptr<NetworkCache::Entry> entry) {
         if (loader->hasOneRef()) {
             // The loader has been aborted and is only held alive by this lambda.
             return;
         }
         if (!entry) {
-            loader->startNetworkLoad();
+            loader->startNetworkLoad(request);
+            return;
+        }
+        if (entry->redirectRequest()) {
+            loader->dispatchWillSendRequestForCacheEntry(WTF::move(entry));
             return;
         }
         if (loader->m_parameters.needsCertificateInfo && !entry->response().containsCertificateInfo()) {
-            loader->startNetworkLoad();
+            loader->startNetworkLoad(request);
             return;
         }
         if (entry->needsValidation()) {
@@ -145,12 +171,10 @@ void NetworkResourceLoader::start()
         }
         loader->didRetrieveCacheEntry(WTF::move(entry));
     });
-#else
-    startNetworkLoad();
-#endif
 }
+#endif
 
-void NetworkResourceLoader::startNetworkLoad(const Optional<ResourceRequest>& updatedRequest)
+void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
 {
     consumeSandboxExtensions();
 
@@ -158,14 +182,13 @@ void NetworkResourceLoader::startNetworkLoad(const Optional<ResourceRequest>& up
         m_bufferedData = SharedBuffer::create();
 
 #if ENABLE(NETWORK_CACHE)
-    if (NetworkCache::singleton().isEnabled())
+    if (canUseCache(request))
         m_bufferedDataForCache = SharedBuffer::create();
 #endif
 
     NetworkLoadParameters parameters = m_parameters;
     parameters.defersLoading = m_defersLoading;
-    if (updatedRequest)
-        parameters.request = updatedRequest.value();
+    parameters.request = request;
     m_networkLoad = std::make_unique<NetworkLoad>(*this, parameters);
 }
 
@@ -212,15 +235,14 @@ void NetworkResourceLoader::abort()
     ASSERT(RunLoop::isMain());
 
     if (m_networkLoad && !m_didConvertToDownload) {
-        m_networkLoad->cancel();
-
 #if ENABLE(NETWORK_CACHE)
-        if (NetworkCache::singleton().isEnabled()) {
+        if (canUseCache(m_networkLoad->currentRequest())) {
             // We might already have used data from this incomplete load. Ensure older versions don't remain in the cache after cancel.
             if (!m_response.isNull())
-                NetworkCache::singleton().remove(originalRequest());
+                NetworkCache::singleton().remove(m_networkLoad->currentRequest());
         }
 #endif
+        m_networkLoad->cancel();
     }
 
     cleanup();
@@ -302,7 +324,7 @@ void NetworkResourceLoader::didReceiveBuffer(RefPtr<SharedBuffer>&& buffer, int 
 void NetworkResourceLoader::didFinishLoading(double finishTime)
 {
 #if ENABLE(NETWORK_CACHE)
-    if (NetworkCache::singleton().isEnabled()) {
+    if (canUseCache(m_networkLoad->currentRequest())) {
         if (m_cacheEntryForValidation) {
             // 304 Not Modified
             ASSERT(m_response.httpStatusCode() == 304);
@@ -310,21 +332,13 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
             didRetrieveCacheEntry(WTF::move(m_cacheEntryForValidation));
             return;
         }
-        bool allowStale = originalRequest().cachePolicy() >= ReturnCacheDataElseLoad;
-        bool hasCacheableRedirect = m_response.isHTTP() && redirectChainAllowsReuse(m_redirectChainCacheStatus, allowStale ? ReuseExpiredRedirection : DoNotReuseExpiredRedirection);
-        if (hasCacheableRedirect && m_redirectChainCacheStatus.status == RedirectChainCacheStatus::CachedRedirection) {
-            // Maybe we should cache the actual redirects instead of the end result?
-            auto now = std::chrono::system_clock::now();
-            auto responseEndOfValidity = now + computeFreshnessLifetimeForHTTPFamily(m_response, now) - computeCurrentAge(m_response, now);
-            hasCacheableRedirect = responseEndOfValidity <= m_redirectChainCacheStatus.endOfValidity;
-        }
 
         bool isPrivateSession = sessionID().isEphemeral();
-        if (m_bufferedDataForCache && hasCacheableRedirect && !isPrivateSession) {
+        if (m_bufferedDataForCache && m_response.isHTTP() && !isPrivateSession) {
             // Keep the connection alive.
             RefPtr<NetworkConnectionToWebProcess> connection(&connectionToWebProcess());
             RefPtr<NetworkResourceLoader> loader(this);
-            NetworkCache::singleton().store(originalRequest(), m_response, WTF::move(m_bufferedDataForCache), [loader, connection](NetworkCache::MappedBody& mappedBody) {
+            NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTF::move(m_bufferedDataForCache), [loader, connection](NetworkCache::MappedBody& mappedBody) {
 #if ENABLE(SHAREABLE_RESOURCE)
                 if (mappedBody.shareableResourceHandle.isNull())
                     return;
@@ -332,9 +346,6 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
                 loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody.shareableResourceHandle, loader->sessionID()));
 #endif
             });
-        } else if (!hasCacheableRedirect) {
-            // Make sure we don't keep a stale entry in the cache.
-            NetworkCache::singleton().remove(originalRequest());
         }
     }
 #endif
@@ -371,17 +382,13 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     cleanup();
 }
 
-void NetworkResourceLoader::willSendRedirectedRequest(const ResourceRequest& request, const ResourceResponse& redirectResponse)
+void NetworkResourceLoader::willSendRedirectedRequest(const ResourceRequest& request, const WebCore::ResourceRequest& redirectRequest, const ResourceResponse& redirectResponse)
 {
-#if ENABLE(NETWORK_CACHE)
-    updateRedirectChainStatus(m_redirectChainCacheStatus, redirectResponse);
-#endif
-
     if (isSynchronous()) {
-        ResourceRequest overridenRequest = request;
+        ResourceRequest overridenRequest = redirectRequest;
         // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
         // This includes at least updating host records, and comparing the current request instead of the original request here.
-        if (!protocolHostAndPortAreEqual(originalRequest().url(), request.url())) {
+        if (!protocolHostAndPortAreEqual(originalRequest().url(), redirectRequest.url())) {
             ASSERT(m_synchronousLoadData->error.isNull());
             m_synchronousLoadData->error = SynchronousLoaderClient::platformBadResponseError();
             m_networkLoad->clearCurrentRequest();
@@ -390,11 +397,30 @@ void NetworkResourceLoader::willSendRedirectedRequest(const ResourceRequest& req
         continueWillSendRequest(overridenRequest);
         return;
     }
-    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse));
+    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(redirectRequest, redirectResponse));
+
+#if ENABLE(NETWORK_CACHE)
+    if (canUseCache(request))
+        NetworkCache::singleton().storeRedirect(request, redirectResponse, redirectRequest);
+#else
+    UNUSED_PARAM(request);
+#endif
 }
-    
+
 void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRequest)
 {
+#if ENABLE(NETWORK_CACHE)
+    if (m_isWaitingContinueWillSendRequestForCachedRedirect) {
+        LOG(NetworkCache, "(NetworkProcess) Retrieving cached redirect");
+        if (canUseCache(newRequest))
+            retrieveCacheEntry(newRequest);
+        else
+            startNetworkLoad(newRequest);
+
+        m_isWaitingContinueWillSendRequestForCachedRedirect = false;
+        return;
+    }
+#endif
     m_networkLoad->continueWillSendRequest(newRequest);
 }
 
@@ -463,14 +489,6 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
         m_synchronousLoadData->response = entry->response();
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
     } else {
-        if (entry->response().url() != originalRequest().url()) {
-            // This is a cached redirect. Synthesize a minimal redirect so we get things like referer header right.
-            // FIXME: We should cache the actual redirects.
-            ResourceRequest syntheticRedirectRequest(entry->response().url());
-            ResourceResponse syntheticRedirectResponse(originalRequest().url(), { }, 0, { });
-            sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(syntheticRedirectRequest, syntheticRedirectResponse));
-        }
-
         bool needsContinueDidReceiveResponseMessage = originalRequest().requester() == ResourceRequest::Requester::Main;
         sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
 
@@ -510,6 +528,15 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
     m_cacheEntryForValidation = WTF::move(entry);
 
     startNetworkLoad(revalidationRequest);
+}
+
+void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
+{
+    ASSERT(entry->redirectRequest());
+    LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
+
+    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(*entry->redirectRequest(), entry->response()));
+    m_isWaitingContinueWillSendRequestForCachedRedirect = true;
 }
 #endif
 

@@ -82,6 +82,7 @@ enum class UseDecision {
     NoDueToVaryingHeaderMismatch,
     NoDueToMissingValidatorFields,
     NoDueToDecodeFailure,
+    NoDueToExpiredRedirect,
 };
 
 using GlobalFrameID = std::pair<uint64_t /*webPageID*/, uint64_t /*webFrameID*/>;
@@ -104,6 +105,7 @@ public:
     // Completion handler may get called back synchronously on failure.
     void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, std::function<void (std::unique_ptr<Entry>)>);
     std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
+    std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest);
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const GlobalFrameID&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
     void traverse(std::function<void (const Entry*)>&&);

@@ -61,6 +61,10 @@ public:
 
     NetworkLoad* networkLoad() const { return m_networkLoad.get(); }
 
+#if ENABLE(NETWORK_CACHE)
+    bool canUseCache(const WebCore::ResourceRequest&) const;
+#endif
+
     void start();
     void abort();
 
@@ -97,7 +101,7 @@ public:
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     virtual void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override;
     virtual bool isSynchronous() const override;
-    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
+    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse) override;
     virtual ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override;
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     virtual void didFinishLoading(double finishTime) override;
@@ -112,11 +116,13 @@ private:
     virtual uint64_t messageSenderDestinationID() override { return m_parameters.identifier; }
 
 #if ENABLE(NETWORK_CACHE)
+    void retrieveCacheEntry(const WebCore::ResourceRequest&);
     void didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
+    void dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
 #endif
 
-    void startNetworkLoad(const Optional<WebCore::ResourceRequest>& updatedRequest = { });
+    void startNetworkLoad(const WebCore::ResourceRequest&);
     void continueDidReceiveResponse();
 
     void cleanup();
@@ -155,8 +161,7 @@ private:
 #if ENABLE(NETWORK_CACHE)
     RefPtr<WebCore::SharedBuffer> m_bufferedDataForCache;
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForValidation;
-
-    WebCore::RedirectChainCacheStatus m_redirectChainCacheStatus;
+    bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
 #endif
 };
 

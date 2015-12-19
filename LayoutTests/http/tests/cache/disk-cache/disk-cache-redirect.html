@@ -1,0 +1,31 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var testMatrix =
+[
+ [
+  { responseHeaders: {'Status': '301', 'Location': 'unique-cacheable' } },
+  { responseHeaders: {'Status': '302', 'Location': 'unique-cacheable' } },
+  { responseHeaders: {'Status': '303', 'Location': 'unique-cacheable' } },
+  { responseHeaders: {'Status': '307', 'Location': 'unique-cacheable' } },
+  ],
+ [
+  { },
+  { responseHeaders: {'Cache-control': 'max-age=0' } },
+  { responseHeaders: {'Cache-control': 'max-age=100' } },
+  ],
+ ];
+
+description("Test redirect caching");
+
+var tests = generateTests(testMatrix);
+
+debug("running " + tests.length + " tests");
+debug("");
+
+runTests(tests);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

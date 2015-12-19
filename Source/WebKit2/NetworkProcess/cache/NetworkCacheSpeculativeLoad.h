@@ -54,7 +54,7 @@ private:
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override { }
     virtual void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override { }
     virtual bool isSynchronous() const override { return false; }
-    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
+    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse) override;
     virtual ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override;
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     virtual void didFinishLoading(double finishTime) override;

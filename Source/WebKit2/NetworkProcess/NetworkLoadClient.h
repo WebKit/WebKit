@@ -50,7 +50,7 @@ public:
 
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) = 0;
     virtual void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) = 0;
-    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) = 0;
+    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse) = 0;
     enum class ShouldContinueDidReceiveResponse { No, Yes };
     virtual ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) = 0;
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) = 0;

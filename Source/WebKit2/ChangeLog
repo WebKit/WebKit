@@ -1,3 +1,105 @@
+2015-12-18  Antti Koivisto  <antti@apple.com>
+
+        Cache redirects as separate entries
+        https://bugs.webkit.org/show_bug.cgi?id=152424
+
+        Reviewed by Alex Christensen.
+
+        We are currently caching redirect chains. This has correctness issues and can be inefficient in cases
+        where multiple URLs redirect to the same destination.
+
+        After this patch we write a cache entry for each redirect individually.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::sharedWillSendRedirectedRequest):
+        * NetworkProcess/NetworkLoad.h:
+        (WebKit::NetworkLoad::currentRequest):
+        (WebKit::NetworkLoad::clearCurrentRequest):
+        * NetworkProcess/NetworkLoadClient.h:
+
+            Add original request as a parameter for willSendRedirectedRequest.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::canUseCache):
+
+            Factor to a function.
+
+        (WebKit::NetworkResourceLoader::isSynchronous):
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+
+            Factor to a function.
+            Call dispatchWillSendRequestForCacheEntry for cached redirects.
+
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+
+            Make this take request as argument instead of always loading originalRequest().
+
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+
+            Remove redirect chain code.
+            Store cache entry for current request instead of the original request.
+
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+
+            Write cache entry for redirect.
+
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+
+            If we are playing back cached redirect continue with another cache lookup.
+
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+
+            No need to synthesize fake willSendRequest anymore.
+
+        (WebKit::NetworkResourceLoader::validateCacheEntry):
+        (WebKit::NetworkResourceLoader::dispatchWillSendRequestForCacheEntry):
+
+            Route via web process willSendRequest so cached redirects looks exactly like network ones.
+
+        (WebKit::NetworkResourceLoader::messageSenderConnection):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeUseDecision):
+
+            Ignore validation headers for cached redirects.
+
+        (WebKit::NetworkCache::makeRetrieveDecision):
+        (WebKit::NetworkCache::makeStoreDecision):
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+
+            Rename originalRequest -> request since it is not really the original request anymore in all cases.
+
+        (WebKit::NetworkCache::Cache::storeRedirect):
+
+            Stored redirects include the network layer generated ResourceRequest instead of body data.
+
+        (WebKit::NetworkCache::Cache::update):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::Entry):
+
+            New constructor for making redirect entries.
+
+        (WebKit::NetworkCache::Entry::encodeAsStorageRecord):
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+
+            Encoding support.
+
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        (WebKit::NetworkCache::Entry::varyingRequestHeaders):
+        (WebKit::NetworkCache::Entry::redirectRequest):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::~SpeculativeLoad):
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::cachedEntryReuseFailureToDiagnosticKey):
+
 2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Avoid triggering clang's -Wundefined-bool-conversion

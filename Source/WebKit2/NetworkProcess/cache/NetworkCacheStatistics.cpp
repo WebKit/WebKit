@@ -280,6 +280,7 @@ static String cachedEntryReuseFailureToDiagnosticKey(UseDecision decision)
     case UseDecision::NoDueToMissingValidatorFields:
         return WebCore::DiagnosticLoggingKeys::missingValidatorFieldsKey();
     case UseDecision::NoDueToDecodeFailure:
+    case UseDecision::NoDueToExpiredRedirect:
         return WebCore::DiagnosticLoggingKeys::otherKey();
     case UseDecision::Use:
     case UseDecision::Validate:

@@ -1,3 +1,14 @@
+2015-12-18  Antti Koivisto  <antti@apple.com>
+
+        Cache redirects as separate entries
+        https://bugs.webkit.org/show_bug.cgi?id=152424
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/cache/disk-cache/disk-cache-redirect.html
+
+        * platform/network/ResourceRequestBase.h:
+
 2015-12-18  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Empty context menu item.

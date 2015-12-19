@@ -1,3 +1,14 @@
+2015-12-18  Antti Koivisto  <antti@apple.com>
+
+        Cache redirects as separate entries
+        https://bugs.webkit.org/show_bug.cgi?id=152424
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/cache/disk-cache/disk-cache-redirect-expected.txt: Added.
+        * http/tests/cache/disk-cache/disk-cache-redirect.html: Added.
+        * http/tests/cache/disk-cache/resources/generate-response.cgi:
+
 2015-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Mark fast/regions/overflow/overflow-region-float.html as passing

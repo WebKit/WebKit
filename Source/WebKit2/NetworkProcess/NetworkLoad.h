@@ -53,6 +53,7 @@ public:
     void setDefersLoading(bool);
     void cancel();
 
+    const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
     void clearCurrentRequest() { m_currentRequest = WebCore::ResourceRequest(); }
 
     void continueWillSendRequest(const WebCore::ResourceRequest&);

@@ -49,6 +49,18 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<W
     ASSERT(m_key.type() == "resource");
 }
 
+Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, const Vector<std::pair<String, String>>& varyingRequestHeaders)
+    : m_key(key)
+    , m_timeStamp(std::chrono::system_clock::now())
+    , m_response(response)
+    , m_varyingRequestHeaders(varyingRequestHeaders)
+    , m_redirectRequest(WebCore::ResourceRequest::adopt(redirectRequest.copyData())) // Don't include the underlying platform request object.
+{
+    ASSERT(m_key.type() == "resource");
+    // Redirect body is not needed even if exists.
+    m_redirectRequest->setHTTPBody(nullptr);
+}
+
 Entry::Entry(const Entry& other)
     : m_key(other.m_key)
     , m_timeStamp(other.m_timeStamp)
@@ -77,6 +89,11 @@ Storage::Record Entry::encodeAsStorageRecord() const
     if (hasVaryingRequestHeaders)
         encoder << m_varyingRequestHeaders;
 
+    bool isRedirect = !!m_redirectRequest;
+    encoder << isRedirect;
+    if (isRedirect)
+        m_redirectRequest->encodeWithoutPlatformData(encoder);
+
     encoder.encodeChecksum();
 
     Data header(encoder.buffer(), encoder.bufferSize());
@@ -102,6 +119,16 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
 
     if (hasVaryingRequestHeaders) {
         if (!decoder.decode(entry->m_varyingRequestHeaders))
+            return nullptr;
+    }
+
+    bool isRedirect;
+    if (!decoder.decode(isRedirect))
+        return nullptr;
+
+    if (isRedirect) {
+        entry->m_redirectRequest = std::make_unique<WebCore::ResourceRequest>();
+        if (!entry->m_redirectRequest->decodeWithoutPlatformData(decoder))
             return nullptr;
     }
 

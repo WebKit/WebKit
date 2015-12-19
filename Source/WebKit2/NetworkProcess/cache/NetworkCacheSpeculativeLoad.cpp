@@ -63,7 +63,7 @@ SpeculativeLoad::~SpeculativeLoad()
     ASSERT(!m_networkLoad);
 }
 
-void SpeculativeLoad::willSendRedirectedRequest(const ResourceRequest& request, const ResourceResponse& redirectResponse)
+void SpeculativeLoad::willSendRedirectedRequest(const ResourceRequest& request, const ResourceRequest& redirectRequest, const ResourceResponse& redirectResponse)
 {
     updateRedirectChainStatus(m_redirectChainCacheStatus, redirectResponse);
 }
