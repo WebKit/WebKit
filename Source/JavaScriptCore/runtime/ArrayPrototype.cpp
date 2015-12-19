@@ -496,7 +496,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
     JSString* separator = separatorValue.toString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(join(*exec, thisObject, separator->view(exec)));
+    return JSValue::encode(join(*exec, thisObject, separator->view(exec).get()));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)

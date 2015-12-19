@@ -432,19 +432,23 @@ private:
 
 class JSString::SafeView {
 public:
-    SafeView();
     explicit SafeView(ExecState&, const JSString&);
-    operator StringView() const;
     StringView get() const;
 
+    bool is8Bit() const { return m_string->is8Bit(); }
+    unsigned length() const { return m_string->length(); }
+    const LChar* characters8() const { return get().characters8(); }
+    const UChar* characters16() const { return get().characters16(); }
+    UChar operator[](unsigned index) const { return get()[index]; }
+
 private:
-    ExecState* m_state { nullptr };
+    ExecState& m_state;
 
     // The following pointer is marked "volatile" to make the compiler leave it on the stack
     // or in a register as long as this object is alive, even after the last use of the pointer.
     // That's needed to prevent garbage collecting the string and possibly deleting the block
     // with the characters in it, and then using the StringView after that.
-    const JSString* volatile m_string { nullptr };
+    const JSString* volatile m_string;
 };
 
 JS_EXPORT_PRIVATE JSString* jsStringWithCacheSlowCase(VM&, StringImpl&);
@@ -707,24 +711,15 @@ inline bool JSString::isSubstring() const
     return isRope() && static_cast<const JSRopeString*>(this)->isSubstring();
 }
 
-inline JSString::SafeView::SafeView()
-{
-}
-
 inline JSString::SafeView::SafeView(ExecState& state, const JSString& string)
-    : m_state(&state)
+    : m_state(state)
     , m_string(&string)
 {
 }
 
-inline JSString::SafeView::operator StringView() const
-{
-    return m_string->unsafeView(*m_state);
-}
-
 inline StringView JSString::SafeView::get() const
 {
-    return *this;
+    return m_string->unsafeView(m_state);
 }
 
 ALWAYS_INLINE JSString::SafeView JSString::view(ExecState* exec) const

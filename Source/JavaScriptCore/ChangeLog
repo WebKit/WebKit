@@ -1,3 +1,68 @@
+2015-12-18  Andreas Kling  <akling@apple.com>
+
+        Make JSString::SafeView less of a footgun.
+        <https://webkit.org/b/152376>
+
+        Reviewed by Darin Adler.
+
+        Remove the "operator StringView()" convenience helper on JSString::SafeString since that
+        made it possible to casually turn the return value from JSString::view() into an unsafe
+        StringView local on the stack with this pattern:
+
+            StringView view = someJSValue.toString(exec)->view(exec);
+
+        The JSString* returned by toString() above will go out of scope by the end of the statement
+        and does not stick around to protect itself from garbage collection.
+
+        It will now look like this instead:
+
+            JSString::SafeView view = someJSValue.toString(exec)->view(exec);
+
+        To be extra clear, the following is not safe:
+
+            StringView view = someJSValue.toString(exec)->view(exec).get();
+
+        By the end of that statement, the JSString::SafeView goes out of scope, and the JSString*
+        is no longer protected from GC.
+
+        I added a couple of forwarding helpers to the SafeView class, and if you need a StringView
+        object from it, you can call .get() just like before.
+
+        Finally I also removed the JSString::SafeView() constructor, since nobody was instantiating
+        empty SafeView objects anyway. This way we don't have to worry about null members.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncJoin):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncParseFloat):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSString.cpp:
+        (JSC::JSString::getPrimitiveNumber):
+        (JSC::JSString::toNumber):
+        * runtime/JSString.h:
+        (JSC::JSString::SafeView::is8Bit):
+        (JSC::JSString::SafeView::length):
+        (JSC::JSString::SafeView::characters8):
+        (JSC::JSString::SafeView::characters16):
+        (JSC::JSString::SafeView::operator[]):
+        (JSC::JSString::SafeView::SafeView):
+        (JSC::JSString::SafeView::get):
+        (JSC::JSString::SafeView::operator StringView): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncNormalize):
+
 2015-12-18  Saam barati  <sbarati@apple.com>
 
         BytecodeGenerator::pushLexicalScopeInternal and pushLexicalScope should use enums instead of bools

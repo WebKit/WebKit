@@ -798,7 +798,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
-    StringView string = thisValue.toString(exec)->view(exec);
+    JSString::SafeView string = thisValue.toString(exec)->view(exec);
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
@@ -817,7 +817,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
-    StringView string = thisValue.toString(exec)->view(exec);
+    JSString::SafeView string = thisValue.toString(exec)->view(exec);
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
@@ -909,7 +909,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
     if (thisJSString->length() < otherJSString->length() + pos)
         return JSValue::encode(jsNumber(-1));
 
-    size_t result = thisJSString->view(exec).get().find(otherJSString->view(exec), pos);
+    size_t result = thisJSString->view(exec).get().find(otherJSString->view(exec).get(), pos);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
@@ -1930,7 +1930,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
-    StringView source = thisValue.toString(exec)->view(exec);
+    JSString::SafeView source = thisValue.toString(exec)->view(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1953,7 +1953,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
             return throwVMError(exec, createRangeError(exec, ASCIILiteral("argument does not match any normalization form")));
     }
 
-    return JSValue::encode(normalize(exec, source.upconvertedCharacters(), source.length(), form));
+    return JSValue::encode(normalize(exec, source.get().upconvertedCharacters(), source.length(), form));
 }
 
 } // namespace JSC

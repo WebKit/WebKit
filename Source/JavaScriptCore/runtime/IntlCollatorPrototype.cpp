@@ -105,7 +105,7 @@ static EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)
         return JSValue::encode(jsUndefined());
 
     // 9. Return CompareStrings(collator, X, Y).
-    return JSValue::encode(collator->compareStrings(*state, x->view(state), y->view(state)));
+    return JSValue::encode(collator->compareStrings(*state, x->view(state).get(), y->view(state).get()));
 }
 
 EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(ExecState* state)

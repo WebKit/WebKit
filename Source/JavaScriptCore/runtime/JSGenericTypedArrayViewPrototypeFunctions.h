@@ -182,35 +182,31 @@ template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncJoin(ExecState* exec)
 {
     // 22.2.3.14
-    ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
+    auto joinWithSeparator = [&] (StringView separator) -> EncodedJSValue {
+        ViewClass* thisObject = jsCast<ViewClass*>(exec->thisValue());
+        unsigned length = thisObject->length();
 
-    unsigned length = thisObject->length();
+        JSStringJoiner joiner(*exec, separator, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        for (unsigned i = 0; i < length; i++) {
+            joiner.append(*exec, thisObject->getIndexQuickly(i));
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        }
+        return JSValue::encode(joiner.join(*exec));
+    };
 
     JSValue separatorValue = exec->argument(0);
-    JSString* separatorString;
-    StringView separator;
-
     if (separatorValue.isUndefined()) {
         const LChar* comma = reinterpret_cast<const LChar*>(",");
-        separator = { comma, 1 };
-    } else {
-        separatorString = separatorValue.toString(exec);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-        separator = separatorString->view(exec);
+        return joinWithSeparator({ comma, 1 });
     }
 
-    JSStringJoiner joiner(*exec, separator, length);
+    JSString* separatorString = separatorValue.toString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
-    for (unsigned i = 0; i < length; i++) {
-        joiner.append(*exec, thisObject->getIndexQuickly(i));
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-    }
-
-    return JSValue::encode(joiner.join(*exec));
+    return joinWithSeparator(separatorString->view(exec).get());
 }
 
 template<typename ViewClass>

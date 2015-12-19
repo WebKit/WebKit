@@ -150,7 +150,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
 
 static JSValue decode(ExecState* exec, const Bitmap<256>& doNotUnescape, bool strict)
 {
-    StringView str = exec->argument(0).toString(exec)->view(exec);
+    JSString::SafeView str = exec->argument(0).toString(exec)->view(exec);
     
     if (str.is8Bit())
         return decode(exec, str.characters8(), str.length(), doNotUnescape, strict);
@@ -617,16 +617,16 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
     }
 
     // If ToString throws, we shouldn't call ToInt32.
-    StringView s = value.toString(exec)->view(exec);
+    JSString::SafeView s = value.toString(exec)->view(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    return JSValue::encode(jsNumber(parseInt(s, radixValue.toInt32(exec))));
+    return JSValue::encode(jsNumber(parseInt(s.get(), radixValue.toInt32(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
 {
-    return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec)->view(exec))));
+    return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec)->view(exec).get())));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
@@ -689,7 +689,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
     );
 
     JSStringBuilder builder;
-    StringView str = exec->argument(0).toString(exec)->view(exec);
+    JSString::SafeView str = exec->argument(0).toString(exec)->view(exec);
     if (str.is8Bit()) {
         const LChar* c = str.characters8();
         for (unsigned k = 0; k < str.length(); k++, c++) {
@@ -727,7 +727,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 {
     StringBuilder builder;
-    StringView str = exec->argument(0).toString(exec)->view(exec);
+    JSString::SafeView str = exec->argument(0).toString(exec)->view(exec);
     int k = 0;
     int len = str.length();
     
