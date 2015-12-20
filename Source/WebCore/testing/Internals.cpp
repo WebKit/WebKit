@@ -234,7 +234,6 @@ public:
 protected:
     virtual void setAttachedWindowHeight(unsigned) override { }
     virtual void setAttachedWindowWidth(unsigned) override { }
-    virtual void setToolbarHeight(unsigned) override { }
 
 public:
     // Inspector::FrontendChannel API

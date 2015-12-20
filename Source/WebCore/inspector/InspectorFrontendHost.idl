@@ -46,7 +46,6 @@
 
     void setAttachedWindowHeight(unsigned long height);
     void setAttachedWindowWidth(unsigned long width);
-    void setToolbarHeight(unrestricted float height);
 
     void startWindowDrag();
     void moveWindowBy(unrestricted float x, unrestricted float y);

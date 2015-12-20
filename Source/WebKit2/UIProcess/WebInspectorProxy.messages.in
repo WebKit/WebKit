@@ -39,7 +39,6 @@ messages -> WebInspectorProxy {
 
     SetAttachedWindowHeight(unsigned height)
     SetAttachedWindowWidth(unsigned width)
-    SetToolbarHeight(unsigned height)
 
     StartWindowDrag()
 

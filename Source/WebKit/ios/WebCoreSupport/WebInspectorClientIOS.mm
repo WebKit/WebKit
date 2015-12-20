@@ -128,7 +128,6 @@ void WebInspectorFrontendClient::attachWindow(DockSide) { }
 void WebInspectorFrontendClient::detachWindow() { }
 void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned) { }
 void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned) { }
-void WebInspectorFrontendClient::setToolbarHeight(unsigned) { }
 void WebInspectorFrontendClient::startWindowDrag() { }
 void WebInspectorFrontendClient::inspectedURLChanged(const String&) { }
 void WebInspectorFrontendClient::updateWindowTitle() const { }

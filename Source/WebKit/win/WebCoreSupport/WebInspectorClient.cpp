@@ -327,11 +327,6 @@ void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned)
     notImplemented();
 }
 
-void WebInspectorFrontendClient::setToolbarHeight(unsigned)
-{
-    notImplemented();
-}
-
 void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;

@@ -187,11 +187,6 @@ void WebInspectorUI::changeAttachedWindowWidth(unsigned width)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetAttachedWindowWidth(width), m_inspectedPageIdentifier);
 }
 
-void WebInspectorUI::setToolbarHeight(unsigned height)
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetToolbarHeight(height), m_inspectedPageIdentifier);
-}
-
 void WebInspectorUI::openInNewTab(const String& url)
 {
     if (m_backendConnection)

@@ -366,7 +366,6 @@ WebInspector.contentLoaded = function()
     this._dockingAvailable = false;
 
     this._updateDockNavigationItems();
-    this._updateToolbarHeight();
     this._setupViewHierarchy();
 
     // These tabs are always available for selecting, modulo isTabAllowed().
@@ -1434,12 +1433,6 @@ WebInspector._quickConsoleDidResize = function(event)
 WebInspector._sidebarWidthDidChange = function(event)
 {
     this._tabBrowserSizeDidChange();
-};
-
-WebInspector._updateToolbarHeight = function()
-{
-    if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release < 10)
-        InspectorFrontendHost.setToolbarHeight(this.toolbar.element.offsetHeight);
 };
 
 WebInspector._setupViewHierarchy = function()

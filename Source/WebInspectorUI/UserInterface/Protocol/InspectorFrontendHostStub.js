@@ -84,10 +84,6 @@ if (!window.InspectorFrontendHost) {
         {
         },
 
-        setToolbarHeight: function(width)
-        {
-        },
-
         startWindowDrag: function()
         {
         },

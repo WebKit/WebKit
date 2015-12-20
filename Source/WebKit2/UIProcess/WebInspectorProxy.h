@@ -128,7 +128,6 @@ public:
 
     void setAttachedWindowHeight(unsigned);
     void setAttachedWindowWidth(unsigned);
-    void setToolbarHeight(unsigned height) { platformSetToolbarHeight(height); }
 
     void startWindowDrag();
 
@@ -176,7 +175,6 @@ private:
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);
     void platformSetAttachedWindowWidth(unsigned);
-    void platformSetToolbarHeight(unsigned);
     void platformStartWindowDrag();
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);

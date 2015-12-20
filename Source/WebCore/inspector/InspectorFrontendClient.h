@@ -64,8 +64,6 @@ public:
     WEBCORE_EXPORT virtual void changeAttachedWindowHeight(unsigned) = 0;
     WEBCORE_EXPORT virtual void changeAttachedWindowWidth(unsigned) = 0;
 
-    virtual void setToolbarHeight(unsigned) = 0;
-
     WEBCORE_EXPORT virtual void openInNewTab(const String& url) = 0;
 
     virtual bool canSave() = 0;

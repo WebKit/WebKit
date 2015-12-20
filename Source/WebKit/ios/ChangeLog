@@ -1,3 +1,13 @@
+2015-12-20  Dan Bernstein  <mitz@apple.com>
+
+        Remove unused setToolbarHeight
+        https://bugs.webkit.org/show_bug.cgi?id=152466
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorFrontendClient::setToolbarHeight): Deleted.
+
 2015-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Turn off "shrink-to-fit" viewport scaling in UIWebViews

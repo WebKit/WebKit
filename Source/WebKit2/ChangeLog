@@ -1,3 +1,25 @@
+2015-12-20  Dan Bernstein  <mitz@apple.com>
+
+        Remove unused setToolbarHeight
+        https://bugs.webkit.org/show_bug.cgi?id=152466
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::platformSetToolbarHeight): Deleted.
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::setToolbarHeight): Deleted.
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformSetToolbarHeight): Deleted.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformSetToolbarHeight): Deleted.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformSetToolbarHeight): Deleted.
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::setToolbarHeight): Deleted.
+        * WebProcess/WebPage/WebInspectorUI.h:
+
 2015-12-19  Dan Bernstein  <mitz@apple.com>
 
         [Mac] WebKit contains dead source code for OS X Mavericks and earlier

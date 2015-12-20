@@ -343,11 +343,6 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
     webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(inspectedPage()->viewWidget()), width);
 }
 
-void WebInspectorProxy::platformSetToolbarHeight(unsigned)
-{
-    notImplemented();
-}
-
 void WebInspectorProxy::platformStartWindowDrag()
 {
     notImplemented();

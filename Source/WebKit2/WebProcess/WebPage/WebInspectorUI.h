@@ -91,8 +91,6 @@ public:
     void changeAttachedWindowHeight(unsigned) override;
     void changeAttachedWindowWidth(unsigned) override;
 
-    void setToolbarHeight(unsigned) override;
-
     void openInNewTab(const String& url) override;
 
     bool canSave() override;

@@ -784,10 +784,6 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
     inspectedViewFrameDidChange(width);
 }
 
-void WebInspectorProxy::platformSetToolbarHeight(unsigned height)
-{
-}
-
 void WebInspectorProxy::platformStartWindowDrag()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
