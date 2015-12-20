@@ -435,6 +435,12 @@ Test32 U:G, U:G, U:G, D:G
     ResCond, Tmp, Imm, Tmp
     ResCond, Tmp, Tmp, Tmp
 
+CompareDouble U:G, U:F, U:F, D:G
+    DoubleCond, Tmp, Tmp, Tmp
+
+CompareFloat U:G, U:F, U:F, D:G
+    DoubleCond, Tmp, Tmp, Tmp
+
 # Note that branches have some logic in AirOptimizeBlockOrder.cpp. If you add new branches, please make sure
 # you opt them into the block order optimizations.
 

@@ -29,7 +29,6 @@
 #if ENABLE(B3_JIT)
 
 #include "B3CFG.h"
-#include "B3Common.h"
 #include "B3Procedure.h"
 #include <wtf/Dominators.h>
 #include <wtf/FastMalloc.h>
@@ -42,7 +41,7 @@ class Dominators : public WTF::Dominators<CFG> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Dominators(Procedure& proc)
-        : WTF::Dominators<CFG>(proc.cfg(), shouldValidateIR())
+        : WTF::Dominators<CFG>(proc.cfg())
     {
     }
 };

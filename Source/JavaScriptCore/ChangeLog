@@ -1,3 +1,37 @@
+2015-12-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Implement compareDouble in B3/Air
+        https://bugs.webkit.org/show_bug.cgi?id=150903
+
+        Reviewed by Benjamin Poulain.
+
+        A hole in our coverage is that we don't fuse a double comparison into a branch, then we will
+        crash in the instruction selector. Obviously, we *really* want to fuse double comparisons,
+        but we can't guarantee that this will always happen.
+
+        This also removes all uses of WTF::Dominators verification, since it's extremely slow even in
+        a release build. This speeds up testb3 with validateGraphAtEachPhase=true by an order of
+        magnitude.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::moveDoubleConditionallyFloat):
+        (JSC::MacroAssembler::compareDouble):
+        (JSC::MacroAssembler::compareFloat):
+        (JSC::MacroAssembler::lea):
+        * b3/B3Dominators.h:
+        (JSC::B3::Dominators::Dominators):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testCompare):
+        (JSC::B3::testEqualDouble):
+        (JSC::B3::simpleFunction):
+        (JSC::B3::run):
+        * dfg/DFGDominators.h:
+        (JSC::DFG::Dominators::Dominators):
+
 2015-12-19  Dan Bernstein  <mitz@apple.com>
 
         [Mac] WebKit contains dead source code for OS X Mavericks and earlier

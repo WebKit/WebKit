@@ -1425,13 +1425,20 @@ private:
                     return Inst();
                 }
             },
-            [this] (const Arg&, const ArgPromise&, const ArgPromise&) -> Inst {
-                // FIXME: Implement this.
-                // https://bugs.webkit.org/show_bug.cgi?id=150903
+            [this] (const Arg& doubleCond, const ArgPromise& left, const ArgPromise& right) -> Inst {
+                if (isValidForm(CompareDouble, Arg::DoubleCond, left.kind(), right.kind(), Arg::Tmp)) {
+                    return Inst(
+                        CompareDouble, m_value, doubleCond,
+                        left.consume(*this), right.consume(*this), tmp(m_value));
+                }
                 return Inst();
             },
-            [this] (const Arg&, const ArgPromise&, const ArgPromise&) -> Inst {
-                // FIXME: Implement this.
+            [this] (const Arg& doubleCond, const ArgPromise& left, const ArgPromise& right) -> Inst {
+                if (isValidForm(CompareFloat, Arg::DoubleCond, left.kind(), right.kind(), Arg::Tmp)) {
+                    return Inst(
+                        CompareFloat, m_value, doubleCond,
+                        left.consume(*this), right.consume(*this), tmp(m_value));
+                }
                 return Inst();
             },
             inverted);
@@ -1652,6 +1659,9 @@ private:
         }
 
         case BitXor: {
+            // FIXME: If canBeInternal(child), we should generate this using the comparison path.
+            // https://bugs.webkit.org/show_bug.cgi?id=152367
+            
             if (m_value->child(1)->isInt(-1)) {
                 appendUnOp<Not32, Not64>(m_value->child(0));
                 return;

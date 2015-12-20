@@ -7455,6 +7455,20 @@ void testCompare(B3::Opcode opcode, int left, int right)
     variants(-left, -right);
 }
 
+void testEqualDouble(double left, double right, bool result)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Equal, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
+
+    CHECK(compileAndRun<bool>(proc, left, right) == result);
+}
+
 int simpleFunction(int a, int b)
 {
     return a + b;
@@ -9497,6 +9511,13 @@ void run(const char* filter)
 
     RUN(testCompare(BitAnd, 42, 42));
     RUN(testCompare(BitAnd, 42, 0));
+
+    RUN(testEqualDouble(42, 42, true));
+    RUN(testEqualDouble(0, -0, true));
+    RUN(testEqualDouble(42, 43, false));
+    RUN(testEqualDouble(PNaN, 42, false));
+    RUN(testEqualDouble(42, PNaN, false));
+    RUN(testEqualDouble(PNaN, PNaN, false));
 
     RUN(testLoad<Int32>(60));
     RUN(testLoad<Int32>(-60));

@@ -1363,6 +1363,23 @@ public:
         moveDouble(src, dest);
         falseCase.link(this);
     }
+
+    // We should implement this the right way eventually, but for now, it's fine because it arises so
+    // infrequently.
+    void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
+    {
+        move(TrustedImm32(0), dest);
+        Jump falseCase = branchDouble(invert(cond), left, right);
+        move(TrustedImm32(1), dest);
+        falseCase.link(this);
+    }
+    void compareFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
+    {
+        move(TrustedImm32(0), dest);
+        Jump falseCase = branchFloat(invert(cond), left, right);
+        move(TrustedImm32(1), dest);
+        falseCase.link(this);
+    }
 #endif
 
     void lea(Address address, RegisterID dest)

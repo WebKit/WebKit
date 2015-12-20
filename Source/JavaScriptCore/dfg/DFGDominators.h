@@ -45,7 +45,7 @@ class Dominators : public WTF::Dominators<CFG> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Dominators(Graph& graph)
-        : WTF::Dominators<CFG>(*graph.m_cfg, validationEnabled())
+        : WTF::Dominators<CFG>(*graph.m_cfg)
     {
     }
 };
