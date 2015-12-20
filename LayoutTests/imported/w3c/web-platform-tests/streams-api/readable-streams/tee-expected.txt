@@ -11,14 +11,14 @@ PASS ReadableStream teeing: closing the original should immediately close the br
 PASS ReadableStream teeing: erroring the original should immediately error the branches 
 FAIL Load tee.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-PASS ReadableStream teeing: rs.tee() returns an array of two ReadableStreams 
-PASS ReadableStream teeing: should be able to read one branch to the end without affecting the other 
-PASS ReadableStream teeing: values should be equal across each branch 
-PASS ReadableStream teeing: errors in the source should propagate to both branches 
-PASS ReadableStream teeing: canceling branch1 should not impact branch2 
-PASS ReadableStream teeing: canceling branch2 should not impact branch2 
-PASS ReadableStream teeing: canceling both branches should aggregate the cancel reasons into an array 
-PASS ReadableStream teeing: failing to cancel the original stream should cause cancel() to reject on branches 
-PASS ReadableStream teeing: closing the original should immediately close the branches 
-PASS ReadableStream teeing: erroring the original should immediately error the branches 
+FAIL ReadableStream teeing: rs.tee() returns an array of two ReadableStreams Can't find variable: ReadableStream
+FAIL ReadableStream teeing: should be able to read one branch to the end without affecting the other Can't find variable: ReadableStream
+FAIL ReadableStream teeing: values should be equal across each branch Can't find variable: ReadableStream
+FAIL ReadableStream teeing: errors in the source should propagate to both branches Can't find variable: ReadableStream
+FAIL ReadableStream teeing: canceling branch1 should not impact branch2 Can't find variable: ReadableStream
+FAIL ReadableStream teeing: canceling branch2 should not impact branch2 Can't find variable: ReadableStream
+FAIL ReadableStream teeing: canceling both branches should aggregate the cancel reasons into an array Can't find variable: ReadableStream
+FAIL ReadableStream teeing: failing to cancel the original stream should cause cancel() to reject on branches Can't find variable: ReadableStream
+FAIL ReadableStream teeing: closing the original should immediately close the branches Can't find variable: ReadableStream
+FAIL ReadableStream teeing: erroring the original should immediately error the branches Can't find variable: ReadableStream
 

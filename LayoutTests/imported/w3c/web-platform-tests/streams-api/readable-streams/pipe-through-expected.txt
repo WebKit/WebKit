@@ -6,9 +6,9 @@ PASS ReadableStream.prototype.pipeThrough should rethrow errors from accessing p
 PASS ReadableStream.prototype.pipeThrough should work with missing readable, writable, or options 
 FAIL Load pipe-through.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-PASS ReadableStream.prototype.pipeThrough should work generically on its this and its arguments 
-PASS ReadableStream.prototype.pipeThrough should throw when its first argument is not convertible to an object 
-PASS ReadableStream.prototype.pipeThrough should throw when "this" has no pipeTo method 
-PASS ReadableStream.prototype.pipeThrough should rethrow errors from accessing pipeTo, readable, or writable 
-PASS ReadableStream.prototype.pipeThrough should work with missing readable, writable, or options 
+FAIL ReadableStream.prototype.pipeThrough should work generically on its this and its arguments Can't find variable: ReadableStream
+FAIL ReadableStream.prototype.pipeThrough should throw when its first argument is not convertible to an object Can't find variable: ReadableStream
+FAIL ReadableStream.prototype.pipeThrough should throw when "this" has no pipeTo method Can't find variable: ReadableStream
+FAIL ReadableStream.prototype.pipeThrough should rethrow errors from accessing pipeTo, readable, or writable assert_throws: pipeThrough should rethrow the error thrown by pipeTo function "() => ReadableStream.prototype.pipeThrough.call(throwingP..." threw object "ReferenceError: Can't find variable: ReadableStream" ("ReferenceError") expected object "Error: potato" ("Error")
+FAIL ReadableStream.prototype.pipeThrough should work with missing readable, writable, or options Can't find variable: ReadableStream
 

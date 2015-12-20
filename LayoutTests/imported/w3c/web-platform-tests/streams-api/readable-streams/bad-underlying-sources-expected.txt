@@ -22,25 +22,31 @@ PASS Underlying source: calling error and returning a rejected promise from star
 PASS Underlying source: calling error and returning a rejected promise from pull should cause the stream to error with the first error 
 FAIL Load bad-underlying-sources.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-PASS Underlying source start: throwing getter 
-PASS Underlying source start: throwing method 
-PASS Underlying source: throwing pull getter (initial pull) 
-PASS Underlying source: throwing pull method (initial pull) 
-PASS Underlying source pull: throwing getter (second pull) 
-PASS Underlying source pull: throwing method (second pull) 
-PASS Underlying source cancel: throwing getter 
-PASS Underlying source cancel: throwing method 
-PASS Underlying source: calling enqueue on an empty canceled stream should not throw 
-PASS Underlying source: calling enqueue on a non-empty canceled stream should not throw 
-PASS Underlying source: calling enqueue on a closed stream should throw 
-PASS Underlying source: calling enqueue on an errored stream should throw 
-PASS Underlying source: calling close twice on an empty stream should throw the second time 
-PASS Underlying source: calling close twice on a non-empty stream should throw the second time 
-PASS Underlying source: calling close on an empty canceled stream should not throw 
-PASS Underlying source: calling close on a non-empty canceled stream should not throw 
-PASS Underlying source: calling close after error should throw 
-PASS Underlying source: calling error twice should throw the second time 
-PASS Underlying source: calling error after close should throw 
-PASS Underlying source: calling error and returning a rejected promise from start should cause the stream to error with the first error 
-PASS Underlying source: calling error and returning a rejected promise from pull should cause the stream to error with the first error 
+FAIL Underlying source start: throwing getter assert_throws: constructing the stream should re-throw the error function "() => {
+    new ReadableStream({
+      get start() {
+    ..." threw object "ReferenceError: Can't find variable: ReadableStream" ("ReferenceError") expected object "Error: a unique string" ("Error")
+FAIL Underlying source start: throwing method assert_throws: constructing the stream should re-throw the error function "() => {
+    new ReadableStream({
+      start() {
+        ..." threw object "ReferenceError: Can't find variable: ReadableStream" ("ReferenceError") expected object "Error: a unique string" ("Error")
+FAIL Underlying source: throwing pull getter (initial pull) Can't find variable: ReadableStream
+FAIL Underlying source: throwing pull method (initial pull) Can't find variable: ReadableStream
+FAIL Underlying source pull: throwing getter (second pull) Can't find variable: ReadableStream
+FAIL Underlying source pull: throwing method (second pull) Can't find variable: ReadableStream
+FAIL Underlying source cancel: throwing getter Can't find variable: ReadableStream
+FAIL Underlying source cancel: throwing method Can't find variable: ReadableStream
+FAIL Underlying source: calling enqueue on an empty canceled stream should not throw Can't find variable: ReadableStream
+FAIL Underlying source: calling enqueue on a non-empty canceled stream should not throw Can't find variable: ReadableStream
+FAIL Underlying source: calling enqueue on a closed stream should throw Can't find variable: ReadableStream
+FAIL Underlying source: calling enqueue on an errored stream should throw Can't find variable: ReadableStream
+FAIL Underlying source: calling close twice on an empty stream should throw the second time Can't find variable: ReadableStream
+FAIL Underlying source: calling close twice on a non-empty stream should throw the second time Can't find variable: ReadableStream
+FAIL Underlying source: calling close on an empty canceled stream should not throw Can't find variable: ReadableStream
+FAIL Underlying source: calling close on a non-empty canceled stream should not throw Can't find variable: ReadableStream
+FAIL Underlying source: calling close after error should throw Can't find variable: ReadableStream
+FAIL Underlying source: calling error twice should throw the second time Can't find variable: ReadableStream
+FAIL Underlying source: calling error after close should throw Can't find variable: ReadableStream
+FAIL Underlying source: calling error and returning a rejected promise from start should cause the stream to error with the first error Can't find variable: ReadableStream
+FAIL Underlying source: calling error and returning a rejected promise from pull should cause the stream to error with the first error Can't find variable: ReadableStream
 

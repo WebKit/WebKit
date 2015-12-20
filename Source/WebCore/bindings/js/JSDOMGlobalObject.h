@@ -28,7 +28,6 @@
 #define JSDOMGlobalObject_h
 
 #include "PlatformExportMacros.h"
-#include "WebCoreJSBuiltinInternals.h"
 #include <runtime/JSGlobalObject.h>
 
 namespace WebCore {
@@ -79,9 +78,6 @@ namespace WebCore {
             return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
         }
 
-        void addBuiltinGlobals(JSC::VM&);
-        friend void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject&, JSC::VM&);
-
     protected:
         JSDOMStructureMap m_structures;
         JSDOMConstructorMap m_constructors;
@@ -89,8 +85,6 @@ namespace WebCore {
         Event* m_currentEvent;
         const RefPtr<DOMWrapperWorld> m_world;
         bool m_worldIsNormal;
-
-        JSBuiltinInternalFunctions m_internalFunctions;
     };
 
     template<class ConstructorClass>

@@ -5,8 +5,8 @@ PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 
 PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 4) 
 FAIL Load count-queuing-strategy-integration.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-PASS Can construct a readable stream with a valid CountQueuingStrategy 
-PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 0) 
-PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 1) 
-PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 4) 
+FAIL Can construct a readable stream with a valid CountQueuingStrategy Can't find variable: ReadableStream
+FAIL Correctly governs a ReadableStreamController's desiredSize property (HWM = 0) Can't find variable: ReadableStream
+FAIL Correctly governs a ReadableStreamController's desiredSize property (HWM = 1) Can't find variable: ReadableStream
+FAIL Correctly governs a ReadableStreamController's desiredSize property (HWM = 4) Can't find variable: ReadableStream
 

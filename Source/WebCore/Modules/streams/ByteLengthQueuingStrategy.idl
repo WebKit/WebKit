@@ -31,7 +31,6 @@
     JSBuiltin,
     Constructor,
     Conditional=STREAMS_API,
-    GlobalContext=DOMWindow&WorkerGlobalScope,
 ] interface ByteLengthQueuingStrategy {
     double size();
 };
