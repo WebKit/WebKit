@@ -8633,7 +8633,6 @@
 				BC3DE46215A91763008D26FC /* Sources */,
 				BCDC308D15FDB99A006B6695 /* Frameworks */,
 				BC3DE46415A91763008D26FC /* Resources */,
-				E19C7DDB194A5E9100F1866F /* Add CFBundle Localization Info.plist Key */,
 			);
 			buildRules = (
 			);
@@ -8742,7 +8741,6 @@
 				BCAE9DE5160C097400A33217 /* Sources */,
 				BCAE9DE6160C097400A33217 /* Frameworks */,
 				BCAE9DE7160C097400A33217 /* Resources */,
-				E19C7DDA194A4C9500F1866F /* Add CFBundle Localization Info.plist Key */,
 			);
 			buildRules = (
 			);
@@ -9255,34 +9253,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\n\nexport WebKit2=\"${SRCROOT}\"\n\nif [ ! $CC ]; then\n    export CC=\"`xcrun -find clang`\"\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make --no-builtin-rules -f \"${WebKit2}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.activecpu` SDKROOT=${SDKROOT}\nfi\n";
-		};
-		E19C7DDA194A4C9500F1866F /* Add CFBundle Localization Info.plist Key */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Add CFBundle Localization Info.plist Key";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/libexec/PlistBuddy -c \"Print :$BUNDLE_LOCALIZATION_KEY\" $TARGET_BUILD_DIR/$INFOPLIST_PATH >/dev/null 2>/dev/null\nif [[ $? != 0 ]]; then\n    echo \"Updating the Info.plist key\"\n    /usr/libexec/PlistBuddy -c \"Delete :CFBundleAllowMixedLocalizations\" $TARGET_BUILD_DIR/$INFOPLIST_PATH 2>/dev/null\n    /usr/libexec/PlistBuddy -c \"Delete :CFBundleFollowParentLocalization\" $TARGET_BUILD_DIR/$INFOPLIST_PATH 2>/dev/null\n    /usr/libexec/PlistBuddy -c \"Add :$BUNDLE_LOCALIZATION_KEY bool true\" $TARGET_BUILD_DIR/$INFOPLIST_PATH\n    if [[ ${PLIST_FILE_OUTPUT_FORMAT} == \"binary\" ]]; then\n        plutil -convert binary1 \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\" || exit $?\n    fi\n    echo \"Done\"\nfi\n";
-		};
-		E19C7DDB194A5E9100F1866F /* Add CFBundle Localization Info.plist Key */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Add CFBundle Localization Info.plist Key";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/libexec/PlistBuddy -c \"Print :$BUNDLE_LOCALIZATION_KEY\" $TARGET_BUILD_DIR/$INFOPLIST_PATH >/dev/null 2>/dev/null\nif [[ $? != 0 ]]; then\n    echo \"Updating the Info.plist key\"\n    /usr/libexec/PlistBuddy -c \"Delete :CFBundleAllowMixedLocalizations\" $TARGET_BUILD_DIR/$INFOPLIST_PATH 2>/dev/null\n    /usr/libexec/PlistBuddy -c \"Delete :CFBundleFollowParentLocalization\" $TARGET_BUILD_DIR/$INFOPLIST_PATH 2>/dev/null\n    /usr/libexec/PlistBuddy -c \"Add :$BUNDLE_LOCALIZATION_KEY bool true\" $TARGET_BUILD_DIR/$INFOPLIST_PATH\n    if [[ ${PLIST_FILE_OUTPUT_FORMAT} == \"binary\" ]]; then\n        plutil -convert binary1 \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\" || exit $?\n    fi\n    echo \"Done\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

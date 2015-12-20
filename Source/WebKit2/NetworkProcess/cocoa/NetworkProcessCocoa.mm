@@ -220,12 +220,10 @@ void NetworkProcess::clearCFURLCacheForOrigins(const Vector<WebCore::SecurityOri
 
 void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, std::chrono::system_clock::time_point modifiedSince)
 {
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
     NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(modifiedSince.time_since_epoch()).count();
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
 
     _CFNetworkResetHSTSHostsSinceDate(session.platformSession(), (__bridge CFDateRef)date);
-#endif
 }
 
 static void clearNSURLCache(dispatch_group_t group, std::chrono::system_clock::time_point modifiedSince, const std::function<void ()>& completionHandler)
@@ -233,13 +231,10 @@ static void clearNSURLCache(dispatch_group_t group, std::chrono::system_clock::t
     dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [modifiedSince, completionHandler] {
         NSURLCache *cache = [NSURLCache sharedURLCache];
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(modifiedSince.time_since_epoch()).count();
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
         [cache removeCachedResponsesSinceDate:date];
-#else
-        [cache removeAllCachedResponses];
-#endif
+
         dispatch_async(dispatch_get_main_queue(), [completionHandler] {
             completionHandler();
         });

@@ -33,13 +33,13 @@
 #import <WebCore/LocalizedStrings.h>
 #import <objc/runtime.h>
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
 #import <WebCore/TUCallSPI.h>
 #endif
 
 namespace WebKit {
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
 
 NSString *menuItemTitleForTelephoneNumberGroup()
 {

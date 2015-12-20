@@ -1,3 +1,13 @@
+2015-12-19  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] WebKit contains dead source code for OS X Mavericks and earlier
+        https://bugs.webkit.org/show_bug.cgi?id=152462
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/DebugRelease.xcconfig: Removed definition of MACOSX_DEPLOYMENT_TARGET for
+          OS X 10.9.
+
 2015-12-03  Anders Carlsson  <andersca@apple.com>
 
         Remove Objective-C GC support

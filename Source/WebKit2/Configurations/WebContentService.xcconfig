@@ -30,13 +30,6 @@ PRODUCT_NAME = com.apple.WebKit.WebContent;
 INFOPLIST_FILE[sdk=iphone*] = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX$(WK_XPC_SERVICE_INFOPLIST_SUFFIX).plist;
 
-BUNDLE_LOCALIZATION_KEY[sdk=iphone*] = CFBundleFollowParentLocalization;
-BUNDLE_LOCALIZATION_KEY = $(BUNDLE_LOCALIZATION_KEY_$(PLATFORM_NAME)_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-BUNDLE_LOCALIZATION_KEY_macosx_1090 = CFBundleAllowMixedLocalizations;
-BUNDLE_LOCALIZATION_KEY_macosx_101000 = CFBundleFollowParentLocalization;
-BUNDLE_LOCALIZATION_KEY_macosx_101100 = CFBundleFollowParentLocalization;
-BUNDLE_LOCALIZATION_KEY_macosx_101200 = CFBundleFollowParentLocalization;
-
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit $(OTHER_LDFLAGS_SHIM_$(WK_LINK_SHIM));
 OTHER_LDFLAGS_SHIM_YES = $(BUILT_PRODUCTS_DIR)/WebProcessShim.dylib;

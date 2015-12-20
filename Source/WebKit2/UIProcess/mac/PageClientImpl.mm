@@ -771,9 +771,7 @@ CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *laye
 
 void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResultData& result, bool contentPreventsDefault, API::Object* userData)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     m_impl->didPerformImmediateActionHitTest(result, contentPreventsDefault, userData);
-#endif
 }
 
 void* PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)

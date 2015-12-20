@@ -102,7 +102,7 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
     if (!m_fontCustomPlatformData && !errorOccurred() && !isLoading() && data) {
         RefPtr<SharedBuffer> buffer(data);
 
-#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090) && !PLATFORM(IOS)
+#if !PLATFORM(COCOA)
         if (isWOFF(buffer.get())) {
             Vector<char> convertedFont;
             if (!convertWOFFToSfnt(buffer.get(), convertedFont))

@@ -74,15 +74,10 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
 
-    void timerFired();
-
     bool isFlexibleBoxImpl() const override { return true; }
 
     RenderTextFragment* m_buttonText;
     RenderBlock* m_inner;
-
-    std::unique_ptr<Timer> m_timer;
-    bool m_default;
 };
 
 } // namespace WebCore

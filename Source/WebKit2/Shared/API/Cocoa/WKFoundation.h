@@ -113,10 +113,6 @@
 
 #endif
 
-#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101000
-typedef NSUInteger NSEventModifierFlags;
-#endif
-
 #endif
 
 #endif

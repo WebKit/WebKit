@@ -59,7 +59,7 @@ typedef enum {
 } AXSuspendStatus;
 #endif
 
-#if !TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
 extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
 #endif
 
@@ -193,10 +193,8 @@ bool Connection::open()
         // Create the receive port.
         mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_receivePort);
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
         mach_port_set_attributes(mach_task_self(), m_receivePort, MACH_PORT_DENAP_RECEIVER, (mach_port_info_t)0, 0);
-#elif PLATFORM(MAC)
-        mach_port_set_attributes(mach_task_self(), m_receivePort, MACH_PORT_IMPORTANCE_RECEIVER, (mach_port_info_t)0, 0);
 #endif
 
         m_isConnected = true;
@@ -611,7 +609,7 @@ bool Connection::kill()
     
 static void AccessibilityProcessSuspendedNotification(bool suspended)
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
     _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
 #elif PLATFORM(IOS)
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });

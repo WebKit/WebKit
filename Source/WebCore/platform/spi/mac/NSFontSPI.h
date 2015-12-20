@@ -38,7 +38,6 @@
 + (NSFont *)systemFontOfSize:(CGFloat)size weight:(CGFloat)weight;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 extern const CGFloat NSFontWeightUltraLight;
 extern const CGFloat NSFontWeightThin;
 extern const CGFloat NSFontWeightLight;
@@ -48,7 +47,6 @@ extern const CGFloat NSFontWeightSemibold;
 extern const CGFloat NSFontWeightBold;
 extern const CGFloat NSFontWeightHeavy;
 extern const CGFloat NSFontWeightBlack;
-#endif
 
 #endif
 

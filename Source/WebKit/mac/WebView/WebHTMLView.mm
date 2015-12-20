@@ -4353,7 +4353,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
         frame->eventHandler().wheelEvent(event);
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
     [[[self _webView] _immediateActionController] webView:[self _webView] didHandleScrollWheel:event];
 #endif
 }

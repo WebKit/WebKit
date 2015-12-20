@@ -591,17 +591,8 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
 
 bool FontCascade::primaryFontIsSystemFont() const
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
     const auto& fontData = primaryFont();
     return !fontData.isSVGFont() && CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(fontData.platformData().ctFont())).get());
-#else
-    const String& firstFamily = this->firstFamily();
-    return equalIgnoringASCIICase(firstFamily, "-webkit-system-font")
-        || equalIgnoringASCIICase(firstFamily, "-apple-system-font")
-        || equalIgnoringASCIICase(firstFamily, "-apple-system")
-        || equalIgnoringASCIICase(firstFamily, "-apple-menu")
-        || equalIgnoringASCIICase(firstFamily, "-apple-status-bar");
-#endif
 }
 
 void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const

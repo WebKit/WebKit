@@ -1,3 +1,67 @@
+2015-12-19  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] WebKit contains dead source code for OS X Mavericks and earlier
+        https://bugs.webkit.org/show_bug.cgi?id=152462
+
+        Reviewed by Alexey Proskuryakov.
+
+        - Removed build setting definitions for OS X 10.9 and earlier, and simplified defintions
+          that became uniform across all OS X versions as a result:
+
+        * Configurations/BaseTarget.xcconfig:
+        * Configurations/BaseXPCService.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKit.xcconfig:
+
+        - Removed the definition of BUNDLE_LOCALIZATION_KEY:
+
+        * Configurations/WebContentService.Development.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+
+        - Added CFBundleFollowParentLocalization set to true:
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info-OSX.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info-iOS.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX-10.9-10.10.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist:
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed the “Add CFBundle Localization Info.plist Key”
+          script build phases from the Web Content Service targets.
+
+        - Simplified expressions involving __MAC_OS_X_VERSION_MIN_REQUIRED and removed code that was
+          never getting compiled:
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        * Platform/IPC/mac/ImportanceAssertion.h:
+        * Platform/mac/MenuUtilities.h:
+        * Platform/mac/MenuUtilities.mm:
+        * Platform/mac/StringUtilities.h:
+        * Platform/mac/StringUtilities.mm:
+        * Shared/API/Cocoa/WKFoundation.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * UIProcess/mac/PageClientImpl.mm:
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        * WebProcess/WebPage/FindController.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/com.apple.WebProcess.sb.in:
+        * config.h:
+
 2015-12-18  Antti Koivisto  <antti@apple.com>
 
         Cache redirects as separate entries

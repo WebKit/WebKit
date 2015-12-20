@@ -92,7 +92,7 @@ bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
 CTFontRef CTFontCreateForCSS(CFStringRef name, uint16_t weight, CTFontSymbolicTraits, CGFloat size);
 CTFontRef CTFontCreateForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CFIndex *coveredLength);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(COCOA)
 extern const CFStringRef kCTUIFontTextStyleShortHeadline;
 extern const CFStringRef kCTUIFontTextStyleShortBody;
 extern const CFStringRef kCTUIFontTextStyleShortSubhead;

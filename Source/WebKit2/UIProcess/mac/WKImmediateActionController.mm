@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKImmediateActionController.h"
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
 
 #import "APIHitTestResult.h"
 #import "WKNSURLExtras.h"

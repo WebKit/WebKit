@@ -1025,17 +1025,11 @@ void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
     [m_scrollbarPainterController setHorizontalScrollerImp:nil];
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 void ScrollAnimatorMac::invalidateScrollbarPartLayers(Scrollbar* scrollbar)
 {
     ScrollbarPainter painter = scrollbarPainterForScrollbar(*scrollbar);
     [painter setNeedsDisplay:YES];
 }
-#else
-void ScrollAnimatorMac::invalidateScrollbarPartLayers(Scrollbar*)
-{
-}
-#endif
 
 void ScrollAnimatorMac::verticalScrollbarLayerDidChange()
 {

@@ -31,12 +31,8 @@
 #import <wtf/RetainPtr.h>
 
 WEBCORE_EXPORT @interface WebCoreFullScreenPlaceholderView : NSView {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     RetainPtr<NSVisualEffectView> _effectView;
     RetainPtr<NSTextField> _exitWarning;
-#else
-    RetainPtr<NSView> _exitWarning;
-#endif
     NSObject* _target;
     SEL _action;
 }

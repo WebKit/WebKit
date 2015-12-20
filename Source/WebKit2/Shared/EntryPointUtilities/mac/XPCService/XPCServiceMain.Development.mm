@@ -160,7 +160,6 @@ using namespace WebKit;
 
 int main(int argc, char** argv)
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (auto bootstrap = adoptOSObject(xpc_copy_bootstrap())) {
         if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
             NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
@@ -174,9 +173,8 @@ int main(int argc, char** argv)
             [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments forName:NSArgumentDomain];
         }
     }
-#endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // Workaround for <rdar://problem/20653234>, make XPC transactions work after re-exec.

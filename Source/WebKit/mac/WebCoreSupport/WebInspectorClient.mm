@@ -274,9 +274,6 @@ void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned)
 
 void WebInspectorFrontendClient::setToolbarHeight(unsigned height)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-    [[m_frontendWindowController window] setContentBorderThickness:height forEdge:NSMaxYEdge];
-#endif
 }
 
 void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
@@ -398,10 +395,6 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [_frontendWebView setUIDelegate:self];
     [_frontendWebView setPolicyDelegate:self];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-    [_frontendWebView setDrawsBackground:NO];
-#endif
-
     [preferences release];
 
     [self setWindowFrameAutosaveName:@"Web Inspector 2"];
@@ -468,12 +461,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     if (window)
         return window;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
-#else
-    NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask;
-#endif
-
     window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
@@ -486,12 +474,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     window.titlebarAppearsTransparent = YES;
-#else
-    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
-    [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
-#endif
 
     [self setWindow:window];
     [window release];

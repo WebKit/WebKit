@@ -223,13 +223,9 @@ static PlatformAnimationController showPopupOrCreateAnimationController(bool cre
         if ([getLULookupDefinitionModuleClass() respondsToSelector:@selector(showDefinitionForTerm:relativeToRect:ofView:options:)]) {
             FloatRect firstTextRectInViewCoordinates = textIndicator.get().textRectsInBoundingRectCoordinates()[0];
             firstTextRectInViewCoordinates.moveBy(textIndicator.get().textBoundingRectInRootViewCoordinates().location());
-            if (createAnimationController) {
-#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+            if (createAnimationController)
                 return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
-#else
-                return nil;
-#endif
-            }
+
             [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
             return nil;
         }
@@ -241,13 +237,8 @@ static PlatformAnimationController showPopupOrCreateAnimationController(bool cre
     textBaselineOrigin = [view convertPoint:textBaselineOrigin toView:nil];
     textBaselineOrigin = [view.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
 
-    if (createAnimationController) {
-#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    if (createAnimationController)
         return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
-#else
-        return nil;
-#endif
-    }
 
     [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     return nil;

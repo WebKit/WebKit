@@ -1435,8 +1435,6 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(WTF::Optional<WebCore::Scrol
     _data->_impl->dismissContentRelativeChildWindowsWithAnimationFromViewOnly(withAnimation);
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets
 {
     _data->_impl->setAutomaticallyAdjustsContentInsets(automaticallyAdjustsContentInsets);
@@ -1446,8 +1444,6 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(WTF::Optional<WebCore::Scrol
 {
     return _data->_impl->automaticallyAdjustsContentInsets();
 }
-
-#endif
 
 @end
 

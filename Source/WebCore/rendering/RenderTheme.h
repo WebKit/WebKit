@@ -247,8 +247,6 @@ public:
     virtual IntSize imageControlsButtonPositionOffset() const { return IntSize(); }
 #endif
 
-    virtual bool defaultButtonHasAnimation() const { return false; }
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual LayoutSize attachmentIntrinsicSize(const RenderAttachment&) const { return LayoutSize(); }
     virtual int attachmentBaseline(const RenderAttachment&) const { return -1; }

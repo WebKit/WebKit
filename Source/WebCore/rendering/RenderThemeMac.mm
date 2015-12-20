@@ -175,11 +175,9 @@ const double progressAnimationNumFrames = 256;
 @implementation WebCoreRenderThemeBundle
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 @interface NSSearchFieldCell()
 @property (getter=isCenteredLook) BOOL centeredLook;
 @end
-#endif
 
 namespace WebCore {
 
@@ -469,12 +467,8 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
         color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
         break;
     case CSSValueActivebuttontext:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         // There is no corresponding NSColor for this so we use a hard coded value.
         color = Color::white;
-#else
-        color = convertNSColorToColor([NSColor controlTextColor]);
-#endif
         break;
     case CSSValueActivecaption:
         color = convertNSColorToColor([NSColor windowFrameTextColor]);
@@ -568,7 +562,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
     case CSSValueWindowtext:
         color = convertNSColorToColor([NSColor windowFrameTextColor]);
         break;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     case CSSValueAppleWirelessPlaybackTargetActive:
         color = convertNSColorToColor([NSColor systemBlueColor]);
         break;
@@ -599,7 +592,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
     case CSSValueAppleSystemYellow:
         color = convertNSColorToColor([NSColor systemYellowColor]);
         break;
-#endif
     default:
         break;
     }
@@ -932,11 +924,6 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
         inflatedRect = inflateRect(rect, size, popupButtonMargins(), zoomLevel);
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    // Before Yosemite we did not want the cell to ever draw outside the given rectangle.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-    paintInfo.context().clip(inflatedRect);
-#endif
 
     if (zoomLevel != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomLevel);
@@ -1971,9 +1958,7 @@ NSSearchFieldCell* RenderThemeMac::search() const
         [m_search.get() setBezeled:YES];
         [m_search.get() setEditable:YES];
         [m_search.get() setFocusRingType:NSFocusRingTypeExterior];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         [m_search.get() setCenteredLook:NO];
-#endif
     }
 
     return m_search.get();
@@ -2041,15 +2026,6 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
         return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font, StringTruncator::EnableRoundingHacks);
 
     return StringTruncator::centerTruncate(strToTruncate, width, font, StringTruncator::EnableRoundingHacks);
-}
-
-bool RenderThemeMac::defaultButtonHasAnimation() const
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    return false;
-#else
-    return true;
-#endif
 }
 
 #if ENABLE(SERVICE_CONTROLS)

@@ -25,8 +25,6 @@
 #ifndef NSImmediateActionGestureRecognizerSPI_h
 #define NSImmediateActionGestureRecognizerSPI_h
 
-#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-
 #import <AppKit/NSGestureRecognizer.h>
 
 // FIXME: This header should include system headers when possible.
@@ -60,7 +58,5 @@
 @property (readonly) CGFloat animationProgress;
 
 @end
-
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 #endif

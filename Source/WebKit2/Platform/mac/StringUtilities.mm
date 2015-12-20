@@ -39,7 +39,7 @@ NSString *nsStringFromWebCoreString(const String& string)
     return string.isEmpty() ? @"" : CFBridgingRelease(WKStringCopyCFString(0, toAPI(string.impl())));
 }
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
 SOFT_LINK_PRIVATE_FRAMEWORK(PhoneNumbers);
 
@@ -72,6 +72,6 @@ NSString *formattedPhoneNumberString(NSString *originalPhoneNumber)
     return [(NSString *)phoneNumberString autorelease];
 }
 
-#endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
 }

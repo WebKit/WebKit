@@ -41,20 +41,12 @@ namespace WebCore {
 
 static inline const char* sansSerifTraditionalHanFontFamily()
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || PLATFORM(IOS)
     return "PingFang TC";
-#else
-    return "Heiti TC";
-#endif
 }
 
 static inline const char* sansSerifSimplifiedHanFontFamily()
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || PLATFORM(IOS)
     return "PingFang SC";
-#else
-    return "Heiti SC";
-#endif
 }
 
 #if PLATFORM(MAC)

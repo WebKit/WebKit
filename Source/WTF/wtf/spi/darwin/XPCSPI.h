@@ -79,16 +79,8 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 #include <xpc/private.h>
 #endif
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 1090
-#define CONST_ON_IOS_AND_ON_OR_AFTER_MAC_OS_X_VERSION_1090 const
-#else
-#define CONST_ON_IOS_AND_ON_OR_AFTER_MAC_OS_X_VERSION_1090
-#endif
-
-EXTERN_C CONST_ON_IOS_AND_ON_OR_AFTER_MAC_OS_X_VERSION_1090 struct _xpc_dictionary_s _xpc_error_connection_invalid;
-EXTERN_C CONST_ON_IOS_AND_ON_OR_AFTER_MAC_OS_X_VERSION_1090 struct _xpc_dictionary_s _xpc_error_termination_imminent;
-
-#undef CONST_ON_IOS_AND_ON_OR_AFTER_MAC_OS_X_VERSION_1090
+EXTERN_C const struct _xpc_dictionary_s _xpc_error_connection_invalid;
+EXTERN_C const struct _xpc_dictionary_s _xpc_error_termination_imminent;
 
 EXTERN_C const struct _xpc_type_s _xpc_type_array;
 EXTERN_C const struct _xpc_type_s _xpc_type_bool;
@@ -140,11 +132,9 @@ EXTERN_C void xpc_connection_set_instance(xpc_connection_t, uuid_t);
 EXTERN_C mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
 EXTERN_C void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 EXTERN_C void xpc_connection_set_bootstrap(xpc_connection_t, xpc_object_t bootstrap);
 EXTERN_C xpc_object_t xpc_copy_bootstrap(void);
 EXTERN_C void xpc_connection_set_oneshot_instance(xpc_connection_t, uuid_t instance);
-#endif
 
 #if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
 #if !defined(xpc_retain)

@@ -36,13 +36,11 @@
 #import <AppKit/NSInputManager.h>
 #import <AppKit/NSTextAlternatives.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 #define SUPPORT_INSERTION_UNDO_GROUPING
 #if __has_include(<AppKit/NSTextInputContext_Private.h>)
 #import <AppKit/NSTextInputContext_Private.h>
 #else
 NSString *NSTextInsertionUndoableAttributeName;
-#endif
 #endif
 
 #import <WebKit/WebDocument.h>

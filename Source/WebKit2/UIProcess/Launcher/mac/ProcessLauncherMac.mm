@@ -203,13 +203,8 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
 {
     // Create a connection to the WebKit XPC service.
     auto connection = adoptOSObject(xpc_connection_create(serviceName(launchOptions, forDevelopment), 0));
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     xpc_connection_set_oneshot_instance(connection.get(), instanceUUID->uuid);
-#else
-    xpc_connection_set_instance(connection.get(), instanceUUID->uuid);
-#endif
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     // Inherit UI process localization. It can be different from child process default localization:
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
@@ -239,7 +234,6 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     }
 
     xpc_connection_set_bootstrap(connection.get(), initializationMessage.get());
-#endif
 
     // XPC requires having an event handler, even if it is not used.
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t event) { });
@@ -335,11 +329,7 @@ static void connectToReExecService(const ProcessLauncher::LaunchOptions& launchO
     // FIXME: It would be nice if we could use OSObjectPtr for this connection as well, but we'd have to be careful
     // not to introduce any retain cycles in the call to xpc_connection_set_event_handler below.
     xpc_connection_t reExecConnection = xpc_connection_create(serviceName(launchOptions, true), 0);
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     xpc_connection_set_oneshot_instance(reExecConnection, instanceUUID->uuid);
-#else
-    xpc_connection_set_instance(reExecConnection, instanceUUID->uuid);
-#endif
 
     // Keep the ProcessLauncher alive while we do the re-execing (balanced in event handler).
     that->ref();

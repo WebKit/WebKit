@@ -1,3 +1,73 @@
+2015-12-19  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] WebKit contains dead source code for OS X Mavericks and earlier
+        https://bugs.webkit.org/show_bug.cgi?id=152462
+
+        Reviewed by Alexey Proskuryakov.
+
+        - Removed build setting definitions for OS X 10.9 and earlier, and simplified defintions
+          that became uniform across all OS X versions as a result:
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+
+        - Removed support for animating default buttons:
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::RenderButton): Removed m_default initialization.
+        (WebCore::RenderButton::styleDidChange): Removed checking for animating default button and
+          starting the animation timer.
+        (WebCore::RenderButton::timerFired): Deleted.
+        * rendering/RenderButton.h: Removed m_timer and m_default member variables
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::defaultButtonHasAnimation): Deleted.
+        * rendering/RenderThemeMac.h: Deleted override.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::defaultButtonHasAnimation): Deleted.
+
+        - Simplified expressions involving __MAC_OS_X_VERSION_MIN_REQUIRED and removed code that was
+          never getting compiled:
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        * editing/mac/DictionaryLookup.h:
+        * editing/mac/DictionaryLookup.mm:
+        * html/canvas/WebGLDrawBuffers.cpp:
+        * loader/DocumentLoader.cpp:
+        * loader/cache/CachedFont.cpp:
+        * loader/cocoa/DiskCacheMonitorCocoa.h:
+        * page/cocoa/SettingsCocoa.mm:
+        * platform/Scrollbar.cpp:
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        * platform/cocoa/NetworkExtensionContentFilter.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/mac/NSScrollerImpDetails.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/ScrollViewMac.mm:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * platform/mac/ThemeMac.mm:
+        * platform/mac/WebCoreFullScreenPlaceholderView.h:
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        * platform/network/cf/ResourceRequest.h:
+        * platform/spi/cf/CFNetworkSPI.h:
+        * platform/spi/cocoa/CoreTextSPI.h:
+        * platform/spi/cocoa/NSButtonCellSPI.h:
+        * platform/spi/cocoa/NSColorSPI.h:
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        * platform/spi/mac/LookupSPI.h:
+        * platform/spi/mac/NSFontSPI.h:
+        * platform/spi/mac/NSImmediateActionGestureRecognizerSPI.h:
+        * platform/spi/mac/NSPopoverSPI.h:
+        * platform/spi/mac/NSSharingServicePickerSPI.h:
+        * platform/spi/mac/NSSharingServiceSPI.h:
+        * platform/spi/mac/TUCallSPI.h:
+        * platform/sql/SQLiteDatabase.cpp:
+
 2015-12-18  Antti Koivisto  <antti@apple.com>
 
         Cache redirects as separate entries

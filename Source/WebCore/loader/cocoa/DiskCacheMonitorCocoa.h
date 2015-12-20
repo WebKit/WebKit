@@ -55,19 +55,6 @@ private:
     SessionID m_sessionID;
 };
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
-
-inline void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest&, SessionID, CFCachedURLResponseRef)
-{
-}
-
-inline PassRefPtr<SharedBuffer> DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef)
-{
-    return nullptr;
-}
-
-#endif
-
 } // namespace WebKit
 
 #endif // DiskCacheMonitorCocoa_h

@@ -32,7 +32,7 @@
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 
-#define HAVE_NETWORK_EXTENSION PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && CPU(X86_64))
+#define HAVE_NETWORK_EXTENSION PLATFORM(IOS) || (PLATFORM(MAC) && CPU(X86_64))
 
 enum NEFilterSourceStatus : NSInteger;
 

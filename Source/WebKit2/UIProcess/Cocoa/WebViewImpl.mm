@@ -139,9 +139,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
     [super dealloc];
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 static void* keyValueObservingContext = &keyValueObservingContext;
-#endif
 
 - (void)startObserving:(NSWindow *)window
 {
@@ -164,10 +162,9 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeScreen:) name:NSWindowDidChangeScreenNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeLayerHosting:) name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeOcclusionState:) name:NSWindowDidChangeOcclusionStateNotification object:window];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
     [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
     [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
-#endif
 }
 
 - (void)stopObserving:(NSWindow *)window
@@ -190,19 +187,16 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
     [defaultNotificationCenter removeObserver:self name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:window];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
     if (_impl->isEditable())
         [[NSFontPanel sharedFontPanel] removeObserver:self forKeyPath:@"visible" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
-#endif
 }
 
 - (void)startObservingFontPanel
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [[NSFontPanel sharedFontPanel] addObserver:self forKeyPath:@"visible" options:0 context:keyValueObservingContext];
-#endif
 }
 
 - (void)startObservingLookupDismissal
@@ -274,7 +268,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (context != keyValueObservingContext) {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
         return;
@@ -286,7 +279,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
     if ([keyPath isEqualToString:@"contentLayoutRect"] || [keyPath isEqualToString:@"titlebarAppearsTransparent"])
         _impl->updateContentInsetsIfAutomatic();
-#endif
 }
 
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
@@ -459,15 +451,12 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 
     m_page->setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         m_immediateActionGestureRecognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] init]);
         m_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:m_page view:m_view viewImpl:*this recognizer:m_immediateActionGestureRecognizer.get()]);
         [m_immediateActionGestureRecognizer setDelegate:m_immediateActionController.get()];
         [m_immediateActionGestureRecognizer setDelaysPrimaryMouseButtonEvents:NO];
     }
-#endif
-
 
     m_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
@@ -502,9 +491,7 @@ WebViewImpl::~WebViewImpl()
 
     [m_layoutStrategy invalidate];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [m_immediateActionController willDestroyView:m_view];
-#endif
 
     m_page->close();
 
@@ -800,7 +787,6 @@ void WebViewImpl::setAutomaticallyAdjustsContentInsets(bool automaticallyAdjusts
 
 void WebViewImpl::updateContentInsetsIfAutomatic()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (!m_automaticallyAdjustsContentInsets)
         return;
 
@@ -812,7 +798,6 @@ void WebViewImpl::updateContentInsetsIfAutomatic()
             setTopContentInset(newTopContentInset);
     } else
         setTopContentInset(0);
-#endif
 }
 
 void WebViewImpl::setTopContentInset(CGFloat contentInset)
@@ -1182,10 +1167,8 @@ void WebViewImpl::viewDidMoveToWindow()
 
         accessibilityRegisterUIProcessTokens();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         if (m_immediateActionGestureRecognizer && ![[m_view gestureRecognizers] containsObject:m_immediateActionGestureRecognizer.get()] && !m_ignoresNonWheelEvents && m_allowsLinkPreview)
             [m_view addGestureRecognizer:m_immediateActionGestureRecognizer.get()];
-#endif
     } else {
         WebCore::ViewState::Flags viewStateChanges = WebCore::ViewState::WindowIsActive | WebCore::ViewState::IsVisible;
         if (m_isDeferringViewInWindowChanges)
@@ -1199,10 +1182,8 @@ void WebViewImpl::viewDidMoveToWindow()
 
         dismissContentRelativeChildWindowsWithAnimation(false);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         if (m_immediateActionGestureRecognizer)
             [m_view removeGestureRecognizer:m_immediateActionGestureRecognizer.get()];
-#endif
     }
 
     m_page->setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
@@ -2158,27 +2139,21 @@ void WebViewImpl::dismissContentRelativeChildWindowsWithAnimationFromViewOnly(bo
 void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 {
     bool hasActiveImmediateAction = false;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     hasActiveImmediateAction = [m_immediateActionController hasActiveImmediateAction];
-#endif
 
     // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
     if (m_view.window.isKeyWindow || hasActiveImmediateAction) {
         WebCore::DictionaryLookup::hidePopup();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
         if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
             [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
-#endif
     }
 
     clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation::FadeOut);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [m_immediateActionController dismissContentRelativeChildWindows];
-#endif
-    
+
     m_pageClient->dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeTextIgnored);
 }
 
@@ -2192,12 +2167,10 @@ void WebViewImpl::quickLookWithEvent(NSEvent *event)
     if (ignoresNonWheelEvents())
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (m_immediateActionGestureRecognizer) {
         [m_view _web_superQuickLookWithEvent:event];
         return;
     }
-#endif
 
     NSPoint locationInViewCoordinates = [m_view convertPoint:[event locationInWindow] fromView:nil];
     m_page->performDictionaryLookupAtLocation(WebCore::FloatPoint(locationInViewCoordinates));
@@ -2220,12 +2193,10 @@ void WebViewImpl::setAllowsLinkPreview(bool allowsLinkPreview)
 
     m_allowsLinkPreview = allowsLinkPreview;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (!allowsLinkPreview)
         [m_view removeGestureRecognizer:m_immediateActionGestureRecognizer.get()];
     else if (NSGestureRecognizer *immediateActionRecognizer = m_immediateActionGestureRecognizer.get())
         [m_view addGestureRecognizer:immediateActionRecognizer];
-#endif
 }
 
 void* WebViewImpl::immediateActionAnimationControllerForHitTestResult(API::HitTestResult* hitTestResult, uint32_t type, API::Object* userData)
@@ -2235,9 +2206,7 @@ void* WebViewImpl::immediateActionAnimationControllerForHitTestResult(API::HitTe
 
 void WebViewImpl::didPerformImmediateActionHitTest(const WebHitTestResultData& result, bool contentPreventsDefault, API::Object* userData)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [m_immediateActionController didPerformImmediateActionHitTest:result contentPreventsDefault:contentPreventsDefault userData:userData];
-#endif
 }
 
 void WebViewImpl::prepareForImmediateActionAnimation()
@@ -2268,14 +2237,12 @@ void WebViewImpl::setIgnoresNonWheelEvents(bool ignoresNonWheelEvents)
     m_ignoresNonWheelEvents = ignoresNonWheelEvents;
     m_page->setShouldDispatchFakeMouseMoveEvents(!ignoresNonWheelEvents);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (ignoresNonWheelEvents)
         [m_view removeGestureRecognizer:m_immediateActionGestureRecognizer.get()];
     else if (NSGestureRecognizer *immediateActionRecognizer = m_immediateActionGestureRecognizer.get()) {
         if (m_allowsLinkPreview)
             [m_view addGestureRecognizer:immediateActionRecognizer];
     }
-#endif
 }
 
 void WebViewImpl::setIgnoresAllEvents(bool ignoresAllEvents)

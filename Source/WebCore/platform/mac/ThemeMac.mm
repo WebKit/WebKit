@@ -186,10 +186,6 @@ static void setControlSize(NSCell* cell, const std::array<IntSize, 3>& sizes, co
 
 static void updateStates(NSCell* cell, const ControlStates& controlStates, bool useAnimation = false)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-    UNUSED_PARAM(useAnimation);
-#endif
-
     // The animated state cause this thread to start and stop repeatedly on CoreAnimation synchronize calls.
     // This short burts of activity in between are not long enough for VoiceOver to retrieve accessibility attributes and makes the process appear unresponsive.
     if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
@@ -203,11 +199,7 @@ static void updateStates(NSCell* cell, const ControlStates& controlStates, bool 
     bool oldPressed = [cell isHighlighted];
     bool pressed = states & ControlStates::PressedState;
     if (pressed != oldPressed) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         [(NSButtonCell*)cell _setHighlighted:pressed animated:useAnimation];
-#else
-        [cell setHighlighted:pressed];
-#endif
     }
     
     // Enabled state
@@ -223,11 +215,7 @@ static void updateStates(NSCell* cell, const ControlStates& controlStates, bool 
     bool oldChecked = [cell state] == NSOnState;
     if (oldIndeterminate != indeterminate || checked != oldChecked) {
         NSCellStateValue newState = indeterminate ? NSMixedState : (checked ? NSOnState : NSOffState);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         [(NSButtonCell*)cell _setState:newState animated:useAnimation];
-#else
-        [cell setState:newState];
-#endif
     }
 
     // Window inactive state does not need to be checked explicitly, since we paint parented to 
@@ -419,17 +407,12 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
 
     LocalCurrentGraphicsContext localContext(context);
 
-    bool useUnparentedView = false;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    useUnparentedView = true;
-#endif
-    NSView *view = ThemeMac::ensuredView(scrollView, controlStates, useUnparentedView);
+    NSView *view = ThemeMac::ensuredView(scrollView, controlStates, true /* useUnparentedView */);
 
     bool needsRepaint = false;
     bool useImageBuffer = pageScaleFactor != 1.0f || zoomFactor != 1.0f;
     bool isCellFocused = controlStates.states() & ControlStates::FocusState;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([toggleButtonCell _stateAnimationRunning]) {
         context.translate(inflatedRect.x(), inflatedRect.y());
         context.scale(FloatSize(1, -1));
@@ -440,15 +423,10 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
             needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, false, true, useImageBuffer, deviceScaleFactor);
     } else
         needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, true, isCellFocused, useImageBuffer, deviceScaleFactor);
-#else
-    needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(toggleButtonCell.get(), context, inflatedRect, view, true, isCellFocused, useImageBuffer, deviceScaleFactor);
-#endif
 
     [toggleButtonCell setControlView:nil];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     needsRepaint |= [toggleButtonCell _stateAnimationRunning];
-#endif
     controlStates.setNeedsRepaint(needsRepaint);
     if (needsRepaint)
         controlStates.setPlatformControl(toggleButtonCell.get());
@@ -561,12 +539,9 @@ static void paintButton(ControlPart part, ControlStates& controlStates, Graphics
 
     bool useImageBuffer = pageScaleFactor != 1.0f || zoomFactor != 1.0f;
     bool needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(buttonCell, context, inflatedRect, view, true, states & ControlStates::FocusState, useImageBuffer, deviceScaleFactor);
-    if (states & ControlStates::DefaultState) {
+    if (states & ControlStates::DefaultState)
         [window setDefaultButtonCell:buttonCell];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-        wkAdvanceDefaultButtonPulseAnimation(buttonCell);
-#endif
-    } else if ([previousDefaultButtonCell isEqual:buttonCell])
+    else if ([previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:nil];
     
     controlStates.setNeedsRepaint(needsRepaint);

@@ -227,9 +227,6 @@ if ($shouldCombineMain) {
 
     ditto(File::Spec->catdir($uiRoot, 'Images'), File::Spec->catdir($targetResourcePath, 'Images'));
 
-    # Remove Images/Legacy on modern systems (OS X 10.10 Yosemite and greater or Windows).
-    remove_tree(File::Spec->catdir($targetResourcePath, 'Images', 'Legacy')) if (defined $ENV{'MAC_OS_X_VERSION_MAJOR'} && $ENV{'MAC_OS_X_VERSION_MAJOR'} ge 101000) or defined $ENV{'OFFICIAL_BUILD'};
-
     # Remove Images/gtk on Mac and Windows builds.
     remove_tree(File::Spec->catdir($targetResourcePath, 'Images', 'gtk')) if defined $ENV{'MAC_OS_X_VERSION_MAJOR'} or defined $ENV{'OFFICIAL_BUILD'};
 

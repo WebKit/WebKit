@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber);
 RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber);
 NSString *menuItemTitleForTelephoneNumberGroup();

@@ -25,8 +25,6 @@
 
 #import <AppKit/NSButtonCell.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSButtonCell_Private.h>
@@ -39,8 +37,6 @@
 - (void)_renderCurrentAnimationFrameInContext:(CGContextRef)ctxt atLocation:(NSPoint)where;
 - (BOOL)_stateAnimationRunning;
 @end
-
-#endif
 
 #endif
 

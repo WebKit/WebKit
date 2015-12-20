@@ -38,26 +38,14 @@ static NSAttributedString *attributedString(WebView *webView, NSRange range)
     return [(NSView <NSTextInput> *)[[[webView mainFrame] frameView] documentView] attributedSubstringFromRange:range];
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-static NSAttributedString *attributedString(WKView *wkView, NSRange range)
-{
-    NSRange actualRange;
-    return [wkView attributedSubstringForProposedRange:range actualRange:&actualRange];
-}
-#endif
-
 class AttributedStringTest_CustomFont : public WebKitAgnosticTest {
 public:
     template <typename View> void runSyncTest(View);
 
     // WebKitAgnosticTest
     virtual void didLoadURL(WebView *webView) { runSyncTest(webView); }
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-    virtual void didLoadURL(WKView *wkView) { runSyncTest(wkView); }
-#else
     // FIXME: Reimplement the test using async NSTextInputClient interface.
     virtual void didLoadURL(WKView *wkView) { }
-#endif
 
     virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"attributedStringCustomFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
 };
@@ -74,25 +62,14 @@ TEST_F(AttributedStringTest_CustomFont, WebKit)
     runWebKit1Test();
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-TEST_F(AttributedStringTest_CustomFont, WebKit2)
-{
-    runWebKit2Test();
-}
-#endif
-
 class AttributedStringTest_Strikethrough : public WebKitAgnosticTest {
 public:
     template <typename View> void runSyncTest(View);
 
     // WebKitAgnosticTest
     virtual void didLoadURL(WebView *webView) { runSyncTest(webView); }
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-    virtual void didLoadURL(WKView *wkView) { runSyncTest(wkView); }
-#else
     // FIXME: Reimplement the test using async NSTextInputClient interface.
     virtual void didLoadURL(WKView *wkView) { }
-#endif
 
     virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"attributedStringStrikethrough" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
 };
@@ -114,12 +91,5 @@ TEST_F(AttributedStringTest_Strikethrough, WebKit)
 {
     runWebKit1Test();
 }
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-TEST_F(AttributedStringTest_Strikethrough, WebKit2)
-{
-    runWebKit2Test();
-}
-#endif
 
 } // namespace TestWebKitAPI

@@ -50,12 +50,6 @@
 
 using namespace WebCore;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-#define ENABLE_LEGACY_FIND_INDICATOR_STYLE 1
-#else
-#define ENABLE_LEGACY_FIND_INDICATOR_STYLE 0
-#endif
-
 namespace WebKit {
 
 static WebCore::FindOptions core(FindOptions options)
@@ -446,17 +440,10 @@ void FindController::didMoveToPage(PageOverlay&, Page*)
 {
 }
 
-#if ENABLE(LEGACY_FIND_INDICATOR_STYLE)
-const float shadowOffsetX = 0;
-const float shadowOffsetY = 1;
-const float shadowBlurRadius = 2;
-const float shadowColorAlpha = 1;
-#else
 const float shadowOffsetX = 0;
 const float shadowOffsetY = 0;
 const float shadowBlurRadius = 1;
 const float shadowColorAlpha = 0.5;
-#endif
 
 void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {

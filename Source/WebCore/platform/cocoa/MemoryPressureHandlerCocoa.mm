@@ -68,16 +68,12 @@ void MemoryPressureHandler::platformReleaseMemory(Critical critical)
     }
 #endif
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (critical == Critical::Yes && !isUnderMemoryPressure()) {
         // libcache listens to OS memory notifications, but for process suspension
         // or memory pressure simulation, we need to prod it manually:
         ReliefLogger log("Purging libcache caches");
         cache_simulate_memory_warning_event(DISPATCH_MEMORYPRESSURE_CRITICAL);
     }
-#else
-    UNUSED_PARAM(critical);
-#endif
 }
 
 static dispatch_source_t _cache_event_source = 0;

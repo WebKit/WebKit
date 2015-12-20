@@ -411,9 +411,7 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     _impl = std::make_unique<WebKit::WebViewImpl>(self, self, processPool, WTF::move(pageConfiguration));
     _page = &_impl->page();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     _impl->setAutomaticallyAdjustsContentInsets(true);
-#endif
 #endif
 
     _page->setBackgroundExtendsBeyondPage(true);
@@ -4090,7 +4088,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return nil;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets
 {
     _impl->setAutomaticallyAdjustsContentInsets(automaticallyAdjustsContentInsets);
@@ -4100,7 +4097,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     return _impl->automaticallyAdjustsContentInsets();
 }
-#endif
 
 - (CGFloat)_minimumLayoutWidth
 {

@@ -30,25 +30,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-
-#if __has_include(<os/object_private.h>)
-#include <os/object_private.h>
-#endif
-
-#if OS_OBJECT_USE_OBJC
-@class OS_object;
-typedef OS_object *_os_object_t;
-#else
-typedef struct _os_object_s *_os_object_t;
-#endif
-
-extern "C" _os_object_t _os_object_retain(_os_object_t object);
-extern "C" void _os_object_release(_os_object_t object);
-
-#endif
-
-
 namespace WTF {
 
 template<typename T> class OSObjectPtr;
@@ -57,29 +38,13 @@ template<typename T> OSObjectPtr<T> adoptOSObject(T);
 template<typename T>
 static inline void retainOSObject(T ptr)
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 || PLATFORM(IOS)
     os_retain(ptr);
-#else
-#if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
-    [ptr retain];
-#else
-    _os_object_retain((_os_object_t)ptr);
-#endif
-#endif
 }
 
 template<typename T>
 static inline void releaseOSObject(T ptr)
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 || PLATFORM(IOS)
     os_release(ptr);
-#else
-#if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
-    [ptr release];
-#else
-    _os_object_release((_os_object_t)ptr);
-#endif
-#endif
 }
 
 template<typename T> class OSObjectPtr {

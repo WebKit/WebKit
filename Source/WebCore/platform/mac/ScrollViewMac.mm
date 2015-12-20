@@ -38,12 +38,6 @@
 - (NSEdgeInsets)contentInsets;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-@interface NSScrollView (WebDetails)
-@property BOOL automaticallyAdjustsContentInsets;
-@end
-#endif
-
 @interface NSWindow (WebWindowDetails)
 - (BOOL)_needsToResetDragMargins;
 - (void)_setNeedsToResetDragMargins:(BOOL)needs;
@@ -117,9 +111,7 @@ bool ScrollView::platformCanBlitOnScroll() const
 float ScrollView::platformTopContentInset() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     return scrollView().contentInsets.top;
-#endif
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return 0;
@@ -128,7 +120,6 @@ float ScrollView::platformTopContentInset() const
 void ScrollView::platformSetTopContentInset(float topContentInset)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (topContentInset)
         scrollView().automaticallyAdjustsContentInsets = NO;
     else
@@ -137,9 +128,6 @@ void ScrollView::platformSetTopContentInset(float topContentInset)
     NSEdgeInsets contentInsets = scrollView().contentInsets;
     contentInsets.top = topContentInset;
     scrollView().contentInsets = contentInsets;
-#else
-    UNUSED_PARAM(topContentInset);
-#endif
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -148,10 +136,8 @@ IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     IntRect visibleContentRect = platformVisibleContentRectIncludingObscuredArea(includeScrollbars);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     visibleContentRect.move(scrollView().contentInsets.left, scrollView().contentInsets.top);
     visibleContentRect.contract(scrollView().contentInsets.left + scrollView().contentInsets.right, scrollView().contentInsets.top + scrollView().contentInsets.bottom);
-#endif
 
     return visibleContentRect;
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -209,12 +195,10 @@ void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
     NSPoint floatPoint = scrollPoint;
     NSPoint tempPoint = { std::max(-[scrollView() scrollOrigin].x, floatPoint.x), std::max(-[scrollView() scrollOrigin].y, floatPoint.y) };  // Don't use NSMakePoint to work around 4213314.
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     // AppKit has the inset factored into all of its scroll positions. In WebCore, we use positions that ignore
     // the insets so that they are equivalent whether or not there is an inset.
     tempPoint.x = tempPoint.x - scrollView().contentInsets.left;
     tempPoint.y = tempPoint.y - scrollView().contentInsets.top;
-#endif
 
     [documentView() scrollPoint:tempPoint];
     END_BLOCK_OBJC_EXCEPTIONS;

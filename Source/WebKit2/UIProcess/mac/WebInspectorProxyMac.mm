@@ -55,16 +55,7 @@ SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 using namespace WebCore;
 using namespace WebKit;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-// The height needed to match a typical NSToolbar.
-static const CGFloat windowContentBorderThickness = 55;
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
-#else
-static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask;
-#endif
 
 // The time we keep our WebView alive before closing it and its process.
 // Reusing the WebView improves start up time for people that jump in and out of the Inspector.
@@ -301,12 +292,7 @@ void WebInspectorProxy::createInspectorWindow()
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     window.titlebarAppearsTransparent = YES;
-#else
-    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
-    [window setContentBorderThickness:windowContentBorderThickness forEdge:NSMaxYEdge];
-#endif
 
     m_inspectorWindow = adoptNS(window);
 
@@ -395,13 +381,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     m_inspectorView = adoptNS([[WKWebInspectorWKWebView alloc] initWithFrame:initialRect configuration:configuration.get()]);
     ASSERT(m_inspectorView);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 10900
-    m_inspectorView->_page->setDrawsBackground(false);
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [m_inspectorView _setAutomaticallyAdjustsContentInsets:NO];
-#endif
 
     m_inspectorProxyObjCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
     ASSERT(m_inspectorProxyObjCAdapter);
@@ -806,9 +786,6 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
 
 void WebInspectorProxy::platformSetToolbarHeight(unsigned height)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-    [m_inspectorWindow setContentBorderThickness:height forEdge:NSMaxYEdge];
-#endif
 }
 
 void WebInspectorProxy::platformStartWindowDrag()

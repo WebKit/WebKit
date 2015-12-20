@@ -1,3 +1,23 @@
+2015-12-19  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] WebKit contains dead source code for OS X Mavericks and earlier
+        https://bugs.webkit.org/show_bug.cgi?id=152462
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/DebugRelease.xcconfig: Removed definition of MACOSX_DEPLOYMENT_TARGET for
+          OS X 10.9.
+
+        - Simplified expressions involving __MAC_OS_X_VERSION_MIN_REQUIRED and removed code that was
+          never getting compiled:
+
+        * wtf/FeatureDefines.h:
+        * wtf/MainThread.h:
+        * wtf/OSObjectPtr.h:
+        * wtf/Platform.h:
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        * wtf/spi/darwin/XPCSPI.h:
+
 2015-12-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         [INTL] Implement Collator Compare Functions

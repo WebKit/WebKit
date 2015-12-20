@@ -368,7 +368,7 @@ CGImageRef ImageSource::createFrameAtIndex(size_t index, SubsamplingLevel subsam
     if (!imageUTI)
         return image.leakRef();
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
     if (CFEqual(imageUTI, kUTTypeGIF)) {
         CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
         return image.leakRef();

@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSSharingService_Private.h>
@@ -45,7 +43,5 @@ typedef NS_ENUM(NSInteger, NSSharingServicePickerStyle) {
 - (NSMenu *)menu;
 - (void)hide;
 @end
-
-#endif
 
 #endif

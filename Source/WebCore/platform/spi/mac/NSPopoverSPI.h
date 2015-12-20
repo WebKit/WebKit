@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-
 #import "NSImmediateActionGestureRecognizerSPI.h"
 
 // FIXME: This header should include system headers when possible.
@@ -46,5 +44,3 @@ typedef NS_OPTIONS(NSUInteger, NSPopoverPositioningOptions) {
 @interface NSPopover (WKDetails)
 @property NSPopoverPositioningOptions positioningOptions;
 @end
-
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

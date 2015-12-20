@@ -151,14 +151,8 @@ namespace WebCore {
 
     inline bool ResourceRequest::resourcePrioritiesEnabled()
     {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
     return true;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-    // See <rdar://problem/16518595>, <rdar://problem/17168793> for issues we had before OS X 10.10.
-    // HTTP Pipelining could be enabled for experiments, but there is no point in doing so on old OS versions,
-    // and that can't work well because of the above issues.
-    ASSERT(!httpPipeliningEnabled());
-    return false;
 #elif PLATFORM(IOS)
     return true;
 #elif PLATFORM(WIN)

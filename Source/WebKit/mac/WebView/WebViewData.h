@@ -172,11 +172,9 @@ private:
     WebNodeHighlight *currentNodeHighlight;
 
 #if PLATFORM(MAC)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     WebImmediateActionController *immediateActionController;
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewDataAdditions.h>
 #endif
 

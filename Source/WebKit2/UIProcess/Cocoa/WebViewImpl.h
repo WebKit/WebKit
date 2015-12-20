@@ -563,10 +563,8 @@ private:
     bool m_ignoresAllEvents { false };
     bool m_ignoresMouseDraggedEvents { false };
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     RetainPtr<WKImmediateActionController> m_immediateActionController;
     RetainPtr<NSImmediateActionGestureRecognizer> m_immediateActionGestureRecognizer;
-#endif
 
     bool m_allowsLinkPreview { true };
     bool m_didRegisterForLookupPopoverCloseNotifications { false };

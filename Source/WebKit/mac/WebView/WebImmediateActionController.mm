@@ -25,7 +25,7 @@
 
 #import "WebImmediateActionController.h"
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if PLATFORM(MAC)
 
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
@@ -554,4 +554,4 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
 
 @end
 
-#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#endif // PLATFORM(MAC)
