@@ -5333,6 +5333,7 @@ private:
 
         setJSValue(patchpoint);
 #else
+        UNUSED_PARAM(forwarding);
         unsigned stackmapID = m_stackmapIDs++;
         
         StackmapArgumentList arguments;

@@ -1,3 +1,10 @@
+2015-12-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, fix the !FTL_USES_B3 build after r194334.
+
+        * ftl/FTLLowerDFGToLLVM.cpp: Mark forwarding unused variable.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+
 2015-12-21  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should do doubleToInt32
