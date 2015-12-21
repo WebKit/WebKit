@@ -1,5 +1,5 @@
 
-FAIL ReadableStream cancellation: integration test on an infinite stream derived from a random push source promise_test: Unhandled rejection with value: object "Error: forced error"
+PASS ReadableStream cancellation: integration test on an infinite stream derived from a random push source 
 PASS ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source 
 PASS ReadableStream cancellation: cancel() on a locked stream should fail and not call the underlying source cancel 
 PASS ReadableStream cancellation: should fulfill promise when cancel callback went fine 
@@ -11,7 +11,7 @@ PASS ReadableStream cancellation: if the underlying source's cancel method retur
 PASS ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called 
 FAIL Load cancel.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-FAIL ReadableStream cancellation: integration test on an infinite stream derived from a random push source promise_test: Unhandled rejection with value: object "Error: forced error"
+FAIL ReadableStream cancellation: integration test on an infinite stream derived from a random push source Can't find variable: ReadableStream
 FAIL ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source Can't find variable: ReadableStream
 FAIL ReadableStream cancellation: cancel() on a locked stream should fail and not call the underlying source cancel Can't find variable: ReadableStream
 FAIL ReadableStream cancellation: should fulfill promise when cancel callback went fine Can't find variable: ReadableStream
