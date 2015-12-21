@@ -1,3 +1,15 @@
+2015-12-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r194328.
+
+        This change appears to have caused failures in JSC tests
+
+        Reverted changeset:
+
+        "[INTL] Implement String.prototype.localeCompare in ECMA-402"
+        https://bugs.webkit.org/show_bug.cgi?id=147607
+        http://trac.webkit.org/changeset/194328
+
 2015-12-21  Filip Pizlo  <fpizlo@apple.com>
 
         B3->Air lowering incorrectly copy-propagates over ZExt32's
