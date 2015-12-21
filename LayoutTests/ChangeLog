@@ -1,3 +1,18 @@
+2015-12-20  Jeremy Zerfas  <WebKit@JeremyZerfas.com>
+
+        Don't allocate a NSImage and skip unneeded call to TIFFRepresentation when copying image to clipboard.
+        https://bugs.webkit.org/show_bug.cgi?id=152374
+
+        Reviewed by Darin Adler.
+
+        Added test to make sure that when copying a 50 frame 500x500 animation
+        (50 MB uncompressed) to the clipboard, the additional memory usage is
+        kept to less than 200 MB.
+
+        * fast/images/image-copy-memory-usage-expected.txt: Added.
+        * fast/images/image-copy-memory-usage.html: Added.
+        * fast/images/resources/dot-moving-in-a-circle-animation.gif: Added.
+
 2015-12-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194033 and r194267.

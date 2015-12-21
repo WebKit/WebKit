@@ -255,7 +255,7 @@ static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const Strin
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    NSData *imageData = [pasteboardImage.image->getNSImage() TIFFRepresentation];
+    CFDataRef imageData = pasteboardImage.image->getTIFFRepresentation();
     if (!imageData)
         return;
 
@@ -263,7 +263,7 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
     ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(pasteboardImage.resourceMIMEType));
 
     m_changeCount = writeURLForTypes(writableTypesForImage(), m_pasteboardName, pasteboardImage.url);
-    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData(imageData), NSTIFFPboardType, m_pasteboardName);
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapCFData(imageData), NSTIFFPboardType, m_pasteboardName);
     writeFileWrapperAsRTFDAttachment(fileWrapper(pasteboardImage), m_pasteboardName, m_changeCount);
 }
 
