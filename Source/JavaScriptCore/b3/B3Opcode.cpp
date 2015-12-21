@@ -176,9 +176,6 @@ void printInternal(PrintStream& out, Opcode opcode)
     case IToD:
         out.print("IToD");
         return;
-    case DToI32:
-        out.print("DToI32");
-        return;
     case FloatToDouble:
         out.print("FloatToDouble");
         return;

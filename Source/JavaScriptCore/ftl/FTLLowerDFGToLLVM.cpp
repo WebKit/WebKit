@@ -2084,7 +2084,7 @@ private:
             LBasicBlock nanExceptionResultIsNaN = FTL_NEW_BLOCK(m_out, ("ArithPow NaN Exception, result is NaN."));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithPow continuation"));
 
-            LValue integerExponent = m_out.fpToInt32(exponent);
+            LValue integerExponent = m_out.doubleToInt(exponent);
             LValue integerExponentConvertedToDouble = m_out.intToDouble(integerExponent);
             LValue exponentIsInteger = m_out.doubleEqual(exponent, integerExponentConvertedToDouble);
             m_out.branch(exponentIsInteger, unsure(integerExponentIsSmallBlock), unsure(doubleExponentPowBlockEntry));
@@ -3282,7 +3282,7 @@ private:
                                 unsure(continuation), unsure(withinRange));
                             
                             m_out.appendTo(withinRange, continuation);
-                            intValues.append(m_out.anchor(m_out.fpToInt32(doubleValue)));
+                            intValues.append(m_out.anchor(m_out.doubleToInt(doubleValue)));
                             m_out.jump(continuation);
                             
                             m_out.appendTo(continuation, lastNext);
@@ -5513,7 +5513,7 @@ private:
                 
                 m_out.appendTo(isDouble, innerLastNext);
                 LValue doubleValue = unboxDouble(boxedValue);
-                LValue intInDouble = m_out.fpToInt32(doubleValue);
+                LValue intInDouble = m_out.doubleToInt(doubleValue);
                 intValues.append(m_out.anchor(intInDouble));
                 m_out.branch(
                     m_out.doubleEqual(m_out.intToDouble(intInDouble), doubleValue),
@@ -8274,9 +8274,9 @@ private:
         m_out.appendTo(withinRange, slowPath);
         LValue fastResult;
         if (isSigned)
-            fastResult = m_out.fpToInt32(doubleValue);
+            fastResult = m_out.doubleToInt(doubleValue);
         else
-            fastResult = m_out.fpToUInt32(doubleValue);
+            fastResult = m_out.doubleToUInt(doubleValue);
         results.append(m_out.anchor(fastResult));
         m_out.jump(continuation);
         
@@ -8302,7 +8302,7 @@ private:
         LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("sensible doubleToInt32 slow path"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("sensible doubleToInt32 continuation"));
 
-        LValue fastResultValue = m_out.sensibleDoubleToInt(doubleValue);
+        LValue fastResultValue = m_out.doubleToInt(doubleValue);
         ValueFromBlock fastResult = m_out.anchor(fastResultValue);
         m_out.branch(
             m_out.equal(fastResultValue, m_out.constInt32(0x80000000)),
@@ -8958,7 +8958,7 @@ private:
 
     LValue convertDoubleToInt32(LValue value, bool shouldCheckNegativeZero)
     {
-        LValue integerValue = m_out.fpToInt32(value);
+        LValue integerValue = m_out.doubleToInt(value);
         LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
         LValue valueNotConvertibleToInteger = m_out.doubleNotEqualOrUnordered(value, integerValueConvertedToDouble);
         speculate(Overflow, FormattedValue(DataFormatDouble, value), m_node, valueNotConvertibleToInteger);

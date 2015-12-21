@@ -1,3 +1,67 @@
+2015-12-21  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should do doubleToInt32
+        https://bugs.webkit.org/show_bug.cgi?id=152484
+
+        Reviewed by Saam Barati.
+
+        We used to have a DToI32 opcode in B3 that we never implemented. This removes that opcode,
+        since double-to-int conversion has dramatically different semantics on different
+        architectures. We let FTL get the conversion instruction it wants by using a patchpoint.
+
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::materialize):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::appendTo):
+        (JSC::FTL::Output::lockedStackSlot):
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::doublePowi):
+        (JSC::FTL::Output::hasSensibleDoubleToInt):
+        (JSC::FTL::Output::doubleToInt):
+        (JSC::FTL::Output::doubleToUInt):
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::load8ZeroExt32):
+        (JSC::FTL::Output::load16SignExt32):
+        (JSC::FTL::Output::load16ZeroExt32):
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::store32As8):
+        (JSC::FTL::Output::store32As16):
+        (JSC::FTL::Output::branch):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doubleLog):
+        (JSC::FTL::Output::signExt32To64):
+        (JSC::FTL::Output::zeroExt):
+        (JSC::FTL::Output::zeroExtPtr):
+        (JSC::FTL::Output::intToDouble):
+        (JSC::FTL::Output::unsignedToDouble):
+        (JSC::FTL::Output::castToInt32):
+        (JSC::FTL::Output::hasSensibleDoubleToInt): Deleted.
+        (JSC::FTL::Output::sensibleDoubleToInt): Deleted.
+        (JSC::FTL::Output::fpToInt32): Deleted.
+        (JSC::FTL::Output::fpToUInt32): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithPow):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::DFG::LowerDFGToLLVM::doubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToLLVM::sensibleDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToLLVM::convertDoubleToInt32):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::hasSensibleDoubleToInt):
+        (JSC::FTL::Output::doubleToInt):
+        (JSC::FTL::Output::doubleToUInt):
+        (JSC::FTL::Output::signExt32To64):
+        (JSC::FTL::Output::zeroExt):
+
 2015-12-21  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Unexpected exception assigning to this._property inside arrow function

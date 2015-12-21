@@ -175,8 +175,9 @@ public:
 
     LValue doubleLog(LValue value) { return callWithoutSideEffects(B3::Double, log, value); }
 
-    static bool hasSensibleDoubleToInt() { CRASH(); }
-    LValue sensibleDoubleToInt(LValue) { CRASH(); }
+    static bool hasSensibleDoubleToInt();
+    LValue doubleToInt(LValue);
+    LValue doubleToUInt(LValue);
 
     LValue signExt32To64(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::SExt32, origin(), value); }
     LValue zeroExt(LValue value, LType type)
@@ -186,8 +187,6 @@ public:
         return m_block->appendNew<B3::Value>(m_proc, B3::ZExt32, origin(), value);
     }
     LValue zeroExtPtr(LValue value) { return zeroExt(value, B3::Int64); }
-    LValue fpToInt32(LValue value) { CRASH(); }
-    LValue fpToUInt32(LValue value) { CRASH(); }
     LValue intToDouble(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::IToD, origin(), value); }
     LValue unsignedToDouble(LValue value) { CRASH(); }
     LValue castToInt32(LValue value)

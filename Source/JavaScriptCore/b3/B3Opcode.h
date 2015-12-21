@@ -100,10 +100,10 @@ enum Opcode : int16_t {
     ZExt32,
     // Takes Int64 and returns Int32:
     Trunc,
-    // Takes ints and returns Double:
+    // Takes ints and returns Double. Note that we don't currently provide the opposite operation,
+    // because double-to-int conversions have weirdly different semantics on different platforms. Use
+    // a patchpoint if you need to do that.
     IToD,
-    // Takes Double and returns Int32:
-    DToI32,
     // Convert between double and float.
     FloatToDouble,
     DoubleToFloat,

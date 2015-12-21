@@ -215,6 +215,8 @@ public:
 
     static bool hasSensibleDoubleToInt() { return isX86(); }
     LValue sensibleDoubleToInt(LValue);
+    LValue doubleToInt(LValue value) { return fpToInt32(value); }
+    LValue doubleToUInt(LValue value) { return fpToUInt32(value); }
 
     LValue signExt32To64(LValue value) { return signExt(value, int64); }
     LValue zeroExt(LValue value, LType type) { return buildZExt(m_builder, value, type); }

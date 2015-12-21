@@ -383,7 +383,6 @@ Effects Value::effects() const
     case ZExt32:
     case Trunc:
     case IToD:
-    case DToI32:
     case FloatToDouble:
     case DoubleToFloat:
     case Equal:
@@ -464,7 +463,6 @@ ValueKey Value::key() const
     case Clz:
     case Trunc:
     case IToD:
-    case DToI32:
     case FloatToDouble:
     case DoubleToFloat:
     case Check:
@@ -575,7 +573,6 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case SExt8:
     case SExt16:
     case Trunc:
-    case DToI32:
     case Equal:
     case NotEqual:
     case LessThan:
