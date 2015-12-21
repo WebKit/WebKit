@@ -1,3 +1,33 @@
+2015-12-18  Mark Lam  <mark.lam@apple.com>
+
+        Add unary operator tests to compare JIT and LLINT results.
+        https://bugs.webkit.org/show_bug.cgi?id=152453
+
+        Reviewed by Benjamin Poulain.
+
+        Also fixed a few things in the binary-op-test.js.
+
+        * tests/stress/op_negate.js: Added.
+        (o1.valueOf):
+        * tests/stress/op_postdec.js: Added.
+        (o1.valueOf):
+        * tests/stress/op_postinc.js: Added.
+        (o1.valueOf):
+        * tests/stress/op_predec.js: Added.
+        (o1.valueOf):
+        * tests/stress/op_preinc.js: Added.
+        (o1.valueOf):
+        * tests/stress/resources/binary-op-test.js:
+        (stringifyIfNeeded):
+        (isIdentical):
+        (run):
+        * tests/stress/resources/unary-op-test.js: Added.
+        (stringifyIfNeeded):
+        (generateBinaryTests):
+        (isIdentical):
+        (runTest):
+        (run):
+
 2015-12-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r194328.
