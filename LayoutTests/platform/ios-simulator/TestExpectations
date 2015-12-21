@@ -124,6 +124,9 @@ webkit.org/b/76173 fast/css3-text/css3-text-align-last
 webkit.org/b/99945 fast/css3-text/css3-text-justify
 webkit.org/b/112755 fast/css3-text/css3-text-indent
 
+# Unsupported on certain OS versions
+webkit.org/b/152491 fast/text/woff2.html [ Skip ]
+
 # Needs testRunner.enableAutoResizeMode()
 fast/autoresize
 
