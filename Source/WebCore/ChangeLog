@@ -1,3 +1,31 @@
+2015-12-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Performs DNS prefetch when a proxy is configured (information leak)
+        https://bugs.webkit.org/show_bug.cgi?id=145542
+
+        Reviewed by Darin Adler.
+
+        Perform DNS prefetch only when no proxy is configured.
+
+        No new tests. Test this manually with Wireshark. Run the simple-proxy example program found
+        in libsoup's examples directory, set that as your system HTTP proxy, and see if DNS queries
+        show up in Wireshark when refreshing a page sent over HTTP. They should appear only when the
+        proxy is not configured.
+
+        * platform/network/DNSResolveQueue.cpp:
+        (WebCore::DNSResolveQueue::DNSResolveQueue):
+        (WebCore::DNSResolveQueue::isUsingProxy):
+        * platform/network/DNSResolveQueue.h:
+        * platform/network/cf/DNSCFNet.cpp:
+        (WebCore::DNSResolveQueue::updateIsUsingProxy):
+        (WebCore::DNSResolveQueue::platformProxyIsEnabledInSystemPreferences): Deleted.
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore::didResolveProxy):
+        (WebCore::proxyResolvedForHttpUriCallback):
+        (WebCore::proxyResolvedForHttpsUriCallback):
+        (WebCore::DNSResolveQueue::updateIsUsingProxy):
+        (WebCore::DNSResolveQueue::platformProxyIsEnabledInSystemPreferences): Deleted.
+
 2015-12-20  Dan Bernstein  <mitz@apple.com>
 
         Remove unused setToolbarHeight

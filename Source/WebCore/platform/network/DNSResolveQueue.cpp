@@ -60,20 +60,27 @@ DNSResolveQueue& DNSResolveQueue::singleton()
 DNSResolveQueue::DNSResolveQueue()
     : m_timer(*this, &DNSResolveQueue::timerFired)
     , m_requestsInFlight(0)
-    , m_cachedProxyEnabledStatus(false)
+    , m_isUsingProxy(true)
     , m_lastProxyEnabledStatusCheckTime(0)
 {
+    // isUsingProxy will return the initial value of m_isUsingProxy at first on
+    // platforms that have an asynchronous implementation of updateIsUsingProxy,
+    // so initialize it to true so we won't prefetch before we know if we are using a proxy.
 }
 
+// Don't do DNS prefetch if proxies are involved. For many proxy types, the user agent is never
+// exposed to the IP address during normal operation. Querying an internal DNS server may not help
+// performance, as it doesn't necessarily look up the actual external IP. Also, if DNS returns a
+// fake internal address, local caches may keep it even after re-connecting to another network.
 bool DNSResolveQueue::isUsingProxy()
 {
     double time = monotonicallyIncreasingTime();
     static const double minimumProxyCheckDelay = 5;
     if (time - m_lastProxyEnabledStatusCheckTime > minimumProxyCheckDelay) {
         m_lastProxyEnabledStatusCheckTime = time;
-        m_cachedProxyEnabledStatus = platformProxyIsEnabledInSystemPreferences();
+        updateIsUsingProxy();
     }
-    return m_cachedProxyEnabledStatus;
+    return m_isUsingProxy;
 }
 
 void DNSResolveQueue::add(const String& hostname)

@@ -33,16 +33,56 @@
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
 #include <wtf/MainThread.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
-// There is no current reliable way to know if we're behind a proxy at
-// this level. We'll have to implement it in
-// SoupSession/SoupProxyURIResolver/GProxyResolver
-bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
+// Initially true to ensure prefetch stays disabled until we have proxy settings.
+static bool isUsingHttpProxy = true;
+static bool isUsingHttpsProxy = true;
+
+static bool didResolveProxy(char** uris)
 {
-    return false;
+    // We have a list of possible proxies to use for the URI. If the first item in the list is
+    // direct:// (the usual case), then the user prefers not to use a proxy. This is similar to
+    // resolving hostnames: there could be many possibilities returned in order of preference, and
+    // if we're trying to connect we should attempt each one in order, but here we are not trying
+    // to connect, merely to decide whether a proxy "should" be used.
+    return uris && *uris && strcmp(*uris, "direct://");
+}
+
+static void didResolveProxy(GProxyResolver* resolver, GAsyncResult* result, bool* isUsingProxyType, bool* isUsingProxy)
+{
+    GUniqueOutPtr<GError> error;
+    GUniquePtr<char*> uris(g_proxy_resolver_lookup_finish(resolver, result, &error.outPtr()));
+    if (error) {
+        WTFLogAlways("Error determining system proxy settings: %s", error->message);
+        return;
+    }
+
+    *isUsingProxyType = didResolveProxy(uris.get());
+    *isUsingProxy = isUsingHttpProxy || isUsingHttpsProxy;
+}
+
+static void proxyResolvedForHttpUriCallback(GObject* source, GAsyncResult* result, void* userData)
+{
+    didResolveProxy(G_PROXY_RESOLVER(source), result, &isUsingHttpProxy, static_cast<bool*>(userData));
+}
+
+static void proxyResolvedForHttpsUriCallback(GObject* source, GAsyncResult* result, void* userData)
+{
+    didResolveProxy(G_PROXY_RESOLVER(source), result, &isUsingHttpsProxy, static_cast<bool*>(userData));
+}
+
+void DNSResolveQueue::updateIsUsingProxy()
+{
+    GRefPtr<GProxyResolver> resolver;
+    g_object_get(SoupNetworkSession::defaultSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
+    ASSERT(resolver);
+
+    g_proxy_resolver_lookup_async(resolver.get(), "http://example.com/", nullptr, proxyResolvedForHttpUriCallback, &m_isUsingProxy);
+    g_proxy_resolver_lookup_async(resolver.get(), "https://example.com/", nullptr, proxyResolvedForHttpsUriCallback, &m_isUsingProxy);
 }
 
 static void resolvedCallback(SoupAddress*, guint, void*)
