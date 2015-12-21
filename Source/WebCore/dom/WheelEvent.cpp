@@ -65,7 +65,7 @@ WheelEvent::WheelEvent(const AtomicString& type, const WheelEventInit& initializ
 {
 }
 
-WheelEvent::WheelEvent(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)
+WheelEvent::WheelEvent(const PlatformWheelEvent& event, AbstractView* view)
     : MouseEvent(eventNames().wheelEvent, true, true, event.timestamp(), view, 0, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y()
 #if ENABLE(POINTER_LOCK)
                 , 0, 0
@@ -81,7 +81,7 @@ WheelEvent::WheelEvent(const PlatformWheelEvent& event, PassRefPtr<AbstractView>
 {
 }
 
-void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<AbstractView> view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, AbstractView* view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
     if (dispatched())
         return;
@@ -104,7 +104,7 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<Abstrac
     initCoordinates(IntPoint(pageX, pageY));
 }
 
-void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<AbstractView> view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, AbstractView* view, int screenX, int screenY, int pageX, int pageY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {
     initWheelEvent(rawDeltaX, rawDeltaY, view, screenX, screenY, pageX, pageY, ctrlKey, altKey, shiftKey, metaKey);
 }

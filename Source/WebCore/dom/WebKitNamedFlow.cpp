@@ -39,9 +39,9 @@
 
 namespace WebCore {
 
-WebKitNamedFlow::WebKitNamedFlow(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
+WebKitNamedFlow::WebKitNamedFlow(NamedFlowCollection& manager, const AtomicString& flowThreadName)
     : m_flowThreadName(flowThreadName)
-    , m_flowManager(manager)
+    , m_flowManager(&manager)
     , m_parentFlowThread(nullptr)
 {
 }
@@ -52,7 +52,7 @@ WebKitNamedFlow::~WebKitNamedFlow()
     m_flowManager->discardNamedFlow(this);
 }
 
-Ref<WebKitNamedFlow> WebKitNamedFlow::create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
+Ref<WebKitNamedFlow> WebKitNamedFlow::create(NamedFlowCollection& manager, const AtomicString& flowThreadName)
 {
     return adoptRef(*new WebKitNamedFlow(manager, flowThreadName));
 }
@@ -117,7 +117,7 @@ int WebKitNamedFlow::firstEmptyRegionIndex() const
     return -1;
 }
 
-PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
+Ref<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
 {
     if (!contentNode)
         return StaticElementList::createEmpty();
@@ -151,7 +151,7 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
     return StaticElementList::adopt(regionElements);
 }
 
-PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
+Ref<NodeList> WebKitNamedFlow::getRegions()
 {
     if (m_flowManager->document())
         m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
@@ -178,7 +178,7 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
     return StaticElementList::adopt(regionElements);
 }
 
-PassRefPtr<NodeList> WebKitNamedFlow::getContent()
+Ref<NodeList> WebKitNamedFlow::getContent()
 {
     if (m_flowManager->document())
         m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
