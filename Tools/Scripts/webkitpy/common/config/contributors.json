@@ -1,5 +1,13 @@
 {
    "Committers" : {
+      "Aakash Jain" : {
+         "emails" : [
+            "aakash_jain@apple.com"
+         ],
+         "nicks" : [
+            "aakash_jain"
+         ]
+      },
       "Aaron Boodman" : {
          "emails" : [
             "aa@chromium.org"
