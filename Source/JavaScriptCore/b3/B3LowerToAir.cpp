@@ -132,32 +132,6 @@ public:
     }
 
 private:
-    bool highBitsAreZero(Value* value)
-    {
-        switch (value->opcode()) {
-        case Const32:
-            // We will use a Move immediate instruction, which may sign extend.
-            return value->asInt32() >= 0;
-        case Trunc:
-            // Trunc is copy-propagated, so the value may have garbage in the high bits.
-            return false;
-        case CCall:
-            // Calls are allowed to have garbage in their high bits.
-            return false;
-        case Patchpoint:
-            // For now, we assume that patchpoints may return garbage in the high bits. This simplifies
-            // the interface. We may revisit for performance reasons later.
-            return false;
-        case Phi:
-            // FIXME: We could do this right.
-            // https://bugs.webkit.org/show_bug.cgi?id=150845
-            return false;
-        default:
-            // All other operations that return Int32 should lower to something that zero extends.
-            return value->type() == Int32;
-        }
-    }
-
     bool shouldCopyPropagate(Value* value)
     {
         switch (value->opcode()) {

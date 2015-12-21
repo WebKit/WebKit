@@ -1,3 +1,12 @@
+2015-12-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, remove highBitsAreZero(), it's unused.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::shouldCopyPropagate):
+        (JSC::B3::Air::LowerToAir::highBitsAreZero): Deleted.
+
 2015-12-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, fix the !FTL_USES_B3 build after r194334.
