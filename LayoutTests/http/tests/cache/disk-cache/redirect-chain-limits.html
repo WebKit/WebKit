@@ -1,0 +1,48 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+description("Test the limits of redirect chain length.");
+
+function redirectChain(length, uniqueId, onload)
+{
+    internals.clearMemoryCache()
+
+    var url = "resources/redirect-chain.php?length=" + length + "&uniqueId=" + uniqueId;
+
+    xhr = new XMLHttpRequest();
+    xhr.onload = onload;
+    xhr.onerror = onload;
+    xhr.onabort = onload;
+    xhr.open("get", url, true);
+
+    xhr.send();
+}
+
+function testRedirectChain(length, completionHandler)
+{
+    var uniqueId = Math.floor(Math.random() * 1000000000000);
+    redirectChain(length, uniqueId, (ev) => {
+        redirectChain(length, uniqueId, (ev) => {
+            debug("Redirect chain length: " + length)
+            debug("Response status code: " + ev.target.status);
+            debug("Response source: " + internals.xhrResponseSource(ev.target));
+            debug("");
+            completionHandler();
+        });
+    });
+}
+
+testRedirectChain(1, () => {
+    testRedirectChain(5, () => {
+        testRedirectChain(6, () => {
+            testRedirectChain(20, () => {
+                testRedirectChain(40, () => {
+                    finishJSTest();
+                });
+            });
+        });
+    });
+});
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

@@ -1,3 +1,14 @@
+2015-12-21  Antti Koivisto  <antti@apple.com>
+
+        Limit cached redirect chain length
+        https://bugs.webkit.org/show_bug.cgi?id=152477
+
+        Reviewed by Andreas Kling.
+
+        * http/tests/cache/disk-cache/redirect-chain-limits-expected.txt: Added.
+        * http/tests/cache/disk-cache/redirect-chain-limits.html: Added.
+        * http/tests/cache/disk-cache/resources/redirect-chain.phpl: Added.
+
 2015-12-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking webaudio/audiocontext-state-interrupted.html  as a flaky crasher on mac-wk1

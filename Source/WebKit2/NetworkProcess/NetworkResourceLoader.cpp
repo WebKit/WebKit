@@ -116,6 +116,20 @@ bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
         return false;
     if (!request.url().protocolIsInHTTPFamily())
         return false;
+
+    return true;
+}
+
+bool NetworkResourceLoader::canUseCachedRedirect(const ResourceRequest& request) const
+{
+    if (!canUseCache(request))
+        return false;
+    // Limit cached redirects to avoid cycles and other trouble.
+    // Networking layer follows over 30 redirects but caching that many seems unnecessary.
+    static const unsigned maximumCachedRedirectCount { 5 };
+    if (m_redirectCount > maximumCachedRedirectCount)
+        return false;
+
     return true;
 }
 #endif
@@ -384,6 +398,8 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 
 void NetworkResourceLoader::willSendRedirectedRequest(const ResourceRequest& request, const WebCore::ResourceRequest& redirectRequest, const ResourceResponse& redirectResponse)
 {
+    ++m_redirectCount;
+
     if (isSynchronous()) {
         ResourceRequest overridenRequest = redirectRequest;
         // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
@@ -400,7 +416,7 @@ void NetworkResourceLoader::willSendRedirectedRequest(const ResourceRequest& req
     sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(redirectRequest, redirectResponse));
 
 #if ENABLE(NETWORK_CACHE)
-    if (canUseCache(request))
+    if (canUseCachedRedirect(request))
         NetworkCache::singleton().storeRedirect(request, redirectResponse, redirectRequest);
 #else
     UNUSED_PARAM(request);
@@ -412,7 +428,8 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
 #if ENABLE(NETWORK_CACHE)
     if (m_isWaitingContinueWillSendRequestForCachedRedirect) {
         LOG(NetworkCache, "(NetworkProcess) Retrieving cached redirect");
-        if (canUseCache(newRequest))
+
+        if (canUseCachedRedirect(newRequest))
             retrieveCacheEntry(newRequest);
         else
             startNetworkLoad(newRequest);
@@ -535,6 +552,7 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr
     ASSERT(entry->redirectRequest());
     LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
 
+    ++m_redirectCount;
     sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(*entry->redirectRequest(), entry->response()));
     m_isWaitingContinueWillSendRequestForCachedRedirect = true;
 }

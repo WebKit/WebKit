@@ -61,10 +61,6 @@ public:
 
     NetworkLoad* networkLoad() const { return m_networkLoad.get(); }
 
-#if ENABLE(NETWORK_CACHE)
-    bool canUseCache(const WebCore::ResourceRequest&) const;
-#endif
-
     void start();
     void abort();
 
@@ -116,6 +112,9 @@ private:
     virtual uint64_t messageSenderDestinationID() override { return m_parameters.identifier; }
 
 #if ENABLE(NETWORK_CACHE)
+    bool canUseCache(const WebCore::ResourceRequest&) const;
+    bool canUseCachedRedirect(const WebCore::ResourceRequest&) const;
+
     void retrieveCacheEntry(const WebCore::ResourceRequest&);
     void didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
@@ -149,6 +148,7 @@ private:
     size_t m_bytesReceived { 0 };
     size_t m_bufferedDataEncodedDataLength { 0 };
     RefPtr<WebCore::SharedBuffer> m_bufferedData;
+    unsigned m_redirectCount { 0 };
 
     std::unique_ptr<SynchronousLoadData> m_synchronousLoadData;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
