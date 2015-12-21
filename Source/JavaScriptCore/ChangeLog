@@ -1,3 +1,37 @@
+2015-12-21  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should do vararg calls
+        https://bugs.webkit.org/show_bug.cgi?id=152468
+
+        Reviewed by Benjamin Poulain.
+
+        This adds FTL->B3 lowering of all kinds of varargs calls - forwarding or not, tail or not,
+        and construct or not. Like all other such lowerings, all of the code is in one place in
+        FTLLower.
+
+        I removed code for varargs and exception spill slots from the B3 path, since it won't need
+        it. The plan is to rely on B3 doing the spilling for us by using some combination of early
+        clobber and late use.
+
+        This adds ValueRep::emitRestore(), a helpful method for emitting code to restore any ValueRep
+        into any 64-bit Reg (FPR or GPR).
+
+        I wrote new tests for vararg calls, because I wasn't sure which of the existing ones we can
+        run. These are short-running tests, so I'm not worried about bloating our test suite.
+
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::dump):
+        (JSC::B3::ValueRep::emitRestore):
+        * b3/B3ValueRep.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        * ftl/FTLState.h:
+        * tests/stress/varargs-no-forward.js: Added.
+        * tests/stress/varargs-simple.js: Added.
+        * tests/stress/varargs-two-level.js: Added.
+
 2015-12-18  Mark Lam  <mark.lam@apple.com>
 
         Add unary operator tests to compare JIT and LLINT results.

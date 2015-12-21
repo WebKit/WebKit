@@ -85,8 +85,6 @@ public:
     B3::PatchpointValue* handleStackOverflowExceptionValue { nullptr };
     B3::PatchpointValue* handleExceptionValue { nullptr };
     B3::StackSlotValue* capturedValue { nullptr };
-    B3::StackSlotValue* varargsSpillSlotsValue { nullptr };
-    B3::StackSlotValue* exceptionHandlingSpillSlotValue { nullptr };
 #else // FTL_USES_B3
     unsigned handleStackOverflowExceptionStackmapID { UINT_MAX };
     unsigned handleExceptionStackmapID { UINT_MAX };

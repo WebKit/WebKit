@@ -58,6 +58,7 @@
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
 #include "ScratchRegisterAllocator.h"
+#include "SetupVarargsFrame.h"
 #include "VirtualRegister.h"
 #include "Watchdog.h"
 #include <atomic>
@@ -205,8 +206,8 @@ public:
 #endif // FTL_USE_B3
 
         auto preOrder = m_graph.blocksInPreOrder();
-        
-        // If we have any CallVarargs then we need to have a spill slot for it.
+
+#if !FTL_USES_B3
         bool hasVarargs = false;
         size_t maxNumberOfCatchSpills = 0;
         for (DFG::BasicBlock* block : preOrder) {
@@ -270,10 +271,8 @@ public:
             }
         }
 
-#if FTL_USES_B3
-        UNUSED_PARAM(hasVarargs);
-        // FIXME
-#else
+        // B3 doesn't need the varargs spill slot because we just use call arg area size as a way to
+        // request spill slots.
         if (hasVarargs) {
             LValue varargsSpillSlots = m_out.alloca(
                 arrayType(m_out.int64, JSCallVarargs::numSpillSlotsNeeded()));
@@ -284,6 +283,7 @@ public:
                 m_out.int32Zero, varargsSpillSlots);
         }
 
+        // B3 doesn't need the exception spill slot because we just use the 
         if (m_graph.m_hasExceptionHandlers && maxNumberOfCatchSpills) {
             RegisterSet volatileRegisters = RegisterSet::volatileRegistersForJSCall();
             maxNumberOfCatchSpills = std::min(volatileRegisters.numberOfSetRegisters(), maxNumberOfCatchSpills);
@@ -296,7 +296,7 @@ public:
                 m_out.constInt64(m_ftlState.exceptionHandlingSpillSlotStackmapID),
                 m_out.int32Zero, exceptionHandlingVolatileRegistersSpillSlots);
         }
-#endif
+#endif // !FTL_USES_B3
         
         // We should not create any alloca's after this point, since they will cease to
         // be mem2reg candidates.
@@ -5076,32 +5076,263 @@ private:
     
     void compileCallOrConstructVarargs()
     {
-#if FTL_USES_B3
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
-#else
+        Node* node = m_node;
         LValue jsCallee = lowJSValue(m_node->child1());
         LValue thisArg = lowJSValue(m_node->child3());
         
         LValue jsArguments = nullptr;
+        bool forwarding = false;
         
-        switch (m_node->op()) {
+        switch (node->op()) {
         case CallVarargs:
         case TailCallVarargs:
         case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
-            jsArguments = lowJSValue(m_node->child2());
+            jsArguments = lowJSValue(node->child2());
             break;
         case CallForwardVarargs:
         case TailCallForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
         case ConstructForwardVarargs:
+            forwarding = true;
             break;
         default:
-            DFG_CRASH(m_graph, m_node, "bad node type");
+            DFG_CRASH(m_graph, node, "bad node type");
             break;
         }
         
+#if FTL_USES_B3
+        // FIXME: Need a story for exceptions.
+        // https://bugs.webkit.org/show_bug.cgi?id=151686
+
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+
+        // Append the forms of the arguments that we will use before any clobbering happens.
+        patchpoint->append(jsCallee, ValueRep::reg(GPRInfo::regT0));
+        if (jsArguments)
+            patchpoint->append(jsArguments, ValueRep::SomeRegister);
+        patchpoint->append(thisArg, ValueRep::SomeRegister);
+
+        if (!forwarding) {
+            // Now append them again for after clobbering. Note that the compiler may ask us to use a
+            // different register for the late for the post-clobbering version of the value. This gives
+            // the compiler a chance to spill these values without having to burn any callee-saves.
+            patchpoint->append(jsCallee, ValueRep::LateColdAny);
+            patchpoint->append(jsArguments, ValueRep::LateColdAny);
+            patchpoint->append(thisArg, ValueRep::LateColdAny);
+        }
+
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
+        patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+
+        // This is the minimum amount of call arg area stack space that all JS->JS calls always have.
+        unsigned minimumJSCallAreaSize =
+            sizeof(CallerFrameAndPC) +
+            WTF::roundUpToMultipleOf(stackAlignmentBytes(), 5 * sizeof(EncodedJSValue));
+
+        m_proc.requestCallArgAreaSize(minimumJSCallAreaSize);
+        
+        CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
+        State* state = &m_ftlState;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                CallSiteIndex callSiteIndex =
+                    state->jitCode->common.addUniqueCallSiteIndex(codeOrigin);
+
+                // FIXME: We would ask the OSR exit descriptor to prepare and then we would modify
+                // the OSRExit data structure inside the OSRExitHandle to link it up to this call.
+                // Also, the exception checks JumpList should be linked to somewhere.
+                // https://bugs.webkit.org/show_bug.cgi?id=151686
+                CCallHelpers::JumpList exceptions;
+
+                jit.store32(
+                    CCallHelpers::TrustedImm32(callSiteIndex.bits()),
+                    CCallHelpers::tagFor(VirtualRegister(JSStack::ArgumentCount)));
+
+                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
+                CallVarargsData* data = node->callVarargsData();
+
+                unsigned argIndex = 1;
+                GPRReg calleeGPR = params[argIndex++].gpr();
+                ASSERT(calleeGPR == GPRInfo::regT0);
+                GPRReg argumentsGPR = jsArguments ? params[argIndex++].gpr() : InvalidGPRReg;
+                GPRReg thisGPR = params[argIndex++].gpr();
+
+                B3::ValueRep calleeLateRep;
+                B3::ValueRep argumentsLateRep;
+                B3::ValueRep thisLateRep;
+                if (!forwarding) {
+                    // If we're not forwarding then we'll need callee, arguments, and this after we
+                    // have potentially clobbered calleeGPR, argumentsGPR, and thisGPR. Our technique
+                    // for this is to supply all of those operands as late uses in addition to
+                    // specifying them as early uses. It's possible that the late use uses a spill
+                    // while the early use uses a register, and it's possible for the late and early
+                    // uses to use different registers. We do know that the late uses interfere with
+                    // all volatile registers and so won't use those, but the early uses may use
+                    // volatile registers and in the case of calleeGPR, it's pinned to regT0 so it
+                    // definitely will.
+                    //
+                    // Note that we have to be super careful with these. It's possible that these
+                    // use a shuffling of the registers used for calleeGPR, argumentsGPR, and
+                    // thisGPR. If that happens and we do for example:
+                    //
+                    //     calleeLateRep.emitRestore(jit, calleeGPR);
+                    //     argumentsLateRep.emitRestore(jit, calleeGPR);
+                    //
+                    // Then we might end up with garbage if calleeLateRep.gpr() == argumentsGPR and
+                    // argumentsLateRep.gpr() == calleeGPR.
+                    //
+                    // We do a variety of things to prevent this from happening. For example, we use
+                    // argumentsLateRep before needing the other two and after we've already stopped
+                    // using the *GPRs. Also, we pin calleeGPR to regT0, and rely on the fact that
+                    // the *LateReps cannot use volatile registers (so they cannot be regT0, so
+                    // calleeGPR != argumentsLateRep.gpr() and calleeGPR != thisLateRep.gpr()).
+                    //
+                    // An alternative would have been to just use early uses and early-clobber all
+                    // volatile registers. But that would force callee, arguments, and this into
+                    // callee-save registers even if we have to spill them. We don't want spilling to
+                    // use up three callee-saves.
+                    //
+                    // TL;DR: The way we use LateReps here is dangerous and barely works but achieves
+                    // some desirable performance properties, so don't mistake the cleverness for
+                    // elegance.
+                    calleeLateRep = params[argIndex++];
+                    argumentsLateRep = params[argIndex++];
+                    thisLateRep = params[argIndex++];
+                }
+
+                // Get some scratch registers.
+                RegisterSet usedRegisters;
+                usedRegisters.merge(RegisterSet::stackRegisters());
+                usedRegisters.merge(RegisterSet::reservedHardwareRegisters());
+                usedRegisters.merge(RegisterSet::calleeSaveRegisters());
+                usedRegisters.set(calleeGPR);
+                if (argumentsGPR != InvalidGPRReg)
+                    usedRegisters.set(argumentsGPR);
+                usedRegisters.set(thisGPR);
+                if (calleeLateRep.isReg())
+                    usedRegisters.set(calleeLateRep.reg());
+                if (argumentsLateRep.isReg())
+                    usedRegisters.set(argumentsLateRep.reg());
+                if (thisLateRep.isReg())
+                    usedRegisters.set(thisLateRep.reg());
+                ScratchRegisterAllocator allocator(usedRegisters);
+                GPRReg scratchGPR1 = allocator.allocateScratchGPR();
+                GPRReg scratchGPR2 = allocator.allocateScratchGPR();
+                GPRReg scratchGPR3 = forwarding ? allocator.allocateScratchGPR() : InvalidGPRReg;
+                RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
+
+                auto callWithExceptionCheck = [&] (void* callee) {
+                    jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR);
+                    jit.call(GPRInfo::nonPreservedNonArgumentGPR);
+                    exceptions.append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
+                };
+
+                auto adjustStack = [&] (GPRReg amount) {
+                    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), amount, CCallHelpers::stackPointerRegister);
+                };
+
+                unsigned originalStackHeight = params.proc().frameSize();
+
+                if (forwarding) {
+                    jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR2);
+                    
+                    CCallHelpers::JumpList slowCase;
+                    emitSetupVarargsFrameFastCase(jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, node->child2()->origin.semantic.inlineCallFrame, data->firstVarArgOffset, slowCase);
+
+                    CCallHelpers::Jump done = jit.jump();
+                    slowCase.link(&jit);
+                    jit.setupArgumentsExecState();
+                    callWithExceptionCheck(bitwise_cast<void*>(operationThrowStackOverflowForVarargs));
+                    jit.abortWithReason(DFGVarargsThrowingPathDidNotThrow);
+                    
+                    done.link(&jit);
+
+                    adjustStack(scratchGPR2);
+                } else {
+                    jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR1);
+                    jit.setupArgumentsWithExecState(argumentsGPR, scratchGPR1, CCallHelpers::TrustedImm32(data->firstVarArgOffset));
+                    callWithExceptionCheck(bitwise_cast<void*>(operationSizeFrameForVarargs));
+
+                    jit.move(GPRInfo::returnValueGPR, scratchGPR1);
+                    jit.move(CCallHelpers::TrustedImm32(originalStackHeight / sizeof(EncodedJSValue)), scratchGPR2);
+                    argumentsLateRep.emitRestore(jit, argumentsGPR);
+                    emitSetVarargsFrame(jit, scratchGPR1, false, scratchGPR2, scratchGPR2);
+                    jit.addPtr(CCallHelpers::TrustedImm32(-minimumJSCallAreaSize), scratchGPR2, CCallHelpers::stackPointerRegister);
+                    jit.setupArgumentsWithExecState(scratchGPR2, argumentsGPR, CCallHelpers::TrustedImm32(data->firstVarArgOffset), scratchGPR1);
+                    callWithExceptionCheck(bitwise_cast<void*>(operationSetupVarargsFrame));
+                    
+                    adjustStack(GPRInfo::returnValueGPR);
+
+                    calleeLateRep.emitRestore(jit, GPRInfo::regT0);
+
+                    // This may not emit code if thisGPR got a callee-save. Also, we're guaranteed
+                    // that thisGPR != GPRInfo::regT0 because regT0 interferes with it.
+                    thisLateRep.emitRestore(jit, thisGPR);
+                }
+                
+                jit.store64(GPRInfo::regT0, CCallHelpers::calleeFrameSlot(JSStack::Callee));
+                jit.store64(thisGPR, CCallHelpers::calleeArgumentSlot(0));
+                
+                CallLinkInfo::CallType callType;
+                if (node->op() == ConstructVarargs || node->op() == ConstructForwardVarargs)
+                    callType = CallLinkInfo::ConstructVarargs;
+                else if (node->op() == TailCallVarargs || node->op() == TailCallForwardVarargs)
+                    callType = CallLinkInfo::TailCallVarargs;
+                else
+                    callType = CallLinkInfo::CallVarargs;
+                
+                bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
+                
+                CCallHelpers::DataLabelPtr targetToCheck;
+                CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
+                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
+                    CCallHelpers::TrustedImmPtr(0));
+                
+                CCallHelpers::Call fastCall;
+                CCallHelpers::Jump done;
+                
+                if (isTailCall) {
+                    jit.prepareForTailCallSlow();
+                    fastCall = jit.nearTailCall();
+                } else {
+                    fastCall = jit.nearCall();
+                    done = jit.jump();
+                }
+                
+                slowPath.link(&jit);
+                
+                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+                CCallHelpers::Call slowCall = jit.nearCall();
+                
+                if (isTailCall)
+                    jit.abortWithReason(JITDidReturnFromTailCall);
+                else
+                    done.link(&jit);
+                
+                callLinkInfo->setUpCall(callType, node->origin.semantic, GPRInfo::regT0);
+                
+                jit.addPtr(
+                    CCallHelpers::TrustedImm32(-originalStackHeight),
+                    GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+                
+                jit.addLinkTask(
+                    [=] (LinkBuffer& linkBuffer) {
+                        MacroAssemblerCodePtr linkCall =
+                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                        linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
+                        
+                        callLinkInfo->setCallLocations(
+                            linkBuffer.locationOfNearCall(slowCall),
+                            linkBuffer.locationOf(targetToCheck),
+                            linkBuffer.locationOfNearCall(fastCall));
+                    });
+            });
+
+        setJSValue(patchpoint);
+#else
         unsigned stackmapID = m_stackmapIDs++;
         
         StackmapArgumentList arguments;
@@ -5115,15 +5346,15 @@ private:
 
         arguments.insert(0, m_out.constInt32(2 + !!jsArguments));
         arguments.insert(0, constNull(m_out.ref8));
-        arguments.insert(0, m_out.constInt32(sizeOfICFor(m_node)));
+        arguments.insert(0, m_out.constInt32(sizeOfICFor(node)));
         arguments.insert(0, m_out.constInt64(stackmapID));
         
         LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMCCallConv);
         
-        m_ftlState.jsCallVarargses.append(JSCallVarargs(stackmapID, m_node, codeOriginDescriptionOfCallSite()));
+        m_ftlState.jsCallVarargses.append(JSCallVarargs(stackmapID, node, codeOriginDescriptionOfCallSite()));
 
-        switch (m_node->op()) {
+        switch (node->op()) {
         case TailCallVarargs:
         case TailCallForwardVarargs:
             m_out.unreachable();
@@ -5495,7 +5726,7 @@ private:
         DFG_ASSERT(m_graph, m_node, m_origin.exitOK);
         
 #if FTL_USES_B3
-        B3::PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
         OSRExitDescriptor* descriptor = appendOSRExitDescriptor(noValue(), nullptr);
         NodeOrigin origin = m_origin;
         patchpoint->appendColdAnys(buildExitArguments(descriptor, origin.forExit, noValue()));

@@ -34,7 +34,11 @@
 #include "Reg.h"
 #include <wtf/PrintStream.h>
 
-namespace JSC { namespace B3 {
+namespace JSC {
+
+class AssemblyHelpers;
+
+namespace B3 {
 
 // We use this class to describe value representations at stackmaps. It's used both to force a
 // representation and to get the representation. When the B3 client forces a representation, we say
@@ -215,6 +219,10 @@ public:
     }
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
+
+    // This has a simple contract: it emits code to restore the value into the given register. This
+    // will work even if it requires moving between bits a GPR and a FPR.
+    void emitRestore(AssemblyHelpers&, Reg);
 
 private:
     Kind m_kind;

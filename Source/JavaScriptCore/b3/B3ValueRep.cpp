@@ -28,6 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AssemblyHelpers.h"
+
 namespace JSC { namespace B3 {
 
 void ValueRep::dump(PrintStream& out) const
@@ -53,6 +55,49 @@ void ValueRep::dump(PrintStream& out) const
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg)
+{
+    if (reg.isGPR()) {
+        switch (kind()) {
+        case Register:
+            if (isGPR())
+                jit.move(gpr(), reg.gpr());
+            else
+                jit.moveDoubleTo64(fpr(), reg.gpr());
+            break;
+        case Stack:
+            jit.load64(AssemblyHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP()), reg.gpr());
+            break;
+        case Constant:
+            jit.move(AssemblyHelpers::TrustedImm64(value()), reg.gpr());
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        return;
+    }
+    
+    switch (kind()) {
+    case Register:
+        if (isGPR())
+            jit.move64ToDouble(gpr(), reg.fpr());
+        else
+            jit.moveDouble(fpr(), reg.fpr());
+        break;
+    case Stack:
+        jit.loadDouble(AssemblyHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP()), reg.fpr());
+        break;
+    case Constant:
+        jit.move(AssemblyHelpers::TrustedImm64(value()), jit.scratchRegister());
+        jit.move64ToDouble(jit.scratchRegister(), reg.fpr());
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 } } // namespace JSC::B3
