@@ -291,6 +291,9 @@ webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [
 webkit.org/b/151729 [ Yosemite ] http/tests/xmlhttprequest/methods-async.html [ Pass Timeout ]
 
 webkit.org/b/152025 [ Debug ] inspector/console/messagesCleared.html [ Pass Timeout ]
+
+webkit.org/b/152492 [ Debug ] inspector/debugger/break-on-exception-catch.html [ Pass Timeout ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
