@@ -52,6 +52,8 @@ webkit.org/b/150564 svg/repaint/add-background-property-on-root.html [ Pass Time
 
 webkit.org/b/152272 [ Debug ] js/regress/generator-with-several-types.html [ Pass Timeout ]
 
+webkit.org/b/152485 webaudio/audiocontext-state-interrupted.html [ Pass Crash ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
