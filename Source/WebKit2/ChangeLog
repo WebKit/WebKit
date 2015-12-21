@@ -1,3 +1,35 @@
+2015-12-21  Dan Bernstein  <mitz@apple.com>
+
+        Different and incorrect flags are passed to sendSync when accessibility is enabled, SpinRunLoopWhileWaitingForReply
+        https://bugs.webkit.org/show_bug.cgi?id=126021
+
+        Reviewed by Darin Adler.
+
+        Get rid of SpinRunLoopWhileWaitingForReply because it’s not used anymore.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForSyncReply): Removed the SpinRunLoopWhileWaitingForReply branch.
+
+        * Platform/IPC/Connection.h: Removed SpinRunLoopWhileWaitingForReply.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel): Don’t check
+          WebPage::synchronousMessagesShouldSpinRunLoop() and don’t specify
+          SpinRunLoopWhileWaitingForReply.
+        (WebKit::WebChromeClient::runJavaScriptAlert): Ditto.
+        (WebKit::WebChromeClient::runJavaScriptConfirm): Ditto.
+        (WebKit::WebChromeClient::runJavaScriptPrompt): Ditto.
+        (WebKit::WebChromeClient::print): Ditto.
+        (WebKit::WebChromeClient::exceededDatabaseQuota): Ditto.
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota): Ditto.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::synchronousMessagesShouldSpinRunLoop): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2015-12-20  Joonghun Park  <jh718.park@samsung.com>
 
         [WK2][EFL] Use WebsiteDataStore instead of WebDatabaseManager which has been deleted in r194295

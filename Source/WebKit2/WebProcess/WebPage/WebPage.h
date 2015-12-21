@@ -881,10 +881,6 @@ public:
 
     void getBytecodeProfile(uint64_t callbackID);
     
-    // Some platforms require accessibility-enabled processes to spin the run loop so that the WebProcess doesn't hang.
-    // While this is not ideal, it does not have to be applied to every platform at the moment.
-    static bool synchronousMessagesShouldSpinRunLoop();
-
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
     void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);

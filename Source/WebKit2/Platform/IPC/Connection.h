@@ -69,10 +69,7 @@ enum MessageSendFlags {
 enum SyncMessageSendFlags {
     // Use this to inform that this sync call will suspend this process until the user responds with input.
     InformPlatformProcessWillSuspend = 1 << 0,
-    // Some platform accessibility clients can't suspend gracefully and need to spin the run loop so WebProcess doesn't hang.
-    // FIXME (126021): Remove when no platforms need to support this.
-    SpinRunLoopWhileWaitingForReply = 1 << 1,
-    UseFullySynchronousModeForTesting = 1 << 2,
+    UseFullySynchronousModeForTesting = 1 << 1,
 };
 
 enum WaitForMessageFlags {
