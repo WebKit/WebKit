@@ -1,3 +1,20 @@
+2015-12-21  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Unexpected exception assigning to this._property inside arrow function
+        https://bugs.webkit.org/show_bug.cgi?id=152028
+
+        Reviewed by Saam Barati.
+
+        The issue appeared in case if in arrow function created base-level lexical envioronment, and in this case 
+        |this| value was loaded from wrong scope. The problem was that loading of the |this| happened too early when
+        compiling bytecode because the bytecode generators's scope stack wasn't in sync with runtime scope stack.
+        To fix issue loading of |this| was moved after initializeDefaultParameterValuesAndSetupFunctionScopeStack 
+        in BytecodeGenerator.cpp   
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * tests/stress/arrowfunction-lexical-bind-this-2.js:
+
 2015-12-21  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should do vararg calls

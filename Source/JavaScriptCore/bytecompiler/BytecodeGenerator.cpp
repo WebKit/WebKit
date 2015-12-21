@@ -521,12 +521,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     m_newTargetRegister = addVar();
     switch (parseMode) {
-    case SourceParseMode::ArrowFunctionMode: {
-        if (functionNode->usesThis())
-            emitLoadThisFromArrowFunctionLexicalEnvironment();
-        break;
-    }
-
     case SourceParseMode::GeneratorWrapperFunctionMode: {
         m_generatorRegister = addVar();
 
@@ -550,20 +544,22 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     }
 
     default: {
-        if (isConstructor()) {
-            emitMove(m_newTargetRegister, &m_thisRegister);
-            if (constructorKind() == ConstructorKind::Derived)
-                emitMoveEmptyValue(&m_thisRegister);
-            else
-                emitCreateThis(&m_thisRegister);
-        } else if (constructorKind() != ConstructorKind::None) {
-            emitThrowTypeError("Cannot call a class constructor");
-        } else if (functionNode->usesThis() || codeBlock->usesEval()) {
-            m_codeBlock->addPropertyAccessInstruction(instructions().size());
-            emitOpcode(op_to_this);
-            instructions().append(kill(&m_thisRegister));
-            instructions().append(0);
-            instructions().append(0);
+        if (SourceParseMode::ArrowFunctionMode != parseMode) {
+            if (isConstructor()) {
+                emitMove(m_newTargetRegister, &m_thisRegister);
+                if (constructorKind() == ConstructorKind::Derived)
+                    emitMoveEmptyValue(&m_thisRegister);
+                else
+                    emitCreateThis(&m_thisRegister);
+            } else if (constructorKind() != ConstructorKind::None) {
+                emitThrowTypeError("Cannot call a class constructor");
+            } else if (functionNode->usesThis() || codeBlock->usesEval()) {
+                m_codeBlock->addPropertyAccessInstruction(instructions().size());
+                emitOpcode(op_to_this);
+                instructions().append(kill(&m_thisRegister));
+                instructions().append(0);
+                instructions().append(0);
+            }
         }
         break;
     }
@@ -573,6 +569,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // because a function's default parameter ExpressionNodes will use temporary registers.
     m_TDZStack.append(std::make_pair(*parentScopeTDZVariables, false));
     initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, functionNode, functionSymbolTable, symbolTableConstantIndex, captures);
+    
+    // Loading |this| inside an arrow function must be done after initializeDefaultParameterValuesAndSetupFunctionScopeStack()
+    // because that function sets up the SymbolTable stack and emitLoadThisFromArrowFunctionLexicalEnvironment()
+    // consults the SymbolTable stack
+    if (parseMode == SourceParseMode::ArrowFunctionMode && functionNode->usesThis())
+        emitLoadThisFromArrowFunctionLexicalEnvironment();
 
     if (needsToUpdateArrowFunctionContext() && !codeBlock->isArrowFunction()) {
         initializeArrowFunctionContextScopeIfNeeded(functionSymbolTable);

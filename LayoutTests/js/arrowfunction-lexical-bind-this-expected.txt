@@ -16,6 +16,9 @@ PASS fake.steal() === ownerObj is true
 PASS real.borrow()() === real is true
 PASS arrowFunction('-this') is "right-this"
 PASS hostObj.func('-this') is "right-this"
+PASS arrowWithEval.func() is "new-value"
+PASS fooObject.arr() is internal_value_1
+PASS fooObject._id is internal_value_2
 PASS successfullyParsed is true
 
 TEST COMPLETE
