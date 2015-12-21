@@ -115,6 +115,7 @@ private:
     bool canUseCache(const WebCore::ResourceRequest&) const;
     bool canUseCachedRedirect(const WebCore::ResourceRequest&) const;
 
+    void tryStoreAsCacheEntry();
     void retrieveCacheEntry(const WebCore::ResourceRequest&);
     void didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);

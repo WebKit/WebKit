@@ -338,29 +338,12 @@ void NetworkResourceLoader::didReceiveBuffer(RefPtr<SharedBuffer>&& buffer, int 
 void NetworkResourceLoader::didFinishLoading(double finishTime)
 {
 #if ENABLE(NETWORK_CACHE)
-    if (canUseCache(m_networkLoad->currentRequest())) {
-        if (m_cacheEntryForValidation) {
-            // 304 Not Modified
-            ASSERT(m_response.httpStatusCode() == 304);
-            LOG(NetworkCache, "(NetworkProcess) revalidated");
-            didRetrieveCacheEntry(WTF::move(m_cacheEntryForValidation));
-            return;
-        }
-
-        bool isPrivateSession = sessionID().isEphemeral();
-        if (m_bufferedDataForCache && m_response.isHTTP() && !isPrivateSession) {
-            // Keep the connection alive.
-            RefPtr<NetworkConnectionToWebProcess> connection(&connectionToWebProcess());
-            RefPtr<NetworkResourceLoader> loader(this);
-            NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTF::move(m_bufferedDataForCache), [loader, connection](NetworkCache::MappedBody& mappedBody) {
-#if ENABLE(SHAREABLE_RESOURCE)
-                if (mappedBody.shareableResourceHandle.isNull())
-                    return;
-                LOG(NetworkCache, "(NetworkProcess) sending DidCacheResource");
-                loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody.shareableResourceHandle, loader->sessionID()));
-#endif
-            });
-        }
+    if (m_cacheEntryForValidation) {
+        // 304 Not Modified
+        ASSERT(m_response.httpStatusCode() == 304);
+        LOG(NetworkCache, "(NetworkProcess) revalidated");
+        didRetrieveCacheEntry(WTF::move(m_cacheEntryForValidation));
+        return;
     }
 #endif
 
@@ -375,6 +358,10 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
         }
         send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
     }
+
+#if ENABLE(NETWORK_CACHE)
+    tryStoreAsCacheEntry();
+#endif
 
     cleanup();
 }
@@ -500,6 +487,26 @@ bool NetworkResourceLoader::sendBufferMaybeAborting(SharedBuffer& buffer, size_t
 }
 
 #if ENABLE(NETWORK_CACHE)
+void NetworkResourceLoader::tryStoreAsCacheEntry()
+{
+    if (!canUseCache(m_networkLoad->currentRequest()))
+        return;
+    if (!m_bufferedDataForCache)
+        return;
+
+    // Keep the connection alive.
+    RefPtr<NetworkConnectionToWebProcess> connection(&connectionToWebProcess());
+    RefPtr<NetworkResourceLoader> loader(this);
+    NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTF::move(m_bufferedDataForCache), [loader, connection](NetworkCache::MappedBody& mappedBody) {
+#if ENABLE(SHAREABLE_RESOURCE)
+        if (mappedBody.shareableResourceHandle.isNull())
+            return;
+        LOG(NetworkCache, "(NetworkProcess) sending DidCacheResource");
+        loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody.shareableResourceHandle, loader->sessionID()));
+#endif
+    });
+}
+
 void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
     if (isSynchronous()) {
