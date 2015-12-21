@@ -1,3 +1,16 @@
+2015-12-21  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement String.prototype.localeCompare in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147607
+
+        Reviewed by Darin Adler.
+
+        * js/script-tests/string-localeCompare.js:
+        * js/script-tests/string-prototype-properties.js: Update error message.
+        * js/string-localeCompare-expected.txt:
+        * js/string-prototype-properties-expected.txt: Update error message.
+        * js/string-localeCompare.html:
+
 2015-12-20  Jeremy Zerfas  <WebKit@JeremyZerfas.com>
 
         Don't allocate a NSImage and skip unneeded call to TIFFRepresentation when copying image to clipboard.

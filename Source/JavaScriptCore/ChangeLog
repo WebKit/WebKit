@@ -1,3 +1,21 @@
+2015-12-21  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement String.prototype.localeCompare in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147607
+
+        Reviewed by Darin Adler.
+
+        Add localeCompare in builtin JavaScript that delegates comparing to Intl.Collator.
+        Keep existing native implementation for use if INTL flag is disabled.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/StringPrototype.js: Added.
+        (localeCompare):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2015-12-18  Filip Pizlo  <fpizlo@apple.com>
 
         Implement compareDouble in B3/Air
