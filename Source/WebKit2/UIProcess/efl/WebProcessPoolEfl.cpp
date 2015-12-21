@@ -84,7 +84,7 @@ static void initializeInspectorServer()
 
 String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
 {
-    return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
+    return API::WebsiteDataStore::defaultApplicationCacheDirectory();
 }
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
@@ -99,12 +99,12 @@ void WebProcessPool::platformInvalidateContext()
 
 String WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory()
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/Databases";
+    return API::WebsiteDataStore::defaultWebSQLDatabaseDirectory();
 }
 
 String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/IndexedDB";
+    return API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory();
 }
 
 String WebProcessPool::platformDefaultIconDatabasePath() const
@@ -114,28 +114,17 @@ String WebProcessPool::platformDefaultIconDatabasePath() const
 
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
+    return API::WebsiteDataStore::defaultLocalStorageDirectory();
 }
 
 String WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory()
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/MediaKeys";
+    return API::WebsiteDataStore::defaultMediaKeysStorageDirectory();
 }
 
 String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 {
-#if ENABLE(NETWORK_CACHE)
-    static const char networkCacheSubdirectory[] = "WebKitCache";
-#else
-    static const char networkCacheSubdirectory[] = "webkit";
-#endif
-
-    StringBuilder diskCacheDirectory;
-    diskCacheDirectory.append(efreet_cache_home_get());
-    diskCacheDirectory.appendLiteral("/");
-    diskCacheDirectory.append(networkCacheSubdirectory);
-
-    return diskCacheDirectory.toString();
+    return API::WebsiteDataStore::defaultNetworkCacheDirectory();
 }
 
 void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)

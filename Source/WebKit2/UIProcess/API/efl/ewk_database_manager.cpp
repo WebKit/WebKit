@@ -26,22 +26,41 @@
 #include "config.h"
 #include "ewk_database_manager.h"
 
+#include "APIWebsiteDataStore.h"
+#include "GenericCallback.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "ewk_database_manager_private.h"
 #include "ewk_security_origin_private.h"
+#include <WebCore/DatabaseTracker.h>
+#include <WebCore/OriginLock.h>
+#include <WebCore/SecurityOrigin.h>
 
 using namespace WebKit;
 
-EwkDatabaseManager::EwkDatabaseManager(WKDatabaseManagerRef databaseManager)
-    : m_databaseManager(databaseManager)
+typedef GenericCallback<API::Array*> ArrayCallback;
+
+EwkDatabaseManager::EwkDatabaseManager()
 {
-    ASSERT(databaseManager);
 }
 
-void EwkDatabaseManager::getDatabaseOrigins(WKDatabaseManagerGetDatabaseOriginsFunction callback, void* context) const
+void EwkDatabaseManager::getDatabaseOrigins(Ewk_Database_Manager_Get_Database_Origins_Function callback, void* context) const
 {
-    WKDatabaseManagerGetDatabaseOrigins(m_databaseManager.get(), context, callback);
+    if (!callback)
+        return;
+
+    RefPtr<ArrayCallback> arrayCallback = ArrayCallback::create(toGenericCallbackFunction(context, callback));
+
+    Vector<RefPtr<WebCore::SecurityOrigin>> origins;
+    Vector<RefPtr<API::Object>> securityOrigins;
+
+    WebCore::DatabaseTracker::trackerWithDatabasePath(API::WebsiteDataStore::defaultWebSQLDatabaseDirectory())->origins(origins);
+    securityOrigins.reserveInitialCapacity(origins.size());
+
+    for (const auto& originIdentifier : origins)
+        securityOrigins.uncheckedAppend(API::SecurityOrigin::create(*originIdentifier));
+
+    arrayCallback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).ptr());
 }
 
 Eina_List* EwkDatabaseManager::createOriginList(WKArrayRef origins) const

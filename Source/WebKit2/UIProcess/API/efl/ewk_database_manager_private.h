@@ -26,22 +26,23 @@
 #ifndef ewk_database_manager_private_h
 #define ewk_database_manager_private_h
 
-#include "WKDatabaseManager.h"
 #include "WKRetainPtr.h"
+#include "WebsiteDataStore.h"
 #include "ewk_security_origin_private.h"
 #include <WebKit/WKBase.h>
 
 using namespace WebKit;
 
+typedef void (*Ewk_Database_Manager_Get_Database_Origins_Function)(WKArrayRef, WKErrorRef, void*);
+
 class EwkDatabaseManager {
 public:
-    explicit EwkDatabaseManager(WKDatabaseManagerRef);
+    EwkDatabaseManager();
 
     Eina_List* createOriginList(WKArrayRef wkList) const;
-    void getDatabaseOrigins(WKDatabaseManagerGetDatabaseOriginsFunction callback, void* context) const;
+    void getDatabaseOrigins(Ewk_Database_Manager_Get_Database_Origins_Function callback, void* context) const;
 
 private:
-    WKRetainPtr<WKDatabaseManagerRef> m_databaseManager;
     mutable HashMap<WKSecurityOriginRef, RefPtr<EwkSecurityOrigin> > m_wrapperCache;
 };
 #endif // ewk_database_manager_private_h

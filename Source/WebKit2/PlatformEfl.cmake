@@ -83,6 +83,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/cpp/efl/WKEinaSharedString.cpp
 
+    UIProcess/API/efl/APIWebsiteDataStoreEfl.cpp
     UIProcess/API/efl/EwkView.cpp
     UIProcess/API/efl/GestureRecognizer.cpp
     UIProcess/API/efl/SnapshotImageGL.cpp

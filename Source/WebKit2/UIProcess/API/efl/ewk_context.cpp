@@ -66,7 +66,7 @@ static inline ContextMap& contextMap()
 
 EwkContext::EwkContext(WKContextRef context, const String& extensionsPath)
     : m_context(context)
-    , m_databaseManager(std::make_unique<EwkDatabaseManager>(WKContextGetDatabaseManager(context)))
+    , m_databaseManager(std::make_unique<EwkDatabaseManager>())
     , m_storageManager(std::make_unique<EwkStorageManager>(WKContextGetKeyValueStorageManager(context)))
 #if ENABLE(BATTERY_STATUS)
     , m_batteryProvider(BatteryProvider::create(context))

@@ -1,3 +1,38 @@
+2015-12-20  Joonghun Park  <jh718.park@samsung.com>
+
+        [WK2][EFL] Use WebsiteDataStore instead of WebDatabaseManager which has been deleted in r194295
+        https://bugs.webkit.org/show_bug.cgi?id=152460
+
+        Reviewed by Gyuyoung Kim.
+
+        Use WebsiteDataStore to support EFL WebDatabase API and to fix build break.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        * UIProcess/API/efl/APIWebsiteDataStoreEfl.cpp: Copied from Source/WebKit2/UIProcess/API/APIWebsiteDataStore.cpp.
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        (EwkDatabaseManager::EwkDatabaseManager):
+        (EwkDatabaseManager::getDatabaseOrigins):
+        * UIProcess/API/efl/ewk_database_manager_private.h:
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+
 2015-12-20  Dan Bernstein  <mitz@apple.com>
 
         Remove unused setToolbarHeight
