@@ -113,7 +113,7 @@ void updateDistances(Inst& inst, FPDefDistance& localDistance, unsigned& distanc
         return;
     }
 
-    inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type) {
+    inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type, Arg::Width) {
         ASSERT_WITH_MESSAGE(tmp.isReg(), "This phase must be run after register allocation.");
 
         if (tmp.isFPR() && Arg::isDef(role))
@@ -203,7 +203,7 @@ void fixPartialRegisterStalls(Code& code)
             if (hasPartialXmmRegUpdate(inst)) {
                 RegisterSet defs;
                 RegisterSet uses;
-                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type) {
+                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type, Arg::Width) {
                     if (tmp.isFPR()) {
                         if (Arg::isDef(role))
                             defs.set(tmp.fpr());

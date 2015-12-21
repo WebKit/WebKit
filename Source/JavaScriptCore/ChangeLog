@@ -1,3 +1,123 @@
+2015-12-21  Filip Pizlo  <fpizlo@apple.com>
+
+        B3->Air lowering incorrectly copy-propagates over ZExt32's
+        https://bugs.webkit.org/show_bug.cgi?id=152365
+
+        Reviewed by Benjamin Poulain.
+
+        The instruction selector thinks that Value's that return Int32's are going to always be lowered
+        to instructions that zero-extend the destination. But this isn't actually true. If you have an
+        Add32 with a destination on the stack (i.e. spilled) then it only writes 4 bytes. Then, the
+        filler will load 8 bytes from the stack at the point of use. So, the use of the Add32 will see
+        garbage in the high bits.
+
+        The fact that the spiller chose to use 8 bytes for a Tmp that gets defined by an Add32 is a
+        pretty sad bug, but:
+
+        - It's entirely up to the spiller to decide how many bytes to use for a Tmp, since we do not
+          ascribe a type to Tmps. We could ascribe types to Tmps, but then coalescing would become
+          harder. Our goal is to fix the bug while still enabling coalescing in cases like "a[i]" where
+          "i" is a 32-bit integer that is computed using operations that already do zero-extension.
+
+        - More broadly, it's strange that the instruction selector decides whether a Value will be
+          lowered to something that zero-extends. That's too constraining, since the most optimal
+          instruction selection might involve something that doesn't zero-extend in cases of spilling, so
+          the zero-extension should only happen if it's actually needed. This means that we need to
+          understand which Air instructions cause zero-extensions.
+
+        - If we know which Air instructions cause zero-extensions, then we don't need the instruction
+          selector to copy-propagate ZExt32's. We have copy-propagation in Air thanks to the register
+          allocator.
+
+        In fact, the register allocator is exactly where all of the pieces come together. It's there that
+        we want to know which operations zero-extend and which don't. It also wants to know how many bits
+        of a Tmp each instruction reads. Armed with that information, the register allocator can emit
+        more optimal spill code, use less stack space for spill slots, and coalesce Move32's. As a bonus,
+        on X86, it replaces Move's with Move32's whenever it can. On X86, Move32 is cheaper.
+
+        This fixes a crash bug in V8/encrypt. After fixing this, I only needed two minor fixes to get
+        V8/encrypt to run. We're about 10% behind LLVM on steady state throughput on this test. It
+        appears to be mostly due to excessive spilling caused by CCall slow paths. That's fixable: we
+        could make CCalls on slow paths use a variant of CCallSpecial that promises not to clobber any
+        registers, and then have it emit spill code around the call itself. LLVM probably gets this
+        optimization from its live range splitting.
+
+        I tried writing a regression test. The problem is that you need garbage on the stack for this to
+        work, and I didn't feel like writing a flaky test. It appears that running V8/encrypt will cover
+        this, so we do have coverage.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::isX86):
+        (JSC::isX86_64):
+        (JSC::optimizeForARMv7IDIVSupported):
+        (JSC::optimizeForX86):
+        (JSC::optimizeForX86_64):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::highBitsAreZero):
+        (JSC::B3::Air::LowerToAir::shouldCopyPropagate):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        * b3/B3Value.h:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirArg.cpp:
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::pointerWidth):
+        (JSC::B3::Air::Arg::isAnyUse):
+        (JSC::B3::Air::Arg::isColdUse):
+        (JSC::B3::Air::Arg::isEarlyUse):
+        (JSC::B3::Air::Arg::isDef):
+        (JSC::B3::Air::Arg::isZDef):
+        (JSC::B3::Air::Arg::widthForB3Type):
+        (JSC::B3::Air::Arg::conservativeWidth):
+        (JSC::B3::Air::Arg::minimumWidth):
+        (JSC::B3::Air::Arg::bytes):
+        (JSC::B3::Air::Arg::widthForBytes):
+        (JSC::B3::Air::Arg::Arg):
+        (JSC::B3::Air::Arg::forEachTmp):
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::forEachArg):
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode):
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        (JSC::B3::Air::fixPartialRegisterStalls):
+        * b3/air/AirInst.cpp:
+        (JSC::B3::Air::Inst::hasArgEffects):
+        * b3/air/AirInst.h:
+        (JSC::B3::Air::Inst::forEachTmpFast):
+        (JSC::B3::Air::Inst::forEachTmp):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::forEachTmpWithExtraClobberedRegs):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::AbstractLiveness::AbstractLiveness):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::execute):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirTmpWidth.cpp: Added.
+        (JSC::B3::Air::TmpWidth::TmpWidth):
+        (JSC::B3::Air::TmpWidth::~TmpWidth):
+        * b3/air/AirTmpWidth.h: Added.
+        (JSC::B3::Air::TmpWidth::width):
+        (JSC::B3::Air::TmpWidth::defWidth):
+        (JSC::B3::Air::TmpWidth::useWidth):
+        (JSC::B3::Air::TmpWidth::Widths::Widths):
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckTrickyMegaCombo):
+        (JSC::B3::testCheckTwoMegaCombos):
+        (JSC::B3::run):
+
 2015-12-21  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement String.prototype.localeCompare in ECMA-402

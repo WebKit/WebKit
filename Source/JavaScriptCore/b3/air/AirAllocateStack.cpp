@@ -104,7 +104,7 @@ void allocateStack(Code& code)
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
             inst.forEachArg(
-                [&] (Arg& arg, Arg::Role role, Arg::Type) {
+                [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
                     if (role == Arg::UseAddr && arg.isStack())
                         escapingStackSlots.add(arg.stackSlot());
                 });
@@ -148,7 +148,7 @@ void allocateStack(Code& code)
                 dataLog("Interfering: ", WTF::pointerListDump(localCalc.live()), "\n");
 
             inst.forEachArg(
-                [&] (Arg& arg, Arg::Role role, Arg::Type) {
+                [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
                     if (!Arg::isDef(role))
                         return;
                     if (!arg.isStack())

@@ -80,7 +80,7 @@ bool eliminateDeadCode(Code& code)
         // This instruction should be presumed dead, if its Args are all dead.
         bool storesToLive = false;
         inst.forEachArg(
-            [&] (Arg& arg, Arg::Role role, Arg::Type) {
+            [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
                 if (!Arg::isDef(role))
                     return;
                 storesToLive |= isArgLive(arg);

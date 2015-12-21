@@ -178,6 +178,12 @@ void printInternal(PrintStream& out, Arg::Role role)
     case Arg::UseDef:
         out.print("UseDef");
         return;
+    case Arg::ZDef:
+        out.print("ZDef");
+        return;
+    case Arg::UseZDef:
+        out.print("UseZDef");
+        return;
     case Arg::UseAddr:
         out.print("UseAddr");
         return;

@@ -55,7 +55,7 @@ template<> struct ForEach<StackSlot*> {
     static void forEach(Inst& inst, const Functor& functor)
     {
         inst.forEachArg(
-            [&] (Arg& arg, Arg::Role role, Arg::Type type) {
+            [&] (Arg& arg, Arg::Role role, Arg::Type type, Arg::Width width) {
                 if (!arg.isStack())
                     return;
                 StackSlot* stackSlot = arg.stackSlot();
@@ -66,7 +66,7 @@ template<> struct ForEach<StackSlot*> {
                 // semantics of "Anonymous".
                 // https://bugs.webkit.org/show_bug.cgi?id=151128
                 
-                functor(stackSlot, role, type);
+                functor(stackSlot, role, type, width);
                 arg = Arg::stack(stackSlot, arg.offset());
             });
     }
@@ -99,12 +99,13 @@ template<typename Functor>
 inline void Inst::forEachTmpWithExtraClobberedRegs(Inst* nextInst, const Functor& functor)
 {
     forEachTmp(
-        [&] (Tmp& tmpArg, Arg::Role role, Arg::Type argType) {
-            functor(tmpArg, role, argType);
+        [&] (Tmp& tmpArg, Arg::Role role, Arg::Type argType, Arg::Width argWidth) {
+            functor(tmpArg, role, argType, argWidth);
         });
 
     auto reportReg = [&] (Reg reg) {
-        functor(Tmp(reg), Arg::Def, reg.isGPR() ? Arg::GP : Arg::FP);
+        Arg::Type type = reg.isGPR() ? Arg::GP : Arg::FP;
+        functor(Tmp(reg), Arg::Def, type, Arg::conservativeWidth(type));
     };
 
     if (hasSpecial())

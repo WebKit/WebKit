@@ -4218,10 +4218,17 @@ private:
         LValue length = m_out.load32(kids[0], m_heaps.JSString_length);
         for (unsigned i = 1; i < numKids; ++i) {
             flags = m_out.bitAnd(flags, m_out.load32(kids[i], m_heaps.JSString_flags));
+#if FTL_USES_B3
+            B3::CheckValue* lengthCheck = m_out.speculateAdd(
+                length, m_out.load32(kids[i], m_heaps.JSString_length));
+            blessSpeculation(lengthCheck, Uncountable, noValue(), nullptr, m_origin);
+            length = lengthCheck;
+#else // FTL_USES_B3            
             LValue lengthAndOverflow = m_out.addWithOverflow32(
                 length, m_out.load32(kids[i], m_heaps.JSString_length));
             speculate(Uncountable, noValue(), 0, m_out.extractValue(lengthAndOverflow, 1));
             length = m_out.extractValue(lengthAndOverflow, 0);
+#endif // FTL_USES_B3
         }
         m_out.store32(
             m_out.bitAnd(m_out.constInt32(JSString::Is8Bit), flags),

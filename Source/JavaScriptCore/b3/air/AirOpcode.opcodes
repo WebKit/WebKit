@@ -23,14 +23,17 @@
 
 # Syllabus:
 #
-# Roles and types:
-# U:G => use of a general-purpose register or value
-# D:G => def of a general-purpose register or value
-# UD:G => use and def of a general-purpose register or value
-# UA:G => UseAddr (see comment in Arg.h)
-# U:F => use of a float register or value
-# D:F => def of a float register or value
-# UD:F => use and def of a float register or value
+# Examples of some roles, types, and widths:
+# U:G:32 => use of the low 32 bits of a general-purpose register or value
+# D:G:32 => def of the low 32 bits of a general-purpose register or value
+# UD:G:32 => use and def of the low 32 bits of a general-purpose register or value
+# U:G:64 => use of the low 64 bits of a general-purpose register or value
+# ZD:G:32 => def of all bits of a general-purpose register, where all but the low 32 bits are guaranteed to be zeroed.
+# UA:G:Ptr => UseAddr (see comment in Arg.h)
+# U:F:32 => use of a float register or value
+# U:F:64 => use of a double register or value
+# D:F:32 => def of a float register or value
+# UD:F:32 => use and def of a float register or value
 #
 # Argument kinds:
 # Tmp => temporary or register
@@ -44,11 +47,11 @@
 # of things. So, although this file uses a particular indentation style, none of the whitespace or
 # even newlines are meaningful to the parser. For example, you could write:
 #
-# Foo42 U:G, UD:F Imm, Tmp Addr, Tmp
+# Foo42 U:G:32, UD:F:32 Imm, Tmp Addr, Tmp
 #
 # And the parser would know that this is the same as:
 #
-# Foo42 U:G, UD:F
+# Foo42 U:G:32, UD:F:32
 #     Imm, Tmp
 #     Addr, Tmp
 #
@@ -58,22 +61,22 @@
 # union of those architectures. For example, if this is the only overload of the opcode, then it makes the
 # opcode only available on x86_64:
 #
-# x86_64: Fuzz UD:G, D:G
+# x86_64: Fuzz UD:G:64, D:G:64
 #     Tmp, Tmp
 #     Tmp, Addr
 #
 # But this only restricts the two-operand form, the other form is allowed on all architectures:
 #
-# x86_64: Fuzz UD:G, D:G
+# x86_64: Fuzz UD:G:64, D:G:64
 #     Tmp, Tmp
 #     Tmp, Addr
-# Fuzz UD:G, D:G, U:F
+# Fuzz UD:G:Ptr, D:G:Ptr, U:F:Ptr
 #     Tmp, Tmp, Tmp
 #     Tmp, Addr, Tmp
 #
 # And you can also restrict individual forms:
 #
-# Thingy UD:G, D:G
+# Thingy UD:G:32, D:G:32
 #     Tmp, Tmp
 #     arm64: Tmp, Addr
 #
@@ -81,7 +84,7 @@
 # form. In this example, the version that takes an address is only available on armv7 while the other
 # versions are available on armv7 or x86_64:
 #
-# x86_64 armv7: Buzz U:G, UD:F
+# x86_64 armv7: Buzz U:G:32, UD:F:32
 #     Tmp, Tmp
 #     Imm, Tmp
 #     armv7: Addr, Tmp
@@ -103,214 +106,214 @@
 
 Nop
 
-Add32 U:G, UD:G
+Add32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Imm, Addr
     Imm, Tmp
     x86: Addr, Tmp
     x86: Tmp, Addr
 
-Add32 U:G, U:G, D:G
+Add32 U:G:32, U:G:32, ZD:G:32
     Imm, Tmp, Tmp
     Tmp, Tmp, Tmp
 
-64: Add64 U:G, UD:G
+64: Add64 U:G:64, UD:G:64
     Tmp, Tmp
     x86: Imm, Addr
     Imm, Tmp
     x86: Addr, Tmp
     x86: Tmp, Addr
 
-64: Add64 U:G, U:G, D:G
+64: Add64 U:G:64, U:G:64, D:G:64
     Imm, Tmp, Tmp
     Tmp, Tmp, Tmp
 
-AddDouble U:F, UD:F
+AddDouble U:F:64, UD:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
-AddFloat U:F, UD:F
+AddFloat U:F:32, UD:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 
-Sub32 U:G, UD:G
-    Tmp, Tmp
-    x86: Imm, Addr
-    Imm, Tmp
-    x86: Addr, Tmp
-    x86: Tmp, Addr
-
-64: Sub64 U:G, UD:G
+Sub32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Imm, Addr
     Imm, Tmp
     x86: Addr, Tmp
     x86: Tmp, Addr
 
-SubDouble U:F, UD:F
+64: Sub64 U:G:64, UD:G:64
+    Tmp, Tmp
+    x86: Imm, Addr
+    Imm, Tmp
+    x86: Addr, Tmp
+    x86: Tmp, Addr
+
+SubDouble U:F:64, UD:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
-SubFloat U:F, UD:F
+SubFloat U:F:32, UD:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 
-Neg32 UD:G
+Neg32 UZD:G:32
     Tmp
     Addr
 
-64: Neg64 UD:G
+64: Neg64 UD:G:64
     Tmp
 
-Mul32 U:G, UD:G
+Mul32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Addr, Tmp
 
-Mul32 U:G, U:G, D:G
+Mul32 U:G:32, U:G:32, ZD:G:32
     Imm, Tmp, Tmp
 
-64: Mul64 U:G, UD:G
+64: Mul64 U:G:64, UD:G:64
     Tmp, Tmp
 
-MulDouble U:F, UD:F
-    Tmp, Tmp
-    x86: Addr, Tmp
-
-MulFloat U:F, UD:F
+MulDouble U:F:64, UD:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
-DivDouble U:F, UD:F
+MulFloat U:F:32, UD:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 
-DivFloat U:F, UD:F
+DivDouble U:F:32, UD:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 
-x86: X86ConvertToDoubleWord32 U:G, D:G
+DivFloat U:F:32, UD:F:32
+    Tmp, Tmp
+    x86: Addr, Tmp
+
+x86: X86ConvertToDoubleWord32 U:G:32, ZD:G:32
     Tmp*, Tmp*
 
-x86_64: X86ConvertToQuadWord64 U:G, D:G
+x86_64: X86ConvertToQuadWord64 U:G:64, D:G:64
     Tmp*, Tmp*
 
-x86: X86Div32 UD:G, UD:G, U:G
+x86: X86Div32 UZD:G:32, UZD:G:32, U:G:32
     Tmp*, Tmp*, Tmp
 
-x86_64: X86Div64 UD:G, UD:G, U:G
+x86_64: X86Div64 UZD:G:64, UZD:G:64, U:G:64
     Tmp*, Tmp*, Tmp
 
-Lea UA:G, D:G
+Lea UA:G:Ptr, D:G:Ptr
     Addr, Tmp
 
-And32 U:G, UD:G
+And32 U:G:32, UZD:G:32
     Tmp, Tmp
     Imm, Tmp
     x86: Tmp, Addr
     x86: Addr, Tmp
     x86: Imm, Addr
 
-64: And64 U:G, UD:G
+64: And64 U:G:64, UD:G:64
     Tmp, Tmp
     Imm, Tmp
 
-AndDouble U:F, UD:F
+AndDouble U:F:64, UD:F:64
     Tmp, Tmp
 
-AndFloat U:F, UD:F
+AndFloat U:F:32, UD:F:32
     Tmp, Tmp
 
-Lshift32 U:G, UD:G
+Lshift32 U:G:32, UZD:G:32
     Tmp*, Tmp
     Imm, Tmp
 
-64: Lshift64 U:G, UD:G
+64: Lshift64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
 
-Rshift32 U:G, UD:G
+Rshift32 U:G:32, UZD:G:32
     Tmp*, Tmp
     Imm, Tmp
 
-64: Rshift64 U:G, UD:G
+64: Rshift64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
 
-Urshift32 U:G, UD:G
+Urshift32 U:G:32, UZD:G:32
     Tmp*, Tmp
     Imm, Tmp
 
-64: Urshift64 U:G, UD:G
+64: Urshift64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
 
-Or32 U:G, UD:G
+Or32 U:G:32, UZD:G:32
     Tmp, Tmp
     Imm, Tmp
     x86: Tmp, Addr
     x86: Addr, Tmp
     x86: Imm, Addr
 
-64: Or64 U:G, UD:G
+64: Or64 U:G:64, UD:G:64
     Tmp, Tmp
     Imm, Tmp
 
-Xor32 U:G, UD:G
+Xor32 U:G:32, UZD:G:32
     Tmp, Tmp
     Imm, Tmp
     x86: Tmp, Addr
     x86: Addr, Tmp
     x86: Imm, Addr
 
-64: Xor64 U:G, UD:G
+64: Xor64 U:G:64, UD:G:64
     Tmp, Tmp
     x86: Tmp, Addr
     Imm, Tmp
 
-Not32 UD:G
+Not32 UZD:G:32
     Tmp
     x86: Addr
 
-64: Not64 UD:G
+64: Not64 UD:G:64
     Tmp
     x86: Addr
 
-CeilDouble U:F, UD:F
+CeilDouble U:F:64, UD:F:64
     Tmp, Tmp
     Addr, Tmp
 
-CeilFloat U:F, UD:F
+CeilFloat U:F:32, UD:F:32
     Tmp, Tmp
     Addr, Tmp
 
-SqrtDouble U:F, UD:F
+SqrtDouble U:F:64, UD:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
-SqrtFloat U:F, UD:F
+SqrtFloat U:F:32, UD:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 
-ConvertInt32ToDouble U:G, D:F
+ConvertInt32ToDouble U:G:32, D:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
-64: ConvertInt64ToDouble U:G, D:F
+64: ConvertInt64ToDouble U:G:64, D:F:64
     Tmp, Tmp
 
-CountLeadingZeros32 U:G, D:G
-    Tmp, Tmp
-    x86: Addr, Tmp
-
-64: CountLeadingZeros64 U:G, D:G
+CountLeadingZeros32 U:G:32, ZD:G:32
     Tmp, Tmp
     x86: Addr, Tmp
 
-ConvertDoubleToFloat U:F, D:F
+64: CountLeadingZeros64 U:G:64, D:G:64
     Tmp, Tmp
     x86: Addr, Tmp
 
-ConvertFloatToDouble U:F, D:F
+ConvertDoubleToFloat U:F:64, D:F:32
+    Tmp, Tmp
+    x86: Addr, Tmp
+
+ConvertFloatToDouble U:F:32, D:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
@@ -318,7 +321,7 @@ ConvertFloatToDouble U:F, D:F
 # the platform. I'm not entirely sure that this is a good thing; it might be better to just have a
 # Move64 instruction. OTOH, our MacroAssemblers already have this notion of "move()" that basically
 # means movePtr.
-Move U:G, D:G
+Move U:G:Ptr, D:G:Ptr
     Tmp, Tmp
     Imm, Tmp as signExtend32ToPtr
     Imm64, Tmp
@@ -328,7 +331,7 @@ Move U:G, D:G
     Tmp, Index as storePtr
     Imm, Addr as storePtr
 
-Move32 U:G, D:G
+Move32 U:G:32, ZD:G:32
     Tmp, Tmp as zeroExtend32ToPtr
     Addr, Tmp as load32
     Index, Tmp as load32
@@ -337,118 +340,118 @@ Move32 U:G, D:G
     Imm, Addr as store32
     Imm, Index as store32
 
-SignExtend32ToPtr U:G, D:G
+SignExtend32ToPtr U:G:32, D:G:Ptr
     Tmp, Tmp
 
-ZeroExtend8To32 U:G, D:G
+ZeroExtend8To32 U:G:8, ZD:G:32
     Tmp, Tmp
     Addr, Tmp as load8
     Index, Tmp as load8
 
-SignExtend8To32 U:G, D:G
+SignExtend8To32 U:G:8, ZD:G:32
     Tmp, Tmp
     x86: Addr, Tmp as load8SignedExtendTo32
     Index, Tmp as load8SignedExtendTo32
 
-ZeroExtend16To32 U:G, D:G
+ZeroExtend16To32 U:G:16, ZD:G:32
     Tmp, Tmp
     Addr, Tmp as load16
     Index, Tmp as load16
 
-SignExtend16To32 U:G, D:G
+SignExtend16To32 U:G:16, ZD:G:32
     Tmp, Tmp
     Addr, Tmp as load16SignedExtendTo32
     Index, Tmp as load16SignedExtendTo32
 
-MoveFloat U:F, D:F
+MoveFloat U:F:32, D:F:32
     Tmp, Tmp as moveDouble
     Addr, Tmp as loadFloat
     Index, Tmp as loadFloat
     Tmp, Addr as storeFloat
     Tmp, Index as storeFloat
 
-MoveDouble U:F, D:F
+MoveDouble U:F:64, D:F:64
     Tmp, Tmp
     Addr, Tmp as loadDouble
     Index, Tmp as loadDouble
     Tmp, Addr as storeDouble
     Tmp, Index as storeDouble
 
-MoveZeroToDouble D:F
+MoveZeroToDouble D:F:64
     Tmp
 
-64: Move64ToDouble U:G, D:F
+64: Move64ToDouble U:G:64, D:F:64
     Tmp, Tmp
     Addr, Tmp as loadDouble
     Index, Tmp as loadDouble
 
-MoveInt32ToPacked U:G, D:F
+MoveInt32ToPacked U:G:32, D:F:32
     Tmp, Tmp
     Addr, Tmp as loadFloat
     Index, Tmp as loadFloat
 
-64: MoveDoubleTo64 U:F, D:G
+64: MoveDoubleTo64 U:F:64, D:G:64
     Tmp, Tmp
     Addr, Tmp as load64
     Index, Tmp as load64
 
-MovePackedToInt32 U:F, D:G
+MovePackedToInt32 U:F:32, D:G:32
     Tmp, Tmp
     Addr, Tmp as load32
     Index, Tmp as load32
 
-Load8 U:G, D:G
+Load8 U:G:8, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-Store8 U:G, D:G
+Store8 U:G:8, D:G:8
     Tmp, Index
     Tmp, Addr
     Imm, Index
     Imm, Addr
 
-Load8SignedExtendTo32 U:G, D:G
+Load8SignedExtendTo32 U:G:8, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-Load16 U:G, D:G
+Load16 U:G:16, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-Load16SignedExtendTo32 U:G, D:G
+Load16SignedExtendTo32 U:G:16, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-Compare32 U:G, U:G, U:G, D:G
+Compare32 U:G:32, U:G:32, U:G:32, ZD:G:32
     RelCond, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp
 
-64: Compare64 U:G, U:G, U:G, D:G
+64: Compare64 U:G:32, U:G:64, U:G:64, ZD:G:32
     RelCond, Tmp, Imm, Tmp
     RelCond, Tmp, Tmp, Tmp
 
-Test32 U:G, U:G, U:G, D:G
+Test32 U:G:32, U:G:32, U:G:32, ZD:G:32
     x86: ResCond, Addr, Imm, Tmp
     ResCond, Tmp, Tmp, Tmp
 
-64: Test64 U:G, U:G, U:G, D:G
+64: Test64 U:G:32, U:G:64, U:G:64, ZD:G:32
     ResCond, Tmp, Imm, Tmp
     ResCond, Tmp, Tmp, Tmp
 
-CompareDouble U:G, U:F, U:F, D:G
+CompareDouble U:G:32, U:F:64, U:F:64, ZD:G:32
     DoubleCond, Tmp, Tmp, Tmp
 
-CompareFloat U:G, U:F, U:F, D:G
+CompareFloat U:G:32, U:F:32, U:F:32, ZD:G:32
     DoubleCond, Tmp, Tmp, Tmp
 
 # Note that branches have some logic in AirOptimizeBlockOrder.cpp. If you add new branches, please make sure
 # you opt them into the block order optimizations.
 
-Branch8 U:G, U:G, U:G /branch
+Branch8 U:G:32, U:G:8, U:G:8 /branch
     x86: RelCond, Addr, Imm
     x86: RelCond, Index, Imm
 
-Branch32 U:G, U:G, U:G /branch
+Branch32 U:G:32, U:G:32, U:G:32 /branch
     x86: RelCond, Addr, Imm
     RelCond, Tmp, Tmp
     RelCond, Tmp, Imm
@@ -456,17 +459,17 @@ Branch32 U:G, U:G, U:G /branch
     x86: RelCond, Addr, Tmp
     x86: RelCond, Index, Imm
 
-64: Branch64 U:G, U:G, U:G /branch
+64: Branch64 U:G:32, U:G:64, U:G:64 /branch
     RelCond, Tmp, Tmp
     x86: RelCond, Tmp, Addr
     x86: RelCond, Addr, Tmp
     x86: RelCond, Index, Tmp
 
-BranchTest8 U:G, U:G, U:G /branch
+BranchTest8 U:G:32, U:G:8, U:G:8 /branch
     x86: ResCond, Addr, Imm
     x86: ResCond, Index, Imm
 
-BranchTest32 U:G, U:G, U:G /branch
+BranchTest32 U:G:32, U:G:32, U:G:32 /branch
     ResCond, Tmp, Tmp
     ResCond, Tmp, Imm
     x86: ResCond, Addr, Imm
@@ -474,95 +477,95 @@ BranchTest32 U:G, U:G, U:G /branch
 
 # Warning: forms that take an immediate will sign-extend their immediate. You probably want
 # BranchTest32 in most cases where you use an immediate.
-64: BranchTest64 U:G, U:G, U:G /branch
+64: BranchTest64 U:G:32, U:G:64, U:G:64 /branch
     ResCond, Tmp, Tmp
     ResCond, Tmp, Imm
     x86: ResCond, Addr, Imm
     x86: ResCond, Addr, Tmp
     x86: ResCond, Index, Imm
 
-BranchDouble U:G, U:F, U:F /branch
+BranchDouble U:G:32, U:F:64, U:F:64 /branch
     DoubleCond, Tmp, Tmp
 
-BranchFloat U:G, U:F, U:F /branch
+BranchFloat U:G:32, U:F:32, U:F:32 /branch
     DoubleCond, Tmp, Tmp
 
-BranchAdd32 U:G, U:G, UD:G /branch
+BranchAdd32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp
     ResCond, Imm, Tmp
     x86: ResCond, Imm, Addr
     x86: ResCond, Tmp, Addr
     x86: ResCond, Addr, Tmp
 
-64: BranchAdd64 U:G, U:G, UD:G /branch
+64: BranchAdd64 U:G:32, U:G:64, UD:G:64 /branch
     ResCond, Imm, Tmp
     ResCond, Tmp, Tmp
 
-BranchMul32 U:G, U:G, UD:G /branch
+BranchMul32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp
     x86: ResCond, Addr, Tmp
 
-BranchMul32 U:G, U:G, U:G, D:G /branch
+BranchMul32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
     ResCond, Tmp, Imm, Tmp
 
-64: BranchMul64 U:G, U:G, UD:G /branch
+64: BranchMul64 U:G:32, U:G:64, UZD:G:64 /branch
     ResCond, Tmp, Tmp
 
-BranchSub32 U:G, U:G, UD:G /branch
+BranchSub32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp
     ResCond, Imm, Tmp
     x86: ResCond, Imm, Addr
     x86: ResCond, Tmp, Addr
     x86: ResCond, Addr, Tmp
 
-64: BranchSub64 U:G, U:G, UD:G /branch
+64: BranchSub64 U:G:32, U:G:64, UD:G:64 /branch
     ResCond, Imm, Tmp
     ResCond, Tmp, Tmp
 
-BranchNeg32 U:G, UD:G /branch
+BranchNeg32 U:G:32, UZD:G:32 /branch
     ResCond, Tmp
 
-64: BranchNeg64 U:G, UD:G /branch
+64: BranchNeg64 U:G:32, UZD:G:64 /branch
     ResCond, Tmp
 
-MoveConditionally32 U:G, U:G, U:G, U:G, UD:G
+MoveConditionally32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp
 
-64: MoveConditionally64 U:G, U:G, U:G, U:G, UD:G
+64: MoveConditionally64 U:G:32, U:G:64, U:G:64, U:G:Ptr, UD:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp
 
-MoveConditionallyTest32 U:G, U:G, U:G, U:G, UD:G
+MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp
     ResCond, Tmp, Imm, Tmp, Tmp
 
-64: MoveConditionallyTest64 U:G, U:G, U:G, U:G, UD:G
+64: MoveConditionallyTest64 U:G:32, U:G:64, U:G:64, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp
     ResCond, Tmp, Imm, Tmp, Tmp
 
-MoveConditionallyDouble U:G, U:F, U:F, U:G, UD:G
+MoveConditionallyDouble U:G:32, U:F:64, U:F:64, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
-MoveConditionallyFloat U:G, U:F, U:F, U:G, UD:G
+MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
-MoveDoubleConditionally32 U:G, U:G, U:G, U:F, UD:F
+MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, UD:F:64
     RelCond, Tmp, Tmp, Tmp, Tmp
 
-64: MoveDoubleConditionally64 U:G, U:G, U:G, U:F, UD:F
+64: MoveDoubleConditionally64 U:G:32, U:G:64, U:G:64, U:F:64, UD:F:64
     RelCond, Tmp, Tmp, Tmp, Tmp
 
-MoveDoubleConditionallyTest32 U:G, U:G, U:G, U:F, UD:F
+MoveDoubleConditionallyTest32 U:G:32, U:G:32, U:G:32, U:F:64, UD:F:64
     ResCond, Tmp, Tmp, Tmp, Tmp
     ResCond, Tmp, Imm, Tmp, Tmp
 
-64: MoveDoubleConditionallyTest64 U:G, U:G, U:G, U:F, UD:F
+64: MoveDoubleConditionallyTest64 U:G:32, U:G:64, U:G:64, U:F:64, UD:F:64
     ResCond, Tmp, Tmp, Tmp, Tmp
     ResCond, Tmp, Imm, Tmp, Tmp
 
-MoveDoubleConditionallyDouble U:G, U:F, U:F, U:F, UD:F
+MoveDoubleConditionallyDouble U:G:32, U:F:64, U:F:64, U:F:64, UD:F:64
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
-MoveDoubleConditionallyFloat U:G, U:F, U:F, U:F, UD:F
+MoveDoubleConditionallyFloat U:G:32, U:F:32, U:F:32, U:F:64, UD:F:64
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
 Jump /branch

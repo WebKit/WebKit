@@ -695,6 +695,8 @@
 		0FE0502C1AA9095600D33B33 /* VarOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE050231AA9095600D33B33 /* VarOffset.cpp */; };
 		0FE0502D1AA9095600D33B33 /* VarOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE050241AA9095600D33B33 /* VarOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE0502F1AAA806900D33B33 /* ScopedArgumentsTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE0502E1AAA806900D33B33 /* ScopedArgumentsTable.cpp */; };
+		0FE0E4AD1C24C94A002E17B6 /* AirTmpWidth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE0E4AB1C24C94A002E17B6 /* AirTmpWidth.cpp */; };
+		0FE0E4AE1C24C94A002E17B6 /* AirTmpWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE0E4AC1C24C94A002E17B6 /* AirTmpWidth.h */; };
 		0FE228ED1436AB2700196C48 /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE228EB1436AB2300196C48 /* Options.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
 		0FE254F61ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE254F41ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.cpp */; };
@@ -2835,6 +2837,8 @@
 		0FE050231AA9095600D33B33 /* VarOffset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VarOffset.cpp; sourceTree = "<group>"; };
 		0FE050241AA9095600D33B33 /* VarOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VarOffset.h; sourceTree = "<group>"; };
 		0FE0502E1AAA806900D33B33 /* ScopedArgumentsTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedArgumentsTable.cpp; sourceTree = "<group>"; };
+		0FE0E4AB1C24C94A002E17B6 /* AirTmpWidth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirTmpWidth.cpp; path = b3/air/AirTmpWidth.cpp; sourceTree = "<group>"; };
+		0FE0E4AC1C24C94A002E17B6 /* AirTmpWidth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirTmpWidth.h; path = b3/air/AirTmpWidth.h; sourceTree = "<group>"; };
 		0FE228EA1436AB2300196C48 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
 		0FE254F41ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVarargsForwardingPhase.cpp; path = dfg/DFGVarargsForwardingPhase.cpp; sourceTree = "<group>"; };
@@ -4800,6 +4804,8 @@
 				0FEC85681BDACDC70080FF74 /* AirTmp.cpp */,
 				0FEC85691BDACDC70080FF74 /* AirTmp.h */,
 				0FEC856A1BDACDC70080FF74 /* AirTmpInlines.h */,
+				0FE0E4AB1C24C94A002E17B6 /* AirTmpWidth.cpp */,
+				0FE0E4AC1C24C94A002E17B6 /* AirTmpWidth.h */,
 				0F3730921C0D67EE00052BFA /* AirUseCounts.h */,
 				0FEC856B1BDACDC70080FF74 /* AirValidate.cpp */,
 				0FEC856C1BDACDC70080FF74 /* AirValidate.h */,
@@ -7296,6 +7302,7 @@
 				0F235BD917178E1C00690C7F /* FTLExitThunkGenerator.h in Headers */,
 				0F2B9CF719D0BAC100B1D1B5 /* FTLExitTimeObjectMaterialization.h in Headers */,
 				0F235BDB17178E1C00690C7F /* FTLExitValue.h in Headers */,
+				0FE0E4AE1C24C94A002E17B6 /* AirTmpWidth.h in Headers */,
 				A7F2996C17A0BB670010417A /* FTLFail.h in Headers */,
 				0FEA0A2C170B661900BB722C /* FTLFormattedValue.h in Headers */,
 				0FD8A31A17D51F2200CA2C40 /* FTLForOSREntryJITCode.h in Headers */,
@@ -9229,6 +9236,7 @@
 				0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */,
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 				705B41AB1A6E501E00716757 /* Symbol.cpp in Sources */,
+				0FE0E4AD1C24C94A002E17B6 /* AirTmpWidth.cpp in Sources */,
 				705B41AD1A6E501E00716757 /* SymbolConstructor.cpp in Sources */,
 				705B41AF1A6E501E00716757 /* SymbolObject.cpp in Sources */,
 				705B41B11A6E501E00716757 /* SymbolPrototype.cpp in Sources */,

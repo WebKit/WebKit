@@ -158,16 +158,12 @@ private:
         }
     }
 
-    // NOTE: This entire mechanism could be done over Air, if we felt that this would be fast enough.
-    // For now we're assuming that it's faster to do this here, since analyzing B3 is so cheap.
     bool shouldCopyPropagate(Value* value)
     {
         switch (value->opcode()) {
         case Trunc:
         case Identity:
             return true;
-        case ZExt32:
-            return highBitsAreZero(value->child(0));
         default:
             return false;
         }
@@ -1775,11 +1771,6 @@ private:
         }
 
         case ZExt32: {
-            if (highBitsAreZero(m_value->child(0))) {
-                ASSERT(tmp(m_value->child(0)) == tmp(m_value));
-                return;
-            }
-
             appendUnOp<Move32, Air::Oops>(m_value->child(0));
             return;
         }

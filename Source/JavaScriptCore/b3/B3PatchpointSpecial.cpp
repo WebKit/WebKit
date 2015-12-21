@@ -54,7 +54,7 @@ void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgC
         return;
     }
 
-    callback(inst.args[1], Arg::Def, inst.origin->airType());
+    callback(inst.args[1], Arg::Def, inst.origin->airType(), inst.origin->airWidth());
     forEachArgImpl(0, 2, inst, SameAsRep, callback);
 }
 

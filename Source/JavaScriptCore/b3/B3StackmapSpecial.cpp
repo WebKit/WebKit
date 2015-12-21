@@ -111,8 +111,9 @@ void StackmapSpecial::forEachArgImpl(
             role = Arg::LateUse;
             break;
         }
-        
-        callback(arg, role, Arg::typeForB3Type(child.value()->type()));
+
+        Type type = child.value()->type();
+        callback(arg, role, Arg::typeForB3Type(type), Arg::widthForB3Type(type));
     }
 }
 

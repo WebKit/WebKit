@@ -101,8 +101,27 @@ public:
         // Like Use of address, Def of address does not mean escape.
         Def,
 
+        // This is a special variant of Def that implies that the upper bits of the target register are
+        // zero-filled. Specifically, if the Width of a ZDef is less than the largest possible width of
+        // the argument (for example, we're on a 64-bit machine and we have a Width32 ZDef of a GPR) then
+        // this has different implications for the upper bits (i.e. the top 32 bits in our example)
+        // depending on the kind of the argument:
+        //
+        // For register: the upper bits are zero-filled.
+        // For address: the upper bits are not touched (i.e. we do a 32-bit store in our example).
+        // For tmp: either the upper bits are not touched or they are zero-filled, and we won't know
+        // which until we lower the tmp to either a StackSlot or a Reg.
+        //
+        // The behavior of ZDef is consistent with what happens when you perform 32-bit operations on a
+        // 64-bit GPR. It's not consistent with what happens with 8-bit or 16-bit Defs on x86 GPRs, or
+        // what happens with float Defs in ARM NEON or X86 SSE. Hence why we have both Def and ZDef.
+        ZDef,
+
         // This is a combined Use and Def. It means that both things happen.
         UseDef,
+
+        // This is a combined Use and ZDef. It means that both things happen.
+        UseZDef,
 
         // This is a special kind of use that is only valid for addresses. It means that the
         // instruction will evaluate the address expression and consume the effective address, but it
@@ -126,6 +145,13 @@ public:
         Width64
     };
 
+    static Width pointerWidth()
+    {
+        if (sizeof(void*) == 8)
+            return Width64;
+        return Width32;
+    }
+
     enum Signedness : int8_t {
         Signed,
         Unsigned
@@ -139,9 +165,11 @@ public:
         case Use:
         case ColdUse:
         case UseDef:
+        case UseZDef:
         case LateUse:
             return true;
         case Def:
+        case ZDef:
         case UseAddr:
             return false;
         }
@@ -155,7 +183,9 @@ public:
             return true;
         case Use:
         case UseDef:
+        case UseZDef:
         case Def:
+        case ZDef:
         case UseAddr:
             return false;
         }
@@ -173,8 +203,10 @@ public:
         case Use:
         case ColdUse:
         case UseDef:
+        case UseZDef:
             return true;
         case Def:
+        case ZDef:
         case UseAddr:
         case LateUse:
             return false;
@@ -198,6 +230,25 @@ public:
             return false;
         case Def:
         case UseDef:
+        case ZDef:
+        case UseZDef:
+            return true;
+        }
+    }
+
+    // Returns true if the Role implies that the Inst will ZDef the Arg.
+    static bool isZDef(Role role)
+    {
+        switch (role) {
+        case Use:
+        case ColdUse:
+        case UseAddr:
+        case LateUse:
+        case Def:
+        case UseDef:
+            return false;
+        case ZDef:
+        case UseZDef:
             return true;
         }
     }
@@ -230,6 +281,37 @@ public:
             return Width32;
         case Int64:
         case Double:
+            return Width64;
+        }
+    }
+
+    static Width conservativeWidth(Type type)
+    {
+        return type == GP ? pointerWidth() : Width64;
+    }
+
+    static Width minimumWidth(Type type)
+    {
+        return type == GP ? Width8 : Width32;
+    }
+
+    static unsigned bytes(Width width)
+    {
+        return 1 << width;
+    }
+
+    static Width widthForBytes(unsigned bytes)
+    {
+        switch (bytes) {
+        case 0:
+        case 1:
+            return Width8;
+        case 2:
+            return Width16;
+        case 3:
+        case 4:
+            return Width32;
+        default:
             return Width64;
         }
     }
@@ -717,19 +799,19 @@ public:
     //
     // This defs (%rcx) but uses %rcx.
     template<typename Functor>
-    void forEachTmp(Role argRole, Type argType, const Functor& functor)
+    void forEachTmp(Role argRole, Type argType, Width argWidth, const Functor& functor)
     {
         switch (m_kind) {
         case Tmp:
             ASSERT(isAnyUse(argRole) || isDef(argRole));
-            functor(m_base, argRole, argType);
+            functor(m_base, argRole, argType, argWidth);
             break;
         case Addr:
-            functor(m_base, Use, GP);
+            functor(m_base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
             break;
         case Index:
-            functor(m_base, Use, GP);
-            functor(m_index, Use, GP);
+            functor(m_base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
+            functor(m_index, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
             break;
         default:
             break;

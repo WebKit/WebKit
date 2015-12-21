@@ -38,7 +38,7 @@ bool Inst::hasArgEffects()
 {
     bool result = false;
     forEachArg(
-        [&] (Arg&, Arg::Role role, Arg::Type) {
+        [&] (Arg&, Arg::Role role, Arg::Type, Arg::Width) {
             if (Arg::isDef(role))
                 result = true;
         });

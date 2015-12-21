@@ -148,6 +148,7 @@ void optimizeBlockOrder(Code& code)
         case BranchTest8:
         case BranchTest32:
         case BranchTest64:
+        case BranchFloat:
         case BranchDouble:
         case BranchAdd32:
         case BranchAdd64:

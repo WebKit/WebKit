@@ -90,6 +90,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirSpillEverything.cpp
     b3/air/AirStackSlot.cpp
     b3/air/AirTmp.cpp
+    b3/air/AirTmpWidth.cpp
     b3/air/AirValidate.cpp
 
     b3/B3ArgumentRegValue.cpp

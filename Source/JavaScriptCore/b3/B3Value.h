@@ -76,6 +76,7 @@ public:
 
     // This is useful when lowering. Note that this is only valid for non-void values.
     Air::Arg::Type airType() const { return Air::Arg::typeForB3Type(type()); }
+    Air::Arg::Width airWidth() const { return Air::Arg::widthForB3Type(type()); }
 
     AdjacencyList& children() { return m_children; } 
     const AdjacencyList& children() const { return m_children; }

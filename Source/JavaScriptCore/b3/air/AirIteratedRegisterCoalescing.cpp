@@ -35,6 +35,7 @@
 #include "AirPhaseScope.h"
 #include "AirRegisterPriority.h"
 #include "AirTmpInlines.h"
+#include "AirTmpWidth.h"
 #include "AirUseCounts.h"
 #include <wtf/ListDump.h>
 #include <wtf/ListHashSet.h>
@@ -630,9 +631,10 @@ protected:
 template<Arg::Type type>
 class ColoringAllocator : public AbstractColoringAllocator<unsigned> {
 public:
-    ColoringAllocator(Code& code, const UseCounts<Tmp>& useCounts, const HashSet<unsigned>& unspillableTmp)
+    ColoringAllocator(Code& code, TmpWidth& tmpWidth, const UseCounts<Tmp>& useCounts, const HashSet<unsigned>& unspillableTmp)
         : AbstractColoringAllocator<unsigned>(regsInPriorityOrder(type), AbsoluteTmpMapper<type>::lastMachineRegisterIndex(), tmpArraySize(code))
         , m_code(code)
+        , m_tmpWidth(tmpWidth)
         , m_useCounts(useCounts)
         , m_unspillableTmps(unspillableTmp)
     {
@@ -646,9 +648,17 @@ public:
         return AbsoluteTmpMapper<type>::tmpFromAbsoluteIndex(getAlias(AbsoluteTmpMapper<type>::absoluteIndex(tmp)));
     }
 
+    // This tells you if a Move will be coalescable if the src and dst end up matching. This method
+    // relies on an analysis that is invalidated by register allocation, so you it's only meaningful to
+    // call this *before* replacing the Tmp's in this Inst with registers or spill slots.
+    bool mayBeCoalescable(const Inst& inst) const
+    {
+        return mayBeCoalescableImpl(inst, &m_tmpWidth);
+    }
+
     bool isUselessMove(const Inst& inst) const
     {
-        return mayBeCoalescable(inst) && inst.args[0].tmp() == inst.args[1].tmp();
+        return mayBeCoalescableImpl(inst, nullptr) && inst.args[0].tmp() == inst.args[1].tmp();
     }
 
     Tmp getAliasWhenSpilling(Tmp tmp) const
@@ -770,14 +780,14 @@ private:
     {
         inst.forEachTmpWithExtraClobberedRegs(
             nextInst,
-            [&] (const Tmp& arg, Arg::Role role, Arg::Type argType) {
+            [&] (const Tmp& arg, Arg::Role role, Arg::Type argType, Arg::Width) {
                 if (!Arg::isDef(role) || argType != type)
                     return;
                 
                 // All the Def()s interfere with each other and with all the extra clobbered Tmps.
                 // We should not use forEachDefAndExtraClobberedTmp() here since colored Tmps
                 // do not need interference edges in our implementation.
-                inst.forEachTmp([&] (Tmp& otherArg, Arg::Role role, Arg::Type argType) {
+                inst.forEachTmp([&] (Tmp& otherArg, Arg::Role role, Arg::Type argType, Arg::Width) {
                     if (!Arg::isDef(role) || argType != type)
                         return;
 
@@ -791,7 +801,7 @@ private:
             // coalesce the Move even if the two Tmp never interfere anywhere.
             Tmp defTmp;
             Tmp useTmp;
-            inst.forEachTmp([&defTmp, &useTmp] (Tmp& argTmp, Arg::Role role, Arg::Type) {
+            inst.forEachTmp([&defTmp, &useTmp] (Tmp& argTmp, Arg::Role role, Arg::Type, Arg::Width) {
                 if (Arg::isDef(role))
                     defTmp = argTmp;
                 else {
@@ -839,7 +849,7 @@ private:
         // All the Def()s interfere with everthing live.
         inst.forEachTmpWithExtraClobberedRegs(
             nextInst,
-            [&] (const Tmp& arg, Arg::Role role, Arg::Type argType) {
+            [&] (const Tmp& arg, Arg::Role role, Arg::Type argType, Arg::Width) {
                 if (!Arg::isDef(role) || argType != type)
                     return;
                 
@@ -857,12 +867,15 @@ private:
         addEdge(AbsoluteTmpMapper<type>::absoluteIndex(a), AbsoluteTmpMapper<type>::absoluteIndex(b));
     }
 
-    bool mayBeCoalescable(const Inst& inst) const
+    // Calling this without a tmpWidth will perform a more conservative coalescing analysis that assumes
+    // that Move32's are not coalescable.
+    static bool mayBeCoalescableImpl(const Inst& inst, TmpWidth* tmpWidth)
     {
         switch (type) {
         case Arg::GP:
             switch (inst.opcode) {
             case Move:
+            case Move32:
                 break;
             default:
                 return false;
@@ -887,6 +900,22 @@ private:
         ASSERT(inst.args[0].type() == type);
         ASSERT(inst.args[1].type() == type);
 
+        // We can coalesce a Move32 so long as either of the following holds:
+        // - The input is already zero-filled.
+        // - The output only cares about the low 32 bits.
+        //
+        // Note that the input property requires an analysis over ZDef's, so it's only valid so long
+        // as the input gets a register. We don't know if the input gets a register, but we do know
+        // that if it doesn't get a register then we will still emit this Move32.
+        if (inst.opcode == Move32) {
+            if (!tmpWidth)
+                return false;
+
+            if (tmpWidth->defWidth(inst.args[0].tmp()) > Arg::Width32
+                && tmpWidth->useWidth(inst.args[1].tmp()) > Arg::Width32)
+                return false;
+        }
+        
         return true;
     }
 
@@ -1024,6 +1053,7 @@ private:
     using AbstractColoringAllocator<unsigned>::getAlias;
 
     Code& m_code;
+    TmpWidth& m_tmpWidth;
     // FIXME: spilling should not type specific. It is only a side effect of using UseCounts.
     const UseCounts<Tmp>& m_useCounts;
     const HashSet<unsigned>& m_unspillableTmps;
@@ -1053,7 +1083,23 @@ private:
         HashSet<unsigned> unspillableTmps;
         while (true) {
             ++m_numIterations;
-            ColoringAllocator<type> allocator(m_code, m_useCounts, unspillableTmps);
+
+            // FIXME: One way to optimize this code is to remove the recomputation inside the fixpoint.
+            // We need to recompute because spilling adds tmps, but we could just update tmpWidth when we
+            // add those tmps. Note that one easy way to remove the recomputation is to make any newly
+            // added Tmps get the same use/def widths that the original Tmp got. But, this may hurt the
+            // spill code we emit. Since we currently recompute TmpWidth after spilling, the newly
+            // created Tmps may get narrower use/def widths. On the other hand, the spiller already
+            // selects which move instruction to use based on the original Tmp's widths, so it may not
+            // matter than a subsequent iteration sees a coservative width for the new Tmps. Also, the
+            // recomputation may not actually be a performance problem; it's likely that a better way to
+            // improve performance of TmpWidth is to replace its HashMap with something else. It's
+            // possible that most of the TmpWidth overhead is from queries of TmpWidth rather than the
+            // recomputation, in which case speeding up the lookup would be a bigger win.
+            // https://bugs.webkit.org/show_bug.cgi?id=152478
+            m_tmpWidth.recompute(m_code);
+            
+            ColoringAllocator<type> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
             if (!allocator.requiresSpilling()) {
                 assignRegistersToTmp(allocator);
                 return;
@@ -1069,6 +1115,22 @@ private:
             // Give Tmp a valid register.
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
+
+                // The mayBeCoalescable() method will change its mind for some operations after we
+                // complete register allocation. So, we record this before starting.
+                bool mayBeCoalescable = allocator.mayBeCoalescable(inst);
+
+                // On X86_64, Move32 is cheaper if we know that it's equivalent to a Move. It's
+                // equivalent if the destination's high bits are not observable or if the source's high
+                // bits are all zero. Note that we don't have the opposite optimization for other
+                // architectures, which may prefer Move over Move32, because Move is canonical already.
+                if (type == Arg::GP && optimizeForX86_64() && inst.opcode == Move
+                    && inst.args[0].isTmp() && inst.args[1].isTmp()) {
+                    if (m_tmpWidth.useWidth(inst.args[1].tmp()) <= Arg::Width32
+                        || m_tmpWidth.defWidth(inst.args[0].tmp()) <= Arg::Width32)
+                        inst.opcode = Move32;
+                }
+
                 inst.forEachTmpFast([&] (Tmp& tmp) {
                     if (tmp.isReg() || tmp.isGP() == (type != Arg::GP))
                         return;
@@ -1085,11 +1147,15 @@ private:
                     ASSERT(assignedTmp.isReg());
                     tmp = assignedTmp;
                 });
+
+                if (mayBeCoalescable && inst.args[0].isTmp() && inst.args[1].isTmp()
+                    && inst.args[0].tmp() == inst.args[1].tmp())
+                    inst = Inst();
             }
 
             // Remove all the useless moves we created in this block.
             block->insts().removeAllMatching([&] (const Inst& inst) {
-                return allocator.isUselessMove(inst);
+                return !inst;
             });
         }
     }
@@ -1103,7 +1169,9 @@ private:
             unspillableTmps.add(AbsoluteTmpMapper<type>::absoluteIndex(tmp));
 
             // Allocate stack slot for each spilled value.
-            bool isNewTmp = stackSlots.add(tmp, m_code.addStackSlot(8, StackSlotKind::Anonymous)).isNewEntry;
+            StackSlot* stackSlot = m_code.addStackSlot(
+                m_tmpWidth.width(tmp) <= Arg::Width32 ? 4 : 8, StackSlotKind::Anonymous);
+            bool isNewTmp = stackSlots.add(tmp, stackSlot).isNewEntry;
             ASSERT_UNUSED(isNewTmp, isNewTmp);
         }
 
@@ -1115,18 +1183,36 @@ private:
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
 
+                // The TmpWidth analysis will say that a Move only stores 32 bits into the destination,
+                // if the source only had 32 bits worth of non-zero bits. Same for the source: it will
+                // only claim to read 32 bits from the source if only 32 bits of the destination are
+                // read. Note that we only apply this logic if this turns into a load or store, since
+                // Move is the canonical way to move data between GPRs.
+                bool forceMove32IfDidSpill = false;
+                bool didSpill = false;
+                if (type == Arg::GP && inst.opcode == Move) {
+                    if (m_tmpWidth.defWidth(inst.args[0].tmp()) <= Arg::Width32
+                        || m_tmpWidth.useWidth(inst.args[1].tmp()) <= Arg::Width32)
+                        forceMove32IfDidSpill = true;
+                }
+
                 // Try to replace the register use by memory use when possible.
                 for (unsigned i = 0; i < inst.args.size(); ++i) {
                     Arg& arg = inst.args[i];
                     if (arg.isTmp() && arg.type() == type && !arg.isReg()) {
                         auto stackSlotEntry = stackSlots.find(arg.tmp());
-                        if (stackSlotEntry != stackSlots.end() && inst.admitsStack(i))
+                        if (stackSlotEntry != stackSlots.end() && inst.admitsStack(i)) {
                             arg = Arg::stack(stackSlotEntry->value);
+                            didSpill = true;
+                        }
                     }
                 }
 
+                if (didSpill && forceMove32IfDidSpill)
+                    inst.opcode = Move32;
+
                 // For every other case, add Load/Store as needed.
-                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type argType) {
+                inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Arg::Type argType, Arg::Width) {
                     if (tmp.isReg() || argType != type)
                         return;
 
@@ -1141,7 +1227,18 @@ private:
                     }
 
                     Arg arg = Arg::stack(stackSlotEntry->value);
-                    Opcode move = type == Arg::GP ? Move : MoveDouble;
+                    Opcode move = Oops;
+                    switch (stackSlotEntry->value->byteSize()) {
+                    case 4:
+                        move = type == Arg::GP ? Move32 : MoveFloat;
+                        break;
+                    case 8:
+                        move = type == Arg::GP ? Move : MoveDouble;
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                        break;
+                    }
 
                     if (Arg::isAnyUse(role)) {
                         Tmp newTmp = m_code.newTmp(type);
@@ -1166,6 +1263,7 @@ private:
     }
 
     Code& m_code;
+    TmpWidth m_tmpWidth;
     UseCounts<Tmp> m_useCounts;
     unsigned m_numIterations { 0 };
 };

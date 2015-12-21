@@ -39,9 +39,10 @@ void OSRExitHandle::emitExitThunk(CCallHelpers& jit)
     label = jit.label();
     jit.pushToSaveImmediateWithoutTouchingRegisters(CCallHelpers::TrustedImm32(index));
     CCallHelpers::PatchableJump jump = jit.patchableJump();
+    RefPtr<OSRExitHandle> self = this;
     jit.addLinkTask(
-        [this, jump] (LinkBuffer& linkBuffer) {
-            exit.m_patchableJump = CodeLocationJump(linkBuffer.locationOf(jump));
+        [self, jump] (LinkBuffer& linkBuffer) {
+            self->exit.m_patchableJump = CodeLocationJump(linkBuffer.locationOf(jump));
 
             linkBuffer.link(
                 jump.m_jump,

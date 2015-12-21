@@ -6368,6 +6368,61 @@ void testCheckMegaCombo()
     CHECK(invoke<int>(*code, &value - 2, 1) == 42);
 }
 
+void testCheckTrickyMegaCombo()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* index = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)),
+            root->appendNew<Const32Value>(proc, Origin(), 1)));
+
+    Value* ptr = root->appendNew<Value>(
+        proc, Add, Origin(), base,
+        root->appendNew<Value>(
+            proc, Shl, Origin(), index,
+            root->appendNew<Const32Value>(proc, Origin(), 1)));
+    
+    CheckValue* check = root->appendNew<CheckValue>(
+        proc, Check, Origin(),
+        root->appendNew<Value>(
+            proc, LessThan, Origin(),
+            root->appendNew<MemoryValue>(proc, Load8S, Origin(), ptr),
+            root->appendNew<Const32Value>(proc, Origin(), 42)));
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            CHECK(!params.size());
+
+            // This should always work because a function this simple should never have callee
+            // saves.
+            jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+
+    int8_t value;
+    value = 42;
+    CHECK(invoke<int>(*code, &value - 2, 0) == 0);
+    value = 127;
+    CHECK(invoke<int>(*code, &value - 2, 0) == 0);
+    value = 41;
+    CHECK(invoke<int>(*code, &value - 2, 0) == 42);
+    value = 0;
+    CHECK(invoke<int>(*code, &value - 2, 0) == 42);
+    value = -1;
+    CHECK(invoke<int>(*code, &value - 2, 0) == 42);
+}
+
 void testCheckTwoMegaCombos()
 {
     Procedure proc;
@@ -9474,6 +9529,7 @@ void run(const char* filter)
     RUN(testSimpleCheck());
     RUN(testCheckLessThan());
     RUN(testCheckMegaCombo());
+    RUN(testCheckTrickyMegaCombo());
     RUN(testCheckTwoMegaCombos());
     RUN(testCheckTwoNonRedundantMegaCombos());
     RUN(testCheckAddImm());

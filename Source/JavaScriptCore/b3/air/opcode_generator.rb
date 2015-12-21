@@ -44,11 +44,12 @@ class Opcode
 end
 
 class Arg
-    attr_reader :role, :type
+    attr_reader :role, :type, :width
 
-    def initialize(role, type)
+    def initialize(role, type, width)
         @role = role
         @type = type
+        @width = width
     end
 end
 
@@ -173,7 +174,7 @@ def lex(str, fileName)
 end
 
 def isUD(token)
-    token =~ /\A((U)|(D)|(UD)|(UA))\Z/
+    token =~ /\A((U)|(D)|(UD)|(ZD)|(UZD)|(UA))\Z/
 end
 
 def isGF(token)
@@ -188,8 +189,12 @@ def isArch(token)
     token =~ /\A((x86)|(x86_32)|(x86_64)|(arm)|(armv7)|(arm64)|(32)|(64))\Z/
 end
 
+def isWidth(token)
+    token =~ /\A((8)|(16)|(32)|(64)|(Ptr))\Z/
+end
+
 def isKeyword(token)
-    isUD(token) or isGF(token) or isKind(token) or isArch(token) or
+    isUD(token) or isGF(token) or isKind(token) or isArch(token) or isWidth(token) or
         token == "special" or token == "as"
 end
 
@@ -252,6 +257,13 @@ class Parser
     def consumeKind
         result = token.string
         parseError("Expected kind (Imm, Imm64, Tmp, Addr, Index, RelCond, ResCond, or DoubleCond)") unless isKind(result)
+        advance
+        result
+    end
+
+    def consumeWidth
+        result = token.string
+        parseError("Expected width (8, 16, 32, or 64)") unless isWidth(result)
         advance
         result
     end
@@ -350,8 +362,10 @@ class Parser
                         role = consumeRole
                         consume(":")
                         type = consumeType
+                        consume(":")
+                        width = consumeWidth
                         
-                        signature << Arg.new(role, type)
+                        signature << Arg.new(role, type, width)
                         
                         break unless token == ","
                         consume(",")
@@ -606,26 +620,37 @@ writeH("OpcodeUtils") {
     matchInstOverload(outp, :fast, "this") {
         | opcode, overload |
         if opcode.special
-            outp.puts "functor(args[0], Arg::Use, Arg::GP); // This is basically bogus, but it works f analyses model Special as an immediate."
+            outp.puts "functor(args[0], Arg::Use, Arg::GP, Arg::pointerWidth()); // This is basically bogus, but it works for analyses that model Special as an immediate."
             outp.puts "args[0].special()->forEachArg(*this, scopedLambda<EachArgCallback>(functor));"
         else
             overload.signature.each_with_index {
                 | arg, index |
+                
                 role = nil
                 case arg.role
                 when "U"
                     role = "Use"
                 when "D"
                     role = "Def"
+                when "ZD"
+                    role = "ZDef"
                 when "UD"
                     role = "UseDef"
+                when "UZD"
+                    role = "UseZDef"
                 when "UA"
                     role = "UseAddr"
                 else
                     raise
                 end
+
+                if arg.width == "Ptr"
+                    width = "Arg::pointerWidth()"
+                else
+                    width = "Arg::Width#{arg.width}"
+                end
                 
-                outp.puts "functor(args[#{index}], Arg::#{role}, Arg::#{arg.type}P);"
+                outp.puts "functor(args[#{index}], Arg::#{role}, Arg::#{arg.type}P, #{width});"
             }
         end
     }

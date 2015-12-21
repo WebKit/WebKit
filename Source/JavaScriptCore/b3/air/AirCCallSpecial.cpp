@@ -45,16 +45,17 @@ CCallSpecial::~CCallSpecial()
 void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     for (unsigned i = 0; i < numCalleeArgs; ++i)
-        callback(inst.args[calleeArgOffset + i], Arg::Use, Arg::GP);
+        callback(inst.args[calleeArgOffset + i], Arg::Use, Arg::GP, Arg::pointerWidth());
     for (unsigned i = 0; i < numReturnGPArgs; ++i)
-        callback(inst.args[returnGPArgOffset + i], Arg::Def, Arg::GP);
+        callback(inst.args[returnGPArgOffset + i], Arg::Def, Arg::GP, Arg::pointerWidth());
     for (unsigned i = 0; i < numReturnFPArgs; ++i)
-        callback(inst.args[returnFPArgOffset + i], Arg::Def, Arg::FP);
+        callback(inst.args[returnFPArgOffset + i], Arg::Def, Arg::FP, Arg::Width64);
     
     for (unsigned i = argArgOffset; i < inst.args.size(); ++i) {
         // For the type, we can just query the arg's type. The arg will have a type, because we
         // require these args to be argument registers.
-        callback(inst.args[i], Arg::Use, inst.args[i].type());
+        Arg::Type type = inst.args[i].type();
+        callback(inst.args[i], Arg::Use, type, Arg::conservativeWidth(type));
     }
 }
 

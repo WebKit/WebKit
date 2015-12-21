@@ -90,7 +90,7 @@ public:
             typename Adapter::IndexSet& liveAtTail = m_liveAtTail[block];
 
             block->last().forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type) {
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
                     if (Arg::isLateUse(role) && Adapter::acceptsType(type))
                         liveAtTail.add(Adapter::valueToIndex(thing));
                 });
@@ -216,14 +216,14 @@ public:
             auto& workset = m_liveness.m_workset;
             // First handle def's.
             inst.forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type) {
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
                     if (Arg::isDef(role) && Adapter::acceptsType(type))
                         workset.remove(Adapter::valueToIndex(thing));
                 });
 
             // Then handle use's.
             inst.forEach<typename Adapter::Thing>(
-                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type) {
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
                     if (Arg::isEarlyUse(role) && Adapter::acceptsType(type))
                         workset.add(Adapter::valueToIndex(thing));
                 });
@@ -232,7 +232,7 @@ public:
             if (instIndex) {
                 Inst& prevInst = m_block->at(instIndex - 1);
                 prevInst.forEach<typename Adapter::Thing>(
-                    [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type) {
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
                         if (Arg::isLateUse(role) && Adapter::acceptsType(type))
                             workset.add(Adapter::valueToIndex(thing));
                     });
