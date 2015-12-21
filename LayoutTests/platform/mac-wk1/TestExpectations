@@ -54,6 +54,8 @@ webkit.org/b/152272 [ Debug ] js/regress/generator-with-several-types.html [ Pas
 
 webkit.org/b/152485 webaudio/audiocontext-state-interrupted.html [ Pass Crash ]
 
+webkit.org/b/152487 inspector/debugger/command-line-api-exception-nested-catch.html [ Pass Timeout ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
