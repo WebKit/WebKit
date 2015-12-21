@@ -4078,7 +4078,7 @@ void testStore16Arg()
         root->appendNew<MemoryValue>(proc, Store16, Origin(), value, address);
         root->appendNew<ControlValue>(proc, Return, Origin(), value);
 
-        int8_t storage = -1;
+        int16_t storage = -1;
         CHECK(compileAndRun<int64_t>(proc, 42, &storage, 1) == 42);
         CHECK(storage == 42);
     }

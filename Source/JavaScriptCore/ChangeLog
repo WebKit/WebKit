@@ -1,5 +1,12 @@
 2015-12-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Address review feedback from Saam.  I should have landed it in r194354.
+
+        * b3/testb3.cpp:
+        (JSC::B3::testStore16Arg):
+
+2015-12-21  Filip Pizlo  <fpizlo@apple.com>
+
         B3 should be able to compile Store16
         https://bugs.webkit.org/show_bug.cgi?id=152493
 
