@@ -55,6 +55,7 @@ exclude Source/cmake/OptionsWindows.cmake$
 exclude Source/cmake/OptionsAppleWin.cmake$
 exclude Source/cmake/OptionsEfl.cmake$
 exclude Source/cmake/eflsymbols.filter$
+exclude Source/WebInspectorUI/Tools
 exclude Source/WebInspectorUI/UserInterface/Images
 
 directory Source/WebInspectorUI/UserInterface/Images/gtk

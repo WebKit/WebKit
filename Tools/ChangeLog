@@ -1,3 +1,15 @@
+2015-12-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] jquery.min.js violates DFSG
+        https://bugs.webkit.org/show_bug.cgi?id=152428
+
+        Reviewed by Joseph Pecoraro.
+
+        Stop distributing Source/WebInspectorUI/Tools. It is not needed in tarballs. This brings us
+        into compliance with DFSG by removing a bundled, minified copy of jQuery from our tarball.
+
+        * gtk/manifest.txt.in:
+
 2015-12-19  Dan Bernstein  <mitz@apple.com>
 
         [Mac] WebKit contains dead source code for OS X Mavericks and earlier
