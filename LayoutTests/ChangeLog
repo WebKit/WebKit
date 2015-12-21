@@ -1,5 +1,14 @@
 2015-12-21  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skipping fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152449
+
+        Unreviewed teset gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2015-12-21  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r194328.
 
         This change appears to have caused failures in JSC tests

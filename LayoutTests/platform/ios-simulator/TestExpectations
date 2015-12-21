@@ -2857,3 +2857,5 @@ webkit.org/b/152137 fast/media/mq-pointer-styling.html [ Failure ]
 webkit.org/b/152137 fast/media/mq-pointer.html [ Failure ]
 
 webkit.org/b/152442 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
+
+webkit.org/b/152449 fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html [ Skip ]
