@@ -1550,6 +1550,12 @@ public:
         m_formatter.oneByteOp8(OP_MOV_EbGb, src, base, index, scale, offset);
     }
 
+    void movw_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp8(OP_MOV_EvGv, src, base, offset);
+    }
+
     void movw_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
         m_formatter.prefix(PRE_OPERAND_SIZE);

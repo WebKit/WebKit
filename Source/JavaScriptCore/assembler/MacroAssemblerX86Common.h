@@ -821,6 +821,25 @@ public:
         m_assembler.movw_rm(src, address.offset, address.base, address.index, address.scale);
     }
 
+    void store16(RegisterID src, Address address)
+    {
+#if CPU(X86)
+        // On 32-bit x86 we can only store from the first 4 registers;
+        // esp..edi are mapped to the 'h' registers!
+        if (src >= 4) {
+            // Pick a temporary register.
+            RegisterID temp = getUnusedRegister(address);
+
+            // Swap to the temporary register to perform the store.
+            swap(src, temp);
+            m_assembler.movw_rm(temp, address.offset, address.base);
+            swap(src, temp);
+            return;
+        }
+#endif
+        m_assembler.movw_rm(src, address.offset, address.base);
+    }
+
 
     // Floating-point operation:
     //

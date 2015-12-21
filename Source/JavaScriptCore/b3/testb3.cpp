@@ -4044,6 +4044,84 @@ void testStorePartial8BitRegisterOnX86()
     CHECK(!storage);
 }
 
+void testStore16Arg()
+{
+    { // Direct addressing.
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Value>(proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+
+        root->appendNew<MemoryValue>(proc, Store16, Origin(), value, address);
+        root->appendNew<ControlValue>(proc, Return, Origin(), value);
+
+        int16_t storage = -1;
+        CHECK(compileAndRun<int64_t>(proc, 42, &storage) == 42);
+        CHECK(storage == 42);
+    }
+
+    { // Indexed addressing.
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Value>(proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* displacement = root->appendNew<Const64Value>(proc, Origin(), -1);
+
+        Value* baseDisplacement = root->appendNew<Value>(proc, Add, Origin(), displacement, base);
+        Value* address = root->appendNew<Value>(proc, Add, Origin(), baseDisplacement, offset);
+
+        root->appendNew<MemoryValue>(proc, Store16, Origin(), value, address);
+        root->appendNew<ControlValue>(proc, Return, Origin(), value);
+
+        int8_t storage = -1;
+        CHECK(compileAndRun<int64_t>(proc, 42, &storage, 1) == 42);
+        CHECK(storage == 42);
+    }
+}
+
+void testStore16Imm()
+{
+    { // Direct addressing.
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const32Value>(proc, Origin(), 42);
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+
+        root->appendNew<MemoryValue>(proc, Store16, Origin(), value, address);
+        root->appendNew<ControlValue>(proc, Return, Origin(), value);
+
+        int16_t storage = -1;
+        CHECK(compileAndRun<int64_t>(proc, &storage) == 42);
+        CHECK(storage == 42);
+    }
+
+    { // Indexed addressing.
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const32Value>(proc, Origin(), 42);
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* displacement = root->appendNew<Const64Value>(proc, Origin(), -1);
+
+        Value* baseDisplacement = root->appendNew<Value>(proc, Add, Origin(), displacement, base);
+        Value* address = root->appendNew<Value>(proc, Add, Origin(), baseDisplacement, offset);
+
+        root->appendNew<MemoryValue>(proc, Store16, Origin(), value, address);
+        root->appendNew<ControlValue>(proc, Return, Origin(), value);
+
+        int16_t storage = -1;
+        CHECK(compileAndRun<int64_t>(proc, &storage, 1) == 42);
+        CHECK(storage == 42);
+    }
+}
+
 void testTrunc(int64_t value)
 {
     Procedure proc;
@@ -9437,6 +9515,8 @@ void run(const char* filter)
     RUN(testStore8Arg());
     RUN(testStore8Imm());
     RUN(testStorePartial8BitRegisterOnX86());
+    RUN(testStore16Arg());
+    RUN(testStore16Imm());
     RUN(testTrunc((static_cast<int64_t>(1) << 40) + 42));
     RUN(testAdd1(45));
     RUN(testAdd1Ptr(51));

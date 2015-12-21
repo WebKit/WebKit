@@ -1,5 +1,29 @@
 2015-12-21  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 should be able to compile Store16
+        https://bugs.webkit.org/show_bug.cgi?id=152493
+
+        Reviewed by Saam Barati.
+
+        This adds comprehensive Store16 support to our assembler, Air, and B3->Air lowering.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::store16):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movb_rm):
+        (JSC::X86Assembler::movw_rm):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testStorePartial8BitRegisterOnX86):
+        (JSC::B3::testStore16Arg):
+        (JSC::B3::testStore16Imm):
+        (JSC::B3::testTrunc):
+        (JSC::B3::run):
+
+2015-12-21  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, remove highBitsAreZero(), it's unused.
 
         * b3/B3LowerToAir.cpp:

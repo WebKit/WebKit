@@ -1729,6 +1729,12 @@ private:
             return;
         }
 
+        case B3::Store16: {
+            Value* valueToStore = m_value->child(0);
+            m_insts.last().append(createStore(Air::Store16, valueToStore, addr(m_value)));
+            return;
+        }
+
         case Trunc: {
             ASSERT(tmp(m_value->child(0)) == tmp(m_value));
             return;
