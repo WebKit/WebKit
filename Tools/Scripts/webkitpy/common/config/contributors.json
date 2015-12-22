@@ -1502,6 +1502,14 @@
             "jknotten"
          ]
       },
+      "John Wilander" : {
+         "emails" : [
+            "wilander@apple.com"
+         ],
+         "nicks" : [
+            "johnwilander"
+         ]
+      },
       "Johnny Ding" : {
          "emails" : [
             "jnd@chromium.org",

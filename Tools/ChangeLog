@@ -1,3 +1,9 @@
+2015-12-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed: Add John Wilander as a contributor.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-12-22  Chris Fleizach  <cfleizach@apple.com>
 
         [WK2] Looping in testcase: fast/dom/Window/property-access-on-cached-window-after-frame-removed.html
