@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Options.h"
 
-#include "CCallHelpers.h"
 #include <algorithm>
 #include <limits>
 #include <math.h>
@@ -317,15 +316,15 @@ static void recomputeDependentOptions()
         Options::useOSREntryToFTL() = false;
     }
 
-    if (isARM64()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=152510
-        // We're running into a bug where some ARM64 tests are failing in the FTL
-        // with what appears to be an llvm bug where llvm is miscalculating the
-        // live-out variables of a patchpoint. This causes us to not keep a 
-        // volatile register alive across a C call in a patchpoint, even though 
-        // that register is used immediately after the patchpoint.
-        Options::assumeAllRegsInFTLICAreLive() = true;
-    }
+#if CPU(ARM64)
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=152510
+    // We're running into a bug where some ARM64 tests are failing in the FTL
+    // with what appears to be an llvm bug where llvm is miscalculating the
+    // live-out variables of a patchpoint. This causes us to not keep a 
+    // volatile register alive across a C call in a patchpoint, even though 
+    // that register is used immediately after the patchpoint.
+    Options::assumeAllRegsInFTLICAreLive() = true;
+#endif
 
     // Compute the maximum value of the reoptimization retry counter. This is simply
     // the largest value at which we don't overflow the execute counter, when using it

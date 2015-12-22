@@ -1,5 +1,14 @@
 2015-12-22  Saam barati  <sbarati@apple.com>
 
+        Cloop build fix after https://bugs.webkit.org/show_bug.cgi?id=152511.
+
+        Unreviewed build fix.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
+2015-12-22  Saam barati  <sbarati@apple.com>
+
         Work around issue in bug #152510
         https://bugs.webkit.org/show_bug.cgi?id=152511
 
