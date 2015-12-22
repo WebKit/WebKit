@@ -37,20 +37,20 @@ namespace JSC {
 class LLIntOffsetsExtractor;
 
 static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
-static const unsigned ImplementsHasInstance = 1 << 1;
-static const unsigned OverridesHasInstanceFlag = 1 << 2; // FIXME: This is only trivially used by the runtime and should be removed: https://bugs.webkit.org/show_bug.cgi?id=152005
-static const unsigned ImplementsDefaultHasInstance = 1 << 3;
-static const unsigned TypeOfShouldCallGetCallData = 1 << 4; // Need this flag if you override getCallData() and you want typeof to use this to determine if it should say "function". Currently we always set this flag when we override getCallData().
-static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
-static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 6;
-static const unsigned StructureIsImmortal = 1 << 7;
+static const unsigned ImplementsDefaultHasInstance = 1 << 1;
+static const unsigned TypeOfShouldCallGetCallData = 1 << 2; // Need this flag if you override getCallData() and you want typeof to use this to determine if it should say "function". Currently we always set this flag when we override getCallData().
+static const unsigned OverridesGetOwnPropertySlot = 1 << 3;
+static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 4;
+static const unsigned StructureIsImmortal = 1 << 5;
+// There are two free bits at the end of the InlineTypeFlags.
 
-static const unsigned OverridesGetPropertyNames = 1 << 8;
-static const unsigned ProhibitsPropertyCaching = 1 << 9;
-static const unsigned GetOwnPropertySlotIsImpure = 1 << 10;
-static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 11;
-static const unsigned IsEnvironmentRecord = 1 << 12;
-static const unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 13;
+static const unsigned ImplementsHasInstance = 1 << 8;
+static const unsigned OverridesGetPropertyNames = 1 << 9;
+static const unsigned ProhibitsPropertyCaching = 1 << 10;
+static const unsigned GetOwnPropertySlotIsImpure = 1 << 11;
+static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 12;
+static const unsigned IsEnvironmentRecord = 1 << 13;
+static const unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 14;
 
 class TypeInfo {
 public:
@@ -67,11 +67,6 @@ public:
         , m_flags(inlineTypeFlags)
         , m_flags2(outOfLineTypeFlags)
     {
-        // No object that doesn't ImplementsHasInstance should override it!
-        ASSERT((m_flags & (ImplementsHasInstance | OverridesHasInstanceFlag)) != OverridesHasInstanceFlag);
-        // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
-        if ((m_flags & (ImplementsHasInstance | OverridesHasInstanceFlag)) == ImplementsHasInstance)
-            m_flags |= ImplementsDefaultHasInstance;
     }
 
     JSType type() const { return static_cast<JSType>(m_type); }
@@ -82,8 +77,7 @@ public:
 
     unsigned flags() const { return (static_cast<unsigned>(m_flags2) << 8) | static_cast<unsigned>(m_flags); }
     bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }
-    bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }
-    bool overridesHasInstance() const { return isSetOnFlags1(OverridesHasInstanceFlag); }
+    bool implementsHasInstance() const { return isSetOnFlags2(ImplementsHasInstance); }
     bool implementsDefaultHasInstance() const { return isSetOnFlags1(ImplementsDefaultHasInstance); }
     bool typeOfShouldCallGetCallData() const { return isSetOnFlags1(TypeOfShouldCallGetCallData); }
     bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }

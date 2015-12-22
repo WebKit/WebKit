@@ -1045,7 +1045,7 @@ sub GenerateHeader
     }
     # Structure ID
     if ($interfaceName eq "DOMWindow") {
-        $structureFlags{"JSC::ImplementsHasInstance"} = 1;
+        $structureFlags{"JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance"} = 1;
     }
     push(@headerContent, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
     push(@headerContent, "    {\n");

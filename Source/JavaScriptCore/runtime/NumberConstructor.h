@@ -30,7 +30,7 @@ class NumberPrototype;
 class NumberConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | ImplementsHasInstance;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | ImplementsHasInstance | ImplementsDefaultHasInstance;
 
     static NumberConstructor* create(VM& vm, Structure* structure, NumberPrototype* numberPrototype)
     {

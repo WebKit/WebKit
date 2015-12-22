@@ -118,7 +118,7 @@ void JIT::emit_op_overrides_has_instance(Instruction* currentInstruction)
 
     emitGetVirtualRegister(constructor, regT0);
 
-    // Check that constructor 'ImplementsHasInstance' i.e. the object is a C-API user or a bound function.
+    // Check that constructor 'ImplementsDefaultHasInstance' i.e. the object is not a C-API user nor a bound function.
     test8(Zero, Address(regT0, JSCell::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance), regT0);
     emitTagBool(regT0);
     Jump done = jump();

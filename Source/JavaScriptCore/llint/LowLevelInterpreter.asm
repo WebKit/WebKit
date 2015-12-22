@@ -333,8 +333,7 @@ const FinalObjectType = 22
 
 # Type flags constants.
 const MasqueradesAsUndefined = 1
-const ImplementsHasInstance = 2
-const ImplementsDefaultHasInstance = 8
+const ImplementsDefaultHasInstance = 2
 
 # Bytecode operand constants.
 const FirstConstantRegisterIndex = 0x40000000

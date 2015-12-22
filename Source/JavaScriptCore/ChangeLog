@@ -1,3 +1,34 @@
+2015-12-22  Keith Miller  <keith_miller@apple.com>
+
+        Remove OverridesHasInstance from TypeInfoFlags
+        https://bugs.webkit.org/show_bug.cgi?id=152005
+
+        Reviewed by Saam Barati.
+
+        Currently, we have three TypeInfo flags associated with instanceof behavior,
+        ImplementsHasInstance, ImplementDefaultHasInstance, and OverridesHasInstance. This patch
+        removes the third and moves the first to the out of line flags. In theory, we should only
+        need one flag but removing ImplementsHasInstance is more involved and should be done in a
+        separate patch.
+
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/InternalFunction.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCallee.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::implementsHasInstance):
+        (JSC::TypeInfo::TypeInfo): Deleted.
+        (JSC::TypeInfo::overridesHasInstance): Deleted.
+        * runtime/NumberConstructor.h:
+
 2015-12-22  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should do tail calls

@@ -1,3 +1,20 @@
+2015-12-22  Keith Miller  <keith_miller@apple.com>
+
+        Remove OverridesHasInstance from TypeInfoFlags
+        https://bugs.webkit.org/show_bug.cgi?id=152005
+
+        Reviewed by Saam Barati.
+
+        Currently, we have three TypeInfo flags associated with instanceof behavior,
+        ImplementsHasInstance, ImplementDefaultHasInstance, and OverridesHasInstance. This patch
+        removes the third and moves the first to the out of line flags. In theory, we should only
+        need one flag but removing ImplementsHasInstance is more involved and should be done in a
+        separate patch.
+
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+
 2015-12-22  Brent Fulgham  <bfulgham@apple.com>
 
         Allow JavaScript to iterate over plugins for local SecurityOrigins

@@ -38,7 +38,7 @@ EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(ExecState*);
 class JSBoundFunction : public JSFunction {
 public:
     typedef JSFunction Base;
-    const static unsigned StructureFlags = OverridesHasInstanceFlag | Base::StructureFlags;
+    const static unsigned StructureFlags = ~ImplementsDefaultHasInstance & Base::StructureFlags;
 
     static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String&);
     
