@@ -27,13 +27,14 @@
 #include "APIWebsiteDataStore.h"
 
 #include <Efreet.h>
+#include <WebCore/FileSystem.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace API {
 
 String WebsiteDataStore::defaultApplicationCacheDirectory()
 {
-    return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
+    return cacheDirectoryFileSystemRepresentation("WebKitEfl" EINA_PATH_SEP_S "Applications");
 }
 
 String WebsiteDataStore::defaultNetworkCacheDirectory()
@@ -44,42 +45,37 @@ String WebsiteDataStore::defaultNetworkCacheDirectory()
     static const char networkCacheSubdirectory[] = "webkit";
 #endif
 
-    StringBuilder diskCacheDirectory;
-    diskCacheDirectory.append(efreet_cache_home_get());
-    diskCacheDirectory.appendLiteral("/");
-    diskCacheDirectory.append(networkCacheSubdirectory);
-
-    return diskCacheDirectory.toString();
+    return cacheDirectoryFileSystemRepresentation(networkCacheSubdirectory);
 }
 
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/IndexedDB";
+    return websiteDataDirectoryFileSystemRepresentation("WebKitEfl" EINA_PATH_SEP_S "IndexedDB");
 }
 
 String WebsiteDataStore::defaultLocalStorageDirectory()
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
+    return websiteDataDirectoryFileSystemRepresentation("WebKitEfl" EINA_PATH_SEP_S "LocalStorage");
 }
 
 String WebsiteDataStore::defaultMediaKeysStorageDirectory()
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/MediaKeys";
+    return websiteDataDirectoryFileSystemRepresentation("WebKitEfl" EINA_PATH_SEP_S "MediaKeys");
 }
 
 String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/Databases";
+    return websiteDataDirectoryFileSystemRepresentation("WebKitEfl" EINA_PATH_SEP_S "Databases");
 }
 
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
 {
-    return String::fromUTF8(efreet_cache_home_get()) + directoryName;
+    return WebCore::pathByAppendingComponent(String::fromUTF8(efreet_cache_home_get()), directoryName);
 }
 
 String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
 {
-    return String::fromUTF8(efreet_data_home_get()) + directoryName;
+    return WebCore::pathByAppendingComponent(String::fromUTF8(efreet_data_home_get()), directoryName);
 }
 
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()

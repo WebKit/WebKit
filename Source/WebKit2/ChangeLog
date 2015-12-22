@@ -1,3 +1,27 @@
+2015-12-21  Joonghun Park  <jh718.park@samsung.com>
+
+        [WK2][EFL] Use cacheDirectoryFileSystemRepresentation and websiteDataDirectoryFileSystemRepresentation
+        to refactor APIWebsiteDataStoreEfl
+        https://bugs.webkit.org/show_bug.cgi?id=152475
+
+        Reviewed by Gyuyoung Kim.
+
+        Use cacheDirectoryFileSystemRepresentation and websiteDataDirectoryFileSystemRepresentation
+        instead of to use efreet_cache_home_get
+        and efreet_data_home_get directly.
+        And also use EINA_PATH_SEP_S instead of "/" as directory separator,
+        and WebCore::pathByAppendingComponent instead of operator+.
+
+        * UIProcess/API/efl/APIWebsiteDataStoreEfl.cpp:
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+
 2015-12-21  Antti Koivisto  <antti@apple.com>
 
         Factor NetworkResourceLoader code for storing a cache entry into a function
