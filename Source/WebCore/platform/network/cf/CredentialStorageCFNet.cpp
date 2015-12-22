@@ -29,6 +29,7 @@
 #if USE(CFNETWORK)
 
 #include "AuthenticationCF.h"
+#include "CFNetworkSPI.h"
 #include "Credential.h"
 #include "ProtectionSpace.h"
 #include <wtf/RetainPtr.h>
@@ -44,15 +45,21 @@
 #endif
 
 namespace WebCore {
+    
+static inline CFURLCredentialRef copyCredentialFromProtectionSpace(CFURLProtectionSpaceRef protectionSpace)
+{
+    auto storage = adoptCF(CFURLCredentialStorageCreate(kCFAllocatorDefault));
+    return CFURLCredentialStorageCopyDefaultCredentialForProtectionSpace(storage.get(), protectionSpace);
+}
 
 Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& protectionSpace)
 {
 #if PLATFORM(COCOA)
-    RetainPtr<CFURLCredentialRef> credentialCF = adoptCF(wkCopyCredentialFromCFPersistentStorage(protectionSpace.cfSpace()));
+    auto credentialCF = adoptCF(copyCredentialFromProtectionSpace(protectionSpace.cfSpace()));
     return Credential(credentialCF.get());
 #else
-    RetainPtr<CFURLProtectionSpaceRef> protectionSpaceCF = adoptCF(createCF(protectionSpace));
-    RetainPtr<CFURLCredentialRef> credentialCF = adoptCF(wkCopyCredentialFromCFPersistentStorage(protectionSpaceCF.get()));
+    auto protectionSpaceCF = adoptCF(createCF(protectionSpace));
+    auto credentialCF = adoptCF(copyCredentialFromProtectionSpace(protectionSpaceCF.get()));
     return core(credentialCF.get());
 #endif
 }

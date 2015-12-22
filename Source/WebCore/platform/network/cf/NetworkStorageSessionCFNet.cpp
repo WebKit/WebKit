@@ -84,10 +84,10 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
 RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
 {
     if (m_platformSession)
-        return adoptCF(wkCopyHTTPCookieStorage(m_platformSession.get()));
+        return adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, m_platformSession.get()));
 
 #if USE(CFNETWORK)
-    return wkGetDefaultHTTPCookieStorage();
+    return _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
 #else
     // When using NSURLConnection, we also use its shared cookie storage.
     return 0;

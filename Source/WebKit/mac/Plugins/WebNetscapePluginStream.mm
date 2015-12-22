@@ -39,6 +39,7 @@
 #import "WebNetscapePluginView.h"
 #import "WebResourceLoadScheduler.h"
 #import <Foundation/NSURLResponse.h>
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
@@ -358,7 +359,7 @@ void WebNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, co
         // startStreamResponseURL:... will null-terminate.
     }
     
-    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), response.mimeType(), theHeaders);
+    startStream([r URL], expectedContentLength, [r _lastModifiedDate], response.mimeType(), theHeaders);
 }
 
 void WebNetscapePluginStream::startStreamWithResponse(NSURLResponse *response)

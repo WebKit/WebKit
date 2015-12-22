@@ -1976,7 +1976,6 @@
 		514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76460CE9234E007EF3CD /* ResourceErrorMac.mm */; };
 		514C76510CE9234E007EF3CD /* ResourceHandleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */; };
 		514C76530CE9234E007EF3CD /* ResourceRequestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */; };
-		514C76550CE9234F007EF3CD /* ResourceResponseMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */; };
 		514C766D0CE923A1007EF3CD /* CredentialBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76580CE923A1007EF3CD /* CredentialBase.cpp */; };
 		514C766E0CE923A1007EF3CD /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76590CE923A1007EF3CD /* Credential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C766F0CE923A1007EF3CD /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765A0CE923A1007EF3CD /* FormData.cpp */; };
@@ -4012,6 +4011,7 @@
 		A104F24414C71F7A009E2C23 /* CachedSVGDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = A104F24214C71F7A009E2C23 /* CachedSVGDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10BB5851484E3A700B2E87A /* RenderSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5831484E3A700B2E87A /* RenderSVGRect.h */; };
 		A10BB58B1484E3B300B2E87A /* RenderSVGShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5891484E3B300B2E87A /* RenderSVGShape.h */; };
+		A10D7FEC1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10D7FEB1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10DBF4718F92317000D70C6 /* QuickLookHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DBF4618F92317000D70C6 /* QuickLookHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10DC76A14747BAB005E2471 /* StyleGridData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A10DC76814747BAB005E2471 /* StyleGridData.cpp */; };
 		A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DC76914747BAB005E2471 /* StyleGridData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4095,6 +4095,7 @@
 		A1ED778C1BE3294000DC1791 /* Device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1ED778A1BE3293F00DC1791 /* Device.cpp */; };
 		A1ED778D1BE3294000DC1791 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ED778B1BE3294000DC1791 /* Device.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1ED778F1BE4291800DC1791 /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ED778E1BE4291800DC1791 /* UIKitSPI.h */; };
+		A1F78D0C1C25424C00245446 /* ResourceResponseCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F78D0B1C25422C00245446 /* ResourceResponseCocoa.mm */; };
 		A2B9217316C5CC420041DCD9 /* IntRectExtent.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B9217216C5CC420041DCD9 /* IntRectExtent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A31C4E4D16E02AA6002F7957 /* OESTextureHalfFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */; };
 		A31C4E4F16E02AB4002F7957 /* OESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E4E16E02AB4002F7957 /* OESTextureHalfFloat.h */; };
@@ -6123,7 +6124,6 @@
 		CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB61586ABAD0098B3FA /* TextAlternativeWithRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */; };
-		CE8245F019B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE95208A1811B475007A5392 /* WebSafeIncrementalSweeperIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C4CB1D161A131200D214DA /* WebSafeIncrementalSweeperIOS.h */; };
 		CEC337AD1A46071F009B8523 /* ServersSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC337AC1A46071F009B8523 /* ServersSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEC337AF1A46086D009B8523 /* GraphicsServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC337AE1A46086D009B8523 /* GraphicsServicesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9399,7 +9399,6 @@
 		514C76460CE9234E007EF3CD /* ResourceErrorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceErrorMac.mm; sourceTree = "<group>"; };
 		514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceHandleMac.mm; sourceTree = "<group>"; };
 		514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceRequestMac.mm; sourceTree = "<group>"; };
-		514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceResponseMac.mm; sourceTree = "<group>"; };
 		514C76580CE923A1007EF3CD /* CredentialBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialBase.cpp; sourceTree = "<group>"; };
 		514C76590CE923A1007EF3CD /* Credential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credential.h; sourceTree = "<group>"; };
 		514C765A0CE923A1007EF3CD /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; };
@@ -11575,6 +11574,7 @@
 		A10BB5831484E3A700B2E87A /* RenderSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGRect.h; sourceTree = "<group>"; };
 		A10BB5881484E3B300B2E87A /* RenderSVGShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGShape.cpp; sourceTree = "<group>"; };
 		A10BB5891484E3B300B2E87A /* RenderSVGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGShape.h; sourceTree = "<group>"; };
+		A10D7FEB1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
 		A10DBF4618F92317000D70C6 /* QuickLookHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookHandleClient.h; sourceTree = "<group>"; };
 		A10DC76814747BAB005E2471 /* StyleGridData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGridData.cpp; sourceTree = "<group>"; };
 		A10DC76914747BAB005E2471 /* StyleGridData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleGridData.h; sourceTree = "<group>"; };
@@ -11654,6 +11654,7 @@
 		A1ED778A1BE3293F00DC1791 /* Device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Device.cpp; sourceTree = "<group>"; };
 		A1ED778B1BE3294000DC1791 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
 		A1ED778E1BE4291800DC1791 /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
+		A1F78D0B1C25422C00245446 /* ResourceResponseCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceResponseCocoa.mm; sourceTree = "<group>"; };
 		A208E222A56A0C7575F2A72E /* RenderMathMLMenclose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLMenclose.h; sourceTree = "<group>"; };
 		A2B9217216C5CC420041DCD9 /* IntRectExtent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectExtent.h; sourceTree = "<group>"; };
 		A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OESTextureHalfFloat.cpp; sourceTree = "<group>"; };
@@ -13997,7 +13998,6 @@
 		CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AlternativeTextUIController.mm; sourceTree = "<group>"; };
 		CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAlternativeWithRange.h; sourceTree = "<group>"; };
 		CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextAlternativeWithRange.mm; sourceTree = "<group>"; };
-		CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
 		CEC337AC1A46071F009B8523 /* ServersSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServersSPI.h; sourceTree = "<group>"; };
 		CEC337AE1A46086D009B8523 /* GraphicsServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsServicesSPI.h; sourceTree = "<group>"; };
 		CECADFC2153778FF00E37068 /* DictationAlternative.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationAlternative.cpp; sourceTree = "<group>"; };
@@ -17225,7 +17225,7 @@
 			children = (
 				E10A39E11AE84E7100A29AE3 /* CFBundleSPI.h */,
 				65086DA719AC1719009AF46B /* CFLocaleSPI.h */,
-				CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */,
+				A10D7FEB1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h */,
 				CE12525A1A1C018200864480 /* CFNetworkSPI.h */,
 				4449A4041A964B0000B64AD5 /* CoreMediaSPI.h */,
 			);
@@ -17490,7 +17490,6 @@
 				514C76460CE9234E007EF3CD /* ResourceErrorMac.mm */,
 				514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */,
 				514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */,
-				514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */,
 				E180811416FCF9CB00B80D07 /* SynchronousLoaderClient.mm */,
 				1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */,
 				1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */,
@@ -17865,6 +17864,7 @@
 				372ADA37197F47B900FC501E /* ProtectionSpaceCocoa.h */,
 				372ADA39197F687600FC501E /* ProtectionSpaceCocoa.mm */,
 				7E7DE1FC195CEF260035363B /* ResourceRequestCocoa.mm */,
+				A1F78D0B1C25422C00245446 /* ResourceResponseCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -24668,6 +24668,7 @@
 				AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */,
 				85031B3D0A44EFC700F992E0 /* BeforeUnloadEvent.h in Headers */,
 				B2C3DA240D006C1D00EF6F26 /* BidiContext.h in Headers */,
+				A10D7FEC1C2676D100C6C115 /* CFNetworkConnectionCacheSPI.h in Headers */,
 				B2C3DA250D006C1D00EF6F26 /* BidiResolver.h in Headers */,
 				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
 				A8C402931348B2220063F1E5 /* BidiRunList.h in Headers */,
@@ -24749,7 +24750,6 @@
 				CDE8B5F11A69778B00B4B66A /* CDMSessionClearKey.h in Headers */,
 				5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */,
 				E10A39E21AE84E7100A29AE3 /* CFBundleSPI.h in Headers */,
-				CE8245F019B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h in Headers */,
 				CE12525B1A1C018200864480 /* CFNetworkSPI.h in Headers */,
 				E1A8E56717552B2A007488E7 /* CFURLExtras.h in Headers */,
 				FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */,
@@ -29064,6 +29064,7 @@
 				850657010AAB4763002D15C0 /* DOMStyleSheet.mm in Sources */,
 				850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */,
 				85ACA99D0A9B575900671E90 /* DOMText.mm in Sources */,
+				A1F78D0C1C25424C00245446 /* ResourceResponseCocoa.mm in Sources */,
 				933A14AA0B7D1D0900A53FFD /* DOMTextEvent.mm in Sources */,
 				188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */,
 				76FC2B0B12370DA0006A991A /* DOMTokenList.cpp in Sources */,
@@ -30785,7 +30786,6 @@
 				514C76530CE9234E007EF3CD /* ResourceRequestMac.mm in Sources */,
 				514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */,
 				7EE6847112D26E3800E79415 /* ResourceResponseCFNet.cpp in Sources */,
-				514C76550CE9234F007EF3CD /* ResourceResponseMac.mm in Sources */,
 				ADBAD6EE1BCDD95500381325 /* ResourceUsageOverlay.cpp in Sources */,
 				ADFE2B551BD5F61200DAB457 /* ResourceUsageOverlayCocoa.mm in Sources */,
 				FD3160A412B026F700C1A359 /* Reverb.cpp in Sources */,

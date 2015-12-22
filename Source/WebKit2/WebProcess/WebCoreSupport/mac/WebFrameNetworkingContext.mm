@@ -31,6 +31,7 @@
 #include "WebCookieManager.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/CFNetworkSPI.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
@@ -69,11 +70,11 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAc
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
 
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
-        WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
+        CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 
     for (const auto& session : SessionTracker::storageSessionMap().values()) {
         if (session)
-            WKSetHTTPCookieAcceptPolicy(session->cookieStorage().get(), policy);
+            CFHTTPCookieStorageSetCookieAcceptPolicy(session->cookieStorage().get(), policy);
     }
 }
     

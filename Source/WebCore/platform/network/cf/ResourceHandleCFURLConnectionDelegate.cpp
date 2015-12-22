@@ -158,8 +158,9 @@ ResourceRequest ResourceHandleCFURLConnectionDelegate::createResourceRequest(CFU
         RetainPtr<CFStringRef> lastHTTPMethod = m_handle->lastHTTPMethod().createCFString();
         RetainPtr<CFStringRef> newMethod = adoptCF(CFURLRequestCopyHTTPRequestMethod(cfRequest));
         if (CFStringCompareWithOptions(lastHTTPMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(lastHTTPMethod.get())), kCFCompareCaseInsensitive)) {
-            RetainPtr<CFMutableURLRequestRef> mutableRequest = adoptCF(CFURLRequestCreateMutableCopy(0, cfRequest));
-            wkSetRequestStorageSession(m_handle->storageSession(), mutableRequest.get());
+            auto mutableRequest = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, cfRequest));
+            if (auto storageSession = m_handle->storageSession())
+                _CFURLRequestSetStorageSession(mutableRequest.get(), storageSession);
             CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), lastHTTPMethod.get());
 
             FormData* body = m_handle->firstRequest().httpBody();

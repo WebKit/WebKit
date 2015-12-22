@@ -168,7 +168,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     NSURLRequest *nsRequest = firstRequest().nsURLRequest(UpdateHTTPBody);
     if (!shouldContentSniff) {
         NSMutableURLRequest *mutableRequest = [[nsRequest mutableCopy] autorelease];
-        wkSetNSURLRequestShouldContentSniff(mutableRequest, NO);
+        [mutableRequest _setProperty:@(NO) forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
         nsRequest = mutableRequest;
     }
 

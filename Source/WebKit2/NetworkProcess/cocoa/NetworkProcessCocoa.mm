@@ -51,7 +51,7 @@ static void initializeNetworkSettings()
 {
     static const unsigned preferredConnectionCount = 6;
 
-    WKInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+    _CFNetworkHTTPConnectionCacheSetLimit(kHTTPLoadWidth, preferredConnectionCount);
 
     Boolean keyExistsAndHasValidFormat = false;
     Boolean prefValue = CFPreferencesGetAppBooleanValue(CFSTR("WebKitEnableHTTPPipelining"), kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
@@ -59,8 +59,10 @@ static void initializeNetworkSettings()
         WebCore::ResourceRequest::setHTTPPipeliningEnabled(prefValue);
 
     if (WebCore::ResourceRequest::resourcePrioritiesEnabled()) {
-        WKSetHTTPRequestMaximumPriority(toPlatformRequestPriority(WebCore::ResourceLoadPriority::Highest));
-        WKSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(WebCore::ResourceLoadPriority::Medium));
+        _CFNetworkHTTPConnectionCacheSetLimit(kHTTPPriorityNumLevels, toPlatformRequestPriority(WebCore::ResourceLoadPriority::Highest));
+#if PLATFORM(IOS)
+        _CFNetworkHTTPConnectionCacheSetLimit(kHTTPMinimumFastLanePriority, toPlatformRequestPriority(WebCore::ResourceLoadPriority::Medium));
+#endif
     }
 }
 

@@ -36,6 +36,7 @@
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
 #import "StringUtilities.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
@@ -95,7 +96,7 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
     }
 
     if ([proxySettings count] > 0)
-        WKCFNetworkSetOverrideSystemProxySettings((CFDictionaryRef)proxySettings);
+        _CFNetworkSetOverrideSystemProxySettings((CFDictionaryRef)proxySettings);
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)

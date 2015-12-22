@@ -116,6 +116,15 @@ ResourceHandle::~ResourceHandle()
 {
     LOG(Network, "CFNet - Destroying job %p (%s)", this, d->m_firstRequest.url().string().utf8().data());
 }
+    
+static inline CFStringRef shouldSniffConnectionProperty()
+{
+#if PLATFORM(WIN)
+    return CFSTR("_kCFURLConnectionPropertyShouldSniff");
+#else
+    return _kCFURLConnectionPropertyShouldSniff;
+#endif
+}
 
 void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior schedulingBehavior, CFDictionaryRef clientProperties)
 {
@@ -147,11 +156,12 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         applyBasicAuthorizationHeader(firstRequest(), d->m_initialCredential);
     }
 
-    RetainPtr<CFMutableURLRequestRef> request = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, firstRequest().cfURLRequest(UpdateHTTPBody)));
-    wkSetRequestStorageSession(d->m_storageSession.get(), request.get());
+    auto request = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, firstRequest().cfURLRequest(UpdateHTTPBody)));
+    if (auto storageSession = d->m_storageSession.get())
+        _CFURLRequestSetStorageSession(request.get(), storageSession);
     
     if (!shouldContentSniff)
-        wkSetCFURLRequestShouldContentSniff(request.get(), false);
+        _CFURLRequestSetProtocolProperty(request.get(), shouldSniffConnectionProperty(), kCFBooleanFalse);
 
     RetainPtr<CFMutableDictionaryRef> sslProps;
 

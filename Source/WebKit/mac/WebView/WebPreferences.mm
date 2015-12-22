@@ -41,6 +41,7 @@
 #import "WebSystemInterface.h"
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/AudioSession.h>
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PlatformCookieJar.h>
 #import <WebCore/ResourceHandle.h>
@@ -50,10 +51,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
-
-enum {
-    NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3
-};
 
 using namespace WebCore;
 
@@ -1767,7 +1764,7 @@ static NSString *classIBCreatorID = nil;
 {
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage();
     ASSERT(cookieStorage); // Will fail when building without USE(CFNETWORK) and NetworkStorageSession::switchToNewTestingSession() was not called beforehand.
-    WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
+    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 }
 
 - (BOOL)isDOMPasteAllowed

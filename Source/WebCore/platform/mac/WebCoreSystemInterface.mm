@@ -32,13 +32,9 @@
 
 void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
-BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
 CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
-NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
-CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
-void (*wkDrawCapsLockIndicator)(CGContextRef, CGRect);
 void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);
 bool (*wkDrawFocusRingAtTime)(CGContextRef, NSTimeInterval);
@@ -54,7 +50,6 @@ void (*wkWindowSetAlpha)(NSWindow *, float);
 void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 CFStringRef (*wkSignedPublicKeyAndChallengeString)(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
-NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 UInt8 (*wkGetNSEventKeyChar)(NSEvent *);
@@ -63,37 +58,20 @@ unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 void (*wkQTMovieDisableComponent)(uint32_t[5]);
 float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
 NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
-float (*wkQTMovieMaxTimeSeekable)(QTMovie*);
 int (*wkQTMovieGetType)(QTMovie*);
 BOOL (*wkQTMovieHasClosedCaptions)(QTMovie*);
 NSURL *(*wkQTMovieResolvedURL)(QTMovie*);
 void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
 void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
-void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 NSArray *(*wkQTGetSitesInMediaDownloadCache)();
 void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
 void (*wkQTClearMediaDownloadCache)();
 
-void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*, BOOL);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
 bool (*wkCGContextIsPDFContext)(CGContextRef);
-void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
-unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
-int (*wkGetHTTPRequestPriority)(CFURLRequestRef);
-void (*wkSetHTTPRequestMaximumPriority)(int priority);
-void (*wkSetHTTPRequestPriority)(CFURLRequestRef, int priority);
-void (*wkSetHTTPRequestMinimumFastLanePriority)(int priority);
-void (*wkHTTPRequestEnablePipelining)(CFURLRequestRef);
 void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
-
-#if USE(CFNETWORK)
-CFHTTPCookieStorageRef (*wkGetDefaultHTTPCookieStorage)();
-WKCFURLCredentialRef (*wkCopyCredentialFromCFPersistentStorage)(CFURLProtectionSpaceRef protectionSpace);
-void (*wkSetCFURLRequestShouldContentSniff)(CFMutableURLRequestRef, bool);
-void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
-#endif
 
 void* wkGetHyphenationLocationBeforeIndex;
 
@@ -119,23 +97,14 @@ AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
 CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
-CFHTTPCookieStorageRef (*wkCopyHTTPCookieStorage)(CFURLStorageSessionRef);
 unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
-void (*wkSetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef, unsigned);
 NSArray *(*wkHTTPCookies)(CFHTTPCookieStorageRef);
 NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *, NSURL *);
 void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
 void (*wkDeleteAllHTTPCookies)(CFHTTPCookieStorageRef);
 void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
 
-CFStringRef (*wkGetCFURLResponseMIMEType)(CFURLResponseRef);
-CFURLRef (*wkGetCFURLResponseURL)(CFURLResponseRef);
-CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
-CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
-void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
-
-void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 
 #if !PLATFORM(IOS)
 CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);

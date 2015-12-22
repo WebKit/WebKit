@@ -33,6 +33,10 @@
 #import <objc/objc-runtime.h>
 #import <wtf/RefPtr.h>
 
+#if USE(CFNETWORK)
+#include "CFNetworkSPI.h"
+#endif
+
 OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSFileHandle;
@@ -43,11 +47,6 @@ OBJC_CLASS NSURLConnection;
 OBJC_CLASS NSURLRequest;
 OBJC_CLASS NSURLResponse;
 OBJC_CLASS QLPreviewConverter;
-
-#if USE(CFNETWORK)
-typedef struct _CFURLResponse* CFURLResponseRef;
-typedef struct _CFURLConnection* CFURLConnectionRef;
-#endif
 
 namespace WebCore {
 

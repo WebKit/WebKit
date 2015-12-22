@@ -1,3 +1,22 @@
+2015-12-22  Andy Estes  <aestes@apple.com>
+
+        [CF] Replace CFNetwork-related WebKitSystemInterface calls with SPI
+        https://bugs.webkit.org/show_bug.cgi?id=152463
+
+        Reviewed by Alexey Proskuryakov.
+
+        Replaced WebkitSystemInterface calls that wrapped CFNetwork SPI with direct calls to SPI that is now forward
+        declared in CFNetworkSPI.h.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::initializeNetworkSettings):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::overrideSystemProxies):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2015-12-22  Brent Fulgham  <bfulgham@apple.com>
 
         Allow JavaScript to iterate over plugins for local SecurityOrigins

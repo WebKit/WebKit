@@ -26,20 +26,14 @@
 #import "config.h"
 #import "ResourceResponse.h"
 
+#if PLATFORM(COCOA)
+
+#import "CFNetworkSPI.h"
 #import "HTTPParsers.h"
 #import "WebCoreURLResponse.h"
-#import "WebCoreSystemInterface.h"
 #import <Foundation/Foundation.h>
 #import <limits>
 #import <wtf/StdLibExtras.h>
-
-@interface NSURLResponse (WebNSURLResponseDetails)
-- (NSTimeInterval)_calculatedExpiration;
-- (id)_initWithCFURLResponse:(CFURLResponseRef)response;
-- (CFURLResponseRef) _CFURLResponse;
-+ (id)_responseWithCFURLResponse:(CFURLResponseRef)response;
-@end
-
 
 namespace WebCore {
 
@@ -69,6 +63,42 @@ void ResourceResponse::initNSURLResponse() const
 
     // Mime type sniffing doesn't work with a synthesized response.
     [m_nsResponse.get() _setMIMEType:(NSString *)m_mimeType];
+}
+
+CertificateInfo ResourceResponse::platformCertificateInfo() const
+{
+    ASSERT(m_nsResponse);
+    auto cfResponse = [m_nsResponse _CFURLResponse];
+    if (!cfResponse)
+        return { };
+
+    CFDictionaryRef context = _CFURLResponseGetSSLCertificateContext(cfResponse);
+    if (!context)
+        return { };
+
+    auto trustValue = CFDictionaryGetValue(context, kCFStreamPropertySSLPeerTrust);
+    if (!trustValue)
+        return { };
+    ASSERT(CFGetTypeID(trustValue) == SecTrustGetTypeID());
+    auto trust = (SecTrustRef)trustValue;
+
+    SecTrustResultType trustResultType;
+    OSStatus result = SecTrustGetTrustResult(trust, &trustResultType);
+    if (result != errSecSuccess)
+        return { };
+
+    if (trustResultType == kSecTrustResultInvalid) {
+        result = SecTrustEvaluate(trust, &trustResultType);
+        if (result != errSecSuccess)
+            return { };
+    }
+
+    CFIndex count = SecTrustGetCertificateCount(trust);
+    auto certificateChain = CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks);
+    for (CFIndex i = 0; i < count; i++)
+        CFArrayAppendValue(certificateChain, SecTrustGetCertificateAtIndex(trust, i));
+
+    return CertificateInfo(adoptCF(certificateChain));
 }
 
 #if USE(CFNETWORK)
@@ -110,6 +140,19 @@ NSURLResponse *ResourceResponse::nsURLResponse() const
     if (!m_nsResponse && !m_isNull)
         initNSURLResponse();
     return m_nsResponse.get();
+}
+    
+static NSString *copyNSURLResponseStatusLine(NSURLResponse *response)
+{
+    CFURLResponseRef cfResponse = [response _CFURLResponse];
+    if (!cfResponse)
+        return nil;
+
+    CFHTTPMessageRef cfHTTPMessage = CFURLResponseGetHTTPResponse(cfResponse);
+    if (!cfHTTPMessage)
+        return nil;
+
+    return (NSString *)CFHTTPMessageCopyResponseStatusLine(cfHTTPMessage);
 }
 
 void ResourceResponse::platformLazyInit(InitLevel initLevel)
@@ -157,7 +200,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
-            if (RetainPtr<NSString> httpStatusLine = adoptNS(wkCopyNSURLResponseStatusLine(httpResponse)))
+            if (RetainPtr<NSString> httpStatusLine = adoptNS(copyNSURLResponseStatusLine(httpResponse)))
                 m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
             else
                 m_httpStatusText = AtomicString("OK", AtomicString::ConstructFromLiteral);
@@ -171,12 +214,6 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     }
 
     m_initLevel = initLevel;
-}
-
-CertificateInfo ResourceResponse::platformCertificateInfo() const
-{
-    ASSERT(m_nsResponse);
-    return CertificateInfo(adoptCF(wkCopyNSURLResponseCertificateChain(m_nsResponse.get())));
 }
 
 String ResourceResponse::platformSuggestedFilename() const
@@ -193,3 +230,4 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
 
 } // namespace WebCore
 
+#endif // PLATFORM(COCOA)

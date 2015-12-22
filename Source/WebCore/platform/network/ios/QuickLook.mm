@@ -46,15 +46,6 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
-#if USE(CFNETWORK)
-#import <CFNetwork/CFURLConnection.h>
-
-@interface NSURLResponse (QuickLookDetails)
-+(NSURLResponse *)_responseWithCFURLResponse:(CFURLResponseRef)response;
--(CFURLResponseRef)_CFURLResponse;
-@end
-#endif
-
 using namespace WebCore;
 
 NSSet *WebCore::QLPreviewGetSupportedMIMETypesSet()

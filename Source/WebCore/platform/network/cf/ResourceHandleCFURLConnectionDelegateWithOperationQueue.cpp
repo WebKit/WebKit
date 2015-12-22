@@ -30,12 +30,12 @@
 
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
+#include "CFNetworkSPI.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
-#include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -140,7 +140,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-        CFHTTPMessageRef msg = wkGetCFURLResponseHTTPResponse(cfResponse);
+        auto msg = CFURLResponseGetHTTPResponse(cfResponse);
         int statusCode = msg ? CFHTTPMessageGetResponseStatusCode(msg) : 0;
 
         if (statusCode != 304)
@@ -148,7 +148,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
 
 #if !PLATFORM(IOS)
         if (_CFURLRequestCopyProtocolPropertyForKey(m_handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))
-            wkSetCFURLResponseMIMEType(cfResponse, CFSTR("text/html"));
+            CFURLResponseSetMIMEType(cfResponse, CFSTR("text/html"));
 #endif // !PLATFORM(IOS)
         
         ResourceResponse resourceResponse(cfResponse);

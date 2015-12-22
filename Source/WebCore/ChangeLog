@@ -1,3 +1,65 @@
+2015-12-22  Andy Estes  <aestes@apple.com>
+
+        [CF] Replace CFNetwork-related WebKitSystemInterface calls with SPI
+        https://bugs.webkit.org/show_bug.cgi?id=152463
+
+        Reviewed by Alexey Proskuryakov.
+
+        Replaced WebkitSystemInterface calls that wrapped CFNetwork SPI with direct calls to SPI that is now forward
+        declared in CFNetworkSPI.h.
+
+        Also removed some unused declarations and renamed ResourceResponseMac.mm to ResourceResponseCocoa.mm.
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        (WebCore::copyCredentialFromProtectionSpace):
+        (WebCore::CredentialStorage::getFromPersistentStorage):
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::cookieStorage):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegate::createResourceRequest):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::setStorageSession):
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost):
+        (WebCore::initializeHTTPConnectionSettingsOnStartup):
+        * platform/network/cf/ResourceRequestCFNet.h:
+        (WebCore::toResourceLoadPriority):
+        (WebCore::toPlatformRequestPriority):
+        * platform/network/cf/ResourceResponse.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformCertificateInfo):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/cocoa/ResourceResponseCocoa.mm: Renamed from Source/WebCore/platform/network/mac/ResourceResponseMac.mm.
+        (WebCore::ResourceResponse::platformCertificateInfo):
+        (WebCore::copyNSURLResponseStatusLine):
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/ios/QuickLook.h:
+        * platform/network/ios/QuickLook.mm:
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        * platform/network/mac/WebCoreURLResponse.h:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+        * platform/spi/cf/CFNetworkConnectionCacheSPI.h:
+        * platform/spi/cf/CFNetworkSPI.h:
+
 2015-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Everything broken in GTK+ 3.19

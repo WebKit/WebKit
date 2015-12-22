@@ -30,7 +30,7 @@
 #include <wtf/RetainPtr.h>
 
 #if USE(CFNETWORK)
-typedef struct _CFURLResponse* CFURLResponseRef;
+#include "CFNetworkSPI.h"
 #endif
 
 OBJC_CLASS NSURLResponse;

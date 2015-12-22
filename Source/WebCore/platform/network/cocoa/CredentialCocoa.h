@@ -31,7 +31,7 @@
 #include <wtf/RetainPtr.h>
 
 #if USE(CFNETWORK)
-typedef const struct _CFURLCredential* CFURLCredentialRef;
+#include "CFNetworkSPI.h"
 #endif
 
 OBJC_CLASS NSURLCredential;

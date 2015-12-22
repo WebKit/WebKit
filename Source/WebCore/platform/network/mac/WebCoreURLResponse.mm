@@ -288,13 +288,12 @@ static CFDictionaryRef createExtensionToMIMETypeMap()
 
 void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
 {
-    RetainPtr<CFStringRef> result = wkGetCFURLResponseMIMEType(cfResponse);
+    RetainPtr<CFStringRef> result = CFURLResponseGetMIMEType(cfResponse);
     RetainPtr<CFStringRef> originalResult = result;
 
     if (!result) {
-        CFURLRef url = wkGetCFURLResponseURL(cfResponse);
-        NSURL *nsURL = (NSURL *)url;
-        if ([nsURL isFileURL]) {
+        auto url = CFURLResponseGetURL(cfResponse);
+        if ([(NSURL *)url isFileURL]) {
             RetainPtr<CFStringRef> extension = adoptCF(CFURLCopyPathExtension(url));
             if (extension) {
                 // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
@@ -321,7 +320,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
     }
 
     if (result != originalResult)
-        wkSetCFURLResponseMIMEType(cfResponse, result.get());
+        CFURLResponseSetMIMEType(cfResponse, result.get());
 }
 #endif
 

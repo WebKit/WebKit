@@ -520,6 +520,7 @@ list(APPEND WebCore_SOURCES
     platform/network/cocoa/CredentialCocoa.mm
     platform/network/cocoa/ProtectionSpaceCocoa.mm
     platform/network/cocoa/ResourceRequestCocoa.mm
+    platform/network/cocoa/ResourceResponseCocoa.mm
 
     platform/network/mac/AuthenticationMac.mm
     platform/network/mac/BlobDataFileReferenceMac.mm
@@ -532,7 +533,6 @@ list(APPEND WebCore_SOURCES
     platform/network/mac/ResourceErrorMac.mm
     platform/network/mac/ResourceHandleMac.mm
     platform/network/mac/ResourceRequestMac.mm
-    platform/network/mac/ResourceResponseMac.mm
     platform/network/mac/SynchronousLoaderClient.mm
     platform/network/mac/UTIUtilities.mm
     platform/network/mac/WebCoreResourceHandleAsDelegate.mm

@@ -113,13 +113,12 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     m_initLevel = initLevel;
 }
 
+#if !PLATFORM(COCOA)
 CertificateInfo ResourceResponse::platformCertificateInfo() const
 {
-#if PLATFORM(COCOA)
-    return CertificateInfo(adoptCF(wkCopyNSURLResponseCertificateChain(nsURLResponse())));
-#endif
-    return CertificateInfo();
+    return { };
 }
+#endif
 
 String ResourceResponse::platformSuggestedFilename() const
 {

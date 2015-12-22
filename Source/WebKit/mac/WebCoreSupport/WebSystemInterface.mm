@@ -46,18 +46,12 @@ void InitWebCoreSystemInterface(void)
     INIT(AdvanceDefaultButtonPulseAnimation);
 #endif
     INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
-#if !PLATFORM(IOS)
-    INIT(CGContextGetShouldSmoothFonts);
-#endif
     INIT(CGPatternCreateWithImageAndTransform);
 #if !PLATFORM(IOS)
     INIT(CGContextDrawsWithCorrectShadowOffsets);
 #endif
     INIT(CopyCONNECTProxyResponse);
-    INIT(CopyNSURLResponseStatusLine);
-    INIT(CopyNSURLResponseCertificateChain);
 #if !PLATFORM(IOS)
-    INIT(DrawCapsLockIndicator);
     INIT(DrawBezeledTextArea);
     INIT(DrawFocusRing);
     INIT(DrawFocusRingAtTime);
@@ -65,47 +59,34 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
 #endif
-    INIT(GetHTTPRequestPriority);
-    INIT(GetNSURLResponseLastModifiedDate);
     INIT(GetWebDefaultCFStringEncoding);
 #if !PLATFORM(IOS)
     INIT(SignedPublicKeyAndChallengeString);
     INIT(GetWheelEventDeltas);
     INIT(GetNSEventKeyChar);
     INIT(HitTestMediaUIPart);
-#endif
-    INIT(InitializeMaximumHTTPConnectionCountPerHost);
-#if !PLATFORM(IOS)
     INIT(MeasureMediaUIPart);
     INIT(CreateMediaUIBackgroundView);
     INIT(CreateMediaUIControl);
     INIT(WindowSetAlpha);
     INIT(WindowSetScaledFrame);
-    INIT(SetCGFontRenderingMode);
 #endif
     INIT(SetCONNECTProxyAuthorizationForStream);
     INIT(SetCONNECTProxyForStream);
 #if !PLATFORM(IOS)
     INIT(SetDragImage);
 #endif
-    INIT(SetHTTPRequestMaximumPriority);
-    INIT(SetHTTPRequestPriority);
-    INIT(SetHTTPRequestMinimumFastLanePriority);
-    INIT(HTTPRequestEnablePipelining);
-    INIT(SetNSURLRequestShouldContentSniff);
     INIT(CGContextIsPDFContext);
 #if ENABLE(VIDEO) && !PLATFORM(IOS)
     INIT(QTIncludeOnlyModernMediaFileTypes);
     INIT(QTMovieDisableComponent);
     INIT(QTMovieMaxTimeLoaded);
     INIT(QTMovieMaxTimeLoadedChangeNotification);
-    INIT(QTMovieMaxTimeSeekable);
     INIT(QTMovieGetType);
     INIT(QTMovieHasClosedCaptions);
     INIT(QTMovieResolvedURL);
     INIT(QTMovieSetShowClosedCaptions);
     INIT(QTMovieSelectPreferredAlternates);
-    INIT(QTMovieViewSetDrawSynchronously);
     INIT(QTGetSitesInMediaDownloadCache);
     INIT(QTClearMediaDownloadCacheForSite);
     INIT(QTClearMediaDownloadCache);
@@ -115,16 +96,6 @@ void InitWebCoreSystemInterface(void)
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
     INIT(CopyDefaultSearchProviderDisplayName);
     INIT(Cursor);
-#endif
-
-#if USE(CFNETWORK)
-    INIT(GetDefaultHTTPCookieStorage);
-    INIT(CopyCredentialFromCFPersistentStorage);
-    INIT(SetCFURLRequestShouldContentSniff);
-    INIT(SetRequestStorageSession);
-#endif
-
-#if !PLATFORM(IOS)
     INIT(SpeechSynthesisGetVoiceIdentifiers);
     INIT(SpeechSynthesisGetDefaultVoiceIdentifierForLocale);
     INIT(GetAXTextMarkerTypeID);
@@ -140,7 +111,6 @@ void InitWebCoreSystemInterface(void)
 #endif
     INIT(CreatePrivateStorageSession);
     INIT(CopyRequestWithStorageSession);
-    INIT(CopyHTTPCookieStorage);
     INIT(GetHTTPCookieAcceptPolicy);
     INIT(HTTPCookies);
     INIT(HTTPCookiesForURL);
@@ -148,19 +118,8 @@ void InitWebCoreSystemInterface(void)
     INIT(DeleteAllHTTPCookies);
     INIT(DeleteHTTPCookie);
 
-    INIT(GetCFURLResponseMIMEType);
-    INIT(GetCFURLResponseURL);
-    INIT(GetCFURLResponseHTTPResponse);
-    INIT(CopyCFURLResponseSuggestedFilename);
-    INIT(SetCFURLResponseMIMEType);
-
 #if !PLATFORM(IOS)
     INIT(SetMetadataURL);
-#endif
-
-    INIT(CFURLRequestAllowAllPostCaching);
-
-#if !PLATFORM(IOS)
     INIT(NSElasticDeltaForTimeDelta);
     INIT(NSElasticDeltaForReboundDelta);
     INIT(NSReboundDeltaForElasticDelta);

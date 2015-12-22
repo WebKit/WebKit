@@ -41,6 +41,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include "CFNetworkSPI.h"
 #include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
 #endif // PLATFORM(COCOA)
@@ -143,7 +144,7 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
 
 #if PLATFORM(COCOA)
     // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-    CFHTTPMessageRef msg = wkGetCFURLResponseHTTPResponse(cfResponse);
+    auto msg = CFURLResponseGetHTTPResponse(cfResponse);
     int statusCode = msg ? CFHTTPMessageGetResponseStatusCode(msg) : 0;
 
     if (statusCode != 304)
@@ -151,7 +152,7 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
 
 #if !PLATFORM(IOS)
     if (_CFURLRequestCopyProtocolPropertyForKey(m_handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))
-        wkSetCFURLResponseMIMEType(cfResponse, CFSTR("text/html"));
+        CFURLResponseSetMIMEType(cfResponse, CFSTR("text/html"));
 #endif // !PLATFORM(IOS)
 #else
     if (!CFURLResponseGetMIMEType(cfResponse))

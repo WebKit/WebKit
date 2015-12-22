@@ -26,11 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef struct _CFURLResponse* CFURLResponseRef;
+#include "CFNetworkSPI.h"
 
 #ifdef __OBJC__
 @interface NSURLResponse (Details)
-- (CFURLResponseRef)_CFURLResponse;
 - (void)_setMIMEType:(NSString *)type;
 @end
 

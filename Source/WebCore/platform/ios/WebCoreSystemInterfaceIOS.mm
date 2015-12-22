@@ -27,53 +27,26 @@
 #import "WebCoreSystemInterface.h"
 
 WEBCORE_EXPORT void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
-WEBCORE_EXPORT BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 WEBCORE_EXPORT CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
 WEBCORE_EXPORT void (*wkClearGlyphVector)(void* glyphs);
 WEBCORE_EXPORT OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
-WEBCORE_EXPORT NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 WEBCORE_EXPORT bool (*wkCGContextIsPDFContext)(CGContextRef);
-WEBCORE_EXPORT NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
-WEBCORE_EXPORT void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 WEBCORE_EXPORT id (*wkCreateNSURLConnectionDelegateProxy)(void);
-WEBCORE_EXPORT unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
-WEBCORE_EXPORT int (*wkGetHTTPRequestPriority)(CFURLRequestRef);
-WEBCORE_EXPORT void (*wkSetHTTPRequestMaximumPriority)(int priority);
-WEBCORE_EXPORT void (*wkSetHTTPRequestPriority)(CFURLRequestRef, int priority);
-WEBCORE_EXPORT void (*wkSetHTTPRequestMinimumFastLanePriority)(int priority);
-WEBCORE_EXPORT void (*wkHTTPRequestEnablePipelining)(CFURLRequestRef);
 WEBCORE_EXPORT void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 WEBCORE_EXPORT void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 WEBCORE_EXPORT void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 WEBCORE_EXPORT CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
 WEBCORE_EXPORT void (*wkSetLayerContentsScale)(CALayer *);
-WEBCORE_EXPORT void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
-WEBCORE_EXPORT CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 WEBCORE_EXPORT CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
-
-#if USE(CFNETWORK)
-WEBCORE_EXPORT CFHTTPCookieStorageRef (*wkGetDefaultHTTPCookieStorage)();
-WEBCORE_EXPORT WKCFURLCredentialRef (*wkCopyCredentialFromCFPersistentStorage)(CFURLProtectionSpaceRef protectionSpace);
-WEBCORE_EXPORT void (*wkSetCFURLRequestShouldContentSniff)(CFMutableURLRequestRef, bool);
-WEBCORE_EXPORT void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
-#endif
 
 WEBCORE_EXPORT CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 WEBCORE_EXPORT NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
-WEBCORE_EXPORT CFHTTPCookieStorageRef (*wkCopyHTTPCookieStorage)(CFURLStorageSessionRef);
 WEBCORE_EXPORT unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
-WEBCORE_EXPORT void (*wkSetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef, unsigned);
 WEBCORE_EXPORT NSArray *(*wkHTTPCookies)(CFHTTPCookieStorageRef);
 WEBCORE_EXPORT NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *, NSURL *);
 WEBCORE_EXPORT void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
 WEBCORE_EXPORT void (*wkDeleteAllHTTPCookies)(CFHTTPCookieStorageRef);
 WEBCORE_EXPORT void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
-
-WEBCORE_EXPORT CFStringRef (*wkGetCFURLResponseMIMEType)(CFURLResponseRef);
-WEBCORE_EXPORT CFURLRef (*wkGetCFURLResponseURL)(CFURLResponseRef);
-WEBCORE_EXPORT CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
-WEBCORE_EXPORT CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
-WEBCORE_EXPORT void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 
 WEBCORE_EXPORT void(*wkDestroyRenderingResources)(void);
 

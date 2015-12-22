@@ -32,8 +32,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
-typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
-typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
+#include "CFNetworkSPI.h"
 #endif
 
 namespace WebCore {

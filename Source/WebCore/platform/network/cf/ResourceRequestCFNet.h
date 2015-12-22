@@ -26,11 +26,8 @@
 #ifndef ResourceRequestCFNet_h
 #define ResourceRequestCFNet_h
 
+#include "CFNetworkSPI.h"
 #include "ResourceLoadPriority.h"
-
-#if USE(CFNETWORK)
-typedef const struct _CFURLRequest* CFURLRequestRef;
-#endif
 
 namespace WebCore {
 
@@ -41,7 +38,7 @@ void getResourceRequest(ResourceRequest&, CFURLRequestRef);
 CFURLRequestRef cfURLRequest(const ResourceRequest&);
 #endif
 
-inline ResourceLoadPriority toResourceLoadPriority(int priority)
+inline ResourceLoadPriority toResourceLoadPriority(CFURLRequestPriority priority)
 {
     switch (priority) {
     case -1:
@@ -61,7 +58,7 @@ inline ResourceLoadPriority toResourceLoadPriority(int priority)
     }
 }
 
-inline int toPlatformRequestPriority(ResourceLoadPriority priority)
+inline CFURLRequestPriority toPlatformRequestPriority(ResourceLoadPriority priority)
 {
     switch (priority) {
     case ResourceLoadPriority::VeryLow:
