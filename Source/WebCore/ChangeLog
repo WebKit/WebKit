@@ -1,3 +1,46 @@
+2015-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Everything broken in GTK+ 3.19
+        https://bugs.webkit.org/show_bug.cgi?id=150550
+
+        Reviewed by Carlos Garcia Campos.
+
+        Port RenderThemeGtk and ScrollbarThemeGtk to use CSS nodes. This makes it possible to render
+        stuff with modern GTK+.
+
+        No new tests. We already have tons of tests for this functionality, but we're running them
+        with GTK+ 3.16, so they cannot have detected this breakage. These fixes require unreleased
+        GTK+, and GTK+ rendering is currently in a state of flux; once things settle down, we can
+        consider upgrading the GTK+ used for our layout tests.
+
+        * platform/gtk/GRefPtrGtk.cpp:
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * platform/gtk/GRefPtrGtk.h:
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::themeChanged):
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::orientationStyleClass):
+        (WebCore::applyScrollbarStyleContextClasses):
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground):
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground):
+        (WebCore::ScrollbarThemeGtk::paintThumb):
+        (WebCore::ScrollbarThemeGtk::paintButton):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::createStyleContext):
+        (WebCore::setToggleSize):
+        (WebCore::paintToggle):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::getComboBoxMetrics):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::applySliderStyleContextClasses):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        (WebCore::paintSpinArrowButton):
+        (WebCore::styleColor):
+
 2015-12-20  Jeremy Zerfas  <WebKit@JeremyZerfas.com>
 
         Don't allocate a NSImage and skip unneeded call to TIFFRepresentation when copying image to clipboard.
