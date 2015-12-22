@@ -1,3 +1,32 @@
+2015-12-21  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] test_ewk2_context failed after r192808
+        https://bugs.webkit.org/show_bug.cgi?id=151846
+
+        Reviewed by Gyuyoung Kim.
+
+        As we can make the single WebProcess behavior by setting the miximum number
+        of WebProcess to 1 after r192808, I remove the ewk_context_process_model_{set|get}
+        apis and add the ewk_context_web_process_count_limit_{set|get} apis and tests.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        (EwkContext::setProcessCountLimit):
+        (EwkContext::processCountLimit):
+        (ewk_context_web_process_count_limit_set):
+        (ewk_context_web_process_count_limit_get):
+        (EwkContext::setProcessModel): Deleted.
+        (EwkContext::processModel): Deleted.
+        (ewk_context_process_model_set): Deleted.
+        (ewk_context_process_model_get): Deleted.
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F): Changed the ewk_context_{web|network}_process_model tests to
+        ewk_context_{web|network}_process_count_limit tests.
+
 2015-12-21  Joonghun Park  <jh718.park@samsung.com>
 
         [WK2][EFL] Use cacheDirectoryFileSystemRepresentation and websiteDataDirectoryFileSystemRepresentation

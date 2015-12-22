@@ -171,11 +171,11 @@ TEST_F(EWK2ContextTest, ewk_context_cache_model)
     ASSERT_EQ(EWK_CACHE_MODEL_DOCUMENT_VIEWER, ewk_context_cache_model_get(context));
 }
 
-TEST_F(EWK2ContextTest, ewk_context_web_process_model)
+TEST_F(EWK2ContextTest, ewk_context_web_process_count_limit)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
 
-    ASSERT_EQ(EWK_PROCESS_MODEL_SHARED_SECONDARY, ewk_context_process_model_get(context));
+    ASSERT_EQ(1, ewk_context_web_process_count_limit_get(context));
 
     Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
     Evas* evas = ecore_evas_get(backingStore());
@@ -190,11 +190,11 @@ TEST_F(EWK2ContextTest, ewk_context_web_process_model)
     ASSERT_EQ(webView1WebProcessID, webView2WebProcessID);
 }
 
-TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_web_process_model)
+TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_web_process_count_limit)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
 
-    ASSERT_EQ(EWK_PROCESS_MODEL_MULTIPLE_SECONDARY, ewk_context_process_model_get(context));
+    ASSERT_EQ(0, ewk_context_web_process_count_limit_get(context));
 
     Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
     Evas* evas = ecore_evas_get(backingStore());
@@ -209,11 +209,11 @@ TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_web_process_model)
     ASSERT_NE(webView1WebProcessID, webView2WebProcessID);
 }
 
-TEST_F(EWK2ContextTest, ewk_context_network_process_model)
+TEST_F(EWK2ContextTest, ewk_context_network_process_count_limit)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
 
-    ASSERT_EQ(EWK_PROCESS_MODEL_SHARED_SECONDARY, ewk_context_process_model_get(context));
+    ASSERT_EQ(1, ewk_context_web_process_count_limit_get(context));
 
     Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
     Evas* evas = ecore_evas_get(backingStore());
@@ -233,11 +233,11 @@ TEST_F(EWK2ContextTest, ewk_context_network_process_model)
     ASSERT_EQ(webView1NetworkProcessID, webView2NetworkProcessID);
 }
 
-TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_network_process_model)
+TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_network_count_limit)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
 
-    ASSERT_EQ(EWK_PROCESS_MODEL_MULTIPLE_SECONDARY, ewk_context_process_model_get(context));
+    ASSERT_EQ(0, ewk_context_web_process_count_limit_get(context));
 
     Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
     Evas* evas = ecore_evas_get(backingStore());

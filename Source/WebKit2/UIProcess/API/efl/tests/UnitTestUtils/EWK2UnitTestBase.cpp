@@ -69,7 +69,7 @@ void EWK2UnitTestBase::SetUp()
         newContext = ewk_context_new();
 
     if (m_multipleProcesses)
-        ewk_context_process_model_set(newContext, EWK_PROCESS_MODEL_MULTIPLE_SECONDARY);
+        ewk_context_web_process_count_limit_set(newContext, 0);
 
     Ewk_Page_Group* newPageGroup = ewk_page_group_create("UnitTest");
     m_webView = ewk_view_smart_add(evas, smart, newContext, newPageGroup);

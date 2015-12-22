@@ -2464,7 +2464,7 @@ elm_main(int argc, char *argv[])
     Ewk_Context *context = ewk_context_default_get();
 
     if (separated_process_enabled)
-        ewk_context_process_model_set(context, EWK_PROCESS_MODEL_MULTIPLE_SECONDARY);
+        ewk_context_web_process_count_limit_set(context, 0);
 
     // Enable favicon database.
     ewk_context_favicon_database_directory_set(context, NULL);

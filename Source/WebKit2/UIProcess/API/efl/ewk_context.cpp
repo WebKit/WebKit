@@ -77,6 +77,10 @@ EwkContext::EwkContext(WKContextRef context, const String& extensionsPath)
     , m_jsGlobalContext(nullptr)
     , m_extensionsPath(extensionsPath)
 {
+    // EwkContext make the context with the legacy options, it set the maximum process count to 1.
+    // m_processCount also set to 1 to align with the ProcessPoolConfiguration.
+    m_processCountLimit = 1;
+    
     ContextMap::AddResult result = contextMap().add(context, this);
     ASSERT_UNUSED(result, result.isNewEntry);
 
@@ -257,13 +261,18 @@ Ewk_Cache_Model EwkContext::cacheModel() const
     return static_cast<Ewk_Cache_Model>(WKContextGetCacheModel(m_context.get()));
 }
 
-void EwkContext::setProcessModel(Ewk_Process_Model)
+void EwkContext::setProcessCountLimit(unsigned count)
 {
+    if (m_processCountLimit == count)
+        return;
+    
+    m_processCountLimit = count;
+    WKContextSetMaximumNumberOfProcesses(m_context.get(), m_processCountLimit);
 }
 
-Ewk_Process_Model EwkContext::processModel() const
+unsigned EwkContext::processCountLimit() const
 {
-    return EWK_PROCESS_MODEL_MULTIPLE_SECONDARY;
+    return m_processCountLimit;
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -534,17 +543,6 @@ void ewk_context_message_from_extensions_callback_set(Ewk_Context* ewkContext, E
     impl->setMessageFromExtensionCallback(callback, userData);
 }
 
-Eina_Bool ewk_context_process_model_set(Ewk_Context* ewkContext, Ewk_Process_Model)
-{
-    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl, false);
-    return true;
-}
-
-Ewk_Process_Model ewk_context_process_model_get(const Ewk_Context* ewkContext)
-{
-    return EWK_PROCESS_MODEL_MULTIPLE_SECONDARY;
-}
-
 Ewk_TLS_Error_Policy ewk_context_tls_error_policy_get(const Ewk_Context* context)
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, context, impl, EWK_TLS_ERROR_POLICY_FAIL);
@@ -577,4 +575,19 @@ void ewk_context_tls_certificate_for_host_allow(Ewk_Context* context, const char
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, context, impl);
 
     impl->allowSpecificHTTPSCertificateForHost(pem, host);
+}
+
+Eina_Bool ewk_context_web_process_count_limit_set(Ewk_Context* context, unsigned count)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, context, impl, false);
+
+    impl->setProcessCountLimit(count);
+    return true;
+}
+
+unsigned ewk_context_web_process_count_limit_get(const Ewk_Context* context)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, context, impl, 0);
+    
+    return impl->processCountLimit();
 }

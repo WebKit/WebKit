@@ -71,9 +71,9 @@ public:
 
     Ewk_Cache_Model cacheModel() const;
 
-    void setProcessModel(Ewk_Process_Model);
+    void setProcessCountLimit(unsigned count);
 
-    Ewk_Process_Model processModel() const;
+    unsigned processCountLimit() const;
 
     WKContextRef wkContext() const { return m_context.get(); }
 
@@ -126,6 +126,7 @@ private:
     JSGlobalContextRef m_jsGlobalContext;
 
     String m_extensionsPath;
+    unsigned m_processCountLimit { 0 };
 
     struct {
         Ewk_Context_Message_From_Extension_Cb callback;

@@ -92,19 +92,6 @@ enum Ewk_Cache_Model {
 typedef enum Ewk_Cache_Model Ewk_Cache_Model;
 
 /**
- * \enum    Ewk_Process_Model
- *
- * @brief   Contains option for process model
- */
-enum Ewk_Process_Model {
-    EWK_PROCESS_MODEL_SHARED_SECONDARY,
-    EWK_PROCESS_MODEL_MULTIPLE_SECONDARY
-};
-
-/// Creates a type name for the Ewk_Process_Model.
-typedef enum Ewk_Process_Model Ewk_Process_Model;
-
-/**
  * \enum    Ewk_TLS_Error_Policy
  *
  * @brief   Contains option for TLS error policy
@@ -457,30 +444,6 @@ EAPI Eina_Bool ewk_context_message_post_to_extensions(Ewk_Context *context, cons
 EAPI void ewk_context_message_from_extensions_callback_set(Ewk_Context *context, Ewk_Context_Message_From_Extension_Cb callback, void *user_data);
 
 /**
- * Sets a process model for @a context.
- *
- * Sets a process model for web views, which will be used to decide how
- * processes should be handled. Default value is
- * EWK_PROCESS_MODEL_SHARED_SECONDARY which means that there is only one
- * web process. When EWK_PROCESS_MODEL_MULTIPLE_SECONDARY is set a
- * network process is introduced and every web view starts new web process.
- * This function should be used before first web process is spawned.
- *
- * @param context context object to set process model
- * @param process_model a #Ewk_Process_Model
- */
-EAPI Eina_Bool ewk_context_process_model_set(Ewk_Context *context, Ewk_Process_Model process_model);
-
-/**
- * Gets the process model for @a context.
- *
- * @param context context object to query
- *
- * @return the process model for the @a context
- */
-EAPI Ewk_Process_Model ewk_context_process_model_get(const Ewk_Context *context);
-
-/**
  * Gets TLS error policy for @a context.
  *
  * @param context context object to get TLS error policy
@@ -521,6 +484,26 @@ EAPI void ewk_context_preferred_languages_set(Eina_List *languages);
  * @param host the host for which the certificate is to be accepted
  */
 EAPI void ewk_context_tls_certificate_for_host_allow(Ewk_Context *context, const char *pem, const char *host);
+
+/**
+ * Sets the maximum number of web processes that can be created at the same time for the @a context.
+ * The default value is 0 and means no limit.
+ *
+ * @param context context object to set webprocess count limit
+ * @param count the maximum number of web processes
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_context_web_process_count_limit_set(Ewk_Context *context, unsigned count);
+
+/**
+ * Gets the maximum number of web processes that can be created at the same time for the @a context.
+ *
+ * @param context context object to get webprocess count limit
+ *
+ * @return the maximum number of web processes, or 0 if there isn't a limit
+ */
+EAPI unsigned ewk_context_web_process_count_limit_get(const Ewk_Context *context);
 
 #ifdef __cplusplus
 }
