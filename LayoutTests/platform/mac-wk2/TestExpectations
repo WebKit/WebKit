@@ -364,9 +364,6 @@ webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Skip ]
 
 [ Debug ] editing/undo/remove-css-property-and-remove-style.html [ Pass Failure ]
 
-# Test for WK1 only
-fast/dom/Window/property-access-on-cached-window-after-frame-removed.html [ Skip ]
-
 ### END OF (3) Unclassified failures
 ########################################
 

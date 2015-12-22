@@ -1352,6 +1352,9 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(u
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar() const
 {
+    if (!m_element)
+        return nullptr;
+
     BEGIN_AX_OBJC_EXCEPTIONS
     return AccessibilityUIElement::create([m_element accessibilityAttributeValue:NSAccessibilityHorizontalScrollBarAttribute]);
     END_AX_OBJC_EXCEPTIONS    
@@ -1361,6 +1364,9 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar()
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() const
 {
+    if (!m_element)
+        return nullptr;
+    
     BEGIN_AX_OBJC_EXCEPTIONS
     return AccessibilityUIElement::create([m_element accessibilityAttributeValue:NSAccessibilityVerticalScrollBarAttribute]);
     END_AX_OBJC_EXCEPTIONS        

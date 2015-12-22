@@ -1292,6 +1292,9 @@ AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned col,
 
 AccessibilityUIElement AccessibilityUIElement::horizontalScrollbar() const
 {
+    if (!m_element)
+        return nullptr;
+    
     BEGIN_AX_OBJC_EXCEPTIONS
     return AccessibilityUIElement([m_element accessibilityAttributeValue:NSAccessibilityHorizontalScrollBarAttribute]);
     END_AX_OBJC_EXCEPTIONS    
@@ -1301,6 +1304,9 @@ AccessibilityUIElement AccessibilityUIElement::horizontalScrollbar() const
 
 AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const
 {
+    if (!m_element)
+        return nullptr;
+
     BEGIN_AX_OBJC_EXCEPTIONS
     return AccessibilityUIElement([m_element accessibilityAttributeValue:NSAccessibilityVerticalScrollBarAttribute]);
     END_AX_OBJC_EXCEPTIONS        

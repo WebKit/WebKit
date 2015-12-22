@@ -1,3 +1,12 @@
+2015-12-22  Chris Fleizach  <cfleizach@apple.com>
+
+        [WK2] Looping in testcase: fast/dom/Window/property-access-on-cached-window-after-frame-removed.html
+        https://bugs.webkit.org/show_bug.cgi?id=152482
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-12-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping unsupported test on ios-simulator

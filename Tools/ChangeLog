@@ -1,3 +1,21 @@
+2015-12-22  Chris Fleizach  <cfleizach@apple.com>
+
+        [WK2] Looping in testcase: fast/dom/Window/property-access-on-cached-window-after-frame-removed.html
+        https://bugs.webkit.org/show_bug.cgi?id=152482
+
+        Reviewed by Brent Fulgham.
+
+        vertical/horizontalScrollbar returns an accessibility element. That element can also be queried
+        for the same property. On WK2, the element returned will not be valid, but is still present and
+        that can lead to looping.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::horizontalScrollbar):
+        (AccessibilityUIElement::verticalScrollbar):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::horizontalScrollbar):
+        (WTR::AccessibilityUIElement::verticalScrollbar):
+
 2015-12-22  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed.
