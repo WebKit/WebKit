@@ -65,7 +65,7 @@ public:
     SharedTask() { }
     virtual ~SharedTask() { }
 
-    virtual ResultType run(ArgumentTypes&&...) = 0;
+    virtual ResultType run(ArgumentTypes...) = 0;
 };
 
 // This is a utility class that allows you to create a SharedTask subclass using a lambda. Usually,
@@ -85,9 +85,9 @@ public:
     }
 
 private:
-    ResultType run(ArgumentTypes&&... arguments) override
+    ResultType run(ArgumentTypes... arguments) override
     {
-        return m_functor(std::forward<ArgumentTypes>(arguments)...);
+        return m_functor(arguments...);
     }
 
     Functor m_functor;

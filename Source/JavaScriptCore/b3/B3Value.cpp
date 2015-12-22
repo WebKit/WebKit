@@ -32,6 +32,7 @@
 #include "B3CCallValue.h"
 #include "B3ControlValue.h"
 #include "B3MemoryValue.h"
+#include "B3OriginDump.h"
 #include "B3ProcedureInlines.h"
 #include "B3StackSlotValue.h"
 #include "B3UpsilonValue.h"
@@ -99,7 +100,7 @@ void Value::dumpChildren(CommaPrinter& comma, PrintStream& out) const
         out.print(comma, pointerDump(child));
 }
 
-void Value::deepDump(PrintStream& out) const
+void Value::deepDump(const Procedure& proc, PrintStream& out) const
 {
     out.print(m_type, " ", *this, " = ", m_opcode);
 
@@ -108,7 +109,7 @@ void Value::deepDump(PrintStream& out) const
     dumpChildren(comma, out);
 
     if (m_origin)
-        out.print(comma, m_origin);
+        out.print(comma, OriginDump(proc, m_origin));
 
     dumpMeta(comma, out);
 

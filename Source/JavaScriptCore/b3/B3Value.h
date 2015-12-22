@@ -85,7 +85,7 @@ public:
     void replaceWithNop();
 
     void dump(PrintStream&) const;
-    void deepDump(PrintStream&) const;
+    void deepDump(const Procedure&, PrintStream&) const;
 
     // This is how you cast Values. For example, if you want to do something provided that we have a
     // ArgumentRegValue, you can do:
@@ -314,26 +314,28 @@ public:
 
 class DeepValueDump {
 public:
-    DeepValueDump(const Value* value)
-        : m_value(value)
+    DeepValueDump(const Procedure& proc, const Value* value)
+        : m_proc(proc)
+        , m_value(value)
     {
     }
 
     void dump(PrintStream& out) const
     {
         if (m_value)
-            m_value->deepDump(out);
+            m_value->deepDump(m_proc, out);
         else
             out.print("<null>");
     }
 
 private:
+    const Procedure& m_proc;
     const Value* m_value;
 };
 
-inline DeepValueDump deepDump(const Value* value)
+inline DeepValueDump deepDump(const Procedure& proc, const Value* value)
 {
-    return DeepValueDump(value);
+    return DeepValueDump(proc, value);
 }
 
 } } // namespace JSC::B3

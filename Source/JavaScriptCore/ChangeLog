@@ -1,3 +1,105 @@
+2015-12-22  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 does not logicalNot correctly
+        https://bugs.webkit.org/show_bug.cgi?id=152512
+
+        Reviewed by Saam Barati.
+
+        I'm working on a bug where V8/richards does not run correctly. I noticed that the codegen was
+        doing a log of Not32's followed by branches, which smelled like badness. To debug this, I
+        needed B3's origins to dump as something other than a hexed pointer to a node. The node index
+        would be better. So, I added the notion of an origin printer to Procedure.
+
+        The bug was easy enough to fix. This introduces Output::logicalNot(). In LLVM, it's the same
+        as bitNot(). In B3, it's compiled to Equal(value, 0). We could have also compiled it to
+        BitXor(value, 1), except that B3 will strength-reduce to that anyway whenever it's safe. It's
+        sort of nice that right now, you could use logicalNot() on non-bool values and get C-like
+        behavior.
+
+        Richards still doesn't run, though. There are more bugs!
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::dump):
+        (JSC::B3::BasicBlock::deepDump):
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::frequency):
+        (JSC::B3::DeepBasicBlockDump::DeepBasicBlockDump):
+        (JSC::B3::DeepBasicBlockDump::dump):
+        (JSC::B3::deepDump):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Origin.h:
+        (JSC::B3::Origin::data):
+        * b3/B3OriginDump.h: Added.
+        (JSC::B3::OriginDump::OriginDump):
+        (JSC::B3::OriginDump::dump):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::~Procedure):
+        (JSC::B3::Procedure::printOrigin):
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::dump):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::setOriginPrinter):
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::dumpChildren):
+        (JSC::B3::Value::deepDump):
+        * b3/B3Value.h:
+        (JSC::B3::DeepValueDump::DeepValueDump):
+        (JSC::B3::DeepValueDump::dump):
+        (JSC::B3::deepDump):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::lockedStackSlot):
+        (JSC::FTL::Output::bitNot):
+        (JSC::FTL::Output::logicalNot):
+        (JSC::FTL::Output::load):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::lShr):
+        (JSC::FTL::Output::ctlz32):
+        (JSC::FTL::Output::addWithOverflow32):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::doubleEqual):
+        (JSC::FTL::Output::doubleEqualOrUnordered):
+        (JSC::FTL::Output::doubleNotEqualOrUnordered):
+        (JSC::FTL::Output::doubleLessThan):
+        (JSC::FTL::Output::doubleLessThanOrEqual):
+        (JSC::FTL::Output::doubleGreaterThan):
+        (JSC::FTL::Output::doubleGreaterThanOrEqual):
+        (JSC::FTL::Output::doubleNotEqualAndOrdered):
+        (JSC::FTL::Output::doubleLessThanOrUnordered):
+        (JSC::FTL::Output::doubleLessThanOrEqualOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrEqualOrUnordered):
+        (JSC::FTL::Output::isZero32):
+        (JSC::FTL::Output::notZero32):
+        (JSC::FTL::Output::addIncomingToPhi):
+        (JSC::FTL::Output::bitCast):
+        (JSC::FTL::Output::bitNot): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckArray):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileLogicalNot):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInstanceOfCustom):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCountExecution):
+        (JSC::FTL::DFG::LowerDFGToLLVM::boolify):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isMisc):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isNotBoolean):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isBoolean):
+        (JSC::FTL::DFG::LowerDFGToLLVM::unboxBoolean):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isNotType):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateObject):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::lShr):
+        (JSC::FTL::Output::bitNot):
+        (JSC::FTL::Output::logicalNot):
+        (JSC::FTL::Output::insertElement):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+
 2015-12-22  Keith Miller  <keith_miller@apple.com>
 
         Remove OverridesHasInstance from TypeInfoFlags

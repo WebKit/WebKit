@@ -102,7 +102,7 @@ public:
                     continue;
                 m_insts.append(Vector<Inst>());
                 if (verbose)
-                    dataLog("Lowering ", deepDump(m_value), ":\n");
+                    dataLog("Lowering ", deepDump(m_procedure, m_value), ":\n");
                 lower();
                 if (verbose) {
                     for (Inst& inst : m_insts.last())
@@ -2147,7 +2147,7 @@ private:
             break;
         }
 
-        dataLog("FATAL: could not lower ", deepDump(m_value), "\n");
+        dataLog("FATAL: could not lower ", deepDump(m_procedure, m_value), "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
 

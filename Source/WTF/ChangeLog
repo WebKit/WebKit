@@ -1,3 +1,17 @@
+2015-12-22  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 does not logicalNot correctly
+        https://bugs.webkit.org/show_bug.cgi?id=152512
+
+        Reviewed by Saam Barati.
+
+        This change introduces yet another use of SharedTask in JSC. While doing this, I noticed that
+        SharedTask::run() always demands that whatever arguments the callback takes, they must be
+        passed as rvalue references. This was a clear misuse of perfect forwarding. This change makes
+        SharedTask's approach to forwarding match what we were already doing in ScopedLambda.
+
+        * wtf/SharedTask.h:
+
 2015-12-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Performs DNS prefetch when a proxy is configured (information leak)

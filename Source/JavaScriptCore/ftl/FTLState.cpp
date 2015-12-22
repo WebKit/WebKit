@@ -72,6 +72,11 @@ State::State(Graph& graph)
 
 #if FTL_USES_B3
     proc = std::make_unique<Procedure>();
+
+    proc->setOriginPrinter(
+        [this] (PrintStream& out, B3::Origin origin) {
+            out.print("DFG:", bitwise_cast<Node*>(origin.data()));
+        });
 #endif // FTL_USES_B3
 }
 

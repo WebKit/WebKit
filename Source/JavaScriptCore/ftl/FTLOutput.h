@@ -144,6 +144,7 @@ public:
     LValue aShr(LValue left, LValue right) { return buildAShr(m_builder, left, right); } // arithmetic = signed
     LValue lShr(LValue left, LValue right) { return buildLShr(m_builder, left, right); } // logical = unsigned
     LValue bitNot(LValue value) { return buildNot(m_builder, value); }
+    LValue logicalNot(LValue value) { return bitNot(value); }
     
     LValue insertElement(LValue vector, LValue element, LValue index) { return buildInsertElement(m_builder, vector, element, index); }
 

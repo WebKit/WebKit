@@ -39,6 +39,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
+#include <wtf/SharedTask.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
 
@@ -59,6 +60,16 @@ public:
 
     JS_EXPORT_PRIVATE Procedure();
     JS_EXPORT_PRIVATE ~Procedure();
+
+    template<typename Callback>
+    void setOriginPrinter(Callback&& callback)
+    {
+        m_originPrinter = createSharedTask<void(PrintStream&, Origin)>(
+            std::forward<Callback>(callback));
+    }
+
+    // Usually you use this via OriginDump, though it's cool to use it directly.
+    void printOrigin(PrintStream& out, Origin origin) const;
 
     JS_EXPORT_PRIVATE BasicBlock* addBlock(double frequency = 1);
     
@@ -261,6 +272,7 @@ private:
     const char* m_lastPhaseName;
     std::unique_ptr<OpaqueByproducts> m_byproducts;
     std::unique_ptr<Air::Code> m_code;
+    RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
 };
 
 } } // namespace JSC::B3

@@ -108,13 +108,13 @@ void BasicBlock::dump(PrintStream& out) const
     out.print(dumpPrefix, m_index);
 }
 
-void BasicBlock::deepDump(PrintStream& out) const
+void BasicBlock::deepDump(const Procedure& proc, PrintStream& out) const
 {
     out.print("BB", *this, ": ; frequency = ", m_frequency, "\n");
     if (predecessors().size())
         out.print("  Predecessors: ", pointerListDump(predecessors()), "\n");
     for (Value* value : *this)
-        out.print("    ", B3::deepDump(value), "\n");
+        out.print("    ", B3::deepDump(proc, value), "\n");
 }
 
 } } // namespace JSC::B3

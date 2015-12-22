@@ -67,6 +67,18 @@ StackSlotValue* Output::lockedStackSlot(size_t bytes)
     return m_block->appendNew<StackSlotValue>(m_proc, origin(), bytes, StackSlotKind::Locked);
 }
 
+LValue Output::bitNot(LValue value)
+{
+    return m_block->appendNew<B3::Value>(m_proc, B3::BitXor, origin(),
+        value,
+        m_block->appendIntConstant(m_proc, origin(), value->type(), -1));
+}
+
+LValue Output::logicalNot(LValue value)
+{
+    return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), value, int32Zero);
+}
+
 LValue Output::load(TypedPointer pointer, LType type)
 {
     LValue load = m_block->appendNew<MemoryValue>(m_proc, Load, type, origin(), pointer.value());

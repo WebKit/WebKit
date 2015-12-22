@@ -52,6 +52,14 @@ Procedure::~Procedure()
 {
 }
 
+void Procedure::printOrigin(PrintStream& out, Origin origin) const
+{
+    if (m_originPrinter)
+        m_originPrinter->run(out, origin);
+    else
+        out.print(origin);
+}
+
 BasicBlock* Procedure::addBlock(double frequency)
 {
     std::unique_ptr<BasicBlock> block(new BasicBlock(m_blocks.size(), frequency));
@@ -126,7 +134,7 @@ void Procedure::invalidateCFG()
 void Procedure::dump(PrintStream& out) const
 {
     for (BasicBlock* block : *this)
-        out.print(deepDump(block));
+        out.print(deepDump(*this, block));
     if (m_byproducts->count())
         out.print(*m_byproducts);
 }

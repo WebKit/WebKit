@@ -153,6 +153,7 @@ public:
     LValue aShr(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::SShr, origin(), left, castToInt32(right)); }
     LValue lShr(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::ZShr, origin(), left, castToInt32(right)); }
     LValue bitNot(LValue);
+    LValue logicalNot(LValue);
 
     LValue ctlz32(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Clz, origin(), operand); }
     LValue addWithOverflow32(LValue left, LValue right) { CRASH(); }
@@ -335,44 +336,17 @@ public:
     LValue lessThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right); }
 
     LValue doubleEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), left, right); }
+    LValue doubleEqualOrUnordered(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::EqualOrUnordered, origin(), left, right); }
     LValue doubleNotEqualOrUnordered(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), left, right); }
     LValue doubleLessThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessThan, origin(), left, right); }
     LValue doubleLessThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right); }
     LValue doubleGreaterThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::GreaterThan, origin(), left, right); }
     LValue doubleGreaterThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::GreaterEqual, origin(), left, right); }
-    LValue doubleNotEqualAndOrdered(LValue left, LValue right)
-    {
-        LValue equalOrUnordered = m_block->appendNew<B3::Value>(m_proc, B3::EqualOrUnordered, origin(), left, right);
-        return bitXor(equalOrUnordered, int32One);
-    }
-    LValue doubleLessThanOrUnordered(LValue left, LValue right)
-    {
-        return m_block->appendNew<B3::Value>(
-            m_proc, B3::Equal, origin(),
-            m_block->appendNew<B3::Value>(m_proc, B3::GreaterEqual, origin(), left, right),
-            int32Zero);
-    }
-    LValue doubleLessThanOrEqualOrUnordered(LValue left, LValue right)
-    {
-        return m_block->appendNew<B3::Value>(
-            m_proc, B3::Equal, origin(),
-            m_block->appendNew<B3::Value>(m_proc, B3::GreaterThan, origin(), left, right),
-            int32Zero);
-    }
-    LValue doubleGreaterThanOrUnordered(LValue left, LValue right)
-    {
-        return m_block->appendNew<B3::Value>(
-            m_proc, B3::Equal, origin(),
-            m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right),
-            int32Zero);
-    }
-    LValue doubleGreaterThanOrEqualOrUnordered(LValue left, LValue right)
-    {
-        return m_block->appendNew<B3::Value>(
-            m_proc, B3::Equal, origin(),
-            m_block->appendNew<B3::Value>(m_proc, B3::LessThan, origin(), left, right),
-            int32Zero);
-    }
+    LValue doubleNotEqualAndOrdered(LValue left, LValue right) { return logicalNot(doubleEqualOrUnordered(left, right)); }
+    LValue doubleLessThanOrUnordered(LValue left, LValue right) { return logicalNot(doubleGreaterThanOrEqual(left, right)); }
+    LValue doubleLessThanOrEqualOrUnordered(LValue left, LValue right) { return logicalNot(doubleGreaterThan(left, right)); }
+    LValue doubleGreaterThanOrUnordered(LValue left, LValue right) { return logicalNot(doubleLessThanOrEqual(left, right)); }
+    LValue doubleGreaterThanOrEqualOrUnordered(LValue left, LValue right) { return logicalNot(doubleLessThan(left, right)); }
 
     LValue isZero32(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), value, int32Zero); }
     LValue notZero32(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), value, int32Zero); }
@@ -538,13 +512,6 @@ inline void Output::addIncomingToPhi(LValue phi, ValueFromBlock value, Params...
 {
     addIncomingToPhi(phi, value);
     addIncomingToPhi(phi, theRest...);
-}
-
-inline LValue Output::bitNot(LValue value)
-{
-    return m_block->appendNew<B3::Value>(m_proc, B3::BitXor, origin(),
-        value,
-        m_block->appendIntConstant(m_proc, origin(), value->type(), -1));
 }
 
 inline LValue Output::bitCast(LValue value, LType type)

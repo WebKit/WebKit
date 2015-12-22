@@ -114,7 +114,7 @@ public:
     double frequency() const { return m_frequency; }
 
     void dump(PrintStream&) const;
-    void deepDump(PrintStream&) const;
+    void deepDump(const Procedure&, PrintStream&) const;
 
 private:
     friend class BlockInsertionSet;
@@ -132,26 +132,28 @@ private:
 
 class DeepBasicBlockDump {
 public:
-    DeepBasicBlockDump(const BasicBlock* block)
-        : m_block(block)
+    DeepBasicBlockDump(const Procedure& proc, const BasicBlock* block)
+        : m_proc(proc)
+        , m_block(block)
     {
     }
 
     void dump(PrintStream& out) const
     {
         if (m_block)
-            m_block->deepDump(out);
+            m_block->deepDump(m_proc, out);
         else
             out.print("<null>");
     }
 
 private:
+    const Procedure& m_proc;
     const BasicBlock* m_block;
 };
 
-inline DeepBasicBlockDump deepDump(const BasicBlock* block)
+inline DeepBasicBlockDump deepDump(const Procedure& proc, const BasicBlock* block)
 {
-    return DeepBasicBlockDump(block);
+    return DeepBasicBlockDump(proc, block);
 }
 
 } } // namespace JSC::B3

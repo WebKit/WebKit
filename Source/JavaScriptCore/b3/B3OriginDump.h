@@ -23,40 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3Origin_h
-#define B3Origin_h
+#ifndef B3OriginDump_h
+#define B3OriginDump_h
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/PrintStream.h>
+#include "B3Origin.h"
+#include "B3Procedure.h"
 
 namespace JSC { namespace B3 {
 
-// Whoever generates B3IR can choose to put origins on values. When you do this, B3 will be able to
-// account, down to the machine code, which instruction corresponds to which origin. B3
-// transformations must preserve Origins carefully. It's an error to write a transformation that
-// either drops Origins or lies about them.
-class Origin {
+class OriginDump {
 public:
-    explicit Origin(const void* data = nullptr)
-        : m_data(data)
+    OriginDump(const Procedure& proc, Origin origin)
+        : m_proc(proc)
+        , m_origin(origin)
     {
     }
 
-    explicit operator bool() const { return !!m_data; }
+    void dump(PrintStream& out) const
+    {
+        m_proc.printOrigin(out, m_origin);
+    }
 
-    const void* data() const { return m_data; }
-
-    // You should avoid using this. Use OriginDump instead.
-    void dump(PrintStream&) const;
-    
 private:
-    const void* m_data;
+    const Procedure& m_proc;
+    Origin m_origin;
 };
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3Origin_h
+#endif // B3OriginDump_h
 

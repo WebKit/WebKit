@@ -2700,7 +2700,7 @@ private:
         
         speculate(
             BadIndexingType, jsValueValue(cell), 0,
-            m_out.bitNot(isArrayType(cell, m_node->arrayMode())));
+            m_out.logicalNot(isArrayType(cell, m_node->arrayMode())));
     }
 
     void compileGetTypedArrayByteOffset()
@@ -4899,7 +4899,7 @@ private:
     
     void compileLogicalNot()
     {
-        setBoolean(m_out.bitNot(boolify(m_node->child1())));
+        setBoolean(m_out.logicalNot(boolify(m_node->child1())));
     }
 
     void compileCallOrConstruct()
@@ -6168,7 +6168,7 @@ private:
         LValue constructor = lowCell(m_node->child2());
         LValue hasInstance = lowJSValue(m_node->child3());
 
-        setBoolean(m_out.bitNot(m_out.equal(m_out.constInt32(0), vmCall(m_out.int32, m_out.operation(operationInstanceOfCustom), m_callFrame, value, constructor, hasInstance))));
+        setBoolean(m_out.logicalNot(m_out.equal(m_out.constInt32(0), vmCall(m_out.int32, m_out.operation(operationInstanceOfCustom), m_callFrame, value, constructor, hasInstance))));
     }
     
     void compileCountExecution()
@@ -7631,7 +7631,7 @@ private:
         case DoubleRepUse:
             return m_out.doubleNotEqualAndOrdered(lowDouble(edge), m_out.doubleZero);
         case ObjectOrOtherUse:
-            return m_out.bitNot(
+            return m_out.logicalNot(
                 equalNullOrUndefined(
                     edge, CellCaseSpeculatesObject, SpeculateNullOrUndefined,
                     ManualOperandSpeculation));
@@ -9104,7 +9104,7 @@ private:
     {
         if (LValue proven = isProvenValue(type, SpecMisc))
             return proven;
-        return m_out.bitNot(isNotMisc(value));
+        return m_out.logicalNot(isNotMisc(value));
     }
     
     LValue isNotBoolean(LValue jsValue, SpeculatedType type = SpecFullTop)
@@ -9119,7 +9119,7 @@ private:
     {
         if (LValue proven = isProvenValue(type, SpecBoolean))
             return proven;
-        return m_out.bitNot(isNotBoolean(jsValue));
+        return m_out.logicalNot(isNotBoolean(jsValue));
     }
     LValue unboxBoolean(LValue jsValue)
     {
@@ -9410,7 +9410,7 @@ private:
     
     LValue isNotType(LValue cell, JSType type)
     {
-        return m_out.bitNot(isType(cell, type));
+        return m_out.logicalNot(isType(cell, type));
     }
     
     void speculateObject(Edge edge, LValue cell)
