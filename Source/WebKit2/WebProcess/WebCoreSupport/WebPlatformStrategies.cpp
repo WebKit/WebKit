@@ -48,6 +48,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
+#include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/IDBFactoryBackendInterface.h>
 #include <WebCore/LoaderStrategy.h>
@@ -189,6 +190,13 @@ void WebPlatformStrategies::getWebVisiblePluginInfo(const Page* page, Vector<Plu
     getPluginInfo(page, plugins);
 
 #if PLATFORM(MAC)
+    if (Document* document = page->mainFrame().document()) {
+        if (SecurityOrigin* securityOrigin = document->securityOrigin()) {
+            if (securityOrigin->isLocal())
+                return;
+        }
+    }
+    
     for (int32_t i = plugins.size() - 1; i >= 0; --i) {
         PluginInfo& info = plugins.at(i);
         PluginLoadClientPolicy clientPolicy = info.clientLoadPolicy;

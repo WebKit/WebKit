@@ -524,7 +524,15 @@ PluginData& Page::pluginData() const
 
 bool Page::showAllPlugins() const
 {
-    return m_showAllPlugins || mainFrame().loader().documentLoader()->url().isLocalFile();
+    if (m_showAllPlugins)
+        return true;
+
+    if (Document* document = mainFrame().document()) {
+        if (SecurityOrigin* securityOrigin = document->securityOrigin())
+            return securityOrigin->isLocal();
+    }
+
+    return false;
 }
 
 inline MediaCanStartListener* Page::takeAnyMediaCanStartListener()
