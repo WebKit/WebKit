@@ -23,7 +23,6 @@
 
 #include <wtf/glib/GRefPtr.h>
 
-typedef struct _GtkWidgetPath GtkWidgetPath;
 typedef struct _SecretValue SecretValue;
 
 namespace WTF {
@@ -39,9 +38,6 @@ template <> void derefGPtr(SecretValue* ptr);
 #ifdef GTK_API_VERSION_2
 template <> GdkCursor* refGPtr(GdkCursor* ptr);
 template <> void derefGPtr(GdkCursor* ptr);
-#else
-template <> GtkWidgetPath* refGPtr(GtkWidgetPath* ptr);
-template <> void derefGPtr(GtkWidgetPath* ptr);
 #endif
 
 }

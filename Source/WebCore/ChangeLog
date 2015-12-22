@@ -1,3 +1,16 @@
+2015-12-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r194362.
+        https://bugs.webkit.org/show_bug.cgi?id=152508
+
+        crashes release bot (Requested by mcatanzaro on #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Everything broken in GTK+ 3.19"
+        https://bugs.webkit.org/show_bug.cgi?id=150550
+        http://trac.webkit.org/changeset/194362
+
 2015-12-22  Keith Miller  <keith_miller@apple.com>
 
         Remove OverridesHasInstance from TypeInfoFlags
