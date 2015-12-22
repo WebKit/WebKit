@@ -1,3 +1,14 @@
+2015-12-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Remove unused WebInspector.Object.removeAllListeners
+        https://bugs.webkit.org/show_bug.cgi?id=152474
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object.removeAllListeners): Deleted.
+        (WebInspector.Object.prototype.removeAllListeners): Deleted.
+
 2015-12-20  Dan Bernstein  <mitz@apple.com>
 
         Remove unused setToolbarHeight

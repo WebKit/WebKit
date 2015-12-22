@@ -99,11 +99,6 @@ WebInspector.Object = class WebInspectorObject
             delete this._listeners;
     }
 
-    static removeAllListeners()
-    {
-        delete this._listeners;
-    }
-
     static hasEventListeners(eventType)
     {
         if (!this._listeners || !this._listeners[eventType])
@@ -130,7 +125,6 @@ WebInspector.Object = class WebInspectorObject
     addEventListener() { return WebInspector.Object.addEventListener.apply(this, arguments); }
     singleFireEventListener() { return WebInspector.Object.singleFireEventListener.apply(this, arguments); }
     removeEventListener() { return WebInspector.Object.removeEventListener.apply(this, arguments); }
-    removeAllListeners() { return WebInspector.Object.removeAllListeners.apply(this, arguments); }
     hasEventListeners() { return WebInspector.Object.hasEventListeners.apply(this, arguments); }
     retainedObjectsWithPrototype() { return WebInspector.Object.retainedObjectsWithPrototype.apply(this, arguments); }
 
