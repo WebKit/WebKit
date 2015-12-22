@@ -31,6 +31,7 @@
 #include "AirGenerationContext.h"
 #include "AllowMacroScratchRegisterUsage.h"
 #include "B3StackmapGenerationParams.h"
+#include "CallFrameShuffler.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGDominators.h"
@@ -5037,29 +5038,112 @@ private:
 
     void compileTailCall()
     {
+        Node* node = m_node;
+        unsigned numArgs = node->numChildren() - 1;
+
+        LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
+        
 #if FTL_USES_B3
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
+        // We want B3 to give us all of the arguments using whatever mechanism it thinks is
+        // convenient. The generator then shuffles those arguments into our own call frame,
+        // destroying our frame in the process.
+
+        Vector<ConstrainedValue> arguments;
+
+        arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(GPRInfo::regT0)));
+
+        for (unsigned i = 0; i < numArgs; ++i) {
+            // Note: we could let the shuffler do boxing for us, but it's not super clear that this
+            // would be better. Also, if we wanted to do that, then we'd have to teach the shuffler
+            // that 32-bit values could land at 4-byte alignment but not 8-byte alignment.
+            
+            ConstrainedValue constrainedValue(
+                lowJSValue(m_graph.varArgChild(node, 1 + i)),
+                ValueRep::WarmAny);
+            arguments.append(constrainedValue);
+        }
+
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->appendVector(arguments);
+
+        // Prevent any of the arguments from using the scratch register.
+        patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
+
+        // We don't have to tell the patchpoint that we will clobber registers, since we won't return
+        // anyway.
+
+        CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                // FIXME: There may be some exception things that need to happen here.
+                // https://bugs.webkit.org/show_bug.cgi?id=151686
+
+                CallFrameShuffleData shuffleData;
+                shuffleData.callee = ValueRecovery::inGPR(GPRInfo::regT0, DataFormatJS);
+
+                for (unsigned i = 0; i < numArgs; ++i)
+                    shuffleData.args.append(params[1 + i].recoveryForJSValue());
+
+                shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
+
+                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
+
+                CCallHelpers::DataLabelPtr targetToCheck;
+                CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
+                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
+                    CCallHelpers::TrustedImmPtr(0));
+
+                callLinkInfo->setFrameShuffleData(shuffleData);
+                CallFrameShuffler(jit, shuffleData).prepareForTailCall();
+
+                CCallHelpers::Call fastCall = jit.nearTailCall();
+
+                slowPath.link(&jit);
+
+                CallFrameShuffler slowPathShuffler(jit, shuffleData);
+                slowPathShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
+                slowPathShuffler.prepareForSlowPath();
+
+                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+                CCallHelpers::Call slowCall = jit.nearCall();
+
+                jit.abortWithReason(JITDidReturnFromTailCall);
+
+                callLinkInfo->setUpCall(CallLinkInfo::TailCall, codeOrigin, GPRInfo::regT0);
+
+                jit.addLinkTask(
+                    [=] (LinkBuffer& linkBuffer) {
+                        MacroAssemblerCodePtr linkCall =
+                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                        linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
+
+                        callLinkInfo->setCallLocations(
+                            linkBuffer.locationOfNearCall(slowCall),
+                            linkBuffer.locationOf(targetToCheck),
+                            linkBuffer.locationOfNearCall(fastCall));
+                    });
+            });
 #else
-        int numArgs = m_node->numChildren() - 1;
         StackmapArgumentList exitArguments;
         exitArguments.reserveCapacity(numArgs + 6);
 
         unsigned stackmapID = m_stackmapIDs++;
-        exitArguments.append(lowJSValue(m_graph.varArgChild(m_node, 0)));
+        exitArguments.append(jsCallee);
         exitArguments.append(m_tagTypeNumber);
 
         Vector<ExitValue> callArguments(numArgs);
 
         bool needsTagTypeNumber { false };
-        for (int i = 0; i < numArgs; ++i) {
+        for (unsigned i = 0; i < numArgs; ++i) {
             callArguments[i] =
-                exitValueForTailCall(exitArguments, m_graph.varArgChild(m_node, 1 + i).node());
+                exitValueForTailCall(exitArguments, m_graph.varArgChild(node, 1 + i).node());
             if (callArguments[i].dataFormat() == DataFormatInt32)
                 needsTagTypeNumber = true;
         }
 
-        JSTailCall tailCall(stackmapID, m_node, WTF::move(callArguments));
+        JSTailCall tailCall(stackmapID, node, WTF::move(callArguments));
 
         exitArguments.insert(0, m_out.constInt32(needsTagTypeNumber ? 2 : 1));
         exitArguments.insert(0, constNull(m_out.ref8));
@@ -5068,10 +5152,11 @@ private:
 
         LValue call = m_out.call(m_out.voidType, m_out.patchpointVoidIntrinsic(), exitArguments);
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-        m_out.unreachable();
 
         m_ftlState.jsTailCalls.append(tailCall);
 #endif
+        
+        m_out.unreachable();
     }
     
     void compileCallOrConstructVarargs()

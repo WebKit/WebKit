@@ -32,6 +32,7 @@
 #include "GPRInfo.h"
 #include "JSCJSValue.h"
 #include "Reg.h"
+#include "ValueRecovery.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -222,7 +223,13 @@ public:
 
     // This has a simple contract: it emits code to restore the value into the given register. This
     // will work even if it requires moving between bits a GPR and a FPR.
-    void emitRestore(AssemblyHelpers&, Reg);
+    void emitRestore(AssemblyHelpers&, Reg) const;
+
+    // Computes the ValueRecovery assuming that the Value* was for a JSValue (i.e. Int64).
+    // NOTE: We should avoid putting JSValue-related methods in B3, but this was hard to avoid
+    // because some parts of JSC use ValueRecovery like a general "where my bits at" object, almost
+    // exactly like ValueRep.
+    ValueRecovery recoveryForJSValue() const;
 
 private:
     Kind m_kind;

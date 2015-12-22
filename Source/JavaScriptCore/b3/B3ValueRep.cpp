@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AssemblyHelpers.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace B3 {
 
@@ -57,7 +58,7 @@ void ValueRep::dump(PrintStream& out) const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg)
+void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg) const
 {
     if (reg.isGPR()) {
         switch (kind()) {
@@ -97,6 +98,24 @@ void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg)
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
+    }
+}
+
+ValueRecovery ValueRep::recoveryForJSValue() const
+{
+    switch (kind()) {
+    case Register:
+        return ValueRecovery::inGPR(gpr(), DataFormatJS);
+    case Stack:
+        RELEASE_ASSERT(!(offsetFromFP() % sizeof(EncodedJSValue)));
+        return ValueRecovery::displacedInJSStack(
+            VirtualRegister(offsetFromFP() / sizeof(EncodedJSValue)),
+            DataFormatJS);
+    case Constant:
+        return ValueRecovery::constant(JSValue::decode(value()));
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
     }
 }
 

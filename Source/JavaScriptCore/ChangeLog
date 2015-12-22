@@ -1,3 +1,33 @@
+2015-12-22  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should do tail calls
+        https://bugs.webkit.org/show_bug.cgi?id=152494
+
+        Reviewed by Michael Saboff.
+
+        OMG this was so easy.
+
+        The only shady part is that I broke a layering rule that we had so far been following: B3 was
+        sitting below the JSC runtime, and did not use JS-specific types. No more, since B3::ValueRep
+        can now turn itself into a ValueRecovery for a JSValue. This small feature makes a huge
+        difference for the readability of tail call code: it makes it plain that the call frame
+        shuffler is basically just directly consuming the stackmap generation params, and insofar as
+        there is any data transformation, it's just because it uses different classes to say the same
+        thing.
+
+        I think we should avoid adding too many JS-specific things to B3. But, so long as it's still
+        possible to use B3 to compile things that aren't JS, I think we'll be fine.
+
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::dump):
+        (JSC::B3::ValueRep::emitRestore):
+        (JSC::B3::ValueRep::recoveryForJSValue):
+        * b3/B3ValueRep.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        * test/stress/ftl-tail-call.js: Added.
+
 2015-12-21  Mark Lam  <mark.lam@apple.com>
 
         Snippefy op_negate for the baseline JIT.
