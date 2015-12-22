@@ -2970,15 +2970,6 @@
             "wms"
          ]
       },
-      "Xabier Rodriguez-Calvar" : {
-         "emails" : [
-            "calvaris@igalia.com",
-            "xrcalvar@igalia.com"
-         ],
-         "nicks" : [
-            "calvaris"
-         ]
-      },
       "Xianzhu Wang" : {
          "emails" : [
             "wangxianzhu@chromium.org",
@@ -4983,6 +4974,16 @@
          "expertise" : "Developer Tools, Web Inspector",
          "nicks" : [
             "vsevik"
+         ]
+      },
+      "Xabier Rodriguez-Calvar" : {
+         "emails" : [
+            "calvaris@igalia.com",
+            "xrcalvar@igalia.com"
+         ],
+         "expertise" : "WebKitGTK+, GStreamer, Streams API",
+         "nicks" : [
+            "calvaris"
          ]
       },
       "Xan Lopez" : {

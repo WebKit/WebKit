@@ -1,3 +1,9 @@
+2015-12-22  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json: Marking myself as reviewer.
+
 2015-12-21  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] test_ewk2_context failed after r192808
