@@ -490,7 +490,11 @@ WebInspector._updateNewTabButtonState = function(event)
 {
     let allTabs = [...this._knownTabClassesByType.values()];
     let addableTabs = allTabs.filter((tabClass) => !tabClass.isEphemeral());
-    let canMakeNewTab = addableTabs.some((tabClass) => this.isNewTabWithTypeAllowed(tabClass.Type));
+
+    // FIXME: Use arrow functions once http://webkit.org/b/152497 is resolved.
+    let canMakeNewTab = addableTabs.some(function(tabClass) {
+        return this.isNewTabWithTypeAllowed(tabClass.Type);
+    }.bind(this));
     this.tabBar.newTabItem.disabled = !canMakeNewTab;
 };
 

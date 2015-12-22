@@ -1,5 +1,16 @@
 2015-12-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        WebInspector: Can't open a new tab: Uncaught Exception: TypeError: this.isNewTabWithTypeAllowed is not a function
+        https://bugs.webkit.org/show_bug.cgi?id=152471
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._updateNewTabButtonState):
+        Don't use arrow functions because of https://webkit.org/b/152497 "Arrow functions: 'this' isn't lexically bound"
+
+2015-12-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Remove unused WebInspector.Object.removeAllListeners
         https://bugs.webkit.org/show_bug.cgi?id=152474
 
