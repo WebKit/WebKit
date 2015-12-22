@@ -1,3 +1,27 @@
+2015-12-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] MediaStreamTrackPrivate.source should be a reference
+        https://bugs.webkit.org/show_bug.cgi?id=152509
+
+        Reviewed by Tim Horton.
+
+        No new tests, no functional change.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::trackVectorForType):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::create):
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::didCreateStream):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::platformLayer):
+        (WebCore::MediaStreamPrivate::currentFrameImage):
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::MediaStreamTrackPrivate):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::source):
+
 2015-12-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194362.

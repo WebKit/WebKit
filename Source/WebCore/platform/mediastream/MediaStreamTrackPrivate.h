@@ -77,7 +77,7 @@ public:
 
     RefPtr<MediaStreamTrackPrivate> clone();
 
-    RealtimeMediaSource* source() const { return m_source.get(); }
+    RealtimeMediaSource& source() const { return *m_source.get(); }
     RealtimeMediaSource::Type type() const;
 
     void endTrack();

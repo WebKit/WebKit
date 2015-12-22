@@ -83,7 +83,7 @@ public:
     void applyConstraints(const Dictionary&);
     void applyConstraints(const MediaConstraints&);
 
-    RealtimeMediaSource* source() const { return m_private->source(); }
+    RealtimeMediaSource& source() const { return m_private->source(); }
     MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
 
     AudioSourceProvider* audioSourceProvider();

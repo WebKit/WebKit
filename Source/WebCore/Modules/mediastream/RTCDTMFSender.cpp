@@ -47,7 +47,7 @@ static const long defaultInterToneGapMs = 70;
 RefPtr<RTCDTMFSender> RTCDTMFSender::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
 {
     RefPtr<MediaStreamTrack> track = prpTrack;
-    std::unique_ptr<RTCDTMFSenderHandler> handler = peerConnectionHandler->createDTMFSender(track->source());
+    std::unique_ptr<RTCDTMFSenderHandler> handler = peerConnectionHandler->createDTMFSender(&track->source());
     if (!handler) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;

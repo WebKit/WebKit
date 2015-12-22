@@ -50,7 +50,7 @@ RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(RefPtr<RealtimeM
 
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(const MediaStreamTrackPrivate& other)
     : RefCounted()
-    , m_source(other.source())
+    , m_source(&other.source())
     , m_id(createCanonicalUUIDString())
     , m_isEnabled(other.enabled())
     , m_isEnded(other.ended())

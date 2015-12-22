@@ -167,13 +167,13 @@ void UserMediaRequest::didCreateStream(PassRefPtr<MediaStreamPrivate> privateStr
     if (m_audioConstraints) {
         for (auto& track : stream->getAudioTracks()) {
             track->applyConstraints(*m_audioConstraints);
-            track->source()->startProducingData();
+            track->source().startProducingData();
         }
     }
     if (m_videoConstraints) {
         for (auto& track : stream->getVideoTracks()) {
             track->applyConstraints(*m_videoConstraints);
-            track->source()->startProducingData();
+            track->source().startProducingData();
         }
     }
 

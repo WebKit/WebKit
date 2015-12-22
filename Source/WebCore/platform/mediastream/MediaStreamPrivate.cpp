@@ -217,7 +217,7 @@ PlatformLayer* MediaStreamPrivate::platformLayer() const
     if (!m_activeVideoTrack)
         return nullptr;
 
-    return m_activeVideoTrack->source()->platformLayer();
+    return m_activeVideoTrack->source().platformLayer();
 }
 
 void MediaStreamPrivate::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
@@ -241,7 +241,7 @@ RefPtr<Image> MediaStreamPrivate::currentFrameImage()
     if (!active() || !m_activeVideoTrack)
         return nullptr;
 
-    return m_activeVideoTrack->source()->currentFrameImage();
+    return m_activeVideoTrack->source().currentFrameImage();
 }
 
 void MediaStreamPrivate::updateActiveVideoTrack()

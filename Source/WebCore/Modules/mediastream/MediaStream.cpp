@@ -315,7 +315,7 @@ MediaStreamTrackVector MediaStream::trackVectorForType(RealtimeMediaSource::Type
 {
     MediaStreamTrackVector tracks;
     for (auto& track : m_trackSet.values()) {
-        if (track->source()->type() == filterType)
+        if (track->source().type() == filterType)
             tracks.append(track);
     }
 
