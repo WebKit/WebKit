@@ -2081,16 +2081,6 @@
             "mibrunin"
          ]
       },
-      "Michael Catanzaro" : {
-         "emails" : [
-            "mcatanzaro@igalia.com",
-            "mcatanzaro@gnome.org"
-         ],
-         "expertise" : "The WebKitGTK+ Port, Epiphany, TLS",
-         "nicks" : [
-            "mcatanzaro"
-         ]
-      },
       "Michael Nordman" : {
          "emails" : [
             "michaeln@google.com"
@@ -4623,6 +4613,16 @@
          "expertise" : "The WebKitGTK+ Port, Cairo graphics backend, soup HTTP backend",
          "nicks" : [
             "mrobinson"
+         ]
+      },
+      "Michael Catanzaro" : {
+         "emails" : [
+            "mcatanzaro@igalia.com",
+            "mcatanzaro@gnome.org"
+         ],
+         "expertise" : "The WebKitGTK+ Port, Epiphany, Soup HTTP Backend",
+         "nicks" : [
+            "mcatanzaro"
          ]
       },
       "Michael Saboff" : {
