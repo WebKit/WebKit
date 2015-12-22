@@ -657,6 +657,7 @@
     <ClCompile Include="..\jit\JITInlineCacheGenerator.cpp" />
     <ClCompile Include="..\jit\JITLeftShiftGenerator.cpp" />
     <ClCompile Include="..\jit\JITMulGenerator.cpp" />
+    <ClCompile Include="..\jit\JITNegGenerator.cpp" />
     <ClCompile Include="..\jit\JITOpcodes.cpp" />
     <ClCompile Include="..\jit\JITOpcodes32_64.cpp" />
     <ClCompile Include="..\jit\JITOperations.cpp" />
@@ -1490,6 +1491,7 @@
     <ClInclude Include="..\jit\JITInlines.h" />
     <ClInclude Include="..\jit\JITLeftShiftGenerator.h" />
     <ClInclude Include="..\jit\JITMulGenerator.h" />
+    <ClInclude Include="..\jit\JITNegGenerator.h" />
     <ClInclude Include="..\jit\JITOperations.h" />
     <ClInclude Include="..\jit\JITRightShiftGenerator.h" />
     <ClInclude Include="..\jit\JITStubRoutine.h" />

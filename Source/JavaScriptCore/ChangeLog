@@ -1,3 +1,31 @@
+2015-12-21  Mark Lam  <mark.lam@apple.com>
+
+        Snippefy op_negate for the baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=152447
+
+        Reviewed by Benjamin Poulain.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_unsigned):
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitBitBinaryOpFastPath):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_op_negate): Deleted.
+        (JSC::JIT::emitSlow_op_negate): Deleted.
+        * jit/JITNegGenerator.cpp: Added.
+        (JSC::JITNegGenerator::generateFastPath):
+        * jit/JITNegGenerator.h: Added.
+        (JSC::JITNegGenerator::JITNegGenerator):
+        (JSC::JITNegGenerator::didEmitFastPath):
+        (JSC::JITNegGenerator::endJumpList):
+        (JSC::JITNegGenerator::slowPathJumpList):
+
 2015-12-21  Filip Pizlo  <fpizlo@apple.com>
 
         Address review feedback from Saam.  I should have landed it in r194354.

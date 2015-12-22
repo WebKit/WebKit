@@ -462,6 +462,9 @@
     <ClCompile Include="..\jit\JITMulGenerator.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\JITNegGenerator.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\JITOpcodes.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -2580,6 +2583,9 @@
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITMulGenerator.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITNegGenerator.h">
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITRightShiftGenerator.h">

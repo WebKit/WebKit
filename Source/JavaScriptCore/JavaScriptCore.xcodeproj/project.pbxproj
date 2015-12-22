@@ -2054,6 +2054,8 @@
 		FE7BA60F1A1A7CEC00F1F7B4 /* HeapVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */; };
 		FE7BA6101A1A7CEC00F1F7B4 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
+		FE99B2491C24C3D300C82159 /* JITNegGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE99B2481C24B6D300C82159 /* JITNegGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE99B24A1C24C3D700C82159 /* JITNegGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE99B2471C24B6D300C82159 /* JITNegGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08621182B7A0400F6D851 /* DebuggerPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA1E4391C213A2B00277A16 /* ValueProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEA1E4381C213A2600277A16 /* ValueProfile.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -4261,6 +4263,8 @@
 		FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapVerifier.h; sourceTree = "<group>"; };
 		FE90BB3A1B7CF64E006B3F03 /* VMInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInlines.h; sourceTree = "<group>"; };
 		FE98B5B61BB9AE110073E7A6 /* JITSubGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITSubGenerator.h; sourceTree = "<group>"; };
+		FE99B2471C24B6D300C82159 /* JITNegGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITNegGenerator.cpp; sourceTree = "<group>"; };
+		FE99B2481C24B6D300C82159 /* JITNegGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITNegGenerator.h; sourceTree = "<group>"; };
 		FEA0861E182B7A0400F6D851 /* Breakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoint.h; sourceTree = "<group>"; };
 		FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPrimitives.h; sourceTree = "<group>"; };
 		FEA1E4381C213A2600277A16 /* ValueProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueProfile.cpp; sourceTree = "<group>"; };
@@ -4970,6 +4974,8 @@
 				FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */,
 				FE1879FF1BFBC73C0038BBCA /* JITMulGenerator.cpp */,
 				FE187A001BFBC73C0038BBCA /* JITMulGenerator.h */,
+				FE99B2471C24B6D300C82159 /* JITNegGenerator.cpp */,
+				FE99B2481C24B6D300C82159 /* JITNegGenerator.h */,
 				BCDD51E90FB8DF74004A8BDC /* JITOpcodes.cpp */,
 				A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */,
 				0F24E54517EE274900ABB217 /* JITOperations.cpp */,
@@ -7228,6 +7234,7 @@
 				0FC20CB61852E2C600C9E954 /* DFGStrengthReductionPhase.h in Headers */,
 				0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */,
 				0F50AF3C193E8B3900674EE8 /* DFGStructureClobberState.h in Headers */,
+				FE99B2491C24C3D300C82159 /* JITNegGenerator.h in Headers */,
 				0F79085619A290B200F6310C /* DFGStructureRegistrationPhase.h in Headers */,
 				0F2FCCFF18A60070001A27F8 /* DFGThreadData.h in Headers */,
 				70B791991C024A29002481E2 /* GeneratorPrototype.h in Headers */,
@@ -8964,6 +8971,7 @@
 				BCDD51EB0FB8DF74004A8BDC /* JITOpcodes.cpp in Sources */,
 				A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */,
 				0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */,
+				FE99B24A1C24C3D700C82159 /* JITNegGenerator.cpp in Sources */,
 				86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */,
 				A7C1E8E4112E72EF00A37F98 /* JITPropertyAccess32_64.cpp in Sources */,
 				0F766D2815A8CC1E008F363E /* JITStubRoutine.cpp in Sources */,

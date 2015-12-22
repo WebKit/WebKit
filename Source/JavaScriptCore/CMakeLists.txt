@@ -473,6 +473,7 @@ set(JavaScriptCore_SOURCES
     jit/JITInlineCacheGenerator.cpp
     jit/JITLeftShiftGenerator.cpp
     jit/JITMulGenerator.cpp
+    jit/JITNegGenerator.cpp
     jit/JITOpcodes.cpp
     jit/JITOpcodes32_64.cpp
     jit/JITOperations.cpp

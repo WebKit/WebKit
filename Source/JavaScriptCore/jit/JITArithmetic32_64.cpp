@@ -42,40 +42,6 @@
 
 namespace JSC {
 
-void JIT::emit_op_negate(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int src = currentInstruction[2].u.operand;
-
-    emitLoad(src, regT1, regT0);
-
-    Jump srcNotInt = branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag));
-    addSlowCase(branchTest32(Zero, regT0, TrustedImm32(0x7fffffff)));
-    neg32(regT0);
-    emitStoreInt32(dst, regT0, (dst == src));
-
-    Jump end = jump();
-
-    srcNotInt.link(this);
-    addSlowCase(branch32(Above, regT1, TrustedImm32(JSValue::LowestTag)));
-
-    xor32(TrustedImm32(1 << 31), regT1);
-    store32(regT1, tagFor(dst));
-    if (dst != src)
-        store32(regT0, payloadFor(dst));
-
-    end.link(this);
-}
-
-void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter); // 0x7fffffff check
-    linkSlowCase(iter); // double check
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_negate);
-    slowPathCall.call();
-}
-
 void JIT::emit_compareAndJump(OpcodeID opcode, int op1, int op2, unsigned target, RelationalCondition condition)
 {
     JumpList notInt32Op1;
