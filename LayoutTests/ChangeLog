@@ -1,3 +1,35 @@
+2015-12-22  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Fix cosmetic things after importing spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=152479
+
+        Reviewed by Youenn Fablet.
+
+        Spec version are mainly updated in this patch as it wasn't done when importing tests from the spec. Some other
+        minor changes were done, as renumbering some tests, removing some orphan expectations and other styling issues.
+
+        * streams/brand-checks.html:
+        * streams/pipe-to.html:
+        * streams/readable-stream-controller-error.html:
+        * streams/readable-stream-pipeThrough.html:
+        * streams/readable-stream-reader-read.html:
+        * streams/reference-implementation/abstract-ops.html:
+        * streams/reference-implementation/bad-strategies.html:
+        * streams/reference-implementation/bad-underlying-sinks.html:
+        * streams/reference-implementation/bad-underlying-sources-expected.txt: Removed.
+        * streams/reference-implementation/brand-checks.html:
+        * streams/reference-implementation/byte-length-queuing-strategy.html:
+        * streams/reference-implementation/count-queuing-strategy.html:
+        * streams/reference-implementation/pipe-through.html:
+        * streams/reference-implementation/pipe-to-options.html:
+        * streams/reference-implementation/pipe-to.html:
+        * streams/reference-implementation/readable-stream-templated.html:
+        * streams/reference-implementation/transform-stream-errors.html:
+        * streams/reference-implementation/transform-stream.html:
+        * streams/reference-implementation/writable-stream-abort.html:
+        * streams/reference-implementation/writable-stream-expected.txt:
+        * streams/reference-implementation/writable-stream.html:
+
 2015-12-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking webgl/1.0.2/conformance/extensions/get-extension.html as flaky on mac-wk1

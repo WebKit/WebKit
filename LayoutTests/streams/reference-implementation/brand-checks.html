@@ -3,7 +3,7 @@
 <script src='../../resources/testharnessreport.js'></script>
 <script src='resources/streams-utils.js'></script>
 <script>
-// This is updated till https://github.com/whatwg/streams/commit/ec5ffa036308d9f6350d2946560d48cdbf090939
+// This is updated till https://github.com/whatwg/streams/commit/4ba861e6f60c248060811830e11271c84b439cc3
 
 function fakeWritableStream() {
   return {
@@ -52,16 +52,16 @@ function getterThrows(obj, getterName, target) {
     assert_throws(new TypeError(), function() { getter.call(target); }, getterName + ' should throw a TypeError');
 }
 
-var test6 = async_test('WritableStream.prototype.closed enforces a brand check');
-test6.step(function() {
-    getterRejects(test6, WritableStream.prototype, 'closed', fakeWritableStream());
-    getterRejects(test6, WritableStream.prototype, 'closed', realReadableStream(), true);
+var test1 = async_test('WritableStream.prototype.closed enforces a brand check');
+test1.step(function() {
+    getterRejects(test1, WritableStream.prototype, 'closed', fakeWritableStream());
+    getterRejects(test1, WritableStream.prototype, 'closed', realReadableStream(), true);
 });
 
-var test7 = async_test('WritableStream.prototype.ready enforces a brand check');
-test7.step(function() {
-    getterRejects(test7, WritableStream.prototype, 'ready', fakeWritableStream());
-    getterRejects(test7, WritableStream.prototype, 'ready', realReadableStream(), true);
+var test2 = async_test('WritableStream.prototype.ready enforces a brand check');
+test2.step(function() {
+    getterRejects(test2, WritableStream.prototype, 'ready', fakeWritableStream());
+    getterRejects(test2, WritableStream.prototype, 'ready', realReadableStream(), true);
 });
 
 test(function() {
@@ -69,21 +69,21 @@ test(function() {
     getterThrows(WritableStream.prototype, 'state', realReadableStream());
 }, 'WritableStream.prototype.state enforces a brand check');
 
-var test8 = async_test('WritableStream.prototype.abort enforces a brand check');
-test8.step(function() {
-    methodRejects(test8, WritableStream.prototype, 'abort', fakeWritableStream());
-    methodRejects(test8, WritableStream.prototype, 'abort', realReadableStream(), true);
+var test3 = async_test('WritableStream.prototype.abort enforces a brand check');
+test3.step(function() {
+    methodRejects(test3, WritableStream.prototype, 'abort', fakeWritableStream());
+    methodRejects(test3, WritableStream.prototype, 'abort', realReadableStream(), true);
 });
 
-var test9 = async_test('WritableStream.prototype.write enforces a brand check');
-test9.step(function() {
-    methodRejects(test9, WritableStream.prototype, 'write', fakeWritableStream());
-    methodRejects(test9, WritableStream.prototype, 'write', realReadableStream(), true);
+var test4 = async_test('WritableStream.prototype.write enforces a brand check');
+test4.step(function() {
+    methodRejects(test4, WritableStream.prototype, 'write', fakeWritableStream());
+    methodRejects(test4, WritableStream.prototype, 'write', realReadableStream(), true);
 });
 
-var test10 = async_test('WritableStream.prototype.close enforces a brand check');
-test10.step(function() {
-    methodRejects(test10, WritableStream.prototype, 'close', fakeWritableStream());
-    methodRejects(test10, WritableStream.prototype, 'close', realReadableStream(), true);
+var test5 = async_test('WritableStream.prototype.close enforces a brand check');
+test5.step(function() {
+    methodRejects(test5, WritableStream.prototype, 'close', fakeWritableStream());
+    methodRejects(test5, WritableStream.prototype, 'close', realReadableStream(), true);
 });
 </script>

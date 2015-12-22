@@ -3,6 +3,7 @@
 <script src='../resources/testharnessreport.js'></script>
 <script src='../resources/gc.js'></script>
 <script>
+// This is updated till https://github.com/whatwg/streams/commit/4ba861e6f60c248060811830e11271c84b439cc3
 
 test(function() {
     var input = {
@@ -78,5 +79,4 @@ test(function() {
 
     assert_equals(count, 3);
 }, 'ReadableStream.prototype.pipeThrough should work with missing parameters');
-
 </script>

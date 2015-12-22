@@ -3,14 +3,14 @@
 <script src='../../resources/testharnessreport.js'></script>
 <script src='resources/streams-utils.js'></script>
 <script>
-// This is updated till https://github.com/whatwg/streams/commit/ec5ffa036308d9f6350d2946560d48cdbf090939
+// This is updated till https://github.com/whatwg/streams/commit/4ba861e6f60c248060811830e11271c84b439cc3
 
 function templatedRSClosed(label, factory) {
     test(function() {
     }, 'Running templatedRSClosed with ' + label);
 
-    var test2 = async_test('piping to a WritableStream in the writable state should close the writable stream');
-    test2.step(function() {
+    var test1 = async_test('piping to a WritableStream in the writable state should close the writable stream');
+    test1.step(function() {
         var closeCalled = false;
 
         var rs = factory();
@@ -31,19 +31,19 @@ function templatedRSClosed(label, factory) {
             }
         });
 
-        startPromise.then(test2.step_func(function() {
+        startPromise.then(test1.step_func(function() {
             assert_equals(ws.state, 'writable', 'writable stream should start in writable state');
 
-            return rs.pipeTo(ws).then(test2.step_func(function() {
+            return rs.pipeTo(ws).then(test1.step_func(function() {
                 assert_true(closeCalled);
                 assert_equals(ws.state, 'closed', 'writable stream should become closed');
-                test2.done('underlying source close should be called');
+                test1.done('underlying source close should be called');
             }));
-        })).catch(test2.step_func(function(e) { assert_unreached(e); }));
+        })).catch(test1.step_func(function(e) { assert_unreached(e); }));
     });
 
-    var test3 = async_test('piping to a WritableStream in the writable state with { preventClose: true } should do nothing');
-    test3.step(function() {
+    var test2 = async_test('piping to a WritableStream in the writable state with { preventClose: true } should do nothing');
+    test2.step(function() {
         var rs = factory();
 
         var startPromise = Promise.resolve();
@@ -62,14 +62,14 @@ function templatedRSClosed(label, factory) {
             }
         });
 
-        startPromise.then(test3.step_func(function() {
+        startPromise.then(test2.step_func(function() {
             assert_equals(ws.state, 'writable', 'writable stream should start in writable state');
 
-            return rs.pipeTo(ws, { preventClose: true }).then(test3.step_func(function() {
+            return rs.pipeTo(ws, { preventClose: true }).then(test2.step_func(function() {
                 assert_equals(ws.state, 'writable', 'writable stream should still be writable');
-                test3.done('pipeTo promise should be fulfilled');
+                test2.done('pipeTo promise should be fulfilled');
             }));
-        })).catch(test3.step_func(function(e) { assert_unreached(e); }));
+        })).catch(test2.step_func(function(e) { assert_unreached(e); }));
     });
 };
 

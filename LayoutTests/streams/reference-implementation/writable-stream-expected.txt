@@ -10,5 +10,5 @@ PASS WritableStream instances have the correct methods and properties
 PASS WritableStream with simple input, processed asynchronously 
 PASS WritableStream with simple input, processed synchronously 
 PASS WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure 
-PASS Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined ovalue 
+PASS Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined value 
 

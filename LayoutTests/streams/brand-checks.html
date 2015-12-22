@@ -3,6 +3,8 @@
 <script src='../resources/testharnessreport.js'></script>
 <script src='reference-implementation/resources/streams-utils.js'></script>
 <script>
+// This is updated till https://github.com/whatwg/streams/commit/4ba861e6f60c248060811830e11271c84b439cc3
+
 let ReadableStreamReader = (new ReadableStream()).getReader().constructor;
 
 function fakeWritableStream() {
