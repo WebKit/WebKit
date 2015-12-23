@@ -1252,8 +1252,6 @@ char* JIT_OPERATION operationGetButterfly(ExecState* exec, JSCell* cell)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    dataLog("Ran the barrier.\n");
-
     return bitwise_cast<char*>(jsCast<JSObject*>(cell)->butterfly());
 }
 

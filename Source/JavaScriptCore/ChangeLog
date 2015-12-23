@@ -1,5 +1,20 @@
 2015-12-22  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION(194382): FTL B3 no longer runs V8/encrypt
+        https://bugs.webkit.org/show_bug.cgi?id=152519
+
+        Reviewed by Saam Barati.
+
+        A "Move Imm, Tmp" instruction should turn into "Move32 Imm, Tmp" if the Tmp is spilled to a
+        32-bit slot. Changing where we check isTmp() achieves this. Since all of the logic is only
+        relevant to when we spill without introducing a Tmp, and since a Move does not have a "Move Addr,
+        Addr" form, this code ensures that the logic only happens for "Tmp, Tmp" and "Imm, Tmp".
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * dfg/DFGOperations.cpp:
+
+2015-12-22  Filip Pizlo  <fpizlo@apple.com>
+
         FTL B3 should use the right type for comparison slow paths
         https://bugs.webkit.org/show_bug.cgi?id=152521
 
