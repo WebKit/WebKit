@@ -19,6 +19,60 @@ test(() => {
 
 }, 'Readable stream: throwing strategy.size getter');
 
+test(() => {
+
+  const theError = new Error('a unique string');
+
+  let controller;
+  const rs = new ReadableStream(
+    {
+      start(c) {
+        controller = c;
+      }
+    },
+    {
+      size() {
+        controller.error(theError);
+        throw theError;
+      },
+      highWaterMark: 5
+    }
+  );
+
+  assert_throws(theError, () => {
+    controller.enqueue('a');
+  }, 'enqueue should re-throw the error');
+
+}, 'Readable stream: strategy.size errors the stream and then throws');
+
+test(() => {
+
+  const theError = new Error('a unique string');
+
+  let controller;
+  const rs = new ReadableStream(
+    {
+      start(c) {
+        controller = c;
+      }
+    },
+    {
+      size() {
+        controller.error(theError);
+        return Infinity;
+      },
+      highWaterMark: 5
+    }
+  );
+
+  try {
+    controller.enqueue('a');
+  } catch (error) {
+    assert_equals(error.name, 'RangeError', 'enqueue should throw a RangeError');
+  }
+
+}, 'Readable stream: strategy.size errors the stream and then returns Infinity');
+
 promise_test(() => {
 
   const theError = new Error('a unique string');

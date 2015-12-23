@@ -1,5 +1,7 @@
 
 PASS Readable stream: throwing strategy.size getter 
+PASS Readable stream: strategy.size errors the stream and then throws 
+PASS Readable stream: strategy.size errors the stream and then returns Infinity 
 PASS Readable stream: throwing strategy.size method 
 PASS Readable stream: throwing strategy.highWaterMark getter 
 PASS Readable stream: invalid strategy.highWaterMark 
@@ -10,6 +12,8 @@ FAIL Readable stream: throwing strategy.size getter assert_throws: construction 
     new ReadableStream({}, {
       get size() {
  ..." threw object "ReferenceError: Can't find variable: ReadableStream" ("ReferenceError") expected object "Error: a unique string" ("Error")
+FAIL Readable stream: strategy.size errors the stream and then throws Can't find variable: ReadableStream
+FAIL Readable stream: strategy.size errors the stream and then returns Infinity Can't find variable: ReadableStream
 FAIL Readable stream: throwing strategy.size method Can't find variable: ReadableStream
 FAIL Readable stream: throwing strategy.highWaterMark getter assert_throws: construction should re-throw the error function "() => {
     new ReadableStream({}, {

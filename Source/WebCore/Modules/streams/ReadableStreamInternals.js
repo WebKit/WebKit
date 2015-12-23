@@ -328,7 +328,8 @@ function enqueueInReadableStream(stream, chunk)
         @enqueueValueWithSize(stream.@queue, chunk, size);
     }
     catch(error) {
-        @errorReadableStream(stream, error);
+        if (stream.@state === @streamReadable)
+            @errorReadableStream(stream, error);
         throw error;
     }
     @requestReadableStreamPull(stream);

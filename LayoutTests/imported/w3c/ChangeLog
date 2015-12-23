@@ -1,3 +1,16 @@
+2015-12-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] In RS during enqueuing error should be reported only if readable
+        https://bugs.webkit.org/show_bug.cgi?id=152505
+
+        Reviewed by Youenn Fablet.
+
+        Updated imported spec tests.
+
+        * web-platform-tests/streams-api/README.txt: Updated spec version.
+        * web-platform-tests/streams-api/readable-streams/bad-strategies-expected.txt: Expectations.
+        * web-platform-tests/streams-api/readable-streams/bad-strategies.js: Added two new tests.
+
 2015-12-21  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] imported/w3c/web-platform-tests/streams-api/readable-streams/cancel.html has a flaky test
