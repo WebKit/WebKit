@@ -436,10 +436,15 @@ public:
         move(stackPointerRegister, framePointerRegister);
     }
 
+    void emitFunctionEpilogueWithEmptyFrame()
+    {
+        popPair(framePointerRegister, linkRegister);
+    }
+
     void emitFunctionEpilogue()
     {
         move(framePointerRegister, stackPointerRegister);
-        popPair(framePointerRegister, linkRegister);
+        emitFunctionEpilogueWithEmptyFrame();
     }
 
     ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)

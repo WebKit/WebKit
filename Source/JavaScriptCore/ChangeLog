@@ -1,3 +1,69 @@
+2015-12-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Get the JavaScriptCore framework to build on ARM64 with B3 enabled
+        https://bugs.webkit.org/show_bug.cgi?id=152503
+
+        Reviewed by Filip Pizlo.
+
+        It is not working but it builds.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::vand):
+        (JSC::ARM64Assembler::vectorDataProcessing2Source):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::add32):
+        (JSC::MacroAssemblerARM64::add64):
+        (JSC::MacroAssemblerARM64::countLeadingZeros64):
+        (JSC::MacroAssemblerARM64::not32):
+        (JSC::MacroAssemblerARM64::not64):
+        (JSC::MacroAssemblerARM64::zeroExtend16To32):
+        (JSC::MacroAssemblerARM64::signExtend16To32):
+        (JSC::MacroAssemblerARM64::zeroExtend8To32):
+        (JSC::MacroAssemblerARM64::signExtend8To32):
+        (JSC::MacroAssemblerARM64::addFloat):
+        (JSC::MacroAssemblerARM64::ceilFloat):
+        (JSC::MacroAssemblerARM64::branchDouble):
+        (JSC::MacroAssemblerARM64::branchFloat):
+        (JSC::MacroAssemblerARM64::divFloat):
+        (JSC::MacroAssemblerARM64::moveZeroToDouble):
+        (JSC::MacroAssemblerARM64::moveFloatTo32):
+        (JSC::MacroAssemblerARM64::move32ToFloat):
+        (JSC::MacroAssemblerARM64::moveConditionallyDouble):
+        (JSC::MacroAssemblerARM64::moveConditionallyFloat):
+        (JSC::MacroAssemblerARM64::moveConditionallyAfterFloatingPointCompare):
+        (JSC::MacroAssemblerARM64::mulFloat):
+        (JSC::MacroAssemblerARM64::andDouble):
+        (JSC::MacroAssemblerARM64::andFloat):
+        (JSC::MacroAssemblerARM64::sqrtFloat):
+        (JSC::MacroAssemblerARM64::subFloat):
+        (JSC::MacroAssemblerARM64::signExtend32ToPtr):
+        (JSC::MacroAssemblerARM64::moveConditionally32):
+        (JSC::MacroAssemblerARM64::moveConditionally64):
+        (JSC::MacroAssemblerARM64::moveConditionallyTest32):
+        (JSC::MacroAssemblerARM64::moveConditionallyTest64):
+        (JSC::MacroAssemblerARM64::test32):
+        (JSC::MacroAssemblerARM64::setCarry):
+        (JSC::MacroAssemblerARM64::jumpAfterFloatingPointCompare):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::moveDoubleToInts):
+        (JSC::MacroAssemblerX86::moveIntsToDouble):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::move32ToFloat):
+        (JSC::MacroAssemblerX86Common::moveFloatTo32):
+        (JSC::MacroAssemblerX86Common::moveInt32ToPacked): Deleted.
+        (JSC::MacroAssemblerX86Common::movePackedToInt32): Deleted.
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendShift):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::isX86DivHelperValid):
+        * b3/air/AirOpcode.opcodes:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitFunctionEpilogueWithEmptyFrame):
+        (JSC::AssemblyHelpers::emitFunctionEpilogue):
+        * jit/FPRInfo.h:
+        (JSC::FPRInfo::toArgumentRegister):
+
 2015-12-23  Andy VanWagoner  <andy@instructure.com>
 
         [INTL] Implement Intl.DateTimeFormat.prototype.resolvedOptions ()

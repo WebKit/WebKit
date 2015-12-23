@@ -167,6 +167,7 @@ inline bool isX86DivHelperValid(const Inst& inst)
     return inst.args[0] == Tmp(X86Registers::eax)
         && inst.args[1] == Tmp(X86Registers::edx);
 #else
+    UNUSED_PARAM(inst);
     return false;
 #endif
 }

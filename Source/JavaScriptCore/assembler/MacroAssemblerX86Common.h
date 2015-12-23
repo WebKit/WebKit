@@ -1208,13 +1208,13 @@ public:
         m_assembler.por_rr(src, dst);
     }
 
-    void moveInt32ToPacked(RegisterID src, XMMRegisterID dst)
+    void move32ToFloat(RegisterID src, XMMRegisterID dst)
     {
         ASSERT(isSSE2Present());
         m_assembler.movd_rr(src, dst);
     }
 
-    void movePackedToInt32(XMMRegisterID src, RegisterID dst)
+    void moveFloatTo32(XMMRegisterID src, RegisterID dst)
     {
         ASSERT(isSSE2Present());
         m_assembler.movd_rr(src, dst);

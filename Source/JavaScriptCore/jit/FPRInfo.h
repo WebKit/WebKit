@@ -187,6 +187,7 @@ class FPRInfo {
 public:
     typedef FPRReg RegisterType;
     static const unsigned numberOfRegisters = 23;
+    static const unsigned numberOfArgumentRegisters = 8;
 
     // Temporary registers.
     // q8-q15 are callee saved, q31 is use by the MacroAssembler as fpTempRegister.
@@ -256,6 +257,12 @@ public:
         };
         unsigned result = indexForRegister[reg];
         return result;
+    }
+
+    static FPRReg toArgumentRegister(unsigned index)
+    {
+        ASSERT(index < 8);
+        return static_cast<FPRReg>(index);
     }
 
     static const char* debugName(FPRReg reg)

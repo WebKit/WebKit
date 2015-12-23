@@ -644,14 +644,27 @@ private:
         Air::Opcode opcode = opcodeForType(opcode32, opcode64, value->type());
         
         if (imm(amount)) {
-            append(Move, tmp(value), tmp(m_value));
-            append(opcode, imm(amount), tmp(m_value));
+            if (isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Tmp)) {
+                append(opcode, tmp(value), imm(amount), tmp(m_value));
+                return;
+            }
+            if (isValidForm(opcode, Arg::Imm, Arg::Tmp)) {
+                append(Move, tmp(value), tmp(m_value));
+                append(opcode, imm(amount), tmp(m_value));
+                return;
+            }
+        }
+
+        if (isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            append(opcode, tmp(value), tmp(amount), tmp(m_value));
             return;
         }
 
+#if CPU(X86)
         append(Move, tmp(value), tmp(m_value));
         append(Move, tmp(amount), Tmp(X86Registers::ecx));
         append(opcode, Tmp(X86Registers::ecx), tmp(m_value));
+#endif
     }
 
     template<Air::Opcode opcode32, Air::Opcode opcode64>
@@ -1585,8 +1598,10 @@ private:
 
         case Div: {
             if (isInt(m_value->type())) {
+#if CPU(X86)
                 lowerX86Div();
                 append(Move, Tmp(X86Registers::eax), tmp(m_value));
+#endif
                 return;
             }
             ASSERT(isFloat(m_value->type()));
@@ -1596,8 +1611,10 @@ private:
         }
 
         case Mod: {
+#if CPU(X86)
             lowerX86Div();
             append(Move, Tmp(X86Registers::edx), tmp(m_value));
+#endif
             return;
         }
 
@@ -1677,7 +1694,7 @@ private:
         }
 
         case BitwiseCast: {
-            appendUnOp<MoveInt32ToPacked, Move64ToDouble, MoveDoubleTo64, MovePackedToInt32>(m_value->child(0));
+            appendUnOp<Move32ToFloat, Move64ToDouble, MoveDoubleTo64, MoveFloatTo32>(m_value->child(0));
             return;
         }
 
@@ -2151,6 +2168,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+#if CPU(X86)
     void lowerX86Div()
     {
         Tmp eax = Tmp(X86Registers::eax);
@@ -2176,7 +2194,8 @@ private:
         append(convertToDoubleWord, eax, edx);
         append(div, eax, edx, tmp(m_value->child(1)));
     }
-    
+#endif
+
     IndexSet<Value> m_locked; // These are values that will have no Tmp in Air.
     IndexMap<Value, Tmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
     IndexMap<B3::BasicBlock, Air::BasicBlock*> m_blockToBlock;

@@ -179,13 +179,13 @@ public:
         m_assembler.pextrw_irr(2, src, dest2);
         lshift32(TrustedImm32(16), dest1);
         or32(dest1, dest2);
-        movePackedToInt32(src, dest1);
+        moveFloatTo32(src, dest1);
     }
 
     void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest, FPRegisterID scratch)
     {
-        moveInt32ToPacked(src1, dest);
-        moveInt32ToPacked(src2, scratch);
+        move32ToFloat(src1, dest);
+        move32ToFloat(src2, scratch);
         lshiftPacked(TrustedImm32(32), scratch);
         orPacked(scratch, dest);
     }
