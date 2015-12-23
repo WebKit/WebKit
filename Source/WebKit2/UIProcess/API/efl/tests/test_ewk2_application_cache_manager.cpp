@@ -97,6 +97,9 @@ static Eina_Bool timerCallback(void* userData)
 
 TEST_F(EWK2UnitTestBase, ewk_application_cache_manager)
 {
+    Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
+    ewk_settings_offline_web_application_cache_enabled_set(settings, true);
+    
     std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 

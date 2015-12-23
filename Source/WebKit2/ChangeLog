@@ -1,3 +1,15 @@
+2015-12-22  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] ewk_application_cache_manager test failed after r193812
+        https://bugs.webkit.org/show_bug.cgi?id=152498
+
+        Reviewed by Gyuyoung Kim.
+
+        Need to enable the offline_web_application_cache for the ewk_application_cache_manager test.
+
+        * UIProcess/API/efl/tests/test_ewk2_application_cache_manager.cpp:
+        (TEST_F):
+
 2015-12-22  Andy Estes  <aestes@apple.com>
 
         [CF] Replace CFNetwork-related WebKitSystemInterface calls with SPI
