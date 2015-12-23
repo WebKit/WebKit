@@ -109,6 +109,15 @@ inline DeepStackSlotDump deepDump(const StackSlot* slot)
 
 } } } // namespace JSC::B3::Air
 
+namespace WTF {
+
+inline void printInternal(PrintStream& out, JSC::B3::Air::StackSlot* stackSlot)
+{
+    out.print(*stackSlot);
+}
+
+} // namespace WTF
+
 #endif // ENABLE(B3_JIT)
 
 #endif // AirStackSlot_h

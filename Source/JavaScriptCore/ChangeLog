@@ -1,3 +1,43 @@
+2015-12-22  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should be able to run richards
+        https://bugs.webkit.org/show_bug.cgi?id=152514
+
+        Reviewed by Michael Saboff.
+
+        This came down to a liveness bug and a register allocation bug.
+
+        The liveness bug was that the code that determined whether we should go around the fixpoint
+        assumed that BitVector::quickSet() would return true if the bit changed state from false to
+        true. That's not how it works. It returns the old value of the bit, so it will return false
+        if the bit changed from false to true. Since there is already a lot of code that relies on
+        this behavior, I fixed Liveness instead of changing BitVector.
+
+        The register allocation bug was that we weren't guarding some checks of tmp()'s with checks
+        that the Arg isTmp().
+
+        The liveness took a long time to track down, and I needed to add a lot of dumping to do it.
+        It's now possible to dump more of the liveness states, including liveAtHead. I found this
+        extremely helpful, so I removed the code that cleared liveAtHead.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::AbstractLiveness::AbstractLiveness):
+        (JSC::B3::Air::AbstractLiveness::Iterable::Iterable):
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::iterator):
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::operator*):
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::operator++):
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::operator==):
+        (JSC::B3::Air::AbstractLiveness::Iterable::iterator::operator!=):
+        (JSC::B3::Air::AbstractLiveness::Iterable::begin):
+        (JSC::B3::Air::AbstractLiveness::Iterable::end):
+        (JSC::B3::Air::AbstractLiveness::liveAtHead):
+        (JSC::B3::Air::AbstractLiveness::liveAtTail):
+        * b3/air/AirStackSlot.h:
+        (WTF::printInternal):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+
 2015-12-22  Saam barati  <sbarati@apple.com>
 
         Cloop build fix after https://bugs.webkit.org/show_bug.cgi?id=152511.

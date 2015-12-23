@@ -1190,7 +1190,8 @@ private:
                 // Move is the canonical way to move data between GPRs.
                 bool forceMove32IfDidSpill = false;
                 bool didSpill = false;
-                if (type == Arg::GP && inst.opcode == Move) {
+                if (type == Arg::GP && inst.opcode == Move
+                    && inst.args[0].isTmp() && inst.args[1].isTmp()) {
                     if (m_tmpWidth.defWidth(inst.args[0].tmp()) <= Arg::Width32
                         || m_tmpWidth.useWidth(inst.args[1].tmp()) <= Arg::Width32)
                         forceMove32IfDidSpill = true;

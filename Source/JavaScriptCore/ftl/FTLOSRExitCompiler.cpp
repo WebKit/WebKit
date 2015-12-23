@@ -626,6 +626,9 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
         dataLog("    Will arrive at exit from lazy slow path: ", exit.m_exceptionType == ExceptionType::LazySlowPath, "\n");
 #endif // FTL_USES_B3
         dataLog("    Exit values: ", exit.m_descriptor->m_values, "\n");
+#if FTL_USES_B3
+        dataLog("    Value reps: ", listDump(exit.m_valueReps), "\n");
+#endif // FTL_USES_B3
         if (!exit.m_descriptor->m_materializations.isEmpty()) {
             dataLog("    Materializations:\n");
             for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor->m_materializations)

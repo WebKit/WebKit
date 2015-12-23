@@ -43,7 +43,7 @@ public:
     
     void dump(PrintStream& out) const
     {
-        for (typename T::const_iterator iter = m_list.begin(); iter != m_list.end(); ++iter)
+        for (auto iter = m_list.begin(); iter != m_list.end(); ++iter)
             out.print(m_comma, *iter);
     }
 
@@ -84,7 +84,7 @@ public:
     
     void dump(PrintStream& out) const
     {
-        for (typename T::const_iterator iter = m_map.begin(); iter != m_map.end(); ++iter)
+        for (auto iter = m_map.begin(); iter != m_map.end(); ++iter)
             out.print(m_comma, iter->key, m_arrow, iter->value);
     }
     
@@ -135,7 +135,7 @@ template<typename T, typename Comparator>
 CString sortedMapDump(const T& map, const Comparator& comparator, const char* arrow = "=>", const char* comma = ", ")
 {
     Vector<typename T::KeyType> keys;
-    for (typename T::const_iterator iter = map.begin(); iter != map.end(); ++iter)
+    for (auto iter = map.begin(); iter != map.end(); ++iter)
         keys.append(iter->key);
     std::sort(keys.begin(), keys.end(), comparator);
     StringPrintStream out;
@@ -157,7 +157,7 @@ public:
     
     void dump(PrintStream& out) const
     {
-        for (typename T::const_iterator iter = m_list.begin(); iter != m_list.end(); ++iter)
+        for (auto iter = m_list.begin(); iter != m_list.end(); ++iter)
             out.print(m_comma, inContext(*iter, m_context));
     }
 
