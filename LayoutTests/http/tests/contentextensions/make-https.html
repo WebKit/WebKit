@@ -1,0 +1,40 @@
+<head>
+<script>
+if(window.testRunner) {
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+var testURLs = [
+    "http://127.0.0.1:8000/try_to_promote",
+    "http://127.0.0.1:80/nope",
+    "http://127.0.0.1:80/promote",
+    "http://127.0.0.1:/promote",
+    "http://127.0.0.1/promote",
+    "http://127.0.0.1:443/try_to_promote",
+    "http://127.0.0.1:1443/try_to_promote",
+    "http://promote",
+    "protocol://try_to_promote",
+    "https://127.0.0.1/already_promoted"
+];
+function bodyLoaded() {
+    var testImage = new Image();
+    var currentImageIndex = 0;
+    var runTest = function() {
+        if(currentImageIndex >= testURLs.length) {
+            if(window.testRunner) {
+                testRunner.notifyDone();
+            }
+            return;
+        }
+        testImage.src = testURLs[currentImageIndex++];
+    };
+    testImage.addEventListener("load", runTest);
+    testImage.addEventListener("error", runTest);
+    runTest();
+}
+</script>
+</head>
+<body onload="bodyLoaded();">
+URLs with http, port 80, and promote in the url should be promoted to https with port 443.
+</body>

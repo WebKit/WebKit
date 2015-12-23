@@ -1,3 +1,33 @@
+2015-12-23  Chris Aljoudi <chris@chrismatic.io> and Alex Christensen <achristensen@webkit.org>
+
+        Content blockers should be able to promote http to https
+        https://bugs.webkit.org/show_bug.cgi?id=148966
+
+        Reviewed by Benjamin Poulain.
+
+        Test: http/tests/contentextensions/make-https.html
+
+        * contentextensions/ContentExtensionActions.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::serializeActions):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::loadAction):
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Action::deserialize):
+        (WebCore::ContentExtensions::Action::deserializeType):
+        (WebCore::ContentExtensions::Action::serializedLength):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * platform/URL.cpp:
+        (WebCore::URL::isBlankURL):
+        (WebCore::defaultPortsMap):
+        (WebCore::defaultPortForProtocol):
+        (WebCore::isDefaultPortForProtocol):
+        (WebCore::portAllowed):
+        * platform/URL.h:
+
 2015-12-22  Andy Estes  <aestes@apple.com>
 
         Try to fix the iOS build after r194378

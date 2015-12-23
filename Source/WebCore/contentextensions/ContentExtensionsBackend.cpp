@@ -36,6 +36,7 @@
 #include "DocumentLoader.h"
 #include "ExtensionStyleSheets.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "MainFrame.h"
 #include "ResourceLoadInfo.h"
 #include "URL.h"
@@ -186,6 +187,25 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(Reso
                     initiatingDocumentLoader.addPendingContentExtensionSheet(action.stringArgument(), *styleSheetContents);
                 else if (currentDocument)
                     currentDocument->extensionStyleSheets().maybeAddContentExtensionSheet(action.stringArgument(), *styleSheetContents);
+            }
+            break;
+        }
+        case ContentExtensions::ActionType::MakeHTTPS: {
+            const URL originalURL = request.url();
+            if (originalURL.protocolIs("http") && (!originalURL.hasPort() || isDefaultPortForProtocol(originalURL.port(), originalURL.protocol()))) {
+                URL newURL = originalURL;
+                newURL.setProtocol("https");
+                if (originalURL.hasPort())
+                    newURL.setPort(defaultPortForProtocol("https"));
+                request.setURL(newURL);
+
+                if (resourceType == ResourceType::Document && initiatingDocumentLoader.isLoadingMainResource()) {
+                    // This is to make sure the correct 'new' URL shows in the location bar.
+                    initiatingDocumentLoader.request().setURL(newURL);
+                    initiatingDocumentLoader.frameLoader()->client().dispatchDidChangeProvisionalURL();
+                }
+                if (currentDocument)
+                    currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker promoted URL from ", originalURL.string(), " to ", newURL.string()));
             }
             break;
         }

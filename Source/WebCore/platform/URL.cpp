@@ -35,6 +35,7 @@
 #include <unicode/uidna.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -1989,20 +1990,28 @@ bool URL::isBlankURL() const
     return protocolIs("about");
 }
 
+typedef HashMap<String, unsigned short, CaseFoldingHash> DefaultPortsMap;
+static const DefaultPortsMap& defaultPortsMap()
+{
+    static NeverDestroyed<const DefaultPortsMap> defaultPortsMap(DefaultPortsMap({
+        { "http", 80 },
+        { "https", 443 },
+        { "ftp", 21 },
+        { "ftps", 990 }
+    }));
+    return defaultPortsMap.get();
+}
+unsigned short defaultPortForProtocol(const String& protocol)
+{
+    return defaultPortsMap().get(protocol);
+}
+
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
 {
     if (protocol.isEmpty())
         return false;
 
-    typedef HashMap<String, unsigned, CaseFoldingHash> DefaultPortsMap;
-    DEPRECATED_DEFINE_STATIC_LOCAL(DefaultPortsMap, defaultPorts, ());
-    if (defaultPorts.isEmpty()) {
-        defaultPorts.set("http", 80);
-        defaultPorts.set("https", 443);
-        defaultPorts.set("ftp", 21);
-        defaultPorts.set("ftps", 990);
-    }
-    return defaultPorts.get(protocol) == port;
+    return defaultPortForProtocol(protocol) == port;
 }
 
 bool portAllowed(const URL& url)

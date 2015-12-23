@@ -549,6 +549,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
             }
             return nullptr;
         }
+        url = request.resourceRequest().url(); // The content extension could have changed it from http to https.
+        url = MemoryCache::removeFragmentIdentifierIfNeeded(url); // Might need to remove fragment identifier again.
     }
 #endif
 

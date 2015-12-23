@@ -40,6 +40,7 @@ enum class ActionType : uint8_t {
     CSSDisplayNoneSelector,
     CSSDisplayNoneStyleSheet,
     IgnorePreviousRules,
+    MakeHTTPS,
     InvalidAction,
 };
 

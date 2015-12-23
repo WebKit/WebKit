@@ -49,6 +49,8 @@ Action Action::deserialize(const SerializedActionByte* actions, const uint32_t a
         return Action(ActionType::BlockLoad, location);
     case ActionType::IgnorePreviousRules:
         return Action(ActionType::IgnorePreviousRules, location);
+    case ActionType::MakeHTTPS:
+        return Action(ActionType::MakeHTTPS, location);
     case ActionType::CSSDisplayNoneSelector: {
         uint32_t headerLength = sizeof(ActionType) + sizeof(uint32_t) + sizeof(bool);
         uint32_t stringStartIndex = location + headerLength;
@@ -79,6 +81,7 @@ ActionType Action::deserializeType(const SerializedActionByte* actions, const ui
     case ActionType::BlockLoad:
     case ActionType::IgnorePreviousRules:
     case ActionType::CSSDisplayNoneSelector:
+    case ActionType::MakeHTTPS:
         return type;
     case ActionType::CSSDisplayNoneStyleSheet:
     case ActionType::InvalidAction:
@@ -94,6 +97,7 @@ uint32_t Action::serializedLength(const SerializedActionByte* actions, const uin
     case ActionType::BlockCookies:
     case ActionType::BlockLoad:
     case ActionType::IgnorePreviousRules:
+    case ActionType::MakeHTTPS:
         return sizeof(ActionType);
     case ActionType::CSSDisplayNoneSelector: {
         uint32_t headerLength = sizeof(ActionType) + sizeof(uint32_t) + sizeof(bool);

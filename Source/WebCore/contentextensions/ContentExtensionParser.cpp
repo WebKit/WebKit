@@ -216,6 +216,8 @@ static std::error_code loadAction(ExecState& exec, const JSObject& ruleObject, A
             return { };
         }
         action = Action(ActionType::CSSDisplayNoneSelector, s);
+    } else if (actionType == "make-https") {
+        action = ActionType::MakeHTTPS;
     } else
         return ContentExtensionError::JSONInvalidActionType;
 

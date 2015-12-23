@@ -1,3 +1,14 @@
+2015-12-23  Chris Aljoudi <chris@chrismatic.io> and Alex Christensen <achristensen@webkit.org>
+
+        Content blockers should be able to promote http to https
+        https://bugs.webkit.org/show_bug.cgi?id=148966
+
+        Reviewed by Benjamin Poulain.
+
+        * http/tests/contentextensions/make-https-expected.txt: Added.
+        * http/tests/contentextensions/make-https.html: Added.
+        * http/tests/contentextensions/make-https.html.json: Added.
+
 2015-12-22  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Fix cosmetic things after importing spec tests
