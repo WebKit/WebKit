@@ -1,3 +1,17 @@
+2015-12-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Web Inspector: add support for running protocol-test.js tests on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=148037
+        <rdar://problem/22292237>
+
+        Reviewed by Simon Fraser.
+
+        Provide API for WebKit.dll clients to request its CFBundleRef.
+        
+        * WebKitCOMAPI.cpp:
+        (webKitBundle): Added.
+        * WebKitCOMAPI.h:
+
 2015-12-20  Dan Bernstein  <mitz@apple.com>
 
         Remove unused setToolbarHeight

@@ -1095,11 +1095,15 @@ void TestRunner::evaluateInWebInspector(JSStringRef script)
 
 JSStringRef TestRunner::inspectorTestStubURL()
 {
-    // FIXME: Implement this to support Web Inspector tests using `protocol-test.js`.
-    // See https://bugs.webkit.org/show_bug.cgi?id=148025.
-    printf("ERROR: TestRunner::inspectorTestStubURL() not implemented\n");
+    CFBundleRef webkitBundle = webKitBundle();
+    if (!webkitBundle)
+        return nullptr;
 
-    return nullptr;
+    RetainPtr<CFURLRef> url = adoptCF(CFBundleCopyResourceURL(webkitBundle, CFSTR("TestStub"), CFSTR("html"), CFSTR("WebInspectorUI")));
+    if (!url)
+        return nullptr;
+
+    return JSStringCreateWithCFString(CFURLGetString(url.get()));
 }
 
 typedef HashMap<unsigned, COMPtr<IWebScriptWorld> > WorldMap;

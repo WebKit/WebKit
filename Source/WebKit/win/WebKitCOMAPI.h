@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,9 @@ extern "C" {
 // Callers should use this API instead of CoCreateInstance to instantiate WebKit COM classes.
 // This bypasses CoCreateInstance entirely, so registry keys and isolated COM manifests aren't needed.
 HRESULT WEBKIT_API WebKitCreateInstance(REFCLSID, IUnknown* pUnkOuter, REFIID, _COM_Outptr_ void** ppvObject);
+
+typedef struct __CFBundle* CFBundleRef;
+CFBundleRef WEBKIT_API webKitBundle();
 
 }
 

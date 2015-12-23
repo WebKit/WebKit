@@ -29,6 +29,7 @@
 #include "WebKitDLL.h"
 
 #include <WebCore/COMPtr.h>
+#include <WebCore/WebCoreBundleWin.h>
 
 struct CLSIDHash {
     static unsigned hash(const CLSID& clsid)
@@ -73,4 +74,9 @@ HRESULT WebKitCreateInstance(REFCLSID rclsid, IUnknown* pUnkOuter, REFIID riid, 
         return REGDB_E_CLASSNOTREG;
 
     return factory->CreateInstance(pUnkOuter, riid, ppvObject);
+}
+
+CFBundleRef webKitBundle()
+{
+    return WebCore::webKitBundle();
 }
