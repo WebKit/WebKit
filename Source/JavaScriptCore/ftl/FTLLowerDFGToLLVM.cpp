@@ -7367,7 +7367,7 @@ private:
         
         m_out.appendTo(slowPath, continuation);
         ValueFromBlock slowResult = m_out.anchor(m_out.notNull(vmCall(
-            m_out.boolean, m_out.operation(helperFunction), m_callFrame, left, right)));
+            m_out.intPtr, m_out.operation(helperFunction), m_callFrame, left, right)));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
