@@ -1,5 +1,11 @@
 2015-12-22  Andy Estes  <aestes@apple.com>
 
+        Try to fix the iOS build after r194378
+
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+
+2015-12-22  Andy Estes  <aestes@apple.com>
+
         [CF] Replace CFNetwork-related WebKitSystemInterface calls with SPI
         https://bugs.webkit.org/show_bug.cgi?id=152463
 

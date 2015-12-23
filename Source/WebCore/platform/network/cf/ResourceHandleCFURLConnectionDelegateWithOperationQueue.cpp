@@ -36,6 +36,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
+#include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
