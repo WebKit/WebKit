@@ -775,6 +775,12 @@ void TestRunner::setUserMediaPermission(bool enabled)
     InjectedBundle::singleton().setUserMediaPermission(enabled);
 }
 
+void TestRunner::setUserMediaPermissionForOrigin(bool permission, JSStringRef url)
+{
+    WKRetainPtr<WKStringRef> urlWK = toWK(url);
+    InjectedBundle::singleton().setUserMediaPermissionForOrigin(permission, urlWK.get());
+}
+
 bool TestRunner::callShouldCloseOnWebView()
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());

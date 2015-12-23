@@ -73,10 +73,10 @@ RefPtr<TrackSourceInfo> MockRealtimeMediaSource::trackSourceWithUID(const String
     // FIXME: validate constraints.
 
     if (mockAudioSourcePersistentID() == id)
-        return TrackSourceInfo::create(mockAudioSourcePersistentID(), TrackSourceInfo::Audio, "Mock audio device");
+        return TrackSourceInfo::create(mockAudioSourcePersistentID(), id, TrackSourceInfo::Audio, "Mock audio device");
 
     if (mockVideoSourcePersistentID() == id)
-        return TrackSourceInfo::create(mockVideoSourcePersistentID(), TrackSourceInfo::Video, "Mock video device");
+        return TrackSourceInfo::create(mockVideoSourcePersistentID(), id, TrackSourceInfo::Video, "Mock video device");
     
     return nullptr;
 }

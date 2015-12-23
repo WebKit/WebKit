@@ -39,37 +39,41 @@ class TrackSourceInfo : public RefCounted<TrackSourceInfo> {
 public:
     enum SourceKind { Audio, Video };
 
-    static PassRefPtr<TrackSourceInfo> create(const AtomicString& id, SourceKind kind, const AtomicString& label)
+    static PassRefPtr<TrackSourceInfo> create(const AtomicString& persistentId, const AtomicString& id, SourceKind kind, const AtomicString& label)
     {
-        return adoptRef(new TrackSourceInfo(id, kind, label));
+        return adoptRef(new TrackSourceInfo(persistentId, id, kind, label));
     }
 
-    static Ref<TrackSourceInfo> create(const AtomicString& id, SourceKind kind, const AtomicString& label, const AtomicString& groupId)
+    static Ref<TrackSourceInfo> create(const AtomicString& persistentId, const AtomicString& id, SourceKind kind, const AtomicString& label, const AtomicString& groupId)
     {
-        return adoptRef(*new TrackSourceInfo(id, kind, label, groupId));
+        return adoptRef(*new TrackSourceInfo(persistentId, id, kind, label, groupId));
     }
 
     const AtomicString& id() const { return m_id; }
+    const AtomicString& persistentId() const { return m_persistentId; }
     const AtomicString& label() const { return m_label; }
     const AtomicString& groupId() const { return m_groupId; }
     SourceKind kind() const { return m_kind; }
 
 private:
-    TrackSourceInfo(const AtomicString& id, SourceKind kind, const AtomicString& label)
-        : m_id(id)
+    TrackSourceInfo(const AtomicString& persistentId, const AtomicString& id, SourceKind kind, const AtomicString& label)
+        : m_persistentId(persistentId)
+        , m_id(id)
         , m_kind(kind)
         , m_label(label)
     {
     }
 
-    TrackSourceInfo(const AtomicString& id, SourceKind kind, const AtomicString& label, const AtomicString& groupId)
-        : m_id(id)
+    TrackSourceInfo(const AtomicString& persistentId, const AtomicString& id, SourceKind kind, const AtomicString& label, const AtomicString& groupId)
+        : m_persistentId(persistentId)
+        , m_id(id)
         , m_kind(kind)
         , m_label(label)
         , m_groupId(groupId)
     {
     }
 
+    AtomicString m_persistentId;
     AtomicString m_id;
     SourceKind m_kind;
     AtomicString m_label;
@@ -84,7 +88,6 @@ public:
 
     virtual const String& requestOrigin() const = 0;
     virtual void didCompleteRequest(const TrackSourceInfoVector&) = 0;
-
 };
 
 

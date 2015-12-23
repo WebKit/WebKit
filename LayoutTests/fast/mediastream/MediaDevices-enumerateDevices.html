@@ -20,7 +20,6 @@
 
             function enumerate(next)
             {
-                debug(`<br>*** Calling mediaDevices.enumerateDevices when persistent access HAS ${havePermission ? "" : "NOT "}been granted<br>`);
                 navigator.mediaDevices.enumerateDevices()
                     .then(function(devices) {
                         captureDevices = devices;
@@ -48,23 +47,37 @@
                     });
             }
             
-            function grantPermission()
+            function createStream()
             {
                 if (window.testRunner) {
                     testRunner.setUserMediaPermission(true);
-                    navigator.mediaDevices
-                        .getUserMedia({audio:{}, video:{}})
-                        .then(function(stream) {
-                            havePermission = true;
-                            enumerate(null);                        
-                        })
-                        .catch(function(err) {
-                            testFailed(`mediaDevices.getUserMedia() failed with ${err.name}: ${err.message}`);
-                        });
+                    testRunner.setUserMediaPermissionForOrigin(false, document.location.href);
                 }
+
+                navigator.mediaDevices
+                    .getUserMedia({audio:{}, video:{}})
+                    .then(function(stream) {
+                        debug(`<br>*** Calling mediaDevices.enumerateDevices without persistent access, with a media stream track<br>`);
+                        havePermission = true;
+                        enumerate(null);                        
+                    })
+                    .catch(function(err) {
+                        testFailed(`mediaDevices.getUserMedia() failed with ${err.name}: ${err.message}`);
+                    });
+            }
+            
+            function grantPermission()
+            {
+                if (window.testRunner)
+                    testRunner.setUserMediaPermissionForOrigin(true, document.location.href);
+
+                debug(`<br>*** Calling mediaDevices.enumerateDevices without persistent access, and without a media stream track<br>`);
+                havePermission = true;
+                enumerate(createStream);
             }
 
             havePermission = false;
+            debug(`<br>*** Calling mediaDevices.enumerateDevices without persistent access, and without a media stream track<br>`);
             enumerate(grantPermission);
 
             window.successfullyParsed = true;

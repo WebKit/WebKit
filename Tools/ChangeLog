@@ -1,3 +1,31 @@
+2015-12-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] MediaDeviceInfo.label must be empty in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=152000
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::setUserMediaPermission):
+        (WTR::InjectedBundle::setUserMediaPermissionForOrigin): New.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setUserMediaPermissionForOrigin): New.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setUserMediaPermissionForOrigin):
+        (WTR::TestController::handleCheckOfUserMediaPermissionForOrigin): Add NULL check.
+        (WTR::TestController::decidePolicyForUserMediaPermissionRequestIfPossible): Don't add 
+          persistent permission for origin, that can be done from script now.
+        * WebKitTestRunner/TestController.h:
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle): Add support for
+          SetUserMediaPermissionForOrigin.
+
 2015-12-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix: Recognize Windows 10 variants.

@@ -59,6 +59,8 @@ public:
 private:
     MediaDevicesRequest(ScriptExecutionContext*, MediaDevices::EnumerateDevicesPromise&&);
 
+    void getTrackSources();
+
     // MediaStreamTrackSourcesRequestClient
     const String& requestOrigin() const final;
     void didCompleteRequest(const TrackSourceInfoVector&) final;
@@ -73,7 +75,7 @@ private:
     RefPtr<MediaDevicesRequest> m_protector;
     RefPtr<UserMediaPermissionCheck> m_permissionCheck;
 
-    bool m_hasUserMediaPermission { false };
+    bool m_canShowLabels { false };
 };
 
 } // namespace WebCore

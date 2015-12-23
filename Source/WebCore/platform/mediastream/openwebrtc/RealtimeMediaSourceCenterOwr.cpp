@@ -215,7 +215,7 @@ RefPtr<TrackSourceInfo> RealtimeMediaSourceCenterOwr::sourceWithUID(const String
 {
     for (auto& source : m_sourceMap.values()) {
         if (source->id() == UID)
-            return TrackSourceInfo::create(source->id(), source->type() == RealtimeMediaSource::Type::Video ? TrackSourceInfo::SourceKind::Video : TrackSourceInfo::SourceKind::Audio , source->name());
+            return TrackSourceInfo::create(source->persistentID(), source->id(), source->type() == RealtimeMediaSource::Type::Video ? TrackSourceInfo::SourceKind::Video : TrackSourceInfo::SourceKind::Audio , source->name());
     }
 
     return nullptr;

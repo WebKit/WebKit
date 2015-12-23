@@ -52,11 +52,6 @@ public:
         virtual void didAddOrRemoveTrack() = 0;
     };
 
-    static void setRegistry(URLRegistry&);
-    static MediaStream* lookUp(const URL&);
-
-    static MediaStream* lookUp(const MediaStreamPrivate&);
-
     static Ref<MediaStream> create(ScriptExecutionContext&);
     static Ref<MediaStream> create(ScriptExecutionContext&, MediaStream*);
     static Ref<MediaStream> create(ScriptExecutionContext&, const MediaStreamTrackVector&);
@@ -119,6 +114,7 @@ private:
 
     void scheduleActiveStateChange();
     void activityEventTimerFired();
+    void setIsActive(bool);
 
     MediaStreamTrackVector trackVectorForType(RealtimeMediaSource::Type) const;
 

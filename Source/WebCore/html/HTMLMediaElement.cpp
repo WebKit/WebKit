@@ -1328,7 +1328,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 #if ENABLE(MEDIA_STREAM)
     if (!loadAttempted) {
         if (!m_mediaStreamSrcObject && url.protocolIs(mediaStreamBlobProtocol))
-            m_mediaStreamSrcObject = MediaStream::lookUp(url);
+            m_mediaStreamSrcObject = MediaStreamRegistry::shared().lookUp(url);
 
         if (m_mediaStreamSrcObject) {
             loadAttempted = true;

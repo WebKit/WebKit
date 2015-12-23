@@ -1,3 +1,68 @@
+2015-12-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] MediaDeviceInfo.label must be empty in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=152000
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, updated fast/mediastream/MediaDevices-enumerateDevices.html.
+
+        * Modules/mediastream/CaptureDeviceManager.cpp:
+        (CaptureDeviceManager::getSourcesInfo): TrackSourceInfo constructor takes persistent ID.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::start): If Document had an active stream track, don't bother
+          checking for a persistent permission to access devices.
+        (WebCore::MediaDevicesRequest::didCompleteCheck): m_hasUserMediaPermission -> m_canShowLabels.
+        (WebCore::MediaDevicesRequest::getTrackSources): New, factored out of didCompleteCheck so it
+          can be called when we don't need to check permissions.
+        (WebCore::MediaDevicesRequest::didCompleteRequest): m_hasUserMediaPermission -> m_canShowLabels.
+        * Modules/mediastream/MediaDevicesRequest.h:
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream): Call setIsActive. Register new stream with MediaStreamRegistry.
+        (WebCore::MediaStream::~MediaStream): Unregister stream with MediaStreamRegistry.
+        (WebCore::MediaStream::setIsActive): New. Set m_isActive and call Document if stream is active.
+        (WebCore::MediaStream::scheduleActiveStateChange): Call setIsActive.
+        (WebCore::MediaStream::registry): MediaStreamRegistry::registry -> MediaStreamRegistry::shared.
+        (WebCore::mediaStreams): Deleted. Drive-by cleanup: moved list of all streams to MediaStreamRegistry.
+        (WebCore::registerMediaStream): Ditto.
+        (WebCore::unRegisterMediaStream): Ditto.
+        (WebCore::MediaStream::lookUp): Ditto.
+        (WebCore::MediaStream::setRegistry): Ditto.
+        * Modules/mediastream/MediaStream.h:
+
+        * Modules/mediastream/MediaStreamRegistry.cpp:
+        (WebCore::MediaStreamRegistry::shared): Renamed from "registry".
+        (WebCore::MediaStreamRegistry::MediaStreamRegistry):
+        (WebCore::MediaStreamRegistry::lookUp): Moved here from MediaStream.
+        (WebCore::mediaStreams): Ditto.
+        (WebCore::MediaStreamRegistry::registerStream): Ditto.
+        (WebCore::MediaStreamRegistry::unregisterStream): Ditto.
+        (WebCore::MediaStreamRegistry::registry): Deleted.
+        * Modules/mediastream/MediaStreamRegistry.h:
+
+        * dom/Document.h:
+        (WebCore::Document::setHasActiveMediaStreamTrack): New, set m_hasHadActiveMediaStreamTrack.
+        (WebCore::Document::hasHadActiveMediaStreamTrack): New, return m_hasHadActiveMediaStreamTrack.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): MediaStream::lookUp -> MediaStreamRegistry::shared().lookUp.
+
+        * platform/mediastream/MediaStreamTrackSourcesRequestClient.h:
+        (WebCore::TrackSourceInfo::create): Take track persistent ID.
+        (WebCore::TrackSourceInfo::persistentId): New.
+        (WebCore::TrackSourceInfo::TrackSourceInfo): Take track persistent ID.
+
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::sourceWithUID): TrackSourceInfo::create takes persistent ID.
+
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::trackSourceWithUID): Ditto.
+
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::sourceWithUID): TrackSourceInfo::create takes persistent ID.
+
 2015-12-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] In RS during enqueuing error should be reported only if readable

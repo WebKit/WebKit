@@ -526,6 +526,21 @@ void InjectedBundle::setUserMediaPermission(bool enabled)
     WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
 }
 
+void InjectedBundle::setUserMediaPermissionForOrigin(bool permission, WKStringRef url)
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetUserMediaPermissionForOrigin"));
+    WKRetainPtr<WKMutableDictionaryRef> messageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> permissionKeyWK(AdoptWK, WKStringCreateWithUTF8CString("permission"));
+    WKRetainPtr<WKBooleanRef> permissionWK(AdoptWK, WKBooleanCreate(permission));
+    WKDictionarySetItem(messageBody.get(), permissionKeyWK.get(), permissionWK.get());
+
+    WKRetainPtr<WKStringRef> urlKeyWK(AdoptWK, WKStringCreateWithUTF8CString("url"));
+    WKDictionarySetItem(messageBody.get(), urlKeyWK.get(), url);
+
+    WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
+}
+
 void InjectedBundle::setCustomPolicyDelegate(bool enabled, bool permissive)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetCustomPolicyDelegate"));

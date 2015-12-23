@@ -178,7 +178,7 @@ RefPtr<TrackSourceInfo> RealtimeMediaSourceCenterMac::sourceWithUID(const String
     RefPtr<RealtimeMediaSource> mediaSource = AVCaptureDeviceManager::singleton().sourceWithUID(UID, type, constraints);
     if (!mediaSource)
         return nullptr;
-    return TrackSourceInfo::create(mediaSource->id(), mediaSource->type() == RealtimeMediaSource::Type::Video ? TrackSourceInfo::SourceKind::Video : TrackSourceInfo::SourceKind::Audio, mediaSource->name());
+    return TrackSourceInfo::create(mediaSource->persistentID(), mediaSource->id(), mediaSource->type() == RealtimeMediaSource::Type::Video ? TrackSourceInfo::SourceKind::Video : TrackSourceInfo::SourceKind::Audio, mediaSource->name());
 }
 
 } // namespace WebCore

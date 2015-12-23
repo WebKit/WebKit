@@ -30,6 +30,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Document.h"
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "MediaStreamRegistry.h"
@@ -39,52 +40,6 @@
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
-
-static Vector<MediaStream*>& mediaStreams()
-{
-    static NeverDestroyed<Vector<MediaStream*>> streams;
-    return streams;
-}
-
-static void registerMediaStream(MediaStream* stream)
-{
-    mediaStreams().append(stream);
-}
-
-static void unRegisterMediaStream(MediaStream* stream)
-{
-    Vector<MediaStream*>& allStreams = mediaStreams();
-    size_t pos = allStreams.find(stream);
-    if (pos != notFound)
-        allStreams.remove(pos);
-}
-
-MediaStream* MediaStream::lookUp(const MediaStreamPrivate& privateStream)
-{
-    Vector<MediaStream*>& allStreams = mediaStreams();
-    for (auto& stream : allStreams) {
-        if (stream->m_private == &privateStream)
-            return stream;
-    }
-
-    return nullptr;
-}
-
-static URLRegistry* s_registry;
-
-void MediaStream::setRegistry(URLRegistry& registry)
-{
-    ASSERT(!s_registry);
-    s_registry = &registry;
-}
-
-MediaStream* MediaStream::lookUp(const URL& url)
-{
-    if (!s_registry)
-        return nullptr;
-
-    return static_cast<MediaStream*>(s_registry->lookup(url.string()));
-}
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {
@@ -124,20 +79,20 @@ MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrack
     }
 
     m_private = MediaStreamPrivate::create(trackPrivates);
-    m_isActive = m_private->active();
+    setIsActive(m_private->active());
     m_private->addObserver(*this);
-    registerMediaStream(this);
+    MediaStreamRegistry::shared().registerStream(*this);
 }
 
 MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPrivate>&& streamPrivate)
     : ContextDestructionObserver(&context)
     , m_private(streamPrivate)
-    , m_isActive(m_private->active())
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
 {
     ASSERT(m_private);
+    setIsActive(m_private->active());
     m_private->addObserver(*this);
-    registerMediaStream(this);
+    MediaStreamRegistry::shared().registerStream(*this);
 
     for (auto& trackPrivate : m_private->tracks()) {
         RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(context, *trackPrivate);
@@ -148,7 +103,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPriv
 
 MediaStream::~MediaStream()
 {
-    unRegisterMediaStream(this);
+    MediaStreamRegistry::shared().unregisterStream(*this);
     m_private->removeObserver(*this);
     for (auto& track : m_trackSet.values())
         track->removeObserver(this);
@@ -276,6 +231,16 @@ bool MediaStream::internalRemoveTrack(RefPtr<MediaStreamTrack>&& track, StreamMo
     return true;
 }
 
+void MediaStream::setIsActive(bool active)
+{
+    m_isActive = active;
+    if (!active)
+        return;
+
+    if (Document* document = downcast<Document>(scriptExecutionContext()))
+        document->setHasActiveMediaStreamTrack();
+}
+
 void MediaStream::scheduleActiveStateChange()
 {
     bool active = false;
@@ -285,10 +250,11 @@ void MediaStream::scheduleActiveStateChange()
             break;
         }
     }
+
     if (m_isActive == active)
         return;
 
-    m_isActive = active;
+    setIsActive(active);
 
     const AtomicString& eventName = m_isActive ? eventNames().inactiveEvent : eventNames().activeEvent;
     m_scheduledActivityEvents.append(Event::create(eventName, false, false));
@@ -308,7 +274,7 @@ void MediaStream::activityEventTimerFired()
 
 URLRegistry& MediaStream::registry() const
 {
-    return MediaStreamRegistry::registry();
+    return MediaStreamRegistry::shared();
 }
 
 MediaStreamTrackVector MediaStream::trackVectorForType(RealtimeMediaSource::Type filterType) const

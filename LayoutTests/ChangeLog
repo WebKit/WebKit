@@ -1,3 +1,13 @@
+2015-12-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] MediaDeviceInfo.label must be empty in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=152000
+
+        Reviewed by Brent Fulgham.
+
+        * fast/mediastream/MediaDevices-enumerateDevices-expected.txt:
+        * fast/mediastream/MediaDevices-enumerateDevices.html:
+
 2015-12-23  Andy VanWagoner  <andy@instructure.com>
 
         [INTL] Implement DateTime Format Functions

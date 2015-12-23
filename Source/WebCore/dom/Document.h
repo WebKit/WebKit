@@ -1312,6 +1312,11 @@ public:
     void addViewportDependentPicture(HTMLPictureElement&);
     void removeViewportDependentPicture(HTMLPictureElement&);
 
+#if ENABLE(MEDIA_STREAM)
+    void setHasActiveMediaStreamTrack() { m_hasHadActiveMediaStreamTrack = true; }
+    bool hasHadActiveMediaStreamTrack() const { return m_hasHadActiveMediaStreamTrack; }
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1780,6 +1785,10 @@ private:
     RefPtr<MediaSession> m_defaultMediaSession;
 #endif
     bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
+
+#if ENABLE(MEDIA_STREAM)
+    bool m_hasHadActiveMediaStreamTrack { false };
+#endif
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

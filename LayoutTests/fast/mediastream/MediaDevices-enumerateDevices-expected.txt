@@ -7,7 +7,7 @@ PASS navigator.mediaDevices is an instance of Object
 PASS navigator.mediaDevices.enumerateDevices is an instance of Function
 
 
-*** Calling mediaDevices.enumerateDevices when persistent access HAS NOT been granted
+*** Calling mediaDevices.enumerateDevices without persistent access, and without a media stream track
 
 PASS captureDevices.length is non-zero.
 
@@ -24,7 +24,24 @@ PASS captureDevice.label is ""
 PASS captureDevice.groupId is non-null.
 
 
-*** Calling mediaDevices.enumerateDevices when persistent access HAS been granted
+*** Calling mediaDevices.enumerateDevices without persistent access, and without a media stream track
+
+PASS captureDevices.length is non-zero.
+
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is not ""
+PASS captureDevice.groupId is non-null.
+
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is not ""
+PASS captureDevice.groupId is non-null.
+
+
+*** Calling mediaDevices.enumerateDevices without persistent access, with a media stream track
 
 PASS captureDevices.length is non-zero.
 

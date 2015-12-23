@@ -1645,13 +1645,6 @@ bool TestController::isGeolocationProviderActive() const
     return m_geolocationProvider->isActive();
 }
 
-void TestController::setUserMediaPermission(bool enabled)
-{
-    m_isUserMediaPermissionSet = true;
-    m_isUserMediaPermissionAllowed = enabled;
-    decidePolicyForUserMediaPermissionRequestIfPossible();
-}
-
 static WKStringRef originUserVisibleName(WKSecurityOriginRef origin)
 {
     std::string host = toSTD(adoptWK(WKSecurityOriginCopyHost(origin))).c_str();
@@ -1667,6 +1660,22 @@ static WKStringRef originUserVisibleName(WKSecurityOriginRef origin)
     return WKStringCreateWithUTF8CString(userVisibleName.utf8().data());
 }
 
+void TestController::setUserMediaPermission(bool enabled)
+{
+    m_isUserMediaPermissionSet = true;
+    m_isUserMediaPermissionAllowed = enabled;
+    decidePolicyForUserMediaPermissionRequestIfPossible();
+}
+
+void TestController::setUserMediaPermissionForOrigin(bool permission, WKStringRef originString)
+{
+    if (!m_userMediaOriginPermissions)
+        m_userMediaOriginPermissions = adoptWK(WKMutableDictionaryCreate());
+    WKRetainPtr<WKBooleanRef> allowed = adoptWK(WKBooleanCreate(permission));
+    WKRetainPtr<WKSecurityOriginRef> origin = adoptWK(WKSecurityOriginCreateFromString(originString));
+    WKDictionarySetItem(m_userMediaOriginPermissions.get(), originUserVisibleName(origin.get()), allowed.get());
+}
+
 void TestController::handleCheckOfUserMediaPermissionForOrigin(WKSecurityOriginRef origin, const WKUserMediaPermissionCheckRef& checkRequest)
 {
     bool allowed = false;
@@ -1674,7 +1683,7 @@ void TestController::handleCheckOfUserMediaPermissionForOrigin(WKSecurityOriginR
     if (m_userMediaOriginPermissions) {
         WKRetainPtr<WKStringRef> originString = originUserVisibleName(origin);
         WKBooleanRef value = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(m_userMediaOriginPermissions.get(), originString.get()));
-        if (WKGetTypeID(value) == WKBooleanGetTypeID())
+        if (value && WKGetTypeID(value) == WKBooleanGetTypeID())
             allowed = WKBooleanGetValue(value);
     }
 
@@ -1693,16 +1702,9 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         return;
 
     for (auto& pair : m_userMediaPermissionRequests) {
-        auto origin = pair.first.get();
         auto request = pair.second.get();
         WKRetainPtr<WKArrayRef> audioDeviceUIDs = WKUserMediaPermissionRequestAudioDeviceUIDs(request);
         WKRetainPtr<WKArrayRef> videoDeviceUIDs = WKUserMediaPermissionRequestVideoDeviceUIDs(request);
-
-        WKRetainPtr<WKStringRef> originString = adoptWK(originUserVisibleName(origin));
-        if (!m_userMediaOriginPermissions)
-            m_userMediaOriginPermissions = adoptWK(WKMutableDictionaryCreate());
-        WKRetainPtr<WKBooleanRef> allowed = adoptWK(WKBooleanCreate(m_isUserMediaPermissionAllowed));
-        WKDictionarySetItem(m_userMediaOriginPermissions.get(), originString.get(), allowed.get());
 
         if (m_isUserMediaPermissionAllowed && (WKArrayGetSize(videoDeviceUIDs.get()) || WKArrayGetSize(audioDeviceUIDs.get()))) {
             WKRetainPtr<WKStringRef> videoDeviceUID;

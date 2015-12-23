@@ -96,6 +96,7 @@ public:
 
     // MediaStream.
     void setUserMediaPermission(bool);
+    void setUserMediaPermissionForOrigin(bool permission, WKStringRef url);
     void handleUserMediaPermissionRequest(WKSecurityOriginRef, WKUserMediaPermissionRequestRef);
     void handleCheckOfUserMediaPermissionForOrigin(WKSecurityOriginRef, const WKUserMediaPermissionCheckRef&);
 

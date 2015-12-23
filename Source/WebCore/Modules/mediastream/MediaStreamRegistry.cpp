@@ -28,14 +28,14 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "URL.h"
 #include "MediaStream.h"
+#include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-MediaStreamRegistry& MediaStreamRegistry::registry()
+MediaStreamRegistry& MediaStreamRegistry::shared()
 {
     // Since WebWorkers cannot obtain MediaSource objects, we should be on the main thread.
     ASSERT(isMainThread());
@@ -64,7 +64,41 @@ URLRegistrable* MediaStreamRegistry::lookup(const String& url) const
 
 MediaStreamRegistry::MediaStreamRegistry()
 {
-    MediaStream::setRegistry(*this);
+}
+
+MediaStream* MediaStreamRegistry::lookUp(const URL& url) const
+{
+    return static_cast<MediaStream*>(lookup(url.string()));
+}
+
+static Vector<MediaStream*>& mediaStreams()
+{
+    static NeverDestroyed<Vector<MediaStream*>> streams;
+    return streams;
+}
+
+void MediaStreamRegistry::registerStream(MediaStream& stream)
+{
+    mediaStreams().append(&stream);
+}
+
+void MediaStreamRegistry::unregisterStream(MediaStream& stream)
+{
+    Vector<MediaStream*>& allStreams = mediaStreams();
+    size_t pos = allStreams.find(&stream);
+    if (pos != notFound)
+        allStreams.remove(pos);
+}
+
+MediaStream* MediaStreamRegistry::lookUp(const MediaStreamPrivate& privateStream) const
+{
+    Vector<MediaStream*>& allStreams = mediaStreams();
+    for (auto& stream : allStreams) {
+        if (stream->privateStream() == &privateStream)
+            return stream;
+    }
+
+    return nullptr;
 }
 
 } // namespace WebCore

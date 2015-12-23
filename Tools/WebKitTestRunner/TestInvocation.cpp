@@ -467,6 +467,21 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetUserMediaPermissionForOrigin")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+
+        WKRetainPtr<WKStringRef> permissionKeyWK(AdoptWK, WKStringCreateWithUTF8CString("permission"));
+        WKBooleanRef permissionWK = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, permissionKeyWK.get()));
+        bool permission = WKBooleanGetValue(permissionWK);
+
+        WKRetainPtr<WKStringRef> urlKey(AdoptWK, WKStringCreateWithUTF8CString("url"));
+        WKStringRef urlWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, urlKey.get()));
+
+        TestController::singleton().setUserMediaPermissionForOrigin(permission, urlWK);
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetCacheModel")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
         uint64_t model = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));

@@ -77,6 +77,15 @@ void MediaDevicesRequest::contextDestroyed()
 void MediaDevicesRequest::start()
 {
     m_protector = this;
+
+    if (Document* document = downcast<Document>(scriptExecutionContext())) {
+        m_canShowLabels = document->hasHadActiveMediaStreamTrack();
+        if (m_canShowLabels) {
+            getTrackSources();
+            return;
+        }
+    }
+
     m_permissionCheck = UserMediaPermissionCheck::create(*downcast<Document>(scriptExecutionContext()), *this);
     m_permissionCheck->start();
 }
@@ -86,8 +95,12 @@ void MediaDevicesRequest::didCompleteCheck(bool canAccess)
     m_permissionCheck->setClient(nullptr);
     m_permissionCheck = nullptr;
 
-    m_hasUserMediaPermission = canAccess;
+    m_canShowLabels = canAccess;
+    getTrackSources();
+}
 
+void MediaDevicesRequest::getTrackSources()
+{
     callOnMainThread([this] {
         RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(this);
     });
@@ -105,7 +118,7 @@ void MediaDevicesRequest::didCompleteRequest(const TrackSourceInfoVector& captur
         TrackSourceInfo* trackInfo = device.get();
         String deviceType = trackInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::audioInputType() : MediaDeviceInfo::videoInputType();
 
-        AtomicString label = m_hasUserMediaPermission ? trackInfo->label() : emptyAtom;
+        AtomicString label = m_canShowLabels ? trackInfo->label() : emptyAtom;
         deviceInfo.append(MediaDeviceInfo::create(m_scriptExecutionContext, label, trackInfo->id(), trackInfo->groupId(), deviceType));
     }
 

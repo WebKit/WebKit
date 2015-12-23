@@ -179,6 +179,7 @@ interface TestRunner {
 
     // MediaStream
     void setUserMediaPermission(boolean value);
+    void setUserMediaPermissionForOrigin(boolean permission, DOMString url);
 
     // Audio testing.
     [PassContext] void setAudioResult(object data);

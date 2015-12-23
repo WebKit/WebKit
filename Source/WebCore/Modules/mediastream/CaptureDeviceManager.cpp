@@ -52,7 +52,7 @@ Vector<RefPtr<TrackSourceInfo>> CaptureDeviceManager::getSourcesInfo(const Strin
             continue;
 
         TrackSourceInfo::SourceKind trackSourceType = captureDevice.m_sourceType == RealtimeMediaSource::Video ? TrackSourceInfo::Video : TrackSourceInfo::Audio;
-        sourcesInfo.append(TrackSourceInfo::create(captureDevice.m_sourceId, trackSourceType, captureDevice.m_localizedName, captureDevice.m_groupID));
+        sourcesInfo.append(TrackSourceInfo::create(captureDevice.m_persistentDeviceID, captureDevice.m_sourceId, trackSourceType, captureDevice.m_localizedName, captureDevice.m_groupID));
     }
     LOG(Media, "CaptureDeviceManager::getSourcesInfo(%p), found %zu active devices", this, sourcesInfo.size());
     return sourcesInfo;

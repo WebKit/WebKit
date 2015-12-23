@@ -96,6 +96,7 @@ public:
 
     // MediaStream.
     void setUserMediaPermission(bool);
+    void setUserMediaPermissionForOrigin(bool permission, WKStringRef url);
 
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
