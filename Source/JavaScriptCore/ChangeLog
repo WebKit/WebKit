@@ -1,3 +1,20 @@
+2015-12-23  Andy VanWagoner  <andy@instructure.com>
+
+        [INTL] Implement DateTime Format Functions
+        https://bugs.webkit.org/show_bug.cgi?id=147606
+
+        Reviewed by Benjamin Poulain.
+
+        Initialize a UDateFormat from the generated pattern. Use udat_format()
+        to format the value. Make sure that the UDateFormat is cleaned up when
+        the DateTimeFormat is deconstructed.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::~IntlDateTimeFormat):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::format):
+        * runtime/IntlDateTimeFormat.h:
+
 2015-12-23  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement String.prototype.localeCompare in ECMA-402

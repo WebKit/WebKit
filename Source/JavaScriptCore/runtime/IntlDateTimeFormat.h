@@ -29,6 +29,7 @@
 #if ENABLE(INTL)
 
 #include "JSDestructibleObject.h"
+#include <unicode/udat.h>
 
 namespace JSC {
 
@@ -53,6 +54,7 @@ public:
 
 protected:
     IntlDateTimeFormat(VM&, Structure*);
+    ~IntlDateTimeFormat();
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -81,6 +83,7 @@ private:
     bool m_initializedDateTimeFormat { false };
     void setFormatsFromPattern(const StringView&);
     WriteBarrier<JSBoundFunction> m_boundFormat;
+    UDateFormat* m_dateFormat { nullptr };
 
     String m_locale { ASCIILiteral("en") };
     String m_calendar { ASCIILiteral("gregorian") };

@@ -61,6 +61,8 @@ PASS Intl.DateTimeFormat.prototype.format.call(5, 0) is Intl.DateTimeFormat().fo
 PASS new Intl.DateTimeFormat().format.call(null, 0) is Intl.DateTimeFormat().format(0)
 PASS new Intl.DateTimeFormat().format.call(Intl.DateTimeFormat('ar'), 0) is Intl.DateTimeFormat().format(0)
 PASS new Intl.DateTimeFormat().format.call(5, 0) is Intl.DateTimeFormat().format(0)
+PASS typeof Intl.DateTimeFormat.prototype.format() === 'string' is true
+PASS Intl.DateTimeFormat('en', { timeZone: 'America/Denver' }).format(new Date(1451099872641)) is '12/25/2015'
 PASS Intl.DateTimeFormat.prototype.resolvedOptions.length is 0
 PASS Intl.DateTimeFormat.prototype.resolvedOptions() is an instance of Object
 PASS Intl.DateTimeFormat.prototype.resolvedOptions().locale is new Intl.DateTimeFormat().resolvedOptions().locale
@@ -91,6 +93,10 @@ PASS Intl.DateTimeFormat('en').resolvedOptions().hour12 is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().minute is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().second is undefined
 PASS Intl.DateTimeFormat('en').resolvedOptions().timeZoneName is undefined
+PASS Intl.DateTimeFormat('ar-SA', { timeZone: 'America/Denver' }).format(1451099872641) is '\u0661\u0664\u200F/\u0663\u200F/\u0661\u0664\u0663\u0667'
+PASS Intl.DateTimeFormat('de', { timeZone: 'America/Denver' }).format(1451099872641) is '25.12.2015'
+PASS Intl.DateTimeFormat('ja', { timeZone: 'America/Denver' }).format(1451099872641) is '2015/12/25'
+PASS Intl.DateTimeFormat('pt', { timeZone: 'America/Denver' }).format(1451099872641) is '25/12/2015'
 PASS Intl.DateTimeFormat('en', { localeMatcher: { toString() { throw 'nope' } } }) threw exception nope.
 PASS Intl.DateTimeFormat('en', { localeMatcher:'bad' }) threw exception RangeError: localeMatcher must be either "lookup" or "best fit".
 PASS Intl.DateTimeFormat('en', { localeMatcher:'lookup' }) did not throw exception.
@@ -193,6 +199,8 @@ PASS Intl.DateTimeFormat('en', { timeZone: 'UTC' }).resolvedOptions().timeZone i
 PASS Intl.DateTimeFormat('en', { timeZone: 'Universal' }).resolvedOptions().timeZone is 'UTC'
 PASS Intl.DateTimeFormat('en', { timeZone: 'W-SU' }).resolvedOptions().timeZone is 'Europe/Moscow'
 PASS Intl.DateTimeFormat('en', { timeZone: 'Zulu' }).resolvedOptions().timeZone is 'UTC'
+PASS Intl.DateTimeFormat('en', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/2015'
+PASS Intl.DateTimeFormat('en', { timeZone: 'Pacific/Auckland' }).format(1451099872641) is '12/26/2015'
 PASS Intl.DateTimeFormat('ar-sa').resolvedOptions().locale is 'ar-SA'
 PASS Intl.DateTimeFormat('ar-sa').resolvedOptions().calendar is 'islamic-umalqura'
 PASS Intl.DateTimeFormat('ar-sa').resolvedOptions().numberingSystem is 'arab'
@@ -215,6 +223,21 @@ PASS Intl.DateTimeFormat('en-u-ca-ISO8601').resolvedOptions().calendar is 'iso86
 PASS Intl.DateTimeFormat('en-u-ca-japanese').resolvedOptions().calendar is 'japanese'
 PASS Intl.DateTimeFormat('en-u-ca-persian').resolvedOptions().calendar is 'persian'
 PASS Intl.DateTimeFormat('en-u-ca-roc').resolvedOptions().calendar is 'roc'
+PASS Intl.DateTimeFormat('en-u-ca-buddhist', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/2558'
+PASS Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '11/15/32'
+PASS Intl.DateTimeFormat('en-u-ca-coptic', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '4/15/1732'
+PASS Intl.DateTimeFormat('en-u-ca-dangi', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '11/15/32'
+PASS Intl.DateTimeFormat('en-u-ca-ethioaa', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '4/15/7508'
+PASS Intl.DateTimeFormat('en-u-ca-ethiopic', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '4/15/2008'
+PASS Intl.DateTimeFormat('en-u-ca-gregory', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/2015'
+PASS Intl.DateTimeFormat('en-u-ca-hebrew', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '4/13/5776'
+PASS Intl.DateTimeFormat('en-u-ca-indian', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '10/4/1937'
+PASS Intl.DateTimeFormat('en-u-ca-islamic', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '3/14/1437'
+PASS Intl.DateTimeFormat('en-u-ca-islamicc', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '3/13/1437'
+PASS Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/2015'
+PASS Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/27'
+PASS Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '10/4/1394'
+PASS Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/104'
 PASS Intl.DateTimeFormat('en', { numberingSystem:'gujr' }).resolvedOptions().numberingSystem is 'latn'
 PASS Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().locale is 'en'
 PASS Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().numberingSystem is 'latn'
@@ -273,1487 +296,1922 @@ PASS Intl.DateTimeFormat('en-u-nu-telu').resolvedOptions().numberingSystem is 't
 PASS Intl.DateTimeFormat('en-u-nu-thai').resolvedOptions().numberingSystem is 'thai'
 PASS Intl.DateTimeFormat('en-u-nu-tibt').resolvedOptions().numberingSystem is 'tibt'
 PASS Intl.DateTimeFormat('en-u-nu-vaii').resolvedOptions().numberingSystem is 'vaii'
+PASS Intl.DateTimeFormat('en-u-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '١٢/٢٥/٢٠١٥'
+PASS Intl.DateTimeFormat('en-u-nu-arabext', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '۱۲/۲۵/۲۰۱۵'
+PASS Intl.DateTimeFormat('en-u-nu-armn', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is 'ԺԲ/ԻԵ/ՍԺԵ'
+PASS Intl.DateTimeFormat('en-u-nu-armnlow', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is 'ժբ/իե/սժե'
+PASS Intl.DateTimeFormat('en-u-nu-bali', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᭑᭒/᭒᭕/᭒᭐᭑᭕'
+PASS Intl.DateTimeFormat('en-u-nu-beng', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '১২/২৫/২০১৫'
+PASS Intl.DateTimeFormat('en-u-nu-cham', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '꩑꩒/꩒꩕/꩒꩐꩑꩕'
+PASS Intl.DateTimeFormat('en-u-nu-deva', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '१२/२५/२०१५'
+PASS Intl.DateTimeFormat('en-u-nu-ethi', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '፲፪/፳፭/፳፻፲፭'
+PASS Intl.DateTimeFormat('en-u-nu-fullwide', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '１２/２５/２０１５'
+PASS Intl.DateTimeFormat('en-u-nu-geor', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is 'იბ/კე/ჩიე'
+PASS Intl.DateTimeFormat('en-u-nu-grek', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is 'ΙΒ´/ΚΕ´/͵ΒΙΕ´'
+PASS Intl.DateTimeFormat('en-u-nu-greklow', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is 'ιβ´/κε´/͵βιε´'
+PASS Intl.DateTimeFormat('en-u-nu-gujr', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '૧૨/૨૫/૨૦૧૫'
+PASS Intl.DateTimeFormat('en-u-nu-guru', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '੧੨/੨੫/੨੦੧੫'
+PASS Intl.DateTimeFormat('en-u-nu-hanidays', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/廿五/2015'
+PASS Intl.DateTimeFormat('en-u-nu-hanidec', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '一二/二五/二〇一五'
+PASS Intl.DateTimeFormat('en-u-nu-hans', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '十二/二十五/二千零一十五'
+PASS Intl.DateTimeFormat('en-u-nu-hansfin', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '拾贰/贰拾伍/贰仟零壹拾伍'
+PASS Intl.DateTimeFormat('en-u-nu-hant', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '十二/二十五/二千零一十五'
+PASS Intl.DateTimeFormat('en-u-nu-hantfin', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '拾貳/貳拾伍/貳仟零壹拾伍'
+PASS Intl.DateTimeFormat('en-u-nu-hebr', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is 'י״ב/כ״ה/ב׳ט״ו'
+PASS Intl.DateTimeFormat('en-u-nu-java', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '꧑꧒/꧒꧕/꧒꧐꧑꧕'
+PASS Intl.DateTimeFormat('en-u-nu-jpan', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '十二/二十五/二千十五'
+PASS Intl.DateTimeFormat('en-u-nu-jpanfin', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '拾弐/弐拾伍/弐千拾伍'
+PASS Intl.DateTimeFormat('en-u-nu-kali', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '꤁꤂/꤂꤅/꤂꤀꤁꤅'
+PASS Intl.DateTimeFormat('en-u-nu-khmr', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '១២/២៥/២០១៥'
+PASS Intl.DateTimeFormat('en-u-nu-knda', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '೧೨/೨೫/೨೦೧೫'
+PASS Intl.DateTimeFormat('en-u-nu-lana', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᪁᪂/᪂᪅/᪂᪀᪁᪅'
+PASS Intl.DateTimeFormat('en-u-nu-lanatham', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᪑᪒/᪒᪕/᪒᪐᪑᪕'
+PASS Intl.DateTimeFormat('en-u-nu-laoo', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '໑໒/໒໕/໒໐໑໕'
+PASS Intl.DateTimeFormat('en-u-nu-latn', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '12/25/2015'
+PASS Intl.DateTimeFormat('en-u-nu-lepc', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᱁᱂/᱂᱅/᱂᱀᱁᱅'
+PASS Intl.DateTimeFormat('en-u-nu-limb', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᥇᥈/᥈᥋/᥈᥆᥇᥋'
+PASS Intl.DateTimeFormat('en-u-nu-mlym', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '൧൨/൨൫/൨൦൧൫'
+PASS Intl.DateTimeFormat('en-u-nu-mong', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᠑᠒/᠒᠕/᠒᠐᠑᠕'
+PASS Intl.DateTimeFormat('en-u-nu-mtei', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '꯱꯲/꯲꯵/꯲꯰꯱꯵'
+PASS Intl.DateTimeFormat('en-u-nu-mymr', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '၁၂/၂၅/၂၀၁၅'
+PASS Intl.DateTimeFormat('en-u-nu-mymrshan', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '႑႒/႒႕/႒႐႑႕'
+PASS Intl.DateTimeFormat('en-u-nu-nkoo', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '߁߂/߂߅/߂߀߁߅'
+PASS Intl.DateTimeFormat('en-u-nu-olck', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᱑᱒/᱒᱕/᱒᱐᱑᱕'
+PASS Intl.DateTimeFormat('en-u-nu-orya', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '୧୨/୨୫/୨୦୧୫'
+PASS Intl.DateTimeFormat('en-u-nu-roman', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is 'XII/XXV/MMXV'
+PASS Intl.DateTimeFormat('en-u-nu-romanlow', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is 'xii/xxv/mmxv'
+PASS Intl.DateTimeFormat('en-u-nu-saur', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '꣑꣒/꣒꣕/꣒꣐꣑꣕'
+PASS Intl.DateTimeFormat('en-u-nu-sund', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᮱᮲/᮲᮵/᮲᮰᮱᮵'
+PASS Intl.DateTimeFormat('en-u-nu-talu', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '᧑᧒/᧒᧕/᧒᧐᧑᧕'
+PASS Intl.DateTimeFormat('en-u-nu-taml', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '௰௨/௨௰௫/௨௲௰௫'
+PASS Intl.DateTimeFormat('en-u-nu-tamldec', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '௧௨/௨௫/௨௦௧௫'
+PASS Intl.DateTimeFormat('en-u-nu-telu', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '౧౨/౨౫/౨౦౧౫'
+PASS Intl.DateTimeFormat('en-u-nu-thai', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '๑๒/๒๕/๒๐๑๕'
+PASS Intl.DateTimeFormat('en-u-nu-tibt', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '༡༢/༢༥/༢༠༡༥'
+PASS Intl.DateTimeFormat('en-u-nu-vaii', { timeZone: 'America/Los_Angeles' }).format(1451099872641) is '꘡꘢/꘢꘥/꘢꘠꘡꘥'
 PASS Intl.DateTimeFormat('en', { weekday: { toString() { throw 'weekday' } } }) threw exception weekday.
 PASS Intl.DateTimeFormat('en', { weekday:'invalid' }) threw exception RangeError: weekday must be "narrow", "short", or "long".
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().weekday is undefined
 PASS Intl.DateTimeFormat('en', { weekday:'narrow', month:'numeric', day:'numeric' }).resolvedOptions().weekday is 'narrow'
+PASS Intl.DateTimeFormat('en', { weekday:'narrow', month:'numeric', day:'numeric', timeZone: 'UTC' }).format(0) is 'T, 1/1'
 PASS Intl.DateTimeFormat('en', { weekday:'short', month:'numeric', day:'numeric' }).resolvedOptions().weekday is 'short'
+PASS Intl.DateTimeFormat('en', { weekday:'short', month:'numeric', day:'numeric', timeZone: 'UTC' }).format(0) is 'Thu, 1/1'
 PASS Intl.DateTimeFormat('en', { weekday:'long', month:'numeric', day:'numeric' }).resolvedOptions().weekday is 'long'
+PASS Intl.DateTimeFormat('en', { weekday:'long', month:'numeric', day:'numeric', timeZone: 'UTC' }).format(0) is 'Thursday, 1/1'
 PASS Intl.DateTimeFormat('en', { era: { toString() { throw 'era' } } }) threw exception era.
 PASS Intl.DateTimeFormat('en', { era:'never' }) threw exception RangeError: era must be "narrow", "short", or "long".
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().day is undefined
 PASS Intl.DateTimeFormat('en', { era:'narrow', year:'numeric' }).resolvedOptions().era is 'narrow'
+PASS Intl.DateTimeFormat('en', { era:'narrow', year:'numeric', timeZone: 'UTC' }).format(0) is '1970 A'
 PASS Intl.DateTimeFormat('en', { era:'short', year:'numeric' }).resolvedOptions().era is 'short'
+PASS Intl.DateTimeFormat('en', { era:'short', year:'numeric', timeZone: 'UTC' }).format(0) is '1970 AD'
 PASS Intl.DateTimeFormat('en', { era:'long', year:'numeric' }).resolvedOptions().era is 'long'
+PASS Intl.DateTimeFormat('en', { era:'long', year:'numeric', timeZone: 'UTC' }).format(0) is '1970 Anno Domini'
 PASS Intl.DateTimeFormat('en', { year: { toString() { throw 'year' } } }) threw exception year.
 PASS Intl.DateTimeFormat('en', { year:'nope' }) threw exception RangeError: year must be "2-digit" or "numeric".
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().year is undefined
 PASS Intl.DateTimeFormat('en', { era:'narrow', year:'2-digit' }).resolvedOptions().year is '2-digit'
+PASS Intl.DateTimeFormat('en', { era:'narrow', year:'2-digit', timeZone: 'UTC' }).format(0) is '70 A'
 PASS Intl.DateTimeFormat('en', { era:'narrow', year:'numeric' }).resolvedOptions().year is 'numeric'
+PASS Intl.DateTimeFormat('en', { era:'narrow', year:'numeric', timeZone: 'UTC' }).format(0) is '1970 A'
 PASS Intl.DateTimeFormat('en', { month: { toString() { throw 'month' } } }) threw exception month.
 PASS Intl.DateTimeFormat('en', { month:2 }) threw exception RangeError: month must be "2-digit", "numeric", "narrow", "short", or "long".
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().month is undefined
 PASS Intl.DateTimeFormat('en', { month:'2-digit', year:'numeric' }).resolvedOptions().month is '2-digit'
+PASS Intl.DateTimeFormat('en', { month:'2-digit', year:'numeric', timeZone: 'UTC' }).format(0) is '01/1970'
 PASS Intl.DateTimeFormat('en', { month:'numeric', year:'numeric' }).resolvedOptions().month is 'numeric'
+PASS Intl.DateTimeFormat('en', { month:'numeric', year:'numeric', timeZone: 'UTC' }).format(0) is '1/1970'
 PASS Intl.DateTimeFormat('en', { month:'narrow', year:'numeric' }).resolvedOptions().month is 'narrow'
+PASS Intl.DateTimeFormat('en', { month:'narrow', year:'numeric', timeZone: 'UTC' }).format(0) is 'J 1970'
 PASS Intl.DateTimeFormat('en', { month:'short', year:'numeric' }).resolvedOptions().month is 'short'
+PASS Intl.DateTimeFormat('en', { month:'short', year:'numeric', timeZone: 'UTC' }).format(0) is 'Jan 1970'
 PASS Intl.DateTimeFormat('en', { month:'long', year:'numeric' }).resolvedOptions().month is 'long'
+PASS Intl.DateTimeFormat('en', { month:'long', year:'numeric', timeZone: 'UTC' }).format(0) is 'January 1970'
 PASS Intl.DateTimeFormat('en', { day: { toString() { throw 'day' } } }) threw exception day.
 PASS Intl.DateTimeFormat('en', { day:'' }) threw exception RangeError: day must be "2-digit" or "numeric".
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().day is undefined
 PASS Intl.DateTimeFormat('en', { month:'long', day:'2-digit' }).resolvedOptions().day is '2-digit'
+PASS Intl.DateTimeFormat('en', { month:'long', day:'2-digit', timeZone: 'UTC' }).format(0) is 'January 01'
 PASS Intl.DateTimeFormat('en', { month:'long', day:'numeric' }).resolvedOptions().day is 'numeric'
+PASS Intl.DateTimeFormat('en', { month:'long', day:'numeric', timeZone: 'UTC' }).format(0) is 'January 1'
 PASS Intl.DateTimeFormat('en', { hour: { toString() { throw 'hour' } } }) threw exception hour.
 PASS Intl.DateTimeFormat('en', { hour:[] }) threw exception RangeError: hour must be "2-digit" or "numeric".
 PASS Intl.DateTimeFormat('en').resolvedOptions().hour is undefined
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit' }).resolvedOptions().hour is 'numeric'
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', timeZone: 'UTC' }).format(0) is '12:00 AM'
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour is 'numeric'
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '12:00 AM'
 PASS Intl.DateTimeFormat('en').resolvedOptions().hour12 is undefined
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12 is true
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '12:00 AM'
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12 is false
+PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '00:00'
 PASS Intl.DateTimeFormat('en', { minute: { toString() { throw 'minute' } } }) threw exception minute.
 PASS Intl.DateTimeFormat('en', { minute:null }) threw exception RangeError: minute must be "2-digit" or "numeric".
 PASS Intl.DateTimeFormat('en').resolvedOptions().minute is undefined
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().minute is '2-digit'
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '12:00 AM'
 PASS Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric' }).resolvedOptions().minute is '2-digit'
+PASS Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', timeZone: 'UTC' }).format(0) is '12:00 AM'
 PASS Intl.DateTimeFormat('en', { second: { toString() { throw 'second' } } }) threw exception second.
 PASS Intl.DateTimeFormat('en', { second:'badvalue' }) threw exception RangeError: second must be "2-digit" or "numeric".
 PASS Intl.DateTimeFormat('en').resolvedOptions().second is undefined
 PASS Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', second:'2-digit' }).resolvedOptions().second is '2-digit'
+PASS Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', second:'2-digit', timeZone: 'UTC' }).format(0) is '12:00:00 AM'
 PASS Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', second:'numeric' }).resolvedOptions().second is '2-digit'
+PASS Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', second:'numeric', timeZone: 'UTC' }).format(0) is '12:00:00 AM'
 PASS Intl.DateTimeFormat('en', { timeZoneName: { toString() { throw 'timeZoneName' } } }) threw exception timeZoneName.
 PASS Intl.DateTimeFormat('en', { timeZoneName:'name' }) threw exception RangeError: timeZoneName must be "short" or "long".
 PASS Intl.DateTimeFormat('en').resolvedOptions().timeZoneName is undefined
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short' }).resolvedOptions().timeZoneName is 'short'
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short', timeZone: 'UTC' }).format(0) is '12:00 AM GMT'
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long' }).resolvedOptions().timeZoneName is 'long'
+PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'UTC' }).format(0) is '00:00 GMT'
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ar-SA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar-SA", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ar-SA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar-SA", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ar-SA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar-SA", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ar-SA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar-SA", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ar-SA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar-SA", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ar-SA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar-SA", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ar-SA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ar-SA", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("be", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("be", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("be", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("be", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("be", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("be", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("be", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("be", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("be", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("be", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("be", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("be", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("be", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("be", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ca", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ca", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ca", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ca", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ca", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ca", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ca", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ca", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ca", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ca", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ca", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ca", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ca", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ca", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("cs", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("cs", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("cs", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("cs", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("cs", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("cs", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("cs", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("cs", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("cs", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("cs", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("cs", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("cs", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("cs", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("cs", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("da", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("da", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("da", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("da", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("da", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("da", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("da", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("da", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("da", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("da", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("da", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("da", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("da", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("da", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("de", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("de", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("de", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("de", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("de", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("de", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("de", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("de-CH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de-CH", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("de-CH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de-CH", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("de-CH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de-CH", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("de-CH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de-CH", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("de-CH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de-CH", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("de-CH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de-CH", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("de-CH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("de-CH", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("en", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("en", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en-AU", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-AU", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-AU", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-AU", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-AU", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-AU", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("en-AU", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-AU", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-AU", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-AU", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en-AU", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-AU", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("en-AU", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-AU", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en-GB", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-GB", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-GB", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-GB", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-GB", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("en-GB", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-GB", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-GB", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-GB", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en-GB", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("en-GB", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en-PH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-PH", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-PH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-PH", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-PH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-PH", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("en-PH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-PH", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-PH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-PH", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en-PH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-PH", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("en-PH", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-PH", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en-US", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-US", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-US", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-US", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-US", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("en-US", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-US", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("en-US", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-US", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("en-US", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("en-US", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("el", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("el", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("el", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("el", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("el", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("el", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("el", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("el", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("el", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("el", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("el", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("el", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("el", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("el", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("es", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("es", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("es", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("es", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("es-MX", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-MX", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es-MX", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-MX", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es-MX", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-MX", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("es-MX", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-MX", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es-MX", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-MX", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("es-MX", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-MX", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("es-MX", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-MX", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("es-PR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-PR", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es-PR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-PR", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es-PR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-PR", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("es-PR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-PR", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("es-PR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-PR", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("es-PR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-PR", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("es-PR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("es-PR", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("fr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("fr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("fr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("fr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("fr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("fr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("fr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("fr-CA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr-CA", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("fr-CA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr-CA", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("fr-CA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("fr-CA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("fr-CA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr-CA", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("fr-CA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr-CA", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("fr-CA", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("fr-CA", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ga", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ga", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ga", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ga", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ga", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ga", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ga", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ga", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ga", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ga", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ga", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ga", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ga", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ga", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("hi-IN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("hi-IN", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("hi-IN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("hi-IN", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("hi-IN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("hi-IN", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("hi-IN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("hi-IN", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("hi-IN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("hi-IN", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("hi-IN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("hi-IN", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("hi-IN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("hi-IN", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("is", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("is", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("is", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("is", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("is", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("is", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("is", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("is", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("is", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("is", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("is", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("is", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("is", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("is", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("it", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("it", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("it", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("it", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("it", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("it", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("it", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("it", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("it", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("it", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("it", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("it", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("it", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("it", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("iw", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("iw", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("iw", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("iw", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("iw", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("iw", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("iw", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("iw", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("iw", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("iw", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("iw", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("iw", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("iw", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("iw", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ja", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ja", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ja", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ja", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ja", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ja", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ja", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ja", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ja", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ja", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ja", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ja", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ja", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ja", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ko-KR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ko-KR", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ko-KR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ko-KR", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ko-KR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ko-KR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ko-KR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ko-KR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ko-KR", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ko-KR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ko-KR", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("lt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lt", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("lt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lt", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("lt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lt", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("lt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lt", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("lt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lt", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("lt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lt", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("lt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lt", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("lv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lv", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("lv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lv", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("lv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lv", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("lv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lv", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("lv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lv", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("lv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lv", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("lv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("lv", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("mk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mk", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("mk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mk", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("mk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mk", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("mk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mk", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("mk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mk", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("mk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mk", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("mk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mk", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ms", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ms", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ms", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ms", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ms", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ms", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ms", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ms", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ms", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ms", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ms", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ms", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ms", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ms", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("mt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mt", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("mt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mt", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("mt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mt", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("mt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mt", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("mt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mt", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("mt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mt", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("mt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("mt", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("nb", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nb", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("nb", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nb", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("nb", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nb", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("nb", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nb", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("nb", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nb", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("nb", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nb", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("nb", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nb", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("nl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nl", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("nl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nl", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("nl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nl", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("nl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nl", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("nl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nl", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("nl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nl", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("nl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("nl", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("no", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("no", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("no", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("no", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("no", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("no", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("no", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("no", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("no", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("no", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("no", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("no", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("no", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("no", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("pl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pl", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pl", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pl", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("pl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pl", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pl", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("pl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pl", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("pl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pl", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("pt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("pt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("pt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("pt", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("pt-BR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt-BR", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pt-BR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt-BR", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pt-BR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt-BR", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("pt-BR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt-BR", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("pt-BR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt-BR", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("pt-BR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt-BR", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("pt-BR", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("pt-BR", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ro", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ro", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ro", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ro", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ro", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ro", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ro", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ro", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ro", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ro", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ro", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ro", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ro", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ro", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ru", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ru", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ru", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ru", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ru", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ru", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("ru", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ru", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("ru", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ru", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ru", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ru", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("ru", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("ru", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("sk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sk", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sk", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sk", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("sk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sk", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sk", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("sk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sk", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("sk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sk", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("sl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sl", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sl", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sl", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("sl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sl", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sl", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("sl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sl", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("sl", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sl", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("sr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sr", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sr", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sr", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("sr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sr", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sr", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("sr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sr", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("sr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sr", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("sv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sv", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sv", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sv", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("sv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sv", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("sv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sv", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("sv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sv", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("sv", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("sv", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("th", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("th", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("th", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("th", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("th", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("th", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("th", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("th", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("th", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("th", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("th", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("th", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("th", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("th", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("tr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("tr", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("tr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("tr", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("tr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("tr", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("tr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("tr", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("tr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("tr", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("tr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("tr", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("tr", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("tr", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("uk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("uk", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("uk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("uk", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("uk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("uk", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("uk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("uk", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("uk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("uk", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("uk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("uk", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("uk", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("uk", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("vi", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("vi", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("vi", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("vi", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("vi", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("vi", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("vi", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("vi", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("vi", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("vi", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("vi", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("vi", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("vi", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("vi", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("zh", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("zh", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("zh", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("zh", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-CN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-CN", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-CN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-CN", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-CN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-CN", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("zh-CN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-CN", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-CN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-CN", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-CN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-CN", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-CN", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-CN", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-Hant-HK", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-Hant-HK", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-Hant-HK", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-Hant-HK", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-Hant-HK", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-Hant-HK", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("zh-Hant-HK", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-Hant-HK", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-Hant-HK", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-Hant-HK", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-Hant-HK", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-Hant-HK", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-Hant-HK", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-Hant-HK", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-TW", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-TW", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-TW", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-TW", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-TW", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-TW", { year: "numeric", month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("zh-TW", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-TW", { year: "numeric", month: "long" }).format() === "string" is true
 PASS 
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-TW", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-TW", { month: "long", day: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-TW", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-TW", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string" is true
 PASS 
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("zh-TW", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null) is true
+PASS typeof Intl.DateTimeFormat("zh-TW", { hour: "numeric", minute: "numeric" }).format() === "string" is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

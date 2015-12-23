@@ -129,6 +129,9 @@ shouldBe("new Intl.DateTimeFormat().format.call(null, 0)", "Intl.DateTimeFormat(
 shouldBe("new Intl.DateTimeFormat().format.call(Intl.DateTimeFormat('ar'), 0)", "Intl.DateTimeFormat().format(0)");
 shouldBe("new Intl.DateTimeFormat().format.call(5, 0)", "Intl.DateTimeFormat().format(0)");
 
+shouldBeTrue("typeof Intl.DateTimeFormat.prototype.format() === 'string'");
+shouldBe("Intl.DateTimeFormat('en', { timeZone: 'America/Denver' }).format(new Date(1451099872641))", "'12/25/2015'");
+
 // 12.3.5 Intl.DateTimeFormat.prototype.resolvedOptions ()
 
 shouldBe("Intl.DateTimeFormat.prototype.resolvedOptions.length", "0");
@@ -172,6 +175,12 @@ shouldBe("Intl.DateTimeFormat('en').resolvedOptions().hour12", "undefined");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().minute", "undefined");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().second", "undefined");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().timeZoneName", "undefined");
+
+// Locale-sensitive format().
+shouldBe("Intl.DateTimeFormat('ar-SA', { timeZone: 'America/Denver' }).format(1451099872641)", "'\\u0661\\u0664\\u200F/\\u0663\\u200F/\\u0661\\u0664\\u0663\\u0667'");
+shouldBe("Intl.DateTimeFormat('de', { timeZone: 'America/Denver' }).format(1451099872641)", "'25.12.2015'");
+shouldBe("Intl.DateTimeFormat('ja', { timeZone: 'America/Denver' }).format(1451099872641)", "'2015/12/25'");
+shouldBe("Intl.DateTimeFormat('pt', { timeZone: 'America/Denver' }).format(1451099872641)", "'25/12/2015'");
 
 shouldThrow("Intl.DateTimeFormat('en', { localeMatcher: { toString() { throw 'nope' } } })", "'nope'");
 shouldThrow("Intl.DateTimeFormat('en', { localeMatcher:'bad' })", '\'RangeError: localeMatcher must be either "lookup" or "best fit"\'');
@@ -284,6 +293,10 @@ shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Universal' }).resolvedOptions()
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'W-SU' }).resolvedOptions().timeZone", "'Europe/Moscow'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Zulu' }).resolvedOptions().timeZone", "'UTC'");
 
+// Timezone-sensitive format().
+shouldBe("Intl.DateTimeFormat('en', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/2015'");
+shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Pacific/Auckland' }).format(1451099872641)", "'12/26/2015'");
+
 // Gets default calendar and numberingSystem from locale.
 shouldBe("Intl.DateTimeFormat('ar-sa').resolvedOptions().locale", "'ar-SA'");
 shouldBe("Intl.DateTimeFormat('ar-sa').resolvedOptions().calendar", "'islamic-umalqura'");
@@ -315,6 +328,23 @@ shouldBe("Intl.DateTimeFormat('en-u-ca-roc').resolvedOptions().calendar", "'roc'
 // shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-civil').resolvedOptions().calendar", "'islamic-civil'");
 // shouldBe("Intl.DateTimeFormat('en-u-ca-islamic-rgsa').resolvedOptions().calendar", "'islamic-rgsa'");
 
+// Calendar-sensitive format().
+shouldBe("Intl.DateTimeFormat('en-u-ca-buddhist', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/2558'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-chinese', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'11/15/32'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-coptic', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'4/15/1732'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-dangi', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'11/15/32'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-ethioaa', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'4/15/7508'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-ethiopic', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'4/15/2008'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-gregory', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/2015'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-hebrew', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'4/13/5776'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-indian', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'10/4/1937'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamic', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'3/14/1437'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-islamicc', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'3/13/1437'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/2015'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/27'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'10/4/1394'");
+shouldBe("Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/104'");
+
 shouldBe("Intl.DateTimeFormat('en', { numberingSystem:'gujr' }).resolvedOptions().numberingSystem", "'latn'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().locale", "'en'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-bogus').resolvedOptions().numberingSystem", "'latn'");
@@ -334,68 +364,148 @@ for (let numberingSystem of numberingSystems) {
   shouldBe(`Intl.DateTimeFormat('en-u-nu-${numberingSystem}').resolvedOptions().numberingSystem`, `'${numberingSystem}'`);
 }
 
+// Numbering system sensitive format().
+shouldBe("Intl.DateTimeFormat('en-u-nu-arab', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'١٢/٢٥/٢٠١٥'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-arabext', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'۱۲/۲۵/۲۰۱۵'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-armn', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'ԺԲ/ԻԵ/ՍԺԵ'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-armnlow', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'ժբ/իե/սժե'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-bali', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᭑᭒/᭒᭕/᭒᭐᭑᭕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-beng', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'১২/২৫/২০১৫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-cham', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'꩑꩒/꩒꩕/꩒꩐꩑꩕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-deva', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'१२/२५/२०१५'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-ethi', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'፲፪/፳፭/፳፻፲፭'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-fullwide', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'１２/２５/２０１５'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-geor', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'იბ/კე/ჩიე'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-grek', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'ΙΒ´/ΚΕ´/͵ΒΙΕ´'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-greklow', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'ιβ´/κε´/͵βιε´'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-gujr', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'૧૨/૨૫/૨૦૧૫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-guru', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'੧੨/੨੫/੨੦੧੫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-hanidays', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/廿五/2015'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-hanidec', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'一二/二五/二〇一五'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-hans', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'十二/二十五/二千零一十五'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-hansfin', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'拾贰/贰拾伍/贰仟零壹拾伍'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-hant', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'十二/二十五/二千零一十五'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-hantfin', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'拾貳/貳拾伍/貳仟零壹拾伍'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-hebr', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'י״ב/כ״ה/ב׳ט״ו'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-java', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'꧑꧒/꧒꧕/꧒꧐꧑꧕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-jpan', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'十二/二十五/二千十五'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-jpanfin', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'拾弐/弐拾伍/弐千拾伍'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-kali', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'꤁꤂/꤂꤅/꤂꤀꤁꤅'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-khmr', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'១២/២៥/២០១៥'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-knda', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'೧೨/೨೫/೨೦೧೫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-lana', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᪁᪂/᪂᪅/᪂᪀᪁᪅'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-lanatham', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᪑᪒/᪒᪕/᪒᪐᪑᪕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-laoo', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'໑໒/໒໕/໒໐໑໕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-latn', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/25/2015'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-lepc', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᱁᱂/᱂᱅/᱂᱀᱁᱅'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-limb', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᥇᥈/᥈᥋/᥈᥆᥇᥋'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-mlym', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'൧൨/൨൫/൨൦൧൫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-mong', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᠑᠒/᠒᠕/᠒᠐᠑᠕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-mtei', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'꯱꯲/꯲꯵/꯲꯰꯱꯵'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-mymr', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'၁၂/၂၅/၂၀၁၅'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-mymrshan', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'႑႒/႒႕/႒႐႑႕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-nkoo', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'߁߂/߂߅/߂߀߁߅'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-olck', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᱑᱒/᱒᱕/᱒᱐᱑᱕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-orya', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'୧୨/୨୫/୨୦୧୫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-roman', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'XII/XXV/MMXV'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-romanlow', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'xii/xxv/mmxv'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-saur', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'꣑꣒/꣒꣕/꣒꣐꣑꣕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-sund', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᮱᮲/᮲᮵/᮲᮰᮱᮵'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-talu', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'᧑᧒/᧒᧕/᧒᧐᧑᧕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-taml', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'௰௨/௨௰௫/௨௲௰௫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-tamldec', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'௧௨/௨௫/௨௦௧௫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-telu', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'౧౨/౨౫/౨౦౧౫'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-thai', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'๑๒/๒๕/๒๐๑๕'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-tibt', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'༡༢/༢༥/༢༠༡༥'");
+shouldBe("Intl.DateTimeFormat('en-u-nu-vaii', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'꘡꘢/꘢꘥/꘢꘠꘡꘥'");
+
 shouldThrow("Intl.DateTimeFormat('en', { weekday: { toString() { throw 'weekday' } } })", "'weekday'");
 shouldThrow("Intl.DateTimeFormat('en', { weekday:'invalid' })", '\'RangeError: weekday must be "narrow", "short", or "long"\'');
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().weekday", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { weekday:'narrow', month:'numeric', day:'numeric' }).resolvedOptions().weekday", "'narrow'");
+shouldBe("Intl.DateTimeFormat('en', { weekday:'narrow', month:'numeric', day:'numeric', timeZone: 'UTC' }).format(0)", "'T, 1/1'");
 shouldBe("Intl.DateTimeFormat('en', { weekday:'short', month:'numeric', day:'numeric' }).resolvedOptions().weekday", "'short'");
+shouldBe("Intl.DateTimeFormat('en', { weekday:'short', month:'numeric', day:'numeric', timeZone: 'UTC' }).format(0)", "'Thu, 1/1'");
 shouldBe("Intl.DateTimeFormat('en', { weekday:'long', month:'numeric', day:'numeric' }).resolvedOptions().weekday", "'long'");
+shouldBe("Intl.DateTimeFormat('en', { weekday:'long', month:'numeric', day:'numeric', timeZone: 'UTC' }).format(0)", "'Thursday, 1/1'");
 
 shouldThrow("Intl.DateTimeFormat('en', { era: { toString() { throw 'era' } } })", "'era'");
 shouldThrow("Intl.DateTimeFormat('en', { era:'never' })", '\'RangeError: era must be "narrow", "short", or "long"\'');
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().day", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { era:'narrow', year:'numeric' }).resolvedOptions().era", "'narrow'");
+shouldBe("Intl.DateTimeFormat('en', { era:'narrow', year:'numeric', timeZone: 'UTC' }).format(0)", "'1970 A'");
 shouldBe("Intl.DateTimeFormat('en', { era:'short', year:'numeric' }).resolvedOptions().era", "'short'");
+shouldBe("Intl.DateTimeFormat('en', { era:'short', year:'numeric', timeZone: 'UTC' }).format(0)", "'1970 AD'");
 shouldBe("Intl.DateTimeFormat('en', { era:'long', year:'numeric' }).resolvedOptions().era", "'long'");
+shouldBe("Intl.DateTimeFormat('en', { era:'long', year:'numeric', timeZone: 'UTC' }).format(0)", "'1970 Anno Domini'");
 
 shouldThrow("Intl.DateTimeFormat('en', { year: { toString() { throw 'year' } } })", "'year'");
 shouldThrow("Intl.DateTimeFormat('en', { year:'nope' })", '\'RangeError: year must be "2-digit" or "numeric"\'');
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().year", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { era:'narrow', year:'2-digit' }).resolvedOptions().year", "'2-digit'");
+shouldBe("Intl.DateTimeFormat('en', { era:'narrow', year:'2-digit', timeZone: 'UTC' }).format(0)", "'70 A'");
 shouldBe("Intl.DateTimeFormat('en', { era:'narrow', year:'numeric' }).resolvedOptions().year", "'numeric'");
+shouldBe("Intl.DateTimeFormat('en', { era:'narrow', year:'numeric', timeZone: 'UTC' }).format(0)", "'1970 A'");
 
 shouldThrow("Intl.DateTimeFormat('en', { month: { toString() { throw 'month' } } })", "'month'");
 shouldThrow("Intl.DateTimeFormat('en', { month:2 })", '\'RangeError: month must be "2-digit", "numeric", "narrow", "short", or "long"\'');
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().month", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { month:'2-digit', year:'numeric' }).resolvedOptions().month", "'2-digit'");
+shouldBe("Intl.DateTimeFormat('en', { month:'2-digit', year:'numeric', timeZone: 'UTC' }).format(0)", "'01/1970'");
 shouldBe("Intl.DateTimeFormat('en', { month:'numeric', year:'numeric' }).resolvedOptions().month", "'numeric'");
+shouldBe("Intl.DateTimeFormat('en', { month:'numeric', year:'numeric', timeZone: 'UTC' }).format(0)", "'1/1970'");
 shouldBe("Intl.DateTimeFormat('en', { month:'narrow', year:'numeric' }).resolvedOptions().month", "'narrow'");
+shouldBe("Intl.DateTimeFormat('en', { month:'narrow', year:'numeric', timeZone: 'UTC' }).format(0)", "'J 1970'");
 shouldBe("Intl.DateTimeFormat('en', { month:'short', year:'numeric' }).resolvedOptions().month", "'short'");
+shouldBe("Intl.DateTimeFormat('en', { month:'short', year:'numeric', timeZone: 'UTC' }).format(0)", "'Jan 1970'");
 shouldBe("Intl.DateTimeFormat('en', { month:'long', year:'numeric' }).resolvedOptions().month", "'long'");
+shouldBe("Intl.DateTimeFormat('en', { month:'long', year:'numeric', timeZone: 'UTC' }).format(0)", "'January 1970'");
 
 shouldThrow("Intl.DateTimeFormat('en', { day: { toString() { throw 'day' } } })", "'day'");
 shouldThrow("Intl.DateTimeFormat('en', { day:'' })", '\'RangeError: day must be "2-digit" or "numeric"\'');
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().day", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { month:'long', day:'2-digit' }).resolvedOptions().day", "'2-digit'");
+shouldBe("Intl.DateTimeFormat('en', { month:'long', day:'2-digit', timeZone: 'UTC' }).format(0)", "'January 01'");
 shouldBe("Intl.DateTimeFormat('en', { month:'long', day:'numeric' }).resolvedOptions().day", "'numeric'");
+shouldBe("Intl.DateTimeFormat('en', { month:'long', day:'numeric', timeZone: 'UTC' }).format(0)", "'January 1'");
 
 shouldThrow("Intl.DateTimeFormat('en', { hour: { toString() { throw 'hour' } } })", "'hour'");
 shouldThrow("Intl.DateTimeFormat('en', { hour:[] })", '\'RangeError: hour must be "2-digit" or "numeric"\'');
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().hour", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit' }).resolvedOptions().hour", "'numeric'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour", "'numeric'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
 
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().hour12", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12", "true");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12", "false");
+shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'00:00'");
 
 shouldThrow("Intl.DateTimeFormat('en', { minute: { toString() { throw 'minute' } } })", "'minute'");
 shouldThrow("Intl.DateTimeFormat('en', { minute:null })", '\'RangeError: minute must be "2-digit" or "numeric"\'');
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().minute", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().minute", "'2-digit'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
 shouldBe("Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric' }).resolvedOptions().minute", "'2-digit'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
 
 shouldThrow("Intl.DateTimeFormat('en', { second: { toString() { throw 'second' } } })", "'second'");
 shouldThrow("Intl.DateTimeFormat('en', { second:'badvalue' })", '\'RangeError: second must be "2-digit" or "numeric"\'');
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().second", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', second:'2-digit' }).resolvedOptions().second", "'2-digit'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', second:'2-digit', timeZone: 'UTC' }).format(0)", "'12:00:00 AM'");
 shouldBe("Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', second:'numeric' }).resolvedOptions().second", "'2-digit'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'numeric', hour:'numeric', second:'numeric', timeZone: 'UTC' }).format(0)", "'12:00:00 AM'");
 
 shouldThrow("Intl.DateTimeFormat('en', { timeZoneName: { toString() { throw 'timeZoneName' } } })", "'timeZoneName'");
 shouldThrow("Intl.DateTimeFormat('en', { timeZoneName:'name' })", '\'RangeError: timeZoneName must be "short" or "long"\'');
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().timeZoneName", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short' }).resolvedOptions().timeZoneName", "'short'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short', timeZone: 'UTC' }).format(0)", "'12:00 AM GMT'");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long' }).resolvedOptions().timeZoneName", "'long'");
+shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'UTC' }).format(0)", "'00:00 GMT'")
 
 let localesSample = [
   "ar", "ar-SA", "be", "ca", "cs", "da", "de", "de-CH", "en", "en-AU", "en-GB",
@@ -411,34 +521,41 @@ for (let locale of localesSample) {
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("${locale}", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null)`);
+  shouldBeTrue(`typeof Intl.DateTimeFormat("${locale}", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string"`);
   // weekday, year, month, day
   shouldBeTrue(`
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
     var resolved = Intl.DateTimeFormat("${locale}", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null)`);
+  shouldBeTrue(`typeof Intl.DateTimeFormat("${locale}", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).format() === "string"`);
   // year, month, day
   shouldBeTrue(`
     var options = { year: "numeric", month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("${locale}", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null)`);
+  shouldBeTrue(`typeof Intl.DateTimeFormat("${locale}", { year: "numeric", month: "long", day: "numeric" }).format() === "string"`);
   // year, month
   shouldBeTrue(`
     var options = { year: "numeric", month: "long" };
     var resolved = Intl.DateTimeFormat("${locale}", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null)`);
+  shouldBeTrue(`typeof Intl.DateTimeFormat("${locale}", { year: "numeric", month: "long" }).format() === "string"`);
   // month, day
   shouldBeTrue(`
     var options = { month: "long", day: "numeric" };
     var resolved = Intl.DateTimeFormat("${locale}", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null)`);
+  shouldBeTrue(`typeof Intl.DateTimeFormat("${locale}", { month: "long", day: "numeric" }).format() === "string"`);
   // hour, minute, second
   shouldBeTrue(`
     var options = { hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("${locale}", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null)`);
+  shouldBeTrue(`typeof Intl.DateTimeFormat("${locale}", { hour: "numeric", minute: "numeric", second: "numeric" }).format() === "string"`);
   // hour, minute
   shouldBeTrue(`
     var options = { hour: "numeric", minute: "numeric" };
     var resolved = Intl.DateTimeFormat("${locale}", options).resolvedOptions();
     Object.keys(options).every(option => resolved[option] != null)`);
+  shouldBeTrue(`typeof Intl.DateTimeFormat("${locale}", { hour: "numeric", minute: "numeric" }).format() === "string"`);
 }

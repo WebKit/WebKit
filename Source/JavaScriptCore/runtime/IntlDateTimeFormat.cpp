@@ -71,6 +71,12 @@ IntlDateTimeFormat::IntlDateTimeFormat(VM& vm, Structure* structure)
 {
 }
 
+IntlDateTimeFormat::~IntlDateTimeFormat()
+{
+    if (m_dateFormat)
+        udat_close(m_dateFormat);
+}
+
 void IntlDateTimeFormat::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
@@ -684,6 +690,14 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     StringView pattern(patternBuffer.data(), patternLength);
     setFormatsFromPattern(pattern);
 
+    status = U_ZERO_ERROR;
+    StringView timeZoneView(m_timeZone);
+    m_dateFormat = udat_open(UDAT_IGNORE, UDAT_IGNORE, m_locale.utf8().data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), pattern.upconvertedCharacters(), pattern.length(), &status);
+    if (U_FAILURE(status)) {
+        throwTypeError(&exec, ASCIILiteral("failed to initialize DateTimeFormat"));
+        return;
+    }
+
     // 37. Set dateTimeFormat.[[boundFormat]] to undefined.
     // Already undefined.
 
@@ -900,13 +914,19 @@ JSValue IntlDateTimeFormat::format(ExecState& exec, double value)
     if (!std::isfinite(value))
         return throwRangeError(&exec, ASCIILiteral("date value is not finite in DateTimeFormat format()"));
 
-    // FIXME: implement 2 - 9
+    // Delegate remaining steps to ICU.
+    UErrorCode status = U_ZERO_ERROR;
+    Vector<UChar, 32> result(32);
+    auto resultLength = udat_format(m_dateFormat, value, result.data(), result.capacity(), nullptr, &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        status = U_ZERO_ERROR;
+        result = Vector<UChar, 32>(resultLength);
+        udat_format(m_dateFormat, value, result.data(), resultLength, nullptr, &status);
+    }
+    if (U_FAILURE(status))
+        return throwTypeError(&exec, ASCIILiteral("failed to format date value"));
 
-    // Return new Date(value).toString() until properly implemented.
-    VM& vm = exec.vm();
-    JSGlobalObject* globalObject = exec.callee()->globalObject();
-    DateInstance* d = DateInstance::create(vm, globalObject->dateStructure(), value);
-    return JSValue(d).toString(&exec);
+    return jsString(&exec, String(result.data(), resultLength));
 }
 
 } // namespace JSC
