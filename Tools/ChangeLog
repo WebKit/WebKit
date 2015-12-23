@@ -1,3 +1,10 @@
+2015-12-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix: Recognize Windows 10 variants.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._determine_win_version):
+
 2015-12-23  Chris Aljoudi <chris@chrismatic.io> and Alex Christensen <achristensen@webkit.org>
 
         Content blockers should be able to promote http to https
