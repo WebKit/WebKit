@@ -224,30 +224,18 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
     VM& vm = exec->vm();
 
     std::unique_ptr<AccessCase> newCase;
-    JSFunction* getter = nullptr;
-    ObjectPropertyConditionSet conditionSet;
-    JSCell* baseCell = baseValue.asCell();
-    Structure* structure = baseCell->structure(vm);
-
-    if (slot.isCacheableGetter())
-        getter = jsDynamicCast<JSFunction*>(slot.getterSetter()->getter());
 
     if (isJSArray(baseValue) && propertyName == exec->propertyNames().length)
         newCase = AccessCase::getLength(vm, codeBlock, AccessCase::ArrayLength);
     else if (isJSString(baseValue) && propertyName == exec->propertyNames().length)
         newCase = AccessCase::getLength(vm, codeBlock, AccessCase::StringLength);
-    else if (getter && AccessCase::canEmitIntrinsicGetter(getter, structure)) {
-        if (slot.slotBase() != baseValue) {
-            conditionSet = generateConditionsForPrototypePropertyHit(vm, codeBlock->ownerExecutable(), exec, structure, slot.slotBase(), propertyName.impl());
-            if (!conditionSet.isValid())
-                return GiveUpOnCache;
-        }
-
-        newCase = AccessCase::getIntrinsic(vm, codeBlock, getter, slot.cachedOffset(), structure, conditionSet);
-
-    } else {
+    else {
         if (!slot.isCacheable() && !slot.isUnset())
             return GiveUpOnCache;
+
+        ObjectPropertyConditionSet conditionSet;
+        JSCell* baseCell = baseValue.asCell();
+        Structure* structure = baseCell->structure(vm);
 
         bool loadTargetFromProxy = false;
         if (baseCell->type() == PureForwardingProxyType) {
@@ -297,24 +285,32 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             
             if (!conditionSet.isValid())
                 return GiveUpOnCache;
-            
+
             offset = slot.isUnset() ? invalidOffset : conditionSet.slotBaseCondition().offset();
         }
 
-        AccessCase::AccessType type;
-        if (slot.isCacheableValue())
-            type = AccessCase::Load;
-        else if (slot.isUnset())
-            type = AccessCase::Miss;
-        else if (slot.isCacheableGetter())
-            type = AccessCase::Getter;
-        else
-            type = AccessCase::CustomGetter;
+        JSFunction* getter = nullptr;
+        if (slot.isCacheableGetter())
+            getter = jsDynamicCast<JSFunction*>(slot.getterSetter()->getter());
 
-        newCase = AccessCase::get(
-            vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
-            slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
-            slot.isCacheableCustom() ? slot.slotBase() : nullptr);
+        if (!loadTargetFromProxy && getter && AccessCase::canEmitIntrinsicGetter(getter, structure))
+            newCase = AccessCase::getIntrinsic(vm, codeBlock, getter, slot.cachedOffset(), structure, conditionSet);
+        else {
+            AccessCase::AccessType type;
+            if (slot.isCacheableValue())
+                type = AccessCase::Load;
+            else if (slot.isUnset())
+                type = AccessCase::Miss;
+            else if (slot.isCacheableGetter())
+                type = AccessCase::Getter;
+            else
+                type = AccessCase::CustomGetter;
+
+            newCase = AccessCase::get(
+                vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
+                slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
+                slot.isCacheableCustom() ? slot.slotBase() : nullptr);
+        }
     }
 
     MacroAssemblerCodePtr codePtr =

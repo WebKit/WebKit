@@ -1,3 +1,20 @@
+2015-12-23  Keith Miller  <keith_miller@apple.com>
+
+        [JSC] Bugfix for intrinsic getters with dictionary structures.
+        https://bugs.webkit.org/show_bug.cgi?id=152538
+
+        Reviewed by Mark Lam.
+
+        Intrinsic getters did not check if an object was a dictionary. This meant, if a property on
+        the prototype chain of a dictionary was an intrinsic getter we would IC it. Later, if a
+        property is added to the dictionary the IC would still return the result of the intrinsic.
+        The fix is to no longer IC intrinsic getters if the base object is a dictionary.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * tests/stress/typedarray-length-dictionary.js: Added.
+        (len):
+
 2015-12-23  Andy VanWagoner  <andy@instructure.com>
 
         [INTL] Implement DateTime Format Functions
