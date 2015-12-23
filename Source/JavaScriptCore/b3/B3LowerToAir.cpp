@@ -660,7 +660,7 @@ private:
             return;
         }
 
-#if CPU(X86)
+#if CPU(X86) || CPU(X86_64)
         append(Move, tmp(value), tmp(m_value));
         append(Move, tmp(amount), Tmp(X86Registers::ecx));
         append(opcode, Tmp(X86Registers::ecx), tmp(m_value));
@@ -1598,7 +1598,7 @@ private:
 
         case Div: {
             if (isInt(m_value->type())) {
-#if CPU(X86)
+#if CPU(X86) || CPU(X86_64)
                 lowerX86Div();
                 append(Move, Tmp(X86Registers::eax), tmp(m_value));
 #endif
@@ -1611,7 +1611,7 @@ private:
         }
 
         case Mod: {
-#if CPU(X86)
+#if CPU(X86) || CPU(X86_64)
             lowerX86Div();
             append(Move, Tmp(X86Registers::edx), tmp(m_value));
 #endif
@@ -2168,7 +2168,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-#if CPU(X86)
+#if CPU(X86) || CPU(X86_64)
     void lowerX86Div()
     {
         Tmp eax = Tmp(X86Registers::eax);
