@@ -1,3 +1,12 @@
+2015-12-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-* as failing on Win
+        https://bugs.webkit.org/show_bug.cgi?id=152411
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2015-12-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Unreviewed gardening
