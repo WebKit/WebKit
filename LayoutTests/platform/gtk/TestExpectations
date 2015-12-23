@@ -349,7 +349,6 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-localDescription.html [ Sk
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-remoteDescription.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stable.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-state.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
 webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
@@ -553,9 +552,7 @@ webkit.org/b/142268 editing/pasteboard/copy-paste-attachment.html [ Failure ]
 webkit.org/b/142269 fast/attachment/attachment-dom.html [ Failure ]
 webkit.org/b/142270 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 
-webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure ]
 webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
-webkit.org/b/142287 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 webkit.org/b/142289 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 
 webkit.org/b/142819 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]

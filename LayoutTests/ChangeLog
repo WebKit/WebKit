@@ -1,3 +1,14 @@
+2015-12-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Unreviewed gardening
+
+        RTCPeerConnection-state.html is removed after r194112. Remove failure expectations
+        for tests which have been passing. Add new expectations for text-combine-shrink-on-color-change.html
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/text/text-combine-shrink-on-color-change-expected.png: Added.
+        * platform/gtk/fast/text/text-combine-shrink-on-color-change-expected.txt: Added.
+
 2015-12-23  Andy VanWagoner  <andy@instructure.com>
 
         [INTL] Implement Intl.DateTimeFormat.prototype.resolvedOptions ()
