@@ -178,6 +178,8 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_STORE_DEF_BOOL
             ('l', "local-storage", "Enable/disable HTML5 local storage.", EINA_TRUE),
         ECORE_GETOPT_STORE_DEF_BOOL
+            ('o', "offline-web-application-cache", "Enable/disable offline web application cache.", EINA_TRUE),
+        ECORE_GETOPT_STORE_DEF_BOOL
             ('F', "full-screen", "Start in full-screen.", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('t', "text-checking", "Enable/disable text spell checking.", EINA_FALSE),

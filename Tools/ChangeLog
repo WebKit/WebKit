@@ -1,3 +1,12 @@
+2015-12-22  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] MiniBrowser should be able to choose the offline-web-application-cache option
+        https://bugs.webkit.org/show_bug.cgi?id=152516
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+
 2015-12-22  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed: Add John Wilander as a contributor.
