@@ -104,8 +104,9 @@ static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* state
     ASSERT(dateTimeFormat);
 
     // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).
-    // FIXME: return JSValue::encode(InitializeDateTimeFormat(dateTimeFormat, locales, options));
-
+    JSValue locales = state->argument(0);
+    JSValue options = state->argument(1);
+    dateTimeFormat->initializeDateTimeFormat(*state, locales, options);
     return JSValue::encode(dateTimeFormat);
 }
 
@@ -123,8 +124,9 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* state)
     ASSERT(dateTimeFormat);
 
     // 4. Return InitializeDateTimeFormat(dateTimeFormat, locales, options).
-    // FIXME: return JSValue::encode(InitializeDateTimeFormat(dateTimeFormat, locales, options));
-
+    JSValue locales = state->argument(0);
+    JSValue options = state->argument(1);
+    dateTimeFormat->initializeDateTimeFormat(*state, locales, options);
     return JSValue::encode(dateTimeFormat);
 }
 
@@ -161,7 +163,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).
     return JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1)));
 }
-    
+
 void IntlDateTimeFormatConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     IntlDateTimeFormatConstructor* thisObject = jsCast<IntlDateTimeFormatConstructor*>(cell);

@@ -44,6 +44,10 @@ public:
 
     DECLARE_INFO;
 
+    void initializeDateTimeFormat(ExecState&, JSValue locales, JSValue options);
+    JSValue format(ExecState&, double value);
+    JSObject* resolvedOptions(ExecState&);
+
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
 
@@ -53,10 +57,46 @@ protected:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
+private:
+    enum class Weekday { None, Narrow, Short, Long };
+    enum class Era { None, Narrow, Short, Long };
+    enum class Year { None, TwoDigit, Numeric };
+    enum class Month { None, TwoDigit, Numeric, Narrow, Short, Long };
+    enum class Day { None, TwoDigit, Numeric };
+    enum class Hour { None, TwoDigit, Numeric };
+    enum class Minute { None, TwoDigit, Numeric };
+    enum class Second { None, TwoDigit, Numeric };
+    enum class TimeZoneName { None, Short, Long };
+
+    static const char* weekdayString(Weekday);
+    static const char* eraString(Era);
+    static const char* yearString(Year);
+    static const char* monthString(Month);
+    static const char* dayString(Day);
+    static const char* hourString(Hour);
+    static const char* minuteString(Minute);
+    static const char* secondString(Second);
+    static const char* timeZoneNameString(TimeZoneName);
+
+    bool m_initializedDateTimeFormat { false };
+    void setFormatsFromPattern(const StringView&);
     WriteBarrier<JSBoundFunction> m_boundFormat;
+
+    String m_locale { ASCIILiteral("en") };
+    String m_calendar { ASCIILiteral("gregorian") };
+    String m_numberingSystem { ASCIILiteral("latn") };
+    String m_timeZone { ASCIILiteral("UTC") };
+    bool m_hour12 { true };
+    Weekday m_weekday { Weekday::None };
+    Era m_era { Era::None };
+    Year m_year { Year::None };
+    Month m_month { Month::None };
+    Day m_day { Day::None };
+    Hour m_hour { Hour::None };
+    Minute m_minute { Minute::None };
+    Second m_second { Second::None };
+    TimeZoneName m_timeZoneName { TimeZoneName::None };
 };
-    
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState*);
 
 } // namespace JSC
 

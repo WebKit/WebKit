@@ -86,6 +86,7 @@
     macro(bytecodeIndex) \
     macro(bytecodes) \
     macro(bytecodesID) \
+    macro(calendar) \
     macro(callee) \
     macro(caller) \
     macro(caseFirst) \
@@ -101,6 +102,7 @@
     macro(constructor) \
     macro(count) \
     macro(counters) \
+    macro(day) \
     macro(defineProperty) \
     macro(description) \
     macro(descriptions) \
@@ -109,6 +111,7 @@
     macro(done) \
     macro(entries) \
     macro(enumerable) \
+    macro(era) \
     macro(eval) \
     macro(exec) \
     macro(executionCount) \
@@ -116,6 +119,7 @@
     macro(flags) \
     macro(focus) \
     macro(forEach) \
+    macro(formatMatcher) \
     macro(forward) \
     macro(from) \
     macro(fromCharCode) \
@@ -126,6 +130,8 @@
     macro(hasOwnProperty) \
     macro(hash) \
     macro(header) \
+    macro(hour) \
+    macro(hour12) \
     macro(href) \
     macro(id) \
     macro(ignoreCase) \
@@ -149,10 +155,13 @@
     macro(locale) \
     macro(localeMatcher) \
     macro(message) \
+    macro(minute) \
+    macro(month) \
     macro(multiline) \
     macro(name) \
     macro(next) \
     macro(now) \
+    macro(numberingSystem) \
     macro(numInlinedCalls) \
     macro(numInlinedGetByIds) \
     macro(numInlinedPutByIds) \
@@ -172,6 +181,7 @@
     macro(reload) \
     macro(replace) \
     macro(resolve) \
+    macro(second) \
     macro(sensitivity) \
     macro(set) \
     macro(showModalDialog) \
@@ -185,6 +195,8 @@
     macro(target) \
     macro(test) \
     macro(then) \
+    macro(timeZone) \
+    macro(timeZoneName) \
     macro(toExponential) \
     macro(toFixed) \
     macro(toISOString) \
@@ -198,8 +210,10 @@
     macro(values) \
     macro(webkit) \
     macro(webkitIndexedDB) \
+    macro(weekday) \
     macro(window) \
-    macro(writable)
+    macro(writable) \
+    macro(year)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
     macro(break) \

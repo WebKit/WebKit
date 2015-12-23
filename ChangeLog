@@ -1,3 +1,12 @@
+2015-12-23  Andy VanWagoner  <andy@instructure.com>
+
+        [INTL] Implement Intl.DateTimeFormat.prototype.resolvedOptions ()
+        https://bugs.webkit.org/show_bug.cgi?id=147603
+
+        Reviewed by Benjamin Poulain.
+
+        * Source/cmake/OptionsWin.cmake: Disable INTL on Windows for now
+
 2015-12-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Add fetch API compile time flag

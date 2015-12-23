@@ -1,3 +1,49 @@
+2015-12-23  Andy VanWagoner  <andy@instructure.com>
+
+        [INTL] Implement Intl.DateTimeFormat.prototype.resolvedOptions ()
+        https://bugs.webkit.org/show_bug.cgi?id=147603
+
+        Reviewed by Benjamin Poulain.
+
+        Implements InitializeDateTimeFormat and related abstract operations
+        using ICU. Lazy initialization is used for DateTimeFormat.prototype.
+        Refactor to align with Collator work.
+
+        * icu/unicode/udatpg.h: Added.
+        * icu/unicode/unumsys.h: Added.
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::defaultTimeZone):
+        (JSC::canonicalizeTimeZoneName):
+        (JSC::localeData):
+        (JSC::toDateTimeOptions):
+        (JSC::IntlDateTimeFormat::setFormatsFromPattern):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::weekdayString):
+        (JSC::IntlDateTimeFormat::eraString):
+        (JSC::IntlDateTimeFormat::yearString):
+        (JSC::IntlDateTimeFormat::monthString):
+        (JSC::IntlDateTimeFormat::dayString):
+        (JSC::IntlDateTimeFormat::hourString):
+        (JSC::IntlDateTimeFormat::minuteString):
+        (JSC::IntlDateTimeFormat::secondString):
+        (JSC::IntlDateTimeFormat::timeZoneNameString):
+        (JSC::IntlDateTimeFormat::resolvedOptions):
+        (JSC::IntlDateTimeFormat::format):
+        (JSC::IntlDateTimeFormatFuncFormatDateTime): Deleted.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        (JSC::callIntlDateTimeFormat):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatFuncFormatDateTime):
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::resolveLocale):
+        (JSC::getNumberingSystemsForLocale):
+        * runtime/IntlObject.h:
+
 2015-12-22  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(194382): FTL B3 no longer runs V8/encrypt

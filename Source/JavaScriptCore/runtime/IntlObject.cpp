@@ -45,7 +45,9 @@
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include <unicode/uloc.h>
+#include <unicode/unumsys.h>
 #include <wtf/Assertions.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace JSC {
 
@@ -751,6 +753,7 @@ HashMap<String, String> resolveLocale(const HashSet<String>& availableLocales, c
             size_t keyPos = extensionSubtags.find(key);
             // ii. If keyPos != -1, then
             if (keyPos != notFound) {
+                // FIXME: https://github.com/tc39/ecma402/issues/59
                 // 1. If keyPos + 1 < extensionSubtagsLength and the length of the result of Get(extensionSubtags, ToString(keyPos +1)) is greater than 2, then
                 if (keyPos + 1 < extensionSubtags.size() && extensionSubtags[keyPos + 1].length() > 2) {
                     const String& requestedValue = extensionSubtags[keyPos + 1];
@@ -919,6 +922,37 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
 
     // 9. Return subset.
     return supportedLocales;
+}
+
+Vector<String> getNumberingSystemsForLocale(const String& locale)
+{
+    static NeverDestroyed<Vector<String>> cachedNumberingSystems;
+    Vector<String>& availableNumberingSystems = cachedNumberingSystems.get();
+    if (availableNumberingSystems.isEmpty()) {
+        UErrorCode status(U_ZERO_ERROR);
+        UEnumeration* numberingSystemNames = unumsys_openAvailableNames(&status);
+        ASSERT(U_SUCCESS(status));
+        status = U_ZERO_ERROR;
+
+        int32_t resultLength;
+        // Numbering system names are always ASCII, so use char[].
+        while (const char* result = uenum_next(numberingSystemNames, &resultLength, &status)) {
+            ASSERT(U_SUCCESS(status));
+            status = U_ZERO_ERROR;
+            availableNumberingSystems.append(String(result, resultLength));
+        }
+        uenum_close(numberingSystemNames);
+    }
+
+    UErrorCode status(U_ZERO_ERROR);
+    UNumberingSystem* defaultSystem = unumsys_open(locale.utf8().data(), &status);
+    ASSERT(U_SUCCESS(status));
+    String defaultSystemName(unumsys_getName(defaultSystem));
+    unumsys_close(defaultSystem);
+
+    Vector<String> numberingSystems({ defaultSystemName });
+    numberingSystems.appendVector(availableNumberingSystems);
+    return numberingSystems;
 }
 
 } // namespace JSC

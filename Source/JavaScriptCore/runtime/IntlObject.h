@@ -64,8 +64,9 @@ String intlStringOption(ExecState&, JSValue options, PropertyName, std::initiali
 Vector<String> canonicalizeLocaleList(ExecState&, JSValue locales);
 HashMap<String, String> resolveLocale(const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const char* const relevantExtensionKeys[], size_t relevantExtensionKeyCount, Vector<String> (*localeData)(const String&, size_t));
 JSValue supportedLocales(ExecState&, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options);
-String removeUnicodeLocaleExtension(const String&);
-String bestAvailableLocale(const HashSet<String>&, const String&);
+String removeUnicodeLocaleExtension(const String& locale);
+String bestAvailableLocale(const HashSet<String>& availableLocales, const String& requestedLocale);
+Vector<String> getNumberingSystemsForLocale(const String& locale);
 
 } // namespace JSC
 

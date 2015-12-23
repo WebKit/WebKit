@@ -1,3 +1,14 @@
+2015-12-23  Andy VanWagoner  <andy@instructure.com>
+
+        [INTL] Implement Intl.DateTimeFormat.prototype.resolvedOptions ()
+        https://bugs.webkit.org/show_bug.cgi?id=147603
+
+        Reviewed by Benjamin Poulain.
+
+        * js/intl-datetimeformat-expected.txt: Added resolvedOptions tests.
+        * js/script-tests/intl-datetimeformat.js: Added resolvedOptions tests.
+        (string_appeared_here):
+
 2015-12-23  Chris Aljoudi <chris@chrismatic.io> and Alex Christensen <achristensen@webkit.org>
 
         Content blockers should be able to promote http to https
