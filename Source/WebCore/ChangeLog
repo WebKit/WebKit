@@ -1,3 +1,14 @@
+2015-12-23  Pranjal Jumde  <pjumde@apple.com>
+
+        Avoids stack recursion when indexed propertyNames defined using Object.defineProperty are deleted.
+        https://bugs.webkit.org/show_bug.cgi?id=149179
+        <rdar://problem/22708019>.
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSObject.cpp:
+        (JSStorage::deletePropertyByIndex was invoking Base::deleteProperty for indexed propertyNames instead of Base::deletePropertyByIndex leading to a stack recursion)
+
 2015-12-23  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] MediaDeviceInfo.label must be empty in some situations

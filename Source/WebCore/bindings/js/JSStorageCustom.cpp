@@ -58,9 +58,11 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
     // the native property slots manually.
     PropertySlot slot(thisObject);
-    if (getStaticValueSlot<JSStorage, Base>(exec, *s_info.staticPropHashTable, thisObject, propertyName, slot))
+    if (getStaticValueSlot<JSStorage, Base>(exec, *s_info.staticPropHashTable, thisObject, propertyName, slot)) {
+        if (Optional<uint32_t> index = parseIndex(propertyName))
+            return Base::deletePropertyByIndex(thisObject, exec, index.value());
         return Base::deleteProperty(thisObject, exec, propertyName);
-
+    }
     JSValue prototype = thisObject->prototype();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))
         return Base::deleteProperty(thisObject, exec, propertyName);
@@ -76,6 +78,10 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
 
 bool JSStorage::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
+    JSStorage* thisObject = jsCast<JSStorage*>(cell);
+    PropertySlot slot(thisObject);
+    if (getStaticValueSlot<JSStorage, Base>(exec, *s_info.staticPropHashTable, thisObject, Identifier::from(exec, propertyName), slot))
+        return Base::deletePropertyByIndex(thisObject, exec, propertyName);
     return deleteProperty(cell, exec, Identifier::from(exec, propertyName));
 }
 
