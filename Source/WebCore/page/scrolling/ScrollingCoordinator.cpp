@@ -160,9 +160,7 @@ Region ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame(const Frame
 
         Region subframeRegion = absoluteNonFastScrollableRegionForFrame(*subframe);
         // Map from the frame document to our document.
-        IntPoint offset = subframeView->contentsToView(IntPoint());
-        offset = subframeView->convertToContainingView(offset);
-        offset = frameView->viewToContents(offset);
+        IntPoint offset = subframeView->contentsToContainingViewContents(IntPoint());
 
         // FIXME: this translation ignores non-trival transforms on the frame.
         subframeRegion.translate(toIntSize(offset));

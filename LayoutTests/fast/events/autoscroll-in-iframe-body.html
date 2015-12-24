@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <style>
+            body {
+                height: 2000px;
+            }
+            iframe {
+                position: absolute;
+                top: 800px;
+            }
+        </style>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+        }
+        
+        var verticalScrollOffset;
+        var iframe;
+        var mainFrameScrollOffset = 400;
+        
+        function getDragStart()
+        {
+            iframe = document.getElementById('targetFrame');
+            // Start dragging near the bottom of the iframe.
+            return {
+                'x' : iframe.clientLeft + iframe.clientWidth / 2,
+                'y' : iframe.clientTop + iframe.clientHeight - 10
+            };
+        }
+
+        function doTest()
+        {
+            document.scrollingElement.scrollTop = mainFrameScrollOffset;
+            if (document.scrollingElement.scrollTop != mainFrameScrollOffset)
+                log("FAILED: failed to scroll by " + mainFrameScrollOffset + "px");
+
+            iframe = document.getElementById('targetFrame');
+            // Start dragging near the bottom of the iframe.
+            var startPoint = getDragStart();
+            if (window.eventSender) {
+                eventSender.dragMode = false;
+                eventSender.mouseMoveTo(startPoint.x, startPoint.y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+            setTimeout(autoscrollTestPart1, 0);
+        }
+
+        function autoscrollTestPart1()
+        {
+            var mainDocumentTop = document.scrollingElement.scrollTop;
+            if (mainDocumentTop != mainFrameScrollOffset)
+                log("FAILED: Clicking in the iframe scrolled the page (window.scrollTop is " + mainDocumentTop + ")");
+
+            if (window.eventSender) {
+                var startPoint = getDragStart();
+                eventSender.dragMode = false;
+                eventSender.mouseMoveTo(startPoint.x, startPoint.y);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(startPoint.x + 10, startPoint.y);
+            }
+            setTimeout(autoscrollTestPart2, 100);
+        }
+
+        function autoscrollTestPart2()
+        {
+            if (window.eventSender)
+                eventSender.mouseUp();
+
+            var mainDocumentTop = document.scrollingElement.scrollTop;
+            if (mainDocumentTop == mainFrameScrollOffset)
+                log("PASSED: selecting in the iframe did not scroll the page.");
+            else
+                log("FAILED: the page autoscrolled (window.scrollTop is " + mainDocumentTop + ").");
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', doTest, false);
+        </script>
+    </head>
+<body>
+    <iframe id="targetFrame" src="data:text/html,Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."></iframe>
+    <div id="console"></div>
+</body>
+</html>
+

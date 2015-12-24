@@ -77,6 +77,7 @@ namespace WebCore {
     M(SQLDatabase) \
     M(SVG) \
     M(Services) \
+    M(Scrolling) \
     M(SpellingAndGrammar) \
     M(StorageAPI) \
     M(Threading) \

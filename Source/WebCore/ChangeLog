@@ -1,3 +1,59 @@
+2015-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r187593): Scroll position jumps when selecting text in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=152541
+        rdar://problem/23886181
+
+        Reviewed by Tim Horton.
+        
+        r154382 added code that modifies parentLayer traversal, looking for ancestor
+        scrollable layers. However, it confusingly added another code path in which
+        the ancestor layer traversal cross a frame boundary, when RenderLayer::scrollRectToVisible()
+        already has one. I fixed this new location to adjust the rect coordinates in r187593,
+        but then code that hit both crossing points double-mapped the coordinates, causing
+        autoscroll jumping.
+        
+        Fix by reverting r154382 and r187593, going back to doing the ancestor walk in
+        one place. Re-fix r154382 by implementing RenderLayer::allowsCurrentScroll(),
+        which contains the logic for line clamp, autoscroll and ensuring that overflow:hidden
+        can be programmatically scrolled.
+        
+        Form controls are special; they can have overflow:hidden but still be user-scrollable
+        during autoscroll; this is handled via the confusingly-named canBeProgramaticallyScrolled().
+        RenderTextControlSingleLine implements this to ensure that readonly text inputs
+        autoscroll (which is exercised by a test).
+        
+        The frame-to-parent-frame rect mapping in RenderLayer::scrollRectToVisible() is
+        fixed to use the coordinate mapping functions from Widget/ScrollView, with the
+        addition of a new utility function contentsToContainingViewContents().
+        
+        A "Scrolling" logging channel is added with a few log points.
+
+        Test: fast/events/autoscroll-in-iframe-body.html
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame):
+        use contentsToContainingViewContents().
+        * platform/Logging.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::contentsToContainingViewContents):
+        * platform/ScrollView.h:
+        * platform/graphics/IntPoint.cpp:
+        (WebCore::IntPoint::constrainedBetween): New helper to constrain a point between
+        two other points.
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::expandedTo):
+        (WebCore::IntPoint::shrunkTo):
+        * rendering/RenderBox.cpp:
+        * rendering/RenderLayer.cpp:
+        (WebCore::parentLayerCrossFrame):
+        (WebCore::RenderLayer::enclosingScrollableLayer):
+        (WebCore::frameElementAndViewPermitScroll):
+        (WebCore::RenderLayer::allowsCurrentScroll):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        * rendering/RenderLayer.h:
+        * rendering/RenderTextControlSingleLine.h:
+
 2015-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Minor cleanup in RenderBox::canBeProgramaticallyScrolled()

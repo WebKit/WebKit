@@ -294,6 +294,9 @@ public:
     IntRect viewToContents(IntRect) const;
     IntRect contentsToView(IntRect) const;
 
+    IntPoint contentsToContainingViewContents(const IntPoint&) const;
+    IntRect contentsToContainingViewContents(IntRect) const;
+
     WEBCORE_EXPORT IntPoint rootViewToTotalContents(const IntPoint&) const;
 
     // Event coordinates are assumed to be in the coordinate space of a window that contains

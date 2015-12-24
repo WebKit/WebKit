@@ -1,3 +1,18 @@
+2015-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r187593): Scroll position jumps when selecting text in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=152541
+        rdar://problem/23886181
+
+        Reviewed by Tim Horton.
+        
+        New test for autoscrolling iframe contents (an existing test scrolled an overflow:scroll
+        inside an iframe, and didn't catch the bug).
+
+        * fast/events/autoscroll-in-iframe-body-expected.txt: Added.
+        * fast/events/autoscroll-in-iframe-body.html: Added.
+        * fast/forms/input-readonly-autoscroll.html: Fix a missing double quote.
+
 2015-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Minor cleanup in RenderBox::canBeProgramaticallyScrolled()

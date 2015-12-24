@@ -78,6 +78,7 @@
 #include "HitTestingTransformState.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "Logging.h"
 #include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
@@ -1454,7 +1455,7 @@ RenderLayer* RenderLayer::enclosingAncestorForPosition(EPosition position) const
     return curr;
 }
 
-static RenderLayer* parentLayerCrossFrame(const RenderLayer& layer, LayoutRect* rect = nullptr)
+static RenderLayer* parentLayerCrossFrame(const RenderLayer& layer)
 {
     if (layer.parent())
         return layer.parent();
@@ -1467,18 +1468,12 @@ static RenderLayer* parentLayerCrossFrame(const RenderLayer& layer, LayoutRect* 
     if (!ownerRenderer)
         return nullptr;
 
-    // Convert the rect into the coordinate space of the parent frame's document.
-    if (rect) {
-        IntRect viewRect = layer.renderer().frame().view()->convertToContainingView(enclosingIntRect(*rect));
-        *rect = ownerRenderer->frame().view()->viewToContents(viewRect);
-    }
-
     return ownerRenderer->enclosingLayer();
 }
 
-RenderLayer* RenderLayer::enclosingScrollableLayer(LayoutRect* rect) const
+RenderLayer* RenderLayer::enclosingScrollableLayer() const
 {
-    for (RenderLayer* nextLayer = parentLayerCrossFrame(*this, rect); nextLayer; nextLayer = parentLayerCrossFrame(*nextLayer, rect)) {
+    for (RenderLayer* nextLayer = parentLayerCrossFrame(*this); nextLayer; nextLayer = parentLayerCrossFrame(*nextLayer)) {
         if (is<RenderBox>(nextLayer->renderer()) && downcast<RenderBox>(nextLayer->renderer()).canBeScrolledAndHasScrollableArea())
             return nextLayer;
     }
@@ -2283,6 +2278,7 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
     scrollByRecursively(adjustedScrollDelta(delta), ScrollOffsetClamped);
 }
 
+// FIXME: unify with the scrollRectToVisible() code below.
 void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping clamp, ScrollableArea** scrolledArea)
 {
     if (delta.isZero())
@@ -2436,23 +2432,48 @@ void RenderLayer::scrollTo(int x, int y)
     view.frameView().viewportContentsChanged();
 }
 
-static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameElementBase, FrameView* frameView) 
+static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameElementBase, FrameView& frameView)
 {
     // If scrollbars aren't explicitly forbidden, permit scrolling.
     if (frameElementBase && frameElementBase->scrollingMode() != ScrollbarAlwaysOff)
         return true;
 
     // If scrollbars are forbidden, user initiated scrolls should obviously be ignored.
-    if (frameView->wasScrolledByUser())
+    if (frameView.wasScrolledByUser())
         return false;
 
     // Forbid autoscrolls when scrollbars are off, but permits other programmatic scrolls,
     // like navigation to an anchor.
-    return !frameView->frame().eventHandler().autoscrollInProgress();
+    return !frameView.frame().eventHandler().autoscrollInProgress();
+}
+
+bool RenderLayer::allowsCurrentScroll() const
+{
+    if (!renderer().hasOverflowClip())
+        return false;
+
+    // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
+    // FIXME: Is this still needed? It used to be relevant for Safari RSS.
+    if (renderer().parent() && !renderer().parent()->style().lineClamp().isNone())
+        return false;
+
+    RenderBox* box = renderBox();
+    ASSERT(box); // Only boxes can have overflowClip set.
+
+    if (renderer().frame().eventHandler().autoscrollInProgress()) {
+        // The "programmatically" here is misleading; this asks whether the box has scrollable overflow,
+        // or is a special case like a form control.
+        return box->canBeProgramaticallyScrolled();
+    }
+
+    // Programmatic scrolls can scroll overflow:hidden.
+    return box->hasHorizontalOverflow() || box->hasVerticalOverflow();
 }
 
 void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "Layer " << this << " scrollRectToVisible " << rect);
+
     RenderLayer* parentLayer = nullptr;
     LayoutRect newRect = rect;
 
@@ -2460,13 +2481,10 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
     // the end of the function since they could delete the layer or the layer's renderer().
     FrameView& frameView = renderer().view().frameView();
 
-    bool restrictedByLineClamp = false;
-    if (renderer().parent()) {
+    if (renderer().parent())
         parentLayer = renderer().parent()->enclosingLayer();
-        restrictedByLineClamp = !renderer().parent()->style().lineClamp().isNone();
-    }
 
-    if (renderer().hasOverflowClip() && !restrictedByLineClamp) {
+    if (allowsCurrentScroll()) {
         // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
         // This will prevent us from revealing text hidden by the slider in Safari RSS.
         RenderBox* box = renderBox();
@@ -2483,7 +2501,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
             localExposeRect.move(-scrollOffsetDifference);
             newRect = LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRect)), UseTransforms).boundingBox());
         }
-    } else if (!parentLayer && renderer().isBox() && renderBox()->canBeProgramaticallyScrolled()) {
+    } else if (!parentLayer && renderer().isRenderView()) {
         HTMLFrameOwnerElement* ownerElement = renderer().document().ownerElement();
 
         if (ownerElement && ownerElement->renderer()) {
@@ -2492,23 +2510,19 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
             if (is<HTMLFrameElementBase>(*ownerElement))
                 frameElementBase = downcast<HTMLFrameElementBase>(ownerElement);
 
-            if (frameElementAndViewPermitScroll(frameElementBase, &frameView)) {
+            if (frameElementAndViewPermitScroll(frameElementBase, frameView)) {
                 LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
                 LayoutRect exposeRect = getRectToExpose(viewRect, viewRect, rect, alignX, alignY);
 
-                int xOffset = roundToInt(exposeRect.x());
-                int yOffset = roundToInt(exposeRect.y());
+                IntPoint scrollOffset(roundedIntPoint(exposeRect.location()));
                 // Adjust offsets if they're outside of the allowable range.
-                xOffset = std::max(0, std::min(frameView.contentsWidth(), xOffset));
-                yOffset = std::max(0, std::min(frameView.contentsHeight(), yOffset));
+                scrollOffset = scrollOffset.constrainedBetween(IntPoint(), IntPoint(frameView.contentsSize()));
+                frameView.setScrollPosition(scrollOffset);
 
-                frameView.setScrollPosition(IntPoint(xOffset, yOffset));
                 if (frameView.safeToPropagateScrollToParent()) {
                     parentLayer = ownerElement->renderer()->enclosingLayer();
-                    // FIXME: This doesn't correctly convert the rect to
-                    // absolute coordinates in the parent.
-                    newRect.setX(rect.x() - frameView.scrollX() + frameView.x());
-                    newRect.setY(rect.y() - frameView.scrollY() + frameView.y());
+                    // Convert the rect into the coordinate space of the parent frame's document.
+                    newRect = frameView.contentsToContainingViewContents(enclosingIntRect(newRect));
                 } else
                     parentLayer = nullptr;
             }
@@ -2537,9 +2551,6 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         }
     }
     
-    if (renderer().frame().eventHandler().autoscrollInProgress())
-        parentLayer = enclosingScrollableLayer(&newRect);
-
     if (parentLayer)
         parentLayer->scrollRectToVisible(newRect, alignX, alignY);
 }

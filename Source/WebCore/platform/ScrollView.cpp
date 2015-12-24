@@ -29,11 +29,13 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "HostWindow.h"
+#include "Logging.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
+#include "TextStream.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -869,6 +871,26 @@ IntRect ScrollView::contentsToView(IntRect rect) const
 {
     rect.move(-documentScrollOffsetRelativeToViewOrigin());
     return rect;
+}
+
+IntPoint ScrollView::contentsToContainingViewContents(const IntPoint& point) const
+{
+    if (const ScrollView* parentScrollView = parent()) {
+        IntPoint pointInContainingView = convertToContainingView(contentsToView(point));
+        return parentScrollView->viewToContents(pointInContainingView);
+    }
+
+    return contentsToView(point);
+}
+
+IntRect ScrollView::contentsToContainingViewContents(IntRect rect) const
+{
+    if (const ScrollView* parentScrollView = parent()) {
+        IntRect rectInContainingView = convertToContainingView(contentsToView(rect));
+        return parentScrollView->viewToContents(rectInContainingView);
+    }
+
+    return contentsToView(rect);
 }
 
 IntPoint ScrollView::rootViewToContents(const IntPoint& rootViewPoint) const
