@@ -469,11 +469,16 @@ public:
 
     bool hasVerticalScrollbarWithAutoBehavior() const;
     bool hasHorizontalScrollbarWithAutoBehavior() const;
+
     bool scrollsOverflow() const { return scrollsOverflowX() || scrollsOverflowY(); }
     bool scrollsOverflowX() const { return hasOverflowClip() && (style().overflowX() == OSCROLL || hasHorizontalScrollbarWithAutoBehavior()); }
     bool scrollsOverflowY() const { return hasOverflowClip() && (style().overflowY() == OSCROLL || hasVerticalScrollbarWithAutoBehavior()); }
-    bool hasScrollableOverflowX() const { return scrollsOverflowX() && scrollWidth() != roundToInt(clientWidth()); }
-    bool hasScrollableOverflowY() const { return scrollsOverflowY() && scrollHeight() != roundToInt(clientHeight()); }
+
+    bool hasHorizontalOverflow() const { return scrollWidth() != roundToInt(clientWidth()); }
+    bool hasVerticalOverflow() const { return scrollHeight() != roundToInt(clientHeight()); }
+
+    bool hasScrollableOverflowX() const { return scrollsOverflowX() && hasHorizontalOverflow(); }
+    bool hasScrollableOverflowY() const { return scrollsOverflowY() && hasVerticalOverflow(); }
 
     bool usesCompositedScrolling() const;
     

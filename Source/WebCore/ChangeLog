@@ -1,3 +1,30 @@
+2015-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor cleanup in RenderBox::canBeProgramaticallyScrolled()
+        https://bugs.webkit.org/show_bug.cgi?id=152515
+
+        Reviewed by Tim Horton.
+
+        Remove the scrollsOverflow() check in RenderBox::canBeProgramaticallyScrolled(),
+        since if hasScrollableOverflow is true, scrollsOverflow() must also be true.
+        
+        Factor clientWidth/Height vs. scrollWidth/Height checks into separate functions,
+        and call them from two places.
+        
+        Added a test which is not affected by this particular change, but will verify
+        that a later change doesn't break anything.
+
+        Test: fast/overflow/overflow-hidden-scroll-into-view.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::canBeScrolledAndHasScrollableArea):
+        (WebCore::RenderBox::canBeProgramaticallyScrolled):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::hasHorizontalOverflow):
+        (WebCore::RenderBox::hasVerticalOverflow):
+        (WebCore::RenderBox::hasScrollableOverflowX):
+        (WebCore::RenderBox::hasScrollableOverflowY):
+
 2015-12-23  Pranjal Jumde  <pjumde@apple.com>
 
         Avoids stack recursion when indexed propertyNames defined using Object.defineProperty are deleted.

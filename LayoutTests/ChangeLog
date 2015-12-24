@@ -1,3 +1,15 @@
+2015-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor cleanup in RenderBox::canBeProgramaticallyScrolled()
+        https://bugs.webkit.org/show_bug.cgi?id=152515
+
+        Reviewed by Tim Horton.
+
+        Test that programmatic scrolling works inside overflow:hidden.
+
+        * fast/overflow/overflow-hidden-scroll-into-view-expected.html: Added.
+        * fast/overflow/overflow-hidden-scroll-into-view.html: Added.
+
 2015-12-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaselining storage/domstorage/localstorage/delete-defineproperty-removal.html
