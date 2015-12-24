@@ -103,10 +103,7 @@ void ScrollingTreeScrollingNode::updateLayersAfterAncestorChange(const Scrolling
 
 void ScrollingTreeScrollingNode::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    FloatPoint newScrollPosition = scrollPosition;
-    newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
-    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
-
+    FloatPoint newScrollPosition = scrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 }
 

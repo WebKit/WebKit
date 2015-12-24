@@ -1,3 +1,19 @@
+2015-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Use "constrainedBetween" in more places
+        https://bugs.webkit.org/show_bug.cgi?id=152543
+
+        Reviewed by Zalan Bujtas.
+
+        Replace code that contrains points via shrunkTo/expandedTo() with calls
+        to constrainedBetween(), and implement constrainedBetween() on IntPoint,
+        FloatPoint and LayoutPoint.
+
+        Convert some functions that return points to more modern syntax.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (constrainContentOffset):
+
 2015-12-22  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] ewk_application_cache_manager test failed after r193812

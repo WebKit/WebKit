@@ -1,5 +1,40 @@
 2015-12-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Use "constrainedBetween" in more places
+        https://bugs.webkit.org/show_bug.cgi?id=152543
+
+        Reviewed by Zalan Bujtas.
+
+        Replace code that contrains points via shrunkTo/expandedTo() with calls
+        to constrainedBetween(), and implement constrainedBetween() on IntPoint,
+        FloatPoint and LayoutPoint.
+
+        Convert some functions that return points to more modern syntax.
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::setScrollPosition):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::setScrollPosition):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::adjustScrollPositionWithinRange):
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::constrainedBetween):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::shrunkTo):
+        (WebCore::FloatPoint::expandedTo):
+        (WebCore::FloatPoint::transposedPoint):
+        * platform/graphics/IntPoint.cpp:
+        * platform/graphics/LayoutPoint.cpp:
+        (WebCore::LayoutPoint::constrainedBetween):
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::LayoutPoint::expandedTo):
+        (WebCore::LayoutPoint::shrunkTo):
+        (WebCore::LayoutPoint::transposedPoint):
+        (WebCore::LayoutPoint::fraction):
+        (WebCore::LayoutPoint::operator FloatPoint):
+
+2015-12-23  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r187593): Scroll position jumps when selecting text in an iframe
         https://bugs.webkit.org/show_bug.cgi?id=152541
         rdar://problem/23886181

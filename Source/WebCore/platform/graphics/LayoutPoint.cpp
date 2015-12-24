@@ -30,6 +30,14 @@
 
 namespace WebCore {
 
+LayoutPoint LayoutPoint::constrainedBetween(const LayoutPoint& min, const LayoutPoint& max) const
+{
+    return {
+        std::max(min.x(), std::min(max.x(), m_x)),
+        std::max(min.y(), std::min(max.y(), m_y))
+    };
+}
+
 TextStream& operator<<(TextStream& ts, const LayoutPoint& p)
 {
     // FIXME: These should be printed as floats. Keeping them ints for consistency with pervious test expectations.

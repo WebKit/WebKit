@@ -403,9 +403,7 @@ IntPoint ScrollView::adjustScrollPositionWithinRange(const IntPoint& scrollPoint
     if (!constrainsScrollingToContentEdge())
         return scrollPoint;
 
-    IntPoint newScrollPosition = scrollPoint.shrunkTo(maximumScrollPosition());
-    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
-    return newScrollPosition;
+    return scrollPoint.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
 }
 
 IntSize ScrollView::documentScrollOffsetRelativeToViewOrigin() const

@@ -45,7 +45,6 @@ IntPoint IntPoint::constrainedBetween(const IntPoint& min, const IntPoint& max) 
     };
 }
 
-
 TextStream& operator<<(TextStream& ts, const IntPoint& p)
 {
     return ts << "(" << p.x() << "," << p.y() << ")";

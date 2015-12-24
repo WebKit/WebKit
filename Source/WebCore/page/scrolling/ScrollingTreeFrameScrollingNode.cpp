@@ -82,10 +82,7 @@ void ScrollingTreeFrameScrollingNode::scrollByWithoutContentEdgeConstraints(cons
 
 void ScrollingTreeFrameScrollingNode::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    FloatPoint newScrollPosition = scrollPosition;
-    newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
-    newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
-
+    FloatPoint newScrollPosition = scrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 }
 
