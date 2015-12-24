@@ -1,3 +1,15 @@
+2015-12-23  Dewei Zhu  <dewei_zhu@apple.com>
+
+        SVN checkout used by RunBenchmark should be non-interactive
+        https://bugs.webkit.org/show_bug.cgi?id=152542
+
+        Reviewed by Ryosuke Niwa.
+
+        RunBenchmark should not require user interaction while running.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder.py:
+        (BenchmarkBuilder._checkout_with_subversion):
+
 2015-12-23  Brent Fulgham  <bfulgham@apple.com>
 
         Web Inspector: add support for running protocol-test.js tests on Windows

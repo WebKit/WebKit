@@ -86,7 +86,7 @@ class BenchmarkBuilder(object):
 
     def _checkout_with_subversion(self, subversion_url):
         _log.info('Checking out %s to %s' % (subversion_url, self._dest))
-        error_code = subprocess.call(['svn', 'checkout', subversion_url, self._dest])
+        error_code = subprocess.call(['svn', 'checkout', '--trust-server-cert', '--non-interactive', subversion_url, self._dest])
         if error_code:
             raise Exception('Cannot checkout the benchmark - Error: %s' % error_code)
 
