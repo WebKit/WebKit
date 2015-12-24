@@ -231,6 +231,11 @@ void allocateStack(Code& code)
     // transformation since we can search the StackSlots array to figure out which StackSlot any
     // offset-from-FP refers to.
 
+    // FIXME: This may produce addresses that aren't valid if we end up with a ginormous stack frame.
+    // We would have to scavenge for temporaries if this happened. Fortunately, this case will be
+    // extremely rare so we can do crazy things when it arises.
+    // https://bugs.webkit.org/show_bug.cgi?id=152530
+    
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
             for (Arg& arg : inst.args) {

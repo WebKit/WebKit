@@ -337,32 +337,42 @@ private:
     }
 
     // This turns the given operand into an address.
-    Arg effectiveAddr(Value* address)
+    Arg effectiveAddr(Value* address, int32_t offset, Arg::Width width)
     {
-        static const unsigned lotsOfUses = 10; // This is arbitrary and we should tune it eventually.
+        // B3 allows any memory operation to have a 32-bit offset. That's not how some architectures
+        // work. We solve this by requiring a just-before-lowering phase that legalizes offsets.
+        // FIXME: Implement such a legalization phase.
+        // https://bugs.webkit.org/show_bug.cgi?id=152530
+        ASSERT(Arg::isValidAddrForm(offset));
+
+        auto fallback = [&] () -> Arg {
+            return Arg::addr(tmp(address), offset);
+        };
         
+        static const unsigned lotsOfUses = 10; // This is arbitrary and we should tune it eventually.
+
         // Only match if the address value isn't used in some large number of places.
         if (m_useCounts.numUses(address) > lotsOfUses)
-            return Arg::addr(tmp(address));
+            return fallback();
         
         switch (address->opcode()) {
         case Add: {
             Value* left = address->child(0);
             Value* right = address->child(1);
 
-            auto tryIndex = [&] (Value* index, Value* offset) -> Arg {
+            auto tryIndex = [&] (Value* index, Value* base) -> Arg {
                 if (index->opcode() != Shl)
                     return Arg();
-                if (m_locked.contains(index->child(0)) || m_locked.contains(offset))
+                if (m_locked.contains(index->child(0)) || m_locked.contains(base))
                     return Arg();
                 if (!index->child(1)->hasInt32())
                     return Arg();
                 
                 unsigned scale = 1 << (index->child(1)->asInt32() & 31);
-                if (!Arg::isValidScale(scale))
+                if (!Arg::isValidIndexForm(scale, offset, width))
                     return Arg();
 
-                return Arg::index(tmp(offset), tmp(index->child(0)), scale);
+                return Arg::index(tmp(base), tmp(index->child(0)), scale, offset);
             };
 
             if (Arg result = tryIndex(left, right))
@@ -370,10 +380,11 @@ private:
             if (Arg result = tryIndex(right, left))
                 return result;
 
-            if (m_locked.contains(left) || m_locked.contains(right))
-                return Arg::addr(tmp(address));
+            if (m_locked.contains(left) || m_locked.contains(right)
+                || !Arg::isValidIndexForm(1, offset, width))
+                return fallback();
             
-            return Arg::index(tmp(left), tmp(right));
+            return Arg::index(tmp(left), tmp(right), 1, offset);
         }
 
         case Shl: {
@@ -382,20 +393,21 @@ private:
             // We'll never see child(1)->isInt32(0), since that would have been reduced. If the shift
             // amount is greater than 1, then there isn't really anything smart that we could do here.
             // We avoid using baseless indexes because their encoding isn't particularly efficient.
-            if (m_locked.contains(left) || !address->child(1)->isInt32(1))
-                return Arg::addr(tmp(address));
+            if (m_locked.contains(left) || !address->child(1)->isInt32(1)
+                || !Arg::isValidIndexForm(1, offset, width))
+                return fallback();
 
-            return Arg::index(tmp(left), tmp(left));
+            return Arg::index(tmp(left), tmp(left), 1, offset);
         }
 
         case FramePointer:
-            return Arg::addr(Tmp(GPRInfo::callFrameRegister));
+            return Arg::addr(Tmp(GPRInfo::callFrameRegister), offset);
 
         case B3::StackSlot:
-            return Arg::stack(m_stackToStack.get(address->as<StackSlotValue>()));
+            return Arg::stack(m_stackToStack.get(address->as<StackSlotValue>()), offset);
 
         default:
-            return Arg::addr(tmp(address));
+            return fallback();
         }
     }
 
@@ -407,14 +419,13 @@ private:
         if (!value)
             return Arg();
 
-        Arg result = effectiveAddr(value->lastChild());
-        ASSERT(result);
-        
-        int32_t offset = memoryValue->as<MemoryValue>()->offset();
-        Arg offsetResult = result.withOffset(offset);
-        if (!offsetResult)
-            return Arg::addr(tmp(value->lastChild()), offset);
-        return offsetResult;
+        int32_t offset = value->offset();
+        Arg::Width width = Arg::widthForBytes(value->accessByteSize());
+
+        Arg result = effectiveAddr(value->lastChild(), offset, width);
+        ASSERT(result.isValidForm(width));
+
+        return result;
     }
 
     ArgPromise loadPromise(Value* loadValue, B3::Opcode loadOpcode)
@@ -435,8 +446,11 @@ private:
 
     Arg imm(Value* value)
     {
-        if (value->hasInt() && value->representableAs<int32_t>())
-            return Arg::imm(value->asNumber<int32_t>());
+        if (value->hasInt()) {
+            int64_t intValue = value->asInt();
+            if (Arg::isValidImmForm(intValue))
+                return Arg::imm(intValue);
+        }
         return Arg();
     }
 
@@ -1798,15 +1812,12 @@ private:
             return;
         }
 
-        case Const32: {
-            append(Move, imm(m_value), tmp(m_value));
-            return;
-        }
+        case Const32:
         case Const64: {
             if (imm(m_value))
                 append(Move, imm(m_value), tmp(m_value));
             else
-                append(Move, Arg::imm64(m_value->asInt64()), tmp(m_value));
+                append(Move, Arg::imm64(m_value->asInt()), tmp(m_value));
             return;
         }
 

@@ -51,6 +51,14 @@ class Arg
         @type = type
         @width = width
     end
+
+    def widthCode
+        if width == "Ptr"
+            "Arg::pointerWidth()"
+        else
+            "Arg::Width#{width}"
+        end
+    end
 end
 
 class Overload
@@ -644,13 +652,7 @@ writeH("OpcodeUtils") {
                     raise
                 end
 
-                if arg.width == "Ptr"
-                    width = "Arg::pointerWidth()"
-                else
-                    width = "Arg::Width#{arg.width}"
-                end
-                
-                outp.puts "functor(args[#{index}], Arg::#{role}, Arg::#{arg.type}P, #{width});"
+                outp.puts "functor(args[#{index}], Arg::#{role}, Arg::#{arg.type}P, #{arg.widthCode});"
             }
         end
     }
@@ -674,9 +676,11 @@ writeH("OpcodeUtils") {
                 callback = proc {
                     | form |
                     notSpecial = (not form.kinds.detect { | kind | kind.special })
-                    beginArchs(outp, form.archs)
-                    outp.puts "OPGEN_RETURN(#{notSpecial});"
-                    endArchs(outp, form.archs)
+                    if notSpecial
+                        beginArchs(outp, form.archs)
+                        outp.puts "OPGEN_RETURN(true);"
+                        endArchs(outp, form.archs)
+                    end
                 }
                 matchForms(outp, :safe, overload.forms, 0, columnGetter, filter, callback)
                 outp.puts "break;"
@@ -746,17 +750,30 @@ writeH("OpcodeGenerated") {
             needsMoreValidation = false
             overload.signature.length.times {
                 | index |
-                role = overload.signature[index].role
-                type = overload.signature[index].type
+                arg = overload.signature[index]
                 kind = form.kinds[index]
                 needsMoreValidation |= kind.special
-                
-                # We already know that the form matches. We don't have to validate the role, since
-                # kind implies role. So, the only thing left to validate is the type. And we only have
-                # to validate the type if we have a Tmp.
-                if kind.name == "Tmp"
-                    outp.puts "if (!args[#{index}].tmp().is#{type}P())"
+
+                # Some kinds of Args reqire additional validation.
+                case kind.name
+                when "Tmp"
+                    outp.puts "if (!args[#{index}].tmp().is#{arg.type}P())"
                     outp.puts "OPGEN_RETURN(false);"
+                when "Imm"
+                    outp.puts "if (!Arg::isValidImmForm(args[#{index}].value()))"
+                    outp.puts "OPGEN_RETURN(false);"
+                when "Addr"
+                    outp.puts "if (!Arg::isValidAddrForm(args[#{index}].offset()))"
+                    outp.puts "OPGEN_RETURN(false);"
+                when "Index"
+                    outp.puts "if (!Arg::isValidIndexForm(args[#{index}].scale(), args[#{index}].offset(), #{arg.widthCode}))"
+                    outp.puts "OPGEN_RETURN(false);"
+                when "Imm64"
+                when "RelCond"
+                when "ResCond"
+                when "DoubleCond"
+                else
+                    raise "Unexpected kind: #{kind.name}"
                 end
             }
             if needsMoreValidation
