@@ -101,9 +101,9 @@ CanvasStarsAnimator.prototype.animate = function()
    return StageAnimator.prototype.animate.call(this);
 }
 
-function CanvasStarsBenchmark(suite, test, options, recordTable, progressBar)
+function CanvasStarsBenchmark(suite, test, options, progressBar)
 {
-   StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+   StageBenchmark.call(this, suite, test, options, progressBar);
 }
 
 CanvasStarsBenchmark.prototype = Object.create(StageBenchmark.prototype);
@@ -121,9 +121,9 @@ CanvasStarsBenchmark.prototype.createAnimator = function()
    return new CanvasStarsAnimator(this, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
    // This function is called from the test harness which starts the
    // test by creating your benchmark object.
-   return new CanvasStarsBenchmark(suite, test, options, recordTable, progressBar);
+   return new CanvasStarsBenchmark(suite, test, options, progressBar);
 }

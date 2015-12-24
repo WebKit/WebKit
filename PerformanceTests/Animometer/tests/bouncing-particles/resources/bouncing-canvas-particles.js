@@ -91,9 +91,9 @@ BouncingCanvasParticlesAnimator.prototype.animate = function()
     return BouncingParticlesAnimator.prototype.animate.call(this);
 }
 
-function BouncingCanvasParticlesBenchmark(suite, test, options, recordTable, progressBar)
+function BouncingCanvasParticlesBenchmark(suite, test, options, progressBar)
 {
-    StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    StageBenchmark.call(this, suite, test, options, progressBar);
 }
 
 BouncingCanvasParticlesBenchmark.prototype = Object.create(StageBenchmark.prototype);

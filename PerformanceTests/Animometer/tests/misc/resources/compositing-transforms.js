@@ -48,9 +48,9 @@ CompositingTransformsStage.prototype.particleWillBeRemoved = function(particle)
     particle.element.remove();
 }
 
-function CompositedTransformsBenchmark(suite, test, options, recordTable, progressBar)
+function CompositedTransformsBenchmark(suite, test, options, progressBar)
 {
-    BouncingParticlesBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    BouncingParticlesBenchmark.call(this, suite, test, options, progressBar);
 }
 
 CompositedTransformsBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
@@ -61,7 +61,7 @@ CompositedTransformsBenchmark.prototype.createStage = function(element)
     return new CompositingTransformsStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
-    return new CompositedTransformsBenchmark(suite, test, options, recordTable, progressBar);
+    return new CompositedTransformsBenchmark(suite, test, options, progressBar);
 }

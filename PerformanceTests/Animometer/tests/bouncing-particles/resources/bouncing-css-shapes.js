@@ -62,9 +62,9 @@ BouncingCssShapesStage.prototype.particleWillBeRemoved = function(particle)
     particle.element.remove();
 }
 
-function BouncingCssShapesBenchmark(suite, test, options, recordTable, progressBar)
+function BouncingCssShapesBenchmark(suite, test, options, progressBar)
 {
-    BouncingParticlesBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    BouncingParticlesBenchmark.call(this, suite, test, options, progressBar);
 }
 
 BouncingCssShapesBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
@@ -75,7 +75,7 @@ BouncingCssShapesBenchmark.prototype.createStage = function(element)
     return new BouncingCssShapesStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
-    return new BouncingCssShapesBenchmark(suite, test, options, recordTable, progressBar);
+    return new BouncingCssShapesBenchmark(suite, test, options, progressBar);
 }

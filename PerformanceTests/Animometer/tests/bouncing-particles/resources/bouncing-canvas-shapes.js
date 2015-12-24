@@ -71,9 +71,9 @@ BouncingCanvasShapesStage.prototype.createParticle = function()
     return new BouncingCanvasShape(this);
 }
 
-function BouncingCanvasShapesBenchmark(suite, test, options, recordTable, progressBar)
+function BouncingCanvasShapesBenchmark(suite, test, options, progressBar)
 {
-    BouncingCanvasParticlesBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    BouncingCanvasParticlesBenchmark.call(this, suite, test, options, progressBar);
 }
 
 BouncingCanvasShapesBenchmark.prototype = Object.create(BouncingCanvasParticlesBenchmark.prototype);
@@ -84,7 +84,7 @@ BouncingCanvasShapesBenchmark.prototype.createStage = function(element)
     return new BouncingCanvasShapesStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
-    return new BouncingCanvasShapesBenchmark(suite, test, options, recordTable, progressBar);
+    return new BouncingCanvasShapesBenchmark(suite, test, options, progressBar);
 }

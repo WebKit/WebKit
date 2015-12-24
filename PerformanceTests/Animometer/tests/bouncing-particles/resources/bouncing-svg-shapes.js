@@ -85,9 +85,9 @@ BouncingSvgShapesStage.prototype.particleWillBeRemoved = function(particle)
     this._ensureDefsIsCreated().removeChild(gradient);
 }
 
-function BouncingSvgShapesBenchmark(suite, test, options, recordTable, progressBar)
+function BouncingSvgShapesBenchmark(suite, test, options, progressBar)
 {
-    BouncingParticlesBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    BouncingParticlesBenchmark.call(this, suite, test, options, progressBar);
 }
 
 BouncingSvgShapesBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
@@ -98,7 +98,7 @@ BouncingSvgShapesBenchmark.prototype.createStage = function(element)
     return new BouncingSvgShapesStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
-    return new BouncingSvgShapesBenchmark(suite, test, options, recordTable, progressBar);
+    return new BouncingSvgShapesBenchmark(suite, test, options, progressBar);
 }

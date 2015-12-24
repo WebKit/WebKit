@@ -236,9 +236,9 @@ LayeringTextStage.prototype.tune = function(count)
     return this._textElements.length;
 }
 
-function LayeringTextBenchmark(suite, test, options, recordTable, progressBar)
+function LayeringTextBenchmark(suite, test, options, progressBar)
 {
-    StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    StageBenchmark.call(this, suite, test, options, progressBar);
 }
 
 LayeringTextBenchmark.prototype = Object.create(StageBenchmark.prototype);
@@ -249,7 +249,7 @@ LayeringTextBenchmark.prototype.createStage = function(element)
     return new LayeringTextStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
-    return new LayeringTextBenchmark(suite, test, options, recordTable, progressBar);
+    return new LayeringTextBenchmark(suite, test, options, progressBar);
 }

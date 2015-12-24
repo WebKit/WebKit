@@ -1,27 +1,7 @@
-window.benchmarkRunnerClient = {
-    iterationCount: 1,
+Utilities.extendObject(window.benchmarkRunnerClient, {
     testsCount: null,
     progressBar: null,
-    recordTable: null,
-    options: null,
-    score: 0,
-    _resultsDashboard: null,
-    _resultsTable: null,
-    
-    initialize: function(suites, options)
-    {
-        this.testsCount = this.iterationCount * suites.reduce(function (count, suite) { return count + suite.tests.length; }, 0);
-        this.options = options;
-    },
 
-    willAddTestFrame: function (frame)
-    {
-        var main = document.querySelector("main");
-        var style = getComputedStyle(main);
-        frame.style.left = main.offsetLeft + parseInt(style.borderLeftWidth) + parseInt(style.paddingLeft) + "px";
-        frame.style.top = main.offsetTop + parseInt(style.borderTopWidth) + parseInt(style.paddingTop) + "px";
-    },
-    
     didRunTest: function ()
     {
         this.progressBar.incRange();
@@ -29,115 +9,17 @@ window.benchmarkRunnerClient = {
     
     willStartFirstIteration: function ()
     {
-        this._resultsDashboard = new ResultsDashboard();
-        this._resultsTable = new ResultsTable(document.querySelector("section#results > data > table"), Headers);
-        
+        this.results = new ResultsDashboard();
         this.progressBar = new ProgressBar(document.getElementById("progress-completed"), this.testsCount);
-        this.recordTable = new ResultsTable(document.querySelector("section#running #record > table"), Headers);
-    },
-    
-    didRunSuites: function (suitesSamplers)
-    {
-        this._resultsDashboard.push(suitesSamplers);
-    },
-    
-    didFinishLastIteration: function ()
-    {
-        var json = this._resultsDashboard.toJSON(true, true);
-        this.score = json[Strings.json.score];
-        this._resultsTable.showIterations(json[Strings.json.results.iterations], this.options);
-        sectionsManager.showJSON("json", json[Strings.json.results.iterations][0]);
-        suitesManager.updateLocalStorageFromJSON(json[Strings.json.results.iterations][0]);
-        benchmarkController.showResults();
     }
-}
+});
 
-window.sectionsManager =
-{
-    _sectionHeaderH1Element: function(sectionIdentifier)
+Utilities.extendObject(window.sectionsManager, {
+    setSectionHeader: function(sectionIdentifier, title)
     {
-        return document.querySelector("#" + sectionIdentifier + " > header > h1");
-    },
-
-    _sectionDataElement: function(sectionIdentifier)
-    {
-        return document.querySelector("#" + sectionIdentifier + " > data");
-    },
-    
-    _sectionDataDivElement: function(sectionIdentifier)
-    {
-        return document.querySelector("#" + sectionIdentifier + " >  data > div");
-    },
-    
-    showScore: function(sectionIdentifier, title)
-    {
-        var element = this._sectionHeaderH1Element(sectionIdentifier);
-        element.textContent = title + ":";
-
-        var score = benchmarkRunnerClient.score.toFixed(2);
-        element.textContent += " [" + Strings.text.score + " = " + score + "]";
-    },
-    
-    showTestName: function(sectionIdentifier, title, testName)
-    {
-        var element = this._sectionHeaderH1Element(sectionIdentifier);
-        element.textContent = title + ":";
-
-        if (!testName.length)
-            return;
-            
-        element.textContent += " [" + Strings.text.testName + " = " + testName + "]";
-    },
-    
-    showJSON: function(sectionIdentifier, json)
-    {
-        var element = this._sectionDataDivElement(sectionIdentifier);
-        element.textContent = JSON.stringify(json, function(key, value) { 
-            if (typeof value == "number")
-                return value.toFixed(2);
-            return value;
-        }, 4);
-    },
-    
-    selectData: function(sectionIdentifier)
-    {
-        window.getSelection().removeAllRanges();
-        var element = this._sectionDataElement(sectionIdentifier);
-        var range = document.createRange();
-        range.selectNode(element);
-        window.getSelection().addRange(range);  
-    },
-    
-    selectDataContents: function(sectionIdentifier)
-    {
-        window.getSelection().removeAllRanges();
-        var element = this._sectionDataDivElement(sectionIdentifier);
-        var range = document.createRange();
-        range.selectNodeContents(element);
-        window.getSelection().addRange(range);
-    },
-        
-    showSection: function(sectionIdentifier, pushState)
-    {
-        var currentSectionElement = document.querySelector("section.selected");
-        console.assert(currentSectionElement);
-
-        var newSectionElement = document.getElementById(sectionIdentifier);
-        console.assert(newSectionElement);
-
-        currentSectionElement.classList.remove("selected");
-        newSectionElement.classList.add("selected");
-
-        if (pushState)
-            history.pushState({section: sectionIdentifier}, document.title);
-    },
-
-    setupRunningSectionStyle: function(options)
-    {
-        if (options["display"] != "statistics-table")
-            document.getElementById("record").style.display = "none";
+        document.querySelector("#" + sectionIdentifier + " h1").textContent = title;
     }
-}
+});
 
 window.optionsManager =
 {
@@ -242,7 +124,7 @@ window.suitesManager =
     _updateStartButtonState: function()
     {
         var suitesElements = this._suitesElements();
-        var startButton = document.querySelector("#home > footer > button");
+        var startButton = document.querySelector("#intro button");
         
         for (var i = 0; i < suitesElements.length; ++i) {
             var suiteElement = suitesElements[i];
@@ -417,8 +299,7 @@ window.suitesManager =
     }
 }
 
-window.benchmarkController =
-{
+Utilities.extendObject(window.benchmarkController, {
     initialize: function()
     {
         document.forms["benchmark-options"].addEventListener("change", benchmarkController.onFormChanged, true);
@@ -439,59 +320,43 @@ window.benchmarkController =
             suitesManager.updateDisplay();
         }
     },
-    
-    _runBenchmark: function(suites, options)
-    {
-        benchmarkRunnerClient.initialize(suites, options);
-        var frameContainer = document.querySelector("#running > #running-test");
-        var runner = new BenchmarkRunner(suites, frameContainer || document.body, benchmarkRunnerClient);
-        runner.runMultipleIterations();
-    },
 
-    startTest: function()
+    startBenchmark: function()
     {
         var options = optionsManager.updateLocalStorageFromUI();
         var suites = suitesManager.updateLocalStorageFromUI();
-        sectionsManager.setupRunningSectionStyle(options);
-        this._runBenchmark(suites, options);
-        sectionsManager.showSection("running");
+        this._startBenchmark(suites, options, "running-test");
     },
 
-    selectResults: function()
-    {
-        sectionsManager.selectData("results");
-    },
-    
     showResults: function()
     {
-        sectionsManager.showScore("results", Strings.text.results.results);
+        if (!this.addedKeyEvent) {
+            document.addEventListener("keypress", this.selectResults, false);
+            this.addedKeyEvent = true;
+        }
+
+        sectionsManager.setSectionScore("results", benchmarkRunnerClient.results.score.toFixed(2));
+        var data = benchmarkRunnerClient.results.data[Strings.json.results.iterations];
+        sectionsManager.populateTable("results-header", Headers.testName, data);
+        sectionsManager.populateTable("results-score", Headers.score, data);
+        sectionsManager.populateTable("results-data", Headers.details, data);
+        document.querySelector("#results-json textarea").textContent = JSON.stringify(benchmarkRunnerClient.results.data, function(key, value) {
+            if (typeof value == "number")
+                return value.toFixed(2);
+            return value;
+        });
         sectionsManager.showSection("results", true);
-    },
-    
-    showJSON: function()
-    {
-        sectionsManager.showScore("json", Strings.text.results.results);
-        sectionsManager.showSection("json", true);
+
+        suitesManager.updateLocalStorageFromJSON(data[0]);
     },
 
-    showTestGraph: function(testName, axes, samples, samplingTimeOffset)
+    showTestGraph: function(testName, score, mean, axes, samples, samplingTimeOffset)
     {
-        sectionsManager.showTestName("test-graph", Strings.text.results.graph, testName);
+        sectionsManager.setSectionHeader("test-graph", testName);
+        sectionsManager.setSectionScore("test-graph", score, mean);
         sectionsManager.showSection("test-graph", true);
-        graph("section#test-graph > data", new Insets(20, 50, 20, 50), axes, samples, samplingTimeOffset);
-    },
-
-    showTestJSON: function(testName, json)
-    {
-        sectionsManager.showTestName("test-json", Strings.text.results.graph, testName);
-        sectionsManager.showJSON("test-json", json);
-        sectionsManager.showSection("test-json", true);
-    },
-    
-    selectJSON: function(sectionIdentifier)
-    {
-        sectionsManager.selectDataContents(sectionIdentifier);
-    },
-}
+        graph("#test-graph-data", new Insets(10, 20, 30, 40), axes, samples, samplingTimeOffset);
+    }
+});
 
 window.addEventListener("load", benchmarkController.initialize);

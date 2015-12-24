@@ -1,11 +1,3 @@
-Array.prototype.swap = function(i, j)
-{
-    var t = this[i];
-    this[i] = this[j];
-    this[j] = t;
-    return this;
-}
-
 function Heap(maxSize, compare)
 {
     this._maxSize = maxSize;

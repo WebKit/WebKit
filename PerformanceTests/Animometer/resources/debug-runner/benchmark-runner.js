@@ -9,18 +9,18 @@ function BenchmarkRunnerState(suites)
 BenchmarkRunnerState.prototype.currentSuite = function()
 {
     return this._suites[this._suiteIndex];
-}
+};
 
 BenchmarkRunnerState.prototype.currentTest = function()
 {
     var suite = this.currentSuite();
     return suite ? suite.tests[this._testIndex] : null;
-}
+};
 
 BenchmarkRunnerState.prototype.isFirstTest = function()
 {
     return !this._testIndex;
-}
+};
 
 BenchmarkRunnerState.prototype.next = function()
 {
@@ -36,7 +36,7 @@ BenchmarkRunnerState.prototype.next = function()
     } while (this._suiteIndex < this._suites.length && this._suites[this._suiteIndex].disabled);
 
     return this;
-}
+};
 
 BenchmarkRunnerState.prototype.prepareCurrentTest = function(runner, frame)
 {
@@ -46,9 +46,9 @@ BenchmarkRunnerState.prototype.prepareCurrentTest = function(runner, frame)
     frame.onload = function() {
         suite.prepare(runner, frame.contentWindow, frame.contentDocument).then(function(result) { promise.resolve(result); });
     }
-    frame.src = "../tests/" + test.url;
+    frame.src = "tests/" + test.url;
     return promise;
-}
+};
 
 function BenchmarkRunner(suites, frameContainer, client)
 {
@@ -71,20 +71,17 @@ BenchmarkRunner.prototype.waitForElement = function(selector)
 
     resolveIfReady();
     return promise;
-}
+};
 
 BenchmarkRunner.prototype._appendFrame = function()
 {
     var frame = document.createElement("iframe");
     frame.setAttribute("scrolling", "no");
 
-    if (this._client && this._client.willAddTestFrame)
-        this._client.willAddTestFrame(frame);
-
     this._frameContainer.insertBefore(frame, this._frameContainer.firstChild);
     this._frame = frame;
     return frame;
-}
+};
 
 BenchmarkRunner.prototype._removeFrame = function()
 {
@@ -92,7 +89,7 @@ BenchmarkRunner.prototype._removeFrame = function()
         this._frame.parentNode.removeChild(this._frame);
         this._frame = null;
     }
-}
+};
 
 BenchmarkRunner.prototype._runTestAndRecordResults = function(state)
 {
@@ -100,16 +97,15 @@ BenchmarkRunner.prototype._runTestAndRecordResults = function(state)
     var suite = state.currentSuite();
     var test = state.currentTest();
     
-    if (this._client && this._client.willRunTestTest)
+    if (this._client && this._client.willRunTest)
         this._client.willRunTest(suite, test);
 
     var contentWindow = this._frame.contentWindow;
     var self = this;
 
-    suite.run(contentWindow, test, this._client.options, this._client.recordTable, this._client.progressBar).then(function(sampler) {
-        var samplers = self._suitesSamplers[suite.name] || [];
-        
-        samplers[test.name] = sampler;
+    suite.run(contentWindow, test, this._client.options, this._client.progressBar).then(function(sampler) {
+        var samplers = self._suitesSamplers[suite.name] || {};
+        samplers[test.name] = sampler.toJSON(true, true);
         self._suitesSamplers[suite.name] = samplers;
 
         if (self._client && self._client.didRunTest)
@@ -122,7 +118,7 @@ BenchmarkRunner.prototype._runTestAndRecordResults = function(state)
     });
     
     return promise;
-}
+};
 
 BenchmarkRunner.prototype.step = function(state)
 {
@@ -140,14 +136,13 @@ BenchmarkRunner.prototype.step = function(state)
     }
 
     if (state.isFirstTest()) {
-        this._masuredValuesForCurrentSuite = {};
         this._appendFrame();
     }
 
     return state.prepareCurrentTest(this, this._frame).then(function(prepareReturnValue) {
         return this._runTestAndRecordResults(state);
     }.bind(this));
-}
+};
 
 BenchmarkRunner.prototype.runAllSteps = function(startingState)
 {
@@ -156,7 +151,7 @@ BenchmarkRunner.prototype.runAllSteps = function(startingState)
         if (nextState)
             nextCallee(nextState);
     });
-}
+};
 
 BenchmarkRunner.prototype.runMultipleIterations = function()
 {
@@ -175,7 +170,7 @@ BenchmarkRunner.prototype.runMultipleIterations = function()
         self._client.willStartFirstIteration();
 
     self.runAllSteps();
-}
+};
 
 BenchmarkRunner.prototype._finalize = function()
 {
@@ -186,4 +181,4 @@ BenchmarkRunner.prototype._finalize = function()
 
     if (this._runNextIteration)
         this._runNextIteration();
-}
+};

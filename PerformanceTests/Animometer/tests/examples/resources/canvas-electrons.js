@@ -104,9 +104,9 @@ CanvasElectronsAnimator.prototype.animate = function()
     return StageAnimator.prototype.animate.call(this);
 }
 
-function CanvasElectronsBenchmark(suite, test, options, recordTable, progressBar)
+function CanvasElectronsBenchmark(suite, test, options, progressBar)
 {
-    StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    StageBenchmark.call(this, suite, test, options, progressBar);
 }
 
 CanvasElectronsBenchmark.prototype = Object.create(StageBenchmark.prototype);
@@ -124,9 +124,9 @@ CanvasElectronsBenchmark.prototype.createAnimator = function()
     return new CanvasElectronsAnimator(this, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
     // This function is called from the test harness which starts the
     // test by creating your benchmark object.
-    return new CanvasElectronsBenchmark(suite, test, options, recordTable, progressBar);
+    return new CanvasElectronsBenchmark(suite, test, options, progressBar);
 }

@@ -44,9 +44,9 @@ BouncingCssImagesStage.prototype.particleWillBeRemoved = function(particle)
     particle.element.remove();
 }
 
-function BouncingCssImagesBenchmark(suite, test, options, recordTable, progressBar)
+function BouncingCssImagesBenchmark(suite, test, options, progressBar)
 {
-    BouncingParticlesBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    BouncingParticlesBenchmark.call(this, suite, test, options, progressBar);
 }
 
 BouncingCssImagesBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
@@ -57,7 +57,7 @@ BouncingCssImagesBenchmark.prototype.createStage = function(element)
     return new BouncingCssImagesStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
-    return new BouncingCssImagesBenchmark(suite, test, options, recordTable, progressBar);
+    return new BouncingCssImagesBenchmark(suite, test, options, progressBar);
 }

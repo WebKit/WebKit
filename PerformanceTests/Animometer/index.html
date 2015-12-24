@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="resources/runner/animometer.css">
+    <script src="resources/strings.js"></script>
+    <script src="resources/sampler.js"></script>
+    <script src="resources/extensions.js" charset="utf-8"></script>
+
+    <script src="resources/runner/tests.js"></script>
+    <script src="resources/runner/animometer.js"></script>
+
+    <script src="resources/debug-runner/benchmark-runner.js"></script>
+</head>
+<body>
+    <main>
+        <hr>
+        <section id="intro" class="selected">
+            <h1>Animometer</h1>
+            <p>Animometer is a graphics benchmark that measures a browser’s capability to animate complex scenes at a target frame rate.</p>
+            <button onclick="benchmarkController.startBenchmark()">Run benchmark</button>
+        </section>
+        <section id="test-container" class="frame-container">
+        </section>
+        <section id="results">
+            <h1>Animometer score</h1>
+            <p class="score"></p>
+            <div id="results-tables">
+                <table id="results-score"></table>
+                <table id="results-header"></table>
+            </div>
+            <button onclick="benchmarkController.startBenchmark()">Test Again</button>
+        </section>
+        <hr>
+    </main>
+</body>
+</html>

@@ -124,9 +124,9 @@ BouncingParticlesStage.prototype.tune = function(count)
     return this._particles.length;
 }
 
-function BouncingParticlesBenchmark(suite, test, options, recordTable, progressBar)
+function BouncingParticlesBenchmark(suite, test, options, progressBar)
 {
-    StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    StageBenchmark.call(this, suite, test, options, progressBar);
 }
 
 BouncingParticlesBenchmark.prototype = Object.create(StageBenchmark.prototype);

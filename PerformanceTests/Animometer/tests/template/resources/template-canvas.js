@@ -76,9 +76,9 @@ TemplateCanvasAnimator.prototype.animate = function()
     return StageAnimator.prototype.animate.call(this);
 }
 
-function TemplateCanvasBenchmark(suite, test, options, recordTable, progressBar)
+function TemplateCanvasBenchmark(suite, test, options, progressBar)
 {
-    StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    StageBenchmark.call(this, suite, test, options, progressBar);
 }
 
 TemplateCanvasBenchmark.prototype = Object.create(StageBenchmark.prototype);
@@ -96,9 +96,9 @@ TemplateCanvasBenchmark.prototype.createAnimator = function()
     return new TemplateCanvasAnimator(this, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
     // This function is called from the test harness which starts the
     // test by creating your benchmark object.
-    return new TemplateCanvasBenchmark(suite, test, options, recordTable, progressBar);
+    return new TemplateCanvasBenchmark(suite, test, options, progressBar);
 }

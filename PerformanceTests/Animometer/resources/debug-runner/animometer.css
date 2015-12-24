@@ -1,0 +1,391 @@
+body {
+    background-color: rgb(96, 96, 96);
+    color: rgb(235, 235, 235);
+}
+
+h1 {
+    margin: 5vh 0;
+}
+
+button {
+    border: 2px solid rgb(235, 235, 235);
+    color: rgb(235, 235, 235);
+}
+
+button:disabled {
+    border-color: rgba(235, 235, 235, .5);
+    color: rgba(235, 235, 235, .5);
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, .1);
+    cursor: pointer;
+}
+
+button:active {
+    color: inherit;
+    background-color: rgba(255, 255, 255, .2);
+}
+
+@media screen and (min-device-width: 1800px) {
+    section {
+        width: 1600px;
+        height: 800px;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               Tree                                         */
+/* -------------------------------------------------------------------------- */
+
+.tree {
+    padding: 0;
+    list-style-type: none;
+}
+
+.tree .expand-button {
+    position: absolute;
+    clip: rect(0, 0, 0, 0);
+}
+
+.tree .expand-button ~ ul {
+    display: none;
+}
+
+.tree .expand-button:checked ~ ul {
+    display: block;
+}
+
+.tree ul {
+    list-style-type:none;
+}
+
+.tree li {
+    position: relative;
+    padding: 0 0 1em 1em;
+}
+
+.tree ul li {
+    list-style:none;
+    padding: 1em 0 0 0em;
+}
+
+.tree > li:last-child {
+    padding-bottom: 0;
+}
+
+.tree-label {
+  position: relative;
+  display: inline-block;
+}
+
+label.tree-label {
+    cursor: pointer;
+}
+
+.tree > li > label.tree-label:before {
+    position: relative;
+    z-index: 1;
+    float: left;
+    margin: 0 0 0 -2em;
+    width: 1em;
+    height: 1em;
+    content: '\25BA';
+    text-align: center;
+    line-height: 2.5em;
+    font-size: .5em;
+}
+
+.tree > li > :checked ~ label.tree-label:before {
+    content: '\25BC';
+}
+
+@media screen and (max-device-width: 414px) {
+    .tree {
+        padding-left: 1em;
+    }
+    .tree > li > label.tree-label:before {
+        font-size: 1em;
+        margin-left: -1.75em;
+        line-height: 1em;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Intro Section                              */
+/* -------------------------------------------------------------------------- */
+
+#intro {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center;
+
+    min-height: 600px;
+    height: auto;
+}
+
+#intro h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+}
+
+#intro > div {
+    width: 100%;
+    margin: 2em 0;
+    flex-direction: row;
+    display: flex;
+    align-content: flex-start;
+}
+
+#suites {
+    padding-left: 15vw;
+    flex: 0 1 40%;
+}
+
+#options {
+    flex: 1 1 auto;
+}
+
+#intro input[type="number"] {
+    width: 50px;
+}
+ 
+#suites input[type="number"] {
+    display: none;
+    float: right;
+}
+
+#suites input[type="number"].selected {
+    display: inline;
+    margin: 0;
+}
+
+#suites ul ul {
+    font-size: .8em;
+    margin: 0;
+    padding: 0 0 0 1em;
+}
+
+#options ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#options h3 {
+    font-size: 1em;
+    font-weight: inherit;
+    margin: 0 0 .3em 0;
+    padding: 0;
+}
+
+#options > form > ul > li {
+    padding: 0 0 1em 0;
+}
+
+#options ul ul {
+    padding: 0;
+}
+
+#options li {
+    padding: .1em 0;
+}
+
+@media screen and (min-device-width: 1800px) {
+    #intro {
+        min-height: 800px;
+    }
+}
+
+@media screen and (max-device-width: 414px) {
+    #intro {
+        min-height: 100%;
+    }
+
+    #intro > div {
+        flex-direction: column;
+    }
+
+    #suites,
+    #options {
+        padding: 0 5px;
+        margin: 0;
+        flex: 0 0 auto;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           Running Section                                  */
+/* -------------------------------------------------------------------------- */
+
+#test-container {
+    position: relative;
+}
+
+#running-test {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#progress {
+    display: none;
+}
+
+.display-progress-bar #progress {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 6px;
+    width: 100%;
+    background-color: rgb(128, 128, 128);
+}
+
+.display-progress-bar #progress-completed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 6px;
+    width: 0;
+    background-color: rgb(235, 96, 32);
+}
+
+@media screen and (min-device-width: 1800px) {
+    .frame-container > iframe {
+        width: 1600px;
+        height: 800px;
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           Results Section                                  */
+/* -------------------------------------------------------------------------- */
+
+#results h1, #test-graph h1 {
+    font-size: 2em;
+}
+
+.score {
+    font-size: 3em;
+}
+
+.mean {
+    margin-top: 0;
+    margin-bottom: 1em;
+    font-size: 1.5em;
+    font-weight: 400;
+}
+
+#results-data .average {
+    padding-left: 1em;
+    text-align: right;
+}
+
+#results-data .stdev {
+    text-align: left;
+    padding-left: .25em;
+}
+
+#results-data button.small-button {
+    border: 1px solid rgba(235, 235, 235, .9);
+    color: rgba(235, 235, 235, .9);
+    border-radius: 2px;
+    padding: 1px 4px;
+    margin: 0 0 0 1em;
+    font-size: 9px;
+}
+
+#results-data button.small-button:active {
+    background-color: rgba(235, 235, 235, .2);
+    color: inherit;
+}
+
+#results-tables td.noisy-results {
+    color: rgb(255, 104, 104);
+}
+
+#results-tables div {
+    direction: ltr;
+    display: flex;
+    flex-direction: row;
+}
+
+#results-json {
+    margin-bottom: 3em;
+}
+
+#results-json textarea {
+    vertical-align: sub;
+}
+
+#test-graph {
+    flex: 1 0 calc(100% - 40px);
+}
+
+#test-graph h1 {
+    margin-bottom: 0;
+}
+
+#test-graph header {
+    position: relative;
+    width: 100%;
+}
+
+#test-graph header button {
+    position: absolute;
+    top: 1.5em;
+    left: 0;
+    border-width: 1px;
+    font-size: 1em;
+    padding: .5em 1em;
+}
+
+#test-graph-data {
+    flex: 1 1 auto;
+    align-self: stretch;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           Graph Section                                    */
+/* -------------------------------------------------------------------------- */
+
+#test-graph-data {
+    font: 10px sans-serif;
+    color: rgb(235, 235, 235);
+}
+
+#test-graph-data > svg {
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #999999;
+    shape-rendering: crispEdges;
+}
+
+.left-samples {
+    stroke: #7ADD49;
+    stroke-width: 1.5px;
+}
+
+.right-samples {
+    stroke: #FA4925;
+    stroke-width: 1.5px;
+}
+
+.sample-time {
+    stroke: #5493D6;
+}
+
+.left-mean {
+    stroke: #7ADD49;
+    opacity: .8;
+}
+
+.right-mean {
+    stroke: #FA4925;
+    opacity: .8;
+}

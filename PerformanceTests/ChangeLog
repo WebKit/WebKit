@@ -1,3 +1,265 @@
+2015-12-23  Jon Lee  <jonlee@apple.com>
+
+        Split benchmark into two different pages
+        https://bugs.webkit.org/show_bug.cgi?id=152458
+
+        Reviewed by Simon Fraser.
+
+        Address comments.
+
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runTestAndRecordResults): When the testing is complete the frame owning the
+        sampler goes away, and a later call to get the JSON data is no longer available. Process the data
+        right here, instead, and just reference it when displaying the results in ResultsDashboard.prototype._processData.
+        * Animometer/resources/extensions.js:
+        (Array.prototype.fill.Array.prototype.fill): Add a null check. Remove braces around single-line clause.
+        (Array.prototype.find.Array.prototype.find): Update the null check.
+        (ResultsDashboard.prototype._processData): Use the already-processed data.
+        * Animometer/resources/runner/animometer.css:
+        (.frame-container > iframe): Remove calc().
+
+        Move Array functions to extensions.js since that is included by the harness.
+        Add ES6 Array polyfills.
+
+        * Animometer/resources/algorithm.js:
+        (Array.prototype.swap): Moved to extensions.js.
+        * Animometer/resources/extensions.js:
+        (Array.prototype.swap):
+        (Array.prototype.fill): Added.
+        (Array.prototype.find): Added.
+
+        Adjust styles for iPad.
+
+        * Animometer/resources/runner/animometer.css:
+        (@media screen and (min-device-width: 768px)): Apply to iPad as well.
+        (@media screen and (max-device-width: 1024px)): Update width for iPads.
+
+        Adjustment styles for iOS.
+
+        * Animometer/developer.html: Different divs contain the iframe, so use a class instead and
+        update the style rules.
+        * Animometer/index.html:
+        * Animometer/resources/debug-runner/animometer.css: Remove extraneous rules.
+        (@media screen and (min-device-width: 1800px)): Move this up.
+        * Animometer/resources/runner/animometer.css: Add rules to accomodate iOS.
+
+        Get rid of prefixed flex properties for now.
+
+        * Animometer/resources/debug-runner/animometer.css:
+        * Animometer/resources/runner/animometer.css:
+
+        Update the structure of the harness. Remove the JSON-per-test but keep
+        the JSON of the whole test run. Use the full page in order to display
+        the graph.
+
+        * Animometer/developer.html: Update several of the JS file includes to UTF-8. Remove header and footer. Test results screen includes score,
+        average, and worst 5% statistics.
+        * Animometer/index.html: Make structure similar to developer.html.
+        * Animometer/resources/debug-runner/animometer.css: Remove most of the
+        button rules since they are superfluous. Move the progress bar to the
+        top, fixed. Update the results page rules.
+        * Animometer/resources/debug-runner/animometer.js: Remove most of the
+        additions to sectionsManager since they are no longer needed.
+        (setSectionHeader): Updates header of the section.
+        (window.suitesManager._updateStartButtonState): Update selector.
+        (showResults): Add keypress event for selecting different data for
+        copy/paste. Update how the results are populated. Include full test
+        JSON in a textarea, rather than requiring a button press.
+        (showTestGraph):
+        * Animometer/resources/debug-runner/tests.js: Update structure of Headers. Define different kinds of headers. Headers can control their
+        title, and the text used as the cell contents, including class name.
+        * Animometer/resources/extensions.js:
+        (ResultsTable): Update to include a flattened version of the headers,
+        used while populating table contents. Remove unneeded helper functions
+        for creating the table. Rename "show" to "add".
+        * Animometer/resources/runner/animometer.css: Update rules to
+        accommodate the new structure.
+        * Animometer/resources/runner/animometer.js:
+        (window.sectionsManager.setSectionScore): Helper function to set the
+        score and mean for a section.
+        (window.sectionsManager.populateTable): Helper function to set the table.
+        (window.benchmarkController.showResults): Refactor.
+        (window.benchmarkController.selectResults): Update selectors.
+        * Animometer/resources/runner/tests.js: Set Headers. Debug harness
+        extends it.
+
+        Update debug runner to have similar names to the basic runner. Include
+        that page's CSS and remove extraneous CSS rules.
+
+        Get rid of the statistics table #record.
+
+        * Animometer/developer.html: Rename #home to #intro. Rename .spacer to hr.
+        * Animometer/resources/debug-runner/animometer.css: Set to flexbox when selected.
+        * Animometer/resources/debug-runner/animometer.js: Remove recordTable.
+        (window.suitesManager._updateStartButtonState): Update selector to #intro.
+        (setupRunningSectionStyle): Deleted.
+
+        * Animometer/resources/runner/animometer.css:
+        (#test-container.selected): Change to flex-box only when visible.
+
+        Remove recordTable.
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runTestAndRecordResults):
+        * Animometer/resources/runner/tests.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+        * Animometer/tests/examples/resources/canvas-electrons.js:
+        * Animometer/tests/examples/resources/canvas-stars.js:
+        * Animometer/tests/misc/resources/compositing-transforms.js:
+        * Animometer/tests/resources/main.js:
+        * Animometer/tests/resources/stage.js:
+        (StageBenchmark): Remove _recordTable.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        * Animometer/tests/template/resources/template-canvas.js:
+        * Animometer/tests/template/resources/template-css.js:
+        * Animometer/tests/template/resources/template-svg.js:
+        * Animometer/tests/text/resources/layering-text.js:
+
+        * Animometer/resources/debug-runner/animometer.js:
+        (willStartFirstIteration): Fix selector, since results-table is used
+        in multiple places, so it cannot be an id.
+
+        Make it possible to select the scores, or the whole table data,
+        by cycling through different selections through key press of 's'.
+
+        * Animometer/resources/runner/animometer.js:
+        (window.benchmarkController.showResults): Attach a keypress handler
+        if it hasn't been added already.
+        (window.benchmarkController.selectResults):
+        * Animometer/resources/runner/tests.js: Cycle through different
+        ranges.
+
+        Fix a few fly-by errors.
+
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        (BenchmarkRunnerState.prototype.prepareCurrentTest): Update the frame relative path
+        since the files are now in the top directory instead of inside runner/.
+        (BenchmarkRunner.prototype._runTestAndRecordResults): Incorrect reference to function.
+        (BenchmarkRunner.prototype.step): Member variable is never used.
+
+        A little stylistic cleanup.
+
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        * Animometer/resources/extensions.js:
+        (window.DocumentExtension.createElement):
+        * Animometer/tests/resources/main.js:
+        (Benchmark.prototype.record):
+        * Animometer/tests/resources/stage.js:
+        (StageBenchmark.prototype.showResults): Reverse progress and message.
+        The message appears less frequently than the progress.
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        (SimpleCanvasBenchmark): Remove unused options.
+
+        Add newer version of harness in a new page. Consolidate differences between the two
+        pages.
+
+        * Animometer/developer.html: Include runner/animometer.js. Rename the JS function
+        to run the benchmark to startBenchmark() instead of startTest(). Rename #running to
+        #test-container.
+        * Animometer/index.html: Added. Similarly calls startBenchmark() and has #test-container.
+        * Animometer/resources/debug-runner/animometer.css: Make the canvas 2:1 (1200px x 800px)
+        instead of 4:3.
+
+        Split out benchmarkRunnerClient and benchmarkController.
+
+        * Animometer/resources/debug-runner/animometer.js: Move needed functions out of
+        benchmarkRunnerClient, and leave the rest here to extend that object. Get rid of _resultsTable
+        and move populating the results table into benchmarkController. Rename _resultsDashboard
+        to results and make it accessible for other objects to use.
+        (willAddTestFrame): This is unnecessary. Remove.
+
+        (window.sectionsManager.showScore): Grab it from the results object instead of
+        benchmarkRunnerClient.
+        (window.sectionsManager.showSection): Deleted. Moved to runner/animometer.js.
+
+        (window.benchmarkController._runBenchmark): Deleted. Mostly moved into _startBenchmark.
+        (window.benchmarkController.startBenchmark): Refactor to call _startBenchmark.
+        (window.benchmarkController.showResults): Include most of benchmarkRunnerClient.didFinishLastIteration()
+        here.
+
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        (BenchmarkRunner.prototype._appendFrame): Remove unneeded call to willAddTestFrame.
+        * Animometer/resources/extensions.js:
+        (ResultsDashboard): Change the class to process the sampler data on-demand and hold onto that data
+        for later referencing.
+        (ResultsDashboard.prototype.toJSON): Deleted.
+        (ResultsDashboard.prototype._processData): Rename toJSON to _processData since it's not really
+        outputting JSON. Store the processed data into a member variable that can be referenced later.
+        (ResultsDashboard.prototype.get data): Process the data if it hasn't already.
+        (ResultsDashboard.prototype.get score): Process the data if it hasn't already, then return the
+        aggregate score.
+        (ResultsTable.prototype._showHeader): When outputting the results to a table, don't force the
+        need for an empty children array. This was to allow for a header row in the table that spanned
+        multiple columns. In the simpler harness, this is not needed.
+        (ResultsTable.prototype._showEmptyCells):
+        (ResultsTable.prototype._showTest): This hardcoded the columns. At least for the name and score,
+        which is the bare minimum needed for the simpler harness, key off of the header name provided.
+        * Animometer/resources/runner/animometer.css: Added. Use a similar 2:1 ratio. The score tables are
+        split into the data and the headers, and are also displayed RTL so that a later patch allows a
+        user to copy-paste the data easily.
+        * Animometer/resources/runner/animometer.js: Added. Use a simpler version of benchmarkRunnerClient.
+        The debug harness will extend these classes.
+        (window.benchmarkController._startBenchmark): Used by both harnesses.
+        (window.benchmarkController.startBenchmark): Set hard-coded options.
+        (window.benchmarkController.showResults): Includes most of benchmarkRunnerClient.didFinishLastIteration()
+        here.
+
+        Get rid of utilities.js. Move it all into extensions.js.
+
+        * Animometer/resources/extensions.js:
+        * Animometer/tests/resources/utilities.js: Removed.
+
+        * Animometer/tests/bouncing-particles/bouncing-canvas-images.html: Remove script link.
+        * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html: Ditto.
+        * Animometer/tests/bouncing-particles/bouncing-css-images.html: Ditto.
+        * Animometer/tests/bouncing-particles/bouncing-css-shapes.html: Ditto.
+        * Animometer/tests/bouncing-particles/bouncing-svg-images.html: Ditto.
+        * Animometer/tests/bouncing-particles/bouncing-svg-shapes.html: Ditto.
+        * Animometer/tests/examples/canvas-electrons.html: Ditto.
+        * Animometer/tests/examples/canvas-stars.html: Ditto.
+        * Animometer/tests/misc/compositing-transforms.html: Ditto.
+        * Animometer/tests/simple/simple-canvas-paths.html: Ditto.
+        * Animometer/tests/template/template-canvas.html: Ditto.
+        * Animometer/tests/template/template-css.html: Ditto.
+        * Animometer/tests/template/template-svg.html: Ditto.
+        * Animometer/tests/text/layering-text.html: Ditto.
+
+        Split tests.js into two. Add a new suite to runner/tests.js.
+
+        * Animometer/developer.html: Update the script order. Scripts from
+        debug-runner/ will always build on those from runner/, and have the
+        same name.
+        * Animometer/resources/debug-runner/tests.js: Move "complex examples"
+        suite into "miscellaneous tests".
+        (Suite): Deleted.
+        (Suite.prototype.prepare): Deleted.
+        (Suite.prototype.run): Deleted.
+        (suiteFromName): Deleted.
+        * Animometer/resources/runner/tests.js: Added. Take definitions and
+        functions needed by the test harness. Leave the test suites behind.
+        (Suite): Moved from debug script.
+        (Suite.prototype.prepare): Ditto.
+        (Suite.prototype.run): Ditto.
+        (suiteFromName): Ditto.
+        (testFromName): Ditto.
+
+        Move benchmark resources out into resources/debug-runner, and update URLs.
+
+        * Animometer/developer.html: Renamed from PerformanceTests/Animometer/runner/animometer.html.
+        * Animometer/resources/debug-runner/animometer.css: Renamed from PerformanceTests/Animometer/runner/resources/animometer.css.
+        * Animometer/resources/debug-runner/animometer.js: Renamed from PerformanceTests/Animometer/runner/resources/animometer.js.
+        * Animometer/resources/debug-runner/benchmark-runner.js: Renamed from PerformanceTests/Animometer/runner/resources/benchmark-runner.js.
+        * Animometer/resources/debug-runner/d3.min.js: Renamed from PerformanceTests/Animometer/runner/resources/d3.min.js.
+        * Animometer/resources/debug-runner/graph.js: Renamed from PerformanceTests/Animometer/runner/resources/graph.js.
+        * Animometer/resources/debug-runner/tests.js: Renamed from PerformanceTests/Animometer/runner/resources/tests.js.
+
 2015-12-11  Jon Lee  <jonlee@apple.com>
 
         Improve Animometer on iOS

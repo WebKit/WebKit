@@ -1,63 +1,75 @@
-var Headers = [
-    {
-        text: Strings.text.testName,
-        width: 27,
-        children: []
-    },
-    {
-        text: Strings.text.score,
-        width: 7,
-        children: []
-    },
-    {
-        text: Strings.text.experiments.complexity,
-        width: 27,
-        children:
-        [
-            { text: Strings.text.measurements.average, width: 7, children: [] },
-            { text: Strings.text.measurements.concern, width: 7, children: [] },
-            { text: Strings.text.measurements.stdev, width: 7, children: [] },
-            { text: Strings.text.measurements.percent, width: 6, children: [] },
-        ]
-    },
-    {
-        text: Strings.text.experiments.frameRate,
-        width: 24,
-        children:
-        [
-            { text: Strings.text.measurements.average, width: 6, children: [] },
-            { text: Strings.text.measurements.concern, width: 6, children: [] },
-            { text: Strings.text.measurements.stdev, width: 6, children: [] },
-            { text: Strings.text.measurements.percent, width: 6, children: [] },
-        ]
-    },
-    {
-        text: Strings.text.samples,
-        width: 15,
-        children:
-        [
-            { text: Strings.text.results.graph, width: 8, children: [] },
-            { text: Strings.text.results.json, width: 7, children: [] },
-        ]
-    }
-];
+Utilities.extendObject(Headers, {
+    details: [
+        {
+            title: Strings.text.results.graph
+        },
+        {
+            title: Strings.text.experiments.complexity,
+            children:
+            [
+                {
+                    text: function(data) {
+                        return data[Strings.json.experiments.complexity][Strings.json.measurements.average].toFixed(2);
+                    },
+                    className: "average"
+                },
+                {
+                    text: function(data) {
+                        return [
+                            "± ",
+                            data[Strings.json.experiments.complexity][Strings.json.measurements.percent].toFixed(2),
+                            "%"
+                        ].join("");
+                    },
+                    className: function(data) {
+                        var className = "stdev";
 
-var Suite = function(name, tests) {
-    this.name = name;
-    this.tests = tests;
-};
-Suite.prototype.prepare = function(runner, contentWindow, contentDocument)
-{
-    return runner.waitForElement("#stage").then(function (element) {
-        return element;
-    });
-};
-Suite.prototype.run = function(contentWindow, test, options, recordTable, progressBar)
-{
-    return contentWindow.runBenchmark(this, test, options, recordTable, progressBar);
-};
+                        if (data[Strings.json.experiments.complexity][Strings.json.measurements.percent] >= 10)
+                            className += " noisy-results";
+                        return className;
+                    }
+                }
+            ]
+        },
+        {
+            title: Strings.text.experiments.frameRate,
+            children:
+            [
+                {
+                    text: function(data) {
+                        return data[Strings.json.experiments.frameRate][Strings.json.measurements.average].toFixed(2);
+                    },
+                    className: function(data, options) {
+                        var className = "average";
+                        if (Math.abs(data[Strings.json.experiments.frameRate][Strings.json.measurements.average] - options["frame-rate"]) >= 2)
+                            className += " noisy-results";
+                        return className;
+                    }
+                },
+                {
+                    text: function(data) {
+                        var frameRateData = data[Strings.json.experiments.frameRate];
+                        return [
+                            "± ",
+                            frameRateData[Strings.json.measurements.percent].toFixed(2),
+                            "%"
+                        ].join("");
+                    },
+                    className: function(data) {
+                        var className = "stdev";
 
-var Suites = [];
+                        if (data[Strings.json.experiments.frameRate][Strings.json.measurements.percent] >= 10)
+                            className += " noisy-results";
+                        return className;
+                    }
+                }
+            ]
+        },
+    ]
+})
+
+///////////
+// Suites
 
 Suites.push(new Suite("HTML suite",
     [
@@ -223,8 +235,12 @@ Suites.push(new Suite("Basic canvas path suite",
     ]
 ));
 
-Suites.push(new Suite("Complex examples",
+Suites.push(new Suite("Miscellaneous Tests",
     [
+        {
+            url: "misc/compositing-transforms.html?particleWidth=50&particleHeight=50&filters=yes&imageSrc=../resources/yin-yang.svg",
+            name: "Composited Transforms"
+        },
         {
             url: "examples/canvas-electrons.html",
             name: "canvas electrons"
@@ -235,22 +251,3 @@ Suites.push(new Suite("Complex examples",
         },
     ]
 ));
-
-Suites.push(new Suite("Miscellaneous Tests",
-    [
-        {
-            url: "misc/compositing-transforms.html?particleWidth=50&particleHeight=50&filters=yes&imageSrc=../resources/yin-yang.svg",
-            name: "Composited Transforms"
-        },
-    ]
-));
-
-function suiteFromName(name)
-{
-    return Suites.find(function(suite) { return suite.name == name; });
-}
-
-function testFromName(suite, name)
-{
-    return suite.tests.find(function(test) { return test.name == name; });
-}

@@ -51,11 +51,8 @@ SimpleCanvasAnimator.prototype.animate = function()
 }
 
 
-function SimpleCanvasBenchmark(suite, test, options, recordTable, progressBar) {
-    options["gain"] = 6;
-    options["addLimit"] = 100;
-    options["removeLimit"] = 1000;
-    StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+function SimpleCanvasBenchmark(suite, test, options, progressBar) {
+    StageBenchmark.call(this, suite, test, options, progressBar);
 }
 SimpleCanvasBenchmark.prototype = Object.create(StageBenchmark.prototype);
 SimpleCanvasBenchmark.prototype.constructor = SimpleCanvasBenchmark;

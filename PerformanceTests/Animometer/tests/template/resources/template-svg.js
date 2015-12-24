@@ -32,9 +32,9 @@ TemplateSvgStage.prototype.animate = function(timeDelta)
     // TODO: Loop through all your objects and ask them to animate.
 }
 
-function TemplateSvgBenchmark(suite, test, options, recordTable, progressBar)
+function TemplateSvgBenchmark(suite, test, options, progressBar)
 {
-    StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    StageBenchmark.call(this, suite, test, options, progressBar);
 }
 
 TemplateSvgBenchmark.prototype = Object.create(StageBenchmark.prototype);
@@ -47,9 +47,9 @@ TemplateSvgBenchmark.prototype.createStage = function(element)
     return new TemplateSvgStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
     // This function is called from the test harness which starts the
     // test by creating your benchmark object.
-    return new TemplateSvgBenchmark(suite, test, options, recordTable, progressBar);
+    return new TemplateSvgBenchmark(suite, test, options, progressBar);
 }

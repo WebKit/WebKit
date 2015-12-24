@@ -32,9 +32,9 @@ TemplateCssStage.prototype.animate = function(timeDelta)
     // Loop through all your objects and ask them to animate.
 }
 
-function TemplateCssBenchmark(suite, test, options, recordTable, progressBar)
+function TemplateCssBenchmark(suite, test, options, progressBar)
 {
-    StageBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    StageBenchmark.call(this, suite, test, options, progressBar);
 }
 
 TemplateCssBenchmark.prototype = Object.create(StageBenchmark.prototype);
@@ -47,9 +47,9 @@ TemplateCssBenchmark.prototype.createStage = function(element)
     return new TemplateCssStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
     // This function is called from the test harness which starts the
     // test by creating your benchmark object.
-    return new TemplateCssBenchmark(suite, test, options, recordTable, progressBar);
+    return new TemplateCssBenchmark(suite, test, options, progressBar);
 }

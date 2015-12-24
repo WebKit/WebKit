@@ -195,7 +195,7 @@ Benchmark.prototype =
         if (stage != BenchmarkState.stages.FINISHED && currentTimeOffset < this._recordTimeOffset + this._recordInterval)
             return;
 
-        this.showResults(this._state.currentMessage(), this._state.currentProgress());
+        this.showResults(this._state.currentProgress(), this._state.currentMessage());
         this._recordTimeOffset = currentTimeOffset;
     },
     
@@ -228,11 +228,11 @@ window.addEventListener("load", function()
 });
 
 // This function is called from the suite controller run-callback when running the benchmark runner.
-window.runBenchmark = function(suite, test, options, recordTable, progressBar)
+window.runBenchmark = function(suite, test, options, progressBar)
 {
     var benchmarkOptions = { complexity: test.complexity };
     benchmarkOptions = Utilities.mergeObjects(benchmarkOptions, options);
     benchmarkOptions = Utilities.mergeObjects(benchmarkOptions, Utilities.parseParameters());
-    window.benchmark = window.benchmarkClient.create(suite, test, benchmarkOptions, recordTable, progressBar);
+    window.benchmark = window.benchmarkClient.create(suite, test, benchmarkOptions, progressBar);
     return window.benchmark.run();
 }

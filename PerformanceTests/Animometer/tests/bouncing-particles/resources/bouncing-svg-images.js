@@ -26,9 +26,9 @@ BouncingSvgImagesStage.prototype.createParticle = function()
     return new BouncingSvgImage(this);
 }
 
-function BouncingSvgImagesBenchmark(suite, test, options, recordTable, progressBar)
+function BouncingSvgImagesBenchmark(suite, test, options, progressBar)
 {
-    BouncingParticlesBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    BouncingParticlesBenchmark.call(this, suite, test, options, progressBar);
 }
 
 BouncingSvgImagesBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
@@ -39,7 +39,7 @@ BouncingSvgImagesBenchmark.prototype.createStage = function(element)
     return new BouncingSvgImagesStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
-    return new BouncingSvgImagesBenchmark(suite, test, options, recordTable, progressBar);
+    return new BouncingSvgImagesBenchmark(suite, test, options, progressBar);
 }

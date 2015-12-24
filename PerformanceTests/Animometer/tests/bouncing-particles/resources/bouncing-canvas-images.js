@@ -32,9 +32,9 @@ BouncingCanvasImagesStage.prototype.createParticle = function()
     return new BouncingCanvasImage(this);
 }
 
-function BouncingCanvasImagesBenchmark(suite, test, options, recordTable, progressBar)
+function BouncingCanvasImagesBenchmark(suite, test, options, progressBar)
 {
-    BouncingCanvasParticlesBenchmark.call(this, suite, test, options, recordTable, progressBar);
+    BouncingCanvasParticlesBenchmark.call(this, suite, test, options, progressBar);
 }
 
 BouncingCanvasImagesBenchmark.prototype = Object.create(BouncingCanvasParticlesBenchmark.prototype);
@@ -45,7 +45,7 @@ BouncingCanvasImagesBenchmark.prototype.createStage = function(element)
     return new BouncingCanvasImagesStage(element, this._options);
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
+window.benchmarkClient.create = function(suite, test, options, progressBar)
 {
-    return new BouncingCanvasImagesBenchmark(suite, test, options, recordTable, progressBar);
+    return new BouncingCanvasImagesBenchmark(suite, test, options, progressBar);
 }

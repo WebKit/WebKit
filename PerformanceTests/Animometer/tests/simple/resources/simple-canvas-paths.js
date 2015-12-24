@@ -244,8 +244,8 @@ CanvasLineDashStage.prototype.animate = function() {
 
 // === BENCHMARK ===
 
-function CanvasPathBenchmark(suite, test, options, recordTable, progressBar) {
-    SimpleCanvasBenchmark.call(this, suite, test, options, recordTable, progressBar);
+function CanvasPathBenchmark(suite, test, options, progressBar) {
+    SimpleCanvasBenchmark.call(this, suite, test, options, progressBar);
 }
 CanvasPathBenchmark.prototype = Object.create(SimpleCanvasBenchmark.prototype);
 CanvasPathBenchmark.prototype.constructor = CanvasPathBenchmark;
@@ -290,6 +290,6 @@ CanvasPathBenchmark.prototype.createStage = function(element)
     }
 }
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar) {
-    return new CanvasPathBenchmark(suite, test, options, recordTable, progressBar);
+window.benchmarkClient.create = function(suite, test, options, progressBar) {
+    return new CanvasPathBenchmark(suite, test, options, progressBar);
 }

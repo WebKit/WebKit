@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="resources/runner/animometer.css">
+    <link rel="stylesheet" href="resources/debug-runner/animometer.css">
+    <script src="resources/strings.js"></script>
+    <script src="resources/sampler.js"></script>
+    <script src="resources/extensions.js" charset="utf-8"></script>
+
+    <script src="resources/runner/tests.js" charset="utf-8"></script>
+    <script src="resources/debug-runner/tests.js" charset="utf-8"></script>
+    <script src="resources/runner/animometer.js"></script>
+    <script src="resources/debug-runner/animometer.js"></script>
+
+    <script src="resources/debug-runner/benchmark-runner.js"></script>
+    <script src="resources/debug-runner/d3.min.js"></script>
+    <script src="resources/debug-runner/graph.js"></script>
+</head>
+<body>
+    <main>
+        <hr>
+        <section id="intro" class="selected">
+            <h1>Animometer</h1>
+            <div>
+                <div id="suites">
+                    <h2>Suites:</h2>
+                    <ul class="tree"></ul>
+                </div>
+                <div id="options">
+                    <h2>Options:</h2>
+                    <form name="benchmark-options">
+                    <ul>
+                    <li>
+                        <label>Test length: <input type="number" id="test-interval" value="10"> seconds each</label>
+                    </li>
+                    <li>
+                        <h3>Display:</h3>
+                        <ul>
+                            <li><label><input name="display" type="radio" value="minimal" checked> Minimal</label></li>
+                            <li><label><input name="display" type="radio" value="progress-bar" checked> Progress bar</label></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>Adjusting the test complexity:</h3>
+                        <ul>
+                            <li><label><input name="adjustment" type="radio" value="fixed"> Keep constant</label></li>
+                            <li><label><input name="adjustment" type="radio" value="fixed-after-warmup"> Keep constant after warmup to target FPS</label></li>
+                            <li><label><input name="adjustment" type="radio" value="adaptive" checked> Maintain target FPS</label></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <label>Target frame rate: <input type="number" id="frame-rate" value="50"> FPS</label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id="estimated-frame-rate" checked> Filter frame rate calculation</label>
+                    </li>
+                    </ul>
+                    </form>
+                </div>
+            </div>
+            <button onclick="benchmarkController.startBenchmark()">Start Test</button>
+        </section>
+        <section id="test-container">
+            <div id="running-test" class="frame-container"></div>
+            <div id="progress">
+                <div id="progress-completed"></div>
+            </div>
+        </section>
+        <section id="results">
+            <h1>Animometer score</h1>
+            <p class="score"></p>
+            <div id="results-tables">
+                <div>
+                    <table id="results-score"></table>
+                    <table id="results-data"></table>
+                </div>
+                <table id="results-header"></table>
+            </div>
+            <div id="results-json">
+                JSON:
+                <textarea rows=1 onclick="this.focus();this.select()" readonly></textarea>
+            </div>
+            <button onclick="benchmarkController.startBenchmark()">Test Again</button>
+            <p>'s': Select different data for copy/paste</p>
+        </section>
+        <section id="test-graph">
+            <header>
+                <button onclick="benchmarkController.showResults()">&lt; Results</button>
+                <h1>Graph:</h1>
+            </header>
+            <p class="score"></p>
+            <p class="mean"></p>
+            <div id="test-graph-data"></div>
+        </section>
+        <hr>
+    </main>
+</body>
+</html>

@@ -128,7 +128,7 @@ StageAnimator.prototype.animate = function()
     return true;
 }
 
-function StageBenchmark(suite, test, options, recordTable, progressBar)
+function StageBenchmark(suite, test, options, progressBar)
 {
     Benchmark.call(this, options);
     
@@ -140,7 +140,6 @@ function StageBenchmark(suite, test, options, recordTable, progressBar)
     this._animator = this.createAnimator();
     this._suite = suite;
     this._test = test;
-    this._recordTable = recordTable;
     this._progressBar = progressBar;
 }
 
@@ -167,13 +166,10 @@ StageBenchmark.prototype.clear = function()
     return this._stage.clear();
 }
 
-StageBenchmark.prototype.showResults = function(message, progress)
+StageBenchmark.prototype.showResults = function(progress, message)
 {
-    if (!this._recordTable || !this._progressBar || !this._test)
+    if (!this._progressBar || !this._test)
         return;
-
-    if (this._options["display"] == "statistics-table")
-        this._recordTable.showRecord(this._test.name, message, this._sampler.toJSON(true, false), this._options);
 
     this._progressBar.setPos(progress);
 }
