@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirCode.h"
+#include "AirFixSpillSlotZDef.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
@@ -86,6 +87,7 @@ void spillEverything(Code& code)
 
     // Allocate a stack slot for each tmp.
     Vector<StackSlot*> allStackSlots[Arg::numTypes];
+    unsigned newStackSlotThreshold = code.stackSlots().size();
     for (unsigned typeIndex = 0; typeIndex < Arg::numTypes; ++typeIndex) {
         Vector<StackSlot*>& stackSlots = allStackSlots[typeIndex];
         Arg::Type type = static_cast<Arg::Type>(typeIndex);
@@ -109,7 +111,7 @@ void spillEverything(Code& code)
                     if (arg.isReg())
                         continue;
 
-                    if (inst.admitsStack(i)) { 
+                    if (inst.admitsStack(i)) {
                         StackSlot* stackSlot = allStackSlots[arg.type()][arg.tmpIndex()];
                         arg = Arg::stack(stackSlot);
                         continue;
@@ -184,6 +186,12 @@ void spillEverything(Code& code)
         }
         insertionSet.execute(block);
     }
+
+    fixSpillSlotZDef(
+        code,
+        [&] (StackSlot* stackSlot) -> bool {
+            return stackSlot->index() >= newStackSlotThreshold;
+        });
 }
 
 } } } // namespace JSC::B3::Air

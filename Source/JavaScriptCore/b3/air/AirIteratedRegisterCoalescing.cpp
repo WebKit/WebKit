@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirCode.h"
+#include "AirFixSpillSlotZDef.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
@@ -1164,6 +1165,7 @@ private:
     void addSpillAndFill(const ColoringAllocator<type>& allocator, HashSet<unsigned>& unspillableTmps)
     {
         HashMap<Tmp, StackSlot*> stackSlots;
+        unsigned newStackSlotThreshold = m_code.stackSlots().size();
         for (Tmp tmp : allocator.spilledTmps()) {
             // All the spilled values become unspillable.
             unspillableTmps.add(AbsoluteTmpMapper<type>::absoluteIndex(tmp));
@@ -1260,6 +1262,12 @@ private:
                 });
             }
         }
+
+        fixSpillSlotZDef(
+            m_code,
+            [&] (StackSlot* stackSlot) -> bool {
+                return stackSlot->index() >= newStackSlotThreshold;
+            });
     }
 
     Code& m_code;

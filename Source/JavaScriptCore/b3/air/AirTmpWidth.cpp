@@ -48,17 +48,31 @@ TmpWidth::~TmpWidth()
 
 void TmpWidth::recompute(Code& code)
 {
+    // Set this to true to cause this analysis to always return pessimistic results.
+    const bool beCareful = false;
+    
     m_width.clear();
+    
+    auto assumeTheWorst = [&] (Tmp tmp) {
+        Widths& widths = m_width.add(tmp, Widths()).iterator->value;
+        Arg::Type type = Arg(tmp).type();
+        widths.use = Arg::conservativeWidth(type);
+        widths.def = Arg::conservativeWidth(type);
+    };
     
     // Assume the worst for registers.
     RegisterSet::allRegisters().forEach(
         [&] (Reg reg) {
-            Widths& widths = m_width.add(Tmp(reg), Widths()).iterator->value;
-            Arg::Type type = Arg(Tmp(reg)).type();
-            widths.use = Arg::conservativeWidth(type);
-            widths.def = Arg::conservativeWidth(type);
+            assumeTheWorst(Tmp(reg));
         });
-    
+
+    if (beCareful) {
+        code.forAllTmps(assumeTheWorst);
+        
+        // We fall through because the fixpoint that follows can only make things even more
+        // conservative. This mode isn't meant to be fast, just safe.
+    }
+
     // Now really analyze everything but Move's over Tmp's, but set aside those Move's so we can find
     // them quickly during the fixpoint below. Note that we can make this analysis stronger by
     // recognizing more kinds of Move's or anything that has Move-like behavior, though it's probably not

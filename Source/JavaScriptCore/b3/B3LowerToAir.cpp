@@ -64,6 +64,7 @@ class LowerToAir {
 public:
     LowerToAir(Procedure& procedure)
         : m_valueToTmp(procedure.values().size())
+        , m_phiToTmp(procedure.values().size())
         , m_blockToBlock(procedure.size())
         , m_useCounts(procedure)
         , m_phiChildren(procedure)
@@ -76,9 +77,21 @@ public:
     {
         for (B3::BasicBlock* block : m_procedure)
             m_blockToBlock[block] = m_code.addBlock(block->frequency());
+        
         for (Value* value : m_procedure.values()) {
-            if (StackSlotValue* stackSlotValue = value->as<StackSlotValue>())
+            switch (value->opcode()) {
+            case Phi: {
+                m_phiToTmp[value] = m_code.newTmp(Arg::typeForB3Type(value->type()));
+                break;
+            }
+            case B3::StackSlot: {
+                StackSlotValue* stackSlotValue = value->as<StackSlotValue>();
                 m_stackToStack.add(stackSlotValue, m_code.addStackSlot(stackSlotValue));
+                break;
+            }
+            default:
+                break;
+            }
         }
 
         m_procedure.resetValueOwners(); // Used by crossesInterference().
@@ -2126,12 +2139,17 @@ private:
             Value* value = m_value->child(0);
             append(
                 relaxedMoveForType(value->type()), immOrTmp(value),
-                tmp(m_value->as<UpsilonValue>()->phi()));
+                m_phiToTmp[m_value->as<UpsilonValue>()->phi()]);
             return;
         }
 
         case Phi: {
-            // Our semantics are determined by Upsilons, so we have nothing to do here.
+            // Snapshot the value of the Phi. It may change under us because you could do:
+            // a = Phi()
+            // Upsilon(@x, ^a)
+            // @a => this should get the value of the Phi before the Upsilon, i.e. not @x.
+
+            append(relaxedMoveForType(m_value->type()), m_phiToTmp[m_value], tmp(m_value));
             return;
         }
 
@@ -2209,6 +2227,7 @@ private:
 
     IndexSet<Value> m_locked; // These are values that will have no Tmp in Air.
     IndexMap<Value, Tmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
+    IndexMap<Value, Tmp> m_phiToTmp; // Each Phi gets its own Tmp.
     IndexMap<B3::BasicBlock, Air::BasicBlock*> m_blockToBlock;
     HashMap<StackSlotValue*, Air::StackSlot*> m_stackToStack;
 

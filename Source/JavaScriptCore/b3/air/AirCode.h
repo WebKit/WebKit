@@ -57,6 +57,9 @@ public:
 
     BasicBlock* addBlock(double frequency = 1);
 
+    // Note that you can rely on stack slots always getting indices that are larger than the index
+    // of any prior stack slot. In fact, all stack slots you create in the future will have an index
+    // that is >= stackSlots().size().
     StackSlot* addStackSlot(unsigned byteSize, StackSlotKind, StackSlotValue* = nullptr);
     StackSlot* addStackSlot(StackSlotValue*);
 
@@ -290,6 +293,15 @@ public:
     };
 
     SpecialsCollection specials() const { return SpecialsCollection(*this); }
+
+    template<typename Callback>
+    void forAllTmps(const Callback& callback) const
+    {
+        for (unsigned i = m_numGPTmps; i--;)
+            callback(Tmp::gpTmpForIndex(i));
+        for (unsigned i = m_numFPTmps; i--;)
+            callback(Tmp::fpTmpForIndex(i));
+    }
 
     void addFastTmp(Tmp);
     bool isFastTmp(Tmp tmp) const { return m_fastTmps.contains(tmp); }

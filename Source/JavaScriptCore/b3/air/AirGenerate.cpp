@@ -74,7 +74,7 @@ void prepareForGeneration(Code& code)
     // After this phase, every Tmp has a reg.
     //
     // For debugging, you can use spillEverything() to put everything to the stack between each Inst.
-    if (false)
+    if (Options::airSpillsEverything())
         spillEverything(code);
     else
         iteratedRegisterCoalescing(code);

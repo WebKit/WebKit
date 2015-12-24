@@ -1,5 +1,77 @@
 2015-12-23  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 should be able to run crypto-sha1 in eager mode
+        https://bugs.webkit.org/show_bug.cgi?id=152539
+
+        Reviewed by Saam Barati.
+
+        This patch contains one real bug fix and some other fixes that are primarily there for sanity
+        because I don't believe they are symptomatic.
+
+        The real fix is the instruction selector's handling of Phi. It was assuming that the correct
+        lowering of Phi is to do nothing and the correct lowering of Upsilon is to store into the tmp
+        that the Phi uses. But this fails for code patterns like:
+
+            @a = Phi()
+            Upsilon(@x, ^a)
+            use(@a) // this should see the value that @a had at the point that "@a = Phi()" executed.
+
+        This arises when we have a lot of Upsilons in a row and they are trying to perform a
+        shuffling. Prior to this change, "use(@a)" would see the new value of @a, i.e. @x. That's
+        wrong. So, this changes the lowering to make each Phi have a special shadow Tmp, and Upsilon
+        stores to it while Phi loads from it. Most of these assignments get copy-propagated by IRC,
+        so it doesn't really hurt us. I couldn't find any benchmarks that slowed down because of
+        this. In fact, I believe that the only time that this would lead to extra interference or
+        extra assignments is when it's actually needed to be correct.
+
+        This also contains other fixes, which are probably not for real bugs, but they make me feel
+        all warm and fuzzy:
+
+        - spillEverything() works again.  Previously, it didn't have all of IRC's smarts for handling
+          a spill of a ZDef.  I fixed this by creating a helper phase that finds all subwidth ZDefs
+          to spill slots and amends them with zero-fills of the top bits.
+
+        - IRC no longer requires precise TmpWidth analysis.  Previously, if TmpWidth gave pessimistic
+          results, the subwidth ZDef bug would return.  That probably means that it was never fixed
+          to begin with, since it's totally cool for just a single def or use of a tmp to cause it
+          to become pessimistic. But there may still have been some subwidth ZDefs.  The way that I
+          fixed this bug is to have IRC also run the ZDef fixup code that spillEverything() uses.
+          This is abstracted behind the beautifully named Air::fixSpillSlotZDef().
+
+        - B3::validate() does dominance checks!  So, if you shoot yourself in the foot by using
+          something before defining it, validate() will tell you.
+
+        - Air::TmpWidth is now easy to "turn off" - i.e. to make it go fully conservative. It's not
+          an Option; you have to hack code. But that's better than nothing, and it's consistent with
+          what we do for other super-internal compiler options that we use rarely.
+
+        - You can now run spillEverything() without hacking code.  Just use
+          Options::airSpillSeverything().
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::LowerToAir):
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Validate.cpp:
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::specials):
+        (JSC::B3::Air::Code::forAllTmps):
+        (JSC::B3::Air::Code::isFastTmp):
+        * b3/air/AirFixSpillSlotZDef.h: Added.
+        (JSC::B3::Air::fixSpillSlotZDef):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirTmpWidth.cpp:
+        (JSC::B3::Air::TmpWidth::recompute):
+        * jit/JITOperations.cpp:
+        * runtime/Options.h:
+
+2015-12-23  Filip Pizlo  <fpizlo@apple.com>
+
         Need a story for platform-specific Args
         https://bugs.webkit.org/show_bug.cgi?id=152529
 
