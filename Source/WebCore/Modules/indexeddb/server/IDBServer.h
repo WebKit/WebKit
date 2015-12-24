@@ -60,6 +60,7 @@ public:
     void deleteDatabase(const IDBRequestData&);
     void abortTransaction(const IDBResourceIdentifier&);
     void commitTransaction(const IDBResourceIdentifier&);
+    void didFinishHandlingVersionChangeTransaction(const IDBResourceIdentifier&);
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
     void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier);

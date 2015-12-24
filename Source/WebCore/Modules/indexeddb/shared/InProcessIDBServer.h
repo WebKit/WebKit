@@ -58,6 +58,7 @@ public:
     virtual void openDatabase(IDBRequestData&) override final;
     virtual void abortTransaction(IDBResourceIdentifier&) override final;
     virtual void commitTransaction(IDBResourceIdentifier&) override final;
+    virtual void didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier&) override final;
     virtual void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) override final;
     virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) override final;
     virtual void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) override final;

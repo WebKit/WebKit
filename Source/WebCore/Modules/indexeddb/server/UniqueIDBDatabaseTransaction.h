@@ -79,6 +79,7 @@ public:
     void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
 
     void didActivateInBackingStore(const IDBError&);
+    void didFinishHandlingVersionChange();
 
     const Vector<uint64_t>& objectStoreIdentifiers();
 

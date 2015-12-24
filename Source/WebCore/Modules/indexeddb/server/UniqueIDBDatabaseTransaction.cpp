@@ -309,6 +309,14 @@ void UniqueIDBDatabaseTransaction::didActivateInBackingStore(const IDBError& err
     m_databaseConnection->connectionToClient().didStartTransaction(m_transactionInfo.identifier(), error);
 }
 
+void UniqueIDBDatabaseTransaction::didFinishHandlingVersionChange()
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::didFinishHandlingVersionChange");
+    ASSERT(isVersionChange());
+
+    m_databaseConnection->database().didFinishHandlingVersionChange(*this);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

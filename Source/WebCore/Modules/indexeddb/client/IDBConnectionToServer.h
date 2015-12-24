@@ -98,6 +98,8 @@ public:
     void commitTransaction(IDBTransaction&);
     void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
+    void didFinishHandlingVersionChangeTransaction(IDBTransaction&);
+
     void abortTransaction(IDBTransaction&);
     void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 

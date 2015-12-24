@@ -1,5 +1,55 @@
 2015-12-23  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Don't open any new connections until after version change transactions are completely handled.
+        https://bugs.webkit.org/show_bug.cgi?id=152441
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least 4 failing tests now pass).
+        
+        When a version change transaction is in progress for a database, the server should not open any new connections
+        to that database until the version change transaction has been 100% completed.
+        
+        This means *all* events related to finishing the transaction must fire.
+        
+        To support this, a new message from client -> server is added.
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::didFinishHandlingVersionChangeTransaction):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::dispatchEvent):
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.h:
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::didFinishHandlingVersionChangeTransaction):
+        * Modules/indexeddb/server/IDBServer.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::didFinishHandlingVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformAbortTransaction): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::inProgressTransactionCompleted): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::didFinishHandlingVersionChange):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+        
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::loggingString):
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::didFinishHandlingVersionChangeTransaction):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
+2015-12-23  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/transaction-basics.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152481
 

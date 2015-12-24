@@ -224,6 +224,14 @@ void InProcessIDBServer::commitTransaction(IDBResourceIdentifier& resourceIdenti
     });
 }
 
+void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(IDBResourceIdentifier& transactionIdentifier)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, transactionIdentifier] {
+        m_server->didFinishHandlingVersionChangeTransaction(transactionIdentifier);
+    });
+}
+
 void InProcessIDBServer::createObjectStore(const IDBRequestData& resultData, const IDBObjectStoreInfo& info)
 {
     RefPtr<InProcessIDBServer> self(this);

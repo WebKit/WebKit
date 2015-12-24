@@ -61,6 +61,10 @@ public:
 
     IDBDatabaseInfo* originalDatabaseInfo() const { return m_originalDatabaseInfo.get(); }
 
+#ifndef NDEBUG
+    String loggingString() const;
+#endif
+
 private:
     IDBTransactionInfo(const IDBResourceIdentifier&);
 

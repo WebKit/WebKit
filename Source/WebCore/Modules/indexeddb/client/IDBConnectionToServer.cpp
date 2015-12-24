@@ -290,6 +290,13 @@ void IDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier& tr
     transaction->didCommit(error);
 }
 
+void IDBConnectionToServer::didFinishHandlingVersionChangeTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didFinishHandlingVersionChangeTransaction");
+    auto identifier = transaction.info().identifier();
+    m_delegate->didFinishHandlingVersionChangeTransaction(identifier);
+}
+
 void IDBConnectionToServer::abortTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBConnectionToServer::abortTransaction");

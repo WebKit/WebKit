@@ -1,5 +1,14 @@
 2015-12-23  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Don't open any new connections until after version change transactions are completely handled.
+        https://bugs.webkit.org/show_bug.cgi?id=152441
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations: Enable 4 now-passing tests.
+
+2015-12-23  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/transaction-basics.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152481
 

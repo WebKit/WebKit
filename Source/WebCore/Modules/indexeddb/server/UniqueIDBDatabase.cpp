@@ -206,13 +206,10 @@ void UniqueIDBDatabase::handleDatabaseOperations()
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::handleDatabaseOperations - There are %zu pending", m_pendingDatabaseOperations.size());
 
-    if (m_versionChangeDatabaseConnection || m_currentOperation) {
-        // We can't start the next database operation quite yet, but we might need to notify all open connections
-        // about a pending delete.
-        if (!m_pendingDatabaseOperations.isEmpty() && m_pendingDatabaseOperations.first()->isDeleteRequest() && !m_hasNotifiedConnectionsOfDelete) {
-            m_hasNotifiedConnectionsOfDelete = true;
-            notifyConnectionsOfVersionChange(0);
-        }
+    if (m_versionChangeDatabaseConnection || m_versionChangeTransaction || m_currentOperation) {
+        // We can't start any new open-database operations right now, but we might be able to start handling a delete operation.
+        if (!m_currentOperation && !m_pendingDatabaseOperations.isEmpty() && m_pendingDatabaseOperations.first()->isDeleteRequest())
+            m_currentOperation = m_pendingDatabaseOperations.takeFirst();
 
         // Some operations (such as the first open operation after a delete) require multiple passes to completely handle
         if (m_currentOperation)
@@ -849,9 +846,6 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
         ASSERT(&m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
         ASSERT(m_databaseInfo->version() == transaction.info().newVersion());
 
-        m_versionChangeTransaction = nullptr;
-        m_versionChangeDatabaseConnection = nullptr;
-
         invokeOperationAndTransactionTimer();
     }
 
@@ -889,6 +883,20 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
     m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performAbortTransaction, callbackID, transaction.info().identifier()));
 }
 
+void UniqueIDBDatabase::didFinishHandlingVersionChange(UniqueIDBDatabaseTransaction& transaction)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didFinishHandlingVersionChange");
+
+    ASSERT(m_versionChangeTransaction);
+    ASSERT_UNUSED(transaction, m_versionChangeTransaction == &transaction);
+
+    m_versionChangeTransaction = nullptr;
+    m_versionChangeDatabaseConnection = nullptr;
+
+    invokeOperationAndTransactionTimer();
+}
+
 void UniqueIDBDatabase::performAbortTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     ASSERT(!isMainThread());
@@ -907,9 +915,6 @@ void UniqueIDBDatabase::didPerformAbortTransaction(uint64_t callbackIdentifier, 
         ASSERT(&m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
         ASSERT(m_versionChangeTransaction->originalDatabaseInfo());
         m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*m_versionChangeTransaction->originalDatabaseInfo());
-
-        m_versionChangeTransaction = nullptr;
-        m_versionChangeDatabaseConnection = nullptr;
     }
 
     inProgressTransactionCompleted(transactionIdentifier);
@@ -1093,9 +1098,6 @@ void UniqueIDBDatabase::inProgressTransactionCompleted(const IDBResourceIdentifi
 {
     auto transaction = m_inProgressTransactions.take(transactionIdentifier);
     ASSERT(transaction);
-
-    if (m_versionChangeTransaction == transaction)
-        m_versionChangeTransaction = nullptr;
 
     for (auto objectStore : transaction->objectStoreIdentifiers())
         m_objectStoreTransactionCounts.remove(objectStore);
