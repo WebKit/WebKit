@@ -289,7 +289,6 @@ storage/indexeddb/cursor-advance.html [ Skip ]
 storage/indexeddb/cursor-basics.html [ Skip ]
 storage/indexeddb/cursor-continue.html [ Skip ]
 storage/indexeddb/cursor-continue-validity.html [ Skip ]
-storage/indexeddb/cursor-continueprimarykey.html [ Skip ]
 storage/indexeddb/cursor-index-delete.html [ Skip ]
 storage/indexeddb/cursor-key-order.html [ Skip ]
 storage/indexeddb/cursor-leak.html [ Skip ] # Missing needed WKTR feature?
@@ -297,7 +296,6 @@ storage/indexeddb/cursor-overloads.html [ Skip ]
 storage/indexeddb/cursor-primary-key-order.html [ Skip ]
 storage/indexeddb/cursor-request-cycle.html [ Skip ] # Missing needed WKTR feature?
 storage/indexeddb/cursor-update.html [ Skip ]
-storage/indexeddb/data-corruption.html [ Skip ]
 storage/indexeddb/database-close.html [ Skip ]
 storage/indexeddb/database-closepending-flag.html [ Skip ]
 storage/indexeddb/database-quota.html [ Skip ]
@@ -311,7 +309,6 @@ storage/indexeddb/deletedatabase-not-blocked.html [ Skip ]
 storage/indexeddb/deleted-objects.html [ Skip ]
 storage/indexeddb/duplicates.html [ Skip ] # Difference between null + undefined
 storage/indexeddb/events.html [ Skip ]
-storage/indexeddb/factory-basics.html [ Skip ] # indexedDB.webkitGetDatabaseNames is missing)
 storage/indexeddb/factory-cmp.html [ Skip ]
 storage/indexeddb/factory-deletedatabase.html [ Skip ]
 storage/indexeddb/get-keyrange.html [ Skip ]
@@ -336,7 +333,6 @@ storage/indexeddb/metadata.html [ Skip ]
 storage/indexeddb/noblobs.html [ Skip ] # Missing DRT file/blob support
 storage/indexeddb/objectstore-autoincrement.html [ Skip ]
 storage/indexeddb/objectstore-basics.html [ Skip ]
-storage/indexeddb/objectstore-keycursor.html [ Skip ]
 storage/indexeddb/odd-strings.html [ Skip ]
 storage/indexeddb/optional-arguments.html [ Skip ]
 storage/indexeddb/persistence.html [ Skip ]
@@ -749,7 +745,6 @@ Bug(EFL) media/video-played-reset.html [ Failure Pass ]
 Bug(EFL) fast/loader/child-frame-add-after-back-forward.html [ Failure Pass ]
 Bug(EFL) fast/events/backspace-navigates-back.html [ Failure Pass ]
 Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failure Pass ]
-Bug(EFL) js/dom/create-lots-of-workers.html [ Crash Failure Pass ]
 Bug(EFL) media/track/track-element-load-event.html [ Crash Failure Pass ]
 
 webkit.org/b/85603 fast/forms/textarea-placeholder-set-attribute.html [ Failure ImageOnlyFailure Pass ]
@@ -1315,6 +1310,28 @@ webkit.org/b/150183 fast/css/variables/test-suite/failures/161.html [ Pass ]
 webkit.org/b/150183 fast/css/variables/test-suite/failures/163.html [ Pass ]
 webkit.org/b/150183 fast/css/variables/test-suite/failures/169.html [ Pass ]
 
+# SHADOW DOM is not enabled though, these tests are reported to PASS.
+fast/shadow-dom/css-scoping-shadow-assigned-node-with-before-after.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-assigned-node-with-rules.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-host-functional-rule.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-host-rule.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-host-with-before-after.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-invisible-slot.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-root-hides-children.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-slot-display-override.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-slot-fallback.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-slot.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-slotted-rule.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-with-outside-rules.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-with-rules-no-style-leak.html [ Pass ]
+fast/shadow-dom/css-scoping-shadow-with-rules.html [ Pass ]
+fast/shadow-dom/insert-child-to-assigned-node.html [ Pass ]
+fast/shadow-dom/shadow-layout-after-attach-shadow.html [ Pass ]
+fast/shadow-dom/shadow-layout-after-host-child-changes.html [ Pass ]
+fast/shadow-dom/shadow-layout-after-inserting-or-removing-host-child.html [ Pass ]
+fast/shadow-dom/shadow-layout-after-slot-changes.html [ Pass ]
+fast/shadow-dom/shadow-layout-after-slot-fallback-changes.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1442,12 +1459,6 @@ webkit.org/b/134974 media/media-source/media-source-stalled-holds-sleep-assertio
 webkit.org/b/134974 media/media-source/media-source-duplicate-seeked.html [ Failure ]
 webkit.org/b/134974 media/media-source/media-source-play.html [ Failure ]
 webkit.org/b/134974 media/media-source/media-source-append-buffer-with-append-window.html [ Failure Pass ]
-
-# Mocking the codec is not implemented in EFL. A gstreamer parser for MSE is also not implemented.
-Bug(EFL) media/media-source/media-source-timeoffset.html [ Failure ]
-Bug(EFL) media/media-source/media-source-track-enabled.html [ Failure ]
-Bug(EFL) media/media-source/media-source-tracks.html [ Failure ]
-Bug(EFL) media/media-source/media-source-video-playback-quality.html [ Failure ]
 
 # Requires ENCRYPTED_MEDIA support.
 webkit.org/b/95297 media/encrypted-media [ Pass ]

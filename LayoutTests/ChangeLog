@@ -1,3 +1,14 @@
+2015-12-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening.
+
+        Mark shadow dom to Pass with incorrect result. Additionally remove
+        disappeared storage tests in TestExpectations.
+
+        Unskip MSE tests because MSE functionalities have been supported by gstreamer.
+
+        * platform/efl/TestExpectations:
+
 2015-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r187593): Scroll position jumps when selecting text in an iframe
