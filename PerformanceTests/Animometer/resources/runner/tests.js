@@ -22,6 +22,18 @@ var Suites = [];
 
 Suites.push(new Suite("Animometer",
     [
+        {
+            url: "master/canvas-stage.html?pathType=arcs",
+            name: "Canvas arcs"
+        },
+        {
+            url: "master/canvas-stage.html?pathType=linePath&lineJoin=round&lineCap=round",
+            name: "Canvas line path, round join"
+        },
+        {
+            url: "master/canvas-stage.html?pathType=line&lineCap=square",
+            name: "Canvas line segments"
+        },
     ]
 ));
 

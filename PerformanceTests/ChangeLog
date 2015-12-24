@@ -5,6 +5,21 @@
 
         Reviewed by Simon Fraser.
 
+        Add tests to 'animometer' suite.
+
+        * Animometer/resources/runner/tests.js:
+        * Animometer/tests/master/canvas-stage.html: Added.
+        * Animometer/tests/master/resources/canvas-stage.js: Added.
+        * Animometer/tests/master/resources/canvas-tests.js: Added.
+        * Animometer/tests/master/resources/stage.css: Added.
+
+2015-12-23  Jon Lee  <jonlee@apple.com>
+
+        Split benchmark into two different pages
+        https://bugs.webkit.org/show_bug.cgi?id=152458
+
+        Reviewed by Simon Fraser.
+
         Address comments.
 
         * Animometer/resources/debug-runner/benchmark-runner.js:
