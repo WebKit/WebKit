@@ -90,22 +90,22 @@ namespace JSC {
         
         unsigned hash() const override
         {
-            return m_source.impl()->hash();
+            return m_source.get().hash();
         }
 
         virtual StringView source() const override
         {
-            return m_source;
+            return m_source.get();
         }
 
     private:
         StringSourceProvider(const String& source, const String& url, const TextPosition& startPosition)
             : SourceProvider(url, startPosition)
-            , m_source(source)
+            , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
         {
         }
 
-        String m_source;
+        Ref<StringImpl> m_source;
     };
     
 #if ENABLE(WEBASSEMBLY)

@@ -1,3 +1,24 @@
+2015-12-23  Andreas Kling  <akling@apple.com>
+
+        jsc CLI tool crashes on EOF.
+        <https://webkit.org/b/152522>
+
+        Reviewed by Benjamin Poulain.
+
+        SourceProvider should treat String() like the empty string for hashing purposes.
+        This was a subtle behavior change in r194017 due to how zero-length strings are
+        treated by StringImpl::createSubstringSharingImpl().
+
+        I made these SourceProviders store a Ref<StringImpl> internally instead of a
+        String, to codify the fact that these strings can't be null strings.
+
+        I couldn't find a way to cause this crash through the API.
+
+        * API/JSScriptRef.cpp:
+        (OpaqueJSScript::OpaqueJSScript):
+        * parser/SourceProvider.h:
+        (JSC::StringSourceProvider::StringSourceProvider):
+
 2015-12-23  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should be able to run crypto-sha1 in eager mode
