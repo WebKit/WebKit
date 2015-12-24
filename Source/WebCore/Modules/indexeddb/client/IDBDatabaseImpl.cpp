@@ -156,7 +156,7 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
 
     IndexedDB::TransactionMode mode = IDBTransaction::stringToMode(modeString, ec.code);
     if (ec.code) {
-        ec.message = ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('invalid-mode') is not one of 'readonly' or 'readwrite'.");
+        ec.message = makeString(ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('"), modeString, ASCIILiteral("') is not one of 'readonly' or 'readwrite'."));
         return nullptr;
     }
 

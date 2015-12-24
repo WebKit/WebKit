@@ -1,3 +1,14 @@
+2015-12-23  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/transaction-basics.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152481
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-expected.txt:
+        * storage/indexeddb/transaction-basics-expected.txt:
+
 2015-12-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL gardening.

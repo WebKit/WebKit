@@ -3,8 +3,8 @@ ALERT: Failed to start a transaction while a versionChange transaction was in pr
 ALERT: versionchange transaction completed
 ALERT: Failed to start a transaction with an empty set of object stores - Error: Failed to execute 'transaction' on 'IDBDatabase': The storeNames parameter was empty.
 ALERT: Failed to start a transaction to a nonexistent object store - Error: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
-ALERT: Failed to start a transaction with an invalid mode - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('invalid-mode') is not one of 'readonly' or 'readwrite'.
-ALERT: Failed to explicitly start a versionchange transaction - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('invalid-mode') is not one of 'readonly' or 'readwrite'.
+ALERT: Failed to start a transaction with an invalid mode - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('blahblah') is not one of 'readonly' or 'readwrite'.
+ALERT: Failed to explicitly start a versionchange transaction - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('versionchange') is not one of 'readonly' or 'readwrite'.
 ALERT: Failed to explicitly start a transaction with the close pending flag set - Error: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
 ALERT: Done
 This tests some obvious failures that can happen while calling IDBDatabase.transaction()
