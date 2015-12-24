@@ -26,9 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define _USE_MATH_DEFINES 1
 #include "config.h"
 
+#include <limits>
+#include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
 
 using namespace std;
@@ -171,13 +172,15 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(3, 2).toDouble(), 1.5);
     EXPECT_EQ(MediaTime(1, 1 << 16).toFloat(), 1 / pow(2.0f, 16.0f));
     EXPECT_EQ(MediaTime(1, 1 << 30).toDouble(), 1 / pow(2.0, 30.0));
-    EXPECT_EQ(MediaTime::createWithDouble(M_PI, 1 << 30), MediaTime(3373259426U, 1 << 30));
-    EXPECT_EQ(MediaTime::createWithFloat(INFINITY), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithFloat(-INFINITY), MediaTime::negativeInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithFloat(NAN), MediaTime::invalidTime());
-    EXPECT_EQ(MediaTime::createWithDouble(INFINITY), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(-INFINITY), MediaTime::negativeInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(NAN), MediaTime::invalidTime());
+    EXPECT_EQ(MediaTime::createWithDouble(piDouble, 1 << 30), MediaTime(3373259426U, 1 << 30));
+
+    EXPECT_EQ(MediaTime::createWithFloat(std::numeric_limits<float>::infinity()), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(-std::numeric_limits<float>::infinity()), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithFloat(std::numeric_limits<float>::quiet_NaN()), MediaTime::invalidTime());
+
+    EXPECT_EQ(MediaTime::createWithDouble(std::numeric_limits<double>::infinity()), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(-std::numeric_limits<double>::infinity()), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(std::numeric_limits<double>::quiet_NaN()), MediaTime::invalidTime());
 
     // Floating Point Round Trip
     EXPECT_EQ(10.0123456789f, MediaTime::createWithFloat(10.0123456789f).toFloat());

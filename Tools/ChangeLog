@@ -1,3 +1,15 @@
+2015-12-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the unused #define _USE_MATH_DEFINES
+        https://bugs.webkit.org/show_bug.cgi?id=152034
+
+        Reviewed by Tim Horton.
+        
+        Update this test to use piDouble from MathExtras.h, and
+        std::numeric_limits<>.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+
 2015-12-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Python SCM should be able to retrieve untracked files - Generic changes
