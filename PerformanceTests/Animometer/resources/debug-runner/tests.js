@@ -97,6 +97,10 @@ Suites.push(new Suite("HTML suite",
             url: "text/layering-text.html",
             name: "CSS layering text"
         },
+        {
+            url: "text/text-boxes.html?particleWidth=280&particleHeight=180",
+            name: "CSS text boxes"
+        },
     ]
 ));
 

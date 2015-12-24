@@ -1,3 +1,26 @@
+2015-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an Animometer developer test which animates text-rich boxes
+        https://bugs.webkit.org/show_bug.cgi?id=152544
+
+        Reviewed by Zalan Bujtas.
+        
+        Add a test that draws lots of international text. This is a particle test,
+        moving the boxes around with absolution positioning.
+
+        * Animometer/resources/debug-runner/tests.js:
+        * Animometer/tests/text/resources/text-boxes.js: Added.
+        (BouncingTextBox):
+        (BouncingTextBox.prototype._move):
+        (BouncingTextBox.prototype.animate):
+        (BouncingTextBoxStage):
+        (BouncingTextBoxStage.prototype.createParticle):
+        (BouncingTextBoxStage.prototype.particleWillBeRemoved):
+        (BouncingTextBoxsBenchmark):
+        (BouncingTextBoxsBenchmark.prototype.createStage):
+        (window.benchmarkClient.create):
+        * Animometer/tests/text/text-boxes.html: Added.
+
 2015-12-23  Jon Lee  <jonlee@apple.com>
 
         Split benchmark into two different pages
