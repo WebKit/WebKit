@@ -204,6 +204,9 @@ class SCM:
     def has_working_directory_changes(self):
         self._subclass_must_implement()
 
+    def untracked_files(self, include_ignored_files=False):
+        self._subclass_must_implement()
+
     def discard_working_directory_changes(self):
         self._subclass_must_implement()
 

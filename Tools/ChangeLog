@@ -1,3 +1,18 @@
+2015-12-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Python SCM should be able to retrieve untracked files - Generic changes
+        https://bugs.webkit.org/show_bug.cgi?id=152536
+
+        Reviewed by Brent Fulgham.
+
+        This patch introduces SCM.untracked_files to retrieve a list of untracked files.
+        No support is yet added to GIT and SVN specific implementations.
+
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.untracked_files):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (SCMTest._shared_test_untracked_files):
+
 2015-12-23  Dewei Zhu  <dewei_zhu@apple.com>
 
         SVN checkout used by RunBenchmark should be non-interactive

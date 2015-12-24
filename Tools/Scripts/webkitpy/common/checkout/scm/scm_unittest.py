@@ -309,6 +309,29 @@ class SCMTest(unittest.TestCase):
         self.assertItemsEqual(self.scm.changed_files(), ["test_dir/test_file3", "test_file"])
         os.chdir(old_cwd)
 
+    def _shared_test_untracked_files(self, scm):
+        write_into_file_at_path("test_file_new", "new content")
+        self.assertItemsEqual(scm.untracked_files(), ["test_file_new"])
+
+        os.mkdir("test_dir_new")
+        write_into_file_at_path(os.path.join("test_dir_new", "test_file_new"), "new stuff")
+        self.assertItemsEqual(scm.untracked_files(), ["test_dir_new", "test_file_new"])
+
+        old_cwd = os.getcwd()
+        os.chdir("test_dir_new")
+        # Validate that untracked_files do not change with our cwd.
+        self.assertItemsEqual(scm.untracked_files(), ["test_dir_new", "test_file_new"])
+
+        os.chdir(old_cwd)
+
+        write_into_file_at_path("test_file_new.pyc", "new ignored file")
+        self.assertItemsEqual(scm.untracked_files(), ["test_dir_new", "test_file_new"])
+        self.assertItemsEqual(scm.untracked_files(include_ignored_files=True), ["test_file_new.pyc", "test_dir_new", "test_file_new"])
+
+        shutil.rmtree("test_dir_new")
+        os.remove("test_file_new")
+        os.remove("test_file_new.pyc")
+
     def _shared_test_added_files(self):
         write_into_file_at_path("test_file", "changed content")
         self.assertItemsEqual(self.scm.added_files(), [])
