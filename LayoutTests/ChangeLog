@@ -1,3 +1,12 @@
+2015-12-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaselining storage/domstorage/localstorage/delete-defineproperty-removal.html
+        https://bugs.webkit.org/show_bug.cgi?id=149179
+
+        Unreviewed test gardening.
+
+        * storage/domstorage/localstorage/delete-defineproperty-removal-expected.txt:
+
 2015-12-23  Pranjal Jumde  <pjumde@apple.com>
 
         Test to check for stack recursion when indexed propertyNames defined using Object.defineProperty are deleted.
