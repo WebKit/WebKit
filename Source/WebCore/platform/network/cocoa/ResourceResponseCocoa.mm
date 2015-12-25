@@ -67,8 +67,14 @@ void ResourceResponse::initNSURLResponse() const
 
 CertificateInfo ResourceResponse::platformCertificateInfo() const
 {
+#if USE(CFNETWORK)
+    ASSERT(m_cfResponse);
+    CFURLResponseRef cfResponse = m_cfResponse.get();
+#else
     ASSERT(m_nsResponse);
-    auto cfResponse = [m_nsResponse _CFURLResponse];
+    CFURLResponseRef cfResponse = [m_nsResponse _CFURLResponse];
+#endif
+
     if (!cfResponse)
         return { };
 

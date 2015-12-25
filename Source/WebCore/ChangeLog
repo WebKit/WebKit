@@ -1,3 +1,15 @@
+2015-12-25  Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERT(m_nsResponse) in ResourceResponse::platformCertificateInfo() when running tests in iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152559
+
+        Reviewed by Andy Estes.
+
+        Fix a regression from r194378.
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo):
+
 2015-12-25  David Kilzer  <ddkilzer@apple.com>
 
         ResourceError should store failingURL as URL instead of String to avoid reparsing and to address FIXME comments in ResourceErrorCF.cpp and ResourceErrorMac.mm
