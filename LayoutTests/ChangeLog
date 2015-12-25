@@ -1,3 +1,21 @@
+2015-12-24  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: x2 >= x1 in WebCore::RenderElement::drawLineForBoxSide
+        https://bugs.webkit.org/show_bug.cgi?id=151210
+
+        Reviewed by Simon Fraser.
+
+        "IntRect outer = snappedIntRect(inner)" explicitly converts inner to LayoutRect and
+        returns a snapped IntRect. When inner (after the inflate) overflows LayoutUnit,
+        the snapped outer rect becomes smaller than the inner rect.
+
+        This patch also enables outline painting on subpixel positions.
+
+        * fast/borders/hidpi-outline-on-subpixel-position-expected.html: Added.
+        * fast/borders/hidpi-outline-on-subpixel-position.html: Added.
+        * fast/borders/outline-offset-overflow-expected.txt: Added.
+        * fast/borders/outline-offset-overflow.html: Added.
+
 2015-12-23  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Don't open any new connections until after version change transactions are completely handled.

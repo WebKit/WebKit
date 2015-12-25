@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests outlines on subpixel positions</title>
+<style>
+  div {
+    position: absolute;
+    height: 5px;
+    width: 5px;
+    left: 1px;
+    top: 1px;
+    outline: solid 1px green;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  var leftPos = 1;
+  var topPos = 1;
+  var subpixelOffset = 0;
+  for (var i = 0; i < 50; ++i) {
+    var e = document.createElement("div");
+    e.style.left = leftPos + "px";
+    e.style.top = topPos + "px";
+    container.appendChild(e);
+    subpixelOffset += 0.1;
+    leftPos += 5 + subpixelOffset;
+    topPos += 5 + subpixelOffset;
+  }
+</script>
+</body>
+</html>

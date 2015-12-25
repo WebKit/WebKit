@@ -1,3 +1,22 @@
+2015-12-24  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: x2 >= x1 in WebCore::RenderElement::drawLineForBoxSide
+        https://bugs.webkit.org/show_bug.cgi?id=151210
+
+        Reviewed by Simon Fraser.
+
+        "IntRect outer = snappedIntRect(inner)" explicitly converts inner to LayoutRect first and
+        returns a snapped IntRect. When inner (after the inflate) overflows LayoutUnit,
+        the snapped rect might become smaller than the inner rect.
+
+        This patch also enables outline painting on subpixel positions.
+
+        Tests: fast/borders/hidpi-outline-on-subpixel-position.html
+               fast/borders/outline-offset-overflow.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintOutline):
+
 2015-12-24  Simon Fraser  <simon.fraser@apple.com>
 
         Use an enum for RenderElement's baseTypeFlags
