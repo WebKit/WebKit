@@ -34,42 +34,42 @@ namespace WebCore {
 
 ResourceError cancelledError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainNetwork, NetworkErrorCancelled, request.url().string(), ASCIILiteral("Load request cancelled"));
+    return ResourceError(errorDomainNetwork, NetworkErrorCancelled, request.url(), ASCIILiteral("Load request cancelled"));
 }
 
 ResourceError blockedError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotUseRestrictedPort, request.url().string(), ASCIILiteral("Not allowed to use restricted network port"));
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotUseRestrictedPort, request.url(), ASCIILiteral("Not allowed to use restricted network port"));
 }
 
 ResourceError blockedByContentBlockerError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorBlockedByContentBlocker, request.url().string(), ASCIILiteral("Blocked by content blocker"));
+    return ResourceError(errorDomainPolicy, PolicyErrorBlockedByContentBlocker, request.url(), ASCIILiteral("Blocked by content blocker"));
 }
 
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowURL, request.url().string(), ASCIILiteral("URL cannot be shown"));
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowURL, request.url(), ASCIILiteral("URL cannot be shown"));
 }
 
 ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorFrameLoadInterruptedByPolicyChange, request.url().string(), ASCIILiteral("Frame load was interrupted"));
+    return ResourceError(errorDomainPolicy, PolicyErrorFrameLoadInterruptedByPolicyChange, request.url(), ASCIILiteral("Frame load was interrupted"));
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowMimeType, response.url().string(), ASCIILiteral("Content with the specified MIME type cannot be shown"));
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowMimeType, response.url(), ASCIILiteral("Content with the specified MIME type cannot be shown"));
 }
 
 ResourceError fileDoesNotExistError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainNetwork, NetworkErrorFileDoesNotExist, response.url().string(), ASCIILiteral("File does not exist"));
+    return ResourceError(errorDomainNetwork, NetworkErrorFileDoesNotExist, response.url(), ASCIILiteral("File does not exist"));
 }
 
 ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainPlugin, PluginErrorWillHandleLoad, response.url().string(), ASCIILiteral("Plugin will handle load"));
+    return ResourceError(errorDomainPlugin, PluginErrorWillHandleLoad, response.url(), ASCIILiteral("Plugin will handle load"));
 }
 
 ResourceError downloadNetworkError(const ResourceError& networkError)
@@ -79,12 +79,12 @@ ResourceError downloadNetworkError(const ResourceError& networkError)
 
 ResourceError downloadCancelledByUserError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainDownload, DownloadErrorCancelledByUser, response.url().string(), ASCIILiteral("User cancelled the download"));
+    return ResourceError(errorDomainDownload, DownloadErrorCancelledByUser, response.url(), ASCIILiteral("User cancelled the download"));
 }
 
 ResourceError downloadDestinationError(const ResourceResponse& response, const String& errorMessage)
 {
-    return ResourceError(errorDomainDownload, DownloadErrorDestination, response.url().string(), errorMessage);
+    return ResourceError(errorDomainDownload, DownloadErrorDestination, response.url(), errorMessage);
 }
 
 ResourceError printError(const URL& failingURL, const String& errorMessage)

@@ -544,7 +544,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
                 auto resource = createResource(type, request.mutableResourceRequest(), request.charset(), sessionID());
                 ASSERT(resource);
                 resource->error(CachedResource::Status::LoadError);
-                resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, request.resourceRequest().url().string(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
+                resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, request.resourceRequest().url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
                 return resource;
             }
             return nullptr;

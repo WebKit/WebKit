@@ -1,3 +1,32 @@
+2015-12-25  David Kilzer  <ddkilzer@apple.com>
+
+        ResourceError should store failingURL as URL instead of String to avoid reparsing and to address FIXME comments in ResourceErrorCF.cpp and ResourceErrorMac.mm
+        <http://webkit.org/b/146391>
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/Downloads/efl/DownloadSoupErrorsEfl.cpp:
+        (WebKit::platformDownloadNetworkError):
+        * NetworkProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp:
+        (WebKit::platformDownloadNetworkError):
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::didReceiveResponse):
+        * NetworkProcess/Downloads/soup/DownloadSoupErrors.h:
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (LoaderClient::didFailLoadWithErrorForFrame):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkit_uri_scheme_request_finish_error):
+        * WebProcess/WebCoreSupport/efl/WebErrorsEfl.cpp:
+        (WebKit::internalError):
+        * WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp:
+        (WebKit::internalError):
+        - Update for type change of 'failingURL' argument to
+          ResourceError().
+
 2015-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         Use "constrainedBetween" in more places

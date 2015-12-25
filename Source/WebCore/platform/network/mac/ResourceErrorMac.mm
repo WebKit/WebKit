@@ -182,12 +182,9 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
         [userInfo.get() setValue:resourceError.localizedDescription() forKey:NSLocalizedDescriptionKey];
 
     if (!resourceError.failingURL().isEmpty()) {
-        // FIXEME: We normally create an NSURL from a string by using URL::createNSURL, which handles
-        // cases correctly that initWithString: handles incorrectly.
-        RetainPtr<NSURL> cocoaURL = adoptNS([[NSURL alloc] initWithString:resourceError.failingURL()]);
-        [userInfo.get() setValue:resourceError.failingURL() forKey:@"NSErrorFailingURLStringKey"];
-        if (cocoaURL)
-            [userInfo.get() setValue:cocoaURL.get() forKey:@"NSErrorFailingURLKey"];
+        [userInfo.get() setValue:(NSString *)resourceError.failingURL().string() forKey:@"NSErrorFailingURLStringKey"];
+        if (NSURL *cocoaURL = (NSURL *)resourceError.failingURL())
+            [userInfo.get() setValue:cocoaURL forKey:@"NSErrorFailingURLKey"];
     }
 
     return adoptNS([[NSError alloc] initWithDomain:resourceError.domain() code:resourceError.errorCode() userInfo:userInfo.get()]);
@@ -266,10 +263,10 @@ void ResourceError::platformLazyInit()
     m_domain = [m_platformError.get() domain];
     m_errorCode = [m_platformError.get() code];
 
-    NSString* failingURLString = [[m_platformError.get() userInfo] valueForKey:@"NSErrorFailingURLStringKey"];
-    if (!failingURLString)
-        failingURLString = [[[m_platformError.get() userInfo] valueForKey:@"NSErrorFailingURLKey"] absoluteString];
-    m_failingURL = failingURLString; 
+    if (NSString* failingURLString = [[m_platformError.get() userInfo] valueForKey:@"NSErrorFailingURLStringKey"])
+        m_failingURL = URL(URL(), failingURLString);
+    else
+        m_failingURL = URL((NSURL *)[[m_platformError.get() userInfo] valueForKey:@"NSErrorFailingURLKey"]);
     // Workaround for <rdar://problem/6554067>
     m_localizedDescription = m_failingURL;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

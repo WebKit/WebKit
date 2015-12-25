@@ -2686,7 +2686,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
             if (auto* controller = page->userContentController()) {
                 if (m_documentLoader && controller->processContentExtensionRulesForLoad(newRequest, ResourceType::Raw, *m_documentLoader) == ContentExtensions::BlockedStatus::Blocked) {
                     newRequest = { };
-                    error = ResourceError(errorDomainWebKitInternal, 0, initialRequest.url().string(), emptyString());
+                    error = ResourceError(errorDomainWebKitInternal, 0, initialRequest.url(), emptyString());
                     response = { };
                     data = nullptr;
                 }

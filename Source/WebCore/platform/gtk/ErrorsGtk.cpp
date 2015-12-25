@@ -29,67 +29,57 @@ namespace WebCore {
 
 ResourceError cancelledError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainNetwork, NetworkErrorCancelled,
-                         request.url().string(), _("Load request cancelled"));
+    return ResourceError(errorDomainNetwork, NetworkErrorCancelled, request.url(), _("Load request cancelled"));
 }
 
 ResourceError blockedError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotUseRestrictedPort,
-                         request.url().string(), _("Not allowed to use restricted network port"));
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotUseRestrictedPort, request.url(), _("Not allowed to use restricted network port"));
 }
 
 ResourceError blockedByContentBlockerError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorBlockedByContentBlocker, request.url().string(), _("Blocked by content blocker"));
+    return ResourceError(errorDomainPolicy, PolicyErrorBlockedByContentBlocker, request.url(), _("Blocked by content blocker"));
 }
 
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowURL,
-                         request.url().string(), _("URL cannot be shown"));
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowURL, request.url(), _("URL cannot be shown"));
 }
 
 ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorFrameLoadInterruptedByPolicyChange,
-                         request.url().string(), _("Frame load was interrupted"));
+    return ResourceError(errorDomainPolicy, PolicyErrorFrameLoadInterruptedByPolicyChange, request.url(), _("Frame load was interrupted"));
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowMimeType,
-                         response.url().string(), _("Content with the specified MIME type cannot be shown"));
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowMimeType, response.url(), _("Content with the specified MIME type cannot be shown"));
 }
 
 ResourceError fileDoesNotExistError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainNetwork, NetworkErrorFileDoesNotExist,
-                         response.url().string(), _("File does not exist"));
+    return ResourceError(errorDomainNetwork, NetworkErrorFileDoesNotExist, response.url(), _("File does not exist"));
 }
 
 ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainPlugin, PluginErrorWillHandleLoad,
-                         response.url().string(), _("Plugin will handle load"));
+    return ResourceError(errorDomainPlugin, PluginErrorWillHandleLoad, response.url(), _("Plugin will handle load"));
 }
 
 ResourceError downloadNetworkError(const ResourceError& networkError)
 {
-    return ResourceError(errorDomainDownload, DownloadErrorNetwork,
-                         networkError.failingURL(), networkError.localizedDescription());
+    return ResourceError(errorDomainDownload, DownloadErrorNetwork, networkError.failingURL(), networkError.localizedDescription());
 }
 
 ResourceError downloadCancelledByUserError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainDownload, DownloadErrorCancelledByUser,
-                         response.url().string(), _("User cancelled the download"));
+    return ResourceError(errorDomainDownload, DownloadErrorCancelledByUser, response.url(), _("User cancelled the download"));
 }
 
 ResourceError downloadDestinationError(const ResourceResponse& response, const String& errorMessage)
 {
-    return ResourceError(errorDomainDownload, DownloadErrorDestination,
-                         response.url().string(), errorMessage);
+    return ResourceError(errorDomainDownload, DownloadErrorDestination, response.url(), errorMessage);
 }
 
 ResourceError printError(const URL& failingURL, const String& errorMessage)

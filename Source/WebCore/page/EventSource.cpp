@@ -273,7 +273,7 @@ void EventSource::didFail(const ResourceError& error)
 
 void EventSource::didFailAccessControlCheck(const ResourceError& error)
 {
-    String message = makeString("EventSource cannot load ", error.failingURL(), ". ", error.localizedDescription());
+    String message = makeString("EventSource cannot load ", error.failingURL().string(), ". ", error.localizedDescription());
     scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
 
     abortConnectionAttempt();

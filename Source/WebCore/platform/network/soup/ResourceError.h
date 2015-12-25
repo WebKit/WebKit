@@ -41,7 +41,7 @@ namespace WebCore {
 class ResourceError : public ResourceErrorBase
 {
 public:
-    ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
+    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription)
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
         , m_tlsErrors(0)
     {
@@ -56,7 +56,7 @@ public:
     static ResourceError transportError(SoupRequest*, int statusCode, const String& reasonPhrase);
     static ResourceError genericGError(GError*, SoupRequest*);
     static ResourceError tlsError(SoupRequest*, unsigned tlsErrors, GTlsCertificate*);
-    static ResourceError timeoutError(const String& failingURL);
+    static ResourceError timeoutError(const URL& failingURL);
     static ResourceError authenticationError(SoupMessage*);
 
     unsigned tlsErrors() const { return m_tlsErrors; }

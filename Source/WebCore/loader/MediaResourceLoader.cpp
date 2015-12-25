@@ -100,7 +100,7 @@ void MediaResourceLoader::responseReceived(CachedResource* resource, const Resou
         static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy.");
         m_document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         m_didPassAccessControlCheck = false;
-        m_client->accessControlCheckFailed(ResourceError(errorDomainWebKitInternal, 0, response.url().string(), consoleMessage.get()));
+        m_client->accessControlCheckFailed(ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
         stop();
         return;
     }

@@ -35,14 +35,13 @@
 
 namespace WebCore {
 
-static String failingURI(SoupURI* soupURI)
+static URL failingURI(SoupURI* soupURI)
 {
     ASSERT(soupURI);
-    GUniquePtr<char> uri(soup_uri_to_string(soupURI, FALSE));
-    return uri.get();
+    return URL(soupURI);
 }
 
-static String failingURI(SoupRequest* request)
+static URL failingURI(SoupRequest* request)
 {
     ASSERT(request);
     return failingURI(soup_request_get_uri(request));
@@ -85,7 +84,7 @@ ResourceError ResourceError::tlsError(SoupRequest* request, unsigned tlsErrors, 
     return resourceError;
 }
 
-ResourceError ResourceError::timeoutError(const String& failingURL)
+ResourceError ResourceError::timeoutError(const URL& failingURL)
 {
     // FIXME: This should probably either be integrated into Errors(Gtk/EFL).h or the
     // networking errors from those files should be moved here.

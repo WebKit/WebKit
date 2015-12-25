@@ -50,7 +50,7 @@ public:
     {
     }
 
-    ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
+    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription)
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
         , m_dataIsUpToDate(true)
     {
@@ -63,7 +63,7 @@ public:
 
 #if USE(CFNETWORK)
 #if PLATFORM(WIN)
-    ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription, CFDataRef certificate);
+    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate);
     PCCERT_CONTEXT certificate() const;
     void setCertificate(CFDataRef);
 #endif

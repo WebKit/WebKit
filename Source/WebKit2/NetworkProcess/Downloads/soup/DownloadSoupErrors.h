@@ -27,11 +27,12 @@
 #define DownloadSoupErrors_h
 
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-WebCore::ResourceError platformDownloadNetworkError(int errorCode, const String& failingURL, const String& localizedDescription);
+WebCore::ResourceError platformDownloadNetworkError(int errorCode, const WebCore::URL& failingURL, const String& localizedDescription);
 WebCore::ResourceError platformDownloadDestinationError(const WebCore::ResourceResponse&, const String& message);
 
 } // namespace WebKit

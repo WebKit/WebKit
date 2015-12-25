@@ -307,7 +307,7 @@ HRESULT WebDownload::cancelAuthenticationChallenge(_In_opt_ IWebURLAuthenticatio
     }
 
     // FIXME: Do we need a URL or description for this error code?
-    ResourceError error(String(WebURLErrorDomain), WebURLErrorUserCancelledAuthentication, "", "");
+    ResourceError error(String(WebURLErrorDomain), WebURLErrorUserCancelledAuthentication, URL(), "");
     COMPtr<WebError> webError(AdoptCOM, WebError::createInstance(error));
     m_delegate->didFailWithError(this, webError.get());
 

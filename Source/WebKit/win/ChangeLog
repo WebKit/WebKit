@@ -1,3 +1,27 @@
+2015-12-25  David Kilzer  <ddkilzer@apple.com>
+
+        ResourceError should store failingURL as URL instead of String to avoid reparsing and to address FIXME comments in ResourceErrorCF.cpp and ResourceErrorMac.mm
+        <http://webkit.org/b/146391>
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::cancelledError):
+        (WebFrameLoaderClient::blockedError):
+        (WebFrameLoaderClient::cannotShowURLError):
+        (WebFrameLoaderClient::interruptedForPolicyChangeError):
+        (WebFrameLoaderClient::cannotShowMIMETypeError):
+        (WebFrameLoaderClient::fileDoesNotExistError):
+        (WebFrameLoaderClient::pluginWillHandleLoadError):
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin):
+        (WebFrameLoaderClient::createJavaAppletWidget):
+        * WebDownloadCFNet.cpp:
+        (WebDownload::cancelAuthenticationChallenge):
+        * WebError.cpp:
+        (WebError::init):
+        - Update for type change of 'failingURL' argument to
+          ResourceError().
+
 2015-12-23  Brent Fulgham  <bfulgham@apple.com>
 
         Web Inspector: add support for running protocol-test.js tests on Windows

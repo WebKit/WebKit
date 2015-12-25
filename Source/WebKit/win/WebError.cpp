@@ -107,7 +107,7 @@ ULONG WebError::Release()
 
 HRESULT WebError::init(_In_ BSTR domain, int code, _In_ BSTR url)
 {
-    m_error = ResourceError(String(domain, SysStringLen(domain)), code, String(url, SysStringLen(url)), String());
+    m_error = ResourceError(String(domain, SysStringLen(domain)), code, URL(URL(), String(url, SysStringLen(url))), String());
     return S_OK;
 }
   

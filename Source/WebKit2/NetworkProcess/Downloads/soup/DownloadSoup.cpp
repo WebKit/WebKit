@@ -82,7 +82,7 @@ public:
         m_download->didReceiveResponse(response);
 
         if (response.httpStatusCode() >= 400) {
-            downloadFailed(platformDownloadNetworkError(response.httpStatusCode(), response.url().string(), response.httpStatusText()));
+            downloadFailed(platformDownloadNetworkError(response.httpStatusCode(), response.url(), response.httpStatusText()));
             return;
         }
 

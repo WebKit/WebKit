@@ -26,6 +26,7 @@
 #ifndef ResourceErrorBase_h
 #define ResourceErrorBase_h
 
+#include "URL.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ public:
 
     const String& domain() const { lazyInit(); return m_domain; }
     int errorCode() const { lazyInit(); return m_errorCode; }
-    const String& failingURL() const { lazyInit(); return m_failingURL; }
+    const URL& failingURL() const { lazyInit(); return m_failingURL; }
     const String& localizedDescription() const { lazyInit(); return m_localizedDescription; }
 
     void setIsCancellation(bool isCancellation) { m_isCancellation = isCancellation; }
@@ -63,7 +64,7 @@ protected:
     {
     }
 
-    ResourceErrorBase(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
+    ResourceErrorBase(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription)
         : m_domain(domain)
         , m_failingURL(failingURL)
         , m_localizedDescription(localizedDescription)
@@ -86,7 +87,7 @@ protected:
     static bool platformCompare(const ResourceError&, const ResourceError&) { return true; }
 
     String m_domain;
-    String m_failingURL;
+    URL m_failingURL;
     String m_localizedDescription;
     int m_errorCode;
     bool m_isNull : 1;

@@ -851,12 +851,12 @@ ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& reques
 {
     // FIXME: Need ChickenCat to include CFNetwork/CFURLError.h to get these values
     // Alternatively, we could create our own error domain/codes.
-    return ResourceError(String(WebURLErrorDomain), -999, request.url().string(), String("Cancelled"));
+    return ResourceError(String(WebURLErrorDomain), -999, request.url(), String("Cancelled"));
 }
 
 ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request)
 {
-    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotUseRestrictedPort, request.url().string(), WEB_UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description"));
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotUseRestrictedPort, request.url(), WEB_UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description"));
 }
 
 ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const ResourceRequest& request)
@@ -866,27 +866,27 @@ ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const ResourceR
 
 ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url().string(), WEB_UI_STRING("The URL can\xE2\x80\x99t be shown", "WebKitErrorCannotShowURL description"));
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url(), WEB_UI_STRING("The URL can\xE2\x80\x99t be shown", "WebKitErrorCannotShowURL description"));
 }
 
 ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(String(WebKitErrorDomain), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
 }
 
 ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(String(), WebKitErrorCannotShowMIMEType, response.url().string(), WEB_UI_STRING("Content with specified MIME type can\xE2\x80\x99t be shown", "WebKitErrorCannotShowMIMEType description"));
+    return ResourceError(String(), WebKitErrorCannotShowMIMEType, response.url(), WEB_UI_STRING("Content with specified MIME type can\xE2\x80\x99t be shown", "WebKitErrorCannotShowMIMEType description"));
 }
 
 ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse& response)
 {
-    return ResourceError(String(WebURLErrorDomain), -1100, response.url().string(), String("File does not exist."));
+    return ResourceError(String(WebURLErrorDomain), -1100, response.url(), String("File does not exist."));
 }
 
 ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError(String(WebKitErrorDomain), WebKitErrorPlugInWillHandleLoad, response.url().string(), WEB_UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description"));
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorPlugInWillHandleLoad, response.url(), WEB_UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description"));
 }
 
 bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
@@ -1166,7 +1166,7 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
             ASSERT_NOT_REACHED();
     }
 
-    ResourceError resourceError(String(WebKitErrorDomain), errorCode, pluginView->url().string(), String());
+    ResourceError resourceError(String(WebKitErrorDomain), errorCode, pluginView->url(), String());
     COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
      
     resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader().documentLoader()));
@@ -1244,7 +1244,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& p
 
     COMPtr<CFDictionaryPropertyBag> userInfoBag = CFDictionaryPropertyBag::createInstance();
 
-    ResourceError resourceError(String(WebKitErrorDomain), WebKitErrorJavaUnavailable, String(), WEB_UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description"));
+    ResourceError resourceError(String(WebKitErrorDomain), WebKitErrorJavaUnavailable, URL(), WEB_UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description"));
     COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
 
     Frame* coreFrame = core(m_webFrame);

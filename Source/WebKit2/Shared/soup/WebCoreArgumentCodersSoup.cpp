@@ -193,7 +193,7 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
 
     encoder << resourceError.domain();
     encoder << resourceError.errorCode();
-    encoder << resourceError.failingURL();
+    encoder << resourceError.failingURL().string();
     encoder << resourceError.localizedDescription();
     encoder << resourceError.isCancellation();
     encoder << resourceError.isTimeout();
@@ -235,7 +235,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
     if (!decoder.decode(isTimeout))
         return false;
 
-    resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
+    resourceError = ResourceError(domain, errorCode, URL(URL(), failingURL), localizedDescription);
     resourceError.setIsCancellation(isCancellation);
     resourceError.setIsTimeout(isTimeout);
 

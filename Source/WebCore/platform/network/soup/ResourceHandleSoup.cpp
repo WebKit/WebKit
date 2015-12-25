@@ -1051,7 +1051,7 @@ RefPtr<ResourceHandle> ResourceHandle::releaseForDownload(ResourceHandleClient* 
 
 void ResourceHandle::timeoutFired()
 {
-    client()->didFail(this, ResourceError::timeoutError(firstRequest().url().string()));
+    client()->didFail(this, ResourceError::timeoutError(firstRequest().url()));
     cancel();
 }
 

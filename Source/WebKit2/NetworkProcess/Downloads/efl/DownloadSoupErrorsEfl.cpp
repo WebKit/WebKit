@@ -33,7 +33,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ResourceError platformDownloadNetworkError(int errorCode, const String& failingURL, const String& localizedDescription)
+ResourceError platformDownloadNetworkError(int errorCode, const URL& failingURL, const String& localizedDescription)
 {
     return downloadNetworkError(ResourceError(errorDomainDownload, errorCode, failingURL, localizedDescription));
 }

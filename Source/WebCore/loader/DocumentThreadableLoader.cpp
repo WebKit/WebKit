@@ -85,7 +85,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     }
 
     if (m_options.crossOriginRequestPolicy == DenyCrossOriginRequests) {
-        m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, request.url().string(), "Cross origin requests are not supported."));
+        m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, request.url(), "Cross origin requests are not supported."));
         return;
     }
 
@@ -119,7 +119,7 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
 
     // Cross-origin requests are only allowed for HTTP and registered schemes. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
     if (!SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(request.url().protocol())) {
-        m_client->didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, request.url().string(), "Cross origin requests are only supported for HTTP."));
+        m_client->didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, request.url(), "Cross origin requests are only supported for HTTP."));
         return;
     }
 
@@ -261,7 +261,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     } else {
         if (!m_sameOriginRequest && m_options.crossOriginRequestPolicy == UseAccessControl) {
             if (!passesAccessControlCheck(response, m_options.allowCredentials(), securityOrigin(), accessControlErrorDescription)) {
-                m_client->didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, response.url().string(), accessControlErrorDescription));
+                m_client->didFailAccessControlCheck(ResourceError(errorDomainWebKitInternal, 0, response.url(), accessControlErrorDescription));
                 return;
             }
         }
@@ -333,7 +333,7 @@ void DocumentThreadableLoader::preflightSuccess()
     loadRequest(*actualRequest, SkipSecurityCheck);
 }
 
-void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const String& url, const String& errorDescription)
+void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const URL& url, const String& errorDescription)
 {
     ResourceError error(errorDomainWebKitInternal, 0, url, errorDescription);
     if (m_actualRequest)

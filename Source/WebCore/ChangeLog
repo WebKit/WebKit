@@ -1,3 +1,108 @@
+2015-12-25  David Kilzer  <ddkilzer@apple.com>
+
+        ResourceError should store failingURL as URL instead of String to avoid reparsing and to address FIXME comments in ResourceErrorCF.cpp and ResourceErrorMac.mm
+        <http://webkit.org/b/146391>
+
+        Reviewed by Antti Koivisto.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        * loader/DocumentThreadableLoader.h:
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        - Switch type of 'url' argument of preflightFailure() from
+          String to URL.
+        - Update for type change of 'failingURL' argument to
+          ResourceError().
+
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::responseReceived):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::loadDataURL):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        - Update for type change of 'failingURL' argument to
+          ResourceError().
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didFailAccessControlCheck):
+        - Convert failingURL() to String explicitly.
+
+        * platform/efl/ErrorsEfl.cpp:
+        (WebCore::cancelledError):
+        (WebCore::blockedError):
+        (WebCore::blockedByContentBlockerError):
+        (WebCore::cannotShowURLError):
+        (WebCore::interruptedForPolicyChangeError):
+        (WebCore::cannotShowMIMETypeError):
+        (WebCore::fileDoesNotExistError):
+        (WebCore::pluginWillHandleLoadError):
+        (WebCore::downloadCancelledByUserError):
+        (WebCore::downloadDestinationError):
+        * platform/gtk/ErrorsGtk.cpp:
+        (WebCore::cancelledError):
+        (WebCore::blockedError):
+        (WebCore::blockedByContentBlockerError):
+        (WebCore::cannotShowURLError):
+        (WebCore::interruptedForPolicyChangeError):
+        (WebCore::cannotShowMIMETypeError):
+        (WebCore::fileDoesNotExistError):
+        (WebCore::pluginWillHandleLoadError):
+        (WebCore::downloadCancelledByUserError):
+        (WebCore::downloadDestinationError):
+        - Update for type change of 'failingURL' argument to
+          ResourceError().
+
+        * platform/network/ResourceErrorBase.h:
+        (WebCore::ResourceErrorBase::failingURL):
+        - Change return type from String to URL.
+        (WebCore::ResourceErrorBase::ResourceErrorBase):
+        * platform/network/cf/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        - Change type of 'failingURL' from String to URL.
+
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::ResourceError):
+        - Change type of 'failingURL' from String to URL.
+        (WebCore::ResourceError::platformLazyInit):
+        - Clean up code and address FIXME by parsing CFURLRef using
+          URL() constructor.
+        (WebCore::ResourceError::cfError):
+        - Clean up code and address FIXME after switching type of
+          m_failingURL.
+
+        * platform/network/curl/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        - Change type of 'failingURL' from String to URL.
+
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::createNSErrorFromResourceErrorBase):
+        (WebCore::ResourceError::platformLazyInit):
+        - Clean up code and address FIXME after switching type of
+          m_failingURL.
+
+        * platform/network/soup/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::timeoutError):
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::failingURI):
+        (WebCore::ResourceError::timeoutError):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::timeoutFired):
+        - Change type of 'failingURL' from String to URL.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFail):
+        - Convert failingURL() to String explicitly.
+        - Also switch to using makeString().
+
 2015-12-24  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: x2 >= x1 in WebCore::RenderElement::drawLineForBoxSide

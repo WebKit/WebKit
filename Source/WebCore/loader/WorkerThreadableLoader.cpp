@@ -139,7 +139,7 @@ void WorkerThreadableLoader::MainThreadBridge::cancel()
     if (!clientWrapper->done()) {
         // If the client hasn't reached a termination state, then transition it by sending a cancellation error.
         // Note: no more client callbacks will be done after this method -- the clearClientWrapper() call ensures that.
-        ResourceError error(String(), 0, String(), String());
+        ResourceError error(String(), 0, URL(), String());
         error.setIsCancellation(true);
         clientWrapper->didFail(error);
     }

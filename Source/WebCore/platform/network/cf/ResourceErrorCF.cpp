@@ -49,7 +49,7 @@ ResourceError::ResourceError(CFErrorRef cfError)
 }
 
 #if PLATFORM(WIN)
-ResourceError::ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription, CFDataRef certificate)
+ResourceError::ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate)
     : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
     , m_dataIsUpToDate(true)
     , m_certificate(certificate)
@@ -101,17 +101,12 @@ void ResourceError::platformLazyInit()
     if (userInfo.get()) {
         CFStringRef failingURLString = (CFStringRef) CFDictionaryGetValue(userInfo.get(), failingURLStringKey);
         if (failingURLString)
-            m_failingURL = String(failingURLString);
+            m_failingURL = URL(URL(), failingURLString);
         else {
             CFURLRef failingURL = (CFURLRef) CFDictionaryGetValue(userInfo.get(), failingURLKey);
             if (failingURL) {
-                RetainPtr<CFURLRef> absoluteURLRef = adoptCF(CFURLCopyAbsoluteURL(failingURL));
-                if (absoluteURLRef.get()) {
-                    // FIXME: CFURLGetString returns a normalized URL which is different from what is actually used by CFNetwork.
-                    // We should use CFURLGetBytes instead.
-                    failingURLString = CFURLGetString(absoluteURLRef.get());
-                    m_failingURL = String(failingURLString);
-                }
+                if (RetainPtr<CFURLRef> absoluteURLRef = adoptCF(CFURLCopyAbsoluteURL(failingURL)))
+                    m_failingURL = URL(absoluteURLRef.get());
             }
         }
         m_localizedDescription = (CFStringRef) CFDictionaryGetValue(userInfo.get(), kCFErrorLocalizedDescriptionKey);
@@ -152,12 +147,9 @@ CFErrorRef ResourceError::cfError() const
             CFDictionarySetValue(userInfo.get(), kCFErrorLocalizedDescriptionKey, m_localizedDescription.createCFString().get());
 
         if (!m_failingURL.isEmpty()) {
-            RetainPtr<CFStringRef> failingURLString = m_failingURL.createCFString();
+            RetainPtr<CFStringRef> failingURLString = m_failingURL.string().createCFString();
             CFDictionarySetValue(userInfo.get(), failingURLStringKey, failingURLString.get());
-            // FIXEME: We normally create a CFURL from a string by using URL::createCFURL, which handles
-            // cases correctly that CFURLCreateWithString handles incorrectly.
-            RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithString(0, failingURLString.get(), 0));
-            if (url)
+            if (RetainPtr<CFURLRef> url = m_failingURL.createCFURL())
                 CFDictionarySetValue(userInfo.get(), failingURLKey, url.get());
         }
 

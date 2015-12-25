@@ -62,10 +62,10 @@ private:
         GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
         if (resourceError.tlsErrors()) {
-            webkitWebViewLoadFailedWithTLSErrors(m_webView, resourceError.failingURL().utf8().data(), error.get(),
+            webkitWebViewLoadFailedWithTLSErrors(m_webView, resourceError.failingURL().string().utf8().data(), error.get(),
                 static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()), resourceError.certificate());
         } else
-            webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_STARTED, resourceError.failingURL().utf8().data(), error.get());
+            webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_STARTED, resourceError.failingURL().string().utf8().data(), error.get());
     }
 
     void didCommitLoadForFrame(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, API::Object* /* userData */) override
@@ -88,7 +88,7 @@ private:
             return;
         GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
             toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().data()));
-        webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_COMMITTED, resourceError.failingURL().utf8().data(), error.get());
+        webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_COMMITTED, resourceError.failingURL().string().utf8().data(), error.get());
     }
 
     void didDisplayInsecureContentForFrame(WebPageProxy&, WebFrameProxy&, API::Object* /* userData */) override
