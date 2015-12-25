@@ -1,5 +1,30 @@
 2015-12-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Use an enum for RenderElement's baseTypeFlags
+        https://bugs.webkit.org/show_bug.cgi?id=152553
+
+        Reviewed by Zalan Bujtas.
+
+        Use an enum, rather than unsigned, for the BaseTypeFlags bit mask.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::RenderBoxModelObject):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::RenderLayerModelObject):
+        * rendering/RenderLayerModelObject.h:
+
+2015-12-24  Simon Fraser  <simon.fraser@apple.com>
+
         Remove the unused #define _USE_MATH_DEFINES
         https://bugs.webkit.org/show_bug.cgi?id=152034
 

@@ -628,8 +628,8 @@ public:
     const RenderBox* findEnclosingScrollableContainer() const;
 
 protected:
-    RenderBox(Element&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
-    RenderBox(Document&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
+    RenderBox(Element&, Ref<RenderStyle>&&, BaseTypeFlags);
+    RenderBox(Document&, Ref<RenderStyle>&&, BaseTypeFlags);
 
     virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

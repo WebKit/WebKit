@@ -218,17 +218,19 @@ public:
     bool childRequiresTable(const RenderObject& child) const;
 
 protected:
-    enum BaseTypeFlags {
-        RenderLayerModelObjectFlag = 1 << 0,
-        RenderBoxModelObjectFlag = 1 << 1,
-        RenderInlineFlag = 1 << 2,
-        RenderReplacedFlag = 1 << 3,
-        RenderBlockFlag = 1 << 4,
-        RenderBlockFlowFlag = 1 << 5,
+    enum BaseTypeFlag {
+        RenderLayerModelObjectFlag  = 1 << 0,
+        RenderBoxModelObjectFlag    = 1 << 1,
+        RenderInlineFlag            = 1 << 2,
+        RenderReplacedFlag          = 1 << 3,
+        RenderBlockFlag             = 1 << 4,
+        RenderBlockFlowFlag         = 1 << 5,
     };
+    
+    typedef unsigned BaseTypeFlags;
 
-    RenderElement(Element&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
-    RenderElement(Document&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
+    RenderElement(Element&, Ref<RenderStyle>&&, BaseTypeFlags);
+    RenderElement(Document&, Ref<RenderStyle>&&, BaseTypeFlags);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -276,7 +278,7 @@ protected:
     void paintOutline(PaintInfo&, const LayoutRect&);
 
 private:
-    RenderElement(ContainerNode&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
+    RenderElement(ContainerNode&, Ref<RenderStyle>&&, BaseTypeFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;

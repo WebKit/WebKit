@@ -81,7 +81,7 @@ static HashMap<const RenderObject*, ControlStates*>& controlStatesRendererMap()
     return map;
 }
 
-inline RenderElement::RenderElement(ContainerNode& elementOrDocument, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
+inline RenderElement::RenderElement(ContainerNode& elementOrDocument, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
     : RenderObject(elementOrDocument)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
@@ -103,12 +103,12 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, Ref<Render
 {
 }
 
-RenderElement::RenderElement(Element& element, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
+RenderElement::RenderElement(Element& element, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(static_cast<ContainerNode&>(element), WTF::move(style), baseTypeFlags)
 {
 }
 
-RenderElement::RenderElement(Document& document, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
+RenderElement::RenderElement(Document& document, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
     : RenderElement(static_cast<ContainerNode&>(document), WTF::move(style), baseTypeFlags)
 {
 }

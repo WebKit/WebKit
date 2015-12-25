@@ -181,12 +181,12 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Element& element, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
+RenderBlock::RenderBlock(Element& element, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
     : RenderBox(element, WTF::move(style), baseTypeFlags | RenderBlockFlag)
 {
 }
 
-RenderBlock::RenderBlock(Document& document, Ref<RenderStyle>&& style, unsigned baseTypeFlags)
+RenderBlock::RenderBlock(Document& document, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
     : RenderBox(document, WTF::move(style), baseTypeFlags | RenderBlockFlag)
 {
 }
