@@ -277,9 +277,9 @@ opacity
 orphans [Inherited, AutoFunctions]
 outline [Longhands=outline-color|outline-style|outline-width]
 outline-color [VisitedLinkColorSupport, Initial=invalidColor]
-outline-offset [Converter=ComputedLength<int>]
+outline-offset [Converter=ComputedLength<float>]
 outline-style [Custom=All]
-outline-width [Converter=LineWidth<unsigned short>]
+outline-width [Converter=LineWidth<float>]
 overflow [Longhands=overflow-x|overflow-y]
 overflow-wrap
 overflow-x

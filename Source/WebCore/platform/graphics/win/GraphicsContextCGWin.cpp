@@ -130,14 +130,14 @@ void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& po
     CGContextDrawImage(m_data->m_cgContext.get(), CGRectMake(point.x(), point.y(), image->size().width(), image->size().height()), cgImage.get());   
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, int width, int offset, const Color& color)
+void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
     // FIXME: implement
 }
 
 // FIXME: This is nearly identical to the GraphicsContext::drawFocusRing function in GraphicsContextMac.mm.
 // The code could move to GraphicsContextCG.cpp and be shared.
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float width, float offset, const Color& color)
 {
     if (paintingDisabled())
         return;

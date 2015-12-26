@@ -1,3 +1,37 @@
+2015-12-25  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Add subpixel support for outline.
+        https://bugs.webkit.org/show_bug.cgi?id=152560
+
+        Reviewed by Simon Fraser.
+
+        This patch adds support for subpixel outline-width/outline-offset.
+
+        Test: fast/borders/hidpi-outline-hairline-painting.html
+
+        * css/CSSPropertyNames.in:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::computeMaxOutlineSize):
+        (WebCore::RenderElement::paintOutline):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setMaximalOutlineSize):
+        * rendering/RenderView.h:
+        * rendering/style/OutlineValue.h:
+        (WebCore::OutlineValue::offset):
+        (WebCore::OutlineValue::OutlineValue): Deleted.
+        * rendering/style/RenderStyle.h:
+
 2015-12-25  Alexey Proskuryakov  <ap@apple.com>
 
         ASSERT(m_nsResponse) in ResourceResponse::platformCertificateInfo() when running tests in iOS simulator

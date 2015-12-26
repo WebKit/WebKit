@@ -377,7 +377,7 @@ void RenderElement::computeMaxOutlineSize(const RenderStyle& style) const
     // during styleDidChange (it's used by clippedOverflowRectForRepaint()).
     if (!style.outlineWidth())
         return;
-    int maxOutlineSize = style.outlineSize();
+    float maxOutlineSize = style.outlineSize();
     if (style.outlineStyleIsAuto())
         maxOutlineSize = std::max(theme().platformFocusRingWidth() + style.outlineOffset(), maxOutlineSize);
 
@@ -2107,9 +2107,8 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
         return;
 
     RenderStyle& styleToUse = style();
-    LayoutUnit outlineWidth = styleToUse.outlineWidth();
-
-    int outlineOffset = styleToUse.outlineOffset();
+    float outlineWidth = floorToDevicePixel(styleToUse.outlineWidth(), document().deviceScaleFactor());
+    float outlineOffset = floorToDevicePixel(styleToUse.outlineOffset(), document().deviceScaleFactor());
 
     // Only paint the focus ring by hand if the theme isn't able to draw it.
     if (styleToUse.outlineStyleIsAuto() && !theme().supportsFocusRing(styleToUse))

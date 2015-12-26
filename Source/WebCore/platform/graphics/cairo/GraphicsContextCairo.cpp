@@ -522,7 +522,7 @@ static inline void adjustFocusRingColor(Color& color)
 #endif
 }
 
-static inline void adjustFocusRingLineWidth(int& width)
+static inline void adjustFocusRingLineWidth(float& width)
 {
 #if PLATFORM(GTK)
     width = 2;
@@ -540,7 +540,7 @@ static inline StrokeStyle focusRingStrokeStyle()
 #endif
 }
 
-void GraphicsContext::drawFocusRing(const Path& path, int width, int /* offset */, const Color& color)
+void GraphicsContext::drawFocusRing(const Path& path, float width, float /* offset */, const Color& color)
 {
     // FIXME: We should draw paths that describe a rectangle with rounded corners
     // so as to be consistent with how we draw rectangular focus rings.
@@ -558,7 +558,7 @@ void GraphicsContext::drawFocusRing(const Path& path, int width, int /* offset *
     cairo_restore(cr);
 }
 
-void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int /* offset */, const Color& color)
+void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float width, float /* offset */, const Color& color)
 {
     if (paintingDisabled())
         return;

@@ -516,7 +516,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
     // FIXME: Do we need additional code to clip the path to the image's bounding box?
 
     RenderStyle* areaElementStyle = areaElement.computedStyle();
-    unsigned short outlineWidth = areaElementStyle->outlineWidth();
+    float outlineWidth = areaElementStyle->outlineWidth();
     if (!outlineWidth)
         return;
 

@@ -1,3 +1,15 @@
+2015-12-25  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Add subpixel support for outline.
+        https://bugs.webkit.org/show_bug.cgi?id=152560
+
+        Unable to ref-test other outline types.
+
+        Reviewed by Simon Fraser.
+
+        * fast/borders/hidpi-outline-hairline-painting-expected.html: Added.
+        * fast/borders/hidpi-outline-hairline-painting.html: Added.
+
 2015-12-24  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: x2 >= x1 in WebCore::RenderElement::drawLineForBoxSide

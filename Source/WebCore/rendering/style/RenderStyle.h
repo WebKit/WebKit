@@ -674,8 +674,8 @@ public:
     float borderStartWidth() const;
     float borderEndWidth() const;
 
-    unsigned short outlineSize() const { return std::max(0, outlineWidth() + outlineOffset()); }
-    unsigned short outlineWidth() const
+    float outlineSize() const { return std::max<float>(0, outlineWidth() + outlineOffset()); }
+    float outlineWidth() const
     {
         if (m_background->outline().style() == BNONE)
             return 0;
@@ -887,7 +887,7 @@ public:
 
     // CSS3 Getter Methods
 
-    int outlineOffset() const
+    float outlineOffset() const
     {
         if (m_background->outline().style() == BNONE)
             return 0;
@@ -1325,7 +1325,7 @@ public:
     void setBorderBottomStyle(EBorderStyle v) { SET_VAR(surround, border.m_bottom.m_style, v); }
     void setBorderBottomColor(const Color& v) { SET_BORDERVALUE_COLOR(surround, border.m_bottom, v); }
 
-    void setOutlineWidth(unsigned short v) { SET_VAR(m_background, m_outline.m_width, v); }
+    void setOutlineWidth(float v) { SET_VAR(m_background, m_outline.m_width, v); }
     void setOutlineStyleIsAuto(OutlineIsAuto isAuto) { SET_VAR(m_background, m_outline.m_isAuto, isAuto); }
     void setOutlineStyle(EBorderStyle v) { SET_VAR(m_background, m_outline.m_style, v); }
     void setOutlineColor(const Color& v) { SET_BORDERVALUE_COLOR(m_background, m_outline, v); }
@@ -1499,7 +1499,7 @@ public:
     void setPageBreakAfter(EPageBreak b) { noninherited_flags.setPageBreakAfter(b); }
 
     // CSS3 Setters
-    void setOutlineOffset(int v) { SET_VAR(m_background, m_outline.m_offset, v); }
+    void setOutlineOffset(float v) { SET_VAR(m_background, m_outline.m_offset, v); }
     void setTextShadow(std::unique_ptr<ShadowData>, bool add = false);
     void setTextStrokeColor(const Color& c) { SET_VAR(rareInheritedData, textStrokeColor, c); }
     void setTextStrokeWidth(float w) { SET_VAR(rareInheritedData, textStrokeWidth, w); }
@@ -1922,7 +1922,7 @@ public:
     static StyleImage* initialListStyleImage() { return 0; }
     static float initialBorderWidth() { return 3; }
     static unsigned short initialColumnRuleWidth() { return 3; }
-    static unsigned short initialOutlineWidth() { return 3; }
+    static float initialOutlineWidth() { return 3; }
     static float initialLetterSpacing() { return 0; }
     static Length initialWordSpacing() { return Length(Fixed); }
     static Length initialSize() { return Length(); }
@@ -1955,7 +1955,7 @@ public:
     static TextUnderlinePosition initialTextUnderlinePosition() { return TextUnderlinePositionAuto; }
     static float initialZoom() { return 1.0f; }
     static TextZoom initialTextZoom() { return TextZoomNormal; }
-    static int initialOutlineOffset() { return 0; }
+    static float initialOutlineOffset() { return 0; }
     static float initialOpacity() { return 1.0f; }
     static EBoxAlignment initialBoxAlign() { return BSTRETCH; }
     static EBoxDecorationBreak initialBoxDecorationBreak() { return DSLICE; }
