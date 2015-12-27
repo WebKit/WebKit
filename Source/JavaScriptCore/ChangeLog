@@ -1,3 +1,27 @@
+2015-12-26  Mark Lam  <mark.lam@apple.com>
+
+        Rename NodeMayOverflowInXXX to NodeMayOverflowInt32InXXX.
+        https://bugs.webkit.org/show_bug.cgi?id=152555
+
+        Reviewed by Alex Christensen.
+
+        That's because the NodeMayOverflowInBaseline and NodeMayOverflowInDFG flags only
+        indicates potential overflowing of Int32 values.  We'll be adding overflow
+        profiling for Int52 values later, and we should disambiguate between the 2 types.
+
+        This is purely a renaming patch.  There are no semantic changes.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        (JSC::DFG::nodeMayOverflowInt32):
+        (JSC::DFG::nodeCanSpeculateInt32):
+        (JSC::DFG::nodeMayOverflow): Deleted.
+
 2015-12-23  Andreas Kling  <akling@apple.com>
 
         jsc CLI tool crashes on EOF.
