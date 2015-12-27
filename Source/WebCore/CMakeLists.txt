@@ -6,8 +6,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/battery"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
-    "${WEBCORE_DIR}/Modules/gamepad"
-    "${WEBCORE_DIR}/Modules/gamepad/deprecated"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
@@ -139,7 +137,6 @@ set(WebCore_IDL_INCLUDES
     Modules/airplay
     Modules/battery
     Modules/encryptedmedia
-    Modules/gamepad
     Modules/geolocation
     Modules/indexeddb
     Modules/indieui
@@ -154,8 +151,6 @@ set(WebCore_IDL_INCLUDES
     Modules/webaudio
     Modules/webdatabase
     Modules/websockets
-
-    Modules/gamepad/deprecated
 
     bindings/generic
     bindings/js
@@ -172,17 +167,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/battery/BatteryManager.idl
     Modules/battery/NavigatorBattery.idl
-
-# FIXME: These were causing name conflicts on Mac, and the Gamepad API is not finished yet.
-# https://bugs.webkit.org/show_bug.cgi?id=135858
-#   Modules/gamepad/Gamepad.idl
-#   Modules/gamepad/GamepadButton.idl
-#   Modules/gamepad/GamepadEvent.idl
-#   Modules/gamepad/NavigatorGamepad.idl
-
-    Modules/gamepad/deprecated/Gamepad.idl
-    Modules/gamepad/deprecated/GamepadList.idl
-    Modules/gamepad/deprecated/NavigatorGamepad.idl
 
     Modules/geolocation/Coordinates.idl
     Modules/geolocation/Geolocation.idl
@@ -828,10 +812,6 @@ set(WebCore_SOURCES
     Modules/battery/BatteryManager.cpp
     Modules/battery/BatteryStatus.cpp
     Modules/battery/NavigatorBattery.cpp
-
-    Modules/gamepad/deprecated/Gamepad.cpp
-    Modules/gamepad/deprecated/GamepadList.cpp
-    Modules/gamepad/deprecated/NavigatorGamepad.cpp
 
     Modules/geolocation/Coordinates.cpp
     Modules/geolocation/GeoNotifier.cpp
@@ -3249,6 +3229,43 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/FormatConverter.cpp
         platform/graphics/GraphicsContext3D.cpp
+    )
+endif ()
+
+if (ENABLE_GAMEPAD)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/Modules/gamepad"
+    )
+
+    list(APPEND WebCore_IDL_INCLUDES
+        Modules/gamepad
+    )
+
+    list(APPEND WebCore_NON_SVG_IDL_FILES
+        Modules/gamepad/Gamepad.idl
+        Modules/gamepad/GamepadButton.idl
+        Modules/gamepad/GamepadEvent.idl
+        Modules/gamepad/NavigatorGamepad.idl
+    )
+elseif (ENABLE_GAMEPAD_DEPRECATED)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/Modules/gamepad/deprecated"
+    )
+
+    list(APPEND WebCore_IDL_INCLUDES
+        Modules/gamepad/deprecated
+    )
+
+    list(APPEND WebCore_NON_SVG_IDL_FILES
+        Modules/gamepad/deprecated/Gamepad.idl
+        Modules/gamepad/deprecated/GamepadList.idl
+        Modules/gamepad/deprecated/NavigatorGamepad.idl
+    )
+
+    list(APPEND WebCore_SOURCES
+        Modules/gamepad/deprecated/Gamepad.cpp
+        Modules/gamepad/deprecated/GamepadList.cpp
+        Modules/gamepad/deprecated/NavigatorGamepad.cpp
     )
 endif ()
 

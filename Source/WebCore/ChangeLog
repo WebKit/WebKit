@@ -1,3 +1,15 @@
+2015-12-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake] Rearrange new gamepad files with deprecated files
+        https://bugs.webkit.org/show_bug.cgi?id=152564
+
+        Reviewed by Alex Christensen.
+
+        New gamepad files have been commented out in CMakeLists.txt so far. This patch
+        rearrange the files with deprecated files using ENABLE_GAMEPAD.
+
+        * CMakeLists.txt:
+
 2015-12-26  Per Arne Vollan  <peavo@outlook.com>
 
         [Curl] Compile errors.
