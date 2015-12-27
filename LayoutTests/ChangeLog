@@ -1,3 +1,17 @@
+2015-12-27  Zalan Bujtas  <zalan@apple.com>
+
+        Should never be reached failure in WebCore::RenderElement::clearLayoutRootIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=151590
+
+        Reviewed by Simon Fraser.
+
+        We should always set the layoutroot when a new subtree layout is requested (and convert it
+        to a full layout when needed). It ensures that renderers are detached cleanly even when
+        they are set as layoutroot.
+
+        * fast/block/assert-when-layout-root-is-not-cleared-expected.txt: Added.
+        * fast/block/assert-when-layout-root-is-not-cleared.html: Added.
+
 2015-12-25  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Add subpixel support for outline.

@@ -2654,7 +2654,8 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
     ASSERT(frame().view() == this);
 
     if (renderView.needsLayout()) {
-        newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
+        m_layoutRoot = &newRelayoutRoot;
+        convertSubtreeLayoutToFullLayout();
         return;
     }
 
@@ -2695,8 +2696,8 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
     }
 
     // Just do a full relayout.
+    m_layoutRoot = &newRelayoutRoot;
     convertSubtreeLayoutToFullLayout();
-    newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
     InspectorInstrumentation::didInvalidateLayout(frame());
 }
 
