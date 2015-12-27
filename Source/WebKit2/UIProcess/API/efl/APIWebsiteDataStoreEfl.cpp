@@ -28,7 +28,6 @@
 
 #include <Efreet.h>
 #include <WebCore/FileSystem.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace API {
 

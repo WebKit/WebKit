@@ -1,3 +1,18 @@
+2015-12-26  Joonghun Park  <jh718.park@samsung.com>
+
+        [WK2][EFL] Use eina_file_path_join at platformDefaultIconDatabasePath in WebProcessPoolEfl
+        https://bugs.webkit.org/show_bug.cgi?id=152565
+
+        Reviewed by Gyuyoung Kim.
+
+        Use eina_file_path_join and EINA_PATH_SEP_S at platformDefaultIconDatabasePath
+        instead of operator+ and separator "/" respectively
+        to concatenate paths.
+
+        * UIProcess/API/efl/APIWebsiteDataStoreEfl.cpp:
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::platformDefaultIconDatabasePath):
+
 2015-12-25  David Kilzer  <ddkilzer@apple.com>
 
         ResourceError should store failingURL as URL instead of String to avoid reparsing and to address FIXME comments in ResourceErrorCF.cpp and ResourceErrorMac.mm

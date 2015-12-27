@@ -109,7 +109,10 @@ String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
 
 String WebProcessPool::platformDefaultIconDatabasePath() const
 {
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/IconDatabase/" + WebCore::IconDatabase::defaultDatabaseFilename();
+    char joinedPath[PATH_MAX];
+    eina_file_path_join(joinedPath, sizeof(joinedPath), efreet_data_home_get(), "WebKitEfl" EINA_PATH_SEP_S "IconDatabase");
+
+    return WebCore::pathByAppendingComponent(joinedPath, WebCore::IconDatabase::defaultDatabaseFilename());
 }
 
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
