@@ -59,6 +59,13 @@ public:
     // This tells you the registers that were used.
     const RegisterSet& usedRegisters() const;
 
+    // This is a useful helper if you want to do register allocation inside of a patchpoint. You
+    // can only use callee-save registers if they were saved in the prologue. This gives you the
+    // used register set that's useful for such settings by returning:
+    //
+    //     usedRegisters() | (RegisterSet::calleeSaveRegisters() - proc.calleeSaveRegisters())
+    RegisterSet unavailableRegisters() const;
+
     // This is provided for convenience; it means that you don't have to capture it if you don't want to.
     Procedure& proc() const;
     

@@ -2586,8 +2586,8 @@ private:
                 auto generator = Box<JITPutByIdGenerator>::create(
                     jit.codeBlock(), node->origin.semantic,
                     state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic),
-                    params.usedRegisters(), JSValueRegs(params[0].gpr()), JSValueRegs(params[1].gpr()),
-                    GPRInfo::patchpointScratchRegister, ecmaMode,
+                    params.unavailableRegisters(), JSValueRegs(params[0].gpr()),
+                    JSValueRegs(params[1].gpr()), GPRInfo::patchpointScratchRegister, ecmaMode,
                     node->op() == PutByIdDirect ? Direct : NotDirect);
 
                 generator->generateFastPath(jit);
@@ -2603,8 +2603,8 @@ private:
                         generator->slowPathJump().link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
                         CCallHelpers::Call slowPathCall = callOperation(
-                            *state, params.usedRegisters(), jit, node->origin.semantic, &exceptions,
-                            generator->slowPathFunction(), InvalidGPRReg,
+                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            &exceptions, generator->slowPathFunction(), InvalidGPRReg,
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
                             params[0].gpr(), CCallHelpers::TrustedImmPtr(uid)).call();
                         jit.jump().linkTo(done, &jit);
@@ -7091,7 +7091,8 @@ private:
                 auto generator = Box<JITGetByIdGenerator>::create(
                     jit.codeBlock(), node->origin.semantic,
                     state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic),
-                    params.usedRegisters(), JSValueRegs(params[1].gpr()), JSValueRegs(params[0].gpr()));
+                    params.unavailableRegisters(), JSValueRegs(params[1].gpr()),
+                    JSValueRegs(params[0].gpr()));
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
@@ -7106,8 +7107,8 @@ private:
                         generator->slowPathJump().link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
                         CCallHelpers::Call slowPathCall = callOperation(
-                            *state, params.usedRegisters(), jit, node->origin.semantic, &exceptions,
-                            operationGetByIdOptimize, params[0].gpr(),
+                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            &exceptions, operationGetByIdOptimize, params[0].gpr(),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
                             CCallHelpers::TrustedImmPtr(uid)).call();
                         jit.jump().linkTo(done, &jit);
@@ -8516,7 +8517,7 @@ private:
                 CCallHelpers::PatchableJump patchableJump = jit.patchableJump();
                 CCallHelpers::Label done = jit.label();
 
-                RegisterSet usedRegisters = params.usedRegisters();
+                RegisterSet usedRegisters = params.unavailableRegisters();
 
                 // FIXME: As part of handling exceptions, we need to create a concrete OSRExit here.
                 // Doing so should automagically register late paths that emit exit thunks.
@@ -8544,7 +8545,7 @@ private:
                                     generatorJump, CodeLocationLabel(
                                         vm->getCTIStub(
                                             lazySlowPathGenerationThunkGenerator).code()));
-                                    
+                                
                                 CodeLocationJump linkedPatchableJump = CodeLocationJump(
                                     linkBuffer.locationOf(patchableJump));
                                 CodeLocationLabel linkedDone = linkBuffer.locationOf(done);

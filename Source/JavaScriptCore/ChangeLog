@@ -1,3 +1,54 @@
+2015-12-27  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should know that used registers are not the same thing as used registers. Rename the
+        latter to unavailable registers to avoid future confusion.
+        https://bugs.webkit.org/show_bug.cgi?id=152572
+
+        Reviewed by Saam Barati.
+
+        Prior to this change, we used the term "used registers" in two different senses:
+
+        - The set of registers that are live at some point in the current compilation unit. A
+          register is live at some point if it is read after that point on some path through that
+          point.
+
+        - The set of registers that are not available for scratch register use at some point. A
+          register may not be available if it is live or if it is a callee-save register but it is
+          not being saved by the current compilation.
+
+        In the old FTL LLVM code, we had some translations from the first sense into the second
+        sense. We forgot to do those in FTL B3, and so we get crashes, for example in V8/splay. That
+        benchmark highlighted this issue because it fired some lazy slow paths, and then used an
+        unsaved callee-save for scratch.
+ 
+        Curiously, we could merge these two definitions by observing that, in some sense, an unsaved
+        callee save is live at every point in a compilation in the sense that it may contain a value
+        that will be read when the compilation returns. That's pretty cool, but it feels strange to
+        me. This isn't how we would normally define liveness of registers. It's not how the
+        Air::TmpLiveness analysis would do it for any of its other clients.
+
+        So, this changes B3 to have two different concepts:
+
+        - Used registers. These are the registers that are live.
+
+        - Unavailable registers. These are the registers that are not available for scratch. It's
+          always a superset of used registers.
+
+        This also changes FTLLower to use unavailableRegisters() pretty much everywhere that it
+        previously used usedRegisters().
+
+        This makes it possible to run V8/splay.
+
+        * b3/B3StackmapGenerationParams.cpp:
+        (JSC::B3::StackmapGenerationParams::usedRegisters):
+        (JSC::B3::StackmapGenerationParams::unavailableRegisters):
+        (JSC::B3::StackmapGenerationParams::proc):
+        * b3/B3StackmapGenerationParams.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+
 2015-12-25  Andy Estes  <aestes@apple.com>
 
         Stop moving local objects in return statements
