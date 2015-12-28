@@ -1,3 +1,11 @@
+2015-12-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, move Sebastian Dröge to committers list
+
+        He accidentally added himself to the reviewers list because the file is confusing.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-12-24  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the unused #define _USE_MATH_DEFINES

@@ -3536,6 +3536,18 @@
             "rmondello"
          ]
       },
+      "Sebastian Dr\u00f6ge" : {
+         "emails" : [
+            "slomo@coaxion.net",
+            "sebastian@centricular.com",
+            "sebastian.droege@collabora.co.uk",
+            "sebastian.droege@collabora.com"
+         ],
+         "expertise" : "WebKitGTK+, Media support (focused on the GStreamer implementation)",
+         "nicks" : [
+            "slomo"
+         ]
+      },
       "Sungmann Cho" : {
          "emails" : [
             "sungmann.cho@navercorp.com",
@@ -4817,18 +4829,6 @@
          ],
          "nicks" : [
             "saamyjoon"
-         ]
-      },
-      "Sebastian Dr\u00f6ge" : {
-         "emails" : [
-            "slomo@coaxion.net",
-            "sebastian@centricular.com",
-            "sebastian.droege@collabora.co.uk",
-            "sebastian.droege@collabora.com"
-         ],
-         "expertise" : "WebKitGTK+, Media support (focused on the GStreamer implementation)",
-         "nicks" : [
-            "slomo"
          ]
       },
       "Sergio Villar Senin" : {
