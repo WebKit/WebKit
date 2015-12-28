@@ -1,3 +1,15 @@
+2015-12-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake][EFL] Fix build breaks when enabling GAMEPAD
+        https://bugs.webkit.org/show_bug.cgi?id=152573
+
+        Reviewed by Alex Christensen.
+
+        When enabling GAMEPAD feature on EFL and GTK, there are build breaks.
+        Fixed all.
+
+        * CMakeLists.txt:
+
 2015-12-25  Andy Estes  <aestes@apple.com>
 
         Stop moving local objects in return statements
