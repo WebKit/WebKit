@@ -44,7 +44,7 @@ Ref<InProcessIDBServer> InProcessIDBServer::create()
 {
     Ref<InProcessIDBServer> server = adoptRef(*new InProcessIDBServer);
     server->m_server->registerConnection(server->connectionToClient());
-    return WTF::move(server);
+    return server;
 }
 
 InProcessIDBServer::InProcessIDBServer()

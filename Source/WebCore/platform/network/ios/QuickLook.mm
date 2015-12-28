@@ -403,7 +403,7 @@ std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle,
 
     std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, nsResponse, delegate));
     handle->client()->didCreateQuickLookHandle(*quickLookHandle);
-    return WTF::move(quickLookHandle);
+    return quickLookHandle;
 }
 
 #if USE(CFNETWORK)
@@ -417,7 +417,7 @@ std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle,
     WebQuickLookHandleAsDelegate *delegate = [[[WebQuickLookHandleAsDelegate alloc] initWithConnectionDelegate:connectionDelegate] autorelease];
     std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, nsResponse, delegate));
     handle->client()->didCreateQuickLookHandle(*quickLookHandle);
-    return WTF::move(quickLookHandle);
+    return quickLookHandle;
 }
 
 CFURLResponseRef QuickLookHandle::cfResponse()
@@ -439,7 +439,7 @@ std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceLoader& loader,
     std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([loader.originalRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], nil, response.nsURLResponse(), delegate.get()));
     [delegate setQuickLookHandle:quickLookHandle.get()];
     loader.didCreateQuickLookHandle(*quickLookHandle);
-    return WTF::move(quickLookHandle);
+    return quickLookHandle;
 }
 
 NSURLResponse *QuickLookHandle::nsResponse()

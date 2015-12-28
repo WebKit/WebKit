@@ -667,7 +667,7 @@ RefPtr<OriginLock> DatabaseTracker::originLockFor(SecurityOrigin* origin)
     ASSERT(lock);
     addResult.iterator->value = lock;
 
-    return WTF::move(lock);
+    return lock;
 }
 
 void DatabaseTracker::deleteOriginLockFor(SecurityOrigin* origin)

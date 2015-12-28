@@ -976,7 +976,7 @@ NEVER_INLINE Ref<StringImpl> CSSPrimitiveValue::formatNumberValue(const char* su
     for (unsigned i = 0; i < suffixLength; ++i)
         buffer[length + i] = static_cast<LChar>(suffix[i]);
 
-    return WTF::move(string);
+    return string;
 }
 
 template <unsigned characterCount>

@@ -52,7 +52,7 @@ IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const
     identifier.m_openingOrigin = m_openingOrigin.isolatedCopy();
     identifier.m_mainFrameOrigin = m_mainFrameOrigin.isolatedCopy();
 
-    return WTF::move(identifier);
+    return identifier;
 }
 
 #ifndef NDEBUG

@@ -117,7 +117,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
 #endif
         }
-        return WTF::move(data);
+        return data;
     }
 
     // Ask the shuffler to put the callee into some registers once the

@@ -164,7 +164,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::Applicatio
     for (const auto& resourceInfo : applicationCacheResources)
         resources->addItem(buildObjectForApplicationCacheResource(resourceInfo));
 
-    return WTF::move(resources);
+    return resources;
 }
 
 Ref<Inspector::Protocol::ApplicationCache::ApplicationCacheResource> InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo& resourceInfo)

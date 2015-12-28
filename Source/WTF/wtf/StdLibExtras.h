@@ -111,6 +111,8 @@ inline bool isPointerTypeAlignmentOkay(Type*)
 
 namespace WTF {
 
+// FIXME: Using this function prevents Clang's move diagnostics (-Wpessimizing-move, -Wredundant-move, -Wself-move) from
+// finding mistakes, since these diagnostics only evaluate calls to std::move().
 template<typename T>
 ALWAYS_INLINE typename std::remove_reference<T>::type&& move(T&& value)
 {

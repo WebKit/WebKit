@@ -1,3 +1,115 @@
+2015-12-25  Andy Estes  <aestes@apple.com>
+
+        Stop moving local objects in return statements
+        https://bugs.webkit.org/show_bug.cgi?id=152557
+
+        Reviewed by Brady Eidson.
+
+        Calling std::move() on a local object in a return statement prevents the compiler from applying the return value optimization.
+
+        Clang can warn about these mistakes with -Wpessimizing-move, although only when std::move() is called directly.
+        I found these issues by temporarily replacing WTF::move with std::move and recompiling.
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::isolatedCopy):
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::deletedValue):
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::objectStoreNames):
+        (WebCore::IDBClient::IDBDatabase::startVersionChangeTransaction):
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::createObjectStore):
+        (WebCore::IDBClient::IDBTransaction::createIndex):
+        (WebCore::IDBClient::IDBTransaction::doRequestOpenCursor):
+        (WebCore::IDBClient::IDBTransaction::requestGetRecord):
+        (WebCore::IDBClient::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBClient::IDBTransaction::requestClearObjectStore):
+        (WebCore::IDBClient::IDBTransaction::requestPutOrAdd):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::takeNextRunnableTransaction):
+        * Modules/indexeddb/shared/IDBDatabaseInfo.cpp:
+        (WebCore::IDBDatabaseInfo::isolatedCopy):
+        (WebCore::IDBDatabaseInfo::objectStoreNames):
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::error):
+        (WebCore::IDBResultData::openDatabaseSuccess):
+        (WebCore::IDBResultData::openDatabaseUpgradeNeeded):
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::versionChange):
+        (WebCore::IDBTransactionInfo::isolatedCopy):
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::create):
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::create):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::originLockFor):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::create):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue):
+        * dom/NodeOrString.cpp:
+        (WebCore::convertNodesOrStringsIntoNode):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer):
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::buildObjectForHeaders):
+        (WebCore::buildObjectForResourceRequest):
+        (WebCore::buildObjectForCachedResource):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildArrayForQuad):
+        (WebCore::buildObjectForFlowRegions):
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNodes):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::createXHRTextDecoder):
+        (WebCore::buildArrayForCookies):
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildMediaObject):
+        (WebCore::InspectorStyle::buildArrayForComputedStyle):
+        (WebCore::buildObjectForSelectorHelper):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForStyle):
+        (WebCore::InspectorStyleSheet::buildArrayForRuleList):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::stopFromConsole):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        (WebCore::TimelineRecordFactory::createFunctionCallData):
+        (WebCore::TimelineRecordFactory::createConsoleProfileData):
+        (WebCore::TimelineRecordFactory::createProbeSampleData):
+        (WebCore::TimelineRecordFactory::createEventDispatchData):
+        (WebCore::TimelineRecordFactory::createGenericTimerData):
+        (WebCore::TimelineRecordFactory::createTimerInstallData):
+        (WebCore::TimelineRecordFactory::createEvaluateScriptData):
+        (WebCore::TimelineRecordFactory::createTimeStampData):
+        (WebCore::TimelineRecordFactory::createAnimationFrameData):
+        (WebCore::createQuad):
+        (WebCore::TimelineRecordFactory::createPaintData):
+        (WebCore::buildInspectorObject):
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::copyWithShouldOpenExternalURLsPolicy):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::QuickLookHandle::create):
+        * testing/Internals.cpp:
+        (WebCore::Internals::openDummyInspectorFrontend):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::createResourceRequest):
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::evaluate):
+
 2015-12-27  Zalan Bujtas  <zalan@apple.com>
 
         Should never be reached failure in WebCore::RenderElement::clearLayoutRootIfNeeded

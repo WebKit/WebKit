@@ -1085,13 +1085,13 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
 
     hadDeferredTransactions = !deferredTransactions.isEmpty();
     if (!hadDeferredTransactions)
-        return WTF::move(currentTransaction);
+        return currentTransaction;
 
     // Prepend the deferred transactions back on the beginning of the deque for future scheduling passes.
     while (!deferredTransactions.isEmpty())
         m_pendingTransactions.prepend(deferredTransactions.takeLast());
 
-    return WTF::move(currentTransaction);
+    return currentTransaction;
 }
 
 void UniqueIDBDatabase::inProgressTransactionCompleted(const IDBResourceIdentifier& transactionIdentifier)

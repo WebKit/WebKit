@@ -47,7 +47,7 @@ IDBDatabaseInfo IDBDatabaseInfo::isolatedCopy() const
     info.m_name = m_name.isolatedCopy();
     info.m_version = m_version;
 
-    return WTF::move(info);
+    return info;
 }
 
 bool IDBDatabaseInfo::hasObjectStore(const String& name) const
@@ -123,7 +123,7 @@ Vector<String> IDBDatabaseInfo::objectStoreNames() const
     for (auto& objectStore : m_objectStoreMap.values())
         names.uncheckedAppend(objectStore.name());
 
-    return WTF::move(names);
+    return names;
 }
 
 void IDBDatabaseInfo::deleteObjectStore(const String& objectStoreName)

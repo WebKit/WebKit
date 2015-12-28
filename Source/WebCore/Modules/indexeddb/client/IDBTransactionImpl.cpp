@@ -444,7 +444,7 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
     auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateObjectStoreOnServer, &IDBTransaction::createObjectStoreOnServer, info);
     scheduleOperation(WTF::move(operation));
 
-    return WTF::move(objectStore);
+    return objectStore;
 }
 
 void IDBTransaction::createObjectStoreOnServer(TransactionOperation& operation, const IDBObjectStoreInfo& info)
@@ -473,7 +473,7 @@ Ref<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStore, const IDB
     auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateIndexOnServer, &IDBTransaction::createIndexOnServer, info);
     scheduleOperation(WTF::move(operation));
 
-    return WTF::move(index);
+    return index;
 }
 
 void IDBTransaction::createIndexOnServer(TransactionOperation& operation, const IDBIndexInfo& info)
@@ -529,7 +529,7 @@ Ref<IDBRequest> IDBTransaction::doRequestOpenCursor(ScriptExecutionContext& cont
     auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didOpenCursorOnServer, &IDBTransaction::openCursorOnServer, cursor->info());
     scheduleOperation(WTF::move(operation));
 
-    return WTF::move(request);
+    return request;
 }
 
 void IDBTransaction::openCursorOnServer(TransactionOperation& operation, const IDBCursorInfo& info)
@@ -584,7 +584,7 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(ScriptExecutionContext& context
     auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, keyRangeData);
     scheduleOperation(WTF::move(operation));
 
-    return WTF::move(request);
+    return request;
 }
 
 Ref<IDBRequest> IDBTransaction::requestGetValue(ScriptExecutionContext& context, IDBIndex& index, const IDBKeyRangeData& range)
@@ -611,7 +611,7 @@ Ref<IDBRequest> IDBTransaction::requestIndexRecord(ScriptExecutionContext& conte
     auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, range);
     scheduleOperation(WTF::move(operation));
 
-    return WTF::move(request);
+    return request;
 }
 
 void IDBTransaction::getRecordOnServer(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
@@ -732,7 +732,7 @@ Ref<IDBRequest> IDBTransaction::requestClearObjectStore(ScriptExecutionContext& 
     auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didClearObjectStoreOnServer, &IDBTransaction::clearObjectStoreOnServer, objectStoreIdentifier);
     scheduleOperation(WTF::move(operation));
 
-    return WTF::move(request);
+    return request;
 }
 
 void IDBTransaction::clearObjectStoreOnServer(TransactionOperation& operation, const uint64_t& objectStoreIdentifier)
@@ -763,7 +763,7 @@ Ref<IDBRequest> IDBTransaction::requestPutOrAdd(ScriptExecutionContext& context,
     auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didPutOrAddOnServer, &IDBTransaction::putOrAddOnServer, key, &value, overwriteMode);
     scheduleOperation(WTF::move(operation));
 
-    return WTF::move(request);
+    return request;
 }
 
 void IDBTransaction::putOrAddOnServer(TransactionOperation& operation, RefPtr<IDBKey> key, RefPtr<SerializedScriptValue> value, const IndexedDB::ObjectStoreOverwriteMode& overwriteMode)

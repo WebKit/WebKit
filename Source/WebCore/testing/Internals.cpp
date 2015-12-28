@@ -1801,7 +1801,7 @@ RefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
     RefPtr<DOMWindow> frontendWindow = window->open(url, "", "", *window, *window);
     m_inspectorFrontend = std::make_unique<InspectorStubFrontend>(inspectedPage, frontendWindow.copyRef());
 
-    return WTF::move(frontendWindow);
+    return frontendWindow;
 }
 
 void Internals::closeDummyInspectorFrontend()

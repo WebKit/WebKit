@@ -111,7 +111,7 @@ Ref<Inspector::Protocol::Console::StackTrace> ScriptCallStack::buildInspectorArr
     auto frames = Inspector::Protocol::Console::StackTrace::create();
     for (size_t i = 0; i < m_frames.size(); i++)
         frames->addItem(m_frames.at(i).buildInspectorObject());
-    return WTF::move(frames);
+    return frames;
 }
 
 } // namespace Inspector

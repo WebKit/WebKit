@@ -55,7 +55,7 @@ Ref<InspectorObject> TimelineRecordFactory::createGenericRecord(double startTime
         if (stackTrace && stackTrace->size())
             record->setValue(ASCIILiteral("stackTrace"), stackTrace->buildInspectorArray());
     }
-    return WTF::move(record);
+    return record;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createFunctionCallData(const String& scriptName, int scriptLine)
@@ -63,14 +63,14 @@ Ref<InspectorObject> TimelineRecordFactory::createFunctionCallData(const String&
     Ref<InspectorObject> data = InspectorObject::create();
     data->setString(ASCIILiteral("scriptName"), scriptName);
     data->setInteger(ASCIILiteral("scriptLine"), scriptLine);
-    return WTF::move(data);
+    return data;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createConsoleProfileData(const String& title)
 {
     Ref<InspectorObject> data = InspectorObject::create();
     data->setString(ASCIILiteral("title"), title);
-    return WTF::move(data);
+    return data;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, unsigned sampleId)
@@ -78,21 +78,21 @@ Ref<InspectorObject> TimelineRecordFactory::createProbeSampleData(const ScriptBr
     Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger(ASCIILiteral("probeId"), action.identifier);
     data->setInteger(ASCIILiteral("sampleId"), sampleId);
-    return WTF::move(data);
+    return data;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createEventDispatchData(const Event& event)
 {
     Ref<InspectorObject> data = InspectorObject::create();
     data->setString(ASCIILiteral("type"), event.type().string());
-    return WTF::move(data);
+    return data;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createGenericTimerData(int timerId)
 {
     Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger(ASCIILiteral("timerId"), timerId);
-    return WTF::move(data);
+    return data;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, int timeout, bool singleShot)
@@ -101,7 +101,7 @@ Ref<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, 
     data->setInteger(ASCIILiteral("timerId"), timerId);
     data->setInteger(ASCIILiteral("timeout"), timeout);
     data->setBoolean(ASCIILiteral("singleShot"), singleShot);
-    return WTF::move(data);
+    return data;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createEvaluateScriptData(const String& url, double lineNumber)
@@ -109,21 +109,21 @@ Ref<InspectorObject> TimelineRecordFactory::createEvaluateScriptData(const Strin
     Ref<InspectorObject> data = InspectorObject::create();
     data->setString(ASCIILiteral("url"), url);
     data->setInteger(ASCIILiteral("lineNumber"), lineNumber);
-    return WTF::move(data);
+    return data;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createTimeStampData(const String& message)
 {
     Ref<InspectorObject> data = InspectorObject::create();
     data->setString(ASCIILiteral("message"), message);
-    return WTF::move(data);
+    return data;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createAnimationFrameData(int callbackId)
 {
     Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger(ASCIILiteral("id"), callbackId);
-    return WTF::move(data);
+    return data;
 }
 
 static Ref<InspectorArray> createQuad(const FloatQuad& quad)
@@ -137,14 +137,14 @@ static Ref<InspectorArray> createQuad(const FloatQuad& quad)
     array->pushDouble(quad.p3().y());
     array->pushDouble(quad.p4().x());
     array->pushDouble(quad.p4().y());
-    return WTF::move(array);
+    return array;
 }
 
 Ref<InspectorObject> TimelineRecordFactory::createPaintData(const FloatQuad& quad)
 {
     Ref<InspectorObject> data = InspectorObject::create();
     data->setArray(ASCIILiteral("clip"), createQuad(quad));
-    return WTF::move(data);
+    return data;
 }
 
 void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQuad& quad)
@@ -192,7 +192,7 @@ static Ref<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::P
         result->setChildren(WTF::move(children));
     }
 
-    return WTF::move(result);
+    return result;
 }
 
 static Ref<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC::Profile* profile)

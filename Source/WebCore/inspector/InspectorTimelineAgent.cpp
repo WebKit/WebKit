@@ -266,7 +266,7 @@ RefPtr<JSC::Profile> InspectorTimelineAgent::stopFromConsole(JSC::ExecState* exe
             if (!m_enabledFromFrontend && m_pendingConsoleProfileRecords.isEmpty())
                 internalStop();
 
-            return WTF::move(profile);
+            return profile;
         }
     }
 

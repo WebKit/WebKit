@@ -183,7 +183,7 @@ static Ref<Inspector::Protocol::CSS::CSSMedia> buildMediaObject(const MediaList*
         mediaObject->setSourceURL(sourceURL);
         mediaObject->setSourceLine(media->queries()->lastLine());
     }
-    return WTF::move(mediaObject);
+    return mediaObject;
 }
 
 static RefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
@@ -327,7 +327,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStylePropert
         result->addItem(WTF::move(entry));
     }
 
-    return WTF::move(result);
+    return result;
 }
 
 bool InspectorStyle::getText(String* result) const
@@ -875,7 +875,7 @@ static Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(c
         }
     }
 
-    return WTF::move(inspectorSelector);
+    return inspectorSelector;
 }
 
 static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText, const CSSSelectorList& selectorList, Element* element)
@@ -899,7 +899,7 @@ static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> se
 
         selector = CSSSelectorList::next(selector);
     }
-    return WTF::move(result);
+    return result;
 }
 
 Ref<Inspector::Protocol::CSS::CSSSelector> InspectorStyleSheet::buildObjectForSelector(const CSSSelector* selector, Element* element)
@@ -931,7 +931,7 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
         .release();
     if (sourceData)
         result->setRange(buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings().get()));
-    return WTF::move(result);
+    return result;
 }
 
 RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSStyleRule* rule, Element* element)
@@ -992,7 +992,7 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyleSheet::buildObjectForSt
         }
     }
 
-    return WTF::move(result);
+    return result;
 }
 
 bool InspectorStyleSheet::setStyleText(const InspectorCSSId& id, const String& text, String* oldText, ExceptionCode& ec)
@@ -1231,7 +1231,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> InspectorStyl
 {
     auto result = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>::create();
     if (!ruleList)
-        return WTF::move(result);
+        return result;
 
     RefPtr<CSSRuleList> refRuleList = ruleList;
     CSSStyleRuleVector rules;
@@ -1240,7 +1240,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> InspectorStyl
     for (auto& rule : rules)
         result->addItem(buildObjectForRule(rule.get(), nullptr));
 
-    return WTF::move(result);
+    return result;
 }
 
 void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, CSSStyleRuleVector* result)

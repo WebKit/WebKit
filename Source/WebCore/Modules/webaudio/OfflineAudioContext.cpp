@@ -51,7 +51,7 @@ RefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionContext& 
 
     RefPtr<OfflineAudioContext> audioContext(adoptRef(new OfflineAudioContext(document, numberOfChannels, numberOfFrames, sampleRate)));
     audioContext->suspendIfNeeded();
-    return WTF::move(audioContext);
+    return audioContext;
 }
 
 OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)

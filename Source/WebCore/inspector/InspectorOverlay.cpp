@@ -372,7 +372,7 @@ static Ref<Inspector::Protocol::OverlayTypes::Quad> buildArrayForQuad(const Floa
     array->addItem(buildObjectForPoint(quad.p2()));
     array->addItem(buildObjectForPoint(quad.p3()));
     array->addItem(buildObjectForPoint(quad.p4()));
-    return WTF::move(array);
+    return array;
 }
 
 static Ref<Inspector::Protocol::OverlayTypes::FragmentHighlightData> buildObjectForHighlight(const Highlight& highlight)
@@ -450,7 +450,7 @@ static Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::Region>
         arrayOfRegions->addItem(WTF::move(regionObject));
     }
 
-    return WTF::move(arrayOfRegions);
+    return arrayOfRegions;
 }
 
 static Ref<Inspector::Protocol::OverlayTypes::Size> buildObjectForSize(const IntSize& size)
@@ -834,7 +834,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::NodeHighlightD
         }
     }
 
-    return WTF::move(highlights);
+    return highlights;
 }
 
 void InspectorOverlay::drawNodeHighlight()

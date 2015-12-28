@@ -225,7 +225,7 @@ static RefPtr<IDBTransaction> transactionForDatabase(ScriptExecutionContext* scr
     RefPtr<IDBTransaction> idbTransaction = idbDatabase->transaction(scriptExecutionContext, objectStoreName, mode, ec);
     if (ec.code)
         return nullptr;
-    return WTF::move(idbTransaction);
+    return idbTransaction;
 }
 
 static RefPtr<IDBObjectStore> objectStoreForTransaction(IDBTransaction* idbTransaction, const String& objectStoreName)
@@ -234,7 +234,7 @@ static RefPtr<IDBObjectStore> objectStoreForTransaction(IDBTransaction* idbTrans
     RefPtr<IDBObjectStore> idbObjectStore = idbTransaction->objectStore(objectStoreName, ec);
     if (ec.code)
         return nullptr;
-    return WTF::move(idbObjectStore);
+    return idbObjectStore;
 }
 
 static RefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, const String& indexName)
@@ -243,7 +243,7 @@ static RefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, cons
     RefPtr<IDBIndex> idbIndex = idbObjectStore->index(indexName, ec);
     if (ec.code)
         return nullptr;
-    return WTF::move(idbIndex);
+    return idbIndex;
 }
 
 static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
@@ -276,7 +276,7 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
         ASSERT_NOT_REACHED();
     }
 
-    return WTF::move(keyPath);
+    return keyPath;
 }
 
 class DatabaseLoader : public ExecutableWithDatabase {

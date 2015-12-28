@@ -196,7 +196,7 @@ Ref<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectF
             layerObject->setPseudoElement("first-line");
     }
 
-    return WTF::move(layerObject);
+    return layerObject;
 }
 
 int InspectorLayerTreeAgent::idForNode(ErrorString& errorString, Node* node)

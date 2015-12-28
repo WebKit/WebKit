@@ -101,7 +101,7 @@ std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
     auto request = std::make_unique<ResourceRequest>(m_url);
     request->setHTTPMethod("GET");
-    return WTF::move(request);
+    return request;
 }
     
 void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)

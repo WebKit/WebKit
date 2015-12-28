@@ -84,7 +84,7 @@ RefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
     for (auto& name : m_info.objectStoreNames())
         objectStoreNames->append(name);
     objectStoreNames->sort();
-    return WTF::move(objectStoreNames);
+    return objectStoreNames;
 }
 
 RefPtr<WebCore::IDBObjectStore> IDBDatabase::createObjectStore(const String&, const Dictionary&, ExceptionCodeWithMessage&)
@@ -266,7 +266,7 @@ Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransact
 
     m_activeTransactions.set(transaction->info().identifier(), &transaction.get());
 
-    return WTF::move(transaction);
+    return transaction;
 }
 
 void IDBDatabase::didStartTransaction(IDBTransaction& transaction)

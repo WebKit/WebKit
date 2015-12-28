@@ -53,7 +53,7 @@ IDBTransactionInfo IDBTransactionInfo::versionChange(const IDBServer::IDBConnect
     result.m_newVersion = newVersion;
     result.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(originalDatabaseInfo);
 
-    return WTF::move(result);
+    return result;
 }
 
 IDBTransactionInfo::IDBTransactionInfo(const IDBTransactionInfo& info)
@@ -79,7 +79,7 @@ IDBTransactionInfo IDBTransactionInfo::isolatedCopy() const
     if (m_originalDatabaseInfo)
         result.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*m_originalDatabaseInfo);
 
-    return WTF::move(result);
+    return result;
 }
 
 #ifndef NDEBUG

@@ -1376,7 +1376,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
             value->setRole(axObject->computedRoleString());
     }
 
-    return WTF::move(value);
+    return value;
 }
 
 Ref<Inspector::Protocol::Array<String>> InspectorDOMAgent::buildArrayForElementAttributes(Element* element)
@@ -1384,13 +1384,13 @@ Ref<Inspector::Protocol::Array<String>> InspectorDOMAgent::buildArrayForElementA
     auto attributesValue = Inspector::Protocol::Array<String>::create();
     // Go through all attributes and serialize them.
     if (!element->hasAttributes())
-        return WTF::move(attributesValue);
+        return attributesValue;
     for (const Attribute& attribute : element->attributesIterator()) {
         // Add attribute pair
         attributesValue->addItem(attribute.name().toString());
         attributesValue->addItem(attribute.value());
     }
-    return WTF::move(attributesValue);
+    return attributesValue;
 }
 
 Ref<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap)
@@ -1403,7 +1403,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> InspectorDOMAgen
             children->addItem(buildObjectForNode(firstChild, 0, nodesMap));
             m_childrenRequested.add(bind(container, nodesMap));
         }
-        return WTF::move(children);
+        return children;
     }
 
     Node* child = innerFirstChild(container);
@@ -1414,7 +1414,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> InspectorDOMAgen
         children->addItem(buildObjectForNode(child, depth, nodesMap));
         child = innerNextSibling(child);
     }
-    return WTF::move(children);
+    return children;
 }
 
 RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildArrayForPseudoElements(const Element& element, NodeToIdMap* nodesMap)
@@ -1481,7 +1481,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         if (!sourceName.isEmpty())
             value->setSourceName(sourceName);
     }
-    return WTF::move(value);
+    return value;
 }
     
 void InspectorDOMAgent::processAccessibilityChildren(RefPtr<AccessibilityObject>&& axObject, RefPtr<Inspector::Protocol::Array<int>>&& childNodeIds)

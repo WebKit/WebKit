@@ -183,7 +183,7 @@ RefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const Strin
     if (ec)
         return nullptr;
 
-    return WTF::move(webSocket);
+    return webSocket;
 }
 
 RefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const String& url, const String& protocol, ExceptionCode& ec)

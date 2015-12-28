@@ -324,7 +324,7 @@ IDBKeyData IDBKeyData::deletedValue()
     IDBKeyData result;
     result.m_isNull = false;
     result.m_isDeletedValue = true;
-    return WTF::move(result);
+    return result;
 }
 
 bool IDBKeyData::operator<(const IDBKeyData& rhs) const

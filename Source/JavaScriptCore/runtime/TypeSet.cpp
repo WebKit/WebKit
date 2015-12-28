@@ -224,7 +224,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescriptio
     for (size_t i = 0; i < m_structureHistory.size(); i++)
         description->addItem(m_structureHistory.at(i)->inspectorRepresentation());
 
-    return WTF::move(description);
+    return description;
 }
 
 Ref<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
@@ -523,7 +523,7 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
         currentShape = currentShape->m_proto;
     }
 
-    return WTF::move(base);
+    return base;
 }
 
 bool StructureShape::hasSamePrototypeChain(PassRefPtr<StructureShape> prpOther)

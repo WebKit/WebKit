@@ -87,7 +87,7 @@ RefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned short 
             return nullptr;
     }
 
-    return WTF::move(result);
+    return result;
 }
 
 }

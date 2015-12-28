@@ -67,7 +67,7 @@ IDBResultData IDBResultData::error(const IDBResourceIdentifier& requestIdentifie
     IDBResultData result(requestIdentifier);
     result.m_type = IDBResultType::Error;
     result.m_error = error;
-    return WTF::move(result);
+    return result;
 }
 
 IDBResultData IDBResultData::openDatabaseSuccess(const IDBResourceIdentifier& requestIdentifier, IDBServer::UniqueIDBDatabaseConnection& connection)
@@ -76,7 +76,7 @@ IDBResultData IDBResultData::openDatabaseSuccess(const IDBResourceIdentifier& re
     result.m_type = IDBResultType::OpenDatabaseSuccess;
     result.m_databaseConnectionIdentifier = connection.identifier();
     result.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(connection.database().info());
-    return WTF::move(result);
+    return result;
 }
 
 
@@ -87,7 +87,7 @@ IDBResultData IDBResultData::openDatabaseUpgradeNeeded(const IDBResourceIdentifi
     result.m_databaseConnectionIdentifier = transaction.databaseConnection().identifier();
     result.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(transaction.databaseConnection().database().info());
     result.m_transactionInfo = std::make_unique<IDBTransactionInfo>(transaction.info());
-    return WTF::move(result);
+    return result;
 }
 
 IDBResultData IDBResultData::deleteDatabaseSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBDatabaseInfo& info)

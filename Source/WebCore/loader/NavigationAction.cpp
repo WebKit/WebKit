@@ -106,7 +106,7 @@ NavigationAction NavigationAction::copyWithShouldOpenExternalURLsPolicy(ShouldOp
 {
     NavigationAction result(*this);
     result.m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
-    return WTF::move(result);
+    return result;
 }
 
 }

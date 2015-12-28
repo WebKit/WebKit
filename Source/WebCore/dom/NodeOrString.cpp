@@ -61,7 +61,7 @@ RefPtr<Node> convertNodesOrStringsIntoNode(Node& context, Vector<NodeOrString>&&
         }
     }
     
-    return WTF::move(nodeToReturn);
+    return nodeToReturn;
 }
 
 } // namespace WebCore

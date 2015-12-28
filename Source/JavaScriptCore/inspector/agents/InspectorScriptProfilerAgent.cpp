@@ -181,7 +181,7 @@ static Ref<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::P
         result->setChildren(WTF::move(children));
     }
 
-    return WTF::move(result);
+    return result;
 }
 
 static Ref<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC::Profile* profile)

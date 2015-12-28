@@ -1,3 +1,18 @@
+2015-12-25  Andy Estes  <aestes@apple.com>
+
+        Stop moving local objects in return statements
+        https://bugs.webkit.org/show_bug.cgi?id=152557
+
+        Reviewed by Brady Eidson.
+
+        Calling std::move() on a local object in a return statement prevents the compiler from applying the return value optimization.
+
+        Clang can warn about these mistakes with -Wpessimizing-move, although only when std::move() is called directly.
+        I found these issues by temporarily replacing WTF::move with std::move and recompiling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::ExceededDatabaseQuotaRecords::createRecord):
+
 2015-12-26  Joonghun Park  <jh718.park@samsung.com>
 
         [WK2][EFL] Use eina_file_path_join at platformDefaultIconDatabasePath in WebProcessPoolEfl

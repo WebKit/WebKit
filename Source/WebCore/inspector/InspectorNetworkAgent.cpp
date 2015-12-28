@@ -186,7 +186,7 @@ static Ref<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
     
     for (const auto& header : headers)
         headersObject->setString(header.key, header.value);
-    return WTF::move(headersObject);
+    return headersObject;
 }
 
 static Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const ResourceLoadTiming& timing, DocumentLoader* loader)
@@ -212,7 +212,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
         .release();
     if (request.httpBody() && !request.httpBody()->isEmpty())
         requestObject->setPostData(request.httpBody()->flattenToString());
-    return WTF::move(requestObject);
+    return requestObject;
 }
 
 static RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse& response, DocumentLoader* loader)
@@ -252,7 +252,7 @@ static Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedRes
     if (!sourceMappingURL.isEmpty())
         resourceObject->setSourceMapURL(sourceMappingURL);
 
-    return WTF::move(resourceObject);
+    return resourceObject;
 }
 
 InspectorNetworkAgent::~InspectorNetworkAgent()
