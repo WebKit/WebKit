@@ -136,9 +136,30 @@ function createErrorSheet() {
             dismissErrorSheet();
     }
 
+    let inspectedPageURL = "(unknown)";
+    try {
+        inspectedPageURL = WebInspector.frameResourceManager.mainFrame.url;
+    } catch (e) { }
+
     let formattedErrorDetails = window.__uncaughtExceptions.map((entry) => `${entry.message} (at ${entry.url}:${entry.lineNumber}:${entry.columnNumber})`);
     let detailsForBugReport = formattedErrorDetails.map((line) => ` - ${line}`).join("\n");
-    let encodedBugDescription = encodeURIComponent(`Loading completed: ${loadCompleted ? "true" : "false"}\nUncaught exceptions:\n${detailsForBugReport}`);
+    let encodedBugDescription = encodeURIComponent(`-------
+Auto-generated details:
+
+Inspected URL:        ${inspectedPageURL}
+Loading completed:    ${!!loadCompleted}
+Frontend User Agent:  ${window.navigator.userAgent}
+Uncaught exceptions:
+${detailsForBugReport}
+-------
+
+* STEPS TO REPRODUCE
+1. What were you doing? Include setup or other preparations to reproduce the exception.
+2. Include explicit, accurate, and minimal steps taken. Do not include extraneous or irrelevant steps.
+
+* NOTES
+Document any additional information that might be useful in resolving the problem, such as screen shots or other included attachments.
+`);
     let encodedBugTitle = encodeURIComponent(`Uncaught Exception: ${firstException.message}`);
     let prefilledBugReportLink = `https://bugs.webkit.org/enter_bug.cgi?alias=&assigned_to=webkit-unassigned%40lists.webkit.org&attach_text=&blocked=&bug_file_loc=http%3A%2F%2F&bug_severity=Normal&bug_status=NEW&comment=${encodedBugDescription}&component=Web%20Inspector&contenttypeentry=&contenttypemethod=autodetect&contenttypeselection=text%2Fplain&data=&dependson=&description=&flag_type-1=X&flag_type-3=X&form_name=enter_bug&keywords=&op_sys=All&priority=P2&product=WebKit&rep_platform=All&short_desc=${encodedBugTitle}&version=WebKit%20Nightly%20Build`;
     let detailsForHTML = formattedErrorDetails.map((line) => `<li>${insertWordBreakCharacters(line)}</li>`).join("\n");

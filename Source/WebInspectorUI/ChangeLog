@@ -1,3 +1,17 @@
+2015-12-27  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: improve pre-filled bugzilla link on Uncaught Exception reporter sheet
+        https://bugs.webkit.org/show_bug.cgi?id=152402
+
+        Reviewed by Joseph Pecoraro.
+
+        Include the UA string, inspected page URL, and a template that includes
+        steps to reproduce and notes. Other common headings (regression, expected,
+        results, summary) are omitted because they are unlikely to be known when
+        an uncaught exception occurs, or are obvious ("shouldn't throw exception").
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+
 2015-12-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         WebInspector: Can't open a new tab: Uncaught Exception: TypeError: this.isNewTabWithTypeAllowed is not a function
