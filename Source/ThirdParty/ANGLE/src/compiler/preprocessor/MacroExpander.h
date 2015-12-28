@@ -80,7 +80,7 @@ class MacroExpander : public Lexer
     MacroSet *mMacroSet;
     Diagnostics *mDiagnostics;
 
-    std::auto_ptr<Token> mReserveToken;
+    std::unique_ptr<Token> mReserveToken;
     std::vector<MacroContext *> mContextStack;
 };
 

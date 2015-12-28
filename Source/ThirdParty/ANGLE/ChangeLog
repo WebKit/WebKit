@@ -1,3 +1,14 @@
+2015-12-28  Joonghun Park  <jh718.park@samsung.com>
+
+        [ANGLE][EFL][GTK] Remove 'template<class> class std::auto_ptr is deprecated' compile warning
+        https://bugs.webkit.org/show_bug.cgi?id=152567
+
+        Reviewed by Alex Christensen.
+
+        Because auto_ptr is deprecated as of C++11, we should use unique_ptr instead.
+
+        * src/compiler/preprocessor/MacroExpander.h:
+
 2015-12-19  Dan Bernstein  <mitz@apple.com>
 
         [Mac] WebKit contains dead source code for OS X Mavericks and earlier
