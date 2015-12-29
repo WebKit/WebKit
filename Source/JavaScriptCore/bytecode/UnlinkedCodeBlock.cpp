@@ -65,7 +65,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_hasCapturedVariables(false)
     , m_isBuiltinFunction(info.isBuiltinFunction())
     , m_constructorKind(static_cast<unsigned>(info.constructorKind()))
-    , m_generatorThisMode(static_cast<unsigned>(info.generatorThisMode()))
     , m_superBinding(static_cast<unsigned>(info.superBinding()))
     , m_isDerivedConstructorContext(info.isDerivedConstructorContext())
     , m_isArrowFunctionContext(info.isArrowFunctionContext())

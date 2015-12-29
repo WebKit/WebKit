@@ -31,7 +31,6 @@
 #include "CodeType.h"
 #include "ConstructAbility.h"
 #include "ExpressionRangeInfo.h"
-#include "GeneratorThisMode.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
 #include "JSCell.h"
@@ -207,7 +206,6 @@ public:
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
 
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
-    GeneratorThisMode generatorThisMode() const { return static_cast<GeneratorThisMode>(m_generatorThisMode); }
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
 
     void shrinkToFit()
@@ -394,7 +392,6 @@ private:
     unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructorKind : 2;
-    unsigned m_generatorThisMode : 1;
     unsigned m_superBinding : 1;
     unsigned m_isDerivedConstructorContext : 1;
     unsigned m_isArrowFunctionContext : 1;

@@ -163,8 +163,6 @@ JSValue eval(CallFrame* callFrame)
     ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded;
     if (callerUnlinkedCodeBlock->constructorKind() == ConstructorKind::Derived)
         thisTDZMode = ThisTDZMode::AlwaysCheck;
-    if (callerUnlinkedCodeBlock->parseMode() == SourceParseMode::GeneratorBodyMode && callerUnlinkedCodeBlock->generatorThisMode() == GeneratorThisMode::Empty)
-        thisTDZMode = ThisTDZMode::AlwaysCheck;
 
     SourceCode sourceCode(makeSource(programSource));
     EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), sourceCode, thisTDZMode, callerScopeChain);

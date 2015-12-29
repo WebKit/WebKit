@@ -1243,7 +1243,6 @@
 		70B791971C024A29002481E2 /* GeneratorFunctionPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B791881C024432002481E2 /* GeneratorFunctionPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70B791981C024A29002481E2 /* GeneratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70B791891C024432002481E2 /* GeneratorPrototype.cpp */; };
 		70B791991C024A29002481E2 /* GeneratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918A1C024432002481E2 /* GeneratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B7919A1C024A29002481E2 /* GeneratorThisMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918B1C024432002481E2 /* GeneratorThisMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70B7919B1C024A46002481E2 /* JSGeneratorFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70B7918C1C024462002481E2 /* JSGeneratorFunction.cpp */; };
 		70B7919C1C024A49002481E2 /* JSGeneratorFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918D1C024462002481E2 /* JSGeneratorFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70B7919D1C024A56002481E2 /* GeneratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B791901C0246CE002481E2 /* GeneratorPrototype.lut.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3382,7 +3381,6 @@
 		70B791881C024432002481E2 /* GeneratorFunctionPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorFunctionPrototype.h; sourceTree = "<group>"; };
 		70B791891C024432002481E2 /* GeneratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorPrototype.cpp; sourceTree = "<group>"; };
 		70B7918A1C024432002481E2 /* GeneratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorPrototype.h; sourceTree = "<group>"; };
-		70B7918B1C024432002481E2 /* GeneratorThisMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorThisMode.h; sourceTree = "<group>"; };
 		70B7918C1C024462002481E2 /* JSGeneratorFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeneratorFunction.cpp; sourceTree = "<group>"; };
 		70B7918D1C024462002481E2 /* JSGeneratorFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeneratorFunction.h; sourceTree = "<group>"; };
 		70B7918E1C0244C9002481E2 /* SourceCodeKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceCodeKey.h; sourceTree = "<group>"; };
@@ -5551,7 +5549,6 @@
 				70B791881C024432002481E2 /* GeneratorFunctionPrototype.h */,
 				70B791891C024432002481E2 /* GeneratorPrototype.cpp */,
 				70B7918A1C024432002481E2 /* GeneratorPrototype.h */,
-				70B7918B1C024432002481E2 /* GeneratorThisMode.h */,
 				0FE050111AA9091100D33B33 /* GenericArguments.h */,
 				0FE050121AA9091100D33B33 /* GenericArgumentsInlines.h */,
 				0FE050131AA9091100D33B33 /* GenericOffset.h */,
@@ -7898,7 +7895,6 @@
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,
 				0FB3878E1BFBC44D00E3AB1E /* AirBlockWorklist.h in Headers */,
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
-				70B7919A1C024A29002481E2 /* GeneratorThisMode.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,

@@ -298,8 +298,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // Before emitting a scope creation, emit a generator prologue that contains jump based on a generator's state.
     if (parseMode == SourceParseMode::GeneratorBodyMode) {
         m_generatorRegister = &m_parameters[1];
-        if (generatorThisMode() == GeneratorThisMode::Empty)
-            emitMoveEmptyValue(&m_thisRegister);
 
         // Jump with switch_imm based on @generatorState. We don't take the coroutine styled generator implementation.
         // When calling `next()`, we would like to enter the same prologue instead of jumping based on the saved instruction pointer.

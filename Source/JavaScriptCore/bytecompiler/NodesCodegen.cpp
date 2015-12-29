@@ -149,7 +149,7 @@ RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst
     if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext())
         generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
 
-    if (m_shouldAlwaysEmitTDZCheck || generator.constructorKind() == ConstructorKind::Derived || generator.generatorThisMode() == GeneratorThisMode::Empty || generator.isDerivedConstructorContext())
+    if (m_shouldAlwaysEmitTDZCheck || generator.constructorKind() == ConstructorKind::Derived || generator.isDerivedConstructorContext())
         generator.emitTDZCheck(generator.thisRegister());
 
     if (dst == generator.ignoredResult())

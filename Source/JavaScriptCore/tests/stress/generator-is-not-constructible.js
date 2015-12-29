@@ -1,8 +1,3 @@
-function shouldBe(actual, expected) {
-    if (actual !== expected)
-        throw new Error('bad value: ' + actual);
-}
-
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;
     var error = null;
@@ -20,12 +15,27 @@ function shouldThrow(func, errorMessage) {
 
 function *gen()
 {
-    yield new.target;
 }
 
-var g = gen();
-shouldBe(g.next().value, undefined);
+shouldThrow(() => {
+    new gen();
+}, `TypeError: function is not a constructor (evaluating 'new gen()')`);
+
+class A {
+    static *staticGen()
+    {
+    }
+
+    *gen()
+    {
+    }
+};
 
 shouldThrow(() => {
-    var g2 = new gen();
-}, `TypeError: function is not a constructor (evaluating 'new gen()')`);
+    let a = new A();
+    new a.gen();
+}, `TypeError: function is not a constructor (evaluating 'new a.gen()')`);
+
+shouldThrow(() => {
+    new A.staticGen();
+}, `TypeError: function is not a constructor (evaluating 'new A.staticGen()')`);

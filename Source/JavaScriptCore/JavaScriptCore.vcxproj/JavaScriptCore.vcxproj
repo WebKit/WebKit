@@ -1631,7 +1631,6 @@
     <ClInclude Include="..\runtime\GeneratorFunctionConstructor.h" />
     <ClInclude Include="..\runtime\GeneratorFunctionPrototype.h" />
     <ClInclude Include="..\runtime\GeneratorPrototype.h" />
-    <ClInclude Include="..\runtime\GeneratorThisMode.h" />
     <ClInclude Include="..\runtime\GenericArguments.h" />
     <ClInclude Include="..\runtime\GenericArgumentsInlines.h" />
     <ClInclude Include="..\runtime\GenericOffset.h" />

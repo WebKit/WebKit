@@ -2897,9 +2897,6 @@
     <ClInclude Include="..\runtime\GeneratorPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\GeneratorThisMode.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\GetPutInfo.h">
       <Filter>runtime</Filter>
     </ClInclude>

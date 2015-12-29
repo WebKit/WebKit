@@ -1,3 +1,59 @@
+2015-12-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6][ES7] Drop Constructability of generator function
+        https://bugs.webkit.org/show_bug.cgi?id=152383
+
+        Reviewed by Saam Barati.
+
+        We drop the constructability of generator functions.
+        This functionality is already landed in ES 2016 draft[1].
+        And this simplifies the existing JSC's generator implementation;
+        dropping GeneratorThisMode flag.
+
+        [1]: https://github.com/tc39/ecma262/releases/tag/es2016-draft-20151201
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::createExecutableInternal):
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::generatorThisMode): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::generatorThisMode): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        (JSC::BytecodeGenerator::generatorThisMode): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval): Deleted.
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/Executable.h:
+        * runtime/GeneratorThisMode.h: Removed.
+        * tests/stress/generator-eval-this.js:
+        (shouldThrow):
+        * tests/stress/generator-is-not-constructible.js: Added.
+        (shouldThrow):
+        (A.staticGen):
+        (A.prototype.gen):
+        (A):
+        (TypeError):
+        * tests/stress/generator-this.js:
+        (shouldBe.g.next):
+        * tests/stress/generator-with-new-target.js:
+        (shouldThrow):
+
 2015-12-27  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should know that used registers are not the same thing as used registers. Rename the

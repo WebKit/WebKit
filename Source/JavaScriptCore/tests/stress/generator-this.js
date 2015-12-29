@@ -31,10 +31,10 @@ var global = new Function('return this')();
         shouldBe(g.next().value, global);
     }
     {
-        let g = new gen();
         shouldThrow(() => {
+            let g = new gen();
             g.next();
-        }, `ReferenceError: Cannot access uninitialized variable.`);
+        }, `TypeError: function is not a constructor (evaluating 'new gen()')`);
     }
     {
         let thisObject = {};
@@ -54,10 +54,10 @@ var global = new Function('return this')();
         shouldBe(g.next().value, undefined);
     }
     {
-        let g = new gen();
         shouldThrow(() => {
+            let g = new gen();
             g.next();
-        }, `ReferenceError: Cannot access uninitialized variable.`);
+        }, `TypeError: function is not a constructor (evaluating 'new gen()')`);
     }
     {
         let thisObject = {};

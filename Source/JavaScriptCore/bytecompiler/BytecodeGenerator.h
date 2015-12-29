@@ -32,7 +32,6 @@
 #define BytecodeGenerator_h
 
 #include "CodeBlock.h"
-#include "GeneratorThisMode.h"
 #include <wtf/HashTraits.h>
 #include "Instruction.h"
 #include "Label.h"
@@ -288,7 +287,6 @@ namespace JSC {
         bool usesEval() const { return m_scopeNode->usesEval(); }
         bool usesThis() const { return m_scopeNode->usesThis(); }
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
-        GeneratorThisMode generatorThisMode() const { return m_codeBlock->generatorThisMode(); }
         SuperBinding superBinding() const { return m_codeBlock->superBinding(); }
 
         ParserError generate();
@@ -805,18 +803,12 @@ namespace JSC {
             // https://bugs.webkit.org/show_bug.cgi?id=151547
             SourceParseMode parseMode = metadata->parseMode();
             ConstructAbility constructAbility = ConstructAbility::CanConstruct;
-            if (parseMode == SourceParseMode::GetterMode || parseMode == SourceParseMode::SetterMode || parseMode == SourceParseMode::ArrowFunctionMode)
+            if (parseMode == SourceParseMode::GetterMode || parseMode == SourceParseMode::SetterMode || parseMode == SourceParseMode::ArrowFunctionMode || parseMode == SourceParseMode::GeneratorWrapperFunctionMode)
                 constructAbility = ConstructAbility::CannotConstruct;
             else if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() == ConstructorKind::None)
                 constructAbility = ConstructAbility::CannotConstruct;
-            else if (parseMode == SourceParseMode::GeneratorWrapperFunctionMode && metadata->superBinding() == SuperBinding::Needed)
-                constructAbility = ConstructAbility::CannotConstruct;
 
-            GeneratorThisMode generatorThisMode = GeneratorThisMode::NonEmpty;
-            if (parseMode == SourceParseMode::GeneratorBodyMode && isConstructor())
-                generatorThisMode = GeneratorThisMode::Empty;
-
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, generatorThisMode, variablesUnderTDZ, newisDerivedConstructorContext);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, variablesUnderTDZ, newisDerivedConstructorContext);
         }
 
         void getVariablesUnderTDZ(VariableEnvironment&);

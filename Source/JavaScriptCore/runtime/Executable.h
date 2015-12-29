@@ -453,7 +453,7 @@ public:
     DECLARE_INFO;
 
 
-    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, GeneratorThisMode::NonEmpty, SuperBinding::NotNeeded, SourceParseMode::ProgramMode, isDerivedConstructorContext(), isArrowFunctionContext()); }
+    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, SuperBinding::NotNeeded, SourceParseMode::ProgramMode, isDerivedConstructorContext(), isArrowFunctionContext()); }
 
     unsigned numVariables() { return m_unlinkedEvalCodeBlock->numVariables(); }
     unsigned numberOfFunctionDecls() { return m_unlinkedEvalCodeBlock->numberOfFunctionDecls(); }
@@ -506,7 +506,7 @@ public:
         
     DECLARE_INFO;
 
-    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, GeneratorThisMode::NonEmpty, SuperBinding::NotNeeded, SourceParseMode::ProgramMode, isDerivedConstructorContext(), false); }
+    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, SuperBinding::NotNeeded, SourceParseMode::ProgramMode, isDerivedConstructorContext(), false); }
 
 private:
     friend class ExecutableBase;
@@ -547,7 +547,7 @@ public:
 
     DECLARE_INFO;
 
-    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, GeneratorThisMode::NonEmpty, SuperBinding::NotNeeded, SourceParseMode::ModuleEvaluateMode, isDerivedConstructorContext(), false); }
+    ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, SuperBinding::NotNeeded, SourceParseMode::ModuleEvaluateMode, isDerivedConstructorContext(), false); }
 
     UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock() { return m_unlinkedModuleProgramCodeBlock.get(); }
 

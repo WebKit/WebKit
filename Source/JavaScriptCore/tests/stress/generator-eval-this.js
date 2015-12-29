@@ -22,10 +22,10 @@ function *gen() {
     yield eval("this");
 }
 
-var g = new gen();
 shouldThrow(() => {
+    var g = new gen();
     g.next().value;
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `TypeError: function is not a constructor (evaluating 'new gen()')`);
 
 class B { }
 
