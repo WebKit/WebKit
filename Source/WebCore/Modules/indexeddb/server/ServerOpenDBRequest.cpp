@@ -23,47 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBServerOperation_h
-#define IDBServerOperation_h
+#include "config.h"
+#include "ServerOpenDBRequest.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBConnectionToClient.h"
-#include "IDBRequestData.h"
-#include <wtf/Ref.h>
+#include "IDBResultData.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-class IDBDatabaseInfo;
-
 namespace IDBServer {
 
-class IDBServerOperation : public RefCounted<IDBServerOperation> {
-public:
-    static Ref<IDBServerOperation> create(IDBConnectionToClient&, const IDBRequestData&);
+Ref<ServerOpenDBRequest> ServerOpenDBRequest::create(IDBConnectionToClient& connection, const IDBRequestData& requestData)
+{
+    return adoptRef(*new ServerOpenDBRequest(connection, requestData));
+}
 
-    IDBConnectionToClient& connection() { return m_connection; }
-    const IDBRequestData& requestData() const { return m_requestData; }
+ServerOpenDBRequest::ServerOpenDBRequest(IDBConnectionToClient& connection, const IDBRequestData& requestData)
+    : m_connection(connection)
+    , m_requestData(requestData)
+{
+}
 
-    bool isOpenRequest() const;
-    bool isDeleteRequest() const;
+bool ServerOpenDBRequest::isOpenRequest() const
+{
+    return m_requestData.isOpenRequest();
+}
 
-    void notifyDeleteRequestBlocked(uint64_t currentVersion);
-    void notifyDidDeleteDatabase(const IDBDatabaseInfo&);
-    bool hasNotifiedDeleteRequestBlocked() const { return m_notifiedDeleteRequestBlocked; }
+bool ServerOpenDBRequest::isDeleteRequest() const
+{
+    return m_requestData.isDeleteRequest();
+}
 
-private:
-    IDBServerOperation(IDBConnectionToClient&, const IDBRequestData&);
+void ServerOpenDBRequest::notifyDeleteRequestBlocked(uint64_t currentVersion)
+{
+    ASSERT(isDeleteRequest());
+    ASSERT(!m_notifiedDeleteRequestBlocked);
 
-    IDBConnectionToClient& m_connection;
-    IDBRequestData m_requestData;
+    m_connection.notifyOpenDBRequestBlocked(m_requestData.requestIdentifier(), currentVersion, 0);
+    m_notifiedDeleteRequestBlocked = true;
+}
 
-    bool m_notifiedDeleteRequestBlocked { false };
-};
+void ServerOpenDBRequest::notifyDidDeleteDatabase(const IDBDatabaseInfo& info)
+{
+    ASSERT(isDeleteRequest());
+
+    m_connection.didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(m_requestData.requestIdentifier(), info));
+}
 
 } // namespace IDBServer
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBServerOperation_h

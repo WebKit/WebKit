@@ -1,3 +1,40 @@
+2015-12-28  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Rename IDBServerOperation to ServerOpenDBRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=152577
+
+        Reviewed by Andy Estes.
+
+        No new tests (Refactor, no behavior change)
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/server/ServerOpenDBRequest.cpp: Renamed from Source/WebCore/Modules/indexeddb/server/IDBServerOperation.cpp.
+        (WebCore::IDBServer::ServerOpenDBRequest::create):
+        (WebCore::IDBServer::ServerOpenDBRequest::ServerOpenDBRequest):
+        (WebCore::IDBServer::ServerOpenDBRequest::isOpenRequest):
+        (WebCore::IDBServer::ServerOpenDBRequest::isDeleteRequest):
+        (WebCore::IDBServer::ServerOpenDBRequest::notifyDeleteRequestBlocked):
+        (WebCore::IDBServer::ServerOpenDBRequest::notifyDidDeleteDatabase):
+        
+        * Modules/indexeddb/server/ServerOpenDBRequest.h: Renamed from Source/WebCore/Modules/indexeddb/server/IDBServerOperation.h.
+        (WebCore::IDBServer::ServerOpenDBRequest::connection):
+        (WebCore::IDBServer::ServerOpenDBRequest::requestData):
+        (WebCore::IDBServer::ServerOpenDBRequest::hasNotifiedDeleteRequestBlocked):
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::openDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleCurrentOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::startVersionChangeTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::notifyConnectionsOfVersionChangeForUpgrade):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        
 2015-12-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [CMake][EFL] Fix build breaks when enabling GAMEPAD

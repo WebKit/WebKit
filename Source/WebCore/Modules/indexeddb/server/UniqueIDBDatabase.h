@@ -33,7 +33,7 @@
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBGetResult.h"
-#include "IDBServerOperation.h"
+#include "ServerOpenDBRequest.h"
 #include "ThreadSafeDataBuffer.h"
 #include "Timer.h"
 #include "UniqueIDBDatabaseConnection.h"
@@ -177,8 +177,8 @@ private:
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
     
-    Deque<Ref<IDBServerOperation>> m_pendingDatabaseOperations;
-    RefPtr<IDBServerOperation> m_currentOperation;
+    Deque<Ref<ServerOpenDBRequest>> m_pendingOpenDBRequests;
+    RefPtr<ServerOpenDBRequest> m_currentOpenDBRequest;
 
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_closePendingDatabaseConnections;
