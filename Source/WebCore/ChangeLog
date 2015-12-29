@@ -1,3 +1,13 @@
+2015-12-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build, ostensibly after r194424.
+
+        * CMakeLists.txt:
+        * PlatformWin.cmake:
+        ml.exe was given too many unneeded parameters (/Idir1 /Idir2 etc.), and it was failing sometimes with long directories.
+        Instead of compiling makesafeseh.asm as a normal source file, we now put only the parameters that are needed to assemble
+        the object file, then link with the object file.
+
 2015-12-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Rename IDBServerOperation to ServerOpenDBRequest.

@@ -3730,10 +3730,6 @@ include_directories(SYSTEM ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
 
 if (MSVC)
     ADD_PRECOMPILED_HEADER("WebCorePrefix.h" "WebCorePrefix.cpp" WebCore_SOURCES)
-    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-        list(APPEND WebCore_SOURCES platform/win/makesafeseh.asm)
-        set_source_files_properties(platform/win/makesafeseh.asm PROPERTIES COMPILE_FLAGS "/safeseh")
-    endif ()
 endif ()
 
 add_library(WebCore ${WebCore_LIBRARY_TYPE} ${WebCore_SOURCES})

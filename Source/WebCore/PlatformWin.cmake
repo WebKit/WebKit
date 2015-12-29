@@ -40,7 +40,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}/ANGLE/include/egl"
 )
 
-enable_language(ASM_MASM)
 list(APPEND WebCore_SOURCES
     accessibility/win/AXObjectCacheWin.cpp
     accessibility/win/AccessibilityObjectWin.cpp
@@ -245,6 +244,15 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     svg/graphics/filters
 )
+
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj)
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj
+        DEPENDS ${WEBCORE_DIR}/platform/win/makesafeseh.asm
+        COMMAND ml /safeseh /c /Fo ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj ${WEBCORE_DIR}/platform/win/makesafeseh.asm
+        VERBATIM)
+endif ()
 
 if (${WTF_PLATFORM_WIN_CAIRO})
     include(PlatformWinCairo.cmake)
