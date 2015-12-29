@@ -69,9 +69,16 @@ body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-
 }
 
 .item.visual-style-selector-item.selector-invalid > .icon {
-    width: 14px;
     height: 14px;
     content: url(../Images/Error.svg);
+}
+
+.item.visual-style-selector-item.selector-invalid > .icon:hover {
+    filter: brightness(0.9);
+}
+
+.item.visual-style-selector-item.selector-invalid > .icon:active {
+    filter: brightness(0.8);
 }
 
 .item.visual-style-selector-item.selector-invalid > .titles > .title {

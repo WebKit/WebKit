@@ -72,8 +72,12 @@
     height: 16px;
 }
 
-.style-declaration-section:not(.invalid-selector) > .header > .icon.toggle-able:hover {
+.style-declaration-section > .header > .icon.toggle-able:hover {
     filter: brightness(0.9);
+}
+
+.style-declaration-section > .header > .icon.toggle-able:active {
+    filter: brightness(0.8);
 }
 
 .style-declaration-section:not(.invalid-selector).rule-disabled > .header > .icon {

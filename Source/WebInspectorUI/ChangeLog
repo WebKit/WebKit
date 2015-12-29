@@ -1,3 +1,51 @@
+2015-12-29  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Styling of invalid selector persists when changing the selected node
+        https://bugs.webkit.org/show_bug.cgi?id=152456
+
+        Reviewed by Brian Burg.
+
+        If the user changes the selector of a CSS rule to be invalid (e.g. having
+        a { or ; character), it is expected that the invalid indicator will be removed
+        once the user changes nodes or reverts the selector to its previous value.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section > .header > .icon.toggle-able:hover):
+        (.style-declaration-section > .header > .icon.toggle-able:active):
+        (.style-declaration-section:not(.invalid-selector) > .header > .icon.toggle-able:hover): Deleted.
+        Added better :hover and :active styles.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleIconElementClicked):
+        If the selector is invalid, simply refresh the section to regenerate the
+        original selector with correct content, specificity, and highlighting.
+
+        (WebInspector.CSSStyleDeclarationSection.prototype.get _hasInvalidSelector): Deleted.
+        Moved the state of the invalid selector to a member
+        variable instead of a DOM class.
+
+        (WebInspector.CSSStyleDeclarationSection.prototype._updateSelectorIcon):
+        Renamed from _markSelector for clarity.
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css:
+        (.item.visual-style-selector-item.selector-invalid > .icon:hover):
+        (.item.visual-style-selector-item.selector-invalid > .icon:active):
+        (.item.visual-style-selector-item.selector-invalid > .icon):
+        Added :hover and :active styles.
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype.onattach):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._commitSelector):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._updateSelectorIcon):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleIconElementClicked):
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._selectorChanged): Deleted.
+        Changed the names of a few functions to provide better
+        consistency across the classes in the Style sidebar.
+
 2015-12-27  Brian Burg  <bburg@apple.com>
 
         Web Inspector: improve pre-filled bugzilla link on Uncaught Exception reporter sheet
