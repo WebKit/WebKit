@@ -1,5 +1,14 @@
 2015-12-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, relax limitation in operationCreateThis
+        https://bugs.webkit.org/show_bug.cgi?id=152383
+
+        Unreviewed. operationCreateThis now can be called with non constructible function.
+
+        * dfg/DFGOperations.cpp:
+
+2015-12-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6][ES7] Drop Constructability of generator function
         https://bugs.webkit.org/show_bug.cgi?id=152383
 
