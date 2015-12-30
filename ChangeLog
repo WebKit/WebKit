@@ -1,3 +1,15 @@
+2015-12-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][Mac] Disable gtk-doc
+        https://bugs.webkit.org/show_bug.cgi?id=150798
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/PlatformGTK.cmake: gtkdoc-scangobj fails due to a clang
+        link error on Mac, so for now disable gtk-doc support on that
+        platform.
+        * Source/cmake/OptionsGTK.cmake: Ditto.
+
 2015-12-23  Andy VanWagoner  <andy@instructure.com>
 
         [INTL] Implement Intl.DateTimeFormat.prototype.resolvedOptions ()

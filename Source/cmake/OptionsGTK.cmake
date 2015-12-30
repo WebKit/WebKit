@@ -453,8 +453,8 @@ if (USE_LIBHYPHEN)
     endif ()
 endif ()
 
-# Override the cached variables, gtk-doc and gobject-introspection do not really work when cross-building.
-if (CMAKE_CROSSCOMPILING)
+# Override the cached variables, gtk-doc and gobject-introspection do not really work when cross-building or when building on Mac.
+if (CMAKE_CROSSCOMPILING OR APPLE)
     set(ENABLE_GTKDOC OFF)
     set(ENABLE_INTROSPECTION OFF)
 endif ()

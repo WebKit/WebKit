@@ -34,7 +34,7 @@ endmacro()
 add_gtkdoc_generator("docs-build.stamp" "")
 if (ENABLE_GTKDOC)
     add_custom_target(gtkdoc ALL DEPENDS "${CMAKE_BINARY_DIR}/docs-build.stamp")
-elseif (NOT ENABLED_COMPILER_SANITIZERS AND NOT CMAKE_CROSSCOMPILING)
+elseif (NOT ENABLED_COMPILER_SANITIZERS AND NOT CMAKE_CROSSCOMPILING AND NOT APPLE)
     add_custom_target(gtkdoc DEPENDS "${CMAKE_BINARY_DIR}/docs-build.stamp")
 
     # Add a default build step which check that documentation does not have any warnings
