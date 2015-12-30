@@ -26,9 +26,6 @@ __gtk_tools_directory = os.path.abspath(os.path.dirname(__file__))
 sys.path = [__gtk_tools_directory] + sys.path
 import common
 
-# GTK+ 3.0.12 misses the -lm flag when linking the tests.
-module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs
-
 # We always enable introspection so that we can sniff out problems with our
 # annotations sooner rather than later.
 autogenargs='--enable-introspection'

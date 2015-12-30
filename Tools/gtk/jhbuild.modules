@@ -22,18 +22,23 @@
       <dep package="gtk-doc"/>
       <dep package="libsoup"/>
       <dep package="atk"/>
-      <dep package="at-spi2-core"/>
-      <dep package="at-spi2-atk"/>
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
       <dep package="gst-plugins-good"/>
       <dep package="gst-plugins-bad"/>
       <dep package="gst-libav"/>
-      <dep package="xserver"/>
-      <dep package="mesa"/>
       <dep package="openwebrtc"/>
-      <dep package="libseccomp"/>
       <dep package="llvm"/>
+      <if condition-set="linux">
+          <dep package="xserver"/>
+          <dep package="mesa"/>
+          <dep package="libseccomp"/>
+          <dep package="at-spi2-core"/>
+          <dep package="at-spi2-atk"/>
+      </if>
+      <if condition-set="macos">
+          <dep package="gsettings-desktop-schemas"/>
+      </if>
     </dependencies>
   </metamodule>
 
@@ -67,9 +72,13 @@
   <repository type="tarball" name="llvm.org"
       href="http://llvm.org"/>
 
-  <autotools id="cairo"
-             autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes ac_cv_func_rsvg_pixbuf_from_file=no"
-             makeargs="">
+  <autotools id="cairo">
+    <if condition-set="linux">
+      <autogenargs value="--enable-gl=yes --enable-egl=yes --enable-glx=yes"/>
+    </if>
+    <if condition-set="macos">
+      <autogenargs value="ac_cv_func_rsvg_pixbuf_from_file=no --disable-lto"/>
+    </if>
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="pixman"/>
@@ -144,6 +153,9 @@
 
   <autotools id="librsvg" autogen-sh="configure"
              autogenargs="--disable-introspection --enable-pixbuf-loader --disable-gtk-theme">
+    <if condition-set="macos">
+      <autogenargs value="--disable-Bsymbolic"/>
+    </if>
     <dependencies>
       <dep package="gdk-pixbuf"/>
       <dep package="glib"/>
@@ -159,10 +171,17 @@
 
   <autotools id="gtk+" autogen-sh="configure"
              autogenargs="--disable-introspection">
+    <if condition-set="macos">
+      <autogenargs value="--enable-x11-backend=no --enable-quartz-backend" />
+      <makeargs value="-j1" />
+    </if>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
-      <dep package="at-spi2-atk"/>
+      <dep package="atk"/>
+      <if condition-set="linux">
+        <dep package="at-spi2-atk"/>
+      </if>
       <dep package="gdk-pixbuf"/>
       <dep package="pango"/>
     </dependencies>
@@ -185,6 +204,9 @@
   </autotools>
 
   <autotools id="glib-networking">
+    <if condition-set="macos">
+      <autogenargs value="--with-ca-certificates='/usr/local/etc/openssl/cert.pem' --without-pkcs11"/>
+    </if>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -196,6 +218,9 @@
 
   <autotools id="libsoup"
              autogenargs="--without-gnome --disable-introspection">
+    <if condition-set="macos">
+      <autogenargs value="--disable-tls-check"/>
+    </if>
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
@@ -207,6 +232,9 @@
   <autotools id="fontconfig" 
              autogen-sh="configure"
              autogenargs="--enable-libxml2">
+    <if condition-set="macos">
+      <autogenargs value="--with-add-fonts=/System/Library/Fonts,/Library/Fonts,~/Library/Fonts"/>
+    </if>
     <dependencies>
       <dep package="freetype6"/>
       <dep package="libxml2"/>
@@ -214,7 +242,9 @@
     <branch module="software/fontconfig/release/fontconfig-2.11.1.tar.gz" version="2.11.1"
             repo="freedesktop.org"
             hash="sha256:b6b066c7dce3f436fdc0dfbae9d36122b38094f4f53bd8dffd45e195b0540d8d"
-            md5sum="e75e303b4f7756c2b16203a57ac87eba"/>
+            md5sum="e75e303b4f7756c2b16203a57ac87eba">
+      <patch file="fontconfig-fix-osx-cache.diff" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gnome-icon-theme" autogen-sh="configure">
@@ -290,6 +320,10 @@
   </autotools>
 
   <autotools id="gstreamer" autogenargs="--disable-gtk-doc">
+    <if condition-set="macos">
+      <autogenargs value="--disable-introspection"/>
+      <makeargs value="CFLAGS+=-Wno-error"/>
+    </if>
     <branch module="gstreamer/gstreamer-1.4.4.tar.xz" version="1.4.4"
             repo="gstreamer"
             hash="sha256:f0e305d91a93d05bf9e332cd4256ca07d77f5186a4d73847b7ae6db218f2c237"
@@ -299,6 +333,10 @@
   <autotools id="gst-plugins-base"
              autogen-sh="autogen.sh"
              autogenargs="--disable-examples --disable-gtk-doc">
+    <if condition-set="macos">
+      <autogenargs value="--disable-introspection"/>
+      <makeargs value="CFLAGS+=-Wno-error"/>
+    </if>
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
@@ -311,6 +349,10 @@
   </autotools>
 
   <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
+    <if condition-set="macos">
+      <autogenargs value="--disable-introspection"/>
+      <makeargs value="CFLAGS+=-Wno-error  OBJCFLAGS+=-Wno-error"/>
+    </if>
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -323,6 +365,10 @@
   </autotools>
 
   <autotools id="gst-plugins-bad" autogenargs="--disable-examples --disable-gtk-doc">
+    <if condition-set="macos">
+      <autogenargs value="--disable-introspection"/>
+      <makeargs value="CFLAGS+=-Wno-error CXXFLAGS+=-Wno-error OBJCFLAGS+=-Wno-error"/>
+    </if>
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -336,6 +382,9 @@
   </autotools>
 
   <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
+    <if condition-set="macos">
+      <makeargs value="CFLAGS+=-Wno-error"/>
+    </if>
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -358,6 +407,9 @@
   </autotools>
 
   <autotools id="gtk-doc" autogen-sh="configure">
+    <if condition-set="macos">
+      <autogenargs value="--with-xml-catalog=/usr/local/etc/xml/catalog"/>
+    </if>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -384,6 +436,9 @@
    </autotools>
 
    <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">
+     <if condition-set="macos">
+       <makeargs value="CFLAGS+=-Wno-error"/>
+     </if>
      <dependencies>
        <dep package="gst-plugins-base"/>
        <dep package="libusrsctp"/>
@@ -399,6 +454,9 @@
   </autotools>
 
   <autotools id="openwebrtc" autogenargs="--enable-bridge=no --enable-owr-gst=yes">
+     <if condition-set="macos">
+       <makeargs value="CFLAGS+=-Wno-error"/>
+     </if>
     <dependencies>
       <dep package="gst-plugins-openwebrtc"/>
       <dep package="libnice"/>
@@ -413,6 +471,16 @@
             hash="sha256:ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153"/>
   </autotools>
 
+  <autotools id="gsettings-desktop-schemas" autogen-sh="configure">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/gsettings-desktop-schemas/3.16/gsettings-desktop-schemas-3.16.1.tar.xz" version="3.16.1"
+            repo="ftp.gnome.org"
+            hash="sha256:74fe9fdad510c8a6666febeceb7ebafc581ef990b3afcc8c1e8b5d90b24b3461">
+    </branch>
+  </autotools>
+  
   <!-- Dependencies listed below this point are not thought to affect test results, and are only
        included because they themselves depend on other dependencies built by jhbuild. -->
 

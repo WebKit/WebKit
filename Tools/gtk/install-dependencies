@@ -37,7 +37,43 @@ function checkInstaller {
         exit 0
     fi
 
+    if [ `uname` -eq "Darwin" ]
+       installDependenciesWithBrew
+       exit 0
+    fi
+
     printNotSupportedMessageAndExit
+}
+
+function installDependenciesWithBrew {
+    brew &> /dev/null
+    if [ $? -gt 1 ]; then
+        echo "Please install HomeBrew. Instructions on http://brew.sh"
+        exit 1
+    fi
+
+    brew install autoconf \
+         automake \
+         bison \
+         cmake \
+         enchant \
+         flex \
+         gettext \
+         gobject-introspection \
+         icu4c \
+         intltool \
+         itstool \
+         libcroco \
+         libgcrypt \
+         libgpg-error \
+         libtiff \
+         libtool \
+         ninja \
+         pango \
+         pkg-config \
+         sqlite \
+         webp \
+         xz
 }
 
 function installDependenciesWithApt {
