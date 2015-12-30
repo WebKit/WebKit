@@ -1,3 +1,65 @@
+2015-12-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Clean up TextureMapperAnimation, TextureMapperAnimations
+        https://bugs.webkit.org/show_bug.cgi?id=152112
+
+        Reviewed by Darin Adler.
+
+        Clean up the TextureMapperAnimation class. Turn AnimationState into an enum
+        class. Use references for non-null pointer parameters to one version of the
+        constructor and the apply() and applyInternal() methods. Remove unnecessary
+        public methods and reorder the remaining ones into something more sensible.
+        In terms of the implementation of this class, the methods are moved around to
+        follow the order of declarations, along with some small cleanups and improvements
+        applied.
+
+        TextureMapperAnimations class is also refreshed. The constructor is defaulted,
+        and the method implementations are reordered a bit and also adjusted to use the
+        range-based for-loops and some STL utilities.
+
+        Static functions in the implementation file are also updated to use range-based
+        for-loops, references and nullptrs where possible.
+
+        There's no change in behavior as this is just a refactoring.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::applyFilterAnimation):
+        (WebCore::shouldReverseAnimationValue):
+        (WebCore::applyTransformAnimation):
+        (WebCore::TextureMapperAnimation::TextureMapperAnimation):
+        (WebCore::TextureMapperAnimation::apply):
+        (WebCore::TextureMapperAnimation::pause):
+        (WebCore::TextureMapperAnimation::resume):
+        (WebCore::TextureMapperAnimation::computeTotalRunningTime):
+        (WebCore::TextureMapperAnimation::isActive):
+        (WebCore::TextureMapperAnimation::applyInternal):
+        (WebCore::TextureMapperAnimations::add):
+        (WebCore::TextureMapperAnimations::remove):
+        (WebCore::TextureMapperAnimations::pause):
+        (WebCore::TextureMapperAnimations::suspend):
+        (WebCore::TextureMapperAnimations::resume):
+        (WebCore::TextureMapperAnimations::apply):
+        (WebCore::TextureMapperAnimations::hasActiveAnimationsOfType):
+        (WebCore::TextureMapperAnimations::hasRunningAnimations):
+        (WebCore::TextureMapperAnimations::getActiveAnimations):
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        (WebCore::TextureMapperAnimation::name):
+        (WebCore::TextureMapperAnimation::boxSize):
+        (WebCore::TextureMapperAnimation::animation):
+        (WebCore::TextureMapperAnimation::startTime):
+        (WebCore::TextureMapperAnimation::pauseTime):
+        (WebCore::TextureMapperAnimation::state):
+        (WebCore::TextureMapperAnimation::setState): Deleted.
+        (WebCore::TextureMapperAnimation::property): Deleted.
+        (WebCore::TextureMapperAnimations::TextureMapperAnimations): Deleted.
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::syncAnimations):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+
 2015-12-29  Simon Fraser  <simon.fraser@apple.com>
 
         Rename "scrollOffsetForFixedPosition" and related functions to refer to scrollPosition

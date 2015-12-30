@@ -26,15 +26,12 @@
 
 namespace WebCore {
 
-static inline PassRefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation* toOp, double progress, const FloatSize& size, bool blendToPassthrough = false)
+static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize& size, bool blendToPassthrough = false)
 {
-    ASSERT(toOp);
-    if (toOp->blendingNeedsRendererSize())
-        return toOp->blend(fromOp, progress, LayoutSize(size), blendToPassthrough);
-
-    return toOp->blend(fromOp, progress, blendToPassthrough);
+    if (toOp.blendingNeedsRendererSize())
+        return toOp.blend(fromOp, progress, LayoutSize(size), blendToPassthrough);
+    return toOp.blend(fromOp, progress, blendToPassthrough);
 }
-
 
 static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress, const FloatSize& boxSize)
 {
@@ -55,9 +52,9 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     size_t toSize = to.operations().size();
     size_t size = std::max(fromSize, toSize);
     for (size_t i = 0; i < size; i++) {
-        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
-        RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
-        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), toOp.get(), progress, boxSize) : (fromOp ? blendFunc(0, fromOp.get(), progress, boxSize, true) : 0);
+        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : nullptr;
+        RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : nullptr;
+        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), *toOp, progress, boxSize) : (fromOp ? blendFunc(nullptr, *fromOp, progress, boxSize, true) : nullptr);
         if (blendedOp)
             result.operations().append(blendedOp);
         else {
@@ -74,11 +71,9 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
 
 static bool shouldReverseAnimationValue(Animation::AnimationDirection direction, int loopCount)
 {
-    if (((direction == Animation::AnimationDirectionAlternate) && (loopCount & 1))
-        || ((direction == Animation::AnimationDirectionAlternateReverse) && !(loopCount & 1))
-        || direction == Animation::AnimationDirectionReverse)
-        return true;
-    return false;
+    return (direction == Animation::AnimationDirectionAlternate && loopCount & 1)
+        || (direction == Animation::AnimationDirectionAlternateReverse && !(loopCount & 1))
+        || direction == Animation::AnimationDirectionReverse;
 }
 
 static double normalizedAnimationValue(double runningTime, double duration, Animation::AnimationDirection direction, double iterationCount)
@@ -179,16 +174,16 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     // Animation to "-webkit-transform: none".
     if (!to.size()) {
         TransformOperations blended(from);
-        for (size_t i = 0; i < blended.operations().size(); ++i)
-            blended.operations()[i]->blend(0, progress, true)->apply(matrix, boxSize);
+        for (auto& operation : blended.operations())
+            operation->blend(nullptr, progress, true)->apply(matrix, boxSize);
         return matrix;
     }
 
     // Animation from "-webkit-transform: none".
     if (!from.size()) {
         TransformOperations blended(to);
-        for (size_t i = 0; i < blended.operations().size(); ++i)
-            blended.operations()[i]->blend(0, 1. - progress, true)->apply(matrix, boxSize);
+        for (auto& operation : blended.operations())
+            operation->blend(nullptr, 1 - progress, true)->apply(matrix, boxSize);
         return matrix;
     }
 
@@ -209,79 +204,35 @@ static const TimingFunction* timingFunctionForAnimationValue(const AnimationValu
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
-TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation* animation, double startTime, bool listsMatch)
-    : m_keyframes(keyframes)
+TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation& animation, bool listsMatch, double startTime, double pauseTime, AnimationState state)
+    : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
+    , m_keyframes(keyframes)
     , m_boxSize(boxSize)
-    , m_animation(Animation::create(*animation))
-    , m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
+    , m_animation(Animation::create(animation))
     , m_listsMatch(listsMatch)
     , m_startTime(startTime)
-    , m_pauseTime(0)
+    , m_pauseTime(pauseTime)
     , m_totalRunningTime(0)
     , m_lastRefreshedTime(m_startTime)
-    , m_state(PlayingState)
+    , m_state(state)
 {
 }
 
 TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& other)
-    : m_keyframes(other.keyframes())
-    , m_boxSize(other.boxSize())
-    , m_animation(Animation::create(*other.animation()))
-    , m_name(other.name().isSafeToSendToAnotherThread() ? other.name() : other.name().isolatedCopy())
-    , m_listsMatch(other.listsMatch())
-    , m_startTime(other.startTime())
-    , m_pauseTime(other.pauseTime())
+    : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
+    , m_keyframes(other.m_keyframes)
+    , m_boxSize(other.m_boxSize)
+    , m_animation(Animation::create(*other.m_animation))
+    , m_listsMatch(other.m_listsMatch)
+    , m_startTime(other.m_startTime)
+    , m_pauseTime(other.m_pauseTime)
     , m_totalRunningTime(other.m_totalRunningTime)
     , m_lastRefreshedTime(other.m_lastRefreshedTime)
-    , m_state(other.state())
+    , m_state(other.m_state)
 {
 }
 
-void TextureMapperAnimation::applyInternal(Client* client, const AnimationValue& from, const AnimationValue& to, float progress)
-{
-    switch (m_keyframes.property()) {
-    case AnimatedPropertyOpacity:
-        client->setAnimatedOpacity(applyOpacityAnimation((static_cast<const FloatAnimationValue&>(from).value()), (static_cast<const FloatAnimationValue&>(to).value()), progress));
-        return;
-    case AnimatedPropertyTransform:
-        client->setAnimatedTransform(applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize, m_listsMatch));
-        return;
-    case AnimatedPropertyFilter:
-        client->setAnimatedFilters(applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize));
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-bool TextureMapperAnimation::isActive() const
-{
-    if (state() != StoppedState)
-        return true;
-
-    return m_animation->fillsForwards();
-}
-
-bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
-{
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        if (m_animations[i].isActive() && m_animations[i].property() == type)
-            return true;
-    }
-    return false;
-}
-
-bool TextureMapperAnimations::hasRunningAnimations() const
-{
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        if (m_animations[i].state() == TextureMapperAnimation::PlayingState)
-            return true;
-    }
-
-    return false;
-}
-
-void TextureMapperAnimation::apply(Client* client)
+void TextureMapperAnimation::apply(Client& client)
 {
     if (!isActive())
         return;
@@ -290,7 +241,8 @@ void TextureMapperAnimation::apply(Client* client)
     double normalizedValue = normalizedAnimationValue(totalRunningTime, m_animation->duration(), m_animation->direction(), m_animation->iterationCount());
 
     if (m_animation->iterationCount() != Animation::IterationCountInfinite && totalRunningTime >= m_animation->duration() * m_animation->iterationCount()) {
-        setState(StoppedState);
+        m_state = AnimationState::Stopped;
+        m_pauseTime = 0;
         if (m_animation->fillsForwards())
             normalizedValue = normalizedAnimationValueForFillsForwards(m_animation->iterationCount(), m_animation->direction());
     }
@@ -325,9 +277,23 @@ void TextureMapperAnimation::apply(Client* client)
     }
 }
 
+void TextureMapperAnimation::pause(double time)
+{
+    m_state = AnimationState::Paused;
+    m_pauseTime = time;
+}
+
+void TextureMapperAnimation::resume()
+{
+    m_state = AnimationState::Playing;
+    m_pauseTime = 0;
+    m_totalRunningTime = m_pauseTime;
+    m_lastRefreshedTime = monotonicallyIncreasingTime();
+}
+
 double TextureMapperAnimation::computeTotalRunningTime()
 {
-    if (state() == PausedState)
+    if (m_state == AnimationState::Paused)
         return m_pauseTime;
 
     double oldLastRefreshedTime = m_lastRefreshedTime;
@@ -336,45 +302,34 @@ double TextureMapperAnimation::computeTotalRunningTime()
     return m_totalRunningTime;
 }
 
-void TextureMapperAnimation::pause(double time)
+bool TextureMapperAnimation::isActive() const
 {
-    setState(PausedState);
-    m_pauseTime = time;
+    return m_state != AnimationState::Stopped || m_animation->fillsForwards();
 }
 
-void TextureMapperAnimation::resume()
+void TextureMapperAnimation::applyInternal(Client& client, const AnimationValue& from, const AnimationValue& to, float progress)
 {
-    setState(PlayingState);
-    m_totalRunningTime = m_pauseTime;
-    m_lastRefreshedTime = monotonicallyIncreasingTime();
+    switch (m_keyframes.property()) {
+    case AnimatedPropertyOpacity:
+        client.setAnimatedOpacity(applyOpacityAnimation((static_cast<const FloatAnimationValue&>(from).value()), (static_cast<const FloatAnimationValue&>(to).value()), progress));
+        return;
+    case AnimatedPropertyTransform:
+        client.setAnimatedTransform(applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize, m_listsMatch));
+        return;
+    case AnimatedPropertyFilter:
+        client.setAnimatedFilters(applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize));
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void TextureMapperAnimations::add(const TextureMapperAnimation& animation)
 {
     // Remove the old state if we are resuming a paused animation.
-    remove(animation.name(), animation.property());
+    remove(animation.name(), animation.keyframes().property());
 
     m_animations.append(animation);
-}
-
-void TextureMapperAnimations::pause(const String& name, double offset)
-{
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        if (m_animations[i].name() == name)
-            m_animations[i].pause(offset);
-    }
-}
-
-void TextureMapperAnimations::suspend(double offset)
-{
-    for (size_t i = 0; i < m_animations.size(); ++i)
-        m_animations[i].pause(offset);
-}
-
-void TextureMapperAnimations::resume()
-{
-    for (size_t i = 0; i < m_animations.size(); ++i)
-        m_animations[i].resume();
 }
 
 void TextureMapperAnimations::remove(const String& name)
@@ -387,23 +342,56 @@ void TextureMapperAnimations::remove(const String& name)
 void TextureMapperAnimations::remove(const String& name, AnimatedPropertyID property)
 {
     m_animations.removeAllMatching([&name, property] (const TextureMapperAnimation& animation) {
-        return animation.name() == name && animation.property() == property;
+        return animation.name() == name && animation.keyframes().property() == property;
     });
 }
 
-void TextureMapperAnimations::apply(TextureMapperAnimation::Client* client)
+void TextureMapperAnimations::pause(const String& name, double offset)
 {
-    for (size_t i = 0; i < m_animations.size(); ++i)
-        m_animations[i].apply(client);
+    for (auto& animation : m_animations) {
+        if (animation.name() == name)
+            animation.pause(offset);
+    }
+}
+
+void TextureMapperAnimations::suspend(double offset)
+{
+    for (auto& animation : m_animations)
+        animation.pause(offset);
+}
+
+void TextureMapperAnimations::resume()
+{
+    for (auto& animation : m_animations)
+        animation.resume();
+}
+
+void TextureMapperAnimations::apply(TextureMapperAnimation::Client& client)
+{
+    for (auto& animation : m_animations)
+        animation.apply(client);
+}
+
+bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
+{
+    return std::any_of(m_animations.begin(), m_animations.end(),
+        [&type](const TextureMapperAnimation& animation) { return animation.isActive() && animation.keyframes().property() == type; });
+}
+
+bool TextureMapperAnimations::hasRunningAnimations() const
+{
+    return std::any_of(m_animations.begin(), m_animations.end(),
+        [](const TextureMapperAnimation& animation) { return animation.state() == TextureMapperAnimation::AnimationState::Playing; });
 }
 
 TextureMapperAnimations TextureMapperAnimations::getActiveAnimations() const
 {
     TextureMapperAnimations active;
-    for (size_t i = 0; i < m_animations.size(); ++i) {
-        if (m_animations[i].isActive())
-            active.add(m_animations[i]);
+    for (auto& animation : m_animations) {
+        if (animation.isActive())
+            active.add(animation);
     }
     return active;
 }
-}
+
+} // namespace WebCore

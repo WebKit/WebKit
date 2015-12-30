@@ -574,7 +574,7 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
         listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
 
     const double currentTime = monotonicallyIncreasingTime();
-    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, anim, currentTime - timeOffset, listsMatch));
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, *anim, listsMatch, currentTime - timeOffset, 0, TextureMapperAnimation::AnimationState::Playing));
     // m_animationStartTime is the time of the first real frame of animation, now or delayed by a negative offset.
     if (timeOffset > 0)
         m_animationStartTime = currentTime;

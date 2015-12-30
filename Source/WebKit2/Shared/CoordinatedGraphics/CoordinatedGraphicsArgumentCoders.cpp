@@ -546,9 +546,7 @@ bool ArgumentCoder<TextureMapperAnimation>::decode(ArgumentDecoder& decoder, Tex
         }
     }
 
-    animation = TextureMapperAnimation(name, keyframes, boxSize, animationObject.get(), startTime, listsMatch);
-    animation.setState(state, pauseTime);
-
+    animation = TextureMapperAnimation(name, keyframes, boxSize, *animationObject, listsMatch, startTime, pauseTime, state);
     return true;
 }
 

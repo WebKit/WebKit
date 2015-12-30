@@ -21,15 +21,15 @@
 #define TextureMapperAnimation_h
 
 #include "GraphicsLayer.h"
-#include "TransformationMatrix.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
+class TransformationMatrix;
+
 class TextureMapperAnimation {
 public:
-    enum AnimationState { PlayingState, PausedState, StoppedState };
+    enum class AnimationState { Playing, Paused, Stopped };
+
     class Client {
     public:
         virtual void setAnimatedTransform(const TransformationMatrix&) = 0;
@@ -40,34 +40,31 @@ public:
     TextureMapperAnimation()
         : m_keyframes(AnimatedPropertyInvalid)
     { }
-    TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation*, double, bool);
+    TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation&, bool, double, double, AnimationState);
     TextureMapperAnimation(const TextureMapperAnimation&);
-    void apply(Client*);
+
+    void apply(Client&);
     void pause(double);
     void resume();
-    double computeTotalRunningTime();
-    AnimationState state() const { return m_state; }
-    void setState(AnimationState s, double pauseTime = 0)
-    {
-        m_state = s;
-        m_pauseTime = pauseTime;
-    }
-    AnimatedPropertyID property() const { return m_keyframes.property(); }
     bool isActive() const;
-    String name() const { return m_name; }
-    FloatSize boxSize() const { return m_boxSize; }
+
+    const String& name() const { return m_name; }
+    const KeyframeValueList& keyframes() const { return m_keyframes; }
+    const FloatSize& boxSize() const { return m_boxSize; }
+    const RefPtr<Animation> animation() const { return m_animation; }
+    bool listsMatch() const { return m_listsMatch; }
     double startTime() const { return m_startTime; }
     double pauseTime() const { return m_pauseTime; }
-    PassRefPtr<Animation> animation() const { return m_animation.get(); }
-    const KeyframeValueList& keyframes() const { return m_keyframes; }
-    bool listsMatch() const { return m_listsMatch; }
+    AnimationState state() const { return m_state; }
 
 private:
-    void applyInternal(Client*, const AnimationValue& from, const AnimationValue& to, float progress);
+    void applyInternal(Client&, const AnimationValue& from, const AnimationValue& to, float progress);
+    double computeTotalRunningTime();
+
+    String m_name;
     KeyframeValueList m_keyframes;
     FloatSize m_boxSize;
     RefPtr<Animation> m_animation;
-    String m_name;
     bool m_listsMatch;
     double m_startTime;
     double m_pauseTime;
@@ -78,7 +75,7 @@ private:
 
 class TextureMapperAnimations {
 public:
-    TextureMapperAnimations() { }
+    TextureMapperAnimations() = default;
 
     void add(const TextureMapperAnimation&);
     void remove(const String& name);
@@ -86,7 +83,9 @@ public:
     void pause(const String&, double);
     void suspend(double);
     void resume();
-    void apply(TextureMapperAnimation::Client*);
+
+    void apply(TextureMapperAnimation::Client&);
+
     bool isEmpty() const { return m_animations.isEmpty(); }
     size_t size() const { return m_animations.size(); }
     const Vector<TextureMapperAnimation>& animations() const { return m_animations; }
@@ -94,7 +93,6 @@ public:
 
     bool hasRunningAnimations() const;
     bool hasActiveAnimationsOfType(AnimatedPropertyID type) const;
-
     TextureMapperAnimations getActiveAnimations() const;
 
 private:

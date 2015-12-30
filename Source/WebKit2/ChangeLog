@@ -1,3 +1,13 @@
+2015-12-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Clean up TextureMapperAnimation, TextureMapperAnimations
+        https://bugs.webkit.org/show_bug.cgi?id=152112
+
+        Reviewed by Darin Adler.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextureMapperAnimation>::decode):
+
 2015-12-29  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ScrollView::scrollOffset() in preparation for scrollOffset vs. scrollPosition clarification
