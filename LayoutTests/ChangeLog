@@ -1,3 +1,17 @@
+2015-12-29  Andy VanWagoner  <andy@instructure.com>
+
+        Remove tests for sometimes unsupported calendars, numbering systems, and time zone backward links
+        https://bugs.webkit.org/show_bug.cgi?id=152550
+
+        Reviewed by Alexey Proskuryakov.
+
+        Time zones change often, so only test a few probable backward links.
+        Remove hanidays numbering system tests, since GTK and EFL don't support it.
+        Remove islamic-umalqura calendar tests, since GTK and EFL don't support it.
+
+        * js/intl-datetimeformat-expected.txt:
+        * js/script-tests/intl-datetimeformat.js:
+
 2015-12-27  Zalan Bujtas  <zalan@apple.com>
 
         Should never be reached failure in WebCore::RenderElement::clearLayoutRootIfNeeded

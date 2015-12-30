@@ -177,7 +177,7 @@ shouldBe("Intl.DateTimeFormat('en').resolvedOptions().second", "undefined");
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().timeZoneName", "undefined");
 
 // Locale-sensitive format().
-shouldBe("Intl.DateTimeFormat('ar-SA', { timeZone: 'America/Denver' }).format(1451099872641)", "'\\u0661\\u0664\\u200F/\\u0663\\u200F/\\u0661\\u0664\\u0663\\u0667'");
+shouldBe("Intl.DateTimeFormat('ar', { timeZone: 'America/Denver' }).format(1451099872641)", "'٢٥‏/١٢‏/٢٠١٥'");
 shouldBe("Intl.DateTimeFormat('de', { timeZone: 'America/Denver' }).format(1451099872641)", "'25.12.2015'");
 shouldBe("Intl.DateTimeFormat('ja', { timeZone: 'America/Denver' }).format(1451099872641)", "'2015/12/25'");
 shouldBe("Intl.DateTimeFormat('pt', { timeZone: 'America/Denver' }).format(1451099872641)", "'25/12/2015'");
@@ -203,94 +203,30 @@ shouldBe("Intl.DateTimeFormat('en', { timeZone: 'AMERICA/LOS_ANGELES' }).resolve
 shouldBe("Intl.DateTimeFormat('en', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }).resolvedOptions().timeZone", "Intl.DateTimeFormat().resolvedOptions().timeZone");
 
 // Time zone is canonicalized for obsolete links in IANA tz backward file.
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'America/Atka' }).resolvedOptions().timeZone", "'America/Adak'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'America/Ensenada' }).resolvedOptions().timeZone", "'America/Tijuana'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'America/Porto_Acre' }).resolvedOptions().timeZone", "'America/Rio_Branco'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'America/Shiprock' }).resolvedOptions().timeZone", "'America/Denver'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Antarctica/South_Pole' }).resolvedOptions().timeZone", "'Pacific/Auckland'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Ashkhabad' }).resolvedOptions().timeZone", "'Asia/Ashgabat'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Chongqing' }).resolvedOptions().timeZone", "'Asia/Shanghai'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Chungking' }).resolvedOptions().timeZone", "'Asia/Shanghai'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Dacca' }).resolvedOptions().timeZone", "'Asia/Dhaka'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Harbin' }).resolvedOptions().timeZone", "'Asia/Shanghai'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Kashgar' }).resolvedOptions().timeZone", "'Asia/Urumqi'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Macao' }).resolvedOptions().timeZone", "'Asia/Macau'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Tel_Aviv' }).resolvedOptions().timeZone", "'Asia/Jerusalem'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Thimbu' }).resolvedOptions().timeZone", "'Asia/Thimphu'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Ujung_Pandang' }).resolvedOptions().timeZone", "'Asia/Makassar'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Asia/Ulan_Bator' }).resolvedOptions().timeZone", "'Asia/Ulaanbaatar'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/ACT' }).resolvedOptions().timeZone", "'Australia/Sydney'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/Canberra' }).resolvedOptions().timeZone", "'Australia/Sydney'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/LHI' }).resolvedOptions().timeZone", "'Australia/Lord_Howe'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/NSW' }).resolvedOptions().timeZone", "'Australia/Sydney'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/North' }).resolvedOptions().timeZone", "'Australia/Darwin'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/Queensland' }).resolvedOptions().timeZone", "'Australia/Brisbane'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/South' }).resolvedOptions().timeZone", "'Australia/Adelaide'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/Tasmania' }).resolvedOptions().timeZone", "'Australia/Hobart'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/Victoria' }).resolvedOptions().timeZone", "'Australia/Melbourne'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/West' }).resolvedOptions().timeZone", "'Australia/Perth'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Australia/Yancowinna' }).resolvedOptions().timeZone", "'Australia/Broken_Hill'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Brazil/Acre' }).resolvedOptions().timeZone", "'America/Rio_Branco'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Brazil/DeNoronha' }).resolvedOptions().timeZone", "'America/Noronha'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Brazil/East' }).resolvedOptions().timeZone", "'America/Sao_Paulo'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Brazil/West' }).resolvedOptions().timeZone", "'America/Manaus'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/Atlantic' }).resolvedOptions().timeZone", "'America/Halifax'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/Central' }).resolvedOptions().timeZone", "'America/Winnipeg'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/East-Saskatchewan' }).resolvedOptions().timeZone", "'America/Regina'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/Eastern' }).resolvedOptions().timeZone", "'America/Toronto'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/Mountain' }).resolvedOptions().timeZone", "'America/Edmonton'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/Newfoundland' }).resolvedOptions().timeZone", "'America/St_Johns'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/Pacific' }).resolvedOptions().timeZone", "'America/Vancouver'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/Saskatchewan' }).resolvedOptions().timeZone", "'America/Regina'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Canada/Yukon' }).resolvedOptions().timeZone", "'America/Whitehorse'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Chile/Continental' }).resolvedOptions().timeZone", "'America/Santiago'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Chile/EasterIsland' }).resolvedOptions().timeZone", "'Pacific/Easter'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Cuba' }).resolvedOptions().timeZone", "'America/Havana'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Egypt' }).resolvedOptions().timeZone", "'Africa/Cairo'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Eire' }).resolvedOptions().timeZone", "'Europe/Dublin'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Europe/Belfast' }).resolvedOptions().timeZone", "'Europe/London'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Europe/Tiraspol' }).resolvedOptions().timeZone", "'Europe/Chisinau'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'GB' }).resolvedOptions().timeZone", "'Europe/London'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'GB-Eire' }).resolvedOptions().timeZone", "'Europe/London'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'GMT+0' }).resolvedOptions().timeZone", "'UTC'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'GMT-0' }).resolvedOptions().timeZone", "'UTC'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'GMT0' }).resolvedOptions().timeZone", "'UTC'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Greenwich' }).resolvedOptions().timeZone", "'UTC'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Hongkong' }).resolvedOptions().timeZone", "'Asia/Hong_Kong'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Iceland' }).resolvedOptions().timeZone", "'Atlantic/Reykjavik'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Iran' }).resolvedOptions().timeZone", "'Asia/Tehran'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Israel' }).resolvedOptions().timeZone", "'Asia/Jerusalem'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Jamaica' }).resolvedOptions().timeZone", "'America/Jamaica'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Japan' }).resolvedOptions().timeZone", "'Asia/Tokyo'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Kwajalein' }).resolvedOptions().timeZone", "'Pacific/Kwajalein'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Libya' }).resolvedOptions().timeZone", "'Africa/Tripoli'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Mexico/BajaNorte' }).resolvedOptions().timeZone", "'America/Tijuana'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Mexico/BajaSur' }).resolvedOptions().timeZone", "'America/Mazatlan'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Mexico/General' }).resolvedOptions().timeZone", "'America/Mexico_City'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'NZ' }).resolvedOptions().timeZone", "'Pacific/Auckland'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'NZ-CHAT' }).resolvedOptions().timeZone", "'Pacific/Chatham'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Navajo' }).resolvedOptions().timeZone", "'America/Denver'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'PRC' }).resolvedOptions().timeZone", "'Asia/Shanghai'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Poland' }).resolvedOptions().timeZone", "'Europe/Warsaw'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Portugal' }).resolvedOptions().timeZone", "'Europe/Lisbon'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'ROC' }).resolvedOptions().timeZone", "'Asia/Taipei'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'ROK' }).resolvedOptions().timeZone", "'Asia/Seoul'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Singapore' }).resolvedOptions().timeZone", "'Asia/Singapore'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Turkey' }).resolvedOptions().timeZone", "'Europe/Istanbul'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'UCT' }).resolvedOptions().timeZone", "'UTC'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Alaska' }).resolvedOptions().timeZone", "'America/Anchorage'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Aleutian' }).resolvedOptions().timeZone", "'America/Adak'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Arizona' }).resolvedOptions().timeZone", "'America/Phoenix'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Central' }).resolvedOptions().timeZone", "'America/Chicago'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Eastern' }).resolvedOptions().timeZone", "'America/New_York'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Hawaii' }).resolvedOptions().timeZone", "'Pacific/Honolulu'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Michigan' }).resolvedOptions().timeZone", "'America/Detroit'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Mountain' }).resolvedOptions().timeZone", "'America/Denver'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Pacific' }).resolvedOptions().timeZone", "'America/Los_Angeles'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'US/Samoa' }).resolvedOptions().timeZone", "'Pacific/Pago_Pago'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'UTC' }).resolvedOptions().timeZone", "'UTC'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Universal' }).resolvedOptions().timeZone", "'UTC'");
-shouldBe("Intl.DateTimeFormat('en', { timeZone: 'W-SU' }).resolvedOptions().timeZone", "'Europe/Moscow'");
 shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Zulu' }).resolvedOptions().timeZone", "'UTC'");
 
 // Timezone-sensitive format().
@@ -299,8 +235,8 @@ shouldBe("Intl.DateTimeFormat('en', { timeZone: 'Pacific/Auckland' }).format(145
 
 // Gets default calendar and numberingSystem from locale.
 shouldBe("Intl.DateTimeFormat('ar-sa').resolvedOptions().locale", "'ar-SA'");
-shouldBe("Intl.DateTimeFormat('ar-sa').resolvedOptions().calendar", "'islamic-umalqura'");
-shouldBe("Intl.DateTimeFormat('ar-sa').resolvedOptions().numberingSystem", "'arab'");
+shouldBe("Intl.DateTimeFormat('fa-IR').resolvedOptions().calendar", "'persian'");
+shouldBe("Intl.DateTimeFormat('ar').resolvedOptions().numberingSystem", "'arab'");
 
 shouldBe("Intl.DateTimeFormat('en', { calendar:'dangi' }).resolvedOptions().calendar", "'gregorian'");
 shouldBe("Intl.DateTimeFormat('en-u-ca-bogus').resolvedOptions().locale", "'en'");
@@ -353,7 +289,7 @@ shouldBe("Intl.DateTimeFormat('en-u-nu-arab').resolvedOptions().locale", "'en-u-
 
 let numberingSystems = [
   "arab", "arabext", "armn", "armnlow", "bali", "beng", "cham", "deva", "ethi",
-  "fullwide", "geor", "grek", "greklow", "gujr", "guru", "hanidays", "hanidec",
+  "fullwide", "geor", "grek", "greklow", "gujr", "guru", "hanidec",
   "hans", "hansfin", "hant", "hantfin", "hebr", "java", "jpan", "jpanfin",
   "kali", "khmr", "knda", "lana", "lanatham", "laoo", "latn", "lepc", "limb",
   "mlym", "mong", "mtei", "mymr", "mymrshan", "nkoo", "olck", "orya", "roman",
@@ -380,7 +316,6 @@ shouldBe("Intl.DateTimeFormat('en-u-nu-grek', { timeZone: 'America/Los_Angeles' 
 shouldBe("Intl.DateTimeFormat('en-u-nu-greklow', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'ιβ´/κε´/͵βιε´'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-gujr', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'૧૨/૨૫/૨૦૧૫'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-guru', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'੧੨/੨੫/੨੦੧੫'");
-shouldBe("Intl.DateTimeFormat('en-u-nu-hanidays', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'12/廿五/2015'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-hanidec', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'一二/二五/二〇一五'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-hans', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'十二/二十五/二千零一十五'");
 shouldBe("Intl.DateTimeFormat('en-u-nu-hansfin', { timeZone: 'America/Los_Angeles' }).format(1451099872641)", "'拾贰/贰拾伍/贰仟零壹拾伍'");
