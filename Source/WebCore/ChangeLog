@@ -1,5 +1,12 @@
 2015-12-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the Windows build.
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::drawRectIntoContext):
+
+2015-12-29  Simon Fraser  <simon.fraser@apple.com>
+
         Remove ScrollView::scrollOffset() in preparation for scrollOffset vs. scrollPosition clarification
         https://bugs.webkit.org/show_bug.cgi?id=152589
 

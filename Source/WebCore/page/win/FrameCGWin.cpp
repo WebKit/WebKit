@@ -41,7 +41,7 @@ namespace WebCore {
 
 static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext& gc)
 {
-    IntSize scrollPosition = view->scrollPosition();
+    IntPoint scrollPosition = view->scrollPosition();
     rect.move(-scrollPosition.x(), -scrollPosition.y());
     rect = view->convertToContainingWindow(rect);
 
