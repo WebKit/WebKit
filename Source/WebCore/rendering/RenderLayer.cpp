@@ -2740,17 +2740,17 @@ int RenderLayer::scrollPosition(Scrollbar* scrollbar) const
     return 0;
 }
 
-IntPoint RenderLayer::scrollPosition() const
+ScrollPosition RenderLayer::scrollPosition() const
 {
-    return IntPoint(m_scrollOffset);
+    return ScrollPosition(m_scrollOffset);
 }
 
-IntPoint RenderLayer::minimumScrollPosition() const
+ScrollPosition RenderLayer::minimumScrollPosition() const
 {
     return -scrollOrigin();
 }
 
-IntPoint RenderLayer::maximumScrollPosition() const
+ScrollPosition RenderLayer::maximumScrollPosition() const
 {
     // FIXME: m_scrollSize may not be up-to-date if m_scrollDimensionsDirty is true.
     return -scrollOrigin() + roundedIntSize(m_scrollSize) - visibleContentRectIncludingScrollbars(ContentsVisibleRect).size();

@@ -41,6 +41,11 @@ class ScrollAnimator;
 class GraphicsLayer;
 class TiledBacking;
 
+// scrollPosition is in content coordinates (0,0 is at scrollOrigin), so may have negative components.
+typedef IntPoint ScrollPosition;
+// scrollOffset() is the value used by scrollbars (min is 0,0), and should never have negative components.
+typedef IntPoint ScrollOffset;
+
 class ScrollableArea {
 public:
     WEBCORE_EXPORT bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
@@ -179,9 +184,10 @@ public:
     virtual Scrollbar* horizontalScrollbar() const { return 0; }
     virtual Scrollbar* verticalScrollbar() const { return 0; }
 
-    virtual IntPoint scrollPosition() const;
-    virtual IntPoint minimumScrollPosition() const;
-    virtual IntPoint maximumScrollPosition() const;
+    virtual ScrollPosition scrollPosition() const;
+    virtual ScrollPosition minimumScrollPosition() const;
+    virtual ScrollPosition maximumScrollPosition() const;
+
     WEBCORE_EXPORT virtual bool scrolledToTop() const;
     WEBCORE_EXPORT virtual bool scrolledToBottom() const;
     WEBCORE_EXPORT virtual bool scrolledToLeft() const;

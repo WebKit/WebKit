@@ -197,9 +197,9 @@ private:
     virtual bool isActive() const override;
     virtual bool isScrollCornerVisible() const override { return false; }
     virtual int scrollPosition(WebCore::Scrollbar*) const override;
-    virtual WebCore::IntPoint scrollPosition() const override;
-    virtual WebCore::IntPoint minimumScrollPosition() const override;
-    virtual WebCore::IntPoint maximumScrollPosition() const override;
+    virtual WebCore::ScrollPosition scrollPosition() const override;
+    virtual WebCore::ScrollPosition minimumScrollPosition() const override;
+    virtual WebCore::ScrollPosition maximumScrollPosition() const override;
     virtual WebCore::IntSize visibleSize() const override { return m_size; }
     virtual WebCore::IntSize contentsSize() const override { return m_pdfDocumentSize; }
     virtual WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }

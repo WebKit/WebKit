@@ -1,3 +1,73 @@
+2015-12-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ScrollView::scrollOffset() in preparation for scrollOffset vs. scrollPosition clarification
+        https://bugs.webkit.org/show_bug.cgi?id=152589
+
+        Reviewed by Sam Weinig.
+
+        Current code uses scrollOffset vs. scrollPosition interchangeably, and confusingly.
+        Longer term, I plan to make "scrollPosition" be the value that is relative to the 
+        contents, i.e. affected by scrollOrigin, and "scrollOffset" be the zero-based value
+        that's used to set scrollbar values.
+        
+        To prepare for this, remove ScrollView::scrollOffset(), which is just the
+        scrollPosition as an IntSize.
+        
+        Add some typedefs in ScrollableArea, which will slowly propagate through the
+        code as position vs. offset is clarified.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::contentsQuadToCoordinateSystem):
+        (WebCore::InspectorOverlay::highlightQuad):
+        (WebCore::localPointToRoot):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollOffsetRespectingCustomFixedPosition):
+        (WebCore::FrameView::topContentInsetDidChange):
+        (WebCore::FrameView::addTrackedRepaintRect):
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::wheelEvent):
+        (WebCore::FrameView::setScrollPinningBehavior):
+        * page/FrameView.h:
+        * page/SpatialNavigation.cpp:
+        (WebCore::canScrollInDirection):
+        (WebCore::rectToAbsoluteCoordinates):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollbarModes):
+        (WebCore::ScrollView::availableContentSizeChanged):
+        (WebCore::ScrollView::setContentsSize):
+        (WebCore::ScrollView::maximumScrollPosition):
+        (WebCore::ScrollView::minimumScrollPosition):
+        (WebCore::ScrollView::adjustScrollPositionWithinRange):
+        (WebCore::ScrollView::documentScrollOffsetRelativeToViewOrigin):
+        (WebCore::ScrollView::documentScrollOffsetRelativeToScrollableAreaOrigin):
+        (WebCore::ScrollView::setScrollPosition):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::rootViewToTotalContents):
+        (WebCore::ScrollView::setFrameRect):
+        (WebCore::ScrollView::scrollbarStyleChanged):
+        (WebCore::ScrollView::setScrollOrigin):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::convertChildToSelf):
+        (WebCore::ScrollView::convertSelfToChild):
+        (WebCore::ScrollView::scrollOffset): Deleted.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollbarIntrusion):
+        (WebCore::ScrollableArea::scrollPosition):
+        (WebCore::ScrollableArea::minimumScrollPosition):
+        (WebCore::ScrollableArea::maximumScrollPosition):
+        * platform/ScrollableArea.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateAutoscrollDirection):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollPosition):
+        (WebCore::RenderLayer::minimumScrollPosition):
+        (WebCore::RenderLayer::maximumScrollPosition):
+        * rendering/RenderLayer.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::nodeAtPoint):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+
 2015-12-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build, ostensibly after r194424.

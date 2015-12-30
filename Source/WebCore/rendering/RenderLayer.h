@@ -864,9 +864,9 @@ private:
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
     virtual int scrollSize(ScrollbarOrientation) const override;
     virtual void setScrollOffset(const IntPoint&) override;
-    virtual IntPoint scrollPosition() const override;
-    virtual IntPoint minimumScrollPosition() const override;
-    virtual IntPoint maximumScrollPosition() const override;
+    virtual ScrollPosition scrollPosition() const override;
+    virtual ScrollPosition minimumScrollPosition() const override;
+    virtual ScrollPosition maximumScrollPosition() const override;
     virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
     virtual IntSize visibleSize() const override;
     virtual IntSize contentsSize() const override;

@@ -225,12 +225,13 @@ public:
     virtual void setContentsSize(const IntSize&);
 
     // Functions for querying the current scrolled position (both as a point, a size, or as individual X and Y values).
-    virtual IntPoint scrollPosition() const override { return visibleContentRect(LegacyIOSDocumentVisibleRect).location(); }
-    IntSize scrollOffset() const { return toIntSize(visibleContentRect(LegacyIOSDocumentVisibleRect).location()); } // Gets the scrolled position as an IntSize. Convenient for adding to other sizes.
-    virtual IntPoint maximumScrollPosition() const override; // The maximum position we can be scrolled to.
-    virtual IntPoint minimumScrollPosition() const override; // The minimum position we can be scrolled to.
+    virtual ScrollPosition scrollPosition() const override { return visibleContentRect(LegacyIOSDocumentVisibleRect).location(); }
+
+    virtual ScrollPosition maximumScrollPosition() const override; // The maximum position we can be scrolled to.
+    virtual ScrollPosition minimumScrollPosition() const override; // The minimum position we can be scrolled to.
+
     // Adjust the passed in scroll position to keep it between the minimum and maximum positions.
-    IntPoint adjustScrollPositionWithinRange(const IntPoint&) const; 
+    ScrollPosition adjustScrollPositionWithinRange(const ScrollPosition&) const;
     int scrollX() const { return scrollPosition().x(); }
     int scrollY() const { return scrollPosition().y(); }
 
@@ -267,7 +268,7 @@ public:
     IntPoint cachedScrollPosition() const { return m_cachedScrollPosition; }
 
     // Functions for scrolling the view.
-    virtual void setScrollPosition(const IntPoint&);
+    virtual void setScrollPosition(const ScrollPosition&);
     void scrollBy(const IntSize& s) { return setScrollPosition(scrollPosition() + s); }
 
     // This function scrolls by lines, pages or pixels.
@@ -331,7 +332,7 @@ public:
     {
         IntPoint newPoint = point;
         if (!isScrollViewScrollbar(child))
-            newPoint = point - scrollOffset();
+            newPoint = point - toIntSize(scrollPosition());
         newPoint.moveBy(child->location());
         return newPoint;
     }
@@ -340,7 +341,7 @@ public:
     {
         IntPoint newPoint = point;
         if (!isScrollViewScrollbar(child))
-            newPoint = point + scrollOffset();
+            newPoint = point + toIntSize(scrollPosition());
         newPoint.moveBy(-child->location());
         return newPoint;
     }
@@ -409,7 +410,7 @@ protected:
     virtual bool isFlippedDocument() const { return false; }
 
     // Called to update the scrollbars to accurately reflect the state of the view.
-    void updateScrollbars(const IntSize& desiredOffset);
+    void updateScrollbars(const ScrollPosition& desiredPosition);
 
     float platformTopContentInset() const;
     void platformSetTopContentInset(float);

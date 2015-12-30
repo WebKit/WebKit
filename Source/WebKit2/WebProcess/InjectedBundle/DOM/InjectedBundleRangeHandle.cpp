@@ -129,7 +129,7 @@ PassRefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions op
     graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
 
     paintRect.move(frameView->frameRect().x(), frameView->frameRect().y());
-    paintRect.move(-frameView->scrollOffset());
+    paintRect.moveBy(-frameView->scrollPosition());
 
     graphicsContext->translate(-paintRect.x(), -paintRect.y());
 

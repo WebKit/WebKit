@@ -1316,8 +1316,8 @@ void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffse
 {
     FrameView* frameView = m_page->mainFrame().view();
 
-    IntPoint scrollPosition = frameView->scrollPosition();
-    IntPoint maximumScrollPosition = frameView->maximumScrollPosition();
+    ScrollPosition scrollPosition = frameView->scrollPosition();
+    ScrollPosition maximumScrollPosition = frameView->maximumScrollPosition();
 
     // If the current scroll position in a direction is the max scroll position 
     // we don't want to scroll at all.
@@ -3504,9 +3504,9 @@ void WebPage::addMIMETypeWithCustomContentProvider(const String& mimeType)
 void WebPage::updateMainFrameScrollOffsetPinning()
 {
     Frame& frame = m_page->mainFrame();
-    IntPoint scrollPosition = frame.view()->scrollPosition();
-    IntPoint maximumScrollPosition = frame.view()->maximumScrollPosition();
-    IntPoint minimumScrollPosition = frame.view()->minimumScrollPosition();
+    ScrollPosition scrollPosition = frame.view()->scrollPosition();
+    ScrollPosition maximumScrollPosition = frame.view()->maximumScrollPosition();
+    ScrollPosition minimumScrollPosition = frame.view()->minimumScrollPosition();
 
     bool isPinnedToLeftSide = (scrollPosition.x() <= minimumScrollPosition.x());
     bool isPinnedToRightSide = (scrollPosition.x() >= maximumScrollPosition.x());

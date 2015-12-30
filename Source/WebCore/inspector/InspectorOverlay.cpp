@@ -72,7 +72,7 @@ static void contentsQuadToCoordinateSystem(const FrameView* mainView, const Fram
     quad.setP4(view->contentsToRootView(roundedIntPoint(quad.p4())));
 
     if (coordinateSystem == InspectorOverlay::CoordinateSystem::View)
-        quad += mainView->scrollOffset();
+        quad += toIntSize(mainView->scrollPosition());
 }
 
 static void contentsQuadToPage(const FrameView* mainView, const FrameView* view, FloatQuad& quad)
@@ -278,7 +278,7 @@ void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highligh
 void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const HighlightConfig& highlightConfig)
 {
     if (highlightConfig.usePageCoordinates)
-        *quad -= m_page.mainFrame().view()->scrollOffset();
+        *quad -= toIntSize(m_page.mainFrame().view()->scrollPosition());
 
     m_quadHighlightConfig = highlightConfig;
     m_highlightQuad = WTF::move(quad);
@@ -594,7 +594,7 @@ static FloatPoint localPointToRoot(RenderObject* renderer, const FrameView* main
 {
     FloatPoint result = renderer->localToAbsolute(point);
     result = view->contentsToRootView(roundedIntPoint(result));
-    result += mainView->scrollOffset();
+    result += toIntSize(mainView->scrollPosition());
     return result;
 }
 

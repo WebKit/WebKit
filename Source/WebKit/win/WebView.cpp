@@ -3789,7 +3789,7 @@ HRESULT WebView::rectsForTextMatches(_COM_Outptr_opt_ IEnumTextMatches** pmatche
         if (Document* document = frame->document()) {
             IntRect visibleRect = frame->view()->visibleContentRect();
             Vector<FloatRect> frameRects = document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch);
-            IntPoint frameOffset(-frame->view()->scrollOffset().width(), -frame->view()->scrollOffset().height());
+            IntPoint frameOffset = -frame->view()->scrollPosition();
             frameOffset = frame->view()->convertToContainingWindow(frameOffset);
 
             Vector<FloatRect>::iterator end = frameRects.end();
@@ -3835,7 +3835,7 @@ HRESULT WebView::selectionRect(_Inout_ RECT* rc)
 
     IntRect ir = enclosingIntRect(frame.selection().selectionBounds());
     ir = frame.view()->convertToContainingWindow(ir);
-    ir.move(-frame.view()->scrollOffset().width(), -frame.view()->scrollOffset().height());
+    ir.moveBy(-frame.view()->scrollPosition());
 
     float scaleFactor = deviceScaleFactor();
     rc->left = ir.x() * scaleFactor;

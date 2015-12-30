@@ -568,7 +568,7 @@ IntSize WebFrame::scrollOffset() const
     if (!view)
         return IntSize();
 
-    return view->scrollOffset();
+    return toIntSize(view->scrollPosition());
 }
 
 bool WebFrame::hasHorizontalScrollbar() const

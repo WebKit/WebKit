@@ -783,17 +783,17 @@ int PDFPlugin::scrollPosition(Scrollbar* scrollbar) const
     return 0;
 }
 
-IntPoint PDFPlugin::scrollPosition() const
+ScrollPosition PDFPlugin::scrollPosition() const
 {
     return IntPoint(m_scrollOffset.width(), m_scrollOffset.height());
 }
 
-IntPoint PDFPlugin::minimumScrollPosition() const
+ScrollPosition PDFPlugin::minimumScrollPosition() const
 {
     return IntPoint();
 }
 
-IntPoint PDFPlugin::maximumScrollPosition() const
+ScrollPosition PDFPlugin::maximumScrollPosition() const
 {
     IntSize scrollbarSpace = scrollbarIntrusion();
 

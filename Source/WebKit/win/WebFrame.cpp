@@ -901,7 +901,7 @@ HRESULT WebFrame::scrollOffset(_Out_ SIZE* offset)
     if (!view)
         return E_FAIL;
 
-    *offset = view->scrollOffset();
+    *offset = toIntSize(view->scrollPosition());
     return S_OK;
 }
 

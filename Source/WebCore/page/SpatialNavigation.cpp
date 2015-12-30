@@ -483,18 +483,19 @@ bool canScrollInDirection(const Frame* frame, FocusDirection direction)
     if ((direction == FocusDirectionUp || direction == FocusDirectionDown) &&  ScrollbarAlwaysOff == verticalMode)
         return false;
     LayoutSize size = frame->view()->totalContentsSize();
-    LayoutSize offset = frame->view()->scrollOffset();
+    LayoutPoint scrollPosition = frame->view()->scrollPosition();
     LayoutRect rect = frame->view()->unobscuredContentRectIncludingScrollbars();
 
+    // FIXME: wrong in RTL documents.
     switch (direction) {
     case FocusDirectionLeft:
-        return offset.width() > 0;
+        return scrollPosition.x() > 0;
     case FocusDirectionUp:
-        return offset.height() > 0;
+        return scrollPosition.y() > 0;
     case FocusDirectionRight:
-        return rect.width() + offset.width() < size.width();
+        return rect.width() + scrollPosition.x() < size.width();
     case FocusDirectionDown:
-        return rect.height() + offset.height() < size.height();
+        return rect.height() + scrollPosition.y() < size.height();
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -510,7 +511,7 @@ static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRec
             do {
                 rect.move(element->offsetLeft(), element->offsetTop());
             } while ((element = element->offsetParent()));
-            rect.move((-frame->view()->scrollOffset()));
+            rect.moveBy((-frame->view()->scrollPosition()));
         }
     }
     return rect;

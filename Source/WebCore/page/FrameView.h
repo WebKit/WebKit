@@ -242,8 +242,8 @@ public:
     virtual void updateCompositingLayersAfterScrolling() override;
     virtual bool requestScrollPositionUpdate(const IntPoint&) override;
     virtual bool isRubberBandInProgress() const override;
-    WEBCORE_EXPORT virtual IntPoint minimumScrollPosition() const override;
-    WEBCORE_EXPORT virtual IntPoint maximumScrollPosition() const override;
+    WEBCORE_EXPORT virtual ScrollPosition minimumScrollPosition() const override;
+    WEBCORE_EXPORT virtual ScrollPosition maximumScrollPosition() const override;
 
     void viewportContentsChanged();
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
