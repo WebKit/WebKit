@@ -2742,18 +2742,14 @@ int RenderLayer::scrollPosition(Scrollbar* scrollbar) const
 
 ScrollPosition RenderLayer::scrollPosition() const
 {
+    // FIXME: This needs scrollOffset/scrollPosition disambiguation.
     return ScrollPosition(m_scrollOffset);
-}
-
-ScrollPosition RenderLayer::minimumScrollPosition() const
-{
-    return -scrollOrigin();
 }
 
 ScrollPosition RenderLayer::maximumScrollPosition() const
 {
     // FIXME: m_scrollSize may not be up-to-date if m_scrollDimensionsDirty is true.
-    return -scrollOrigin() + roundedIntSize(m_scrollSize) - visibleContentRectIncludingScrollbars(ContentsVisibleRect).size();
+    return scrollPositionFromOffset(roundedIntPoint(m_scrollSize) - visibleContentRectIncludingScrollbars(ContentsVisibleRect).size());
 }
 
 IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
@@ -2773,17 +2769,17 @@ IntSize RenderLayer::overhangAmount() const
 
     IntSize stretch;
 
-    int physicalScrollY = scrollPosition().y() + scrollOrigin().y();
-    if (physicalScrollY < 0)
-        stretch.setHeight(physicalScrollY);
-    else if (scrollableContentsSize().height() && physicalScrollY > scrollableContentsSize().height() - visibleHeight())
-        stretch.setHeight(physicalScrollY - (scrollableContentsSize().height() - visibleHeight()));
+    // FIXME: use maximumScrollOffset()
+    ScrollOffset scrollOffset = scrollOffsetFromPosition(scrollOrigin());
+    if (scrollOffset.y() < 0)
+        stretch.setHeight(scrollOffset.y());
+    else if (scrollableContentsSize().height() && scrollOffset.y() > scrollableContentsSize().height() - visibleHeight())
+        stretch.setHeight(scrollOffset.y() - (scrollableContentsSize().height() - visibleHeight()));
 
-    int physicalScrollX = scrollPosition().x() + scrollOrigin().x();
-    if (physicalScrollX < 0)
-        stretch.setWidth(physicalScrollX);
-    else if (scrollableContentsSize().width() && physicalScrollX > scrollableContentsSize().width() - visibleWidth())
-        stretch.setWidth(physicalScrollX - (scrollableContentsSize().width() - visibleWidth()));
+    if (scrollOffset.x() < 0)
+        stretch.setWidth(scrollOffset.x());
+    else if (scrollableContentsSize().width() && scrollOffset.x() > scrollableContentsSize().width() - visibleWidth())
+        stretch.setWidth(scrollOffset.x() - (scrollableContentsSize().width() - visibleWidth()));
 
     return stretch;
 #else

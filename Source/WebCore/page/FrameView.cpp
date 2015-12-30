@@ -1853,9 +1853,9 @@ LayoutRect FrameView::viewportConstrainedObjectsRect() const
 }
 #endif
     
-IntPoint FrameView::minimumScrollPosition() const
+ScrollPosition FrameView::minimumScrollPosition() const
 {
-    IntPoint minimumPosition(ScrollView::minimumScrollPosition());
+    ScrollPosition minimumPosition = ScrollView::minimumScrollPosition();
 
     if (frame().isMainFrame() && m_scrollPinningBehavior == PinToBottom)
         minimumPosition.setY(maximumScrollPosition().y());
@@ -1863,16 +1863,14 @@ IntPoint FrameView::minimumScrollPosition() const
     return minimumPosition;
 }
 
-IntPoint FrameView::maximumScrollPosition() const
+ScrollPosition FrameView::maximumScrollPosition() const
 {
-    IntPoint maximumOffset(contentsWidth() - visibleWidth() - scrollOrigin().x(), totalContentsSize().height() - visibleHeight() - scrollOrigin().y());
-
-    maximumOffset.clampNegativeToZero();
+    ScrollPosition maximumPosition = ScrollView::maximumScrollPosition();
 
     if (frame().isMainFrame() && m_scrollPinningBehavior == PinToTop)
-        maximumOffset.setY(minimumScrollPosition().y());
+        maximumPosition.setY(minimumScrollPosition().y());
     
-    return maximumOffset;
+    return maximumPosition;
 }
 
 void FrameView::viewportContentsChanged()

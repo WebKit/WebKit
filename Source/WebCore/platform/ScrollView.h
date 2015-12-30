@@ -228,7 +228,6 @@ public:
     virtual ScrollPosition scrollPosition() const override { return visibleContentRect(LegacyIOSDocumentVisibleRect).location(); }
 
     virtual ScrollPosition maximumScrollPosition() const override; // The maximum position we can be scrolled to.
-    virtual ScrollPosition minimumScrollPosition() const override; // The minimum position we can be scrolled to.
 
     // Adjust the passed in scroll position to keep it between the minimum and maximum positions.
     ScrollPosition adjustScrollPositionWithinRange(const ScrollPosition&) const;

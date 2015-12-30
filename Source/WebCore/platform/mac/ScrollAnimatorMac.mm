@@ -1154,18 +1154,18 @@ bool ScrollAnimatorMac::pinnedInDirection(const FloatSize& direction)
     FloatSize limitDelta;
     if (fabsf(direction.height()) >= fabsf(direction.width())) {
         if (direction.height() < 0) {
-            // We are trying to scroll up.  Make sure we are not pinned to the top
+            // We are trying to scroll up. Make sure we are not pinned to the top
             limitDelta.setHeight(m_scrollableArea.visibleContentRect().y() + m_scrollableArea.scrollOrigin().y());
         } else {
-            // We are trying to scroll down.  Make sure we are not pinned to the bottom
+            // We are trying to scroll down. Make sure we are not pinned to the bottom
             limitDelta.setHeight(m_scrollableArea.totalContentsSize().height() - (m_scrollableArea.visibleContentRect().maxY() + m_scrollableArea.scrollOrigin().y()));
         }
     } else if (direction.width()) {
         if (direction.width() < 0) {
-            // We are trying to scroll left.  Make sure we are not pinned to the left
+            // We are trying to scroll left. Make sure we are not pinned to the left
             limitDelta.setWidth(m_scrollableArea.visibleContentRect().x() + m_scrollableArea.scrollOrigin().x());
         } else {
-            // We are trying to scroll right.  Make sure we are not pinned to the right
+            // We are trying to scroll right. Make sure we are not pinned to the right
             limitDelta.setWidth(m_scrollableArea.totalContentsSize().width() - (m_scrollableArea.visibleContentRect().maxX() + m_scrollableArea.scrollOrigin().x()));
         }
     }
@@ -1284,7 +1284,8 @@ bool ScrollAnimatorMac::shouldRubberBandInDirection(ScrollDirection)
 
 IntPoint ScrollAnimatorMac::absoluteScrollPosition()
 {
-    return m_scrollableArea.visibleContentRect().location() + m_scrollableArea.scrollOrigin();
+    // FIXME: can this use m_scrollableArea.scrollPosition()?
+    return m_scrollableArea.scrollOffsetFromPosition(m_scrollableArea.visibleContentRect().location());
 }
 
 void ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& delta)

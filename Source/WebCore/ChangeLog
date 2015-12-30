@@ -1,3 +1,46 @@
+2015-12-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Add explicit conversions between scrollOffset and scrollPostion, and use them in a few places
+        https://bugs.webkit.org/show_bug.cgi?id=152594
+
+        Reviewed by Sam Weinig.
+
+        Add functions to ScrollableArea to convert between scrollPosition and scrollOffset,
+        and use them in places where code did the math with scrollOrigin.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::minimumScrollPosition):
+        (WebCore::FrameView::maximumScrollPosition): totalContentsSize().width() == contentsWidth(),
+        so we can use the base class maximumScrollPosition(), which also clamps.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::maximumScrollPosition):
+        (WebCore::ScrollView::setScrollOffset):
+        (WebCore::ScrollView::overhangAmount):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::calculateOverhangAreasForPainting):
+        (WebCore::ScrollView::minimumScrollPosition): Deleted. Can use base class implementation.
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::minimumScrollPosition):
+        (WebCore::ScrollableArea::maximumScrollPosition):
+        (WebCore::ScrollableArea::maximumScrollOffset):
+        (WebCore::ScrollableArea::scrollPositionFromOffset):
+        (WebCore::ScrollableArea::scrollOffsetFromPosition):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollOrigin):
+        (WebCore::ScrollableArea::scrollOriginChanged):
+        * platform/ios/ScrollViewIOS.mm:
+        (WebCore::ScrollView::unobscuredContentRect):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::pinnedInDirection):
+        (WebCore::ScrollAnimatorMac::absoluteScrollPosition):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollPosition):
+        (WebCore::RenderLayer::maximumScrollPosition):
+        (WebCore::RenderLayer::overhangAmount):
+        (WebCore::RenderLayer::minimumScrollPosition): Deleted.
+        * rendering/RenderLayer.h:
+
 2015-12-30  Zalan Bujtas  <zalan@apple.com>
 
         Move InlineTextBox's text decoration painting to its own class.

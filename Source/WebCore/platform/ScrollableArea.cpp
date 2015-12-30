@@ -534,12 +534,27 @@ ScrollPosition ScrollableArea::scrollPosition() const
 
 ScrollPosition ScrollableArea::minimumScrollPosition() const
 {
-    return IntPoint();
+    return scrollPositionFromOffset(ScrollPosition());
 }
 
 ScrollPosition ScrollableArea::maximumScrollPosition() const
 {
-    return IntPoint(totalContentsSize().width() - visibleWidth(), totalContentsSize().height() - visibleHeight());
+    return scrollPositionFromOffset(ScrollPosition(totalContentsSize() - visibleSize()));
+}
+
+ScrollOffset ScrollableArea::maximumScrollOffset() const
+{
+    return ScrollOffset(totalContentsSize() - visibleSize());
+}
+
+ScrollPosition ScrollableArea::scrollPositionFromOffset(ScrollOffset offset) const
+{
+    return IntPoint(toIntSize(offset) - toIntSize(m_scrollOrigin));
+}
+
+ScrollOffset ScrollableArea::scrollOffsetFromPosition(ScrollPosition position) const
+{
+    return IntPoint(toIntSize(position) + toIntSize(m_scrollOrigin));
 }
 
 bool ScrollableArea::scrolledToTop() const

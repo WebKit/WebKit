@@ -107,8 +107,10 @@ IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) 
         return enclosingIntRect(r);
     }
 
-    if (!m_unobscuredContentSize.isEmpty())
+    if (!m_unobscuredContentSize.isEmpty()) {
+        // FIXME: is this correct in RTL documents?
         return IntRect(scrollOrigin() + m_scrollOffset, roundedIntSize(m_unobscuredContentSize));
+    }
 
     return unobscuredContentRectInternal();
 }

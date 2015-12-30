@@ -270,8 +270,8 @@ void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
 
 #if !PLATFORM(IOS)
     if (!m_exposedRect.isInfinite()) {
-        IntPoint scrollPositionWithOrigin = frameView->scrollPosition() + toIntSize(frameView->scrollOrigin());
-        m_scrolledExposedRect.moveBy(scrollPositionWithOrigin);
+        ScrollOffset scrollOffset = frameView->scrollOffsetFromPosition(frameView->scrollPosition());
+        m_scrolledExposedRect.moveBy(scrollOffset);
     }
 #endif
 

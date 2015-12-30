@@ -388,14 +388,10 @@ void ScrollView::setContentsSize(const IntSize& newSize)
 
 ScrollPosition ScrollView::maximumScrollPosition() const
 {
-    IntPoint maximumOffset(contentsWidth() - visibleWidth() - scrollOrigin().x(), totalContentsSize().height() - visibleHeight() - scrollOrigin().y());
-    maximumOffset.clampNegativeToZero();
-    return maximumOffset;
-}
-
-ScrollPosition ScrollView::minimumScrollPosition() const
-{
-    return IntPoint(-scrollOrigin().x(), -scrollOrigin().y());
+    ScrollPosition maximumPosition = ScrollableArea::maximumScrollPosition();
+    // FIXME: can this be moved into the base class?
+    maximumPosition.clampNegativeToZero();
+    return maximumPosition;
 }
 
 ScrollPosition ScrollView::adjustScrollPositionWithinRange(const ScrollPosition& scrollPoint) const
@@ -441,18 +437,12 @@ void ScrollView::notifyPageThatContentAreaWillPaint() const
 
 void ScrollView::setScrollOffset(const IntPoint& offset)
 {
-    int horizontalOffset = offset.x();
-    int verticalOffset = offset.y();
-    if (constrainsScrollingToContentEdge()) {
-        horizontalOffset = std::max(std::min(horizontalOffset, contentsWidth() - visibleWidth()), 0);
-        verticalOffset = std::max(std::min(verticalOffset, totalContentsSize().height() - visibleHeight()), 0);
-    }
+    IntPoint constrainedOffset = offset;
+    if (constrainsScrollingToContentEdge())
+        constrainedOffset = constrainedOffset.constrainedBetween(IntPoint(), maximumScrollOffset());
 
-    IntSize newOffset = m_scrollOffset;
-    newOffset.setWidth(horizontalOffset - scrollOrigin().x());
-    newOffset.setHeight(verticalOffset - scrollOrigin().y());
-
-    scrollTo(newOffset);
+    ScrollPosition newPosition = scrollPositionFromOffset(constrainedOffset);
+    scrollTo(toIntSize(newPosition));
 }
 
 void ScrollView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition)
@@ -567,17 +557,17 @@ IntSize ScrollView::overhangAmount() const
 {
     IntSize stretch;
 
-    int physicalScrollY = scrollPosition().y() + scrollOrigin().y();
-    if (physicalScrollY < 0)
-        stretch.setHeight(physicalScrollY);
-    else if (totalContentsSize().height() && physicalScrollY > totalContentsSize().height() - visibleHeight())
-        stretch.setHeight(physicalScrollY - (totalContentsSize().height() - visibleHeight()));
+    // FIXME: use maximumScrollOffset()
+    ScrollOffset scrollOffset = scrollOffsetFromPosition(scrollPosition());
+    if (scrollOffset.y() < 0)
+        stretch.setHeight(scrollOffset.y());
+    else if (totalContentsSize().height() && scrollOffset.y() > totalContentsSize().height() - visibleHeight())
+        stretch.setHeight(scrollOffset.y() - (totalContentsSize().height() - visibleHeight()));
 
-    int physicalScrollX = scrollPosition().x() + scrollOrigin().x();
-    if (physicalScrollX < 0)
-        stretch.setWidth(physicalScrollX);
-    else if (contentsWidth() && physicalScrollX > contentsWidth() - visibleWidth())
-        stretch.setWidth(physicalScrollX - (contentsWidth() - visibleWidth()));
+    if (scrollOffset.x() < 0)
+        stretch.setWidth(scrollOffset.x());
+    else if (contentsWidth() && scrollOffset.x() > contentsWidth() - visibleWidth())
+        stretch.setWidth(scrollOffset.x() - (contentsWidth() - visibleWidth()));
 
     return stretch;
 }
@@ -765,7 +755,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         adjustedScrollPosition = adjustScrollPositionWithinRange(adjustedScrollPosition);
 
     if (adjustedScrollPosition != scrollPosition() || scrollOriginChanged()) {
-        ScrollableArea::scrollToOffsetWithoutAnimation(adjustedScrollPosition + toIntSize(scrollOrigin()));
+        ScrollableArea::scrollToOffsetWithoutAnimation(scrollOffsetFromPosition(adjustedScrollPosition));
         resetScrollOriginChanged();
     }
 
@@ -1265,30 +1255,30 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
 {
     IntSize scrollbarSpace = scrollbarIntrusion();
 
-    int physicalScrollY = scrollPosition().y() + scrollOrigin().y();
-    if (physicalScrollY < 0) {
+    // FIXME: use maximumScrollOffset().
+    ScrollOffset scrollOffset = scrollOffsetFromPosition(scrollPosition());
+    if (scrollOffset.y() < 0) {
         horizontalOverhangRect = frameRect();
-        horizontalOverhangRect.setHeight(-physicalScrollY);
+        horizontalOverhangRect.setHeight(-scrollOffset.y());
         horizontalOverhangRect.setWidth(horizontalOverhangRect.width() - scrollbarSpace.width());
-    } else if (totalContentsSize().height() && physicalScrollY > totalContentsSize().height() - visibleHeight()) {
-        int height = physicalScrollY - (totalContentsSize().height() - visibleHeight());
+    } else if (totalContentsSize().height() && scrollOffset.y() > totalContentsSize().height() - visibleHeight()) {
+        int height = scrollOffset.y() - (totalContentsSize().height() - visibleHeight());
         horizontalOverhangRect = frameRect();
         horizontalOverhangRect.setY(frameRect().maxY() - height - scrollbarSpace.height());
         horizontalOverhangRect.setHeight(height);
         horizontalOverhangRect.setWidth(horizontalOverhangRect.width() - scrollbarSpace.width());
     }
 
-    int physicalScrollX = scrollPosition().x() + scrollOrigin().x();
-    if (physicalScrollX < 0) {
-        verticalOverhangRect.setWidth(-physicalScrollX);
+    if (scrollOffset.x() < 0) {
+        verticalOverhangRect.setWidth(-scrollOffset.x());
         verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height() - scrollbarSpace.height());
         verticalOverhangRect.setX(frameRect().x());
         if (horizontalOverhangRect.y() == frameRect().y())
             verticalOverhangRect.setY(frameRect().y() + horizontalOverhangRect.height());
         else
             verticalOverhangRect.setY(frameRect().y());
-    } else if (contentsWidth() && physicalScrollX > contentsWidth() - visibleWidth()) {
-        int width = physicalScrollX - (contentsWidth() - visibleWidth());
+    } else if (contentsWidth() && scrollOffset.x() > contentsWidth() - visibleWidth()) {
+        int width = scrollOffset.x() - (contentsWidth() - visibleWidth());
         verticalOverhangRect.setWidth(width);
         verticalOverhangRect.setHeight(frameRect().height() - horizontalOverhangRect.height() - scrollbarSpace.height());
         verticalOverhangRect.setX(frameRect().maxX() - width - scrollbarSpace.width());
