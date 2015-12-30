@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMetrics& fontMetrics, InlineTextBox* inlineTextBox, int textDecorationThickness)
+int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, int textDecorationThickness)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     int gap = std::max<int>(1, ceilf(textDecorationThickness / 2.0));
@@ -97,7 +97,7 @@ static inline void extendIntToFloat(int& extendMe, float extendTo)
     extendMe = std::max(extendMe, static_cast<int>(ceilf(extendTo)));
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, InlineTextBox* inlineTextBox)
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineTextBox* inlineTextBox)
 {
     ASSERT(!inlineTextBox || inlineTextBox->lineStyle() == lineStyle);
     

@@ -44,9 +44,9 @@ inline float wavyOffsetFromDecoration()
     return 2;
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, InlineTextBox*);
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineTextBox*);
 void getWavyStrokeParameters(float strokeThickness, float& controlPointDistance, float& step);
-int computeUnderlineOffset(TextUnderlinePosition, const FontMetrics&, InlineTextBox*, int textDecorationThickness);
+int computeUnderlineOffset(TextUnderlinePosition, const FontMetrics&, const InlineTextBox*, int textDecorationThickness);
     
 }
 

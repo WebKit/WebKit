@@ -1801,9 +1801,9 @@ static Color decorationColor(RenderStyle* style)
 }
 
 void RenderObject::getTextDecorationColorsAndStyles(int decorations, Color& underlineColor, Color& overlineColor, Color& linethroughColor,
-    TextDecorationStyle& underlineStyle, TextDecorationStyle& overlineStyle, TextDecorationStyle& linethroughStyle, bool firstlineStyle)
+    TextDecorationStyle& underlineStyle, TextDecorationStyle& overlineStyle, TextDecorationStyle& linethroughStyle, bool firstlineStyle) const
 {
-    RenderObject* current = this;
+    const RenderObject* current = this;
     RenderStyle* styleToUse = nullptr;
     TextDecoration currDecs = TextDecorationNone;
     Color resultColor;

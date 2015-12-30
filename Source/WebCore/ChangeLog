@@ -1,3 +1,51 @@
+2015-12-30  Zalan Bujtas  <zalan@apple.com>
+
+        Move InlineTextBox's text decoration painting to its own class.
+        https://bugs.webkit.org/show_bug.cgi?id=152587
+
+        Reviewed by Myles C. Maxfield.
+
+        This is in preparation for adding text decoration support for simple line layout.
+
+        No change in functionality.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::compareTuples): Deleted.
+        (WebCore::translateIntersectionPointsToSkipInkBoundaries): Deleted.
+        (WebCore::drawSkipInkUnderline): Deleted.
+        (WebCore::textDecorationStyleToStrokeStyle): Deleted.
+        (WebCore::adjustStepToDecorationLength): Deleted.
+        (WebCore::strokeWavyTextDecoration): Deleted.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTextDecorationColorsAndStyles):
+        * rendering/RenderObject.h:
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/TextDecorationPainter.cpp: Added.
+        (WebCore::adjustStepToDecorationLength):
+        (WebCore::strokeWavyTextDecoration):
+        (WebCore::compareTuples):
+        (WebCore::translateIntersectionPointsToSkipInkBoundaries):
+        (WebCore::drawSkipInkUnderline):
+        (WebCore::textDecorationStyleToStrokeStyle):
+        (WebCore::TextDecorationPainter::TextDecorationPainter):
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/TextDecorationPainter.h: Added.
+        (WebCore::TextDecorationPainter::setInlineTextBox):
+        (WebCore::TextDecorationPainter::setFont):
+        (WebCore::TextDecorationPainter::setIsHorizontal):
+        (WebCore::TextDecorationPainter::setWidth):
+        (WebCore::TextDecorationPainter::setBaseline):
+        (WebCore::TextDecorationPainter::addTextShadow):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::computeUnderlineOffset):
+        (WebCore::visualOverflowForDecorations):
+        * style/InlineTextBoxStyle.h:
+
 2015-12-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] VideoRenderRequestScheduler shouldn't dispatch to main thread in threaded compositor

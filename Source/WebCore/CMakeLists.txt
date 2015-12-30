@@ -2472,6 +2472,7 @@ set(WebCore_SOURCES
     rendering/SimpleLineLayoutResolver.cpp
     rendering/SimpleLineLayoutTextFragmentIterator.cpp
     rendering/TextAutosizer.cpp
+    rendering/TextDecorationPainter.cpp
     rendering/TextPaintStyle.cpp
     rendering/TextPainter.cpp
     rendering/break_lines.cpp

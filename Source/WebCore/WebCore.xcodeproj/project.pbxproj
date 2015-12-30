@@ -2288,6 +2288,8 @@
 		5824ABAB1AE849C8009074B7 /* RenderTreePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5824ABA91AE849C8009074B7 /* RenderTreePosition.h */; };
 		582CB0531A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h */; };
 		582CB0551A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp */; };
+		582DE3241C30C85400BE02A8 /* TextDecorationPainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 582DE3221C30C85400BE02A8 /* TextDecorationPainter.cpp */; };
+		582DE3251C30C85400BE02A8 /* TextDecorationPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 582DE3231C30C85400BE02A8 /* TextDecorationPainter.h */; };
 		585D6DFC1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */; };
 		585D6E031A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */; };
 		585D6E041A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */; };
@@ -9731,6 +9733,8 @@
 		5824ABA91AE849C8009074B7 /* RenderTreePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreePosition.h; sourceTree = "<group>"; };
 		582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutTextFragmentIterator.h; sourceTree = "<group>"; };
 		582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutTextFragmentIterator.cpp; sourceTree = "<group>"; };
+		582DE3221C30C85400BE02A8 /* TextDecorationPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDecorationPainter.cpp; sourceTree = "<group>"; };
+		582DE3231C30C85400BE02A8 /* TextDecorationPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextDecorationPainter.h; sourceTree = "<group>"; };
 		585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutResolver.cpp; sourceTree = "<group>"; };
 		585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutFlowContents.cpp; sourceTree = "<group>"; };
 		585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFlowContents.h; sourceTree = "<group>"; };
@@ -23696,6 +23700,8 @@
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */,
 				0F54DCE41881051D003EEDBB /* TextAutoSizing.h */,
+				582DE3221C30C85400BE02A8 /* TextDecorationPainter.cpp */,
+				582DE3231C30C85400BE02A8 /* TextDecorationPainter.h */,
 				1C18DA56181AF6A500C4EF22 /* TextPainter.cpp */,
 				1C18DA57181AF6A500C4EF22 /* TextPainter.h */,
 				E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */,
@@ -25750,6 +25756,7 @@
 				A871D4560A127CBC00B12A68 /* HTMLPlugInElement.h in Headers */,
 				4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */,
 				A8EA7CB00A192B9C00A8EF5F /* HTMLPreElement.h in Headers */,
+				582DE3251C30C85400BE02A8 /* TextDecorationPainter.h in Headers */,
 				977B3873122883E900B81FF8 /* HTMLPreloadScanner.h in Headers */,
 				A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */,
 				A8CFF7A30A156978000A4234 /* HTMLQuoteElement.h in Headers */,
@@ -30543,6 +30550,7 @@
 				371E65CE13661EED00BEEDB0 /* PageSerializer.cpp in Sources */,
 				A7197F2617568AE5007B9442 /* PageThrottler.cpp in Sources */,
 				E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */,
+				582DE3241C30C85400BE02A8 /* TextDecorationPainter.cpp in Sources */,
 				51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */,
 				FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */,
 				FD3160A212B026F700C1A359 /* Panner.cpp in Sources */,

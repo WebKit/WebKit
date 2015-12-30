@@ -2900,6 +2900,9 @@
     <ClCompile Include="..\rendering\svg\SVGTextRunRenderingContext.cpp">
       <Filter>rendering\svg</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\TextDecorationPainter.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\TextPainter.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -9680,6 +9683,9 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\TableLayout.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\TextDecorationPainter.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\TextPainter.h">
