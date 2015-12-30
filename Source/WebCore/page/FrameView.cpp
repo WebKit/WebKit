@@ -1078,20 +1078,20 @@ void FrameView::scheduleLayerFlushAllowingThrottling()
 
 LayoutRect FrameView::fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const
 {
-    LayoutSize scrollPosition = scrollOffsetRespectingCustomFixedPosition();
+    LayoutPoint scrollPosition = scrollPositionRespectingCustomFixedPosition();
 
-    LayoutSize topLeftExpansion = scrollPosition - toLayoutSize(minimumScrollPosition());
-    LayoutSize bottomRightExpansion = toLayoutSize(maximumScrollPosition()) - scrollPosition;
+    LayoutSize topLeftExpansion = scrollPosition - minimumScrollPosition();
+    LayoutSize bottomRightExpansion = maximumScrollPosition() - scrollPosition;
 
     return LayoutRect(uninflatedBounds.location() - topLeftExpansion, uninflatedBounds.size() + topLeftExpansion + bottomRightExpansion);
 }
 
-LayoutSize FrameView::scrollOffsetRespectingCustomFixedPosition() const
+LayoutPoint FrameView::scrollPositionRespectingCustomFixedPosition() const
 {
 #if PLATFORM(IOS)
-    return useCustomFixedPositionLayoutRect() ? customFixedPositionLayoutRect().location() - LayoutPoint() : toLayoutSize(scrollPosition());
+    return useCustomFixedPositionLayoutRect() ? customFixedPositionLayoutRect().location() : scrollPosition();
 #else
-    return scrollOffsetForFixedPosition();
+    return scrollPositionForFixedPosition();
 #endif
 }
 
@@ -1733,7 +1733,7 @@ LayoutRect FrameView::viewportConstrainedVisibleContentRect() const
 #endif
     LayoutRect viewportRect = visibleContentRect();
 
-    viewportRect.setLocation(toLayoutPoint(scrollOffsetForFixedPosition()));
+    viewportRect.setLocation(scrollPositionForFixedPosition());
     return viewportRect;
 }
 
@@ -1742,7 +1742,7 @@ float FrameView::frameScaleFactor() const
     return frame().frameScaleFactor();
 }
 
-LayoutSize FrameView::scrollOffsetForFixedPosition(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements behaviorForFixed, int headerHeight, int footerHeight)
+LayoutPoint FrameView::scrollPositionForFixedPosition(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements behaviorForFixed, int headerHeight, int footerHeight)
 {
     LayoutPoint position;
     if (behaviorForFixed == StickToDocumentBounds)
@@ -1757,7 +1757,7 @@ LayoutSize FrameView::scrollOffsetForFixedPosition(const LayoutRect& visibleCont
     float dragFactorX = (fixedElementsLayoutRelativeToFrame || !maxSize.width()) ? 1 : (totalContentsSize.width() - visibleContentRect.width() * frameScaleFactor) / maxSize.width();
     float dragFactorY = (fixedElementsLayoutRelativeToFrame || !maxSize.height()) ? 1 : (totalContentsSize.height() - visibleContentRect.height() * frameScaleFactor) / maxSize.height();
 
-    return LayoutSize(position.x() * dragFactorX / frameScaleFactor, position.y() * dragFactorY / frameScaleFactor);
+    return LayoutPoint(position.x() * dragFactorX / frameScaleFactor, position.y() * dragFactorY / frameScaleFactor);
 }
 
 float FrameView::yPositionForInsetClipLayer(const FloatPoint& scrollPosition, float topContentInset)

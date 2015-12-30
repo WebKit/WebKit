@@ -441,7 +441,7 @@ void RenderView::mapLocalToContainer(const RenderLayerModelObject* repaintContai
     }
     
     if (mode & IsFixed)
-        transformState.move(frameView().scrollOffsetRespectingCustomFixedPosition());
+        transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
 }
 
 const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -450,14 +450,14 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
     // then we should have found it by now.
     ASSERT_ARG(ancestorToStopAt, !ancestorToStopAt || ancestorToStopAt == this);
 
-    LayoutSize scrollOffset = frameView().scrollOffsetRespectingCustomFixedPosition();
+    LayoutPoint scrollPosition = frameView().scrollPositionRespectingCustomFixedPosition();
 
     if (!ancestorToStopAt && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
         getTransformFromContainer(nullptr, LayoutSize(), t);
-        geometryMap.pushView(this, scrollOffset, &t);
+        geometryMap.pushView(this, toLayoutSize(scrollPosition), &t);
     } else
-        geometryMap.pushView(this, scrollOffset);
+        geometryMap.pushView(this, toLayoutSize(scrollPosition));
 
     return nullptr;
 }
@@ -465,7 +465,7 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
 void RenderView::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
     if (mode & IsFixed)
-        transformState.move(frameView().scrollOffsetRespectingCustomFixedPosition());
+        transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
 
     if (mode & UseTransforms && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
@@ -696,10 +696,9 @@ LayoutRect RenderView::computeRectForRepaint(const LayoutRect& rect, const Rende
             adjustedRect.setX(viewWidth() - adjustedRect.maxX());
     }
 
-    if (fixed) {
-        adjustedRect.move(frameView().scrollOffsetRespectingCustomFixedPosition());
-    }
-        
+    if (fixed)
+        adjustedRect.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
+    
     // Apply our transform if we have one (because of full page zooming).
     if (!repaintContainer && layer() && layer()->transform())
         adjustedRect = LayoutRect(layer()->transform()->mapRect(snapRectToDevicePixels(adjustedRect, document().deviceScaleFactor())));

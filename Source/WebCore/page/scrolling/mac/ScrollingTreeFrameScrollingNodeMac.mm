@@ -403,11 +403,11 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
     LayoutPoint scrollOffset = LayoutPoint(position) - toLayoutSize(scrollOrigin());
     FloatRect viewportRect(FloatPoint(), scrollableAreaSize());
     
-    FloatSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), LayoutSize(totalContentsSize()), scrollOffset, scrollOrigin(), frameScaleFactor(),
+    FloatPoint scrollPositionForFixedChildren = FrameView::scrollPositionForFixedPosition(enclosingLayoutRect(viewportRect), LayoutSize(totalContentsSize()), scrollOffset, scrollOrigin(), frameScaleFactor(),
         fixedElementsLayoutRelativeToFrame(), behaviorForFixed, headerHeight(), footerHeight());
     
     if (m_counterScrollingLayer)
-        m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
+        m_counterScrollingLayer.get().position = scrollPositionForFixedChildren;
 
     float topContentInset = this->topContentInset();
     if (m_insetClipLayer && m_scrolledContentsLayer && topContentInset) {
@@ -422,9 +422,9 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
         // Generally the banners should have the same horizontal-position computation as a fixed element. However,
         // the banners are not affected by the frameScaleFactor(), so if there is currently a non-1 frameScaleFactor()
         // then we should recompute scrollOffsetForFixedChildren for the banner with a scale factor of 1.
-        float horizontalScrollOffsetForBanner = scrollOffsetForFixedChildren.width();
+        float horizontalScrollOffsetForBanner = scrollPositionForFixedChildren.x();
         if (frameScaleFactor() != 1)
-            horizontalScrollOffsetForBanner = FrameView::scrollOffsetForFixedPosition(enclosingLayoutRect(viewportRect), LayoutSize(totalContentsSize()), scrollOffset, scrollOrigin(), 1, fixedElementsLayoutRelativeToFrame(), behaviorForFixed, headerHeight(), footerHeight()).width();
+            horizontalScrollOffsetForBanner = FrameView::scrollPositionForFixedPosition(enclosingLayoutRect(viewportRect), LayoutSize(totalContentsSize()), scrollOffset, scrollOrigin(), 1, fixedElementsLayoutRelativeToFrame(), behaviorForFixed, headerHeight(), footerHeight()).x();
 
         if (m_headerLayer)
             m_headerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForHeaderLayer(position, topContentInset));
@@ -459,7 +459,7 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
     if (!m_children)
         return;
 
-    viewportRect.setLocation(FloatPoint() + scrollOffsetForFixedChildren);
+    viewportRect.setLocation(scrollPositionForFixedChildren);
 
     for (auto& child : *m_children)
         child->updateLayersAfterAncestorChange(*this, viewportRect, FloatSize());

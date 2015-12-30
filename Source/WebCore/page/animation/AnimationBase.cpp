@@ -564,9 +564,9 @@ double AnimationBase::timeToNextService()
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         if (m_animation->trigger()->isScrollAnimationTrigger()) {
             if (m_object) {
-                float currentScrollOffset = m_object->view().frameView().scrollOffsetForFixedPosition().height().toFloat();
+                float currentScrollPosition = m_object->view().frameView().scrollPositionForFixedPosition().y().toFloat();
                 ScrollAnimationTrigger& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger().get());
-                if (currentScrollOffset >= scrollTrigger.startValue().value() && (!scrollTrigger.hasEndValue() || currentScrollOffset <= scrollTrigger.endValue().value()))
+                if (currentScrollPosition >= scrollTrigger.startValue().value() && (!scrollTrigger.hasEndValue() || currentScrollPosition <= scrollTrigger.endValue().value()))
                     return 0;
             }
             return -1;

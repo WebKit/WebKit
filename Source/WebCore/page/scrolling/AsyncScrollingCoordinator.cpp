@@ -319,20 +319,20 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
             GraphicsLayer* scrolledContentsLayer = rootContentLayerForFrameView(frameView);
             GraphicsLayer* headerLayer = headerLayerForFrameView(frameView);
             GraphicsLayer* footerLayer = footerLayerForFrameView(frameView);
-            LayoutSize scrollOffsetForFixed = frameView.scrollOffsetForFixedPosition();
+            LayoutPoint scrollPositionForFixed = frameView.scrollPositionForFixedPosition();
 
             float topContentInset = frameView.topContentInset();
             FloatPoint positionForInsetClipLayer = FloatPoint(0, FrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset));
             FloatPoint positionForContentsLayer = FloatPoint(scrolledContentsLayer->position().x(),
                 FrameView::yPositionForRootContentLayer(scrollPosition, topContentInset, frameView.headerHeight()));
-            FloatPoint positionForHeaderLayer = FloatPoint(scrollOffsetForFixed.width(), FrameView::yPositionForHeaderLayer(scrollPosition, topContentInset));
-            FloatPoint positionForFooterLayer = FloatPoint(scrollOffsetForFixed.width(),
+            FloatPoint positionForHeaderLayer = FloatPoint(scrollPositionForFixed.x(), FrameView::yPositionForHeaderLayer(scrollPosition, topContentInset));
+            FloatPoint positionForFooterLayer = FloatPoint(scrollPositionForFixed.x(),
                 FrameView::yPositionForFooterLayer(scrollPosition, topContentInset, frameView.totalContentsSize().height(), frameView.footerHeight()));
 
             if (programmaticScroll || scrollingLayerPositionAction == SetScrollingLayerPosition) {
                 scrollLayer->setPosition(-frameView.scrollPosition());
                 if (counterScrollingLayer)
-                    counterScrollingLayer->setPosition(toLayoutPoint(scrollOffsetForFixed));
+                    counterScrollingLayer->setPosition(scrollPositionForFixed);
                 if (insetClipLayer)
                     insetClipLayer->setPosition(positionForInsetClipLayer);
                 if (contentShadowLayer)
@@ -346,7 +346,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
             } else {
                 scrollLayer->syncPosition(-frameView.scrollPosition());
                 if (counterScrollingLayer)
-                    counterScrollingLayer->syncPosition(toLayoutPoint(scrollOffsetForFixed));
+                    counterScrollingLayer->syncPosition(scrollPositionForFixed);
                 if (insetClipLayer)
                     insetClipLayer->syncPosition(positionForInsetClipLayer);
                 if (contentShadowLayer)

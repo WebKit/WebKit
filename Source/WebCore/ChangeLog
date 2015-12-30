@@ -1,5 +1,50 @@
 2015-12-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename "scrollOffsetForFixedPosition" and related functions to refer to scrollPosition
+        https://bugs.webkit.org/show_bug.cgi?id=152590
+
+        Reviewed by Zalan Bujtas.
+
+        FrameView::scrollOffsetForFixedPosition() actually returned a scroll position
+        (possibly negative for RTL content), not a scroll offset, so rename it and related
+        functions.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::fixedScrollableAreaBoundsInflatedForScrolling):
+        (WebCore::FrameView::scrollPositionRespectingCustomFixedPosition):
+        (WebCore::FrameView::viewportConstrainedVisibleContentRect):
+        (WebCore::FrameView::scrollPositionForFixedPosition):
+        (WebCore::FrameView::scrollOffsetRespectingCustomFixedPosition): Deleted.
+        (WebCore::FrameView::scrollOffsetForFixedPosition): Deleted.
+        * page/FrameView.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::timeToNextService):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::scrollWasUpdated):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::updateChildNodesAfterScroll):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::setSize):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollLayerPosition):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        (WebCore::RenderView::pushMappingToContainer):
+        (WebCore::RenderView::mapAbsoluteToLocalPoint):
+        (WebCore::RenderView::computeRectForRepaint):
+
+2015-12-29  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the Windows build.
 
         * page/win/FrameCGWin.cpp:

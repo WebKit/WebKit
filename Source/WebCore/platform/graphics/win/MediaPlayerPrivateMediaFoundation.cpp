@@ -294,7 +294,6 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
     if (!m_videoDisplay)
         return;
 
-    LayoutSize scrollOffset;
     IntPoint positionInWindow(m_lastPaintRect.location());
 
     FrameView* view = nullptr;
@@ -304,12 +303,13 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
         deviceScaleFactor = m_player->cachedResourceLoader()->document()->deviceScaleFactor();
     }
 
+    LayoutPoint scrollPosition;
     if (view) {
-        scrollOffset = view->scrollOffsetForFixedPosition();
+        scrollPosition = view->scrollPositionForFixedPosition();
         positionInWindow = view->convertToContainingWindow(IntPoint(m_lastPaintRect.location()));
     }
 
-    positionInWindow.move(-scrollOffset.width().toInt(), -scrollOffset.height().toInt());
+    positionInWindow.move(-scrollPosition.x().toInt(), -scrollPosition.y().toInt());
 
     int x = positionInWindow.x() * deviceScaleFactor;
     int y = positionInWindow.y() * deviceScaleFactor;

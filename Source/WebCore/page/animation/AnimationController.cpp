@@ -559,7 +559,8 @@ void AnimationControllerPrivate::scrollWasUpdated()
     auto* view = m_frame.view();
     if (!view || !wantsScrollUpdates())
         return;
-    m_scrollPosition = view->scrollOffsetForFixedPosition().height().toFloat();
+
+    m_scrollPosition = view->scrollPositionForFixedPosition().y().toFloat();
 
     // FIXME: This is updating all the animations, rather than just the ones
     // that are dependent on scroll. We to go from our AnimationBase to its CompositeAnimation
