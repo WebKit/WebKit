@@ -1,5 +1,29 @@
 2015-12-30  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordinatedGraphics] VideoRenderRequestScheduler shouldn't dispatch to main thread in threaded compositor
+        https://bugs.webkit.org/show_bug.cgi?id=152584
+
+        Reviewed by Carlos Garcia Campos.
+
+        The VideoRenderRequestScheduler class should only send the repaint-requested
+        signal dispatch to the main thread when not using the threaded compositor.
+        In case that is used (guarded via WTF_USE_COORDINATED_GRAPHICS_THREADED), the
+        signal dispatch can be done on the current thread (normally a GStreamer thread)
+        since the actual GL texture update will be then dispatched to the compositor
+        thread (unlike when gstreamer-gl is used, when the update can be done on the
+        very same thread).
+
+        When that is the case we don't need the RunLoop::Timer, Condition and the
+        video sink GRefPtr protector that are otherwise used by this class, so these
+        can just be guarded with the USE(...) flag.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (VideoRenderRequestScheduler::VideoRenderRequestScheduler):
+        (VideoRenderRequestScheduler::stop):
+        (VideoRenderRequestScheduler::requestRender):
+
+2015-12-30  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Clean up TextureMapperAnimation, TextureMapperAnimations
         https://bugs.webkit.org/show_bug.cgi?id=152112
 
