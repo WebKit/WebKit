@@ -5471,12 +5471,13 @@ HRESULT WebView::scrollOffset(_Out_ LPPOINT offset)
 {
     if (!offset)
         return E_POINTER;
-    IntSize offsetIntSize = m_page->mainFrame().view()->scrollOffset();
 
-    offsetIntSize.scale(deviceScaleFactor());
+    IntPoint scrollPosition = m_page->mainFrame().view()->scrollPosition();
+    float scaleFactor = deviceScaleFactor();
+    scrollPosition.scale(scaleFactor, scaleFactor);
 
-    offset->x = offsetIntSize.width();
-    offset->y = offsetIntSize.height();
+    offset->x = scrollPosition.x();
+    offset->y = scrollPosition.y();
     return S_OK;
 }
 

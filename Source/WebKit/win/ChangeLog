@@ -1,3 +1,10 @@
+2015-12-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build.
+
+        * WebView.cpp:
+        (WebView::scrollOffset):
+
 2015-12-25  David Kilzer  <ddkilzer@apple.com>
 
         ResourceError should store failingURL as URL instead of String to avoid reparsing and to address FIXME comments in ResourceErrorCF.cpp and ResourceErrorMac.mm
