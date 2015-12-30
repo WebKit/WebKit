@@ -1,3 +1,65 @@
+2015-12-30  Aleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Arrow function specific features. Lexical bind "super"
+        https://bugs.webkit.org/show_bug.cgi?id=149615
+
+        Reviewed by Saam Barati.
+
+        Implemented lexical bind "super" property for arrow function. 'super' property can be accessed 
+        inside of the arrow function in case if arrow function is nested in constructor, method, 
+        getter or setter of class. In current patch using 'super' in arrow function, that declared out of the 
+        class, lead to wrong type of error, should be SyntaxError(https://bugs.webkit.org/show_bug.cgi?id=150893) 
+        and this will be fixed in separete patch.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::createExecutableInternal):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::getSlow):
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::derivedContextType):
+        (JSC::ExecutableInfo::isClassContext):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::derivedContextType):
+        (JSC::UnlinkedCodeBlock::isClassContext):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::derivedContextType):
+        (JSC::BytecodeGenerator::isDerivedConstructorContext):
+        (JSC::BytecodeGenerator::isDerivedClassContext):
+        (JSC::BytecodeGenerator::isArrowFunction):
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::emitHomeObjectForCallee):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::ModuleProgramExecutable::ModuleProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::derivedContextType):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * tests/es6.yaml:
+        * tests/stress/arrowfunction-lexical-bind-superproperty.js: Added.
+
 2015-12-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, relax limitation in operationCreateThis

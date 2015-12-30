@@ -281,7 +281,7 @@ namespace JSC {
         const CommonIdentifiers& propertyNames() const { return *m_vm->propertyNames; }
 
         bool isConstructor() const { return m_codeBlock->isConstructor(); }
-        bool isDerivedConstructorContext() const { return m_codeBlock->isDerivedConstructorContext(); }
+        DerivedContextType derivedContextType() const { return m_derivedContextType; }
         bool usesArrowFunction() const { return m_scopeNode->usesArrowFunction(); }
         bool needsToUpdateArrowFunctionContext() const { return m_needsToUpdateArrowFunctionContext; }
         bool usesEval() const { return m_scopeNode->usesEval(); }
@@ -697,6 +697,10 @@ namespace JSC {
         bool isBuiltinFunction() const { return m_isBuiltinFunction; }
 
         OpcodeID lastOpcodeID() const { return m_lastOpcodeID; }
+        
+        bool isDerivedConstructorContext() { return m_derivedContextType == DerivedContextType::DerivedConstructorContext; }
+        bool isDerivedClassContext() { return m_derivedContextType == DerivedContextType::DerivedMethodContext; }
+        bool isArrowFunction() { return m_codeBlock->isArrowFunction(); }
 
         enum class TDZCheckOptimization { Optimize, DoNotOptimize };
         enum class NestedScopeType { IsNested, IsNotNested };
@@ -794,7 +798,14 @@ namespace JSC {
         
         UnlinkedFunctionExecutable* makeFunction(FunctionMetadataNode* metadata)
         {
-            bool newisDerivedConstructorContext = constructorKind() == ConstructorKind::Derived || (m_isDerivedConstructorContext && metadata->parseMode() == SourceParseMode::ArrowFunctionMode);
+            DerivedContextType newDerivedContextType = DerivedContextType::None;
+
+            if (metadata->parseMode() == SourceParseMode::ArrowFunctionMode) {
+                if (constructorKind() == ConstructorKind::Derived || isDerivedConstructorContext())
+                    newDerivedContextType = DerivedContextType::DerivedConstructorContext;
+                else if (m_codeBlock->isClassContext() || isDerivedClassContext())
+                    newDerivedContextType = DerivedContextType::DerivedMethodContext;
+            }
 
             VariableEnvironment variablesUnderTDZ;
             getVariablesUnderTDZ(variablesUnderTDZ);
@@ -808,7 +819,7 @@ namespace JSC {
             else if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() == ConstructorKind::None)
                 constructAbility = ConstructAbility::CannotConstruct;
 
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, variablesUnderTDZ, newisDerivedConstructorContext);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, variablesUnderTDZ, newDerivedContextType);
         }
 
         void getVariablesUnderTDZ(VariableEnvironment&);
@@ -918,9 +929,9 @@ namespace JSC {
         bool m_isBuiltinFunction { false };
         bool m_usesNonStrictEval { false };
         bool m_inTailPosition { false };
-        bool m_isDerivedConstructorContext { false };
         bool m_needsToUpdateArrowFunctionContext;
         bool m_isNewTargetLoadedInArrowFunction { false };
+        DerivedContextType m_derivedContextType { DerivedContextType::None };
     };
 
 }

@@ -29,11 +29,13 @@
 #include "ParserModes.h"
 
 namespace JSC {
+    
+enum class DerivedContextType { None, DerivedConstructorContext, DerivedMethodContext };
 
 // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
 // https://bugs.webkit.org/show_bug.cgi?id=151547
 struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, SuperBinding superBinding, SourceParseMode parseMode, bool isDerivedConstructorContext, bool isArrowFunctionContext)
+    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, SuperBinding superBinding, SourceParseMode parseMode, DerivedContextType derivedContextType, bool isArrowFunctionContext, bool isClassContext)
         : m_needsActivation(needsActivation)
         , m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
@@ -42,8 +44,9 @@ struct ExecutableInfo {
         , m_constructorKind(static_cast<unsigned>(constructorKind))
         , m_superBinding(static_cast<unsigned>(superBinding))
         , m_parseMode(parseMode)
-        , m_isDerivedConstructorContext(isDerivedConstructorContext)
+        , m_derivedContextType(static_cast<unsigned>(derivedContextType))
         , m_isArrowFunctionContext(isArrowFunctionContext)
+        , m_isClassContext(isClassContext)
     {
         ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
         ASSERT(m_superBinding == static_cast<unsigned>(superBinding));
@@ -57,8 +60,9 @@ struct ExecutableInfo {
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
     SourceParseMode parseMode() const { return m_parseMode; }
-    bool isDerivedConstructorContext() const { return m_isDerivedConstructorContext; }
+    DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
+    bool isClassContext() const { return m_isClassContext; }
 
 private:
     unsigned m_needsActivation : 1;
@@ -69,8 +73,9 @@ private:
     unsigned m_constructorKind : 2;
     unsigned m_superBinding : 1;
     SourceParseMode m_parseMode;
-    unsigned m_isDerivedConstructorContext : 1;
+    unsigned m_derivedContextType : 2;
     unsigned m_isArrowFunctionContext : 1;
+    unsigned m_isClassContext : 1;
 };
 
 } // namespace JSC

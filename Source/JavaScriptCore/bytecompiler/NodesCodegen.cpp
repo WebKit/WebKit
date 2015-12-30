@@ -173,12 +173,16 @@ RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 
     RegisterID callee;
     callee.setIndex(JSStack::Callee);
-
     return generator.emitGetById(generator.finalDestination(dst), &callee, generator.propertyNames().underscoreProto);
 }
 
 static RegisterID* emitHomeObjectForCallee(BytecodeGenerator& generator)
 {
+    if (generator.isDerivedClassContext() || generator.isDerivedConstructorContext()) {
+        RegisterID* derivedConstructor = generator.emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment();
+        return generator.emitGetById(generator.newTemporary(), derivedConstructor, generator.propertyNames().homeObjectPrivateName);
+    }
+
     RegisterID callee;
     callee.setIndex(JSStack::Callee);
     return generator.emitGetById(generator.newTemporary(), &callee, generator.propertyNames().homeObjectPrivateName);
@@ -749,8 +753,8 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
     CallArguments callArguments(generator, m_args);
     if (m_expr->isSuperNode()) {
-        ASSERT(generator.isConstructor() || generator.isDerivedConstructorContext());
-        ASSERT(generator.constructorKind() == ConstructorKind::Derived || generator.isDerivedConstructorContext());
+        ASSERT(generator.isConstructor() || generator.derivedContextType() == DerivedContextType::DerivedConstructorContext);
+        ASSERT(generator.constructorKind() == ConstructorKind::Derived || generator.derivedContextType() == DerivedContextType::DerivedConstructorContext);
         generator.emitMove(callArguments.thisRegister(), generator.newTarget());
         RegisterID* ret = generator.emitConstruct(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
         generator.emitMove(generator.thisRegister(), ret);

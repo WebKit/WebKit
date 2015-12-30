@@ -1,3 +1,14 @@
+2015-12-30  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Arrow function specific features. Lexical bind "super"
+        https://bugs.webkit.org/show_bug.cgi?id=149615
+
+        Reviewed by Saam Barati.
+
+        * js/arrowfunction-superproperty-expected.txt: Added.
+        * js/arrowfunction-superproperty.html: Added.
+        * js/script-tests/arrowfunction-superproperty.js: Added.
+
 2015-12-29  Andy VanWagoner  <andy@instructure.com>
 
         Remove tests for sometimes unsupported calendars, numbering systems, and time zone backward links

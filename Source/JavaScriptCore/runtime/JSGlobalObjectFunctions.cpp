@@ -587,7 +587,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 
     JSGlobalObject* calleeGlobalObject = exec->callee()->globalObject();
     VariableEnvironment emptyTDZVariables; // Indirect eval does not have access to the lexical scope.
-    EvalExecutable* eval = EvalExecutable::create(exec, makeSource(s), false, ThisTDZMode::CheckIfNeeded, false, false, &emptyTDZVariables);
+    EvalExecutable* eval = EvalExecutable::create(exec, makeSource(s), false, ThisTDZMode::CheckIfNeeded, DerivedContextType::None, false, &emptyTDZVariables);
     if (!eval)
         return JSValue::encode(jsUndefined());
 

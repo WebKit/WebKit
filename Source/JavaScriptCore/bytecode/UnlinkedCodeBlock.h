@@ -119,8 +119,9 @@ public:
     bool usesEval() const { return m_usesEval; }
     SourceParseMode parseMode() const { return m_parseMode; }
     bool isArrowFunction() const { return m_parseMode == SourceParseMode::ArrowFunctionMode; }
-    bool isDerivedConstructorContext() const { return m_isDerivedConstructorContext; }
+    DerivedContextType derivedContextType() const { return static_cast<DerivedContextType>(m_derivedContextType); }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
+    bool isClassContext() const { return m_isClassContext; }
 
     bool needsFullScopeChain() const { return m_needsFullScopeChain; }
 
@@ -393,9 +394,9 @@ private:
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructorKind : 2;
     unsigned m_superBinding : 1;
-    unsigned m_isDerivedConstructorContext : 1;
+    unsigned m_derivedContextType : 2;
     unsigned m_isArrowFunctionContext : 1;
-
+    unsigned m_isClassContext : 1;
     unsigned m_firstLine;
     unsigned m_lineCount;
     unsigned m_endColumn;

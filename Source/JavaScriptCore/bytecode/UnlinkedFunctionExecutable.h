@@ -30,6 +30,7 @@
 #include "CodeSpecializationKind.h"
 #include "CodeType.h"
 #include "ConstructAbility.h"
+#include "ExecutableInfo.h"
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
@@ -65,10 +66,10 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, VariableEnvironment& parentScopeTDZVariables, bool isDerivedConstructorContext, RefPtr<SourceProvider>&& sourceOverride = nullptr)
+    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, VariableEnvironment& parentScopeTDZVariables, DerivedContextType derivedContextType, RefPtr<SourceProvider>&& sourceOverride = nullptr)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap))
-            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind, constructAbility, parentScopeTDZVariables, isDerivedConstructorContext);
+            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind, constructAbility, parentScopeTDZVariables, derivedContextType);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -128,11 +129,12 @@ public:
     const VariableEnvironment* parentScopeTDZVariables() const { return &m_parentScopeTDZVariables; }
     
     bool isArrowFunction() const { return m_parseMode == SourceParseMode::ArrowFunctionMode; }
-    bool isDerivedConstructorContext() const {return m_isDerivedConstructorContext; }
 
-private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, VariableEnvironment&, bool isDerivedConstructorContext);
+    JSC::DerivedContextType derivedContextType() const {return static_cast<JSC::DerivedContextType>(m_derivedContextType); }
     
+private:
+    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, VariableEnvironment&,  JSC::DerivedContextType);
+
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
 
@@ -163,7 +165,7 @@ private:
     unsigned m_constructorKind : 2;
     unsigned m_functionMode : 1; // FunctionMode
     unsigned m_superBinding : 1;
-    unsigned m_isDerivedConstructorContext : 1;
+    unsigned m_derivedContextType: 2;
 
 protected:
     void finishCreation(VM& vm)
