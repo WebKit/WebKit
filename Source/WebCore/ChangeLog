@@ -1,3 +1,18 @@
+2015-12-31  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Nested block with pseudo first-line parent should bail out of simple line layout.
+        https://bugs.webkit.org/show_bug.cgi?id=152599
+
+        Reviewed by Simon Fraser.
+
+        We should bail out of simple line layout if any of the ancestors have pseudo first-line style.
+        (see RenderBlock::firstLineBlock()) 
+
+        Test: fast/block/line-layout/first-line-should-bail-out-of-simple-line-layout.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+
 2015-12-30  Simon Fraser  <simon.fraser@apple.com>
 
         Change ScrollView::scrollTo() to take a ScrollPosition

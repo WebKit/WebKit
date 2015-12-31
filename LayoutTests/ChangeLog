@@ -1,3 +1,16 @@
+2015-12-31  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Nested block with pseudo first-line parent should bail out of simple line layout.
+        https://bugs.webkit.org/show_bug.cgi?id=152599
+
+        Reviewed by Simon Fraser.
+
+        We should bail out of simple line layout if any of the ancestors have pseudo first-line style.
+        (see RenderBlock::firstLineBlock()) 
+
+        * fast/block/line-layout/first-line-should-bail-out-of-simple-line-layout-expected.html: Added.
+        * fast/block/line-layout/first-line-should-bail-out-of-simple-line-layout.html: Added.
+
 2015-12-31  Martin Robinson  <mrobinson@igalia.com>
 
         Mark some tests as failing on WebKitGTK+.

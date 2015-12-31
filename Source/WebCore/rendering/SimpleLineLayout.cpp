@@ -287,7 +287,7 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Inc
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
-    if (flow.isAnonymous() && flow.firstLineBlock())
+    if (flow.firstLineBlock())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLine, reasons, includeReasons);
     if (flow.isAnonymousBlock() && flow.parent()->style().textOverflow())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
