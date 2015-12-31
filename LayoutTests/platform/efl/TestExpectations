@@ -1756,8 +1756,6 @@ webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
 # Select element popup is not shown.
 webkit.org/b/114154 fast/forms/select/popup-closes-on-blur.html [ Pass ]
 
-webkit.org/b/114159 fast/events/popup-blocking-timers3.html [ Failure ]
-
 # CURSOR_VISIBILITY is not enabled in efl
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 
@@ -2018,7 +2016,6 @@ webkit.org/b/128667 fast/regions/repaint/hover-border-radius.html [ Failure ]
 
 # Failing after r163562
 webkit.org/b/128670 batterystatus/window-property.html [ Failure ]
-webkit.org/b/128670 fast/forms/form-hides-table.html [ Failure ]
 webkit.org/b/128670 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 
 webkit.org/b/128973 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure ]
@@ -2172,7 +2169,6 @@ webkit.org/b/141593 fast/text/justify-ideograph-complex.html [ Failure ]
 webkit.org/b/141593 fast/text/justify-ideograph-simple.html [ Failure ]
 webkit.org/b/141593 fast/text/justify-ideograph-vertical.html [ Failure ]
 
-webkit.org/b/141631 fast/forms/basic-buttons.html [ Failure ]
 webkit.org/b/141631 fast/forms/datalist/datalist-child-validation.html [ Failure ]
 webkit.org/b/141631 fast/forms/search-vertical-alignment.html [ Failure ]
 webkit.org/b/141631 fast/forms/searchfield-heights.html [ Failure ]
@@ -2237,7 +2233,6 @@ webkit.org/b/131044 media/audio-controls-rendering.html [ Failure ]
 webkit.org/b/131044 media/controls-strict.html [ Failure ]
 webkit.org/b/131044 media/controls-without-preload.html [ Failure ]
 webkit.org/b/131044 media/media-controls-invalid-url.html [ Failure ]
-webkit.org/b/131044 media/media-controls-timeline-updates.html [ Failure ]
 webkit.org/b/131044 media/media-preload-no-delay-loadevent.html [ Failure ]
 webkit.org/b/131044 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
 webkit.org/b/131044 media/track/track-long-word-container-sizing.html [ Failure ]
@@ -2253,6 +2248,12 @@ webkit.org/b/131044 media/video-volume-slider-drag.html [ Failure ]
 webkit.org/b/131044 media/track/track-datacue.html [ Timeout ]
 webkit.org/b/131044 media/track/track-in-band-subtitles-too-large.html [ Timeout Crash Failure ]
 webkit.org/b/131044 media/track/track-remove-track.html [ Timeout ]
+webkit.org/b/131044 media/track/media-element-enqueue-event-crash.html [ Failure ]
+webkit.org/b/131044 media/track/track-delete-during-setup.html [ Failure ]
+webkit.org/b/131044 media/track/track-insert-after-load-crash.html [ Failure ]
+webkit.org/b/131044 media/track/track-mode-triggers-loading.html [ Failure ]
+webkit.org/b/131044 media/track/track-remove-by-setting-innerHTML.html [ Failure ]
+webkit.org/b/131044 media/video-initially-hidden-volume-slider-up.html [ Failure ]
 webkit.org/b/131044 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/131044 media/video-controls-toggling.html [ Timeout ]
 
@@ -2712,3 +2713,12 @@ webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/obj
 webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html [ Failure ]
 webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code.html [ Failure ]
 webkit.org/b/151943 imported/blink/media/track/media-element-move-to-new-document-assert.html [ Failure ]
+
+webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html [ Crash ]
+webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html [ Crash ]
+webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html [ Crash ]
+webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html [ Crash ]
+webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html [ Crash ]
+webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html [ Crash ]
+webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html [ Crash ]
+webkit.org/b/152602 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html [ Crash ]

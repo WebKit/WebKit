@@ -1,3 +1,12 @@
+2015-12-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed, EFL gardening.
+
+        Mark navigation policy tests to failure and unskip some passing test.
+        Update media failure tests.
+
+        * platform/efl/TestExpectations:
+
 2015-12-30  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Arrow function specific features. Lexical bind "super"
