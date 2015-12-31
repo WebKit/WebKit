@@ -2130,14 +2130,14 @@ void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
     setScrollPosition(IntPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
 }
 
-void FrameView::setScrollPosition(const IntPoint& scrollPoint)
+void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
 {
     TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     m_maintainScrollPositionAnchor = nullptr;
     Page* page = frame().page();
     if (page && page->expectsWheelEventTriggers())
         scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
-    ScrollView::setScrollPosition(scrollPoint);
+    ScrollView::setScrollPosition(scrollPosition);
 }
 
 void FrameView::delegatesScrollingDidChange()
@@ -2191,15 +2191,15 @@ void FrameView::didChangeScrollOffset()
     frame().loader().client().didChangeScrollOffset();
 }
 
-void FrameView::scrollPositionChangedViaPlatformWidgetImpl(const IntPoint& oldPosition, const IntPoint& newPosition)
+void FrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& oldOffset, const ScrollOffset& newOffset)
 {
     updateLayerPositionsAfterScrolling();
     updateCompositingLayersAfterScrolling();
     repaintSlowRepaintObjects();
-    scrollPositionChanged(oldPosition, newPosition);
+    scrollPositionChanged(scrollPositionFromOffset(oldOffset), scrollPositionFromOffset(newOffset));
 }
 
-void FrameView::scrollPositionChanged(const IntPoint& oldPosition, const IntPoint& newPosition)
+void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
 {
     Page* page = frame().page();
     auto throttlingDelay = page ? page->chrome().client().eventThrottlingDelay() : std::chrono::milliseconds::zero();
@@ -2351,7 +2351,7 @@ bool FrameView::isRubberBandInProgress() const
     return false;
 }
 
-bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
+bool FrameView::requestScrollPositionUpdate(const ScrollPosition& position)
 {
 #if ENABLE(ASYNC_SCROLLING)
     if (TiledBacking* tiledBacking = this->tiledBacking())

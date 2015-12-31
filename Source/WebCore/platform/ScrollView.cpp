@@ -444,35 +444,35 @@ void ScrollView::setScrollOffset(const IntPoint& offset)
     scrollTo(scrollPositionFromOffset(constrainedOffset));
 }
 
-void ScrollView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition)
+void ScrollView::scrollOffsetChangedViaPlatformWidget(const ScrollOffset& oldOffset, const ScrollOffset& newOffset)
 {
     // We should not attempt to actually modify (paint) platform widgets if the layout phase
     // is not complete. Instead, defer the scroll event until the layout finishes.
     if (shouldDeferScrollUpdateAfterContentSizeChange()) {
         // We only care about the most recent scroll position change request
-        m_deferredScrollPositions = std::make_unique<std::pair<IntPoint, IntPoint>>(std::make_pair(oldPosition, newPosition));
+        m_deferredScrollOffsets = std::make_unique<std::pair<ScrollOffset, ScrollOffset>>(std::make_pair(oldOffset, newOffset));
         return;
     }
 
-    scrollPositionChangedViaPlatformWidgetImpl(oldPosition, newPosition);
+    scrollOffsetChangedViaPlatformWidgetImpl(oldOffset, newOffset);
 }
 
 void ScrollView::handleDeferredScrollUpdateAfterContentSizeChange()
 {
     ASSERT(!shouldDeferScrollUpdateAfterContentSizeChange());
 
-    if (!m_deferredScrollDelta && !m_deferredScrollPositions)
+    if (!m_deferredScrollDelta && !m_deferredScrollOffsets)
         return;
 
-    ASSERT(static_cast<bool>(m_deferredScrollDelta) != static_cast<bool>(m_deferredScrollPositions));
+    ASSERT(static_cast<bool>(m_deferredScrollDelta) != static_cast<bool>(m_deferredScrollOffsets));
 
     if (m_deferredScrollDelta)
         completeUpdatesAfterScrollTo(*m_deferredScrollDelta);
-    else if (m_deferredScrollPositions)
-        scrollPositionChangedViaPlatformWidgetImpl(m_deferredScrollPositions->first, m_deferredScrollPositions->second);
+    else if (m_deferredScrollOffsets)
+        scrollOffsetChangedViaPlatformWidgetImpl(m_deferredScrollOffsets->first, m_deferredScrollOffsets->second);
     
     m_deferredScrollDelta = nullptr;
-    m_deferredScrollPositions = nullptr;
+    m_deferredScrollOffsets = nullptr;
 }
 
 void ScrollView::scrollTo(const ScrollPosition& newPosition)
@@ -529,7 +529,7 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition)
         return;
     }
 
-    IntPoint newScrollPosition = !delegatesScrolling() ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
+    ScrollPosition newScrollPosition = !delegatesScrolling() ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
 
     if ((!delegatesScrolling() || !inProgrammaticScroll()) && newScrollPosition == this->scrollPosition())
         return;

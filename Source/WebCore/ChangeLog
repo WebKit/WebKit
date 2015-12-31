@@ -1,3 +1,41 @@
+2015-12-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Clarify that scrollPositionChangedViaPlatformWidget takes offsets
+        https://bugs.webkit.org/show_bug.cgi?id=152606
+
+        Reviewed by Zalan Bujtas.
+
+        scrollPositionChangedViaPlatformWidget actually gets scroll offsets, since the
+        values we get from AppKit are zero-based, so rename to scrollOffsetChangedViaPlatformWidget().
+        
+        Change ScrollableArea's setScrollPosition() and requestScrollPositionUpdate() to take
+        ScrollPositions.
+        
+        Add a FIXME noting that willRevealEdge events are probably broken in RTL documents.
+
+        * dom/Document.cpp:
+        (WebCore::Document::sendWillRevealEdgeEventsIfNeeded):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setScrollPosition):
+        (WebCore::FrameView::scrollOffsetChangedViaPlatformWidgetImpl):
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::requestScrollPositionUpdate):
+        (WebCore::FrameView::scrollPositionChangedViaPlatformWidgetImpl): Deleted.
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollOffsetChangedViaPlatformWidget):
+        (WebCore::ScrollView::handleDeferredScrollUpdateAfterContentSizeChange):
+        (WebCore::ScrollView::scrollTo):
+        (WebCore::ScrollView::setScrollPosition):
+        (WebCore::ScrollView::scrollPositionChangedViaPlatformWidget): Deleted.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::scrollOffsetChangedViaPlatformWidgetImpl):
+        (WebCore::ScrollView::scrollPositionChangedViaPlatformWidgetImpl): Deleted.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::notifyScrollPositionChanged):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::requestScrollPositionUpdate):
+
 2015-12-31  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Text with stroke width is not positioned correctly.

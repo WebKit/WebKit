@@ -1,3 +1,21 @@
+2015-12-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Clarify that scrollPositionChangedViaPlatformWidget takes offsets
+        https://bugs.webkit.org/show_bug.cgi?id=152606
+
+        Reviewed by Zalan Bujtas.
+
+        scrollPositionChangedViaPlatformWidget actually gets scroll offsets, since the
+        values we get from AppKit are zero-based, so rename to scrollOffsetChangedViaPlatformWidget().
+        
+        Change ScrollableArea's setScrollPosition() and requestScrollPositionUpdate() to take
+        ScrollPositions.
+        
+        Add a FIXME noting that willRevealEdge events are probably broken in RTL documents.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+
 2015-12-22  Andy Estes  <aestes@apple.com>
 
         [CF] Replace CFNetwork-related WebKitSystemInterface calls with SPI

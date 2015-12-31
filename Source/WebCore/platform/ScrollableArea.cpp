@@ -145,7 +145,7 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orienta
         scrollToOffsetWithoutAnimation(FloatPoint(scrollAnimator().currentPosition().x(), offset));
 }
 
-void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
+void ScrollableArea::notifyScrollPositionChanged(const ScrollPosition& position)
 {
     scrollPositionChanged(position);
     scrollAnimator().setCurrentPosition(position);

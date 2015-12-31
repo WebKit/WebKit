@@ -54,12 +54,12 @@ public:
 
     // Should be called when the scroll position changes externally, for example if the scroll layer position
     // is updated on the scrolling thread and we need to notify the main thread.
-    WEBCORE_EXPORT void notifyScrollPositionChanged(const IntPoint&);
+    WEBCORE_EXPORT void notifyScrollPositionChanged(const ScrollPosition&);
 
     // Allows subclasses to handle scroll position updates themselves. If this member function
     // returns true, the scrollable area won't actually update the scroll position and instead
     // expect it to happen sometime in the future.
-    virtual bool requestScrollPositionUpdate(const IntPoint&) { return false; }
+    virtual bool requestScrollPositionUpdate(const ScrollPosition&) { return false; }
 
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
 

@@ -237,10 +237,10 @@ public:
 #if USE(COORDINATED_GRAPHICS)
     virtual void setFixedVisibleContentRect(const IntRect&) override;
 #endif
-    WEBCORE_EXPORT virtual void setScrollPosition(const IntPoint&) override;
+    WEBCORE_EXPORT virtual void setScrollPosition(const ScrollPosition&) override;
     virtual void updateLayerPositionsAfterScrolling() override;
     virtual void updateCompositingLayersAfterScrolling() override;
-    virtual bool requestScrollPositionUpdate(const IntPoint&) override;
+    virtual bool requestScrollPositionUpdate(const ScrollPosition&) override;
     virtual bool isRubberBandInProgress() const override;
     WEBCORE_EXPORT virtual ScrollPosition minimumScrollPosition() const override;
     WEBCORE_EXPORT virtual ScrollPosition maximumScrollPosition() const override;
@@ -597,7 +597,7 @@ private:
 
     virtual bool shouldDeferScrollUpdateAfterContentSizeChange() override;
 
-    virtual void scrollPositionChangedViaPlatformWidgetImpl(const IntPoint& oldPosition, const IntPoint& newPosition) override;
+    virtual void scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& oldOffset, const ScrollOffset& newOffset) override;
 
     void applyOverflowToViewport(const RenderElement&, ScrollbarMode& hMode, ScrollbarMode& vMode);
     void applyPaginationToViewport();
@@ -658,7 +658,7 @@ private:
     bool updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
-    void scrollPositionChanged(const IntPoint& oldPosition, const IntPoint& newPosition);
+    void scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
     void scrollableAreaSetChanged();
     void sendScrollEvent();
 
