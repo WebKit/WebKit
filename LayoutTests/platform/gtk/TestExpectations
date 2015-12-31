@@ -610,6 +610,9 @@ webkit.org/b/149016 accessibility/aria-current.html [ Skip ]
 # ARIA 1.1 table related attributes are not supported
 webkit.org/b/148967 accessibility/aria-table-attributes.html [ Skip ]
 
+# WebKitGTK+ needs WOFF2 support.
+webkit.org/b/152616 fast/text/woff2.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,11 @@
+2015-12-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Mark WOFF2 test as failing on WebKitGTK+
+
+        Unreviewed. Gardening.
+
+        * platform/gtk/TestExpectations:
+
 2015-12-31  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Unreviewed gardening at 2015-12-31
