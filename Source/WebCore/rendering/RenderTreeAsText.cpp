@@ -617,10 +617,10 @@ static void write(TextStream& ts, RenderLayer& l,
     }
 
     if (l.renderer().hasOverflowClip()) {
-        if (l.scrollXOffset())
-            ts << " scrollX " << l.scrollXOffset();
-        if (l.scrollYOffset())
-            ts << " scrollY " << l.scrollYOffset();
+        if (l.scrollOffset().x())
+            ts << " scrollX " << l.scrollOffset().x();
+        if (l.scrollOffset().y())
+            ts << " scrollY " << l.scrollOffset().y();
         if (l.renderBox() && roundToInt(l.renderBox()->clientWidth()) != l.scrollWidth())
             ts << " scrollWidth " << l.scrollWidth();
         if (l.renderBox() && roundToInt(l.renderBox()->clientHeight()) != l.scrollHeight())

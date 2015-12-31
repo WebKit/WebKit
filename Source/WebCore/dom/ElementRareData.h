@@ -101,8 +101,8 @@ public:
     LayoutSize minimumSizeForResizing() const { return m_minimumSizeForResizing; }
     void setMinimumSizeForResizing(LayoutSize size) { m_minimumSizeForResizing = size; }
 
-    IntSize savedLayerScrollOffset() const { return m_savedLayerScrollOffset; }
-    void setSavedLayerScrollOffset(IntSize size) { m_savedLayerScrollOffset = size; }
+    IntPoint savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
+    void setSavedLayerScrollPosition(IntPoint position) { m_savedLayerScrollPosition = position; }
 
     bool hasPendingResources() const { return m_hasPendingResources; }
     void setHasPendingResources(bool has) { m_hasPendingResources = has; }
@@ -130,7 +130,7 @@ private:
     RegionOversetState m_regionOversetState;
 
     LayoutSize m_minimumSizeForResizing;
-    IntSize m_savedLayerScrollOffset;
+    IntPoint m_savedLayerScrollPosition;
     RefPtr<RenderStyle> m_computedStyle;
 
     std::unique_ptr<DatasetDOMStringMap> m_dataset;

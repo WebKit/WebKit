@@ -159,9 +159,9 @@ void RenderMarquee::start()
 
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
-            m_layer->scrollToOffset(IntSize(m_start, 0));
+            m_layer->scrollToOffset(ScrollOffset(m_start, 0));
         else
-            m_layer->scrollToOffset(IntSize(0, m_start));
+            m_layer->scrollToOffset(ScrollOffset(0, m_start));
     }
     else {
         m_suspended = false;
@@ -274,7 +274,7 @@ void RenderMarquee::timerFired()
         bool positive = range > 0;
         int clientSize = (isHorizontal() ? roundToInt(m_layer->renderBox()->clientWidth()) : roundToInt(m_layer->renderBox()->clientHeight()));
         int increment = abs(intValueForLength(m_layer->renderer().style().marqueeIncrement(), clientSize));
-        int currentPos = (isHorizontal() ? m_layer->scrollXOffset() : m_layer->scrollYOffset());
+        int currentPos = (isHorizontal() ? m_layer->scrollOffset().x() : m_layer->scrollOffset().y());
         newPos =  currentPos + (addIncrement ? increment : -increment);
         if (positive)
             newPos = std::min(newPos, endPoint);

@@ -3577,7 +3577,8 @@ void AccessibilityRenderObject::scrollTo(const IntPoint& point) const
     if (!box.canBeScrolledAndHasScrollableArea())
         return;
 
-    box.layer()->scrollToOffset(toIntSize(point), RenderLayer::ScrollOffsetClamped);
+    // FIXME: is point a ScrollOffset or ScrollPosition? Test in RTL overflow.
+    box.layer()->scrollToOffset(point, RenderLayer::ScrollOffsetClamped);
 }
 
 #if ENABLE(MATHML)

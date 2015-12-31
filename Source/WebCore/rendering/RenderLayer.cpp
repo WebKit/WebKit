@@ -333,10 +333,10 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
 
     if (Element* element = renderer().element()) {
         // We save and restore only the scrollOffset as the other scroll values are recalculated.
-        m_scrollOffset = element->savedLayerScrollOffset();
-        if (!m_scrollOffset.isZero())
-            scrollAnimator().setCurrentPosition(FloatPoint(m_scrollOffset.width(), m_scrollOffset.height()));
-        element->setSavedLayerScrollOffset(IntSize());
+        m_scrollPosition = element->savedLayerScrollPosition();
+        if (!m_scrollPosition.isZero())
+            scrollAnimator().setCurrentPosition(m_scrollPosition);
+        element->setSavedLayerScrollPosition(IntPoint());
     }
 }
 
@@ -352,7 +352,7 @@ RenderLayer::~RenderLayer()
         unregisterAsTouchEventListenerForScrolling();
 #endif
         if (Element* element = renderer().element())
-            element->setSavedLayerScrollOffset(m_scrollOffset);
+            element->setSavedLayerScrollPosition(m_scrollPosition);
     }
 
     destroyScrollbar(HorizontalScrollbar);
@@ -2289,7 +2289,7 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
         restrictedByLineClamp = !renderer().parent()->style().lineClamp().isNone();
 
     if (renderer().hasOverflowClip() && !restrictedByLineClamp) {
-        IntSize newScrollOffset = scrollOffset() + delta;
+        ScrollOffset newScrollOffset = scrollOffset() + delta;
         scrollToOffset(newScrollOffset, clamp);
         if (scrolledArea)
             *scrolledArea = this;
@@ -2314,26 +2314,20 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
     }
 }
 
-IntSize RenderLayer::clampScrollOffset(const IntSize& scrollOffset) const
+ScrollOffset RenderLayer::clampScrollOffset(const ScrollOffset& scrollOffset) const
 {
-    RenderBox* box = renderBox();
-    ASSERT(box);
-
-    int maxX = scrollWidth() - roundToInt(box->clientWidth());
-    int maxY = scrollHeight() - roundToInt(box->clientHeight());
-
-    int x = std::max(std::min(scrollOffset.width(), maxX), 0);
-    int y = std::max(std::min(scrollOffset.height(), maxY), 0);
-    return IntSize(x, y);
+    return scrollOffset.constrainedBetween(IntPoint(), maximumScrollOffset());
 }
 
-void RenderLayer::scrollToOffset(const IntSize& scrollOffset, ScrollOffsetClamping clamp)
+void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollOffsetClamping clamp)
 {
-    IntSize newScrollOffset = clamp == ScrollOffsetClamped ? clampScrollOffset(scrollOffset) : scrollOffset;
+    ScrollOffset newScrollOffset = clamp == ScrollOffsetClamped ? clampScrollOffset(scrollOffset) : scrollOffset;
     if (newScrollOffset != this->scrollOffset())
-        scrollToOffsetWithoutAnimation(IntPoint(newScrollOffset));
+        scrollToOffsetWithoutAnimation(newScrollOffset);
 }
 
+// x and y are scroll offset values
+// FIXME: use a ScrollOffset, or change this to take a ScrollPosition.
 void RenderLayer::scrollTo(int x, int y)
 {
     RenderBox* box = renderBox();
@@ -2351,7 +2345,7 @@ void RenderLayer::scrollTo(int x, int y)
                 x += caretWidth;
                 if (x <= caretWidth)
                     x = 0;
-            } else if (x < m_scrollOffset.width() - caretWidth)
+            } else if (x < m_scrollPosition.x() - caretWidth)
                 x -= caretWidth;
         }
 #endif
@@ -2362,8 +2356,8 @@ void RenderLayer::scrollTo(int x, int y)
     // complicated (since it will involve testing whether our layer
     // is either occluded by another layer or clipped by an enclosing
     // layer or contains fixed backgrounds, etc.).
-    IntSize newScrollOffset = IntSize(x - scrollOrigin().x(), y - scrollOrigin().y());
-    if (m_scrollOffset == newScrollOffset) {
+    ScrollPosition newScrollPosition = scrollPositionFromOffset(ScrollOffset(x, y));
+    if (m_scrollPosition == newScrollPosition) {
 #if PLATFORM(IOS)
         if (m_requiresScrollBoundsOriginUpdate)
             updateCompositingLayersAfterScroll();
@@ -2371,8 +2365,8 @@ void RenderLayer::scrollTo(int x, int y)
         return;
     }
     
-    IntPoint oldPosition = IntPoint(m_scrollOffset);
-    m_scrollOffset = newScrollOffset;
+    ScrollPosition oldPosition = IntPoint(m_scrollPosition);
+    m_scrollPosition = newScrollPosition;
 
     RenderView& view = renderer().view();
 
@@ -2423,7 +2417,7 @@ void RenderLayer::scrollTo(int x, int y)
     // Schedule the scroll and scroll-related DOM events.
     if (Element* element = renderer().element()) {
         element->document().eventQueue().enqueueOrDispatchScrollEvent(*element);
-        element->document().sendWillRevealEdgeEventsIfNeeded(oldPosition, IntPoint(newScrollOffset), visibleContentRect(), contentsSize(), element);
+        element->document().sendWillRevealEdgeEventsIfNeeded(oldPosition, newScrollPosition, visibleContentRect(), contentsSize(), element);
     }
 
     if (scrollsOverflow())
@@ -2493,9 +2487,9 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         LayoutRect layerBounds(0, 0, box->clientWidth(), box->clientHeight());
         LayoutRect r = getRectToExpose(layerBounds, layerBounds, localExposeRect, alignX, alignY);
 
-        IntSize clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(r).location()));
+        ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(r).location()));
         if (clampedScrollOffset != scrollOffset()) {
-            IntSize oldScrollOffset = scrollOffset();
+            ScrollOffset oldScrollOffset = scrollOffset();
             scrollToOffset(clampedScrollOffset);
             IntSize scrollOffsetDifference = scrollOffset() - oldScrollOffset;
             localExposeRect.move(-scrollOffsetDifference);
@@ -2734,21 +2728,16 @@ void RenderLayer::setScrollOffset(const IntPoint& offset)
 int RenderLayer::scrollPosition(Scrollbar* scrollbar) const
 {
     if (scrollbar->orientation() == HorizontalScrollbar)
-        return scrollXOffset();
+        return scrollOffset().x();
     if (scrollbar->orientation() == VerticalScrollbar)
-        return scrollYOffset();
+        return scrollOffset().y();
     return 0;
-}
-
-ScrollPosition RenderLayer::scrollPosition() const
-{
-    // FIXME: This needs scrollOffset/scrollPosition disambiguation.
-    return ScrollPosition(m_scrollOffset);
 }
 
 ScrollPosition RenderLayer::maximumScrollPosition() const
 {
     // FIXME: m_scrollSize may not be up-to-date if m_scrollDimensionsDirty is true.
+    // FIXME: should be able to use the ScrollableArea implementation.
     return scrollPositionFromOffset(roundedIntPoint(m_scrollSize) - visibleContentRectIncludingScrollbars(ContentsVisibleRect).size());
 }
 
@@ -3476,7 +3465,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
         return;
 
     m_scrollDimensionsDirty = true;
-    IntSize originalScrollOffset = scrollOffset();
+    ScrollOffset originalScrollOffset = scrollOffset();
 
     computeScrollDimensions();
 
@@ -3489,7 +3478,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
     if (box->style().overflowX() != OMARQUEE && !isRubberBandInProgress()) {
         // Layout may cause us to be at an invalid scroll position. In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
-        IntSize clampedScrollOffset = clampScrollOffset(scrollOffset());
+        ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset());
 #if PLATFORM(IOS)
         // FIXME: This looks wrong. The caret adjust mode should only be enabled on editing related entry points.
         // This code was added to fix an issue where the text insertion point would always be drawn on the right edge

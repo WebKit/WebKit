@@ -66,6 +66,7 @@ public:
     explicit IntPoint(const FloatPoint&); // don't do this implicitly since it's lossy
 
     static IntPoint zero() { return IntPoint(); }
+    bool isZero() const { return !m_x && !m_y; }
 
     int x() const { return m_x; }
     int y() const { return m_y; }

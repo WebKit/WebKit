@@ -490,25 +490,25 @@ void Frame::scrollOverflowLayer(RenderLayer* layer, const IntRect& visibleRect, 
     if (visibleRect.intersects(exposeRect))
         return;
 
-    int x = layer->scrollXOffset();
+    // FIXME: Why isn't this just calling RenderLayer::scrollRectToVisible()?
+    ScrollOffset scrollOffset = layer->scrollOffset();
     int exposeLeft = exposeRect.x();
     int exposeRight = exposeLeft + exposeRect.width();
     int clientWidth = roundToInt(box->clientWidth());
     if (exposeLeft <= 0)
-        x = std::max(0, x + exposeLeft - clientWidth / 2);
+        scrollOffset.setX(std::max(0, scrollOffset.x() + exposeLeft - clientWidth / 2));
     else if (exposeRight >= clientWidth)
-        x = std::min(box->scrollWidth() - clientWidth, x + clientWidth / 2);
+        scrollOffset.setX(std::min(box->scrollWidth() - clientWidth, scrollOffset.x() + clientWidth / 2));
 
-    int y = layer->scrollYOffset();
     int exposeTop = exposeRect.y();
     int exposeBottom = exposeTop + exposeRect.height();
     int clientHeight = roundToInt(box->clientHeight());
     if (exposeTop <= 0)
-        y = std::max(0, y + exposeTop - clientHeight / 2);
+        scrollOffset.setY(std::max(0, scrollOffset.y() + exposeTop - clientHeight / 2));
     else if (exposeBottom >= clientHeight)
-        y = std::min(box->scrollHeight() - clientHeight, y + clientHeight / 2);
+        scrollOffset.setY(std::min(box->scrollHeight() - clientHeight, scrollOffset.y() + clientHeight / 2));
 
-    layer->scrollToOffset(IntSize(x, y));
+    layer->scrollToOffset(scrollOffset);
     selection().setCaretRectNeedsUpdate();
     selection().updateAppearance();
 }
@@ -602,7 +602,7 @@ int Frame::checkOverflowScroll(OverflowScrollAction action)
     }
 
     if (action == PerformOverflowScroll && (deltaX || deltaY)) {
-        layer->scrollToOffset(IntSize(layer->scrollXOffset() + deltaX, layer->scrollYOffset() + deltaY));
+        layer->scrollToOffset(layer->scrollOffset() + IntSize(deltaX, deltaY));
 
         // Handle making selection.
         VisiblePosition visiblePosition(renderer->positionForPoint(selectionPosition, nullptr));

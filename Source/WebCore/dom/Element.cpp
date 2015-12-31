@@ -1575,7 +1575,7 @@ void Element::removedFrom(ContainerNode& insertionPoint)
         document().page()->pointerLockController().elementRemoved(this);
 #endif
 
-    setSavedLayerScrollOffset(IntSize());
+    setSavedLayerScrollPosition(ScrollPosition());
 
     if (insertionPoint.isInTreeScope()) {
         TreeScope* oldScope = &insertionPoint.treeScope();
@@ -3152,16 +3152,16 @@ void Element::didRemoveAttribute(const QualifiedName& name, const AtomicString& 
     dispatchSubtreeModifiedEvent();
 }
 
-IntSize Element::savedLayerScrollOffset() const
+IntPoint Element::savedLayerScrollPosition() const
 {
-    return hasRareData() ? elementRareData()->savedLayerScrollOffset() : IntSize();
+    return hasRareData() ? elementRareData()->savedLayerScrollPosition() : IntPoint();
 }
 
-void Element::setSavedLayerScrollOffset(const IntSize& size)
+void Element::setSavedLayerScrollPosition(const IntPoint& position)
 {
-    if (size.isZero() && !hasRareData())
+    if (position.isZero() && !hasRareData())
         return;
-    ensureElementRareData().setSavedLayerScrollOffset(size);
+    ensureElementRareData().setSavedLayerScrollPosition(position);
 }
 
 RefPtr<Attr> Element::attrIfExists(const AtomicString& localName, bool shouldIgnoreAttributeCase)

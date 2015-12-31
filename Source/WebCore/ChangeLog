@@ -1,3 +1,66 @@
+2015-12-31  Simon Fraser  <simon.fraser@apple.com>
+
+        More scrollOffset/scrollPosition disambiguation, in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=152617
+
+        Reviewed by Zalan Bujtas.
+        
+        Change RenderLayer's m_scrollOffset to be m_scrollPosition, since it stores
+        scroll positions (negative in RTL overflow). scrollOffset() was accurately
+        named already, but fix the return type, and remove the unnecessary scrollXOffset()/
+        scrollYOffset() variants, fixing callers to use .x() and .y().
+        
+        scrollToOffset() was also accurately named, but fix its argument.
+        
+        Fix functions related to saving scroll positions on Element to refer to scroll positions.
+
+        No behavior change.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::scrollTo):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFrom):
+        (WebCore::Element::savedLayerScrollPosition):
+        (WebCore::Element::setSavedLayerScrollPosition):
+        (WebCore::Element::savedLayerScrollOffset): Deleted.
+        (WebCore::Element::setSavedLayerScrollOffset): Deleted.
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::savedLayerScrollPosition):
+        (WebCore::ElementRareData::setSavedLayerScrollPosition):
+        (WebCore::ElementRareData::savedLayerScrollOffset): Deleted.
+        (WebCore::ElementRareData::setSavedLayerScrollOffset): Deleted.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::isZero):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::baselinePosition):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::scrollLeft):
+        (WebCore::RenderBox::scrollTop):
+        (WebCore::RenderBox::scrolledContentOffset):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::scrollByRecursively):
+        (WebCore::RenderLayer::clampScrollOffset):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::scrollPosition):
+        (WebCore::RenderLayer::maximumScrollPosition):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::start):
+        (WebCore::RenderMarquee::timerFired):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+
 2015-12-31  Zalan Bujtas  <zalan@apple.com>
 
         text-decoration: line-through is mispositioned when text has overline/underline too.

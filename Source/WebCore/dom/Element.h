@@ -452,8 +452,8 @@ public:
     bool hasName() const;
     const SpaceSplitString& classNames() const;
 
-    IntSize savedLayerScrollOffset() const;
-    void setSavedLayerScrollOffset(const IntSize&);
+    IntPoint savedLayerScrollPosition() const;
+    void setSavedLayerScrollPosition(const IntPoint&);
 
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Element* relatedTarget = nullptr);
     bool dispatchWheelEvent(const PlatformWheelEvent&);
