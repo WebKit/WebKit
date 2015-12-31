@@ -37,7 +37,7 @@ function checkInstaller {
         exit 0
     fi
 
-    if [ `uname` -eq "Darwin" ]
+    if [ `uname` -eq "Darwin" ]; then
        installDependenciesWithBrew
        exit 0
     fi
