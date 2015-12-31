@@ -613,6 +613,22 @@ webkit.org/b/148967 accessibility/aria-table-attributes.html [ Skip ]
 # WebKitGTK+ needs WOFF2 support.
 webkit.org/b/152616 fast/text/woff2.html [ ImageOnlyFailure ]
 
+# WebKitGTK+ doesn't have killring support.
+webkit.org/b/152379 editing/pasteboard/emacs-killring-alternating-append-prepend.html [ Failure ]
+webkit.org/b/152379 editing/pasteboard/emacs-killring-backward-delete-prepend.html [ Failure ]
+
+# The GTK+ test harness doesn't have support for overriding preferred languages.
+webkit.org/b/152618 fast/text/international/system-language/declarative-language.html [ Failure ]
+
+# This port doesn't support small-caps synthesis.
+webkit.org/b/152620 css3/font-variant-all.html [ ImageOnlyFailure ]
+webkit.org/b/152620 css3/font-variant-font-face-all.html [ ImageOnlyFailure ]
+webkit.org/b/152620 css3/font-variant-font-face-override.html [ ImageOnlyFailure ]
+webkit.org/b/152620 css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+webkit.org/b/152620 css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
+webkit.org/b/152620 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+webkit.org/b/152620 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

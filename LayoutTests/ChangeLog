@@ -1,5 +1,13 @@
 2015-12-31  Martin Robinson  <mrobinson@igalia.com>
 
+        Mark some tests as failing on WebKitGTK+.
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
+2015-12-31  Martin Robinson  <mrobinson@igalia.com>
+
         Mark WOFF2 test as failing on WebKitGTK+
 
         Unreviewed. Gardening.
