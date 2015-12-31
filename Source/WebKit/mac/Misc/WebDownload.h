@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WebDownload_h
+#define WebDownload_h
+
 #if !TARGET_OS_IPHONE || (defined USE_APPLE_INTERNAL_SDK && USE_APPLE_INTERNAL_SDK)
 #import <Foundation/NSURLDownload.h>
 #else
@@ -78,3 +81,5 @@
 - (NSWindow *)downloadWindowForAuthenticationSheet:(WebDownload *)download;
 
 @end
+
+#endif /* WebDownload_h */

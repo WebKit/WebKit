@@ -1,3 +1,26 @@
+2015-12-31  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using USE(CFNETWORK) path on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=142540
+
+        Step 1/2: Do everything but turn off USE(CFNETWORK) internally.
+
+        Original patch by Antti Koivisto <antti@apple.com> on 2015-03-10
+        Reviewed by Daniel Bates.
+
+        * Misc/WebDownload.h: Add header guard to make
+        NSURLDownloadSPI.h work when pre-declaring NSURLDownload object.
+        * Misc/WebKitVersionChecks.h: Define
+        WEBKIT_FIRST_VERSION_WITH_LOADING_DURING_COMMON_RUNLOOP_MODES
+        for iOS.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Use
+        the correct runloop on iOS.
+        * WebView/WebViewPrivate.h:
+        (-[WebView(WebPendingPublic) scheduleInRunLoop:forMode:]):
+        (-[WebView(WebPendingPublic) unscheduleFromRunLoop:forMode:]):
+        - These are available on iOS now.
+
 2015-12-31  Simon Fraser  <simon.fraser@apple.com>
 
         Clarify that scrollPositionChangedViaPlatformWidget takes offsets

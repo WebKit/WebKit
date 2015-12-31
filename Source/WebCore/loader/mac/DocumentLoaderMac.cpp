@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-#if PLATFORM(MAC)
+#if !USE(CFNETWORK)
 
 static void scheduleAll(const ResourceLoaderMap& loaders, SchedulePair& pair)
 {

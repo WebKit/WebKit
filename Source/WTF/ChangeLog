@@ -1,3 +1,15 @@
+2015-12-31  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using USE(CFNETWORK) path on iOS
+        <https://webkit.org/b/142540>
+
+        Step 1/2: Do everything but turn off USE(CFNETWORK) internally.
+
+        Original patch by Antti Koivisto <antti@apple.com> on 2015-03-10
+        Reviewed by Daniel Bates.
+
+        * wtf/SchedulePair.h: Update macros to match WebCore.
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Rename WTF_MOVE to WTFMove

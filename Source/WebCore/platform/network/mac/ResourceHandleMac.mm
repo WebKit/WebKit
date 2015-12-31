@@ -314,7 +314,7 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
         [d->m_connection setDefersCallbacks:defers];
 }
 
-#if PLATFORM(MAC)
+#if !USE(CFNETWORK)
 
 void ResourceHandle::schedule(SchedulePair& pair)
 {

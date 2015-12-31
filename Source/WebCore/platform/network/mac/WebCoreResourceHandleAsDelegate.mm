@@ -54,7 +54,7 @@ using namespace WebCore;
 
 - (void)detachHandle
 {
-    m_handle = 0;
+    m_handle = nullptr;
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse

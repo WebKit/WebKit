@@ -35,7 +35,7 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(FOUNDATION)
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
 OBJC_CLASS NSRunLoop;
 #endif
 
@@ -45,7 +45,7 @@ class SchedulePair : public ThreadSafeRefCounted<SchedulePair> {
 public:
     static Ref<SchedulePair> create(CFRunLoopRef runLoop, CFStringRef mode) { return adoptRef(*new SchedulePair(runLoop, mode)); }
 
-#if USE(FOUNDATION) && !USE(CFNETWORK)
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
     static Ref<SchedulePair> create(NSRunLoop* runLoop, CFStringRef mode) { return adoptRef(*new SchedulePair(runLoop, mode)); }
     NSRunLoop* nsRunLoop() const { return m_nsRunLoop.get(); }
 #endif
@@ -63,7 +63,7 @@ private:
             m_mode = adoptCF(CFStringCreateCopy(0, mode));
     }
 
-#if USE(FOUNDATION) && !USE(CFNETWORK)
+#if PLATFORM(COCOA) && !USE(CFNETWORK)
     WTF_EXPORT_PRIVATE SchedulePair(NSRunLoop*, CFStringRef);
     RetainPtr<NSRunLoop*> m_nsRunLoop;
 #endif

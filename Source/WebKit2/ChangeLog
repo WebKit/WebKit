@@ -1,3 +1,23 @@
+2015-12-31  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using USE(CFNETWORK) path on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=142540
+
+        Step 1/2: Do everything but turn off USE(CFNETWORK) internally.
+
+        Original patch by Antti Koivisto <antti@apple.com> on 2015-03-10
+        Reviewed by Daniel Bates.
+
+        * NetworkProcess/Downloads/ios/DownloadIOS.mm: This is now the
+        USE(CFNETWORK) && !USE(NETWORK_SESSION) code path.
+        * NetworkProcess/Downloads/mac/DownloadMac.mm: This is now the
+        !USE(CFNETWORK) && !USE(NETWORK_SESSION) code path.  Make use of
+        NSURLDownloadSPI.h.  Ignore a deprecated delcaration warning now
+        that we're using actual header declarations internally.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess): Update for
+        iOS to use NSURLConnection loader.
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Fix warnings uncovered by migrating to WTF_MOVE

@@ -1026,14 +1026,16 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
-#if !PLATFORM(IOS)
+#if PLATFORM(IOS)
+    NSRunLoop *runLoop = WebThreadNSRunLoop();
+#else
     NSRunLoop *runLoop = [NSRunLoop mainRunLoop];
+#endif
 
     if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOADING_DURING_COMMON_RUNLOOP_MODES))
         [self scheduleInRunLoop:runLoop forMode:(NSString *)kCFRunLoopCommonModes];
     else
         [self scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
-#endif
 
     [self _addToAllWebViewsSet];
     
@@ -6618,7 +6620,6 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 @implementation WebView (WebPendingPublic)
 
-#if !PLATFORM(IOS)
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode
 {
 #if USE(CFNETWORK)
@@ -6640,7 +6641,6 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
     if (runLoop && mode)
         core(self)->removeSchedulePair(SchedulePair::create(schedulePairRunLoop, (CFStringRef)mode));
 }
-#endif
 
 static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *string, WebFindOptions options)
 {

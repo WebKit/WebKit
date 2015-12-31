@@ -26,9 +26,10 @@
 #import "config.h"
 #import "Download.h"
 
-#if PLATFORM(IOS) && !USE(NETWORK_SESSION)
+#if USE(CFNETWORK) && !USE(NETWORK_SESSION)
 
 #import "DataReference.h"
+#import <CFNetwork/CFURLDownload.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceHandle.h>
@@ -36,15 +37,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
-#if USE(CFNETWORK)
-#import <CFNetwork/CFURLDownload.h>
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
 
-#if USE(CFNETWORK)
 // FIXME: If possible, we should consider moving some callbacks off the main thread or at least
 // making them asynchonous calls.
 static void dispatchOnMainThread(void(^block)())
@@ -125,7 +121,6 @@ static void setUpDownloadClient(CFURLDownloadClient& client, Download& download)
         });
     };
 }
-#endif // USE(CFNETWORK)
 
 void Download::start()
 {
@@ -139,16 +134,12 @@ void Download::resume(const IPC::DataReference&, const String&, const SandboxExt
 
 void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& response)
 {
-#if USE(CFNETWORK)
     CFURLDownloadClient client;
     setUpDownloadClient(client, *this);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_download = adoptCF(CFURLDownloadCreateAndStartWithLoadingConnection(NULL, handle->releaseConnectionForDownload().get(), m_request.cfURLRequest(UpdateHTTPBody), response.cfURLResponse(), &client));
 #pragma clang diagnostic pop
-#else
-    notImplemented();
-#endif
 }
 
 void Download::cancel()
@@ -193,4 +184,4 @@ void Download::receivedChallengeRejection(const WebCore::AuthenticationChallenge
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // USE(CFNETWORK) && !USE(NETWORK_SESSION)

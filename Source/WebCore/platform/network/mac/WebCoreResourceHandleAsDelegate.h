@@ -26,17 +26,20 @@
 #ifndef WebCoreResourceHandleAsDelegate_h
 #define WebCoreResourceHandleAsDelegate_h
 
-#if !USE(CFNETWORK)
-
 namespace WebCore {
 class ResourceHandle;
 }
 
-@interface WebCoreResourceHandleAsDelegate : NSObject <NSURLConnectionDelegate> {
+@protocol WebCoreResourceLoaderDelegate
+- (void)detachHandle;
+@end
+
+#if !USE(CFNETWORK)
+
+@interface WebCoreResourceHandleAsDelegate : NSObject <NSURLConnectionDelegate, WebCoreResourceLoaderDelegate> {
     WebCore::ResourceHandle* m_handle;
 }
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle;
-- (void)detachHandle;
 @end
 
 #endif // !USE(CFNETWORK)

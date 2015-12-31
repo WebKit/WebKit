@@ -26,24 +26,17 @@
 #import "config.h"
 #import "Download.h"
 
-#if PLATFORM(MAC) && !USE(NETWORK_SESSION)
+#if !USE(CFNETWORK) && !USE(NETWORK_SESSION)
 
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/AuthenticationMac.h>
+#import <WebCore/NSURLDownloadSPI.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceHandleClient.h>
 #import <WebCore/ResourceResponse.h>
 #import "DataReference.h"
 #import "WebPage.h"
-
-@interface NSURLDownload (WebNSURLDownloadDetails)
-+(id)_downloadWithLoadingConnection:(NSURLConnection *)connection
-                            request:(NSURLRequest *)request
-                           response:(NSURLResponse *)r
-                           delegate:(id)delegate
-                              proxy:(id)proxy;
-@end
 
 @interface WKDownloadAsDelegate : NSObject <NSURLDownloadDelegate> {
     WebKit::Download* _download;
@@ -77,11 +70,14 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
     ASSERT(!m_delegate);
 
     m_delegate = adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_nsURLDownload = [NSURLDownload _downloadWithLoadingConnection:handle->connection()
                                                             request:m_request.nsURLRequest(UpdateHTTPBody)
                                                            response:response.nsURLResponse()
                                                             delegate:m_delegate.get()
                                                                proxy:nil];
+#pragma clang diagnostic pop
 
     // FIXME: Allow this to be changed by the client.
     [m_nsURLDownload setDeletesFileUponFailure:NO];
@@ -308,4 +304,4 @@ static void dispatchOnMainThread(void (^block)())
 
 @end
 
-#endif // PLATFORM(MAC) && !USE(NETWORK_SESSION)
+#endif // !USE(CFNETWORK) && !USE(NETWORK_SESSION)

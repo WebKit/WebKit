@@ -28,6 +28,7 @@
 
 #if !USE(CFNETWORK)
 
+#include "WebCoreResourceHandleAsDelegate.h"
 #include <dispatch/dispatch.h>
 #include <wtf/RetainPtr.h>
 
@@ -35,7 +36,7 @@ namespace WebCore {
 class ResourceHandle;
 }
 
-@interface WebCoreResourceHandleAsOperationQueueDelegate : NSObject <NSURLConnectionDelegate> {
+@interface WebCoreResourceHandleAsOperationQueueDelegate : NSObject <NSURLConnectionDelegate, WebCoreResourceLoaderDelegate> {
     WebCore::ResourceHandle* m_handle;
 
     // Synchronous delegates on operation queue wait until main thread sends an asynchronous response.
@@ -46,7 +47,6 @@ class ResourceHandle;
 }
 
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle;
-- (void)detachHandle;
 - (void)continueWillSendRequest:(NSURLRequest *)newRequest;
 - (void)continueDidReceiveResponse;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

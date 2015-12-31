@@ -32,12 +32,12 @@
 #import "FileSystemIOS.h"
 #import "Logging.h"
 #import "NSFileManagerSPI.h"
-#import "QuickLookSoftLink.h"
 #import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceLoader.h"
 #import "RuntimeApplicationChecksIOS.h"
 #import "SynchronousResourceHandleCFURLConnectionDelegate.h"
+#import "WebCoreResourceHandleAsDelegate.h"
 #import "WebCoreURLResponseIOS.h"
 #import <Foundation/Foundation.h>
 #import <wtf/NeverDestroyed.h>
@@ -45,6 +45,8 @@
 #import <wtf/Threading.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
+
+#import "QuickLookSoftLink.h"
 
 using namespace WebCore;
 
@@ -193,12 +195,11 @@ const char* WebCore::QLPreviewProtocol()
 // This works fine when using NS APIs, but when using CFNetwork, we don't have a NSURLConnectionDelegate.
 // So we create WebQuickLookHandleAsDelegate as an intermediate delegate object and pass it to
 // QLPreviewConverter. The proxy delegate then forwards the messages on to the CFNetwork code.
-@interface WebQuickLookHandleAsDelegate : NSObject <NSURLConnectionDelegate> {
+@interface WebQuickLookHandleAsDelegate : NSObject <NSURLConnectionDelegate, WebCoreResourceLoaderDelegate> {
     RefPtr<SynchronousResourceHandleCFURLConnectionDelegate> m_connectionDelegate;
 }
 
 - (id)initWithConnectionDelegate:(SynchronousResourceHandleCFURLConnectionDelegate*)connectionDelegate;
-- (void)clearHandle;
 @end
 
 @implementation WebQuickLookHandleAsDelegate
@@ -252,14 +253,14 @@ const char* WebCore::QLPreviewProtocol()
     m_connectionDelegate->didFail(reinterpret_cast<CFErrorRef>(error));
 }
 
-- (void)clearHandle
+- (void)detachHandle
 {
     m_connectionDelegate = nullptr;
 }
 @end
 #endif
 
-@interface WebResourceLoaderQuickLookDelegate : NSObject <NSURLConnectionDelegate> {
+@interface WebResourceLoaderQuickLookDelegate : NSObject <NSURLConnectionDelegate, WebCoreResourceLoaderDelegate> {
     RefPtr<ResourceLoader> _resourceLoader;
     BOOL _hasSentDidReceiveResponse;
     BOOL _hasFailed;
@@ -350,7 +351,7 @@ const char* WebCore::QLPreviewProtocol()
     _resourceLoader->didFail(ResourceError(error));
 }
 
-- (void)clearHandle
+- (void)detachHandle
 {
     _resourceLoader = nullptr;
     _quickLookHandle = nullptr;
@@ -491,7 +492,7 @@ QuickLookHandle::~QuickLookHandle()
     LOG(Network, "QuickLookHandle::~QuickLookHandle()");
     m_converter = nullptr;
 
-    [m_delegate clearHandle];
+    [m_delegate detachHandle];
 }
 
 String QuickLookHandle::previewFileName() const
