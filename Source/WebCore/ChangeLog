@@ -1,3 +1,19 @@
+2015-12-31  Zalan Bujtas  <zalan@apple.com>
+
+        text-decoration: line-through is mispositioned when text has overline/underline too.
+        https://bugs.webkit.org/show_bug.cgi?id=152619
+
+        Reviewed by Simon Fraser.
+
+        Line-through painting was mistakenly calling drawLineForText with overline/underline positioning.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-line-through-mispositioned.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration): Deleted.
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+
 2015-12-31  Simon Fraser  <simon.fraser@apple.com>
 
         Clarify that scrollPositionChangedViaPlatformWidget takes offsets

@@ -702,11 +702,6 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const F
 void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin,
     TextDecoration decoration, const ShadowData* shadow)
 {
-#if !ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
-    UNUSED_PARAM(font);
-    UNUSED_PARAM(textRun);
-    UNUSED_PARAM(textOrigin);
-#endif
     if (m_truncation == cFullTruncation)
         return;
 
