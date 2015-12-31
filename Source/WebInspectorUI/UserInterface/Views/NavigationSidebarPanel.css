@@ -57,19 +57,25 @@ body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
     border-bottom-color: hsl(0, 0%, 85%);
 }
 
-.sidebar > .panel.navigation > .empty-content-placeholder {
-    position: absolute;
-    top: 0;
+.sidebar > .panel.navigation > .content .empty-content-placeholder {
     left: 0;
     right: 0;
-    bottom: 28px;
+    padding-top: 15px;
+    padding-bottom: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
 }
 
-.sidebar > .panel.navigation > .empty-content-placeholder > .message {
+.sidebar > .panel.navigation > .content > .empty-content-placeholder {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+}
+
+.sidebar > .panel.navigation > .content .empty-content-placeholder > .message {
     display: inline-block;
     white-space: nowrap;
 

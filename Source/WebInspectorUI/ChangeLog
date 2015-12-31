@@ -1,3 +1,79 @@
+2015-12-31  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: "No Filter Results" message overlaps Debugger sidebar sections
+        https://bugs.webkit.org/show_bug.cgi?id=150608
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.showResourcesWithIssuesOnlyFilterFunction):
+        Style cleanup.
+        (WebInspector.DebuggerSidebarPanel):
+        Add breakpoints tree to the details section before adding Global Breakpoint
+        elements, since adding them will trigger filtering.
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        Simplified selection management between the various tree outlines.
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        Style cleanup.
+        (WebInspector.DebuggerSidebarPanel.prototype.get hasSelectedElement): Deleted.
+        Defer to the base class implementation.
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange.deselectCallStackContentTreeElements): Deleted.
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange.deselectBreakpointContentTreeElements): Deleted.
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange.deselectPauseReasonContentTreeElements): Deleted.
+        These are no longer needed, since the list of visible tree elements list can be used
+        to manage tree element selection is a more general way.
+
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        Empty content placeholders are now inserted into the DOM as a sibling of the
+        tree that was filtered. As such, they can be a child of a details section, or
+        the sidebar's content element.
+        (.sidebar > .panel.navigation > .content .empty-content-placeholder):
+        Styles for all empty content placeholders.
+        (.sidebar > .panel.navigation > .content > .empty-content-placeholder):
+        Styles for empty content placeholders that fill the sidebar's content element.
+        (.sidebar > .panel.navigation > .content .message):
+        Styles for all empty content placeholders.
+        (.sidebar > .panel.navigation > .empty-content-placeholder): Deleted.
+        (.sidebar > .panel.navigation > .empty-content-placeholder > .message): Deleted.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        Track the tree outline which currently has a selection.
+        Manage a map of content placeholders
+        (WebInspector.NavigationSidebarPanel.prototype.set contentTreeOutline):
+        (WebInspector.NavigationSidebarPanel.prototype.get hasSelectedElement):
+        Check all visible content trees for a selected element.
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WebInspector.NavigationSidebarPanel.prototype.treeElementForRepresentedObject):
+        Check all visible content trees for the represented object.
+        (WebInspector.NavigationSidebarPanel.prototype.showEmptyContentPlaceholder):
+        (WebInspector.NavigationSidebarPanel.prototype.hideEmptyContentPlaceholder):
+        (WebInspector.NavigationSidebarPanel.prototype.updateEmptyContentPlaceholder):
+        No sidebars currently have more than one filterable content tree outline, but in
+        the future we will want to support this. Empty content placeholder visibility
+        is now done per tree outline.
+        (WebInspector.NavigationSidebarPanel.prototype.show):
+        Focus the tree outline that most recently had the selection, or the
+        first tree outline in the visible tree list, if it exists.
+        (WebInspector.NavigationSidebarPanel.prototype._checkForEmptyFilterResults.checkTreeOutlineForEmptyFilterResults):
+        Tree is considered filtered if no visible filterable tree elements are found.
+        (WebInspector.NavigationSidebarPanel.prototype._checkForEmptyFilterResults):
+        Check all visible trees that support filtering.
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        Support for filtering multiple content trees.
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        Check if the element's tree outline supports filtering, before applying filters.
+        (WebInspector.NavigationSidebarPanel.prototype._treeSelectionDidChange):
+        Update the selected tree outline.
+        (WebInspector.NavigationSidebarPanel.prototype._createEmptyContentPlaceholderIfNeeded):
+        Create a new empty content placeholder element for the tree.
+        (WebInspector.NavigationSidebarPanel.prototype.get contentTreeOutlineElement): Deleted.
+        No longer used.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.get hasSelectedElement): Deleted.
+        Defer to the base class implementation.
+
 2015-12-29  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Styling of invalid selector persists when changing the selected node
