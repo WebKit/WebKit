@@ -1,3 +1,18 @@
+2015-12-31  Brady Eidson  <beidson@apple.com>
+
+        Review feedback followup for:
+        Modern IDB: Only fire blocked events after all open connections have handled their versionchange events.
+        https://bugs.webkit.org/show_bug.cgi?id=152593
+
+        Suggested by Andy Estes.
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::dispatchEvent): Use downcast instead of static_cast.
+
+        Add traits to support downcast<>:
+        * Modules/indexeddb/client/IDBVersionChangeEventImpl.h:
+        (isType):
+
 2015-12-31  Zalan Bujtas  <zalan@apple.com>
 
         Move decoration context setup calls to InlineTextBox::paintDecoration.

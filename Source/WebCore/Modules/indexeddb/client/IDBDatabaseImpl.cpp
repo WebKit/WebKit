@@ -379,7 +379,7 @@ bool IDBDatabase::dispatchEvent(Event& event)
     bool result = WebCore::IDBDatabase::dispatchEvent(event);
 
     if (event.isVersionChangeEvent() && event.type() == eventNames().versionchangeEvent)
-        serverConnection().didFireVersionChangeEvent(m_databaseConnectionIdentifier, static_cast<IDBVersionChangeEvent&>(event).requestIdentifier());
+        serverConnection().didFireVersionChangeEvent(m_databaseConnectionIdentifier, downcast<IDBVersionChangeEvent>(event).requestIdentifier());
 
     return result;
 }
