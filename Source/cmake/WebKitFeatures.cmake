@@ -9,30 +9,47 @@ macro(_ENSURE_OPTION_MODIFICATION_IS_ALLOWED)
     endif ()
 endmacro()
 
+macro(_ENSURE_IS_WEBKIT_OPTION _name)
+    list(FIND _WEBKIT_AVAILABLE_OPTIONS ${_name} ${_name}_OPTION_INDEX)
+    if (${_name}_OPTION_INDEX EQUAL -1)
+        message(FATAL_ERROR "${_name} is not a valid WebKit option")
+    endif ()
+endmacro()
+
 macro(WEBKIT_OPTION_DEFINE _name _description _public _initial_value)
     _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
+
     set(_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name} ${_description})
     set(_WEBKIT_AVAILABLE_OPTIONS_IS_PUBLIC_${_name} ${_public})
     set(_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name} ${_initial_value})
     set(_WEBKIT_AVAILABLE_OPTIONS_${_name}_CONFLICTS "")
     set(_WEBKIT_AVAILABLE_OPTIONS_${_name}_DEPENDENCIES "")
     list(APPEND _WEBKIT_AVAILABLE_OPTIONS ${_name})
+
     EXPOSE_VARIABLE_TO_BUILD(${_name})
 endmacro()
 
 macro(WEBKIT_OPTION_DEFAULT_PORT_VALUE _name _public _value)
     _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
+    _ENSURE_IS_WEBKIT_OPTION(${_name})
+
     set(_WEBKIT_AVAILABLE_OPTIONS_IS_PUBLIC_${_name} ${_public})
     set(_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name} ${_value})
 endmacro()
 
 macro(WEBKIT_OPTION_CONFLICT _name _conflict)
     _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
+    _ENSURE_IS_WEBKIT_OPTION(${_name})
+    _ENSURE_IS_WEBKIT_OPTION(${_conflict})
+
     list(APPEND _WEBKIT_AVAILABLE_OPTIONS_${_name}_CONFLICTS ${_conflict})
 endmacro()
 
 macro(WEBKIT_OPTION_DEPEND _name _depend)
     _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
+    _ENSURE_IS_WEBKIT_OPTION(${_name})
+    _ENSURE_IS_WEBKIT_OPTION(${_depend})
+
     list(APPEND _WEBKIT_AVAILABLE_OPTIONS_${_name}_DEPENDENCIES ${_depend})
 endmacro()
 
@@ -163,6 +180,7 @@ macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_STREAMS_API "Toggle Streams API support" PRIVATE ON)
     WEBKIT_OPTION_DEFINE(ENABLE_SUBTLE_CRYPTO "Toggle subtle crypto support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_SVG_FONTS "Toggle SVG fonts support (imples SVG support)" PRIVATE ON)
+    WEBKIT_OPTION_DEFINE(ENABLE_SVG_OTF_CONVERTER "Toggle whether to use the SVG to OTF font converter" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_TELEPHONE_NUMBER_DETECTION "Toggle telephone number detection support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_TEMPLATE_ELEMENT "Toggle Template support" PRIVATE ON)
     WEBKIT_OPTION_DEFINE(ENABLE_TEXT_AUTOSIZING "Toggle Text auto sizing support" PRIVATE OFF)

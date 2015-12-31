@@ -1,5 +1,20 @@
 2015-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] Add error checking to WEBKIT_OPTION_DEFAULT_PORT_VALUE et. al.
+        https://bugs.webkit.org/show_bug.cgi?id=144069
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsWin.cmake:
+        Do not set options that no longer exist.
+        * Source/cmake/WebKitFeatures.cmake:
+        Add error checking to ensure that option names passed to WEBKIT_OPTION_DEFAULT_PORT_VALUE,
+        WEBKIT_OPTION_CONFLICT, and WEBKIT_OPTION_DEPEND are actually valid options that have been
+        previously-defined. Also, add ENABLE_SVG_OTF_CONVERTER build option, defaulted to off since
+        no CMake port was using it.
+
+2015-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Add error checking to catch option manipulation after WEBKIT_OPTION_END
         https://bugs.webkit.org/show_bug.cgi?id=152611
 
