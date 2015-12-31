@@ -89,8 +89,9 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
             continue;
 
         FloatRect rect = run.rect();
-        rect.inflate(strokeOverflow);
-        if (paintRect.y() > rect.maxY() || paintRect.maxY() < rect.y())
+        FloatRect visualOverflowRect = rect;
+        visualOverflowRect.inflate(strokeOverflow);
+        if (paintRect.y() > visualOverflowRect.maxY() || paintRect.maxY() < visualOverflowRect.y())
             continue;
 
         TextRun textRun(run.text());

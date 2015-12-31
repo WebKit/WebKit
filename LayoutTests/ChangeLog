@@ -1,5 +1,17 @@
 2015-12-31  Zalan Bujtas  <zalan@apple.com>
 
+        Simple line layout: Text with stroke width is not positioned correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=152614
+
+        Reviewed by Simon Fraser.
+
+        Visual overflow should not affect text position.
+
+        * fast/text/simple-line-layout-text-position-with-stroke-expected.html: Added.
+        * fast/text/simple-line-layout-text-position-with-stroke.html: Added.
+
+2015-12-31  Zalan Bujtas  <zalan@apple.com>
+
         Simple line layout: Nested block with pseudo first-line parent should bail out of simple line layout.
         https://bugs.webkit.org/show_bug.cgi?id=152599
 
