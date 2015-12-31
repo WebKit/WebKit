@@ -30,8 +30,10 @@
 namespace WebCore {
 
 struct CompositionUnderline;
+class RenderCombineText;
 class RenderedDocumentMarker;
 class TextPainter;
+struct TextPaintStyle;
 
 const unsigned short cNoTruncation = USHRT_MAX;
 const unsigned short cFullTruncation = USHRT_MAX - 1;
@@ -159,7 +161,8 @@ protected:
     void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&);
 
 private:
-    void paintDecoration(GraphicsContext&, const FontCascade&, const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin, TextDecoration, const ShadowData*);
+    void paintDecoration(GraphicsContext&, const FontCascade&, RenderCombineText*, const TextRun&, const FloatPoint& textOrigin, const FloatRect& boxRect,
+        TextDecoration, TextPaintStyle, const ShadowData*);
     void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, Color textColor);
     void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const FontCascade&, bool grammar);
     void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const FontCascade&);

@@ -1,3 +1,17 @@
+2015-12-31  Zalan Bujtas  <zalan@apple.com>
+
+        Move decoration context setup calls to InlineTextBox::paintDecoration.
+        https://bugs.webkit.org/show_bug.cgi?id=152622
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/InlineTextBox.h:
+
 2015-12-31  Simon Fraser  <simon.fraser@apple.com>
 
         More scrollOffset/scrollPosition disambiguation, in RenderLayer

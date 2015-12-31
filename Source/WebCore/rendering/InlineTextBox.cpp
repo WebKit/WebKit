@@ -560,14 +560,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
-    if (textDecorations != TextDecorationNone && paintInfo.phase != PaintPhaseSelection) {
-        updateGraphicsContext(context, textPaintStyle);
-        if (combinedText)
-            context.concatCTM(rotation(boxRect, Clockwise));
-        paintDecoration(context, font, textRun, textOrigin, boxOrigin, textDecorations, textShadow);
-        if (combinedText)
-            context.concatCTM(rotation(boxRect, Counterclockwise));
-    }
+    if (textDecorations != TextDecorationNone && paintInfo.phase != PaintPhaseSelection)
+        paintDecoration(context, font, combinedText, textRun, textOrigin, boxRect, textDecorations, textPaintStyle, textShadow);
 
     if (paintInfo.phase == PaintPhaseForeground) {
         paintDocumentMarkers(context, boxOrigin, lineStyle, font, false);
@@ -699,13 +693,16 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const F
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor);
 }
 
-void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin,
-    TextDecoration decoration, const ShadowData* shadow)
+void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade& font, RenderCombineText* combinedText, const TextRun& textRun, const FloatPoint& textOrigin,
+    const FloatRect& boxRect, TextDecoration decoration, TextPaintStyle textPaintStyle, const ShadowData* shadow)
 {
     if (m_truncation == cFullTruncation)
         return;
 
-    FloatPoint localOrigin = boxOrigin;
+    FloatPoint localOrigin = boxRect.location();
+    updateGraphicsContext(context, textPaintStyle);
+    if (combinedText)
+        context.concatCTM(rotation(boxRect, Clockwise));
 
     float width = m_logicalWidth;
     if (m_truncation != cNoTruncation) {
@@ -724,6 +721,9 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade&
     decorationPainter.addTextShadow(shadow);
 
     decorationPainter.paintTextDecoration(textRun, textOrigin, localOrigin);
+
+    if (combinedText)
+        context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
 static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentMarker::MarkerType markerType)
