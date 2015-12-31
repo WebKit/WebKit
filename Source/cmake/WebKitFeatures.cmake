@@ -3,7 +3,14 @@ set(_WEBKIT_AVAILABLE_OPTIONS "")
 set(PUBLIC YES)
 set(PRIVATE NO)
 
+macro(_ENSURE_OPTION_MODIFICATION_IS_ALLOWED)
+    if (NOT _SETTING_WEBKIT_OPTIONS)
+        message(FATAL_ERROR "Options must be set between WEBKIT_OPTION_BEGIN and WEBKIT_OPTION_END")
+    endif ()
+endmacro()
+
 macro(WEBKIT_OPTION_DEFINE _name _description _public _initial_value)
+    _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
     set(_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name} ${_description})
     set(_WEBKIT_AVAILABLE_OPTIONS_IS_PUBLIC_${_name} ${_public})
     set(_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name} ${_initial_value})
@@ -14,19 +21,24 @@ macro(WEBKIT_OPTION_DEFINE _name _description _public _initial_value)
 endmacro()
 
 macro(WEBKIT_OPTION_DEFAULT_PORT_VALUE _name _public _value)
+    _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
     set(_WEBKIT_AVAILABLE_OPTIONS_IS_PUBLIC_${_name} ${_public})
     set(_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name} ${_value})
 endmacro()
 
 macro(WEBKIT_OPTION_CONFLICT _name _conflict)
+    _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
     list(APPEND _WEBKIT_AVAILABLE_OPTIONS_${_name}_CONFLICTS ${_conflict})
 endmacro()
 
 macro(WEBKIT_OPTION_DEPEND _name _depend)
+    _ENSURE_OPTION_MODIFICATION_IS_ALLOWED()
     list(APPEND _WEBKIT_AVAILABLE_OPTIONS_${_name}_DEPENDENCIES ${_depend})
 endmacro()
 
 macro(WEBKIT_OPTION_BEGIN)
+    set(_SETTING_WEBKIT_OPTIONS TRUE)
+
     WEBKIT_OPTION_DEFINE(ENABLE_3D_TRANSFORMS "Toggle 3D transforms support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_ACCELERATED_2D_CANVAS "Toggle accelerated 2D canvas support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_ACCELERATED_OVERFLOW_SCROLLING "Toggle accelerated scrolling support" PRIVATE OFF)
@@ -224,6 +236,8 @@ macro(_WEBKIT_OPTION_ENFORCE_ALL_CONFLICTS)
 endmacro()
 
 macro(WEBKIT_OPTION_END)
+    set(_SETTING_WEBKIT_OPTIONS FALSE)
+
     list(SORT _WEBKIT_AVAILABLE_OPTIONS)
     set(_MAX_FEATURE_LENGTH 0)
     foreach (_name ${_WEBKIT_AVAILABLE_OPTIONS})

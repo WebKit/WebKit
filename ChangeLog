@@ -1,3 +1,21 @@
+2015-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Add error checking to catch option manipulation after WEBKIT_OPTION_END
+        https://bugs.webkit.org/show_bug.cgi?id=152611
+
+        Reviewed by Martin Robinson.
+
+        If WEBKIT_OPTION_DEFINE is called after WEBKIT_OPTION_END, the option never makes its way
+        into FEATURE_DEFINES and so will be inconsistently set (available to most of the build, but
+        not to the DOM bindings generator, for example).
+
+        If WEBKIT_OPTION_DEFAULT_PORT_VALUE, WEBKIT_OPTION_CONFLICT, or WEBKIT_OPTION_DEPEND are
+        called after WEBKIT_OPTION_END, they don't do anything.
+
+        Add error checking to catch these bugs.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2015-12-30  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][Mac] Disable gtk-doc
