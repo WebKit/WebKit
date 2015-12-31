@@ -1,3 +1,23 @@
+2015-12-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Change ScrollView::scrollTo() to take a ScrollPosition
+        https://bugs.webkit.org/show_bug.cgi?id=152607
+
+        Reviewed by Zalan Bujtas.
+
+        Make it more explicit that ScrollView::scrollTo() takes a ScrollPosition, and
+        change the name and type of the m_scrollOffset member variable.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::wheelEvent):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unobscuredContentRectInternal):
+        (WebCore::ScrollView::setScrollOffset):
+        (WebCore::ScrollView::scrollTo):
+        * platform/ScrollView.h:
+
 2015-12-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Only fire blocked events after all open connections have handled their versionchange events.

@@ -264,7 +264,7 @@ IntRect ScrollView::unobscuredContentRectInternal(VisibleContentRectIncludesScro
 {
     FloatSize visibleContentSize = unscaledUnobscuredVisibleContentSize(scrollbarInclusion);
     visibleContentSize.scale(1 / visibleContentScaleFactor());
-    return IntRect(IntPoint(m_scrollOffset), expandedIntSize(visibleContentSize));
+    return IntRect(m_scrollPosition, expandedIntSize(visibleContentSize));
 }
 
 IntSize ScrollView::unscaledVisibleContentSizeIncludingObscuredArea(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
@@ -441,8 +441,7 @@ void ScrollView::setScrollOffset(const IntPoint& offset)
     if (constrainsScrollingToContentEdge())
         constrainedOffset = constrainedOffset.constrainedBetween(IntPoint(), maximumScrollOffset());
 
-    ScrollPosition newPosition = scrollPositionFromOffset(constrainedOffset);
-    scrollTo(toIntSize(newPosition));
+    scrollTo(scrollPositionFromOffset(constrainedOffset));
 }
 
 void ScrollView::scrollPositionChangedViaPlatformWidget(const IntPoint& oldPosition, const IntPoint& newPosition)
@@ -476,19 +475,20 @@ void ScrollView::handleDeferredScrollUpdateAfterContentSizeChange()
     m_deferredScrollPositions = nullptr;
 }
 
-void ScrollView::scrollTo(const IntSize& newOffset)
+void ScrollView::scrollTo(const ScrollPosition& newPosition)
 {
-    IntSize scrollDelta = newOffset - m_scrollOffset;
+    IntSize scrollDelta = newPosition - m_scrollPosition;
     if (scrollDelta.isZero())
         return;
-    m_scrollOffset = newOffset;
+
+    m_scrollPosition = newPosition;
 
     if (scrollbarsSuppressed())
         return;
 
 #if USE(COORDINATED_GRAPHICS)
     if (delegatesScrolling()) {
-        requestScrollPositionUpdate(IntPoint(newOffset));
+        requestScrollPositionUpdate(newPosition);
         return;
     }
 #endif

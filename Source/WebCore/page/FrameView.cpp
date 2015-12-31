@@ -3474,10 +3474,10 @@ bool FrameView::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
     return page && page->settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
 }
 
-void FrameView::scrollTo(const IntSize& newOffset)
+void FrameView::scrollTo(const ScrollPosition& newPosition)
 {
     IntPoint oldPosition = scrollPosition();
-    ScrollView::scrollTo(newOffset);
+    ScrollView::scrollTo(newPosition);
     if (oldPosition != scrollPosition())
         scrollPositionChanged(oldPosition, scrollPosition());
     didChangeScrollOffset();
@@ -4586,7 +4586,7 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
         ScrollPosition oldPosition = scrollPosition();
         ScrollPosition newPosition = oldPosition - IntSize(wheelEvent.deltaX(), wheelEvent.deltaY());
         if (oldPosition != newPosition) {
-            ScrollView::scrollTo(toIntSize(newPosition));
+            ScrollView::scrollTo(newPosition);
             scrollPositionChanged(oldPosition, scrollPosition());
             didChangeScrollOffset();
         }

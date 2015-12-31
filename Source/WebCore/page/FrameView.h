@@ -624,7 +624,7 @@ private:
 
     // ScrollableArea interface
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
-    virtual void scrollTo(const IntSize&) override;
+    virtual void scrollTo(const ScrollPosition&) override;
     virtual void setVisibleScrollerThumbRect(const IntRect&) override;
     virtual ScrollableArea* enclosingScrollableArea() const override;
     virtual IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;

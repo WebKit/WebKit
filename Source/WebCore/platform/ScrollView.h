@@ -74,7 +74,7 @@ public:
     virtual void notifyPageThatContentAreaWillPaint() const;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
-    virtual void scrollTo(const IntSize& newOffset);
+    virtual void scrollTo(const ScrollPosition&);
 
     // The window thats hosts the ScrollView. The ScrollView will communicate scrolls and repaints to the
     // host window in the window's coordinate space.
@@ -450,7 +450,7 @@ private:
 #else
     IntRect m_fixedVisibleContentRect;
 #endif
-    IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
+    ScrollPosition m_scrollPosition;
     IntPoint m_cachedScrollPosition;
     IntSize m_fixedLayoutSize;
     IntSize m_contentsSize;
