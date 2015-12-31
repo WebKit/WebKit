@@ -1,3 +1,15 @@
+2015-12-31  Andy Estes  <aestes@apple.com>
+
+        Rename WTF_MOVE to WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Daniel Bates.
+
+        Our coding style guidelines say that macros that expand to function calls should be named like functions,
+        so WTFMove() is a more appropriate name.
+
+        * wtf/StdLibExtras.h:
+
 2015-12-30  Andy Estes  <aestes@apple.com>
 
         Use of WTF::move prevents clang's move diagnostics from warning about several classes of mistakes

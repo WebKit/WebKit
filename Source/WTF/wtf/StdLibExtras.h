@@ -397,7 +397,7 @@ ALWAYS_INLINE CONSTEXPR typename remove_reference<T>::type&& move(T&& value)
 
 } // namespace std
 
-#define WTF_MOVE(value) std::move<WTF::CheckMoveParameter>(value)
+#define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
 
 using WTF::KB;
 using WTF::MB;
