@@ -649,6 +649,8 @@ webkit.org/b/118423 http/tests/misc/iframe-reparenting-id-collision.html [ Crash
 
 webkit.org/b/118902 svg/animations/svgenum-animation-6.html [ Crash Pass ]
 
+webkit.org/b/152610 fast/text/text-combine-placement.html [ Crash ]
+
 # Crashing after the FTL merge
 webkit.org/b/119255 [ Debug ] fast/workers/stress-js-execution.html [ Crash Pass ]
 

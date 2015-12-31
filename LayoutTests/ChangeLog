@@ -1,3 +1,11 @@
+2015-12-31  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Unreviewed gardening at 2015-12-31
+
+        Mark fast/text/text-combine-placement.html as crashing.
+
+        * platform/gtk/TestExpectations:
+
 2015-12-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Only fire blocked events after all open connections have handled their versionchange events.
