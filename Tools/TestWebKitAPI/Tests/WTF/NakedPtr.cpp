@@ -179,7 +179,14 @@ TEST(WTF_NakedPtr, Assignment)
     {
         NakedPtr<RefLogger> ptr(&a);
         ASSERT_EQ(&a, ptr.get());
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wself-move"
+#endif
         ptr = WTF::move(ptr);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
         ASSERT_EQ(&a, ptr.get());
     }
 }

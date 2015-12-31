@@ -1,3 +1,13 @@
+2015-12-31  Andy Estes  <aestes@apple.com>
+
+        Fix warnings uncovered by migrating to WTF_MOVE
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Daniel Bates.
+
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::createSession): Moving a return value prevented copy elision.
+
 2015-12-31  Brady Eidson  <beidson@apple.com>
 
         Review feedback followup for:

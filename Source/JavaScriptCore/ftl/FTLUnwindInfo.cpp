@@ -1016,7 +1016,7 @@ std::unique_ptr<RegisterAtOffsetList> parseUnwindInfo(void* section, size_t size
 
 #endif
     registerOffsets->sort();
-    return WTF::move(registerOffsets);
+    return registerOffsets;
 }
 
 } } // namespace JSC::FTL

@@ -1,3 +1,18 @@
+2015-12-31  Andy Estes  <aestes@apple.com>
+
+        Fix warnings uncovered by migrating to WTF_MOVE
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Daniel Bates.
+
+        Ignored -Wself-move warnings in these two API tests. It's useful to test that these classes properly handle
+        self-move, even if doing so would trigger a warning.
+
+        * TestWebKitAPI/Tests/WTF/NakedPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-12-31  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] The install-dependencies script has a syntax error

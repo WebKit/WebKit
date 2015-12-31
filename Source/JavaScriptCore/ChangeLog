@@ -1,3 +1,15 @@
+2015-12-31  Andy Estes  <aestes@apple.com>
+
+        Fix warnings uncovered by migrating to WTF_MOVE
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Daniel Bates.
+
+        * create_regex_tables: Moving a return value prevented copy elision.
+        * ftl/FTLUnwindInfo.cpp:
+        (JSC::FTL::parseUnwindInfo): Ditto.
+        * replay/EncodedValue.h: Ditto.
+
 2015-12-30  Aleksandr Skachkov  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Arrow function specific features. Lexical bind "super"

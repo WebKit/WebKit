@@ -119,7 +119,7 @@ RefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext* context
     session->generateKeyRequest(type, initData);
 
     // 6. Return the new object to the caller.
-    return WTF::move(session);
+    return session;
 }
 
 bool MediaKeys::isTypeSupported(const String& keySystem, const String& mimeType)

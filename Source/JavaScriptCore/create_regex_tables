@@ -106,7 +106,7 @@ for name, classes in types.items():
             function += ("    characterClass->m_rangesUnicode.append(CharacterRange(0x%04x, 0x%04x));\n" % (min, max))
         else:
             function += ("    characterClass->m_ranges.append(CharacterRange(0x%02x, 0x%02x));\n" % (min, max))
-    function += ("    return WTF::move(characterClass);\n")
+    function += ("    return characterClass;\n")
     function += ("}\n\n")
     functions += function
 

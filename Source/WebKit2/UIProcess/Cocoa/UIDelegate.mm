@@ -360,7 +360,7 @@ bool UIDelegate::UIClient::shouldIncludeAppLinkActionsForElement(_WKActivatedEle
 RetainPtr<NSArray> UIDelegate::UIClient::actionsForElement(_WKActivatedElementInfo *elementInfo, RetainPtr<NSArray> defaultActions)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewActionsForElementDefaultActions)
-        return WTF::move(defaultActions);
+        return defaultActions;
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)

@@ -114,7 +114,7 @@ struct EncodingTraits<Vector<T, inlineCapacity, OverflowHandler>> {
         for (const typename EncodingTraits<T>::DecodedType& value : vectorOfValues)
             encodedVector.append<T>(value);
 
-        return WTF::move(encodedVector);
+        return encodedVector;
     }
 
     static bool decodeValue(EncodedValue& encodedVector, DecodedType& decodedValue)

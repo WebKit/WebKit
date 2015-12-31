@@ -270,7 +270,14 @@ TEST(WTF_RefPtr, Assignment)
     {
         RefPtr<RefLogger> ptr(&a);
         ASSERT_EQ(&a, ptr.get());
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wself-move"
+#endif
         ptr = WTF::move(ptr);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
         ASSERT_EQ(&a, ptr.get());
     }
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
