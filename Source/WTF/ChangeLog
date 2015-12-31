@@ -1,3 +1,26 @@
+2015-12-30  Andy Estes  <aestes@apple.com>
+
+        Use of WTF::move prevents clang's move diagnostics from warning about several classes of mistakes
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Brady Eidson.
+
+        Clang has recently added warnings to catch certain classes of mistakes with the use of std::move():
+        -Wpessimizing-move (warns if moving prevents copy elision), -Wredundant-move (warns if a move is redundant),
+        and -Wself-move (warns if moving to self). Enabling these warnings manually (by renaming WTF::move to std::move)
+        have caught numerous mistakes in our codebase (see http://trac.webkit.org/changeset/194428).
+
+        It would be nice to be able to take advantage of these warnings, but doing so requires that we use std::move,
+        not WTF::move. But since WTF::move does provide useful checks for which clang does not yet have warnings,
+        we should write a best-of-both-worlds move function.
+
+        This patch adds a function that satisfies clang's criteria for a move function (in namespace std, named "move",
+        and takes a single argument) but also retains WTF::move's compile-time checks. It also adds a convenience macro
+        called WTF_MOVE for use by callers.
+
+        * wtf/StdLibExtras.h:
+        (std::move):
+
 2015-12-25  Andy Estes  <aestes@apple.com>
 
         Stop moving local objects in return statements

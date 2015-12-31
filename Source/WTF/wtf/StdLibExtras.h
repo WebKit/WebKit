@@ -111,6 +111,8 @@ inline bool isPointerTypeAlignmentOkay(Type*)
 
 namespace WTF {
 
+enum CheckMoveParameterTag { CheckMoveParameter };
+
 // FIXME: Using this function prevents Clang's move diagnostics (-Wpessimizing-move, -Wredundant-move, -Wself-move) from
 // finding mistakes, since these diagnostics only evaluate calls to std::move().
 template<typename T>
@@ -381,7 +383,21 @@ namespace chrono_literals {
 }
 }
 #endif
+
+template<WTF::CheckMoveParameterTag, typename T>
+ALWAYS_INLINE CONSTEXPR typename remove_reference<T>::type&& move(T&& value)
+{
+    static_assert(is_lvalue_reference<T>::value, "T is not an lvalue reference; move() is unnecessary.");
+
+    using NonRefQualifiedType = typename remove_reference<T>::type;
+    static_assert(!is_const<NonRefQualifiedType>::value, "T is const qualified.");
+
+    return move(forward<T>(value));
 }
+
+} // namespace std
+
+#define WTF_MOVE(value) std::move<WTF::CheckMoveParameter>(value)
 
 using WTF::KB;
 using WTF::MB;
