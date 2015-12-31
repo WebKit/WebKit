@@ -1,5 +1,19 @@
 2015-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK][CMake] Do not override default values of build options with the default value
+        https://bugs.webkit.org/show_bug.cgi?id=152615
+
+        Reviewed by Martin Robinson.
+
+        Override the default value of build options only when the default value for the GTK+ port
+        is actually different than the default value in WebKitFeatures.cmake. This way we don't
+        accidentally override changes to default values in WebKitFeatures.cmake. We should use the
+        values in WebKitFeatures.cmake except when we make an active choice to do otherwise.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2015-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Add error checking to WEBKIT_OPTION_DEFAULT_PORT_VALUE et. al.
         https://bugs.webkit.org/show_bug.cgi?id=144069
 
