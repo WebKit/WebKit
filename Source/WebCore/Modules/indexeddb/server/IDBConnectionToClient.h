@@ -64,7 +64,7 @@ public:
     void didOpenCursor(const IDBResultData&);
     void didIterateCursor(const IDBResultData&);
 
-    void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion);
+    void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
     void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);

@@ -1,3 +1,82 @@
+2015-12-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Only fire blocked events after all open connections have handled their versionchange events.
+        https://bugs.webkit.org/show_bug.cgi?id=152593
+
+        Reviewed by Andy Estes.
+
+        No new tests (At least two previously timing-out tests now pass, others are now closer to passing).
+
+        Before this patch, whenever we sent all open connections the versionchange event, we would immediately 
+        fire the blocked event on the request.
+
+        That's not right, as those event handlers can close the connections, rendering the request unblocked.
+
+        So this patch implements the behavior of waiting for each open connection to either close or positively
+        message back "I finished firing my versionchange event handler"
+        
+        This behavior is explicitly denoted in the spec and is covered by existing tests.
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::fireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionToServer::didFireVersionChangeEvent):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::fireVersionChangeEvent):
+        (WebCore::IDBClient::IDBDatabase::dispatchEvent):
+        * Modules/indexeddb/client/IDBDatabaseImpl.h:
+        
+        * Modules/indexeddb/client/IDBVersionChangeEventImpl.cpp:
+        (WebCore::IDBClient::IDBVersionChangeEvent::IDBVersionChangeEvent):
+        * Modules/indexeddb/client/IDBVersionChangeEventImpl.h:
+        
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::fireVersionChangeEvent):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+        
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::didFireVersionChangeEvent):
+        * Modules/indexeddb/server/IDBServer.h:
+        
+        * Modules/indexeddb/server/ServerOpenDBRequest.cpp:
+        (WebCore::IDBServer::ServerOpenDBRequest::notifyRequestBlocked):
+        (WebCore::IDBServer::ServerOpenDBRequest::notifiedConnectionsOfVersionChange):
+        (WebCore::IDBServer::ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent):
+        (WebCore::IDBServer::ServerOpenDBRequest::notifyDeleteRequestBlocked): Deleted.
+        * Modules/indexeddb/server/ServerOpenDBRequest.h:
+        (WebCore::IDBServer::ServerOpenDBRequest::hasNotifiedBlocked):
+        (WebCore::IDBServer::ServerOpenDBRequest::hasConnectionsPendingVersionChangeEvent):
+        (WebCore::IDBServer::ServerOpenDBRequest::hasNotifiedConnectionsOfVersionChange):
+        (WebCore::IDBServer::ServerOpenDBRequest::hasNotifiedDeleteRequestBlocked): Deleted.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabase::didFireVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabase::notifyConnectionsOfVersionChangeForUpgrade): Deleted.
+        (WebCore::IDBServer::UniqueIDBDatabase::notifyConnectionsOfVersionChange): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFireVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::fireVersionChangeEvent):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::fireVersionChangeEvent):
+        (WebCore::InProcessIDBServer::didFireVersionChangeEvent):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+        
+        * dom/Event.h:
+        (WebCore::Event::isVersionChangeEvent):
+
 2015-12-30  Simon Fraser  <simon.fraser@apple.com>
 
         Add explicit conversions between scrollOffset and scrollPostion, and use them in a few places

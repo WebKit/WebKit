@@ -60,7 +60,7 @@ public:
 
     bool hasNonFinishedTransactions() const;
 
-    void fireVersionChangeEvent(uint64_t requestedVersion);
+    void fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     UniqueIDBDatabaseTransaction& createVersionChangeTransaction(uint64_t newVersion);
 
     void establishTransaction(const IDBTransactionInfo&);
@@ -71,6 +71,7 @@ public:
     void didClearObjectStore(const IDBResultData&);
     void didCreateIndex(const IDBResultData&);
     void didDeleteIndex(const IDBResultData&);
+    void didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier);
 
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, IDBConnectionToClient&);

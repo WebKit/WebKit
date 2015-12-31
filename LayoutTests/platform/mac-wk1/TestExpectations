@@ -91,13 +91,10 @@ webkit.org/b/152264 storage/indexeddb/deleted-objects.html [ Failure Crash ]
 # IDB tests that timeout                                                               
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/dont-wedge.html [ Skip ]
-storage/indexeddb/intversion-pending-version-changes-ascending.html [ Skip ]
 storage/indexeddb/transaction-starvation.html [ Skip ]
-storage/indexeddb/unblocked-version-changes.html [ Skip ]
 
 # IDB tests with text failures                                                             
 storage/indexeddb/database-deletepending-flag.html [ Failure ]
-storage/indexeddb/delete-closed-database-object.html [ Failure ]
 storage/indexeddb/intversion-gated-on-delete.html [ Failure ]
 storage/indexeddb/odd-strings.html [ Failure ]
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
@@ -106,6 +103,7 @@ storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Failure ]
 storage/indexeddb/transaction-scope-sequencing.html [ Failure ]
 
 # Relies on internals.observeGC
+storage/indexeddb/delete-closed-database-object.html [ Skip ]
 storage/indexeddb/cursor-leak.html [ Failure ]
 storage/indexeddb/cursor-request-cycle.html [ Failure ]
 storage/indexeddb/request-leak.html [ Failure ]

@@ -339,6 +339,14 @@ void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
     databaseConnection->connectionClosedFromClient();
 }
 
+void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
+{
+    LOG(IndexedDB, "IDBServer::didFireVersionChangeEvent");
+
+    if (auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier))
+        databaseConnection->didFireVersionChangeEvent(requestIdentifier);
+}
+
 void IDBServer::postDatabaseTask(std::unique_ptr<CrossThreadTask>&& task)
 {
     ASSERT(isMainThread());

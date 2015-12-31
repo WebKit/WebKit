@@ -55,13 +55,14 @@ bool ServerOpenDBRequest::isDeleteRequest() const
     return m_requestData.isDeleteRequest();
 }
 
-void ServerOpenDBRequest::notifyDeleteRequestBlocked(uint64_t currentVersion)
+void ServerOpenDBRequest::notifyRequestBlocked(uint64_t currentVersion)
 {
-    ASSERT(isDeleteRequest());
-    ASSERT(!m_notifiedDeleteRequestBlocked);
+    ASSERT(!m_notifiedBlocked);
 
-    m_connection.notifyOpenDBRequestBlocked(m_requestData.requestIdentifier(), currentVersion, 0);
-    m_notifiedDeleteRequestBlocked = true;
+    uint64_t requestedVersion = isOpenRequest() ?  m_requestData.requestedVersion() : 0;
+    m_connection.notifyOpenDBRequestBlocked(m_requestData.requestIdentifier(), currentVersion, requestedVersion);
+
+    m_notifiedBlocked = true;
 }
 
 void ServerOpenDBRequest::notifyDidDeleteDatabase(const IDBDatabaseInfo& info)
@@ -69,6 +70,19 @@ void ServerOpenDBRequest::notifyDidDeleteDatabase(const IDBDatabaseInfo& info)
     ASSERT(isDeleteRequest());
 
     m_connection.didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(m_requestData.requestIdentifier(), info));
+}
+
+void ServerOpenDBRequest::notifiedConnectionsOfVersionChange(HashSet<uint64_t>&& connectionIdentifiers)
+{
+    ASSERT(!m_notifiedConnectionsOfVersionChange);
+
+    m_notifiedConnectionsOfVersionChange = true;
+    m_connectionsPendingVersionChangeEvent = WTF::move(connectionIdentifiers);
+}
+
+void ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier)
+{
+    m_connectionsPendingVersionChangeEvent.remove(connectionIdentifier);
 }
 
 } // namespace IDBServer

@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBResourceIdentifier.h"
 #include "IDBVersionChangeEvent.h"
 
 namespace WebCore {
@@ -37,16 +38,26 @@ class IDBVersionChangeEvent final : public WebCore::IDBVersionChangeEvent {
 public:
     static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType)
     {
-        return adoptRef(*new IDBVersionChangeEvent(oldVersion, newVersion, eventType));
+        return adoptRef(*new IDBVersionChangeEvent(IDBResourceIdentifier::emptyValue(), oldVersion, newVersion, eventType));
     }
 
+    static Ref<IDBVersionChangeEvent> create(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType)
+    {
+        return adoptRef(*new IDBVersionChangeEvent(requestIdentifier, oldVersion, newVersion, eventType));
+    }
+
+    const IDBResourceIdentifier& requestIdentifier() const { return m_requestIdentifier; }
+
+    bool isVersionChangeEvent() const override final { return true; }
+
 private:
-    IDBVersionChangeEvent(uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType);
+    IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType);
 
     virtual uint64_t oldVersion() const override { return m_oldVersion; }
     virtual Optional<uint64_t> newVersion() const override;
     virtual EventInterface eventInterface() const override;
 
+    IDBResourceIdentifier m_requestIdentifier;
     uint64_t m_oldVersion;
     uint64_t m_newVersion;
 };

@@ -1,3 +1,15 @@
+2015-12-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Only fire blocked events after all open connections have handled their versionchange events.
+        https://bugs.webkit.org/show_bug.cgi?id=152593
+
+        Reviewed by Andy Estes.
+
+        - Unskip two timeout tests that now pass.
+        - Reclassify a text-failure test to be skipped for new reasons.
+        
+        * platform/mac-wk1/TestExpectations:
+
 2015-12-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed, EFL gardening.

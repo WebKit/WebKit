@@ -72,6 +72,7 @@ public:
     virtual void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count) override final;
     virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) override final;
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
+    virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) override final;
 
     // IDBConnectionToClient
     virtual uint64_t identifier() const override;
@@ -90,7 +91,7 @@ public:
     virtual void didDeleteRecord(const IDBResultData&) override final;
     virtual void didOpenCursor(const IDBResultData&) override final;
     virtual void didIterateCursor(const IDBResultData&) override final;
-    virtual void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, uint64_t requestedVersion) override final;
+    virtual void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) override final;
     virtual void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
     virtual void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) override final;
 

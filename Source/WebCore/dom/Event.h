@@ -151,6 +151,10 @@ public:
     virtual bool isTextEvent() const;
     virtual bool isWheelEvent() const;
 
+#if ENABLE(INDEXED_DATABASE)
+    virtual bool isVersionChangeEvent() const { return false; }
+#endif
+
     bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
     bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 

@@ -158,10 +158,7 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
     }
 
     // Otherwise we have to notify all those open connections and wait for them to close.
-    notifyConnectionsOfVersionChangeForUpgrade();
-
-    // And we notify this OpenDBRequest that it is blocked until those connections close.
-    m_versionChangeDatabaseConnection->connectionToClient().notifyOpenDBRequestBlocked(m_currentOpenDBRequest->requestData().requestIdentifier(), m_databaseInfo->version(), requestedVersion);
+    maybeNotifyConnectionsOfVersionChange();
 }
 
 void UniqueIDBDatabase::performCurrentDeleteOperation()
@@ -173,15 +170,7 @@ void UniqueIDBDatabase::performCurrentDeleteOperation()
     ASSERT(m_currentOpenDBRequest->isDeleteRequest());
 
     if (hasAnyOpenConnections()) {
-        // Exactly once, notify all open connections of the pending deletion.
-        if (!m_hasNotifiedConnectionsOfDelete) {
-            notifyConnectionsOfVersionChange(0);
-            m_hasNotifiedConnectionsOfDelete = true;
-        }
-
-        if (!m_currentOpenDBRequest->hasNotifiedDeleteRequestBlocked())
-            m_currentOpenDBRequest->notifyDeleteRequestBlocked(m_databaseInfo->version());
-
+        maybeNotifyConnectionsOfVersionChange();
         return;
     }
 
@@ -192,7 +181,6 @@ void UniqueIDBDatabase::performCurrentDeleteOperation()
 
     m_currentOpenDBRequest->notifyDidDeleteDatabase(*m_databaseInfo);
     m_currentOpenDBRequest = nullptr;
-    m_hasNotifiedConnectionsOfDelete = false;
     m_deletePending = false;
 
     if (m_pendingOpenDBRequests.isEmpty())
@@ -329,28 +317,67 @@ void UniqueIDBDatabase::beginTransactionInBackingStore(const IDBTransactionInfo&
     m_backingStore->beginTransaction(info);
 }
 
-void UniqueIDBDatabase::notifyConnectionsOfVersionChangeForUpgrade()
+void UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange()
 {
     ASSERT(m_currentOpenDBRequest);
-    ASSERT(m_currentOpenDBRequest->isOpenRequest());
-    ASSERT(m_versionChangeDatabaseConnection);
 
-    notifyConnectionsOfVersionChange(m_currentOpenDBRequest->requestData().requestedVersion());
-}
+    if (m_currentOpenDBRequest->hasNotifiedConnectionsOfVersionChange())
+        return;
 
-void UniqueIDBDatabase::notifyConnectionsOfVersionChange(uint64_t requestedVersion)
-{
-    LOG(IndexedDB, "(main) UniqueIDBDatabase::notifyConnectionsOfVersionChange - %" PRIu64, requestedVersion);
+    uint64_t newVersion = m_currentOpenDBRequest->isOpenRequest() ? m_currentOpenDBRequest->requestData().requestedVersion() : 0;
+    auto requestIdentifier = m_currentOpenDBRequest->requestData().requestIdentifier();
+
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::notifyConnectionsOfVersionChange - %" PRIu64, newVersion);
 
     // 3.3.7 "versionchange" transaction steps
     // Fire a versionchange event at each connection in m_openDatabaseConnections that is open.
     // The event must not be fired on connections which has the closePending flag set.
+    HashSet<uint64_t> connectionIdentifiers;
     for (auto connection : m_openDatabaseConnections) {
         if (connection->closePending())
             continue;
 
-        connection->fireVersionChangeEvent(requestedVersion);
+        connection->fireVersionChangeEvent(requestIdentifier, newVersion);
+        connectionIdentifiers.add(connection->identifier());
     }
+
+    m_currentOpenDBRequest->notifiedConnectionsOfVersionChange(WTF::move(connectionIdentifiers));
+}
+
+void UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier)
+{
+    LOG(IndexedDB, "UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent - %" PRIu64, connectionIdentifier);
+
+    ASSERT(m_currentOpenDBRequest);
+
+    m_currentOpenDBRequest->connectionClosedOrFiredVersionChangeEvent(connectionIdentifier);
+
+    if (m_currentOpenDBRequest->hasConnectionsPendingVersionChangeEvent())
+        return;
+
+    if (!hasAnyOpenConnections()) {
+        invokeOperationAndTransactionTimer();
+        return;
+    }
+
+    if (m_currentOpenDBRequest->hasNotifiedBlocked())
+        return;
+
+    // Since all open connections have fired their version change events but not all of them have closed,
+    // this request is officially blocked.
+    m_currentOpenDBRequest->notifyRequestBlocked(m_databaseInfo->version());
+}
+
+void UniqueIDBDatabase::didFireVersionChangeEvent(UniqueIDBDatabaseConnection& connection, const IDBResourceIdentifier& requestIdentifier)
+{
+    LOG(IndexedDB, "UniqueIDBDatabase::didFireVersionChangeEvent");
+
+    if (!m_currentOpenDBRequest)
+        return;
+
+    ASSERT_UNUSED(requestIdentifier, m_currentOpenDBRequest->requestData().requestIdentifier() == requestIdentifier);
+
+    notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connection.identifier());
 }
 
 void UniqueIDBDatabase::addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&& connection)
@@ -937,6 +964,9 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
         m_versionChangeDatabaseConnection = nullptr;
 
     ASSERT(m_openDatabaseConnections.contains(&connection));
+
+    if (m_currentOpenDBRequest)
+        notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connection.identifier());
 
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> pendingTransactions;
     while (!m_pendingTransactions.isEmpty()) {

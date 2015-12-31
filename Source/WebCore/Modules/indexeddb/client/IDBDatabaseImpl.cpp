@@ -357,17 +357,31 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
         maybeCloseInServer();
 }
 
-void IDBDatabase::fireVersionChangeEvent(uint64_t requestedVersion)
+void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     uint64_t currentVersion = m_info.version();
-    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64, currentVersion, requestedVersion);
+    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64 ", connection %" PRIu64, currentVersion, requestedVersion, m_databaseConnectionIdentifier);
 
-    if (!scriptExecutionContext() || m_closePending)
+    if (!scriptExecutionContext() || m_closePending) {
+        serverConnection().didFireVersionChangeEvent(m_databaseConnectionIdentifier, requestIdentifier);
         return;
+    }
 
-    Ref<Event> event = IDBVersionChangeEvent::create(currentVersion, requestedVersion, eventNames().versionchangeEvent);
+    Ref<Event> event = IDBVersionChangeEvent::create(requestIdentifier, currentVersion, requestedVersion, eventNames().versionchangeEvent);
     event->setTarget(this);
     scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
+}
+
+bool IDBDatabase::dispatchEvent(Event& event)
+{
+    LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ")", m_databaseConnectionIdentifier);
+
+    bool result = WebCore::IDBDatabase::dispatchEvent(event);
+
+    if (event.isVersionChangeEvent() && event.type() == eventNames().versionchangeEvent)
+        serverConnection().didFireVersionChangeEvent(m_databaseConnectionIdentifier, static_cast<IDBVersionChangeEvent&>(event).requestIdentifier());
+
+    return result;
 }
 
 void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)

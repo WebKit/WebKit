@@ -95,6 +95,7 @@ public:
     void didFinishHandlingVersionChange(UniqueIDBDatabaseTransaction&);
     void transactionDestroyed(UniqueIDBDatabaseTransaction&);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
+    void didFireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier);
 
     void enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&&);
 
@@ -115,8 +116,8 @@ private:
     bool hasAnyOpenConnections() const;
 
     void startVersionChangeTransaction();
-    void notifyConnectionsOfVersionChangeForUpgrade();
-    void notifyConnectionsOfVersionChange(uint64_t requestedVersion);
+    void maybeNotifyConnectionsOfVersionChange();
+    void notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier);
     bool isVersionChangeInProgress();
 
     void activateTransactionInBackingStore(UniqueIDBDatabaseTransaction&);
@@ -207,7 +208,6 @@ private:
     HashCountedSet<uint64_t> m_objectStoreTransactionCounts;
 
     bool m_deletePending { false };
-    bool m_hasNotifiedConnectionsOfDelete { false };
 };
 
 } // namespace IDBServer

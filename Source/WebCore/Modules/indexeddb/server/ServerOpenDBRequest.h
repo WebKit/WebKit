@@ -30,6 +30,7 @@
 
 #include "IDBConnectionToClient.h"
 #include "IDBRequestData.h"
+#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -49,9 +50,17 @@ public:
     bool isOpenRequest() const;
     bool isDeleteRequest() const;
 
-    void notifyDeleteRequestBlocked(uint64_t currentVersion);
+    bool hasNotifiedBlocked() const { return m_notifiedBlocked; }
+    void notifyRequestBlocked(uint64_t currentVersion);
     void notifyDidDeleteDatabase(const IDBDatabaseInfo&);
-    bool hasNotifiedDeleteRequestBlocked() const { return m_notifiedDeleteRequestBlocked; }
+
+    uint64_t versionChangeID() const;
+
+    void notifiedConnectionsOfVersionChange(HashSet<uint64_t>&& connectionIdentifiers);
+    void connectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier);
+    bool hasConnectionsPendingVersionChangeEvent() const { return !m_connectionsPendingVersionChangeEvent.isEmpty(); }
+    bool hasNotifiedConnectionsOfVersionChange() const { return m_notifiedConnectionsOfVersionChange; }
+
 
 private:
     ServerOpenDBRequest(IDBConnectionToClient&, const IDBRequestData&);
@@ -59,7 +68,10 @@ private:
     IDBConnectionToClient& m_connection;
     IDBRequestData m_requestData;
 
-    bool m_notifiedDeleteRequestBlocked { false };
+    bool m_notifiedBlocked { false };
+
+    bool m_notifiedConnectionsOfVersionChange { false };
+    HashSet<uint64_t> m_connectionsPendingVersionChangeEvent;
 };
 
 } // namespace IDBServer
