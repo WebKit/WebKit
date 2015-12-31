@@ -2256,7 +2256,7 @@ def check_max_min_macros(clean_lines, line_number, file_state, error):
 
 
 def check_wtf_move(clean_lines, line_number, file_state, error):
-    """Looks for use of 'std::move()' which should be replaced with 'WTF::move()'.
+    """Looks for use of 'std::move()' which should be replaced with 'WTFMove()'.
 
     Args:
       clean_lines: A CleansedLines instance containing the file.
@@ -2276,7 +2276,7 @@ def check_wtf_move(clean_lines, line_number, file_state, error):
     if not using_std_move:
         return
 
-    error(line_number, 'runtime/wtf_move', 4, "Use 'WTF::move()' instead of 'std::move()'.")
+    error(line_number, 'runtime/wtf_move', 4, "Use 'WTFMove()' instead of 'std::move()'.")
 
 
 def check_ctype_functions(clean_lines, line_number, file_state, error):

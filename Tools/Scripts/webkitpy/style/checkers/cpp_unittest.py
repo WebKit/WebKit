@@ -4801,19 +4801,19 @@ class WebKitStyleTest(CppStyleTestBase):
 
     def test_wtf_move(self):
         self.assert_lint(
-             'A a = WTF::move(b);',
+             'A a = WTFMove(b);',
              '',
              'foo.cpp')
 
         self.assert_lint(
             'A a = std::move(b);',
-            "Use 'WTF::move()' instead of 'std::move()'."
+            "Use 'WTFMove()' instead of 'std::move()'."
             "  [runtime/wtf_move] [4]",
             'foo.cpp')
 
         self.assert_lint(
             'A a = std::move(b);',
-            "Use 'WTF::move()' instead of 'std::move()'."
+            "Use 'WTFMove()' instead of 'std::move()'."
             "  [runtime/wtf_move] [4]",
             'foo.mm')
 

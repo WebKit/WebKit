@@ -1,5 +1,17 @@
 2015-12-31  Andy Estes  <aestes@apple.com>
 
+        Update the style checker to advise using WTFMove() instead of WTF::move()
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_wtf_move):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_wtf_move):
+
+2015-12-31  Andy Estes  <aestes@apple.com>
+
         Fix warnings uncovered by migrating to WTF_MOVE
         https://bugs.webkit.org/show_bug.cgi?id=152601
 
