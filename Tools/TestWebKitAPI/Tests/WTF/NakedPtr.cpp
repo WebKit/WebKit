@@ -181,6 +181,7 @@ TEST(WTF_NakedPtr, Assignment)
         ASSERT_EQ(&a, ptr.get());
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wself-move"
 #endif
         ptr = WTF::move(ptr);
