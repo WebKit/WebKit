@@ -1,5 +1,12 @@
 2015-12-31  David Kilzer  <ddkilzer@apple.com>
 
+        Fix typo in FIXME comment
+
+        * dom/make_event_factory.pl:
+        (generateImplementation): FIXEME => FIXME.
+
+2015-12-31  David Kilzer  <ddkilzer@apple.com>
+
         Stop using USE(CFNETWORK) path on iOS
         https://bugs.webkit.org/show_bug.cgi?id=142540
 

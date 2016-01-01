@@ -102,7 +102,7 @@ sub generateImplementation()
             my $conditionals = "#if ENABLE(" . join(") || ENABLE(", split("\\|", $conditional)) . ")";
             print F "$conditionals\n";
         }
-        # FIXEME JSC should support RuntimeEnabledFeatures
+        # FIXME: JSC should support RuntimeEnabledFeatures.
         print F "    if (equalIgnoringASCIICase(type, \"$eventName\"))\n";
         print F "        return ${interfaceName}::create();\n";
         print F "#endif\n" if $conditional;
