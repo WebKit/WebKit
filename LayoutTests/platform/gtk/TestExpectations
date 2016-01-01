@@ -1428,7 +1428,7 @@ webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout Pass
 webkit.org/b/142292 fast/images/animated-gif-zooming.html [ Timeout Pass ]
 
 webkit.org/b/142488 http/tests/appcache/404-resource-with-slow-main-resource.php [ Timeout ]
-webkit.org/b/141959 [ Release ] http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
+webkit.org/b/141959 [ Release ] http/tests/media/clearkey/clear-key-hls-aes128.html [ Crash Timeout ]
 webkit.org/b/142489 http/tests/media/video-play-waiting.html [ Timeout ]
 webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
 webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
