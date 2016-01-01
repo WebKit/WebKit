@@ -1,5 +1,20 @@
 2015-12-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename documentScrollOffsetRelativeTo* functions
+        https://bugs.webkit.org/show_bug.cgi?id=152632
+
+        Reviewed by Zalan Bujtas.
+
+        ScrollView::documentScrollOffsetRelativeTo* functions return scroll positions,
+        not offsets, so rename them and fix their return types, and fix callers. Make
+        their code more similar.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+        (WebKit::WebPage::plugInIntersectsSearchRect):
+
+2015-12-31  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Fix incorrect scrollPosition handling
         https://bugs.webkit.org/show_bug.cgi?id=152630
 

@@ -402,20 +402,14 @@ ScrollPosition ScrollView::adjustScrollPositionWithinRange(const ScrollPosition&
     return scrollPoint.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
 }
 
-IntSize ScrollView::documentScrollOffsetRelativeToViewOrigin() const
+ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
 {
-    return toIntSize(scrollPosition()) - IntSize(0, headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
+    return scrollPosition() - IntSize(0, headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
 }
 
-IntPoint ScrollView::documentScrollPositionRelativeToViewOrigin() const
+ScrollPosition ScrollView::documentScrollPositionRelativeToScrollableAreaOrigin() const
 {
-    IntPoint scrollPosition = this->scrollPosition();
-    return IntPoint(scrollPosition.x(), scrollPosition.y() - headerHeight() - topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
-}
-
-IntSize ScrollView::documentScrollOffsetRelativeToScrollableAreaOrigin() const
-{
-    return toIntSize(scrollPosition()) - IntSize(0, headerHeight());
+    return scrollPosition() - IntSize(0, headerHeight());
 }
 
 int ScrollView::scrollSize(ScrollbarOrientation orientation) const
@@ -841,23 +835,23 @@ void ScrollView::scrollContentsSlowPath(const IntRect& updateRect)
 
 IntPoint ScrollView::viewToContents(const IntPoint& point) const
 {
-    return point + documentScrollOffsetRelativeToViewOrigin();
+    return point + toIntSize(documentScrollPositionRelativeToViewOrigin());
 }
 
 IntPoint ScrollView::contentsToView(const IntPoint& point) const
 {
-    return point - documentScrollOffsetRelativeToViewOrigin();
+    return point - toIntSize(documentScrollPositionRelativeToViewOrigin());
 }
 
 IntRect ScrollView::viewToContents(IntRect rect) const
 {
-    rect.move(documentScrollOffsetRelativeToViewOrigin());
+    rect.moveBy(documentScrollPositionRelativeToViewOrigin());
     return rect;
 }
 
 IntRect ScrollView::contentsToView(IntRect rect) const
 {
-    rect.move(-documentScrollOffsetRelativeToViewOrigin());
+    rect.moveBy(-documentScrollPositionRelativeToViewOrigin());
     return rect;
 }
 

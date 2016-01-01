@@ -4799,8 +4799,8 @@ void WebPage::determinePrimarySnapshottedPlugIn()
                 continue;
 
             IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
-            IntSize scrollOffset = mainFrame.view()->documentScrollOffsetRelativeToViewOrigin();
-            IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollOffset, plugInRectRelativeToView.size());
+            ScrollPosition scrollPosition = mainFrame.view()->documentScrollPositionRelativeToViewOrigin();
+            IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollPosition, plugInRectRelativeToView.size());
             HitTestResult hitTestResult(plugInRectRelativeToTopDocument.center());
             mainRenderView.hitTest(request, hitTestResult);
 
@@ -4809,7 +4809,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
                 continue;
 
             IntRect elementRectRelativeToView = element->clientRect();
-            IntRect elementRectRelativeToTopDocument(elementRectRelativeToView.location() + scrollOffset, elementRectRelativeToView.size());
+            IntRect elementRectRelativeToTopDocument(elementRectRelativeToView.location() + scrollPosition, elementRectRelativeToView.size());
             LayoutRect inflatedPluginRect = plugInRectRelativeToTopDocument;
             LayoutUnit xOffset = (inflatedPluginRect.width() * overlappingImageBoundsScale - inflatedPluginRect.width()) / 2;
             LayoutUnit yOffset = (inflatedPluginRect.height() * overlappingImageBoundsScale - inflatedPluginRect.height()) / 2;
@@ -4878,8 +4878,8 @@ bool WebPage::plugInIntersectsSearchRect(HTMLPlugInImageElement& plugInImageElem
     IntRect plugInRectRelativeToView = plugInImageElement.clientRect();
     if (plugInRectRelativeToView.isEmpty())
         return false;
-    IntSize scrollOffset = mainFrame.view()->documentScrollOffsetRelativeToViewOrigin();
-    IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + scrollOffset, plugInRectRelativeToView.size());
+    ScrollPosition scrollPosition = mainFrame.view()->documentScrollPositionRelativeToViewOrigin();
+    IntRect plugInRectRelativeToTopDocument(plugInRectRelativeToView.location() + toIntSize(scrollPosition), plugInRectRelativeToView.size());
 
     return plugInRectRelativeToTopDocument.intersects(searchRect);
 }

@@ -1115,10 +1115,10 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
                 // topContentInset so do not add it to the calculation below.
                 viewportRect.setLocation(frameView.scrollPositionForFixedPosition());
             } else {
-                // documentScrollOffsetRelativeToViewOrigin() includes -topContentInset in its height
+                // documentScrollPositionRelativeToViewOrigin() includes -topContentInset in its height
                 // so we need to account for that in calculating the phase size
                 topContentInset = frameView.topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
-                viewportRect.setLocation(toLayoutPoint(frameView.documentScrollOffsetRelativeToViewOrigin()));
+                viewportRect.setLocation(frameView.documentScrollPositionRelativeToViewOrigin());
             }
 
             top += topContentInset;
