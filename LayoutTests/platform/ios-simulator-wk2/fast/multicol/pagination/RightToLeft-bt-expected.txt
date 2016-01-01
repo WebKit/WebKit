@@ -198,4 +198,3 @@ layer at (0,-3500) size 180x4100 backgroundClip at (0,0) size 800x600 clip at (0
           text run at (0,360) width 163: "culpa qui officia deserunt"
           text run at (0,380) width 113: "mollit anim id est"
           text run at (0,400) width 58: "laborum."
-scrolled to 580,0

@@ -2954,7 +2954,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         frameView.setCustomSizeForResizeEvent(expandedIntSize(visibleContentRectUpdateInfo.unobscuredRectInScrollViewCoordinates().size()));
 
     frameView.setConstrainsScrollingToContentEdge(false);
-    frameView.setScrollOffset(scrollPosition);
+    frameView.setScrollOffset(frameView.scrollOffsetFromPosition(scrollPosition));
     frameView.setConstrainsScrollingToContentEdge(true);
 }
 

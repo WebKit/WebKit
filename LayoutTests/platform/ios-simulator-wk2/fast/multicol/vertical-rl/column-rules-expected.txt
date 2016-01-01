@@ -135,4 +135,3 @@ layer at (-1733,23) size 2520x174 backgroundClip at (0,0) size 866x600 clip at (
       text run at (2460,0) width 130: "posuere dictum, leo."
       text run at (2480,0) width 154: "Suspendisse scelerisque"
       text run at (2500,0) width 87: "egestas nulla."
-scrolled to 66,0

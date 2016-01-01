@@ -1,3 +1,18 @@
+2015-12-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fix incorrect scrollPosition handling
+        https://bugs.webkit.org/show_bug.cgi?id=152630
+
+        Reviewed by Zalan Bujtas.
+        
+        WebPage::updateVisibleContentRects() was setting the ScrollView's scroll position
+        to a scrollOffset, which was counteracted by ScrollView::unobscuredContentRect()
+        adding the scrollOrigin to the scrollPosition, which resulted in the correct
+        rects, but an incorrect scrollPosition. Fix.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2015-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix a log message

@@ -107,10 +107,8 @@ IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) 
         return enclosingIntRect(r);
     }
 
-    if (!m_unobscuredContentSize.isEmpty()) {
-        // FIXME: This seems wrong but gives the right answer, probably because m_scrollPosition is wrong.
-        return IntRect(m_scrollPosition + scrollOrigin(), roundedIntSize(m_unobscuredContentSize));
-    }
+    if (!m_unobscuredContentSize.isEmpty())
+        return IntRect(m_scrollPosition, roundedIntSize(m_unobscuredContentSize));
 
     return unobscuredContentRectInternal();
 }

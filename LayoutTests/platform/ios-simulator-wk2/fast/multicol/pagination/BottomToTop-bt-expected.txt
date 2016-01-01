@@ -62,4 +62,3 @@ layer at (0,-756) size 800x1356 backgroundClip at (0,0) size 800x1580 clip at (0
           text run at (0,20) width 754: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
           text run at (0,40) width 780: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat"
           text run at (0,60) width 540: "cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-scrolled to 0,980

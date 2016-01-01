@@ -1,3 +1,26 @@
+2015-12-31  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fix incorrect scrollPosition handling
+        https://bugs.webkit.org/show_bug.cgi?id=152630
+
+        Reviewed by Zalan Bujtas.
+        
+        These tests now load with a 0,0 scroll position, so don't dump out the "scrolled to" text,
+        which matches Mac behavior.
+
+        * platform/ios-simulator-wk2/fast/multicol/pagination/BottomToTop-bt-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/BottomToTop-lr-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/BottomToTop-rl-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/BottomToTop-tb-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-bt-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-lr-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-rl-dynamic-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-rl-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/pagination/RightToLeft-tb-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/vertical-rl/column-break-with-balancing-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/vertical-rl/column-rules-expected.txt:
+        * platform/ios-simulator-wk2/fast/multicol/vertical-rl/float-paginate-complex-expected.txt:
+
 2015-12-31  Zalan Bujtas  <zalan@apple.com>
 
         text-decoration: line-through is mispositioned when text has overline/underline too.
