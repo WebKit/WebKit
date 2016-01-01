@@ -1,3 +1,11 @@
+2016-01-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Expect missing results for CSS table anonymous objects tests
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2015-12-31  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fix incorrect scrollPosition handling
