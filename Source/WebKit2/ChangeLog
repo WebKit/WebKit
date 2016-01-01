@@ -1,3 +1,10 @@
+2015-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix a log message
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+
 2015-12-31  David Kilzer  <ddkilzer@apple.com>
 
         Stop using USE(CFNETWORK) path on iOS
