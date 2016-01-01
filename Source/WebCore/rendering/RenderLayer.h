@@ -863,7 +863,7 @@ private:
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const override;
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
     virtual int scrollSize(ScrollbarOrientation) const override;
-    virtual void setScrollOffset(const IntPoint&) override;
+    virtual void setScrollOffset(const ScrollOffset&) override;
 
     virtual ScrollPosition scrollPosition() const override { return m_scrollPosition; }
     virtual ScrollPosition maximumScrollPosition() const override;
@@ -892,7 +892,7 @@ private:
     LayoutRect scrollCornerAndResizerRect() const;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
-    void scrollTo(int, int);
+    void scrollTo(const ScrollPosition&);
     void updateCompositingLayersAfterScroll();
 
     IntSize scrollbarOffset(const Scrollbar*) const;

@@ -1,5 +1,24 @@
 2015-12-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Change RenderLayer::scrollTo() to take a ScrollPosition
+        https://bugs.webkit.org/show_bug.cgi?id=152633
+
+        Reviewed by Zalan Bujtas.
+        
+        RenderLayer::scrollTo() took x and y offsets. Change this to take a position,
+        like ScrollView::scrollTo() and fix the one caller.
+        
+        Preserve the dubious behavior of the adjustForIOSCaretWhenScrolling() code by converting
+        to and from offsets, even though testing suggests that this code can just be removed,
+        even with an extra wide caret for testing.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::setScrollOffset):
+        * rendering/RenderLayer.h:
+
+2015-12-31  Simon Fraser  <simon.fraser@apple.com>
+
         Rename documentScrollOffsetRelativeTo* functions
         https://bugs.webkit.org/show_bug.cgi?id=152632
 

@@ -2326,38 +2326,37 @@ void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollOffsetC
         scrollToOffsetWithoutAnimation(newScrollOffset);
 }
 
-// x and y are scroll offset values
-// FIXME: use a ScrollOffset, or change this to take a ScrollPosition.
-void RenderLayer::scrollTo(int x, int y)
+void RenderLayer::scrollTo(const ScrollPosition& position)
 {
     RenderBox* box = renderBox();
     if (!box)
         return;
 
+    ScrollPosition newPosition = position;
     if (box->style().overflowX() != OMARQUEE) {
         // Ensure that the dimensions will be computed if they need to be (for overflow:hidden blocks).
         if (m_scrollDimensionsDirty)
             computeScrollDimensions();
 #if PLATFORM(IOS)
         if (adjustForIOSCaretWhenScrolling()) {
-            int maxX = scrollWidth() - box->clientWidth();
-            if (x > maxX - caretWidth) {
-                x += caretWidth;
-                if (x <= caretWidth)
-                    x = 0;
-            } else if (x < m_scrollPosition.x() - caretWidth)
-                x -= caretWidth;
+            // FIXME: It's not clear what this code is trying to do. Behavior seems reasonable with it removed.
+            int maxOffset = scrollWidth() - box->clientWidth();
+            ScrollOffset newOffset = scrollOffsetFromPosition(newPosition);
+            int scrollXOffset = newOffset.x();
+            if (scrollXOffset > maxOffset - caretWidth) {
+                scrollXOffset += caretWidth;
+                if (scrollXOffset <= caretWidth)
+                    scrollXOffset = 0;
+            } else if (scrollXOffset < m_scrollPosition.x() - caretWidth)
+                scrollXOffset -= caretWidth;
+
+            newOffset.setX(scrollXOffset);
+            newPosition = scrollPositionFromOffset(newOffset);
         }
 #endif
     }
     
-    // FIXME: Eventually, we will want to perform a blit.  For now never
-    // blit, since the check for blitting is going to be very
-    // complicated (since it will involve testing whether our layer
-    // is either occluded by another layer or clipped by an enclosing
-    // layer or contains fixed backgrounds, etc.).
-    ScrollPosition newScrollPosition = scrollPositionFromOffset(ScrollOffset(x, y));
-    if (m_scrollPosition == newScrollPosition) {
+    if (m_scrollPosition == newPosition) {
 #if PLATFORM(IOS)
         if (m_requiresScrollBoundsOriginUpdate)
             updateCompositingLayersAfterScroll();
@@ -2366,7 +2365,7 @@ void RenderLayer::scrollTo(int x, int y)
     }
     
     ScrollPosition oldPosition = IntPoint(m_scrollPosition);
-    m_scrollPosition = newScrollPosition;
+    m_scrollPosition = newPosition;
 
     RenderView& view = renderer().view();
 
@@ -2417,7 +2416,7 @@ void RenderLayer::scrollTo(int x, int y)
     // Schedule the scroll and scroll-related DOM events.
     if (Element* element = renderer().element()) {
         element->document().eventQueue().enqueueOrDispatchScrollEvent(*element);
-        element->document().sendWillRevealEdgeEventsIfNeeded(oldPosition, newScrollPosition, visibleContentRect(), contentsSize(), element);
+        element->document().sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition, visibleContentRect(), contentsSize(), element);
     }
 
     if (scrollsOverflow())
@@ -2719,9 +2718,9 @@ int RenderLayer::scrollSize(ScrollbarOrientation orientation) const
     return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
 }
 
-void RenderLayer::setScrollOffset(const IntPoint& offset)
+void RenderLayer::setScrollOffset(const ScrollOffset& offset)
 {
-    scrollTo(offset.x(), offset.y());
+    scrollTo(scrollPositionFromOffset(offset));
 }
 
 int RenderLayer::scrollPosition(Scrollbar* scrollbar) const
