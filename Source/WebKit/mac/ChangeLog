@@ -1,3 +1,12 @@
+2016-01-01  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2016
+        https://bugs.webkit.org/show_bug.cgi?id=152531
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Info.plist:
+
 2015-12-31  David Kilzer  <ddkilzer@apple.com>
 
         Stop using USE(CFNETWORK) path on iOS
