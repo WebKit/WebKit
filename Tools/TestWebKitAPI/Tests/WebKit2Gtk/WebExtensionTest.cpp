@@ -375,10 +375,22 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
     }
 }
 
+static void registerGResource(void)
+{
+    GUniquePtr<char> resourcesPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "resources", "webkit2gtk-tests-resources.gresource", nullptr));
+    GResource* resource = g_resource_load(resourcesPath.get(), nullptr);
+    g_assert(resource);
+
+    g_resources_register(resource);
+    g_resource_unref(resource);
+}
+
 extern "C" void webkit_web_extension_initialize_with_user_data(WebKitWebExtension* extension, GVariant* userData)
 {
     g_signal_connect(extension, "page-created", G_CALLBACK(pageCreatedCallback), extension);
     g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectCleared), 0);
+
+    registerGResource();
 
     g_assert(userData);
     g_assert(g_variant_is_of_type(userData, G_VARIANT_TYPE_UINT32));

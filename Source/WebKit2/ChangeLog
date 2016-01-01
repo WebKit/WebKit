@@ -1,3 +1,17 @@
+2016-01-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] REGRESSION(r192761): Broke resource URIs for applications that use g_resource_load in a web extension
+        https://bugs.webkit.org/show_bug.cgi?id=152634
+
+        Reviewed by Carlos Garcia Campos.
+
+        Load GResource URIs locally, not in the network process. Applications expect calling
+        g_resource_load in a web extension to make it possible to load resource URIs, but that
+        doesn't work now that the network process is in use. Loading them locally solves this.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+
 2016-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2016

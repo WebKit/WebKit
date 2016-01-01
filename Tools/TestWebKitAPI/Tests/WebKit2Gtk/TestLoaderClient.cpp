@@ -116,6 +116,14 @@ static void testLoadRequest(LoadTrackingTest* test, gconstpointer)
     assertNormalLoadHappened(test->m_loadEvents);
 }
 
+static void testLoadFromGResource(LoadTrackingTest* test, gconstpointer)
+{
+    GRefPtr<WebKitURIRequest> request(webkit_uri_request_new("resource:///org/webkit/webkit2gtk/tests/boring.html"));
+    test->loadRequest(request.get());
+    test->waitUntilLoadFinished();
+    assertNormalLoadHappened(test->m_loadEvents);
+}
+
 class LoadStopTrackingTest : public LoadTrackingTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(LoadStopTrackingTest);
@@ -517,6 +525,7 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebView", "load-plain-text", testLoadPlainText);
     LoadTrackingTest::add("WebKitWebView", "load-bytes", testLoadBytes);
     LoadTrackingTest::add("WebKitWebView", "load-request", testLoadRequest);
+    LoadTrackingTest::add("WebKitWebView", "load-gresource", testLoadFromGResource);
     LoadStopTrackingTest::add("WebKitWebView", "stop-loading", testLoadCancelled);
     LoadTrackingTest::add("WebKitWebView", "title", testWebViewTitle);
     LoadTrackingTest::add("WebKitWebView", "progress", testLoadProgress);
