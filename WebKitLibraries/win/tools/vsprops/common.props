@@ -245,3 +245,4 @@ nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
     </BuildMacro>
   </ItemGroup>
 </Project>
+

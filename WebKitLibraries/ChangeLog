@@ -1,3 +1,12 @@
+2016-01-02  Andy Estes  <aestes@apple.com>
+
+        Try to fix the Windows build
+
+        After r194496, the Windows build appeared to use a stale copy of StdLibExtras.h. I deleted the build directory
+        on the bots, and am touching this file to force a new build.
+
+        * win/tools/vsprops/common.props:
+
 2016-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2016
