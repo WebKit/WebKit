@@ -1,5 +1,17 @@
 2016-01-01  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: shadow visual sidebar section can be confused with the box shadow section
+        https://bugs.webkit.org/show_bug.cgi?id=148107
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel):
+        Changed title of "Shadow" sub-section in "Background" to "Box Shadow".
+
+2016-01-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: The Computed Styles Properties section shows warning icons and doesn't update if collapsed
         https://bugs.webkit.org/show_bug.cgi?id=152609
 

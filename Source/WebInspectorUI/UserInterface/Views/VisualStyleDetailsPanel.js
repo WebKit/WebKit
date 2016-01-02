@@ -88,7 +88,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._generateSection("background-style", WebInspector.UIString("Style"));
         this._generateSection("border", WebInspector.UIString("Border"));
         this._generateSection("outline", WebInspector.UIString("Outline"));
-        this._generateSection("box-shadow", WebInspector.UIString("Shadow"));
+        this._generateSection("box-shadow", WebInspector.UIString("Box Shadow"));
 
         this._sections.background = new WebInspector.DetailsSection("background", WebInspector.UIString("Background"), [this._groups.backgroundStyle.section, this._groups.border.section, this._groups.outline.section, this._groups.boxShadow.section]);
         this.element.appendChild(this._sections.background.element);
