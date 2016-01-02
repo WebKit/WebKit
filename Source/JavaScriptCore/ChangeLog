@@ -1,4 +1,17 @@
-2015-12-28  Filip Pizlo  <fpizlo@apple.com>
+2016-01-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix copyright dates. It's super annoying when we forget to update these, and I
+        just forgot to do so in the last commit. Also update the date of the last commit in the
+        ChangeLog.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirTmpWidth.cpp:
+        * b3/air/AirTmpWidth.h:
+        * ftl/FTLB3Output.cpp:
+        * ftl/FTLB3Output.h:
+
+2016-01-01  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should be able to run all of the old V8v7 tests
         https://bugs.webkit.org/show_bug.cgi?id=152579
