@@ -67,7 +67,7 @@ public:
     // ScrollableArea functions.
     virtual int scrollSize(ScrollbarOrientation) const override;
     virtual int scrollPosition(Scrollbar*) const override;
-    WEBCORE_EXPORT virtual void setScrollOffset(const IntPoint&) override;
+    WEBCORE_EXPORT virtual void setScrollOffset(const ScrollOffset&) override;
     virtual bool isScrollCornerVisible() const override;
     virtual void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
 

@@ -429,8 +429,10 @@ void ScrollView::notifyPageThatContentAreaWillPaint() const
 {
 }
 
-void ScrollView::setScrollOffset(const IntPoint& offset)
+void ScrollView::setScrollOffset(const ScrollOffset& offset)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollOffset " << offset);
+
     IntPoint constrainedOffset = offset;
     if (constrainsScrollingToContentEdge())
         constrainedOffset = constrainedOffset.constrainedBetween(IntPoint(), maximumScrollOffset());
@@ -471,6 +473,8 @@ void ScrollView::handleDeferredScrollUpdateAfterContentSizeChange()
 
 void ScrollView::scrollTo(const ScrollPosition& newPosition)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::scrollTo " << newPosition << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition());
+
     IntSize scrollDelta = newPosition - m_scrollPosition;
     if (scrollDelta.isZero())
         return;
@@ -515,6 +519,8 @@ int ScrollView::scrollPosition(Scrollbar* scrollbar) const
 
 void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollPosition " << scrollPosition);
+
     if (prohibitsScrolling())
         return;
 
@@ -568,6 +574,8 @@ IntSize ScrollView::overhangAmount() const
 
 void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::updateScrollbars " << desiredPosition);
+
     if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget() || delegatesScrolling())
         return;
 

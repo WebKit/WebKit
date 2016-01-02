@@ -70,9 +70,9 @@ void ScrollingTreeFrameScrollingNode::updateBeforeChildren(const ScrollingStateN
         m_fixedElementsLayoutRelativeToFrame = state.fixedElementsLayoutRelativeToFrame();
 }
 
-void ScrollingTreeFrameScrollingNode::scrollBy(const FloatSize& offset)
+void ScrollingTreeFrameScrollingNode::scrollBy(const FloatSize& delta)
 {
-    setScrollPosition(scrollPosition() + offset);
+    setScrollPosition(scrollPosition() + delta);
 }
 
 void ScrollingTreeFrameScrollingNode::scrollByWithoutContentEdgeConstraints(const FloatSize& offset)
@@ -86,9 +86,9 @@ void ScrollingTreeFrameScrollingNode::setScrollPosition(const FloatPoint& scroll
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 }
 
-FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint& scrollOffset) const
+FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint& scrollPosition) const
 {
-    return toFloatSize(scrollOffset) - toFloatSize(scrollOrigin()) - FloatSize(0, headerHeight() + topContentInset());
+    return toFloatSize(scrollPosition) - FloatSize(0, headerHeight() + topContentInset());
 }
 
 } // namespace WebCore

@@ -111,7 +111,7 @@ private:
     // ScrollableArea interface.
     virtual int scrollSize(ScrollbarOrientation) const override;
     virtual int scrollPosition(Scrollbar*) const override;
-    virtual void setScrollOffset(const IntPoint&) override;
+    virtual void setScrollOffset(const ScrollOffset&) override;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;
     virtual bool isActive() const override;
     virtual bool isScrollCornerVisible() const override { return false; } // We don't support resize on list boxes yet. If we did these would have to change.

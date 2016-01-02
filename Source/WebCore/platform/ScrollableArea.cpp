@@ -151,11 +151,11 @@ void ScrollableArea::notifyScrollPositionChanged(const ScrollPosition& position)
     scrollAnimator().setCurrentPosition(position);
 }
 
-void ScrollableArea::scrollPositionChanged(const IntPoint& position)
+void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
 {
     IntPoint oldPosition = scrollPosition();
     // Tell the derived class to scroll its contents.
-    setScrollOffset(position);
+    setScrollOffset(scrollOffsetFromPosition(position));
 
     Scrollbar* verticalScrollbar = this->verticalScrollbar();
 
@@ -207,17 +207,18 @@ bool ScrollableArea::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 #endif
 
 // NOTE: Only called from Internals for testing.
-void ScrollableArea::setScrollOffsetFromInternals(const IntPoint& offset)
+void ScrollableArea::setScrollOffsetFromInternals(const ScrollOffset& offset)
 {
     setScrollOffsetFromAnimation(offset);
 }
 
-void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
+void ScrollableArea::setScrollOffsetFromAnimation(const ScrollOffset& offset)
 {
-    if (requestScrollPositionUpdate(offset))
+    ScrollPosition position = scrollPositionFromOffset(offset);
+    if (requestScrollPositionUpdate(position))
         return;
 
-    scrollPositionChanged(offset);
+    scrollPositionChanged(position);
 }
 
 void ScrollableArea::willStartLiveResize()
@@ -549,12 +550,12 @@ ScrollOffset ScrollableArea::maximumScrollOffset() const
 
 ScrollPosition ScrollableArea::scrollPositionFromOffset(ScrollOffset offset) const
 {
-    return IntPoint(toIntSize(offset) - toIntSize(m_scrollOrigin));
+    return scrollPositionFromOffset(offset, toIntSize(m_scrollOrigin));
 }
 
 ScrollOffset ScrollableArea::scrollOffsetFromPosition(ScrollPosition position) const
 {
-    return IntPoint(toIntSize(position) + toIntSize(m_scrollOrigin));
+    return scrollOffsetFromPosition(position, toIntSize(m_scrollOrigin));
 }
 
 bool ScrollableArea::scrolledToTop() const

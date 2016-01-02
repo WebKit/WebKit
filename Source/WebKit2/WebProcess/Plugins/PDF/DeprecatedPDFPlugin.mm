@@ -1538,7 +1538,7 @@ bool PDFPlugin::isEditingCommandEnabled(const String& commandName)
     return false;
 }
 
-void PDFPlugin::setScrollOffset(const IntPoint& offset)
+void PDFPlugin::setScrollOffset(const ScrollOffset& offset)
 {
     m_scrollOffset = IntSize(offset.x(), offset.y());
 

@@ -1,3 +1,33 @@
+2016-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix reload and programmatic scrolling in RTL documents
+        https://bugs.webkit.org/show_bug.cgi?id=152639
+
+        Reviewed by Zalan Bujtas.
+
+        Reloading a left-scrolled RTL document would cause the content to appear
+        at an odd offset, and programmatic sideways scrolls in RTL documents also
+        jumped to the wrong location.
+        
+        Fix by resolving offset/position confusion in ScrollableArea::scrollPositionChanged()
+        and the scrolling tree.
+        
+        ScrollableArea::scrollPositionChanged() was erroneously passing a scrollPosition
+        to setScrollOffset(). 
+        
+        ScrollingTreeFrameScrollingNode* were confused about offsets and positions. It
+        turns out that the layer position is just -scrollPosition, but minimumScrollPosition()
+        and maximumScrollPosition() need fixing to return positions, not offsets.
+        
+        ScrollingTreeFrameScrollingNode::viewToContentsOffset() was also doing incorrect
+        math with scrollOrigin, which was detected by a failing test.
+        
+        Add more logging to the Scrolling channel.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h:
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::setScrollOffset):
+
 2016-01-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] REGRESSION(r192761): Broke resource URIs for applications that use g_resource_load in a web extension

@@ -2353,6 +2353,8 @@ bool FrameView::isRubberBandInProgress() const
 
 bool FrameView::requestScrollPositionUpdate(const ScrollPosition& position)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "FrameView::requestScrollPositionUpdate " << position);
+
 #if ENABLE(ASYNC_SCROLLING)
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->prepopulateRect(FloatRect(position, visibleContentRect().size()));

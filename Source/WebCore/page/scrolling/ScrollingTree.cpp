@@ -28,12 +28,14 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
+#include "TextStream.h"
 #include <wtf/TemporaryChange.h>
 
 namespace WebCore {
@@ -61,9 +63,11 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
     
     if (!m_nonFastScrollableRegion.isEmpty() && m_rootNode) {
         ScrollingTreeFrameScrollingNode& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
-        // FIXME: This is not correct for non-default scroll origins.
         FloatPoint position = wheelEvent.position();
         position.move(frameScrollingNode.viewToContentsOffset(m_mainFrameScrollPosition));
+
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::shouldHandleWheelEventSynchronously: wheelEvent at " << wheelEvent.position() << " mapped to content point " << position << ", in non-fast region " << m_nonFastScrollableRegion.contains(roundedIntPoint(position)));
+
         if (m_nonFastScrollableRegion.contains(roundedIntPoint(position)))
             return true;
     }

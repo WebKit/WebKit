@@ -193,6 +193,18 @@ public:
     WEBCORE_EXPORT ScrollPosition scrollPositionFromOffset(ScrollOffset) const;
     WEBCORE_EXPORT ScrollOffset scrollOffsetFromPosition(ScrollPosition) const;
 
+    template<typename PositionType, typename SizeType>
+    static PositionType scrollPositionFromOffset(PositionType offset, SizeType scrollOrigin)
+    {
+        return offset - scrollOrigin;
+    }
+
+    template<typename PositionType, typename SizeType>
+    static PositionType scrollOffsetFromPosition(PositionType position, SizeType scrollOrigin)
+    {
+        return position + scrollOrigin;
+    }
+
     WEBCORE_EXPORT virtual bool scrolledToTop() const;
     WEBCORE_EXPORT virtual bool scrolledToBottom() const;
     WEBCORE_EXPORT virtual bool scrolledToLeft() const;
@@ -249,7 +261,7 @@ public:
     virtual bool scrollAnimatorEnabled() const { return false; }
 
     // NOTE: Only called from Internals for testing.
-    WEBCORE_EXPORT void setScrollOffsetFromInternals(const IntPoint&);
+    WEBCORE_EXPORT void setScrollOffsetFromInternals(const ScrollOffset&);
 
     WEBCORE_EXPORT static LayoutPoint constrainScrollPositionForOverhang(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, int headerHeight, int footetHeight);
     LayoutPoint constrainScrollPositionForOverhang(const LayoutPoint& scrollPosition);
@@ -312,15 +324,15 @@ protected:
 
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
-    void scrollPositionChanged(const IntPoint&);
+    void scrollPositionChanged(const ScrollPosition&);
     
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
-    void setScrollOffsetFromAnimation(const IntPoint&);
+    void setScrollOffsetFromAnimation(const ScrollOffset&);
 
     // This function should be overriden by subclasses to perform the actual
     // scroll of the content.
-    virtual void setScrollOffset(const IntPoint&) = 0;
+    virtual void setScrollOffset(const ScrollOffset&) = 0;
 
     mutable std::unique_ptr<ScrollAnimator> m_scrollAnimator;
 
