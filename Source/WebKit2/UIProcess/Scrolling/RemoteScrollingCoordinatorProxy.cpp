@@ -92,7 +92,7 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
     }
 
     connectStateNodeLayers(*stateTree, *layerTreeHost);
-    m_scrollingTree->commitNewTreeState(WTF::move(stateTree));
+    m_scrollingTree->commitNewTreeState(WTFMove(stateTree));
 
     m_requestedScrollInfo = nullptr;
 }

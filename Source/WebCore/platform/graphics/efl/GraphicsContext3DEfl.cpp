@@ -200,7 +200,7 @@ bool GraphicsContext3D::isGLES2Compliant() const
 
 void GraphicsContext3D::setContextLostCallback(std::unique_ptr<ContextLostCallback> callBack)
 {
-    m_private->setContextLostCallback(WTF::move(callBack));
+    m_private->setContextLostCallback(WTFMove(callBack));
 }
 
 void GraphicsContext3D::setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>)

@@ -91,7 +91,7 @@ RefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String& url
     worker->m_scriptLoader = WorkerScriptLoader::create();
     worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, worker.ptr());
 
-    return WTF::move(worker);
+    return WTFMove(worker);
 }
 
 Worker::~Worker()
@@ -116,7 +116,7 @@ void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, const Messag
     std::unique_ptr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(ports, ec);
     if (ec)
         return;
-    m_contextProxy->postMessageToWorkerGlobalScope(message, WTF::move(channels));
+    m_contextProxy->postMessageToWorkerGlobalScope(message, WTFMove(channels));
 }
 
 void Worker::terminate()

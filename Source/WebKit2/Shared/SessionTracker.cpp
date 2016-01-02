@@ -109,10 +109,10 @@ void SessionTracker::setSession(SessionID sessionID, std::unique_ptr<NetworkStor
     ASSERT(storageSession);
     ASSERT(sessionID != SessionID::defaultSessionID());
     storageSessionToID().set(storageSession.get(), sessionID);
-    staticStorageSessionMap().set(sessionID, WTF::move(storageSession));
+    staticStorageSessionMap().set(sessionID, WTFMove(storageSession));
 #if USE(NETWORK_SESSION)
     ASSERT(session);
-    staticSessionMap().set(sessionID, WTF::move(session));
+    staticSessionMap().set(sessionID, WTFMove(session));
 #endif
 }
 

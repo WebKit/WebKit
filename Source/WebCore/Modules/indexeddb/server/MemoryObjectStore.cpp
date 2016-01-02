@@ -98,7 +98,7 @@ IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transacti
 
     m_info.addExistingIndex(info);
     transaction.addNewIndex(*index);
-    registerIndex(WTF::move(index));
+    registerIndex(WTFMove(index));
 
     return { };
 }
@@ -123,7 +123,7 @@ void MemoryObjectStore::maybeRestoreDeletedIndex(std::unique_ptr<MemoryIndex> in
     // repopulate the index with the object store's pre-transaction records.
     ASSERT_UNUSED(error, error.isNull());
 
-    registerIndex(WTF::move(index));
+    registerIndex(WTFMove(index));
 }
 
 std::unique_ptr<MemoryIndex> MemoryObjectStore::takeIndexByName(const String& name)
@@ -151,7 +151,7 @@ IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transacti
         return IDBError(IDBDatabaseException::ConstraintError);
 
     m_info.deleteIndex(indexName);
-    transaction.indexDeleted(WTF::move(index));
+    transaction.indexDeleted(WTFMove(index));
 
     return { };
 }
@@ -169,7 +169,7 @@ void MemoryObjectStore::clear()
     LOG(IndexedDB, "MemoryObjectStore::clear");
     ASSERT(m_writeTransaction);
 
-    m_writeTransaction->objectStoreCleared(*this, WTF::move(m_keyValueStore), WTF::move(m_orderedKeys));
+    m_writeTransaction->objectStoreCleared(*this, WTFMove(m_keyValueStore), WTFMove(m_orderedKeys));
     for (auto& index : m_indexesByIdentifier.values())
         index->objectStoreCleared();
 
@@ -182,8 +182,8 @@ void MemoryObjectStore::replaceKeyValueStore(std::unique_ptr<KeyValueMap>&& stor
     ASSERT(m_writeTransaction);
     ASSERT(m_writeTransaction->isAborting());
 
-    m_keyValueStore = WTF::move(store);
-    m_orderedKeys = WTF::move(orderedKeys);
+    m_keyValueStore = WTFMove(store);
+    m_orderedKeys = WTFMove(orderedKeys);
 }
 
 void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
@@ -441,7 +441,7 @@ void MemoryObjectStore::registerIndex(std::unique_ptr<MemoryIndex>&& index)
     ASSERT(!m_indexesByName.contains(index->info().name()));
 
     m_indexesByName.set(index->info().name(), index.get());
-    m_indexesByIdentifier.set(index->info().identifier(), WTF::move(index));
+    m_indexesByIdentifier.set(index->info().identifier(), WTFMove(index));
 }
 
 void MemoryObjectStore::unregisterIndex(MemoryIndex& index)

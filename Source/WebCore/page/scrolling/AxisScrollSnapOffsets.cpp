@@ -188,7 +188,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
         if (horizontalSnapOffsets->isEmpty())
             scrollableArea.clearHorizontalSnapOffsets();
         else
-            scrollableArea.setHorizontalSnapOffsets(WTF::move(horizontalSnapOffsets));
+            scrollableArea.setHorizontalSnapOffsets(WTFMove(horizontalSnapOffsets));
     }
     if (canComputeVerticalOffsets) {
         auto verticalSnapOffsets = std::make_unique<Vector<LayoutUnit>>();
@@ -196,7 +196,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
         if (verticalSnapOffsets->isEmpty())
             scrollableArea.clearVerticalSnapOffsets();
         else
-            scrollableArea.setVerticalSnapOffsets(WTF::move(verticalSnapOffsets));
+            scrollableArea.setVerticalSnapOffsets(WTFMove(verticalSnapOffsets));
     }
 }
 

@@ -98,11 +98,11 @@ bool ChildProcessProxy::sendMessage(std::unique_ptr<IPC::MessageEncoder> encoder
     switch (state()) {
     case State::Launching:
         // If we're waiting for the child process to launch, we need to stash away the messages so we can send them once we have a connection.
-        m_pendingMessages.append(std::make_pair(WTF::move(encoder), messageSendFlags));
+        m_pendingMessages.append(std::make_pair(WTFMove(encoder), messageSendFlags));
         return true;
 
     case State::Running:
-        return connection()->sendMessage(WTF::move(encoder), messageSendFlags);
+        return connection()->sendMessage(WTFMove(encoder), messageSendFlags);
 
     case State::Terminated:
         return false;
@@ -154,9 +154,9 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Id
     m_connection->open();
 
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
-        std::unique_ptr<IPC::MessageEncoder> message = WTF::move(m_pendingMessages[i].first);
+        std::unique_ptr<IPC::MessageEncoder> message = WTFMove(m_pendingMessages[i].first);
         unsigned messageSendFlags = m_pendingMessages[i].second;
-        m_connection->sendMessage(WTF::move(message), messageSendFlags);
+        m_connection->sendMessage(WTFMove(message), messageSendFlags);
     }
 
     m_pendingMessages.clear();

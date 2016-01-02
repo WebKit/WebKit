@@ -85,7 +85,7 @@ void WebsiteDataRecord::add(WebsiteDataTypes type, RefPtr<WebCore::SecurityOrigi
 {
     types |= type;
 
-    origins.add(WTF::move(origin));
+    origins.add(WTFMove(origin));
 }
 
 void WebsiteDataRecord::addCookieHostName(const String& hostName)

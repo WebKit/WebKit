@@ -237,7 +237,7 @@ void link(State& state)
         break;
     }
     
-    state.finalizer->entrypointLinkBuffer = WTF::move(linkBuffer);
+    state.finalizer->entrypointLinkBuffer = WTFMove(linkBuffer);
     state.finalizer->function = state.generatedFunction;
     state.finalizer->jitCode = state.jitCode;
 }

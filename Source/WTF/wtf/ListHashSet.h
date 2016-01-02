@@ -381,7 +381,7 @@ inline T ListHashSet<T, U>::takeFirst()
     ASSERT(!isEmpty());
     auto it = m_impl.find(m_head);
 
-    T result = WTF::move((*it)->m_value);
+    T result = WTFMove((*it)->m_value);
     m_impl.remove(it);
     unlinkAndDelete(m_head);
 
@@ -421,7 +421,7 @@ inline T ListHashSet<T, U>::takeLast()
     ASSERT(!isEmpty());
     auto it = m_impl.find(m_tail);
 
-    T result = WTF::move((*it)->m_value);
+    T result = WTFMove((*it)->m_value);
     m_impl.remove(it);
     unlinkAndDelete(m_tail);
 
@@ -497,7 +497,7 @@ auto ListHashSet<T, U>::add(const ValueType& value) -> AddResult
 template<typename T, typename U>
 auto ListHashSet<T, U>::add(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), nullptr);
+    auto result = m_impl.template add<BaseTranslator>(WTFMove(value), nullptr);
     if (result.isNewEntry)
         appendNode(*result.iterator);
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);
@@ -518,7 +518,7 @@ auto ListHashSet<T, U>::appendOrMoveToLast(const ValueType& value) -> AddResult
 template<typename T, typename U>
 auto ListHashSet<T, U>::appendOrMoveToLast(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), nullptr);
+    auto result = m_impl.template add<BaseTranslator>(WTFMove(value), nullptr);
     Node* node = *result.iterator;
     if (!result.isNewEntry)
         unlink(node);
@@ -542,7 +542,7 @@ auto ListHashSet<T, U>::prependOrMoveToFirst(const ValueType& value) -> AddResul
 template<typename T, typename U>
 auto ListHashSet<T, U>::prependOrMoveToFirst(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator>(WTF::move(value), nullptr);
+    auto result = m_impl.template add<BaseTranslator>(WTFMove(value), nullptr);
     Node* node = *result.iterator;
     if (!result.isNewEntry)
         unlink(node);
@@ -560,7 +560,7 @@ auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, const ValueTy
 template<typename T, typename U>
 auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, ValueType&& newValue) -> AddResult
 {
-    return insertBefore(find(beforeValue), WTF::move(newValue));
+    return insertBefore(find(beforeValue), WTFMove(newValue));
 }
 
 template<typename T, typename U>
@@ -575,7 +575,7 @@ auto ListHashSet<T, U>::insertBefore(iterator it, const ValueType& newValue) -> 
 template<typename T, typename U>
 auto ListHashSet<T, U>::insertBefore(iterator it, ValueType&& newValue) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator>(WTF::move(newValue), nullptr);
+    auto result = m_impl.template add<BaseTranslator>(WTFMove(newValue), nullptr);
     if (result.isNewEntry)
         insertNodeBefore(it.node(), *result.iterator);
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);

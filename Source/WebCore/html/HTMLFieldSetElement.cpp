@@ -152,7 +152,7 @@ const AtomicString& HTMLFieldSetElement::formControlType() const
 
 RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderFieldset>(*this, WTF::move(style));
+    return createRenderer<RenderFieldset>(*this, WTFMove(style));
 }
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const

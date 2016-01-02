@@ -43,14 +43,14 @@ class RawData : public RefCounted<RawData> {
 public:
     static Ref<RawData> create(Vector<char>&& data)
     {
-        return adoptRef(*new RawData(WTF::move(data)));
+        return adoptRef(*new RawData(WTFMove(data)));
     }
 
     static Ref<RawData> create(const char* data, size_t size)
     {
         Vector<char> dataVector(size);
         memcpy(dataVector.data(), data, size);
-        return adoptRef(*new RawData(WTF::move(dataVector)));
+        return adoptRef(*new RawData(WTFMove(dataVector)));
     }
 
     const char* data() const { return m_data.data(); }
@@ -58,7 +58,7 @@ public:
 
 private:
     RawData(Vector<char>&& data)
-        : m_data(WTF::move(data))
+        : m_data(WTFMove(data))
     {
     }
 

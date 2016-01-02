@@ -44,7 +44,7 @@
 namespace WebCore {
 
 RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, Ref<RenderStyle>&& style)
-    : RenderSVGResourceContainer(element, WTF::move(style))
+    : RenderSVGResourceContainer(element, WTFMove(style))
 {
 }
 
@@ -92,7 +92,7 @@ std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFi
         effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&element, filterElement().primitiveUnits(), targetBoundingBox));
         if (element.renderer())
             effect->setOperatingColorSpace(element.renderer()->style().svgStyle().colorInterpolationFilters() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceSRGB);
-        builder->add(element.result(), WTF::move(effect));
+        builder->add(element.result(), WTFMove(effect));
     }
     return builder;
 }
@@ -177,7 +177,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     if (filterData->drawingRegion.isEmpty()) {
         ASSERT(!m_filter.contains(&renderer));
         filterData->savedContext = context;
-        m_filter.set(&renderer, WTF::move(filterData));
+        m_filter.set(&renderer, WTFMove(filterData));
         return false;
     }
 
@@ -192,7 +192,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     if (!sourceGraphic) {
         ASSERT(!m_filter.contains(&renderer));
         filterData->savedContext = context;
-        m_filter.set(&renderer, WTF::move(filterData));
+        m_filter.set(&renderer, WTFMove(filterData));
         return false;
     }
     
@@ -201,13 +201,13 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     GraphicsContext& sourceGraphicContext = sourceGraphic->context();
   
-    filterData->sourceGraphicBuffer = WTF::move(sourceGraphic);
+    filterData->sourceGraphicBuffer = WTFMove(sourceGraphic);
     filterData->savedContext = context;
 
     context = &sourceGraphicContext;
 
     ASSERT(!m_filter.contains(&renderer));
-    m_filter.set(&renderer, WTF::move(filterData));
+    m_filter.set(&renderer, WTFMove(filterData));
 
     return true;
 }
@@ -255,7 +255,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         // initial filtering process. We just take the stored filter result on a
         // second drawing.
         if (filterData->state != FilterData::Built)
-            filterData->filter->setSourceImage(WTF::move(filterData->sourceGraphicBuffer));
+            filterData->filter->setSourceImage(WTFMove(filterData->sourceGraphicBuffer));
 
         // Always true if filterData is just built (filterData->state == FilterData::Built).
         if (!lastEffect->hasResult()) {

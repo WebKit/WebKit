@@ -142,7 +142,7 @@ private:
                 }
             }
         }
-        block->ssa->liveAtHead = WTF::move(m_live);
+        block->ssa->liveAtHead = WTFMove(m_live);
     }
     
     void addChildUse(Node*, Edge& edge)

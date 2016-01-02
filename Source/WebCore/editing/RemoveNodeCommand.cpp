@@ -36,7 +36,7 @@ namespace WebCore {
 
 RemoveNodeCommand::RemoveNodeCommand(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
     : SimpleEditCommand(node->document())
-    , m_node(WTF::move(node))
+    , m_node(WTFMove(node))
     , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {
     ASSERT(m_node->parentNode());

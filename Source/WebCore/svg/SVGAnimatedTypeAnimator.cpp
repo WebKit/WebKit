@@ -64,7 +64,7 @@ SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesFo
     if (targetProperties.isEmpty())
         return result;
 
-    result.append(SVGElementAnimatedProperties { &targetElement, WTF::move(targetProperties) });
+    result.append(SVGElementAnimatedProperties { &targetElement, WTFMove(targetProperties) });
 
     for (SVGElement* instance : targetElement.instances())
         result.append(SVGElementAnimatedProperties { instance, propertyMap.properties(*instance, attributeName) });

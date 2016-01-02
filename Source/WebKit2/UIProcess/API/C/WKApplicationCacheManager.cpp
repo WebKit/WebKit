@@ -47,7 +47,7 @@ void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManag
                 securityOrigins.append(API::SecurityOrigin::create(*origin));
         }
 
-        callback(toAPI(API::Array::create(WTF::move(securityOrigins)).ptr()), nullptr, context);
+        callback(toAPI(API::Array::create(WTFMove(securityOrigins)).ptr()), nullptr, context);
     });
 }
 

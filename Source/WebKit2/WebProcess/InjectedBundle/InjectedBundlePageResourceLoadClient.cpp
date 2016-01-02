@@ -55,7 +55,7 @@ void InjectedBundlePageResourceLoadClient::willSendRequestForFrame(WebPage* page
         RefPtr<FormData> returnedHTTPBody = returnedResourceRequest.httpBody();
         request.updateFromDelegatePreservingOldProperties(returnedResourceRequest);
         if (returnedHTTPBody)
-            request.setHTTPBody(WTF::move(returnedHTTPBody));
+            request.setHTTPBody(WTFMove(returnedHTTPBody));
     } else
         request = { };
 }

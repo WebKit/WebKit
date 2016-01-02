@@ -94,7 +94,7 @@ class DispatchAfterContext {
 public:
     DispatchAfterContext(WorkQueue& queue, std::function<void ()> function)
         : m_queue(&queue)
-        , m_function(WTF::move(function))
+        , m_function(WTFMove(function))
     {
     }
 
@@ -117,7 +117,7 @@ void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<v
     GRefPtr<GSource> source = adoptGRef(g_timeout_source_new(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()));
     g_source_set_name(source.get(), "[WebKit] WorkQueue dispatchAfter");
 
-    std::unique_ptr<DispatchAfterContext> context = std::make_unique<DispatchAfterContext>(*this, WTF::move(function));
+    std::unique_ptr<DispatchAfterContext> context = std::make_unique<DispatchAfterContext>(*this, WTFMove(function));
     g_source_set_callback(source.get(), [](gpointer userData) -> gboolean {
         std::unique_ptr<DispatchAfterContext> context(static_cast<DispatchAfterContext*>(userData));
         context->dispatch();

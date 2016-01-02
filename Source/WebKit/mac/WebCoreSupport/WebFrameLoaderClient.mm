@@ -873,7 +873,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
                         decidePolicyForMIMEType:response.mimeType()
                                         request:request.nsURLRequest(UpdateHTTPBody)
                                           frame:m_webFrame.get()
-                               decisionListener:setUpPolicyListener(WTF::move(function)).get()];
+                               decisionListener:setUpPolicyListener(WTFMove(function)).get()];
 }
 
 
@@ -905,7 +905,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
             decidePolicyForNewWindowAction:actionDictionary(action, formState)
                                    request:request.nsURLRequest(UpdateHTTPBody)
                               newFrameName:frameName
-                          decisionListener:setUpPolicyListener(WTF::move(function), tryAppLink ? (NSURL *)request.url() : nil).get()];
+                          decisionListener:setUpPolicyListener(WTFMove(function), tryAppLink ? (NSURL *)request.url() : nil).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, FramePolicyFunction function)
@@ -917,7 +917,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
                 decidePolicyForNavigationAction:actionDictionary(action, formState)
                                         request:request.nsURLRequest(UpdateHTTPBody)
                                           frame:m_webFrame.get()
-                               decisionListener:setUpPolicyListener(WTF::move(function), tryAppLink ? (NSURL *)request.url() : nil).get()];
+                               decisionListener:setUpPolicyListener(WTFMove(function), tryAppLink ? (NSURL *)request.url() : nil).get()];
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()
@@ -963,7 +963,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(PassRefPtr<FormState> formStat
     }
 
     NSDictionary *values = makeFormFieldValuesDictionary(formState.get());
-    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceDocument()->frame()), kit(formState->form()), values, setUpPolicyListener(WTF::move(function)).get());
+    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceDocument()->frame()), kit(formState->form()), values, setUpPolicyListener(WTFMove(function)).get());
 }
 
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader* loader)
@@ -1340,7 +1340,7 @@ Ref<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceReq
     loader->setDataSource(dataSource, getWebView(m_webFrame.get()));
     [dataSource release];
 
-    return WTF::move(loader);
+    return WTFMove(loader);
 }
 
 void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL& url)
@@ -2285,7 +2285,7 @@ void WebFrameLoaderClient::didCreateQuickLookHandle(WebCore::QuickLookHandle& ha
 #if ENABLE(CONTENT_FILTERING)
 void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler unblockHandler)
 {
-    core(m_webFrame.get())->loader().policyChecker().setContentFilterUnblockHandler(WTF::move(unblockHandler));
+    core(m_webFrame.get())->loader().policyChecker().setContentFilterUnblockHandler(WTFMove(unblockHandler));
 }
 #endif
 
@@ -2312,7 +2312,7 @@ void WebFrameLoaderClient::prefetchDNS(const String& hostname)
         return nil;
 
     _frame = frame;
-    _policyFunction = WTF::move(policyFunction);
+    _policyFunction = WTFMove(policyFunction);
 
     return self;
 }
@@ -2349,7 +2349,7 @@ void WebFrameLoaderClient::prefetchDNS(const String& hostname)
     if (!frame)
         return;
 
-    FramePolicyFunction policyFunction = WTF::move(_policyFunction);
+    FramePolicyFunction policyFunction = WTFMove(_policyFunction);
     _policyFunction = nullptr;
 
     ASSERT(policyFunction);

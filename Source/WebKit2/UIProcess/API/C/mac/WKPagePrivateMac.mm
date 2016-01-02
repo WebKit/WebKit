@@ -51,7 +51,7 @@ using namespace WebKit;
     if (!(self = [super init]))
         return nil;
 
-    _page = WTF::move(page);
+    _page = WTFMove(page);
     _observer = std::make_unique<PageLoadStateObserver>(self, @"URL");
     _page->pageLoadState().addObserver(*_observer);
 

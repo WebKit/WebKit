@@ -87,7 +87,7 @@ public:
 
     OSObjectPtr& operator=(OSObjectPtr&& other)
     {
-        OSObjectPtr ptr = WTF::move(other);
+        OSObjectPtr ptr = WTFMove(other);
         swap(ptr);
         return *this;
     }

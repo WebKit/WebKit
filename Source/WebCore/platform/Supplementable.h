@@ -84,7 +84,7 @@ public:
 
     static void provideTo(Supplementable<T>* host, const char* key, std::unique_ptr<Supplement<T>> supplement)
     {
-        host->provideSupplement(key, WTF::move(supplement));
+        host->provideSupplement(key, WTFMove(supplement));
     }
 
     static Supplement<T>* from(Supplementable<T>* host, const char* key)
@@ -100,7 +100,7 @@ public:
     {
         ASSERT(canAccessThreadLocalDataForThread(m_threadId));
         ASSERT(!m_supplements.get(key));
-        m_supplements.set(key, WTF::move(supplement));
+        m_supplements.set(key, WTFMove(supplement));
     }
 
     void removeSupplement(const char* key)

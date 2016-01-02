@@ -61,7 +61,7 @@ Ref<RenderStyle> resolveForDocument(const Document& document)
     documentStyle.get().setPageScaleTransform(renderView.frame().frameScaleFactor());
     FontCascadeDescription documentFontDescription = documentStyle.get().fontDescription();
     documentFontDescription.setLocale(document.contentLanguage());
-    documentStyle.get().setFontDescription(WTF::move(documentFontDescription));
+    documentStyle.get().setFontDescription(WTFMove(documentFontDescription));
 
     // This overrides any -webkit-user-modify inherited from the parent iframe.
     documentStyle.get().setUserModify(document.inDesignMode() ? READ_WRITE : READ_ONLY);

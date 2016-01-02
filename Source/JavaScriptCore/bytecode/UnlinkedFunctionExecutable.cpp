@@ -82,7 +82,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     : Base(*vm, structure)
     , m_name(node->ident())
     , m_inferredName(node->inferredName())
-    , m_sourceOverride(WTF::move(sourceOverride))
+    , m_sourceOverride(WTFMove(sourceOverride))
     , m_firstLineOffset(node->firstLine() - source.firstLine())
     , m_lineCount(node->lastLine() - node->firstLine())
     , m_unlinkedFunctionNameStart(node->functionNameStart() - source.startOffset())

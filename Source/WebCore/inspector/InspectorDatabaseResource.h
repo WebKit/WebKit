@@ -46,7 +46,7 @@ public:
 
     void bind(Inspector::DatabaseFrontendDispatcher*);
     Database* database() { return m_database.get(); }
-    void setDatabase(RefPtr<Database>&& database) { m_database = WTF::move(database); }
+    void setDatabase(RefPtr<Database>&& database) { m_database = WTFMove(database); }
     String id() const { return m_id; }
 
 private:

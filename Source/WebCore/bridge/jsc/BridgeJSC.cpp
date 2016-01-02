@@ -39,7 +39,7 @@ namespace JSC {
 namespace Bindings {
 
 Array::Array(RefPtr<RootObject>&& rootObject)
-    : m_rootObject(WTF::move(rootObject))
+    : m_rootObject(WTFMove(rootObject))
 {
     ASSERT(m_rootObject);
 }
@@ -49,7 +49,7 @@ Array::~Array()
 }
 
 Instance::Instance(RefPtr<RootObject>&& rootObject)
-    : m_rootObject(WTF::move(rootObject))
+    : m_rootObject(WTFMove(rootObject))
 {
     ASSERT(m_rootObject);
 }

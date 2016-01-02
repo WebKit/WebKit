@@ -75,7 +75,7 @@ bool MeterInnerElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> MeterInnerElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMeter>(*this, WTF::move(style));
+    return createRenderer<RenderMeter>(*this, WTFMove(style));
 }
 
 const AtomicString& MeterValueElement::valuePseudoId() const

@@ -124,7 +124,7 @@ public:
         if (slot)
             return *slot;
 
-        auto storageArea = StorageArea::create(nullptr, WTF::move(securityOrigin), m_quotaInBytes);
+        auto storageArea = StorageArea::create(nullptr, WTFMove(securityOrigin), m_quotaInBytes);
         slot = &storageArea.get();
 
         return storageArea;
@@ -168,13 +168,13 @@ private:
 
 Ref<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, Ref<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
 {
-    return adoptRef(*new StorageArea(localStorageNamespace, WTF::move(securityOrigin), quotaInBytes));
+    return adoptRef(*new StorageArea(localStorageNamespace, WTFMove(securityOrigin), quotaInBytes));
 }
 
 StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, Ref<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
     : m_localStorageNamespace(localStorageNamespace)
     , m_didImportItemsFromDatabase(false)
-    , m_securityOrigin(WTF::move(securityOrigin))
+    , m_securityOrigin(WTFMove(securityOrigin))
     , m_quotaInBytes(quotaInBytes)
     , m_storageMap(StorageMap::create(m_quotaInBytes))
 {
@@ -335,7 +335,7 @@ Ref<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCre
     if (slot)
         return *slot;
 
-    auto storageArea = StorageArea::create(this, WTF::move(securityOrigin), m_quotaInBytes);
+    auto storageArea = StorageArea::create(this, WTFMove(securityOrigin), m_quotaInBytes);
     slot = &storageArea.get();
 
     return storageArea;
@@ -441,7 +441,7 @@ Ref<StorageManager::StorageArea> StorageManager::SessionStorageNamespace::getOrC
 {
     auto& slot = m_storageAreaMap.add(securityOrigin.ptr(), nullptr).iterator->value;
     if (!slot)
-        slot = StorageArea::create(0, WTF::move(securityOrigin), m_quotaInBytes);
+        slot = StorageArea::create(0, WTFMove(securityOrigin), m_quotaInBytes);
 
     return *slot;
 }
@@ -562,11 +562,11 @@ void StorageManager::getSessionStorageOrigins(std::function<void (HashSet<RefPtr
 
         for (const auto& sessionStorageNamespace : storageManager->m_sessionStorageNamespaces.values()) {
             for (auto& origin : sessionStorageNamespace->origins())
-                origins.add(WTF::move(origin));
+                origins.add(WTFMove(origin));
         }
 
         RunLoop::main().dispatch([origins, completionHandler]() mutable {
-            completionHandler(WTF::move(origins));
+            completionHandler(WTFMove(origins));
         });
     });
 }
@@ -610,15 +610,15 @@ void StorageManager::getLocalStorageOrigins(std::function<void (HashSet<RefPtr<W
         HashSet<RefPtr<SecurityOrigin>> origins;
 
         for (auto& origin : storageManager->m_localStorageDatabaseTracker->origins())
-            origins.add(WTF::move(origin));
+            origins.add(WTFMove(origin));
 
         for (auto& transientLocalStorageNamespace : storageManager->m_transientLocalStorageNamespaces.values()) {
             for (auto& origin : transientLocalStorageNamespace->origins())
-                origins.add(WTF::move(origin));
+                origins.add(WTFMove(origin));
         }
 
         RunLoop::main().dispatch([origins, completionHandler]() mutable {
-            completionHandler(WTF::move(origins));
+            completionHandler(WTFMove(origins));
         });
     });
 }
@@ -631,7 +631,7 @@ void StorageManager::getLocalStorageOriginDetails(std::function<void (Vector<Loc
         auto originDetails = storageManager->m_localStorageDatabaseTracker->originDetails();
 
         RunLoop::main().dispatch([originDetails, completionHandler]() mutable {
-            completionHandler(WTF::move(originDetails));
+            completionHandler(WTFMove(originDetails));
         });
     });
 }
@@ -738,7 +738,7 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection,
             continue;
         area->addListener(connection, storageMapID);
         m_storageAreasByConnection.remove(it);
-        m_storageAreasByConnection.add({ &connection, storageMapID }, WTF::move(area));
+        m_storageAreasByConnection.add({ &connection, storageMapID }, WTFMove(area));
         return;
     }
 
@@ -752,7 +752,7 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection,
     auto storageArea = transientLocalStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
     storageArea->addListener(connection, storageMapID);
 
-    slot = WTF::move(storageArea);
+    slot = WTFMove(storageArea);
 }
 
 void StorageManager::createSessionStorageMap(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
@@ -781,7 +781,7 @@ void StorageManager::createSessionStorageMap(IPC::Connection& connection, uint64
     auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
     storageArea->addListener(connection, storageMapID);
 
-    slot = WTF::move(storageArea);
+    slot = WTFMove(storageArea);
 }
 
 void StorageManager::destroyStorageMap(IPC::Connection& connection, uint64_t storageMapID)

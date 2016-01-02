@@ -44,7 +44,7 @@ class CInstance : public Instance {
 public:
     static Ref<CInstance> create(NPObject* object, RefPtr<RootObject>&& rootObject)
     {
-        return adoptRef(*new CInstance(object, WTF::move(rootObject)));
+        return adoptRef(*new CInstance(object, WTFMove(rootObject)));
     }
 
     static void setGlobalException(String);

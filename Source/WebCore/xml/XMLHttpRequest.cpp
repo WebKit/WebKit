@@ -242,7 +242,7 @@ Blob* XMLHttpRequest::responseBlob()
             Vector<char> data;
             data.append(m_binaryResponseBuilder->data(), m_binaryResponseBuilder->size());
             String normalizedContentType = Blob::normalizedContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
-            m_responseBlob = Blob::create(WTF::move(data), normalizedContentType);
+            m_responseBlob = Blob::create(WTFMove(data), normalizedContentType);
             m_binaryResponseBuilder = nullptr;
         } else {
             // If we errored out or got no data, we still return a blob, just an empty one.

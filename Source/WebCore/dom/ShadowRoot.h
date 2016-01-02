@@ -56,7 +56,7 @@ public:
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
     {
-        return adoptRef(*new ShadowRoot(document, WTF::move(assignment)));
+        return adoptRef(*new ShadowRoot(document, WTFMove(assignment)));
     }
 #endif
 

@@ -233,7 +233,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                  
                 GetByIdVariant variant(
                     StructureSet(structure), complexGetStatus.offset(),
-                    complexGetStatus.conditionSet(), WTF::move(callLinkStatus),
+                    complexGetStatus.conditionSet(), WTFMove(callLinkStatus),
                     intrinsicFunction);
 
                 if (!result.appendVariant(variant))

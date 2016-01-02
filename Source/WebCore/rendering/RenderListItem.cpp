@@ -45,7 +45,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderListItem::RenderListItem(Element& element, Ref<RenderStyle>&& style)
-    : RenderBlockFlow(element, WTF::move(style))
+    : RenderBlockFlow(element, WTFMove(style))
     , m_marker(nullptr)
     , m_hasExplicitValue(false)
     , m_isValueUpToDate(false)
@@ -80,12 +80,12 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
     // up (e.g., in some deeply nested line box). See CSS3 spec.
     newStyle.get().inheritFrom(&style());
     if (!m_marker) {
-        m_marker = createRenderer<RenderListMarker>(*this, WTF::move(newStyle)).leakPtr();
+        m_marker = createRenderer<RenderListMarker>(*this, WTFMove(newStyle)).leakPtr();
         m_marker->initializeStyle();
     } else {
         // Do not alter our marker's style unless our style has actually changed.
         if (diff != StyleDifferenceEqual)
-            m_marker->setStyle(WTF::move(newStyle));
+            m_marker->setStyle(WTFMove(newStyle));
     }
 }
 

@@ -160,7 +160,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> 
 
     for (const auto& match : matches) {
         Ref<Inspector::Protocol::GenericTypes::SearchMatch> matchObject = buildObjectForSearchMatch(match.first, match.second);
-        result->addItem(WTF::move(matchObject));
+        result->addItem(WTFMove(matchObject));
     }
 
     return result;

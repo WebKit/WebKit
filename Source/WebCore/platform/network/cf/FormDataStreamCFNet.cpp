@@ -139,7 +139,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
         size_t size = nextInput.m_data.size();
         MallocPtr<char> data = nextInput.m_data.releaseBuffer();
         form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data.get()), size, kCFAllocatorNull);
-        form->currentData = WTF::move(data);
+        form->currentData = WTFMove(data);
     } else {
         // Check if the file has been changed or not if required.
         if (isValidFileTime(nextInput.m_expectedFileModificationTime)) {

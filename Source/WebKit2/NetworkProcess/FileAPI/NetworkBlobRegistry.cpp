@@ -61,7 +61,7 @@ void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess* con
 
 void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, Vector<WebCore::BlobPart> blobParts, const String& contentType)
 {
-    blobRegistry().registerBlobURL(url, WTF::move(blobParts), contentType);
+    blobRegistry().registerBlobURL(url, WTFMove(blobParts), contentType);
 
     ASSERT(!m_blobsForConnection.get(connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);

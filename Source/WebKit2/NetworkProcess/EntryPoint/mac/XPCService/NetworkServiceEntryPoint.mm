@@ -39,7 +39,7 @@ namespace WebKit {
 class NetworkServiceInitializerDelegate : public XPCServiceInitializerDelegate {
 public:
     NetworkServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
-        : XPCServiceInitializerDelegate(WTF::move(connection), initializerMessage)
+        : XPCServiceInitializerDelegate(WTFMove(connection), initializerMessage)
     {
     }
 };

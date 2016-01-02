@@ -37,7 +37,7 @@ const ClassInfo NativeStdFunctionCell::s_info = { "NativeStdFunctionCell", nullp
 
 NativeStdFunctionCell* NativeStdFunctionCell::create(VM& vm, NativeStdFunction&& function)
 {
-    NativeStdFunctionCell* nativeFunction = new (NotNull, allocateCell<NativeStdFunctionCell>(vm.heap)) NativeStdFunctionCell(vm, WTF::move(function));
+    NativeStdFunctionCell* nativeFunction = new (NotNull, allocateCell<NativeStdFunctionCell>(vm.heap)) NativeStdFunctionCell(vm, WTFMove(function));
     nativeFunction->finishCreation(vm);
     return nativeFunction;
 }
@@ -45,7 +45,7 @@ NativeStdFunctionCell* NativeStdFunctionCell::create(VM& vm, NativeStdFunction&&
 
 NativeStdFunctionCell::NativeStdFunctionCell(VM& vm, NativeStdFunction&& function)
     : Base(vm, vm.nativeStdFunctionCellStructure.get())
-    , m_function(WTF::move(function))
+    , m_function(WTFMove(function))
 {
 }
 

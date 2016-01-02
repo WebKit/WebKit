@@ -80,7 +80,7 @@ public:
     void enqueue(std::unique_ptr<DisassemblyTask> task)
     {
         LockHolder locker(m_lock);
-        m_queue.append(WTF::move(task));
+        m_queue.append(WTFMove(task));
         m_condition.notifyAll();
     }
     
@@ -141,7 +141,7 @@ void disassembleAsynchronously(
     task->prefix = prefix;
     task->subsetHint = subsetHint;
     
-    asynchronousDisassembler().enqueue(WTF::move(task));
+    asynchronousDisassembler().enqueue(WTFMove(task));
 }
 
 void waitForAsynchronousDisassembly()

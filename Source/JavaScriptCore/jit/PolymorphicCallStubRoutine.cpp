@@ -72,7 +72,7 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
     CallLinkInfo& info, const Vector<PolymorphicCallCase>& cases,
     std::unique_ptr<uint32_t[]> fastCounts)
     : GCAwareJITStubRoutine(codeRef, vm)
-    , m_fastCounts(WTF::move(fastCounts))
+    , m_fastCounts(WTFMove(fastCounts))
 {
     for (PolymorphicCallCase callCase : cases) {
         m_variants.append(WriteBarrier<JSCell>(vm, owner, callCase.variant().rawCalleeCell()));

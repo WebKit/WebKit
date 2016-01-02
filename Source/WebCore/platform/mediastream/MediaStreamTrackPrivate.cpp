@@ -40,12 +40,12 @@ namespace WebCore {
 
 RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(RefPtr<RealtimeMediaSource>&& source)
 {
-    return adoptRef(new MediaStreamTrackPrivate(WTF::move(source), createCanonicalUUIDString()));
+    return adoptRef(new MediaStreamTrackPrivate(WTFMove(source), createCanonicalUUIDString()));
 }
 
 RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(RefPtr<RealtimeMediaSource>&& source, const String& id)
 {
-    return adoptRef(new MediaStreamTrackPrivate(WTF::move(source), id));
+    return adoptRef(new MediaStreamTrackPrivate(WTFMove(source), id));
 }
 
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(const MediaStreamTrackPrivate& other)

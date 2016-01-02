@@ -37,8 +37,8 @@ RemoteObjectInvocation::RemoteObjectInvocation()
 
 RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&& replyInfo)
     : m_interfaceIdentifier(interfaceIdentifier)
-    , m_encodedInvocation(WTF::move(encodedInvocation))
-    , m_replyInfo(WTF::move(replyInfo))
+    , m_encodedInvocation(WTFMove(encodedInvocation))
+    , m_replyInfo(WTFMove(replyInfo))
 {
 }
 
@@ -83,7 +83,7 @@ bool RemoteObjectInvocation::decode(IPC::ArgumentDecoder& decoder, RemoteObjectI
         if (!decoder.decode(blockSignature))
             return false;
 
-        result.m_replyInfo = std::make_unique<ReplyInfo>(replyID, WTF::move(blockSignature));
+        result.m_replyInfo = std::make_unique<ReplyInfo>(replyID, WTFMove(blockSignature));
     }
 
     return true;

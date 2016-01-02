@@ -1468,7 +1468,7 @@ bool ArgumentCoder<UserStyleSheet>::decode(ArgumentDecoder& decoder, UserStyleSh
     if (!decoder.decodeEnum(level))
         return false;
 
-    userStyleSheet = UserStyleSheet(source, url, WTF::move(whitelist), WTF::move(blacklist), injectedFrames, level);
+    userStyleSheet = UserStyleSheet(source, url, WTFMove(whitelist), WTFMove(blacklist), injectedFrames, level);
     return true;
 }
 
@@ -1534,7 +1534,7 @@ bool ArgumentCoder<UserScript>::decode(ArgumentDecoder& decoder, UserScript& use
     if (!decoder.decodeEnum(injectedFrames))
         return false;
 
-    userScript = UserScript(source, url, WTF::move(whitelist), WTF::move(blacklist), injectionTime, injectedFrames);
+    userScript = UserScript(source, url, WTFMove(whitelist), WTFMove(blacklist), injectionTime, injectedFrames);
     return true;
 }
 
@@ -1816,7 +1816,7 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
         RefPtr<FilterOperation> filter;
         if (!decodeFilterOperation(decoder, filter))
             return false;
-        filters.operations().append(WTF::move(filter));
+        filters.operations().append(WTFMove(filter));
     }
 
     return true;
@@ -1911,7 +1911,7 @@ bool ArgumentCoder<BlobPart>::decode(ArgumentDecoder& decoder, BlobPart& blobPar
         Vector<char> data;
         if (!decoder.decode(data))
             return false;
-        blobPart = BlobPart(WTF::move(data));
+        blobPart = BlobPart(WTFMove(data));
         break;
     }
     case BlobPart::Blob: {

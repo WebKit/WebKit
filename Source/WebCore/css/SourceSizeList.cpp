@@ -38,10 +38,10 @@ static bool match(std::unique_ptr<MediaQueryExp>&& expression, RenderStyle& styl
         return true;
 
     auto expList = std::make_unique<Vector<std::unique_ptr<MediaQueryExp>>>();
-    expList->append(WTF::move(expression));
+    expList->append(WTFMove(expression));
 
     RefPtr<MediaQuerySet> mediaQuerySet = MediaQuerySet::create();
-    mediaQuerySet->addMediaQuery(std::make_unique<MediaQuery>(MediaQuery::None, "all", WTF::move(expList)));
+    mediaQuerySet->addMediaQuery(std::make_unique<MediaQuery>(MediaQuery::None, "all", WTFMove(expList)));
 
     MediaQueryEvaluator mediaQueryEvaluator("screen", frame, &style);
     return mediaQueryEvaluator.eval(mediaQuerySet.get());
@@ -72,7 +72,7 @@ float parseSizesAttribute(StringView sizesAttribute, RenderView* view, Frame* fr
         return 0;
     RenderStyle& style = view->style();
     for (auto& sourceSize : CSSParser(CSSStrictMode).parseSizesAttribute(sizesAttribute)) {
-        if (match(WTF::move(sourceSize.expression), style, frame))
+        if (match(WTFMove(sourceSize.expression), style, frame))
             return computeLength(sourceSize.length.get(), style, view);
     }
     return defaultLength(style, view);

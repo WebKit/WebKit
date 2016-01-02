@@ -64,7 +64,7 @@ bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&& pathSeg, SVGPath
     ASSERT(parsingMode == UnalteredParsing);
 
     SVGPathSegList appendedItemList(PathSegUnalteredRole);
-    appendedItemList.append(WTF::move(pathSeg));
+    appendedItemList.append(WTFMove(pathSeg));
 
     SVGPathByteStream appendedByteStream;
     SVGPathSegListSource source(appendedItemList);

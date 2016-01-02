@@ -95,7 +95,7 @@ void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
 
 JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestMediaQueryListListener>&& impl)
-    : JSDOMWrapper<TestMediaQueryListListener>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestMediaQueryListListener>(structure, globalObject, WTFMove(impl))
 {
 }
 

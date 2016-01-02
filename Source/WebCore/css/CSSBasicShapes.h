@@ -214,7 +214,7 @@ class CSSBasicShapePath final : public CSSBasicShape {
 public:
     static Ref<CSSBasicShapePath> create(std::unique_ptr<SVGPathByteStream>&& pathData)
     {
-        return adoptRef(*new CSSBasicShapePath(WTF::move(pathData)));
+        return adoptRef(*new CSSBasicShapePath(WTFMove(pathData)));
     }
 
     const SVGPathByteStream& pathData() const

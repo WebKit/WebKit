@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapper<TestOverrideBuiltins> Base;
     static JSTestOverrideBuiltins* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverrideBuiltins>&& impl)
     {
-        JSTestOverrideBuiltins* ptr = new (NotNull, JSC::allocateCell<JSTestOverrideBuiltins>(globalObject->vm().heap)) JSTestOverrideBuiltins(structure, *globalObject, WTF::move(impl));
+        JSTestOverrideBuiltins* ptr = new (NotNull, JSC::allocateCell<JSTestOverrideBuiltins>(globalObject->vm().heap)) JSTestOverrideBuiltins(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

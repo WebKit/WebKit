@@ -1124,7 +1124,7 @@ Vector<RefPtr<ArchiveResource>> DocumentLoader::subresources() const
 
     for (auto& cachedResourceHandle : m_cachedResourceLoader->allCachedResources().values()) {
         if (RefPtr<ArchiveResource> subresource = this->subresource(URL(ParsedURLString, cachedResourceHandle->url())))
-            subresources.append(WTF::move(subresource));
+            subresources.append(WTFMove(subresource));
     }
 
     return subresources;
@@ -1658,7 +1658,7 @@ void DocumentLoader::installContentFilterUnblockHandler(ContentFilter& contentFi
                 frame->script().executeScript(capturedScript.string());
         });
     }
-    frameLoader()->client().contentFilterDidBlockLoad(WTF::move(unblockHandler));
+    frameLoader()->client().contentFilterDidBlockLoad(WTFMove(unblockHandler));
 }
 
 void DocumentLoader::contentFilterDidDecide()

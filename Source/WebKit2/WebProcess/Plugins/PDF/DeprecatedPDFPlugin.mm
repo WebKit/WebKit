@@ -527,7 +527,7 @@ PDFPlugin::PDFPlugin(WebFrame* frame)
         Ref<Element> annotationStyleElement = document->createElement(styleTag, false);
         annotationStyleElement->setTextContent(annotationStyle, ASSERT_NO_EXCEPTION);
 
-        m_annotationContainer->appendChild(WTF::move(annotationStyleElement));
+        m_annotationContainer->appendChild(WTFMove(annotationStyleElement));
         document->bodyOrFrameset()->appendChild(*m_annotationContainer);
     }
 

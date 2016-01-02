@@ -106,7 +106,7 @@ void InjectedScript::getFunctionDetails(ErrorString& errorString, const String& 
         return;
     }
 
-    *result = BindingTraits<Inspector::Protocol::Debugger::FunctionDetails>::runtimeCast(WTF::move(resultValue));
+    *result = BindingTraits<Inspector::Protocol::Debugger::FunctionDetails>::runtimeCast(WTFMove(resultValue));
 }
 
 void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
@@ -123,7 +123,7 @@ void InjectedScript::getProperties(ErrorString& errorString, const String& objec
         return;
     }
 
-    *properties = BindingTraits<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTF::move(result));
+    *properties = BindingTraits<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTFMove(result));
 }
 
 void InjectedScript::getDisplayableProperties(ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
@@ -139,7 +139,7 @@ void InjectedScript::getDisplayableProperties(ErrorString& errorString, const St
         return;
     }
 
-    *properties = BindingTraits<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTF::move(result));
+    *properties = BindingTraits<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTFMove(result));
 }
 
 void InjectedScript::getInternalProperties(ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>* properties)
@@ -155,7 +155,7 @@ void InjectedScript::getInternalProperties(ErrorString& errorString, const Strin
         return;
     }
 
-    auto array = BindingTraits<Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>::runtimeCast(WTF::move(result));
+    auto array = BindingTraits<Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>::runtimeCast(WTFMove(result));
     *properties = array->length() > 0 ? array : nullptr;
 }
 
@@ -174,7 +174,7 @@ void InjectedScript::getCollectionEntries(ErrorString& errorString, const String
         return;
     }
 
-    *entries = BindingTraits<Array<Protocol::Runtime::CollectionEntry>>::runtimeCast(WTF::move(result));
+    *entries = BindingTraits<Array<Protocol::Runtime::CollectionEntry>>::runtimeCast(WTFMove(result));
 }
 
 void InjectedScript::saveResult(ErrorString& errorString, const String& callArgumentJSON, Inspector::Protocol::OptOutput<int>* savedResultIndex)
@@ -205,7 +205,7 @@ Ref<Array<Inspector::Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFra
     ASSERT(!hadException);
     RefPtr<InspectorValue> result = callFramesValue.toInspectorValue(scriptState());
     if (result->type() == InspectorValue::Type::Array)
-        return BindingTraits<Array<Inspector::Protocol::Debugger::CallFrame>>::runtimeCast(WTF::move(result)).releaseNonNull();
+        return BindingTraits<Array<Inspector::Protocol::Debugger::CallFrame>>::runtimeCast(WTFMove(result)).releaseNonNull();
 
     return Array<Inspector::Protocol::Debugger::CallFrame>::create();
 }

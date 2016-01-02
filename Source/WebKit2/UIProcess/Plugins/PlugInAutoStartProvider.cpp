@@ -99,10 +99,10 @@ Ref<API::Dictionary> PlugInAutoStartProvider::autoStartOriginsTableCopy() const
                 hashMap.set(String::number(originHash.key), API::Double::create(originHash.value));
         }
         if (hashMap.size())
-            map.set(stringOriginHash.key, API::Dictionary::create(WTF::move(hashMap)));
+            map.set(stringOriginHash.key, API::Dictionary::create(WTFMove(hashMap)));
     }
 
-    return API::Dictionary::create(WTF::move(map));
+    return API::Dictionary::create(WTFMove(map));
 }
 
 void PlugInAutoStartProvider::setAutoStartOriginsTable(API::Dictionary& table)

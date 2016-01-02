@@ -136,7 +136,7 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
             if ((mappedName && [mappedName isEqual:(NSString*)methodName.get()]) || strcmp(objcMethodSelectorName, buffer.data()) == 0) {
                 auto method = std::make_unique<ObjcMethod>(thisClass, objcMethodSelector);
                 methodPtr = method.get();
-                m_methodCache.add(name.impl(), WTF::move(method));
+                m_methodCache.add(name.impl(), WTFMove(method));
                 break;
             }
         }
@@ -192,7 +192,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
             if ((mappedName && [mappedName isEqual:(NSString*)fieldName.get()]) || [keyName isEqual:(NSString*)fieldName.get()]) {
                 auto newField = std::make_unique<ObjcField>((CFStringRef)keyName);
                 field = newField.get();
-                m_fieldCache.add(name.impl(), WTF::move(newField));
+                m_fieldCache.add(name.impl(), WTFMove(newField));
                 break;
             }
         }
@@ -223,7 +223,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
                 if ((mappedName && [mappedName isEqual:(NSString*)fieldName.get()]) || strcmp(objcIvarName, jsName.data()) == 0) {
                     auto newField = std::make_unique<ObjcField>(objcIVar);
                     field = newField.get();
-                    m_fieldCache.add(name.impl(), WTF::move(newField));
+                    m_fieldCache.add(name.impl(), WTFMove(newField));
                     break;
                 }
             }

@@ -98,7 +98,7 @@ inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 class RenderTextControlInnerBlock final : public RenderBlockFlow {
 public:
     RenderTextControlInnerBlock(Element& element, Ref<RenderStyle>&& style)
-        : RenderBlockFlow(element, WTF::move(style))
+        : RenderBlockFlow(element, WTFMove(style))
     {
     }
 

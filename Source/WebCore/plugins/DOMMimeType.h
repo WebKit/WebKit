@@ -32,7 +32,7 @@ class DOMPlugin;
 
 class DOMMimeType : public RefCounted<DOMMimeType>, public FrameDestructionObserver {
 public:
-    static Ref<DOMMimeType> create(RefPtr<PluginData>&& pluginData, Frame* frame, unsigned index) { return adoptRef(*new DOMMimeType(WTF::move(pluginData), frame, index)); }
+    static Ref<DOMMimeType> create(RefPtr<PluginData>&& pluginData, Frame* frame, unsigned index) { return adoptRef(*new DOMMimeType(WTFMove(pluginData), frame, index)); }
     ~DOMMimeType();
 
     String type() const;

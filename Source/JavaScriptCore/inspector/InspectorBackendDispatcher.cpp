@@ -45,7 +45,7 @@ SupplementalBackendDispatcher::~SupplementalBackendDispatcher()
 }
 
 BackendDispatcher::CallbackBase::CallbackBase(Ref<BackendDispatcher>&& backendDispatcher, long requestId)
-    : m_backendDispatcher(WTF::move(backendDispatcher))
+    : m_backendDispatcher(WTFMove(backendDispatcher))
     , m_requestId(requestId)
 {
 }
@@ -75,17 +75,17 @@ void BackendDispatcher::CallbackBase::sendSuccess(RefPtr<InspectorObject>&& part
         return;
 
     m_alreadySent = true;
-    m_backendDispatcher->sendResponse(m_requestId, WTF::move(partialMessage));
+    m_backendDispatcher->sendResponse(m_requestId, WTFMove(partialMessage));
 }
 
 BackendDispatcher::BackendDispatcher(Ref<FrontendRouter>&& router)
-    : m_frontendRouter(WTF::move(router))
+    : m_frontendRouter(WTFMove(router))
 {
 }
 
 Ref<BackendDispatcher> BackendDispatcher::create(Ref<FrontendRouter>&& router)
 {
-    return adoptRef(*new BackendDispatcher(WTF::move(router)));
+    return adoptRef(*new BackendDispatcher(WTFMove(router)));
 }
 
 bool BackendDispatcher::isActive() const
@@ -226,16 +226,16 @@ void BackendDispatcher::sendPendingErrors()
         Ref<InspectorObject> error = InspectorObject::create();
         error->setInteger(ASCIILiteral("code"), errorCodes[errorCode]);
         error->setString(ASCIILiteral("message"), errorMessage);
-        payload->pushObject(WTF::move(error));
+        payload->pushObject(WTFMove(error));
     }
 
     Ref<InspectorObject> topLevelError = InspectorObject::create();
     topLevelError->setInteger(ASCIILiteral("code"), errorCodes[errorCode]);
     topLevelError->setString(ASCIILiteral("message"), errorMessage);
-    topLevelError->setArray(ASCIILiteral("data"), WTF::move(payload));
+    topLevelError->setArray(ASCIILiteral("data"), WTFMove(payload));
 
     Ref<InspectorObject> message = InspectorObject::create();
-    message->setObject(ASCIILiteral("error"), WTF::move(topLevelError));
+    message->setObject(ASCIILiteral("error"), WTFMove(topLevelError));
     if (m_currentRequestId)
         message->setInteger(ASCIILiteral("id"), m_currentRequestId.value());
     else {

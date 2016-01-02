@@ -275,7 +275,7 @@ private:
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
         if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.flowThreadContainingBlock()
             || m_layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
-            m_layoutState = std::make_unique<LayoutState>(WTF::move(m_layoutState), &renderer, offset, pageHeight, pageHeightChanged);
+            m_layoutState = std::make_unique<LayoutState>(WTFMove(m_layoutState), &renderer, offset, pageHeight, pageHeightChanged);
             pushLayoutStateForCurrentFlowThread(renderer);
             return true;
         }
@@ -285,7 +285,7 @@ private:
     void popLayoutState()
     {
         popLayoutStateForCurrentFlowThread();
-        m_layoutState = WTF::move(m_layoutState->m_next);
+        m_layoutState = WTFMove(m_layoutState->m_next);
     }
 
     // Suspends the LayoutState optimization. Used under transforms that cannot be represented by

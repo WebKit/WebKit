@@ -334,7 +334,7 @@ void UnlinkedFunctionExecutable::destroy(JSCell* cell)
 
 void UnlinkedCodeBlock::setInstructions(std::unique_ptr<UnlinkedInstructionStream> instructions)
 {
-    m_unlinkedInstructions = WTF::move(instructions);
+    m_unlinkedInstructions = WTFMove(instructions);
 }
 
 const UnlinkedInstructionStream& UnlinkedCodeBlock::instructions() const

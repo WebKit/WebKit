@@ -89,15 +89,15 @@ void BlobBuilder::append(Blob* blob)
     if (!blob)
         return;
     if (!m_appendableData.isEmpty())
-        m_items.append(BlobPart(WTF::move(m_appendableData)));
+        m_items.append(BlobPart(WTFMove(m_appendableData)));
     m_items.append(BlobPart(blob->url()));
 }
 
 Vector<BlobPart> BlobBuilder::finalize()
 {
     if (!m_appendableData.isEmpty())
-        m_items.append(BlobPart(WTF::move(m_appendableData)));
-    return WTF::move(m_items);
+        m_items.append(BlobPart(WTFMove(m_appendableData)));
+    return WTFMove(m_items);
 }
 
 } // namespace WebCore

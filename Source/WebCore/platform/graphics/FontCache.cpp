@@ -424,7 +424,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
         for (auto& font : cachedFonts().values()) {
             if (!font->hasOneRef())
                 continue;
-            fontsToDelete.append(WTF::move(font));
+            fontsToDelete.append(WTFMove(font));
             if (!--purgeCount)
                 break;
         }

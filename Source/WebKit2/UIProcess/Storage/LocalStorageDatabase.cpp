@@ -48,13 +48,13 @@ namespace WebKit {
 
 PassRefPtr<LocalStorageDatabase> LocalStorageDatabase::create(PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker, Ref<SecurityOrigin>&& securityOrigin)
 {
-    return adoptRef(new LocalStorageDatabase(queue, tracker, WTF::move(securityOrigin)));
+    return adoptRef(new LocalStorageDatabase(queue, tracker, WTFMove(securityOrigin)));
 }
 
 LocalStorageDatabase::LocalStorageDatabase(PassRefPtr<WorkQueue> queue, PassRefPtr<LocalStorageDatabaseTracker> tracker, Ref<SecurityOrigin>&& securityOrigin)
     : m_queue(queue)
     , m_tracker(tracker)
-    , m_securityOrigin(WTF::move(securityOrigin))
+    , m_securityOrigin(WTFMove(securityOrigin))
     , m_databasePath(m_tracker->databasePath(m_securityOrigin.ptr()))
     , m_failedToOpenDatabase(false)
     , m_didImportItems(false)

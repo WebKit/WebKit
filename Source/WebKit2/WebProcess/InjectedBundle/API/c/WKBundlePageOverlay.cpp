@@ -225,7 +225,7 @@ WKTypeID WKBundlePageOverlayGetTypeID()
 WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* wkClient)
 {
     auto clientImpl = std::make_unique<PageOverlayClientImpl>(wkClient);
-    return toAPI(&WebPageOverlay::create(WTF::move(clientImpl)).leakRef());
+    return toAPI(&WebPageOverlay::create(WTFMove(clientImpl)).leakRef());
 }
 
 void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlayRef, WKBundlePageOverlayAccessibilityClientBase* client)

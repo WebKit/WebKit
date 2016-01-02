@@ -116,7 +116,7 @@ void JSTestNondeterministicPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestNondeterministic::s_info = { "TestNondeterministic", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNondeterministic) };
 
 JSTestNondeterministic::JSTestNondeterministic(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNondeterministic>&& impl)
-    : JSDOMWrapper<TestNondeterministic>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestNondeterministic>(structure, globalObject, WTFMove(impl))
 {
 }
 

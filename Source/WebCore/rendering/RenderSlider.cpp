@@ -48,7 +48,7 @@ namespace WebCore {
 const int RenderSlider::defaultTrackLength = 129;
 
 RenderSlider::RenderSlider(HTMLInputElement& element, Ref<RenderStyle>&& style)
-    : RenderFlexibleBox(element, WTF::move(style))
+    : RenderFlexibleBox(element, WTFMove(style))
 {
     // We assume RenderSlider works only with <input type=range>.
     ASSERT(element.isRangeControl());

@@ -171,7 +171,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         m_jitCode->common.inlineCallFrames = m_graph.m_plan.inlineCallFrames;
     
 #if USE(JSVALUE32_64)
-    m_jitCode->common.doubleConstants = WTF::move(m_graph.m_doubleConstants);
+    m_jitCode->common.doubleConstants = WTFMove(m_graph.m_doubleConstants);
 #endif
     
     m_graph.registerFrozenValues();
@@ -363,7 +363,7 @@ void JITCompiler::compile()
     disassemble(*linkBuffer);
     
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
-        m_graph.m_plan, m_jitCode.release(), WTF::move(linkBuffer));
+        m_graph.m_plan, m_jitCode.release(), WTFMove(linkBuffer));
 }
 
 void JITCompiler::compileFunction()
@@ -460,7 +460,7 @@ void JITCompiler::compileFunction()
     MacroAssemblerCodePtr withArityCheck = linkBuffer->locationOf(m_arityCheck);
 
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
-        m_graph.m_plan, m_jitCode.release(), WTF::move(linkBuffer), withArityCheck);
+        m_graph.m_plan, m_jitCode.release(), WTFMove(linkBuffer), withArityCheck);
 }
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)

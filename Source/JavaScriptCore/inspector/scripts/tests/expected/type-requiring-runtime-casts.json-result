@@ -42,7 +42,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -377,7 +377,7 @@ public:
         }
 
         Builder(Ref</*TypeNeedingCast*/InspectorObject>&& object)
-            : m_result(WTF::move(object))
+            : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
@@ -425,7 +425,7 @@ public:
             COMPILE_ASSERT(sizeof(TypeNeedingCast) == sizeof(InspectorObject), cannot_cast);
 
             Ref<InspectorObject> result = m_result.releaseNonNull();
-            return WTF::move(*reinterpret_cast<Ref<TypeNeedingCast>*>(&result));
+            return WTFMove(*reinterpret_cast<Ref<TypeNeedingCast>*>(&result));
         }
     };
 
@@ -477,7 +477,7 @@ public:
         }
 
         Builder(Ref</*RecursiveObject1*/InspectorObject>&& object)
-            : m_result(WTF::move(object))
+            : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
@@ -490,7 +490,7 @@ public:
             COMPILE_ASSERT(sizeof(RecursiveObject1) == sizeof(InspectorObject), cannot_cast);
 
             Ref<InspectorObject> result = m_result.releaseNonNull();
-            return WTF::move(*reinterpret_cast<Ref<RecursiveObject1>*>(&result));
+            return WTFMove(*reinterpret_cast<Ref<RecursiveObject1>*>(&result));
         }
     };
 
@@ -506,7 +506,7 @@ public:
 
     void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject2> value)
     {
-        InspectorObjectBase::setObject(ASCIILiteral("obj"), WTF::move(value));
+        InspectorObjectBase::setObject(ASCIILiteral("obj"), WTFMove(value));
     }
 };
 
@@ -528,7 +528,7 @@ public:
         }
 
         Builder(Ref</*RecursiveObject2*/InspectorObject>&& object)
-            : m_result(WTF::move(object))
+            : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
@@ -541,7 +541,7 @@ public:
             COMPILE_ASSERT(sizeof(RecursiveObject2) == sizeof(InspectorObject), cannot_cast);
 
             Ref<InspectorObject> result = m_result.releaseNonNull();
-            return WTF::move(*reinterpret_cast<Ref<RecursiveObject2>*>(&result));
+            return WTFMove(*reinterpret_cast<Ref<RecursiveObject2>*>(&result));
         }
     };
 
@@ -557,7 +557,7 @@ public:
 
     void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
     {
-        InspectorObjectBase::setObject(ASCIILiteral("obj"), WTF::move(value));
+        InspectorObjectBase::setObject(ASCIILiteral("obj"), WTFMove(value));
     }
 };
 

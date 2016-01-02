@@ -158,21 +158,21 @@ template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=
 
 template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr&& o)
 {
-    RefPtr ptr = WTF::move(o);
+    RefPtr ptr = WTFMove(o);
     swap(ptr);
     return *this;
 }
 
 template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<U>&& o)
 {
-    RefPtr ptr = WTF::move(o);
+    RefPtr ptr = WTFMove(o);
     swap(ptr);
     return *this;
 }
 
 template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(Ref<U>&& reference)
 {
-    RefPtr ptr = WTF::move(reference);
+    RefPtr ptr = WTFMove(reference);
     swap(ptr);
     return *this;
 }

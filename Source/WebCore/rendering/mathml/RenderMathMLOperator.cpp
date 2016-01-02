@@ -73,7 +73,7 @@ static const StretchyCharacter stretchyCharacters[14] = {
 };
 
 RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, Ref<RenderStyle>&& style)
-    : RenderMathMLToken(element, WTF::move(style))
+    : RenderMathMLToken(element, WTFMove(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
     , m_textContent(0)
@@ -83,7 +83,7 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, Ref<RenderSty
 }
 
 RenderMathMLOperator::RenderMathMLOperator(Document& document, Ref<RenderStyle>&& style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
-    : RenderMathMLToken(document, WTF::move(style))
+    : RenderMathMLToken(document, WTFMove(style))
     , m_stretchHeightAboveBaseline(0)
     , m_stretchDepthBelowBaseline(0)
     , m_textContent(0)
@@ -605,7 +605,7 @@ void RenderMathMLOperator::updateStyle()
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     newStyle.get().setMarginStart(Length(m_leadingSpace, Fixed));
     newStyle.get().setMarginEnd(Length(m_trailingSpace, Fixed));
-    wrapper->setStyle(WTF::move(newStyle));
+    wrapper->setStyle(WTFMove(newStyle));
     wrapper->setNeedsLayoutAndPrefWidthsRecalc();
 
     if (!shouldAllowStretching())

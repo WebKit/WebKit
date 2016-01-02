@@ -43,7 +43,7 @@ bool WebEditorClient::executePendingEditorCommands(Frame* frame, const Vector<WT
         if (command.isTextInsertion() && !allowTextInsertion)
             return false;
 
-        commands.append(WTF::move(command));
+        commands.append(WTFMove(command));
     }
 
     for (auto& command : commands) {

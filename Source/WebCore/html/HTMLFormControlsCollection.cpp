@@ -138,7 +138,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
         }
     }
 
-    setNamedItemCache(WTF::move(cache));
+    setNamedItemCache(WTFMove(cache));
 }
 
 void HTMLFormControlsCollection::invalidateCache(Document& document)

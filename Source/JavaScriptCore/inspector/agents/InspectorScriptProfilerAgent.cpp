@@ -138,7 +138,7 @@ void InspectorScriptProfilerAgent::addEvent(double startTime, double endTime, Pr
         .setType(toProtocol(reason))
         .release();
 
-    m_frontendDispatcher->trackingUpdate(WTF::move(event));
+    m_frontendDispatcher->trackingUpdate(WTFMove(event));
 }
 
 static Ref<Protocol::Timeline::CPUProfileNodeAggregateCallInfo> buildAggregateCallInfoInspectorObject(const JSC::ProfileNode* node)
@@ -178,7 +178,7 @@ static Ref<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::P
         auto children = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
         for (RefPtr<JSC::ProfileNode> profileNode : node->children())
             children->addItem(buildInspectorObject(profileNode.get()));
-        result->setChildren(WTF::move(children));
+        result->setChildren(WTFMove(children));
     }
 
     return result;
@@ -191,7 +191,7 @@ static Ref<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC
         rootNodes->addItem(buildInspectorObject(profileNode.get()));
 
     return Protocol::Timeline::CPUProfile::create()
-        .setRootNodes(WTF::move(rootNodes))
+        .setRootNodes(WTFMove(rootNodes))
         .release();
 }
 
@@ -200,7 +200,7 @@ void InspectorScriptProfilerAgent::trackingComplete()
     RefPtr<Inspector::Protocol::Array<InspectorValue>> profiles = Inspector::Protocol::Array<InspectorValue>::create();
     for (auto& profile : m_profiles) {
         Ref<InspectorValue> value = buildProfileInspectorObject(profile.get());
-        profiles->addItem(WTF::move(value));
+        profiles->addItem(WTFMove(value));
     }
 
     m_frontendDispatcher->trackingComplete(profiles);

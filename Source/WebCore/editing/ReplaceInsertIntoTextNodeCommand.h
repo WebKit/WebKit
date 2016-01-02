@@ -34,7 +34,7 @@ class ReplaceInsertIntoTextNodeCommand final : public InsertIntoTextNodeCommand 
 public:
     static Ref<ReplaceInsertIntoTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, const String& text, const String& deletedText, EditAction editingAction)
     {
-        return adoptRef(*new ReplaceInsertIntoTextNodeCommand(WTF::move(node), offset, text, deletedText, editingAction));
+        return adoptRef(*new ReplaceInsertIntoTextNodeCommand(WTFMove(node), offset, text, deletedText, editingAction));
     }
 
 private:

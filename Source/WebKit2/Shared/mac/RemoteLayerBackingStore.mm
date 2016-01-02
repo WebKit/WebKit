@@ -424,7 +424,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
 
 RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()
 {
-    return WTF::move(m_frontContextPendingFlush);
+    return WTFMove(m_frontContextPendingFlush);
 }
 
 #if USE(IOSURFACE)
@@ -482,7 +482,7 @@ void RemoteLayerBackingStore::Buffer::discard()
 {
 #if USE(IOSURFACE)
     if (surface)
-        IOSurface::moveToPool(WTF::move(surface));
+        IOSurface::moveToPool(WTFMove(surface));
     isVolatile = false;
 #endif
     bitmap = nullptr;

@@ -125,7 +125,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         return jsUndefined();
 
     MessageEvent& event = jsEvent->wrapped();
-    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, WTF::move(messagePorts));
+    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, WTFMove(messagePorts));
     jsEvent->m_data.set(state.vm(), jsEvent, dataArg.jsValue());
     return jsUndefined();
 }

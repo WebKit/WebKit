@@ -66,7 +66,7 @@ AffineTransform SVGTextElement::animatedLocalTransform() const
 
 RenderPtr<RenderElement> SVGTextElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGText>(*this, WTF::move(style));
+    return createRenderer<RenderSVGText>(*this, WTFMove(style));
 }
 
 bool SVGTextElement::childShouldCreateRenderer(const Node& child) const

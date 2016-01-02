@@ -138,7 +138,7 @@ void GeolocationController::viewStateDidChange(ViewState::Flags oldViewState, Vi
     if (!m_page.isVisible())
         return;
 
-    HashSet<RefPtr<Geolocation>> pendedPermissionRequests = WTF::move(m_pendedPermissionRequest);
+    HashSet<RefPtr<Geolocation>> pendedPermissionRequests = WTFMove(m_pendedPermissionRequest);
     for (auto& permissionRequest : pendedPermissionRequests)
         m_client.requestPermission(permissionRequest.get());
 }

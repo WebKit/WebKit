@@ -75,7 +75,7 @@ void ScrollingTreeIOS::invalidate()
 
 void ScrollingTreeIOS::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
 {
-    ScrollingTree::commitNewTreeState(WTF::move(scrollingStateTree));
+    ScrollingTree::commitNewTreeState(WTFMove(scrollingStateTree));
 }
 
 void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)

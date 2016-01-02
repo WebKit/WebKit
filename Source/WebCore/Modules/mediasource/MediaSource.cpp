@@ -115,7 +115,7 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
 {
     ASSERT(!m_private);
     ASSERT(m_mediaElement);
-    m_private = WTF::move(mediaSourcePrivate);
+    m_private = WTFMove(mediaSourcePrivate);
     setReadyState(openKeyword());
 }
 

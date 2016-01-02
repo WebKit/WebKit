@@ -1,3 +1,293 @@
+2015-12-31  Andy Estes  <aestes@apple.com>
+
+        Replace WTF::move with WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Brady Eidson.
+
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::ObjCCallbackFunctionImpl):
+        (JSC::ObjCCallbackFunction::ObjCCallbackFunction):
+        (JSC::ObjCCallbackFunction::create):
+        (objCCallbackFunctionForInvocation):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::releaseAssemblerData):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode):
+        * b3/B3BlockInsertionSet.cpp:
+        (JSC::B3::BlockInsertionSet::insert):
+        (JSC::B3::BlockInsertionSet::splitForward):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3OpaqueByproducts.cpp:
+        (JSC::B3::OpaqueByproducts::add):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::addDataSection):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::releaseByproducts):
+        * b3/B3ProcedureInlines.h:
+        (JSC::B3::Procedure::add):
+        * b3/B3Value.h:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addBlock):
+        (JSC::B3::Air::Code::addStackSlot):
+        (JSC::B3::Air::Code::addSpecial):
+        * b3/air/AirInst.h:
+        (JSC::B3::Air::Inst::Inst):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirSimplifyCFG.cpp:
+        (JSC::B3::Air::simplifyCFG):
+        * bindings/ScriptValue.cpp:
+        (Deprecated::jsToInspectorValue):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::createExecutableInternal):
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::computeBytecodeBasicBlocks):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setCalleeSaveRegisters):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCodeMap):
+        (JSC::CodeBlock::livenessAnalysis):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerateWithCases):
+        (JSC::PolymorphicAccess::regenerateWithCase):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::setter):
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::push):
+        * bytecode/StructureStubClearingWatchpoint.h:
+        (JSC::StructureStubClearingWatchpoint::StructureStubClearingWatchpoint):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::setInstructions):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/SetForScope.h:
+        (JSC::SetForScope::SetForScope):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::livenessFor):
+        (JSC::DFG::Graph::killsFor):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::JITFinalizer):
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::LivenessAnalysisPhase::process):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::addSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::finishCreation):
+        * disassembler/Disassembler.cpp:
+        (JSC::disassembleAsynchronously):
+        * ftl/FTLB3Compile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::initializeB3Byproducts):
+        * ftl/FTLJITFinalizer.h:
+        (JSC::FTL::OutOfLineCodeInfo::OutOfLineCodeInfo):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+        * heap/Heap.cpp:
+        (JSC::Heap::releaseDelayedReleasedObjects):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::setIncrementalSweeper):
+        * heap/HeapInlines.h:
+        (JSC::Heap::releaseSoon):
+        (JSC::Heap::registerWeakGCMap):
+        * heap/WeakInlines.h:
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::addToFrontend):
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::searchInTextByLines):
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::getFunctionDetails):
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getDisplayableProperties):
+        (Inspector::InjectedScript::getInternalProperties):
+        (Inspector::InjectedScript::getCollectionEntries):
+        (Inspector::InjectedScript::wrapCallFrames):
+        * inspector/InspectorAgentRegistry.cpp:
+        (Inspector::AgentRegistry::append):
+        (Inspector::AgentRegistry::appendExtraAgent):
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::CallbackBase::CallbackBase):
+        (Inspector::BackendDispatcher::CallbackBase::sendSuccess):
+        (Inspector::BackendDispatcher::BackendDispatcher):
+        (Inspector::BackendDispatcher::create):
+        (Inspector::BackendDispatcher::sendPendingErrors):
+        * inspector/InspectorProtocolTypes.h:
+        (Inspector::Protocol::Array::addItem):
+        * inspector/InspectorValues.cpp:
+        * inspector/InspectorValues.h:
+        (Inspector::InspectorObjectBase::setValue):
+        (Inspector::InspectorObjectBase::setObject):
+        (Inspector::InspectorObjectBase::setArray):
+        (Inspector::InspectorArrayBase::pushValue):
+        (Inspector::InspectorArrayBase::pushObject):
+        (Inspector::InspectorArrayBase::pushArray):
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::messageWithTypeAndLevel):
+        (Inspector::JSGlobalObjectConsoleClient::timeEnd):
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::appendExtraAgent):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::JSInjectedScriptHost):
+        * inspector/JSInjectedScriptHost.h:
+        (Inspector::JSInjectedScriptHost::create):
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::activateExtraDomain):
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::addMessageToConsole):
+        (Inspector::InspectorConsoleAgent::addConsoleMessage):
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::resolveBreakpoint):
+        (Inspector::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe):
+        (Inspector::InspectorDebuggerAgent::breakProgram):
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::didGarbageCollect):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        (Inspector::InspectorRuntimeAgent::getBasicBlocks):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::addEvent):
+        (Inspector::buildInspectorObject):
+        (Inspector::buildProfileInspectorObject):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        * inspector/augmentable/AlternateDispatchableAgent.h:
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator._generate_small_dispatcher_switch_implementation_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (_generate_unchecked_setter_for_member):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_out_parameters):
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::performSafeWrites):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::PolymorphicCallStubRoutine):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        (JSC::linkPolymorphicCall):
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::setClosedVariables):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Parser::closedVariables):
+        * parser/SourceProviderCache.cpp:
+        (JSC::SourceProviderCache::add):
+        * profiler/ProfileNode.h:
+        (JSC::CalculateProfileSubtreeDataFunctor::returnValue):
+        * replay/EncodedValue.cpp:
+        (JSC::EncodedValue::get<EncodedValue>):
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Generator.generate_member_move_expression):
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.cpp:
+        (Test::HandleWheelEvent::HandleWheelEvent):
+        (JSC::InputTraits<Test::HandleWheelEvent>::decode):
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.cpp:
+        (Test::MapInput::MapInput):
+        (JSC::InputTraits<Test::MapInput>::decode):
+        * runtime/ConsoleClient.cpp:
+        (JSC::ConsoleClient::internalMessageWithTypeAndLevel):
+        (JSC::ConsoleClient::logWithLevel):
+        (JSC::ConsoleClient::clear):
+        (JSC::ConsoleClient::dir):
+        (JSC::ConsoleClient::dirXML):
+        (JSC::ConsoleClient::table):
+        (JSC::ConsoleClient::trace):
+        (JSC::ConsoleClient::assertCondition):
+        (JSC::ConsoleClient::group):
+        (JSC::ConsoleClient::groupCollapsed):
+        (JSC::ConsoleClient::groupEnd):
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::create):
+        * runtime/JSString.h:
+        (JSC::jsNontrivialString):
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::join):
+        * runtime/JSStringJoiner.h:
+        (JSC::JSStringJoiner::append):
+        * runtime/NativeStdFunctionCell.cpp:
+        (JSC::NativeStdFunctionCell::create):
+        (JSC::NativeStdFunctionCell::NativeStdFunctionCell):
+        * runtime/ScopedArgumentsTable.cpp:
+        (JSC::ScopedArgumentsTable::setLength):
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::resize):
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::inspectorRepresentation):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::set):
+        * tools/CodeProfile.h:
+        (JSC::CodeProfile::addChild):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPatternConstructor::reset):
+        (JSC::Yarr::YarrPatternConstructor::atomPatternCharacter):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassEnd):
+        (JSC::Yarr::YarrPatternConstructor::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::YarrPatternConstructor::atomParentheticalAssertionBegin):
+        (JSC::Yarr::YarrPatternConstructor::copyDisjunction):
+
 2016-01-01  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix copyright dates. It's super annoying when we forget to update these, and I

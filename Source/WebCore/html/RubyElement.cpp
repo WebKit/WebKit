@@ -46,10 +46,10 @@ Ref<RubyElement> RubyElement::create(const QualifiedName& tagName, Document& doc
 RenderPtr<RenderElement> RubyElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     if (style->display() == INLINE)
-        return createRenderer<RenderRubyAsInline>(*this, WTF::move(style));
+        return createRenderer<RenderRubyAsInline>(*this, WTFMove(style));
     if (style->display() == BLOCK || style.get().display() == INLINE_BLOCK)
-        return createRenderer<RenderRubyAsBlock>(*this, WTF::move(style));
-    return HTMLElement::createElementRenderer(WTF::move(style), insertionPosition);
+        return createRenderer<RenderRubyAsBlock>(*this, WTFMove(style));
+    return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 
 }

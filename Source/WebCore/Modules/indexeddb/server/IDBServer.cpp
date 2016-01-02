@@ -350,13 +350,13 @@ void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier,
 void IDBServer::postDatabaseTask(std::unique_ptr<CrossThreadTask>&& task)
 {
     ASSERT(isMainThread());
-    m_databaseQueue.append(WTF::move(task));
+    m_databaseQueue.append(WTFMove(task));
 }
 
 void IDBServer::postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&& task)
 {
     ASSERT(!isMainThread());
-    m_databaseReplyQueue.append(WTF::move(task));
+    m_databaseReplyQueue.append(WTFMove(task));
 
 
     Locker<Lock> locker(m_mainThreadReplyLock);

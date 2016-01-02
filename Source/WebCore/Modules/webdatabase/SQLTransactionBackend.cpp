@@ -466,7 +466,7 @@ SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQL
 void SQLTransactionBackend::enqueueStatementBackend(std::unique_ptr<SQLStatement> statementBackend)
 {
     LockHolder locker(m_statementMutex);
-    m_statementQueue.append(WTF::move(statementBackend));
+    m_statementQueue.append(WTFMove(statementBackend));
 }
 
 void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
@@ -520,7 +520,7 @@ void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatement> statementBa
     if (m_database->deleted())
         statementBackend->setDatabaseDeletedError();
 
-    enqueueStatementBackend(WTF::move(statementBackend));
+    enqueueStatementBackend(WTFMove(statementBackend));
 }
 
 void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()

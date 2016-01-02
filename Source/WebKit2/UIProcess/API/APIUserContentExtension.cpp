@@ -34,7 +34,7 @@ namespace API {
 
 UserContentExtension::UserContentExtension(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&& contentExtension)
     : m_name(name)
-    , m_compiledExtension(WTF::move(contentExtension))
+    , m_compiledExtension(WTFMove(contentExtension))
 {
 }
 

@@ -890,7 +890,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     for (auto* node : nodesVector) {
         Ref<Element> element = createDefaultParagraphElement(*document);
         element->appendChild(*node);
-        fragment->appendChild(WTF::move(element));
+        fragment->appendChild(WTFMove(element));
     }
 
     return kit(fragment.release().get());

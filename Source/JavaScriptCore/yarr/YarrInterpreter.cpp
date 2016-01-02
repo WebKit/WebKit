@@ -1478,7 +1478,7 @@ public:
         emitDisjunction(m_pattern.m_body);
         regexEnd();
 
-        return std::make_unique<BytecodePattern>(WTF::move(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator);
+        return std::make_unique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator);
     }
 
     void checkInput(unsigned count)
@@ -1725,7 +1725,7 @@ public:
         m_bodyDisjunction->terms.shrink(beginTerm);
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, inputPosition));
-        m_allParenthesesInfo.append(WTF::move(parenthesesDisjunction));
+        m_allParenthesesInfo.append(WTFMove(parenthesesDisjunction));
 
         m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount.unsafeGet();
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;

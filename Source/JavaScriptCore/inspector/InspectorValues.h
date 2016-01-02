@@ -350,21 +350,21 @@ inline void InspectorObjectBase::setString(const String& name, const String& val
 inline void InspectorObjectBase::setValue(const String& name, RefPtr<InspectorValue>&& value)
 {
     ASSERT(value);
-    if (m_data.set(name, WTF::move(value)).isNewEntry)
+    if (m_data.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
 inline void InspectorObjectBase::setObject(const String& name, RefPtr<InspectorObjectBase>&& value)
 {
     ASSERT(value);
-    if (m_data.set(name, WTF::move(value)).isNewEntry)
+    if (m_data.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
 inline void InspectorObjectBase::setArray(const String& name, RefPtr<InspectorArrayBase>&& value)
 {
     ASSERT(value);
-    if (m_data.set(name, WTF::move(value)).isNewEntry)
+    if (m_data.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
@@ -391,19 +391,19 @@ inline void InspectorArrayBase::pushString(const String& value)
 inline void InspectorArrayBase::pushValue(RefPtr<InspectorValue>&& value)
 {
     ASSERT(value);
-    m_data.append(WTF::move(value));
+    m_data.append(WTFMove(value));
 }
 
 inline void InspectorArrayBase::pushObject(RefPtr<InspectorObjectBase>&& value)
 {
     ASSERT(value);
-    m_data.append(WTF::move(value));
+    m_data.append(WTFMove(value));
 }
 
 inline void InspectorArrayBase::pushArray(RefPtr<InspectorArrayBase>&& value)
 {
     ASSERT(value);
-    m_data.append(WTF::move(value));
+    m_data.append(WTFMove(value));
 }
 
 } // namespace Inspector

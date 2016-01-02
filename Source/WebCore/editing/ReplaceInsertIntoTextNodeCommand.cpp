@@ -33,7 +33,7 @@
 namespace WebCore {
 
 ReplaceInsertIntoTextNodeCommand::ReplaceInsertIntoTextNodeCommand(RefPtr<Text>&& node, unsigned offset, const String& text, const String& deletedText, EditAction editingAction)
-    : InsertIntoTextNodeCommand(WTF::move(node), offset, text, editingAction)
+    : InsertIntoTextNodeCommand(WTFMove(node), offset, text, editingAction)
     , m_deletedText(deletedText)
 {
 }

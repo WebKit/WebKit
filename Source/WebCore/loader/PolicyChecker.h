@@ -80,7 +80,7 @@ public:
     void continueLoadAfterWillSubmitForm(PolicyAction);
 
 #if ENABLE(CONTENT_FILTERING)
-    void setContentFilterUnblockHandler(ContentFilterUnblockHandler unblockHandler) { m_contentFilterUnblockHandler = WTF::move(unblockHandler); }
+    void setContentFilterUnblockHandler(ContentFilterUnblockHandler unblockHandler) { m_contentFilterUnblockHandler = WTFMove(unblockHandler); }
 #endif
 
 private:

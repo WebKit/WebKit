@@ -68,17 +68,17 @@ std::unique_ptr<ContentFilter> ContentFilter::createIfEnabled(DocumentLoader& do
 
         auto filter = type.create();
         ASSERT(filter);
-        filters.append(WTF::move(filter));
+        filters.append(WTFMove(filter));
     }
 
     if (filters.isEmpty())
         return nullptr;
 
-    return std::make_unique<ContentFilter>(WTF::move(filters), documentLoader);
+    return std::make_unique<ContentFilter>(WTFMove(filters), documentLoader);
 }
 
 ContentFilter::ContentFilter(Container contentFilters, DocumentLoader& documentLoader)
-    : m_contentFilters { WTF::move(contentFilters) }
+    : m_contentFilters { WTFMove(contentFilters) }
     , m_documentLoader { documentLoader }
 {
     LOG(ContentFiltering, "Creating ContentFilter with %zu platform content filter(s).\n", m_contentFilters.size());

@@ -101,7 +101,7 @@ void DocumentEventQueue::enqueueOrDispatchScrollEvent(Node& target)
 
     Ref<Event> scrollEvent = Event::create(eventNames().scrollEvent, bubbles, cancelable);
     scrollEvent->setTarget(&target);
-    enqueueEvent(WTF::move(scrollEvent));
+    enqueueEvent(WTFMove(scrollEvent));
 }
 
 bool DocumentEventQueue::cancelEvent(Event& event)

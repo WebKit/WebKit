@@ -282,7 +282,7 @@ void JSDOMWindowBase::queueTaskToEventLoop(const JSGlobalObject* object, PassRef
         callback->call();
     });
 
-    MicrotaskQueue::mainThreadQueue().append(WTF::move(microtask));
+    MicrotaskQueue::mainThreadQueue().append(WTFMove(microtask));
 }
 
 void JSDOMWindowBase::willRemoveFromWindowShell()

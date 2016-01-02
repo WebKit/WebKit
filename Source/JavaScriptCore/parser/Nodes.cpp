@@ -125,7 +125,7 @@ ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startL
 
 void ProgramNode::setClosedVariables(Vector<RefPtr<UniquedStringImpl>>&& closedVariables)
 {
-    m_closedVariables = WTF::move(closedVariables);
+    m_closedVariables = WTFMove(closedVariables);
 }
 
 // ------------------------------ ModuleProgramNode -----------------------------

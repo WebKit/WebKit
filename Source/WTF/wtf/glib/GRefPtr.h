@@ -142,7 +142,7 @@ template <typename T> inline GRefPtr<T>& GRefPtr<T>::operator=(const GRefPtr<T>&
 
 template <typename T> inline GRefPtr<T>& GRefPtr<T>::operator=(GRefPtr<T>&& o)
 {
-    GRefPtr ptr = WTF::move(o);
+    GRefPtr ptr = WTFMove(o);
     swap(ptr);
     return *this;
 }

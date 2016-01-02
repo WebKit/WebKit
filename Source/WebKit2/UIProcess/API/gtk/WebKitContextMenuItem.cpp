@@ -107,7 +107,7 @@ WebContextMenuItemGtk webkitContextMenuItemToWebContextMenuItemGtk(WebKitContext
     if (item->priv->subMenu) {
         Vector<WebContextMenuItemGtk> subMenuItems;
         webkitContextMenuPopulate(item->priv->subMenu.get(), subMenuItems);
-        return WebContextMenuItemGtk(*item->priv->menuItem, WTF::move(subMenuItems));
+        return WebContextMenuItemGtk(*item->priv->menuItem, WTFMove(subMenuItems));
     }
 
     return *item->priv->menuItem;

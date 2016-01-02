@@ -138,7 +138,7 @@ class ObjCConfigurationImplementationGenerator(Generator):
                 else:
                     lines.append('        if (%s)' % var_name)
                     lines.append('            resultObject->%s(ASCIILiteral("%s"), %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
-            lines.append('        backendDispatcher()->sendResponse(requestId, WTF::move(resultObject));')
+            lines.append('        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject));')
         else:
             lines.append('        backendDispatcher()->sendResponse(requestId, InspectorObject::create());')
 

@@ -315,7 +315,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     g_ptr_array_add(selectedFiles.get(), 0);
 
     // Select the files in WebCore and update local private attributes.
-    request->priv->listener->chooseFiles(API::Array::create(WTF::move(choosenFiles)).ptr());
+    request->priv->listener->chooseFiles(API::Array::create(WTFMove(choosenFiles)).ptr());
     request->priv->selectedFiles = selectedFiles;
     request->priv->handledRequest = true;
 }

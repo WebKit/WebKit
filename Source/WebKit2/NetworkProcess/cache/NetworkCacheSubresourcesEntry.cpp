@@ -70,7 +70,7 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
 }
 
 SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<Key>& subresourceKeys)
-    : m_key(WTF::move(key))
+    : m_key(WTFMove(key))
     , m_timeStamp(std::chrono::system_clock::now())
 {
     ASSERT(m_key.type() == "subresources");
@@ -80,7 +80,7 @@ SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<Key>& subresourceKe
 
 void SubresourcesEntry::updateSubresourceKeys(const Vector<Key>& subresourceKeys)
 {
-    auto oldSubresources = WTF::move(m_subresources);
+    auto oldSubresources = WTFMove(m_subresources);
 
     // Mark keys that are common with last load as non-Transient.
     for (auto& key : subresourceKeys) {

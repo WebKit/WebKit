@@ -44,7 +44,7 @@ static const float gLineThick = 3.f;
 static const float gFractionBarWidth = 0.05f;
 
 RenderMathMLFraction::RenderMathMLFraction(MathMLInlineContainerElement& element, Ref<RenderStyle>&& style)
-    : RenderMathMLBlock(element, WTF::move(style))
+    : RenderMathMLBlock(element, WTFMove(style))
     , m_lineThickness(gLineMedium)
 {
 }

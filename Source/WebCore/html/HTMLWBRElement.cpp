@@ -46,7 +46,7 @@ HTMLWBRElement::HTMLWBRElement(const QualifiedName& tagName, Document& document)
 
 RenderPtr<RenderElement> HTMLWBRElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderLineBreak>(*this, WTF::move(style));
+    return createRenderer<RenderLineBreak>(*this, WTFMove(style));
 }
 
 } // namespace WebCore

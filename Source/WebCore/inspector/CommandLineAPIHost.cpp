@@ -84,8 +84,8 @@ void CommandLineAPIHost::inspectImpl(RefPtr<InspectorValue>&& object, RefPtr<Ins
     if (!hints->asObject(hintsObject))
         return;
 
-    auto remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(WTF::move(object));
-    m_inspectorAgent->inspect(WTF::move(remoteObject), WTF::move(hintsObject));
+    auto remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(WTFMove(object));
+    m_inspectorAgent->inspect(WTFMove(remoteObject), WTFMove(hintsObject));
 }
 
 void CommandLineAPIHost::getEventListenersImpl(Node* node, Vector<EventListenerInfo>& listenersArray)
@@ -114,7 +114,7 @@ Deprecated::ScriptValue CommandLineAPIHost::InspectableObject::get(JSC::ExecStat
 
 void CommandLineAPIHost::addInspectedObject(std::unique_ptr<CommandLineAPIHost::InspectableObject> object)
 {
-    m_inspectedObject = WTF::move(object);
+    m_inspectedObject = WTFMove(object);
 }
 
 CommandLineAPIHost::InspectableObject* CommandLineAPIHost::inspectedObject()

@@ -51,7 +51,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTable::RenderTable(Element& element, Ref<RenderStyle>&& style)
-    : RenderBlock(element, WTF::move(style), 0)
+    : RenderBlock(element, WTFMove(style), 0)
     , m_head(nullptr)
     , m_foot(nullptr)
     , m_firstBody(nullptr)
@@ -75,7 +75,7 @@ RenderTable::RenderTable(Element& element, Ref<RenderStyle>&& style)
 }
 
 RenderTable::RenderTable(Document& document, Ref<RenderStyle>&& style)
-    : RenderBlock(document, WTF::move(style), 0)
+    : RenderBlock(document, WTFMove(style), 0)
     , m_head(nullptr)
     , m_foot(nullptr)
     , m_firstBody(nullptr)

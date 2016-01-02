@@ -159,7 +159,7 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGResourceMasker>(*this, WTF::move(style));
+    return createRenderer<RenderSVGResourceMasker>(*this, WTFMove(style));
 }
 
 }

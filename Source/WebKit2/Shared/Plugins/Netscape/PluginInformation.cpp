@@ -127,7 +127,7 @@ Ref<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo& p
     API::Dictionary::MapType map;
     getPluginModuleInformation(plugin, map);
 
-    return API::Dictionary::create(WTF::move(map));
+    return API::Dictionary::create(WTFMove(map));
 }
 
 Ref<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured)
@@ -147,7 +147,7 @@ Ref<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo& p
         map.set(pluginInformationPluginURLKey(), API::URL::create(pluginURLString));
     map.set(plugInInformationReplacementObscuredKey(), API::Boolean::create(replacementObscured));
 
-    return API::Dictionary::create(WTF::move(map));
+    return API::Dictionary::create(WTFMove(map));
 }
 
 Ref<API::Dictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString)
@@ -161,7 +161,7 @@ Ref<API::Dictionary> createPluginInformationDictionary(const String& mimeType, c
     if (!pageURLString.isEmpty())
         map.set(pluginInformationPageURLKey(), API::URL::create(pageURLString));
 
-    return API::Dictionary::create(WTF::move(map));
+    return API::Dictionary::create(WTFMove(map));
 }
 
 #if !PLATFORM(COCOA)

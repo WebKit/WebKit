@@ -34,7 +34,7 @@ class RemoveNodeCommand : public SimpleEditCommand {
 public:
     static Ref<RemoveNodeCommand> create(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
     {
-        return adoptRef(*new RemoveNodeCommand(WTF::move(node), shouldAssumeContentIsAlwaysEditable));
+        return adoptRef(*new RemoveNodeCommand(WTFMove(node), shouldAssumeContentIsAlwaysEditable));
     }
 
 private:

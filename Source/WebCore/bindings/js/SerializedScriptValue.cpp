@@ -2024,7 +2024,7 @@ private:
         if (type == CryptoKeyAsymmetricTypeSubtag::Public) {
             auto keyData = CryptoKeyDataRSAComponents::createPublic(modulus, exponent);
             auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
-            result = WTF::move(key);
+            result = WTFMove(key);
             return true;
         }
 
@@ -2039,7 +2039,7 @@ private:
         if (!primeCount) {
             auto keyData = CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
             auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
-            result = WTF::move(key);
+            result = WTFMove(key);
             return true;
         }
 
@@ -2071,7 +2071,7 @@ private:
 
         auto keyData = CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(modulus, exponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos);
         auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
-        result = WTF::move(key);
+        result = WTFMove(key);
         return true;
     }
 
@@ -2229,11 +2229,11 @@ private:
                 if (!readFile(file))
                     return JSValue();
                 if (m_isDOMGlobalObject)
-                    files.append(WTF::move(file));
+                    files.append(WTFMove(file));
             }
             if (!m_isDOMGlobalObject)
                 return jsNull();
-            return getJSValue(FileList::create(WTF::move(files)).get());
+            return getJSValue(FileList::create(WTFMove(files)).get());
         }
         case ImageDataTag: {
             int32_t width;
@@ -2613,7 +2613,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<Str
 }
 
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray)
-    : m_arrayBufferContentsArray(WTF::move(arrayBufferContentsArray))
+    : m_arrayBufferContentsArray(WTFMove(arrayBufferContentsArray))
 {
     m_data.swap(buffer);
     for (auto& string : blobURLs)
@@ -2666,7 +2666,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec, JSV
     if (!serializationDidCompleteSuccessfully(code))
         return nullptr;
 
-    return adoptRef(*new SerializedScriptValue(buffer, blobURLs, WTF::move(arrayBufferContentsArray)));
+    return adoptRef(*new SerializedScriptValue(buffer, blobURLs, WTFMove(arrayBufferContentsArray)));
 }
 
 RefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& string)

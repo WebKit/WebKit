@@ -347,7 +347,7 @@ static UIImage* iconForFile(NSURL *file)
     urls.reserveInitialCapacity(count);
     for (NSURL *fileURL in fileURLs)
         urls.uncheckedAppend(adoptRef(toImpl(WKURLCreateWithCFURL((CFURLRef)fileURL))));
-    Ref<API::Array> fileURLsRef = API::Array::create(WTF::move(urls));
+    Ref<API::Array> fileURLsRef = API::Array::create(WTFMove(urls));
 
     NSData *jpeg = UIImageJPEGRepresentation(iconImage, 1.0);
     RefPtr<API::Data> iconImageDataRef = adoptRef(toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([jpeg bytes]), [jpeg length])));

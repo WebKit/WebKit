@@ -47,7 +47,7 @@ private:
 inline void DFACombiner::addDFA(DFA&& dfa)
 {
     dfa.minimize();
-    m_dfas.append(WTF::move(dfa));
+    m_dfas.append(WTFMove(dfa));
 }
 
 }

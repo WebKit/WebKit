@@ -45,7 +45,7 @@ Ref<MathMLMathElement> MathMLMathElement::create(const QualifiedName& tagName, D
 
 RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMathMLMath>(*this, WTF::move(style));
+    return createRenderer<RenderMathMLMath>(*this, WTFMove(style));
 }
 
 }

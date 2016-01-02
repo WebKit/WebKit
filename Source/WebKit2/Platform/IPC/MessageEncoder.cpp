@@ -118,7 +118,7 @@ void MessageEncoder::wrapForTesting(std::unique_ptr<MessageEncoder> original)
     Vector<Attachment> attachments = original->releaseAttachments();
     reserve(attachments.size());
     for (Attachment& attachment : attachments)
-        addAttachment(WTF::move(attachment));
+        addAttachment(WTFMove(attachment));
 }
 
 } // namespace IPC

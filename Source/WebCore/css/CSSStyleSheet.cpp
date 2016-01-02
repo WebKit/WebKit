@@ -78,12 +78,12 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 
 Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, CSSImportRule* ownerRule)
 { 
-    return adoptRef(*new CSSStyleSheet(WTF::move(sheet), ownerRule));
+    return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerRule));
 }
 
 Ref<CSSStyleSheet> CSSStyleSheet::create(Ref<StyleSheetContents>&& sheet, Node* ownerNode)
 { 
-    return adoptRef(*new CSSStyleSheet(WTF::move(sheet), ownerNode, TextPosition::minimumPosition(), false));
+    return adoptRef(*new CSSStyleSheet(WTFMove(sheet), ownerNode, TextPosition::minimumPosition(), false));
 }
 
 Ref<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const URL& baseURL, const TextPosition& startPosition, const String& encoding)
@@ -93,7 +93,7 @@ Ref<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const URL& baseU
 }
 
 CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* ownerRule)
-    : m_contents(WTF::move(contents))
+    : m_contents(WTFMove(contents))
     , m_isInlineStylesheet(false)
     , m_isDisabled(false)
     , m_mutatedRules(false)
@@ -105,7 +105,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* 
 }
 
 CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node* ownerNode, const TextPosition& startPosition, bool isInlineStylesheet)
-    : m_contents(WTF::move(contents))
+    : m_contents(WTFMove(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
     , m_isDisabled(false)
     , m_mutatedRules(false)

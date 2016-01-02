@@ -128,7 +128,7 @@ public:
             callback->attributes[i * 5 + 4] = callback->attributes[i * 5 + 3] + len;
         }
 
-        m_callbacks.append(WTF::move(callback));
+        m_callbacks.append(WTFMove(callback));
     }
 
     void appendEndElementNSCallback()
@@ -143,7 +143,7 @@ public:
         callback->s = xmlStrndup(s, len);
         callback->len = len;
 
-        m_callbacks.append(WTF::move(callback));
+        m_callbacks.append(WTFMove(callback));
     }
 
     void appendProcessingInstructionCallback(const xmlChar* target, const xmlChar* data)
@@ -153,7 +153,7 @@ public:
         callback->target = xmlStrdup(target);
         callback->data = xmlStrdup(data);
 
-        m_callbacks.append(WTF::move(callback));
+        m_callbacks.append(WTFMove(callback));
     }
 
     void appendCDATABlockCallback(const xmlChar* s, int len)
@@ -163,7 +163,7 @@ public:
         callback->s = xmlStrndup(s, len);
         callback->len = len;
 
-        m_callbacks.append(WTF::move(callback));
+        m_callbacks.append(WTFMove(callback));
     }
 
     void appendCommentCallback(const xmlChar* s)
@@ -172,7 +172,7 @@ public:
 
         callback->s = xmlStrdup(s);
 
-        m_callbacks.append(WTF::move(callback));
+        m_callbacks.append(WTFMove(callback));
     }
 
     void appendInternalSubsetCallback(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
@@ -183,7 +183,7 @@ public:
         callback->externalID = xmlStrdup(externalID);
         callback->systemID = xmlStrdup(systemID);
 
-        m_callbacks.append(WTF::move(callback));
+        m_callbacks.append(WTFMove(callback));
     }
 
     void appendErrorCallback(XMLErrors::ErrorType type, const xmlChar* message, OrdinalNumber lineNumber, OrdinalNumber columnNumber)
@@ -195,7 +195,7 @@ public:
         callback->lineNumber = lineNumber;
         callback->columnNumber = columnNumber;
 
-        m_callbacks.append(WTF::move(callback));
+        m_callbacks.append(WTFMove(callback));
     }
 
     void callAndRemoveFirstCallback(XMLDocumentParser* parser)
@@ -364,7 +364,7 @@ class OffsetBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     OffsetBuffer(Vector<char> buffer)
-        : m_buffer(WTF::move(buffer))
+        : m_buffer(WTFMove(buffer))
         , m_currentOffset(0)
     {
     }
@@ -473,7 +473,7 @@ static void* openFunc(const char* uri)
     Vector<char> buffer;
     if (data)
         buffer.append(data->data(), data->size());
-    return new OffsetBuffer(WTF::move(buffer));
+    return new OffsetBuffer(WTFMove(buffer));
 }
 
 static int readFunc(void* context, char* buffer, int len)
@@ -1032,7 +1032,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
         return;
 
     auto newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
-    m_currentNode->parserAppendChild(WTF::move(newNode));
+    m_currentNode->parserAppendChild(WTFMove(newNode));
 }
 
 void XMLDocumentParser::comment(const xmlChar* s)
@@ -1049,7 +1049,7 @@ void XMLDocumentParser::comment(const xmlChar* s)
         return;
 
     auto newNode = Comment::create(m_currentNode->document(), toString(s));
-    m_currentNode->parserAppendChild(WTF::move(newNode));
+    m_currentNode->parserAppendChild(WTFMove(newNode));
 }
 
 enum StandaloneInfo {
@@ -1558,7 +1558,7 @@ HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
     xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), parseString.length() * sizeof(UChar), 1);
 
     attrsOK = state.gotAttributes;
-    return WTF::move(state.attributes);
+    return WTFMove(state.attributes);
 }
 
 }

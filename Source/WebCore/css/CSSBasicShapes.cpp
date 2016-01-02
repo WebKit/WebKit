@@ -202,7 +202,7 @@ bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
 }
 
 CSSBasicShapePath::CSSBasicShapePath(std::unique_ptr<SVGPathByteStream>&& pathData)
-    : m_byteStream(WTF::move(pathData))
+    : m_byteStream(WTFMove(pathData))
 {
 }
 

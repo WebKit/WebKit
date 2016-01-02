@@ -218,7 +218,7 @@ void SpeculativeJIT::cachedGetById(
     }
 
     m_jit.addGetById(gen, slowPath.get());
-    addSlowPathGenerator(WTF::move(slowPath));
+    addSlowPathGenerator(WTFMove(slowPath));
 }
 
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
@@ -247,7 +247,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
         valuePayloadGPR, basePayloadGPR, identifierUID(identifierNumber));
 
     m_jit.addPutById(gen, slowPath.get());
-    addSlowPathGenerator(WTF::move(slowPath));
+    addSlowPathGenerator(WTFMove(slowPath));
 }
 
 void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operand)

@@ -98,7 +98,7 @@ static void ensureObjectStream(WKRemoteObjectEncoder *encoder)
     Ref<API::Array> objectStream = API::Array::create();
     encoder->_objectStream = objectStream.ptr();
 
-    encoder->_rootDictionary->set(objectStreamKey, WTF::move(objectStream));
+    encoder->_rootDictionary->set(objectStreamKey, WTFMove(objectStream));
 }
 
 static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
@@ -270,7 +270,7 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *encode
 
     encodeObject(encoder, object);
 
-    return WTF::move(dictionary);
+    return WTFMove(dictionary);
 }
 
 - (void)encodeValueOfObjCType:(const char *)type at:(const void *)address

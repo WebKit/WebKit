@@ -37,7 +37,7 @@ class Geoposition : public RefCounted<Geoposition> {
 public:
     static Ref<Geoposition> create(RefPtr<Coordinates>&& coordinates, DOMTimeStamp timestamp)
     {
-        return adoptRef(*new Geoposition(WTF::move(coordinates), timestamp));
+        return adoptRef(*new Geoposition(WTFMove(coordinates), timestamp));
     }
 
     Ref<Geoposition> isolatedCopy() const
@@ -50,7 +50,7 @@ public:
     
 private:
     Geoposition(RefPtr<Coordinates>&& coordinates, DOMTimeStamp timestamp)
-        : m_coordinates(WTF::move(coordinates))
+        : m_coordinates(WTFMove(coordinates))
         , m_timestamp(timestamp)
     {
         ASSERT(m_coordinates);

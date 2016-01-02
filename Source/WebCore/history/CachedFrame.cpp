@@ -280,7 +280,7 @@ void CachedFrame::destroy()
 
 void CachedFrame::setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData> data)
 {
-    m_cachedFramePlatformData = WTF::move(data);
+    m_cachedFramePlatformData = WTFMove(data);
 }
 
 CachedFramePlatformData* CachedFrame::cachedFramePlatformData()

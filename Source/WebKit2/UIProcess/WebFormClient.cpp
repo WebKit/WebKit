@@ -49,7 +49,7 @@ void WebFormClient::willSubmitForm(WebPageProxy& page, WebFrameProxy& frame, Web
     API::Dictionary::MapType map;
     for (size_t i = 0; i < textFieldValues.size(); ++i)
         map.set(textFieldValues[i].first, API::String::create(textFieldValues[i].second));
-    Ref<API::Dictionary> textFieldsMap = API::Dictionary::create(WTF::move(map));
+    Ref<API::Dictionary> textFieldsMap = API::Dictionary::create(WTFMove(map));
     m_client.willSubmitForm(toAPI(&page), toAPI(&frame), toAPI(&sourceFrame), toAPI(textFieldsMap.ptr()), toAPI(userData), toAPI(&listener.get()), m_client.base.clientInfo);
 }
 

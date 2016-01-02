@@ -397,7 +397,7 @@ void JSTestInterfacePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, CREATE_METHOD_TABLE(JSTestInterface) };
 
 JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestInterface>&& impl)
-    : JSDOMWrapper<TestInterface>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestInterface>(structure, globalObject, WTFMove(impl))
 {
 }
 

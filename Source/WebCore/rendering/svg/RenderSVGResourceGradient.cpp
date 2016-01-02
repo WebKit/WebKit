@@ -31,7 +31,7 @@
 namespace WebCore {
 
 RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement& node, Ref<RenderStyle>&& style)
-    : RenderSVGResourceContainer(node, WTF::move(style))
+    : RenderSVGResourceContainer(node, WTFMove(style))
     , m_shouldCollectGradientAttributes(true)
 #if USE(CG)
     , m_savedContext(0)
@@ -69,7 +69,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     ASSERT(maskImage);
     savedContext = context;
     context = &maskImageContext;
-    imageBuffer = WTF::move(maskImage);
+    imageBuffer = WTFMove(maskImage);
     return true;
 }
 

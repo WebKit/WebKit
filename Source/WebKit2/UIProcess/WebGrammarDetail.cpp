@@ -61,7 +61,7 @@ Ref<API::Array> WebGrammarDetail::guesses() const
     Vector<RefPtr<API::Object> > wkGuesses(numGuesses);
     for (unsigned i = 0; i < numGuesses; ++i)
         wkGuesses[i] = API::String::create(m_grammarDetail.guesses[i]);
-    return API::Array::create(WTF::move(wkGuesses));
+    return API::Array::create(WTFMove(wkGuesses));
 }
 
 WebGrammarDetail::WebGrammarDetail(const WebCore::GrammarDetail& grammarDetail)

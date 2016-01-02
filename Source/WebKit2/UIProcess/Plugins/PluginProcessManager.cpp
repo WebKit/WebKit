@@ -73,7 +73,7 @@ uint64_t PluginProcessManager::pluginProcessToken(const PluginModuleInfo& plugin
     attributes.processType = pluginProcessType;
     attributes.sandboxPolicy = pluginProcessSandboxPolicy;
 
-    m_pluginProcessTokens.append(std::make_pair(WTF::move(attributes), token));
+    m_pluginProcessTokens.append(std::make_pair(WTFMove(attributes), token));
     m_knownTokens.add(token);
 
     return token;
@@ -99,20 +99,20 @@ void PluginProcessManager::fetchWebsiteData(const PluginModuleInfo& plugin, std:
 {
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
 
-    pluginProcess->fetchWebsiteData(WTF::move(completionHandler));
+    pluginProcess->fetchWebsiteData(WTFMove(completionHandler));
 }
 
 void PluginProcessManager::deleteWebsiteData(const PluginModuleInfo& plugin, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
 {
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
 
-    pluginProcess->deleteWebsiteData(modifiedSince, WTF::move(completionHandler));
+    pluginProcess->deleteWebsiteData(modifiedSince, WTFMove(completionHandler));
 }
 
 void PluginProcessManager::deleteWebsiteDataForHostNames(const PluginModuleInfo& plugin, const Vector<String>& hostNames, std::function<void ()> completionHandler)
 {
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
-    pluginProcess->deleteWebsiteDataForHostNames(hostNames, WTF::move(completionHandler));
+    pluginProcess->deleteWebsiteDataForHostNames(hostNames, WTFMove(completionHandler));
 }
 
 PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(uint64_t pluginProcessToken)

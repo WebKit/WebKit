@@ -45,7 +45,7 @@ public:
     uint64_t listenerID() const { return m_listenerID; }
 
     API::Navigation* navigation() { return m_navigation.get(); }
-    void setNavigation(Ref<API::Navigation>&& navigation) { m_navigation = WTF::move(navigation); }
+    void setNavigation(Ref<API::Navigation>&& navigation) { m_navigation = WTFMove(navigation); }
 
 protected:
     WebFrameListenerProxy(WebFrameProxy*, uint64_t listenerID);

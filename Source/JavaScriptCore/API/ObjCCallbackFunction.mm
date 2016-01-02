@@ -394,8 +394,8 @@ public:
         : m_type(type)
         , m_instanceClass(instanceClass)
         , m_invocation(invocation)
-        , m_arguments(WTF::move(arguments))
-        , m_result(WTF::move(result))
+        , m_arguments(WTFMove(arguments))
+        , m_result(WTFMove(result))
     {
         ASSERT((type != CallbackInstanceMethod && type != CallbackInitMethod) || instanceClass);
     }
@@ -502,13 +502,13 @@ ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::JSGlobalObject* glo
     : Base(vm, globalObject->objcCallbackFunctionStructure())
     , m_functionCallback(functionCallback)
     , m_constructCallback(constructCallback)
-    , m_impl(WTF::move(impl))
+    , m_impl(WTFMove(impl))
 {
 }
 
 ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, const String& name, std::unique_ptr<ObjCCallbackFunctionImpl> impl)
 {
-    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm.heap)) ObjCCallbackFunction(vm, globalObject, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTF::move(impl));
+    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm.heap)) ObjCCallbackFunction(vm, globalObject, objCCallbackFunctionCallAsFunction, objCCallbackFunctionCallAsConstructor, WTFMove(impl));
     function->finishCreation(vm, name);
     return function;
 }
@@ -661,16 +661,16 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
         if (!argument || !skipNumber(position))
             return nullptr;
 
-        *nextArgument = WTF::move(argument);
+        *nextArgument = WTFMove(argument);
         nextArgument = &(*nextArgument)->m_next;
         ++argumentCount;
     }
 
     JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
     JSC::JSLockHolder locker(exec);
-    auto impl = std::make_unique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTF::move(arguments), WTF::move(result));
+    auto impl = std::make_unique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTFMove(arguments), WTFMove(result));
     const String& name = impl->name();
-    return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), name, WTF::move(impl)));
+    return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), name, WTFMove(impl)));
 }
 
 JSObjectRef objCCallbackFunctionForInit(JSContext *context, Class cls, Protocol *protocol, SEL sel, const char* types)

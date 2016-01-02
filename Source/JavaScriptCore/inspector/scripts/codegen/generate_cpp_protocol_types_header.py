@@ -312,7 +312,7 @@ class CppProtocolTypesHeaderGenerator(Generator):
         if isinstance(type_member.type, EnumType):
             lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::getEnumConstantValue(static_cast<int>(value)));' % setter_args)
         elif CppGenerator.should_use_references_for_type(type_member.type):
-            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), WTF::move(value));' % setter_args)
+            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), WTFMove(value));' % setter_args)
         else:
             lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
         lines.append('    }')

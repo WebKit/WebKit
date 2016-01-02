@@ -68,8 +68,8 @@ void executeInsertions(TargetVectorType& target, InsertionVectorType& insertions
         size_t firstIndex = insertions[indexInInsertions].index() + indexInInsertions;
         size_t indexOffset = indexInInsertions + 1;
         for (size_t i = lastIndex; --i > firstIndex;)
-            target[i] = WTF::move(target[i - indexOffset]);
-        target[firstIndex] = WTF::move(insertions[indexInInsertions].element());
+            target[i] = WTFMove(target[i - indexOffset]);
+        target[firstIndex] = WTFMove(insertions[indexInInsertions].element());
         lastIndex = firstIndex;
     }
     insertions.resize(0);

@@ -153,7 +153,7 @@ void callOnMainThread(std::function<void ()> function)
     {
         std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
         needToSchedule = functionQueue().size() == 0;
-        functionQueue().append(WTF::move(function));
+        functionQueue().append(WTFMove(function));
     }
 
     if (needToSchedule)

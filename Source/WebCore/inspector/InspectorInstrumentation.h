@@ -1042,7 +1042,7 @@ inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* co
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didOpenDatabaseImpl(*instrumentingAgents, WTF::move(database), domain, name, version);
+        didOpenDatabaseImpl(*instrumentingAgents, WTFMove(database), domain, name, version);
 }
 
 inline void InspectorInstrumentation::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page* page)
@@ -1107,37 +1107,37 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
 inline void InspectorInstrumentation::sessionCreated(Page& page, RefPtr<ReplaySession>&& session)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    sessionCreatedImpl(instrumentingAgentsForPage(page), WTF::move(session));
+    sessionCreatedImpl(instrumentingAgentsForPage(page), WTFMove(session));
 }
 
 inline void InspectorInstrumentation::sessionLoaded(Page& page, RefPtr<ReplaySession>&& session)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    sessionLoadedImpl(instrumentingAgentsForPage(page), WTF::move(session));
+    sessionLoadedImpl(instrumentingAgentsForPage(page), WTFMove(session));
 }
 
 inline void InspectorInstrumentation::sessionModified(Page& page, RefPtr<ReplaySession>&& session)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    sessionModifiedImpl(instrumentingAgentsForPage(page), WTF::move(session));
+    sessionModifiedImpl(instrumentingAgentsForPage(page), WTFMove(session));
 }
 
 inline void InspectorInstrumentation::segmentCreated(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    segmentCreatedImpl(instrumentingAgentsForPage(page), WTF::move(segment));
+    segmentCreatedImpl(instrumentingAgentsForPage(page), WTFMove(segment));
 }
 
 inline void InspectorInstrumentation::segmentCompleted(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    segmentCompletedImpl(instrumentingAgentsForPage(page), WTF::move(segment));
+    segmentCompletedImpl(instrumentingAgentsForPage(page), WTFMove(segment));
 }
 
 inline void InspectorInstrumentation::segmentLoaded(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    segmentLoadedImpl(instrumentingAgentsForPage(page), WTF::move(segment));
+    segmentLoadedImpl(instrumentingAgentsForPage(page), WTFMove(segment));
 }
 
 inline void InspectorInstrumentation::segmentUnloaded(Page& page)

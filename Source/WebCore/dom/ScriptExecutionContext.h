@@ -124,7 +124,7 @@ public:
 
         template<typename T, typename = typename std::enable_if<!std::is_base_of<Task, T>::value && std::is_convertible<T, std::function<void (ScriptExecutionContext&)>>::value>::type>
         Task(T task)
-            : m_task(WTF::move(task))
+            : m_task(WTFMove(task))
             , m_isCleanupTask(false)
         {
         }
@@ -137,13 +137,13 @@ public:
 
         template<typename T, typename = typename std::enable_if<std::is_convertible<T, std::function<void (ScriptExecutionContext&)>>::value>::type>
         Task(CleanupTaskTag, T task)
-            : m_task(WTF::move(task))
+            : m_task(WTFMove(task))
             , m_isCleanupTask(true)
         {
         }
 
         Task(Task&& other)
-            : m_task(WTF::move(other.m_task))
+            : m_task(WTFMove(other.m_task))
             , m_isCleanupTask(other.m_isCleanupTask)
         {
         }

@@ -37,7 +37,7 @@
 namespace WebCore {
 
 NetworkStorageSession::NetworkStorageSession(std::unique_ptr<SoupNetworkSession> session)
-    : m_session(WTF::move(session))
+    : m_session(WTFMove(session))
 {
 }
 
@@ -77,7 +77,7 @@ SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const
 
 void NetworkStorageSession::setSoupNetworkSession(std::unique_ptr<SoupNetworkSession> session)
 {
-    m_session = WTF::move(session);
+    m_session = WTFMove(session);
 }
 
 }

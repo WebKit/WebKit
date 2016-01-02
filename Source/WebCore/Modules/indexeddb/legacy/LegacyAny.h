@@ -76,7 +76,7 @@ public:
     static RefPtr<LegacyAny> create(PassRefPtr<T> idbObject)
     {
         RefPtr<T> refObject = idbObject;
-        return adoptRef(new LegacyAny(WTF::move(refObject)));
+        return adoptRef(new LegacyAny(WTFMove(refObject)));
     }
     static RefPtr<LegacyAny> create(int64_t value)
     {

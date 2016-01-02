@@ -299,7 +299,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
 WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(WebsiteDataStore::Configuration&& configuration)
 {
     WebKitWebsiteDataManager* manager = WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, nullptr));
-    manager->priv->websiteDataStore = API::WebsiteDataStore::create(WTF::move(configuration));
+    manager->priv->websiteDataStore = API::WebsiteDataStore::create(WTFMove(configuration));
 
     return manager;
 }
@@ -318,7 +318,7 @@ API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataMan
         configuration.webSQLDatabaseDirectory = !priv->webSQLDirectory ?
             API::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : WebCore::filenameToString(priv->webSQLDirectory.get());
         configuration.mediaKeysStorageDirectory = API::WebsiteDataStore::defaultMediaKeysStorageDirectory();
-        priv->websiteDataStore = API::WebsiteDataStore::create(WTF::move(configuration));
+        priv->websiteDataStore = API::WebsiteDataStore::create(WTFMove(configuration));
     }
 
     return *priv->websiteDataStore;

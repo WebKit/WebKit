@@ -293,7 +293,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
             description->setIsTruncated(typeSet->isOverflown());
         }
 
-        typeDescriptions->addItem(WTF::move(description));
+        typeDescriptions->addItem(WTFMove(description));
     }
 
     double end = currentTimeMS();
@@ -353,7 +353,7 @@ void InspectorRuntimeAgent::getBasicBlocks(ErrorString& errorString, const Strin
             .setHasExecuted(block.m_hasExecuted)
             .setExecutionCount(block.m_executionCount)
             .release();
-        basicBlocks->addItem(WTF::move(location));
+        basicBlocks->addItem(WTFMove(location));
     }
 }
 

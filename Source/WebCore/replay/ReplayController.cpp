@@ -230,7 +230,7 @@ void ReplayController::createSegment()
     std::unique_ptr<InitialNavigation> navigationInput = InitialNavigation::createFromPage(m_page);
     // Dispatching this input schedules navigation of the main frame, causing a refresh.
     navigationInput->dispatch(*this);
-    m_activeCursor->storeInput(WTF::move(navigationInput));
+    m_activeCursor->storeInput(WTFMove(navigationInput));
 }
 
 void ReplayController::completeSegment()

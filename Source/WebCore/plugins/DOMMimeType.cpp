@@ -31,7 +31,7 @@ namespace WebCore {
 
 DOMMimeType::DOMMimeType(RefPtr<PluginData>&& pluginData, Frame* frame, unsigned index)
     : FrameDestructionObserver(frame)
-    , m_pluginData(WTF::move(pluginData))
+    , m_pluginData(WTFMove(pluginData))
 {
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;

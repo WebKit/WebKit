@@ -132,7 +132,7 @@ PassRefPtr<HRTFKernel> HRTFKernel::createInterpolatedKernel(HRTFKernel* kernel1,
     float frameDelay = (1 - x) * kernel1->frameDelay() + x * kernel2->frameDelay();
     
     std::unique_ptr<FFTFrame> interpolatedFrame = FFTFrame::createInterpolatedFrame(*kernel1->fftFrame(), *kernel2->fftFrame(), x);
-    return HRTFKernel::create(WTF::move(interpolatedFrame), frameDelay, sampleRate1);
+    return HRTFKernel::create(WTFMove(interpolatedFrame), frameDelay, sampleRate1);
 }
 
 } // namespace WebCore

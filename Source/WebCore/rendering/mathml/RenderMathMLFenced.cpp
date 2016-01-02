@@ -44,7 +44,7 @@ static const char* gOpeningBraceChar = "(";
 static const char* gClosingBraceChar = ")";
 
 RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element, Ref<RenderStyle>&& style)
-    : RenderMathMLRow(element, WTF::move(style))
+    : RenderMathMLRow(element, WTFMove(style))
     , m_closeFenceRenderer(nullptr)
 {
 }

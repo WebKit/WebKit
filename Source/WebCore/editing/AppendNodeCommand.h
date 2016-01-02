@@ -34,7 +34,7 @@ class AppendNodeCommand : public SimpleEditCommand {
 public:
     static Ref<AppendNodeCommand> create(PassRefPtr<ContainerNode> parent, Ref<Node>&& node, EditAction editingAction)
     {
-        return adoptRef(*new AppendNodeCommand(parent, WTF::move(node), editingAction));
+        return adoptRef(*new AppendNodeCommand(parent, WTFMove(node), editingAction));
     }
 
 private:

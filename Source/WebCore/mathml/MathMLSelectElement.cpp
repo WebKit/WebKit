@@ -53,7 +53,7 @@ Ref<MathMLSelectElement> MathMLSelectElement::create(const QualifiedName& tagNam
 
 RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMathMLRow>(*this, WTF::move(style));
+    return createRenderer<RenderMathMLRow>(*this, WTFMove(style));
 }
 
 //  We recognize the following values for the encoding attribute of the <semantics> element:

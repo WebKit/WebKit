@@ -156,7 +156,7 @@ TEST(WTF, StringReplaceWithLiteral)
 TEST(WTF, StringIsolatedCopy)
 {
     String original = "1234";
-    auto copy = WTF::move(original).isolatedCopy();
+    auto copy = WTFMove(original).isolatedCopy();
     ASSERT_FALSE(original.impl() == copy.impl());
 }
 

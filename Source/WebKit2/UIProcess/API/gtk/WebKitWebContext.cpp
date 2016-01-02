@@ -1089,7 +1089,7 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
 
     API::Dictionary::MapType message;
     message.set(String::fromUTF8("Hostname"), API::String::create(String::fromUTF8(hostname)));
-    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), API::Dictionary::create(WTF::move(message)).ptr());
+    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), API::Dictionary::create(WTFMove(message)).ptr());
 }
 
 /**
@@ -1310,7 +1310,7 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
     pageConfiguration->setUserContentController(userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr);
     pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get()));
     pageConfiguration->setSessionID(pageConfiguration->websiteDataStore()->websiteDataStore().sessionID());
-    webkitWebViewBaseCreateWebPage(webViewBase, WTF::move(pageConfiguration));
+    webkitWebViewBaseCreateWebPage(webViewBase, WTFMove(pageConfiguration));
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     context->priv->webViews.set(page->pageID(), webView);

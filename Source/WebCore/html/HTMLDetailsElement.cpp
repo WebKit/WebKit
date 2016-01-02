@@ -78,7 +78,7 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& d
 
 RenderPtr<RenderElement> HTMLDetailsElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderBlockFlow>(*this, WTF::move(style));
+    return createRenderer<RenderBlockFlow>(*this, WTFMove(style));
 }
 
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
@@ -91,11 +91,11 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     defaultSummary->appendChild(Text::create(document(), defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
     m_defaultSummary = defaultSummary.ptr();
 
-    summarySlot->appendChild(WTF::move(defaultSummary));
-    root->appendChild(WTF::move(summarySlot));
+    summarySlot->appendChild(WTFMove(defaultSummary));
+    root->appendChild(WTFMove(summarySlot));
 
     auto defaultSlot = HTMLSlotElement::create(slotTag, document());
-    root->appendChild(WTF::move(defaultSlot));
+    root->appendChild(WTFMove(defaultSlot));
 }
 
 bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) const

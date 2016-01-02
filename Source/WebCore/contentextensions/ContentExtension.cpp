@@ -38,12 +38,12 @@ namespace ContentExtensions {
 
 RefPtr<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
 {
-    return adoptRef(*new ContentExtension(identifier, WTF::move(compiledExtension)));
+    return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension)));
 }
 
 ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
     : m_identifier(identifier)
-    , m_compiledExtension(WTF::move(compiledExtension))
+    , m_compiledExtension(WTFMove(compiledExtension))
 {
     DFABytecodeInterpreter withoutDomains(m_compiledExtension->filtersWithoutDomainsBytecode(), m_compiledExtension->filtersWithoutDomainsBytecodeLength());
     DFABytecodeInterpreter withDomains(m_compiledExtension->filtersWithDomainsBytecode(), m_compiledExtension->filtersWithDomainsBytecodeLength());

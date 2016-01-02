@@ -46,7 +46,7 @@ public:
     }
     
     WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutDomainsBytecodeOffset, unsigned filtersWithoutDomainsBytecodeSize, unsigned filtersWithDomainsBytecodeOffset, unsigned filtersWithDomainsBytecodeSize, unsigned domainFiltersBytecodeOffset, unsigned domainFiltersBytecodeSize)
-        : data(WTF::move(data))
+        : data(WTFMove(data))
         , fileData(fileData)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)

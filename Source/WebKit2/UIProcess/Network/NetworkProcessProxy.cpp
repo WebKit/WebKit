@@ -127,7 +127,7 @@ void NetworkProcessProxy::fetchWebsiteData(SessionID sessionID, WebsiteDataTypes
     auto token = throttler().backgroundActivityToken();
 
     m_pendingFetchWebsiteDataCallbacks.add(callbackID, [token, completionHandler](WebsiteData websiteData) {
-        completionHandler(WTF::move(websiteData));
+        completionHandler(WTFMove(websiteData));
     });
 
     send(Messages::WebProcess::FetchWebsiteData(sessionID, dataTypes, callbackID), 0);

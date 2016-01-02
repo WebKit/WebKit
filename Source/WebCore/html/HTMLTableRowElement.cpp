@@ -123,7 +123,7 @@ RefPtr<HTMLTableCellElement> HTMLTableRowElement::insertCell(int index, Exceptio
             n = children->item(index);
         insertBefore(cell.copyRef(), n, ec);
     }
-    return WTF::move(cell);
+    return WTFMove(cell);
 }
 
 void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)

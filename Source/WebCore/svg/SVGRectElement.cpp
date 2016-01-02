@@ -112,7 +112,7 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGRectElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGRect>(*this, WTF::move(style));
+    return createRenderer<RenderSVGRect>(*this, WTFMove(style));
 }
 
 }

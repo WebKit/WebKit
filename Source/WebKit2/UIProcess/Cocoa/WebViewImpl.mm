@@ -434,7 +434,7 @@ static NSTrackingAreaOptions trackingAreaOptions()
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
     , m_pageClient(std::make_unique<PageClientImpl>(view, outerWebView))
-    , m_page(processPool.createWebPage(*m_pageClient, WTF::move(configuration)))
+    , m_page(processPool.createWebPage(*m_pageClient, WTFMove(configuration)))
     , m_weakPtrFactory(this)
     , m_needsViewFrameInWindowCoordinates(m_page->preferences().pluginsEnabled())
     , m_intrinsicContentSize(CGSizeMake(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric))
@@ -2944,7 +2944,7 @@ RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
         return nullptr;
     surface->setIsVolatile(true);
 
-    return ViewSnapshot::create(WTF::move(surface));
+    return ViewSnapshot::create(WTFMove(surface));
 }
 
 void WebViewImpl::saveBackForwardSnapshotForCurrentItem()

@@ -1715,7 +1715,7 @@ Ref<Range> Document::createRange()
 
 RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool, ExceptionCode& ec)
 {
-    return createNodeIterator(root, whatToShow, WTF::move(filter), ec);
+    return createNodeIterator(root, whatToShow, WTFMove(filter), ec);
 }
 
 RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, ExceptionCode& ec)
@@ -1724,7 +1724,7 @@ RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long what
         ec = TypeError;
         return nullptr;
     }
-    return NodeIterator::create(root, whatToShow, WTF::move(filter));
+    return NodeIterator::create(root, whatToShow, WTFMove(filter));
 }
 
 RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, ExceptionCode& ec)
@@ -1739,7 +1739,7 @@ RefPtr<NodeIterator> Document::createNodeIterator(Node* root, ExceptionCode& ec)
 
 RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool, ExceptionCode& ec)
 {
-    return createTreeWalker(root, whatToShow, WTF::move(filter), ec);
+    return createTreeWalker(root, whatToShow, WTFMove(filter), ec);
 }
 
 RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, ExceptionCode& ec)
@@ -1748,7 +1748,7 @@ RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToSh
         ec = TypeError;
         return nullptr;
     }
-    return TreeWalker::create(*root, whatToShow, WTF::move(filter));
+    return TreeWalker::create(*root, whatToShow, WTFMove(filter));
 }
 
 RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, ExceptionCode& ec)
@@ -2883,7 +2883,7 @@ EventTarget* Document::errorEventTarget()
 
 void Document::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack)
 {
-    addMessage(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, WTF::move(callStack));
+    addMessage(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, WTFMove(callStack));
 }
 
 void Document::setURL(const URL& url)
@@ -3479,7 +3479,7 @@ Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
         cloneChildNodes(clone);
         break;
     }
-    return WTF::move(clone);
+    return WTFMove(clone);
 }
 
 Ref<Document> Document::cloneDocumentWithoutChildren() const
@@ -4112,18 +4112,18 @@ void Document::dispatchWindowLoadEvent()
 void Document::enqueueWindowEvent(Ref<Event>&& event)
 {
     event->setTarget(m_domWindow.get());
-    m_eventQueue.enqueueEvent(WTF::move(event));
+    m_eventQueue.enqueueEvent(WTFMove(event));
 }
 
 void Document::enqueueDocumentEvent(Ref<Event>&& event)
 {
     event->setTarget(this);
-    m_eventQueue.enqueueEvent(WTF::move(event));
+    m_eventQueue.enqueueEvent(WTFMove(event));
 }
 
 void Document::enqueueOverflowEvent(Ref<Event>&& event)
 {
-    m_eventQueue.enqueueEvent(WTF::move(event));
+    m_eventQueue.enqueueEvent(WTFMove(event));
 }
 
 RefPtr<Event> Document::createEvent(const String& type, ExceptionCode& ec)
@@ -4839,7 +4839,7 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
 
 void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 {
-    m_transformSource = WTF::move(source);
+    m_transformSource = WTFMove(source);
 }
 
 #endif
@@ -5342,7 +5342,7 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
     }
 
     if (Page* page = this->page())
-        page->console().addMessage(source, level, message, sourceURL, lineNumber, columnNumber, WTF::move(callStack), state, requestIdentifier);
+        page->console().addMessage(source, level, message, sourceURL, lineNumber, columnNumber, WTFMove(callStack), state, requestIdentifier);
 }
 
 SecurityOrigin* Document::topOrigin() const
@@ -5352,7 +5352,7 @@ SecurityOrigin* Document::topOrigin() const
 
 void Document::postTask(Task task)
 {
-    Task* taskPtr = std::make_unique<Task>(WTF::move(task)).release();
+    Task* taskPtr = std::make_unique<Task>(WTFMove(task)).release();
     WeakPtr<Document> documentReference(m_weakFactory.createWeakPtr());
 
     callOnMainThread([=] {
@@ -5365,7 +5365,7 @@ void Document::postTask(Task task)
 
         Page* page = document->page();
         if ((page && page->defersLoading() && document->activeDOMObjectsAreSuspended()) || !document->m_pendingTasks.isEmpty())
-            document->m_pendingTasks.append(WTF::move(*task.release()));
+            document->m_pendingTasks.append(WTFMove(*task.release()));
         else
             task->performTask(*document);
     });
@@ -5373,7 +5373,7 @@ void Document::postTask(Task task)
 
 void Document::pendingTasksTimerFired()
 {
-    Vector<Task> pendingTasks = WTF::move(m_pendingTasks);
+    Vector<Task> pendingTasks = WTFMove(m_pendingTasks);
     for (auto& task : pendingTasks)
         task.performTask(*this);
 }
@@ -6107,10 +6107,10 @@ void Document::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, con
         && willRevealBottomNotificationPoint >= oldPosition.y()) {
         Ref<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealbottomEvent, false, false);
         if (!target)
-            enqueueWindowEvent(WTF::move(willRevealEvent));
+            enqueueWindowEvent(WTFMove(willRevealEvent));
         else {
             willRevealEvent->setTarget(target);
-            m_eventQueue.enqueueEvent(WTF::move(willRevealEvent));
+            m_eventQueue.enqueueEvent(WTFMove(willRevealEvent));
         }
     }
 
@@ -6119,10 +6119,10 @@ void Document::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, con
         && willRevealTopNotificationPoint <= oldPosition.y()) {
         Ref<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealtopEvent, false, false);
         if (!target)
-            enqueueWindowEvent(WTF::move(willRevealEvent));
+            enqueueWindowEvent(WTFMove(willRevealEvent));
         else {
             willRevealEvent->setTarget(target);
-            m_eventQueue.enqueueEvent(WTF::move(willRevealEvent));
+            m_eventQueue.enqueueEvent(WTFMove(willRevealEvent));
         }
     }
 
@@ -6134,10 +6134,10 @@ void Document::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, con
         && willRevealRightNotificationPoint >= oldPosition.x()) {
         Ref<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealrightEvent, false, false);
         if (!target)
-            enqueueWindowEvent(WTF::move(willRevealEvent));
+            enqueueWindowEvent(WTFMove(willRevealEvent));
         else {
             willRevealEvent->setTarget(target);
-            m_eventQueue.enqueueEvent(WTF::move(willRevealEvent));
+            m_eventQueue.enqueueEvent(WTFMove(willRevealEvent));
         }
     }
 
@@ -6146,10 +6146,10 @@ void Document::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, con
         && willRevealLeftNotificationPoint <= oldPosition.x()) {
         Ref<Event> willRevealEvent = Event::create(eventNames().webkitwillrevealleftEvent, false, false);
         if (!target)
-            enqueueWindowEvent(WTF::move(willRevealEvent));
+            enqueueWindowEvent(WTFMove(willRevealEvent));
         else {
             willRevealEvent->setTarget(target);
-            m_eventQueue.enqueueEvent(WTF::move(willRevealEvent));
+            m_eventQueue.enqueueEvent(WTFMove(willRevealEvent));
         }
     }
 #else

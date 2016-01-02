@@ -58,7 +58,7 @@ void StructureIDTable::resize(size_t newCapacity)
     swap(m_table, newTable);
 
     // Put the old table (now labeled as new) into the list of old tables.
-    m_oldTables.append(WTF::move(newTable));
+    m_oldTables.append(WTFMove(newTable));
 
     // Update the capacity.
     m_capacity = newCapacity;

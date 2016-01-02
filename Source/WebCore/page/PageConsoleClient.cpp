@@ -118,7 +118,7 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
 
 void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, RefPtr<ScriptCallStack>&& callStack)
 {
-    addMessage(source, level, message, String(), 0, 0, WTF::move(callStack), 0);
+    addMessage(source, level, message, String(), 0, 0, WTFMove(callStack), 0);
 }
 
 void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
@@ -129,7 +129,7 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     std::unique_ptr<Inspector::ConsoleMessage> message;
 
     if (callStack)
-        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, WTF::move(callStack), requestIdentifier);
+        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, WTFMove(callStack), requestIdentifier);
     else
         message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
 
@@ -137,7 +137,7 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     unsigned lineNumber = message->line();
     unsigned columnNumber = message->column();
 
-    InspectorInstrumentation::addMessageToConsole(m_page, WTF::move(message));
+    InspectorInstrumentation::addMessageToConsole(m_page, WTFMove(message));
 
     if (source == MessageSource::CSS)
         return;
@@ -165,7 +165,7 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
     unsigned lineNumber = message->line();
     unsigned columnNumber = message->column();
 
-    InspectorInstrumentation::addMessageToConsole(m_page, WTF::move(message));
+    InspectorInstrumentation::addMessageToConsole(m_page, WTFMove(message));
 
     if (m_page.usesEphemeralSession())
         return;
@@ -174,12 +174,12 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
         m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, level, messageText, lineNumber, columnNumber, url);
 
     if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())
-        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, WTF::move(arguments));
+        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, WTFMove(arguments));
 }
 
 void PageConsoleClient::count(JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments)
 {
-    InspectorInstrumentation::consoleCount(m_page, exec, WTF::move(arguments));
+    InspectorInstrumentation::consoleCount(m_page, exec, WTFMove(arguments));
 }
 
 void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
@@ -190,7 +190,7 @@ void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
 void PageConsoleClient::profileEnd(JSC::ExecState* exec, const String& title)
 {
     if (RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(m_page, exec, title))
-        m_profiles.append(WTF::move(profile));
+        m_profiles.append(WTFMove(profile));
 }
 
 void PageConsoleClient::time(JSC::ExecState*, const String& title)
@@ -201,12 +201,12 @@ void PageConsoleClient::time(JSC::ExecState*, const String& title)
 void PageConsoleClient::timeEnd(JSC::ExecState* exec, const String& title)
 {
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
-    InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), title, WTF::move(callStack));
+    InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), title, WTFMove(callStack));
 }
 
 void PageConsoleClient::timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&& arguments)
 {
-    InspectorInstrumentation::consoleTimeStamp(m_page.mainFrame(), WTF::move(arguments));
+    InspectorInstrumentation::consoleTimeStamp(m_page.mainFrame(), WTFMove(arguments));
 }
 
 void PageConsoleClient::clearProfiles()

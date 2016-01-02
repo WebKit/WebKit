@@ -55,7 +55,7 @@ SlotAssignment::SlotAssignment()
 }
 
 SlotAssignment::SlotAssignment(SlotNameFunction function)
-    : m_slotNameFunction(WTF::move(function))
+    : m_slotNameFunction(WTFMove(function))
 {
 }
 

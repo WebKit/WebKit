@@ -60,7 +60,7 @@ void EwkDatabaseManager::getDatabaseOrigins(Ewk_Database_Manager_Get_Database_Or
     for (const auto& originIdentifier : origins)
         securityOrigins.uncheckedAppend(API::SecurityOrigin::create(*originIdentifier));
 
-    arrayCallback->performCallbackWithReturnValue(API::Array::create(WTF::move(securityOrigins)).ptr());
+    arrayCallback->performCallbackWithReturnValue(API::Array::create(WTFMove(securityOrigins)).ptr());
 }
 
 Eina_List* EwkDatabaseManager::createOriginList(WKArrayRef origins) const

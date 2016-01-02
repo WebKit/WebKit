@@ -2154,7 +2154,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (_shouldFireTimers)
         timer->start(_isCompletelyObscured);
     
-    *slot = WTF::move(timer);
+    *slot = WTFMove(timer);
 
     return timerID;
 }

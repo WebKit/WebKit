@@ -550,22 +550,22 @@ inline String::String(PassRefPtr<StringImpl> impl)
 }
 
 inline String::String(Ref<StringImpl>&& impl)
-    : m_impl(WTF::move(impl))
+    : m_impl(WTFMove(impl))
 {
 }
 
 inline String::String(RefPtr<StringImpl>&& impl)
-    : m_impl(WTF::move(impl))
+    : m_impl(WTFMove(impl))
 {
 }
 
 inline String::String(Ref<AtomicStringImpl>&& impl)
-    : m_impl(WTF::move(impl))
+    : m_impl(WTFMove(impl))
 {
 }
 
 inline String::String(RefPtr<AtomicStringImpl>&& impl)
-    : m_impl(WTF::move(impl))
+    : m_impl(WTFMove(impl))
 {
 }
 
@@ -704,7 +704,7 @@ public:
     explicit StringCapture(String&& string) : m_string(string) { }
     StringCapture(const StringCapture& other) : m_string(other.m_string.isolatedCopy()) { }
     const String& string() const { return m_string; }
-    String releaseString() { return WTF::move(m_string); }
+    String releaseString() { return WTFMove(m_string); }
 
     void operator=(const StringCapture& other) { m_string = other.m_string.isolatedCopy(); }
 

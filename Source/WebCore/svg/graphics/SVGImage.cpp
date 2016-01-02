@@ -59,7 +59,7 @@ SVGImage::~SVGImage()
 {
     if (m_page) {
         // Store m_page in a local variable, clearing m_page, so that SVGImageChromeClient knows we're destructed.
-        std::unique_ptr<Page> currentPage = WTF::move(m_page);
+        std::unique_ptr<Page> currentPage = WTFMove(m_page);
         currentPage->mainFrame().loader().frameDetached(); // Break both the loader and view references to the frame
     }
 
@@ -208,7 +208,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
-    RefPtr<Image> image = ImageBuffer::sinkIntoImage(WTF::move(buffer), Unscaled);
+    RefPtr<Image> image = ImageBuffer::sinkIntoImage(WTFMove(buffer), Unscaled);
     if (!image)
         return;
 

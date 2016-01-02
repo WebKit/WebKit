@@ -32,8 +32,8 @@ public:
     }
     
     LengthSize(Length width, Length height)
-        : m_width(WTF::move(width))
-        , m_height(WTF::move(height))
+        : m_width(WTFMove(width))
+        , m_height(WTFMove(height))
     {
     }
 
@@ -42,10 +42,10 @@ public:
         return m_width == o.m_width && m_height == o.m_height;
     }
 
-    void setWidth(Length width) { m_width = WTF::move(width); }
+    void setWidth(Length width) { m_width = WTFMove(width); }
     const Length& width() const { return m_width; }
 
-    void setHeight(Length height) { m_height = WTF::move(height); }
+    void setHeight(Length height) { m_height = WTFMove(height); }
     const Length& height() const { return m_height; }
 
     LengthSize blend(const LengthSize& from, double progress) const

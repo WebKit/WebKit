@@ -52,7 +52,7 @@ Ref<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedName& ta
 
 RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {    
-    return createRenderer<RenderMathMLMenclose>(*this, WTF::move(style));
+    return createRenderer<RenderMathMLMenclose>(*this, WTFMove(style));
 }
 
 bool MathMLMencloseElement::isPresentationAttribute(const QualifiedName& name) const

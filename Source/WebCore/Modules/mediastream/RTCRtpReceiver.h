@@ -41,7 +41,7 @@ class RTCRtpReceiver : public RTCRtpSenderReceiverBase {
 public:
     static Ref<RTCRtpReceiver> create(RefPtr<MediaStreamTrack>&& track)
     {
-        return adoptRef(*new RTCRtpReceiver(WTF::move(track)));
+        return adoptRef(*new RTCRtpReceiver(WTFMove(track)));
     }
 
 private:

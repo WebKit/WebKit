@@ -356,7 +356,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
             }
         }
     }
-    didFinishParsing(sourceElements, context.funcDeclarations(), varDeclarations, features, context.numConstants(), WTF::move(closedVariables));
+    didFinishParsing(sourceElements, context.funcDeclarations(), varDeclarations, features, context.numConstants(), WTFMove(closedVariables));
 
     return parseError;
 }
@@ -2038,7 +2038,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     }
     
     if (newInfo)
-        m_functionCache->add(functionInfo.startOffset, WTF::move(newInfo));
+        m_functionCache->add(functionInfo.startOffset, WTFMove(newInfo));
     
     functionInfo.endLine = m_lastTokenEndPosition.line;
     return true;

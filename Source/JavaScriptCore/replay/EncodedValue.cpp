@@ -191,7 +191,7 @@ bool EncodedValue::get<EncodedValue>(const String& key, typename EncodingTraits<
     if (!asObject()->getValue(key, value))
         return false;
 
-    decodedValue = EncodedValue(WTF::move(value));
+    decodedValue = EncodedValue(WTFMove(value));
     return true;
 }
 

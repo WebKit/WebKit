@@ -249,7 +249,7 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
 
 void WebMediaSessionManager::setPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
-    m_playbackTarget = WTF::move(target);
+    m_playbackTarget = WTFMove(target);
     m_targetChanged = true;
     scheduleDelayedTask(TargetClientsConfigurationTask);
 }

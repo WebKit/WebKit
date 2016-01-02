@@ -52,7 +52,7 @@ struct TermCreatorTranslator {
     {
         std::unique_ptr<Term> newUniqueTerm(new Term(input.term));
         location = newUniqueTerm.get();
-        input.internedTermsStorage.append(WTF::move(newUniqueTerm));
+        input.internedTermsStorage.append(WTFMove(newUniqueTerm));
     }
 };
 

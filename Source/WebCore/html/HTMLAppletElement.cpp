@@ -78,9 +78,9 @@ bool HTMLAppletElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> HTMLAppletElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     if (!canEmbedJava())
-        return RenderElement::createFor(*this, WTF::move(style));
+        return RenderElement::createFor(*this, WTFMove(style));
 
-    return RenderEmbeddedObject::createForApplet(*this, WTF::move(style));
+    return RenderEmbeddedObject::createForApplet(*this, WTFMove(style));
 }
 
 RenderWidget* HTMLAppletElement::renderWidgetLoadingPlugin() const

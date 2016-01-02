@@ -108,10 +108,10 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
         bool isBackgroundStage = false;
 
         if (this->useBackgroundThreads() && stageOffset > RealtimeFrameLimit) {
-            m_backgroundStages.append(WTF::move(stage));
+            m_backgroundStages.append(WTFMove(stage));
             isBackgroundStage = true;
         } else
-            m_stages.append(WTF::move(stage));
+            m_stages.append(WTFMove(stage));
 
         stageOffset += stageSize;
         ++i;

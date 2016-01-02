@@ -1358,7 +1358,7 @@ void WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, co
         
         [m_playerViewController view].frame = [m_parentView convertRect:inlineRect toView:[m_playerViewController view].superview];
 
-        std::function<void(bool)> callback = WTF::move(m_prepareToInlineCallback);
+        std::function<void(bool)> callback = WTFMove(m_prepareToInlineCallback);
         callback(visible);
     }
 }

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
-    : m_next(WTF::move(next))
+    : m_next(WTFMove(next))
 #ifndef NDEBUG
     , m_renderer(renderer)
 #endif

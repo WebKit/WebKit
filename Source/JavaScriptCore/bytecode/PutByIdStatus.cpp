@@ -233,7 +233,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                     
                     variant = PutByIdVariant::setter(
                         structure, complexGetStatus.offset(), complexGetStatus.conditionSet(),
-                        WTF::move(callLinkStatus));
+                        WTFMove(callLinkStatus));
                 } }
                 break;
             }

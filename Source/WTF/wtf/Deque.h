@@ -420,7 +420,7 @@ void Deque<T, inlineCapacity>::expandCapacity()
 template<typename T, size_t inlineCapacity>
 inline auto Deque<T, inlineCapacity>::takeFirst() -> T
 {
-    T oldFirst = WTF::move(first());
+    T oldFirst = WTFMove(first());
     removeFirst();
     return oldFirst;
 }
@@ -428,7 +428,7 @@ inline auto Deque<T, inlineCapacity>::takeFirst() -> T
 template<typename T, size_t inlineCapacity>
 inline auto Deque<T, inlineCapacity>::takeLast() -> T
 {
-    T oldLast = WTF::move(last());
+    T oldLast = WTFMove(last());
     removeLast();
     return oldLast;
 }

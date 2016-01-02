@@ -517,7 +517,7 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
         if (currentShape->m_proto) {
             auto nextObject = Inspector::Protocol::Runtime::StructureDescription::create().release();
             currentObject->setPrototypeStructure(&nextObject.get());
-            currentObject = WTF::move(nextObject);
+            currentObject = WTFMove(nextObject);
         }
 
         currentShape = currentShape->m_proto;

@@ -39,12 +39,12 @@ namespace WebCore {
 
 Ref<Storage> Storage::create(Frame* frame, RefPtr<StorageArea>&& storageArea)
 {
-    return adoptRef(*new Storage(frame, WTF::move(storageArea)));
+    return adoptRef(*new Storage(frame, WTFMove(storageArea)));
 }
 
 Storage::Storage(Frame* frame, RefPtr<StorageArea>&& storageArea)
     : DOMWindowProperty(frame)
-    , m_storageArea(WTF::move(storageArea))
+    , m_storageArea(WTFMove(storageArea))
 {
     ASSERT(m_frame);
     ASSERT(m_storageArea);

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, Ref<RenderStyle>&& style)
-    : RenderSVGContainer(element, WTF::move(style))
+    : RenderSVGContainer(element, WTFMove(style))
     , m_didTransformToRootUpdate(false)
     , m_isLayoutSizeChanged(false)
     , m_needsTransformUpdate(true)

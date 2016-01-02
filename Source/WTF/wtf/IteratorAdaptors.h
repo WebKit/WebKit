@@ -34,9 +34,9 @@ template<typename Predicate, typename Iterator>
 class FilterIterator {
 public:
     FilterIterator(Predicate pred, Iterator begin, Iterator end)
-        : m_pred(WTF::move(pred))
-        , m_iter(WTF::move(begin))
-        , m_end(WTF::move(end))
+        : m_pred(WTFMove(pred))
+        , m_iter(WTFMove(begin))
+        , m_end(WTFMove(end))
     {
         while (m_iter != m_end && !m_pred(*m_iter))
             ++m_iter;
@@ -78,8 +78,8 @@ template<typename Transform, typename Iterator>
 class TransformIterator {
 public:
     TransformIterator(Transform&& transform, Iterator&& iter)
-        : m_transform(WTF::move(transform))
-        , m_iter(WTF::move(iter))
+        : m_transform(WTFMove(transform))
+        , m_iter(WTFMove(iter))
     {
     }
 
@@ -105,7 +105,7 @@ private:
 template<typename Transform, typename Iterator>
 inline TransformIterator<Transform, Iterator> makeTransformIterator(Transform&& transform, Iterator&& iter)
 {
-    return TransformIterator<Transform, Iterator>(WTF::move(transform), WTF::move(iter));
+    return TransformIterator<Transform, Iterator>(WTFMove(transform), WTFMove(iter));
 }
 
 } // namespace WTF

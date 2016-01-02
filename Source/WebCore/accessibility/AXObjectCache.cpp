@@ -821,7 +821,7 @@ void AXObjectCache::notificationPostTimerFired()
     
     // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
-    auto notifications = WTF::move(m_notificationsToPost);
+    auto notifications = WTFMove(m_notificationsToPost);
     
     for (const auto& note : notifications) {
         AccessibilityObject* obj = note.first.get();
@@ -864,7 +864,7 @@ void AXObjectCache::passwordNotificationPostTimerFired()
 
     // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
-    auto notifications = WTF::move(m_passwordNotificationsToPost);
+    auto notifications = WTFMove(m_passwordNotificationsToPost);
 
     for (auto& notification : notifications)
         postTextStateChangePlatformNotification(notification.get(), AXTextEditTypeInsert, " ", VisiblePosition());

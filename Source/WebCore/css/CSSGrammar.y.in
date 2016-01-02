@@ -661,7 +661,7 @@ media_list:
         $$ = $1;
         std::unique_ptr<MediaQuery> mediaQuery($4);
         if ($$) {
-            $$->addMediaQuery(WTF::move(mediaQuery));
+            $$->addMediaQuery(WTFMove(mediaQuery));
             parser->updateLastMediaLine($$);
         }
     }
@@ -763,7 +763,7 @@ supports_declaration_condition:
         CSSParser* p = static_cast<CSSParser*>(parser);
         std::unique_ptr<CSSParserValueList> propertyValue($6);
         if ($3 && propertyValue) {
-            p->m_valueList = WTF::move(propertyValue);
+            p->m_valueList = WTFMove(propertyValue);
             int oldParsedProperties = p->m_parsedProperties.size();
             $$ = p->parseValue($3, $7);
             // We just need to know if the declaration is supported as it is written. Rollback any additions.
@@ -779,7 +779,7 @@ supports_declaration_condition:
         CSSParser* p = static_cast<CSSParser*>(parser);
         std::unique_ptr<CSSParserValueList> propertyValue($6);
         if (propertyValue) {
-            parser->m_valueList = WTF::move(propertyValue);
+            parser->m_valueList = WTFMove(propertyValue);
             int oldParsedProperties = p->m_parsedProperties.size();
             p->setCustomPropertyName($3);
             $$ = p->parseValue(CSSPropertyCustom, $7);
@@ -1078,7 +1078,7 @@ selector_list:
         $$ = nullptr;
         if (selectorList && selector) {
             $$ = selectorList.release();
-            $$->append(WTF::move(selector));
+            $$->append(WTFMove(selector));
             parser->updateLastSelectorLineAndPosition();
         }
     }
@@ -1126,7 +1126,7 @@ complex_selector:
         std::unique_ptr<CSSParserSelector> right($2);
         $$ = nullptr;
         if (left && right) {
-            right->appendTagHistory(CSSParserSelectorCombinator::DescendantSpace, WTF::move(left));
+            right->appendTagHistory(CSSParserSelectorCombinator::DescendantSpace, WTFMove(left));
             $$ = right.release();
         }
     }
@@ -1135,7 +1135,7 @@ complex_selector:
         std::unique_ptr<CSSParserSelector> right($3);
         $$ = nullptr;
         if (left && right) {
-            right->appendTagHistory($2, WTF::move(left));
+            right->appendTagHistory($2, WTFMove(left));
             $$ = right.release();
         }
     }
@@ -1194,7 +1194,7 @@ simple_selector_list:
         $$ = nullptr;
         if (list && selector) {
             $$ = list.release();
-            $$->append(WTF::move(selector));
+            $$->append(WTFMove(selector));
         }
     }
     | simple_selector_list error {
@@ -1220,7 +1220,7 @@ specifier_list:
         std::unique_ptr<CSSParserSelector> specifier($2);
         $$ = nullptr;
         if (list && specifier)
-            $$ = parser->rewriteSpecifiers(WTF::move(list), WTF::move(specifier)).release();
+            $$ = parser->rewriteSpecifiers(WTFMove(list), WTFMove(specifier)).release();
     }
     | specifier_list error {
         $$ = nullptr;
@@ -1561,7 +1561,7 @@ declaration:
         bool isPropertyParsed = false;
         std::unique_ptr<CSSParserValueList> propertyValue($4);
         if (propertyValue) {
-            parser->m_valueList = WTF::move(propertyValue);
+            parser->m_valueList = WTFMove(propertyValue);
             int oldParsedProperties = parser->m_parsedProperties.size();
             parser->setCustomPropertyName($1);
             $$ = parser->parseValue(CSSPropertyCustom, $5);
@@ -1578,7 +1578,7 @@ declaration:
         bool isPropertyParsed = false;
         std::unique_ptr<CSSParserValueList> propertyValue($4);
         if ($1 && propertyValue) {
-            parser->m_valueList = WTF::move(propertyValue);
+            parser->m_valueList = WTFMove(propertyValue);
             int oldParsedProperties = parser->m_parsedProperties.size();
             $$ = parser->parseValue($1, $5);
             if (!$$)

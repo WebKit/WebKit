@@ -44,7 +44,7 @@ public:
     static Ref<XSLTProcessor> create() { return adoptRef(*new XSLTProcessor); }
     ~XSLTProcessor();
 
-    void setXSLStyleSheet(RefPtr<XSLStyleSheet>&& styleSheet) { m_stylesheet = WTF::move(styleSheet); }
+    void setXSLStyleSheet(RefPtr<XSLStyleSheet>&& styleSheet) { m_stylesheet = WTFMove(styleSheet); }
     bool transformToString(Node& source, String& resultMIMEType, String& resultString, String& resultEncoding);
     Ref<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
     
@@ -52,7 +52,7 @@ public:
     void importStylesheet(RefPtr<Node>&& style)
     {
         if (style)
-            m_stylesheetRootNode = WTF::move(style);
+            m_stylesheetRootNode = WTFMove(style);
     }
     RefPtr<DocumentFragment> transformToFragment(Node* source, Document* ouputDoc);
     RefPtr<Document> transformToDocument(Node* source);

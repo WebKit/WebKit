@@ -356,10 +356,10 @@ RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Ref<RenderStyl
 {
 #if !PLATFORM(IOS)
     if (usesMenuList())
-        return createRenderer<RenderMenuList>(*this, WTF::move(style));
-    return createRenderer<RenderListBox>(*this, WTF::move(style));
+        return createRenderer<RenderMenuList>(*this, WTFMove(style));
+    return createRenderer<RenderListBox>(*this, WTFMove(style));
 #else
-    return createRenderer<RenderMenuList>(*this, WTF::move(style));
+    return createRenderer<RenderMenuList>(*this, WTFMove(style));
 #endif
 }
 
@@ -949,7 +949,7 @@ void HTMLSelectElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, 
     // dispatching change events during blur event dispatch.
     if (usesMenuList())
         saveLastSelection();
-    HTMLFormControlElementWithState::dispatchFocusEvent(WTF::move(oldFocusedElement), direction);
+    HTMLFormControlElementWithState::dispatchFocusEvent(WTFMove(oldFocusedElement), direction);
 }
 
 void HTMLSelectElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
@@ -959,7 +959,7 @@ void HTMLSelectElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
     // This matches other browsers' behavior.
     if (usesMenuList())
         dispatchChangeEventForMenuList();
-    HTMLFormControlElementWithState::dispatchBlurEvent(WTF::move(newFocusedElement));
+    HTMLFormControlElementWithState::dispatchBlurEvent(WTFMove(newFocusedElement));
 }
 
 void HTMLSelectElement::deselectItemsWithoutValidation(HTMLElement* excludeElement)

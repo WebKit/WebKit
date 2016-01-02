@@ -31,7 +31,7 @@ namespace WebCore {
 ActiveDOMCallbackMicrotask::ActiveDOMCallbackMicrotask(MicrotaskQueue& queue, ScriptExecutionContext& scriptExecutionContext, std::function<void()>&& task)
     : ActiveDOMCallback(&scriptExecutionContext)
     , m_queue(queue)
-    , m_task(WTF::move(task))
+    , m_task(WTFMove(task))
 {
 }
 

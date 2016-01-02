@@ -150,5 +150,5 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
             else:
                 lines.append('    if (%s)' % (parameter.parameter_name))
                 lines.append('        paramsObject->%s(ASCIILiteral("%s"), %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
-        lines.append('    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));')
+        lines.append('    jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));')
         return lines

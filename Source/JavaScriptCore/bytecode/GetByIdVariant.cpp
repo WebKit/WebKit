@@ -40,7 +40,7 @@ GetByIdVariant::GetByIdVariant(
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
-    , m_callLinkStatus(WTF::move(callLinkStatus))
+    , m_callLinkStatus(WTFMove(callLinkStatus))
     , m_intrinsicFunction(intrinsicFunction)
 {
     if (!structureSet.size()) {

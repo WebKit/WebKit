@@ -268,7 +268,7 @@ static void tryAppLink(RefPtr<API::NavigationAction> navigationAction, const Str
         return;
     }
 
-    auto* localCompletionHandler = new std::function<void (bool)>(WTF::move(completionHandler));
+    auto* localCompletionHandler = new std::function<void (bool)>(WTFMove(completionHandler));
     [LSAppLink openWithURL:navigationAction->request().url() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
         dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
             (*localCompletionHandler)(success);
@@ -286,7 +286,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
         RefPtr<API::NavigationAction> localNavigationAction = &navigationAction;
-        RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
+        RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
 
         tryAppLink(localNavigationAction, mainFrameURLString, [localListener, localNavigationAction] (bool followedLinkToApp) {
             if (followedLinkToApp) {
@@ -322,7 +322,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
         return;
 
     RefPtr<API::NavigationAction> localNavigationAction = &navigationAction;
-    RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
+    RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
     [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:[localListener, localNavigationAction, checker, mainFrameURLString](WKNavigationActionPolicy actionPolicy) {
         checker->didCallCompletionHandler();
@@ -387,7 +387,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
     if (!navigationDelegate)
         return;
 
-    RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
+    RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
     [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
         checker->didCallCompletionHandler();

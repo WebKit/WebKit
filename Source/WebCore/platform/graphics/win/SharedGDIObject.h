@@ -36,7 +36,7 @@ template <typename T> class SharedGDIObject : public RefCounted<SharedGDIObject<
 public:
     static PassRefPtr<SharedGDIObject> create(GDIObject<T> object)
     {
-        return adoptRef(new SharedGDIObject<T>(WTF::move(object)));
+        return adoptRef(new SharedGDIObject<T>(WTFMove(object)));
     }
 
     T get() const
@@ -51,7 +51,7 @@ public:
 
 private:
     explicit SharedGDIObject(GDIObject<T> object)
-        : m_object(WTF::move(object))
+        : m_object(WTFMove(object))
     {
     }
 

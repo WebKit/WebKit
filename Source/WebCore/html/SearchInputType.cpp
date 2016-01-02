@@ -78,7 +78,7 @@ void SearchInputType::maxResultsAttributeChanged()
 
 RenderPtr<RenderElement> SearchInputType::createInputRenderer(Ref<RenderStyle>&& style)
 {
-    return createRenderer<RenderSearchField>(element(), WTF::move(style));
+    return createRenderer<RenderSearchField>(element(), WTFMove(style));
 }
 
 const AtomicString& SearchInputType::formControlType() const
@@ -110,11 +110,11 @@ void SearchInputType::createShadowSubtree()
     Ref<SearchFieldResultsButtonElement> resultsButton = SearchFieldResultsButtonElement::create(element().document());
     m_resultsButton = resultsButton.ptr();
     updateResultButtonPseudoType(resultsButton.get(), element().maxResults());
-    container->insertBefore(WTF::move(resultsButton), textWrapper, IGNORE_EXCEPTION);
+    container->insertBefore(WTFMove(resultsButton), textWrapper, IGNORE_EXCEPTION);
 
     Ref<SearchFieldCancelButtonElement> cancelButton = SearchFieldCancelButtonElement::create(element().document());
     m_cancelButton = cancelButton.ptr();
-    container->insertBefore(WTF::move(cancelButton), textWrapper->nextSibling(), IGNORE_EXCEPTION);
+    container->insertBefore(WTFMove(cancelButton), textWrapper->nextSibling(), IGNORE_EXCEPTION);
 }
 
 HTMLElement* SearchInputType::resultsButtonElement() const

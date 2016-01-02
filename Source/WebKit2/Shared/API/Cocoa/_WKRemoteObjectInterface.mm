@@ -135,9 +135,9 @@ static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL sel
     }
 
     if (forReplyBlock)
-        methodInfo.replyInfo->allowedReplyClasses = WTF::move(allowedClasses);
+        methodInfo.replyInfo->allowedReplyClasses = WTFMove(allowedClasses);
     else
-        methodInfo.allowedArgumentClasses = WTF::move(allowedClasses);
+        methodInfo.allowedArgumentClasses = WTFMove(allowedClasses);
 }
 
 static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *protocol, bool requiredMethods)
@@ -299,7 +299,7 @@ static HashSet<Class>& classesForSelectorArgument(_WKRemoteObjectInterface *inte
     for (Class allowedClass in classes)
         allowedClasses.add(allowedClass);
 
-    classesForSelectorArgument(self, selector, argumentIndex, ofReply) = WTF::move(allowedClasses);
+    classesForSelectorArgument(self, selector, argumentIndex, ofReply) = WTFMove(allowedClasses);
 }
 
 - (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex

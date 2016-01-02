@@ -66,7 +66,7 @@ void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote& layer, Platf
         creationProperties.hostingDeviceScaleFactor = deviceScaleFactor();
     }
 
-    m_createdLayers.add(layerID, WTF::move(creationProperties));
+    m_createdLayers.add(layerID, WTFMove(creationProperties));
     m_liveLayers.add(layerID, &layer);
 }
 
@@ -115,8 +115,8 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
 
     Vector<RemoteLayerTreeTransaction::LayerCreationProperties> createdLayerProperties;
     copyValuesToVector(m_createdLayers, createdLayerProperties);
-    transaction.setCreatedLayers(WTF::move(createdLayerProperties));
-    transaction.setDestroyedLayerIDs(WTF::move(m_destroyedLayers));
+    transaction.setCreatedLayers(WTFMove(createdLayerProperties));
+    transaction.setDestroyedLayerIDs(WTFMove(m_destroyedLayers));
     
     m_createdLayers.clear();
 }

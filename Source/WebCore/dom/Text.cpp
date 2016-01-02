@@ -83,7 +83,7 @@ RefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
     if (renderer())
         renderer()->setTextWithOffset(data(), 0, oldStr.length());
 
-    return WTF::move(newText);
+    return WTFMove(newText);
 }
 
 static const Text* earliestLogicallyAdjacentTextNode(const Text* text)
@@ -134,7 +134,7 @@ RefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
     for (RefPtr<Node> n = startText; n && n != this && n->isTextNode() && n->parentNode() == parent;) {
         Ref<Node> nodeToRemove(n.releaseNonNull());
         n = nodeToRemove->nextSibling();
-        parent->removeChild(WTF::move(nodeToRemove), IGNORE_EXCEPTION);
+        parent->removeChild(WTFMove(nodeToRemove), IGNORE_EXCEPTION);
     }
 
     if (this != endText) {
@@ -142,7 +142,7 @@ RefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
         for (RefPtr<Node> n = nextSibling(); n && n != onePastEndText && n->isTextNode() && n->parentNode() == parent;) {
             Ref<Node> nodeToRemove(n.releaseNonNull());
             n = nodeToRemove->nextSibling();
-            parent->removeChild(WTF::move(nodeToRemove), IGNORE_EXCEPTION);
+            parent->removeChild(WTFMove(nodeToRemove), IGNORE_EXCEPTION);
         }
     }
 

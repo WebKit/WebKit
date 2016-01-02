@@ -813,7 +813,7 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     Ref<HistoryItem> topItem = frameLoader.history().createItemTree(m_frame, doClip);
     LOG(History, "HistoryController %p updateBackForwardListClippedAtTarget: Adding backforward item %p in frame %p (main frame %d) %s", this, topItem.ptr(), &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader()->url().string().utf8().data());
 
-    page->backForward().addItem(WTF::move(topItem));
+    page->backForward().addItem(WTFMove(topItem));
 }
 
 void HistoryController::updateCurrentItem()
@@ -860,7 +860,7 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
 
     LOG(History, "HistoryController %p pushState: Adding top item %p, setting url of current item %p to %s", this, topItem.ptr(), m_currentItem.get(), urlString.ascii().data());
 
-    page->backForward().addItem(WTF::move(topItem));
+    page->backForward().addItem(WTFMove(topItem));
 
     if (m_frame.page()->usesEphemeralSession())
         return;

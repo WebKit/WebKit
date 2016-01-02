@@ -50,7 +50,7 @@ static void threadEntryPoint(void* contextData)
 
     initializeCurrentThreadInternal(context->name);
 
-    auto entryPoint = WTF::move(context->entryPoint);
+    auto entryPoint = WTFMove(context->entryPoint);
 
     // Delete the context before starting the thread.
     delete context;
@@ -67,7 +67,7 @@ ThreadIdentifier createThread(const char* name, std::function<void()> entryPoint
         LOG_ERROR("Thread name \"%s\" is longer than 31 characters and will be truncated by Visual Studio", name);
 #endif
 
-    NewThreadContext* context = new NewThreadContext { name, WTF::move(entryPoint), { } };
+    NewThreadContext* context = new NewThreadContext { name, WTFMove(entryPoint), { } };
 
     // Prevent the thread body from executing until we've established the thread identifier.
     MutexLocker locker(context->creationMutex);

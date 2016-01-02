@@ -133,11 +133,11 @@ RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(Ref<RenderStyl
     Frame* frame = document().frame();
     if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript)) {
         m_rendererIsCanvas = true;
-        return createRenderer<RenderHTMLCanvas>(*this, WTF::move(style));
+        return createRenderer<RenderHTMLCanvas>(*this, WTFMove(style));
     }
 
     m_rendererIsCanvas = false;
-    return HTMLElement::createElementRenderer(WTF::move(style), insertionPosition);
+    return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 
 bool HTMLCanvasElement::canContainRangeEndPoint() const
@@ -656,7 +656,7 @@ void HTMLCanvasElement::setImageBuffer(std::unique_ptr<ImageBuffer> buffer) cons
 {
     removeFromActivePixelMemory(memoryCost());
 
-    m_imageBuffer = WTF::move(buffer);
+    m_imageBuffer = WTFMove(buffer);
 
     activePixelMemory += memoryCost();
 }

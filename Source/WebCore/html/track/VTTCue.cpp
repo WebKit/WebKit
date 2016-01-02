@@ -231,7 +231,7 @@ const AtomicString& VTTCueBox::vttCueBoxShadowPseudoId()
 
 RenderPtr<RenderElement> VTTCueBox::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderVTTCue>(*this, WTF::move(style));
+    return createRenderer<RenderVTTCue>(*this, WTFMove(style));
 }
 
 // ----------------------------

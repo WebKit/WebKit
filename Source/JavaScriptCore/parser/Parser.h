@@ -657,7 +657,7 @@ public:
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     JSTokenLocation locationBeforeLastToken() const { return m_lexer->lastTokenLocation(); }
-    Vector<RefPtr<UniquedStringImpl>>&& closedVariables() { return WTF::move(m_closedVariables); }
+    Vector<RefPtr<UniquedStringImpl>>&& closedVariables() { return WTFMove(m_closedVariables); }
 
 private:
     struct AllowInOverride {

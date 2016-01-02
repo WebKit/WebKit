@@ -125,7 +125,7 @@ void PageOverlayController::installPageOverlay(PassRefPtr<PageOverlay> pageOverl
     }
 
     GraphicsLayer& rawLayer = *layer;
-    m_overlayGraphicsLayers.set(overlay.get(), WTF::move(layer));
+    m_overlayGraphicsLayers.set(overlay.get(), WTFMove(layer));
 
     updateForceSynchronousScrollLayerPositionUpdates();
 

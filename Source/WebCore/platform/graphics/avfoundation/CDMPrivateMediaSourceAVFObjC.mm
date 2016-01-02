@@ -118,7 +118,7 @@ std::unique_ptr<CDMSession> CDMPrivateMediaSourceAVFObjC::createSession(CDMSessi
         session = std::make_unique<CDMSessionAVStreamSession>(protocolVersions, *this, client);
 
     m_sessions.append(session.get());
-    return WTF::move(session);
+    return WTFMove(session);
 }
 
 void CDMPrivateMediaSourceAVFObjC::invalidateSession(CDMSessionMediaSourceAVFObjC* session)

@@ -93,7 +93,7 @@ bool Storage::ReadOperation::finish()
         else
             resultRecord = nullptr;
     }
-    return completionHandler(WTF::move(resultRecord));
+    return completionHandler(WTFMove(resultRecord));
 }
 
 struct Storage::WriteOperation {
@@ -292,8 +292,8 @@ void Storage::synchronize()
                 blobFilter->add(hash);
             m_blobFilterHashesAddedDuringSynchronization.clear();
 
-            m_recordFilter = WTF::move(recordFilter);
-            m_blobFilter = WTF::move(blobFilter);
+            m_recordFilter = WTFMove(recordFilter);
+            m_blobFilter = WTFMove(blobFilter);
             m_approximateRecordsSize = recordsSize;
             m_synchronizationInProgress = false;
         });
@@ -567,7 +567,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
     ASSERT(RunLoop::isMain());
 
     auto& readOperation = *readOperationPtr;
-    m_activeReadOperations.add(WTF::move(readOperationPtr));
+    m_activeReadOperations.add(WTFMove(readOperationPtr));
 
     // I/O pressure may make disk operations slow. If they start taking very long time we rather go to network.
     const auto readTimeout = 1500_ms;
@@ -702,7 +702,7 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
     ASSERT(RunLoop::isMain());
 
     auto& writeOperation = *writeOperationPtr;
-    m_activeWriteOperations.add(WTF::move(writeOperationPtr));
+    m_activeWriteOperations.add(WTFMove(writeOperationPtr));
 
     // This was added already when starting the store but filter might have been wiped.
     addToRecordFilter(writeOperation.record.key);
@@ -768,8 +768,8 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     if (retrieveFromMemory(m_activeWriteOperations, key, completionHandler))
         return;
 
-    auto readOperation = std::make_unique<ReadOperation>(key, WTF::move(completionHandler));
-    m_pendingReadOperationsByPriority[priority].prepend(WTF::move(readOperation));
+    auto readOperation = std::make_unique<ReadOperation>(key, WTFMove(completionHandler));
+    m_pendingReadOperationsByPriority[priority].prepend(WTFMove(readOperation));
     dispatchPendingReadOperations();
 }
 
@@ -781,8 +781,8 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
     if (!m_capacity)
         return;
 
-    auto writeOperation = std::make_unique<WriteOperation>(record, WTF::move(mappedBodyHandler));
-    m_pendingWriteOperations.prepend(WTF::move(writeOperation));
+    auto writeOperation = std::make_unique<WriteOperation>(record, WTFMove(mappedBodyHandler));
+    m_pendingWriteOperations.prepend(WTFMove(writeOperation));
 
     // Add key to the filter already here as we do lookups from the pending operations too.
     addToRecordFilter(record.key);
@@ -803,9 +803,9 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
     ASSERT(traverseHandler);
     // Avoid non-thread safe std::function copies.
 
-    auto traverseOperationPtr = std::make_unique<TraverseOperation>(type, flags, WTF::move(traverseHandler));
+    auto traverseOperationPtr = std::make_unique<TraverseOperation>(type, flags, WTFMove(traverseHandler));
     auto& traverseOperation = *traverseOperationPtr;
-    m_activeTraverseOperations.add(WTF::move(traverseOperationPtr));
+    m_activeTraverseOperations.add(WTFMove(traverseOperationPtr));
 
     ioQueue().dispatch([this, &traverseOperation] {
         traverseRecordsFiles(recordsPath(), traverseOperation.type, [this, &traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
@@ -897,7 +897,7 @@ void Storage::clear(const String& type, std::chrono::system_clock::time_point mo
     m_approximateRecordsSize = 0;
 
     // Avoid non-thread safe std::function copies.
-    auto* completionHandlerPtr = completionHandler ? new std::function<void ()>(WTF::move(completionHandler)) : nullptr;
+    auto* completionHandlerPtr = completionHandler ? new std::function<void ()>(WTFMove(completionHandler)) : nullptr;
     StringCapture typeCapture(type);
     ioQueue().dispatch([this, modifiedSinceTime, completionHandlerPtr, typeCapture] {
         auto recordsPath = this->recordsPath();

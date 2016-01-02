@@ -68,7 +68,7 @@ public:
 
 protected:
     explicit PlatformMediaResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient> client)
-        : m_client(WTF::move(client))
+        : m_client(WTFMove(client))
     {
     }
 

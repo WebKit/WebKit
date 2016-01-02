@@ -98,7 +98,7 @@ void JSTestClassWithJSBuiltinConstructorPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestClassWithJSBuiltinConstructor::s_info = { "TestClassWithJSBuiltinConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestClassWithJSBuiltinConstructor) };
 
 JSTestClassWithJSBuiltinConstructor::JSTestClassWithJSBuiltinConstructor(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestClassWithJSBuiltinConstructor>&& impl)
-    : JSDOMWrapper<TestClassWithJSBuiltinConstructor>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestClassWithJSBuiltinConstructor>(structure, globalObject, WTFMove(impl))
 {
 }
 

@@ -194,7 +194,7 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCom
     copyCompactAndLinkCode<uint32_t>(macroAssembler, ownerUID, effort);
 #endif
 
-    m_linkTasks = WTF::move(macroAssembler.m_linkTasks);
+    m_linkTasks = WTFMove(macroAssembler.m_linkTasks);
 }
 
 void LinkBuffer::allocate(size_t initialSize, void* ownerUID, JITCompilationEffort effort)

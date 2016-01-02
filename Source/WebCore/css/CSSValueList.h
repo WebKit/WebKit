@@ -98,12 +98,12 @@ private:
 
 inline void CSSValueList::append(Ref<CSSValue>&& value)
 {
-    m_values.append(WTF::move(value));
+    m_values.append(WTFMove(value));
 }
 
 inline void CSSValueList::prepend(Ref<CSSValue>&& value)
 {
-    m_values.insert(0, WTF::move(value));
+    m_values.insert(0, WTFMove(value));
 }
 
 } // namespace WebCore

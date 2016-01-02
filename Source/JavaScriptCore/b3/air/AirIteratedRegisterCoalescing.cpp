@@ -684,7 +684,7 @@ public:
     class IndexToTmpIteratorAdaptor {
     public:
         IndexToTmpIteratorAdaptor(IndexIterator&& indexIterator)
-            : m_indexIterator(WTF::move(indexIterator))
+            : m_indexIterator(WTFMove(indexIterator))
         {
         }
 

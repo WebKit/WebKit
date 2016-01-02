@@ -118,7 +118,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowT
     }
 
     auto glContext = std::make_unique<GLContextEGL>(context, surface, WindowSurface);
-    glContext->m_contextData = WTF::move(contextData);
+    glContext->m_contextData = WTFMove(contextData);
     return glContext;
 }
 
@@ -180,7 +180,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext shari
         return nullptr;
     }
 
-    return std::make_unique<GLContextEGL>(context, surface, WTF::move(pixmap));
+    return std::make_unique<GLContextEGL>(context, surface, WTFMove(pixmap));
 }
 #endif // PLATFORM(X11)
 
@@ -209,7 +209,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType wi
     if (!context)
         context = createPbufferContext(eglSharingContext);
 
-    return WTF::move(context);
+    return WTFMove(context);
 }
 
 GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, EGLSurfaceType type)
@@ -225,7 +225,7 @@ GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, XUniquePixmap
     : m_context(context)
     , m_surface(surface)
     , m_type(PixmapSurface)
-    , m_pixmap(WTF::move(pixmap))
+    , m_pixmap(WTFMove(pixmap))
 {
 }
 #endif

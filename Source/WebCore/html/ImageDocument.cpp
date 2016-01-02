@@ -240,7 +240,7 @@ void ImageDocument::createDocumentStructure()
         RefPtr<EventListener> listener = ImageEventListener::create(*this);
         if (DOMWindow* window = this->domWindow())
             window->addEventListener("resize", listener.copyRef(), false);
-        imageElement->addEventListener("click", WTF::move(listener), false);
+        imageElement->addEventListener("click", WTFMove(listener), false);
 #endif
     }
 

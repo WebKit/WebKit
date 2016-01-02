@@ -28,7 +28,7 @@ namespace WebCore {
 DOMPlugin::DOMPlugin(PluginData* pluginData, Frame* frame, PluginInfo pluginInfo)
     : FrameDestructionObserver(frame)
     , m_pluginData(pluginData)
-    , m_pluginInfo(WTF::move(pluginInfo))
+    , m_pluginInfo(WTFMove(pluginInfo))
 {
 }
 

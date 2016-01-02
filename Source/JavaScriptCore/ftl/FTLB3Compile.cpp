@@ -77,7 +77,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n");
         dataLog("    ", *registerOffsets, "\n");
     }
-    state.graph.m_codeBlock->setCalleeSaveRegisters(WTF::move(registerOffsets));
+    state.graph.m_codeBlock->setCalleeSaveRegisters(WTFMove(registerOffsets));
     ASSERT(!(state.proc->frameSize() % sizeof(EncodedJSValue)));
     state.jitCode->common.frameRegisterCount = state.proc->frameSize() / sizeof(EncodedJSValue);
 

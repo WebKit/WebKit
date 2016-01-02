@@ -58,7 +58,7 @@ void HTMLButtonElement::setType(const AtomicString& type)
 
 RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderButton>(*this, WTF::move(style));
+    return createRenderer<RenderButton>(*this, WTFMove(style));
 }
 
 const AtomicString& HTMLButtonElement::formControlType() const

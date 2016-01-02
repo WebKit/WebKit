@@ -177,7 +177,7 @@ void SVGKerningMap::insert(const SVGKerningPair& kerningPair)
         else {
             auto newVector = std::make_unique<SVGKerningVector>();
             newVector->append(svgKerning);
-            unicodeMap.add(name, WTF::move(newVector));
+            unicodeMap.add(name, WTFMove(newVector));
         }
     }
 
@@ -187,7 +187,7 @@ void SVGKerningMap::insert(const SVGKerningPair& kerningPair)
         else {
             auto newVector = std::make_unique<SVGKerningVector>();
             newVector->append(svgKerning);
-            glyphMap.add(name, WTF::move(newVector));
+            glyphMap.add(name, WTFMove(newVector));
         }
     }
 

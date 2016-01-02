@@ -33,7 +33,7 @@ namespace WebKit {
 
 InputMethodContextEfl::InputMethodContextEfl(EwkView* view, EflUniquePtr<Ecore_IMF_Context> context)
     : m_view(view)
-    , m_context(WTF::move(context))
+    , m_context(WTFMove(context))
     , m_focused(false)
 {
     ASSERT(m_context);

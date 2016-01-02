@@ -298,7 +298,7 @@ static void fetchDiskCacheEntries(SessionID sessionID, std::function<void (Vecto
 
 #if USE(CFURLCACHE)
     for (auto& origin : NetworkProcess::cfURLCacheOrigins())
-        entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeDiskCache });
+        entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataTypeDiskCache });
 #endif
 
     RunLoop::main().dispatch([completionHandler, entries] {
@@ -310,7 +310,7 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, uint64_t websiteDataT
 {
     struct CallbackAggregator final : public RefCounted<CallbackAggregator> {
         explicit CallbackAggregator(std::function<void (WebsiteData)> completionHandler)
-            : m_completionHandler(WTF::move(completionHandler))
+            : m_completionHandler(WTFMove(completionHandler))
         {
         }
 
@@ -318,8 +318,8 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, uint64_t websiteDataT
         {
             ASSERT(RunLoop::isMain());
 
-            auto completionHandler = WTF::move(m_completionHandler);
-            auto websiteData = WTF::move(m_websiteData);
+            auto completionHandler = WTFMove(m_completionHandler);
+            auto websiteData = WTFMove(m_websiteData);
 
             RunLoop::main().dispatch([completionHandler, websiteData] {
                 completionHandler(websiteData);
@@ -365,7 +365,7 @@ void NetworkProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteData
     };
 
     if ((websiteDataTypes & WebsiteDataTypeDiskCache) && !sessionID.isEphemeral()) {
-        clearDiskCache(modifiedSince, WTF::move(completionHandler));
+        clearDiskCache(modifiedSince, WTFMove(completionHandler));
         return;
     }
 
@@ -410,7 +410,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
     NetworkProcess::clearCFURLCacheForOrigins(origins);
 #endif
 
-    RunLoop::main().dispatch(WTF::move(completionHandler));
+    RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
 void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
@@ -425,7 +425,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t w
     };
 
     if ((websiteDataTypes & WebsiteDataTypeDiskCache) && !sessionID.isEphemeral()) {
-        clearDiskCacheEntries(origins, WTF::move(completionHandler));
+        clearDiskCacheEntries(origins, WTFMove(completionHandler));
         return;
     }
 

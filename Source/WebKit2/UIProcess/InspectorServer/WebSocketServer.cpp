@@ -79,7 +79,7 @@ void WebSocketServer::close()
 
 void WebSocketServer::didAcceptConnection(std::unique_ptr<WebSocketServerConnection> connection)
 {
-    m_connections.append(WTF::move(connection));
+    m_connections.append(WTFMove(connection));
 }
 
 void WebSocketServer::didCloseWebSocketServerConnection(WebSocketServerConnection* connection)

@@ -149,7 +149,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData& dragD
                 }
                 anchor->appendChild(document.createTextNode(title), IGNORE_EXCEPTION);
                 Ref<DocumentFragment> fragment = document.createDocumentFragment();
-                fragment->appendChild(WTF::move(anchor), IGNORE_EXCEPTION);
+                fragment->appendChild(WTFMove(anchor), IGNORE_EXCEPTION);
                 return fragment.ptr();
             }
         }
@@ -531,7 +531,7 @@ bool DragController::concludeEditDrag(DragData& dragData)
                     options |= ReplaceSelectionCommand::SmartReplace;
                 if (chosePlainText)
                     options |= ReplaceSelectionCommand::MatchStyle;
-                applyCommand(ReplaceSelectionCommand::create(*m_documentUnderMouse, WTF::move(fragment), options));
+                applyCommand(ReplaceSelectionCommand::create(*m_documentUnderMouse, WTFMove(fragment), options));
             }
         }
     } else {

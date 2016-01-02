@@ -236,7 +236,7 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
             [array addObject:element.get()];
         }
 
-        result = WTF::move(array);
+        result = WTFMove(array);
         break;
     }
 
@@ -245,7 +245,7 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
         if (!IPC::decode(decoder, data))
             return false;
 
-        result = WTF::move(data);
+        result = WTFMove(data);
         break;
     }
 
@@ -254,7 +254,7 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
         if (!IPC::decode(decoder, date))
             return false;
 
-        result = WTF::move(date);
+        result = WTFMove(date);
         break;
     }
 
@@ -280,7 +280,7 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
             }
         }
 
-        result = WTF::move(dictionary);
+        result = WTFMove(dictionary);
         break;
     }
 
@@ -289,7 +289,7 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
         if (!IPC::decode(decoder, number))
             return false;
 
-        result = WTF::move(number);
+        result = WTFMove(number);
         break;
     }
 
@@ -298,7 +298,7 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
         if (!IPC::decode(decoder, string))
             return false;
 
-        result = WTF::move(string);
+        result = WTFMove(string);
         break;
     }
 

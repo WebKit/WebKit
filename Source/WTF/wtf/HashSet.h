@@ -214,7 +214,7 @@ namespace WTF {
     template<typename T, typename U, typename V>
     inline auto HashSet<T, U, V>::add(ValueType&& value) -> AddResult
     {
-        return m_impl.add(WTF::move(value));
+        return m_impl.add(WTFMove(value));
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
@@ -262,7 +262,7 @@ namespace WTF {
         if (it == end())
             return ValueTraits::emptyValue();
 
-        ValueType result = WTF::move(const_cast<ValueType&>(*it));
+        ValueType result = WTFMove(const_cast<ValueType&>(*it));
         remove(it);
         return result;
     }

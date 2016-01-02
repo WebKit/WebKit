@@ -213,7 +213,7 @@ void AudioScheduledSourceNode::finish()
 
 bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
 {
-    bool success = AudioNode::addEventListener(eventType, WTF::move(listener), useCapture);
+    bool success = AudioNode::addEventListener(eventType, WTFMove(listener), useCapture);
     if (success && eventType == eventNames().endedEvent)
         m_hasEndedListener = hasEventListeners(eventNames().endedEvent);
     return success;

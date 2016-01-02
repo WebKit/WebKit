@@ -80,9 +80,9 @@ public:
     // We have to declare the copy constructor and copy assignment operator as well, otherwise
     // they'll be implicitly deleted by adding the move constructor and move assignment operator.
     AtomicString(const AtomicString& other) : m_string(other.m_string) { }
-    AtomicString(AtomicString&& other) : m_string(WTF::move(other.m_string)) { }
+    AtomicString(AtomicString&& other) : m_string(WTFMove(other.m_string)) { }
     AtomicString& operator=(const AtomicString& other) { m_string = other.m_string; return *this; }
-    AtomicString& operator=(AtomicString&& other) { m_string = WTF::move(other.m_string); return *this; }
+    AtomicString& operator=(AtomicString&& other) { m_string = WTFMove(other.m_string); return *this; }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }

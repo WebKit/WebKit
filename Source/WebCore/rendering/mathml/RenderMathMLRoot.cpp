@@ -56,12 +56,12 @@ namespace WebCore {
 // We will allow the IndexWrapper to be empty and it will always contain the last child of the <mroot> if there are at least 2 elements.
 
 RenderMathMLRoot::RenderMathMLRoot(Element& element, Ref<RenderStyle>&& style)
-    : RenderMathMLBlock(element, WTF::move(style))
+    : RenderMathMLBlock(element, WTFMove(style))
 {
 }
 
 RenderMathMLRoot::RenderMathMLRoot(Document& document, Ref<RenderStyle>&& style)
-    : RenderMathMLBlock(document, WTF::move(style))
+    : RenderMathMLBlock(document, WTFMove(style))
 {
 }
 
@@ -227,14 +227,14 @@ void RenderMathMLRoot::updateStyle()
     auto radical = radicalWrapper();
     auto radicalStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     radicalStyle.get().setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
-    radical->setStyle(WTF::move(radicalStyle));
+    radical->setStyle(WTFMove(radicalStyle));
     radical->setNeedsLayoutAndPrefWidthsRecalc();
 
     auto base = baseWrapper();
     auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     baseStyle.get().setMarginTop(Length(0, Fixed)); // This will be updated in RenderMathMLRoot::layout().
     baseStyle.get().setAlignItemsPosition(ItemPositionBaseline);
-    base->setStyle(WTF::move(baseStyle));
+    base->setStyle(WTFMove(baseStyle));
     base->setNeedsLayoutAndPrefWidthsRecalc();
 
     if (!isRenderMathMLSquareRoot()) {
@@ -245,7 +245,7 @@ void RenderMathMLRoot::updateStyle()
         indexStyle.get().setMarginStart(Length(kernBeforeDegree, Fixed));
         indexStyle.get().setMarginEnd(Length(kernAfterDegree, Fixed));
         indexStyle.get().setAlignItemsPosition(ItemPositionBaseline);
-        index->setStyle(WTF::move(indexStyle));
+        index->setStyle(WTFMove(indexStyle));
         index->setNeedsLayoutAndPrefWidthsRecalc();
     }
 }

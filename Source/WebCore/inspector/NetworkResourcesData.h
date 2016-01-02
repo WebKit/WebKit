@@ -79,10 +79,10 @@ public:
         void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
 
         RefPtr<TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
-        void setDecoder(RefPtr<TextResourceDecoder>&& decoder) { m_decoder = WTF::move(decoder); }
+        void setDecoder(RefPtr<TextResourceDecoder>&& decoder) { m_decoder = WTFMove(decoder); }
 
         RefPtr<SharedBuffer> buffer() const { return m_buffer.copyRef(); }
-        void setBuffer(RefPtr<SharedBuffer>&& buffer) { m_buffer = WTF::move(buffer); }
+        void setBuffer(RefPtr<SharedBuffer>&& buffer) { m_buffer = WTFMove(buffer); }
 
         CachedResource* cachedResource() const { return m_cachedResource; }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }

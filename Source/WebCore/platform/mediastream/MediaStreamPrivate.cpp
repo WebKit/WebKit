@@ -51,10 +51,10 @@ RefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<Realti
     tracks.reserveCapacity(audioSources.size() + videoSources.size());
 
     for (auto source : audioSources)
-        tracks.append(MediaStreamTrackPrivate::create(WTF::move(source)));
+        tracks.append(MediaStreamTrackPrivate::create(WTFMove(source)));
 
     for (auto source : videoSources)
-        tracks.append(MediaStreamTrackPrivate::create(WTF::move(source)));
+        tracks.append(MediaStreamTrackPrivate::create(WTFMove(source)));
 
     return MediaStreamPrivate::create(tracks);
 }

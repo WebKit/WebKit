@@ -264,7 +264,7 @@ SVGElement* SVGUseElement::targetClone() const
 
 RenderPtr<RenderElement> SVGUseElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
+    return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
 static bool isDirectReference(const SVGElement& element)
@@ -410,7 +410,7 @@ void SVGUseElement::cloneTarget(ContainerNode& container, SVGElement& target) co
     associateClonesWithOriginals(targetClone.get(), target);
     removeDisallowedElementsFromSubtree(targetClone.get());
     transferSizeAttributesToTargetClone(targetClone.get());
-    container.appendChild(WTF::move(targetClone));
+    container.appendChild(WTFMove(targetClone));
 }
 
 static void cloneDataAndChildren(SVGElement& replacementClone, SVGElement& originalClone)

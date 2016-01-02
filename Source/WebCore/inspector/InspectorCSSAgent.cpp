@@ -586,11 +586,11 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
                         .setPseudoId(static_cast<int>(pseudoId))
                         .setMatches(buildArrayForMatchedRuleList(matchedRules, styleResolver, element, pseudoId))
                         .release();
-                    pseudoElements->addItem(WTF::move(matches));
+                    pseudoElements->addItem(WTFMove(matches));
                 }
             }
 
-            pseudoIdMatches = WTF::move(pseudoElements);
+            pseudoIdMatches = WTFMove(pseudoElements);
         }
 
         // Inherited styles.
@@ -608,11 +608,11 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
                         entry->setInlineStyle(styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId(styleSheet->id(), 0))));
                 }
 
-                entries->addItem(WTF::move(entry));
+                entries->addItem(WTFMove(entry));
                 parentElement = parentElement->parentElement();
             }
 
-            inheritedEntries = WTF::move(entries);
+            inheritedEntries = WTFMove(entries);
         }
     }
 }
@@ -825,7 +825,7 @@ void InspectorCSSAgent::addRule(ErrorString& errorString, const String& styleShe
     ExceptionCode ec = 0;
     auto action = std::make_unique<AddRuleAction>(inspectorStyleSheet, selector);
     AddRuleAction* rawAction = action.get();
-    bool success = m_domAgent->history()->perform(WTF::move(action), ec);
+    bool success = m_domAgent->history()->perform(WTFMove(action), ec);
     if (!success) {
         errorString = InspectorDOMAgent::toErrorString(ec);
         return;
@@ -847,7 +847,7 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector
 
         const StylePropertyShorthand& shorthand = shorthandForProperty(id);
         if (!shorthand.length()) {
-            properties->addItem(WTF::move(property));
+            properties->addItem(WTFMove(property));
             continue;
         }
         auto longhands = Inspector::Protocol::Array<String>::create();
@@ -855,10 +855,10 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector
             CSSPropertyID longhandID = shorthand.properties()[j];
             longhands->addItem(getPropertyNameString(longhandID));
         }
-        property->setLonghands(WTF::move(longhands));
-        properties->addItem(WTF::move(property));
+        property->setLonghands(WTFMove(longhands));
+        properties->addItem(WTFMove(property));
     }
-    cssProperties = WTF::move(properties);
+    cssProperties = WTFMove(properties);
 }
 
 void InspectorCSSAgent::getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<Inspector::Protocol::Array<String>>& fontFamilyNames)
@@ -869,7 +869,7 @@ void InspectorCSSAgent::getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<I
     for (const auto& familyName : systemFontFamilies)
         families->addItem(familyName);
 
-    fontFamilyNames = WTF::move(families);
+    fontFamilyNames = WTFMove(families);
 }
 
 void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, const InspectorArray& forcedPseudoClasses)
@@ -906,7 +906,7 @@ void InspectorCSSAgent::getNamedFlowCollection(ErrorString& errorString, int doc
     for (auto& namedFlow : namedFlowsVector)
         namedFlows->addItem(buildObjectForNamedFlow(errorString, namedFlow.get(), documentNodeId));
 
-    result = WTF::move(namedFlows);
+    result = WTFMove(namedFlows);
 }
 
 InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Element* element)
@@ -1057,13 +1057,13 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Inspecto
         }
 
         auto match = Inspector::Protocol::CSS::RuleMatch::create()
-            .setRule(WTF::move(ruleObject))
-            .setMatchingSelectors(WTF::move(matchingSelectors))
+            .setRule(WTFMove(ruleObject))
+            .setMatchingSelectors(WTFMove(matchingSelectors))
             .release();
-        result->addItem(WTF::move(match));
+        result->addItem(WTFMove(match));
     }
 
-    return WTF::move(result);
+    return WTFMove(result);
 }
 
 RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(Element* element)
@@ -1114,10 +1114,10 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::Region>> InspectorCS
             .setNodeId(m_domAgent->pushNodeToFrontend(errorString, documentNodeId, regionList->item(i)))
             .release();
 
-        regions->addItem(WTF::move(region));
+        regions->addItem(WTFMove(region));
     }
 
-    return WTF::move(regions);
+    return WTFMove(regions);
 }
 
 RefPtr<Inspector::Protocol::CSS::NamedFlow> InspectorCSSAgent::buildObjectForNamedFlow(ErrorString& errorString, WebKitNamedFlow* webkitNamedFlow, int documentNodeId)
@@ -1134,7 +1134,7 @@ RefPtr<Inspector::Protocol::CSS::NamedFlow> InspectorCSSAgent::buildObjectForNam
         .setDocumentNodeId(documentNodeId)
         .setName(webkitNamedFlow->name().string())
         .setOverset(webkitNamedFlow->overset())
-        .setContent(WTF::move(content))
+        .setContent(WTFMove(content))
         .setRegions(buildArrayForRegions(errorString, webkitNamedFlow->getRegions(), documentNodeId))
         .release();
 }

@@ -97,7 +97,7 @@ class GetDatabaseNamesCallback : public EventListener {
 public:
     static Ref<GetDatabaseNamesCallback> create(Ref<RequestDatabaseNamesCallback>&& requestCallback, const String& securityOrigin)
     {
-        return adoptRef(*new GetDatabaseNamesCallback(WTF::move(requestCallback), securityOrigin));
+        return adoptRef(*new GetDatabaseNamesCallback(WTFMove(requestCallback), securityOrigin));
     }
 
     virtual ~GetDatabaseNamesCallback() { }
@@ -132,13 +132,13 @@ public:
         Ref<Inspector::Protocol::Array<String>> databaseNames = Inspector::Protocol::Array<String>::create();
         for (size_t i = 0; i < databaseNamesList->length(); ++i)
             databaseNames->addItem(databaseNamesList->item(i));
-        m_requestCallback->sendSuccess(WTF::move(databaseNames));
+        m_requestCallback->sendSuccess(WTFMove(databaseNames));
     }
 
 private:
     GetDatabaseNamesCallback(Ref<RequestDatabaseNamesCallback>&& requestCallback, const String& securityOrigin)
         : EventListener(EventListener::CPPEventListenerType)
-        , m_requestCallback(WTF::move(requestCallback))
+        , m_requestCallback(WTFMove(requestCallback))
         , m_securityOrigin(securityOrigin) { }
     Ref<RequestDatabaseNamesCallback> m_requestCallback;
     String m_securityOrigin;
@@ -195,7 +195,7 @@ public:
         }
 
         RefPtr<LegacyDatabase> idbDatabase = adoptRef(static_cast<LegacyDatabase*>(requestResult->idbDatabase().leakRef()));
-        m_executableWithDatabase->execute(WTF::move(idbDatabase));
+        m_executableWithDatabase->execute(WTFMove(idbDatabase));
         IDBPendingTransactionMonitor::deactivateNewTransactions();
         idbDatabase->close();
     }
@@ -216,7 +216,7 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
         requestCallback().sendFailure("Could not open database.");
         return;
     }
-    idbOpenDBRequest->addEventListener(eventNames().successEvent, WTF::move(callback), false);
+    idbOpenDBRequest->addEventListener(eventNames().successEvent, WTFMove(callback), false);
 }
 
 static RefPtr<IDBTransaction> transactionForDatabase(ScriptExecutionContext* scriptExecutionContext, IDBDatabase* idbDatabase, const String& objectStoreName, const String& mode = IDBTransaction::modeReadOnly())
@@ -269,7 +269,7 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
         keyPath = KeyPath::create()
             .setType(KeyPath::Type::Array)
             .release();
-        keyPath->setArray(WTF::move(array));
+        keyPath->setArray(WTFMove(array));
         break;
     }
     default:
@@ -283,7 +283,7 @@ class DatabaseLoader : public ExecutableWithDatabase {
 public:
     static Ref<DatabaseLoader> create(ScriptExecutionContext* context, Ref<RequestDatabaseCallback>&& requestCallback)
     {
-        return adoptRef(*new DatabaseLoader(context, WTF::move(requestCallback)));
+        return adoptRef(*new DatabaseLoader(context, WTFMove(requestCallback)));
     }
 
     virtual ~DatabaseLoader() { }
@@ -307,33 +307,33 @@ public:
                     .setUnique(indexMetadata.unique)
                     .setMultiEntry(indexMetadata.multiEntry)
                     .release();
-                indexes->addItem(WTF::move(objectStoreIndex));
+                indexes->addItem(WTFMove(objectStoreIndex));
             }
 
             Ref<ObjectStore> objectStore = ObjectStore::create()
                 .setName(objectStoreMetadata.name)
                 .setKeyPath(keyPathFromIDBKeyPath(objectStoreMetadata.keyPath))
                 .setAutoIncrement(objectStoreMetadata.autoIncrement)
-                .setIndexes(WTF::move(indexes))
+                .setIndexes(WTFMove(indexes))
                 .release();
 
-            objectStores->addItem(WTF::move(objectStore));
+            objectStores->addItem(WTFMove(objectStore));
         }
 
         Ref<DatabaseWithObjectStores> result = DatabaseWithObjectStores::create()
             .setName(databaseMetadata.name)
             .setVersion(databaseMetadata.version)
-            .setObjectStores(WTF::move(objectStores))
+            .setObjectStores(WTFMove(objectStores))
             .release();
 
-        m_requestCallback->sendSuccess(WTF::move(result));
+        m_requestCallback->sendSuccess(WTFMove(result));
     }
 
     virtual RequestCallback& requestCallback() override { return m_requestCallback.get(); }
 private:
     DatabaseLoader(ScriptExecutionContext* context, Ref<RequestDatabaseCallback>&& requestCallback)
         : ExecutableWithDatabase(context)
-        , m_requestCallback(WTF::move(requestCallback)) { }
+        , m_requestCallback(WTFMove(requestCallback)) { }
     Ref<RequestDatabaseCallback> m_requestCallback;
 };
 
@@ -419,7 +419,7 @@ class OpenCursorCallback : public EventListener {
 public:
     static Ref<OpenCursorCallback> create(InjectedScript injectedScript, Ref<RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
     {
-        return adoptRef(*new OpenCursorCallback(injectedScript, WTF::move(requestCallback), skipCount, pageSize));
+        return adoptRef(*new OpenCursorCallback(injectedScript, WTFMove(requestCallback), skipCount, pageSize));
     }
 
     virtual ~OpenCursorCallback() { }
@@ -481,7 +481,7 @@ public:
             .setPrimaryKey(m_injectedScript.wrapObject(idbCursor->primaryKey(), String(), true))
             .setValue(m_injectedScript.wrapObject(idbCursor->value(), String(), true))
             .release();
-        m_result->addItem(WTF::move(dataEntry));
+        m_result->addItem(WTFMove(dataEntry));
 
     }
 
@@ -489,14 +489,14 @@ public:
     {
         if (!m_requestCallback->isActive())
             return;
-        m_requestCallback->sendSuccess(WTF::move(m_result), hasMore);
+        m_requestCallback->sendSuccess(WTFMove(m_result), hasMore);
     }
 
 private:
     OpenCursorCallback(InjectedScript injectedScript, Ref<RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
         : EventListener(EventListener::CPPEventListenerType)
         , m_injectedScript(injectedScript)
-        , m_requestCallback(WTF::move(requestCallback))
+        , m_requestCallback(WTFMove(requestCallback))
         , m_skipCount(skipCount)
         , m_pageSize(pageSize)
         , m_result(Array<DataEntry>::create())
@@ -513,7 +513,7 @@ class DataLoader : public ExecutableWithDatabase {
 public:
     static Ref<DataLoader> create(ScriptExecutionContext* context, Ref<RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange>&& idbKeyRange, int skipCount, unsigned pageSize)
     {
-        return adoptRef(*new DataLoader(context, WTF::move(requestCallback), injectedScript, objectStoreName, indexName, WTF::move(idbKeyRange), skipCount, pageSize));
+        return adoptRef(*new DataLoader(context, WTFMove(requestCallback), injectedScript, objectStoreName, indexName, WTFMove(idbKeyRange), skipCount, pageSize));
     }
 
     virtual ~DataLoader() { }
@@ -547,17 +547,17 @@ public:
             idbRequest = idbIndex->openCursor(context(), m_idbKeyRange.get(), ec);
         } else
             idbRequest = idbObjectStore->openCursor(context(), m_idbKeyRange.get(), ec);
-        idbRequest->addEventListener(eventNames().successEvent, WTF::move(openCursorCallback), false);
+        idbRequest->addEventListener(eventNames().successEvent, WTFMove(openCursorCallback), false);
     }
 
     virtual RequestCallback& requestCallback() override { return m_requestCallback.get(); }
     DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
         : ExecutableWithDatabase(scriptExecutionContext)
-        , m_requestCallback(WTF::move(requestCallback))
+        , m_requestCallback(WTFMove(requestCallback))
         , m_injectedScript(injectedScript)
         , m_objectStoreName(objectStoreName)
         , m_indexName(indexName)
-        , m_idbKeyRange(WTF::move(idbKeyRange))
+        , m_idbKeyRange(WTFMove(idbKeyRange))
         , m_skipCount(skipCount)
         , m_pageSize(pageSize) { }
     Ref<RequestDataCallback> m_requestCallback;
@@ -642,7 +642,7 @@ void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString& errorString, con
         return;
     }
 
-    idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(WTF::move(requestCallback), document->securityOrigin()->toRawString()), false);
+    idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(WTFMove(requestCallback), document->securityOrigin()->toRawString()), false);
 }
 
 void InspectorIndexedDBAgent::requestDatabase(ErrorString& errorString, const String& securityOrigin, const String& databaseName, Ref<RequestDatabaseCallback>&& requestCallback)
@@ -656,7 +656,7 @@ void InspectorIndexedDBAgent::requestDatabase(ErrorString& errorString, const St
     if (!idbFactory)
         return;
 
-    Ref<DatabaseLoader> databaseLoader = DatabaseLoader::create(document, WTF::move(requestCallback));
+    Ref<DatabaseLoader> databaseLoader = DatabaseLoader::create(document, WTFMove(requestCallback));
     databaseLoader->start(idbFactory, document->securityOrigin(), databaseName);
 }
 
@@ -679,7 +679,7 @@ void InspectorIndexedDBAgent::requestData(ErrorString& errorString, const String
         return;
     }
 
-    Ref<DataLoader> dataLoader = DataLoader::create(document, WTF::move(requestCallback), injectedScript, objectStoreName, indexName, WTF::move(idbKeyRange), skipCount, pageSize);
+    Ref<DataLoader> dataLoader = DataLoader::create(document, WTFMove(requestCallback), injectedScript, objectStoreName, indexName, WTFMove(idbKeyRange), skipCount, pageSize);
     dataLoader->start(idbFactory, document->securityOrigin(), databaseName);
 }
 
@@ -688,7 +688,7 @@ class ClearObjectStoreListener : public EventListener {
 public:
     static Ref<ClearObjectStoreListener> create(Ref<ClearObjectStoreCallback> requestCallback)
     {
-        return adoptRef(*new ClearObjectStoreListener(WTF::move(requestCallback)));
+        return adoptRef(*new ClearObjectStoreListener(WTFMove(requestCallback)));
     }
 
     virtual ~ClearObjectStoreListener() { }
@@ -712,7 +712,7 @@ public:
 private:
     ClearObjectStoreListener(Ref<ClearObjectStoreCallback>&& requestCallback)
         : EventListener(EventListener::CPPEventListenerType)
-        , m_requestCallback(WTF::move(requestCallback))
+        , m_requestCallback(WTFMove(requestCallback))
     {
     }
 
@@ -724,13 +724,13 @@ class ClearObjectStore : public ExecutableWithDatabase {
 public:
     static Ref<ClearObjectStore> create(ScriptExecutionContext* context, const String& objectStoreName, Ref<ClearObjectStoreCallback>&& requestCallback)
     {
-        return adoptRef(*new ClearObjectStore(context, objectStoreName, WTF::move(requestCallback)));
+        return adoptRef(*new ClearObjectStore(context, objectStoreName, WTFMove(requestCallback)));
     }
 
     ClearObjectStore(ScriptExecutionContext* context, const String& objectStoreName, Ref<ClearObjectStoreCallback>&& requestCallback)
         : ExecutableWithDatabase(context)
         , m_objectStoreName(objectStoreName)
-        , m_requestCallback(WTF::move(requestCallback))
+        , m_requestCallback(WTFMove(requestCallback))
     {
     }
 
@@ -775,7 +775,7 @@ void InspectorIndexedDBAgent::clearObjectStore(ErrorString& errorString, const S
     if (!idbFactory)
         return;
 
-    Ref<ClearObjectStore> clearObjectStore = ClearObjectStore::create(document, objectStoreName, WTF::move(requestCallback));
+    Ref<ClearObjectStore> clearObjectStore = ClearObjectStore::create(document, objectStoreName, WTFMove(requestCallback));
     clearObjectStore->start(idbFactory, document->securityOrigin(), databaseName);
 }
 

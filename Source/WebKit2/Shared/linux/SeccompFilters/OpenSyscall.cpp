@@ -57,7 +57,7 @@ std::unique_ptr<Syscall> OpenSyscall::createFromOpenatContext(mcontext_t* contex
 
     if (path[0] == '/') {
         open->setPath(path);
-        return WTF::move(open);
+        return WTFMove(open);
     }
 
     struct stat pathStat;
@@ -90,7 +90,7 @@ std::unique_ptr<Syscall> OpenSyscall::createFromOpenatContext(mcontext_t* contex
     sprintf(&fdPath[size], "/%s", path);
     open->setPath(fdPath);
 
-    return WTF::move(open);
+    return WTFMove(open);
 }
 
 std::unique_ptr<Syscall> OpenSyscall::createFromCreatContext(mcontext_t* context)
@@ -102,7 +102,7 @@ std::unique_ptr<Syscall> OpenSyscall::createFromCreatContext(mcontext_t* context
     open->setMode(context->gregs[REG_ARG1]);
     open->setContext(context);
 
-    return WTF::move(open);
+    return WTFMove(open);
 }
 
 OpenSyscall::OpenSyscall(mcontext_t* context)
@@ -200,7 +200,7 @@ void OpenSyscallResult::encode(IPC::ArgumentEncoder& encoder) const
 
     if (m_fd >= 0) {
         IPC::Attachment attachment(m_fd);
-        encoder.addAttachment(WTF::move(attachment));
+        encoder.addAttachment(WTFMove(attachment));
     }
 
     encoder << m_errorNumber;

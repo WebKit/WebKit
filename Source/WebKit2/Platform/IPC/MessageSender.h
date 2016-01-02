@@ -47,7 +47,7 @@ public:
         auto encoder = std::make_unique<MessageEncoder>(U::receiverName(), U::name(), destinationID);
         encoder->encode(message.arguments());
         
-        return sendMessage(WTF::move(encoder), messageSendFlags);
+        return sendMessage(WTFMove(encoder), messageSendFlags);
     }
 
     template<typename T>
@@ -55,7 +55,7 @@ public:
     {
         static_assert(T::isSync, "Message is not sync!");
 
-        return sendSync(std::forward<T>(message), WTF::move(reply), messageSenderDestinationID(), timeout, syncSendFlags);
+        return sendSync(std::forward<T>(message), WTFMove(reply), messageSenderDestinationID(), timeout, syncSendFlags);
     }
 
     template<typename T>
@@ -63,7 +63,7 @@ public:
     {
         ASSERT(messageSenderConnection());
 
-        return messageSenderConnection()->sendSync(WTF::move(message), WTF::move(reply), destinationID, timeout, syncSendFlags);
+        return messageSenderConnection()->sendSync(WTFMove(message), WTFMove(reply), destinationID, timeout, syncSendFlags);
     }
 
     virtual bool sendMessage(std::unique_ptr<MessageEncoder>, unsigned messageSendFlags);

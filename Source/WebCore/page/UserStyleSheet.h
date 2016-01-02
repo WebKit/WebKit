@@ -45,8 +45,8 @@ public:
     UserStyleSheet(const String& source, const URL& url, Vector<String>&& whitelist, Vector<String>&& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level)
         : m_source(source)
         , m_url(url)
-        , m_whitelist(WTF::move(whitelist))
-        , m_blacklist(WTF::move(blacklist))
+        , m_whitelist(WTFMove(whitelist))
+        , m_blacklist(WTFMove(blacklist))
         , m_injectedFrames(injectedFrames)
         , m_level(level)
     {

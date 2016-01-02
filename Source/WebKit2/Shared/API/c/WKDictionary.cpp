@@ -43,7 +43,7 @@ WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* keys, const WKTy
     for (size_t i = 0; i < numberOfValues; ++i)
         map.add(toImpl(keys[i])->string(), toImpl(values[i]));
 
-    return toAPI(&API::Dictionary::create(WTF::move(map)).leakRef());
+    return toAPI(&API::Dictionary::create(WTFMove(map)).leakRef());
 }
 
 WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionaryRef, WKStringRef key)

@@ -124,7 +124,7 @@ void XMLErrors::insertErrorMessageBlock()
         auto body = m_document->createElement(bodyTag, true);
         rootElement->parserAppendChild(body.copyRef());
         m_document->parserAppendChild(rootElement.copyRef());
-        documentElement = WTF::move(body);
+        documentElement = WTFMove(body);
     }
     else if (documentElement->namespaceURI() == SVGNames::svgNamespaceURI) {
         auto rootElement = m_document->createElement(htmlTag, true);
@@ -140,9 +140,9 @@ void XMLErrors::insertErrorMessageBlock()
         m_document->parserRemoveChild(*documentElement);
 
         body->parserAppendChild(*documentElement);
-        m_document->parserAppendChild(WTF::move(rootElement));
+        m_document->parserAppendChild(WTFMove(rootElement));
 
-        documentElement = WTF::move(body);
+        documentElement = WTFMove(body);
     }
 
     String errorMessages = m_errorMessages.toString();
@@ -155,15 +155,15 @@ void XMLErrors::insertErrorMessageBlock()
         auto paragraph = m_document->createElement(pTag, true);
         paragraph->parserSetAttributes(attributes);
         paragraph->parserAppendChild(m_document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."));
-        reportElement->parserAppendChild(WTF::move(paragraph));
+        reportElement->parserAppendChild(WTFMove(paragraph));
     }
 #endif
 
     Node* firstChild = documentElement->firstChild();
     if (firstChild)
-        documentElement->parserInsertBefore(WTF::move(reportElement), *firstChild);
+        documentElement->parserInsertBefore(WTFMove(reportElement), *firstChild);
     else
-        documentElement->parserAppendChild(WTF::move(reportElement));
+        documentElement->parserAppendChild(WTFMove(reportElement));
 
     m_document->updateStyleIfNeeded();
 }

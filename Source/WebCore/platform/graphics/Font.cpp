@@ -55,7 +55,7 @@ Font::Font(const FontPlatformData& platformData, std::unique_ptr<SVGData>&& svgD
     : m_maxCharWidth(-1)
     , m_avgCharWidth(-1)
     , m_platformData(platformData)
-    , m_svgData(WTF::move(svgData))
+    , m_svgData(WTFMove(svgData))
     , m_mathData(nullptr)
     , m_treatAsFixedPitch(false)
     , m_isCustomFont(isCustomFont)
@@ -85,7 +85,7 @@ Font::Font(const FontPlatformData& platformData, bool isCustomFont, bool isLoadi
 }
 
 Font::Font(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
-    : Font(FontPlatformData(fontSize, syntheticBold, syntheticItalic), WTF::move(svgData), true, false, false)
+    : Font(FontPlatformData(fontSize, syntheticBold, syntheticItalic), WTFMove(svgData), true, false, false)
 {
     m_svgData->initializeFont(this, fontSize);
 }
@@ -229,7 +229,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
     if (!haveGlyphs)
         return nullptr;
 
-    return WTF::move(glyphPage);
+    return WTFMove(glyphPage);
 }
 
 const GlyphPage* Font::glyphPage(unsigned pageNumber) const
@@ -471,7 +471,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
     }
 
     auto key = CharacterFallbackMapKey(description.locale(), character, isForPlatformFont);
-    auto characterAddResult = fontAddResult.iterator->value.add(WTF::move(key), nullptr);
+    auto characterAddResult = fontAddResult.iterator->value.add(WTFMove(key), nullptr);
 
     Font*& fallbackFont = characterAddResult.iterator->value;
 

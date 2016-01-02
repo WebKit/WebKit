@@ -83,7 +83,7 @@ RefPtr<StorageArea> StorageNamespaceImpl::storageArea(RefPtr<SecurityOrigin>&& s
     } else
         map = slot;
 
-    return StorageAreaImpl::create(WTF::move(map));
+    return StorageAreaImpl::create(WTFMove(map));
 }
 
 RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)

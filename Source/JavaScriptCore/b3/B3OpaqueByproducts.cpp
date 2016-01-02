@@ -40,7 +40,7 @@ OpaqueByproducts::~OpaqueByproducts()
 
 void OpaqueByproducts::add(std::unique_ptr<OpaqueByproduct> byproduct)
 {
-    m_byproducts.append(WTF::move(byproduct));
+    m_byproducts.append(WTFMove(byproduct));
 }
 
 void OpaqueByproducts::dump(PrintStream& out) const

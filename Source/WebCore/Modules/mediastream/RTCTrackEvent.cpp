@@ -52,7 +52,7 @@ Ref<RTCTrackEvent> RTCTrackEvent::create()
 
 Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track)
 {
-    return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTF::move(receiver), WTF::move(track)));
+    return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTFMove(receiver), WTFMove(track)));
 }
 
 Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomicString& type, const RTCTrackEventInit& initializer)

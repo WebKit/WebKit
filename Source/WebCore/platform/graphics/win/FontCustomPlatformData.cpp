@@ -69,7 +69,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     auto hfont = adoptGDIObject(::CreateFontIndirect(&logFont));
 
     RetainPtr<CGFontRef> cgFont = adoptCF(CGFontCreateWithPlatformFont(&logFont));
-    return FontPlatformData(WTF::move(hfont), cgFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
+    return FontPlatformData(WTFMove(hfont), cgFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
 }
 
 // Creates a unique and unpredictable font name, in order to avoid collisions and to

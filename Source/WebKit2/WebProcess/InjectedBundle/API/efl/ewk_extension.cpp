@@ -83,7 +83,7 @@ void EwkExtension::didCreatePage(WKBundleRef, WKBundlePageRef wkPage, const void
             it->page_add(ewkPage.get(), it->data);
     }
 
-    self->m_pageMap.add(page, WTF::move(ewkPage));
+    self->m_pageMap.add(page, WTFMove(ewkPage));
 }
 
 void EwkExtension::willDestroyPage(WKBundleRef, WKBundlePageRef wkPage, const void* clientInfo)

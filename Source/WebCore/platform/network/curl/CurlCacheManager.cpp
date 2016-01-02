@@ -147,7 +147,7 @@ void CurlCacheManager::loadIndex()
             m_currentStorageSize += cacheEntry->entrySize();
             makeRoomForNewEntry();
             m_LRUEntryList.prependOrMoveToFirst(url);
-            m_index.set(url, WTF::move(cacheEntry));
+            m_index.set(url, WTFMove(cacheEntry));
         } else
             cacheEntry->invalidate();
 
@@ -222,7 +222,7 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle& job, ResourceResponse&
         if (cacheable) {
             cacheEntry->setIsLoading(true);
             m_LRUEntryList.prependOrMoveToFirst(url);
-            m_index.set(url, WTF::move(cacheEntry));
+            m_index.set(url, WTFMove(cacheEntry));
             saveResponseHeaders(url, response);
         }
     } else

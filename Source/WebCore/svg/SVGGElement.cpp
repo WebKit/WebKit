@@ -90,9 +90,9 @@ RenderPtr<RenderElement> SVGGElement::createElementRenderer(Ref<RenderStyle>&& s
     // subtree may be hidden - we only want the resource renderers to exist so they can be
     // referenced from somewhere else.
     if (style.get().display() == NONE)
-        return createRenderer<RenderSVGHiddenContainer>(*this, WTF::move(style));
+        return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
 
-    return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
+    return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
 bool SVGGElement::rendererIsNeeded(const RenderStyle&)

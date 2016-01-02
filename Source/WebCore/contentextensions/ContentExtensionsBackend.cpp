@@ -60,7 +60,7 @@ void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref
     }
 
     RefPtr<ContentExtension> extension = ContentExtension::create(identifier, adoptRef(*compiledContentExtension.leakRef()));
-    m_contentExtensions.set(identifier, WTF::move(extension));
+    m_contentExtensions.set(identifier, WTFMove(extension));
 }
 
 void ContentExtensionsBackend::removeContentExtension(const String& identifier)

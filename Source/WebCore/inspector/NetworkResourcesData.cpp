@@ -242,7 +242,7 @@ void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, RefP
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
-    resourceData->setBuffer(WTF::move(buffer));
+    resourceData->setBuffer(WTFMove(buffer));
     resourceData->setTextEncodingName(textEncodingName);
 }
 

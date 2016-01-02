@@ -366,7 +366,7 @@ void LegacyTransaction::enqueueEvent(Ref<Event>&& event)
         return;
 
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
 }
 
 IDBDatabaseBackend* LegacyTransaction::backendDB() const

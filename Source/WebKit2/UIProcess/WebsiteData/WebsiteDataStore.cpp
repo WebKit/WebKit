@@ -66,17 +66,17 @@ Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 
 Ref<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
 {
-    return adoptRef(*new WebsiteDataStore(WTF::move(configuration)));
+    return adoptRef(*new WebsiteDataStore(WTFMove(configuration)));
 }
 
 WebsiteDataStore::WebsiteDataStore(Configuration configuration)
     : m_identifier(generateIdentifier())
     , m_sessionID(WebCore::SessionID::defaultSessionID())
-    , m_networkCacheDirectory(WTF::move(configuration.networkCacheDirectory))
-    , m_applicationCacheDirectory(WTF::move(configuration.applicationCacheDirectory))
-    , m_webSQLDatabaseDirectory(WTF::move(configuration.webSQLDatabaseDirectory))
-    , m_mediaKeysStorageDirectory(WTF::move(configuration.mediaKeysStorageDirectory))
-    , m_storageManager(StorageManager::create(WTF::move(configuration.localStorageDirectory)))
+    , m_networkCacheDirectory(WTFMove(configuration.networkCacheDirectory))
+    , m_applicationCacheDirectory(WTFMove(configuration.applicationCacheDirectory))
+    , m_webSQLDatabaseDirectory(WTFMove(configuration.webSQLDatabaseDirectory))
+    , m_mediaKeysStorageDirectory(WTFMove(configuration.mediaKeysStorageDirectory))
+    , m_storageManager(StorageManager::create(WTFMove(configuration.localStorageDirectory)))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
     platformInitialize();
@@ -154,7 +154,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 {
     struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(std::function<void (Vector<WebsiteDataRecord>)> completionHandler)
-            : completionHandler(WTF::move(completionHandler))
+            : completionHandler(WTFMove(completionHandler))
         {
         }
 
@@ -180,9 +180,9 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
                 auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
                 if (!record.displayName)
-                    record.displayName = WTF::move(displayName);
+                    record.displayName = WTFMove(displayName);
 
-                record.add(entry.type, WTF::move(entry.origin));
+                record.add(entry.type, WTFMove(entry.origin));
             }
 
             for (auto& hostName : websiteData.hostNamesWithCookies) {
@@ -192,7 +192,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
                 auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
                 if (!record.displayName)
-                    record.displayName = WTF::move(displayName);
+                    record.displayName = WTFMove(displayName);
 
                 record.addCookieHostName(hostName);
             }
@@ -205,7 +205,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
                 auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
                 if (!record.displayName)
-                    record.displayName = WTF::move(displayName);
+                    record.displayName = WTFMove(displayName);
 
                 record.addPluginDataHostName(hostName);
             }
@@ -226,9 +226,9 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
                 records.reserveInitialCapacity(callbackAggregator->m_websiteDataRecords.size());
 
                 for (auto& record : callbackAggregator->m_websiteDataRecords.values())
-                    records.uncheckedAppend(WTF::move(record));
+                    records.uncheckedAppend(WTFMove(record));
 
-                callbackAggregator->completionHandler(WTF::move(records));
+                callbackAggregator->completionHandler(WTFMove(records));
             });
         }
 
@@ -238,7 +238,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
         HashMap<String, WebsiteDataRecord> m_websiteDataRecords;
     };
 
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataFetch(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
@@ -259,7 +259,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
             callbackAggregator->addPendingCallback();
             processPool->networkProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
-                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         }
     }
@@ -284,7 +284,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
             callbackAggregator->addPendingCallback();
             process->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator](WebsiteData websiteData) {
-                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         }
     }
@@ -298,7 +298,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             while (!origins.isEmpty())
                 websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataTypeSessionStorage });
 
-            callbackAggregator->removePendingCallback(WTF::move(websiteData));
+            callbackAggregator->removePendingCallback(WTFMove(websiteData));
         });
     }
 
@@ -311,7 +311,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             while (!origins.isEmpty())
                 websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataTypeLocalStorage });
 
-            callbackAggregator->removePendingCallback(WTF::move(websiteData));
+            callbackAggregator->removePendingCallback(WTFMove(websiteData));
         });
     }
 
@@ -332,7 +332,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
                 for (auto& origin : origins)
                     websiteData.entries.append(WebsiteData::Entry { origin, WebsiteDataTypeOfflineWebApplicationCache });
 
-                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
     }
@@ -349,9 +349,9 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeWebSQLDatabases });
+                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataTypeWebSQLDatabases });
 
-                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
     }
@@ -363,7 +363,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
             callbackAggregator->addPendingCallback();
             processPool->databaseProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
-                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         }
     }
@@ -380,9 +380,9 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             RunLoop::main().dispatch([callbackAggregator, origins]() mutable {
                 WebsiteData websiteData;
                 for (auto& origin : origins)
-                    websiteData.entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeMediaKeys });
+                    websiteData.entries.append(WebsiteData::Entry { WTFMove(origin), WebsiteDataTypeMediaKeys });
 
-                callbackAggregator->removePendingCallback(WTF::move(websiteData));
+                callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         });
     }
@@ -393,13 +393,13 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
         public:
             static void fetchData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins)
             {
-                new State(WTF::move(callbackAggregator), WTF::move(plugins));
+                new State(WTFMove(callbackAggregator), WTFMove(plugins));
             }
 
         private:
             State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins)
-                : m_callbackAggregator(WTF::move(callbackAggregator))
-                , m_plugins(WTF::move(plugins))
+                : m_callbackAggregator(WTFMove(callbackAggregator))
+                , m_plugins(WTFMove(plugins))
             {
                 m_callbackAggregator->addPendingCallback();
 
@@ -415,9 +415,9 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             {
                 if (m_plugins.isEmpty()) {
                     WebsiteData websiteData;
-                    websiteData.hostNamesWithPluginData = WTF::move(m_hostNames);
+                    websiteData.hostNamesWithPluginData = WTFMove(m_hostNames);
 
-                    m_callbackAggregator->removePendingCallback(WTF::move(websiteData));
+                    m_callbackAggregator->removePendingCallback(WTFMove(websiteData));
 
                     delete this;
                     return;
@@ -426,7 +426,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
                 auto plugin = m_plugins.takeLast();
                 PluginProcessManager::singleton().fetchWebsiteData(plugin, [this](Vector<String> hostNames) {
                     for (auto& hostName : hostNames)
-                        m_hostNames.add(WTF::move(hostName));
+                        m_hostNames.add(WTFMove(hostName));
                     fetchWebsiteDataForNextPlugin();
                 });
             }
@@ -479,7 +479,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 {
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator (std::function<void ()> completionHandler)
-            : completionHandler(WTF::move(completionHandler))
+            : completionHandler(WTFMove(completionHandler))
         {
         }
 
@@ -499,14 +499,14 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         void callIfNeeded()
         {
             if (!pendingCallbacks)
-                RunLoop::main().dispatch(WTF::move(completionHandler));
+                RunLoop::main().dispatch(WTFMove(completionHandler));
         }
 
         unsigned pendingCallbacks = 0;
         std::function<void ()> completionHandler;
     };
 
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
@@ -648,13 +648,13 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         public:
             static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, std::chrono::system_clock::time_point modifiedSince)
             {
-                new State(WTF::move(callbackAggregator), WTF::move(plugins), modifiedSince);
+                new State(WTFMove(callbackAggregator), WTFMove(plugins), modifiedSince);
             }
 
         private:
             State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, std::chrono::system_clock::time_point modifiedSince)
-                : m_callbackAggregator(WTF::move(callbackAggregator))
-                , m_plugins(WTF::move(plugins))
+                : m_callbackAggregator(WTFMove(callbackAggregator))
+                , m_plugins(WTFMove(plugins))
                 , m_modifiedSince(modifiedSince)
             {
                 m_callbackAggregator->addPendingCallback();
@@ -706,7 +706,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
 
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator (std::function<void ()> completionHandler)
-            : completionHandler(WTF::move(completionHandler))
+            : completionHandler(WTFMove(completionHandler))
         {
         }
 
@@ -726,14 +726,14 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
         void callIfNeeded()
         {
             if (!pendingCallbacks)
-                RunLoop::main().dispatch(WTF::move(completionHandler));
+                RunLoop::main().dispatch(WTFMove(completionHandler));
         }
 
         unsigned pendingCallbacks = 0;
         std::function<void ()> completionHandler;
     };
 
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTF::move(completionHandler)));
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
@@ -896,14 +896,14 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
         public:
             static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
             {
-                new State(WTF::move(callbackAggregator), WTF::move(plugins), WTF::move(hostNames));
+                new State(WTFMove(callbackAggregator), WTFMove(plugins), WTFMove(hostNames));
             }
 
         private:
             State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
-                : m_callbackAggregator(WTF::move(callbackAggregator))
-                , m_plugins(WTF::move(plugins))
-                , m_hostNames(WTF::move(hostNames))
+                : m_callbackAggregator(WTFMove(callbackAggregator))
+                , m_plugins(WTFMove(plugins))
+                , m_hostNames(WTFMove(hostNames))
             {
                 m_callbackAggregator->addPendingCallback();
 
@@ -935,7 +935,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
             Vector<String> m_hostNames;
         };
 
-        State::deleteData(*callbackAggregator, plugins(), WTF::move(hostNames));
+        State::deleteData(*callbackAggregator, plugins(), WTFMove(hostNames));
     }
 #endif
 
@@ -1039,7 +1039,7 @@ Vector<RefPtr<WebCore::SecurityOrigin>> WebsiteDataStore::mediaKeyOrigins(const 
         auto mediaKeyIdentifier = WebCore::pathGetFileName(originPath);
 
         if (auto securityOrigin = WebCore::SecurityOrigin::maybeCreateFromDatabaseIdentifier(mediaKeyIdentifier))
-            origins.append(WTF::move(securityOrigin));
+            origins.append(WTFMove(securityOrigin));
     }
 
     return origins;

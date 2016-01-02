@@ -128,7 +128,7 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
     frame->m_coreFrame->tree().setName(frameName);
     if (ownerElement) {
         ASSERT(ownerElement->document().frame());
-        ownerElement->document().frame()->tree().appendChild(WTF::move(coreFrame));
+        ownerElement->document().frame()->tree().appendChild(WTFMove(coreFrame));
     }
     frame->m_coreFrame->init();
     return frame.release();
@@ -136,7 +136,7 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
 
 PassRefPtr<WebFrame> WebFrame::create(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
 {
-    RefPtr<WebFrame> frame = adoptRef(new WebFrame(WTF::move(frameLoaderClient)));
+    RefPtr<WebFrame> frame = adoptRef(new WebFrame(WTFMove(frameLoaderClient)));
 
     // Add explict ref() that will be balanced in WebFrameLoaderClient::frameLoaderDestroyed().
     frame->ref();
@@ -149,7 +149,7 @@ WebFrame::WebFrame(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
     , m_policyListenerID(0)
     , m_policyFunction(0)
     , m_policyDownloadID(0)
-    , m_frameLoaderClient(WTF::move(frameLoaderClient))
+    , m_frameLoaderClient(WTFMove(frameLoaderClient))
     , m_loadListener(0)
     , m_frameID(generateFrameID())
 #if PLATFORM(IOS)
@@ -233,7 +233,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
 
     ASSERT(m_policyFunction);
 
-    FramePolicyFunction function = WTF::move(m_policyFunction);
+    FramePolicyFunction function = WTFMove(m_policyFunction);
 
     invalidatePolicyListener();
 
@@ -445,7 +445,7 @@ Ref<API::Array> WebFrame::childFrames()
         vector.uncheckedAppend(webFrame);
     }
 
-    return API::Array::create(WTF::move(vector));
+    return API::Array::create(WTFMove(vector));
 }
 
 String WebFrame::layerTreeAsText() const
@@ -826,7 +826,7 @@ PassRefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
     auto graphicsContext = sharedSnapshot->createGraphicsContext();
     float deviceScaleFactor = coreFrame()->page()->deviceScaleFactor();
     graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
-    graphicsContext->drawConsumingImageBuffer(WTF::move(snapshot), FloatPoint());
+    graphicsContext->drawConsumingImageBuffer(WTFMove(snapshot), FloatPoint());
 
     return sharedSnapshot.release();
 }

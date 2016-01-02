@@ -74,7 +74,7 @@ void DedicatedWorkerGlobalScope::postMessage(PassRefPtr<SerializedScriptValue> m
     std::unique_ptr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(ports, ec);
     if (ec)
         return;
-    thread().workerObjectProxy().postMessageToWorkerObject(message, WTF::move(channels));
+    thread().workerObjectProxy().postMessageToWorkerObject(message, WTFMove(channels));
 }
 
 void DedicatedWorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode& ec)

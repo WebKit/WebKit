@@ -43,7 +43,7 @@ WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data)
     if (!WebKit::decodeLegacySessionState(WebKit::toImpl(data)->bytes(), WebKit::toImpl(data)->size(), sessionState))
         return nullptr;
 
-    return WebKit::toAPI(&API::SessionState::create(WTF::move(sessionState)).leakRef());
+    return WebKit::toAPI(&API::SessionState::create(WTFMove(sessionState)).leakRef());
 }
 
 WKDataRef WKSessionStateCopyData(WKSessionStateRef sessionState)

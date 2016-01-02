@@ -151,14 +151,14 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
                 return ranges;
         }
         if (auto font = fontCache.fontForFamily(description, family))
-            return FontRanges(WTF::move(font));
+            return FontRanges(WTFMove(font));
     }
     // We didn't find a font. Try to find a similar font using our own specific knowledge about our platform.
     // For example on OS X, we know to map any families containing the words Arabic, Pashto, or Urdu to the
     // Geeza Pro font.
     for (auto& family : description.families()) {
         if (auto font = fontCache.similarFont(description, family))
-            return FontRanges(WTF::move(font));
+            return FontRanges(WTFMove(font));
     }
     return { };
 }

@@ -185,7 +185,7 @@ std::unique_ptr<Vector<String>> LocaleICU::createLabelVector(const UDateFormat* 
             return std::make_unique<Vector<String>>();
         labels->append(String::adopt(buffer));
     }
-    return WTF::move(labels);
+    return WTFMove(labels);
 }
 #endif
 
@@ -196,7 +196,7 @@ static std::unique_ptr<Vector<String>> createFallbackMonthLabels()
     labels->reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthFullName));
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthFullName); ++i)
         labels->append(WTF::monthFullName[i]);
-    return WTF::move(labels);
+    return WTFMove(labels);
 }
 
 const Vector<String>& LocaleICU::monthLabels()
@@ -220,7 +220,7 @@ static std::unique_ptr<Vector<String>> createFallbackAMPMLabels()
     labels->reserveCapacity(2);
     labels->append("AM");
     labels->append("PM");
-    return WTF::move(labels);
+    return WTFMove(labels);
 }
 
 void LocaleICU::initializeDateTimeFormat()

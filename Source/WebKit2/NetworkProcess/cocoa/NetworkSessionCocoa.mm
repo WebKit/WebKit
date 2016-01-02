@@ -249,7 +249,7 @@ NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIden
 NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkSessionTaskClient& client, RetainPtr<NSURLSessionDataTask>&& task)
     : m_session(session)
     , m_client(&client)
-    , m_task(WTF::move(task))
+    , m_task(WTFMove(task))
 {
     ASSERT(!m_session.m_dataTaskMap.contains(taskIdentifier()));
     ASSERT(isMainThread());

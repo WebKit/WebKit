@@ -40,22 +40,22 @@ class IDBAny : public WebCore::IDBAny {
 public:
     static RefPtr<IDBAny> create(Ref<IDBDatabase>&& database)
     {
-        return adoptRef(new IDBAny(WTF::move(database)));
+        return adoptRef(new IDBAny(WTFMove(database)));
     }
 
     static Ref<IDBAny> create(Ref<IDBObjectStore>&& objectStore)
     {
-        return adoptRef(*new IDBAny(WTF::move(objectStore)));
+        return adoptRef(*new IDBAny(WTFMove(objectStore)));
     }
 
     static Ref<IDBAny> create(Ref<IDBIndex>&& index)
     {
-        return adoptRef(*new IDBAny(WTF::move(index)));
+        return adoptRef(*new IDBAny(WTFMove(index)));
     }
 
     static RefPtr<IDBAny> create(Ref<IDBCursor>&& cursor)
     {
-        return adoptRef(new IDBAny(WTF::move(cursor)));
+        return adoptRef(new IDBAny(WTFMove(cursor)));
     }
 
     static RefPtr<IDBAny> create(const IDBKeyPath& keyPath)

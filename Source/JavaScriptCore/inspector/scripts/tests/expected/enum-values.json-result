@@ -42,7 +42,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -259,7 +259,7 @@ void CommandDomainBackendDispatcher::dispatch(long requestId, const String& meth
     message->getObject(ASCIILiteral("params"), parameters);
 
     if (method == "commandWithEnumReturnValue")
-        commandWithEnumReturnValue(requestId, WTF::move(parameters));
+        commandWithEnumReturnValue(requestId, WTFMove(parameters));
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "CommandDomain", '.', method, "' was not found"));
 }
@@ -282,9 +282,9 @@ void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, 
         result->setString(ASCIILiteral("returnValue"), Inspector::Protocol::getEnumConstantValue(out_returnValue));
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 } // namespace Inspector
@@ -397,7 +397,7 @@ void EventDomainFrontendDispatcher::eventWithEnumParameter(Parameter parameter)
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
     Ref<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setString(ASCIILiteral("parameter"), Inspector::Protocol::getEnumConstantValue(parameter));
-    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
+    jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
 
     m_frontendRouter.sendEvent(jsonMessage->toJSONString());
 }
@@ -679,8 +679,8 @@ using namespace Inspector;
     _commandDomainHandler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorCommandDomainBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>(ASCIILiteral("CommandDomain"), *_controller, WTF::move(alternateDispatcher));
-    _controller->appendExtraAgent(WTF::move(alternateAgent));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<CommandDomainBackendDispatcher, AlternateCommandDomainBackendDispatcher>>(ASCIILiteral("CommandDomain"), *_controller, WTFMove(alternateDispatcher));
+    _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
 - (id<RWIProtocolCommandDomainDomainHandler>)commandDomainHandler
@@ -794,7 +794,7 @@ void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(lon
     id successCallback = ^(RWIProtocolCommandDomainCommandWithEnumReturnValueReturnValue returnValue) {
         Ref<InspectorObject> resultObject = InspectorObject::create();
         resultObject->setString(ASCIILiteral("returnValue"), toProtocolString(returnValue));
-        backendDispatcher()->sendResponse(requestId, WTF::move(resultObject));
+        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject));
     };
 
     [m_delegate commandWithEnumReturnValueWithErrorCallback:errorCallback successCallback:successCallback];
@@ -1001,7 +1001,7 @@ using namespace Inspector;
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
     Ref<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setString(ASCIILiteral("parameter"), toProtocolString(parameter));
-    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
+    jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
     router.sendEvent(jsonMessage->toJSONString());
 }
 

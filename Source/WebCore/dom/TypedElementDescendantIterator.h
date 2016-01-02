@@ -257,7 +257,7 @@ inline const ElementType* TypedElementDescendantConstIteratorAdapter<ElementType
 // DoubleTypedElementDescendantIteratorAdapter
 
 template<typename ElementType> inline DoubleTypedElementDescendantIteratorAdapter<ElementType>::DoubleTypedElementDescendantIteratorAdapter(SingleAdapter&& first, SingleAdapter&& second)
-    : m_pair(WTF::move(first), WTF::move(second))
+    : m_pair(WTFMove(first), WTFMove(second))
 {
 }
 
@@ -274,7 +274,7 @@ template<typename ElementType> inline auto DoubleTypedElementDescendantIteratorA
 // DoubleTypedElementDescendantIterator
 
 template<typename ElementType> inline DoubleTypedElementDescendantIterator<ElementType>::DoubleTypedElementDescendantIterator(SingleIterator&& first, SingleIterator&& second)
-    : m_pair(WTF::move(first), WTF::move(second))
+    : m_pair(WTFMove(first), WTFMove(second))
 {
 }
 

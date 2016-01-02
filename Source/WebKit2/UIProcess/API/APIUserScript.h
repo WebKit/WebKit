@@ -37,7 +37,7 @@ public:
 
     static Ref<UserScript> create(WebCore::UserScript userScript)
     {
-        return adoptRef(*new UserScript(WTF::move(userScript)));
+        return adoptRef(*new UserScript(WTFMove(userScript)));
     }
 
     UserScript(WebCore::UserScript userScript)

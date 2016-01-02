@@ -106,10 +106,10 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, cons
         auto entry = Inspector::Protocol::Array<String>::create();
         entry->addItem(key);
         entry->addItem(value);
-        storageItems->addItem(WTF::move(entry));
+        storageItems->addItem(WTFMove(entry));
     }
 
-    items = WTF::move(storageItems);
+    items = WTFMove(storageItems);
 }
 
 void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const InspectorObject& storageId, const String& key, const String& value)

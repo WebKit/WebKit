@@ -1,3 +1,13 @@
+2015-12-31  Andy Estes  <aestes@apple.com>
+
+        Replace WTF::move with WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Brady Eidson.
+
+        * Storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::storageArea):
+
 2015-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal Windows build

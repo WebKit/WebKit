@@ -102,7 +102,7 @@ public:
     void wheelEventWasNotHandledByWebCore(NSEvent *event) { m_pendingSwipeTracker.eventWasNotHandledByWebCore(event); }
     void gestureEventWasNotHandledByWebCore(NSEvent *, WebCore::FloatPoint origin);
 
-    void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTF::move(views); }
+    void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTFMove(views); }
     void setCustomSwipeViewsTopContentInset(float topContentInset) { m_customSwipeViewsTopContentInset = topContentInset; }
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
     void setDidMoveSwipeSnapshotCallback(void(^)(CGRect));

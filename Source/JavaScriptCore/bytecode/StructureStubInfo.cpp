@@ -113,7 +113,7 @@ MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
         return MacroAssemblerCodePtr();
     
     if (cacheType == CacheType::Stub)
-        return u.stub->regenerateWithCase(vm, codeBlock, *this, ident, WTF::move(accessCase));
+        return u.stub->regenerateWithCase(vm, codeBlock, *this, ident, WTFMove(accessCase));
 
     std::unique_ptr<PolymorphicAccess> access = std::make_unique<PolymorphicAccess>();
     
@@ -122,17 +122,17 @@ MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
     std::unique_ptr<AccessCase> previousCase =
         AccessCase::fromStructureStubInfo(vm, codeBlock, *this);
     if (previousCase)
-        accessCases.append(WTF::move(previousCase));
+        accessCases.append(WTFMove(previousCase));
 
-    accessCases.append(WTF::move(accessCase));
+    accessCases.append(WTFMove(accessCase));
 
     MacroAssemblerCodePtr result =
-        access->regenerateWithCases(vm, codeBlock, *this, ident, WTF::move(accessCases));
+        access->regenerateWithCases(vm, codeBlock, *this, ident, WTFMove(accessCases));
 
     if (!result)
         return MacroAssemblerCodePtr();
 
-    initStub(codeBlock, WTF::move(access));
+    initStub(codeBlock, WTFMove(access));
     return result;
 }
 

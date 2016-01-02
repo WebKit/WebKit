@@ -183,7 +183,7 @@ const char* NavigatorContentUtils::supplementName()
 
 void provideNavigatorContentUtilsTo(Page* page, std::unique_ptr<NavigatorContentUtilsClient> client)
 {
-    NavigatorContentUtils::provideTo(page, NavigatorContentUtils::supplementName(), std::make_unique<NavigatorContentUtils>(WTF::move(client)));
+    NavigatorContentUtils::provideTo(page, NavigatorContentUtils::supplementName(), std::make_unique<NavigatorContentUtils>(WTFMove(client)));
 }
 
 } // namespace WebCore

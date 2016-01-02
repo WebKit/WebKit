@@ -65,7 +65,7 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
 
     String message;
     arguments->getFirstArgumentAsString(message);
-    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTF::move(arguments), exec));
+    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTFMove(arguments), exec));
 }
 
 void JSGlobalObjectConsoleClient::count(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
@@ -91,7 +91,7 @@ void JSGlobalObjectConsoleClient::time(ExecState*, const String& title)
 void JSGlobalObjectConsoleClient::timeEnd(ExecState* exec, const String& title)
 {
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
-    m_consoleAgent->stopTiming(title, WTF::move(callStack));
+    m_consoleAgent->stopTiming(title, WTFMove(callStack));
 }
 
 void JSGlobalObjectConsoleClient::timeStamp(ExecState*, RefPtr<ScriptArguments>&&)

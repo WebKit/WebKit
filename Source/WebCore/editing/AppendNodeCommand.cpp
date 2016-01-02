@@ -38,7 +38,7 @@ namespace WebCore {
 AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, Ref<Node>&& node, EditAction editingAction)
     : SimpleEditCommand(parent->document(), editingAction)
     , m_parent(parent)
-    , m_node(WTF::move(node))
+    , m_node(WTFMove(node))
 {
     ASSERT(m_parent);
     ASSERT(!m_node->parentNode());

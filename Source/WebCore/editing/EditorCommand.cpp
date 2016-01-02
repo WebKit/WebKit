@@ -103,11 +103,11 @@ static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAc
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
     case CommandFromMenuOrKeyBinding:
-        frame.editor().applyStyleToSelection(WTF::move(style), action);
+        frame.editor().applyStyleToSelection(WTFMove(style), action);
         return true;
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
-        frame.editor().applyStyle(WTF::move(style), EditActionUnspecified);
+        frame.editor().applyStyle(WTFMove(style), EditActionUnspecified);
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -169,7 +169,7 @@ static bool executeInsertNode(Frame& frame, Ref<Node>&& content)
 {
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(*frame.document());
     ExceptionCode ec = 0;
-    fragment->appendChild(WTF::move(content), ec);
+    fragment->appendChild(WTFMove(content), ec);
     if (ec)
         return false;
     return executeInsertFragment(frame, fragment.release());
@@ -467,7 +467,7 @@ static bool executeInsertHorizontalRule(Frame& frame, Event*, EditorCommandSourc
     Ref<HTMLHRElement> rule = HTMLHRElement::create(*frame.document());
     if (!value.isEmpty())
         rule->setIdAttribute(value);
-    return executeInsertNode(frame, WTF::move(rule));
+    return executeInsertNode(frame, WTFMove(rule));
 }
 
 static bool executeInsertHTML(Frame& frame, Event*, EditorCommandSource, const String& value)
@@ -480,7 +480,7 @@ static bool executeInsertImage(Frame& frame, Event*, EditorCommandSource, const 
     // FIXME: If userInterface is true, we should display a dialog box and let the user choose a local image.
     Ref<HTMLImageElement> image = HTMLImageElement::create(*frame.document());
     image->setSrc(value);
-    return executeInsertNode(frame, WTF::move(image));
+    return executeInsertNode(frame, WTFMove(image));
 }
 
 static bool executeInsertLineBreak(Frame& frame, Event* event, EditorCommandSource source, const String&)
@@ -1037,7 +1037,7 @@ static bool executeStrikethrough(Frame& frame, Event*, EditorCommandSource sourc
     Ref<EditingStyle> style = EditingStyle::create();
     style->setStrikeThroughChange(textDecorationChangeForToggling(frame.editor(), CSSPropertyWebkitTextDecorationsInEffect, "line-through"));
     // FIXME: Needs a new EditAction!
-    return applyCommandToFrame(frame, source, EditActionUnderline, WTF::move(style));
+    return applyCommandToFrame(frame, source, EditActionUnderline, WTFMove(style));
 }
 
 static bool executeStyleWithCSS(Frame& frame, Event*, EditorCommandSource, const String& value)
@@ -1104,7 +1104,7 @@ static bool executeUnderline(Frame& frame, Event*, EditorCommandSource source, c
     Ref<EditingStyle> style = EditingStyle::create();
     TextDecorationChange change = textDecorationChangeForToggling(frame.editor(), CSSPropertyWebkitTextDecorationsInEffect, "underline");
     style->setUnderlineChange(change);
-    return applyCommandToFrame(frame, source, EditActionUnderline, WTF::move(style));
+    return applyCommandToFrame(frame, source, EditActionUnderline, WTFMove(style));
 }
 
 static bool executeUndo(Frame& frame, Event*, EditorCommandSource, const String&)

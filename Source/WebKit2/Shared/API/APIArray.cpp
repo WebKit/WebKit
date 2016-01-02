@@ -37,7 +37,7 @@ Ref<Array> Array::create()
 
 Ref<Array> Array::create(Vector<RefPtr<Object>>&& elements)
 {
-    return adoptRef(*new Array(WTF::move(elements)));
+    return adoptRef(*new Array(WTFMove(elements)));
 }
 
 Ref<Array> Array::createStringArray(const Vector<WTF::String>& strings)
@@ -48,7 +48,7 @@ Ref<Array> Array::createStringArray(const Vector<WTF::String>& strings)
     for (const auto& string : strings)
         elements.uncheckedAppend(API::String::create(string));
 
-    return create(WTF::move(elements));
+    return create(WTFMove(elements));
 }
 
 Vector<WTF::String> Array::toStringVector()
@@ -75,7 +75,7 @@ Ref<API::Array> Array::copy()
     elements.reserveInitialCapacity(size);
     for (const auto& entry : this->elements())
         elements.uncheckedAppend(entry);
-    return Array::create(WTF::move(elements));
+    return Array::create(WTFMove(elements));
 }
 
 Array::~Array()

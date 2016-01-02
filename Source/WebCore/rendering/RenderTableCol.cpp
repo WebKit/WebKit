@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTableCol::RenderTableCol(Element& element, Ref<RenderStyle>&& style)
-    : RenderBox(element, WTF::move(style), 0)
+    : RenderBox(element, WTFMove(style), 0)
 {
     // init RenderObject attributes
     setInline(true); // our object is not Inline

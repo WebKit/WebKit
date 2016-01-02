@@ -103,7 +103,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(const ResourceReques
         makeSimpleCrossOriginAccessRequest(*crossOriginRequest);
     else {
         m_simpleRequest = false;
-        m_actualRequest = WTF::move(crossOriginRequest);
+        m_actualRequest = WTFMove(crossOriginRequest);
 
         if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(securityOrigin()->toString(), m_actualRequest->url(), m_options.allowCredentials(), m_actualRequest->httpMethod(), m_actualRequest->httpHeaderFields()))
             preflightSuccess();
@@ -257,7 +257,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
             return;
         }
 
-        CrossOriginPreflightResultCache::singleton().appendEntry(securityOrigin()->toString(), m_actualRequest->url(), WTF::move(preflightResult));
+        CrossOriginPreflightResultCache::singleton().appendEntry(securityOrigin()->toString(), m_actualRequest->url(), WTFMove(preflightResult));
     } else {
         if (!m_sameOriginRequest && m_options.crossOriginRequestPolicy == UseAccessControl) {
             if (!passesAccessControlCheck(response, m_options.allowCredentials(), securityOrigin(), accessControlErrorDescription)) {

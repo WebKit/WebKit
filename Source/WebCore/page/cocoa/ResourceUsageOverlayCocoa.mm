@@ -94,7 +94,7 @@ public:
 
     void append(T v)
     {
-        m_data[m_current] = WTF::move(v);
+        m_data[m_current] = WTFMove(v);
         incrementIndex(m_current);
     }
 
@@ -156,7 +156,7 @@ struct MemoryCategoryInfo {
     MemoryCategoryInfo() { } // Needed for std::array.
 
     MemoryCategoryInfo(unsigned category, RGBA32 rgba, String name, bool subcategory = false)
-        : name(WTF::move(name))
+        : name(WTFMove(name))
         , isSubcategory(subcategory)
         , type(category)
     {

@@ -47,7 +47,7 @@ SecurityContext::~SecurityContext()
 
 void SecurityContext::setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&& securityOriginPolicy)
 {
-    m_securityOriginPolicy = WTF::move(securityOriginPolicy);
+    m_securityOriginPolicy = WTFMove(securityOriginPolicy);
     m_haveInitializedSecurityOrigin = true;
 }
 
@@ -61,7 +61,7 @@ SecurityOrigin* SecurityContext::securityOrigin() const
 
 void SecurityContext::setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy> contentSecurityPolicy)
 {
-    m_contentSecurityPolicy = WTF::move(contentSecurityPolicy);
+    m_contentSecurityPolicy = WTFMove(contentSecurityPolicy);
 }
 
 bool SecurityContext::isSecureTransitionTo(const URL& url) const

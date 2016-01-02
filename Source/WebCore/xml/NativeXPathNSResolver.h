@@ -35,7 +35,7 @@ class Node;
 
 class NativeXPathNSResolver : public XPathNSResolver {
 public:
-    static Ref<NativeXPathNSResolver> create(RefPtr<Node>&& node) { return adoptRef(*new NativeXPathNSResolver(WTF::move(node))); }
+    static Ref<NativeXPathNSResolver> create(RefPtr<Node>&& node) { return adoptRef(*new NativeXPathNSResolver(WTFMove(node))); }
     virtual ~NativeXPathNSResolver();
 
     virtual String lookupNamespaceURI(const String& prefix);

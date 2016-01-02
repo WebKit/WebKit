@@ -77,7 +77,7 @@ void ServerOpenDBRequest::notifiedConnectionsOfVersionChange(HashSet<uint64_t>&&
     ASSERT(!m_notifiedConnectionsOfVersionChange);
 
     m_notifiedConnectionsOfVersionChange = true;
-    m_connectionsPendingVersionChangeEvent = WTF::move(connectionIdentifiers);
+    m_connectionsPendingVersionChangeEvent = WTFMove(connectionIdentifiers);
 }
 
 void ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier)

@@ -38,7 +38,7 @@ public:
         Range(UChar32 from, UChar32 to, Ref<Font>&& font)
             : m_from(from)
             , m_to(to)
-            , m_font(WTF::move(font))
+            , m_font(WTFMove(font))
         {
         }
 

@@ -35,7 +35,7 @@ class NativeNodeFilter final : public NodeFilter {
 public:
     static Ref<NativeNodeFilter> create(RefPtr<NodeFilterCondition>&& condition)
     {
-        return adoptRef(*new NativeNodeFilter(WTF::move(condition)));
+        return adoptRef(*new NativeNodeFilter(WTFMove(condition)));
     }
 
     static Ref<NativeNodeFilter> create()

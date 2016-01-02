@@ -62,7 +62,7 @@ const ClassInfo JSInjectedScriptHost::s_info = { "InjectedScriptHost", &Base::s_
 
 JSInjectedScriptHost::JSInjectedScriptHost(VM& vm, Structure* structure, Ref<InjectedScriptHost>&& impl)
     : JSDestructibleObject(vm, structure)
-    , m_wrapped(WTF::move(impl))
+    , m_wrapped(WTFMove(impl))
 {
 }
 

@@ -270,7 +270,7 @@ class WEBCORE_EXPORT BlurFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BlurFilterOperation> create(Length stdDeviation)
     {
-        return adoptRef(new BlurFilterOperation(WTF::move(stdDeviation)));
+        return adoptRef(new BlurFilterOperation(WTFMove(stdDeviation)));
     }
 
     virtual PassRefPtr<FilterOperation> clone() const override
@@ -290,7 +290,7 @@ private:
 
     BlurFilterOperation(Length stdDeviation)
         : FilterOperation(BLUR)
-        , m_stdDeviation(WTF::move(stdDeviation))
+        , m_stdDeviation(WTFMove(stdDeviation))
     {
     }
 

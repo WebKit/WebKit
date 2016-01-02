@@ -79,7 +79,7 @@ void MoveSelectionCommand::doApply()
     ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::PreventNesting;
     if (m_smartInsert)
         options |= ReplaceSelectionCommand::SmartReplace;
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTF::move(m_fragment), options));
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(m_fragment), options));
 }
 
 EditAction MoveSelectionCommand::editingAction() const

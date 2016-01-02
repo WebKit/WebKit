@@ -56,7 +56,7 @@ WorkerGlobalScopeNotifications* WorkerGlobalScopeNotifications::from(WorkerGloba
     if (!supplement) {
         auto newSupplement = std::make_unique<WorkerGlobalScopeNotifications>(context);
         supplement = newSupplement.get();
-        provideTo(context, supplementName(), WTF::move(newSupplement));
+        provideTo(context, supplementName(), WTFMove(newSupplement));
     }
     return supplement;
 }

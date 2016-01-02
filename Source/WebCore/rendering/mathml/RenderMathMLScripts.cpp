@@ -56,7 +56,7 @@ static bool isPrescript(const RenderObject& renderObject)
 }
 
 RenderMathMLScripts::RenderMathMLScripts(Element& element, Ref<RenderStyle>&& style)
-    : RenderMathMLBlock(element, WTF::move(style))
+    : RenderMathMLBlock(element, WTFMove(style))
     , m_baseWrapper(0)
 {
     // Determine what kind of sub/sup expression we have by element name

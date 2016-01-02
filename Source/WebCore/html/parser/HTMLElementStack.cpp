@@ -126,7 +126,7 @@ inline bool isSelectScopeMarker(HTMLStackItem& item)
 
 HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<HTMLStackItem> item, std::unique_ptr<ElementRecord> next)
     : m_item(item)
-    , m_next(WTF::move(next))
+    , m_next(WTFMove(next))
 {
     ASSERT(m_item);
 }
@@ -560,7 +560,7 @@ void HTMLElementStack::pushCommon(PassRefPtr<HTMLStackItem> item)
     ASSERT(m_rootNode);
 
     m_stackDepth++;
-    m_top = std::make_unique<ElementRecord>(item, WTF::move(m_top));
+    m_top = std::make_unique<ElementRecord>(item, WTFMove(m_top));
 }
 
 void HTMLElementStack::popCommon()

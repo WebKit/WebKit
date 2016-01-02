@@ -1143,7 +1143,7 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
         paintInfo.context().scale(FloatSize(-1, 1));
     }
 
-    paintInfo.context().drawConsumingImageBuffer(WTF::move(imageBuffer), inflatedRect.location());
+    paintInfo.context().drawConsumingImageBuffer(WTFMove(imageBuffer), inflatedRect.location());
     return false;
 }
 

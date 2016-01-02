@@ -104,7 +104,7 @@ void SegmentedInputStorage::store(std::unique_ptr<NondeterministicInputBase> inp
 
     LOG(WebReplay, "%-14s#%-5u %s: %s %s\n", "ReplayEvents", m_inputCount++, queueTypeToLogPrefix(input->queue(), false), input->type().utf8().data(), jsonStringForInput(*input).utf8().data());
 
-    m_queues.at(offsetForInputQueue(input->queue()))->append(WTF::move(input));
+    m_queues.at(offsetForInputQueue(input->queue()))->append(WTFMove(input));
 }
 
 size_t SegmentedInputStorage::queueSize(InputQueue inputQueue) const

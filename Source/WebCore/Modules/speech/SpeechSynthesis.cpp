@@ -53,7 +53,7 @@ SpeechSynthesis::SpeechSynthesis()
     
 void SpeechSynthesis::setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer> synthesizer)
 {
-    m_platformSpeechSynthesizer = WTF::move(synthesizer);
+    m_platformSpeechSynthesizer = WTFMove(synthesizer);
     m_voiceList.clear();
     m_currentSpeechUtterance = nullptr;
     m_utteranceQueue.clear();

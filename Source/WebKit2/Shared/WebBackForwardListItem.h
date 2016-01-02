@@ -51,7 +51,7 @@ public:
     const BackForwardListItemState& itemState() { return m_itemState; }
     uint64_t pageID() const { return m_pageID; }
 
-    void setPageState(PageState pageState) { m_itemState.pageState = WTF::move(pageState); }
+    void setPageState(PageState pageState) { m_itemState.pageState = WTFMove(pageState); }
 
     const String& originalURL() const { return m_itemState.pageState.mainFrameState.originalURLString; }
     const String& url() const { return m_itemState.pageState.mainFrameState.urlString; }

@@ -160,9 +160,9 @@ bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     if (style.get().hasContent())
-        return RenderElement::createFor(*this, WTF::move(style));
+        return RenderElement::createFor(*this, WTFMove(style));
     
-    return createRenderer<RenderFrameSet>(*this, WTF::move(style));
+    return createRenderer<RenderFrameSet>(*this, WTFMove(style));
 }
 
 HTMLFrameSetElement* HTMLFrameSetElement::findContaining(Element* descendant)

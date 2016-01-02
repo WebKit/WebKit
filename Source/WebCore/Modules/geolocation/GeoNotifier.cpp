@@ -36,9 +36,9 @@ namespace WebCore {
 
 GeoNotifier::GeoNotifier(Geolocation& geolocation, RefPtr<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, RefPtr<PositionOptions>&& options)
     : m_geolocation(geolocation)
-    , m_successCallback(WTF::move(successCallback))
-    , m_errorCallback(WTF::move(errorCallback))
-    , m_options(WTF::move(options))
+    , m_successCallback(WTFMove(successCallback))
+    , m_errorCallback(WTFMove(errorCallback))
+    , m_options(WTFMove(options))
     , m_timer(*this, &GeoNotifier::timerFired)
     , m_useCachedPosition(false)
 {
@@ -56,7 +56,7 @@ void GeoNotifier::setFatalError(RefPtr<PositionError>&& error)
     if (m_fatalError)
         return;
 
-    m_fatalError = WTF::move(error);
+    m_fatalError = WTFMove(error);
     // An existing timer may not have a zero timeout.
     m_timer.stop();
     m_timer.startOneShot(0);

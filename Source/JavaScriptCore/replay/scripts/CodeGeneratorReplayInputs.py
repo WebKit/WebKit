@@ -976,7 +976,7 @@ class Generator:
     def generate_member_move_expression(self, _member):
         _type = self._model.get_type_for_member(_member)
         if _type.mode in [TypeModes.OWNED, TypeModes.SHARED]:
-            return "WTF::move(%s)" % _member.memberName
+            return "WTFMove(%s)" % _member.memberName
         else:
             return _member.memberName
 

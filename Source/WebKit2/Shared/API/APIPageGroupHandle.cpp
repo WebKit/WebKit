@@ -33,11 +33,11 @@ namespace API {
 
 Ref<PageGroupHandle> PageGroupHandle::create(WebKit::WebPageGroupData&& webPageGroupData)
 {
-    return adoptRef(*new PageGroupHandle(WTF::move(webPageGroupData)));
+    return adoptRef(*new PageGroupHandle(WTFMove(webPageGroupData)));
 }
 
 PageGroupHandle::PageGroupHandle(WebKit::WebPageGroupData&& webPageGroupData)
-    : m_webPageGroupData(WTF::move(webPageGroupData))
+    : m_webPageGroupData(WTFMove(webPageGroupData))
 {
 }
 
@@ -56,7 +56,7 @@ bool PageGroupHandle::decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& resu
     if (!decoder.decode(webPageGroupData))
         return false;
 
-    result = create(WTF::move(webPageGroupData));
+    result = create(WTFMove(webPageGroupData));
     return true;
 }
 

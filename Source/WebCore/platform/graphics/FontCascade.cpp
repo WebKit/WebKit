@@ -193,8 +193,8 @@ struct FontCascadeCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FontCascadeCacheEntry(FontCascadeCacheKey&& key, Ref<FontCascadeFonts>&& fonts)
-        : key(WTF::move(key))
-        , fonts(WTF::move(fonts))
+        : key(WTFMove(key))
+        , fonts(WTFMove(fonts))
     { }
     FontCascadeCacheKey key;
     Ref<FontCascadeFonts> fonts;
@@ -283,7 +283,7 @@ static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescripti
         return addResult.iterator->value->fonts.get();
 
     auto& newEntry = addResult.iterator->value;
-    newEntry = std::make_unique<FontCascadeCacheEntry>(WTF::move(key), FontCascadeFonts::create(WTF::move(fontSelector)));
+    newEntry = std::make_unique<FontCascadeCacheEntry>(WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)));
     Ref<FontCascadeFonts> glyphs = newEntry->fonts.get();
 
     static const unsigned unreferencedPruneInterval = 50;
@@ -300,7 +300,7 @@ static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescripti
 
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 {
-    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, WTF::move(fontSelector));
+    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, WTFMove(fontSelector));
     m_useBackslashAsYenSymbol = useBackslashAsYenSignForFamily(firstFamily());
     m_enableKerning = computeEnableKerning();
     m_requiresShaping = computeRequiresShaping();

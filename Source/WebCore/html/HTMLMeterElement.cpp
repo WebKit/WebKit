@@ -60,9 +60,9 @@ Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Doc
 RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     if (!document().page()->theme().supportsMeter(style.get().appearance()))
-        return RenderElement::createFor(*this, WTF::move(style));
+        return RenderElement::createFor(*this, WTFMove(style));
 
-    return createRenderer<RenderMeter>(*this, WTF::move(style));
+    return createRenderer<RenderMeter>(*this, WTFMove(style));
 }
 
 bool HTMLMeterElement::childShouldCreateRenderer(const Node& child) const
@@ -238,7 +238,7 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     m_value->updatePseudo();
     bar->appendChild(*m_value, ASSERT_NO_EXCEPTION);
 
-    inner->appendChild(WTF::move(bar), ASSERT_NO_EXCEPTION);
+    inner->appendChild(WTFMove(bar), ASSERT_NO_EXCEPTION);
 }
 
 } // namespace

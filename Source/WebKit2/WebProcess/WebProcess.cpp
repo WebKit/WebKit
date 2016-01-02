@@ -250,7 +250,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     WebCore::MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 #endif
 
-    platformInitializeWebProcess(WTF::move(parameters));
+    platformInitializeWebProcess(WTFMove(parameters));
 
     WTF::setCurrentThreadIsUserInitiated();
 
@@ -1355,7 +1355,7 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
                 WebPageGroupData pageGroupData;
                 pageGroupData.pageGroupID = static_cast<const WebPageGroupProxy&>(object).pageGroupID();
 
-                return API::PageGroupHandle::create(WTF::move(pageGroupData));
+                return API::PageGroupHandle::create(WTFMove(pageGroupData));
             }
 
 #if PLATFORM(COCOA)

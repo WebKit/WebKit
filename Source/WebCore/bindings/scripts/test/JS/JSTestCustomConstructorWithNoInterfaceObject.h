@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapper<TestCustomConstructorWithNoInterfaceObject> Base;
     static JSTestCustomConstructorWithNoInterfaceObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCustomConstructorWithNoInterfaceObject>&& impl)
     {
-        JSTestCustomConstructorWithNoInterfaceObject* ptr = new (NotNull, JSC::allocateCell<JSTestCustomConstructorWithNoInterfaceObject>(globalObject->vm().heap)) JSTestCustomConstructorWithNoInterfaceObject(structure, *globalObject, WTF::move(impl));
+        JSTestCustomConstructorWithNoInterfaceObject* ptr = new (NotNull, JSC::allocateCell<JSTestCustomConstructorWithNoInterfaceObject>(globalObject->vm().heap)) JSTestCustomConstructorWithNoInterfaceObject(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

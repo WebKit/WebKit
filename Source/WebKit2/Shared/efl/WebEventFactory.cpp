@@ -275,7 +275,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const EwkTouchEvent* event, c
             touchPoints.uncheckedAppend(WebPlatformTouchPoint(point->id(), toWebPlatformTouchPointState(point->state()), toIntPoint(point->screenPosition()), toWebContent.mapPoint(toIntPoint(point->position())), toIntSize(point->radius()), point->rotationAngle(), point->forceFactor()));
     }
 
-    return WebTouchEvent(toWebEventType(event->eventType()), WTF::move(touchPoints), toWebEventModifiers(event->modifiers()), event->timestamp());
+    return WebTouchEvent(toWebEventType(event->eventType()), WTFMove(touchPoints), toWebEventModifiers(event->modifiers()), event->timestamp());
 }
 #endif
 

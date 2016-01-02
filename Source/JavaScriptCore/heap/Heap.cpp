@@ -306,7 +306,7 @@ inline IterationStatus RecordType::operator()(JSCell* cell)
 
 inline std::unique_ptr<TypeCountSet> RecordType::returnValue()
 {
-    return WTF::move(m_typeCountSet);
+    return WTFMove(m_typeCountSet);
 }
 
 } // anonymous namespace
@@ -399,7 +399,7 @@ void Heap::releaseDelayedReleasedObjects()
         while (!m_delayedReleaseObjects.isEmpty()) {
             ASSERT(m_vm->currentThreadIsHoldingAPILock());
 
-            Vector<RetainPtr<CFTypeRef>> objectsToRelease = WTF::move(m_delayedReleaseObjects);
+            Vector<RetainPtr<CFTypeRef>> objectsToRelease = WTFMove(m_delayedReleaseObjects);
 
             {
                 // We need to drop locks before calling out to arbitrary code.
@@ -546,7 +546,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
                     std::unique_ptr<SlotVisitor> newVisitor =
                         std::make_unique<SlotVisitor>(*this);
                     slotVisitor = newVisitor.get();
-                    m_parallelSlotVisitors.append(WTF::move(newVisitor));
+                    m_parallelSlotVisitors.append(WTFMove(newVisitor));
                 } else
                     slotVisitor = m_availableParallelSlotVisitors.takeLast();
             }
@@ -1419,7 +1419,7 @@ GCActivityCallback* Heap::edenActivityCallback()
 
 void Heap::setIncrementalSweeper(std::unique_ptr<IncrementalSweeper> sweeper)
 {
-    m_sweeper = WTF::move(sweeper);
+    m_sweeper = WTFMove(sweeper);
 }
 
 IncrementalSweeper* Heap::sweeper()

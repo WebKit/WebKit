@@ -50,7 +50,7 @@ namespace WebKit {
 
 struct NetworkResourceLoader::SynchronousLoadData {
     SynchronousLoadData(RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& reply)
-        : delayedReply(WTF::move(reply))
+        : delayedReply(WTFMove(reply))
     {
         ASSERT(delayedReply);
     }
@@ -97,7 +97,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     }
 
     if (synchronousReply)
-        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(WTF::move(synchronousReply));
+        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(WTFMove(synchronousReply));
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
@@ -172,7 +172,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
             return;
         }
         if (entry->redirectRequest()) {
-            loader->dispatchWillSendRequestForCacheEntry(WTF::move(entry));
+            loader->dispatchWillSendRequestForCacheEntry(WTFMove(entry));
             return;
         }
         if (loader->m_parameters.needsCertificateInfo && !entry->response().containsCertificateInfo()) {
@@ -180,10 +180,10 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
             return;
         }
         if (entry->needsValidation()) {
-            loader->validateCacheEntry(WTF::move(entry));
+            loader->validateCacheEntry(WTFMove(entry));
             return;
         }
-        loader->didRetrieveCacheEntry(WTF::move(entry));
+        loader->didRetrieveCacheEntry(WTFMove(entry));
     });
 }
 #endif
@@ -342,7 +342,7 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
         // 304 Not Modified
         ASSERT(m_response.httpStatusCode() == 304);
         LOG(NetworkCache, "(NetworkProcess) revalidated");
-        didRetrieveCacheEntry(WTF::move(m_cacheEntryForValidation));
+        didRetrieveCacheEntry(WTFMove(m_cacheEntryForValidation));
         return;
     }
 #endif
@@ -497,7 +497,7 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     // Keep the connection alive.
     RefPtr<NetworkConnectionToWebProcess> connection(&connectionToWebProcess());
     RefPtr<NetworkResourceLoader> loader(this);
-    NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTF::move(m_bufferedDataForCache), [loader, connection](NetworkCache::MappedBody& mappedBody) {
+    NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader, connection](NetworkCache::MappedBody& mappedBody) {
 #if ENABLE(SHAREABLE_RESOURCE)
         if (mappedBody.shareableResourceHandle.isNull())
             return;
@@ -549,7 +549,7 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
             revalidationRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
     }
 
-    m_cacheEntryForValidation = WTF::move(entry);
+    m_cacheEntryForValidation = WTFMove(entry);
 
     startNetworkLoad(revalidationRequest);
 }

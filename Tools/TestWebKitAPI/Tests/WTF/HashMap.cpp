@@ -92,7 +92,7 @@ TEST(WTF_HashMap, MoveOnlyValues)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        moveOnlyValues.set(i + 1, WTF::move(moveOnly));
+        moveOnlyValues.set(i + 1, WTFMove(moveOnly));
     }
 
     for (size_t i = 0; i < 100; ++i) {
@@ -115,7 +115,7 @@ TEST(WTF_HashMap, MoveOnlyKeys)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        moveOnlyKeys.set(WTF::move(moveOnly), i + 1);
+        moveOnlyKeys.set(WTFMove(moveOnly), i + 1);
     }
 
     for (size_t i = 0; i < 100; ++i) {
@@ -179,7 +179,7 @@ TEST(WTF_HashMap, UniquePtrKey)
     HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
 
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
-    map.add(WTF::move(uniquePtr), 2);
+    map.add(WTFMove(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -198,7 +198,7 @@ TEST(WTF_HashMap, UniquePtrKey_CustomDeleter)
     HashMap<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>, int> map;
 
     std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>> uniquePtr(new ConstructorDestructorCounter(), DeleterCounter<ConstructorDestructorCounter>());
-    map.add(WTF::move(uniquePtr), 2);
+    map.add(WTFMove(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -219,7 +219,7 @@ TEST(WTF_HashMap, UniquePtrKey_FindUsingRawPointer)
 
     auto uniquePtr = std::make_unique<int>(5);
     int* ptr = uniquePtr.get();
-    map.add(WTF::move(uniquePtr), 2);
+    map.add(WTFMove(uniquePtr), 2);
 
     auto it = map.find(ptr);
     ASSERT_TRUE(it != map.end());
@@ -233,7 +233,7 @@ TEST(WTF_HashMap, UniquePtrKey_ContainsUsingRawPointer)
 
     auto uniquePtr = std::make_unique<int>(5);
     int* ptr = uniquePtr.get();
-    map.add(WTF::move(uniquePtr), 2);
+    map.add(WTFMove(uniquePtr), 2);
 
     EXPECT_EQ(true, map.contains(ptr));
 }
@@ -244,7 +244,7 @@ TEST(WTF_HashMap, UniquePtrKey_GetUsingRawPointer)
 
     auto uniquePtr = std::make_unique<int>(5);
     int* ptr = uniquePtr.get();
-    map.add(WTF::move(uniquePtr), 2);
+    map.add(WTFMove(uniquePtr), 2);
 
     int value = map.get(ptr);
     EXPECT_EQ(2, value);
@@ -258,7 +258,7 @@ TEST(WTF_HashMap, UniquePtrKey_RemoveUsingRawPointer)
 
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    map.add(WTF::move(uniquePtr), 2);
+    map.add(WTFMove(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -278,7 +278,7 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
 
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    map.add(WTF::move(uniquePtr), 2);
+    map.add(WTFMove(uniquePtr), 2);
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -318,7 +318,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMove)
 
     DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
-    map.add(WTF::move(ptr), 0);
+    map.add(WTFMove(ptr), 0);
 
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
 }
@@ -393,7 +393,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 
     {
         RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.add(WTF::move(ptr2), 0);
+        auto addResult = map.add(WTFMove(ptr2), 0);
         EXPECT_FALSE(addResult.isNewEntry);
     }
 
@@ -429,7 +429,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMove)
 
     DerivedRefLogger a("a");
     RefPtr<RefLogger> ptr(&a);
-    map.set(WTF::move(ptr), 0);
+    map.set(WTFMove(ptr), 0);
 
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
 }
@@ -500,7 +500,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
 
     {
         RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.set(WTF::move(ptr2), 1);
+        auto addResult = map.set(WTFMove(ptr2), 1);
         EXPECT_FALSE(addResult.isNewEntry);
         EXPECT_EQ(1, map.get(ptr.get()));
     }

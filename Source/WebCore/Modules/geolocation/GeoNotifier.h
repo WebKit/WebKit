@@ -47,7 +47,7 @@ class GeoNotifier : public RefCounted<GeoNotifier> {
 public:
     static Ref<GeoNotifier> create(Geolocation& geolocation, RefPtr<PositionCallback>&& positionCallback, RefPtr<PositionErrorCallback>&& positionErrorCallback, RefPtr<PositionOptions>&& options)
     {
-        return adoptRef(*new GeoNotifier(geolocation, WTF::move(positionCallback), WTF::move(positionErrorCallback), WTF::move(options)));
+        return adoptRef(*new GeoNotifier(geolocation, WTFMove(positionCallback), WTFMove(positionErrorCallback), WTFMove(options)));
     }
 
     PositionOptions* options() const { return m_options.get(); }

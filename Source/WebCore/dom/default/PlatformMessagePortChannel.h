@@ -52,7 +52,7 @@ namespace WebCore {
             EventData(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray>);
 
             PassRefPtr<SerializedScriptValue> message() { return m_message; }
-            std::unique_ptr<MessagePortChannelArray> channels() { return WTF::move(m_channels); }
+            std::unique_ptr<MessagePortChannelArray> channels() { return WTFMove(m_channels); }
 
         private:
             RefPtr<SerializedScriptValue> m_message;
@@ -71,7 +71,7 @@ namespace WebCore {
 
             bool appendAndCheckEmpty(std::unique_ptr<PlatformMessagePortChannel::EventData> message)
             {
-                return m_queue.appendAndCheckEmpty(WTF::move(message));
+                return m_queue.appendAndCheckEmpty(WTFMove(message));
             }
 
             bool isEmpty()

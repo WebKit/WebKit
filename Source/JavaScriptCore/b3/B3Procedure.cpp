@@ -64,7 +64,7 @@ BasicBlock* Procedure::addBlock(double frequency)
 {
     std::unique_ptr<BasicBlock> block(new BasicBlock(m_blocks.size(), frequency));
     BasicBlock* result = block.get();
-    m_blocks.append(WTF::move(block));
+    m_blocks.append(WTFMove(block));
     return result;
 }
 
@@ -182,7 +182,7 @@ void* Procedure::addDataSection(size_t size)
         return nullptr;
     std::unique_ptr<DataSection> dataSection = std::make_unique<DataSection>(size);
     void* result = dataSection->data();
-    m_byproducts->add(WTF::move(dataSection));
+    m_byproducts->add(WTFMove(dataSection));
     return result;
 }
 

@@ -117,7 +117,7 @@ std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType 
 #if PLATFORM(WAYLAND) && USE(EGL)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
         if (auto eglContext = GLContextEGL::createContext(windowHandle, sharingContext))
-            return WTF::move(eglContext);
+            return WTFMove(eglContext);
         return nullptr;
     }
 #endif
@@ -129,11 +129,11 @@ std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType 
     XID GLXWindowHandle = static_cast<XID>(windowHandle);
 #endif
     if (auto glxContext = GLContextGLX::createContext(GLXWindowHandle, sharingContext))
-        return WTF::move(glxContext);
+        return WTFMove(glxContext);
 #endif
 #if USE(EGL)
     if (auto eglContext = GLContextEGL::createContext(windowHandle, sharingContext))
-        return WTF::move(eglContext);
+        return WTFMove(eglContext);
 #endif
     return nullptr;
 }

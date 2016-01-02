@@ -135,7 +135,7 @@ WebContextMenuItemGtk::WebContextMenuItemGtk(const WebContextMenuItemGtk& data, 
     : WebContextMenuItemData(ActionType, data.action(), data.title(), data.enabled(), false)
 {
     m_action = data.gtkAction();
-    m_submenuItems = WTF::move(submenu);
+    m_submenuItems = WTFMove(submenu);
 }
 
 WebContextMenuItemGtk::WebContextMenuItemGtk(GtkAction* action)

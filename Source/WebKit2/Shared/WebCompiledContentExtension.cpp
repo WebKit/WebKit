@@ -32,11 +32,11 @@ namespace WebKit {
 
 Ref<WebCompiledContentExtension> WebCompiledContentExtension::create(WebCompiledContentExtensionData&& data)
 {
-    return adoptRef(*new WebCompiledContentExtension(WTF::move(data)));
+    return adoptRef(*new WebCompiledContentExtension(WTFMove(data)));
 }
 
 WebCompiledContentExtension::WebCompiledContentExtension(WebCompiledContentExtensionData&& data)
-    : m_data(WTF::move(data))
+    : m_data(WTFMove(data))
 {
 }
 

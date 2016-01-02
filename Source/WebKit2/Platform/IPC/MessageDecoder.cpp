@@ -46,7 +46,7 @@ MessageDecoder::~MessageDecoder()
 }
 
 MessageDecoder::MessageDecoder(const DataReference& buffer, Vector<Attachment> attachments)
-    : ArgumentDecoder(buffer.data(), buffer.size(), WTF::move(attachments))
+    : ArgumentDecoder(buffer.data(), buffer.size(), WTFMove(attachments))
 {
     if (!decode(m_messageFlags))
         return;
@@ -82,7 +82,7 @@ bool MessageDecoder::shouldUseFullySynchronousModeForTesting() const
 #if PLATFORM(MAC)
 void MessageDecoder::setImportanceAssertion(std::unique_ptr<ImportanceAssertion> assertion)
 {
-    m_importanceAssertion = WTF::move(assertion);
+    m_importanceAssertion = WTFMove(assertion);
 }
 #endif
 
@@ -93,14 +93,14 @@ std::unique_ptr<MessageDecoder> MessageDecoder::unwrapForTesting(MessageDecoder&
     Vector<Attachment> attachments;
     Attachment attachment;
     while (decoder.removeAttachment(attachment))
-        attachments.append(WTF::move(attachment));
+        attachments.append(WTFMove(attachment));
     attachments.reverse();
 
     DataReference wrappedMessage;
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    return std::make_unique<MessageDecoder>(wrappedMessage, WTF::move(attachments));
+    return std::make_unique<MessageDecoder>(wrappedMessage, WTFMove(attachments));
 }
 
 } // namespace IPC

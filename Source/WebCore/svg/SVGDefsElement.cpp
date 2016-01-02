@@ -53,7 +53,7 @@ bool SVGDefsElement::isValid() const
 
 RenderPtr<RenderElement> SVGDefsElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGHiddenContainer>(*this, WTF::move(style));
+    return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
 }
 
 }

@@ -57,7 +57,7 @@ Data::Data(GRefPtr<SoupBuffer>&& buffer, int fd)
 Data Data::empty()
 {
     GRefPtr<SoupBuffer> buffer = adoptGRef(soup_buffer_new(SOUP_MEMORY_TAKE, nullptr, 0));
-    return { WTF::move(buffer) };
+    return { WTFMove(buffer) };
 }
 
 const uint8_t* Data::data() const
@@ -84,7 +84,7 @@ Data Data::subrange(size_t offset, size_t size) const
         return { };
 
     GRefPtr<SoupBuffer> subBuffer = adoptGRef(soup_buffer_new_subbuffer(m_buffer.get(), offset, size));
-    return { WTF::move(subBuffer) };
+    return { WTFMove(subBuffer) };
 }
 
 Data concatenate(const Data& a, const Data& b)
@@ -99,7 +99,7 @@ Data concatenate(const Data& a, const Data& b)
     memcpy(data, a.soupBuffer()->data, a.soupBuffer()->length);
     memcpy(data + a.soupBuffer()->length, b.soupBuffer()->data, b.soupBuffer()->length);
     GRefPtr<SoupBuffer> buffer = adoptGRef(soup_buffer_new_with_owner(data, size, data, fastFree));
-    return { WTF::move(buffer) };
+    return { WTFMove(buffer) };
 }
 
 struct MapWrapper {
@@ -125,7 +125,7 @@ Data Data::adoptMap(void* map, size_t size, int fd)
     ASSERT(map != MAP_FAILED);
     MapWrapper* wrapper = new MapWrapper { map, size, fd };
     GRefPtr<SoupBuffer> buffer = adoptGRef(soup_buffer_new_with_owner(map, size, wrapper, reinterpret_cast<GDestroyNotify>(deleteMapWrapper)));
-    return { WTF::move(buffer), fd };
+    return { WTFMove(buffer), fd };
 }
 
 RefPtr<SharedMemory> Data::tryCreateSharedMemory() const

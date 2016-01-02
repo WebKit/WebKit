@@ -72,7 +72,7 @@ void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notific
     for (const auto& notificationID : notificationIDs)
         arrayIDs.uncheckedAppend(API::UInt64::create(notificationID));
 
-    m_client.clearNotifications(toAPI(API::Array::create(WTF::move(arrayIDs)).ptr()), m_client.base.clientInfo);
+    m_client.clearNotifications(toAPI(API::Array::create(WTFMove(arrayIDs)).ptr()), m_client.base.clientInfo);
 }
 
 void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy* manager)

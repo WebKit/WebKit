@@ -201,7 +201,7 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     bool updateStyle = !m_eventsToDispatch.isEmpty() || !m_elementChangesToDispatch.isEmpty();
 
     // fire all the events
-    Vector<EventToDispatch> eventsToDispatch = WTF::move(m_eventsToDispatch);
+    Vector<EventToDispatch> eventsToDispatch = WTFMove(m_eventsToDispatch);
     for (auto& event : eventsToDispatch) {
         Element& element = *event.element;
         if (event.eventType == eventNames().transitionendEvent)
@@ -239,7 +239,7 @@ void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element,
 
 void AnimationControllerPrivate::addElementChangeToDispatch(Ref<Element>&& element)
 {
-    m_elementChangesToDispatch.append(WTF::move(element));
+    m_elementChangesToDispatch.append(WTFMove(element));
     ASSERT(!m_elementChangesToDispatch.last()->document().inPageCache());
     startUpdateStyleIfNeededDispatcher();
 }

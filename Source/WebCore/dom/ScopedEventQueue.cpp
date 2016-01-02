@@ -46,7 +46,7 @@ ScopedEventQueue& ScopedEventQueue::singleton()
 void ScopedEventQueue::enqueueEvent(Ref<Event>&& event)
 {
     if (m_scopingLevel)
-        m_queuedEvents.append(WTF::move(event));
+        m_queuedEvents.append(WTFMove(event));
     else
         dispatchEvent(event);
 }
@@ -61,7 +61,7 @@ void ScopedEventQueue::dispatchEvent(Event& event) const
 
 void ScopedEventQueue::dispatchAllEvents()
 {
-    Vector<Ref<Event>> queuedEvents = WTF::move(m_queuedEvents);
+    Vector<Ref<Event>> queuedEvents = WTFMove(m_queuedEvents);
     for (auto& queuedEvent : queuedEvents)
         dispatchEvent(queuedEvent);
 }

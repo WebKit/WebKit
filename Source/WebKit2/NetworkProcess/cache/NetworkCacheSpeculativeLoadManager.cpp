@@ -113,7 +113,7 @@ class SpeculativeLoadManager::ExpiringEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ExpiringEntry(std::function<void()>&& expirationHandler)
-        : m_lifetimeTimer(WTF::move(expirationHandler))
+        : m_lifetimeTimer(WTFMove(expirationHandler))
     {
         m_lifetimeTimer.startOneShot(preloadedEntryLifetime);
     }
@@ -126,15 +126,15 @@ class SpeculativeLoadManager::PreloadedEntry : private ExpiringEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PreloadedEntry(std::unique_ptr<Entry> entry, WasRevalidated wasRevalidated, std::function<void()>&& lifetimeReachedHandler)
-        : ExpiringEntry(WTF::move(lifetimeReachedHandler))
-        , m_entry(WTF::move(entry))
+        : ExpiringEntry(WTFMove(lifetimeReachedHandler))
+        , m_entry(WTFMove(entry))
         , m_wasRevalidated(wasRevalidated == WasRevalidated::Yes)
     { }
 
     std::unique_ptr<Entry> takeCacheEntry()
     {
         ASSERT(m_entry);
-        return WTF::move(m_entry);
+        return WTFMove(m_entry);
     }
 
     bool wasRevalidated() const { return m_wasRevalidated; }
@@ -148,7 +148,7 @@ class SpeculativeLoadManager::PendingFrameLoad : public RefCounted<PendingFrameL
 public:
     static Ref<PendingFrameLoad> create(Storage& storage, const Key& mainResourceKey, std::function<void()>&& loadCompletionHandler)
     {
-        return adoptRef(*new PendingFrameLoad(storage, mainResourceKey, WTF::move(loadCompletionHandler)));
+        return adoptRef(*new PendingFrameLoad(storage, mainResourceKey, WTFMove(loadCompletionHandler)));
     }
 
     ~PendingFrameLoad()
@@ -184,7 +184,7 @@ public:
         ASSERT(!m_existingEntry);
         ASSERT(!m_didRetrieveExistingEntry);
 
-        m_existingEntry = WTF::move(entry);
+        m_existingEntry = WTFMove(entry);
         m_didRetrieveExistingEntry = true;
         saveToDiskIfReady();
     }
@@ -193,7 +193,7 @@ private:
     PendingFrameLoad(Storage& storage, const Key& mainResourceKey, std::function<void()>&& loadCompletionHandler)
         : m_storage(storage)
         , m_mainResourceKey(mainResourceKey)
-        , m_loadCompletionHandler(WTF::move(loadCompletionHandler))
+        , m_loadCompletionHandler(WTFMove(loadCompletionHandler))
         , m_loadHysteresisActivity([this](HysteresisState state) { if (state == HysteresisState::Stopped) markLoadAsCompleted(); })
     { }
 
@@ -300,7 +300,7 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
             if (entry)
                 startSpeculativeRevalidation(frameID, *entry);
 
-            pendingFrameLoad->setExistingSubresourcesEntry(WTF::move(entry));
+            pendingFrameLoad->setExistingSubresourcesEntry(WTFMove(entry));
         });
         return;
     }
@@ -314,7 +314,7 @@ void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, con
     ASSERT(entry);
     ASSERT(!entry->needsValidation());
     auto key = entry->key();
-    m_preloadedEntries.add(key, std::make_unique<PreloadedEntry>(WTF::move(entry), wasRevalidated, [this, key, frameID] {
+    m_preloadedEntries.add(key, std::make_unique<PreloadedEntry>(WTFMove(entry), wasRevalidated, [this, key, frameID] {
         auto preloadedEntry = m_preloadedEntries.take(key);
         ASSERT(preloadedEntry);
         if (preloadedEntry->wasRevalidated())
@@ -346,7 +346,7 @@ void SpeculativeLoadManager::retrieveEntryFromStorage(const Key& key, const Retr
         if (responseNeedsRevalidation(response, entry->timeStamp()))
             entry->setNeedsValidation();
 
-        completionHandler(WTF::move(entry));
+        completionHandler(WTFMove(entry));
         return true;
     });
 }
@@ -370,7 +370,7 @@ void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const
 
     auto key = entry->key();
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculatively revalidating '%s':", key.identifier().utf8().data());
-    auto revalidator = std::make_unique<SpeculativeLoad>(frameID, constructRevalidationRequest(*entry), WTF::move(entry), [this, key, frameID](std::unique_ptr<Entry> revalidatedEntry) {
+    auto revalidator = std::make_unique<SpeculativeLoad>(frameID, constructRevalidationRequest(*entry), WTFMove(entry), [this, key, frameID](std::unique_ptr<Entry> revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         auto protectRevalidator = m_pendingPreloads.take(key);
         LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculative revalidation completed for '%s':", key.identifier().utf8().data());
@@ -382,9 +382,9 @@ void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const
         }
 
         if (revalidatedEntry)
-            addPreloadedEntry(WTF::move(revalidatedEntry), frameID, WasRevalidated::Yes);
+            addPreloadedEntry(WTFMove(revalidatedEntry), frameID, WasRevalidated::Yes);
     });
-    m_pendingPreloads.add(key, WTF::move(revalidator));
+    m_pendingPreloads.add(key, WTFMove(revalidator));
 }
 
 void SpeculativeLoadManager::preloadEntry(const Key& key, const GlobalFrameID& frameID)
@@ -403,9 +403,9 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const GlobalFrameID& f
             return;
 
         if (entry->needsValidation())
-            revalidateEntry(WTF::move(entry), frameID);
+            revalidateEntry(WTFMove(entry), frameID);
         else
-            addPreloadedEntry(WTF::move(entry), frameID, WasRevalidated::No);
+            addPreloadedEntry(WTFMove(entry), frameID, WasRevalidated::No);
     });
 }
 
@@ -441,7 +441,7 @@ void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, st
             return false;
         }
 
-        completionHandler(WTF::move(subresourcesEntry));
+        completionHandler(WTFMove(subresourcesEntry));
         return true;
     });
 }

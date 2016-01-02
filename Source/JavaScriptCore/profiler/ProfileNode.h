@@ -183,7 +183,7 @@ namespace JSC {
             m_data.selfAndTotalTimes.set(node, std::make_pair(selfTime, totalTime));
         }
 
-        ProfileNode::ProfileSubtreeData returnValue() { return WTF::move(m_data); }
+        ProfileNode::ProfileSubtreeData returnValue() { return WTFMove(m_data); }
 
         ProfileNode::ProfileSubtreeData m_data;
     };

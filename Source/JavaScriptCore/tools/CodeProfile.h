@@ -54,7 +54,7 @@ public:
     
     void addChild(std::unique_ptr<CodeProfile> child)
     {
-        m_children.append(WTF::move(child));
+        m_children.append(WTFMove(child));
     }
 
 private:

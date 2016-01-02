@@ -82,7 +82,7 @@ void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& 
         if (!url.isEmpty()) {
             auto imageValue = CSSImageValue::create(document().completeURL(url).string());
             imageValue.get().setInitiator(localName());
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, WTF::move(imageValue)));
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, WTFMove(imageValue)));
         }
     } else if (name == marginwidthAttr || name == leftmarginAttr) {
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);

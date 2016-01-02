@@ -39,7 +39,7 @@ public:
 
     static RuntimeObject* create(VM& vm, Structure* structure, RefPtr<Instance>&& instance)
     {
-        RuntimeObject* object = new (NotNull, allocateCell<RuntimeObject>(vm.heap)) RuntimeObject(vm, structure, WTF::move(instance));
+        RuntimeObject* object = new (NotNull, allocateCell<RuntimeObject>(vm.heap)) RuntimeObject(vm, structure, WTFMove(instance));
         object->finishCreation(vm);
         return object;
     }

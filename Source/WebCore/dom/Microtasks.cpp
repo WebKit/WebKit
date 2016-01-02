@@ -51,9 +51,9 @@ MicrotaskQueue& MicrotaskQueue::mainThreadQueue()
 void MicrotaskQueue::append(std::unique_ptr<Microtask>&& task)
 {
     if (m_performingMicrotaskCheckpoint)
-        m_tasksAppendedDuringMicrotaskCheckpoint.append(WTF::move(task));
+        m_tasksAppendedDuringMicrotaskCheckpoint.append(WTFMove(task));
     else
-        m_microtaskQueue.append(WTF::move(task));
+        m_microtaskQueue.append(WTFMove(task));
 
     m_timer.startOneShot(0);
 }
@@ -86,20 +86,20 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
 
     TemporaryChange<bool> change(m_performingMicrotaskCheckpoint, true);
 
-    Vector<std::unique_ptr<Microtask>> queue = WTF::move(m_microtaskQueue);
+    Vector<std::unique_ptr<Microtask>> queue = WTFMove(m_microtaskQueue);
     for (auto& task : queue) {
         auto result = task->run();
         switch (result) {
         case Microtask::Result::Done:
             break;
         case Microtask::Result::KeepInQueue:
-            m_microtaskQueue.append(WTF::move(task));
+            m_microtaskQueue.append(WTFMove(task));
             break;
         }
     }
 
     for (auto& task : m_tasksAppendedDuringMicrotaskCheckpoint)
-        m_microtaskQueue.append(WTF::move(task));
+        m_microtaskQueue.append(WTFMove(task));
     m_tasksAppendedDuringMicrotaskCheckpoint.clear();
 }
 

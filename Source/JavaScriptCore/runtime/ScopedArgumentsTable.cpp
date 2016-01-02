@@ -79,7 +79,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::setLength(VM& vm, uint32_t newLength
         for (unsigned i = std::min(m_length, newLength); i--;)
             newArguments[i] = m_arguments[i];
         m_length = newLength;
-        m_arguments = WTF::move(newArguments);
+        m_arguments = WTFMove(newArguments);
         return this;
     }
     

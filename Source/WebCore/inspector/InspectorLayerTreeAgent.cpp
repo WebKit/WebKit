@@ -310,7 +310,7 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString& errorStrin
     if (reasonsBitmask & CompositingReasonRoot)
         compositingReasons->setRoot(true);
     
-    compositingReasonsResult = WTF::move(compositingReasons);
+    compositingReasonsResult = WTFMove(compositingReasons);
 }
 
 String InspectorLayerTreeAgent::bind(const RenderLayer* layer)

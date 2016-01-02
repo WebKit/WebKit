@@ -4822,7 +4822,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CSSFontFamily fontFamily)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_FONT_FAMILY;
-    m_value.fontFamily = new CSSFontFamily(WTF::move(fontFamily));
+    m_value.fontFamily = new CSSFontFamily(WTFMove(fontFamily));
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVectorEffect e)

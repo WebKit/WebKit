@@ -81,7 +81,7 @@ public:
 
     void addItem(RefPtr<T>&& value)
     {
-        openAccessors().pushValue(WTF::move(value));
+        openAccessors().pushValue(WTFMove(value));
     }
     
     void addItem(const String& value)

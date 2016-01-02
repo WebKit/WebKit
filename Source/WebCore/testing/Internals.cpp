@@ -1983,7 +1983,7 @@ void Internals::insertAuthorCSS(const String& css, ExceptionCode& ec) const
     auto parsedSheet = StyleSheetContents::create(*document);
     parsedSheet.get().setIsUserStyleSheet(false);
     parsedSheet.get().parseString(css);
-    document->extensionStyleSheets().addAuthorStyleSheetForTesting(WTF::move(parsedSheet));
+    document->extensionStyleSheets().addAuthorStyleSheetForTesting(WTFMove(parsedSheet));
 }
 
 void Internals::insertUserCSS(const String& css, ExceptionCode& ec) const
@@ -1997,7 +1997,7 @@ void Internals::insertUserCSS(const String& css, ExceptionCode& ec) const
     auto parsedSheet = StyleSheetContents::create(*document);
     parsedSheet.get().setIsUserStyleSheet(true);
     parsedSheet.get().parseString(css);
-    document->extensionStyleSheets().addUserStyleSheet(WTF::move(parsedSheet));
+    document->extensionStyleSheets().addUserStyleSheet(WTFMove(parsedSheet));
 }
 
 String Internals::counterValue(Element* element)
@@ -3065,7 +3065,7 @@ void Internals::queueMicroTask(int testNumber)
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #", String::number(testNumber), " has run."));
     });
 
-    MicrotaskQueue::mainThreadQueue().append(WTF::move(microtask));
+    MicrotaskQueue::mainThreadQueue().append(WTFMove(microtask));
 }
 
 #if ENABLE(CONTENT_FILTERING)

@@ -166,7 +166,7 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
                 continue;
             }
 
-            m_cachedKeys.set(keyId, WTF::move(keyData));
+            m_cachedKeys.set(keyId, WTFMove(keyData));
             foundValidKey = true;
         }
 

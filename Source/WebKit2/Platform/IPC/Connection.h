@@ -130,7 +130,7 @@ public:
 
         Identifier(mach_port_t port, OSObjectPtr<xpc_connection_t> xpcConnection)
             : port(port)
-            , xpcConnection(WTF::move(xpcConnection))
+            , xpcConnection(WTFMove(xpcConnection))
         {
         }
 
@@ -367,7 +367,7 @@ template<typename T> bool Connection::send(T&& message, uint64_t destinationID, 
     auto encoder = std::make_unique<MessageEncoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message.arguments());
     
-    return sendMessage(WTF::move(encoder), messageSendFlags);
+    return sendMessage(WTFMove(encoder), messageSendFlags);
 }
 
 template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned syncSendFlags)
@@ -386,7 +386,7 @@ template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& 
     encoder->encode(message.arguments());
 
     // Now send the message and wait for a reply.
-    std::unique_ptr<MessageDecoder> replyDecoder = sendSyncMessage(syncRequestID, WTF::move(encoder), timeout, syncSendFlags);
+    std::unique_ptr<MessageDecoder> replyDecoder = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, syncSendFlags);
     if (!replyDecoder)
         return false;
 

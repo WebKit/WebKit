@@ -69,7 +69,7 @@ const IDBDatabaseInfo& UniqueIDBDatabase::info() const
 void UniqueIDBDatabase::openDatabaseConnection(IDBConnectionToClient& connection, const IDBRequestData& requestData)
 {
     auto operation = ServerOpenDBRequest::create(connection, requestData);
-    m_pendingOpenDBRequests.append(WTF::move(operation));
+    m_pendingOpenDBRequests.append(WTFMove(operation));
 
     // An open operation is already in progress, so we can't possibly handle this one yet.
     if (m_isOpeningBackingStore)
@@ -138,7 +138,7 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
     UniqueIDBDatabaseConnection* rawConnection = &connection.get();
 
     if (requestedVersion == m_databaseInfo->version()) {
-        addOpenDatabaseConnection(WTF::move(connection));
+        addOpenDatabaseConnection(WTFMove(connection));
 
         auto result = IDBResultData::openDatabaseSuccess(m_currentOpenDBRequest->requestData().requestIdentifier(), *rawConnection);
         m_currentOpenDBRequest->connection().didOpenDatabase(result);
@@ -329,7 +329,7 @@ void UniqueIDBDatabase::startVersionChangeTransaction()
     ASSERT(m_currentOpenDBRequest->isOpenRequest());
     ASSERT(m_versionChangeDatabaseConnection);
 
-    auto operation = WTF::move(m_currentOpenDBRequest);
+    auto operation = WTFMove(m_currentOpenDBRequest);
 
     uint64_t requestedVersion = operation->requestData().requestedVersion();
     if (!requestedVersion)
@@ -377,7 +377,7 @@ void UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange()
         connectionIdentifiers.add(connection->identifier());
     }
 
-    m_currentOpenDBRequest->notifiedConnectionsOfVersionChange(WTF::move(connectionIdentifiers));
+    m_currentOpenDBRequest->notifiedConnectionsOfVersionChange(WTFMove(connectionIdentifiers));
 }
 
 void UniqueIDBDatabase::notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(uint64_t connectionIdentifier)
@@ -1008,7 +1008,7 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
     while (!m_pendingTransactions.isEmpty()) {
         auto transaction = m_pendingTransactions.takeFirst();
         if (&transaction->databaseConnection() != &connection)
-            pendingTransactions.append(WTF::move(transaction));
+            pendingTransactions.append(WTFMove(transaction));
     }
 
     if (!pendingTransactions.isEmpty())
@@ -1016,7 +1016,7 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
 
     auto removedConnection = m_openDatabaseConnections.take(&connection);
     if (removedConnection->hasNonFinishedTransactions()) {
-        m_closePendingDatabaseConnections.add(WTF::move(removedConnection));
+        m_closePendingDatabaseConnections.add(WTFMove(removedConnection));
         return;
     }
 
@@ -1030,7 +1030,7 @@ void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& t
 
     ASSERT(transaction->info().mode() != IndexedDB::TransactionMode::VersionChange);
 
-    m_pendingTransactions.append(WTF::move(transaction));
+    m_pendingTransactions.append(WTFMove(transaction));
 
     invokeOperationAndTransactionTimer();
 }
@@ -1129,14 +1129,14 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
             if (!deferredTransactions.isEmpty()) {
                 ASSERT(deferredTransactions.first()->info().mode() == IndexedDB::TransactionMode::ReadWrite);
                 if (scopesOverlap(deferredTransactions.first()->objectStoreIdentifiers(), currentTransaction->objectStoreIdentifiers()))
-                    deferredTransactions.append(WTF::move(currentTransaction));
+                    deferredTransactions.append(WTFMove(currentTransaction));
             }
 
             break;
         case IndexedDB::TransactionMode::ReadWrite:
             // If this read-write transaction's scope overlaps with running transactions, it must be deferred.
             if (scopesOverlap(m_objectStoreTransactionCounts, currentTransaction->objectStoreIdentifiers()))
-                deferredTransactions.append(WTF::move(currentTransaction));
+                deferredTransactions.append(WTFMove(currentTransaction));
 
             break;
         case IndexedDB::TransactionMode::VersionChange:

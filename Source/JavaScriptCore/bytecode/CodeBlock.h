@@ -267,7 +267,7 @@ public:
 
     void setJITCodeMap(std::unique_ptr<CompactJITCodeMap> jitCodeMap)
     {
-        m_jitCodeMap = WTF::move(jitCodeMap);
+        m_jitCodeMap = WTFMove(jitCodeMap);
     }
     CompactJITCodeMap* jitCodeMap()
     {
@@ -632,7 +632,7 @@ public:
         {
             ConcurrentJITLocker locker(m_lock);
             if (!m_livenessAnalysis)
-                m_livenessAnalysis = WTF::move(analysis);
+                m_livenessAnalysis = WTFMove(analysis);
             return *m_livenessAnalysis;
         }
     }

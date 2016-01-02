@@ -162,7 +162,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGImageElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGImage>(*this, WTF::move(style));
+    return createRenderer<RenderSVGImage>(*this, WTFMove(style));
 }
 
 bool SVGImageElement::haveLoadedRequiredResources()

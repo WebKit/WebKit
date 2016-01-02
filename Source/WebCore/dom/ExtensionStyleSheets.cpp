@@ -159,14 +159,14 @@ void ExtensionStyleSheets::invalidateInjectedStyleSheetCache()
 void ExtensionStyleSheets::addUserStyleSheet(Ref<StyleSheetContents>&& userSheet)
 {
     ASSERT(userSheet.get().isUserStyleSheet());
-    m_userStyleSheets.append(CSSStyleSheet::create(WTF::move(userSheet), &m_document));
+    m_userStyleSheets.append(CSSStyleSheet::create(WTFMove(userSheet), &m_document));
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 void ExtensionStyleSheets::addAuthorStyleSheetForTesting(Ref<StyleSheetContents>&& authorSheet)
 {
     ASSERT(!authorSheet.get().isUserStyleSheet());
-    m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTF::move(authorSheet), &m_document));
+    m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTFMove(authorSheet), &m_document));
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 

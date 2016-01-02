@@ -34,7 +34,7 @@ using namespace Inspector;
 namespace WebCore {
 
 WebInjectedScriptManager::WebInjectedScriptManager(InspectorEnvironment& environment, RefPtr<InjectedScriptHost>&& host)
-    : InjectedScriptManager(environment, WTF::move(host))
+    : InjectedScriptManager(environment, WTFMove(host))
     , m_commandLineAPIHost(CommandLineAPIHost::create())
 {
 }

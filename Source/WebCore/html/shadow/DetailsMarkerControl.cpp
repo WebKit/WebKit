@@ -52,7 +52,7 @@ DetailsMarkerControl::DetailsMarkerControl(Document& document)
 
 RenderPtr<RenderElement> DetailsMarkerControl::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderDetailsMarker>(*this, WTF::move(style));
+    return createRenderer<RenderDetailsMarker>(*this, WTFMove(style));
 }
 
 bool DetailsMarkerControl::rendererIsNeeded(const RenderStyle& style)

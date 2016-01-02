@@ -101,7 +101,7 @@ void JSTestNodePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNode) };
 
 JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNode>&& impl)
-    : JSNode(structure, globalObject, WTF::move(impl))
+    : JSNode(structure, globalObject, WTFMove(impl))
 {
 }
 

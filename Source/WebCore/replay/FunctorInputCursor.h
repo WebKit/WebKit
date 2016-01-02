@@ -45,7 +45,7 @@ class FunctorInputCursor final : public InputCursor {
 public:
     static Ref<FunctorInputCursor> create(RefPtr<ReplaySessionSegment>&& segment)
     {
-        return adoptRef(*new FunctorInputCursor(WTF::move(segment)));
+        return adoptRef(*new FunctorInputCursor(WTFMove(segment)));
     }
 
     // InputCursor
@@ -75,7 +75,7 @@ typename Functor::ReturnType FunctorInputCursor::forEachInputInQueue(InputQueue 
 }
 
 inline FunctorInputCursor::FunctorInputCursor(RefPtr<ReplaySessionSegment>&& segment)
-    : m_segment(WTF::move(segment))
+    : m_segment(WTFMove(segment))
 {
 }
 

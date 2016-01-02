@@ -162,7 +162,7 @@ static Ref<CSSFontFace> createFontFace(CSSValueList& srcList, FontTraitsMask tra
 #else
     UNUSED_PARAM(fontFaceRule);
 #endif
-    Ref<CSSFontFace> fontFace = CSSFontFace::create(traitsMask, WTF::move(rule));
+    Ref<CSSFontFace> fontFace = CSSFontFace::create(traitsMask, WTFMove(rule));
 
     int srcLength = srcList.length();
 
@@ -197,7 +197,7 @@ static Ref<CSSFontFace> createFontFace(CSSValueList& srcList, FontTraitsMask tra
 #if ENABLE(SVG_FONTS)
             source->setSVGFontFaceElement(item.svgFontFaceElement());
 #endif
-            fontFace->addSource(WTF::move(source));
+            fontFace->addSource(WTFMove(source));
         }
     }
 
@@ -244,9 +244,9 @@ static Vector<Ref<CSSFontFace>> constructFamilyFontFaces(const String& familyNam
             Ref<CSSFontFace> face = CSSFontFace::create(mask, nullptr, true);
             face->addSource(std::make_unique<CSSFontFaceSource>(familyName));
             ASSERT(face->isValid());
-            faces.append(WTF::move(face));
+            faces.append(WTFMove(face));
         }
-        locallyInstalledFontFaces.add(familyName, WTF::move(faces));
+        locallyInstalledFontFaces.add(familyName, WTFMove(faces));
     }
     return result;
 }

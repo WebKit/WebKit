@@ -92,7 +92,7 @@ void ThreadedScrollingTree::invalidate()
 void ThreadedScrollingTree::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    ScrollingTree::commitNewTreeState(WTF::move(scrollingStateTree));
+    ScrollingTree::commitNewTreeState(WTFMove(scrollingStateTree));
 }
 
 void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)

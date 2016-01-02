@@ -53,7 +53,7 @@ std::unique_ptr<GLTransportSurface> GLTransportSurface::createTransportSurface(c
 #endif
 
     if (surface && surface->handle() && surface->drawable())
-        return WTF::move(surface);
+        return WTFMove(surface);
 
     return nullptr;
 }
@@ -220,7 +220,7 @@ std::unique_ptr<GLTransportSurfaceClient> GLTransportSurfaceClient::createTransp
         return nullptr;
     }
 
-    return WTF::move(client);
+    return WTFMove(client);
 }
 
 

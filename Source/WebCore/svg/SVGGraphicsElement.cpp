@@ -164,7 +164,7 @@ FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     // By default, any subclass is expected to do path-based drawing
-    return createRenderer<RenderSVGPath>(*this, WTF::move(style));
+    return createRenderer<RenderSVGPath>(*this, WTFMove(style));
 }
 
 void SVGGraphicsElement::toClipPath(Path& path)

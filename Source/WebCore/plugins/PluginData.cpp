@@ -66,7 +66,7 @@ Vector<PluginInfo> PluginData::publiclyVisiblePlugins() const
     Vector<PluginInfo> plugins;
     for (auto&& plugin : allPlugins) {
         if (shouldBePubliclyVisible(plugin))
-            plugins.append(WTF::move(plugin));
+            plugins.append(WTFMove(plugin));
     }
 
     std::sort(plugins.begin(), plugins.end(), [](const PluginInfo& a, const PluginInfo& b) {

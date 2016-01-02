@@ -38,11 +38,11 @@ Ref<Dictionary> Dictionary::create()
 
 Ref<Dictionary> Dictionary::create(MapType map)
 {
-    return adoptRef(*new Dictionary(WTF::move(map)));
+    return adoptRef(*new Dictionary(WTFMove(map)));
 }
 
 Dictionary::Dictionary(MapType map)
-    : m_map(WTF::move(map))
+    : m_map(WTFMove(map))
 {
 }
 
@@ -61,7 +61,7 @@ Ref<Array> Dictionary::keys() const
     for (const auto& key : m_map.keys())
         keys.uncheckedAppend(API::String::create(key));
 
-    return API::Array::create(WTF::move(keys));
+    return API::Array::create(WTFMove(keys));
 }
 
 bool Dictionary::add(const WTF::String& key, PassRefPtr<API::Object> item)

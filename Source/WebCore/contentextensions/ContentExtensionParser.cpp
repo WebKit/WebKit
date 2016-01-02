@@ -282,7 +282,7 @@ static std::error_code loadEncodedRules(ExecState& exec, const String& rules, Ve
             return error;
     }
 
-    ruleList = WTF::move(localRuleList);
+    ruleList = WTFMove(localRuleList);
     return { };
 }
 

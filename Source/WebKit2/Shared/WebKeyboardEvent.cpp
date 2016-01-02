@@ -65,7 +65,7 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
     , m_macCharCode(0)
     , m_handledByInputMethod(handledByInputMethod)
-    , m_commands(WTF::move(commands))
+    , m_commands(WTFMove(commands))
     , m_isAutoRepeat(false)
     , m_isKeypad(isKeypad)
     , m_isSystemKey(false)

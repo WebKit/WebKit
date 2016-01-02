@@ -147,7 +147,7 @@ bool NotificationCenter::canSuspendForDocumentSuspension() const
 void NotificationCenter::timerFired()
 {
     ASSERT(m_client);
-    auto callbacks = WTF::move(m_callbacks);
+    auto callbacks = WTFMove(m_callbacks);
     for (auto& callback : callbacks)
         callback();
     deref(); // Balanced by the ref in NotificationCenter::requestPermission.

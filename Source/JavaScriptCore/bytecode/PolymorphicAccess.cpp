@@ -1112,7 +1112,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
     // new cases that replace each other.
     Vector<std::unique_ptr<AccessCase>> casesToAdd;
     for (unsigned i = 0; i < originalCasesToAdd.size(); ++i) {
-        std::unique_ptr<AccessCase> myCase = WTF::move(originalCasesToAdd[i]);
+        std::unique_ptr<AccessCase> myCase = WTFMove(originalCasesToAdd[i]);
 
         // Add it only if it is not replaced by the subsequent cases in the list.
         bool found = false;
@@ -1126,7 +1126,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
         if (found)
             continue;
         
-        casesToAdd.append(WTF::move(myCase));
+        casesToAdd.append(WTFMove(myCase));
     }
 
     if (verbose)
@@ -1161,7 +1161,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
         newCases.append(oldCase->clone());
     }
     for (auto& caseToAdd : casesToAdd)
-        newCases.append(WTF::move(caseToAdd));
+        newCases.append(WTFMove(caseToAdd));
 
     if (verbose)
         dataLog("newCases: ", listDump(newCases), "\n");
@@ -1176,7 +1176,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
     if (!result)
         return MacroAssemblerCodePtr();
 
-    m_list = WTF::move(newCases);
+    m_list = WTFMove(newCases);
     return result;
 }
 
@@ -1185,8 +1185,8 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCase(
     std::unique_ptr<AccessCase> newAccess)
 {
     Vector<std::unique_ptr<AccessCase>> newAccesses;
-    newAccesses.append(WTF::move(newAccess));
-    return regenerateWithCases(vm, codeBlock, stubInfo, ident, WTF::move(newAccesses));
+    newAccesses.append(WTFMove(newAccess));
+    return regenerateWithCases(vm, codeBlock, stubInfo, ident, WTFMove(newAccesses));
 }
 
 bool PolymorphicAccess::visitWeak(VM& vm) const
@@ -1378,9 +1378,9 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
         doesCalls |= entry->doesCalls();
     
     m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, nullptr, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
-    m_watchpoints = WTF::move(state.watchpoints);
+    m_watchpoints = WTFMove(state.watchpoints);
     if (!state.weakReferences.isEmpty())
-        m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTF::move(state.weakReferences));
+        m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));
     if (verbose)
         dataLog("Returning: ", code.code(), "\n");
     return code.code();

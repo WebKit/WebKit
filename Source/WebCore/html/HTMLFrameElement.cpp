@@ -55,7 +55,7 @@ bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)
 
 RenderPtr<RenderElement> HTMLFrameElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderFrame>(*this, WTF::move(style));
+    return createRenderer<RenderFrame>(*this, WTFMove(style));
 }
 
 bool HTMLFrameElement::noResize() const

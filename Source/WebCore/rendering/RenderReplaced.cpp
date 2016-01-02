@@ -47,21 +47,21 @@ const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
 RenderReplaced::RenderReplaced(Element& element, Ref<RenderStyle>&& style)
-    : RenderBox(element, WTF::move(style), RenderReplacedFlag)
+    : RenderBox(element, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     setReplaced(true);
 }
 
 RenderReplaced::RenderReplaced(Element& element, Ref<RenderStyle>&& style, const LayoutSize& intrinsicSize)
-    : RenderBox(element, WTF::move(style), RenderReplacedFlag)
+    : RenderBox(element, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplaced(true);
 }
 
 RenderReplaced::RenderReplaced(Document& document, Ref<RenderStyle>&& style, const LayoutSize& intrinsicSize)
-    : RenderBox(document, WTF::move(style), RenderReplacedFlag)
+    : RenderBox(document, WTFMove(style), RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplaced(true);

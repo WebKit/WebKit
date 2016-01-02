@@ -66,7 +66,7 @@ public:
 
     void set(T&& t)
     {
-        m_value = WTF::move(t);
+        m_value = WTFMove(t);
         m_isInitialized = true;
     }
 

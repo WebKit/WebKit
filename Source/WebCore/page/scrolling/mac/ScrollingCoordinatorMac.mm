@@ -118,7 +118,7 @@ void ScrollingCoordinatorMac::commitTreeState()
 
     ScrollingThread::dispatch([threadedScrollingTree, unprotectedTreeState] {
         std::unique_ptr<ScrollingStateTree> treeState(unprotectedTreeState);
-        threadedScrollingTree->commitNewTreeState(WTF::move(treeState));
+        threadedScrollingTree->commitNewTreeState(WTFMove(treeState));
     });
 
     updateTiledScrollingIndicator();

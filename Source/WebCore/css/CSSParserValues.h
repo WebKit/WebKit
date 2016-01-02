@@ -218,7 +218,7 @@ public:
     explicit CSSParserSelector(const QualifiedName&);
     ~CSSParserSelector();
 
-    std::unique_ptr<CSSSelector> releaseSelector() { return WTF::move(m_selector); }
+    std::unique_ptr<CSSSelector> releaseSelector() { return WTFMove(m_selector); }
 
     void setValue(const AtomicString& value) { m_selector->setValue(value); }
     void setAttribute(const QualifiedName& value, bool isCaseInsensitive) { m_selector->setAttribute(value, isCaseInsensitive); }
@@ -248,7 +248,7 @@ public:
     bool matchesPseudoElement() const;
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
-    void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTF::move(selector); }
+    void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }
     void clearTagHistory() { m_tagHistory.reset(); }
     void insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector>, CSSSelector::Relation after);
     void appendTagHistory(CSSSelector::Relation, std::unique_ptr<CSSParserSelector>);

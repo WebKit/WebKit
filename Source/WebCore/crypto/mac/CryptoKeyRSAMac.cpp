@@ -245,8 +245,8 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
     }
 
     // We only use the callback functions when back on the main thread, but captured variables are copied on a secondary thread too.
-    KeyPairCallback* localCallback = new KeyPairCallback(WTF::move(callback));
-    VoidCallback* localFailureCallback = new VoidCallback(WTF::move(failureCallback));
+    KeyPairCallback* localCallback = new KeyPairCallback(WTFMove(callback));
+    VoidCallback* localFailureCallback = new VoidCallback(WTFMove(failureCallback));
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         CCRSACryptorRef ccPublicKey;

@@ -43,7 +43,7 @@ MainThreadSharedTimer::MainThreadSharedTimer()
 void MainThreadSharedTimer::setFiredFunction(std::function<void()>&& firedFunction)
 {
     RELEASE_ASSERT(!m_firedFunction || !firedFunction);
-    m_firedFunction = WTF::move(firedFunction);
+    m_firedFunction = WTFMove(firedFunction);
 }
 
 void MainThreadSharedTimer::fired()

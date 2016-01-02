@@ -42,7 +42,7 @@ namespace WebKit {
 class PluginServiceInitializerDelegate : public XPCServiceInitializerDelegate {
 public:
     PluginServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
-        : XPCServiceInitializerDelegate(WTF::move(connection), initializerMessage)
+        : XPCServiceInitializerDelegate(WTFMove(connection), initializerMessage)
     {
     }
 

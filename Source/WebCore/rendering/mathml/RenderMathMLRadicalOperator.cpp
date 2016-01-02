@@ -57,7 +57,7 @@ const float gRadicalLineThicknessEms = 0.02f;
 const float gRadicalThickLineThicknessEms = 0.1f;
 
 RenderMathMLRadicalOperator::RenderMathMLRadicalOperator(Document& document, Ref<RenderStyle>&& style)
-    : RenderMathMLOperator(document, WTF::move(style), String(&gRadicalCharacter, 1), MathMLOperatorDictionary::Prefix)
+    : RenderMathMLOperator(document, WTFMove(style), String(&gRadicalCharacter, 1), MathMLOperatorDictionary::Prefix)
 {
 }
 

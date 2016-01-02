@@ -2038,7 +2038,7 @@ static bool fastDocumentTeardownEnabled()
         Ref<HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
         if (i == 0) 
             newItemToGoTo = newItem.ptr();
-        backForward.client()->addItem(WTF::move(newItem));
+        backForward.client()->addItem(WTFMove(newItem));
     }
 
     ASSERT(newItemToGoTo);
@@ -4059,7 +4059,7 @@ static Vector<String> toStringVector(NSArray* patterns)
         return;
 
     auto userScript = std::make_unique<UserScript>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd, injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
-    viewGroup->userContentController().addUserScript(*core(world), WTF::move(userScript));
+    viewGroup->userContentController().addUserScript(*core(world), WTFMove(userScript));
 }
 
 + (void)_addUserStyleSheetToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url
@@ -4084,7 +4084,7 @@ static Vector<String> toStringVector(NSArray* patterns)
         return;
 
     auto styleSheet = std::make_unique<UserStyleSheet>(source, url, toStringVector(whitelist), toStringVector(blacklist), injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly, UserStyleUserLevel);
-    viewGroup->userContentController().addUserStyleSheet(*core(world), WTF::move(styleSheet), InjectInExistingDocuments);
+    viewGroup->userContentController().addUserStyleSheet(*core(world), WTFMove(styleSheet), InjectInExistingDocuments);
 }
 
 + (void)_removeUserScriptFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url

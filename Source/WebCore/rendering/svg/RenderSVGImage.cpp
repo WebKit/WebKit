@@ -44,7 +44,7 @@
 namespace WebCore {
 
 RenderSVGImage::RenderSVGImage(SVGImageElement& element, Ref<RenderStyle>&& style)
-    : RenderSVGModelObject(element, WTF::move(style))
+    : RenderSVGModelObject(element, WTFMove(style))
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
     , m_imageResource(std::make_unique<RenderImageResource>())

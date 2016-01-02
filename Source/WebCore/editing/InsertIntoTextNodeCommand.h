@@ -36,7 +36,7 @@ class InsertIntoTextNodeCommand : public SimpleEditCommand {
 public:
     static Ref<InsertIntoTextNodeCommand> create(RefPtr<Text>&& node, unsigned offset, const String& text, EditAction editingAction = EditActionInsert)
     {
-        return adoptRef(*new InsertIntoTextNodeCommand(WTF::move(node), offset, text, editingAction));
+        return adoptRef(*new InsertIntoTextNodeCommand(WTFMove(node), offset, text, editingAction));
     }
 
     const String& insertedText();

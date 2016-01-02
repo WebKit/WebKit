@@ -748,13 +748,13 @@ void CSSSelector::setArgument(const AtomicString& value)
 void CSSSelector::setLangArgumentList(std::unique_ptr<Vector<AtomicString>> argumentList)
 {
     createRareData();
-    m_data.m_rareData->m_langArgumentList = WTF::move(argumentList);
+    m_data.m_rareData->m_langArgumentList = WTFMove(argumentList);
 }
 
 void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
     createRareData();
-    m_data.m_rareData->m_selectorList = WTF::move(selectorList);
+    m_data.m_rareData->m_selectorList = WTFMove(selectorList);
 }
 
 bool CSSSelector::parseNth() const

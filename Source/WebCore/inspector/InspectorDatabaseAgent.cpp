@@ -63,14 +63,14 @@ void reportTransactionFailed(ExecuteSQLCallback& requestCallback, SQLError* erro
         .setMessage(error->message())
         .setCode(error->code())
         .release();
-    requestCallback.sendSuccess(nullptr, nullptr, WTF::move(errorObject));
+    requestCallback.sendSuccess(nullptr, nullptr, WTFMove(errorObject));
 }
 
 class StatementCallback : public SQLStatementCallback {
 public:
     static Ref<StatementCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(*new StatementCallback(WTF::move(requestCallback)));
+        return adoptRef(*new StatementCallback(WTFMove(requestCallback)));
     }
 
     virtual ~StatementCallback() { }
@@ -92,15 +92,15 @@ public:
             case SQLValue::NullValue: inspectorValue = InspectorValue::null(); break;
             }
             
-            values->addItem(WTF::move(inspectorValue));
+            values->addItem(WTFMove(inspectorValue));
         }
-        m_requestCallback->sendSuccess(WTF::move(columnNames), WTF::move(values), nullptr);
+        m_requestCallback->sendSuccess(WTFMove(columnNames), WTFMove(values), nullptr);
         return true;
     }
 
 private:
     StatementCallback(Ref<ExecuteSQLCallback>&& requestCallback)
-        : m_requestCallback(WTF::move(requestCallback)) { }
+        : m_requestCallback(WTFMove(requestCallback)) { }
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
@@ -108,7 +108,7 @@ class StatementErrorCallback : public SQLStatementErrorCallback {
 public:
     static Ref<StatementErrorCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(*new StatementErrorCallback(WTF::move(requestCallback)));
+        return adoptRef(*new StatementErrorCallback(WTFMove(requestCallback)));
     }
 
     virtual ~StatementErrorCallback() { }
@@ -121,7 +121,7 @@ public:
 
 private:
     StatementErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
-        : m_requestCallback(WTF::move(requestCallback)) { }
+        : m_requestCallback(WTFMove(requestCallback)) { }
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
@@ -129,7 +129,7 @@ class TransactionCallback : public SQLTransactionCallback {
 public:
     static Ref<TransactionCallback> create(const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(*new TransactionCallback(sqlStatement, WTF::move(requestCallback)));
+        return adoptRef(*new TransactionCallback(sqlStatement, WTFMove(requestCallback)));
     }
 
     virtual ~TransactionCallback() { }
@@ -142,13 +142,13 @@ public:
         Vector<SQLValue> sqlValues;
         Ref<SQLStatementCallback> callback(StatementCallback::create(m_requestCallback.copyRef()));
         Ref<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_requestCallback.copyRef()));
-        transaction->executeSQL(m_sqlStatement, sqlValues, WTF::move(callback), WTF::move(errorCallback), IGNORE_EXCEPTION);
+        transaction->executeSQL(m_sqlStatement, sqlValues, WTFMove(callback), WTFMove(errorCallback), IGNORE_EXCEPTION);
         return true;
     }
 private:
     TransactionCallback(const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
         : m_sqlStatement(sqlStatement)
-        , m_requestCallback(WTF::move(requestCallback)) { }
+        , m_requestCallback(WTFMove(requestCallback)) { }
     String m_sqlStatement;
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
@@ -157,7 +157,7 @@ class TransactionErrorCallback : public SQLTransactionErrorCallback {
 public:
     static Ref<TransactionErrorCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(*new TransactionErrorCallback(WTF::move(requestCallback)));
+        return adoptRef(*new TransactionErrorCallback(WTFMove(requestCallback)));
     }
 
     virtual ~TransactionErrorCallback() { }
@@ -169,7 +169,7 @@ public:
     }
 private:
     TransactionErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
-        : m_requestCallback(WTF::move(requestCallback)) { }
+        : m_requestCallback(WTFMove(requestCallback)) { }
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
@@ -193,11 +193,11 @@ private:
 void InspectorDatabaseAgent::didOpenDatabase(RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
 {
     if (InspectorDatabaseResource* resource = findByFileName(database->fileName())) {
-        resource->setDatabase(WTF::move(database));
+        resource->setDatabase(WTFMove(database));
         return;
     }
 
-    RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(WTF::move(database), domain, name, version);
+    RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(WTFMove(database), domain, name, version);
     m_resources.set(resource->id(), resource);
     // Resources are only bound while visible.
     if (m_enabled)
@@ -281,7 +281,7 @@ void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, 
     Ref<SQLTransactionCallback> callback(TransactionCallback::create(query, requestCallback.get()));
     Ref<SQLTransactionErrorCallback> errorCallback(TransactionErrorCallback::create(requestCallback.get()));
     Ref<VoidCallback> successCallback(TransactionSuccessCallback::create());
-    database->transaction(WTF::move(callback), WTF::move(errorCallback), WTF::move(successCallback));
+    database->transaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback));
 }
 
 String InspectorDatabaseAgent::databaseId(Database* database)

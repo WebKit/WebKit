@@ -82,7 +82,7 @@ static COMPtr<IPropertyBag> createUserInfoFromArray(BSTR notificationStr, IWebHi
 
     HashMap<String, Vector<COMPtr<IWebHistoryItem>>> dictionary;
     String key(notificationStr, ::SysStringLen(notificationStr));
-    dictionary.set(key, WTF::move(arrayItem));
+    dictionary.set(key, WTFMove(arrayItem));
     return COMPtr<IPropertyBag>(AdoptCOM, COMPropertyBag<Vector<COMPtr<IWebHistoryItem>>>::adopt(dictionary));
 #endif
 }

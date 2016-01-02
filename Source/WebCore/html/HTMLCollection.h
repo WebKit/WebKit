@@ -214,7 +214,7 @@ inline void HTMLCollection::setNamedItemCache(std::unique_ptr<CollectionNamedEle
     ASSERT(cache);
     ASSERT(!m_namedElementCache);
     cache->didPopulate();
-    m_namedElementCache = WTF::move(cache);
+    m_namedElementCache = WTFMove(cache);
     document().collectionCachedIdNameMap(*this);
 }
 

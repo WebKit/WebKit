@@ -42,7 +42,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -302,7 +302,7 @@ void Network1BackendDispatcher::dispatch(long requestId, const String& method, R
     message->getObject(ASCIILiteral("params"), parameters);
 
     if (method == "loadResource1")
-        loadResource1(requestId, WTF::move(parameters));
+        loadResource1(requestId, WTFMove(parameters));
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
@@ -321,9 +321,9 @@ void Network1BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorOb
     m_agent->loadResource1(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 Ref<Network3BackendDispatcher> Network3BackendDispatcher::create(BackendDispatcher& backendDispatcher, Network3BackendDispatcherHandler* agent)
@@ -375,7 +375,7 @@ void Network3BackendDispatcher::dispatch(long requestId, const String& method, R
         return;
     }
 
-    ((*this).*findResult->value)(requestId, WTF::move(parameters));
+    ((*this).*findResult->value)(requestId, WTFMove(parameters));
 }
 
 void Network3BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorObject>&&)
@@ -392,9 +392,9 @@ void Network3BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorOb
     m_agent->loadResource1(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 void Network3BackendDispatcher::loadResource2(long requestId, RefPtr<InspectorObject>&&)
@@ -411,9 +411,9 @@ void Network3BackendDispatcher::loadResource2(long requestId, RefPtr<InspectorOb
     m_agent->loadResource2(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 void Network3BackendDispatcher::loadResource3(long requestId, RefPtr<InspectorObject>&&)
@@ -430,9 +430,9 @@ void Network3BackendDispatcher::loadResource3(long requestId, RefPtr<InspectorOb
     m_agent->loadResource3(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 void Network3BackendDispatcher::loadResource4(long requestId, RefPtr<InspectorObject>&&)
@@ -449,9 +449,9 @@ void Network3BackendDispatcher::loadResource4(long requestId, RefPtr<InspectorOb
     m_agent->loadResource4(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 void Network3BackendDispatcher::loadResource5(long requestId, RefPtr<InspectorObject>&&)
@@ -468,9 +468,9 @@ void Network3BackendDispatcher::loadResource5(long requestId, RefPtr<InspectorOb
     m_agent->loadResource5(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 void Network3BackendDispatcher::loadResource6(long requestId, RefPtr<InspectorObject>&&)
@@ -487,9 +487,9 @@ void Network3BackendDispatcher::loadResource6(long requestId, RefPtr<InspectorOb
     m_agent->loadResource6(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 void Network3BackendDispatcher::loadResource7(long requestId, RefPtr<InspectorObject>&&)
@@ -506,9 +506,9 @@ void Network3BackendDispatcher::loadResource7(long requestId, RefPtr<InspectorOb
     m_agent->loadResource7(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
 } // namespace Inspector
@@ -872,8 +872,8 @@ using namespace Inspector;
     _network1Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork1BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), *_controller, WTF::move(alternateDispatcher));
-    _controller->appendExtraAgent(WTF::move(alternateAgent));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), *_controller, WTFMove(alternateDispatcher));
+    _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
 - (id<RWIProtocolNetwork1DomainHandler>)network1Handler
@@ -890,8 +890,8 @@ using namespace Inspector;
     _network3Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork3BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network3BackendDispatcher, AlternateNetwork3BackendDispatcher>>(ASCIILiteral("Network3"), *_controller, WTF::move(alternateDispatcher));
-    _controller->appendExtraAgent(WTF::move(alternateAgent));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network3BackendDispatcher, AlternateNetwork3BackendDispatcher>>(ASCIILiteral("Network3"), *_controller, WTFMove(alternateDispatcher));
+    _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
 - (id<RWIProtocolNetwork3DomainHandler>)network3Handler

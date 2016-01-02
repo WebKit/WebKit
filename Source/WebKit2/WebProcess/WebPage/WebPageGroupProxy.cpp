@@ -100,7 +100,7 @@ void WebPageGroupProxy::removeAllUserContent()
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebPageGroupProxy::addUserContentExtension(const String& name, WebCompiledContentExtensionData contentExtensionData)
 {
-    RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTF::move(contentExtensionData));
+    RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTFMove(contentExtensionData));
     userContentController().addUserContentExtension(name, compiledContentExtension);
 }
 

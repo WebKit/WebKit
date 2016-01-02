@@ -39,7 +39,7 @@ namespace WebCore {
     public:
         static Ref<NodeIterator> create(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
         {
-            return adoptRef(*new NodeIterator(rootNode, whatToShow, WTF::move(filter)));
+            return adoptRef(*new NodeIterator(rootNode, whatToShow, WTFMove(filter)));
         }
         ~NodeIterator();
 

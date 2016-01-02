@@ -74,7 +74,7 @@ void WebProcessConnection::addPluginControllerProxy(std::unique_ptr<PluginContro
     uint64_t pluginInstanceID = pluginController->pluginInstanceID();
 
     ASSERT(!m_pluginControllers.contains(pluginInstanceID));
-    m_pluginControllers.set(pluginInstanceID, WTF::move(pluginController));
+    m_pluginControllers.set(pluginInstanceID, WTFMove(pluginController));
 }
 
 void WebProcessConnection::destroyPluginControllerProxy(PluginControllerProxy* pluginController)
@@ -214,7 +214,7 @@ void WebProcessConnection::createPluginInternal(const PluginCreationParameters& 
 
     // Make sure to add the proxy to the map before initializing it, since the plug-in might call out to the web process from 
     // its NPP_New function. This will hand over ownership of the proxy to the web process connection.
-    addPluginControllerProxy(WTF::move(pluginControllerProxy));
+    addPluginControllerProxy(WTFMove(pluginControllerProxy));
 
     // Now try to initialize the plug-in.
     result = pluginControllerProxyPtr->initialize(creationParameters);

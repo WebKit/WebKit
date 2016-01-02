@@ -98,12 +98,12 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
 
 void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface)
 {
-    IOSurfacePool::sharedPool().addSurface(WTF::move(surface));
+    IOSurfacePool::sharedPool().addSurface(WTFMove(surface));
 }
 
 std::unique_ptr<IOSurface> IOSurface::createFromImageBuffer(std::unique_ptr<ImageBuffer> imageBuffer)
 {
-    return WTF::move(imageBuffer->m_data.surface);
+    return WTFMove(imageBuffer->m_data.surface);
 }
 
 IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
@@ -406,7 +406,7 @@ void IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface,
     }
 
     if (inSurface->format() == format) {
-        callback(WTF::move(inSurface));
+        callback(WTFMove(inSurface));
         return;
     }
 
@@ -414,13 +414,13 @@ void IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface,
     IOSurfaceRef destinationIOSurfaceRef = destinationSurface->surface();
 
     IOSurfaceAcceleratorCompletion completion;
-    completion.completionRefCon = new std::function<void(std::unique_ptr<IOSurface>)> (WTF::move(callback));
+    completion.completionRefCon = new std::function<void(std::unique_ptr<IOSurface>)> (WTFMove(callback));
     completion.completionRefCon2 = destinationSurface.release();
     completion.completionCallback = [](void *completionRefCon, IOReturn, void * completionRefCon2) {
         auto* callback = static_cast<std::function<void(std::unique_ptr<WebCore::IOSurface>)>*>(completionRefCon);
         auto destinationSurface = std::unique_ptr<IOSurface>(static_cast<IOSurface*>(completionRefCon2));
         
-        (*callback)(WTF::move(destinationSurface));
+        (*callback)(WTFMove(destinationSurface));
         delete callback;
     };
 

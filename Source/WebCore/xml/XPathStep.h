@@ -65,17 +65,17 @@ public:
 
         NodeTest(NodeTest&& other)
             : m_kind(other.m_kind)
-            , m_data(WTF::move(other.m_data))
-            , m_namespaceURI(WTF::move(other.m_namespaceURI))
-            , m_mergedPredicates(WTF::move(other.m_mergedPredicates))
+            , m_data(WTFMove(other.m_data))
+            , m_namespaceURI(WTFMove(other.m_namespaceURI))
+            , m_mergedPredicates(WTFMove(other.m_mergedPredicates))
         {
         }
         NodeTest& operator=(NodeTest&& other)
         {
             m_kind = other.m_kind;
-            m_data = WTF::move(other.m_data);
-            m_namespaceURI = WTF::move(other.m_namespaceURI);
-            m_mergedPredicates = WTF::move(other.m_mergedPredicates);
+            m_data = WTFMove(other.m_data);
+            m_namespaceURI = WTFMove(other.m_namespaceURI);
+            m_mergedPredicates = WTFMove(other.m_mergedPredicates);
             return *this;
         }
 #endif

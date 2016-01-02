@@ -285,7 +285,7 @@ public:
             misc.access()->baselineShiftValue = obj;
     }
 
-    void setShadow(std::unique_ptr<ShadowData> obj) { shadowSVG.access()->shadow = WTF::move(obj); }
+    void setShadow(std::unique_ptr<ShadowData> obj) { shadowSVG.access()->shadow = WTFMove(obj); }
 
     // Setters for non-inherited resources
     void setClipperResource(const String& obj)

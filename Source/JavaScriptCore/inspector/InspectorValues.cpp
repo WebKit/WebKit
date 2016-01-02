@@ -392,7 +392,7 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
             RefPtr<InspectorValue> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
             if (!arrayNode)
                 return nullptr;
-            array->pushValue(WTF::move(arrayNode));
+            array->pushValue(WTFMove(arrayNode));
 
             // After a list value, we expect a comma or the end of the list.
             start = tokenEnd;
@@ -409,7 +409,7 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
         }
         if (token != ARRAY_END)
             return nullptr;
-        result = WTF::move(array);
+        result = WTFMove(array);
         break;
     }
     case OBJECT_BEGIN: {
@@ -432,7 +432,7 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
             RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, depth + 1);
             if (!value)
                 return nullptr;
-            object->setValue(key, WTF::move(value));
+            object->setValue(key, WTFMove(value));
             start = tokenEnd;
 
             // After a key/value pair, we expect a comma or the end of the
@@ -450,7 +450,7 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
         }
         if (token != OBJECT_END)
             return nullptr;
-        result = WTF::move(object);
+        result = WTFMove(object);
         break;
     }
 

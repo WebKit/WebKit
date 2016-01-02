@@ -413,7 +413,7 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
 
 inline void StyleResolver::State::setStyle(Ref<RenderStyle>&& style)
 {
-    m_style = WTF::move(style);
+    m_style = WTFMove(style);
     updateConversionData();
 }
 
@@ -1554,7 +1554,7 @@ void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const 
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
     cacheItem.renderStyle = RenderStyle::clone(style);
     cacheItem.parentRenderStyle = RenderStyle::clone(parentStyle);
-    m_matchedPropertiesCache.add(hash, WTF::move(cacheItem));
+    m_matchedPropertiesCache.add(hash, WTFMove(cacheItem));
 }
 
 void StyleResolver::invalidateMatchedPropertiesCache()

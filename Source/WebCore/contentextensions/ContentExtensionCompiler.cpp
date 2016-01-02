@@ -219,7 +219,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 
     Vector<SerializedActionByte> actions;
     Vector<unsigned> actionLocations = serializeActions(parsedRuleList, actions);
-    client.writeActions(WTF::move(actions));
+    client.writeActions(WTFMove(actions));
     LOG_LARGE_STRUCTURES(actions, actions.capacity() * sizeof(SerializedActionByte));
     actions.clear();
 
@@ -325,7 +325,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         ++machinesWithoutDomainsCount;
         totalBytecodeSizeForMachinesWithoutDomains += bytecode.size();
 #endif
-        client.writeFiltersWithoutDomainsBytecode(WTF::move(bytecode));
+        client.writeFiltersWithoutDomainsBytecode(WTFMove(bytecode));
 
         firstNFAWithoutDomainsSeen = true;
     };
@@ -343,17 +343,17 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
 
         if (dfa.graphSize() < smallDFASize)
-            smallFiltersWithoutDomainsDFACombiner.addDFA(WTF::move(dfa));
+            smallFiltersWithoutDomainsDFACombiner.addDFA(WTFMove(dfa));
         else {
             dfa.minimize();
-            lowerFiltersWithoutDomainsDFAToBytecode(WTF::move(dfa));
+            lowerFiltersWithoutDomainsDFAToBytecode(WTFMove(dfa));
         }
     });
 
 
     smallFiltersWithoutDomainsDFACombiner.combineDFAs(smallDFASize, [&](DFA&& dfa) {
         LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
-        lowerFiltersWithoutDomainsDFAToBytecode(WTF::move(dfa));
+        lowerFiltersWithoutDomainsDFAToBytecode(WTFMove(dfa));
     });
 
     ASSERT(filtersWithoutDomains.isEmpty());
@@ -369,7 +369,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         DFABytecodeCompiler compiler(dummyDFA, bytecode);
         compiler.compile();
         LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
-        client.writeFiltersWithoutDomainsBytecode(WTF::move(bytecode));
+        client.writeFiltersWithoutDomainsBytecode(WTFMove(bytecode));
     }
     LOG_LARGE_STRUCTURES(universalActionsWithoutDomains, universalActionsWithoutDomains.capacity() * sizeof(unsigned));
     universalActionsWithoutDomains.clear();
@@ -390,7 +390,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         ++machinesWithDomainsCount;
         totalBytecodeSizeForMachinesWithDomains += bytecode.size();
 #endif
-        client.writeFiltersWithDomainsBytecode(WTF::move(bytecode));
+        client.writeFiltersWithDomainsBytecode(WTFMove(bytecode));
 
         firstNFAWithDomainsSeen = true;
     };
@@ -412,15 +412,15 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         ASSERT_WITH_MESSAGE(!dfa.nodes[dfa.root].hasActions(), "Filters with domains that match everything are not allowed right now.");
 
         if (dfa.graphSize() < smallDFASize)
-            smallFiltersWithDomainsDFACombiner.addDFA(WTF::move(dfa));
+            smallFiltersWithDomainsDFACombiner.addDFA(WTFMove(dfa));
         else {
             dfa.minimize();
-            lowerFiltersWithDomainsDFAToBytecode(WTF::move(dfa));
+            lowerFiltersWithDomainsDFAToBytecode(WTFMove(dfa));
         }
     });
     smallFiltersWithDomainsDFACombiner.combineDFAs(smallDFASize, [&](DFA&& dfa) {
         LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
-        lowerFiltersWithDomainsDFAToBytecode(WTF::move(dfa));
+        lowerFiltersWithDomainsDFAToBytecode(WTFMove(dfa));
     });
     ASSERT(filtersWithDomains.isEmpty());
     
@@ -435,7 +435,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         DFABytecodeCompiler compiler(dummyDFA, bytecode);
         compiler.compile();
         LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
-        client.writeFiltersWithDomainsBytecode(WTF::move(bytecode));
+        client.writeFiltersWithDomainsBytecode(WTFMove(bytecode));
     }
     LOG_LARGE_STRUCTURES(universalActionsWithDomains, universalActionsWithDomains.capacity() * sizeof(unsigned));
     universalActionsWithDomains.clear();
@@ -460,7 +460,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
         LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
-        client.writeDomainFiltersBytecode(WTF::move(bytecode));
+        client.writeDomainFiltersBytecode(WTFMove(bytecode));
     });
     ASSERT(domainFilters.isEmpty());    
     

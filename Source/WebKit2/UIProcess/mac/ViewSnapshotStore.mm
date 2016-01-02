@@ -134,7 +134,7 @@ void ViewSnapshotStore::discardSnapshotImages()
 #if USE(IOSURFACE)
 Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<IOSurface> surface)
 {
-    return adoptRef(*new ViewSnapshot(WTF::move(surface)));
+    return adoptRef(*new ViewSnapshot(WTFMove(surface)));
 }
 #else
 Ref<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
@@ -145,7 +145,7 @@ Ref<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t ima
 
 #if USE(IOSURFACE)
 ViewSnapshot::ViewSnapshot(std::unique_ptr<IOSurface> surface)
-    : m_surface(WTF::move(surface))
+    : m_surface(WTFMove(surface))
 #else
 ViewSnapshot::ViewSnapshot(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
     : m_slotID(slotID)
@@ -171,7 +171,7 @@ void ViewSnapshot::setSurface(std::unique_ptr<WebCore::IOSurface> surface)
         return;
     }
 
-    m_surface = WTF::move(surface);
+    m_surface = WTFMove(surface);
     ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
 }
 #endif

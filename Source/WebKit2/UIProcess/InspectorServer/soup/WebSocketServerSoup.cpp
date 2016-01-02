@@ -48,7 +48,7 @@ static gboolean connectionCallback(GSocketService* /*service*/, GSocketConnectio
 
     auto webSocketConnection = std::make_unique<WebSocketServerConnection>(server->client(), server);
     webSocketConnection->setSocketHandle(SocketStreamHandle::create(connection, webSocketConnection.get()));
-    server->didAcceptConnection(WTF::move(webSocketConnection));
+    server->didAcceptConnection(WTFMove(webSocketConnection));
 
     return TRUE;
 }

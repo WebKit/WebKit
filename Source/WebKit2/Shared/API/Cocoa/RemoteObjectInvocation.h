@@ -41,7 +41,7 @@ public:
     struct ReplyInfo {
         ReplyInfo(uint64_t replyID, String&& blockSignature)
             : replyID(replyID)
-            , blockSignature(WTF::move(blockSignature))
+            , blockSignature(WTFMove(blockSignature))
         {
         }
 

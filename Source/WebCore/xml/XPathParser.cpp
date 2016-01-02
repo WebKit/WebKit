@@ -472,7 +472,7 @@ std::unique_ptr<Expression> Parser::parseStatement(const String& statement, XPat
         return nullptr;
     }
 
-    return WTF::move(parser.m_result);
+    return WTFMove(parser.m_result);
 }
 
 } }

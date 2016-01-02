@@ -187,12 +187,12 @@ void ArgumentEncoder::encode(double n)
 
 void ArgumentEncoder::addAttachment(Attachment&& attachment)
 {
-    m_attachments.append(WTF::move(attachment));
+    m_attachments.append(WTFMove(attachment));
 }
 
 Vector<Attachment> ArgumentEncoder::releaseAttachments()
 {
-    return WTF::move(m_attachments);
+    return WTFMove(m_attachments);
 }
 
 } // namespace IPC

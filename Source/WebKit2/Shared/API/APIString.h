@@ -65,7 +65,7 @@ private:
     }
 
     String(WTF::String&& string)
-        : m_string(WTF::move(string))
+        : m_string(WTFMove(string))
     {
         ASSERT(!m_string.isNull());
         ASSERT(m_string.isSafeToSendToAnotherThread());

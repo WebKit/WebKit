@@ -579,7 +579,7 @@ void LegacyRequest::enqueueEvent(Ref<Event>&& event)
     event->setTarget(this);
 
     if (scriptExecutionContext()->eventQueue().enqueueEvent(event.copyRef()))
-        m_enqueuedEvents.append(WTF::move(event));
+        m_enqueuedEvents.append(WTFMove(event));
 }
 
 } // namespace WebCore

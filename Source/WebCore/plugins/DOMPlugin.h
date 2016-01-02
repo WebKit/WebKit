@@ -33,7 +33,7 @@ class PluginData;
 
 class DOMPlugin : public ScriptWrappable, public RefCounted<DOMPlugin>, public FrameDestructionObserver {
 public:
-    static Ref<DOMPlugin> create(PluginData* pluginData, Frame* frame, PluginInfo pluginInfo) { return adoptRef(*new DOMPlugin(pluginData, frame, WTF::move(pluginInfo))); }
+    static Ref<DOMPlugin> create(PluginData* pluginData, Frame* frame, PluginInfo pluginInfo) { return adoptRef(*new DOMPlugin(pluginData, frame, WTFMove(pluginInfo))); }
     ~DOMPlugin();
 
     String name() const;

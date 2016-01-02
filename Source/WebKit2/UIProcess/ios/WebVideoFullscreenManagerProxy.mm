@@ -308,7 +308,7 @@ WebVideoFullscreenManagerProxy::ModelInterfaceTuple WebVideoFullscreenManagerPro
     interface->setWebVideoFullscreenModel(&model.get());
     interface->setWebVideoFullscreenChangeObserver(&model.get());
 
-    return std::make_tuple(WTF::move(model), WTF::move(interface));
+    return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
 
 WebVideoFullscreenManagerProxy::ModelInterfaceTuple& WebVideoFullscreenManagerProxy::ensureModelAndInterface(uint64_t contextId)

@@ -77,7 +77,7 @@ public:
     }
 
     Inst(Opcode opcode, Value* origin, ArgList&& arguments)
-        : args(WTF::move(arguments))
+        : args(WTFMove(arguments))
         , origin(origin)
         , opcode(opcode)
     {

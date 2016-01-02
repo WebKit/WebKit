@@ -76,7 +76,7 @@ void WebMediaPlaybackTargetPicker::setPlaybackTarget(uint64_t contextId, Ref<Web
     if (!m_page)
         return;
 
-    m_page->setPlaybackTarget(contextId, WTF::move(target));
+    m_page->setPlaybackTarget(contextId, WTFMove(target));
 }
 
 void WebMediaPlaybackTargetPicker::externalOutputDeviceAvailableDidChange(uint64_t contextId, bool available)

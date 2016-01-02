@@ -50,7 +50,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLCo
     if (!context)
         return nullptr;
 
-    return std::make_unique<GLContextGLX>(WTF::move(context), window);
+    return std::make_unique<GLContextGLX>(WTFMove(context), window);
 }
 
 std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext sharingContext)
@@ -82,7 +82,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext shar
     if (!context)
         return nullptr;
 
-    return std::make_unique<GLContextGLX>(WTF::move(context), WTF::move(pbuffer));
+    return std::make_unique<GLContextGLX>(WTFMove(context), WTFMove(pbuffer));
 }
 
 std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext sharingContext)
@@ -113,7 +113,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext shari
     if (!glxPixmap)
         return nullptr;
 
-    return std::make_unique<GLContextGLX>(WTF::move(context), WTF::move(pixmap), WTF::move(glxPixmap));
+    return std::make_unique<GLContextGLX>(WTFMove(context), WTFMove(pixmap), WTFMove(glxPixmap));
 }
 
 std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* sharingContext)
@@ -136,25 +136,25 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext*
     if (!context)
         return nullptr;
 
-    return WTF::move(context);
+    return WTFMove(context);
 }
 
 GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XID window)
-    : m_context(WTF::move(context))
+    : m_context(WTFMove(context))
     , m_window(window)
 {
 }
 
 GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XUniqueGLXPbuffer&& pbuffer)
-    : m_context(WTF::move(context))
-    , m_pbuffer(WTF::move(pbuffer))
+    : m_context(WTFMove(context))
+    , m_pbuffer(WTFMove(pbuffer))
 {
 }
 
 GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XUniquePixmap&& pixmap, XUniqueGLXPixmap&& glxPixmap)
-    : m_context(WTF::move(context))
-    , m_pixmap(WTF::move(pixmap))
-    , m_glxPixmap(WTF::move(glxPixmap))
+    : m_context(WTFMove(context))
+    , m_pixmap(WTFMove(pixmap))
+    , m_glxPixmap(WTFMove(glxPixmap))
 {
 }
 

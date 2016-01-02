@@ -79,7 +79,7 @@ void CInstance::moveGlobalExceptionToExecState(ExecState* exec)
 }
 
 CInstance::CInstance(NPObject* o, RefPtr<RootObject>&& rootObject)
-    : Instance(WTF::move(rootObject))
+    : Instance(WTFMove(rootObject))
 {
     _object = _NPN_RetainObject(o);
     _class = 0;

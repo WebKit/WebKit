@@ -604,7 +604,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
 }
 
 SelectorQuery::SelectorQuery(CSSSelectorList&& selectorList)
-    : m_selectorList(WTF::move(selectorList))
+    : m_selectorList(WTFMove(selectorList))
     , m_selectors(m_selectorList)
 {
 }
@@ -634,7 +634,7 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& docume
     if (m_entries.size() == maximumSelectorQueryCacheSize)
         m_entries.remove(m_entries.begin());
 
-    return m_entries.add(selectors, std::make_unique<SelectorQuery>(WTF::move(selectorList))).iterator->value.get();
+    return m_entries.add(selectors, std::make_unique<SelectorQuery>(WTFMove(selectorList))).iterator->value.get();
 }
 
 }

@@ -115,7 +115,7 @@ private:
 };
 
 RenderView::RenderView(Document& document, Ref<RenderStyle>&& style)
-    : RenderBlockFlow(document, WTF::move(style))
+    : RenderBlockFlow(document, WTFMove(style))
     , m_frameView(*document.view())
     , m_selectionUnsplitStart(nullptr)
     , m_selectionUnsplitEnd(nullptr)
@@ -922,7 +922,7 @@ void RenderView::updateSelectionForSubtrees(RenderSubtreesMap& renderSubtreesMap
         std::unique_ptr<OldSelectionData> oldSelectionData = std::make_unique<OldSelectionData>();
 
         clearSubtreeSelection(root, blockRepaintMode, *oldSelectionData);
-        oldSelectionDataMap.set(&root, WTF::move(oldSelectionData));
+        oldSelectionDataMap.set(&root, WTFMove(oldSelectionData));
 
         root.setSelectionData(subtreeSelectionInfo.value);
         if (hasRenderNamedFlowThreads())
@@ -1026,7 +1026,7 @@ void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, Selecti
                 m_selectionRectGatherer.setTextOnly(false);
 #endif
 
-            newSelectedObjects.set(currentRenderer, WTF::move(selectionInfo));
+            newSelectedObjects.set(currentRenderer, WTFMove(selectionInfo));
 
             RenderBlock* containingBlock = currentRenderer->containingBlock();
             while (containingBlock && !containingBlock->isRenderView()) {

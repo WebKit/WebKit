@@ -108,9 +108,9 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 RenderPtr<RenderElement> SVGAElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
     if (parentNode() && parentNode()->isSVGElement() && downcast<SVGElement>(*parentNode()).isTextContent())
-        return createRenderer<RenderSVGInline>(*this, WTF::move(style));
+        return createRenderer<RenderSVGInline>(*this, WTFMove(style));
 
-    return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
+    return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
 void SVGAElement::defaultEventHandler(Event* event)

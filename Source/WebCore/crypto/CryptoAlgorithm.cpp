@@ -87,12 +87,12 @@ void CryptoAlgorithm::importKey(const CryptoAlgorithmParameters&, const CryptoKe
 
 void CryptoAlgorithm::encryptForWrapKey(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
-    encrypt(parameters, key, data, WTF::move(callback), WTF::move(failureCallback), ec);
+    encrypt(parameters, key, data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
 void CryptoAlgorithm::decryptForUnwrapKey(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
-    decrypt(parameters, key, data, WTF::move(callback), WTF::move(failureCallback), ec);
+    decrypt(parameters, key, data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
 }

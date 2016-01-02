@@ -60,7 +60,7 @@ UserData::UserData()
 }
 
 UserData::UserData(RefPtr<API::Object>&& object)
-    : m_object(WTF::move(object))
+    : m_object(WTFMove(object))
 {
 }
 
@@ -111,7 +111,7 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
                 elements.uncheckedAppend(transformGraph(*element, transformer));
         }
 
-        return API::Array::create(WTF::move(elements));
+        return API::Array::create(WTFMove(elements));
     }
 
     if (object.type() == API::Object::Type::Dictionary) {
@@ -124,7 +124,7 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
             else
                 map.add(keyValuePair.key, transformGraph(*keyValuePair.value, transformer));
         }
-        return API::Dictionary::create(WTF::move(map));
+        return API::Dictionary::create(WTFMove(map));
     }
 
     return transformer.transformObject(object);
@@ -345,10 +345,10 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
             if (!decode(decoder, element))
                 return false;
 
-            elements.append(WTF::move(element));
+            elements.append(WTFMove(element));
         }
 
-        result = API::Array::create(WTF::move(elements));
+        result = API::Array::create(WTFMove(elements));
         break;
     }
 
@@ -385,11 +385,11 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
             if (!decode(decoder, value))
                 return false;
 
-            if (!map.add(WTF::move(key), WTF::move(value)).isNewEntry)
+            if (!map.add(WTFMove(key), WTFMove(value)).isNewEntry)
                 return false;
         }
 
-        result = API::Dictionary::create(WTF::move(map));
+        result = API::Dictionary::create(WTFMove(map));
         break;
     }
 

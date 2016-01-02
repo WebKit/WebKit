@@ -161,7 +161,7 @@ void DatabaseProcess::postDatabaseTask(std::unique_ptr<CrossThreadTask> task)
 
     LockHolder locker(m_databaseTaskMutex);
 
-    m_databaseTasks.append(WTF::move(task));
+    m_databaseTasks.append(WTFMove(task));
 
     m_queue->dispatch([this] {
         performNextDatabaseTask();
@@ -208,7 +208,7 @@ void DatabaseProcess::fetchWebsiteData(SessionID, uint64_t websiteDataTypes, uin
 {
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(std::function<void (WebsiteData)> completionHandler)
-            : m_completionHandler(WTF::move(completionHandler))
+            : m_completionHandler(WTFMove(completionHandler))
         {
         }
 
@@ -216,8 +216,8 @@ void DatabaseProcess::fetchWebsiteData(SessionID, uint64_t websiteDataTypes, uin
         {
             ASSERT(RunLoop::isMain());
 
-            auto completionHandler = WTF::move(m_completionHandler);
-            auto websiteData = WTF::move(m_websiteData);
+            auto completionHandler = WTFMove(m_completionHandler);
+            auto websiteData = WTFMove(m_websiteData);
 
             RunLoop::main().dispatch([completionHandler, websiteData] {
                 completionHandler(websiteData);
@@ -252,7 +252,7 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, uint64_t websiteData
 {
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(std::function<void ()> completionHandler)
-            : m_completionHandler(WTF::move(completionHandler))
+            : m_completionHandler(WTFMove(completionHandler))
         {
         }
 
@@ -260,7 +260,7 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, uint64_t websiteData
         {
             ASSERT(RunLoop::isMain());
 
-            RunLoop::main().dispatch(WTF::move(m_completionHandler));
+            RunLoop::main().dispatch(WTFMove(m_completionHandler));
         }
 
         std::function<void ()> m_completionHandler;
@@ -285,7 +285,7 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t w
 {
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(std::function<void ()> completionHandler)
-            : m_completionHandler(WTF::move(completionHandler))
+            : m_completionHandler(WTFMove(completionHandler))
         {
         }
 
@@ -293,7 +293,7 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t w
         {
             ASSERT(RunLoop::isMain());
 
-            RunLoop::main().dispatch(WTF::move(m_completionHandler));
+            RunLoop::main().dispatch(WTFMove(m_completionHandler));
         }
 
         std::function<void ()> m_completionHandler;
@@ -329,7 +329,7 @@ Vector<RefPtr<WebCore::SecurityOrigin>> DatabaseProcess::indexedDatabaseOrigins(
         String databaseIdentifier = pathGetFileName(originPath);
 
         if (auto securityOrigin = SecurityOrigin::maybeCreateFromDatabaseIdentifier(databaseIdentifier))
-            securityOrigins.append(WTF::move(securityOrigin));
+            securityOrigins.append(WTFMove(securityOrigin));
     }
 
     return securityOrigins;

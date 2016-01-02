@@ -353,9 +353,9 @@ void StyledElement::rebuildPresentationAttributeStyle()
     if (presentationAttributeCache().size() > presentationAttributeCacheMaximumSize) {
         // Start building from scratch if the cache ever gets big.
         presentationAttributeCache().clear();
-        presentationAttributeCache().set(cacheHash, WTF::move(newEntry));
+        presentationAttributeCache().set(cacheHash, WTFMove(newEntry));
     } else
-        cacheIterator->value = WTF::move(newEntry);
+        cacheIterator->value = WTFMove(newEntry);
 }
 
 void StyledElement::addPropertyToPresentationAttributeStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)

@@ -131,7 +131,7 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
     // We stop the timer as this is called when no more events are supposed to occur.
     stop();
 
-    dispatchEvent(WTF::move(event));
+    dispatchEvent(WTFMove(event));
 }
 
 void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents()
@@ -140,9 +140,9 @@ void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents()
     m_deferEvents = false;
 
     // Take over the deferred events before dispatching them which can potentially add more.
-    auto deferredEvents = WTF::move(m_deferredEvents);
+    auto deferredEvents = WTFMove(m_deferredEvents);
 
-    RefPtr<Event> deferredProgressEvent = WTF::move(m_deferredProgressEvent);
+    RefPtr<Event> deferredProgressEvent = WTFMove(m_deferredProgressEvent);
 
     for (auto& deferredEvent : deferredEvents)
         dispatchEvent(deferredEvent);

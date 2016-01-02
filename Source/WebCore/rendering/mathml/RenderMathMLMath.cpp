@@ -36,7 +36,7 @@ namespace WebCore {
 using namespace MathMLNames;
 
 RenderMathMLMath::RenderMathMLMath(Element& element, Ref<RenderStyle>&& style)
-    : RenderMathMLRow(element, WTF::move(style))
+    : RenderMathMLRow(element, WTFMove(style))
 {
 }
 

@@ -386,7 +386,7 @@ void HTMLElement::populateEventHandlerNameMap(EventHandlerNameMap& map, const Qu
         // using pointers from eventNames(), the passed-in table can be initialized at compile time.
         AtomicString eventName = attributeName.string().substring(2);
 
-        map.add(attributeName.impl(), WTF::move(eventName));
+        map.add(attributeName.impl(), WTFMove(eventName));
     }
 }
 
@@ -588,7 +588,7 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     ec = 0;
     Ref<DocumentFragment> fragment = textToFragment(text, ec);
     if (!ec)
-        replaceChildrenWithFragment(*this, WTF::move(fragment), ec);
+        replaceChildrenWithFragment(*this, WTFMove(fragment), ec);
 }
 
 void HTMLElement::setOuterText(const String& text, ExceptionCode& ec)
@@ -878,7 +878,7 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return RenderElement::createFor(*this, WTF::move(style));
+    return RenderElement::createFor(*this, WTFMove(style));
 }
 
 HTMLFormElement* HTMLElement::virtualForm() const

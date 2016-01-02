@@ -260,7 +260,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
 
     CompilationClient compilationClient(temporaryFileHandle, metaData);
     
-    if (auto compilerError = compileRuleList(compilationClient, WTF::move(json))) {
+    if (auto compilerError = compileRuleList(compilationClient, WTFMove(json))) {
         WebCore::closeFile(temporaryFileHandle);
         return compilerError;
     }
@@ -283,7 +283,7 @@ static RefPtr<API::UserContentExtension> createExtension(const String& identifie
 {
     auto sharedMemory = WebKit::SharedMemory::create(const_cast<uint8_t*>(fileData.data()), fileData.size(), WebKit::SharedMemory::Protection::ReadOnly);
     auto compiledContentExtensionData = WebKit::WebCompiledContentExtensionData(
-        WTF::move(sharedMemory),
+        WTFMove(sharedMemory),
         fileData,
         ContentExtensionFileHeaderSize,
         metaData.actionsSize,
@@ -300,8 +300,8 @@ static RefPtr<API::UserContentExtension> createExtension(const String& identifie
             + metaData.filtersWithDomainBytecodeSize,
         metaData.domainFiltersBytecodeSize
     );
-    auto compiledContentExtension = WebKit::WebCompiledContentExtension::create(WTF::move(compiledContentExtensionData));
-    return API::UserContentExtension::create(identifier, WTF::move(compiledContentExtension));
+    auto compiledContentExtension = WebKit::WebCompiledContentExtension::create(WTFMove(compiledContentExtensionData));
+    return API::UserContentExtension::create(identifier, WTFMove(compiledContentExtension));
 }
 
 void UserContentExtensionStore::lookupContentExtension(const WTF::String& identifier, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
@@ -340,7 +340,7 @@ void UserContentExtensionStore::compileContentExtension(const WTF::String& ident
 {
     RefPtr<UserContentExtensionStore> self(this);
     StringCapture identifierCapture(identifier);
-    StringCapture jsonCapture(WTF::move(json));
+    StringCapture jsonCapture(WTFMove(json));
     StringCapture pathCapture(m_storePath);
 
     m_compileQueue->dispatch([self, identifierCapture, jsonCapture, pathCapture, completionHandler] () mutable {

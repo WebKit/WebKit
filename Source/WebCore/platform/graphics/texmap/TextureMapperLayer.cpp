@@ -486,7 +486,7 @@ void TextureMapperLayer::removeFromParent()
 
 void TextureMapperLayer::removeAllChildren()
 {
-    auto oldChildren = WTF::move(m_children);
+    auto oldChildren = WTFMove(m_children);
     for (auto* child : oldChildren)
         child->m_parent = nullptr;
 }

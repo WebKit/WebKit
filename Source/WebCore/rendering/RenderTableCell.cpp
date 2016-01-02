@@ -55,7 +55,7 @@ COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), Ren
 COMPILE_ASSERT(sizeof(CollapsedBorderValue) == 12, CollapsedBorderValue_should_stay_small);
 
 RenderTableCell::RenderTableCell(Element& element, Ref<RenderStyle>&& style)
-    : RenderBlockFlow(element, WTF::move(style))
+    : RenderBlockFlow(element, WTFMove(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
     , m_hasColSpan(false)
@@ -71,7 +71,7 @@ RenderTableCell::RenderTableCell(Element& element, Ref<RenderStyle>&& style)
 }
 
 RenderTableCell::RenderTableCell(Document& document, Ref<RenderStyle>&& style)
-    : RenderBlockFlow(document, WTF::move(style))
+    : RenderBlockFlow(document, WTFMove(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
     , m_hasColSpan(false)

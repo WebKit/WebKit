@@ -85,7 +85,7 @@ public:
 
 private:
     explicit Array(Vector<RefPtr<Object>>&& elements)
-        : m_elements(WTF::move(elements))
+        : m_elements(WTFMove(elements))
     {
     }
 

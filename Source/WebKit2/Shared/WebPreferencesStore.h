@@ -88,7 +88,7 @@ struct WebPreferencesStore {
             case Type::None:
                 break;
             case Type::String:
-                new (&m_string) String(WTF::move(value.m_string));
+                new (&m_string) String(WTFMove(value.m_string));
                 break;
             case Type::Bool:
                 m_bool = value.m_bool;

@@ -162,7 +162,7 @@ CrossOriginPreflightResultCache& CrossOriginPreflightResultCache::singleton()
 void CrossOriginPreflightResultCache::appendEntry(const String& origin, const URL& url, std::unique_ptr<CrossOriginPreflightResultCacheItem> preflightResult)
 {
     ASSERT(isMainThread());
-    m_preflightHashMap.set(std::make_pair(origin, url), WTF::move(preflightResult));
+    m_preflightHashMap.set(std::make_pair(origin, url), WTFMove(preflightResult));
 }
 
 bool CrossOriginPreflightResultCache::canSkipPreflight(const String& origin, const URL& url, StoredCredentials includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders)

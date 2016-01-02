@@ -288,7 +288,7 @@ void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMe
 
 void MediaElementSession::setPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
 {
-    m_playbackTarget = WTF::move(device);
+    m_playbackTarget = WTFMove(device);
     client().setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
 }
 

@@ -90,7 +90,7 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
         for (const auto& statistic : data.webCoreCacheStatistics)
             cacheStatistics.uncheckedAppend(createDictionaryFromHashMap(statistic));
 
-        m_responseDictionary->set("WebCoreCacheStatistics", API::Array::create(WTF::move(cacheStatistics)));
+        m_responseDictionary->set("WebCoreCacheStatistics", API::Array::create(WTFMove(cacheStatistics)));
     }
 
     if (m_outstandingRequests.isEmpty()) {

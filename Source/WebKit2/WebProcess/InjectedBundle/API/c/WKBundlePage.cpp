@@ -192,7 +192,7 @@ static PassRefPtr<API::Array> contextMenuItems(const WebContextMenu& contextMenu
     for (const auto& item : items)
         menuItems.uncheckedAppend(WebContextMenuItem::create(item));
 
-    return API::Array::create(WTF::move(menuItems));
+    return API::Array::create(WTFMove(menuItems));
 }
 #endif
 
@@ -678,5 +678,5 @@ WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
     for (const auto& origin : origins)
         originIdentifiers.uncheckedAppend(API::String::create(origin->databaseIdentifier()));
 
-    return toAPI(&API::Array::create(WTF::move(originIdentifiers)).leakRef());
+    return toAPI(&API::Array::create(WTFMove(originIdentifiers)).leakRef());
 }

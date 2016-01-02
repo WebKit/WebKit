@@ -168,7 +168,7 @@ bool FontLoader::canSuspendForDocumentSuspension() const
 
 void FontLoader::scheduleEvent(Ref<Event>&& event)
 {
-    m_pendingEvents.append(WTF::move(event));
+    m_pendingEvents.append(WTFMove(event));
     if (!m_pendingEventsTimer.isActive())
         m_pendingEventsTimer.startOneShot(0);
 }

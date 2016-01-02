@@ -3455,7 +3455,7 @@ static bool isAssistableInputType(InputType type)
 
 - (RetainPtr<NSArray>)actionSheetAssistant:(WKActionSheetAssistant *)assistant decideActionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
 {
-    return _page->uiClient().actionsForElement(element, WTF::move(defaultActions));
+    return _page->uiClient().actionsForElement(element, WTFMove(defaultActions));
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant willStartInteractionWithElement:(_WKActivatedElementInfo *)element

@@ -79,7 +79,7 @@ void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, const M
         if (ec)
             return;
     }
-    m_entangledChannel->postMessageToRemote(message, WTF::move(channels));
+    m_entangledChannel->postMessageToRemote(message, WTFMove(channels));
 }
 
 std::unique_ptr<MessagePortChannel> MessagePort::disentangle()
@@ -93,7 +93,7 @@ std::unique_ptr<MessagePortChannel> MessagePort::disentangle()
     m_scriptExecutionContext->destroyedMessagePort(*this);
     m_scriptExecutionContext = nullptr;
 
-    return WTF::move(m_entangledChannel);
+    return WTFMove(m_entangledChannel);
 }
 
 // Invoked to notify us that there are messages available for this port.
@@ -133,7 +133,7 @@ void MessagePort::entangle(std::unique_ptr<MessagePortChannel> remote)
 
     // Don't entangle the ports if the channel is closed.
     if (remote->entangleIfOpen(this))
-        m_entangledChannel = WTF::move(remote);
+        m_entangledChannel = WTFMove(remote);
 }
 
 void MessagePort::contextDestroyed()
@@ -159,8 +159,8 @@ void MessagePort::dispatchMessages()
         if (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).isClosing())
             return;
 
-        std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTF::move(channels));
-        Ref<Event> event = MessageEvent::create(WTF::move(ports), message.release());
+        std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTFMove(channels));
+        Ref<Event> event = MessageEvent::create(WTFMove(ports), message.release());
         dispatchEvent(event);
     }
 }
@@ -202,7 +202,7 @@ std::unique_ptr<MessagePortChannelArray> MessagePort::disentanglePorts(const Mes
     auto portArray = std::make_unique<MessagePortChannelArray>(ports->size());
     for (unsigned int i = 0 ; i < ports->size() ; ++i) {
         std::unique_ptr<MessagePortChannel> channel = (*ports)[i]->disentangle();
-        (*portArray)[i] = WTF::move(channel);
+        (*portArray)[i] = WTFMove(channel);
     }
     return portArray;
 }
@@ -215,7 +215,7 @@ std::unique_ptr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionCont
     auto portArray = std::make_unique<MessagePortArray>(channels->size());
     for (unsigned int i = 0; i < channels->size(); ++i) {
         RefPtr<MessagePort> port = MessagePort::create(context);
-        port->entangle(WTF::move((*channels)[i]));
+        port->entangle(WTFMove((*channels)[i]));
         (*portArray)[i] = port.release();
     }
     return portArray;
@@ -225,7 +225,7 @@ bool MessagePort::addEventListener(const AtomicString& eventType, RefPtr<EventLi
 {
     if (listener && listener->isAttribute() && eventType == eventNames().messageEvent)
         start();
-    return EventTargetWithInlineData::addEventListener(eventType, WTF::move(listener), useCapture);
+    return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), useCapture);
 }
 
 } // namespace WebCore

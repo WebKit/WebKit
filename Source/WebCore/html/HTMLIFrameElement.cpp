@@ -102,7 +102,7 @@ bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderIFrame>(*this, WTF::move(style));
+    return createRenderer<RenderIFrame>(*this, WTFMove(style));
 }
 
 }

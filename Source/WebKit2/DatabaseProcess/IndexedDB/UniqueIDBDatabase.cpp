@@ -323,7 +323,7 @@ void UniqueIDBDatabase::postTransactionOperation(const IDBIdentifier& transactio
         return;
     }
 
-    postDatabaseTask(WTF::move(task));
+    postDatabaseTask(WTFMove(task));
 
     RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([successCallback](bool success) {
         successCallback(success);
@@ -1127,7 +1127,7 @@ void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<CrossThreadTask> task
 
     LockHolder locker(m_mainThreadTaskMutex);
 
-    m_mainThreadTasks.append(WTF::move(task));
+    m_mainThreadTasks.append(WTFMove(task));
 
     RefPtr<UniqueIDBDatabase> database(this);
     RunLoop::main().dispatch([database] {
@@ -1167,7 +1167,7 @@ void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<CrossThreadTask> task, 
 
     LockHolder locker(m_databaseTaskMutex);
 
-    m_databaseTasks.append(WTF::move(task));
+    m_databaseTasks.append(WTFMove(task));
 
     RefPtr<UniqueIDBDatabase> database(this);
     DatabaseProcess::singleton().queue().dispatch([database] {

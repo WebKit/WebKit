@@ -729,7 +729,7 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
                 tabText = emptyString();
             }
             Ref<Node> textNode = document.createTextNode(stringWithRebalancedWhitespace(s, first, i + 1 == numEntries));
-            paragraph.appendChild(WTF::move(textNode), ASSERT_NO_EXCEPTION);
+            paragraph.appendChild(WTFMove(textNode), ASSERT_NO_EXCEPTION);
         }
 
         // there is a tab after every entry, except the last entry
@@ -794,7 +794,7 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
         if (string.endsWith('\n')) {
             Ref<Element> element = createBreakElement(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
-            fragment->appendChild(WTF::move(element), ASSERT_NO_EXCEPTION);
+            fragment->appendChild(WTFMove(element), ASSERT_NO_EXCEPTION);
         }
         return fragment;
     }
@@ -1005,12 +1005,12 @@ void replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>
     }
 
     if (hasOneChild(containerNode)) {
-        containerNode->replaceChild(WTF::move(fragment), *containerNode->firstChild(), ec);
+        containerNode->replaceChild(WTFMove(fragment), *containerNode->firstChild(), ec);
         return;
     }
 
     containerNode->removeChildren();
-    containerNode->appendChild(WTF::move(fragment), ec);
+    containerNode->appendChild(WTFMove(fragment), ec);
 }
 
 void replaceChildrenWithText(ContainerNode& container, const String& text, ExceptionCode& ec)
@@ -1026,12 +1026,12 @@ void replaceChildrenWithText(ContainerNode& container, const String& text, Excep
     Ref<Text> textNode = Text::create(containerNode->document(), text);
 
     if (hasOneChild(containerNode)) {
-        containerNode->replaceChild(WTF::move(textNode), *containerNode->firstChild(), ec);
+        containerNode->replaceChild(WTFMove(textNode), *containerNode->firstChild(), ec);
         return;
     }
 
     containerNode->removeChildren();
-    containerNode->appendChild(WTF::move(textNode), ec);
+    containerNode->appendChild(WTFMove(textNode), ec);
 }
 
 }

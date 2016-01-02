@@ -37,7 +37,7 @@
 namespace WebCore {
 
 RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, Ref<RenderStyle>&& style)
-    : RenderRegionSet(flowThread.document(), WTF::move(style), flowThread)
+    : RenderRegionSet(flowThread.document(), WTFMove(style), flowThread)
     , m_computedColumnCount(1)
     , m_computedColumnWidth(0)
     , m_computedColumnHeight(0)

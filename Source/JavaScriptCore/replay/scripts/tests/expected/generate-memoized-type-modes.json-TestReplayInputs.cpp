@@ -47,7 +47,7 @@ ScalarInput::~ScalarInput()
 
 MapInput::MapInput(std::unique_ptr<MapType> data)
     : NondeterministicInput<MapInput>()
-    , m_data(WTF::move(data))
+    , m_data(WTFMove(data))
 {
 }
 
@@ -95,7 +95,7 @@ bool InputTraits<Test::MapInput>::decode(EncodedValue& encodedValue, std::unique
     if (!encodedValue.get<MapType>(ASCIILiteral("data"), data))
         return false;
 
-    input = std::make_unique<Test::MapInput>(WTF::move(data));
+    input = std::make_unique<Test::MapInput>(WTFMove(data));
     return true;
 }
 

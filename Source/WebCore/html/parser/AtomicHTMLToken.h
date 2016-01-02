@@ -236,7 +236,7 @@ inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken::Type type, const AtomicString
     : m_type(type)
     , m_name(name)
     , m_selfClosing(false)
-    , m_attributes(WTF::move(attributes))
+    , m_attributes(WTFMove(attributes))
 {
     ASSERT(type == HTMLToken::StartTag || type == HTMLToken::EndTag);
 }

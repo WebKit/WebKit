@@ -203,7 +203,7 @@ static void createRendererIfNeeded(Element& element, RenderStyle& inheritedStyle
     // This just does what setAnimatedStyle() does, except with setStyleInternal() instead of setStyle().
     Ref<RenderStyle> animatedStyle = newRenderer->style();
     newRenderer->animation().updateAnimations(*newRenderer, animatedStyle, animatedStyle);
-    newRenderer->setStyleInternal(WTF::move(animatedStyle));
+    newRenderer->setStyleInternal(WTFMove(animatedStyle));
 
     newRenderer->initializeStyle();
 
@@ -381,10 +381,10 @@ static void setBeforeOrAfterPseudoElement(Element& current, Ref<PseudoElement>&&
 {
     ASSERT(pseudoId == BEFORE || pseudoId == AFTER);
     if (pseudoId == BEFORE) {
-        current.setBeforePseudoElement(WTF::move(pseudoElement));
+        current.setBeforePseudoElement(WTFMove(pseudoElement));
         return;
     }
-    current.setAfterPseudoElement(WTF::move(pseudoElement));
+    current.setAfterPseudoElement(WTFMove(pseudoElement));
 }
 
 static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
@@ -885,7 +885,7 @@ void resolveTree(Document& document, Change change)
 
         Style::Change documentChange = determineChange(documentStyle.get(), renderView.style());
         if (documentChange != NoChange)
-            renderView.setStyle(WTF::move(documentStyle));
+            renderView.setStyle(WTFMove(documentStyle));
     }
 
     Element* documentElement = document.documentElement();

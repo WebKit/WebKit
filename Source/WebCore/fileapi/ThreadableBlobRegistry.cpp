@@ -54,7 +54,7 @@ public:
     BlobRegistryContext(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
         : url(url.isolatedCopy())
         , contentType(contentType.isolatedCopy())
-        , blobParts(WTF::move(blobParts))
+        , blobParts(WTFMove(blobParts))
     {
         for (BlobPart& part : blobParts)
             part.detachFromCurrentThread();
@@ -115,13 +115,13 @@ void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& p
 void ThreadableBlobRegistry::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
 {
     if (isMainThread())
-        blobRegistry().registerBlobURL(url, WTF::move(blobParts), contentType);
+        blobRegistry().registerBlobURL(url, WTFMove(blobParts), contentType);
     else {
         // BlobRegistryContext performs an isolated copy of data.
-        BlobRegistryContext* context = new BlobRegistryContext(url, WTF::move(blobParts), contentType);
+        BlobRegistryContext* context = new BlobRegistryContext(url, WTFMove(blobParts), contentType);
         callOnMainThread([context] {
             std::unique_ptr<BlobRegistryContext> blobRegistryContext(context);
-            blobRegistry().registerBlobURL(blobRegistryContext->url, WTF::move(blobRegistryContext->blobParts), blobRegistryContext->contentType);
+            blobRegistry().registerBlobURL(blobRegistryContext->url, WTFMove(blobRegistryContext->blobParts), blobRegistryContext->contentType);
         });
     }
 }

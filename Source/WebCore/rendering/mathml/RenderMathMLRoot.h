@@ -80,7 +80,7 @@ friend class RenderMathMLRoot;
 
 public:
     RenderMathMLRootWrapper(Document& document, Ref<RenderStyle>&& style)
-        : RenderMathMLRow(document, WTF::move(style)) { }
+        : RenderMathMLRow(document, WTFMove(style)) { }
 
 private:
     void removeChildWithoutRestructuring(RenderObject&);

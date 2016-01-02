@@ -50,7 +50,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _sessionState = WTF::move(sessionState);
+    _sessionState = WTFMove(sessionState);
 
     return self;
 }

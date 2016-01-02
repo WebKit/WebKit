@@ -81,7 +81,7 @@ class RasterShape final : public Shape {
     WTF_MAKE_NONCOPYABLE(RasterShape);
 public:
     RasterShape(std::unique_ptr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)
-        : m_intervals(WTF::move(intervals))
+        : m_intervals(WTFMove(intervals))
         , m_marginRectSize(marginRectSize)
     {
         m_intervals->initializeBounds();

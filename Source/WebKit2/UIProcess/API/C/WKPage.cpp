@@ -441,7 +441,7 @@ WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSession
     if (shouldReturnData)
         return toAPI(encodeLegacySessionState(sessionState).release().leakRef());
 
-    return toAPI(&API::SessionState::create(WTF::move(sessionState)).leakRef());
+    return toAPI(&API::SessionState::create(WTFMove(sessionState)).leakRef());
 }
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
@@ -458,7 +458,7 @@ void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
         sessionState = toImpl(static_cast<WKSessionStateRef>(sessionStateRef))->sessionState();
     }
 
-    toImpl(pageRef)->restoreFromSessionState(WTF::move(sessionState), true);
+    toImpl(pageRef)->restoreFromSessionState(WTFMove(sessionState), true);
 }
 
 double WKPageGetTextZoomFactor(WKPageRef pageRef)
@@ -808,9 +808,9 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             WKArrayRef newMenu = nullptr;
             if (m_client.base.version >= 2) {
                 RefPtr<API::HitTestResult> webHitTestResult = API::HitTestResult::create(hitTestResultData);
-                m_client.getContextMenuFromProposedMenu(toAPI(&page), toAPI(API::Array::create(WTF::move(proposedMenuItems)).ptr()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.base.clientInfo);
+                m_client.getContextMenuFromProposedMenu(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.base.clientInfo);
             } else
-                m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(&page), toAPI(API::Array::create(WTF::move(proposedMenuItems)).ptr()), &newMenu, toAPI(userData), m_client.base.clientInfo);
+                m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), &newMenu, toAPI(userData), m_client.base.clientInfo);
 
             RefPtr<API::Array> array = adoptRef(toImpl(newMenu));
 
@@ -849,7 +849,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             for (const auto& menuItem : menuItemsVector)
                 menuItems.uncheckedAppend(menuItem);
 
-            m_client.showContextMenu(toAPI(&page), toAPI(menuLocation), toAPI(API::Array::create(WTF::move(menuItems)).ptr()), m_client.base.clientInfo);
+            m_client.showContextMenu(toAPI(&page), toAPI(menuLocation), toAPI(API::Array::create(WTFMove(menuItems)).ptr()), m_client.base.clientInfo);
 
             return true;
         }
@@ -940,10 +940,10 @@ void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesCl
                 for (const auto& rect : rects)
                     apiRects.uncheckedAppend(API::Rect::create(toAPI(rect)));
 
-                matches.uncheckedAppend(API::Array::create(WTF::move(apiRects)));
+                matches.uncheckedAppend(API::Array::create(WTFMove(apiRects)));
             }
 
-            m_client.didFindStringMatches(toAPI(page), toAPI(string.impl()), toAPI(API::Array::create(WTF::move(matches)).ptr()), index, m_client.base.clientInfo);
+            m_client.didFindStringMatches(toAPI(page), toAPI(string.impl()), toAPI(API::Array::create(WTFMove(matches)).ptr()), index, m_client.base.clientInfo);
         }
 
         virtual void didGetImageForMatchResult(WebPageProxy* page, WebImage* image, int32_t index) override
@@ -1172,9 +1172,9 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 Vector<RefPtr<API::Object>> removedItemsVector;
                 removedItemsVector.reserveInitialCapacity(removedItems.size());
                 for (auto& removedItem : removedItems)
-                    removedItemsVector.append(WTF::move(removedItem));
+                    removedItemsVector.append(WTFMove(removedItem));
 
-                removedItemsArray = API::Array::create(WTF::move(removedItemsVector));
+                removedItemsArray = API::Array::create(WTFMove(removedItemsVector));
             }
 
             m_client.didChangeBackForwardList(toAPI(&page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.base.clientInfo);
@@ -1298,7 +1298,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
     if (milestones)
         webPageProxy->process().send(Messages::WebPage::ListenForLayoutMilestones(milestones), webPageProxy->pageID());
 
-    webPageProxy->setLoaderClient(WTF::move(loaderClient));
+    webPageProxy->setLoaderClient(WTFMove(loaderClient));
 }
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* wkClient)
@@ -1509,7 +1509,7 @@ class RunJavaScriptAlertResultListener : public API::ObjectImpl<API::Object::Typ
 public:
     static PassRefPtr<RunJavaScriptAlertResultListener> create(std::function<void ()>&& completionHandler)
     {
-        return adoptRef(new RunJavaScriptAlertResultListener(WTF::move(completionHandler)));
+        return adoptRef(new RunJavaScriptAlertResultListener(WTFMove(completionHandler)));
     }
 
     virtual ~RunJavaScriptAlertResultListener()
@@ -1523,7 +1523,7 @@ public:
 
 private:
     explicit RunJavaScriptAlertResultListener(std::function<void ()>&& completionHandler)
-        : m_completionHandler(WTF::move(completionHandler))
+        : m_completionHandler(WTFMove(completionHandler))
     {
     }
     
@@ -1534,7 +1534,7 @@ class RunJavaScriptConfirmResultListener : public API::ObjectImpl<API::Object::T
 public:
     static PassRefPtr<RunJavaScriptConfirmResultListener> create(std::function<void (bool)>&& completionHandler)
     {
-        return adoptRef(new RunJavaScriptConfirmResultListener(WTF::move(completionHandler)));
+        return adoptRef(new RunJavaScriptConfirmResultListener(WTFMove(completionHandler)));
     }
 
     virtual ~RunJavaScriptConfirmResultListener()
@@ -1548,7 +1548,7 @@ public:
 
 private:
     explicit RunJavaScriptConfirmResultListener(std::function<void (bool)>&& completionHandler)
-        : m_completionHandler(WTF::move(completionHandler))
+        : m_completionHandler(WTFMove(completionHandler))
     {
     }
 
@@ -1559,7 +1559,7 @@ class RunJavaScriptPromptResultListener : public API::ObjectImpl<API::Object::Ty
 public:
     static PassRefPtr<RunJavaScriptPromptResultListener> create(std::function<void (const String&)>&& completionHandler)
     {
-        return adoptRef(new RunJavaScriptPromptResultListener(WTF::move(completionHandler)));
+        return adoptRef(new RunJavaScriptPromptResultListener(WTFMove(completionHandler)));
     }
 
     virtual ~RunJavaScriptPromptResultListener()
@@ -1573,7 +1573,7 @@ public:
 
 private:
     explicit RunJavaScriptPromptResultListener(std::function<void (const String&)>&& completionHandler)
-        : m_completionHandler(WTF::move(completionHandler))
+        : m_completionHandler(WTFMove(completionHandler))
     {
     }
 
@@ -1667,7 +1667,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 map.set("resizable", API::Boolean::create(windowFeatures.resizable));
                 map.set("fullscreen", API::Boolean::create(windowFeatures.fullscreen));
                 map.set("dialog", API::Boolean::create(windowFeatures.dialog));
-                Ref<API::Dictionary> featuresMap = API::Dictionary::create(WTF::move(map));
+                Ref<API::Dictionary> featuresMap = API::Dictionary::create(WTFMove(map));
 
                 if (m_client.createNewPage_deprecatedForUseWithV1) {
                     Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
@@ -1724,7 +1724,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void ()> completionHandler) override
         {
             if (m_client.runJavaScriptAlert) {
-                RefPtr<RunJavaScriptAlertResultListener> listener = RunJavaScriptAlertResultListener::create(WTF::move(completionHandler));
+                RefPtr<RunJavaScriptAlertResultListener> listener = RunJavaScriptAlertResultListener::create(WTFMove(completionHandler));
                 RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
                 m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
                 return;
@@ -1750,7 +1750,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void (bool)> completionHandler) override
         {
             if (m_client.runJavaScriptConfirm) {
-                RefPtr<RunJavaScriptConfirmResultListener> listener = RunJavaScriptConfirmResultListener::create(WTF::move(completionHandler));
+                RefPtr<RunJavaScriptConfirmResultListener> listener = RunJavaScriptConfirmResultListener::create(WTFMove(completionHandler));
                 RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
                 m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
                 return;
@@ -1777,7 +1777,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         virtual void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void (const String&)> completionHandler) override
         {
             if (m_client.runJavaScriptPrompt) {
-                RefPtr<RunJavaScriptPromptResultListener> listener = RunJavaScriptPromptResultListener::create(WTF::move(completionHandler));
+                RefPtr<RunJavaScriptPromptResultListener> listener = RunJavaScriptPromptResultListener::create(WTFMove(completionHandler));
                 RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
                 m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
                 return;
@@ -2307,7 +2307,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
     WebPageProxy* webPageProxy = toImpl(pageRef);
 
     auto navigationClient = std::make_unique<NavigationClient>(wkClient);
-    webPageProxy->setNavigationClient(WTF::move(navigationClient));
+    webPageProxy->setNavigationClient(WTFMove(navigationClient));
 }
 
 void WKPageSetSession(WKPageRef pageRef, WKSessionRef session)
@@ -2545,7 +2545,7 @@ WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
             relatedPages.append(page);
     }
 
-    return toAPI(&API::Array::create(WTF::move(relatedPages)).leakRef());
+    return toAPI(&API::Array::create(WTFMove(relatedPages)).leakRef());
 }
 
 void WKPageSetMayStartMediaWhenInWindow(WKPageRef pageRef, bool mayStartMedia)

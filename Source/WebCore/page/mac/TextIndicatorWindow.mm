@@ -423,7 +423,7 @@ void TextIndicatorWindow::setAnimationProgress(float progress)
 
 void TextIndicatorWindow::clearTextIndicator(TextIndicatorWindowDismissalAnimation animation)
 {
-    RefPtr<TextIndicator> textIndicator = WTF::move(m_textIndicator);
+    RefPtr<TextIndicator> textIndicator = WTFMove(m_textIndicator);
 
     if ([m_textIndicatorView isFadingOut])
         return;

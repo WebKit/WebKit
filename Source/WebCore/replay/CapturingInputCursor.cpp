@@ -39,7 +39,7 @@
 namespace WebCore {
 
 CapturingInputCursor::CapturingInputCursor(RefPtr<ReplaySessionSegment>&& segment)
-    : m_segment(WTF::move(segment))
+    : m_segment(WTFMove(segment))
 {
     LOG(WebReplay, "%-30sCreated capture cursor=%p.\n", "[ReplayController]", this);
 }
@@ -51,7 +51,7 @@ CapturingInputCursor::~CapturingInputCursor()
 
 Ref<CapturingInputCursor> CapturingInputCursor::create(RefPtr<ReplaySessionSegment>&& segment)
 {
-    return adoptRef(*new CapturingInputCursor(WTF::move(segment)));
+    return adoptRef(*new CapturingInputCursor(WTFMove(segment)));
 }
 
 void CapturingInputCursor::storeInput(std::unique_ptr<NondeterministicInputBase> input)
@@ -64,7 +64,7 @@ void CapturingInputCursor::storeInput(std::unique_ptr<NondeterministicInputBase>
         m_segment->eventLoopTimings().append(now);
     }
 
-    m_segment->storage().store(WTF::move(input));
+    m_segment->storage().store(WTFMove(input));
 }
 
 NondeterministicInputBase* CapturingInputCursor::loadInput(InputQueue, const String&)

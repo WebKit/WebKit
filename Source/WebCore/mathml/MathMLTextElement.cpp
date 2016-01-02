@@ -78,11 +78,11 @@ void MathMLTextElement::parseAttribute(const QualifiedName& name, const AtomicSt
 RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     if (hasTagName(MathMLNames::moTag))
-        return createRenderer<RenderMathMLOperator>(*this, WTF::move(style));
+        return createRenderer<RenderMathMLOperator>(*this, WTFMove(style));
     if (hasTagName(MathMLNames::mspaceTag))
-        return createRenderer<RenderMathMLSpace>(*this, WTF::move(style));
+        return createRenderer<RenderMathMLSpace>(*this, WTFMove(style));
     if (hasTagName(MathMLNames::annotationTag))
-        return MathMLElement::createElementRenderer(WTF::move(style), insertionPosition);
+        return MathMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 
     ASSERT(hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag));
 
@@ -90,7 +90,7 @@ RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(Ref<RenderStyl
     // style-changed.htmt test to pass, since mathml renders expect Stretch as default.
     style.get().setAlignItemsPosition(ItemPositionStretch);
 
-    return createRenderer<RenderMathMLToken>(*this, WTF::move(style));
+    return createRenderer<RenderMathMLToken>(*this, WTFMove(style));
 }
 
 bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const

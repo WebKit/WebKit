@@ -40,7 +40,7 @@
 namespace WebCore {
 
 ReplayingInputCursor::ReplayingInputCursor(RefPtr<ReplaySessionSegment>&& segment, Page& page, EventLoopInputDispatcherClient* client)
-    : m_segment(WTF::move(segment))
+    : m_segment(WTFMove(segment))
     , m_dispatcher(std::make_unique<EventLoopInputDispatcher>(page, *this, client))
 {
     for (size_t i = 0; i < static_cast<size_t>(InputQueue::Count); i++)
@@ -53,7 +53,7 @@ ReplayingInputCursor::~ReplayingInputCursor()
 
 Ref<ReplayingInputCursor> ReplayingInputCursor::create(RefPtr<ReplaySessionSegment>&& segment, Page& page, EventLoopInputDispatcherClient* client)
 {
-    return adoptRef(*new ReplayingInputCursor(WTF::move(segment), page, client));
+    return adoptRef(*new ReplayingInputCursor(WTFMove(segment), page, client));
 }
 
 void ReplayingInputCursor::storeInput(std::unique_ptr<NondeterministicInputBase>)

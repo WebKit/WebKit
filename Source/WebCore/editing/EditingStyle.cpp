@@ -593,7 +593,7 @@ static void applyTextDecorationChangeToValueList(CSSValueList& valueList, TextDe
     case TextDecorationChange::None:
         break;
     case TextDecorationChange::Add:
-        valueList.append(WTF::move(value));
+        valueList.append(WTFMove(value));
         break;
     case TextDecorationChange::Remove:
         valueList.removeAll(&value.get());
@@ -624,14 +624,14 @@ void EditingStyle::overrideTypingStyleAt(const EditingStyle& style, const Positi
     RefPtr<CSSValueList> valueList;
     if (value && value->isValueList()) {
         valueList = downcast<CSSValueList>(*value).copy();
-        applyTextDecorationChangeToValueList(*valueList, underlineChange, WTF::move(underline));
-        applyTextDecorationChangeToValueList(*valueList, strikeThroughChange, WTF::move(lineThrough));
+        applyTextDecorationChangeToValueList(*valueList, underlineChange, WTFMove(underline));
+        applyTextDecorationChangeToValueList(*valueList, strikeThroughChange, WTFMove(lineThrough));
     } else {
         valueList = CSSValueList::createSpaceSeparated();
         if (underlineChange == TextDecorationChange::Add)
-            valueList->append(WTF::move(underline));
+            valueList->append(WTFMove(underline));
         if (strikeThroughChange == TextDecorationChange::Add)
-            valueList->append(WTF::move(lineThrough));
+            valueList->append(WTFMove(lineThrough));
     }
     m_mutableStyle->setProperty(CSSPropertyWebkitTextDecorationsInEffect, valueList.get());
 }
@@ -831,7 +831,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Ref
                 if (!newInlineStyle)
                     return true;
                 newValueList->removeAll(underline.ptr());
-                extractedValueList->append(WTF::move(underline));
+                extractedValueList->append(WTFMove(underline));
             }
 
             Ref<CSSPrimitiveValue> lineThrough = CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough);
@@ -839,7 +839,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Ref
                 if (!newInlineStyle)
                     return true;
                 newValueList->removeAll(lineThrough.ptr());
-                extractedValueList->append(WTF::move(lineThrough));
+                extractedValueList->append(WTFMove(lineThrough));
             }
 
             if (extractedValueList->length()) {
@@ -1223,10 +1223,10 @@ static void mergeTextDecorationValues(CSSValueList& mergedValue, const CSSValueL
     Ref<CSSPrimitiveValue> lineThrough = cssValuePool.createIdentifierValue(CSSValueLineThrough);
 
     if (valueToMerge.hasValue(underline.ptr()) && !mergedValue.hasValue(underline.ptr()))
-        mergedValue.append(WTF::move(underline));
+        mergedValue.append(WTFMove(underline));
 
     if (valueToMerge.hasValue(lineThrough.ptr()) && !mergedValue.hasValue(lineThrough.ptr()))
-        mergedValue.append(WTF::move(lineThrough));
+        mergedValue.append(WTFMove(lineThrough));
 }
 
 void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideMode mode)
@@ -1608,9 +1608,9 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
         if (shouldStyleWithCSS) {
             valueList = valueList ? valueList->copy() : CSSValueList::createSpaceSeparated();
             if (shouldAddUnderline && !hasUnderline)
-                valueList->append(WTF::move(underline));
+                valueList->append(WTFMove(underline));
             if (shouldAddStrikeThrough && !hasLineThrough)
-                valueList->append(WTF::move(lineThrough));
+                valueList->append(WTFMove(lineThrough));
             mutableStyle->setProperty(CSSPropertyTextDecoration, valueList.get());
         } else {
             m_applyUnderline = shouldAddUnderline && !hasUnderline;

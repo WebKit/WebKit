@@ -258,7 +258,7 @@ void IDBRequest::enqueueEvent(Ref<Event>&& event)
         return;
 
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
 }
 
 bool IDBRequest::dispatchEvent(Event& event)
@@ -322,7 +322,7 @@ void IDBRequest::setResult(const IDBKeyData* keyData)
     }
 
     Deprecated::ScriptValue value = idbKeyDataToScriptValue(scriptExecutionContext(), *keyData);
-    m_result = IDBAny::create(WTF::move(value));
+    m_result = IDBAny::create(WTFMove(value));
 }
 
 void IDBRequest::setResult(uint64_t number)
@@ -340,7 +340,7 @@ void IDBRequest::setResultToStructuredClone(const ThreadSafeDataBuffer& valueDat
         return;
 
     Deprecated::ScriptValue value = deserializeIDBValueData(*context, valueData);
-    m_result = IDBAny::create(WTF::move(value));
+    m_result = IDBAny::create(WTFMove(value));
 }
 
 void IDBRequest::setResultToUndefined()

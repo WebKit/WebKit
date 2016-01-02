@@ -68,7 +68,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -164,7 +164,7 @@ ${dispatchCases}
         return;
     }
 
-    ((*this).*findResult->value)(requestId, WTF::move(parameters));
+    ((*this).*findResult->value)(requestId, WTFMove(parameters));
 }""")
 
     BackendDispatcherImplementationDomainConstructor = (
@@ -192,13 +192,13 @@ ${domainName}BackendDispatcher::${domainName}BackendDispatcher(BackendDispatcher
 """)
 
     BackendDispatcherImplementationAsyncCommand = (
-"""${domainName}BackendDispatcherHandler::${callbackName}::${callbackName}(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTF::move(backendDispatcher), id) { }
+"""${domainName}BackendDispatcherHandler::${callbackName}::${callbackName}(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
 
 void ${domainName}BackendDispatcherHandler::${callbackName}::sendSuccess(${formalParameters})
 {
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
 ${outParameterAssignments}
-    CallbackBase::sendSuccess(WTF::move(jsonMessage));
+    CallbackBase::sendSuccess(WTFMove(jsonMessage));
 }""")
 
     FrontendDispatcherDomainDispatcherDeclaration = (
@@ -222,7 +222,7 @@ private:
         }
 
         Builder(Ref</*${objectType}*/InspectorObject>&& object)
-            : m_result(WTF::move(object))
+            : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
@@ -237,7 +237,7 @@ private:
             COMPILE_ASSERT(sizeof(${objectType}) == sizeof(InspectorObject), cannot_cast);
 
             Ref<InspectorObject> result = m_result.releaseNonNull();
-            return WTF::move(*reinterpret_cast<Ref<${objectType}>*>(&result));
+            return WTFMove(*reinterpret_cast<Ref<${objectType}>*>(&result));
         }
     };
 

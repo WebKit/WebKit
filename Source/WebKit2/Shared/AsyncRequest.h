@@ -62,12 +62,12 @@ public:
 
     static Ref<AsyncRequest> create(std::function<void(ArgumentType<Arguments>...)> completionHandler)
     {
-        return adoptRef(*new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), nullptr));
+        return adoptRef(*new AsyncRequestImpl<Arguments...>(WTFMove(completionHandler), nullptr));
     }
 
     static Ref<AsyncRequest> create(std::function<void(ArgumentType<Arguments>...)> completionHandler, std::function<void()> abortHandler)
     {
-        return adoptRef(*new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), WTF::move(abortHandler)));
+        return adoptRef(*new AsyncRequestImpl<Arguments...>(WTFMove(completionHandler), WTFMove(abortHandler)));
     }
 
     virtual ~AsyncRequestImpl()
@@ -84,8 +84,8 @@ public:
 
 private:
     AsyncRequestImpl(std::function<void (ArgumentType<Arguments>...)> completionHandler, std::function<void ()> abortHandler)
-        : AsyncRequest(WTF::move(abortHandler))
-        , m_completionHandler(WTF::move(completionHandler))
+        : AsyncRequest(WTFMove(abortHandler))
+        , m_completionHandler(WTFMove(completionHandler))
     {
         ASSERT(m_completionHandler);
     }

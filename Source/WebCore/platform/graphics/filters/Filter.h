@@ -37,7 +37,7 @@ public:
     { }
     virtual ~Filter() { }
 
-    void setSourceImage(std::unique_ptr<ImageBuffer> sourceImage) { m_sourceImage = WTF::move(sourceImage); }
+    void setSourceImage(std::unique_ptr<ImageBuffer> sourceImage) { m_sourceImage = WTFMove(sourceImage); }
     ImageBuffer* sourceImage() { return m_sourceImage.get(); }
 
     FloatSize filterResolution() const { return m_filterResolution; }

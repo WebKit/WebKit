@@ -118,7 +118,7 @@ Ref<CSSValue> CSSImageValue::cloneForCSSOM() const
     // NOTE: We expose CSSImageValues as URI primitive values in CSSOM to maintain old behavior.
     Ref<CSSPrimitiveValue> uriValue = CSSPrimitiveValue::create(m_url, CSSPrimitiveValue::CSS_URI);
     uriValue->setCSSOMSafe();
-    return WTF::move(uriValue);
+    return WTFMove(uriValue);
 }
 
 bool CSSImageValue::knownToBeOpaque(const RenderElement* renderer) const

@@ -323,7 +323,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int li
 
         RefPtr<Inspector::Protocol::Debugger::Location> location = resolveBreakpoint(breakpointIdentifier, it->key, breakpoint);
         if (location)
-            locations->addItem(WTF::move(location));
+            locations->addItem(WTFMove(location));
     }
     *outBreakpointIdentifier = breakpointIdentifier;
 }
@@ -442,7 +442,7 @@ RefPtr<Inspector::Protocol::Debugger::Location> InspectorDebuggerAgent::resolveB
         .setLineNumber(actualLineNumber)
         .release();
     location->setColumnNumber(actualColumnNumber);
-    return WTF::move(location);
+    return WTFMove(location);
 }
 
 void InspectorDebuggerAgent::searchInContent(ErrorString& error, const String& scriptIDStr, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
@@ -486,7 +486,7 @@ void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispat
         return;
 
     m_breakReason = breakReason;
-    m_breakAuxData = WTF::move(data);
+    m_breakAuxData = WTFMove(data);
     m_scriptDebugServer.setPauseOnNextStatement(true);
 }
 
@@ -742,7 +742,7 @@ void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState* scriptState, 
         .setPayload(payload.release())
         .release();
 
-    m_frontendDispatcher->didSampleProbe(WTF::move(result));
+    m_frontendDispatcher->didSampleProbe(WTFMove(result));
 }
 
 void InspectorDebuggerAgent::didContinue()
@@ -764,7 +764,7 @@ void InspectorDebuggerAgent::didContinue()
 void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data)
 {
     m_breakReason = breakReason;
-    m_breakAuxData = WTF::move(data);
+    m_breakAuxData = WTFMove(data);
     m_scriptDebugServer.breakProgram();
 }
 

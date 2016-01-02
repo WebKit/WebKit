@@ -50,14 +50,14 @@ namespace WebCore {
 
 Ref<SQLTransaction> SQLTransaction::create(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, bool readOnly)
 {
-    return adoptRef(*new SQLTransaction(WTF::move(database), WTF::move(callback), WTF::move(successCallback), WTF::move(errorCallback), readOnly));
+    return adoptRef(*new SQLTransaction(WTFMove(database), WTFMove(callback), WTFMove(successCallback), WTFMove(errorCallback), readOnly));
 }
 
 SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, bool readOnly)
-    : m_database(WTF::move(database))
-    , m_callbackWrapper(WTF::move(callback), m_database->scriptExecutionContext())
-    , m_successCallbackWrapper(WTF::move(successCallback), m_database->scriptExecutionContext())
-    , m_errorCallbackWrapper(WTF::move(errorCallback), m_database->scriptExecutionContext())
+    : m_database(WTFMove(database))
+    , m_callbackWrapper(WTFMove(callback), m_database->scriptExecutionContext())
+    , m_successCallbackWrapper(WTFMove(successCallback), m_database->scriptExecutionContext())
+    , m_errorCallbackWrapper(WTFMove(errorCallback), m_database->scriptExecutionContext())
     , m_executeSqlAllowed(false)
     , m_readOnly(readOnly)
 {
@@ -247,8 +247,8 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
-    auto statement = std::make_unique<SQLStatement>(m_database, sqlStatement, arguments, WTF::move(callback), WTF::move(callbackError), permissions);
-    m_backend->executeSQL(WTF::move(statement));
+    auto statement = std::make_unique<SQLStatement>(m_database, sqlStatement, arguments, WTFMove(callback), WTFMove(callbackError), permissions);
+    m_backend->executeSQL(WTFMove(statement));
 }
 
 void SQLTransaction::computeNextStateAndCleanupIfNeeded()

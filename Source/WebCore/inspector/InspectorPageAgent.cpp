@@ -918,7 +918,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
     Ref<Inspector::Protocol::Page::Frame> frameObject = buildObjectForFrame(frame);
     auto subresources = Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResource>::create();
     auto result = Inspector::Protocol::Page::FrameResourceTree::create()
-        .setFrame(WTF::move(frameObject))
+        .setFrame(WTFMove(frameObject))
         .setResources(subresources.copyRef())
         .release();
 
@@ -935,7 +935,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
         String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
         if (!sourceMappingURL.isEmpty())
             resourceObject->setSourceMapURL(sourceMappingURL);
-        subresources->addItem(WTF::move(resourceObject));
+        subresources->addItem(WTFMove(resourceObject));
     }
 
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResourceTree>> childrenArray;

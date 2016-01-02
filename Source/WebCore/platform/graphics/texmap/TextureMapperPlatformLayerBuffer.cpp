@@ -29,7 +29,7 @@
 namespace WebCore {
 
 TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&& texture)
-    : m_texture(WTF::move(texture))
+    : m_texture(WTFMove(texture))
     , m_textureID(0)
     , m_extraFlags(0)
     , m_hasManagedTexture(true)

@@ -373,7 +373,7 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
     if (!m_pendingExceptions)
         return;
 
-    std::unique_ptr<Vector<std::unique_ptr<PendingException>>> pendingExceptions = WTF::move(m_pendingExceptions);
+    std::unique_ptr<Vector<std::unique_ptr<PendingException>>> pendingExceptions = WTFMove(m_pendingExceptions);
     for (auto& exception : *pendingExceptions)
         logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, exception->m_callStack.copyRef());
 }

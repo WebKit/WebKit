@@ -72,17 +72,17 @@ void FETile::platformApplySoftware()
     tileImageContext.translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
     tileImageContext.drawImageBuffer(*inBuffer, in->absolutePaintRect().location());
 
-    auto tileImageCopy = ImageBuffer::sinkIntoImage(WTF::move(tileImage));
+    auto tileImageCopy = ImageBuffer::sinkIntoImage(WTFMove(tileImage));
     if (!tileImageCopy)
         return;
 
-    auto pattern = Pattern::create(WTF::move(tileImageCopy), true, true);
+    auto pattern = Pattern::create(WTFMove(tileImageCopy), true, true);
 
     AffineTransform patternTransform;
     patternTransform.translate(inMaxEffectLocation.x() - maxEffectLocation.x(), inMaxEffectLocation.y() - maxEffectLocation.y());
     pattern.get().setPatternSpaceTransform(patternTransform);
     GraphicsContext& filterContext = resultImage->context();
-    filterContext.setFillPattern(WTF::move(pattern));
+    filterContext.setFillPattern(WTFMove(pattern));
     filterContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
 }
 

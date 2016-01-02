@@ -262,7 +262,7 @@ void InspectorOverlay::hideHighlight()
 void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const HighlightConfig& highlightConfig)
 {
     m_nodeHighlightConfig = highlightConfig;
-    m_highlightNodeList = WTF::move(nodes);
+    m_highlightNodeList = WTFMove(nodes);
     m_highlightNode = nullptr;
     update();
 }
@@ -281,7 +281,7 @@ void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const High
         *quad -= toIntSize(m_page.mainFrame().view()->scrollPosition());
 
     m_quadHighlightConfig = highlightConfig;
-    m_highlightQuad = WTF::move(quad);
+    m_highlightQuad = WTFMove(quad);
     update();
 }
 
@@ -382,7 +382,7 @@ static Ref<Inspector::Protocol::OverlayTypes::FragmentHighlightData> buildObject
         arrayOfQuads->addItem(buildArrayForQuad(quad));
 
     return Inspector::Protocol::OverlayTypes::FragmentHighlightData::create()
-        .setQuads(WTF::move(arrayOfQuads))
+        .setQuads(WTFMove(arrayOfQuads))
         .setContentColor(highlight.contentColor.serialized())
         .setContentOutlineColor(highlight.contentOutlineColor.serialized())
         .setPaddingColor(highlight.paddingColor.serialized())
@@ -447,7 +447,7 @@ static Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::Region>
             // Let the script know that this is the currently highlighted node.
             regionObject->setIsHighlighted(true);
         }
-        arrayOfRegions->addItem(WTF::move(regionObject));
+        arrayOfRegions->addItem(WTFMove(regionObject));
     }
 
     return arrayOfRegions;
@@ -543,7 +543,7 @@ void InspectorOverlay::drawPaintRects()
     for (const auto& pair : m_paintRects)
         arrayOfRects->addItem(buildObjectForRect(pair.second));
 
-    evaluateInOverlay(ASCIILiteral("updatePaintRects"), WTF::move(arrayOfRects));
+    evaluateInOverlay(ASCIILiteral("updatePaintRects"), WTFMove(arrayOfRects));
 }
 
 void InspectorOverlay::drawGutter()
@@ -579,14 +579,14 @@ static RefPtr<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::Frag
 
                 // Compute the clipping area of the region.
                 fragmentHighlight->setRegionClippingArea(buildQuadObjectForCSSRegionContentClip(region));
-                arrayOfFragments->addItem(WTF::move(fragmentHighlight));
+                arrayOfFragments->addItem(WTFMove(fragmentHighlight));
             }
             if (region == endRegion)
                 break;
         }
     }
 
-    return WTF::move(arrayOfFragments);
+    return WTFMove(arrayOfFragments);
 }
 
 #if ENABLE(CSS_SHAPES)
@@ -689,7 +689,7 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> buildObjectFo
         }
     }
 
-    return WTF::move(shapeObject);
+    return WTFMove(shapeObject);
 }
 #endif
 
@@ -748,7 +748,7 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
         .setWidth(modelObject ? adjustForAbsoluteZoom(roundToInt(modelObject->offsetWidth()), *modelObject) : boundingBox.width())
         .setHeight(modelObject ? adjustForAbsoluteZoom(roundToInt(modelObject->offsetHeight()), *modelObject) : boundingBox.height())
         .release();
-    elementData->setSize(WTF::move(sizeObject));
+    elementData->setSize(WTFMove(sizeObject));
 
     if (type != HighlightType::NodeList && renderer->isRenderNamedFlowFragmentContainer()) {
         RenderNamedFlowFragment& region = *downcast<RenderBlockFlow>(*renderer).renderNamedFlowFragment();
@@ -758,7 +758,7 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
                 .setName(downcast<RenderNamedFlowThread>(*flowThread).flowThreadName())
                 .setRegions(buildObjectForFlowRegions(&region, flowThread))
                 .release();
-            elementData->setRegionFlowData(WTF::move(regionFlowData));
+            elementData->setRegionFlowData(WTFMove(regionFlowData));
         }
     }
 
@@ -768,14 +768,14 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
             .setName(downcast<RenderNamedFlowThread>(*containingFlowThread).flowThreadName())
             .release();
 
-        elementData->setContentFlowData(WTF::move(contentFlowData));
+        elementData->setContentFlowData(WTFMove(contentFlowData));
     }
 
 #if ENABLE(CSS_SHAPES)
     if (is<RenderBox>(*renderer)) {
         auto& renderBox = downcast<RenderBox>(*renderer);
         if (RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> shapeObject = buildObjectForShapeOutside(containingFrame, &renderBox))
-            elementData->setShapeOutsideData(WTF::move(shapeObject));
+            elementData->setShapeOutsideData(WTFMove(shapeObject));
     }
 #endif
 
@@ -788,7 +788,7 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
             elementData->setRole(axObject->computedRoleString());
     }
 
-    return WTF::move(elementData);
+    return WTFMove(elementData);
 }
 
 RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> InspectorOverlay::buildHighlightObjectForNode(Node* node, HighlightType type) const
@@ -809,15 +809,15 @@ RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> InspectorOverlay::b
 
     auto nodeHighlightObject = Inspector::Protocol::OverlayTypes::NodeHighlightData::create()
         .setScrollOffset(buildObjectForPoint(!mainView->delegatesScrolling() ? mainView->visibleContentRect().location() : FloatPoint()))
-        .setFragments(WTF::move(arrayOfFragmentHighlights))
+        .setFragments(WTFMove(arrayOfFragmentHighlights))
         .release();
 
     if (m_nodeHighlightConfig.showInfo) {
         if (RefPtr<Inspector::Protocol::OverlayTypes::ElementData> elementData = buildObjectForElementData(node, type))
-            nodeHighlightObject->setElementData(WTF::move(elementData));
+            nodeHighlightObject->setElementData(WTFMove(elementData));
     }
 
-    return WTF::move(nodeHighlightObject);
+    return WTFMove(nodeHighlightObject);
 }
 
 Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::NodeHighlightData>> InspectorOverlay::buildObjectForHighlightedNodes() const
@@ -826,11 +826,11 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::NodeHighlightD
 
     if (m_highlightNode) {
         if (RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> nodeHighlightData = buildHighlightObjectForNode(m_highlightNode.get(), HighlightType::Node))
-            highlights->addItem(WTF::move(nodeHighlightData));
+            highlights->addItem(WTFMove(nodeHighlightData));
     } else if (m_highlightNodeList) {
         for (unsigned i = 0; i < m_highlightNodeList->length(); ++i) {
             if (RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> nodeHighlightData = buildHighlightObjectForNode(m_highlightNodeList->item(i), HighlightType::NodeList))
-                highlights->addItem(WTF::move(nodeHighlightData));
+                highlights->addItem(WTFMove(nodeHighlightData));
         }
     }
 
@@ -919,7 +919,7 @@ void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameVi
         .setViewportSize(buildObjectForSize(viewportSize))
         .setFrameViewFullSize(buildObjectForSize(frameViewFullSize))
         .release();
-    evaluateInOverlay("reset", WTF::move(configObject));
+    evaluateInOverlay("reset", WTFMove(configObject));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method)
@@ -941,7 +941,7 @@ void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<InspectorV
 {
     Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
-    command->pushValue(WTF::move(argument));
+    command->pushValue(WTFMove(argument));
     overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
 }
 

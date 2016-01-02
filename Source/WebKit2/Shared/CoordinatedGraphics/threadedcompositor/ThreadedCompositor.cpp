@@ -55,7 +55,7 @@ public:
     CompositingRunLoop(std::function<void()> updateFunction)
         : m_runLoop(RunLoop::current())
         , m_updateTimer(m_runLoop, this, &CompositingRunLoop::updateTimerFired)
-        , m_updateFunction(WTF::move(updateFunction))
+        , m_updateFunction(WTFMove(updateFunction))
         , m_lastUpdateTime(0)
     {
     }
@@ -67,7 +67,7 @@ public:
             return;
         }
 
-        m_runLoop.dispatch(WTF::move(function));
+        m_runLoop.dispatch(WTFMove(function));
     }
 
     void setUpdateTimer(UpdateTiming timing = Immediate)
@@ -291,7 +291,7 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 
 void ThreadedCompositor::callOnCompositingThread(std::function<void()> function)
 {
-    m_compositingRunLoop->callOnCompositingRunLoop(WTF::move(function));
+    m_compositingRunLoop->callOnCompositingRunLoop(WTFMove(function));
 }
 
 void ThreadedCompositor::compositingThreadEntry(void* coordinatedCompositor)

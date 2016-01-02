@@ -39,7 +39,7 @@ ValueType* Procedure::add(Arguments... arguments)
     size_t index = addValueIndex();
     std::unique_ptr<ValueType> value(new ValueType(index, arguments...));
     ValueType* result = value.get();
-    m_values[index] = WTF::move(value);
+    m_values[index] = WTFMove(value);
     return result;
 }
 

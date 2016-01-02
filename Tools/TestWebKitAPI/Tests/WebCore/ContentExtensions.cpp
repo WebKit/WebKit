@@ -147,19 +147,19 @@ public:
     {
         CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
-        auto compilerError = ContentExtensions::compileRuleList(client, WTF::move(filter));
+        auto compilerError = ContentExtensions::compileRuleList(client, WTFMove(filter));
         if (compilerError) {
             // Compiling should always succeed here. We have other tests for compile failures.
             EXPECT_TRUE(false);
             return nullptr;
         }
 
-        return InMemoryCompiledContentExtension::create(WTF::move(extensionData));
+        return InMemoryCompiledContentExtension::create(WTFMove(extensionData));
     }
 
     static RefPtr<InMemoryCompiledContentExtension> create(CompiledContentExtensionData&& data)
     {
-        return adoptRef(new InMemoryCompiledContentExtension(WTF::move(data)));
+        return adoptRef(new InMemoryCompiledContentExtension(WTFMove(data)));
     }
 
     virtual ~InMemoryCompiledContentExtension()
@@ -177,7 +177,7 @@ public:
 
 private:
     InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)
-        : m_data(WTF::move(data))
+        : m_data(WTFMove(data))
     {
     }
 
@@ -224,7 +224,7 @@ static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLF
     Vector<ContentExtensions::NFA> nfas;
 
     combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
-        nfas.append(WTF::move(nfa));
+        nfas.append(WTFMove(nfa));
     });
 
     return nfas;
@@ -1085,7 +1085,7 @@ TEST_F(ContentExtensionTest, LargeJumps)
     
     Vector<ContentExtensions::NFA> nfas;
     combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
-        nfas.append(WTF::move(nfa));
+        nfas.append(WTFMove(nfa));
     });
     EXPECT_EQ(nfas.size(), 1ull);
     
@@ -1481,7 +1481,7 @@ TEST_F(ContentExtensionTest, SplittingLargeNFAs)
         
         Vector<ContentExtensions::NFA> nfas;
         combinedURLFilters.processNFAs(i, [&](ContentExtensions::NFA&& nfa) {
-            nfas.append(WTF::move(nfa));
+            nfas.append(WTFMove(nfa));
         });
         EXPECT_EQ(nfas.size(), expectedNFACounts[i]);
         

@@ -115,7 +115,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context
 
     auto info = IDBCursorInfo::indexCursor(m_objectStore->modernTransaction(), m_objectStore->info().identifier(), m_info.identifier(), rangeData, direction, IndexedDB::CursorType::KeyAndValue);
     Ref<IDBRequest> request = m_objectStore->modernTransaction().requestOpenCursor(*context, *this, info);
-    return WTF::move(request);
+    return WTFMove(request);
 }
 
 RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
@@ -219,7 +219,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* cont
 
     auto info = IDBCursorInfo::indexCursor(m_objectStore->modernTransaction(), m_objectStore->info().identifier(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
     Ref<IDBRequest> request = m_objectStore->modernTransaction().requestOpenCursor(*context, *this, info);
-    return WTF::move(request);
+    return WTFMove(request);
 }
 
 RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)

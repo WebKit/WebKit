@@ -153,7 +153,7 @@ TEST(WTF_Deque, MoveConstructor)
 
     EXPECT_EQ(10u, deque.size());
 
-    Deque<MoveOnly, 4> deque2 = WTF::move(deque);
+    Deque<MoveOnly, 4> deque2 = WTFMove(deque);
 
     EXPECT_EQ(10u, deque2.size());
 
@@ -177,7 +177,7 @@ TEST(WTF_Deque, MoveAssignmentOperator)
     for (unsigned i = 0; i < 10; ++i)
         deque2.append(MoveOnly(i * 2));
 
-    deque1 = WTF::move(deque2);
+    deque1 = WTFMove(deque2);
 
     EXPECT_EQ(10u, deque2.size());
 

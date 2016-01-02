@@ -39,7 +39,7 @@ Ref<CSSValueList> createBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<
         if (outset)
             listSlash.get().append(*outset);
 
-        list.get().append(WTF::move(listSlash));
+        list.get().append(WTFMove(listSlash));
     } else if (imageSlice)
         list.get().append(*imageSlice);
     if (repeat)

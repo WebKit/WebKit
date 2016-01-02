@@ -118,7 +118,7 @@ public:
                 result = false;
                 break;
             }
-            objects.append(WTF::move(element));
+            objects.append(WTFMove(element));
             endArrayElement();
         }
 

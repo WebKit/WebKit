@@ -362,7 +362,7 @@ uint32_t NetscapePlugin::scheduleTimer(unsigned interval, bool repeat, void (*ti
     
     // FIXME: Based on the plug-in visibility, figure out if we should throttle the timer, or if we should start it at all.
     timer->start();
-    m_timers.set(timerID, WTF::move(timer));
+    m_timers.set(timerID, WTFMove(timer));
 
     return timerID;
 }

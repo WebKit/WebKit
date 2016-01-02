@@ -74,7 +74,7 @@ ALWAYS_INLINE void JSStringJoiner::append(StringViewWithUnderlyingString&& strin
 {
     m_accumulatedStringsLength += string.view.length();
     m_isAll8Bit = m_isAll8Bit && string.view.is8Bit();
-    m_strings.uncheckedAppend(WTF::move(string));
+    m_strings.uncheckedAppend(WTFMove(string));
 }
 
 ALWAYS_INLINE void JSStringJoiner::append8Bit(const String& string)

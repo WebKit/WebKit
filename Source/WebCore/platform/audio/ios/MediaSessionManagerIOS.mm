@@ -349,8 +349,8 @@ void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnde
     LOG(Media, "-[WebMediaSessionHelper dealloc]");
 
     if (!isMainThread()) {
-        auto volumeView = WTF::move(_volumeView);
-        auto routingController = WTF::move(_airPlayPresenceRoutingController);
+        auto volumeView = WTFMove(_volumeView);
+        auto routingController = WTFMove(_airPlayPresenceRoutingController);
 
         callOnMainThread([volumeView, routingController] () mutable {
             LOG(Media, "-[WebMediaSessionHelper dealloc] - dipatched to MainThread");

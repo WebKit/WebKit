@@ -39,12 +39,12 @@ namespace WebCore {
 using namespace MathMLNames;
 
 RenderMathMLRow::RenderMathMLRow(Element& element, Ref<RenderStyle>&& style)
-    : RenderMathMLBlock(element, WTF::move(style))
+    : RenderMathMLBlock(element, WTFMove(style))
 {
 }
 
 RenderMathMLRow::RenderMathMLRow(Document& document, Ref<RenderStyle>&& style)
-    : RenderMathMLBlock(document, WTF::move(style))
+    : RenderMathMLBlock(document, WTFMove(style))
 {
 }
 

@@ -42,7 +42,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -280,13 +280,13 @@ void DatabaseBackendDispatcher::dispatch(long requestId, const String& method, R
     message->getObject(ASCIILiteral("params"), parameters);
 
     if (method == "executeSQLSyncOptionalReturnValues")
-        executeSQLSyncOptionalReturnValues(requestId, WTF::move(parameters));
+        executeSQLSyncOptionalReturnValues(requestId, WTFMove(parameters));
     else if (method == "executeSQLAsyncOptionalReturnValues")
-        executeSQLAsyncOptionalReturnValues(requestId, WTF::move(parameters));
+        executeSQLAsyncOptionalReturnValues(requestId, WTFMove(parameters));
     else if (method == "executeSQLSync")
-        executeSQLSync(requestId, WTF::move(parameters));
+        executeSQLSync(requestId, WTFMove(parameters));
     else if (method == "executeSQLAsync")
-        executeSQLAsync(requestId, WTF::move(parameters));
+        executeSQLAsync(requestId, WTFMove(parameters));
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Database", '.', method, "' was not found"));
 }
@@ -344,12 +344,12 @@ void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestI
             result->setString(ASCIILiteral("printColor"), out_printColor.getValue());
     }
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
-DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::ExecuteSQLAsyncOptionalReturnValuesCallback(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTF::move(backendDispatcher), id) { }
+DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::ExecuteSQLAsyncOptionalReturnValuesCallback(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
 
 void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback::sendSuccess(RefPtr<Inspector::Protocol::Array<String>>&& columnNames, Inspector::Protocol::OptOutput<String>* notes, Inspector::Protocol::OptOutput<double>* timestamp, Inspector::Protocol::OptOutput<Inspector::InspectorObject>* values, Inspector::Protocol::OptOutput<Inspector::InspectorValue>* payload, Inspector::Protocol::OptOutput<int>* databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, Inspector::Protocol::OptOutput<String>* screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, Inspector::Protocol::OptOutput<String>* printColor)
 {
@@ -374,7 +374,7 @@ void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallba
         jsonMessage->setArray(ASCIILiteral("alternateColors"), alternateColors);
     if (printColor.isAssigned())
         jsonMessage->setString(ASCIILiteral("printColor"), printColor.getValue());
-    CallbackBase::sendSuccess(WTF::move(jsonMessage));
+    CallbackBase::sendSuccess(WTFMove(jsonMessage));
 }
 
 void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<InspectorObject>&& parameters)
@@ -448,12 +448,12 @@ void DatabaseBackendDispatcher::executeSQLSync(long requestId, RefPtr<InspectorO
         result->setString(ASCIILiteral("printColor"), Inspector::Protocol::getEnumConstantValue(out_printColor));
     }
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
     else
-        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
-DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::ExecuteSQLAsyncCallback(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTF::move(backendDispatcher), id) { }
+DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::ExecuteSQLAsyncCallback(Ref<BackendDispatcher>&& backendDispatcher, int id) : BackendDispatcher::CallbackBase(WTFMove(backendDispatcher), id) { }
 
 void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::sendSuccess(RefPtr<Inspector::Protocol::Array<String>>&& columnNames, const String& notes, double timestamp, Inspector::InspectorObject values, Inspector::InspectorValue payload, int databaseId, RefPtr<Inspector::Protocol::Database::Error>&& sqlError, const String& screenColor, RefPtr<Inspector::Protocol::Database::ColorList>&& alternateColors, const String& printColor)
 {
@@ -468,7 +468,7 @@ void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::sendSuccess(RefP
     jsonMessage->setString(ASCIILiteral("screenColor"), Inspector::Protocol::getEnumConstantValue(screenColor));
     jsonMessage->setArray(ASCIILiteral("alternateColors"), alternateColors);
     jsonMessage->setString(ASCIILiteral("printColor"), Inspector::Protocol::getEnumConstantValue(printColor));
-    CallbackBase::sendSuccess(WTF::move(jsonMessage));
+    CallbackBase::sendSuccess(WTFMove(jsonMessage));
 }
 
 void DatabaseBackendDispatcher::executeSQLAsync(long requestId, RefPtr<InspectorObject>&& parameters)
@@ -687,7 +687,7 @@ public:
         }
 
         Builder(Ref</*Error*/InspectorObject>&& object)
-            : m_result(WTF::move(object))
+            : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
@@ -714,7 +714,7 @@ public:
             COMPILE_ASSERT(sizeof(Error) == sizeof(InspectorObject), cannot_cast);
 
             Ref<InspectorObject> result = m_result.releaseNonNull();
-            return WTF::move(*reinterpret_cast<Ref<Error>*>(&result));
+            return WTFMove(*reinterpret_cast<Ref<Error>*>(&result));
         }
     };
 
@@ -932,8 +932,8 @@ using namespace Inspector;
     _databaseHandler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorDatabaseBackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>(ASCIILiteral("Database"), *_controller, WTF::move(alternateDispatcher));
-    _controller->appendExtraAgent(WTF::move(alternateAgent));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>(ASCIILiteral("Database"), *_controller, WTFMove(alternateDispatcher));
+    _controller->appendExtraAgent(WTFMove(alternateAgent));
 }
 
 - (id<RWIProtocolDatabaseDomainHandler>)databaseHandler
@@ -1062,7 +1062,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(
             resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(*alternateColors));
         if (printColor)
             resultObject->setString(ASCIILiteral("printColor"), toProtocolString(*printColor));
-        backendDispatcher()->sendResponse(requestId, WTF::move(resultObject));
+        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject));
     };
 
     int o_in_databaseId = in_databaseId;
@@ -1106,7 +1106,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues
             resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(*alternateColors));
         if (printColor)
             resultObject->setString(ASCIILiteral("printColor"), toProtocolString(*printColor));
-        backendDispatcher()->sendResponse(requestId, WTF::move(resultObject));
+        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject));
     };
 
     int o_in_databaseId = in_databaseId;
@@ -1140,7 +1140,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long requestId, int 
         resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(alternateColors));
         resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(screenColor));
         resultObject->setString(ASCIILiteral("printColor"), toProtocolString(printColor));
-        backendDispatcher()->sendResponse(requestId, WTF::move(resultObject));
+        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject));
     };
 
     int o_in_databaseId = in_databaseId;
@@ -1174,7 +1174,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long requestId, int
         resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(screenColor));
         resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(alternateColors));
         resultObject->setString(ASCIILiteral("printColor"), toProtocolString(printColor));
-        backendDispatcher()->sendResponse(requestId, WTF::move(resultObject));
+        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject));
     };
 
     int o_in_databaseId = in_databaseId;

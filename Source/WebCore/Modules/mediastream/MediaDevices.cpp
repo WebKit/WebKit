@@ -65,12 +65,12 @@ Document* MediaDevices::document() const
 
 void MediaDevices::getUserMedia(const Dictionary& options, Promise&& promise, ExceptionCode& ec) const
 {
-    UserMediaRequest::start(document(), options, WTF::move(promise), ec);
+    UserMediaRequest::start(document(), options, WTFMove(promise), ec);
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise, ExceptionCode& ec) const
 {
-    RefPtr<MediaDevicesRequest> request = MediaDevicesRequest::create(document(), WTF::move(promise), ec);
+    RefPtr<MediaDevicesRequest> request = MediaDevicesRequest::create(document(), WTFMove(promise), ec);
     if (request)
         request->start();
 }

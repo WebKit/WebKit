@@ -92,11 +92,11 @@ void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, cons
 {
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    m_client->willSendRequest(this, WTF::move(request), redirectResponse, [protect, redirectResponse, callback](ResourceRequest request) {
+    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protect, redirectResponse, callback](ResourceRequest request) {
         if (!request.isNull())
             protect->willSendRequestInternal(request, redirectResponse);
 
-        callback(WTF::move(request));
+        callback(WTFMove(request));
     });
 }
 

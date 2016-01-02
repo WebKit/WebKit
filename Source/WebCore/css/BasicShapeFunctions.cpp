@@ -79,7 +79,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         circleValue->setCenterY(valueForCenterCoordinate(cssValuePool, style, circle.centerY(), VERTICAL));
         circleValue->setRadius(basicShapeRadiusToCSSValue(style, cssValuePool, circle.radius()));
 
-        basicShapeValue = WTF::move(circleValue);
+        basicShapeValue = WTFMove(circleValue);
         break;
     }
     case BasicShape::BasicShapeEllipseType: {
@@ -91,7 +91,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         ellipseValue->setRadiusX(basicShapeRadiusToCSSValue(style, cssValuePool, ellipse.radiusX()));
         ellipseValue->setRadiusY(basicShapeRadiusToCSSValue(style, cssValuePool, ellipse.radiusY()));
 
-        basicShapeValue = WTF::move(ellipseValue);
+        basicShapeValue = WTFMove(ellipseValue);
         break;
     }
     case BasicShape::BasicShapePolygonType: {
@@ -103,7 +103,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         for (unsigned i = 0; i < values.size(); i += 2)
             polygonValue->appendPoint(cssValuePool.createValue(values.at(i), style), cssValuePool.createValue(values.at(i + 1), style));
 
-        basicShapeValue = WTF::move(polygonValue);
+        basicShapeValue = WTFMove(polygonValue);
         break;
     }
     case BasicShape::BasicShapePathType: {
@@ -111,7 +111,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         auto pathShapeValue = CSSBasicShapePath::create(pathShape.pathData()->copy());
         pathShapeValue->setWindRule(pathShape.windRule());
 
-        basicShapeValue = WTF::move(pathShapeValue);
+        basicShapeValue = WTFMove(pathShapeValue);
         break;
     }
     case BasicShape::BasicShapeInsetType: {
@@ -128,7 +128,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         insetValue->setBottomRightRadius(cssValuePool.createValue(inset.bottomRightRadius(), style));
         insetValue->setBottomLeftRadius(cssValuePool.createValue(inset.bottomLeftRadius(), style));
 
-        basicShapeValue = WTF::move(insetValue);
+        basicShapeValue = WTFMove(insetValue);
         break;
     }
     }
@@ -221,7 +221,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         circle->setCenterY(convertToCenterCoordinate(conversionData, circleValue.centerY()));
         circle->setRadius(cssValueToBasicShapeRadius(conversionData, circleValue.radius()));
 
-        basicShape = WTF::move(circle);
+        basicShape = WTFMove(circle);
         break;
     }
     case CSSBasicShape::CSSBasicShapeEllipseType: {
@@ -234,7 +234,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         ellipse->setRadiusX(cssValueToBasicShapeRadius(conversionData, ellipseValue.radiusX()));
         ellipse->setRadiusY(cssValueToBasicShapeRadius(conversionData, ellipseValue.radiusY()));
 
-        basicShape = WTF::move(ellipse);
+        basicShape = WTFMove(ellipse);
         break;
     }
     case CSSBasicShape::CSSBasicShapePolygonType: {
@@ -246,7 +246,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         for (unsigned i = 0; i < values.size(); i += 2)
             polygon->appendPoint(convertToLength(conversionData, values.at(i).get()), convertToLength(conversionData, values.at(i + 1).get()));
 
-        basicShape = WTF::move(polygon);
+        basicShape = WTFMove(polygon);
         break;
     }
     case CSSBasicShape::CSSBasicShapeInsetType: {
@@ -263,7 +263,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue.bottomRightRadius()));
         rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue.bottomLeftRadius()));
 
-        basicShape = WTF::move(rect);
+        basicShape = WTFMove(rect);
         break;
     }
     case CSSBasicShape::CSSBasicShapePathType: {
@@ -271,7 +271,7 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         auto path = BasicShapePath::create(pathValue.pathData().copy());
         path->setWindRule(pathValue.windRule());
 
-        basicShape = WTF::move(path);
+        basicShape = WTFMove(path);
         break;
     }
     }

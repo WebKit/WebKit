@@ -40,7 +40,7 @@ ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vecto
 {
     initialize(buffer, bufferSize);
 
-    m_attachments = WTF::move(attachments);
+    m_attachments = WTFMove(attachments);
 }
 
 ArgumentDecoder::~ArgumentDecoder()

@@ -89,7 +89,7 @@ public:
     // Used to create SVG Fonts.
     static Ref<Font> create(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
     {
-        return adoptRef(*new Font(WTF::move(svgData), fontSize, syntheticBold, syntheticItalic));
+        return adoptRef(*new Font(WTFMove(svgData), fontSize, syntheticBold, syntheticItalic));
     }
 
     WEBCORE_EXPORT ~Font();

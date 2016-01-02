@@ -51,7 +51,7 @@ void CSSProperty::wrapValueInCommaSeparatedList()
 {
     auto list = CSSValueList::createCommaSeparated();
     list.get().append(m_value.releaseNonNull());
-    m_value = WTF::move(list);
+    m_value = WTFMove(list);
 }
 
 static CSSPropertyID resolveToPhysicalProperty(TextDirection direction, WritingMode writingMode, LogicalBoxSide logicalSide, const StylePropertyShorthand& shorthand)

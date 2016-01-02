@@ -349,7 +349,7 @@ void LegacyDatabase::enqueueEvent(Ref<Event>&& event)
     ASSERT(scriptExecutionContext());
     event->setTarget(this);
     scriptExecutionContext()->eventQueue().enqueueEvent(event.copyRef());
-    m_enqueuedEvents.append(WTF::move(event));
+    m_enqueuedEvents.append(WTFMove(event));
 }
 
 bool LegacyDatabase::dispatchEvent(Event& event)

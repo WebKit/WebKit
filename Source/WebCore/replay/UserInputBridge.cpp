@@ -83,7 +83,7 @@ bool UserInputBridge::handleMousePressEvent(const PlatformMouseEvent& mouseEvent
     InputCursor& cursor = activeCursor();
     if (cursor.isCapturing()) {
         std::unique_ptr<PlatformMouseEvent> ownedEvent = std::make_unique<PlatformMouseEvent>(mouseEvent);
-        cursor.appendInput<HandleMousePress>(WTF::move(ownedEvent));
+        cursor.appendInput<HandleMousePress>(WTFMove(ownedEvent));
     }
     EventLoopInputExtent extent(cursor);
 #else
@@ -101,7 +101,7 @@ bool UserInputBridge::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEve
     InputCursor& cursor = activeCursor();
     if (cursor.isCapturing()) {
         std::unique_ptr<PlatformMouseEvent> ownedEvent = std::make_unique<PlatformMouseEvent>(mouseEvent);
-        cursor.appendInput<HandleMouseRelease>(WTF::move(ownedEvent));
+        cursor.appendInput<HandleMouseRelease>(WTFMove(ownedEvent));
     }
     EventLoopInputExtent extent(cursor);
 #else
@@ -119,7 +119,7 @@ bool UserInputBridge::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent,
     InputCursor& cursor = activeCursor();
     if (cursor.isCapturing()) {
         std::unique_ptr<PlatformMouseEvent> ownedEvent = std::make_unique<PlatformMouseEvent>(mouseEvent);
-        cursor.appendInput<HandleMouseMove>(WTF::move(ownedEvent), false);
+        cursor.appendInput<HandleMouseMove>(WTFMove(ownedEvent), false);
     }
     EventLoopInputExtent extent(cursor);
 #else
@@ -137,7 +137,7 @@ bool UserInputBridge::handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent& 
     InputCursor& cursor = activeCursor();
     if (cursor.isCapturing()) {
         std::unique_ptr<PlatformMouseEvent> ownedEvent = std::make_unique<PlatformMouseEvent>(mouseEvent);
-        cursor.appendInput<HandleMouseMove>(WTF::move(ownedEvent), true);
+        cursor.appendInput<HandleMouseMove>(WTFMove(ownedEvent), true);
     }
     EventLoopInputExtent extent(cursor);
 #else
@@ -160,7 +160,7 @@ bool UserInputBridge::handleKeyEvent(const PlatformKeyboardEvent& keyEvent, Inpu
     InputCursor& cursor = activeCursor();
     if (cursor.isCapturing()) {
         std::unique_ptr<PlatformKeyboardEvent> ownedEvent = std::make_unique<PlatformKeyboardEvent>(keyEvent);
-        cursor.appendInput<HandleKeyPress>(WTF::move(ownedEvent));
+        cursor.appendInput<HandleKeyPress>(WTFMove(ownedEvent));
     }
     EventLoopInputExtent extent(cursor);
 #else
@@ -183,7 +183,7 @@ bool UserInputBridge::handleWheelEvent(const PlatformWheelEvent& wheelEvent, Inp
     InputCursor& cursor = activeCursor();
     if (cursor.isCapturing()) {
         std::unique_ptr<PlatformWheelEvent> ownedEvent = std::make_unique<PlatformWheelEvent>(wheelEvent);
-        cursor.appendInput<HandleWheelEvent>(WTF::move(ownedEvent));
+        cursor.appendInput<HandleWheelEvent>(WTFMove(ownedEvent));
     }
     EventLoopInputExtent extent(cursor);
 #else

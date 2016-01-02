@@ -57,7 +57,7 @@ public:
 
     static PassRefPtr<HRTFKernel> create(std::unique_ptr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
     {
-        return adoptRef(new HRTFKernel(WTF::move(fftFrame), frameDelay, sampleRate));
+        return adoptRef(new HRTFKernel(WTFMove(fftFrame), frameDelay, sampleRate));
     }
 
     // Given two HRTFKernels, and an interpolation factor x: 0 -> 1, returns an interpolated HRTFKernel.
@@ -79,7 +79,7 @@ private:
     HRTFKernel(AudioChannel*, size_t fftSize, float sampleRate);
     
     HRTFKernel(std::unique_ptr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
-        : m_fftFrame(WTF::move(fftFrame))
+        : m_fftFrame(WTFMove(fftFrame))
         , m_frameDelay(frameDelay)
         , m_sampleRate(sampleRate)
     {

@@ -169,7 +169,7 @@ static uint64_t generateReplyIdentifier()
     if (!_remoteObjectRegistry)
         return;
 
-    _remoteObjectRegistry->sendInvocation(RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTF::move(replyInfo)));
+    _remoteObjectRegistry->sendInvocation(RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTFMove(replyInfo)));
 }
 
 - (WebKit::RemoteObjectRegistry&)remoteObjectRegistry

@@ -709,7 +709,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, CREATE_METHOD_TABLE(JSTestObj) };
 
 JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestObj>&& impl)
-    : JSDOMWrapper<TestObj>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestObj>(structure, globalObject, WTFMove(impl))
 {
 }
 

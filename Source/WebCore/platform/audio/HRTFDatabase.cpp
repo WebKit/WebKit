@@ -54,7 +54,7 @@ HRTFDatabase::HRTFDatabase(float sampleRate)
         if (!hrtfElevation.get())
             return;
         
-        m_elevations[elevationIndex] = WTF::move(hrtfElevation);
+        m_elevations[elevationIndex] = WTFMove(hrtfElevation);
         elevationIndex += InterpolationFactor;
     }
 

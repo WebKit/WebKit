@@ -119,7 +119,7 @@ void PseudoElement::didRecalcStyle(Style::Change)
         if (!is<RenderImage>(*child) && !is<RenderQuote>(*child))
             continue;
         Ref<RenderStyle> createdStyle = RenderStyle::createStyleInheritingFromPseudoStyle(renderer.style());
-        downcast<RenderElement>(*child).setStyle(WTF::move(createdStyle));
+        downcast<RenderElement>(*child).setStyle(WTFMove(createdStyle));
     }
 }
 

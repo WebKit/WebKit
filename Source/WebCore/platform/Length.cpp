@@ -249,7 +249,7 @@ Length::Length(Ref<CalculationValue>&& value)
     , m_type(Calculated)
     , m_isFloat(false)
 {
-    m_calculationValueHandle = calculationValues().insert(WTF::move(value));
+    m_calculationValueHandle = calculationValues().insert(WTFMove(value));
 }
         
 Length Length::blendMixedTypes(const Length& from, double progress) const
@@ -261,7 +261,7 @@ Length Length::blendMixedTypes(const Length& from, double progress) const
         return *this;
         
     auto blend = std::make_unique<CalcExpressionBlendLength>(from, *this, progress);
-    return Length(CalculationValue::create(WTF::move(blend), CalculationRangeAll));
+    return Length(CalculationValue::create(WTFMove(blend), CalculationRangeAll));
 }
 
 CalculationValue& Length::calculationValue() const

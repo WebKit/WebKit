@@ -30,11 +30,11 @@ namespace API {
 
 Ref<WebsiteDataRecord> WebsiteDataRecord::create(WebKit::WebsiteDataRecord&& websiteDataRecord)
 {
-    return adoptRef(*new WebsiteDataRecord(WTF::move(websiteDataRecord)));
+    return adoptRef(*new WebsiteDataRecord(WTFMove(websiteDataRecord)));
 }
 
 WebsiteDataRecord::WebsiteDataRecord(WebKit::WebsiteDataRecord&& websiteDataRecord)
-    : m_websiteDataRecord(WTF::move(websiteDataRecord))
+    : m_websiteDataRecord(WTFMove(websiteDataRecord))
 {
 }
 

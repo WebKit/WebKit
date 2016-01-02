@@ -38,7 +38,7 @@ namespace WebKit {
 class RemoteScrollingCoordinatorTransaction {
 public:
 #if ENABLE(ASYNC_SCROLLING)
-    void setStateTreeToEncode(std::unique_ptr<WebCore::ScrollingStateTree> stateTree) { m_scrollingStateTree = WTF::move(stateTree); }
+    void setStateTreeToEncode(std::unique_ptr<WebCore::ScrollingStateTree> stateTree) { m_scrollingStateTree = WTFMove(stateTree); }
     std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
 #endif // ENABLE(ASYNC_SCROLLING)
 

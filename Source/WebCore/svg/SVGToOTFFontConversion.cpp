@@ -55,7 +55,7 @@ public:
 
     Vector<char> releaseResult()
     {
-        return WTF::move(m_result);
+        return WTFMove(m_result);
     }
 
 private:
@@ -1064,7 +1064,7 @@ template<typename T> inline size_t SVGToOTFFontConverter::appendKERNSubtable(boo
         if ((element.*buildKerningPair)(kerningPair))
             addKerningPair(kerningData, kerningPair);
     }
-    return finishAppendingKERNSubtable(WTF::move(kerningData), coverage);
+    return finishAppendingKERNSubtable(WTFMove(kerningData), coverage);
 }
 
 size_t SVGToOTFFontConverter::finishAppendingKERNSubtable(Vector<KerningData> kerningData, uint16_t coverage)
@@ -1298,7 +1298,7 @@ void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissing
     if (glyphBoundingBox)
         m_minRightSideBearing = std::min(m_minRightSideBearing, horizontalAdvance - glyphBoundingBox.value().maxX());
 
-    m_glyphs.append(GlyphData(WTF::move(path), glyphElement, horizontalAdvance, verticalAdvance, glyphBoundingBox.valueOr(FloatRect()), codepoints));
+    m_glyphs.append(GlyphData(WTFMove(path), glyphElement, horizontalAdvance, verticalAdvance, glyphBoundingBox.valueOr(FloatRect()), codepoints));
 }
 
 void SVGToOTFFontConverter::appendLigatureGlyphs()

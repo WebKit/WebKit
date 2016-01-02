@@ -42,14 +42,14 @@ namespace XPath {
 
 Step::Step(Axis axis, NodeTest nodeTest)
     : m_axis(axis)
-    , m_nodeTest(WTF::move(nodeTest))
+    , m_nodeTest(WTFMove(nodeTest))
 {
 }
 
 Step::Step(Axis axis, NodeTest nodeTest, Vector<std::unique_ptr<Expression>> predicates)
     : m_axis(axis)
-    , m_nodeTest(WTF::move(nodeTest))
-    , m_predicates(WTF::move(predicates))
+    , m_nodeTest(WTFMove(nodeTest))
+    , m_predicates(WTFMove(predicates))
 {
 }
 
@@ -65,11 +65,11 @@ void Step::optimize()
     Vector<std::unique_ptr<Expression>> remainingPredicates;
     for (auto& predicate : m_predicates) {
         if ((!predicateIsContextPositionSensitive(*predicate) || m_nodeTest.m_mergedPredicates.isEmpty()) && !predicate->isContextSizeSensitive() && remainingPredicates.isEmpty())
-            m_nodeTest.m_mergedPredicates.append(WTF::move(predicate));
+            m_nodeTest.m_mergedPredicates.append(WTFMove(predicate));
         else
-            remainingPredicates.append(WTF::move(predicate));
+            remainingPredicates.append(WTFMove(predicate));
     }
-    m_predicates = WTF::move(remainingPredicates);
+    m_predicates = WTFMove(remainingPredicates);
 }
 
 void optimizeStepPair(Step& first, Step& second, bool& dropSecondStep)
@@ -99,8 +99,8 @@ void optimizeStepPair(Step& first, Step& second, bool& dropSecondStep)
         return;
 
     first.m_axis = Step::DescendantAxis;
-    first.m_nodeTest = WTF::move(second.m_nodeTest);
-    first.m_predicates = WTF::move(second.m_predicates);
+    first.m_nodeTest = WTFMove(second.m_nodeTest);
+    first.m_predicates = WTFMove(second.m_predicates);
     first.optimize();
     dropSecondStep = true;
 }
@@ -143,7 +143,7 @@ void Step::evaluate(Node& context, NodeSet& nodes) const
                 newNodes.append(node);
         }
 
-        nodes = WTF::move(newNodes);
+        nodes = WTFMove(newNodes);
     }
 }
 

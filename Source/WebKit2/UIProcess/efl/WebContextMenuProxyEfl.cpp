@@ -81,7 +81,7 @@ void WebContextMenuProxyEfl::showContextMenu()
         menuItems.uncheckedAppend(menuItem);
 
     if (m_ewkView)
-        m_ewkView->showContextMenu(toAPI(m_context.menuLocation()), toAPI(API::Array::create(WTF::move(menuItems)).ptr()));
+        m_ewkView->showContextMenu(toAPI(m_context.menuLocation()), toAPI(API::Array::create(WTFMove(menuItems)).ptr()));
 }
 
 void WebContextMenuProxyEfl::hideContextMenu()

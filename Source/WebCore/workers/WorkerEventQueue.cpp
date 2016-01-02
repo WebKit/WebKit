@@ -50,7 +50,7 @@ class WorkerEventQueue::EventDispatcher
 {
 public:
     EventDispatcher(RefPtr<Event>&& event, WorkerEventQueue& eventQueue)
-        : m_event(WTF::move(event))
+        : m_event(WTFMove(event))
         , m_eventQueue(eventQueue)
         , m_isCancelled(false)
     {

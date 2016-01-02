@@ -286,7 +286,7 @@ void AudioContext::addReaction(State state, Promise&& promise)
     if (stateIndex >= m_stateReactions.size())
         m_stateReactions.resize(stateIndex + 1);
 
-    m_stateReactions[stateIndex].append(WTF::move(promise));
+    m_stateReactions[stateIndex].append(WTFMove(promise));
 }
 
 void AudioContext::setState(State state)
@@ -1129,7 +1129,7 @@ void AudioContext::suspend(Promise&& promise)
         return;
     }
 
-    addReaction(State::Suspended, WTF::move(promise));
+    addReaction(State::Suspended, WTFMove(promise));
 
     if (!willPausePlayback())
         return;
@@ -1159,7 +1159,7 @@ void AudioContext::resume(Promise&& promise)
         return;
     }
 
-    addReaction(State::Running, WTF::move(promise));
+    addReaction(State::Running, WTFMove(promise));
 
     if (!willBeginPlayback())
         return;
@@ -1184,7 +1184,7 @@ void AudioContext::close(Promise&& promise)
         return;
     }
 
-    addReaction(State::Closed, WTF::move(promise));
+    addReaction(State::Closed, WTFMove(promise));
 
     lazyInitialize();
 

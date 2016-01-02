@@ -82,9 +82,9 @@ Blob::Blob(Vector<char> data, const String& contentType)
     , m_size(data.size())
 {
     Vector<BlobPart> blobParts;
-    blobParts.append(BlobPart(WTF::move(data)));
+    blobParts.append(BlobPart(WTFMove(data)));
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTF::move(blobParts), contentType);
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
 }
 
 Blob::Blob(Vector<BlobPart> blobParts, const String& contentType)
@@ -92,7 +92,7 @@ Blob::Blob(Vector<BlobPart> blobParts, const String& contentType)
     , m_size(-1)
 {
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTF::move(blobParts), contentType);
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
 }
 
 Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, long long size)

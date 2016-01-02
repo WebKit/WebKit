@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapper<TestMediaQueryListListener> Base;
     static JSTestMediaQueryListListener* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMediaQueryListListener>&& impl)
     {
-        JSTestMediaQueryListListener* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->vm().heap)) JSTestMediaQueryListListener(structure, *globalObject, WTF::move(impl));
+        JSTestMediaQueryListListener* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->vm().heap)) JSTestMediaQueryListListener(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

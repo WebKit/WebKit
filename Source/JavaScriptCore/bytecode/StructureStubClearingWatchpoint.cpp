@@ -41,7 +41,7 @@ StructureStubClearingWatchpoint* StructureStubClearingWatchpoint::push(
     WatchpointsOnStructureStubInfo& holder,
     std::unique_ptr<StructureStubClearingWatchpoint>& head)
 {
-    head = std::make_unique<StructureStubClearingWatchpoint>(key, holder, WTF::move(head));
+    head = std::make_unique<StructureStubClearingWatchpoint>(key, holder, WTFMove(head));
     return head.get();
 }
 

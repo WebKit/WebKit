@@ -44,7 +44,7 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<W
     , m_timeStamp(std::chrono::system_clock::now())
     , m_response(response)
     , m_varyingRequestHeaders(varyingRequestHeaders)
-    , m_buffer(WTF::move(buffer))
+    , m_buffer(WTFMove(buffer))
 {
     ASSERT(m_key.type() == "resource");
 }

@@ -47,7 +47,7 @@ public:
 
 private:
     RenderMathMLScriptsWrapper(Document& document, Ref<RenderStyle>&& style, WrapperType kind)
-        : RenderMathMLBlock(document, WTF::move(style))
+        : RenderMathMLBlock(document, WTFMove(style))
         , m_kind(kind)
     {
     }

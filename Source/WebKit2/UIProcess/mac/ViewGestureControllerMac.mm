@@ -278,7 +278,7 @@ static bool deltaShouldCancelSwipe(float x, float y)
 }
 
 ViewGestureController::PendingSwipeTracker::PendingSwipeTracker(WebPageProxy& webPageProxy, std::function<void(NSEvent *, SwipeDirection)> trackSwipeCallback)
-    : m_trackSwipeCallback(WTF::move(trackSwipeCallback))
+    : m_trackSwipeCallback(WTFMove(trackSwipeCallback))
     , m_webPageProxy(webPageProxy)
 {
 }

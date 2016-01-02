@@ -494,8 +494,8 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
         return;
 
     std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(frameHolder->textureID(), frameHolder->size(), frameHolder->flags());
-    layerBuffer->setUnmanagedBufferDataHolder(WTF::move(frameHolder));
-    m_platformLayerProxy->pushNextBuffer(WTF::move(layerBuffer));
+    layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
+    m_platformLayerProxy->pushNextBuffer(WTFMove(layerBuffer));
 #else
     GstCaps* caps = gst_sample_get_caps(m_sample.get());
     if (UNLIKELY(!caps))
@@ -515,10 +515,10 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
 
         RefPtr<BitmapTexture> texture = adoptRef(new BitmapTextureGL(m_context3D));
         texture->reset(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
-        buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTF::move(texture));
+        buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
     }
     updateTexture(buffer->textureGL(), videoInfo);
-    m_platformLayerProxy->pushNextBuffer(WTF::move(buffer));
+    m_platformLayerProxy->pushNextBuffer(WTFMove(buffer));
 #endif
 }
 #endif

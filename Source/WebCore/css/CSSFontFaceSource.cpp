@@ -165,7 +165,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
         Ref<Font> placeholderFont = FontCache::singleton().lastResortFallbackFont(fontDescription);
         Ref<Font> placeholderFontCopyInLoadingState = Font::create(placeholderFont->platformData(), true, true);
-        return WTF::move(placeholderFontCopyInLoadingState);
+        return WTFMove(placeholderFontCopyInLoadingState);
     }
 
     return font.release();

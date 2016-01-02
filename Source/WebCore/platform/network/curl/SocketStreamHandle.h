@@ -87,13 +87,13 @@ private:
     struct SocketData {
         SocketData(std::unique_ptr<char[]>&& source, int length)
         {
-            data = WTF::move(source);
+            data = WTFMove(source);
             size = length;
         }
 
         SocketData(SocketData&& other)
         {
-            data = WTF::move(other.data);
+            data = WTFMove(other.data);
             size = other.size;
             other.size = 0;
         }

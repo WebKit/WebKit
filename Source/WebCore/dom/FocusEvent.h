@@ -48,7 +48,7 @@ public:
 
     static Ref<FocusEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<AbstractView>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
     {
-        return adoptRef(*new FocusEvent(type, canBubble, cancelable, WTF::move(view), detail, WTF::move(relatedTarget)));
+        return adoptRef(*new FocusEvent(type, canBubble, cancelable, WTFMove(view), detail, WTFMove(relatedTarget)));
     }
 
     static Ref<FocusEvent> create(const AtomicString& type, const FocusEventInit& initializer)
@@ -57,7 +57,7 @@ public:
     }
 
     virtual EventTarget* relatedTarget() const override { return m_relatedTarget.get(); }
-    void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) { m_relatedTarget = WTF::move(relatedTarget); }
+    void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) { m_relatedTarget = WTFMove(relatedTarget); }
 
     virtual EventInterface eventInterface() const override;
 

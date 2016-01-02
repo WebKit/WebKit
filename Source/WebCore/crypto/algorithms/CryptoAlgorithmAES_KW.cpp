@@ -71,7 +71,7 @@ void CryptoAlgorithmAES_KW::encryptForWrapKey(const CryptoAlgorithmParameters&, 
         return;
     }
 
-    platformEncrypt(downcast<CryptoKeyAES>(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
+    platformEncrypt(downcast<CryptoKeyAES>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
 void CryptoAlgorithmAES_KW::decryptForUnwrapKey(const CryptoAlgorithmParameters&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
@@ -81,7 +81,7 @@ void CryptoAlgorithmAES_KW::decryptForUnwrapKey(const CryptoAlgorithmParameters&
         return;
     }
 
-    platformDecrypt(downcast<CryptoKeyAES>(key), data, WTF::move(callback), WTF::move(failureCallback), ec);
+    platformDecrypt(downcast<CryptoKeyAES>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
 void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)

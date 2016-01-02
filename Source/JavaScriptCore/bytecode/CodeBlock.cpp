@@ -2283,7 +2283,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (vm.controlFlowProfiler())
         insertBasicBlockBoundariesForControlFlowProfiler(instructions);
 
-    m_instructions = WTF::move(instructions);
+    m_instructions = WTFMove(instructions);
 
     // Perform bytecode liveness analysis to determine which locals are live and should be resumed when executing op_resume.
     if (unlinkedCodeBlock->parseMode() == SourceParseMode::GeneratorBodyMode) {
@@ -3498,7 +3498,7 @@ void CodeBlock::setCalleeSaveRegisters(RegisterSet calleeSaveRegisters)
 
 void CodeBlock::setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList> registerAtOffsetList)
 {
-    m_calleeSaveRegisters = WTF::move(registerAtOffsetList);
+    m_calleeSaveRegisters = WTFMove(registerAtOffsetList);
 }
     
 static size_t roundCalleeSaveSpaceAsVirtualRegisters(size_t calleeSaveRegisters)

@@ -55,7 +55,7 @@ public:
     void invalidate() { m_manager = nullptr; }
 
     UIView *layerHostView() const { return m_layerHostView.get(); }
-    void setLayerHostView(RetainPtr<UIView>&& layerHostView) { m_layerHostView = WTF::move(layerHostView); }
+    void setLayerHostView(RetainPtr<UIView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
 private:
     WebVideoFullscreenModelContext(WebVideoFullscreenManagerProxy& manager, uint64_t contextId)

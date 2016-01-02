@@ -197,7 +197,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
 
 RenderPtr<RenderElement> FileInputType::createInputRenderer(Ref<RenderStyle>&& style)
 {
-    return createRenderer<RenderFileUploadControl>(element(), WTF::move(style));
+    return createRenderer<RenderFileUploadControl>(element(), WTFMove(style));
 }
 
 bool FileInputType::canSetStringValue() const
@@ -260,7 +260,7 @@ PassRefPtr<FileList> FileInputType::createFileList(const Vector<FileChooserFileI
     for (const FileChooserFileInfo& info : files)
         fileObjects.append(File::createWithName(info.path, info.displayName));
 
-    return FileList::create(WTF::move(fileObjects));
+    return FileList::create(WTFMove(fileObjects));
 }
 
 bool FileInputType::isFileUpload() const

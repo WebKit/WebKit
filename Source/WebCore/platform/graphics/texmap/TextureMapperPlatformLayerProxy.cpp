@@ -83,7 +83,7 @@ bool TextureMapperPlatformLayerProxy::isActive()
 void TextureMapperPlatformLayerProxy::pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer> newBuffer)
 {
     ASSERT(m_lock.isHeld());
-    m_pendingBuffer = WTF::move(newBuffer);
+    m_pendingBuffer = WTFMove(newBuffer);
 
     if (m_compositor)
         m_compositor->onNewBufferAvailable();
@@ -94,17 +94,17 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerProx
     ASSERT(m_lock.isHeld());
     std::unique_ptr<TextureMapperPlatformLayerBuffer> availableBuffer;
 
-    auto buffers = WTF::move(m_usedBuffers);
+    auto buffers = WTFMove(m_usedBuffers);
     for (auto& buffer : buffers) {
         if (!buffer)
             continue;
 
         if (!availableBuffer && buffer->canReuseWithoutReset(size, internalFormat)) {
-            availableBuffer = WTF::move(buffer);
+            availableBuffer = WTFMove(buffer);
             availableBuffer->markUsed();
             continue;
         }
-        m_usedBuffers.append(WTF::move(buffer));
+        m_usedBuffers.append(WTFMove(buffer));
     }
 
     if (!m_usedBuffers.isEmpty())
@@ -124,12 +124,12 @@ void TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired()
     if (m_usedBuffers.isEmpty())
         return;
 
-    auto buffers = WTF::move(m_usedBuffers);
+    auto buffers = WTFMove(m_usedBuffers);
     double minUsedTime = monotonicallyIncreasingTime() - s_releaseUnusedSecondsTolerance;
 
     for (auto& buffer : buffers) {
         if (buffer && buffer->lastUsedTime() >= minUsedTime)
-            m_usedBuffers.append(WTF::move(buffer));
+            m_usedBuffers.append(WTFMove(buffer));
     }
 }
 
@@ -143,14 +143,14 @@ void TextureMapperPlatformLayerProxy::swapBuffer()
         if (!m_targetLayer || !m_pendingBuffer)
             return;
 
-        prevBuffer = WTF::move(m_currentBuffer);
+        prevBuffer = WTFMove(m_currentBuffer);
 
-        m_currentBuffer = WTF::move(m_pendingBuffer);
+        m_currentBuffer = WTFMove(m_pendingBuffer);
         m_targetLayer->setContentsLayer(m_currentBuffer.get());
     }
 
     if (prevBuffer && prevBuffer->hasManagedTexture())
-        m_usedBuffers.append(WTF::move(prevBuffer));
+        m_usedBuffers.append(WTFMove(prevBuffer));
 }
 
 bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(std::function<void()>&& updateFunction)
@@ -159,7 +159,7 @@ bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(std::func
     if (!m_compositorThreadUpdateTimer)
         return false;
 
-    m_compositorThreadUpdateFunction = WTF::move(updateFunction);
+    m_compositorThreadUpdateFunction = WTFMove(updateFunction);
     m_compositorThreadUpdateTimer->startOneShot(0);
     return true;
 }
@@ -171,7 +171,7 @@ void TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired()
         LockHolder locker(m_lock);
         if (!m_compositorThreadUpdateFunction)
             return;
-        updateFunction = WTF::move(m_compositorThreadUpdateFunction);
+        updateFunction = WTFMove(m_compositorThreadUpdateFunction);
     }
 
     updateFunction();

@@ -209,7 +209,7 @@ static void generateInlineIfPossibleOutOfLineIfNot(State& state, VM& vm, CodeBlo
 
     callback(*codeLinkBuffer.get(), code, false);
 
-    state.finalizer->outOfLineCodeInfos.append(OutOfLineCodeInfo(WTF::move(codeLinkBuffer), codeDescription));
+    state.finalizer->outOfLineCodeInfos.append(OutOfLineCodeInfo(WTFMove(codeLinkBuffer), codeDescription));
 }
 
 template<typename DescriptorType>
@@ -478,7 +478,7 @@ static void fixFunctionBasedOnStackMaps(
         linkBuffer->link(callLookupExceptionHandler, FunctionPtr(lookupExceptionHandler));
         linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, FunctionPtr(lookupExceptionHandlerFromCallerFrame));
 
-        state.finalizer->handleExceptionsLinkBuffer = WTF::move(linkBuffer);
+        state.finalizer->handleExceptionsLinkBuffer = WTFMove(linkBuffer);
     }
 
     RELEASE_ASSERT(state.jitCode->osrExit.size() == 0);
@@ -615,7 +615,7 @@ static void fixFunctionBasedOnStackMaps(
             }
         }
         
-        state.finalizer->exitThunksLinkBuffer = WTF::move(linkBuffer);
+        state.finalizer->exitThunksLinkBuffer = WTFMove(linkBuffer);
     }
 
     if (!state.getByIds.isEmpty()
@@ -857,7 +857,7 @@ static void fixFunctionBasedOnStackMaps(
                 
                 descriptor.m_generators.append(std::make_tuple(lazySlowPath.get(), begin));
 
-                state.jitCode->lazySlowPaths.append(WTF::move(lazySlowPath));
+                state.jitCode->lazySlowPaths.append(WTFMove(lazySlowPath));
                 state.finalizer->lazySlowPathGeneratorJumps.append(generatorJump);
             }
         }
@@ -1157,7 +1157,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         dataLog("Unwind info for ", CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT), ":\n");
         dataLog("    ", *registerOffsets, "\n");
     }
-    state.graph.m_codeBlock->setCalleeSaveRegisters(WTF::move(registerOffsets));
+    state.graph.m_codeBlock->setCalleeSaveRegisters(WTFMove(registerOffsets));
     
     if (state.stackmapsSection && state.stackmapsSection->size()) {
         if (shouldDumpDisassembly()) {

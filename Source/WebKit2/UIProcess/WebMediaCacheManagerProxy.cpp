@@ -82,7 +82,7 @@ void WebMediaCacheManagerProxy::derefWebContextSupplement()
 
 void WebMediaCacheManagerProxy::getHostnamesWithMediaCache(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
+    RefPtr<ArrayCallback> callback = ArrayCallback::create(WTFMove(callbackFunction));
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 

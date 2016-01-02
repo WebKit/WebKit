@@ -102,8 +102,8 @@ public:
     bool isMaskSourceTypeSet() const { return m_maskSourceTypeSet; }
 
     void setImage(PassRefPtr<StyleImage> image) { m_image = image; m_imageSet = true; }
-    void setXPosition(Length length) { m_xPosition = WTF::move(length); m_xPosSet = true; }
-    void setYPosition(Length length) { m_yPosition = WTF::move(length); m_yPosSet = true; }
+    void setXPosition(Length length) { m_xPosition = WTFMove(length); m_xPosSet = true; }
+    void setYPosition(Length length) { m_yPosition = WTFMove(length); m_yPosSet = true; }
     void setBackgroundXOrigin(BackgroundEdgeOrigin o) { m_backgroundXOrigin = o; m_backgroundOriginSet = true; }
     void setBackgroundYOrigin(BackgroundEdgeOrigin o) { m_backgroundYOrigin = o; m_backgroundOriginSet = true; }
     void setAttachment(EFillAttachment attachment) { m_attachment = attachment; m_attachmentSet = true; }
@@ -133,7 +133,7 @@ public:
     void clearSize() { m_sizeType = SizeNone; }
     void clearMaskSourceType() { m_maskSourceTypeSet = false; }
 
-    void setNext(std::unique_ptr<FillLayer> next) { m_next = WTF::move(next); }
+    void setNext(std::unique_ptr<FillLayer> next) { m_next = WTFMove(next); }
 
     FillLayer& operator=(const FillLayer&);
     FillLayer(const FillLayer&);

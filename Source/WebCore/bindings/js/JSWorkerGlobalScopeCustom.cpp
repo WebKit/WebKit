@@ -93,7 +93,7 @@ JSValue JSWorkerGlobalScope::setTimeout(ExecState& state)
     if (!action)
         return jsNumber(0);
     int delay = state.argument(1).toInt32(&state);
-    return jsNumber(wrapped().setTimeout(WTF::move(action), delay));
+    return jsNumber(wrapped().setTimeout(WTFMove(action), delay));
 }
 
 JSValue JSWorkerGlobalScope::setInterval(ExecState& state)
@@ -104,7 +104,7 @@ JSValue JSWorkerGlobalScope::setInterval(ExecState& state)
     if (!action)
         return jsNumber(0);
     int delay = state.argument(1).toInt32(&state);
-    return jsNumber(wrapped().setInterval(WTF::move(action), delay));
+    return jsNumber(wrapped().setInterval(WTFMove(action), delay));
 }
 
 } // namespace WebCore

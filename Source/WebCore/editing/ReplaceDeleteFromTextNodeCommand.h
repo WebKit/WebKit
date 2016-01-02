@@ -34,7 +34,7 @@ class ReplaceDeleteFromTextNodeCommand final : public DeleteFromTextNodeCommand 
 public:
     static Ref<ReplaceDeleteFromTextNodeCommand> create(RefPtr<Text>&& text, unsigned offset, unsigned count)
     {
-        return adoptRef(*new ReplaceDeleteFromTextNodeCommand(WTF::move(text), offset, count));
+        return adoptRef(*new ReplaceDeleteFromTextNodeCommand(WTFMove(text), offset, count));
     }
 
 private:

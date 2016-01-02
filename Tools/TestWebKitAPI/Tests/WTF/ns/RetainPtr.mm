@@ -55,7 +55,7 @@ TEST(RetainPtr, MoveAssignmentFromSameType)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = WTF::move(temp);
+    ptr = WTFMove(temp);
 
     EXPECT_EQ(string, ptr);
     EXPECT_EQ((NSString *)0, temp);
@@ -77,7 +77,7 @@ TEST(RetainPtr, MoveAssignmentFromSimilarType)
     RetainPtr<NSMutableString> temp = string;
 
     // This should invoke RetainPtr's move assignment operator.
-    ptr = WTF::move(temp);
+    ptr = WTFMove(temp);
 
     EXPECT_EQ(string, ptr);
     EXPECT_EQ((NSString *)0, temp);
@@ -97,7 +97,7 @@ TEST(RetainPtr, ConstructionFromSameType)
     RetainPtr<NSString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr2(WTF::move(temp));
+    RetainPtr<NSString> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
     EXPECT_EQ((NSString *)0, temp);
@@ -117,7 +117,7 @@ TEST(RetainPtr, ConstructionFromSimilarType)
     RetainPtr<NSMutableString> temp = string;
 
     // This should invoke RetainPtr's move constructor.
-    RetainPtr<NSString> ptr2(WTF::move(temp));
+    RetainPtr<NSString> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
     EXPECT_EQ((NSString *)0, temp);

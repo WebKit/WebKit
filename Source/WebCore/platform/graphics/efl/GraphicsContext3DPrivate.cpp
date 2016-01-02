@@ -103,7 +103,7 @@ void GraphicsContext3DPrivate::releaseResources()
 
 void GraphicsContext3DPrivate::setContextLostCallback(std::unique_ptr<GraphicsContext3D::ContextLostCallback> callBack)
 {
-    m_contextLostCallback = WTF::move(callBack);
+    m_contextLostCallback = WTFMove(callBack);
 }
 
 PlatformGraphicsContext3D GraphicsContext3DPrivate::platformGraphicsContext3D() const

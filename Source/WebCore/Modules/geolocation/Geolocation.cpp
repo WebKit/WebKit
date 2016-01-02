@@ -81,7 +81,7 @@ bool Geolocation::Watchers::add(int id, RefPtr<GeoNotifier>&& notifier)
 
     if (!m_idToNotifierMap.add(id, notifier.get()).isNewEntry)
         return false;
-    m_notifierToIdMap.set(WTF::move(notifier), id);
+    m_notifierToIdMap.set(WTFMove(notifier), id);
     return true;
 }
 
@@ -308,7 +308,7 @@ void Geolocation::getCurrentPosition(RefPtr<PositionCallback>&& successCallback,
     if (!frame())
         return;
 
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, WTF::move(successCallback), WTF::move(errorCallback), WTF::move(options));
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, WTFMove(successCallback), WTFMove(errorCallback), WTFMove(options));
     startRequest(notifier.get());
 
     m_oneShots.add(notifier);
@@ -319,14 +319,14 @@ int Geolocation::watchPosition(RefPtr<PositionCallback>&& successCallback, RefPt
     if (!frame())
         return 0;
 
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, WTF::move(successCallback), WTF::move(errorCallback), WTF::move(options));
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, WTFMove(successCallback), WTFMove(errorCallback), WTFMove(options));
     startRequest(notifier.get());
 
     int watchID;
     // Keep asking for the next id until we're given one that we don't already have.
     do {
         watchID = m_scriptExecutionContext->circularSequentialID();
-    } while (!m_watchers.add(watchID, WTF::move(notifier)));
+    } while (!m_watchers.add(watchID, WTFMove(notifier)));
     return watchID;
 }
 

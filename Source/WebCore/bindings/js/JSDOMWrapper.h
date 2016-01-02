@@ -57,7 +57,7 @@ public:
 protected:
     JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
         : Base(structure, globalObject)
-        , m_wrapped(WTF::move(impl)) { }
+        , m_wrapped(WTFMove(impl)) { }
 
 private:
     Ref<ImplementationClass> m_wrapped;

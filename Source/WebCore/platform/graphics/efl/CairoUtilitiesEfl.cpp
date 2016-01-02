@@ -82,7 +82,7 @@ EflUniquePtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_su
 
     evas_object_image_data_copy_set(image.get(), data);
 
-    return WTF::move(image);
+    return WTFMove(image);
 }
 
 PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(Ecore_Evas* ee)

@@ -253,7 +253,7 @@ void Frame::setView(RefPtr<FrameView>&& view)
     
     eventHandler().clear();
 
-    m_view = WTF::move(view);
+    m_view = WTFMove(view);
 
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being

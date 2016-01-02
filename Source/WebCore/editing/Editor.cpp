@@ -396,7 +396,7 @@ void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, R
     if (dictationPhrases.isEmpty())
         return;
 
-    applyCommand(DictationCommandIOS::create(document(), WTF::move(dictationPhrases), WTF::move(metadata)));
+    applyCommand(DictationCommandIOS::create(document(), WTFMove(dictationPhrases), WTFMove(metadata)));
 }
 
 void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& dictationPhrases, RetainPtr<id> metadata, Element& element)
@@ -614,7 +614,7 @@ void Editor::setTextAsChildOfElement(const String& text, Element* elem)
         RefPtr<Range> context = document().createRange();
         context->selectNodeContents(elem, ec);
         Ref<DocumentFragment> fragment = createFragmentFromText(*context.get(), text);
-        elem->appendChild(WTF::move(fragment), ec);
+        elem->appendChild(WTFMove(fragment), ec);
     
         // restore element to document
         if (parent) {
@@ -952,7 +952,7 @@ void Editor::applyStyleToSelection(Ref<EditingStyle>&& style, EditAction editing
     if (!client() || !client()->shouldApplyStyle(style->styleWithResolvedTextDecorations().ptr(), m_frame.selection().toNormalizedRange().get()))
         return;
 
-    applyStyle(WTF::move(style), editingAction);
+    applyStyle(WTFMove(style), editingAction);
 }
 
 void Editor::applyParagraphStyleToSelection(StyleProperties* style, EditAction editingAction)

@@ -62,7 +62,7 @@ using namespace WebCore;
 namespace WebKit {
 
 LayerTreeHostGtk::RenderFrameScheduler::RenderFrameScheduler(std::function<bool()> renderer)
-    : m_renderer(WTF::move(renderer))
+    : m_renderer(WTFMove(renderer))
     , m_timer(RunLoop::main(), this, &LayerTreeHostGtk::RenderFrameScheduler::renderFrame)
 {
     // We use a RunLoop timer because otherwise GTK+ event handling during dragging can starve WebCore timers, which have a lower priority.

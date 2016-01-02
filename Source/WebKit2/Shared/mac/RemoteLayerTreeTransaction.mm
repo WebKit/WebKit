@@ -412,7 +412,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
         if (!decoder.decode(path))
             return false;
         
-        result.shapePath = WTF::move(path);
+        result.shapePath = WTFMove(path);
     }
 
     if (result.changedProperties & MinificationFilterChanged) {
@@ -454,7 +454,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
             if (!decoder.decode(*backingStore))
                 return false;
             
-            result.backingStore = WTF::move(backingStore);
+            result.backingStore = WTFMove(backingStore);
         } else
             result.backingStore = nullptr;
     }
@@ -468,7 +468,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& d
         std::unique_ptr<FilterOperations> filters = std::make_unique<FilterOperations>();
         if (!decoder.decode(*filters))
             return false;
-        result.filters = WTF::move(filters);
+        result.filters = WTFMove(filters);
     }
 
     if (result.changedProperties & EdgeAntialiasingMaskChanged) {
@@ -554,7 +554,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         if (!decoder.decode(*layerProperties))
             return false;
 
-        result.changedLayerProperties().set(layerID, WTF::move(layerProperties));
+        result.changedLayerProperties().set(layerID, WTFMove(layerProperties));
     }
 
     if (!decoder.decode(result.m_destroyedLayerIDs))
@@ -640,17 +640,17 @@ void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote& r
 
 void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties> createdLayers)
 {
-    m_createdLayers = WTF::move(createdLayers);
+    m_createdLayers = WTFMove(createdLayers);
 }
 
 void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<GraphicsLayer::PlatformLayerID> destroyedLayerIDs)
 {
-    m_destroyedLayerIDs = WTF::move(destroyedLayerIDs);
+    m_destroyedLayerIDs = WTFMove(destroyedLayerIDs);
 }
 
 void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vector<GraphicsLayer::PlatformLayerID> layerIDsWithNewlyUnreachableBackingStore)
 {
-    m_layerIDsWithNewlyUnreachableBackingStore = WTF::move(layerIDsWithNewlyUnreachableBackingStore);
+    m_layerIDsWithNewlyUnreachableBackingStore = WTFMove(layerIDsWithNewlyUnreachableBackingStore);
 }
 
 #if !defined(NDEBUG) || !LOG_DISABLED

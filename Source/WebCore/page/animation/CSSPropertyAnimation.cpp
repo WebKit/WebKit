@@ -226,9 +226,9 @@ static inline PassRefPtr<StyleImage> blendFilter(const AnimationBase* anim, Cach
     auto imageValue = CSSImageValue::create(image->url(), styledImage.get());
     auto filterValue = ComputedStyleExtractor::valueForFilter(anim->renderer()->style(), filterResult, DoNotAdjustPixelValues);
 
-    auto result = CSSFilterImageValue::create(WTF::move(imageValue), WTF::move(filterValue));
+    auto result = CSSFilterImageValue::create(WTFMove(imageValue), WTFMove(filterValue));
     result.get().setFilterOperations(filterResult);
-    return StyleGeneratedImage::create(WTF::move(result));
+    return StyleGeneratedImage::create(WTFMove(result));
 }
 
 static inline EVisibility blendFunc(const AnimationBase* anim, EVisibility from, EVisibility to, double progress)
@@ -290,9 +290,9 @@ static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleC
     auto fromImageValue = CSSImageValue::create(fromStyleImage->cachedImage()->url(), fromStyleImage);
     auto toImageValue = CSSImageValue::create(toStyleImage->cachedImage()->url(), toStyleImage);
 
-    auto crossfadeValue = CSSCrossfadeValue::create(WTF::move(fromImageValue), WTF::move(toImageValue));
+    auto crossfadeValue = CSSCrossfadeValue::create(WTFMove(fromImageValue), WTFMove(toImageValue));
     crossfadeValue.get().setPercentage(CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER));
-    return StyleGeneratedImage::create(WTF::move(crossfadeValue));
+    return StyleGeneratedImage::create(WTFMove(crossfadeValue));
 }
 
 static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleImage* from, StyleImage* to, double progress)
@@ -729,9 +729,9 @@ private:
             ShadowData* blendedShadowPtr = blendedShadow.get();
 
             if (!lastShadow)
-                newShadowData = WTF::move(blendedShadow);
+                newShadowData = WTFMove(blendedShadow);
             else
-                lastShadow->setNext(WTF::move(blendedShadow));
+                lastShadow->setNext(WTFMove(blendedShadow));
 
             lastShadow = blendedShadowPtr;
 
@@ -770,8 +770,8 @@ private:
 
             std::unique_ptr<ShadowData> blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
             // Insert at the start of the list to preserve the order.
-            blendedShadow->setNext(WTF::move(newShadowData));
-            newShadowData = WTF::move(blendedShadow);
+            blendedShadow->setNext(WTFMove(newShadowData));
+            newShadowData = WTFMove(blendedShadow);
         }
 
         return newShadowData;
@@ -1042,7 +1042,7 @@ class ShorthandPropertyWrapper : public AnimationPropertyWrapperBase {
 public:
     ShorthandPropertyWrapper(CSSPropertyID property, Vector<AnimationPropertyWrapperBase*> longhandWrappers)
         : AnimationPropertyWrapperBase(property)
-        , m_propertyWrappers(WTF::move(longhandWrappers))
+        , m_propertyWrappers(WTFMove(longhandWrappers))
     {
     }
 
@@ -1437,7 +1437,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
             longhandWrappers.uncheckedAppend(m_propertyWrappers[wrapperIndex].get());
         }
 
-        m_propertyWrappers.uncheckedAppend(std::make_unique<ShorthandPropertyWrapper>(propertyID, WTF::move(longhandWrappers)));
+        m_propertyWrappers.uncheckedAppend(std::make_unique<ShorthandPropertyWrapper>(propertyID, WTFMove(longhandWrappers)));
         indexFromPropertyID(propertyID) = animatableLonghandPropertiesCount + i;
     }
 }

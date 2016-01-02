@@ -36,7 +36,7 @@ using namespace WebCore;
 namespace WebKit {
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked, Vector<String>&& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, compositionResults, WTF::move(commands)))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, compositionResults, WTFMove(commands)))
     , m_nativeEvent(gdk_event_copy(event))
     , m_compositionResults(compositionResults)
     , m_fakeEventForComposition(faked == InputMethodFilter::EventFaked)

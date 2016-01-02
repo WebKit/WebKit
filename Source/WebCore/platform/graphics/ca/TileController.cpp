@@ -122,7 +122,7 @@ void TileController::setContentsScale(float scale)
         m_coverageMap->setDeviceScaleFactor(deviceScaleFactor);
 
     if (m_zoomedOutTileGrid && m_zoomedOutTileGrid->scale() == scale) {
-        m_tileGrid = WTF::move(m_zoomedOutTileGrid);
+        m_tileGrid = WTFMove(m_zoomedOutTileGrid);
         m_tileGrid->setIsZoomedOutTileGrid(false);
         m_tileGrid->revalidateTiles();
         tileGridsChanged();
@@ -130,7 +130,7 @@ void TileController::setContentsScale(float scale)
     }
 
     if (m_zoomedOutContentsScale && m_zoomedOutContentsScale == tileGrid().scale() && tileGrid().scale() != scale && !m_hasTilesWithTemporaryScaleFactor) {
-        m_zoomedOutTileGrid = WTF::move(m_tileGrid);
+        m_zoomedOutTileGrid = WTFMove(m_tileGrid);
         m_zoomedOutTileGrid->setIsZoomedOutTileGrid(true);
         m_tileGrid = std::make_unique<TileGrid>(*this);
         tileGridsChanged();

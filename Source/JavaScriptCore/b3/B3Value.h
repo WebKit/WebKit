@@ -282,7 +282,7 @@ protected:
         , m_opcode(opcode)
         , m_type(type)
         , m_origin(origin)
-        , m_children(WTF::move(children))
+        , m_children(WTFMove(children))
     {
     }
 

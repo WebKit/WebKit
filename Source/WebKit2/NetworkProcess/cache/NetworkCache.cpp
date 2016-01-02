@@ -372,7 +372,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (m_speculativeLoadManager && m_speculativeLoadManager->retrieve(frameID, storageKey, [request, completionHandler](std::unique_ptr<Entry> entry) {
         if (entry && verifyVaryingRequestHeaders(entry->varyingRequestHeaders(), request))
-            completionHandler(WTF::move(entry));
+            completionHandler(WTFMove(entry));
         else
             completionHandler(nullptr);
     }))
@@ -412,7 +412,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
         auto elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
         LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.priority()), elapsedMS);
 #endif
-        completionHandler(WTF::move(entry));
+        completionHandler(WTFMove(entry));
 
         if (m_statistics)
             m_statistics->recordRetrievedCachedEntry(frameID.first, storageKey, request, useDecision);
@@ -444,7 +444,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         return nullptr;
     }
 
-    std::unique_ptr<Entry> cacheEntry = std::make_unique<Entry>(makeCacheKey(request), response, WTF::move(responseData), collectVaryingRequestHeaders(request, response));
+    std::unique_ptr<Entry> cacheEntry = std::make_unique<Entry>(makeCacheKey(request), response, WTFMove(responseData), collectVaryingRequestHeaders(request, response));
 
     auto record = cacheEntry->encodeAsStorageRecord();
 
@@ -452,7 +452,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
         if (RefPtr<SharedMemory> sharedMemory = bodyData.tryCreateSharedMemory()) {
-            mappedBody.shareableResource = ShareableResource::create(WTF::move(sharedMemory), 0, bodyData.size());
+            mappedBody.shareableResource = ShareableResource::create(WTFMove(sharedMemory), 0, bodyData.size());
             ASSERT(mappedBody.shareableResource);
             mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
         }
@@ -620,7 +620,7 @@ void Cache::clear(std::chrono::system_clock::time_point modifiedSince, std::func
         return;
     }
     String anyType;
-    m_storage->clear(anyType, modifiedSince, WTF::move(completionHandler));
+    m_storage->clear(anyType, modifiedSince, WTFMove(completionHandler));
 
     deleteDumpFile();
 }

@@ -190,7 +190,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
         PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(event->key.keyval),
         static_cast<int>(event->key.keyval),
         compositionResults.compositionUpdated(),
-        WTF::move(commands),
+        WTFMove(commands),
         isGdkKeyCodeFromKeyPad(event->key.keyval),
         modifiersForEvent(event),
         gdk_event_get_time(event));
@@ -215,7 +215,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector
         ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent(type, WTF::move(touchPoints), modifiersForEvent(event), gdk_event_get_time(event));
+    return WebTouchEvent(type, WTFMove(touchPoints), modifiersForEvent(event), gdk_event_get_time(event));
 #else
     return WebTouchEvent();
 #endif // GTK_API_VERSION_2

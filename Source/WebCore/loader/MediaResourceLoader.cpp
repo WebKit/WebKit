@@ -39,7 +39,7 @@
 namespace WebCore {
 
 MediaResourceLoader::MediaResourceLoader(Document& document, const String& crossOriginMode, std::unique_ptr<PlatformMediaResourceLoaderClient> client)
-    : PlatformMediaResourceLoader(WTF::move(client))
+    : PlatformMediaResourceLoader(WTFMove(client))
     , m_document(document)
     , m_crossOriginMode(crossOriginMode)
     , m_didPassAccessControlCheck(false)

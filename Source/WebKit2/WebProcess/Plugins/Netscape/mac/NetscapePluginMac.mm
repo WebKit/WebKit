@@ -999,7 +999,7 @@ static bool convertStringToKeyCodes(StringView string, ScriptCode scriptCode, Ve
     if (status != noErr)
         return false;
 
-    keyCodes = WTF::move(outputData);
+    keyCodes = WTFMove(outputData);
     return true;
 }
 #endif

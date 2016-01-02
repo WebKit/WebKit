@@ -287,7 +287,7 @@ void FloatingObjects::moveAllToFloatInfoMap(RendererToFloatInfoMap& map)
         // FIXME: The only reason it is safe to move these out of the set is that
         // we are about to clear it. Otherwise it would break the hash table invariant.
         // A clean way to do this would be to add a takeAll function to HashSet.
-        map.add(&renderer, WTF::move(*it));
+        map.add(&renderer, WTFMove(*it));
     }
     clear();
 }
@@ -350,7 +350,7 @@ FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObj
     increaseObjectsCount(floatingObject->type());
     if (floatingObject->isPlaced())
         addPlacedObject(floatingObject.get());
-    return m_set.add(WTF::move(floatingObject)).iterator->get();
+    return m_set.add(WTFMove(floatingObject)).iterator->get();
 }
 
 void FloatingObjects::remove(FloatingObject* floatingObject)

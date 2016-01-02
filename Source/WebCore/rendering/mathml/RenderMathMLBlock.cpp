@@ -44,12 +44,12 @@ namespace WebCore {
 using namespace MathMLNames;
     
 RenderMathMLBlock::RenderMathMLBlock(Element& container, Ref<RenderStyle>&& style)
-    : RenderFlexibleBox(container, WTF::move(style))
+    : RenderFlexibleBox(container, WTFMove(style))
 {
 }
 
 RenderMathMLBlock::RenderMathMLBlock(Document& document, Ref<RenderStyle>&& style)
-    : RenderFlexibleBox(document, WTF::move(style))
+    : RenderFlexibleBox(document, WTFMove(style))
 {
 }
 

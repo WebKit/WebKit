@@ -82,7 +82,7 @@ void UserContentController::addUserScript(DOMWrapperWorld& world, std::unique_pt
     auto& scriptsInWorld = m_userScripts->add(&world, nullptr).iterator->value;
     if (!scriptsInWorld)
         scriptsInWorld = std::make_unique<UserScriptVector>();
-    scriptsInWorld->append(WTF::move(userScript));
+    scriptsInWorld->append(WTFMove(userScript));
 }
 
 void UserContentController::removeUserScript(DOMWrapperWorld& world, const URL& url)
@@ -120,7 +120,7 @@ void UserContentController::addUserStyleSheet(DOMWrapperWorld& world, std::uniqu
     auto& styleSheetsInWorld = m_userStyleSheets->add(&world, nullptr).iterator->value;
     if (!styleSheetsInWorld)
         styleSheetsInWorld = std::make_unique<UserStyleSheetVector>();
-    styleSheetsInWorld->append(WTF::move(userStyleSheet));
+    styleSheetsInWorld->append(WTFMove(userStyleSheet));
 
     if (injectionTime == InjectInExistingDocuments)
         invalidateInjectedStyleSheetCacheInAllFrames();

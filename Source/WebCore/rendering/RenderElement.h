@@ -143,7 +143,7 @@ public:
 
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(Ref<RenderStyle>&& style) { m_style = WTF::move(style); }
+    void setStyleInternal(Ref<RenderStyle>&& style) { m_style = WTFMove(style); }
 
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
     bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = nullptr, const LayoutRect* newOutlineBoxPtr = nullptr);
@@ -349,11 +349,11 @@ private:
 
 inline void RenderElement::setAnimatableStyle(Ref<RenderStyle>&& style, StyleDifference minimalStyleDifference)
 {
-    Ref<RenderStyle> animatedStyle = WTF::move(style);
+    Ref<RenderStyle> animatedStyle = WTFMove(style);
     if (animation().updateAnimations(*this, animatedStyle, animatedStyle))
         minimalStyleDifference = std::max(minimalStyleDifference, StyleDifferenceRecompositeLayer);
     
-    setStyle(WTF::move(animatedStyle), minimalStyleDifference);
+    setStyle(WTFMove(animatedStyle), minimalStyleDifference);
 }
 
 inline void RenderElement::setAncestorLineBoxDirty(bool f)

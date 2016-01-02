@@ -113,7 +113,7 @@ void PluginProcessProxy::getPluginProcessConnection(PassRefPtr<Messages::WebProc
 void PluginProcessProxy::fetchWebsiteData(std::function<void (Vector<String>)> completionHandler)
 {
     uint64_t callbackID = generateCallbackID();
-    m_pendingFetchWebsiteDataCallbacks.set(callbackID, WTF::move(completionHandler));
+    m_pendingFetchWebsiteDataCallbacks.set(callbackID, WTFMove(completionHandler));
 
     if (state() == State::Launching) {
         m_pendingFetchWebsiteDataRequests.append(callbackID);
@@ -126,7 +126,7 @@ void PluginProcessProxy::fetchWebsiteData(std::function<void (Vector<String>)> c
 void PluginProcessProxy::deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
 {
     uint64_t callbackID = generateCallbackID();
-    m_pendingDeleteWebsiteDataCallbacks.set(callbackID, WTF::move(completionHandler));
+    m_pendingDeleteWebsiteDataCallbacks.set(callbackID, WTFMove(completionHandler));
 
     if (state() == State::Launching) {
         m_pendingDeleteWebsiteDataRequests.append({ modifiedSince, callbackID });
@@ -139,7 +139,7 @@ void PluginProcessProxy::deleteWebsiteData(std::chrono::system_clock::time_point
 void PluginProcessProxy::deleteWebsiteDataForHostNames(const Vector<String>& hostNames, std::function<void ()> completionHandler)
 {
     uint64_t callbackID = generateCallbackID();
-    m_pendingDeleteWebsiteDataForHostNamesCallbacks.set(callbackID, WTF::move(completionHandler));
+    m_pendingDeleteWebsiteDataForHostNamesCallbacks.set(callbackID, WTFMove(completionHandler));
 
     if (state() == State::Launching) {
         m_pendingDeleteWebsiteDataForHostNamesRequests.append({ hostNames, callbackID });

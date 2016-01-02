@@ -70,7 +70,7 @@ void ReplaySession::appendSegment(RefPtr<ReplaySessionSegment>&& segment)
     size_t offset = m_segments.find(segment.copyRef());
     ASSERT_UNUSED(offset, offset == notFound);
 
-    m_segments.append(WTF::move(segment));
+    m_segments.append(WTFMove(segment));
 }
 
 void ReplaySession::insertSegment(size_t position, RefPtr<ReplaySessionSegment>&& segment)
@@ -78,7 +78,7 @@ void ReplaySession::insertSegment(size_t position, RefPtr<ReplaySessionSegment>&
     ASSERT_ARG(segment, segment);
     ASSERT_ARG(position, position >= 0 && position < m_segments.size());
 
-    m_segments.insert(position, WTF::move(segment));
+    m_segments.insert(position, WTFMove(segment));
 }
 
 void ReplaySession::removeSegment(size_t position)

@@ -400,7 +400,7 @@ void InjectedBundle::addUserScript(WebPageGroupProxy* pageGroup, InjectedBundleS
     // url is not from URL::string(), i.e. it has not already been parsed by URL, so we have to use the relative URL constructor for URL instead of the ParsedURLStringTag version.
     auto userScript = std::make_unique<UserScript>(source, URL(URL(), url), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), injectionTime, injectedFrames);
 
-    pageGroup->userContentController().addUserScript(scriptWorld->coreWorld(), WTF::move(userScript));
+    pageGroup->userContentController().addUserScript(scriptWorld->coreWorld(), WTFMove(userScript));
 }
 
 void InjectedBundle::addUserStyleSheet(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames injectedFrames)
@@ -408,7 +408,7 @@ void InjectedBundle::addUserStyleSheet(WebPageGroupProxy* pageGroup, InjectedBun
     // url is not from URL::string(), i.e. it has not already been parsed by URL, so we have to use the relative URL constructor for URL instead of the ParsedURLStringTag version.
     auto userStyleSheet = std::make_unique<UserStyleSheet>(source, URL(URL(), url), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), injectedFrames, UserStyleUserLevel);
 
-    pageGroup->userContentController().addUserStyleSheet(scriptWorld->coreWorld(), WTF::move(userStyleSheet), InjectInExistingDocuments);
+    pageGroup->userContentController().addUserStyleSheet(scriptWorld->coreWorld(), WTFMove(userStyleSheet), InjectInExistingDocuments);
 }
 
 void InjectedBundle::removeUserScript(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& url)

@@ -41,7 +41,7 @@ class StyleKeyframe : public RefCounted<StyleKeyframe> {
 public:
     static Ref<StyleKeyframe> create(Ref<StyleProperties>&& properties)
     {
-        return adoptRef(*new StyleKeyframe(WTF::move(properties)));
+        return adoptRef(*new StyleKeyframe(WTFMove(properties)));
     }
     ~StyleKeyframe();
 

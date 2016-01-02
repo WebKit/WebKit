@@ -138,7 +138,7 @@ void RTCConfiguration::initialize(const Dictionary& configuration, ExceptionCode
         if (!iceServer)
             return;
 
-        m_iceServers.append(WTF::move(iceServer));
+        m_iceServers.append(WTFMove(iceServer));
     }
 
     String iceTransportPolicy;

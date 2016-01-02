@@ -89,7 +89,7 @@ static void callOnFileThread(std::function<void()>&& function)
         });
     });
 
-    queue.get().append(std::make_unique<std::function<void()>>(WTF::move(function)));
+    queue.get().append(std::make_unique<std::function<void()>>(WTFMove(function)));
 }
 
 AsyncFileStream::AsyncFileStream(FileStreamClient& client)

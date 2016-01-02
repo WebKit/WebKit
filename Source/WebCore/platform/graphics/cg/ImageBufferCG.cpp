@@ -205,7 +205,7 @@ RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavio
     else
         image = copyNativeImage(DontCopyBackingStore);
 
-    return createBitmapImageAfterScalingIfNeeded(WTF::move(image), internalSize(), logicalSize(), m_data.backingStoreSize, m_resolutionScale, scaleBehavior);
+    return createBitmapImageAfterScalingIfNeeded(WTFMove(image), internalSize(), logicalSize(), m_data.backingStoreSize, m_resolutionScale, scaleBehavior);
 }
 
 RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffer, ScaleBehavior scaleBehavior)
@@ -215,7 +215,7 @@ RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffe
     IntSize backingStoreSize = imageBuffer->m_data.backingStoreSize;
     float resolutionScale = imageBuffer->m_resolutionScale;
 
-    return createBitmapImageAfterScalingIfNeeded(sinkIntoNativeImage(WTF::move(imageBuffer)), internalSize, logicalSize, backingStoreSize, resolutionScale, scaleBehavior);
+    return createBitmapImageAfterScalingIfNeeded(sinkIntoNativeImage(WTFMove(imageBuffer)), internalSize, logicalSize, backingStoreSize, resolutionScale, scaleBehavior);
 }
 
 BackingStoreCopy ImageBuffer::fastCopyImageMode()
@@ -229,7 +229,7 @@ RetainPtr<CGImageRef> ImageBuffer::sinkIntoNativeImage(std::unique_ptr<ImageBuff
     if (!imageBuffer->m_data.surface)
         return imageBuffer->copyNativeImage(DontCopyBackingStore);
 
-    return IOSurface::sinkIntoImage(IOSurface::createFromImageBuffer(WTF::move(imageBuffer)));
+    return IOSurface::sinkIntoImage(IOSurface::createFromImageBuffer(WTFMove(imageBuffer)));
 #else
     return imageBuffer->copyNativeImage(DontCopyBackingStore);
 #endif
@@ -272,7 +272,7 @@ void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, Graphi
     float resolutionScale = imageBuffer->m_resolutionScale;
     IntSize backingStoreSize = imageBuffer->m_data.backingStoreSize;
 
-    RetainPtr<CGImageRef> image = IOSurface::sinkIntoImage(IOSurface::createFromImageBuffer(WTF::move(imageBuffer)));
+    RetainPtr<CGImageRef> image = IOSurface::sinkIntoImage(IOSurface::createFromImageBuffer(WTFMove(imageBuffer)));
     
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(resolutionScale, resolutionScale);

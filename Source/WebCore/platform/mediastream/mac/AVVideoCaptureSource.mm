@@ -334,7 +334,7 @@ RefPtr<Image> AVVideoCaptureSource::currentFrameImage()
 
     paintCurrentFrameInContext(imageBuffer->context(), imageRect);
 
-    return ImageBuffer::sinkIntoImage(WTF::move(imageBuffer));
+    return ImageBuffer::sinkIntoImage(WTFMove(imageBuffer));
 }
 
 RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameCGImage()

@@ -179,7 +179,7 @@ void webkitSoupRequestInputStreamDidFailWithError(WebKitSoupRequestInputStream* 
         g_task_return_error(data->task.get(), error.release());
     } else {
         stream->priv->contentLength = stream->priv->bytesReceived;
-        stream->priv->error = WTF::move(error);
+        stream->priv->error = WTFMove(error);
     }
 }
 

@@ -590,7 +590,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
     bool synthesizeItalic = fontDescription.italic() && !logFont.lfItalic;
 
-    auto result = std::make_unique<FontPlatformData>(WTF::move(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
+    auto result = std::make_unique<FontPlatformData>(WTFMove(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
 
 #if USE(CG)
     bool fontCreationFailed = !result->cgFont();

@@ -39,7 +39,7 @@
 namespace Test {
 HandleWheelEvent::HandleWheelEvent(std::unique_ptr<PlatformWheelEvent> platformEvent, PlatformWheelPhase phase)
     : EventLoopInput<HandleWheelEvent>()
-    , m_platformEvent(WTF::move(platformEvent))
+    , m_platformEvent(WTFMove(platformEvent))
     , m_phase(phase)
 {
 }
@@ -72,7 +72,7 @@ bool InputTraits<Test::HandleWheelEvent>::decode(EncodedValue& encodedValue, std
     if (!encodedValue.get<Test::PlatformWheelPhase>(ASCIILiteral("phase"), phase))
         return false;
 
-    input = std::make_unique<Test::HandleWheelEvent>(WTF::move(platformEvent), phase);
+    input = std::make_unique<Test::HandleWheelEvent>(WTFMove(platformEvent), phase);
     return true;
 }
 #if ENABLE(DUMMY_FEATURE)

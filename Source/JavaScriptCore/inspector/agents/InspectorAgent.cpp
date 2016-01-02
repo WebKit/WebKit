@@ -123,7 +123,7 @@ void InspectorAgent::activateExtraDomain(const String& domainName)
 
     Ref<Inspector::Protocol::Array<String>> domainNames = Inspector::Protocol::Array<String>::create();
     domainNames->addItem(domainName);
-    m_frontendDispatcher->activateExtraDomains(WTF::move(domainNames));
+    m_frontendDispatcher->activateExtraDomains(WTFMove(domainNames));
 }
 
 void InspectorAgent::activateExtraDomains(const Vector<String>& extraDomains)

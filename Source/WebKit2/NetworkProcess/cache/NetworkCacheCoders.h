@@ -124,7 +124,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<false, T, inlineC
             if (!decoder.decode(element))
                 return false;
             
-            tmp.append(WTF::move(element));
+            tmp.append(WTFMove(element));
         }
 
         tmp.shrinkToFit();

@@ -167,7 +167,7 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
     if (m_target == target)
         return;
 
-    m_target = WTF::move(target);
+    m_target = WTFMove(target);
     if (m_target)
         receivedTarget();
 }

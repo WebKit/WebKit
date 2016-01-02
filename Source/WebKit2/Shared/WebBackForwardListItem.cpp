@@ -34,11 +34,11 @@ static uint64_t highestUsedItemID = 0;
 
 PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemState backForwardListItemState, uint64_t pageID)
 {
-    return adoptRef(new WebBackForwardListItem(WTF::move(backForwardListItemState), pageID));
+    return adoptRef(new WebBackForwardListItem(WTFMove(backForwardListItemState), pageID));
 }
 
 WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState backForwardListItemState, uint64_t pageID)
-    : m_itemState(WTF::move(backForwardListItemState))
+    : m_itemState(WTFMove(backForwardListItemState))
     , m_pageID(pageID)
 {
     if (m_itemState.identifier > highestUsedItemID)

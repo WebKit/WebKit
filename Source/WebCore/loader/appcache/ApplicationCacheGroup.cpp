@@ -51,7 +51,7 @@
 namespace WebCore {
 
 ApplicationCacheGroup::ApplicationCacheGroup(Ref<ApplicationCacheStorage>&& storage, const URL& manifestURL)
-    : m_storage(WTF::move(storage))
+    : m_storage(WTFMove(storage))
     , m_manifestURL(manifestURL)
     , m_origin(SecurityOrigin::create(manifestURL))
     , m_updateStatus(Idle)

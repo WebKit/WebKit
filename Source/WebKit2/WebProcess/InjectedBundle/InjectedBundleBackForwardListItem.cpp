@@ -40,7 +40,7 @@ Ref<API::Array> InjectedBundleBackForwardListItem::children() const
     for (const auto& child : m_item->children())
         children.uncheckedAppend(InjectedBundleBackForwardListItem::create(const_cast<HistoryItem*>(child.ptr())));
 
-    return API::Array::create(WTF::move(children));
+    return API::Array::create(WTFMove(children));
 }
 
 } // namespace WebKit

@@ -55,7 +55,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
 void HTMLResourcePreloader::preload(PreloadRequestStream requests)
 {
     for (auto& request : requests)
-        preload(WTF::move(request));
+        preload(WTFMove(request));
 }
 
 static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const String& attributeValue)

@@ -196,7 +196,7 @@ void HTMLConstructionSite::executeQueuedTasks()
 
     // Copy the task queue into a local variable in case executeTask
     // re-enters the parser.
-    TaskQueue queue = WTF::move(m_taskQueue);
+    TaskQueue queue = WTFMove(m_taskQueue);
 
     for (size_t i = 0; i < size; ++i)
         executeTask(queue[i]);
@@ -570,7 +570,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
 
         currentPosition += textNode->length();
         ASSERT(currentPosition <= characters.length());
-        task.child = WTF::move(textNode);
+        task.child = WTFMove(textNode);
 
         executeTask(task);
     }

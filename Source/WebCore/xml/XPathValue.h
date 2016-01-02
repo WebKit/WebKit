@@ -45,13 +45,13 @@ namespace WebCore {
             Value(const char* value) : m_type(StringValue), m_data(Data::create(value)) { }
 
             explicit Value(NodeSet&& value)
-                : m_type(NodeSetValue), m_data(Data::create(WTF::move(value)))
+                : m_type(NodeSetValue), m_data(Data::create(WTFMove(value)))
             { }
             explicit Value(Node* value)
                 : m_type(NodeSetValue), m_data(Data::create(value))
             { }
             explicit Value(RefPtr<Node>&& value)
-                : m_type(NodeSetValue), m_data(Data::create(WTF::move(value)))
+                : m_type(NodeSetValue), m_data(Data::create(WTFMove(value)))
             { }
 
             Type type() const { return m_type; }
@@ -76,8 +76,8 @@ namespace WebCore {
             struct Data : public RefCounted<Data> {
                 static Ref<Data> create() { return adoptRef(*new Data); }
                 static Ref<Data> create(const String& string) { return adoptRef(*new Data(string)); }
-                static Ref<Data> create(NodeSet&& nodeSet) { return adoptRef(*new Data(WTF::move(nodeSet))); }
-                static Ref<Data> create(RefPtr<Node>&& node) { return adoptRef(*new Data(WTF::move(node))); }
+                static Ref<Data> create(NodeSet&& nodeSet) { return adoptRef(*new Data(WTFMove(nodeSet))); }
+                static Ref<Data> create(RefPtr<Node>&& node) { return adoptRef(*new Data(WTFMove(node))); }
 
                 String string;
                 NodeSet nodeSet;
@@ -88,10 +88,10 @@ namespace WebCore {
                     : string(string)
                 { }
                 explicit Data(NodeSet&& nodeSet)
-                    : nodeSet(WTF::move(nodeSet))
+                    : nodeSet(WTFMove(nodeSet))
                 { }
                 explicit Data(RefPtr<Node>&& node)
-                    : nodeSet(WTF::move(node))
+                    : nodeSet(WTFMove(node))
                 { }
             };
 

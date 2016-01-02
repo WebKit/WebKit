@@ -277,7 +277,7 @@ public:
         auto body = std::make_unique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
-        m_pattern.m_disjunctions.append(WTF::move(body));
+        m_pattern.m_disjunctions.append(WTFMove(body));
     }
 
     ~YarrPatternConstructor()
@@ -292,7 +292,7 @@ public:
         auto body = std::make_unique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
-        m_pattern.m_disjunctions.append(WTF::move(body));
+        m_pattern.m_disjunctions.append(WTFMove(body));
     }
     
     void assertionBOL()
@@ -331,7 +331,7 @@ public:
         m_characterClassConstructor.putUnicodeIgnoreCase(ch, info);
         auto newCharacterClass = m_characterClassConstructor.charClass();
         m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), false));
-        m_pattern.m_userCharacterClasses.append(WTF::move(newCharacterClass));
+        m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
     }
 
     void atomBuiltInCharacterClass(BuiltInCharacterClassID classID, bool invert)
@@ -393,7 +393,7 @@ public:
     {
         auto newCharacterClass = m_characterClassConstructor.charClass();
         m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
-        m_pattern.m_userCharacterClasses.append(WTF::move(newCharacterClass));
+        m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
     }
 
     void atomParenthesesSubpatternBegin(bool capture = true)
@@ -405,7 +405,7 @@ public:
         auto parenthesesDisjunction = std::make_unique<PatternDisjunction>(m_alternative);
         m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, false));
         m_alternative = parenthesesDisjunction->addNewAlternative();
-        m_pattern.m_disjunctions.append(WTF::move(parenthesesDisjunction));
+        m_pattern.m_disjunctions.append(WTFMove(parenthesesDisjunction));
     }
 
     void atomParentheticalAssertionBegin(bool invert = false)
@@ -414,7 +414,7 @@ public:
         m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParentheticalAssertion, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction.get(), false, invert));
         m_alternative = parenthesesDisjunction->addNewAlternative();
         m_invertParentheticalAssertion = invert;
-        m_pattern.m_disjunctions.append(WTF::move(parenthesesDisjunction));
+        m_pattern.m_disjunctions.append(WTFMove(parenthesesDisjunction));
     }
 
     void atomParenthesesEnd()
@@ -498,7 +498,7 @@ public:
             return 0;
 
         PatternDisjunction* copiedDisjunction = newDisjunction.get();
-        m_pattern.m_disjunctions.append(WTF::move(newDisjunction));
+        m_pattern.m_disjunctions.append(WTFMove(newDisjunction));
         return copiedDisjunction;
     }
     

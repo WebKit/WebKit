@@ -188,7 +188,7 @@ void WebUserContentController::addUserContentExtensions(const Vector<std::pair<S
 {
     for (const auto& userContentExtension : userContentExtensions) {
         WebCompiledContentExtensionData contentExtensionData = userContentExtension.second;
-        RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTF::move(contentExtensionData));
+        RefPtr<WebCompiledContentExtension> compiledContentExtension = WebCompiledContentExtension::create(WTFMove(contentExtensionData));
         m_userContentController->addUserContentExtension(userContentExtension.first, compiledContentExtension);
     }
 }

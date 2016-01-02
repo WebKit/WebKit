@@ -962,7 +962,7 @@ Ref<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceReq
     COMPtr<WebDataSource> dataSource(AdoptCOM, WebDataSource::createInstance(loader.ptr()));
 
     loader->setDataSource(dataSource.get());
-    return WTF::move(loader);
+    return WTFMove(loader);
 }
 
 void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL& url)

@@ -66,7 +66,7 @@ protected:
         m_isContextNodeSensitive |= expression->m_isContextNodeSensitive;
         m_isContextPositionSensitive |= expression->m_isContextPositionSensitive;
         m_isContextSizeSensitive |= expression->m_isContextSizeSensitive;
-        m_subexpressions.append(WTF::move(expression));
+        m_subexpressions.append(WTFMove(expression));
     }
 
     void setSubexpressions(Vector<std::unique_ptr<Expression>>);

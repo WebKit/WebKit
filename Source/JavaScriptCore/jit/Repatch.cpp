@@ -314,7 +314,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
     }
 
     MacroAssemblerCodePtr codePtr =
-        stubInfo.addAccessCase(codeBlock, propertyName, WTF::move(newCase));
+        stubInfo.addAccessCase(codeBlock, propertyName, WTFMove(newCase));
 
     if (!codePtr)
         return GiveUpOnCache;
@@ -455,7 +455,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         }
     }
 
-    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTF::move(newCase));
+    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTFMove(newCase));
     
     if (!codePtr)
         return GiveUpOnCache;
@@ -512,7 +512,7 @@ static InlineCacheAction tryRepatchIn(
     std::unique_ptr<AccessCase> newCase = AccessCase::in(
         vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, structure, conditionSet);
 
-    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTF::move(newCase));
+    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTFMove(newCase));
     if (!codePtr)
         return GiveUpOnCache;
 
@@ -878,7 +878,7 @@ void linkPolymorphicCall(
                 toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation().labelAtOffset(0).executableAddress(),
                 toCString(listDump(callCases)).data())),
         *vm, callerCodeBlock, exec->callerFrame(), callLinkInfo, callCases,
-        WTF::move(fastCounts)));
+        WTFMove(fastCounts)));
     
     MacroAssembler::replaceWithJump(
         MacroAssembler::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),

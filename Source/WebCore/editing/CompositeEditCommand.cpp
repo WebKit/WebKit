@@ -558,10 +558,10 @@ void CompositeEditCommand::deleteTextFromNode(PassRefPtr<Text> node, unsigned of
 void CompositeEditCommand::replaceTextInNode(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)
 {
     RefPtr<Text> node(prpNode);
-    RefPtr<DeleteFromTextNodeCommand> deleteCommand = ReplaceDeleteFromTextNodeCommand::create(WTF::move(node), offset, count);
+    RefPtr<DeleteFromTextNodeCommand> deleteCommand = ReplaceDeleteFromTextNodeCommand::create(WTFMove(node), offset, count);
     applyCommandToComposite(deleteCommand);
     if (!replacementText.isEmpty())
-        applyCommandToComposite(ReplaceInsertIntoTextNodeCommand::create(WTF::move(node), offset, replacementText, deleteCommand->deletedText(), editingAction()));
+        applyCommandToComposite(ReplaceInsertIntoTextNodeCommand::create(WTFMove(node), offset, replacementText, deleteCommand->deletedText(), editingAction()));
 }
 
 Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
@@ -1319,7 +1319,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MovingParagraph;
     if (!preserveStyle)
         options |= ReplaceSelectionCommand::MatchStyle;
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTF::move(fragment), options));
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(fragment), options));
 
     frame().editor().markMisspellingsAndBadGrammar(endingSelection());
 

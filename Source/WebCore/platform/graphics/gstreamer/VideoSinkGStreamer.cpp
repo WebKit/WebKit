@@ -128,8 +128,8 @@ private:
     void render()
     {
         LockHolder locker(m_sampleMutex);
-        GRefPtr<GstSample> sample = WTF::move(m_sample);
-        GRefPtr<WebKitVideoSink> sink = WTF::move(m_sink);
+        GRefPtr<GstSample> sample = WTFMove(m_sample);
+        GRefPtr<WebKitVideoSink> sink = WTFMove(m_sink);
         if (sample && !m_unlocked && LIKELY(GST_IS_SAMPLE(sample.get())))
             webkitVideoSinkRepaintRequested(sink.get(), sample.get());
         m_dataCondition.notifyOne();

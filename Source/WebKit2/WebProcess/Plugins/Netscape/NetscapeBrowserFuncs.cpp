@@ -303,7 +303,7 @@ static NPError NPN_PostURL(NPP npp, const char* url, const char* target, uint32_
         return error;
 
     RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
-    plugin->loadURL("POST", makeURLString(url), target, WTF::move(headerFields), postData, false, 0);
+    plugin->loadURL("POST", makeURLString(url), target, WTFMove(headerFields), postData, false, 0);
     return NPERR_NO_ERROR;
 }
 

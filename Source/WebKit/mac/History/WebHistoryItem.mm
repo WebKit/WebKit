@@ -353,7 +353,7 @@ WebHistoryItem *kit(HistoryItem* item)
             redirectURLsVector->uncheckedAppend((NSString *)redirectURL);
         }
 
-        core(_private)->setRedirectURLs(WTF::move(redirectURLsVector));
+        core(_private)->setRedirectURLs(WTFMove(redirectURLsVector));
     }
 
     NSArray *childDicts = [dict objectForKey:childrenKey];

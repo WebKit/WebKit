@@ -381,9 +381,9 @@ RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(ExecState& exec, const
             RefPtr<IDBKey> key = internalCreateIDBKeyFromScriptValueAndKeyPath(&exec, value, string);
             if (!key)
                 return nullptr;
-            result.uncheckedAppend(WTF::move(key));
+            result.uncheckedAppend(WTFMove(key));
         }
-        return IDBKey::createArray(WTF::move(result));
+        return IDBKey::createArray(WTFMove(result));
     }
 
     ASSERT(keyPath.type() == IndexedDB::KeyPathType::String);
@@ -594,7 +594,7 @@ void generateIndexKeyForValue(ExecState& exec, const IDBIndexInfo& info, JSValue
     if (keyDatas.isEmpty())
         return;
 
-    outKey = IndexKey(WTF::move(keyDatas));
+    outKey = IndexKey(WTFMove(keyDatas));
 }
 
 } // namespace WebCore

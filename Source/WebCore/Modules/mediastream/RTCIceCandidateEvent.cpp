@@ -40,7 +40,7 @@ Ref<RTCIceCandidateEvent> RTCIceCandidateEvent::create()
 
 Ref<RTCIceCandidateEvent> RTCIceCandidateEvent::create(bool canBubble, bool cancelable, RefPtr<RTCIceCandidate>&& candidate)
 {
-    return adoptRef(*new RTCIceCandidateEvent(canBubble, cancelable, WTF::move(candidate)));
+    return adoptRef(*new RTCIceCandidateEvent(canBubble, cancelable, WTFMove(candidate)));
 }
 
 RTCIceCandidateEvent::RTCIceCandidateEvent()
@@ -49,7 +49,7 @@ RTCIceCandidateEvent::RTCIceCandidateEvent()
 
 RTCIceCandidateEvent::RTCIceCandidateEvent(bool canBubble, bool cancelable, RefPtr<RTCIceCandidate>&& candidate)
     : Event(eventNames().icecandidateEvent, canBubble, cancelable)
-    , m_candidate(WTF::move(candidate))
+    , m_candidate(WTFMove(candidate))
 {
 }
 

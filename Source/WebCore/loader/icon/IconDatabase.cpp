@@ -1338,7 +1338,7 @@ void IconDatabase::syncThreadMainLoop()
 
     m_syncLock.lock();
 
-    std::unique_ptr<SuddenTerminationDisabler> disableSuddenTermination = WTF::move(m_disableSuddenTerminationWhileSyncThreadHasWorkToDo);
+    std::unique_ptr<SuddenTerminationDisabler> disableSuddenTermination = WTFMove(m_disableSuddenTerminationWhileSyncThreadHasWorkToDo);
 
     // We'll either do any pending work on our first pass through the loop, or we'll terminate
     // without doing any work. Either way we're dealing with any currently-pending work.
@@ -1428,7 +1428,7 @@ void IconDatabase::syncThreadMainLoop()
         m_syncThreadHasWorkToDo = false;
 
         ASSERT(m_disableSuddenTerminationWhileSyncThreadHasWorkToDo);
-        disableSuddenTermination = WTF::move(m_disableSuddenTerminationWhileSyncThreadHasWorkToDo);
+        disableSuddenTermination = WTFMove(m_disableSuddenTerminationWhileSyncThreadHasWorkToDo);
     }
 
     m_syncLock.unlock();

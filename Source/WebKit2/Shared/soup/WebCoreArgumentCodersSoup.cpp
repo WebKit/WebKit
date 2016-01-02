@@ -79,7 +79,7 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     HTTPHeaderMap headers;
     if (!decoder.decode(headers))
         return false;
-    resourceRequest.setHTTPHeaderFields(WTF::move(headers));
+    resourceRequest.setHTTPHeaderFields(WTFMove(headers));
 
     double timeoutInterval;
     if (!decoder.decode(timeoutInterval))

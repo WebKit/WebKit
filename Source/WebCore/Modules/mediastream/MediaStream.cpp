@@ -60,7 +60,7 @@ Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, const Medi
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, RefPtr<MediaStreamPrivate>&& streamPrivate)
 {
-    return adoptRef(*new MediaStream(context, WTF::move(streamPrivate)));
+    return adoptRef(*new MediaStream(context, WTFMove(streamPrivate)));
 }
 
 MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrackVector& tracks)
@@ -97,7 +97,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPriv
     for (auto& trackPrivate : m_private->tracks()) {
         RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(context, *trackPrivate);
         track->addObserver(this);
-        m_trackSet.add(track->id(), WTF::move(track));
+        m_trackSet.add(track->id(), WTFMove(track));
     }
 }
 
@@ -122,7 +122,7 @@ RefPtr<MediaStream> MediaStream::clone()
 
 void MediaStream::addTrack(RefPtr<MediaStreamTrack>&& track)
 {
-    if (!internalAddTrack(WTF::move(track), StreamModifier::DomAPI))
+    if (!internalAddTrack(WTFMove(track), StreamModifier::DomAPI))
         return;
 
     for (auto& observer : m_observers)
@@ -197,7 +197,7 @@ void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
 {
     RefPtr<MediaStreamTrack> track = getTrackById(trackPrivate.id());
     ASSERT(track);
-    internalRemoveTrack(WTF::move(track), StreamModifier::Platform);
+    internalRemoveTrack(WTFMove(track), StreamModifier::Platform);
 }
 
 bool MediaStream::internalAddTrack(RefPtr<MediaStreamTrack>&& track, StreamModifier streamModifier)
@@ -211,7 +211,7 @@ bool MediaStream::internalAddTrack(RefPtr<MediaStreamTrack>&& track, StreamModif
     if (streamModifier == StreamModifier::DomAPI)
         m_private->addTrack(&track->privateTrack(), MediaStreamPrivate::NotifyClientOption::DontNotify);
     else
-        dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, false, false, WTF::move(track)));
+        dispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, false, false, WTFMove(track)));
 
     return true;
 }
@@ -226,7 +226,7 @@ bool MediaStream::internalRemoveTrack(RefPtr<MediaStreamTrack>&& track, StreamMo
     if (streamModifier == StreamModifier::DomAPI)
         m_private->removeTrack(track->privateTrack(), MediaStreamPrivate::NotifyClientOption::DontNotify);
     else
-        dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, false, false, WTF::move(track)));
+        dispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, false, false, WTFMove(track)));
 
     return true;
 }

@@ -40,7 +40,7 @@ Ref<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Docum
 
 RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTSpan>(*this, WTF::move(style));
+    return createRenderer<RenderSVGTSpan>(*this, WTFMove(style));
 }
 
 bool SVGTSpanElement::childShouldCreateRenderer(const Node& child) const

@@ -93,7 +93,7 @@ void MediaDocumentParser::createDocumentStructure()
     Ref<Element> metaElement = document()->createElement(metaTag, false);
     metaElement->setAttribute(nameAttr, "viewport");
     metaElement->setAttribute(contentAttr, "width=device-width,initial-scale=1,user-scalable=no");
-    headElement->appendChild(WTF::move(metaElement), IGNORE_EXCEPTION);
+    headElement->appendChild(WTFMove(metaElement), IGNORE_EXCEPTION);
 #endif
 
     Ref<Element> body = document()->createElement(bodyTag, false);
@@ -121,8 +121,8 @@ void MediaDocumentParser::createDocumentStructure()
     if (DocumentLoader* loader = document()->loader())
         source.setType(loader->responseMIMEType());
 
-    m_mediaElement->appendChild(WTF::move(sourceElement), IGNORE_EXCEPTION);
-    body->appendChild(WTF::move(mediaElement), IGNORE_EXCEPTION);
+    m_mediaElement->appendChild(WTFMove(sourceElement), IGNORE_EXCEPTION);
+    body->appendChild(WTFMove(mediaElement), IGNORE_EXCEPTION);
 
     Frame* frame = document()->frame();
     if (!frame)

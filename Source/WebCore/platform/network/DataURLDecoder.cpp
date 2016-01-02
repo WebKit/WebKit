@@ -60,14 +60,14 @@ class DecodingResultDispatcher : public ThreadSafeRefCounted<DecodingResultDispa
 public:
     static void dispatch(std::unique_ptr<DecodeTask> decodeTask)
     {
-        Ref<DecodingResultDispatcher> dispatcher = adoptRef(*new DecodingResultDispatcher(WTF::move(decodeTask)));
+        Ref<DecodingResultDispatcher> dispatcher = adoptRef(*new DecodingResultDispatcher(WTFMove(decodeTask)));
         dispatcher->startTimer();
     }
 
 private:
     DecodingResultDispatcher(std::unique_ptr<DecodeTask> decodeTask)
         : m_timer(*this, &DecodingResultDispatcher::timerFired)
-        , m_decodeTask(WTF::move(decodeTask))
+        , m_decodeTask(WTFMove(decodeTask))
     {
     }
 
@@ -82,7 +82,7 @@ private:
     void timerFired()
     {
         if (m_decodeTask->result.data)
-            m_decodeTask->completionHandler(WTF::move(m_decodeTask->result));
+            m_decodeTask->completionHandler(WTFMove(m_decodeTask->result));
         else
             m_decodeTask->completionHandler({ });
 
@@ -128,11 +128,11 @@ static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const Schedu
     auto mediaType = (isBase64 ? header.substring(0, header.length() - strlen(base64String)) : header).toString();
 
     return std::make_unique<DecodeTask>(DecodeTask {
-        WTF::move(urlString),
-        WTF::move(encodedData),
+        WTFMove(urlString),
+        WTFMove(encodedData),
         isBase64,
         scheduleContext,
-        WTF::move(completionHandler),
+        WTFMove(completionHandler),
         parseMediaType(mediaType)
     });
 }
@@ -165,7 +165,7 @@ void decode(const URL& url, const ScheduleContext& scheduleContext, DecodeComple
 {
     ASSERT(url.protocolIsData());
 
-    auto decodeTask = createDecodeTask(url, scheduleContext, WTF::move(completionHandler));
+    auto decodeTask = createDecodeTask(url, scheduleContext, WTFMove(completionHandler));
     auto* decodeTaskPtr = decodeTask.release();
     decodeQueue().dispatch([decodeTaskPtr] {
         auto& decodeTask = *decodeTaskPtr;
@@ -184,7 +184,7 @@ void decode(const URL& url, const ScheduleContext& scheduleContext, DecodeComple
                 decodeTask->completionHandler({ });
                 return;
             }
-            decodeTask->completionHandler(WTF::move(decodeTask->result));
+            decodeTask->completionHandler(WTFMove(decodeTask->result));
         });
 #endif
     });

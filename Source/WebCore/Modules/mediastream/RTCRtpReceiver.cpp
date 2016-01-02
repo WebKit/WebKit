@@ -36,7 +36,7 @@
 namespace WebCore {
 
 RTCRtpReceiver::RTCRtpReceiver(RefPtr<MediaStreamTrack>&& track)
-    : RTCRtpSenderReceiverBase(WTF::move(track))
+    : RTCRtpSenderReceiverBase(WTFMove(track))
 {
 }
 

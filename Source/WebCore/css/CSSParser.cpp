@@ -1340,7 +1340,7 @@ RefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string)
         valueList->append(value.releaseNonNull());
     }
 
-    return WTF::move(valueList);
+    return WTFMove(valueList);
 }
 
 CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
@@ -1550,7 +1550,7 @@ std::unique_ptr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     setupParser("@-webkit-mediaquery ", string, "} ");
     cssyyparse(this);
 
-    return WTF::move(m_mediaQuery);
+    return WTFMove(m_mediaQuery);
 }
 
 Vector<CSSParser::SourceSize> CSSParser::parseSizesAttribute(StringView string)
@@ -1568,7 +1568,7 @@ Vector<CSSParser::SourceSize> CSSParser::parseSizesAttribute(StringView string)
     if (!m_sourceSizeList)
         return result;
 
-    result = WTF::move(*m_sourceSizeList);
+    result = WTFMove(*m_sourceSizeList);
     m_sourceSizeList = nullptr;
     return result;
 }
@@ -1576,13 +1576,13 @@ Vector<CSSParser::SourceSize> CSSParser::parseSizesAttribute(StringView string)
 // FIXME(141289): The following two constructors are only needed because of a bug in MSVC 2013 (and prior).
 // We should remove this code as soon as a Visual Studio update that fixes this problem is released.
 CSSParser::SourceSize::SourceSize(CSSParser::SourceSize&& original)
-    : expression(WTF::move(original.expression))
+    : expression(WTFMove(original.expression))
     , length(original.length)
 {
 }
 
 CSSParser::SourceSize::SourceSize(std::unique_ptr<MediaQueryExp>&& origExp, RefPtr<CSSValue> value)
-    : expression(WTF::move(origExp))
+    : expression(WTFMove(origExp))
     , length(value)
 {
 }
@@ -1600,7 +1600,7 @@ CSSParser::SourceSize CSSParser::sourceSize(std::unique_ptr<MediaQueryExp>&& exp
     destroy(parserValue);
     // FIXME: Calling the constructor explicitly here to work around an MSVC bug.
     // For other compilers, we did not need to define the constructors and we could use aggregate initialization syntax.
-    return SourceSize(WTF::move(expression), WTF::move(value));
+    return SourceSize(WTFMove(expression), WTFMove(value));
 }
 
 static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenCustomProperties)
@@ -3340,19 +3340,19 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 void CSSParser::addFillValue(RefPtr<CSSValue>& lval, Ref<CSSValue>&& rval)
 {
     if (!lval) {
-        lval = WTF::move(rval);
+        lval = WTFMove(rval);
         return;
     }
 
     if (lval->isBaseValueList()) {
-        downcast<CSSValueList>(*lval).append(WTF::move(rval));
+        downcast<CSSValueList>(*lval).append(WTFMove(rval));
         return;
     }
 
     auto list = CSSValueList::createCommaSeparated();
     list.get().append(lval.releaseNonNull());
-    list.get().append(WTF::move(rval));
-    lval = WTF::move(list);
+    list.get().append(WTFMove(rval));
+    lval = WTFMove(list);
 }
 
 static bool isContentDistributionKeyword(CSSValueID id)
@@ -3762,19 +3762,19 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
 void CSSParser::addAnimationValue(RefPtr<CSSValue>& lval, Ref<CSSValue>&& rval)
 {
     if (!lval) {
-        lval = WTF::move(rval);
+        lval = WTFMove(rval);
         return;
     }
 
     if (is<CSSValueList>(*lval)) {
-        downcast<CSSValueList>(*lval).append(WTF::move(rval));
+        downcast<CSSValueList>(*lval).append(WTFMove(rval));
         return;
     }
 
     auto list = CSSValueList::createCommaSeparated();
     list.get().append(lval.releaseNonNull());
-    list.get().append(WTF::move(rval));
-    lval = WTF::move(list);
+    list.get().append(WTFMove(rval));
+    lval = WTFMove(list);
 }
 
 bool CSSParser::parseAnimationShorthand(CSSPropertyID propId, bool important)
@@ -4526,7 +4526,7 @@ void CSSParser::parse4ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
     if (isFillPositionKeyword(value4->getValueID()))
         return;
 
-    value1 = createPrimitiveValuePair(WTF::move(parsedValue1), WTF::move(parsedValue2));
+    value1 = createPrimitiveValuePair(WTFMove(parsedValue1), WTFMove(parsedValue2));
     value2 = createPrimitiveValuePair(value3.copyRef(), value4.copyRef());
 
     if (ident1 == CSSValueTop || ident1 == CSSValueBottom)
@@ -4570,7 +4570,7 @@ void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
             swapNeeded = true;
         }
         value1 = createPrimitiveValuePair(cssValuePool.createIdentifierValue(firstPositionKeyword), cssValuePool.createValue(50, CSSPrimitiveValue::CSS_PERCENTAGE));
-        value2 = createPrimitiveValuePair(WTF::move(parsedValue2), value3.copyRef());
+        value2 = createPrimitiveValuePair(WTFMove(parsedValue2), value3.copyRef());
     } else if (ident3 == CSSValueCenter) {
         if (isFillPositionKeyword(ident2))
             return;
@@ -4580,7 +4580,7 @@ void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
             secondPositionKeyword = CSSValueLeft;
             swapNeeded = true;
         }
-        value1 = createPrimitiveValuePair(WTF::move(parsedValue1), parsedValue2.copyRef());
+        value1 = createPrimitiveValuePair(WTFMove(parsedValue1), parsedValue2.copyRef());
         value2 = createPrimitiveValuePair(cssValuePool.createIdentifierValue(secondPositionKeyword), cssValuePool.createValue(50, CSSPrimitiveValue::CSS_PERCENTAGE));
     } else {
         RefPtr<CSSPrimitiveValue> firstPositionValue;
@@ -4609,7 +4609,7 @@ void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
         if (isValueConflictingWithCurrentEdge(ident1, secondPositionKeyword))
             return;
 
-        value1 = createPrimitiveValuePair(WTF::move(parsedValue1), firstPositionValue.copyRef());
+        value1 = createPrimitiveValuePair(WTFMove(parsedValue1), firstPositionValue.copyRef());
         value2 = createPrimitiveValuePair(cssValuePool.createIdentifierValue(secondPositionKeyword), secondPositionValue.copyRef());
     }
 
@@ -4692,9 +4692,9 @@ void CSSParser::parseFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue
         return;
 
     if (numberOfValues == 3)
-        parse3ValuesFillPosition(valueList, value1, value2, WTF::move(parsedValue1), WTF::move(parsedValue2));
+        parse3ValuesFillPosition(valueList, value1, value2, WTFMove(parsedValue1), WTFMove(parsedValue2));
     else
-        parse4ValuesFillPosition(valueList, value1, value2, WTF::move(parsedValue1), WTF::move(parsedValue2));
+        parse4ValuesFillPosition(valueList, value1, value2, WTFMove(parsedValue1), WTFMove(parsedValue2));
 }
 
 void CSSParser::parse2ValuesFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
@@ -4824,7 +4824,7 @@ RefPtr<CSSValue> CSSParser::parseFillSize(CSSPropertyID propId, bool& allowComma
 
     if (!parsedValue2)
         return parsedValue1;
-    return createPrimitiveValuePair(WTF::move(parsedValue1), WTF::move(parsedValue2), propId == CSSPropertyWebkitBackgroundSize ? Pair::IdenticalValueEncoding::Coalesce : Pair::IdenticalValueEncoding::DoNotCoalesce);
+    return createPrimitiveValuePair(WTFMove(parsedValue1), WTFMove(parsedValue2), propId == CSSPropertyWebkitBackgroundSize ? Pair::IdenticalValueEncoding::Coalesce : Pair::IdenticalValueEncoding::DoNotCoalesce);
 }
 
 bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2,
@@ -6145,7 +6145,7 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
     }
 
     if (valid)
-        addProperty(propId, CSSValuePool::singleton().createValue(RefPtr<DashboardRegion>(WTF::move(firstRegion))), important);
+        addProperty(propId, CSSValuePool::singleton().createValue(RefPtr<DashboardRegion>(WTFMove(firstRegion))), important);
 
     return valid;
 }
@@ -6361,7 +6361,7 @@ bool CSSParser::parseClipShape(CSSPropertyID propId, bool important)
         i++;
     }
     if (valid) {
-        addProperty(propId, CSSValuePool::singleton().createValue(WTF::move(rect)), important);
+        addProperty(propId, CSSValuePool::singleton().createValue(WTFMove(rect)), important);
         m_valueList->next();
         return true;
     }
@@ -6668,7 +6668,7 @@ RefPtr<CSSBasicShape> CSSParser::parseBasicShapePath(CSSParserValueList& args)
     if (!buildSVGPathByteStreamFromString(argument->string, *byteStream, UnalteredParsing))
         return nullptr;
 
-    RefPtr<CSSBasicShapePath> shape = CSSBasicShapePath::create(WTF::move(byteStream));
+    RefPtr<CSSBasicShapePath> shape = CSSBasicShapePath::create(WTFMove(byteStream));
     shape->setWindRule(windRule);
 
     args.next();
@@ -6891,7 +6891,7 @@ void CSSParser::parseSystemFont(bool important)
     addProperty(CSSPropertyFontSize, CSSValuePool::singleton().createValue(fontDescription.specifiedSize(), CSSPrimitiveValue::CSS_PX), important);
     Ref<CSSValueList> fontFamilyList = CSSValueList::createCommaSeparated();
     fontFamilyList->append(CSSValuePool::singleton().createFontFamilyValue(fontDescription.familyAt(0), FromSystemFontID::Yes));
-    addProperty(CSSPropertyFontFamily, WTF::move(fontFamilyList), important);
+    addProperty(CSSPropertyFontFamily, WTFMove(fontFamilyList), important);
     addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
     addProperty(CSSPropertyLineHeight, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
 }
@@ -8265,7 +8265,7 @@ bool CSSParser::parseBorderImageRepeat(RefPtr<CSSValue>& result)
     } else
         secondValue = firstValue;
 
-    result = createPrimitiveValuePair(WTF::move(firstValue), WTF::move(secondValue));
+    result = createPrimitiveValuePair(WTFMove(firstValue), WTFMove(secondValue));
     return true;
 }
 
@@ -8328,7 +8328,7 @@ public:
         quad->setLeft(m_left);
 
         // Make our new border image value now.
-        return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTF::move(quad)), m_fill);
+        return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), m_fill);
     }
 
 private:
@@ -8446,7 +8446,7 @@ public:
         quad->setLeft(m_left);
 
         // Make our new value now.
-        return CSSValuePool::singleton().createValue(WTF::move(quad));
+        return CSSValuePool::singleton().createValue(WTFMove(quad));
     }
 
 private:
@@ -10011,7 +10011,7 @@ RefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParserVal
                     return nullptr;
             }
 
-            filterValue->append(WTF::move(primitiveValue));
+            filterValue->append(WTFMove(primitiveValue));
         }
         break;
     }
@@ -10589,7 +10589,7 @@ bool CSSParser::parseFontFeatureTag(CSSValueList& settings)
             m_valueList->next();
         }
     }
-    settings.append(CSSFontFeatureValue::create(WTF::move(tag), tagValue));
+    settings.append(CSSFontFeatureValue::create(WTFMove(tag), tagValue));
     return true;
 }
 
@@ -10710,7 +10710,7 @@ bool CSSParser::parseFontVariantLigatures(bool important, bool unknownIsFailure,
     if (!values->length())
         return !unknownIsFailure;
 
-    addProperty(CSSPropertyFontVariantLigatures, WTF::move(values), important, implicit);
+    addProperty(CSSPropertyFontVariantLigatures, WTFMove(values), important, implicit);
     return true;
 }
 
@@ -10811,7 +10811,7 @@ bool CSSParser::parseFontVariantNumeric(bool important, bool unknownIsFailure, b
     if (!values->length())
         return !unknownIsFailure;
 
-    addProperty(CSSPropertyFontVariantNumeric, WTF::move(values), important, implicit);
+    addProperty(CSSPropertyFontVariantNumeric, WTFMove(values), important, implicit);
     return true;
 }
 
@@ -10905,7 +10905,7 @@ bool CSSParser::parseFontVariantEastAsian(bool important, bool unknownIsFailure,
     if (!values->length())
         return !unknownIsFailure;
 
-    addProperty(CSSPropertyFontVariantEastAsian, WTF::move(values), important, implicit);
+    addProperty(CSSPropertyFontVariantEastAsian, WTFMove(values), important, implicit);
     return true;
 }
 
@@ -12839,7 +12839,7 @@ void CSSParser::logError(const String& message, int lineNumber, int columnNumber
 
 RefPtr<StyleRuleKeyframes> CSSParser::createKeyframesRule(const String& name, std::unique_ptr<Vector<RefPtr<StyleKeyframe>>> popKeyframes)
 {
-    std::unique_ptr<Vector<RefPtr<StyleKeyframe>>> keyframes = WTF::move(popKeyframes);
+    std::unique_ptr<Vector<RefPtr<StyleKeyframe>>> keyframes = WTFMove(popKeyframes);
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRuleKeyframes> rule = StyleRuleKeyframes::create();
     for (size_t i = 0; i < keyframes->size(); ++i)
@@ -12945,15 +12945,15 @@ std::unique_ptr<CSSParserSelector> CSSParser::rewriteSpecifiers(std::unique_ptr<
 {
     if (newSpecifier->isCustomPseudoElement() || newSpecifier->isPseudoElementCueFunction()) {
         // Unknown pseudo element always goes at the top of selector chain.
-        newSpecifier->appendTagHistory(CSSSelector::ShadowDescendant, WTF::move(specifiers));
+        newSpecifier->appendTagHistory(CSSSelector::ShadowDescendant, WTFMove(specifiers));
         return newSpecifier;
     }
     if (specifiers->isCustomPseudoElement()) {
         // Specifiers for unknown pseudo element go right behind it in the chain.
-        specifiers->insertTagHistory(CSSSelector::SubSelector, WTF::move(newSpecifier), CSSSelector::ShadowDescendant);
+        specifiers->insertTagHistory(CSSSelector::SubSelector, WTFMove(newSpecifier), CSSSelector::ShadowDescendant);
         return specifiers;
     }
-    specifiers->appendTagHistory(CSSSelector::SubSelector, WTF::move(newSpecifier));
+    specifiers->appendTagHistory(CSSSelector::SubSelector, WTFMove(newSpecifier));
     return specifiers;
 }
 
@@ -12965,7 +12965,7 @@ RefPtr<StyleRuleBase> CSSParser::createPageRule(std::unique_ptr<CSSParserSelecto
     if (pageSelector) {
         rule = StyleRulePage::create(createStyleProperties());
         Vector<std::unique_ptr<CSSParserSelector>> selectorVector;
-        selectorVector.append(WTF::move(pageSelector));
+        selectorVector.append(WTFMove(pageSelector));
         rule->parserAdoptSelectorVector(selectorVector);
         processAndAddNewRuleToSourceTreeIfNeeded();
     } else
@@ -12978,7 +12978,7 @@ std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> CSSParser::createSel
 {
     if (m_recycledSelectorVector) {
         m_recycledSelectorVector->shrink(0);
-        return WTF::move(m_recycledSelectorVector);
+        return WTFMove(m_recycledSelectorVector);
     }
     return std::make_unique<Vector<std::unique_ptr<CSSParserSelector>>>();
 }
@@ -12986,7 +12986,7 @@ std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> CSSParser::createSel
 void CSSParser::recycleSelectorVector(std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> vector)
 {
     if (vector && !m_recycledSelectorVector)
-        m_recycledSelectorVector = WTF::move(vector);
+        m_recycledSelectorVector = WTFMove(vector);
 }
 
 RefPtr<StyleRuleBase> CSSParser::createRegionRule(Vector<std::unique_ptr<CSSParserSelector>>* regionSelector, RuleList* rules)

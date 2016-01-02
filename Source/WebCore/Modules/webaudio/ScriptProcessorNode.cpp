@@ -275,7 +275,7 @@ double ScriptProcessorNode::latencyTime() const
 
 bool ScriptProcessorNode::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
 {
-    bool success = AudioNode::addEventListener(eventType, WTF::move(listener), useCapture);
+    bool success = AudioNode::addEventListener(eventType, WTFMove(listener), useCapture);
     if (success && eventType == eventNames().audioprocessEvent)
         m_hasAudioProcessListener = hasEventListeners(eventNames().audioprocessEvent);
     return success;

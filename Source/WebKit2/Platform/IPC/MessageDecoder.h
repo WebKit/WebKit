@@ -65,7 +65,7 @@ public:
 #endif
 
 #if HAVE(DTRACE)
-    void setMessageProcessingToken(std::unique_ptr<MessageRecorder::MessageProcessingToken> token) { m_processingToken = WTF::move(token); }
+    void setMessageProcessingToken(std::unique_ptr<MessageRecorder::MessageProcessingToken> token) { m_processingToken = WTFMove(token); }
 
     const uuid_t& UUID() const { return m_UUID; }
 #endif

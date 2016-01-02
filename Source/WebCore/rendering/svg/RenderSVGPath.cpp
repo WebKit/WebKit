@@ -34,7 +34,7 @@
 namespace WebCore {
 
 RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, Ref<RenderStyle>&& style)
-    : RenderSVGShape(element, WTF::move(style))
+    : RenderSVGShape(element, WTFMove(style))
 {
 }
 

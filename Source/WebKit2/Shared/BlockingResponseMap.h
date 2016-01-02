@@ -60,7 +60,7 @@ public:
         std::lock_guard<Lock> lock(m_mutex);
         ASSERT(!m_responses.contains(requestID));
 
-        m_responses.set(requestID, WTF::move(response));
+        m_responses.set(requestID, WTFMove(response));
 
         // FIXME: Could get a slight speed-up from using notifyOne().
         m_condition.notifyAll();

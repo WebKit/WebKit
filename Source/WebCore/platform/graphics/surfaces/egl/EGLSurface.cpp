@@ -49,7 +49,7 @@ std::unique_ptr<GLTransportSurface> EGLTransportSurface::createTransportSurface(
 #endif
 
     if (surface)
-        return WTF::move(surface);
+        return WTFMove(surface);
 
     return nullptr;
 }
@@ -67,7 +67,7 @@ std::unique_ptr<GLTransportSurfaceClient> EGLTransportSurface::createTransportSu
 #endif
 
     if (client)
-        return WTF::move(client);
+        return WTFMove(client);
 
     return nullptr;
 }

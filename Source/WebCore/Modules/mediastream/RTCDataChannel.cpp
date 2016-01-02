@@ -80,18 +80,18 @@ RefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, R
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
-    return adoptRef(*new RTCDataChannel(context, WTF::move(handler)));
+    return adoptRef(*new RTCDataChannel(context, WTFMove(handler)));
 }
 
 Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, std::unique_ptr<RTCDataChannelHandler> handler)
 {
     ASSERT(handler);
-    return adoptRef(*new RTCDataChannel(context, WTF::move(handler)));
+    return adoptRef(*new RTCDataChannel(context, WTFMove(handler)));
 }
 
 RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, std::unique_ptr<RTCDataChannelHandler> handler)
     : m_scriptExecutionContext(context)
-    , m_handler(WTF::move(handler))
+    , m_handler(WTFMove(handler))
     , m_stopped(false)
     , m_readyState(ReadyStateConnecting)
     , m_binaryType(BinaryTypeArrayBuffer)
@@ -306,7 +306,7 @@ void RTCDataChannel::stop()
 
 void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
 {
-    m_scheduledEvents.append(WTF::move(event));
+    m_scheduledEvents.append(WTFMove(event));
 
     if (!m_scheduledEventTimer.isActive())
         m_scheduledEventTimer.startOneShot(0);

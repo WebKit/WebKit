@@ -41,11 +41,11 @@ public:
 
     static Ref<Pair> create(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second)
     {
-        return adoptRef(*new Pair(WTF::move(first), WTF::move(second)));
+        return adoptRef(*new Pair(WTFMove(first), WTFMove(second)));
     }
     static Ref<Pair> create(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second, IdenticalValueEncoding encoding)
     {
-        return adoptRef(*new Pair(WTF::move(first), WTF::move(second), encoding));
+        return adoptRef(*new Pair(WTFMove(first), WTFMove(second), encoding));
     }
     virtual ~Pair() { }
 
@@ -64,8 +64,8 @@ public:
     bool equals(const Pair& other) const { return compareCSSValuePtr(m_first, other.m_first) && compareCSSValuePtr(m_second, other.m_second); }
 
 private:
-    Pair(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second) : m_first(WTF::move(first)), m_second(WTF::move(second)) { }
-    Pair(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second, IdenticalValueEncoding encoding) : m_first(WTF::move(first)), m_second(WTF::move(second)), m_encoding(encoding) { }
+    Pair(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second) : m_first(WTFMove(first)), m_second(WTFMove(second)) { }
+    Pair(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second, IdenticalValueEncoding encoding) : m_first(WTFMove(first)), m_second(WTFMove(second)), m_encoding(encoding) { }
 
     RefPtr<CSSPrimitiveValue> m_first;
     RefPtr<CSSPrimitiveValue> m_second;

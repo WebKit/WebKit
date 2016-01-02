@@ -176,7 +176,7 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
         m_gamepadVector.resize(index + 1);
 
     m_gamepadVector[index] = gamepad.get();
-    m_gamepadMap.set(device, WTF::move(gamepad));
+    m_gamepadMap.set(device, WTFMove(gamepad));
 
     if (!m_shouldDispatchCallbacks) {
         // This added device is the result of us starting to monitor gamepads.

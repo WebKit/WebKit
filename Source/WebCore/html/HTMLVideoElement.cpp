@@ -75,7 +75,7 @@ bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderVideo>(*this, WTF::move(style));
+    return createRenderer<RenderVideo>(*this, WTFMove(style));
 }
 
 void HTMLVideoElement::didAttachRenderers()

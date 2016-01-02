@@ -70,8 +70,8 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSC::EncodedJSVal
 template <typename Value, typename Error>
 class DOMPromise {
 public:
-    DOMPromise(DeferredWrapper&& wrapper) : m_wrapper(WTF::move(wrapper)) { }
-    DOMPromise(DOMPromise&& promise) : m_wrapper(WTF::move(promise.m_wrapper)) { }
+    DOMPromise(DeferredWrapper&& wrapper) : m_wrapper(WTFMove(wrapper)) { }
+    DOMPromise(DOMPromise&& promise) : m_wrapper(WTFMove(promise.m_wrapper)) { }
 
     DOMPromise(const DOMPromise&)= delete;
     DOMPromise& operator=(DOMPromise const&) = delete;

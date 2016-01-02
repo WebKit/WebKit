@@ -295,7 +295,7 @@ String tryMakeString(StringType1 string1, StringType2 string2)
         result += adapter1.length();
         adapter2.writeTo(result);
 
-        return WTF::move(resultImpl);
+        return WTFMove(resultImpl);
     }
 
     UChar* buffer;
@@ -308,7 +308,7 @@ String tryMakeString(StringType1 string1, StringType2 string2)
     result += adapter1.length();
     adapter2.writeTo(result);
 
-    return WTF::move(resultImpl);
+    return WTFMove(resultImpl);
 }
 
 template<typename StringType1, typename StringType2, typename StringType3>
@@ -338,7 +338,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
         result += adapter2.length();
         adapter3.writeTo(result);
 
-        return WTF::move(resultImpl);
+        return WTFMove(resultImpl);
     }
 
     UChar* buffer = 0;
@@ -353,7 +353,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
     result += adapter2.length();
     adapter3.writeTo(result);
 
-    return WTF::move(resultImpl);
+    return WTFMove(resultImpl);
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4>
@@ -387,7 +387,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
         result += adapter3.length();
         adapter4.writeTo(result);
 
-        return WTF::move(resultImpl);
+        return WTFMove(resultImpl);
     }
 
     UChar* buffer;
@@ -404,7 +404,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
     result += adapter3.length();
     adapter4.writeTo(result);
 
-    return WTF::move(resultImpl);
+    return WTFMove(resultImpl);
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5>
@@ -442,7 +442,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
         result += adapter4.length();
         adapter5.writeTo(result);
 
-        return WTF::move(resultImpl);
+        return WTFMove(resultImpl);
     }
 
     UChar* buffer;
@@ -461,7 +461,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
     result += adapter4.length();
     adapter5.writeTo(result);
 
-    return WTF::move(resultImpl);
+    return WTFMove(resultImpl);
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6>
@@ -503,7 +503,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
         result += adapter5.length();
         adapter6.writeTo(result);
 
-        return WTF::move(resultImpl);
+        return WTFMove(resultImpl);
     }
 
     UChar* buffer;
@@ -524,7 +524,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
     result += adapter5.length();
     adapter6.writeTo(result);
 
-    return WTF::move(resultImpl);
+    return WTFMove(resultImpl);
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7>
@@ -570,7 +570,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
         result += adapter6.length();
         adapter7.writeTo(result);
 
-        return WTF::move(resultImpl);
+        return WTFMove(resultImpl);
     }
 
     UChar* buffer;
@@ -593,7 +593,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
     result += adapter6.length();
     adapter7.writeTo(result);
 
-    return WTF::move(resultImpl);
+    return WTFMove(resultImpl);
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8>
@@ -643,7 +643,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
         result += adapter7.length();
         adapter8.writeTo(result);
 
-        return WTF::move(resultImpl);
+        return WTFMove(resultImpl);
     }
 
     UChar* buffer;
@@ -668,7 +668,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
     result += adapter7.length();
     adapter8.writeTo(result);
 
-    return WTF::move(resultImpl);
+    return WTFMove(resultImpl);
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8, typename StringType9>
@@ -722,7 +722,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
         result += adapter8.length();
         adapter9.writeTo(result);
 
-        return WTF::move(resultImpl);
+        return WTFMove(resultImpl);
     }
 
     UChar* buffer;
@@ -749,7 +749,7 @@ String tryMakeString(StringType1 string1, StringType2 string2, StringType3 strin
     result += adapter8.length();
     adapter9.writeTo(result);
 
-    return WTF::move(resultImpl);
+    return WTFMove(resultImpl);
 }
 
 

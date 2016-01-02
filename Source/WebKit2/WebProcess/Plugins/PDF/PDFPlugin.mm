@@ -382,7 +382,7 @@ const double zoomButtonScaleMultiplier = 1.18920;
     if (!(self = [super init]))
         return nil;
 
-    _completionHandler = WTF::move(completionHandler);
+    _completionHandler = WTFMove(completionHandler);
 
     return self;
 }

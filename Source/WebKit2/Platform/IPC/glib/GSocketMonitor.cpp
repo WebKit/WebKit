@@ -49,7 +49,7 @@ void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& run
     m_cancellable = adoptGRef(g_cancellable_new());
     m_source = adoptGRef(g_socket_create_source(socket, condition, m_cancellable.get()));
     g_source_set_name(m_source.get(), "[WebKit] Socket monitor");
-    m_callback = WTF::move(callback);
+    m_callback = WTFMove(callback);
     g_source_set_callback(m_source.get(), reinterpret_cast<GSourceFunc>(socketSourceCallback), this, nullptr);
     g_source_attach(m_source.get(), runLoop.mainContext());
 }

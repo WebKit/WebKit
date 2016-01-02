@@ -139,7 +139,7 @@ Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
     Ref<Attr> clone = adoptRef(*new Attr(targetDocument, qualifiedName(), value()));
     cloneChildNodes(clone);
-    return WTF::move(clone);
+    return WTFMove(clone);
 }
 
 // DOM Section 1.1.1

@@ -772,9 +772,9 @@ inline void StyleBuilderCustom::applyTextOrBoxShadowValue(StyleResolver& styleRe
             color = styleResolver.style()->color();
         auto shadowData = std::make_unique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
         if (id == CSSPropertyTextShadow)
-            styleResolver.style()->setTextShadow(WTF::move(shadowData), !isFirstEntry); // add to the list if this is not the first entry
+            styleResolver.style()->setTextShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry
         else
-            styleResolver.style()->setBoxShadow(WTF::move(shadowData), !isFirstEntry); // add to the list if this is not the first entry
+            styleResolver.style()->setBoxShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry
         isFirstEntry = false;
     }
 }
@@ -1361,7 +1361,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             if (listStyleIdent != CSSValueNone)
                 listStyleType = static_cast<EListStyleType>(listStyleIdent - CSSValueDisc);
             auto counter = std::make_unique<CounterContent>(counterValue->identifier(), listStyleType, counterValue->separator());
-            styleResolver.style()->setContent(WTF::move(counter), didSet);
+            styleResolver.style()->setContent(WTFMove(counter), didSet);
             didSet = true;
         } else {
             switch (contentValue.getValueID()) {
@@ -1766,7 +1766,7 @@ inline void StyleBuilderCustom::applyValueWillChange(StyleResolver& styleResolve
         }
     }
 
-    styleResolver.style()->setWillChange(WTF::move(willChange));
+    styleResolver.style()->setWillChange(WTFMove(willChange));
 }
 
 } // namespace WebCore

@@ -30,7 +30,7 @@ namespace WebCore {
 
 template <typename T> class DataRef {
 public:
-    DataRef(Ref<T>&& data) : m_data(WTF::move(data)) { }
+    DataRef(Ref<T>&& data) : m_data(WTFMove(data)) { }
     DataRef(const DataRef& other) : m_data(const_cast<T&>(other.m_data.get())) { }
     DataRef& operator=(const DataRef& other) { m_data = const_cast<T&>(other.m_data.get()); return *this; }
 

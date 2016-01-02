@@ -5143,7 +5143,7 @@ private:
                 needsTagTypeNumber = true;
         }
 
-        JSTailCall tailCall(stackmapID, node, WTF::move(callArguments));
+        JSTailCall tailCall(stackmapID, node, WTFMove(callArguments));
 
         exitArguments.insert(0, m_out.constInt32(needsTagTypeNumber ? 2 : 1));
         exitArguments.insert(0, constNull(m_out.ref8));
@@ -8563,7 +8563,7 @@ private:
                                         linkedPatchableJump, linkedDone, exceptionTarget,
                                         usedRegisters, callSiteIndex, generator);
                                     
-                                jitCode->lazySlowPaths[index] = WTF::move(lazySlowPath);
+                                jitCode->lazySlowPaths[index] = WTFMove(lazySlowPath);
                             });
                     });
             });

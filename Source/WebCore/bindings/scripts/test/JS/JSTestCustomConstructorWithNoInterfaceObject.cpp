@@ -92,7 +92,7 @@ void JSTestCustomConstructorWithNoInterfaceObjectPrototype::finishCreation(VM& v
 const ClassInfo JSTestCustomConstructorWithNoInterfaceObject::s_info = { "TestCustomConstructorWithNoInterfaceObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObject) };
 
 JSTestCustomConstructorWithNoInterfaceObject::JSTestCustomConstructorWithNoInterfaceObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCustomConstructorWithNoInterfaceObject>&& impl)
-    : JSDOMWrapper<TestCustomConstructorWithNoInterfaceObject>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestCustomConstructorWithNoInterfaceObject>(structure, globalObject, WTFMove(impl))
 {
 }
 

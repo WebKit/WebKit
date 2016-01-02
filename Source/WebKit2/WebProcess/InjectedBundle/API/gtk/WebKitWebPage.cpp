@@ -120,7 +120,7 @@ static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
 
     std::unique_ptr<WebKitFrameWrapper> wrapper = std::make_unique<WebKitFrameWrapper>(*webFrame);
     wrapperPtr = wrapper.get();
-    webFrameMap().set(webFrame, WTF::move(wrapper));
+    webFrameMap().set(webFrame, WTFMove(wrapper));
     return wrapperPtr->webkitFrame();
 }
 
@@ -198,7 +198,7 @@ static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef fr
     message.set(String::fromUTF8("Frame"), toImpl(frame));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("Request"), toImpl(request));
-    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidInitiateLoadForResource"), API::Dictionary::create(WTF::move(message)).ptr());
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidInitiateLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
 }
 
 static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
@@ -223,7 +223,7 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFra
     message.set(String::fromUTF8("Request"), newRequest.ptr());
     if (!redirectResourceResponse.isNull())
         message.set(String::fromUTF8("RedirectResponse"), toImpl(wkRedirectResponse));
-    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), API::Dictionary::create(WTF::move(message)).ptr());
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), API::Dictionary::create(WTFMove(message)).ptr());
 
     return toAPI(&newRequest.leakRef());
 }
@@ -234,7 +234,7 @@ static void didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("Response"), toImpl(response));
-    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveResponseForResource"), API::Dictionary::create(WTF::move(message)).ptr());
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveResponseForResource"), API::Dictionary::create(WTFMove(message)).ptr());
 
     // Post on the console as well to be consistent with the inspector.
     const ResourceResponse& resourceResponse = toImpl(response)->resourceResponse();
@@ -255,7 +255,7 @@ static void didReceiveContentLengthForResource(WKBundlePageRef page, WKBundleFra
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("ContentLength"), API::UInt64::create(length));
-    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveContentLengthForResource"), API::Dictionary::create(WTF::move(message)).ptr());
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveContentLengthForResource"), API::Dictionary::create(WTFMove(message)).ptr());
 }
 
 static void didFinishLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, const void*)
@@ -263,7 +263,7 @@ static void didFinishLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uin
     API::Dictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFinishLoadForResource"), API::Dictionary::create(WTF::move(message)).ptr());
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFinishLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
 }
 
 static void didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKErrorRef error, const void* clientInfo)
@@ -272,7 +272,7 @@ static void didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint6
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("Error"), toImpl(error));
-    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), API::Dictionary::create(WTF::move(message)).ptr());
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
 
     // Post on the console as well to be consistent with the inspector.
     const ResourceError& resourceError = toImpl(error)->platformError();
@@ -579,7 +579,7 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
         messageReply.set("Page", webPage);
         messageReply.set("CallbackID", API::UInt64::create(callbackID));
         messageReply.set("Snapshot", snapshotImage);
-        WebProcess::singleton().injectedBundle()->postMessage("WebPage.DidGetSnapshot", API::Dictionary::create(WTF::move(messageReply)).ptr());
+        WebProcess::singleton().injectedBundle()->postMessage("WebPage.DidGetSnapshot", API::Dictionary::create(WTFMove(messageReply)).ptr());
     } else
         ASSERT_NOT_REACHED();
 }

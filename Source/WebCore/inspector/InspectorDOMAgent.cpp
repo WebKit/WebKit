@@ -583,7 +583,7 @@ int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
             m_danglingNodeToIdMaps.append(newMap.release());
             auto children = Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>::create();
             children->addItem(buildObjectForNode(node, 0, danglingMap));
-            m_frontendDispatcher->setChildNodes(0, WTF::move(children));
+            m_frontendDispatcher->setChildNodes(0, WTFMove(children));
             break;
         } else {
             path.append(parent);
@@ -1050,7 +1050,7 @@ void InspectorDOMAgent::setInspectModeEnabled(ErrorString& errorString, bool ena
 void InspectorDOMAgent::highlightRect(ErrorString&, int x, int y, int width, int height, const InspectorObject* color, const InspectorObject* outlineColor, const bool* usePageCoordinates)
 {
     auto quad = std::make_unique<FloatQuad>(FloatRect(x, y, width, height));
-    innerHighlightQuad(WTF::move(quad), color, outlineColor, usePageCoordinates);
+    innerHighlightQuad(WTFMove(quad), color, outlineColor, usePageCoordinates);
 }
 
 void InspectorDOMAgent::highlightQuad(ErrorString& errorString, const InspectorArray& quadArray, const InspectorObject* color, const InspectorObject* outlineColor, const bool* usePageCoordinates)
@@ -1060,7 +1060,7 @@ void InspectorDOMAgent::highlightQuad(ErrorString& errorString, const InspectorA
         errorString = ASCIILiteral("Invalid Quad format");
         return;
     }
-    innerHighlightQuad(WTF::move(quad), color, outlineColor, usePageCoordinates);
+    innerHighlightQuad(WTFMove(quad), color, outlineColor, usePageCoordinates);
 }
 
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, const InspectorObject* color, const InspectorObject* outlineColor, const bool* usePageCoordinates)
@@ -1069,7 +1069,7 @@ void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, cons
     highlightConfig->content = parseColor(color);
     highlightConfig->contentOutline = parseColor(outlineColor);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
-    m_overlay->highlightQuad(WTF::move(quad), *highlightConfig);
+    m_overlay->highlightQuad(WTFMove(quad), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const InspectorObject& highlightInspectorObject, const String& selectorString, const String* frameId)
@@ -1104,7 +1104,7 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const Inspec
     if (!highlightConfig)
         return;
 
-    m_overlay->highlightNodeList(WTF::move(nodes), *highlightConfig);
+    m_overlay->highlightNodeList(WTFMove(nodes), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightNode(ErrorString& errorString, const InspectorObject& highlightInspectorObject, const int* nodeId, const String* objectId)
@@ -1314,7 +1314,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         value->setChildNodeCount(nodeCount);
         Ref<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> children = buildArrayForContainerChildren(node, depth, nodesMap);
         if (children->length() > 0)
-            value->setChildren(WTF::move(children));
+            value->setChildren(WTFMove(children));
     }
 
     if (is<Element>(*node)) {
@@ -1333,7 +1333,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         if (ShadowRoot* root = element.shadowRoot()) {
             auto shadowRoots = Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>::create();
             shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
-            value->setShadowRoots(WTF::move(shadowRoots));
+            value->setShadowRoots(WTFMove(shadowRoots));
         }
 
 #if ENABLE(TEMPLATE_ELEMENT)
@@ -1347,7 +1347,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
                 value->setPseudoType(pseudoType);
         } else {
             if (auto pseudoElements = buildArrayForPseudoElements(element, nodesMap))
-                value->setPseudoElements(WTF::move(pseudoElements));
+                value->setPseudoElements(WTFMove(pseudoElements));
         }
 
     } else if (is<Document>(*node)) {
@@ -1429,7 +1429,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> InspectorDOMA
         pseudoElements->addItem(buildObjectForNode(beforeElement, 0, nodesMap));
     if (afterElement)
         pseudoElements->addItem(buildObjectForNode(afterElement, 0, nodesMap));
-    return WTF::move(pseudoElements);
+    return WTFMove(pseudoElements);
 }
 
 Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node, const String* objectGroupId)
@@ -1477,7 +1477,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
             .setScriptId(scriptID)
             .setLineNumber(lineNumber)
             .release();
-        value->setLocation(WTF::move(location));
+        value->setLocation(WTFMove(location));
         if (!sourceName.isEmpty())
             value->setSourceName(sourceName);
     }
@@ -1569,7 +1569,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
                     checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
             }
             
-            processAccessibilityChildren(axObject, WTF::move(childNodeIds));
+            processAccessibilityChildren(axObject, WTFMove(childNodeIds));
             
             if (axObject->supportsARIAControls()) {
                 Vector<Element*> controlledElements;
@@ -1784,7 +1784,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             value->setSelectedChildNodeIds(selectedChildNodeIds);
     }
 
-    return WTF::move(value);
+    return WTFMove(value);
 }
 
 Node* InspectorDOMAgent::innerFirstChild(Node* node)
@@ -1862,7 +1862,7 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     Ref<Inspector::Protocol::DOM::Node> value = buildObjectForNode(frameOwner, 0, &m_documentNodeToIdMap);
     Node* previousSibling = innerPreviousSibling(frameOwner);
     int prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
-    m_frontendDispatcher->childNodeInserted(parentId, prevId, WTF::move(value));
+    m_frontendDispatcher->childNodeInserted(parentId, prevId, WTFMove(value));
 }
 
 void InspectorDOMAgent::didInsertDOMNode(Node& node)
@@ -1890,7 +1890,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node& node)
         Node* prevSibling = innerPreviousSibling(&node);
         int prevId = prevSibling ? m_documentNodeToIdMap.get(prevSibling) : 0;
         Ref<Inspector::Protocol::DOM::Node> value = buildObjectForNode(&node, 0, &m_documentNodeToIdMap);
-        m_frontendDispatcher->childNodeInserted(parentId, prevId, WTF::move(value));
+        m_frontendDispatcher->childNodeInserted(parentId, prevId, WTFMove(value));
     }
 }
 
@@ -1965,7 +1965,7 @@ void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elemen
             m_domListener->didModifyDOMAttr(element);
         nodeIds->addItem(id);
     }
-    m_frontendDispatcher->inlineStyleInvalidated(WTF::move(nodeIds));
+    m_frontendDispatcher->inlineStyleInvalidated(WTFMove(nodeIds));
 }
 
 void InspectorDOMAgent::characterDataModified(CharacterData& characterData)

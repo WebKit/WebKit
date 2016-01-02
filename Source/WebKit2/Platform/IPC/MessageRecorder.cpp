@@ -64,7 +64,7 @@ std::unique_ptr<MessageRecorder::MessageProcessingToken> MessageRecorder::record
 
     uuid_copy(record.UUID, encoder.UUID());
 
-    return std::make_unique<MessageProcessingToken>(WTF::move(record));
+    return std::make_unique<MessageProcessingToken>(WTFMove(record));
 }
 
 void MessageRecorder::recordIncomingMessage(Connection& connection, MessageDecoder& decoder)
@@ -92,13 +92,13 @@ void MessageRecorder::recordIncomingMessage(Connection& connection, MessageDecod
 
     uuid_copy(record.UUID, decoder.UUID());
 
-    decoder.setMessageProcessingToken(std::make_unique<MessageProcessingToken>(WTF::move(record)));
+    decoder.setMessageProcessingToken(std::make_unique<MessageProcessingToken>(WTFMove(record)));
 }
 
 #pragma mark MessageProcessingToken
 
 MessageRecorder::MessageProcessingToken::MessageProcessingToken(WebKitMessageRecord record)
-    : m_record(WTF::move(record))
+    : m_record(WTFMove(record))
 {
     m_record.startTime = monotonicallyIncreasingTime();
 }

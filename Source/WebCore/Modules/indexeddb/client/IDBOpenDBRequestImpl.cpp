@@ -119,7 +119,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
         return;
 
     Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connection(), resultData);
-    m_result = IDBAny::create(WTF::move(database));
+    m_result = IDBAny::create(WTFMove(database));
     m_readyState = IDBRequestReadyState::Done;
 
     enqueueEvent(Event::create(eventNames().successEvent, false, false));
@@ -138,7 +138,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 
     LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %" PRIu64 ", new is %" PRIu64, oldVersion, newVersion);
 
-    m_result = IDBAny::create(WTF::move(database));
+    m_result = IDBAny::create(WTFMove(database));
     m_readyState = IDBRequestReadyState::Done;
     m_transaction = adoptRef(&transaction.leakRef());
     m_transaction->addRequest(*this);

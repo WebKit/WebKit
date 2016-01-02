@@ -39,7 +39,7 @@ void WorkQueue::registerSocketEventHandler(int fileDescriptor, std::function<voi
     if (!m_dispatchQueue)
         return;
 
-    m_dispatchQueue->setSocketEventHandler(fileDescriptor, WTF::move(function));
+    m_dispatchQueue->setSocketEventHandler(fileDescriptor, WTFMove(function));
 }
 
 void WorkQueue::unregisterSocketEventHandler(int fileDescriptor)
@@ -57,7 +57,7 @@ void WorkQueue::dispatch(std::function<void ()> function)
     if (!m_dispatchQueue)
         return;
 
-    m_dispatchQueue->dispatch(std::make_unique<WorkItem>(this, WTF::move(function)));
+    m_dispatchQueue->dispatch(std::make_unique<WorkItem>(this, WTFMove(function)));
 }
 
 void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void ()> function)
@@ -65,5 +65,5 @@ void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<v
     if (!m_dispatchQueue)
         return;
 
-    m_dispatchQueue->dispatch(TimerWorkItem::create(this, WTF::move(function), duration));
+    m_dispatchQueue->dispatch(TimerWorkItem::create(this, WTFMove(function), duration));
 }

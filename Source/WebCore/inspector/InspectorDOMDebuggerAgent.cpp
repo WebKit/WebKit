@@ -166,7 +166,7 @@ void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node& node)
     if (hasBreakpoint(&node, AttributeModified)) {
         Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, AttributeModified, false, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(eventData));
+        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
 }
 
@@ -266,7 +266,7 @@ void InspectorDOMDebuggerAgent::willInsertDOMNode(Node& parent)
     if (hasBreakpoint(&parent, SubtreeModified)) {
         Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(parent, SubtreeModified, true, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(eventData));
+        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
 }
 
@@ -276,11 +276,11 @@ void InspectorDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     if (hasBreakpoint(&node, NodeRemoved)) {
         Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, NodeRemoved, false, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(eventData));
+        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     } else if (parentNode && hasBreakpoint(parentNode, SubtreeModified)) {
         Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, SubtreeModified, false, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(eventData));
+        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
 }
 
@@ -289,7 +289,7 @@ void InspectorDOMDebuggerAgent::willModifyDOMAttr(Element& element)
     if (hasBreakpoint(&element, AttributeModified)) {
         Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(element, AttributeModified, false, eventData.get());
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(eventData));
+        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
 }
 
@@ -363,9 +363,9 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, cons
     Ref<InspectorObject> eventData = InspectorObject::create();
     eventData->setString("eventName", fullEventName);
     if (synchronous)
-        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTF::move(eventData));
+        m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTFMove(eventData));
     else
-        m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTF::move(eventData));
+        m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTFMove(eventData));
 }
 
 void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString&, const String& url)
@@ -408,7 +408,7 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
     Ref<InspectorObject> eventData = InspectorObject::create();
     eventData->setString("breakpointURL", breakpointURL);
     eventData->setString("url", url);
-    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::XHR, WTF::move(eventData));
+    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::XHR, WTFMove(eventData));
 }
 
 void InspectorDOMDebuggerAgent::clear()

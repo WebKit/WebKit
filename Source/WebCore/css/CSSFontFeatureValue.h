@@ -35,7 +35,7 @@ class CSSFontFeatureValue : public CSSValue {
 public:
     static Ref<CSSFontFeatureValue> create(FontFeatureTag&& tag, int value)
     {
-        return adoptRef(*new CSSFontFeatureValue(WTF::move(tag), value));
+        return adoptRef(*new CSSFontFeatureValue(WTFMove(tag), value));
     }
 
     const FontFeatureTag& tag() const { return m_tag; }

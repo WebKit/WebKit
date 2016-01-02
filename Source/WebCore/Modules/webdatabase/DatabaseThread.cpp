@@ -156,13 +156,13 @@ void DatabaseThread::recordDatabaseClosed(Database* database)
 void DatabaseThread::scheduleTask(std::unique_ptr<DatabaseTask> task)
 {
     ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
-    m_queue.append(WTF::move(task));
+    m_queue.append(WTFMove(task));
 }
 
 void DatabaseThread::scheduleImmediateTask(std::unique_ptr<DatabaseTask> task)
 {
     ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
-    m_queue.prepend(WTF::move(task));
+    m_queue.prepend(WTFMove(task));
 }
 
 class SameDatabasePredicate {

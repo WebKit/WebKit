@@ -46,7 +46,7 @@ public:
 
     static CRuntimeObject* create(VM& vm, Structure* structure, RefPtr<CInstance>&& instance)
     {
-        CRuntimeObject* object = new (NotNull, allocateCell<CRuntimeObject>(vm.heap)) CRuntimeObject(vm, structure, WTF::move(instance));
+        CRuntimeObject* object = new (NotNull, allocateCell<CRuntimeObject>(vm.heap)) CRuntimeObject(vm, structure, WTFMove(instance));
         object->finishCreation(vm);
         return object;
     }

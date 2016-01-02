@@ -328,7 +328,7 @@ RegisterSet SpeculativeJIT::usedRegisters()
 
 void SpeculativeJIT::addSlowPathGenerator(std::unique_ptr<SlowPathGenerator> slowPathGenerator)
 {
-    m_slowPathGenerators.append(WTF::move(slowPathGenerator));
+    m_slowPathGenerators.append(WTFMove(slowPathGenerator));
 }
 
 void SpeculativeJIT::runSlowPathGenerators()
@@ -974,7 +974,7 @@ void SpeculativeJIT::compileIn(Node* node)
             stubInfo->patch.usedRegisters = usedRegisters();
 
             m_jit.addIn(InRecord(jump, done, slowPath.get(), stubInfo));
-            addSlowPathGenerator(WTF::move(slowPath));
+            addSlowPathGenerator(WTFMove(slowPath));
 
             base.use();
 
@@ -5720,7 +5720,7 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
     } else {
         auto generator = std::make_unique<CallCreateDirectArgumentsSlowPathGenerator>(
             slowPath, this, resultGPR, structure, lengthGPR, minCapacity);
-        addSlowPathGenerator(WTF::move(generator));
+        addSlowPathGenerator(WTFMove(generator));
     }
         
     if (node->origin.semantic.inlineCallFrame) {

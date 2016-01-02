@@ -223,7 +223,7 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
 struct ActiveSubtree {
     ActiveSubtree(PrefixTreeVertex& vertex, ImmutableCharNFANodeBuilder&& nfaNode, unsigned edgeIndex)
         : vertex(vertex)
-        , nfaNode(WTF::move(nfaNode))
+        , nfaNode(WTFMove(nfaNode))
         , edgeIndex(edgeIndex)
     {
     }
@@ -344,7 +344,7 @@ static void generateSuffixWithReverseSuffixTree(NFA& nfa, Vector<ActiveSubtree>&
             newVertex->nodeId = newNode.nodeId();
 
             ReverseSuffixTreeVertex* newVertexAddress = newVertex.get();
-            activeReverseSuffixTreeVertex->edges.append(ReverseSuffixTreeEdge({ edge.term, WTF::move(newVertex) }));
+            activeReverseSuffixTreeVertex->edges.append(ReverseSuffixTreeEdge({ edge.term, WTFMove(newVertex) }));
             activeReverseSuffixTreeVertex = newVertexAddress;
         }
         destinationNodeId = activeReverseSuffixTreeVertex->nodeId;
@@ -388,7 +388,7 @@ static void generateNFAForSubtree(NFA& nfa, ImmutableCharNFANodeBuilder&& subtre
     ReverseSuffixTreeRoots reverseSuffixTreeRoots;
     Vector<ActiveSubtree> stack;
     if (!root.edges.isEmpty())
-        stack.append(ActiveSubtree(root, WTF::move(subtreeRoot), 0));
+        stack.append(ActiveSubtree(root, WTFMove(subtreeRoot), 0));
 
     bool nfaTooBig = false;
     
@@ -414,7 +414,7 @@ static void generateNFAForSubtree(NFA& nfa, ImmutableCharNFANodeBuilder&& subtre
 
             ASSERT(edge.child.get());
             ImmutableCharNFANodeBuilder emptyBuilder;
-            stack.append(ActiveSubtree(*edge.child.get(), WTF::move(emptyBuilder), 0));
+            stack.append(ActiveSubtree(*edge.child.get(), WTFMove(emptyBuilder), 0));
         } else {
             bool isLeaf = vertex.edges.isEmpty();
 
@@ -482,16 +482,16 @@ void CombinedURLFilters::processNFAs(size_t maxNFASize, std::function<void(NFA&&
             for (unsigned i = 0; i < stack.size() - 1; ++i) {
                 const PrefixTreeEdge& edge = stack[i]->edges.last();
                 ImmutableCharNFANodeBuilder newNode = edge.term->generateGraph(nfa, lastNode, m_actions.get(edge.child.get()));
-                lastNode = WTF::move(newNode);
+                lastNode = WTFMove(newNode);
             }
 
             // Put the non-quantified vertices in the subtree into the NFA and delete them.
             ASSERT(stack.last());
-            generateNFAForSubtree(nfa, WTF::move(lastNode), *stack.last(), m_actions, maxNFASize);
+            generateNFAForSubtree(nfa, WTFMove(lastNode), *stack.last(), m_actions, maxNFASize);
         }
         nfa.finalize();
 
-        handler(WTF::move(nfa));
+        handler(WTFMove(nfa));
 
         // Clean up any processed leaf nodes.
         while (true) {

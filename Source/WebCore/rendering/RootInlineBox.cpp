@@ -136,7 +136,7 @@ float RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, f
     auto newEllipsisBox = std::make_unique<EllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox);
     auto ellipsisBox = newEllipsisBox.get();
 
-    gEllipsisBoxMap->add(this, WTF::move(newEllipsisBox));
+    gEllipsisBoxMap->add(this, WTFMove(newEllipsisBox));
     setHasEllipsisBox(true);
 
     // FIXME: Do we need an RTL version of this?

@@ -185,7 +185,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     for (WebArchive *subframeArchive in subframeArchives)
         coreArchives.append([subframeArchive->_private coreArchive]);
 
-    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(coreMainResource.release(), WTF::move(coreResources), WTF::move(coreArchives));
+    RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(coreMainResource.release(), WTFMove(coreResources), WTFMove(coreArchives));
     if (!coreArchive) {
         [self release];
         return nil;

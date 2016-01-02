@@ -48,7 +48,7 @@ BasicBlock* Code::addBlock(double frequency)
 {
     std::unique_ptr<BasicBlock> block(new BasicBlock(m_blocks.size(), frequency));
     BasicBlock* result = block.get();
-    m_blocks.append(WTF::move(block));
+    m_blocks.append(WTFMove(block));
     return result;
 }
 
@@ -56,7 +56,7 @@ StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind, StackSlotVa
 {
     std::unique_ptr<StackSlot> slot(new StackSlot(byteSize, m_stackSlots.size(), kind, value));
     StackSlot* result = slot.get();
-    m_stackSlots.append(WTF::move(slot));
+    m_stackSlots.append(WTFMove(slot));
     return result;
 }
 
@@ -69,7 +69,7 @@ Special* Code::addSpecial(std::unique_ptr<Special> special)
 {
     Special* result = special.get();
     result->m_code = this;
-    m_specials.append(WTF::move(special));
+    m_specials.append(WTFMove(special));
     return result;
 }
 

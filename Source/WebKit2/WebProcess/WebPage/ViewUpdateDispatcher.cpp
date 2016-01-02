@@ -79,7 +79,7 @@ void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
     HashMap<uint64_t, UpdateData> update;
     {
         LockHolder locker(&m_dataMutex);
-        update = WTF::move(m_latestUpdate);
+        update = WTFMove(m_latestUpdate);
     }
 
     for (auto& slot : update) {

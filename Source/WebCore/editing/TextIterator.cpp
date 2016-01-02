@@ -281,7 +281,7 @@ inline void TextIteratorCopyableText::reset()
 inline void TextIteratorCopyableText::set(String&& string)
 {
     m_singleCharacter = 0;
-    m_string = WTF::move(string);
+    m_string = WTFMove(string);
     m_offset = 0;
     m_length = m_string.length();
 }
@@ -293,7 +293,7 @@ inline void TextIteratorCopyableText::set(String&& string, unsigned offset, unsi
     ASSERT(length <= string.length() - offset);
 
     m_singleCharacter = 0;
-    m_string = WTF::move(string);
+    m_string = WTFMove(string);
     m_offset = offset;
     m_length = length;
 }
@@ -827,7 +827,7 @@ bool TextIterator::handleReplacedElement()
         String altText = downcast<RenderImage>(renderer).altText();
         if (unsigned length = altText.length()) {
             m_lastCharacter = altText[length - 1];
-            m_copyableText.set(WTF::move(altText));
+            m_copyableText.set(WTFMove(altText));
             m_text = m_copyableText.text();
             return true;
         }
@@ -1149,7 +1149,7 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     m_positionEndOffset = textEndOffset;
 
     m_lastCharacter = string[textEndOffset - 1];
-    m_copyableText.set(WTF::move(string), textStartOffset, textEndOffset - textStartOffset);
+    m_copyableText.set(WTFMove(string), textStartOffset, textEndOffset - textStartOffset);
     m_text = m_copyableText.text();
 
     m_lastTextNodeEndedWithCollapsedSpace = false;
@@ -1356,7 +1356,7 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
     ASSERT(m_positionEndOffset - offsetInNode <= static_cast<int>(text.length()));
 
     m_lastCharacter = text[m_positionEndOffset - offsetInNode - 1];
-    m_copyableText.set(WTF::move(text), m_positionStartOffset - offsetInNode, m_positionEndOffset - m_positionStartOffset);
+    m_copyableText.set(WTFMove(text), m_positionStartOffset - offsetInNode, m_positionEndOffset - m_positionStartOffset);
     m_text = m_copyableText.text();
 
     return !m_shouldHandleFirstLetter;
@@ -2476,7 +2476,7 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
     if (!rangeLocation && !rangeLength && it.atEnd()) {
         resultRange->setStart(&textRunRange->startContainer(), 0);
         resultRange->setEnd(&textRunRange->startContainer(), 0);
-        return WTF::move(resultRange);
+        return WTFMove(resultRange);
     }
 
     for (; !it.atEnd(); it.advance()) {
@@ -2539,7 +2539,7 @@ RefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int
     if (rangeLength && rangeEnd > docTextPosition) // rangeEnd is out of bounds
         resultRange->setEnd(&textRunRange->endContainer(), textRunRange->endOffset());
     
-    return WTF::move(resultRange);
+    return WTFMove(resultRange);
 }
 
 bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range, size_t& location, size_t& length)

@@ -274,24 +274,24 @@ void GraphicsContext::setAntialiasedFontDilationEnabled(bool antialiasedFontDila
 void GraphicsContext::setStrokePattern(Ref<Pattern>&& pattern)
 {
     m_state.strokeGradient = nullptr;
-    m_state.strokePattern = WTF::move(pattern);
+    m_state.strokePattern = WTFMove(pattern);
 }
 
 void GraphicsContext::setFillPattern(Ref<Pattern>&& pattern)
 {
     m_state.fillGradient = nullptr;
-    m_state.fillPattern = WTF::move(pattern);
+    m_state.fillPattern = WTFMove(pattern);
 }
 
 void GraphicsContext::setStrokeGradient(Ref<Gradient>&& gradient)
 {
-    m_state.strokeGradient = WTF::move(gradient);
+    m_state.strokeGradient = WTFMove(gradient);
     m_state.strokePattern = nullptr;
 }
 
 void GraphicsContext::setFillGradient(Ref<Gradient>&& gradient)
 {
-    m_state.fillGradient = WTF::move(gradient);
+    m_state.fillGradient = WTFMove(gradient);
     m_state.fillPattern = nullptr;
 }
 
@@ -448,7 +448,7 @@ void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> imag
     if (!image)
         return;
     IntSize imageLogicalSize = image->logicalSize();
-    drawConsumingImageBuffer(WTF::move(image), FloatRect(destination, imageLogicalSize), FloatRect(FloatPoint(), imageLogicalSize), imagePaintingOptions);
+    drawConsumingImageBuffer(WTFMove(image), FloatRect(destination, imageLogicalSize), FloatRect(FloatPoint(), imageLogicalSize), imagePaintingOptions);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> image, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
@@ -456,7 +456,7 @@ void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> imag
     if (!image)
         return;
     IntSize imageLogicalSize = image->logicalSize();
-    drawConsumingImageBuffer(WTF::move(image), destination, FloatRect(FloatPoint(), FloatSize(imageLogicalSize)), imagePaintingOptions);
+    drawConsumingImageBuffer(WTFMove(image), destination, FloatRect(FloatPoint(), FloatSize(imageLogicalSize)), imagePaintingOptions);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
@@ -467,7 +467,7 @@ void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> imag
     // FIXME (49002): Should be InterpolationLow
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
 
-    ImageBuffer::drawConsuming(WTF::move(image), *this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
+    ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
 }
 
 void GraphicsContext::clip(const IntRect& rect)

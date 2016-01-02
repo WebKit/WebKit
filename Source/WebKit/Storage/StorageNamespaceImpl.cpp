@@ -109,7 +109,7 @@ RefPtr<StorageArea> StorageNamespaceImpl::storageArea(RefPtr<SecurityOrigin>&& o
         return storageArea;
 
     storageArea = StorageAreaImpl::create(m_storageType, origin.copyRef(), m_syncManager, m_quota);
-    m_storageAreaMap.set(WTF::move(origin), storageArea);
+    m_storageAreaMap.set(WTFMove(origin), storageArea);
     return storageArea;
 }
 

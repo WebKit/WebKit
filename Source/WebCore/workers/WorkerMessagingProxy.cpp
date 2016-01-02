@@ -91,7 +91,7 @@ void WorkerMessagingProxy::postMessageToWorkerObject(PassRefPtr<SerializedScript
             return;
 
         std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(context, std::unique_ptr<MessagePortChannelArray>(channelsPtr));
-        workerObject->dispatchEvent(MessageEvent::create(WTF::move(ports), message));
+        workerObject->dispatchEvent(MessageEvent::create(WTFMove(ports), message));
     });
 }
 
@@ -105,22 +105,22 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(PassRefPtr<SerializedS
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext.isWorkerGlobalScope());
         DedicatedWorkerGlobalScope& context = static_cast<DedicatedWorkerGlobalScope&>(scriptContext);
         std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(scriptContext, std::unique_ptr<MessagePortChannelArray>(channelsPtr));
-        context.dispatchEvent(MessageEvent::create(WTF::move(ports), message));
+        context.dispatchEvent(MessageEvent::create(WTFMove(ports), message));
         context.thread().workerObjectProxy().confirmMessageFromWorkerObject(context.hasPendingActivity());
     });
 
     if (m_workerThread) {
         ++m_unconfirmedMessageCount;
-        m_workerThread->runLoop().postTask(WTF::move(task));
+        m_workerThread->runLoop().postTask(WTFMove(task));
     } else
-        m_queuedEarlyTasks.append(std::make_unique<ScriptExecutionContext::Task>(WTF::move(task)));
+        m_queuedEarlyTasks.append(std::make_unique<ScriptExecutionContext::Task>(WTFMove(task)));
 }
 
 void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task task)
 {
     // FIXME: In case of nested workers, this should go directly to the root Document context.
     ASSERT(m_scriptExecutionContext->isDocument());
-    m_scriptExecutionContext->postTask(WTF::move(task));
+    m_scriptExecutionContext->postTask(WTFMove(task));
 }
 
 bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task task, const String& mode)
@@ -129,7 +129,7 @@ bool WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionCon
         return false;
 
     ASSERT(m_workerThread);
-    m_workerThread->runLoop().postTaskForMode(WTF::move(task), mode);
+    m_workerThread->runLoop().postTaskForMode(WTFMove(task), mode);
     return true;
 }
 
@@ -174,9 +174,9 @@ void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread>
         m_unconfirmedMessageCount = m_queuedEarlyTasks.size();
         m_workerThreadHadPendingActivity = true; // Worker initialization means a pending activity.
 
-        auto queuedEarlyTasks = WTF::move(m_queuedEarlyTasks);
+        auto queuedEarlyTasks = WTFMove(m_queuedEarlyTasks);
         for (auto& task : queuedEarlyTasks)
-            m_workerThread->runLoop().postTask(WTF::move(*task));
+            m_workerThread->runLoop().postTask(WTFMove(*task));
     }
 }
 

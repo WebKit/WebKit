@@ -47,7 +47,7 @@ namespace WebCore {
 
             int lex(YYSTYPE&);
             bool expandQualifiedName(const String& qualifiedName, String& localName, String& namespaceURI);
-            void setParseResult(std::unique_ptr<Expression> expression) { m_result = WTF::move(expression); }
+            void setParseResult(std::unique_ptr<Expression> expression) { m_result = WTFMove(expression); }
 
         private:
             Parser(const String&, XPathNSResolver*);

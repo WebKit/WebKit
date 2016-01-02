@@ -189,7 +189,7 @@ int Extensions3DOpenGLES::getGraphicsResetStatusARB()
 
 void Extensions3DOpenGLES::setEXTContextLostCallback(std::unique_ptr<GraphicsContext3D::ContextLostCallback> callback)
 {
-    m_contextLostCallback = WTF::move(callback);
+    m_contextLostCallback = WTFMove(callback);
 }
 
 void Extensions3DOpenGLES::readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data)

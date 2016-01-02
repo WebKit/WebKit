@@ -336,7 +336,7 @@ struct BytecodePattern {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator)
-        : m_body(WTF::move(body))
+        : m_body(WTFMove(body))
         , m_ignoreCase(pattern.m_ignoreCase)
         , m_multiline(pattern.m_multiline)
         , m_allocator(allocator)

@@ -381,7 +381,7 @@ namespace WTF {
         bool isEmpty() const { return !m_keyCount; }
 
         AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), value); }
-        AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), WTF::move(value)); }
+        AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), WTFMove(value)); }
 
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
@@ -984,7 +984,7 @@ namespace WTF {
 
         Value* newEntry = lookupForWriting(Extractor::extract(entry)).first;
         newEntry->~Value();
-        new (NotNull, newEntry) ValueType(WTF::move(entry));
+        new (NotNull, newEntry) ValueType(WTFMove(entry));
 
         return newEntry;
     }
@@ -1183,7 +1183,7 @@ namespace WTF {
                 continue;
             }
 
-            Value* reinsertedEntry = reinsert(WTF::move(oldTable[i]));
+            Value* reinsertedEntry = reinsert(WTFMove(oldTable[i]));
             if (&oldTable[i] == entry) {
                 ASSERT(!newEntry);
                 newEntry = reinsertedEntry;
@@ -1298,7 +1298,7 @@ namespace WTF {
         other.m_deletedCount = 0;
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        m_stats = WTF::move(other.m_stats);
+        m_stats = WTFMove(other.m_stats);
         other.m_stats = nullptr;
 #endif
     }
@@ -1306,7 +1306,7 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::operator=(HashTable&& other) -> HashTable&
     {
-        HashTable temp = WTF::move(other);
+        HashTable temp = WTFMove(other);
         swap(temp);
         return *this;
     }

@@ -840,7 +840,7 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& inst
     String messageText = message->message();
 
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
-        consoleAgent->addMessageToConsole(WTF::move(message));
+        consoleAgent->addMessageToConsole(WTFMove(message));
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent()) {
         if (isConsoleAssertMessage(source, type))
@@ -897,7 +897,7 @@ void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents& instrume
     if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
         return;
     if (InspectorDatabaseAgent* dbAgent = instrumentingAgents.inspectorDatabaseAgent())
-        dbAgent->didOpenDatabase(WTF::move(database), domain, name, version);
+        dbAgent->didOpenDatabase(WTFMove(database), domain, name, version);
 }
 
 void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents& instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page* page)
@@ -957,37 +957,37 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
 void InspectorInstrumentation::sessionCreatedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)
 {
     if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->sessionCreated(WTF::move(session));
+        replayAgent->sessionCreated(WTFMove(session));
 }
 
 void InspectorInstrumentation::sessionLoadedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)
 {
     if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->sessionLoaded(WTF::move(session));
+        replayAgent->sessionLoaded(WTFMove(session));
 }
 
 void InspectorInstrumentation::sessionModifiedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)
 {
     if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->sessionModified(WTF::move(session));
+        replayAgent->sessionModified(WTFMove(session));
 }
 
 void InspectorInstrumentation::segmentCreatedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySessionSegment>&& segment)
 {
     if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->segmentCreated(WTF::move(segment));
+        replayAgent->segmentCreated(WTFMove(segment));
 }
 
 void InspectorInstrumentation::segmentCompletedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySessionSegment>&& segment)
 {
     if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->segmentCompleted(WTF::move(segment));
+        replayAgent->segmentCompleted(WTFMove(segment));
 }
 
 void InspectorInstrumentation::segmentLoadedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySessionSegment>&& segment)
 {
     if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->segmentLoaded(WTF::move(segment));
+        replayAgent->segmentLoaded(WTFMove(segment));
 }
 
 void InspectorInstrumentation::segmentUnloadedImpl(InstrumentingAgents& instrumentingAgents)

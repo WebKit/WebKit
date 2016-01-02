@@ -37,7 +37,7 @@ FontFeature::FontFeature(const FontFeatureTag& tag, int value)
 }
 
 FontFeature::FontFeature(FontFeatureTag&& tag, int value)
-    : m_tag(WTF::move(tag))
+    : m_tag(WTFMove(tag))
     , m_value(value)
 {
 }
@@ -60,7 +60,7 @@ void FontFeatureSettings::insert(FontFeature&& feature)
         if (feature < m_list[i])
             break;
     }
-    m_list.insert(i, WTF::move(feature));
+    m_list.insert(i, WTFMove(feature));
 }
 
 unsigned FontFeatureSettings::hash() const

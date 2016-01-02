@@ -167,12 +167,12 @@ bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext& context, Ima
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Element& element, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
-    : RenderLayerModelObject(element, WTF::move(style), baseTypeFlags | RenderBoxModelObjectFlag)
+    : RenderLayerModelObject(element, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Document& document, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
-    : RenderLayerModelObject(document, WTF::move(style), baseTypeFlags | RenderBoxModelObjectFlag)
+    : RenderLayerModelObject(document, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
 }
 
@@ -840,7 +840,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 
     if (maskImage && bgLayer->clip() == TextFillBox) {
-        context.drawConsumingImageBuffer(WTF::move(maskImage), maskRect, CompositeDestinationIn);
+        context.drawConsumingImageBuffer(WTFMove(maskImage), maskRect, CompositeDestinationIn);
         context.endTransparencyLayer();
     }
 }

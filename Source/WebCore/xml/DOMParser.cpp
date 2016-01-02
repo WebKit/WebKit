@@ -38,7 +38,7 @@ RefPtr<Document> DOMParser::parseFromString(const String& str, const String& con
 
     Ref<Document> doc = DOMImplementation::createDocument(contentType, nullptr, URL());
     doc->setContent(str);
-    return WTF::move(doc);
+    return WTFMove(doc);
 }
 
 } // namespace WebCore

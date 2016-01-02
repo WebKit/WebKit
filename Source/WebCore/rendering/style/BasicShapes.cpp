@@ -56,8 +56,8 @@ void BasicShapeCenterCoordinate::updateComputedLength()
 
     auto lhs = std::make_unique<CalcExpressionLength>(Length(100, Percent));
     auto rhs = std::make_unique<CalcExpressionLength>(m_length);
-    auto op = std::make_unique<CalcExpressionBinaryOperation>(WTF::move(lhs), WTF::move(rhs), CalcSubtract);
-    m_computedLength = Length(CalculationValue::create(WTF::move(op), CalculationRangeAll));
+    auto op = std::make_unique<CalcExpressionBinaryOperation>(WTFMove(lhs), WTFMove(rhs), CalcSubtract);
+    m_computedLength = Length(CalculationValue::create(WTFMove(op), CalculationRangeAll));
 }
 
 bool BasicShapeCircle::operator==(const BasicShape& other) const
@@ -120,7 +120,7 @@ Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, double progress
     result->setCenterX(m_centerX.blend(otherCircle.centerX(), progress));
     result->setCenterY(m_centerY.blend(otherCircle.centerY(), progress));
     result->setRadius(m_radius.blend(otherCircle.radius(), progress));
-    return WTF::move(result);
+    return WTFMove(result);
 }
 
 bool BasicShapeEllipse::operator==(const BasicShape& other) const
@@ -184,14 +184,14 @@ Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progres
         result->setCenterY(otherEllipse.centerY());
         result->setRadiusX(otherEllipse.radiusX());
         result->setRadiusY(otherEllipse.radiusY());
-        return WTF::move(result);
+        return WTFMove(result);
     }
 
     result->setCenterX(m_centerX.blend(otherEllipse.centerX(), progress));
     result->setCenterY(m_centerY.blend(otherEllipse.centerY(), progress));
     result->setRadiusX(m_radiusX.blend(otherEllipse.radiusX(), progress));
     result->setRadiusY(m_radiusY.blend(otherEllipse.radiusY(), progress));
-    return WTF::move(result);
+    return WTFMove(result);
 }
 
 bool BasicShapePolygon::operator==(const BasicShape& other) const
@@ -242,7 +242,7 @@ Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progres
     size_t length = m_values.size();
     auto result = BasicShapePolygon::create();
     if (!length)
-        return WTF::move(result);
+        return WTFMove(result);
 
     result->setWindRule(otherPolygon.windRule());
 
@@ -251,11 +251,11 @@ Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progres
             m_values.at(i + 1).blend(otherPolygon.values().at(i + 1), progress));
     }
 
-    return WTF::move(result);
+    return WTFMove(result);
 }
 
 BasicShapePath::BasicShapePath(std::unique_ptr<SVGPathByteStream>&& byteStream)
-    : m_byteStream(WTF::move(byteStream))
+    : m_byteStream(WTFMove(byteStream))
 {
 }
 
@@ -293,9 +293,9 @@ Ref<BasicShape> BasicShapePath::blend(const BasicShape& from, double progress) c
     auto resultingPathBytes = std::make_unique<SVGPathByteStream>();
     buildAnimatedSVGPathByteStream(*fromPath.m_byteStream, *m_byteStream, *resultingPathBytes, progress);
 
-    auto result = BasicShapePath::create(WTF::move(resultingPathBytes));
+    auto result = BasicShapePath::create(WTFMove(resultingPathBytes));
     result->setWindRule(windRule());
-    return WTF::move(result);
+    return WTFMove(result);
 }
 
 bool BasicShapeInset::operator==(const BasicShape& other) const
@@ -357,6 +357,6 @@ Ref<BasicShape> BasicShapeInset::blend(const BasicShape& other, double progress)
     result->setBottomRightRadius(m_bottomRightRadius.blend(otherInset.bottomRightRadius(), progress));
     result->setBottomLeftRadius(m_bottomLeftRadius.blend(otherInset.bottomLeftRadius(), progress));
 
-    return WTF::move(result);
+    return WTFMove(result);
 }
 }

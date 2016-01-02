@@ -45,7 +45,7 @@ public:
 static Ref<WebCore::CalculationValue> createTestValue()
 {
     auto node = std::make_unique<CalculationDeletionTestNode>();
-    return WebCore::CalculationValue::create(WTF::move(node), WebCore::CalculationRangeAll);
+    return WebCore::CalculationValue::create(WTFMove(node), WebCore::CalculationRangeAll);
 }
 
 TEST(CalculationValue, LengthConstruction)
@@ -73,7 +73,7 @@ TEST(CalculationValue, LengthConstruction)
     {
         WebCore::Length lengthC(*value);
         EXPECT_EQ(2U, value->refCount());
-        WebCore::Length lengthD(WTF::move(lengthC));
+        WebCore::Length lengthD(WTFMove(lengthC));
         EXPECT_EQ(2U, value->refCount());
     }
 
@@ -123,7 +123,7 @@ TEST(CalculationValue, LengthConstructionReleasedValue)
         auto* rawValue = value.get();
         WebCore::Length lengthC(value.releaseNonNull());
         EXPECT_EQ(1U, rawValue->refCount());
-        WebCore::Length lengthD(WTF::move(lengthC));
+        WebCore::Length lengthD(WTFMove(lengthC));
         EXPECT_EQ(1U, rawValue->refCount());
 
         EXPECT_EQ(0U, deletionCount);
@@ -153,7 +153,7 @@ TEST(CalculationValue, LengthAssignment)
         WebCore::Length lengthC(*value);
         EXPECT_EQ(2U, value->refCount());
         WebCore::Length lengthD;
-        lengthD = WTF::move(lengthC);
+        lengthD = WTFMove(lengthC);
         EXPECT_EQ(2U, value->refCount());
     }
 
@@ -188,7 +188,7 @@ TEST(CalculationValue, LengthAssignment)
         EXPECT_EQ(2U, value->refCount());
         WebCore::Length lengthH(*value2);
         EXPECT_EQ(2U, value2->refCount());
-        lengthG = WTF::move(lengthH);
+        lengthG = WTFMove(lengthH);
         EXPECT_EQ(1U, value->refCount());
         EXPECT_EQ(2U, value2->refCount());
     }
@@ -226,7 +226,7 @@ TEST(CalculationValue, LengthAssignmentReleasedValue)
         WebCore::Length lengthC(value.releaseNonNull());
         EXPECT_EQ(1U, rawValue->refCount());
         WebCore::Length lengthD;
-        lengthD = WTF::move(lengthC);
+        lengthD = WTFMove(lengthC);
         EXPECT_EQ(1U, rawValue->refCount());
 
         EXPECT_EQ(0U, deletionCount);
@@ -271,7 +271,7 @@ TEST(CalculationValue, LengthAssignmentReleasedValue)
         WebCore::Length lengthH(value2.releaseNonNull());
         EXPECT_EQ(1U, rawValue2->refCount());
 
-        lengthG = WTF::move(lengthH);
+        lengthG = WTFMove(lengthH);
         EXPECT_EQ(1U, deletionCount);
         EXPECT_EQ(1U, rawValue2->refCount());
     }

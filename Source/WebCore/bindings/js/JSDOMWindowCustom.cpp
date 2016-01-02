@@ -652,7 +652,7 @@ JSValue JSDOMWindow::setTimeout(ExecState& state)
     int delay = state.argument(1).toInt32(&state);
 
     ExceptionCode ec = 0;
-    int result = wrapped().setTimeout(WTF::move(action), delay, ec);
+    int result = wrapped().setTimeout(WTFMove(action), delay, ec);
     setDOMException(&state, ec);
 
     return jsNumber(result);
@@ -670,7 +670,7 @@ JSValue JSDOMWindow::setInterval(ExecState& state)
         return jsNumber(0);
 
     ExceptionCode ec = 0;
-    int result = wrapped().setInterval(WTF::move(action), delay, ec);
+    int result = wrapped().setInterval(WTFMove(action), delay, ec);
     setDOMException(&state, ec);
 
     return jsNumber(result);

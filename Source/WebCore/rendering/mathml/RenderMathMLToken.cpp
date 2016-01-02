@@ -37,13 +37,13 @@ namespace WebCore {
 using namespace MathMLNames;
 
 RenderMathMLToken::RenderMathMLToken(Element& element, Ref<RenderStyle>&& style)
-    : RenderMathMLBlock(element, WTF::move(style))
+    : RenderMathMLBlock(element, WTFMove(style))
     , m_containsElement(false)
 {
 }
 
 RenderMathMLToken::RenderMathMLToken(Document& document, Ref<RenderStyle>&& style)
-    : RenderMathMLBlock(document, WTF::move(style))
+    : RenderMathMLBlock(document, WTFMove(style))
     , m_containsElement(false)
 {
 }
@@ -95,7 +95,7 @@ void RenderMathMLToken::updateStyle()
             newStyle.get().fontCascade().update(fontSelector);
     }
 
-    wrapper->setStyle(WTF::move(newStyle));
+    wrapper->setStyle(WTFMove(newStyle));
     wrapper->setNeedsLayoutAndPrefWidthsRecalc();
 }
 

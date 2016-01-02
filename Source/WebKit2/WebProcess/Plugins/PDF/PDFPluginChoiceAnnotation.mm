@@ -90,7 +90,7 @@ PassRefPtr<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
         if (choice == selectedChoice)
             choiceOption->setAttribute(selectedAttr, "selected");
 
-        styledElement->appendChild(WTF::move(choiceOption));
+        styledElement->appendChild(WTFMove(choiceOption));
     }
 
     return element;

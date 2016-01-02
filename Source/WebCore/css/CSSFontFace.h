@@ -45,7 +45,7 @@ class Font;
 
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
-    static Ref<CSSFontFace> create(FontTraitsMask traitsMask, RefPtr<CSSFontFaceRule>&& rule, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(traitsMask, WTF::move(rule), isLocalFallback)); }
+    static Ref<CSSFontFace> create(FontTraitsMask traitsMask, RefPtr<CSSFontFaceRule>&& rule, bool isLocalFallback = false) { return adoptRef(*new CSSFontFace(traitsMask, WTFMove(rule), isLocalFallback)); }
 
     FontTraitsMask traitsMask() const { return m_traitsMask; }
 
@@ -54,7 +54,7 @@ public:
     void addRange(UChar32 from, UChar32 to) { m_ranges.append(UnicodeRange(from, to)); }
     const Vector<UnicodeRange>& ranges() const { return m_ranges; }
 
-    void insertFeature(FontFeature&& feature) { m_featureSettings.insert(WTF::move(feature)); }
+    void insertFeature(FontFeature&& feature) { m_featureSettings.insert(WTFMove(feature)); }
 
     void setVariantCommonLigatures(FontVariantLigatures ligatures) { m_variantSettings.commonLigatures = ligatures; }
     void setVariantDiscretionaryLigatures(FontVariantLigatures ligatures) { m_variantSettings.discretionaryLigatures = ligatures; }

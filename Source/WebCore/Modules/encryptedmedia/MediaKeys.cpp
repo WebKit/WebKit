@@ -62,13 +62,13 @@ RefPtr<MediaKeys> MediaKeys::create(const String& keySystem, ExceptionCode& ec)
     // 5. Create a new MediaKeys object.
     // 5.1 Let the keySystem attribute be keySystem.
     // 6. Return the new object to the caller.
-    return adoptRef(*new MediaKeys(keySystem, WTF::move(cdm)));
+    return adoptRef(*new MediaKeys(keySystem, WTFMove(cdm)));
 }
 
 MediaKeys::MediaKeys(const String& keySystem, std::unique_ptr<CDM> cdm)
     : m_mediaElement(nullptr)
     , m_keySystem(keySystem)
-    , m_cdm(WTF::move(cdm))
+    , m_cdm(WTFMove(cdm))
 {
     m_cdm->setClient(this);
 }

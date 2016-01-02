@@ -279,7 +279,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
     auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
 
-    RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
+    RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];
 
     if (![actions count])
         return;
@@ -288,7 +288,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     if (!_interactionSheet)
         return;
 
-    _elementInfo = WTF::move(elementInfo);
+    _elementInfo = WTFMove(elementInfo);
 
     if (![_interactionSheet presentSheet])
         [self cleanupSheet];
@@ -393,7 +393,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
     auto defaultActions = [self defaultActionsForLinkSheet:elementInfo.get()];
 
-    RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
+    RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];
 
     if (![actions count])
         return;
@@ -402,7 +402,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     if (!_interactionSheet)
         return;
 
-    _elementInfo = WTF::move(elementInfo);
+    _elementInfo = WTFMove(elementInfo);
 
     if (![_interactionSheet presentSheet])
         [self cleanupSheet];

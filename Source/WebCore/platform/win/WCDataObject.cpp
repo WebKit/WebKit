@@ -264,13 +264,13 @@ STDMETHODIMP WCDataObject::SetData(FORMATETC* pformatetc, STGMEDIUM* pmedium, BO
     ZeroMemory(pStgMed.get(), sizeof(STGMEDIUM));
 
     *fetc = *pformatetc;
-    m_formats.append(WTF::move(fetc));
+    m_formats.append(WTFMove(fetc));
 
     if(fRelease)
         *pStgMed = *pmedium;
     else
         CopyMedium(pStgMed.get(), pmedium, pformatetc);
-    m_medium.append(WTF::move(pStgMed));
+    m_medium.append(WTFMove(pStgMed));
 
     return S_OK;
 }

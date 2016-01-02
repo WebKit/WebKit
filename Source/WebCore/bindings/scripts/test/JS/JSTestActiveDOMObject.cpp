@@ -114,7 +114,7 @@ void JSTestActiveDOMObjectPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestActiveDOMObject::s_info = { "TestActiveDOMObject", &Base::s_info, &JSTestActiveDOMObjectTable, CREATE_METHOD_TABLE(JSTestActiveDOMObject) };
 
 JSTestActiveDOMObject::JSTestActiveDOMObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestActiveDOMObject>&& impl)
-    : JSDOMWrapper<TestActiveDOMObject>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestActiveDOMObject>(structure, globalObject, WTFMove(impl))
 {
 }
 

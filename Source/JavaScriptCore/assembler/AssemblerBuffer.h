@@ -161,7 +161,7 @@ namespace JSC {
 
         unsigned debugOffset() { return m_index; }
 
-        AssemblerData releaseAssemblerData() { return WTF::move(m_storage); }
+        AssemblerData releaseAssemblerData() { return WTFMove(m_storage); }
 
     protected:
         template<typename IntegralType>

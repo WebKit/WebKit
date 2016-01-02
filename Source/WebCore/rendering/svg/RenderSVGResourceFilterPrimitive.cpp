@@ -38,7 +38,7 @@
 namespace WebCore {
 
 RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement, Ref<RenderStyle>&& style)
-    : RenderSVGHiddenContainer(filterPrimitiveElement, WTF::move(style))
+    : RenderSVGHiddenContainer(filterPrimitiveElement, WTFMove(style))
 {
 }
 

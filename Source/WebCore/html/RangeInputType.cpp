@@ -257,8 +257,8 @@ void RangeInputType::createShadowSubtree()
     track->setPseudo(AtomicString("-webkit-slider-runnable-track", AtomicString::ConstructFromLiteral));
     track->appendChild(SliderThumbElement::create(document), IGNORE_EXCEPTION);
     Ref<HTMLElement> container = SliderContainerElement::create(document);
-    container->appendChild(WTF::move(track), IGNORE_EXCEPTION);
-    element().userAgentShadowRoot()->appendChild(WTF::move(container), IGNORE_EXCEPTION);
+    container->appendChild(WTFMove(track), IGNORE_EXCEPTION);
+    element().userAgentShadowRoot()->appendChild(WTFMove(container), IGNORE_EXCEPTION);
 }
 
 HTMLElement* RangeInputType::sliderTrackElement() const
@@ -286,7 +286,7 @@ HTMLElement* RangeInputType::sliderThumbElement() const
 
 RenderPtr<RenderElement> RangeInputType::createInputRenderer(Ref<RenderStyle>&& style)
 {
-    return createRenderer<RenderSlider>(element(), WTF::move(style));
+    return createRenderer<RenderSlider>(element(), WTFMove(style));
 }
 
 Decimal RangeInputType::parseToNumber(const String& src, const Decimal& defaultValue) const

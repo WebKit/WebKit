@@ -251,7 +251,7 @@ public:
     void setCurrentReply(uint32_t requestID, std::unique_ptr<Reply> reply)
     {
         ASSERT(!m_replies.contains(requestID));
-        m_replies.add(requestID, WTF::move(reply));
+        m_replies.add(requestID, WTFMove(reply));
     }
     
     template <typename T>

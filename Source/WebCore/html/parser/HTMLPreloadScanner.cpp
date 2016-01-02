@@ -348,7 +348,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         StartTagScanner scanner(tagId, m_deviceScaleFactor);
         scanner.processAttributes(token.attributes(), document);
         if (auto request = scanner.createPreloadRequest(m_predictedBaseElementURL))
-            requests.append(WTF::move(request));
+            requests.append(WTFMove(request));
         return;
     }
 
@@ -393,7 +393,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
         m_scanner.scan(*token, requests, document);
     }
 
-    preloader.preload(WTF::move(requests));
+    preloader.preload(WTFMove(requests));
 }
 
 bool testPreloadScannerViewportSupport(Document* document)

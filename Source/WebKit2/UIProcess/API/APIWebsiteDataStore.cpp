@@ -44,7 +44,7 @@ Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
 
 Ref<WebsiteDataStore> WebsiteDataStore::create(WebKit::WebsiteDataStore::Configuration configuration)
 {
-    return adoptRef(*new WebsiteDataStore(WTF::move(configuration)));
+    return adoptRef(*new WebsiteDataStore(WTFMove(configuration)));
 }
 
 WebsiteDataStore::WebsiteDataStore()
@@ -53,7 +53,7 @@ WebsiteDataStore::WebsiteDataStore()
 }
 
 WebsiteDataStore::WebsiteDataStore(WebKit::WebsiteDataStore::Configuration configuration)
-    : m_websiteDataStore(WebKit::WebsiteDataStore::create(WTF::move(configuration)))
+    : m_websiteDataStore(WebKit::WebsiteDataStore::create(WTFMove(configuration)))
 {
 }
 

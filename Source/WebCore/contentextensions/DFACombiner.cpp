@@ -191,14 +191,14 @@ void DFACombiner::combineDFAs(unsigned minimumSize, std::function<void(DFA&&)> h
 
     for (unsigned i = m_dfas.size(); i--;) {
         if (m_dfas[i].graphSize() > minimumSize) {
-            handler(WTF::move(m_dfas[i]));
+            handler(WTFMove(m_dfas[i]));
             m_dfas.remove(i);
         }
     }
 
     while (!m_dfas.isEmpty()) {
         if (m_dfas.size() == 1) {
-            handler(WTF::move(m_dfas.first()));
+            handler(WTFMove(m_dfas.first()));
             return;
         }
 
@@ -214,7 +214,7 @@ void DFACombiner::combineDFAs(unsigned minimumSize, std::function<void(DFA&&)> h
         }
 
         if (c.graphSize() > minimumSize)
-            handler(WTF::move(c));
+            handler(WTFMove(c));
         else
             m_dfas.append(c);
     }

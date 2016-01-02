@@ -38,7 +38,7 @@ class CryptoKeyPair : public RefCounted<CryptoKeyPair> {
 public:
     static Ref<CryptoKeyPair> create(RefPtr<CryptoKey>&& publicKey, RefPtr<CryptoKey>&& privateKey)
     {
-        return adoptRef(*new CryptoKeyPair(WTF::move(publicKey), WTF::move(privateKey)));
+        return adoptRef(*new CryptoKeyPair(WTFMove(publicKey), WTFMove(privateKey)));
     }
     ~CryptoKeyPair();
 

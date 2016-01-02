@@ -43,7 +43,7 @@ typedef int ExceptionCode;
 class NavigatorContentUtils final : public Supplement<Page> {
 public:
     explicit NavigatorContentUtils(std::unique_ptr<NavigatorContentUtilsClient> client)
-        : m_client(WTF::move(client))
+        : m_client(WTFMove(client))
     { }
 
     virtual ~NavigatorContentUtils();

@@ -273,7 +273,7 @@ namespace WebCore {
         URL documentURL() const;
 
 #if USE(QUICK_LOOK)
-        void setQuickLookHandle(std::unique_ptr<QuickLookHandle> quickLookHandle) { m_quickLookHandle = WTF::move(quickLookHandle); }
+        void setQuickLookHandle(std::unique_ptr<QuickLookHandle> quickLookHandle) { m_quickLookHandle = WTFMove(quickLookHandle); }
         QuickLookHandle* quickLookHandle() const { return m_quickLookHandle.get(); }
 #endif
 

@@ -148,7 +148,7 @@ std::unique_ptr<GLContextEGL> PlatformDisplayWayland::createSharingGLContext()
     contextData->nativeWindow = wl_egl_window_create(contextData->surface, 1, 1);
 
     auto nativeWindow = contextData->nativeWindow;
-    return GLContextEGL::createWindowContext(nativeWindow, nullptr, WTF::move(contextData));
+    return GLContextEGL::createWindowContext(nativeWindow, nullptr, WTFMove(contextData));
 }
 
 } // namespace WebCore

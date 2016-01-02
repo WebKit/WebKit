@@ -736,7 +736,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
 - (RetainPtr<NSArray>)actionSheetAssistant:(WKActionSheetAssistant *)assistant decideActionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
 {
-    return _webView->_page->uiClient().actionsForElement(element, WTF::move(defaultActions));
+    return _webView->_page->uiClient().actionsForElement(element, WTFMove(defaultActions));
 }
 
 #pragma mark Password protection UI

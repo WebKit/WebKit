@@ -52,7 +52,7 @@ void Attachment::release()
 
 void Attachment::encode(ArgumentEncoder& encoder) const
 {
-    encoder.addAttachment(WTF::move(*const_cast<Attachment*>(this)));
+    encoder.addAttachment(WTFMove(*const_cast<Attachment*>(this)));
 }
 
 bool Attachment::decode(ArgumentDecoder& decoder, Attachment& attachment)

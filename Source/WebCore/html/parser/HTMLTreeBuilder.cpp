@@ -324,7 +324,7 @@ RefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptStartPo
     // We pause the parser to exit the tree builder, and then resume before running scripts.
     scriptStartPosition = m_scriptToProcessStartPosition;
     m_scriptToProcessStartPosition = uninitializedPositionValue1();
-    return WTF::move(m_scriptToProcess);
+    return WTFMove(m_scriptToProcess);
 }
 
 void HTMLTreeBuilder::constructTree(AtomicHTMLToken& token)
@@ -407,7 +407,7 @@ void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
 void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, Vector<Attribute>&& attributes)
 {
     // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
-    AtomicHTMLToken fakeToken(HTMLToken::StartTag, tagName.localName(), WTF::move(attributes));
+    AtomicHTMLToken fakeToken(HTMLToken::StartTag, tagName.localName(), WTFMove(attributes));
     processStartTag(fakeToken);
 }
 
@@ -2282,7 +2282,7 @@ void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
     attributes.append(Attribute(HTMLNames::hrefAttr, ASCIILiteral("tel:") + string));
 
     const AtomicString& aTagLocalName = aTag.localName();
-    AtomicHTMLToken aStartToken(HTMLToken::StartTag, aTagLocalName, WTF::move(attributes));
+    AtomicHTMLToken aStartToken(HTMLToken::StartTag, aTagLocalName, WTFMove(attributes));
     AtomicHTMLToken aEndToken(HTMLToken::EndTag, aTagLocalName);
 
     processStartTag(aStartToken);

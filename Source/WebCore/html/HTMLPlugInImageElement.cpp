@@ -194,7 +194,7 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(Ref<Rende
     ASSERT(!document().inPageCache());
 
     if (displayState() >= PreparingPluginReplacement)
-        return HTMLPlugInElement::createElementRenderer(WTF::move(style), insertionPosition);
+        return HTMLPlugInElement::createElementRenderer(WTFMove(style), insertionPosition);
 
     // Once a PlugIn Element creates its renderer, it needs to be told when the Document goes
     // inactive or reactivates so it can clear the renderer before going into the page cache.
@@ -204,21 +204,21 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(Ref<Rende
     }
 
     if (displayState() == DisplayingSnapshot) {
-        auto renderSnapshottedPlugIn = createRenderer<RenderSnapshottedPlugIn>(*this, WTF::move(style));
+        auto renderSnapshottedPlugIn = createRenderer<RenderSnapshottedPlugIn>(*this, WTFMove(style));
         renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage);
-        return WTF::move(renderSnapshottedPlugIn);
+        return WTFMove(renderSnapshottedPlugIn);
     }
 
     // Fallback content breaks the DOM->Renderer class relationship of this
     // class and all superclasses because createObject won't necessarily
     // return a RenderEmbeddedObject or RenderWidget.
     if (useFallbackContent())
-        return RenderElement::createFor(*this, WTF::move(style));
+        return RenderElement::createFor(*this, WTFMove(style));
 
     if (isImageType())
-        return createRenderer<RenderImage>(*this, WTF::move(style));
+        return createRenderer<RenderImage>(*this, WTFMove(style));
 
-    return HTMLPlugInElement::createElementRenderer(WTF::move(style), insertionPosition);
+    return HTMLPlugInElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 
 bool HTMLPlugInImageElement::childShouldCreateRenderer(const Node& child) const

@@ -44,7 +44,7 @@ public:
         : m_ref(currentValue)
         , m_oldValue(currentValue)
     {
-        currentValue = WTF::move(newValue);
+        currentValue = WTFMove(newValue);
     }
 
     ~SetForScope()

@@ -90,14 +90,14 @@ template<typename T> template<typename U> inline NakedPtr<T>& NakedPtr<T>::opera
 
 template<typename T> inline NakedPtr<T>& NakedPtr<T>::operator=(NakedPtr&& o)
 {
-    NakedPtr ptr = WTF::move(o);
+    NakedPtr ptr = WTFMove(o);
     swap(ptr);
     return *this;
 }
 
 template<typename T> template<typename U> inline NakedPtr<T>& NakedPtr<T>::operator=(NakedPtr<U>&& o)
 {
-    NakedPtr ptr = WTF::move(o);
+    NakedPtr ptr = WTFMove(o);
     swap(ptr);
     return *this;
 }

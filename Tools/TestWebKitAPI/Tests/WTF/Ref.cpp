@@ -99,7 +99,7 @@ TEST(WTF_Ref, Assignment)
 
 static Ref<RefLogger> passWithRef(Ref<RefLogger>&& reference)
 {
-    return WTF::move(reference);
+    return WTFMove(reference);
 }
 
 static RefPtr<RefLogger> passWithPassRefPtr(PassRefPtr<RefLogger> reference)
@@ -143,7 +143,7 @@ TEST(WTF_Ref, ReturnValue)
 
     {
         RefPtr<DerivedRefLogger> ptr(&a);
-        RefPtr<RefLogger> ptr2(WTF::move(ptr));
+        RefPtr<RefLogger> ptr2(WTFMove(ptr));
         ASSERT_EQ(nullptr, ptr.get());
         ASSERT_EQ(&a, ptr2.get());
     }

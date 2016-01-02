@@ -31,8 +31,8 @@
 namespace WebCore {
 
 CryptoKeyPair::CryptoKeyPair(RefPtr<CryptoKey>&& publicKey, RefPtr<CryptoKey>&& privateKey)
-    : m_publicKey(WTF::move(publicKey))
-    , m_privateKey(WTF::move(privateKey))
+    : m_publicKey(WTFMove(publicKey))
+    , m_privateKey(WTFMove(privateKey))
 {
 }
 

@@ -1547,7 +1547,7 @@ bool MediaPlayerPrivateQTKit::canSaveMediaData() const
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void MediaPlayerPrivateQTKit::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
-    m_playbackTarget = WTF::move(target);
+    m_playbackTarget = WTFMove(target);
 }
 
 void MediaPlayerPrivateQTKit::setShouldPlayToPlaybackTarget(bool shouldPlayToTarget)

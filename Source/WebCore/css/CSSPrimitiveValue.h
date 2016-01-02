@@ -399,13 +399,13 @@ private:
     template<typename T> CSSPrimitiveValue(RefPtr<T>&& value)
         : CSSValue(PrimitiveClass)
     {
-        init(WTF::move(value));
+        init(WTFMove(value));
     }
 
     template<typename T> CSSPrimitiveValue(Ref<T>&& value)
         : CSSValue(PrimitiveClass)
     {
-        init(WTF::move(value));
+        init(WTFMove(value));
     }
 
     static void create(int); // compile-time guard

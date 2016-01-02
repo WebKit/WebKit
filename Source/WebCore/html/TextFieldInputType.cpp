@@ -232,7 +232,7 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 
 RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(Ref<RenderStyle>&& style)
 {
-    return createRenderer<RenderTextControlSingleLine>(element(), WTF::move(style));
+    return createRenderer<RenderTextControlSingleLine>(element(), WTFMove(style));
 }
 
 bool TextFieldInputType::needsContainer() const

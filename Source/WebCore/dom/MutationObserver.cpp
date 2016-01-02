@@ -185,7 +185,7 @@ static void queueMutationObserverCompoundMicrotask()
     mutationObserverCompoundMicrotaskQueuedFlag = true;
 
     auto microtask = std::make_unique<MutationObserverMicrotask>();
-    MicrotaskQueue::mainThreadQueue().append(WTF::move(microtask));
+    MicrotaskQueue::mainThreadQueue().append(WTFMove(microtask));
 }
 
 void MutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mutation)

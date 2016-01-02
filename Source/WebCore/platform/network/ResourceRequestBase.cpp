@@ -61,7 +61,7 @@ std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<Cros
     request->setRequester(data->requester);
 
     request->updateResourceRequest();
-    request->m_httpHeaderFields.adopt(WTF::move(data->httpHeaders));
+    request->m_httpHeaderFields.adopt(WTFMove(data->httpHeaders));
 
     size_t encodingCount = data->responseContentDispositionEncodingFallbackArray.size();
     if (encodingCount > 0) {
@@ -78,7 +78,7 @@ std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<Cros
     }
     request->setHTTPBody(data->httpBody);
     request->setAllowCookies(data->allowCookies);
-    request->doPlatformAdopt(WTF::move(data));
+    request->doPlatformAdopt(WTFMove(data));
     return request;
 }
 
@@ -102,7 +102,7 @@ std::unique_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() 
     if (m_httpBody)
         data->httpBody = m_httpBody->deepCopy();
     data->allowCookies = m_allowCookies;
-    return asResourceRequest().doPlatformCopyData(WTF::move(data));
+    return asResourceRequest().doPlatformCopyData(WTFMove(data));
 }
 
 bool ResourceRequestBase::isEmpty() const
@@ -469,7 +469,7 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
 {
     updateResourceRequest();
 
-    m_httpHeaderFields = WTF::move(headerFields);
+    m_httpHeaderFields = WTFMove(headerFields);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;

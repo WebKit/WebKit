@@ -141,7 +141,7 @@ void PluginProcess::initializePluginProcess(PluginProcessCreationParameters&& pa
     setMinimumLifetime(parameters.minimumLifetime);
     setTerminationTimeout(parameters.terminationTimeout);
 
-    platformInitializePluginProcess(WTF::move(parameters));
+    platformInitializePluginProcess(WTFMove(parameters));
 }
 
 void PluginProcess::createWebProcessConnection()

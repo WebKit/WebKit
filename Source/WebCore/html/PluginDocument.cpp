@@ -106,7 +106,7 @@ void PluginDocumentParser::createDocumentStructure()
 
     downcast<PluginDocument>(*document()).setPluginElement(m_embedElement);
 
-    body->appendChild(WTF::move(embedElement), IGNORE_EXCEPTION);
+    body->appendChild(WTFMove(embedElement), IGNORE_EXCEPTION);
 }
 
 void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)

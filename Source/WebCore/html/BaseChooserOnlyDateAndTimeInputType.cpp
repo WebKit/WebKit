@@ -62,7 +62,7 @@ void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
 
     Ref<HTMLDivElement> valueContainer = HTMLDivElement::create(element().document());
     valueContainer->setPseudo(valueContainerPseudo);
-    element().userAgentShadowRoot()->appendChild(WTF::move(valueContainer));
+    element().userAgentShadowRoot()->appendChild(WTFMove(valueContainer));
     updateAppearance();
 }
 

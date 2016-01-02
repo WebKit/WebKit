@@ -62,7 +62,7 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const
 
 RenderPtr<RenderElement> SVGSwitchElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
+    return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
 }

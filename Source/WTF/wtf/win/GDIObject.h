@@ -95,7 +95,7 @@ template<typename T> inline GDIObject<T>::GDIObject(GDIObject<T>&& other)
 
 template<typename T> inline GDIObject<T>& GDIObject<T>::operator=(GDIObject<T>&& other)
 {
-    auto object = WTF::move(other);
+    auto object = WTFMove(other);
     swap(object);
     return *this;
 }

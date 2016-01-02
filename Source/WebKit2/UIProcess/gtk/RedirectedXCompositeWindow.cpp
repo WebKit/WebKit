@@ -59,7 +59,7 @@ public:
     {
         if (m_notifyFunctions.isEmpty())
             gdk_window_add_filter(nullptr, reinterpret_cast<GdkFilterFunc>(&filterXDamageEvent), this);
-        m_notifyFunctions.add(window, WTF::move(notifyFunction));
+        m_notifyFunctions.add(window, WTFMove(notifyFunction));
     }
 
     void remove(Window window)
@@ -183,7 +183,7 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(GdkWindow* parentWindow, 
         &windowAttributes);
     XMapWindow(m_display, m_window.get());
 
-    xDamageNotifier().add(m_window.get(), WTF::move(damageNotify));
+    xDamageNotifier().add(m_window.get(), WTFMove(damageNotify));
 
     while (1) {
         XEvent event;
@@ -276,7 +276,7 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
     }
 
     cleanupPixmapAndPixmapSurface();
-    m_pixmap = WTF::move(newPixmap);
+    m_pixmap = WTFMove(newPixmap);
     m_surface = newSurface;
     return m_surface.get();
 }

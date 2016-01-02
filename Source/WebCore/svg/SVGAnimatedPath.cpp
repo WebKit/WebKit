@@ -35,7 +35,7 @@ std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(co
 {
     auto byteStream = std::make_unique<SVGPathByteStream>();
     buildSVGPathByteStreamFromString(string, *byteStream, UnalteredParsing);
-    return SVGAnimatedType::createPath(WTF::move(byteStream));
+    return SVGAnimatedType::createPath(WTFMove(byteStream));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -45,7 +45,7 @@ std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(
     // Build initial path byte stream.
     auto byteStream = std::make_unique<SVGPathByteStream>();
     resetAnimValToBaseVal(animatedTypes, byteStream.get());
-    return SVGAnimatedType::createPath(WTF::move(byteStream));
+    return SVGAnimatedType::createPath(WTFMove(byteStream));
 }
 
 void SVGAnimatedPathAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

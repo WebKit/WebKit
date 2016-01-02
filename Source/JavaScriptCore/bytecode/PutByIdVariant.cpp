@@ -89,7 +89,7 @@ PutByIdVariant PutByIdVariant::setter(
     result.m_oldStructure = structure;
     result.m_conditionSet = conditionSet;
     result.m_offset = offset;
-    result.m_callLinkStatus = WTF::move(callLinkStatus);
+    result.m_callLinkStatus = WTFMove(callLinkStatus);
     result.m_requiredType = InferredType::Top;
     return result;
 }

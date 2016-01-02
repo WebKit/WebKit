@@ -39,7 +39,7 @@ namespace WebCore {
 bool RenderMultiColumnFlowThread::gShiftingSpanner = false;
 
 RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Document& document, Ref<RenderStyle>&& style)
-    : RenderFlowThread(document, WTF::move(style))
+    : RenderFlowThread(document, WTFMove(style))
     , m_lastSetWorkedOn(nullptr)
     , m_columnCount(1)
     , m_columnWidth(0)

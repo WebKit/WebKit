@@ -69,13 +69,13 @@ public:
         : m_isEngaged(other.m_isEngaged)
     {
         if (m_isEngaged)
-            new (NotNull, &m_value) T(WTF::move(*other.asPtr()));
+            new (NotNull, &m_value) T(WTFMove(*other.asPtr()));
     }
 
     Optional(T&& value)
         : m_isEngaged(true)
     {
-        new (NotNull, &m_value) T(WTF::move(value));
+        new (NotNull, &m_value) T(WTFMove(value));
     }
 
     template<typename... Args>
@@ -116,7 +116,7 @@ public:
 
         destroy();
         if (other.m_isEngaged) {
-            new (NotNull, &m_value) T(WTF::move(*other.asPtr()));
+            new (NotNull, &m_value) T(WTFMove(*other.asPtr()));
             m_isEngaged = true;
         }
         return *this;

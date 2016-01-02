@@ -567,7 +567,7 @@ void WebSocket::didReceiveBinaryData(Vector<char>&& binaryData)
     switch (m_binaryType) {
     case BinaryTypeBlob: {
         // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-        RefPtr<Blob> blob = Blob::create(WTF::move(binaryData), emptyString());
+        RefPtr<Blob> blob = Blob::create(WTFMove(binaryData), emptyString());
         dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
         break;
     }
@@ -646,7 +646,7 @@ void WebSocket::dispatchOrQueueErrorEvent()
 void WebSocket::dispatchOrQueueEvent(Ref<Event>&& event)
 {
     if (m_shouldDelayEventFiring)
-        m_pendingEvents.append(WTF::move(event));
+        m_pendingEvents.append(WTFMove(event));
     else
         dispatchEvent(event);
 }

@@ -69,7 +69,7 @@ TEST(WTF_RefPtr, Basic)
 
     {
         RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = WTF::move(p1);
+        RefPtr<RefLogger> p2 = WTFMove(p1);
         ASSERT_EQ(nullptr, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -77,7 +77,7 @@ TEST(WTF_RefPtr, Basic)
 
     {
         RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2(WTF::move(p1));
+        RefPtr<RefLogger> p2(WTFMove(p1));
         ASSERT_EQ(nullptr, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -93,7 +93,7 @@ TEST(WTF_RefPtr, Basic)
 
     {
         RefPtr<DerivedRefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = WTF::move(p1);
+        RefPtr<RefLogger> p2 = WTFMove(p1);
         ASSERT_EQ(nullptr, p1.get());
         ASSERT_EQ(&a, p2.get());
     }
@@ -121,7 +121,7 @@ TEST(WTF_RefPtr, AssignPassRefToRefPtr)
     DerivedRefLogger a("a");
     {
         Ref<RefLogger> passRef(a);
-        RefPtr<RefLogger> ptr = WTF::move(passRef);
+        RefPtr<RefLogger> ptr = WTFMove(passRef);
         ASSERT_EQ(&a, ptr.get());
         ptr.release();
         ASSERT_EQ(nullptr, ptr.get());
@@ -204,7 +204,7 @@ TEST(WTF_RefPtr, Assignment)
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&b, p2.get());
         log() << "| ";
-        p1 = WTF::move(p2);
+        p1 = WTFMove(p2);
         ASSERT_EQ(&b, p1.get());
         ASSERT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -250,7 +250,7 @@ TEST(WTF_RefPtr, Assignment)
         ASSERT_EQ(&a, p1.get());
         ASSERT_EQ(&c, p2.get());
         log() << "| ";
-        p1 = WTF::move(p2);
+        p1 = WTFMove(p2);
         ASSERT_EQ(&c, p1.get());
         ASSERT_EQ(nullptr, p2.get());
         log() << "| ";
@@ -275,7 +275,7 @@ TEST(WTF_RefPtr, Assignment)
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wself-move"
 #endif
-        ptr = WTF::move(ptr);
+        ptr = WTFMove(ptr);
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif

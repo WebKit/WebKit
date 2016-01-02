@@ -110,21 +110,21 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
         element->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeDirectory");
     else
         element->setAttribute(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeFile");
-    rowElement->appendChild(WTF::move(element), IGNORE_EXCEPTION);
+    rowElement->appendChild(WTFMove(element), IGNORE_EXCEPTION);
 
     element = createTDForFilename(filename);
     element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileName");
-    rowElement->appendChild(WTF::move(element), IGNORE_EXCEPTION);
+    rowElement->appendChild(WTFMove(element), IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(*document(), date), IGNORE_EXCEPTION);
     element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileDate");
-    rowElement->appendChild(WTF::move(element), IGNORE_EXCEPTION);
+    rowElement->appendChild(WTFMove(element), IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
     element->appendChild(Text::create(*document(), size), IGNORE_EXCEPTION);
     element->setAttribute(HTMLNames::classAttr, "ftpDirectoryFileSize");
-    rowElement->appendChild(WTF::move(element), IGNORE_EXCEPTION);
+    rowElement->appendChild(WTFMove(element), IGNORE_EXCEPTION);
 }
 
 Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
@@ -140,7 +140,7 @@ Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filen
     anchorElement->appendChild(Text::create(*document(), filename), IGNORE_EXCEPTION);
 
     Ref<Element> tdElement = document()->createElement(tdTag, false);
-    tdElement->appendChild(WTF::move(anchorElement), IGNORE_EXCEPTION);
+    tdElement->appendChild(WTFMove(anchorElement), IGNORE_EXCEPTION);
 
     return tdElement;
 }
@@ -334,14 +334,14 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     m_tableElement->setAttribute(HTMLNames::idAttr, "ftpDirectoryTable");
     m_tableElement->setAttribute(HTMLNames::styleAttr, "width:100%");
 
-    bodyElement->appendChild(WTF::move(tableElement), IGNORE_EXCEPTION);
+    bodyElement->appendChild(WTFMove(tableElement), IGNORE_EXCEPTION);
 
     document()->processViewport("width=device-width", ViewportArguments::ViewportMeta);
 }
 
 void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
-    String source(WTF::move(inputSource));
+    String source(WTFMove(inputSource));
 
     // Make sure we have the table element to append to by loading the template set in the pref, or
     // creating a very basic document with the appropriate table

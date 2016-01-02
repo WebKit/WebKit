@@ -107,7 +107,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr
                 .setManifestURL(manifestURL)
                 .setStatus(static_cast<int>(host->status()))
                 .release();
-            result->addItem(WTF::move(value));
+            result->addItem(WTFMove(value));
         }
     }
 }

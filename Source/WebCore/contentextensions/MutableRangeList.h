@@ -134,7 +134,7 @@ public:
                 DataType copiedData = activeSelfRange->data;
                 CharacterType newRangeFirstCharacter = activeSelfRange->first;
                 activeSelfRange->first = otherIterator.first() + otherRangeOffset;
-                insertBetween(lastSelfRangeIndex, selfRangeIndex, newRangeFirstCharacter, otherIterator.first() + otherRangeOffset - 1, WTF::move(copiedData));
+                insertBetween(lastSelfRangeIndex, selfRangeIndex, newRangeFirstCharacter, otherIterator.first() + otherRangeOffset - 1, WTFMove(copiedData));
                 activeSelfRange = &m_ranges[selfRangeIndex];
             } else if (otherIterator.first() + otherRangeOffset < activeSelfRange->first) {
                 insertBetween(lastSelfRangeIndex, selfRangeIndex, otherIterator.first() + otherRangeOffset, activeSelfRange->first - 1, dataConverter.convert(otherIterator.data()));
@@ -168,7 +168,7 @@ public:
 
                 DataType combinedData = activeSelfRange->data;
                 dataConverter.extend(combinedData, otherIterator.data());
-                insertBetween(lastSelfRangeIndex, selfRangeIndex, combinedPartStart, otherIterator.last(), WTF::move(combinedData));
+                insertBetween(lastSelfRangeIndex, selfRangeIndex, combinedPartStart, otherIterator.last(), WTFMove(combinedData));
 
                 ++otherIterator;
                 otherRangeOffset = 0;
@@ -224,8 +224,8 @@ private:
         if (!rightRangeIndex) {
             // This is a special case. We always keep the first range as the first element in the vector.
             uint32_t movedRangeIndex = m_ranges.size();
-            m_ranges.append(WTF::move(m_ranges.first()));
-            m_ranges[0] = TypedMutableRange(WTF::move(data), movedRangeIndex, first, last);
+            m_ranges.append(WTFMove(m_ranges.first()));
+            m_ranges[0] = TypedMutableRange(WTFMove(data), movedRangeIndex, first, last);
             leftRangeIndex = 0;
             rightRangeIndex = movedRangeIndex;
             return;
@@ -235,7 +235,7 @@ private:
         ASSERT(m_ranges[leftRangeIndex].last < first);
 
         uint32_t newRangeIndex = m_ranges.size();
-        m_ranges.append(TypedMutableRange(WTF::move(data), rightRangeIndex, first, last));
+        m_ranges.append(TypedMutableRange(WTFMove(data), rightRangeIndex, first, last));
         m_ranges[leftRangeIndex].nextRangeIndex = newRangeIndex;
         leftRangeIndex = newRangeIndex;
     }

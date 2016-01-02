@@ -65,7 +65,7 @@ void JITCode::initializeB3Code(CodeRef b3Code)
 
 void JITCode::initializeB3Byproducts(std::unique_ptr<OpaqueByproducts> byproducts)
 {
-    m_b3Byproducts = WTF::move(byproducts);
+    m_b3Byproducts = WTFMove(byproducts);
 }
 #else // FTL_USES_B3
 void JITCode::initializeExitThunks(CodeRef exitThunks)

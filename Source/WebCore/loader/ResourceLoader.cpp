@@ -395,7 +395,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
 void ResourceLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void(ResourceRequest&&)>&& callback)
 {
     willSendRequestInternal(request, redirectResponse);
-    callback(WTF::move(request));
+    callback(WTFMove(request));
 }
 
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)

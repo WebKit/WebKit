@@ -40,7 +40,7 @@ std::unique_ptr<ContentData> ContentData::clone() const
     ContentData* lastNewData = result.get();
     for (const ContentData* contentData = next(); contentData; contentData = contentData->next()) {
         auto newData = contentData->cloneInternal();
-        lastNewData->setNext(WTF::move(newData));
+        lastNewData->setNext(WTFMove(newData));
         lastNewData = lastNewData->next();
     }
         
@@ -52,14 +52,14 @@ RenderPtr<RenderObject> ImageContentData::createContentRenderer(Document& docume
     auto image = createRenderer<RenderImage>(document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), m_image.get());
     image->initializeStyle();
     image->setAltText(altText());
-    return WTF::move(image);
+    return WTFMove(image);
 }
 
 RenderPtr<RenderObject> TextContentData::createContentRenderer(Document& document, const RenderStyle&) const
 {
     auto fragment = createRenderer<RenderTextFragment>(document, m_text);
     fragment->setAltText(altText());
-    return WTF::move(fragment);
+    return WTFMove(fragment);
 }
 
 RenderPtr<RenderObject> CounterContentData::createContentRenderer(Document& document, const RenderStyle&) const
@@ -71,7 +71,7 @@ RenderPtr<RenderObject> QuoteContentData::createContentRenderer(Document& docume
 {
     auto quote = createRenderer<RenderQuote>(document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), m_quote);
     quote->initializeStyle();
-    return WTF::move(quote);
+    return WTFMove(quote);
 }
 
 } // namespace WebCore

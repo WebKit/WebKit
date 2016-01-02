@@ -50,7 +50,7 @@ public:
         std::unique_ptr<StructureStubClearingWatchpoint> next)
         : m_key(key)
         , m_holder(holder)
-        , m_next(WTF::move(next))
+        , m_next(WTFMove(next))
     {
     }
     

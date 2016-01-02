@@ -46,7 +46,7 @@ IndexKey IndexKey::isolatedCopy() const
     for (auto& key : m_keys)
         keys.uncheckedAppend(key.isolatedCopy());
 
-    return { WTF::move(keys) };
+    return { WTFMove(keys) };
 }
 
 IDBKeyData IndexKey::asOneKey() const

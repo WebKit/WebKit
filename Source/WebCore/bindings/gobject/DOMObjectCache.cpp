@@ -154,7 +154,7 @@ private:
         if (m_objects.isEmpty())
             return;
 
-        auto objects = WTF::move(m_objects);
+        auto objects = WTFMove(m_objects);
 
         // Deleting of DOM wrappers might end up deleting the wrapped core object which could cause some problems
         // for example if a Document is deleted during the frame destruction, so we remove the weak references now

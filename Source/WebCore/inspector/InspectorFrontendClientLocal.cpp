@@ -131,7 +131,7 @@ void InspectorFrontendClientLocal::Settings::setProperty(const String&, const St
 InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
     : m_inspectedPageController(inspectedPageController)
     , m_frontendPage(frontendPage)
-    , m_settings(WTF::move(settings))
+    , m_settings(WTFMove(settings))
     , m_dockSide(DockSide::Undocked)
     , m_dispatchTask(InspectorBackendDispatchTask::create(inspectedPageController))
 {

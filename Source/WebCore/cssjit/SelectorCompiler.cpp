@@ -1830,7 +1830,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
             } else
                 failureStack = successStack;
 
-            m_stackAllocator.merge(WTF::move(successStack), WTF::move(failureStack));
+            m_stackAllocator.merge(WTFMove(successStack), WTFMove(failureStack));
             return;
         }
     }
@@ -1865,7 +1865,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
         m_assembler.ret();
     } else
         earlyFailureStack = successStack;
-    m_stackAllocator.merge(WTF::move(successStack), WTF::move(earlyFailureStack));
+    m_stackAllocator.merge(WTFMove(successStack), WTFMove(earlyFailureStack));
 }
 
 void SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements(Assembler::JumpList& failureCases, const SelectorFragmentList& selectorFragmentList)
@@ -2012,7 +2012,7 @@ void SelectorCodeGenerator::generateElementMatchesSelectorList(Assembler::JumpLi
 
         skipFailureCase.link(&m_assembler);
 
-        m_stackAllocator.merge(WTF::move(successStack), WTF::move(failureStack));
+        m_stackAllocator.merge(WTFMove(successStack), WTFMove(failureStack));
     }
 }
 

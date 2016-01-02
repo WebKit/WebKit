@@ -81,7 +81,7 @@ class InspectorThreadableLoaderClient final : public ThreadableLoaderClient {
     WTF_MAKE_NONCOPYABLE(InspectorThreadableLoaderClient);
 public:
     InspectorThreadableLoaderClient(RefPtr<LoadResourceCallback>&& callback)
-        : m_callback(WTF::move(callback)) { }
+        : m_callback(WTFMove(callback)) { }
 
     virtual ~InspectorThreadableLoaderClient() { }
 
@@ -141,7 +141,7 @@ public:
 
     void setLoader(RefPtr<ThreadableLoader>&& loader)
     {
-        m_loader = WTF::move(loader);
+        m_loader = WTFMove(loader);
     }
 
 private:
@@ -227,14 +227,14 @@ static RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResp
         .setUrl(response.url().string())
         .setStatus(status)
         .setStatusText(response.httpStatusText())
-        .setHeaders(WTF::move(headers))
+        .setHeaders(WTFMove(headers))
         .setMimeType(response.mimeType())
         .release();
 
     responseObject->setFromDiskCache(response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation);
     responseObject->setTiming(buildObjectForTiming(response.resourceLoadTiming(), loader));
 
-    return WTF::move(responseObject);
+    return WTFMove(responseObject);
 }
 
 static Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedResource(CachedResource* cachedResource, DocumentLoader* loader)
@@ -246,7 +246,7 @@ static Ref<Inspector::Protocol::Network::CachedResource> buildObjectForCachedRes
         .release();
 
     auto resourceResponse = buildObjectForResourceResponse(cachedResource->response(), loader);
-    resourceObject->setResponse(WTF::move(resourceResponse));
+    resourceObject->setResponse(WTFMove(resourceResponse));
 
     String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
     if (!sourceMappingURL.isEmpty())
@@ -512,7 +512,7 @@ RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInit
             .setType(Inspector::Protocol::Network::Initiator::Type::Script)
             .release();
         initiatorObject->setStackTrace(stackTrace->buildInspectorArray());
-        return WTF::move(initiatorObject);
+        return WTFMove(initiatorObject);
     }
 
     if (document && document->scriptableDocumentParser()) {
@@ -521,7 +521,7 @@ RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInit
             .release();
         initiatorObject->setUrl(document->url().string());
         initiatorObject->setLineNumber(document->scriptableDocumentParser()->textPosition().m_line.oneBasedInt());
-        return WTF::move(initiatorObject);
+        return WTFMove(initiatorObject);
     }
 
     if (m_isRecalculatingStyle && m_styleRecalculationInitiator)
@@ -544,7 +544,7 @@ void InspectorNetworkAgent::willSendWebSocketHandshakeRequest(unsigned long iden
     auto requestObject = Inspector::Protocol::Network::WebSocketRequest::create()
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
         .release();
-    m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), timestamp(), WTF::move(requestObject));
+    m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(requestObject));
 }
 
 void InspectorNetworkAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const ResourceResponse& response)
@@ -554,7 +554,7 @@ void InspectorNetworkAgent::didReceiveWebSocketHandshakeResponse(unsigned long i
         .setStatusText(response.httpStatusText())
         .setHeaders(buildObjectForHeaders(response.httpHeaderFields()))
         .release();
-    m_frontendDispatcher->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier), timestamp(), WTF::move(responseObject));
+    m_frontendDispatcher->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(responseObject));
 }
 
 void InspectorNetworkAgent::didCloseWebSocket(unsigned long identifier)
@@ -569,7 +569,7 @@ void InspectorNetworkAgent::didReceiveWebSocketFrame(unsigned long identifier, c
         .setMask(frame.masked)
         .setPayloadData(String(frame.payload, frame.payloadLength))
         .release();
-    m_frontendDispatcher->webSocketFrameReceived(IdentifiersFactory::requestId(identifier), timestamp(), WTF::move(frameObject));
+    m_frontendDispatcher->webSocketFrameReceived(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(frameObject));
 }
 
 void InspectorNetworkAgent::didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
@@ -579,7 +579,7 @@ void InspectorNetworkAgent::didSendWebSocketFrame(unsigned long identifier, cons
         .setMask(frame.masked)
         .setPayloadData(String(frame.payload, frame.payloadLength))
         .release();
-    m_frontendDispatcher->webSocketFrameSent(IdentifiersFactory::requestId(identifier), timestamp(), WTF::move(frameObject));
+    m_frontendDispatcher->webSocketFrameSent(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(frameObject));
 }
 
 void InspectorNetworkAgent::didReceiveWebSocketFrameError(unsigned long identifier, const String& errorMessage)

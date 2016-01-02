@@ -30,7 +30,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback : public RefCounted<MediaP
 public:
     static Ref<MediaPlayerRequestInstallMissingPluginsCallback> create(std::function<void (uint32_t)>&& function)
     {
-        return adoptRef(*new MediaPlayerRequestInstallMissingPluginsCallback(WTF::move(function)));
+        return adoptRef(*new MediaPlayerRequestInstallMissingPluginsCallback(WTFMove(function)));
     }
 
     void invalidate()
@@ -48,7 +48,7 @@ public:
 
 private:
     MediaPlayerRequestInstallMissingPluginsCallback(std::function<void (uint32_t)>&& function)
-        : m_function(WTF::move(function))
+        : m_function(WTFMove(function))
     {
     }
 

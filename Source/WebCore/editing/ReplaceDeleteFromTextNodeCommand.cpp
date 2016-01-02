@@ -31,7 +31,7 @@
 namespace WebCore {
     
 ReplaceDeleteFromTextNodeCommand::ReplaceDeleteFromTextNodeCommand(RefPtr<Text>&& text, unsigned offset, unsigned count)
-    : DeleteFromTextNodeCommand(WTF::move(text), offset, count, EditActionDelete)
+    : DeleteFromTextNodeCommand(WTFMove(text), offset, count, EditActionDelete)
 {
 }
 

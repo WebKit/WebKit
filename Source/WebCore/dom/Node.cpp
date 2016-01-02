@@ -492,7 +492,7 @@ void Node::before(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     auto viablePreviousSibling = firstPrecedingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
+    auto node = convertNodesOrStringsIntoNode(*this, WTFMove(nodeOrStringVector), ec);
     if (ec || !node)
         return;
 
@@ -513,7 +513,7 @@ void Node::after(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     auto viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
+    auto node = convertNodesOrStringsIntoNode(*this, WTFMove(nodeOrStringVector), ec);
     if (ec || !node)
         return;
 
@@ -529,7 +529,7 @@ void Node::replaceWith(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode&
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     auto viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
+    auto node = convertNodesOrStringsIntoNode(*this, WTFMove(nodeOrStringVector), ec);
     if (ec)
         return;
 
@@ -811,11 +811,11 @@ void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrNa
 #if !ASSERT_DISABLED
     m_inInvalidateNodeListAndCollectionCaches = true;
 #endif
-    HashSet<LiveNodeList*> lists = WTF::move(m_listsInvalidatedAtDocument);
+    HashSet<LiveNodeList*> lists = WTFMove(m_listsInvalidatedAtDocument);
     m_listsInvalidatedAtDocument.clear();
     for (auto* list : lists)
         list->invalidateCacheForAttribute(attrName);
-    HashSet<HTMLCollection*> collections = WTF::move(m_collectionsInvalidatedAtDocument);
+    HashSet<HTMLCollection*> collections = WTFMove(m_collectionsInvalidatedAtDocument);
     for (auto* collection : collections)
         collection->invalidateCacheForAttribute(attrName);
 #if !ASSERT_DISABLED
@@ -1879,7 +1879,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     // This code was added to address <rdar://problem/5846492> Onorientationchange event not working for document.body.
     // Forward this call to addEventListener() to the window since these are window-only events.
     if (eventType == eventNames().orientationchangeEvent || eventType == eventNames().resizeEvent)
-        targetNode->document().domWindow()->addEventListener(eventType, WTF::move(listener), useCapture);
+        targetNode->document().domWindow()->addEventListener(eventType, WTFMove(listener), useCapture);
 
 #if ENABLE(TOUCH_EVENTS)
     if (eventNames().isTouchEventType(eventType))
@@ -1897,7 +1897,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
 
 bool Node::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
 {
-    return tryAddEventListener(this, eventType, WTF::move(listener), useCapture);
+    return tryAddEventListener(this, eventType, WTFMove(listener), useCapture);
 }
 
 static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& eventType, EventListener* listener, bool useCapture)

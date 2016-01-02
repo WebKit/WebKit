@@ -165,7 +165,7 @@ void InputMethodFilter::filterKeyEvent(GdkEventKey* event, FilterKeyEventComplet
 #else
     ASSERT(m_page);
 #endif
-    m_filterKeyEventCompletionHandler = WTF::move(completionHandler);
+    m_filterKeyEventCompletionHandler = WTFMove(completionHandler);
     if (!m_enabled) {
         handleKeyboardEvent(event);
         return;

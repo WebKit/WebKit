@@ -122,9 +122,9 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
     auto firstBlock = std::make_unique<BytecodeBasicBlock>(0, 0);
     linkBlocks(entry.get(), firstBlock.get());
 
-    basicBlocks.append(WTF::move(entry));
+    basicBlocks.append(WTFMove(entry));
     BytecodeBasicBlock* current = firstBlock.get();
-    basicBlocks.append(WTF::move(firstBlock));
+    basicBlocks.append(WTFMove(firstBlock));
 
     auto exit = std::make_unique<BytecodeBasicBlock>(BytecodeBasicBlock::ExitBlock);
 
@@ -142,7 +142,7 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
         if (isJumpTarget(opcodeID, jumpTargets, bytecodeOffset) || nextInstructionIsLeader) {
             auto newBlock = std::make_unique<BytecodeBasicBlock>(bytecodeOffset, opcodeLength);
             current = newBlock.get();
-            basicBlocks.append(WTF::move(newBlock));
+            basicBlocks.append(WTFMove(newBlock));
             createdBlock = true;
             nextInstructionIsLeader = false;
             bytecodeOffset += opcodeLength;
@@ -229,7 +229,7 @@ void computeBytecodeBasicBlocks(CodeBlock* codeBlock, Vector<std::unique_ptr<Byt
         }
     }
 
-    basicBlocks.append(WTF::move(exit));
+    basicBlocks.append(WTFMove(exit));
     
     for (auto& basicBlock : basicBlocks)
         basicBlock->shrinkToFit();

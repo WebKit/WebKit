@@ -76,7 +76,7 @@ bool EventTarget::isMessagePort() const
 
 bool EventTarget::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
 {
-    return ensureEventTargetData().eventListenerMap.add(eventType, WTF::move(listener), useCapture);
+    return ensureEventTargetData().eventListenerMap.add(eventType, WTFMove(listener), useCapture);
 }
 
 bool EventTarget::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)

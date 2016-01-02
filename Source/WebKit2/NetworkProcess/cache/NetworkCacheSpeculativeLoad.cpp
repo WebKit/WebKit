@@ -42,10 +42,10 @@ using namespace WebCore;
 
 SpeculativeLoad::SpeculativeLoad(const GlobalFrameID& frameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, RevalidationCompletionHandler&& completionHandler)
     : m_frameID(frameID)
-    , m_completionHandler(WTF::move(completionHandler))
+    , m_completionHandler(WTFMove(completionHandler))
     , m_originalRequest(request)
     , m_bufferedDataForCache(SharedBuffer::create())
-    , m_cacheEntryForValidation(WTF::move(cacheEntryForValidation))
+    , m_cacheEntryForValidation(WTFMove(cacheEntryForValidation))
 {
     ASSERT(m_cacheEntryForValidation);
     ASSERT(m_cacheEntryForValidation->needsValidation());
@@ -117,7 +117,7 @@ void SpeculativeLoad::didFinishLoading(double finishTime)
     }
 
     if (m_bufferedDataForCache && hasCacheableRedirect)
-        m_cacheEntryForValidation = NetworkCache::singleton().store(m_originalRequest, m_response, WTF::move(m_bufferedDataForCache), [](NetworkCache::MappedBody& mappedBody) { });
+        m_cacheEntryForValidation = NetworkCache::singleton().store(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache), [](NetworkCache::MappedBody& mappedBody) { });
     else if (!hasCacheableRedirect) {
         // Make sure we don't keep a stale entry in the cache.
         NetworkCache::singleton().remove(m_originalRequest);
@@ -139,7 +139,7 @@ void SpeculativeLoad::didComplete()
 
     m_networkLoad = nullptr;
 
-    m_completionHandler(WTF::move(m_cacheEntryForValidation));
+    m_completionHandler(WTFMove(m_cacheEntryForValidation));
 }
 
 } // namespace NetworkCache

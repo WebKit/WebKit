@@ -491,7 +491,7 @@ void NavigationScheduler::timerFired()
 
     Ref<Frame> protect(m_frame);
 
-    std::unique_ptr<ScheduledNavigation> redirect = WTF::move(m_redirect);
+    std::unique_ptr<ScheduledNavigation> redirect = WTFMove(m_redirect);
     redirect->fire(m_frame);
     InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
 }
@@ -512,7 +512,7 @@ void NavigationScheduler::schedule(std::unique_ptr<ScheduledNavigation> redirect
     }
 
     cancel();
-    m_redirect = WTF::move(redirect);
+    m_redirect = WTFMove(redirect);
 
     if (!m_frame.loader().isComplete() && m_redirect->isLocationChange())
         m_frame.loader().completed();
@@ -546,7 +546,7 @@ void NavigationScheduler::cancel(bool newLoadInProgress)
         InspectorInstrumentation::frameClearedScheduledNavigation(m_frame);
     m_timer.stop();
 
-    if (std::unique_ptr<ScheduledNavigation> redirect = WTF::move(m_redirect))
+    if (std::unique_ptr<ScheduledNavigation> redirect = WTFMove(m_redirect))
         redirect->didStopTimer(m_frame, newLoadInProgress);
 }
 

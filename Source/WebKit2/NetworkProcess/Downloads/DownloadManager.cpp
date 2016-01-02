@@ -54,7 +54,7 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
     download->start();
 
     ASSERT(!m_downloads.contains(downloadID));
-    m_downloads.add(downloadID, WTF::move(download));
+    m_downloads.add(downloadID, WTFMove(download));
 }
 
 #if !USE(NETWORK_SESSION)
@@ -64,7 +64,7 @@ void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHan
 
     download->startWithHandle(handle, response);
     ASSERT(!m_downloads.contains(downloadID));
-    m_downloads.add(downloadID, WTF::move(download));
+    m_downloads.add(downloadID, WTFMove(download));
 }
 #endif
 
@@ -78,7 +78,7 @@ void DownloadManager::resumeDownload(SessionID, DownloadID downloadID, const IPC
 
     download->resume(resumeData, path, sandboxExtensionHandle);
     ASSERT(!m_downloads.contains(downloadID));
-    m_downloads.add(downloadID, WTF::move(download));
+    m_downloads.add(downloadID, WTFMove(download));
 #endif
 }
 

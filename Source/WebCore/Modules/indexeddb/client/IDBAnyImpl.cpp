@@ -49,13 +49,13 @@ IDBAny::IDBAny(Ref<IDBDatabase>&& database)
 
 IDBAny::IDBAny(Ref<IDBObjectStore>&& objectStore)
     : m_type(IDBAny::Type::IDBObjectStore)
-    , m_objectStore(WTF::move(objectStore))
+    , m_objectStore(WTFMove(objectStore))
 {
 }
 
 IDBAny::IDBAny(Ref<IDBIndex>&& index)
     : m_type(IDBAny::Type::IDBIndex)
-    , m_index(WTF::move(index))
+    , m_index(WTFMove(index))
 {
 }
 
@@ -63,10 +63,10 @@ IDBAny::IDBAny(Ref<IDBCursor>&& cursor)
 {
     if (cursor->isKeyCursor()) {
         m_type = IDBAny::Type::IDBCursor;
-        m_cursor = WTF::move(cursor);
+        m_cursor = WTFMove(cursor);
     } else {
         m_type = IDBAny::Type::IDBCursorWithValue;
-        m_cursorWithValue = WTF::move(cursor);
+        m_cursorWithValue = WTFMove(cursor);
     }
 }
 

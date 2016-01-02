@@ -53,13 +53,13 @@
 namespace WebCore {
 
 RenderInline::RenderInline(Element& element, Ref<RenderStyle>&& style)
-    : RenderBoxModelObject(element, WTF::move(style), RenderInlineFlag)
+    : RenderBoxModelObject(element, WTFMove(style), RenderInlineFlag)
 {
     setChildrenInline(true);
 }
 
 RenderInline::RenderInline(Document& document, Ref<RenderStyle>&& style)
-    : RenderBoxModelObject(document, WTF::move(style), RenderInlineFlag)
+    : RenderBoxModelObject(document, WTFMove(style), RenderInlineFlag)
 {
     setChildrenInline(true);
 }
@@ -160,7 +160,7 @@ static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, c
             continue;
         auto blockStyle = RenderStyle::createAnonymousStyleWithDisplay(&block.style(), BLOCK);
         blockStyle.get().setPosition(newStyle->position());
-        block.setStyle(WTF::move(blockStyle));
+        block.setStyle(WTFMove(blockStyle));
     }
 }
 
@@ -338,7 +338,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         if (auto positionedAncestor = inFlowPositionedInlineAncestor(this))
             newStyle.get().setPosition(positionedAncestor->style().position());
 
-        RenderBlock* newBox = new RenderBlockFlow(document(), WTF::move(newStyle));
+        RenderBlock* newBox = new RenderBlockFlow(document(), WTFMove(newStyle));
         newBox->initializeStyle();
         RenderBoxModelObject* oldContinuation = continuation();
         setContinuation(newBox);
@@ -490,7 +490,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     while (current && current != fromBlock) {
         if (splitDepth < cMaxSplitDepth) {
             // Create a new clone.
-            RenderPtr<RenderInline> cloneChild = WTF::move(cloneInline);
+            RenderPtr<RenderInline> cloneChild = WTFMove(cloneInline);
             cloneInline = downcast<RenderInline>(*current).clone();
 
             // Insert our child clone as the first child.
@@ -1496,7 +1496,7 @@ InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
     setAlwaysCreateLineBoxes();
     auto newFlowBox = createInlineFlowBox();
     auto flowBox = newFlowBox.get();
-    m_lineBoxes.appendLineBox(WTF::move(newFlowBox));
+    m_lineBoxes.appendLineBox(WTFMove(newFlowBox));
     return flowBox;
 }
 

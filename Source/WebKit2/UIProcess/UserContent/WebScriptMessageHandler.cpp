@@ -56,12 +56,12 @@ static uint64_t generateIdentifier()
 
 PassRefPtr<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, const String& name)
 {
-    return adoptRef(new WebScriptMessageHandler(WTF::move(client), name));
+    return adoptRef(new WebScriptMessageHandler(WTFMove(client), name));
 }
 
 WebScriptMessageHandler::WebScriptMessageHandler(std::unique_ptr<Client> client, const String& name)
     : m_identifier(generateIdentifier())
-    , m_client(WTF::move(client))
+    , m_client(WTFMove(client))
     , m_name(name)
 {
 }

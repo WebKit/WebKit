@@ -62,7 +62,7 @@ static std::unique_ptr<Shape> createEllipseShape(const FloatPoint& center, const
 
 static std::unique_ptr<Shape> createPolygonShape(std::unique_ptr<Vector<FloatPoint>> vertices, WindRule fillRule)
 {
-    return std::make_unique<PolygonShape>(WTF::move(vertices), fillRule);
+    return std::make_unique<PolygonShape>(WTFMove(vertices), fillRule);
 }
 
 static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
@@ -135,7 +135,7 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
             (*vertices)[i / 2] = physicalPointToLogical(vertex, logicalBoxSize.height(), writingMode);
         }
 
-        shape = createPolygonShape(WTF::move(vertices), polygon.windRule());
+        shape = createPolygonShape(WTFMove(vertices), polygon.windRule());
         break;
     }
 
@@ -216,10 +216,10 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
         }
     }
 
-    auto rasterShape = std::make_unique<RasterShape>(WTF::move(intervals), marginRect.size());
+    auto rasterShape = std::make_unique<RasterShape>(WTFMove(intervals), marginRect.size());
     rasterShape->m_writingMode = writingMode;
     rasterShape->m_margin = margin;
-    return WTF::move(rasterShape);
+    return WTFMove(rasterShape);
 }
 
 std::unique_ptr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, float margin)
@@ -232,7 +232,7 @@ std::unique_ptr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, Wri
     shape->m_writingMode = writingMode;
     shape->m_margin = margin;
 
-    return WTF::move(shape);
+    return WTFMove(shape);
 }
 
 } // namespace WebCore

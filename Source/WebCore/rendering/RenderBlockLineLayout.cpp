@@ -127,7 +127,7 @@ RootInlineBox* RenderBlockFlow::createAndAppendRootInlineBox()
 {
     auto newRootBox = createRootInlineBox();
     RootInlineBox* rootBox = newRootBox.get();
-    m_lineBoxes.appendLineBox(WTF::move(newRootBox));
+    m_lineBoxes.appendLineBox(WTFMove(newRootBox));
 
     if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && firstRootBox() == rootBox) {
         if (AXObjectCache* cache = document().existingAXObjectCache())
@@ -1042,7 +1042,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
 
     while (!topResolver.isolatedRuns().isEmpty()) {
         // It does not matter which order we resolve the runs as long as we resolve them all.
-        auto isolatedRun = WTF::move(topResolver.isolatedRuns().last());
+        auto isolatedRun = WTFMove(topResolver.isolatedRuns().last());
         topResolver.isolatedRuns().removeLast();
         currentRoot = &isolatedRun.root;
 
@@ -1089,10 +1089,10 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         // If we encountered any nested isolate runs, just move them
         // to the top resolver's list for later processing.
         while (!isolatedResolver.isolatedRuns().isEmpty()) {
-            auto runWithContext = WTF::move(isolatedResolver.isolatedRuns().last());
+            auto runWithContext = WTFMove(isolatedResolver.isolatedRuns().last());
             isolatedResolver.isolatedRuns().removeLast();
             topResolver.setMidpointForIsolatedRun(runWithContext.runToReplace, isolatedResolver.midpointForIsolatedRun(runWithContext.runToReplace));
-            topResolver.isolatedRuns().append(WTF::move(runWithContext));
+            topResolver.isolatedRuns().append(WTFMove(runWithContext));
         }
     }
 }
@@ -1515,7 +1515,7 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
             auto newLineBox = std::make_unique<TrailingFloatsRootInlineBox>(*this);
             auto trailingFloatsLineBox = newLineBox.get();
-            m_lineBoxes.appendLineBox(WTF::move(newLineBox));
+            m_lineBoxes.appendLineBox(WTFMove(newLineBox));
             trailingFloatsLineBox->setConstructed();
             GlyphOverflowAndFallbackFontsMap textBoxDataMap;
             VerticalPositionCache verticalPositionCache;

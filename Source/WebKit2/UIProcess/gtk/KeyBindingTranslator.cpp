@@ -196,7 +196,7 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
 
     gtk_bindings_activate_event(G_OBJECT(m_nativeWidget.get()), event);
     if (!m_pendingEditorCommands.isEmpty())
-        return WTF::move(m_pendingEditorCommands);
+        return WTFMove(m_pendingEditorCommands);
 
     // Special-case enter keys for we want them to work regardless of modifier.
     if ((event->keyval == GDK_KEY_Return || event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter))

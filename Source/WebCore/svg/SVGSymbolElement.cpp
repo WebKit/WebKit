@@ -76,7 +76,7 @@ bool SVGSymbolElement::selfHasRelativeLengths() const
 
 RenderPtr<RenderElement> SVGSymbolElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGHiddenContainer>(*this, WTF::move(style));
+    return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
 }
 
 }

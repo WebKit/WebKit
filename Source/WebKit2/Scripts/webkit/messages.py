@@ -488,7 +488,7 @@ def generate_message_handler(file):
 
             result.append('%s::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::MessageEncoder> encoder)\n' % message.name)
             result.append('    : m_connection(connection)\n')
-            result.append('    , m_encoder(WTF::move(encoder))\n')
+            result.append('    , m_encoder(WTFMove(encoder))\n')
             result.append('{\n')
             result.append('}\n')
             result.append('\n')
@@ -501,7 +501,7 @@ def generate_message_handler(file):
             result.append('{\n')
             result.append('    ASSERT(m_encoder);\n')
             result += ['    *m_encoder << %s;\n' % x.name for x in message.reply_parameters]
-            result.append('    bool _result = m_connection->sendSyncReply(WTF::move(m_encoder));\n')
+            result.append('    bool _result = m_connection->sendSyncReply(WTFMove(m_encoder));\n')
             result.append('    m_connection = nullptr;\n')
             result.append('    return _result;\n')
             result.append('}\n')

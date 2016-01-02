@@ -30,11 +30,11 @@ namespace API {
 
 Ref<SessionState> SessionState::create(WebKit::SessionState sessionState)
 {
-    return adoptRef(*new SessionState(WTF::move(sessionState)));
+    return adoptRef(*new SessionState(WTFMove(sessionState)));
 }
 
 SessionState::SessionState(WebKit::SessionState sessionState)
-    : m_sessionState(WTF::move(sessionState))
+    : m_sessionState(WTFMove(sessionState))
 {
 }
 

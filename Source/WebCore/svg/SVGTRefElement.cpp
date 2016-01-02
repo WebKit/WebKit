@@ -94,7 +94,7 @@ void SVGTRefTargetEventListener::attach(RefPtr<Element>&& target)
 
     target->addEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
     target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, false);
-    m_target = WTF::move(target);
+    m_target = WTFMove(target);
 }
 
 void SVGTRefTargetEventListener::detach()
@@ -196,7 +196,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGInline>(*this, WTF::move(style));
+    return createRenderer<RenderSVGInline>(*this, WTFMove(style));
 }
 
 bool SVGTRefElement::childShouldCreateRenderer(const Node& child) const

@@ -113,7 +113,7 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
 #pragma mark WebInspectorFrontendClient Implementation
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* frontendWindowController, InspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
-    : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTF::move(settings))
+    : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTFMove(settings))
 {
     // iOS does not have a local inspector, this should not be reached.
     notImplemented();

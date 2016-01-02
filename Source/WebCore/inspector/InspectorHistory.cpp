@@ -90,10 +90,10 @@ bool InspectorHistory::perform(std::unique_ptr<Action> action, ExceptionCode& ec
         return false;
 
     if (!action->mergeId().isEmpty() && m_afterLastActionIndex > 0 && action->mergeId() == m_history[m_afterLastActionIndex - 1]->mergeId())
-        m_history[m_afterLastActionIndex - 1]->merge(WTF::move(action));
+        m_history[m_afterLastActionIndex - 1]->merge(WTFMove(action));
     else {
         m_history.resize(m_afterLastActionIndex);
-        m_history.append(WTF::move(action));
+        m_history.append(WTFMove(action));
         ++m_afterLastActionIndex;
     }
     return true;

@@ -397,7 +397,7 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem& item, Page* page)
     }
 
     m_items.remove(&item);
-    std::unique_ptr<CachedPage> cachedPage = WTF::move(item.m_cachedPage);
+    std::unique_ptr<CachedPage> cachedPage = WTFMove(item.m_cachedPage);
 
     if (cachedPage->hasExpired()) {
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());

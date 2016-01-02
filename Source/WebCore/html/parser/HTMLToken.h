@@ -246,7 +246,7 @@ inline void HTMLToken::appendToSystemIdentifier(UChar character)
 
 inline std::unique_ptr<DoctypeData> HTMLToken::releaseDoctypeData()
 {
-    return WTF::move(m_doctypeData);
+    return WTFMove(m_doctypeData);
 }
 
 inline bool HTMLToken::selfClosing() const

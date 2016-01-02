@@ -81,7 +81,7 @@ template<typename T> struct ArgumentCoder<WTF::Optional<T>> {
         if (!decoder.decode(value))
             return false;
 
-        optional = WTF::move(value);
+        optional = WTFMove(value);
         return true;
     }
 };
@@ -169,7 +169,7 @@ template<typename T, size_t inlineCapacity> struct VectorArgumentCoder<false, T,
             if (!decoder.decode(element))
                 return false;
             
-            tmp.append(WTF::move(element));
+            tmp.append(WTFMove(element));
         }
 
         tmp.shrinkToFit();

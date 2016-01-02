@@ -374,7 +374,7 @@ void Statistics::queryWasEverRequested(const String& hash, NeedUncachedReason ne
     // Query the database.
     auto everRequestedQuery = std::make_unique<EverRequestedQuery>(EverRequestedQuery { hash, needUncachedReason == NeedUncachedReason::Yes, completionHandler });
     auto& query = *everRequestedQuery;
-    m_activeQueries.add(WTF::move(everRequestedQuery));
+    m_activeQueries.add(WTFMove(everRequestedQuery));
     serialBackgroundIOQueue().dispatch([this, wasAlreadyRequested, &query] () mutable {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
         Optional<StoreDecision> storeDecision;

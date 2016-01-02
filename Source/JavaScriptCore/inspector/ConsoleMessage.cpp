@@ -212,14 +212,14 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                     jsonArgs->addItem(inspectorValue.copyRef());
                 }
             }
-            jsonObj->setParameters(WTF::move(jsonArgs));
+            jsonObj->setParameters(WTFMove(jsonArgs));
         }
     }
 
     if (m_callStack)
         jsonObj->setStackTrace(m_callStack->buildInspectorArray());
 
-    consoleFrontendDispatcher.messageAdded(WTF::move(jsonObj));
+    consoleFrontendDispatcher.messageAdded(WTFMove(jsonObj));
 }
 
 void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher& consoleFrontendDispatcher)

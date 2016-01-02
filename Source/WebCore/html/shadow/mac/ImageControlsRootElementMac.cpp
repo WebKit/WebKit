@@ -50,7 +50,7 @@ private:
 };
 
 RenderImageControls::RenderImageControls(HTMLElement& element, Ref<RenderStyle>&& style)
-    : RenderBlockFlow(element, WTF::move(style))
+    : RenderBlockFlow(element, WTFMove(style))
 {
 }
 
@@ -91,7 +91,7 @@ RefPtr<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document&
     if (RefPtr<ImageControlsButtonElementMac> button = ImageControlsButtonElementMac::maybeCreate(document))
         controls->appendChild(button.releaseNonNull());
 
-    return WTF::move(controls);
+    return WTFMove(controls);
 }
 
 ImageControlsRootElementMac::ImageControlsRootElementMac(Document& document)
@@ -105,7 +105,7 @@ ImageControlsRootElementMac::~ImageControlsRootElementMac()
 
 RenderPtr<RenderElement> ImageControlsRootElementMac::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderImageControls>(*this, WTF::move(style));
+    return createRenderer<RenderImageControls>(*this, WTFMove(style));
 }
 
 } // namespace WebCore

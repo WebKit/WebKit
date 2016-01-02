@@ -1,3 +1,51 @@
+2015-12-31  Andy Estes  <aestes@apple.com>
+
+        Replace WTF::move with WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::setAllowedHosts):
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        (DRTDataObject::SetData):
+        * TestWebKitAPI/Tests/WTF/Deque.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/NakedPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Ref.cpp:
+        (TestWebKitAPI::passWithRef):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+        (TestWebKitAPI::createTestValue):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::InMemoryCompiledContentExtension::createFromFilter):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::create):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::InMemoryCompiledContentExtension):
+        (TestWebKitAPI::createNFAs):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/DFACombiner.cpp:
+        (TestWebKitAPI::combine):
+        * TestWebKitAPI/Tests/WebCore/DFAHelpers.h:
+        (TestWebKitAPI::createNFAs):
+        * TestWebKitAPI/Tests/WebKit2/cocoa/WeakObjCPtr.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp:
+        (WebProcessTest::add):
+
 2016-01-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] REGRESSION(r192761): Broke resource URIs for applications that use g_resource_load in a web extension

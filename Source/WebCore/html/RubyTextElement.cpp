@@ -49,8 +49,8 @@ RenderPtr<RenderElement> RubyTextElement::createElementRenderer(Ref<RenderStyle>
 {
     // RenderRubyText requires its parent to be RenderRubyRun.
     if (isRuby(insertionPosition.parent()) && style->display() == BLOCK)
-        return createRenderer<RenderRubyText>(*this, WTF::move(style));
-    return HTMLElement::createElementRenderer(WTF::move(style), insertionPosition);
+        return createRenderer<RenderRubyText>(*this, WTFMove(style));
+    return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }
 
 }

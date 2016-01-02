@@ -113,7 +113,7 @@ private:
 
 inline CSSCalcValue::CSSCalcValue(Ref<CSSCalcExpressionNode>&& expression, bool shouldClampToNonNegative)
     : CSSValue(CalculationClass)
-    , m_expression(WTF::move(expression))
+    , m_expression(WTFMove(expression))
     , m_shouldClampToNonNegative(shouldClampToNonNegative)
 {
 }

@@ -56,7 +56,7 @@ void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(std::functi
 {
     {
         std::lock_guard<Lock> lock(m_testTriggerMutex);
-        m_testNotificationCallback = WTF::move(functionCallback);
+        m_testNotificationCallback = WTFMove(functionCallback);
     }
     
     if (!m_testTriggerTimer.isActive())
@@ -119,7 +119,7 @@ void WheelEventTestTrigger::triggerTestTimerFired()
             return;
         }
 
-        functionCallback = WTF::move(m_testNotificationCallback);
+        functionCallback = WTFMove(m_testNotificationCallback);
         m_testNotificationCallback = std::function<void()>();
     }
 

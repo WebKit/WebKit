@@ -543,7 +543,7 @@ static Ref<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePiece
     quad->setBottom(bottom.release());
     quad->setLeft(left.release());
 
-    return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTF::move(quad)), image.fill());
+    return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), image.fill());
 }
 
 static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
@@ -596,7 +596,7 @@ static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
     quad->setBottom(bottom);
     quad->setLeft(left);
 
-    return cssValuePool.createValue(WTF::move(quad));
+    return cssValuePool.createValue(WTFMove(quad));
 }
 
 static Ref<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image)
@@ -884,7 +884,7 @@ static Ref<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle
     // FIXME: Need to print out individual functions (https://bugs.webkit.org/show_bug.cgi?id=23924)
     auto list = CSSValueList::createSpaceSeparated();
     list.get().append(matrixTransformValue(transform, style));
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 static inline Ref<CSSPrimitiveValue> adjustLengthForZoom(double length, const RenderStyle& style, AdjustPixelValuesForComputedStyle adjust)
@@ -913,7 +913,7 @@ Ref<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shadow, C
         RefPtr<CSSPrimitiveValue> color = cssValuePool.createColorValue(currShadowData->color().rgb());
         list.get().prepend(CSSShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
     }
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, const FilterOperations& filterOperations, AdjustPixelValuesForComputedStyle adjust)
@@ -1005,7 +1005,7 @@ Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, c
         list.get().append(filterValue.releaseNonNull());
     }
 
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -1095,7 +1095,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
 
     // Those are the trailing <ident>* allowed in the syntax.
     addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, insertionIndex, list.get());
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
@@ -1116,7 +1116,7 @@ static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
 
     if (!position.namedGridLine().isNull())
         list.get().append(cssValuePool.createValue(position.namedGridLine(), CSSPrimitiveValue::CSS_STRING));
-    return WTF::move(list);
+    return WTFMove(list);
 }
 #endif
 
@@ -1161,7 +1161,7 @@ static Ref<CSSValue> scrollSnapPoints(RenderStyle& style, const ScrollSnapPoints
         list.get().append(zoomAdjustedPixelValueForLength(point, style));
     if (points->hasRepeat)
         list.get().append(CSSValuePool::singleton().createValue(LengthRepeat::create(zoomAdjustedPixelValueForLength(points->repeatOffset, style))));
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 static Ref<CSSValue> scrollSnapCoordinates(RenderStyle& style, const Vector<LengthSize>& coordinates)
@@ -1175,10 +1175,10 @@ static Ref<CSSValue> scrollSnapCoordinates(RenderStyle& style, const Vector<Leng
         auto pair = CSSValueList::createSpaceSeparated();
         pair.get().append(zoomAdjustedPixelValueForLength(coordinate.width(), style));
         pair.get().append(zoomAdjustedPixelValueForLength(coordinate.height(), style));
-        list.get().append(WTF::move(pair));
+        list.get().append(WTFMove(pair));
     }
 
-    return WTF::move(list);
+    return WTFMove(list);
 }
 #endif
 
@@ -1207,7 +1207,7 @@ static Ref<CSSValue> getWillChangePropertyValue(const WillChangeData* willChange
         }
     }
 
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 static inline void appendLigaturesValue(CSSValueList& list, FontVariantLigatures value, CSSValueID yesValue, CSSValueID noValue)
@@ -1238,7 +1238,7 @@ static Ref<CSSValue> fontVariantLigaturesPropertyValue(FontVariantLigatures comm
     appendLigaturesValue(valueList, discretionary, CSSValueDiscretionaryLigatures, CSSValueNoDiscretionaryLigatures);
     appendLigaturesValue(valueList, historical, CSSValueHistoricalLigatures, CSSValueNoHistoricalLigatures);
     appendLigaturesValue(valueList, contextualAlternates, CSSValueContextual, CSSValueNoContextual);
-    return WTF::move(valueList);
+    return WTFMove(valueList);
 }
 
 static Ref<CSSValue> fontVariantPositionPropertyValue(FontVariantPosition position)
@@ -1332,7 +1332,7 @@ static Ref<CSSValue> fontVariantNumericPropertyValue(FontVariantNumericFigure fi
     if (slashedZero == FontVariantNumericSlashedZero::Yes)
         valueList->append(cssValuePool.createIdentifierValue(CSSValueSlashedZero));
 
-    return WTF::move(valueList);
+    return WTFMove(valueList);
 }
 
 static Ref<CSSValue> fontVariantAlternatesPropertyValue(FontVariantAlternates alternates)
@@ -1393,7 +1393,7 @@ static Ref<CSSValue> fontVariantEastAsianPropertyValue(FontVariantEastAsianVaria
     if (ruby == FontVariantEastAsianRuby::Yes)
         valueList->append(cssValuePool.createIdentifierValue(CSSValueRuby));
 
-    return WTF::move(valueList);
+    return WTFMove(valueList);
 }
 
 static Ref<CSSValueList> getDelayValue(const AnimationList* animList)
@@ -1710,7 +1710,7 @@ static Ref<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepe
     auto list = CSSValueList::createSpaceSeparated();
     list.get().append(cssValuePool.createValue(xRepeat));
     list.get().append(cssValuePool.createValue(yRepeat));
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 static Ref<CSSValue> fillSourceTypeToCSSValue(EMaskSourceType type)
@@ -1738,7 +1738,7 @@ static Ref<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const RenderSt
     auto list = CSSValueList::createSpaceSeparated();
     list.get().append(zoomAdjustedPixelValueForLength(fillSize.size.width(), style));
     list.get().append(zoomAdjustedPixelValueForLength(fillSize.size.height(), style));
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 static Ref<CSSValue> altTextToCSSValue(const RenderStyle* style)
@@ -2007,7 +2007,7 @@ static Ref<CSSValue> fontVariantFromStyle(RenderStyle* style)
         break;
     }
 
-    return WTF::move(list);
+    return WTFMove(list);
 }
 
 static Ref<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
@@ -2634,10 +2634,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             }
             auto value = cssValuePool.createValue(style->cursor());
             if (list) {
-                list->append(WTF::move(value));
+                list->append(WTFMove(value));
                 return list;
             }
-            return WTF::move(value);
+            return WTFMove(value);
         }
 #if ENABLE(CURSOR_VISIBILITY)
         case CSSPropertyWebkitCursorVisibility:
@@ -3185,7 +3185,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                     firstRegion = region.copyRef();
                 previousRegion = region.ptr();
             }
-            return cssValuePool.createValue(WTF::move(firstRegion));
+            return cssValuePool.createValue(WTFMove(firstRegion));
         }
 #endif
         case CSSPropertyAnimationDelay:
@@ -3403,7 +3403,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             rect->setRight(autoOrZoomAdjustedValue(style->clip().right(), *style));
             rect->setBottom(autoOrZoomAdjustedValue(style->clip().bottom(), *style));
             rect->setLeft(autoOrZoomAdjustedValue(style->clip().left(), *style));
-            return cssValuePool.createValue(WTF::move(rect));
+            return cssValuePool.createValue(WTFMove(rect));
         }
         case CSSPropertySpeak:
             return cssValuePool.createValue(style->speak());

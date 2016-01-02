@@ -57,7 +57,7 @@ public:
 
     AddResult set(const KeyType& key, ValueType value)
     {
-        return m_map.set(key, WTF::move(value));
+        return m_map.set(key, WTFMove(value));
     }
 
     bool remove(const KeyType& key)

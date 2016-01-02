@@ -101,7 +101,7 @@ void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
 }
 
 ObjcInstance::ObjcInstance(id instance, RefPtr<RootObject>&& rootObject) 
-    : Instance(WTF::move(rootObject))
+    : Instance(WTFMove(rootObject))
     , _instance(instance)
     , _class(0)
     , _pool(0)
@@ -115,7 +115,7 @@ RefPtr<ObjcInstance> ObjcInstance::create(id instance, RefPtr<RootObject>&& root
         s_instanceWrapperCache = createInstanceWrapperCache();
     if (void* existingWrapper = NSMapGet(s_instanceWrapperCache, instance))
         return static_cast<ObjcInstance*>(existingWrapper);
-    RefPtr<ObjcInstance> wrapper = adoptRef(new ObjcInstance(instance, WTF::move(rootObject)));
+    RefPtr<ObjcInstance> wrapper = adoptRef(new ObjcInstance(instance, WTFMove(rootObject)));
     NSMapInsert(s_instanceWrapperCache, instance, wrapper.get());
     return wrapper;
 }

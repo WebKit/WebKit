@@ -189,7 +189,7 @@ static Ref<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::P
         auto children = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
         for (RefPtr<JSC::ProfileNode> profileNode : node->children())
             children->addItem(buildInspectorObject(profileNode.get()));
-        result->setChildren(WTF::move(children));
+        result->setChildren(WTFMove(children));
     }
 
     return result;
@@ -202,7 +202,7 @@ static Ref<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC
         rootNodes->addItem(buildInspectorObject(profileNode.get()));
 
     return Protocol::Timeline::CPUProfile::create()
-        .setRootNodes(WTF::move(rootNodes))
+        .setRootNodes(WTFMove(rootNodes))
         .release();
 }
 

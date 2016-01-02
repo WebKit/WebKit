@@ -39,7 +39,7 @@ WEBCORE_EXPORT const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &Base:
 
 RuntimeObject::RuntimeObject(VM& vm, Structure* structure, RefPtr<Instance>&& instance)
     : JSDestructibleObject(vm, structure)
-    , m_instance(WTF::move(instance))
+    , m_instance(WTFMove(instance))
 {
 }
 

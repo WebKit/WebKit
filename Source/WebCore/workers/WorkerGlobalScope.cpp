@@ -145,12 +145,12 @@ WorkerNavigator* WorkerGlobalScope::navigator() const
 
 void WorkerGlobalScope::postTask(Task task)
 {
-    thread().runLoop().postTask(WTF::move(task));
+    thread().runLoop().postTask(WTFMove(task));
 }
 
 int WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(*this, WTF::move(action), timeout, true);
+    return DOMTimer::install(*this, WTFMove(action), timeout, true);
 }
 
 void WorkerGlobalScope::clearTimeout(int timeoutId)
@@ -160,7 +160,7 @@ void WorkerGlobalScope::clearTimeout(int timeoutId)
 
 int WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction> action, int timeout)
 {
-    return DOMTimer::install(*this, WTF::move(action), timeout, false);
+    return DOMTimer::install(*this, WTFMove(action), timeout, false);
 }
 
 void WorkerGlobalScope::clearInterval(int timeoutId)
@@ -179,7 +179,7 @@ void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode&
             ec = SYNTAX_ERR;
             return;
         }
-        completedURLs.append(WTF::move(url));
+        completedURLs.append(WTFMove(url));
     }
 
     for (auto& url : completedURLs) {
@@ -232,7 +232,7 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
     }
 
     thread().workerReportingProxy().postConsoleMessageToWorkerObject(source, level, message, lineNumber, columnNumber, sourceURL);
-    addMessageToWorkerConsole(source, level, message, sourceURL, lineNumber, columnNumber, WTF::move(callStack), state, requestIdentifier);
+    addMessageToWorkerConsole(source, level, message, sourceURL, lineNumber, columnNumber, WTFMove(callStack), state, requestIdentifier);
 }
 
 void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
@@ -242,11 +242,11 @@ void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageL
     std::unique_ptr<Inspector::ConsoleMessage> message;
 
     if (callStack)
-        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, WTF::move(callStack), requestIdentifier);
+        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, WTFMove(callStack), requestIdentifier);
     else
         message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
 
-    InspectorInstrumentation::addMessageToConsole(this, WTF::move(message));
+    InspectorInstrumentation::addMessageToConsole(this, WTFMove(message));
 }
 
 bool WorkerGlobalScope::isContextThread() const

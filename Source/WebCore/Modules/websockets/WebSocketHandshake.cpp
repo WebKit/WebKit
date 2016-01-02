@@ -378,7 +378,7 @@ const ResourceResponse& WebSocketHandshake::serverHandshakeResponse() const
 
 void WebSocketHandshake::addExtensionProcessor(std::unique_ptr<WebSocketExtensionProcessor> processor)
 {
-    m_extensionDispatcher.addProcessor(WTF::move(processor));
+    m_extensionDispatcher.addProcessor(WTFMove(processor));
 }
 
 URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const

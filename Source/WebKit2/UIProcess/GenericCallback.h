@@ -193,7 +193,7 @@ public:
     template<typename... T>
     uint64_t put(std::function<void (T...)> function, const ProcessThrottler::BackgroundActivityToken& activityToken)
     {
-        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTF::move(function), activityToken);
+        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTFMove(function), activityToken);
         return put(callback);
     }
 

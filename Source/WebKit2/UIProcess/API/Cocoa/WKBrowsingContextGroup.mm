@@ -126,7 +126,7 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
             strings.uncheckedAppend(adoptRef(toImpl(WKStringCreateWithCFString((CFStringRef)entry))));
     }
 
-    return toAPI(&API::Array::create(WTF::move(strings)).leakRef());
+    return toAPI(&API::Array::create(WTFMove(strings)).leakRef());
 }
 
 -(void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly

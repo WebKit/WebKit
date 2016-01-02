@@ -76,7 +76,7 @@ bool isNumberedHeaderElement(const HTMLStackItem&);
 bool isSpecialNode(const HTMLStackItem&);
 
 inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomicHTMLToken& token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
-    : m_node(WTF::move(element))
+    : m_node(WTFMove(element))
     , m_namespaceURI(namespaceURI)
     , m_localName(token.name())
     , m_attributes(token.attributes())
@@ -86,7 +86,7 @@ inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomicHTMLToken& tok
 
 inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, AtomicHTMLToken& token, const AtomicString& namespaceURI)
 {
-    return adoptRef(*new HTMLStackItem(WTF::move(element), token, namespaceURI));
+    return adoptRef(*new HTMLStackItem(WTFMove(element), token, namespaceURI));
 }
 
 inline HTMLStackItem::HTMLStackItem(Element& element)

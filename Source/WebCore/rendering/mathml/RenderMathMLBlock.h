@@ -73,7 +73,7 @@ private:
 class RenderMathMLTable final : public RenderTable {
 public:
     explicit RenderMathMLTable(Element& element, Ref<RenderStyle>&& style)
-        : RenderTable(element, WTF::move(style))
+        : RenderTable(element, WTFMove(style))
     {
     }
     

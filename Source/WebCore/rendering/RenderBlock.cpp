@@ -171,7 +171,7 @@ public:
 
         Ref<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow);
         overflowEvent->setTarget(m_block->element());
-        m_block->document().enqueueOverflowEvent(WTF::move(overflowEvent));
+        m_block->document().enqueueOverflowEvent(WTFMove(overflowEvent));
     }
 
 private:
@@ -182,12 +182,12 @@ private:
 };
 
 RenderBlock::RenderBlock(Element& element, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(element, WTF::move(style), baseTypeFlags | RenderBlockFlag)
+    : RenderBox(element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
 }
 
 RenderBlock::RenderBlock(Document& document, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(document, WTF::move(style), baseTypeFlags | RenderBlockFlag)
+    : RenderBox(document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
 {
 }
 

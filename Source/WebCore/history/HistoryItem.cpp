@@ -339,13 +339,13 @@ void HistoryItem::setIsTargetItem(bool flag)
 
 void HistoryItem::setStateObject(RefPtr<SerializedScriptValue>&& object)
 {
-    m_stateObject = WTF::move(object);
+    m_stateObject = WTFMove(object);
 }
 
 void HistoryItem::addChildItem(Ref<HistoryItem>&& child)
 {
     ASSERT(!childItemWithTarget(child->target()));
-    m_children.append(WTF::move(child));
+    m_children.append(WTFMove(child));
 }
 
 void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
@@ -355,11 +355,11 @@ void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
     for (unsigned i = 0; i < size; ++i)  {
         if (m_children[i]->target() == child->target()) {
             child->setIsTargetItem(m_children[i]->isTargetItem());
-            m_children[i] = WTF::move(child);
+            m_children[i] = WTFMove(child);
             return;
         }
     }
-    m_children.append(WTF::move(child));
+    m_children.append(WTFMove(child));
 }
 
 HistoryItem* HistoryItem::childItemWithTarget(const String& target)
@@ -486,7 +486,7 @@ void HistoryItem::setFormInfoFromRequest(const ResourceRequest& request)
 
 void HistoryItem::setFormData(RefPtr<FormData>&& formData)
 {
-    m_formData = WTF::move(formData);
+    m_formData = WTFMove(formData);
 }
 
 void HistoryItem::setFormContentType(const String& formContentType)
@@ -523,7 +523,7 @@ Vector<String>* HistoryItem::redirectURLs() const
 
 void HistoryItem::setRedirectURLs(std::unique_ptr<Vector<String>> redirectURLs)
 {
-    m_redirectURLs = WTF::move(redirectURLs);
+    m_redirectURLs = WTFMove(redirectURLs);
 }
 
 void HistoryItem::notifyChanged()

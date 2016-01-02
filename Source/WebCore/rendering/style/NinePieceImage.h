@@ -136,16 +136,16 @@ public:
     void setImage(PassRefPtr<StyleImage> image) { m_data.access()->image = image; }
     
     const LengthBox& imageSlices() const { return m_data->imageSlices; }
-    void setImageSlices(LengthBox slices) { m_data.access()->imageSlices = WTF::move(slices); }
+    void setImageSlices(LengthBox slices) { m_data.access()->imageSlices = WTFMove(slices); }
 
     bool fill() const { return m_data->fill; }
     void setFill(bool fill) { m_data.access()->fill = fill; }
 
     const LengthBox& borderSlices() const { return m_data->borderSlices; }
-    void setBorderSlices(LengthBox slices) { m_data.access()->borderSlices = WTF::move(slices); }
+    void setBorderSlices(LengthBox slices) { m_data.access()->borderSlices = WTFMove(slices); }
 
     const LengthBox& outset() const { return m_data->outset; }
-    void setOutset(LengthBox outset) { m_data.access()->outset = WTF::move(outset); }
+    void setOutset(LengthBox outset) { m_data.access()->outset = WTFMove(outset); }
 
     ENinePieceImageRule horizontalRule() const { return static_cast<ENinePieceImageRule>(m_data->horizontalRule); }
     void setHorizontalRule(ENinePieceImageRule rule) { m_data.access()->horizontalRule = rule; }

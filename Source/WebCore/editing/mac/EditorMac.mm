@@ -526,11 +526,11 @@ bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
 #if ENABLE(ATTACHMENT_ELEMENT)
         Ref<HTMLAttachmentElement> attachment = HTMLAttachmentElement::create(attachmentTag, document);
         attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
-        fragment->appendChild(WTF::move(attachment));
+        fragment->appendChild(WTFMove(attachment));
 #else
         Ref<HTMLElement> paragraph = createDefaultParagraphElement(document);
         paragraph->appendChild(document.createTextNode(frame.editor().client()->userVisibleString([NSURL fileURLWithPath:text])));
-        fragment->appendChild(WTF::move(paragraph));
+        fragment->appendChild(WTFMove(paragraph));
 #endif
     }
 
@@ -594,7 +594,7 @@ bool Editor::WebContentReader::readURL(const URL& url, const String& title)
     anchor->appendChild(frame.document()->createTextNode([title precomposedStringWithCanonicalMapping]));
 
     fragment = frame.document()->createDocumentFragment();
-    fragment->appendChild(WTF::move(anchor));
+    fragment->appendChild(WTFMove(anchor));
     return true;
 }
 
@@ -634,7 +634,7 @@ PassRefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResourc
     imageElement->setAttribute(HTMLNames::srcAttr, resource->url().string());
 
     RefPtr<DocumentFragment> fragment = document().createDocumentFragment();
-    fragment->appendChild(WTF::move(imageElement));
+    fragment->appendChild(WTFMove(imageElement));
 
     return fragment.release();
 }

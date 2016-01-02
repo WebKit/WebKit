@@ -38,7 +38,7 @@ static const double s_releaseUnusedTexturesTimerInterval = 0.5;
 
 #if USE(TEXTURE_MAPPER_GL)
 BitmapTexturePool::BitmapTexturePool(RefPtr<GraphicsContext3D>&& context3D)
-    : m_context3D(WTF::move(context3D))
+    : m_context3D(WTFMove(context3D))
     , m_releaseUnusedTexturesTimer(*this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
 {
 }

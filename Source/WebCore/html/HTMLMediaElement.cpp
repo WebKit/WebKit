@@ -700,7 +700,7 @@ bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMedia>(*this, WTF::move(style));
+    return createRenderer<RenderMedia>(*this, WTFMove(style));
 }
 
 bool HTMLMediaElement::childShouldCreateRenderer(const Node& child) const
@@ -5162,10 +5162,10 @@ bool HTMLMediaElement::dispatchEvent(Event& event)
 bool HTMLMediaElement::addEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
 {
     if (eventType != eventNames().webkitplaybacktargetavailabilitychangedEvent)
-        return Node::addEventListener(eventType, WTF::move(listener), useCapture);
+        return Node::addEventListener(eventType, WTFMove(listener), useCapture);
 
     bool isFirstAvailabilityChangedListener = !hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent);
-    if (!Node::addEventListener(eventType, WTF::move(listener), useCapture))
+    if (!Node::addEventListener(eventType, WTFMove(listener), useCapture))
         return false;
 
     if (isFirstAvailabilityChangedListener) {
@@ -5212,7 +5212,7 @@ void HTMLMediaElement::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& devi
 {
     LOG(Media, "HTMLMediaElement::setWirelessPlaybackTarget(%p)", this);
     if (m_player)
-        m_player->setWirelessPlaybackTarget(WTF::move(device));
+        m_player->setWirelessPlaybackTarget(WTFMove(device));
 }
 
 bool HTMLMediaElement::canPlayToWirelessPlaybackTarget() const
@@ -6112,7 +6112,7 @@ CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
 
 RefPtr<PlatformMediaResourceLoader> HTMLMediaElement::mediaPlayerCreateResourceLoader(std::unique_ptr<PlatformMediaResourceLoaderClient> client)
 {
-    return adoptRef(*new MediaResourceLoader(document(), fastGetAttribute(HTMLNames::crossoriginAttr), WTF::move(client)));
+    return adoptRef(*new MediaResourceLoader(document(), fastGetAttribute(HTMLNames::crossoriginAttr), WTFMove(client)));
 }
 
 bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)

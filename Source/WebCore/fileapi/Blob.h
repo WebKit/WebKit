@@ -50,12 +50,12 @@ public:
 
     static Ref<Blob> create(Vector<char> data, const String& contentType)
     {
-        return adoptRef(*new Blob(WTF::move(data), contentType));
+        return adoptRef(*new Blob(WTFMove(data), contentType));
     }
 
     static Ref<Blob> create(Vector<BlobPart> blobParts, const String& contentType)
     {
-        return adoptRef(*new Blob(WTF::move(blobParts), contentType));
+        return adoptRef(*new Blob(WTFMove(blobParts), contentType));
     }
 
     static Ref<Blob> deserialize(const URL& srcURL, const String& type, long long size)

@@ -117,27 +117,27 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     auto inspectorAgentPtr = std::make_unique<InspectorAgent>(pageContext);
     m_inspectorAgent = inspectorAgentPtr.get();
     m_instrumentingAgents->setInspectorAgent(m_inspectorAgent);
-    m_agents.append(WTF::move(inspectorAgentPtr));
+    m_agents.append(WTFMove(inspectorAgentPtr));
 
     auto pageAgentPtr = std::make_unique<InspectorPageAgent>(pageContext, inspectorClient, m_overlay.get());
     InspectorPageAgent* pageAgent = pageAgentPtr.get();
     m_pageAgent = pageAgentPtr.get();
-    m_agents.append(WTF::move(pageAgentPtr));
+    m_agents.append(WTFMove(pageAgentPtr));
 
     auto runtimeAgentPtr = std::make_unique<PageRuntimeAgent>(pageContext, pageAgent);
     PageRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
     m_instrumentingAgents->setPageRuntimeAgent(runtimeAgent);
-    m_agents.append(WTF::move(runtimeAgentPtr));
+    m_agents.append(WTFMove(runtimeAgentPtr));
 
     auto domAgentPtr = std::make_unique<InspectorDOMAgent>(pageContext, pageAgent, m_overlay.get());
     m_domAgent = domAgentPtr.get();
-    m_agents.append(WTF::move(domAgentPtr));
+    m_agents.append(WTFMove(domAgentPtr));
 
     m_agents.append(std::make_unique<InspectorCSSAgent>(pageContext, m_domAgent));
 
     auto databaseAgentPtr = std::make_unique<InspectorDatabaseAgent>(pageContext);
     InspectorDatabaseAgent* databaseAgent = databaseAgentPtr.get();
-    m_agents.append(WTF::move(databaseAgentPtr));
+    m_agents.append(WTFMove(databaseAgentPtr));
 
     m_agents.append(std::make_unique<InspectorNetworkAgent>(pageContext, pageAgent));
 
@@ -151,20 +151,20 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     auto domStorageAgentPtr = std::make_unique<InspectorDOMStorageAgent>(pageContext, m_pageAgent);
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
-    m_agents.append(WTF::move(domStorageAgentPtr));
+    m_agents.append(WTFMove(domStorageAgentPtr));
 
     auto timelineAgentPtr = std::make_unique<InspectorTimelineAgent>(pageContext, pageAgent);
     m_timelineAgent = timelineAgentPtr.get();
-    m_agents.append(WTF::move(timelineAgentPtr));
+    m_agents.append(WTFMove(timelineAgentPtr));
 
     auto consoleAgentPtr = std::make_unique<PageConsoleAgent>(pageContext, m_domAgent);
     WebConsoleAgent* consoleAgent = consoleAgentPtr.get();
     m_instrumentingAgents->setWebConsoleAgent(consoleAgentPtr.get());
-    m_agents.append(WTF::move(consoleAgentPtr));
+    m_agents.append(WTFMove(consoleAgentPtr));
 
     auto debuggerAgentPtr = std::make_unique<PageDebuggerAgent>(pageContext, pageAgent, m_overlay.get());
     PageDebuggerAgent* debuggerAgent = debuggerAgentPtr.get();
-    m_agents.append(WTF::move(debuggerAgentPtr));
+    m_agents.append(WTFMove(debuggerAgentPtr));
 
     m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, m_domAgent, debuggerAgent));
     m_agents.append(std::make_unique<InspectorHeapAgent>(pageContext));

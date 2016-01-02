@@ -113,7 +113,7 @@ JSValue JSStringJoiner::join(ExecState& state)
     if (result.isNull())
         return throwOutOfMemoryError(&state);
 
-    return jsString(&state, WTF::move(result));
+    return jsString(&state, WTFMove(result));
 }
 
 }

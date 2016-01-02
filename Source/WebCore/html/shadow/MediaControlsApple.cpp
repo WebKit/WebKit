@@ -73,26 +73,26 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
 
     Ref<MediaControlRewindButtonElement> rewindButton = MediaControlRewindButtonElement::create(document);
     controls->m_rewindButton = rewindButton.ptr();
-    panel->appendChild(WTF::move(rewindButton), ec);
+    panel->appendChild(WTFMove(rewindButton), ec);
     if (ec)
         return nullptr;
 
     Ref<MediaControlPlayButtonElement> playButton = MediaControlPlayButtonElement::create(document);
     controls->m_playButton = playButton.ptr();
-    panel->appendChild(WTF::move(playButton), ec);
+    panel->appendChild(WTFMove(playButton), ec);
     if (ec)
         return nullptr;
 
     Ref<MediaControlReturnToRealtimeButtonElement> returnToRealtimeButton = MediaControlReturnToRealtimeButtonElement::create(document);
     controls->m_returnToRealTimeButton = returnToRealtimeButton.ptr();
-    panel->appendChild(WTF::move(returnToRealtimeButton), ec);
+    panel->appendChild(WTFMove(returnToRealtimeButton), ec);
     if (ec)
         return nullptr;
 
     if (document.page()->theme().usesMediaControlStatusDisplay()) {
         Ref<MediaControlStatusDisplayElement> statusDisplay = MediaControlStatusDisplayElement::create(document);
         controls->m_statusDisplay = statusDisplay.ptr();
-        panel->appendChild(WTF::move(statusDisplay), ec);
+        panel->appendChild(WTFMove(statusDisplay), ec);
         if (ec)
             return nullptr;
     }
@@ -101,38 +101,38 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
 
     Ref<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(document);
     controls->m_currentTimeDisplay = currentTimeDisplay.ptr();
-    timelineContainer->appendChild(WTF::move(currentTimeDisplay), ec);
+    timelineContainer->appendChild(WTFMove(currentTimeDisplay), ec);
     if (ec)
         return nullptr;
 
     Ref<MediaControlTimelineElement> timeline = MediaControlTimelineElement::create(document, controls.get());
     controls->m_timeline = timeline.ptr();
-    timelineContainer->appendChild(WTF::move(timeline), ec);
+    timelineContainer->appendChild(WTFMove(timeline), ec);
     if (ec)
         return nullptr;
 
     Ref<MediaControlTimeRemainingDisplayElement> timeRemainingDisplay = MediaControlTimeRemainingDisplayElement::create(document);
     controls->m_timeRemainingDisplay = timeRemainingDisplay.ptr();
-    timelineContainer->appendChild(WTF::move(timeRemainingDisplay), ec);
+    timelineContainer->appendChild(WTFMove(timeRemainingDisplay), ec);
     if (ec)
         return nullptr;
 
     controls->m_timelineContainer = timelineContainer.ptr();
-    panel->appendChild(WTF::move(timelineContainer), ec);
+    panel->appendChild(WTFMove(timelineContainer), ec);
     if (ec)
         return nullptr;
 
     // FIXME: Only create when needed <http://webkit.org/b/57163>
     Ref<MediaControlSeekBackButtonElement> seekBackButton = MediaControlSeekBackButtonElement::create(document);
     controls->m_seekBackButton = seekBackButton.ptr();
-    panel->appendChild(WTF::move(seekBackButton), ec);
+    panel->appendChild(WTFMove(seekBackButton), ec);
     if (ec)
         return nullptr;
 
     // FIXME: Only create when needed <http://webkit.org/b/57163>
     Ref<MediaControlSeekForwardButtonElement> seekForwardButton = MediaControlSeekForwardButtonElement::create(document);
     controls->m_seekForwardButton = seekForwardButton.ptr();
-    panel->appendChild(WTF::move(seekForwardButton), ec);
+    panel->appendChild(WTFMove(seekForwardButton), ec);
     if (ec)
         return nullptr;
 
@@ -141,18 +141,18 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
 
         Ref<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document, controls.get());
         controls->m_closedCaptionsTrackList = closedCaptionsTrackList.ptr();
-        closedCaptionsContainer->appendChild(WTF::move(closedCaptionsTrackList), ec);
+        closedCaptionsContainer->appendChild(WTFMove(closedCaptionsTrackList), ec);
         if (ec)
             return nullptr;
 
         Ref<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document, controls.get());
         controls->m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.ptr();
-        panel->appendChild(WTF::move(toggleClosedCaptionsButton), ec);
+        panel->appendChild(WTFMove(toggleClosedCaptionsButton), ec);
         if (ec)
             return nullptr;
 
         controls->m_closedCaptionsContainer = closedCaptionsContainer.ptr();
-        controls->appendChild(WTF::move(closedCaptionsContainer), ec);
+        controls->appendChild(WTFMove(closedCaptionsContainer), ec);
         if (ec)
             return nullptr;
     }
@@ -160,7 +160,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
     // FIXME: Only create when needed <http://webkit.org/b/57163>
     Ref<MediaControlFullscreenButtonElement> fullScreenButton = MediaControlFullscreenButtonElement::create(document);
     controls->m_fullScreenButton = fullScreenButton.ptr();
-    panel->appendChild(WTF::move(fullScreenButton), ec);
+    panel->appendChild(WTFMove(fullScreenButton), ec);
 
     // The mute button and the slider element should be in the same div.
     Ref<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(document);
@@ -170,7 +170,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
 
         Ref<MediaControlPanelVolumeSliderElement> slider = MediaControlPanelVolumeSliderElement::create(document);
         controls->m_volumeSlider = slider.ptr();
-        volumeSliderContainer->appendChild(WTF::move(slider), ec);
+        volumeSliderContainer->appendChild(WTFMove(slider), ec);
         if (ec)
             return nullptr;
 
@@ -178,48 +178,48 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
         // It's important only when the volume bar is displayed below the controls.
         Ref<MediaControlVolumeSliderMuteButtonElement> volumeSliderMuteButton = MediaControlVolumeSliderMuteButtonElement::create(document);
         controls->m_volumeSliderMuteButton = volumeSliderMuteButton.ptr();
-        volumeSliderContainer->appendChild(WTF::move(volumeSliderMuteButton), ec);
+        volumeSliderContainer->appendChild(WTFMove(volumeSliderMuteButton), ec);
 
         if (ec)
             return nullptr;
 
         controls->m_volumeSliderContainer = volumeSliderContainer.ptr();
-        panelVolumeControlContainer->appendChild(WTF::move(volumeSliderContainer), ec);
+        panelVolumeControlContainer->appendChild(WTFMove(volumeSliderContainer), ec);
         if (ec)
             return nullptr;
     }
 
     Ref<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, controls.get());
     controls->m_panelMuteButton = panelMuteButton.ptr();
-    panelVolumeControlContainer->appendChild(WTF::move(panelMuteButton), ec);
+    panelVolumeControlContainer->appendChild(WTFMove(panelMuteButton), ec);
     if (ec)
         return nullptr;
 
-    panel->appendChild(WTF::move(panelVolumeControlContainer), ec);
+    panel->appendChild(WTFMove(panelVolumeControlContainer), ec);
     if (ec)
         return nullptr;
 
     // FIXME: Only create when needed <http://webkit.org/b/57163>
     Ref<MediaControlFullscreenVolumeMinButtonElement> fullScreenMinVolumeButton = MediaControlFullscreenVolumeMinButtonElement::create(document);
     controls->m_fullScreenMinVolumeButton = fullScreenMinVolumeButton.ptr();
-    panel->appendChild(WTF::move(fullScreenMinVolumeButton), ec);
+    panel->appendChild(WTFMove(fullScreenMinVolumeButton), ec);
     if (ec)
         return nullptr;
 
     Ref<MediaControlFullscreenVolumeSliderElement> fullScreenVolumeSlider = MediaControlFullscreenVolumeSliderElement::create(document);
     controls->m_fullScreenVolumeSlider = fullScreenVolumeSlider.ptr();
-    panel->appendChild(WTF::move(fullScreenVolumeSlider), ec);
+    panel->appendChild(WTFMove(fullScreenVolumeSlider), ec);
     if (ec)
         return nullptr;
 
     Ref<MediaControlFullscreenVolumeMaxButtonElement> fullScreenMaxVolumeButton = MediaControlFullscreenVolumeMaxButtonElement::create(document);
     controls->m_fullScreenMaxVolumeButton = fullScreenMaxVolumeButton.ptr();
-    panel->appendChild(WTF::move(fullScreenMaxVolumeButton), ec);
+    panel->appendChild(WTFMove(fullScreenMaxVolumeButton), ec);
     if (ec)
         return nullptr;
 
     controls->m_panel = panel.ptr();
-    controls->appendChild(WTF::move(panel), ec);
+    controls->appendChild(WTFMove(panel), ec);
     if (ec)
         return nullptr;
 
@@ -517,7 +517,7 @@ void MediaControlsApple::showClosedCaptionTrackList()
     // track list. These two levels are necessary since it would not be possible to get a
     // reference to the track list when handling the event outside of the shadow tree.
     document().addEventListener(eventNames().clickEvent, listener.copyRef(), true);
-    addEventListener(eventNames().clickEvent, WTF::move(listener), true);
+    addEventListener(eventNames().clickEvent, WTFMove(listener), true);
 }
 
 void MediaControlsApple::hideClosedCaptionTrackList()

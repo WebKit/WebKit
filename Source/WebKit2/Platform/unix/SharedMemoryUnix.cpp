@@ -77,20 +77,20 @@ bool SharedMemory::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
     if (!decoder.decode(attachment))
         return false;
 
-    handle.adoptAttachment(WTF::move(attachment));
+    handle.adoptAttachment(WTFMove(attachment));
     return true;
 }
 
 IPC::Attachment SharedMemory::Handle::releaseAttachment() const
 {
-    return WTF::move(m_attachment);
+    return WTFMove(m_attachment);
 }
 
 void SharedMemory::Handle::adoptAttachment(IPC::Attachment&& attachment)
 {
     ASSERT(isNull());
 
-    m_attachment = WTF::move(attachment);
+    m_attachment = WTFMove(attachment);
 }
 
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)

@@ -77,7 +77,7 @@ Ref<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningO
         cloneChildNodes(clone);
         break;
     }
-    return WTF::move(clone);
+    return WTFMove(clone);
 }
 
 void DocumentFragment::parseHTML(const String& source, Element* contextElement, ParserContentPolicy parserContentPolicy)

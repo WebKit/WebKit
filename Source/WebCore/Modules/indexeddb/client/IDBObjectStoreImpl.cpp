@@ -132,7 +132,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* c
 
     auto info = IDBCursorInfo::objectStoreCursor(m_transaction.get(), m_info.identifier(), range, direction);
     Ref<IDBRequest> request = m_transaction->requestOpenCursor(*context, *this, info);
-    return WTF::move(request);
+    return WTFMove(request);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
@@ -175,7 +175,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
     }
 
     Ref<IDBRequest> request = m_transaction->requestGetRecord(*context, *this, idbKey.get());
-    return WTF::move(request);
+    return WTFMove(request);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
@@ -204,7 +204,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
     }
 
     Ref<IDBRequest> request = m_transaction->requestGetRecord(*context, *this, keyRangeData);
-    return WTF::move(request);
+    return WTFMove(request);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
@@ -358,7 +358,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContex
     }
 
     Ref<IDBRequest> request = m_transaction->requestDeleteRecord(*context, *this, keyRangeData);
-    return WTF::move(request);
+    return WTFMove(request);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
@@ -460,7 +460,7 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* co
     Ref<IDBIndex> index = m_transaction->createIndex(*this, info);
     m_referencedIndexes.set(name, &index.get());
 
-    return WTF::move(index);
+    return WTFMove(index);
 }
 
 RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, ExceptionCodeWithMessage& ec)
@@ -492,7 +492,7 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
     auto index = IDBIndex::create(*info, *this);
     m_referencedIndexes.set(indexName, &index.get());
 
-    return WTF::move(index);
+    return WTFMove(index);
 }
 
 void IDBObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& ec)

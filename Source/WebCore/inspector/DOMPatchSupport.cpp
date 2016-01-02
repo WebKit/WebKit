@@ -420,7 +420,7 @@ std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* nod
             std::unique_ptr<Digest> childInfo = createDigest(child, unusedNodesMap);
             addStringToSHA1(sha1, childInfo->m_sha1);
             child = child->nextSibling();
-            digest->m_children.append(WTF::move(childInfo));
+            digest->m_children.append(WTFMove(childInfo));
         }
         Element* element = downcast<Element>(node);
 
@@ -468,7 +468,7 @@ bool DOMPatchSupport::removeChildAndMoveToNew(Digest* oldDigest, ExceptionCode& 
     if (it != m_unusedNodesMap.end()) {
         Digest* newDigest = it->value;
         Node* newNode = newDigest->m_node;
-        if (!m_domEditor->replaceChild(newNode->parentNode(), WTF::move(oldNode), newNode, ec))
+        if (!m_domEditor->replaceChild(newNode->parentNode(), WTFMove(oldNode), newNode, ec))
             return false;
         newDigest->m_node = oldNode.get();
         markNodeAsUsed(newDigest);

@@ -31,7 +31,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderMeter::RenderMeter(HTMLElement& element, Ref<RenderStyle>&& style)
-    : RenderBlockFlow(element, WTF::move(style))
+    : RenderBlockFlow(element, WTFMove(style))
 {
 }
 

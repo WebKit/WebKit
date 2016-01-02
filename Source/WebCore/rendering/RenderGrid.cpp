@@ -242,7 +242,7 @@ void RenderGrid::GridSizingData::setFreeSpaceForDirection(GridTrackSizingDirecti
 }
 
 RenderGrid::RenderGrid(Element& element, Ref<RenderStyle>&& style)
-    : RenderBlock(element, WTF::move(style), 0)
+    : RenderBlock(element, WTFMove(style), 0)
     , m_orderIterator(*this)
 {
     // All of our children must be block level.
@@ -650,7 +650,7 @@ double RenderGrid::computeFlexFactorUnitSize(const Vector<GridTrack>& tracks, Gr
         }
     }
     if (!validFlexFactorUnit)
-        return computeFlexFactorUnitSize(tracks, direction, flexFactorSum, leftOverSpace, flexibleTracksIndexes, WTF::move(tracksToTreatAsInflexible));
+        return computeFlexFactorUnitSize(tracks, direction, flexFactorSum, leftOverSpace, flexibleTracksIndexes, WTFMove(tracksToTreatAsInflexible));
     return hypotheticalFactorUnitSize;
 }
 

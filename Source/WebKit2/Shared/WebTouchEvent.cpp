@@ -35,7 +35,7 @@ namespace WebKit {
 
 WebTouchEvent::WebTouchEvent(WebEvent::Type type, Vector<WebPlatformTouchPoint>&& touchPoints, Modifiers modifiers, double timestamp)
     : WebEvent(type, modifiers, timestamp)
-    , m_touchPoints(WTF::move(touchPoints))
+    , m_touchPoints(WTFMove(touchPoints))
 {
     ASSERT(isTouchEventType(type));
 }

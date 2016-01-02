@@ -3194,7 +3194,7 @@ void FrameView::sendResizeEventIfNeeded()
         // FIXME: Queueing this event for an unpredictable time in the future seems
         // intrinsically racy. By the time this resize event fires, the frame might
         // be resized again, so we could end up with two resize events for the same size.
-        frame().document()->enqueueWindowEvent(WTF::move(resizeEvent));
+        frame().document()->enqueueWindowEvent(WTFMove(resizeEvent));
     }
 
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
@@ -3382,7 +3382,7 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
             verticalOverflowChanged, verticalOverflow);
         overflowEvent->setTarget(viewportRenderer->element());
 
-        frame().document()->enqueueOverflowEvent(WTF::move(overflowEvent));
+        frame().document()->enqueueOverflowEvent(WTFMove(overflowEvent));
     }
 }
 

@@ -50,7 +50,7 @@ public:
 
     static Ref<ReplaceSelectionCommand> create(Document& document, RefPtr<DocumentFragment>&& fragment, CommandOptions options, EditAction editingAction = EditActionInsert)
     {
-        return adoptRef(*new ReplaceSelectionCommand(document, WTF::move(fragment), options, editingAction));
+        return adoptRef(*new ReplaceSelectionCommand(document, WTFMove(fragment), options, editingAction));
     }
 
 private:

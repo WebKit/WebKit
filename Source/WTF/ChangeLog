@@ -1,3 +1,91 @@
+2015-12-31  Andy Estes  <aestes@apple.com>
+
+        Replace WTF::move with WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=152601
+
+        Reviewed by Brady Eidson.
+
+        This also removes the definition of WTF::move.
+
+        * wtf/Deque.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/HashTable.h:
+        (WTF::HashTable::add):
+        (WTF::KeyTraits>::HashTable):
+        * wtf/Insertion.h:
+        (WTF::executeInsertions):
+        * wtf/IteratorAdaptors.h:
+        (WTF::FilterIterator::FilterIterator):
+        (WTF::TransformIterator::TransformIterator):
+        (WTF::makeTransformIterator):
+        * wtf/IteratorRange.h:
+        (WTF::IteratorRange::IteratorRange):
+        * wtf/ListHashSet.h:
+        (WTF::U>::takeFirst):
+        (WTF::U>::takeLast):
+        * wtf/MainThread.cpp:
+        (WTF::callOnMainThread):
+        * wtf/MallocPtr.h:
+        (WTF::MallocPtr::operator=):
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue<DataType>::append):
+        (WTF::MessageQueue<DataType>::appendAndKill):
+        (WTF::MessageQueue<DataType>::appendAndCheckEmpty):
+        (WTF::MessageQueue<DataType>::prepend):
+        * wtf/NakedPtr.h:
+        (WTF::=):
+        * wtf/OSObjectPtr.h:
+        (WTF::OSObjectPtr::operator=):
+        * wtf/Optional.h:
+        (WTF::Optional::Optional):
+        (WTF::Optional::operator=):
+        * wtf/RefPtr.h:
+        (WTF::=):
+        * wtf/RetainPtr.h:
+        (WTF::=):
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::dispatch):
+        * wtf/SharedTask.h:
+        (WTF::createSharedTask):
+        * wtf/StdLibExtras.h:
+        (WTF::move): Deleted.
+        * wtf/Threading.cpp:
+        (WTF::threadEntryPoint):
+        (WTF::createThread):
+        * wtf/Vector.h:
+        (WTF::Vector::takeLast):
+        * wtf/efl/DispatchQueueEfl.cpp:
+        (DispatchQueue::dispatch):
+        (DispatchQueue::setSocketEventHandler):
+        (DispatchQueue::performTimerWork):
+        (DispatchQueue::insertTimerWorkItem):
+        * wtf/efl/DispatchQueueWorkItemEfl.h:
+        (WorkItem::WorkItem):
+        (TimerWorkItem::create):
+        (TimerWorkItem::TimerWorkItem):
+        * wtf/efl/WorkQueueEfl.cpp:
+        (WorkQueue::registerSocketEventHandler):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfter):
+        * wtf/glib/GRefPtr.h:
+        (WTF::=):
+        * wtf/glib/WorkQueueGLib.cpp:
+        (WTF::DispatchAfterContext::DispatchAfterContext):
+        (WTF::WorkQueue::dispatchAfter):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        (WTF::AtomicString::operator=):
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeString):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::isolatedCopy):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        (WTF::StringCapture::releaseString):
+        * wtf/win/GDIObject.h:
+        (WTF::=):
+
 2015-12-31  David Kilzer  <ddkilzer@apple.com>
 
         Stop using USE(CFNETWORK) path on iOS

@@ -48,7 +48,7 @@ public:
         auto absoluteURL = std::make_unique<WebCore::URL>(*baseURL->m_parsedURL.get(), relativeURL);
         const WTF::String& absoluteURLString = absoluteURL->string();
 
-        return adoptRef(*new URL(WTF::move(absoluteURL), absoluteURLString));
+        return adoptRef(*new URL(WTFMove(absoluteURL), absoluteURLString));
     }
 
     bool isNull() const { return m_string.isNull(); }
@@ -108,7 +108,7 @@ private:
 
     URL(std::unique_ptr<WebCore::URL> parsedURL, const WTF::String& string)
         : m_string(string)
-        , m_parsedURL(WTF::move(parsedURL))
+        , m_parsedURL(WTFMove(parsedURL))
     {
     }
 

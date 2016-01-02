@@ -84,7 +84,7 @@ TEST(WTF_HashSet, MoveOnly)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        hashSet.add(WTF::move(moveOnly));
+        hashSet.add(WTFMove(moveOnly));
     }
 
     for (size_t i = 0; i < 100; ++i)
@@ -125,7 +125,7 @@ TEST(WTF_HashSet, UniquePtrKey)
     HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
 
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
-    set.add(WTF::move(uniquePtr));
+    set.add(WTFMove(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -142,7 +142,7 @@ TEST(WTF_HashSet, UniquePtrKey_FindUsingRawPointer)
 
     auto uniquePtr = std::make_unique<int>(5);
     int* ptr = uniquePtr.get();
-    set.add(WTF::move(uniquePtr));
+    set.add(WTFMove(uniquePtr));
 
     auto it = set.find(ptr);
     ASSERT_TRUE(it != set.end());
@@ -156,7 +156,7 @@ TEST(WTF_HashSet, UniquePtrKey_ContainsUsingRawPointer)
 
     auto uniquePtr = std::make_unique<int>(5);
     int* ptr = uniquePtr.get();
-    set.add(WTF::move(uniquePtr));
+    set.add(WTFMove(uniquePtr));
 
     EXPECT_EQ(true, set.contains(ptr));
 }
@@ -169,7 +169,7 @@ TEST(WTF_HashSet, UniquePtrKey_RemoveUsingRawPointer)
 
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    set.add(WTF::move(uniquePtr));
+    set.add(WTFMove(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -189,7 +189,7 @@ TEST(WTF_HashSet, UniquePtrKey_TakeUsingRawPointer)
 
     auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    set.add(WTF::move(uniquePtr));
+    set.add(WTFMove(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);

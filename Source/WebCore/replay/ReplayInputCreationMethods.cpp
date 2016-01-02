@@ -46,7 +46,7 @@ std::unique_ptr<InitialNavigation> InitialNavigation::createFromPage(const Page&
     RefPtr<SecurityOrigin> originCopy = mainFrame.document()->securityOrigin()->isolatedCopy();
     URL url = mainFrame.document()->url();
     String referrer = mainFrame.loader().referrer();
-    return std::make_unique<InitialNavigation>(WTF::move(originCopy), url, referrer);
+    return std::make_unique<InitialNavigation>(WTFMove(originCopy), url, referrer);
 }
 
 } // namespace WebCore

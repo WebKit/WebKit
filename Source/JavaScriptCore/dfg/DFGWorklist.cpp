@@ -64,7 +64,7 @@ void Worklist::finishCreation(unsigned numberOfThreads, int relativePriority)
         data->m_identifier = createThread(threadFunction, data.get(), m_threadName.data());
         if (relativePriority)
             changeThreadPriority(data->m_identifier, relativePriority);
-        m_threads.append(WTF::move(data));
+        m_threads.append(WTFMove(data));
     }
 }
 

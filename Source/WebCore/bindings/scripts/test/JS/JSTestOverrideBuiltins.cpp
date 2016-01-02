@@ -110,7 +110,7 @@ void JSTestOverrideBuiltinsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestOverrideBuiltins::s_info = { "TestOverrideBuiltins", &Base::s_info, &JSTestOverrideBuiltinsTable, CREATE_METHOD_TABLE(JSTestOverrideBuiltins) };
 
 JSTestOverrideBuiltins::JSTestOverrideBuiltins(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOverrideBuiltins>&& impl)
-    : JSDOMWrapper<TestOverrideBuiltins>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestOverrideBuiltins>(structure, globalObject, WTFMove(impl))
 {
 }
 

@@ -103,7 +103,7 @@
             schemes.append(String((NSString *)urlScheme));
     }
     
-    _processPoolConfiguration->setCachePartitionedURLSchemes(WTF::move(schemes));
+    _processPoolConfiguration->setCachePartitionedURLSchemes(WTFMove(schemes));
 }
 
 - (NSString *)description

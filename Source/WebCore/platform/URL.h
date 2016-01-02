@@ -394,7 +394,7 @@ inline const URL& URLCapture::url() const
 
 inline URL URLCapture::releaseURL()
 {
-    return WTF::move(m_URL);
+    return WTFMove(m_URL);
 }
 
 } // namespace WebCore

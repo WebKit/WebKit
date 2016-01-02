@@ -87,7 +87,7 @@ void JSreadonlyPrototype::finishCreation(VM& vm)
 const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonly) };
 
 JSreadonly::JSreadonly(Structure* structure, JSDOMGlobalObject& globalObject, Ref<readonly>&& impl)
-    : JSDOMWrapper<readonly>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<readonly>(structure, globalObject, WTFMove(impl))
 {
 }
 

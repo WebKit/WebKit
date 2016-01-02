@@ -119,7 +119,7 @@ public:
     void setCurrentVersion(uint64_t version) { m_metadata.version = version; }
 
     bool hasPendingSecondHalfOpen() { return m_pendingSecondHalfOpen.get(); }
-    void setPendingSecondHalfOpen(std::unique_ptr<IDBPendingOpenCall> pendingOpenCall) { m_pendingSecondHalfOpen = WTF::move(pendingOpenCall); }
+    void setPendingSecondHalfOpen(std::unique_ptr<IDBPendingOpenCall> pendingOpenCall) { m_pendingSecondHalfOpen = WTFMove(pendingOpenCall); }
 
     IDBFactoryBackendInterface& factoryBackend() { return *m_factory; }
 

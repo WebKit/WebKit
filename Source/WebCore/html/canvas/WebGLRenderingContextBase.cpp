@@ -4807,7 +4807,7 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
     if (!temp)
         return nullptr;
     i = std::min(m_capacity - 1, i);
-    m_buffers[i] = WTF::move(temp);
+    m_buffers[i] = WTFMove(temp);
 
     ImageBuffer* buf = m_buffers[i].get();
     bubbleToFront(i);

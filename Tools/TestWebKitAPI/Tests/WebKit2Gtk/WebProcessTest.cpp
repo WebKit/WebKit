@@ -37,7 +37,7 @@ static TestsMap& testsMap()
 
 void WebProcessTest::add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()> closure)
 {
-    testsMap().add(testName, WTF::move(closure));
+    testsMap().add(testName, WTFMove(closure));
 }
 
 void WebProcessTest::assertObjectIsDeletedWhenTestFinishes(GObject* object)

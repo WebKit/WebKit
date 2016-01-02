@@ -221,7 +221,7 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
     uint64_t pageID = generatePageID();
-    Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, WTF::move(pageConfiguration));
+    Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, WTFMove(pageConfiguration));
 
     m_pageMap.set(pageID, webPage.ptr());
     globalPageMap().set(pageID, webPage.ptr());
@@ -387,7 +387,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, uint64_t pageID, const
         BackForwardListItemState backForwardListItemState;
         backForwardListItemState.identifier = itemID;
         backForwardListItemState.pageState = pageState;
-        backForwardListItem = WebBackForwardListItem::create(WTF::move(backForwardListItemState), pageID);
+        backForwardListItem = WebBackForwardListItem::create(WTFMove(backForwardListItemState), pageID);
         return;
     }
 
@@ -719,7 +719,7 @@ void WebProcessProxy::fetchWebsiteData(SessionID sessionID, WebsiteDataTypes dat
     auto token = throttler().backgroundActivityToken();
 
     m_pendingFetchWebsiteDataCallbacks.add(callbackID, [token, completionHandler](WebsiteData websiteData) {
-        completionHandler(WTF::move(websiteData));
+        completionHandler(WTFMove(websiteData));
     });
 
     send(Messages::WebProcess::FetchWebsiteData(sessionID, dataTypes, callbackID), 0);

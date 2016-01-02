@@ -240,14 +240,14 @@ RefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec)
             Ref<HTMLTableSectionElement> newBody = HTMLTableSectionElement::create(tbodyTag, document());
             Ref<HTMLTableRowElement> newRow = HTMLTableRowElement::create(document());
             newBody->appendChild(newRow.copyRef(), ec);
-            appendChild(WTF::move(newBody), ec);
-            return WTF::move(newRow);
+            appendChild(WTFMove(newBody), ec);
+            return WTFMove(newRow);
         }
     }
 
     Ref<HTMLTableRowElement> newRow = HTMLTableRowElement::create(document());
     parent->insertBefore(newRow.copyRef(), row.get(), ec);
-    return WTF::move(newRow);
+    return WTFMove(newRow);
 }
 
 void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)

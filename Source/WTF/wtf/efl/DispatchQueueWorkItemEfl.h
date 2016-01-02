@@ -35,7 +35,7 @@ class WorkItem {
 public:
     WorkItem(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function)
         : m_workQueue(workQueue)
-        , m_function(WTF::move(function))
+        , m_function(WTFMove(function))
     {
     }
 
@@ -51,14 +51,14 @@ public:
     static std::unique_ptr<TimerWorkItem> create(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function, std::chrono::nanoseconds delayNanoSeconds)
     {
         ASSERT(delayNanoSeconds.count() >= 0);
-        return std::unique_ptr<TimerWorkItem>(new TimerWorkItem(workQueue, WTF::move(function), monotonicallyIncreasingTime() * 1000000000.0 + delayNanoSeconds.count()));
+        return std::unique_ptr<TimerWorkItem>(new TimerWorkItem(workQueue, WTFMove(function), monotonicallyIncreasingTime() * 1000000000.0 + delayNanoSeconds.count()));
     }
     double expirationTimeNanoSeconds() const { return m_expirationTimeNanoSeconds; }
     bool hasExpired(double currentTimeNanoSeconds) const { return currentTimeNanoSeconds >= m_expirationTimeNanoSeconds; }
 
 protected:
     TimerWorkItem(PassRefPtr<WorkQueue> workQueue, std::function<void ()> function, double expirationTimeNanoSeconds)
-        : WorkItem(workQueue, WTF::move(function))
+        : WorkItem(workQueue, WTFMove(function))
         , m_expirationTimeNanoSeconds(expirationTimeNanoSeconds)
     {
     }

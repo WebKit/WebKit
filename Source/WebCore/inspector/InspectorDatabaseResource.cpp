@@ -42,7 +42,7 @@ static int nextUnusedId = 1;
 
 Ref<InspectorDatabaseResource> InspectorDatabaseResource::create(RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
 {
-    return adoptRef(*new InspectorDatabaseResource(WTF::move(database), domain, name, version));
+    return adoptRef(*new InspectorDatabaseResource(WTFMove(database), domain, name, version));
 }
 
 InspectorDatabaseResource::InspectorDatabaseResource(RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
@@ -62,7 +62,7 @@ void InspectorDatabaseResource::bind(Inspector::DatabaseFrontendDispatcher* data
         .setName(m_name)
         .setVersion(m_version)
         .release();
-    databaseFrontendDispatcher->addDatabase(WTF::move(jsonObject));
+    databaseFrontendDispatcher->addDatabase(WTFMove(jsonObject));
 }
 
 } // namespace WebCore

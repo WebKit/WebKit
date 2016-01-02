@@ -272,7 +272,7 @@ bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&
 
     bool success = false;
     auto task = std::make_unique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, error, errorMessage, success);
-    databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
+    databaseContext()->databaseThread()->scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 
     return success;
@@ -548,7 +548,7 @@ void Database::scheduleTransaction()
         auto task = std::make_unique<DatabaseTransactionTask>(transaction);
         LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
         m_transactionInProgress = true;
-        databaseContext()->databaseThread()->scheduleTask(WTF::move(task));
+        databaseContext()->databaseThread()->scheduleTask(WTFMove(task));
     } else
         m_transactionInProgress = false;
 }
@@ -578,7 +578,7 @@ void Database::scheduleTransactionStep(SQLTransactionBackend* transaction)
 
     auto task = std::make_unique<DatabaseTransactionTask>(transaction);
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
-    databaseContext()->databaseThread()->scheduleTask(WTF::move(task));
+    databaseContext()->databaseThread()->scheduleTask(WTFMove(task));
 }
 
 void Database::inProgressTransactionCompleted()
@@ -630,7 +630,7 @@ void Database::markAsDeletedAndClose()
     }
 
     auto task = std::make_unique<DatabaseCloseTask>(*this, synchronizer);
-    databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
+    databaseContext()->databaseThread()->scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 }
 
@@ -731,11 +731,11 @@ void Database::resetAuthorizer()
 
 void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* changeVersionData)
 {
-    RefPtr<SQLTransaction> transaction = SQLTransaction::create(*this, WTF::move(callback), WTF::move(successCallback), errorCallback.copyRef(), readOnly);
+    RefPtr<SQLTransaction> transaction = SQLTransaction::create(*this, WTFMove(callback), WTFMove(successCallback), errorCallback.copyRef(), readOnly);
 
     RefPtr<SQLTransactionBackend> transactionBackend = runTransaction(transaction.release(), readOnly, changeVersionData);
     if (!transactionBackend && errorCallback) {
-        WTF::RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTF::move(errorCallback);
+        WTF::RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTFMove(errorCallback);
         m_scriptExecutionContext->postTask([errorCallbackProtector](ScriptExecutionContext&) {
             errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed").ptr());
         });
@@ -807,7 +807,7 @@ Vector<String> Database::tableNames()
         return result;
 
     auto task = std::make_unique<DatabaseTableNamesTask>(*this, synchronizer, result);
-    databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
+    databaseContext()->databaseThread()->scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 
     return result;

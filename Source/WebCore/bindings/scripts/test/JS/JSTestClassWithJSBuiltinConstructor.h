@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapper<TestClassWithJSBuiltinConstructor> Base;
     static JSTestClassWithJSBuiltinConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestClassWithJSBuiltinConstructor>&& impl)
     {
-        JSTestClassWithJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestClassWithJSBuiltinConstructor>(globalObject->vm().heap)) JSTestClassWithJSBuiltinConstructor(structure, *globalObject, WTF::move(impl));
+        JSTestClassWithJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestClassWithJSBuiltinConstructor>(globalObject->vm().heap)) JSTestClassWithJSBuiltinConstructor(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }

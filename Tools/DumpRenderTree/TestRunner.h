@@ -53,7 +53,7 @@ public:
 
     void addDisallowedURL(JSStringRef url);
     const std::set<std::string>& allowedHosts() const { return m_allowedHosts; }
-    void setAllowedHosts(std::set<std::string> hosts) { m_allowedHosts = WTF::move(hosts); }
+    void setAllowedHosts(std::set<std::string> hosts) { m_allowedHosts = WTFMove(hosts); }
     void addURLToRedirect(std::string origin, std::string destination);
     const std::string& redirectionDestinationForURL(std::string);
     void clearAllApplicationCaches();

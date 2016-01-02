@@ -356,7 +356,7 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protect(*this);
 
-    String source(WTF::move(inputSource));
+    String source(WTFMove(inputSource));
 
     if (m_preloadScanner) {
         if (m_input.current().isEmpty() && !isWaitingForScripts()) {

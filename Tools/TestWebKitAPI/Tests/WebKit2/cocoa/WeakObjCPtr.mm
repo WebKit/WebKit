@@ -142,7 +142,7 @@ TEST(WebKit2_WeakObjCPtr, MoveConstructor)
 {
     id object = [[NSObject alloc] init];
     WeakObjCPtr<id> weak1(object);
-    WeakObjCPtr<id> weak2(WTF::move(weak1));
+    WeakObjCPtr<id> weak2(WTFMove(weak1));
 
     EXPECT_EQ(weak1.get(), (void*)nil);
     EXPECT_EQ(weak2.get(), object);

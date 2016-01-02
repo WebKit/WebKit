@@ -40,7 +40,7 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     static Ref<UserContentExtension> create(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&& contentExtension)
     {
-        return adoptRef(*new UserContentExtension(name, WTF::move(contentExtension)));
+        return adoptRef(*new UserContentExtension(name, WTFMove(contentExtension)));
     }
 
     UserContentExtension(const WTF::String& name, Ref<WebKit::WebCompiledContentExtension>&&);

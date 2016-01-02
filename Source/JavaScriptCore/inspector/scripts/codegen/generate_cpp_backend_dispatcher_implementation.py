@@ -105,10 +105,10 @@ class CppBackendDispatcherImplementationGenerator(Generator):
     def _generate_small_dispatcher_switch_implementation_for_domain(self, domain):
         cases = []
         cases.append('    if (method == "%s")' % domain.commands[0].command_name)
-        cases.append('        %s(requestId, WTF::move(parameters));' % domain.commands[0].command_name)
+        cases.append('        %s(requestId, WTFMove(parameters));' % domain.commands[0].command_name)
         for command in domain.commands[1:]:
             cases.append('    else if (method == "%s")' % command.command_name)
-            cases.append('        %s(requestId, WTF::move(parameters));' % command.command_name)
+            cases.append('        %s(requestId, WTFMove(parameters));' % command.command_name)
 
         switch_args = {
             'domainName': domain.domain_name,
@@ -307,8 +307,8 @@ class CppBackendDispatcherImplementationGenerator(Generator):
 
         if not command.is_async:
             lines.append('    if (!error.length())')
-            lines.append('        m_backendDispatcher->sendResponse(requestId, WTF::move(result));')
+            lines.append('        m_backendDispatcher->sendResponse(requestId, WTFMove(result));')
             lines.append('    else')
-            lines.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));')
+            lines.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));')
         lines.append('}')
         return "\n".join(lines)

@@ -110,7 +110,7 @@ FillLayer::FillLayer(const FillLayer& o)
 FillLayer::~FillLayer()
 {
     // Delete the layers in a loop rather than allowing recursive calls to the destructors.
-    for (std::unique_ptr<FillLayer> next = WTF::move(m_next); next; next = WTF::move(next->m_next)) { }
+    for (std::unique_ptr<FillLayer> next = WTFMove(m_next); next; next = WTFMove(next->m_next)) { }
 }
 
 FillLayer& FillLayer::operator=(const FillLayer& o)

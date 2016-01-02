@@ -56,7 +56,7 @@ static void ensureLineBoxes(const RenderLineBreak& renderer)
 }
 
 RenderLineBreak::RenderLineBreak(HTMLElement& element, Ref<RenderStyle>&& style)
-    : RenderBoxModelObject(element, WTF::move(style), 0)
+    : RenderBoxModelObject(element, WTFMove(style), 0)
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
     , m_isWBR(is<HTMLWBRElement>(element))

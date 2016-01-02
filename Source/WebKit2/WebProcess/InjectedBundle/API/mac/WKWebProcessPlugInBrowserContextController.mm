@@ -490,7 +490,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             }
             [archiver finishEncoding];
 
-            userData = API::Data::createWithoutCopying(WTF::move(data));
+            userData = API::Data::createWithoutCopying(WTFMove(data));
         }
 
         virtual void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& values, RefPtr<API::Object>& userData) override

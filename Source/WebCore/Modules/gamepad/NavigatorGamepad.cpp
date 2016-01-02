@@ -62,7 +62,7 @@ NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
     if (!supplement) {
         auto newSupplement = std::make_unique<NavigatorGamepad>();
         supplement = newSupplement.get();
-        provideTo(navigator, supplementName(), WTF::move(newSupplement));
+        provideTo(navigator, supplementName(), WTFMove(newSupplement));
 
         if (Frame* frame = navigator->frame()) {
             if (DocumentLoader* documentLoader = frame->loader().documentLoader())

@@ -663,7 +663,7 @@ String String::isolatedCopy() &&
     if (isSafeToSendToAnotherThread()) {
         // Since we know that our string is a temporary that will be destroyed
         // we can just steal the m_impl from it, thus avoiding a copy.
-        return String(WTF::move(*this));
+        return String(WTFMove(*this));
     }
 
     if (!m_impl)

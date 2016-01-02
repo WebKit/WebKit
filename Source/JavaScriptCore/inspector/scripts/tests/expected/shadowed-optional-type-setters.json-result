@@ -42,7 +42,7 @@ namespace Inspector {
 
 class AlternateBackendDispatcher {
 public:
-    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    void setBackendDispatcher(RefPtr<BackendDispatcher>&& dispatcher) { m_backendDispatcher = WTFMove(dispatcher); }
     BackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<BackendDispatcher> m_backendDispatcher;
@@ -366,7 +366,7 @@ public:
         }
 
         Builder(Ref</*KeyPath*/InspectorObject>&& object)
-            : m_result(WTF::move(object))
+            : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
@@ -386,7 +386,7 @@ public:
             COMPILE_ASSERT(sizeof(KeyPath) == sizeof(InspectorObject), cannot_cast);
 
             Ref<InspectorObject> result = m_result.releaseNonNull();
-            return WTF::move(*reinterpret_cast<Ref<KeyPath>*>(&result));
+            return WTFMove(*reinterpret_cast<Ref<KeyPath>*>(&result));
         }
     };
 
@@ -408,7 +408,7 @@ public:
 
     void setArray(RefPtr<Inspector::Protocol::Array<String>> value)
     {
-        InspectorObjectBase::setArray(ASCIILiteral("array"), WTF::move(value));
+        InspectorObjectBase::setArray(ASCIILiteral("array"), WTFMove(value));
     }
 };
 

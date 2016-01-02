@@ -54,7 +54,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& element, Ref<RenderStyle>&& style)
-    : RenderTextControl(element, WTF::move(style))
+    : RenderTextControl(element, WTFMove(style))
     , m_desiredInnerTextLogicalHeight(-1)
 {
 }

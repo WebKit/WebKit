@@ -47,7 +47,7 @@ Texture::Texture(GraphicsContext3D* context, std::unique_ptr<Vector<unsigned>> t
     : m_context(context)
     , m_format(format)
     , m_tiles(IntSize(maxTextureSize, maxTextureSize), IntSize(width, height), true)
-    , m_tileTextureIds(WTF::move(tileTextureIds))
+    , m_tileTextureIds(WTFMove(tileTextureIds))
 {
 }
 
@@ -120,7 +120,7 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
                                         tileBoundsWithBorder.height(),
                                         0, glFormat, glType);
     }
-    return adoptRef(new Texture(context, WTF::move(textureIds), format, width, height, maxTextureSize));
+    return adoptRef(new Texture(context, WTFMove(textureIds), format, width, height, maxTextureSize));
 }
 
 template <bool swizzle>

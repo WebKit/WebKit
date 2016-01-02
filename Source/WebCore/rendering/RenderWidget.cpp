@@ -81,7 +81,7 @@ static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
 }
 
 RenderWidget::RenderWidget(HTMLFrameOwnerElement& element, Ref<RenderStyle>&& style)
-    : RenderReplaced(element, WTF::move(style))
+    : RenderReplaced(element, WTFMove(style))
     , m_weakPtrFactory(this)
 {
     setInline(false);

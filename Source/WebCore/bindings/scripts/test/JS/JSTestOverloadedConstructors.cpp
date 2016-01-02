@@ -167,7 +167,7 @@ void JSTestOverloadedConstructorsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestOverloadedConstructors::s_info = { "TestOverloadedConstructors", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructors) };
 
 JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOverloadedConstructors>&& impl)
-    : JSDOMWrapper<TestOverloadedConstructors>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestOverloadedConstructors>(structure, globalObject, WTFMove(impl))
 {
 }
 

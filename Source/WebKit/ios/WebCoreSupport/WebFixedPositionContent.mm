@@ -182,9 +182,9 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
         auto layerData = std::make_unique<ViewportConstrainedLayerData>();
 
         layerData->m_enclosingAcceleratedScrollLayer = stickyContainers.get(layer);
-        layerData->m_viewportConstraints = WTF::move(layerAndConstraints.value);
+        layerData->m_viewportConstraints = WTFMove(layerAndConstraints.value);
 
-        _private->m_viewportConstrainedLayers.set(layer, WTF::move(layerData));
+        _private->m_viewportConstrainedLayers.set(layer, WTFMove(layerData));
     }
 }
 

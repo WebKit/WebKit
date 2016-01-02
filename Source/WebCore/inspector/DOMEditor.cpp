@@ -82,7 +82,7 @@ public:
     InsertBeforeAction(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode)
         : InspectorHistory::Action("InsertBefore")
         , m_parentNode(parentNode)
-        , m_node(WTF::move(node))
+        , m_node(WTFMove(node))
         , m_anchorNode(anchorNode)
     {
     }
@@ -284,7 +284,7 @@ public:
     ReplaceChildNodeAction(Node* parentNode, RefPtr<Node>&& newNode, Node* oldNode)
         : InspectorHistory::Action("ReplaceChildNode")
         , m_parentNode(parentNode)
-        , m_newNode(WTF::move(newNode))
+        , m_newNode(WTFMove(newNode))
         , m_oldNode(oldNode)
     {
     }
@@ -350,7 +350,7 @@ DOMEditor::~DOMEditor() { }
 
 bool DOMEditor::insertBefore(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode, ExceptionCode& ec)
 {
-    return m_history->perform(std::make_unique<InsertBeforeAction>(parentNode, WTF::move(node), anchorNode), ec);
+    return m_history->perform(std::make_unique<InsertBeforeAction>(parentNode, WTFMove(node), anchorNode), ec);
 }
 
 bool DOMEditor::removeChild(Node* parentNode, Node* node, ExceptionCode& ec)
@@ -372,7 +372,7 @@ bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, Exc
 {
     auto action = std::make_unique<SetOuterHTMLAction>(node, html);
     SetOuterHTMLAction* rawAction = action.get();
-    bool result = m_history->perform(WTF::move(action), ec);
+    bool result = m_history->perform(WTFMove(action), ec);
     if (result)
         *newNode = rawAction->newNode();
     return result;
@@ -385,7 +385,7 @@ bool DOMEditor::replaceWholeText(Text* textNode, const String& text, ExceptionCo
 
 bool DOMEditor::replaceChild(Node* parentNode, RefPtr<Node>&& newNode, Node* oldNode, ExceptionCode& ec)
 {
-    return m_history->perform(std::make_unique<ReplaceChildNodeAction>(parentNode, WTF::move(newNode), oldNode), ec);
+    return m_history->perform(std::make_unique<ReplaceChildNodeAction>(parentNode, WTFMove(newNode), oldNode), ec);
 }
 
 bool DOMEditor::setNodeValue(Node* node, const String& value, ExceptionCode& ec)
@@ -404,7 +404,7 @@ static void populateErrorString(const ExceptionCode& ec, ErrorString& errorStrin
 bool DOMEditor::insertBefore(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
-    bool result = insertBefore(parentNode, WTF::move(node), anchorNode, ec);
+    bool result = insertBefore(parentNode, WTFMove(node), anchorNode, ec);
     populateErrorString(ec, errorString);
     return result;
 }

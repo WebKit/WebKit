@@ -53,7 +53,7 @@ public:
 private:
     struct Entry {
         explicit Entry(RefPtr<BitmapTexture>&& texture)
-            : m_texture(WTF::move(texture))
+            : m_texture(WTFMove(texture))
         { }
 
         void markIsInUse() { m_lastUsedTime = monotonicallyIncreasingTime(); }

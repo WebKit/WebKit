@@ -417,7 +417,7 @@ public:
 
     HashMap<Node*, Allocation> takeEscapees()
     {
-        return WTF::move(m_escapees);
+        return WTFMove(m_escapees);
     }
 
     void escape(Node* node)
@@ -643,14 +643,14 @@ private:
         if (allocation.isEscapedAllocation())
             return;
 
-        Allocation unescaped = WTF::move(allocation);
+        Allocation unescaped = WTFMove(allocation);
         allocation = Allocation(unescaped.identifier(), Allocation::Kind::Escaped);
 
         for (const auto& entry : unescaped.fields())
             escapeAllocation(entry.value);
 
         if (m_wantEscapees)
-            m_escapees.add(unescaped.identifier(), WTF::move(unescaped));
+            m_escapees.add(unescaped.identifier(), WTFMove(unescaped));
     }
 
     void prune()
@@ -1218,7 +1218,7 @@ private:
                     if (mustEscape)
                         escapingOnEdge.add(entry.key, entry.value);
                 }
-                placeMaterializations(WTF::move(escapingOnEdge), block->terminal());
+                placeMaterializations(WTFMove(escapingOnEdge), block->terminal());
             }
         }
 
@@ -1332,7 +1332,7 @@ private:
             // We need to insert *after* the current position
             if (firstPos != toMaterialize.end())
                 ++firstPos;
-            firstPos = toMaterialize.insert(firstPos, WTF::move(allocation));
+            firstPos = toMaterialize.insert(firstPos, WTFMove(allocation));
         };
 
         // Nodes that no other unmaterialized node points to will be
@@ -1341,7 +1341,7 @@ private:
         auto lastPos = toMaterialize.end();
         auto materializeLast = [&] (Allocation&& allocation) {
             materialize(allocation.identifier());
-            lastPos = toMaterialize.insert(lastPos, WTF::move(allocation));
+            lastPos = toMaterialize.insert(lastPos, WTFMove(allocation));
         };
 
         // These are the promoted locations that contains some of the
@@ -1362,12 +1362,12 @@ private:
                     continue;
 
                 if (dependencies.find(entry.key)->value.isEmpty()) {
-                    materializeFirst(WTF::move(entry.value));
+                    materializeFirst(WTFMove(entry.value));
                     continue;
                 }
 
                 if (reverseDependencies.find(entry.key)->value.isEmpty()) {
-                    materializeLast(WTF::move(entry.value));
+                    materializeLast(WTFMove(entry.value));
                     continue;
                 }
             }
@@ -1392,7 +1392,7 @@ private:
                 }
                 RELEASE_ASSERT(maxEvaluation > 0);
 
-                materializeFirst(WTF::move(*bestAllocation));
+                materializeFirst(WTFMove(*bestAllocation));
             }
             RELEASE_ASSERT(!materialized.isEmpty());
 

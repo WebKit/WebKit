@@ -37,7 +37,7 @@ public:
         if (!context)
             return nullptr;
 
-        return std::make_unique<InputMethodContextEfl>(viewImpl, WTF::move(context));
+        return std::make_unique<InputMethodContextEfl>(viewImpl, WTFMove(context));
     }
     InputMethodContextEfl(EwkView*, EflUniquePtr<Ecore_IMF_Context>);
     ~InputMethodContextEfl();

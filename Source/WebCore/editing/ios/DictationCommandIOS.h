@@ -37,7 +37,7 @@ class DictationCommandIOS : public CompositeEditCommand {
 public:
     static Ref<DictationCommandIOS> create(Document& document, Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata)
     {
-        return adoptRef(*new DictationCommandIOS(document, WTF::move(dictationPhrases), WTF::move(metadata)));
+        return adoptRef(*new DictationCommandIOS(document, WTFMove(dictationPhrases), WTFMove(metadata)));
     }
 
 private:

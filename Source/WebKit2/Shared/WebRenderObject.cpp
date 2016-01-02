@@ -81,7 +81,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
                 for (size_t i = 0, size = element.classNames().size(); i < size; ++i)
                     classNames.append(API::String::create(element.classNames()[i]));
 
-                m_elementClassNames = API::Array::create(WTF::move(classNames));
+                m_elementClassNames = API::Array::create(WTFMove(classNames));
             }
         }
 
@@ -115,7 +115,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
 
     for (RenderObject* coreChild = renderer->firstChildSlow(); coreChild; coreChild = coreChild->nextSibling()) {
         RefPtr<WebRenderObject> child = adoptRef(new WebRenderObject(coreChild, shouldIncludeDescendants));
-        children.append(WTF::move(child));
+        children.append(WTFMove(child));
     }
 
     if (is<RenderWidget>(*renderer)) {
@@ -125,13 +125,13 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
                 if (RenderView* coreContentRenderer = frameView.frame().contentRenderer()) {
                     RefPtr<WebRenderObject> contentRenderer = adoptRef(new WebRenderObject(coreContentRenderer, shouldIncludeDescendants));
 
-                    children.append(WTF::move(contentRenderer));
+                    children.append(WTFMove(contentRenderer));
                 }
             }
         }
     }
 
-    m_children = API::Array::create(WTF::move(children));
+    m_children = API::Array::create(WTFMove(children));
 }
 
 WebRenderObject::WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, PassRefPtr<API::Array> children)

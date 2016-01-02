@@ -98,7 +98,7 @@ class ShapeClipPathOperation final : public ClipPathOperation {
 public:
     static Ref<ShapeClipPathOperation> create(Ref<BasicShape>&& shape)
     {
-        return adoptRef(*new ShapeClipPathOperation(WTF::move(shape)));
+        return adoptRef(*new ShapeClipPathOperation(WTFMove(shape)));
     }
 
     const BasicShape& basicShape() const { return m_shape; }
@@ -125,7 +125,7 @@ private:
 
     explicit ShapeClipPathOperation(Ref<BasicShape>&& shape)
         : ClipPathOperation(Shape)
-        , m_shape(WTF::move(shape))
+        , m_shape(WTFMove(shape))
         , m_referenceBox(BoxMissing)
     {
     }

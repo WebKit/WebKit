@@ -53,7 +53,7 @@ class NetworkResourceLoader final : public RefCounted<NetworkResourceLoader>, pu
 public:
     static Ref<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& reply = nullptr)
     {
-        return adoptRef(*new NetworkResourceLoader(parameters, connection, WTF::move(reply)));
+        return adoptRef(*new NetworkResourceLoader(parameters, connection, WTFMove(reply)));
     }
     virtual ~NetworkResourceLoader();
 

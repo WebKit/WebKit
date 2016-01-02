@@ -180,7 +180,7 @@ void JSTestTypedefsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, CREATE_METHOD_TABLE(JSTestTypedefs) };
 
 JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTypedefs>&& impl)
-    : JSDOMWrapper<TestTypedefs>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestTypedefs>(structure, globalObject, WTFMove(impl))
 {
 }
 

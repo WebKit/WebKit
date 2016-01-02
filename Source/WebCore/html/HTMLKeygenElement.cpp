@@ -80,7 +80,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
         option->appendChild(Text::create(document, key), IGNORE_EXCEPTION);
     }
 
-    ensureUserAgentShadowRoot().appendChild(WTF::move(select), IGNORE_EXCEPTION);
+    ensureUserAgentShadowRoot().appendChild(WTFMove(select), IGNORE_EXCEPTION);
 }
 
 Ref<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)

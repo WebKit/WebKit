@@ -165,7 +165,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #endif
     , m_settings(Settings::create(this))
     , m_progress(std::make_unique<ProgressTracker>(*pageConfiguration.progressTrackerClient))
-    , m_backForwardController(std::make_unique<BackForwardController>(*this, WTF::move(pageConfiguration.backForwardClient)))
+    , m_backForwardController(std::make_unique<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
     , m_mainFrame(MainFrame::create(*this, pageConfiguration))
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(*pageConfiguration.editorClient)
@@ -217,11 +217,11 @@ Page::Page(PageConfiguration& pageConfiguration)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_forbidPromptsDepth(0)
-    , m_applicationCacheStorage(pageConfiguration.applicationCacheStorage ? *WTF::move(pageConfiguration.applicationCacheStorage) : ApplicationCacheStorage::singleton())
-    , m_databaseProvider(*WTF::move(pageConfiguration.databaseProvider))
-    , m_storageNamespaceProvider(*WTF::move(pageConfiguration.storageNamespaceProvider))
-    , m_userContentController(WTF::move(pageConfiguration.userContentController))
-    , m_visitedLinkStore(*WTF::move(pageConfiguration.visitedLinkStore))
+    , m_applicationCacheStorage(pageConfiguration.applicationCacheStorage ? *WTFMove(pageConfiguration.applicationCacheStorage) : ApplicationCacheStorage::singleton())
+    , m_databaseProvider(*WTFMove(pageConfiguration.databaseProvider))
+    , m_storageNamespaceProvider(*WTFMove(pageConfiguration.storageNamespaceProvider))
+    , m_userContentController(WTFMove(pageConfiguration.userContentController))
+    , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
     , m_tabSuspensionTimer(*this, &Page::tabSuspensionTimerFired)
@@ -1114,7 +1114,7 @@ StorageNamespace* Page::sessionStorage(bool optionalCreate)
 
 void Page::setSessionStorage(RefPtr<StorageNamespace>&& newStorage)
 {
-    m_sessionStorage = WTF::move(newStorage);
+    m_sessionStorage = WTFMove(newStorage);
 }
 
 bool Page::hasCustomHTMLTokenizerTimeDelay() const
@@ -1704,7 +1704,7 @@ void Page::setUserContentController(UserContentController* userContentController
 void Page::setStorageNamespaceProvider(Ref<StorageNamespaceProvider>&& storageNamespaceProvider)
 {
     m_storageNamespaceProvider->removePage(*this);
-    m_storageNamespaceProvider = WTF::move(storageNamespaceProvider);
+    m_storageNamespaceProvider = WTFMove(storageNamespaceProvider);
     m_storageNamespaceProvider->addPage(*this);
 
     // This needs to reset all the local storage namespaces of all the pages.
@@ -1718,7 +1718,7 @@ VisitedLinkStore& Page::visitedLinkStore()
 void Page::setVisitedLinkStore(Ref<VisitedLinkStore>&& visitedLinkStore)
 {
     m_visitedLinkStore->removePage(*this);
-    m_visitedLinkStore = WTF::move(visitedLinkStore);
+    m_visitedLinkStore = WTFMove(visitedLinkStore);
     m_visitedLinkStore->addPage(*this);
 
     invalidateStylesForAllLinks();

@@ -127,7 +127,7 @@ public:
             // it in reverse.
             for (unsigned i = m_insts.size(); i--;) {
                 for (Inst& inst : m_insts[i])
-                    m_blockToBlock[block]->appendInst(WTF::move(inst));
+                    m_blockToBlock[block]->appendInst(WTFMove(inst));
             }
 
             // Make sure that the successors are set up correctly.
@@ -140,7 +140,7 @@ public:
 
         Air::InsertionSet insertionSet(m_code);
         for (Inst& inst : m_prologue)
-            insertionSet.insertInst(0, WTF::move(inst));
+            insertionSet.insertInst(0, WTFMove(inst));
         insertionSet.execute(m_code[0]);
     }
 
@@ -1954,7 +1954,7 @@ private:
                     inst.args.append(arg);
             }
             
-            m_insts.last().append(WTF::move(inst));
+            m_insts.last().append(WTFMove(inst));
 
             switch (cCall->type()) {
             case Void:
@@ -2008,7 +2008,7 @@ private:
             
             fillStackmap(inst, patchpointValue, 0);
             
-            m_insts.last().append(WTF::move(inst));
+            m_insts.last().append(WTFMove(inst));
             m_insts.last().appendVector(after);
             return;
         }
@@ -2037,7 +2037,7 @@ private:
 
                 fillStackmap(inst, checkValue, 2);
 
-                m_insts.last().append(WTF::move(inst));
+                m_insts.last().append(WTFMove(inst));
                 return;
             }
 
@@ -2115,7 +2115,7 @@ private:
 
             fillStackmap(inst, checkValue, 2);
 
-            m_insts.last().append(WTF::move(inst));
+            m_insts.last().append(WTFMove(inst));
             return;
         }
 
@@ -2131,7 +2131,7 @@ private:
             
             fillStackmap(inst, checkValue, 1);
             
-            m_insts.last().append(WTF::move(inst));
+            m_insts.last().append(WTFMove(inst));
             return;
         }
 

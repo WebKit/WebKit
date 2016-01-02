@@ -870,7 +870,7 @@ void WebView::addToDirtyRegion(const IntRect& dirtyRect)
 
     auto newRegion = adoptGDIObject(::CreateRectRgn(dirtyRect.x(), dirtyRect.y(),
         dirtyRect.maxX(), dirtyRect.maxY()));
-    addToDirtyRegion(WTF::move(newRegion));
+    addToDirtyRegion(WTFMove(newRegion));
 }
 
 void WebView::addToDirtyRegion(GDIObject<HRGN> newRegion)
@@ -884,9 +884,9 @@ void WebView::addToDirtyRegion(GDIObject<HRGN> newRegion)
     if (m_backingStoreDirtyRegion) {
         auto combinedRegion = adoptGDIObject(::CreateRectRgn(0, 0, 0, 0));
         ::CombineRgn(combinedRegion.get(), m_backingStoreDirtyRegion->get(), newRegion.get(), RGN_OR);
-        m_backingStoreDirtyRegion = SharedGDIObject<HRGN>::create(WTF::move(combinedRegion));
+        m_backingStoreDirtyRegion = SharedGDIObject<HRGN>::create(WTFMove(combinedRegion));
     } else
-        m_backingStoreDirtyRegion = SharedGDIObject<HRGN>::create(WTF::move(newRegion));
+        m_backingStoreDirtyRegion = SharedGDIObject<HRGN>::create(WTFMove(newRegion));
 
     if (m_uiDelegatePrivate)
         m_uiDelegatePrivate->webViewDidInvalidate(this);
@@ -946,7 +946,7 @@ void WebView::scrollBackingStore(FrameView* frameView, int logicalDx, int logica
     GdiFlush();
 
     // Add the dirty region to the backing store's dirty region.
-    addToDirtyRegion(WTF::move(updateRegion));
+    addToDirtyRegion(WTFMove(updateRegion));
 
     if (m_uiDelegatePrivate)
         m_uiDelegatePrivate->webViewScrolled(this);
@@ -5726,7 +5726,7 @@ HRESULT WebView::loadBackForwardListFromOtherView(_In_opt_ IWebView* otherView)
         Ref<HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
         if (!i) 
             newItemToGoTo = newItem.ptr();
-        backForward.client()->addItem(WTF::move(newItem));
+        backForward.client()->addItem(WTFMove(newItem));
     }
     
     ASSERT(newItemToGoTo);
@@ -6689,7 +6689,7 @@ HRESULT WebView::addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWo
     auto userScript = std::make_unique<UserScript>(source, toURL(url), toStringVector(whitelist, whitelistCount),
         toStringVector(blacklist, blacklistCount), injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
         injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
-    viewGroup->userContentController().addUserScript(world->world(), WTF::move(userScript));
+    viewGroup->userContentController().addUserScript(world->world(), WTFMove(userScript));
     return S_OK;
 }
 
@@ -6717,7 +6717,7 @@ HRESULT WebView::addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScri
     WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
     auto styleSheet = std::make_unique<UserStyleSheet>(source, toURL(url), toStringVector(whitelist, whitelistCount), toStringVector(blacklist, blacklistCount),
         injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly, UserStyleUserLevel);
-    viewGroup->userContentController().addUserStyleSheet(world->world(), WTF::move(styleSheet), InjectInExistingDocuments);
+    viewGroup->userContentController().addUserStyleSheet(world->world(), WTFMove(styleSheet), InjectInExistingDocuments);
     return S_OK;
 }
 

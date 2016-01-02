@@ -145,7 +145,7 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescripti
     GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winfont);
     winfont.lfHeight = -lroundf(scaledSize * (m_platformData.useGDI() ? 1 : 32));
     auto hfont = adoptGDIObject(::CreateFontIndirect(&winfont));
-    return Font::create(FontPlatformData(WTF::move(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false);
+    return Font::create(FontPlatformData(WTFMove(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false);
 }
 
 void Font::determinePitch()

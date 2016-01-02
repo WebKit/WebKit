@@ -59,7 +59,7 @@ Ref<TextControlInnerContainer> TextControlInnerContainer::create(Document& docum
     
 RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderTextControlInnerContainer>(*this, WTF::move(style));
+    return createRenderer<RenderTextControlInnerContainer>(*this, WTFMove(style));
 }
 
 TextControlInnerElement::TextControlInnerElement(Document& document)
@@ -113,7 +113,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event* event)
 
 RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderTextControlInnerBlock>(*this, WTF::move(style));
+    return createRenderer<RenderTextControlInnerBlock>(*this, WTFMove(style));
 }
 
 RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const

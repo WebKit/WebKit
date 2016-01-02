@@ -299,7 +299,7 @@ void CaptionUserPreferences::updateCaptionStyleSheetOveride()
     for (auto& page : pages) {
         if (auto* pageUserContentController = page->userContentController()) {
             auto userStyleSheet = std::make_unique<UserStyleSheet>(captionsOverrideStyleSheet, captionsStyleSheetURL, Vector<String>(), Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel);
-            pageUserContentController->addUserStyleSheet(mainThreadNormalWorld(), WTF::move(userStyleSheet), InjectInExistingDocuments);
+            pageUserContentController->addUserStyleSheet(mainThreadNormalWorld(), WTFMove(userStyleSheet), InjectInExistingDocuments);
         }
     }
 }

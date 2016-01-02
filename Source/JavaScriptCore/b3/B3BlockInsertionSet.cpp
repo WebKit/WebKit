@@ -44,14 +44,14 @@ BlockInsertionSet::~BlockInsertionSet() { }
 
 void BlockInsertionSet::insert(BlockInsertion&& insertion)
 {
-    m_insertions.append(WTF::move(insertion));
+    m_insertions.append(WTFMove(insertion));
 }
 
 BasicBlock* BlockInsertionSet::insert(unsigned index, double frequency)
 {
     std::unique_ptr<BasicBlock> block(new BasicBlock(UINT_MAX, frequency));
     BasicBlock* result = block.get();
-    insert(BlockInsertion(index, WTF::move(block)));
+    insert(BlockInsertion(index, WTFMove(block)));
     return result;
 }
 
@@ -94,7 +94,7 @@ BasicBlock* BlockInsertionSet::splitForward(
     valueIndex = 0;
 
     // Fixup the predecessors of 'block'. They now must jump to the new block.
-    result->predecessors() = WTF::move(block->predecessors());
+    result->predecessors() = WTFMove(block->predecessors());
     block->addPredecessor(result);
     for (BasicBlock* predecessor : result->predecessors())
         predecessor->replaceSuccessor(block, result);

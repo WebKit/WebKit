@@ -37,7 +37,7 @@ namespace WebCore {
         public:
             NodeSet() : m_isSorted(true), m_subtreesAreDisjoint(false) { }
             explicit NodeSet(RefPtr<Node>&& node)
-                : m_isSorted(true), m_subtreesAreDisjoint(false), m_nodes(1, WTF::move(node))
+                : m_isSorted(true), m_subtreesAreDisjoint(false), m_nodes(1, WTFMove(node))
             { }
             
             size_t size() const { return m_nodes.size(); }
@@ -47,7 +47,7 @@ namespace WebCore {
             void clear() { m_nodes.clear(); }
 
             // NodeSet itself does not verify that nodes in it are unique.
-            void append(RefPtr<Node>&& node) { m_nodes.append(WTF::move(node)); }
+            void append(RefPtr<Node>&& node) { m_nodes.append(WTFMove(node)); }
             void append(const NodeSet& nodeSet) { m_nodes.appendVector(nodeSet.m_nodes); }
 
             // Returns the set's first node in document order, or nullptr if the set is empty.

@@ -287,7 +287,7 @@ void IDBDatabase::willCommitTransaction(IDBTransaction& transaction)
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
     ASSERT(refTransaction);
-    m_committingTransactions.set(transaction.info().identifier(), WTF::move(refTransaction));
+    m_committingTransactions.set(transaction.info().identifier(), WTFMove(refTransaction));
 }
 
 void IDBDatabase::didCommitTransaction(IDBTransaction& transaction)
@@ -306,7 +306,7 @@ void IDBDatabase::willAbortTransaction(IDBTransaction& transaction)
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
     ASSERT(refTransaction);
-    m_abortingTransactions.set(transaction.info().identifier(), WTF::move(refTransaction));
+    m_abortingTransactions.set(transaction.info().identifier(), WTFMove(refTransaction));
 
     if (transaction.isVersionChange()) {
         ASSERT(transaction.originalDatabaseInfo());
@@ -369,7 +369,7 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
 
     Ref<Event> event = IDBVersionChangeEvent::create(requestIdentifier, currentVersion, requestedVersion, eventNames().versionchangeEvent);
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTFMove(event));
 }
 
 bool IDBDatabase::dispatchEvent(Event& event)
