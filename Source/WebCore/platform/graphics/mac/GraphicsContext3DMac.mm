@@ -59,6 +59,7 @@
 #include <runtime/Int32Array.h>
 #include <runtime/Float32Array.h>
 #include <runtime/Uint8Array.h>
+#include <sysexits.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -376,8 +377,12 @@ void GraphicsContext3D::checkGPUStatusIfNecessary()
     GLint restartStatus = 0;
 #if PLATFORM(MAC)
     CGLGetParameter(platformGraphicsContext3D(), kCGLCPGPURestartStatus, &restartStatus);
-    if (restartStatus == kCGLCPGPURestartStatusCaused || restartStatus == kCGLCPGPURestartStatusBlacklisted) {
-        LOG(WebGL, "The GPU has either reset or blacklisted us. Lose the context.");
+    if (restartStatus == kCGLCPGPURestartStatusBlacklisted) {
+        LOG(WebGL, "The GPU has blacklisted us. Terminating.");
+        exit(EX_OSERR);
+    }
+    if (restartStatus == kCGLCPGPURestartStatusCaused) {
+        LOG(WebGL, "The GPU has reset us. Lose the context.");
         forceContextLost();
         CGLSetCurrentContext(0);
     }
