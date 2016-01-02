@@ -84,7 +84,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
     frameState.documentSequenceNumber = historyItem.documentSequenceNumber();
     frameState.itemSequenceNumber = historyItem.itemSequenceNumber();
 
-    frameState.scrollPoint = historyItem.scrollPoint();
+    frameState.scrollPosition = historyItem.scrollPosition();
     frameState.pageScaleFactor = historyItem.pageScaleFactor();
 
     if (FormData* formData = const_cast<HistoryItem&>(historyItem).formData()) {
@@ -160,7 +160,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
     historyItem.setDocumentSequenceNumber(frameState.documentSequenceNumber);
     historyItem.setItemSequenceNumber(frameState.itemSequenceNumber);
 
-    historyItem.setScrollPoint(frameState.scrollPoint);
+    historyItem.setScrollPosition(frameState.scrollPosition);
     historyItem.setPageScaleFactor(frameState.pageScaleFactor);
 
     if (frameState.httpBody) {

@@ -102,9 +102,9 @@ public:
     
     bool lastVisitWasFailure() const { return m_lastVisitWasFailure; }
 
-    WEBCORE_EXPORT const IntPoint& scrollPoint() const;
-    WEBCORE_EXPORT void setScrollPoint(const IntPoint&);
-    void clearScrollPoint();
+    WEBCORE_EXPORT const IntPoint& scrollPosition() const;
+    WEBCORE_EXPORT void setScrollPosition(const IntPoint&);
+    void clearScrollPosition();
     
     WEBCORE_EXPORT float pageScaleFactor() const;
     WEBCORE_EXPORT void setPageScaleFactor(float);
@@ -221,7 +221,7 @@ private:
     String m_title;
     String m_displayTitle;
     
-    IntPoint m_scrollPoint;
+    IntPoint m_scrollPosition;
     float m_pageScaleFactor;
     Vector<String> m_documentState;
 

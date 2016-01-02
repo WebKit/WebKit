@@ -1,3 +1,15 @@
+2016-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix naming in HistoryItem to refer to scrollPositions
+        https://bugs.webkit.org/show_bug.cgi?id=152646
+
+        Reviewed by Zalan Bujtas.
+
+        HistoryItem stores a scrollPosition, so call it that.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem scrollPoint]):
+
 2016-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2016

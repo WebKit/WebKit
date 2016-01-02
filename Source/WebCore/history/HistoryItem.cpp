@@ -123,7 +123,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_target(item.m_target)
     , m_title(item.m_title)
     , m_displayTitle(item.m_displayTitle)
-    , m_scrollPoint(item.m_scrollPoint)
+    , m_scrollPosition(item.m_scrollPosition)
     , m_pageScaleFactor(item.m_pageScaleFactor)
     , m_lastVisitWasFailure(item.m_lastVisitWasFailure)
     , m_isTargetItem(item.m_isTargetItem)
@@ -277,20 +277,19 @@ void HistoryItem::setTarget(const String& target)
     notifyHistoryItemChanged(this);
 }
 
-const IntPoint& HistoryItem::scrollPoint() const
+const IntPoint& HistoryItem::scrollPosition() const
 {
-    return m_scrollPoint;
+    return m_scrollPosition;
 }
 
-void HistoryItem::setScrollPoint(const IntPoint& point)
+void HistoryItem::setScrollPosition(const IntPoint& position)
 {
-    m_scrollPoint = point;
+    m_scrollPosition = position;
 }
 
-void HistoryItem::clearScrollPoint()
+void HistoryItem::clearScrollPosition()
 {
-    m_scrollPoint.setX(0);
-    m_scrollPoint.setY(0);
+    m_scrollPosition = IntPoint();
 }
 
 float HistoryItem::pageScaleFactor() const

@@ -393,7 +393,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (NSPoint)scrollPoint
 {
-    return core(_private)->scrollPoint();
+    return core(_private)->scrollPosition();
 }
 
 - (void)_visitedWithTitle:(NSString *)title
@@ -610,12 +610,12 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (CGPoint)_scrollPoint
 {
-    return core(_private)->scrollPoint();
+    return core(_private)->scrollPosition();
 }
 
 - (void)_setScrollPoint:(CGPoint)scrollPoint
 {
-    core(_private)->setScrollPoint(IntPoint(scrollPoint));
+    core(_private)->setScrollPosition(IntPoint(scrollPoint));
 }
 
 - (uint32_t)_bookmarkID

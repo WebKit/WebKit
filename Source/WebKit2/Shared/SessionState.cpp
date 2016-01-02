@@ -113,7 +113,7 @@ void FrameState::encode(IPC::ArgumentEncoder& encoder) const
     encoder << documentSequenceNumber;
     encoder << itemSequenceNumber;
 
-    encoder << scrollPoint;
+    encoder << scrollPosition;
     encoder << pageScaleFactor;
 
     encoder << httpBody;
@@ -150,7 +150,7 @@ bool FrameState::decode(IPC::ArgumentDecoder& decoder, FrameState& result)
     if (!decoder.decode(result.itemSequenceNumber))
         return false;
 
-    if (!decoder.decode(result.scrollPoint))
+    if (!decoder.decode(result.scrollPosition))
         return false;
     if (!decoder.decode(result.pageScaleFactor))
         return false;

@@ -1,5 +1,27 @@
 2016-01-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix naming in HistoryItem to refer to scrollPositions
+        https://bugs.webkit.org/show_bug.cgi?id=152646
+
+        Reviewed by Zalan Bujtas.
+        
+        HistoryItem stores a scrollPosition, so call it that.
+        
+        No behavior change.
+
+        * Shared/SessionState.cpp:
+        (WebKit::FrameState::encode):
+        (WebKit::FrameState::decode):
+        * Shared/SessionState.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeFrameStateNode):
+        (WebKit::decodeBackForwardTreeNode):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+
+2016-01-01  Simon Fraser  <simon.fraser@apple.com>
+
         Fix reload and programmatic scrolling in RTL documents
         https://bugs.webkit.org/show_bug.cgi?id=152639
 

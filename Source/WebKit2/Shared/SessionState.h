@@ -95,7 +95,7 @@ struct FrameState {
     int64_t documentSequenceNumber;
     int64_t itemSequenceNumber;
 
-    WebCore::IntPoint scrollPoint;
+    WebCore::IntPoint scrollPosition;
     float pageScaleFactor;
 
     Optional<HTTPBody> httpBody;
