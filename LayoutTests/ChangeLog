@@ -1,3 +1,15 @@
+2016-01-02  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout:: Add text-decoration support.
+        https://bugs.webkit.org/show_bug.cgi?id=152623
+
+        Reviewed by Antti Koivisto.
+
+        Existing tests cases also cover decoration correctness.
+
+        * fast/css3-text/css3-text-decoration/simple-line-layout-text-decoration-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/simple-line-layout-text-decoration.html: Added.
+
 2016-01-01  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/database-deletepending-flag.html fails.

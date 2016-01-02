@@ -62,57 +62,57 @@ void toggleSimpleLineLayout();
 #endif
 
 enum AvoidanceReason_ : uint64_t {
-    FlowIsInsideRegion                  = 1LLU  << 0,
-    FlowHasHorizonalWritingMode         = 1LLU  << 1,
-    FlowHasOutline                      = 1LLU  << 2,
-    FlowIsRuby                          = 1LLU  << 3,
-    FlowIsPaginated                     = 1LLU  << 4,
-    FlowHasTextOverflow                 = 1LLU  << 5,
-    FlowIsDepricatedFlexBox             = 1LLU  << 6,
-    FlowParentIsPlaceholderElement      = 1LLU  << 7,
-    FlowParentIsTextAreaWithWrapping    = 1LLU  << 8,
-    FlowHasNonSupportedChild            = 1LLU  << 9,
-    FlowHasUnsupportedFloat             = 1LLU  << 10,
-    FlowHasTextDecoration               = 1LLU  << 11,
-    FlowIsJustifyAligned                = 1LLU  << 12,
-    FlowHasOverflowVisible              = 1LLU  << 13,
-    FlowIsNotLTR                        = 1LLU  << 14,
-    FlowHasLineBoxContainProperty       = 1LLU  << 15,
-    FlowIsNotTopToBottom                = 1LLU  << 16,
-    FlowHasLineBreak                    = 1LLU  << 17,
-    FlowHasWordBreak                    = 1LLU  << 18,
-    FlowHasNonNormalUnicodeBiDi         = 1LLU  << 19,
-    FlowHasRTLOrdering                  = 1LLU  << 20,
-    FlowHasLineAlignEdges               = 1LLU  << 21,
-    FlowHasLineSnap                     = 1LLU  << 22,
-    FlowHasHypensAuto                   = 1LLU  << 23,
-    FlowHasTextEmphasisFillOrMark       = 1LLU  << 24,
-    FlowHasTextShadow                   = 1LLU  << 25,
-    FlowHasPseudoFirstLine              = 1LLU  << 26,
-    FlowHasPseudoFirstLetter            = 1LLU  << 27,
-    FlowHasTextCombine                  = 1LLU  << 28,
-    FlowHasTextFillBox                  = 1LLU  << 29,
-    FlowHasBorderFitLines               = 1LLU  << 30,
-    FlowHasNonAutoLineBreak             = 1LLU  << 31,
-    FlowHasNonAutoTrailingWord          = 1LLU  << 32,
-    FlowHasSVGFont                      = 1LLU  << 33,
-    FlowTextIsEmpty                     = 1LLU  << 34,
-    FlowTextHasNoBreakSpace             = 1LLU  << 35,
-    FlowTextHasSoftHyphen               = 1LLU  << 36,
-    FlowTextHasDirectionCharacter       = 1LLU  << 37,
-    FlowIsMissingPrimaryFont            = 1LLU  << 38,
-    FlowFontIsMissingGlyph              = 1LLU  << 39,
-    FlowTextIsCombineText               = 1LLU  << 40,
-    FlowTextIsRenderCounter             = 1LLU  << 41,
-    FlowTextIsRenderQuote               = 1LLU  << 42,
-    FlowTextIsTextFragment              = 1LLU  << 43,
-    FlowTextIsSVGInlineText             = 1LLU  << 44,
-    FlowFontIsNotSimple                 = 1LLU  << 45,
-    FeatureIsDisabled                   = 1LLU  << 46,
-    FlowHasNoParent                     = 1LLU  << 47,
-    FlowHasNoChild                      = 1LLU  << 48,
-    FlowChildIsSelected                 = 1LLU  << 49,
-    EndOfReasons                        = 1LLU  << 50
+    FlowIsInsideRegion                    = 1LLU  << 0,
+    FlowHasHorizonalWritingMode           = 1LLU  << 1,
+    FlowHasOutline                        = 1LLU  << 2,
+    FlowIsRuby                            = 1LLU  << 3,
+    FlowIsPaginated                       = 1LLU  << 4,
+    FlowHasTextOverflow                   = 1LLU  << 5,
+    FlowIsDepricatedFlexBox               = 1LLU  << 6,
+    FlowParentIsPlaceholderElement        = 1LLU  << 7,
+    FlowParentIsTextAreaWithWrapping      = 1LLU  << 8,
+    FlowHasNonSupportedChild              = 1LLU  << 9,
+    FlowHasUnsupportedFloat               = 1LLU  << 10,
+    FlowHasUnsupportedUnderlineDecoration = 1LLU  << 11,
+    FlowIsJustifyAligned                  = 1LLU  << 12,
+    FlowHasOverflowVisible                = 1LLU  << 13,
+    FlowIsNotLTR                          = 1LLU  << 14,
+    FlowHasLineBoxContainProperty         = 1LLU  << 15,
+    FlowIsNotTopToBottom                  = 1LLU  << 16,
+    FlowHasLineBreak                      = 1LLU  << 17,
+    FlowHasWordBreak                      = 1LLU  << 18,
+    FlowHasNonNormalUnicodeBiDi           = 1LLU  << 19,
+    FlowHasRTLOrdering                    = 1LLU  << 20,
+    FlowHasLineAlignEdges                 = 1LLU  << 21,
+    FlowHasLineSnap                       = 1LLU  << 22,
+    FlowHasHypensAuto                     = 1LLU  << 23,
+    FlowHasTextEmphasisFillOrMark         = 1LLU  << 24,
+    FlowHasTextShadow                     = 1LLU  << 25,
+    FlowHasPseudoFirstLine                = 1LLU  << 26,
+    FlowHasPseudoFirstLetter              = 1LLU  << 27,
+    FlowHasTextCombine                    = 1LLU  << 28,
+    FlowHasTextFillBox                    = 1LLU  << 29,
+    FlowHasBorderFitLines                 = 1LLU  << 30,
+    FlowHasNonAutoLineBreak               = 1LLU  << 31,
+    FlowHasNonAutoTrailingWord            = 1LLU  << 32,
+    FlowHasSVGFont                        = 1LLU  << 33,
+    FlowTextIsEmpty                       = 1LLU  << 34,
+    FlowTextHasNoBreakSpace               = 1LLU  << 35,
+    FlowTextHasSoftHyphen                 = 1LLU  << 36,
+    FlowTextHasDirectionCharacter         = 1LLU  << 37,
+    FlowIsMissingPrimaryFont              = 1LLU  << 38,
+    FlowFontIsMissingGlyph                = 1LLU  << 39,
+    FlowTextIsCombineText                 = 1LLU  << 40,
+    FlowTextIsRenderCounter               = 1LLU  << 41,
+    FlowTextIsRenderQuote                 = 1LLU  << 42,
+    FlowTextIsTextFragment                = 1LLU  << 43,
+    FlowTextIsSVGInlineText               = 1LLU  << 44,
+    FlowFontIsNotSimple                   = 1LLU  << 45,
+    FeatureIsDisabled                     = 1LLU  << 46,
+    FlowHasNoParent                       = 1LLU  << 47,
+    FlowHasNoChild                        = 1LLU  << 48,
+    FlowChildIsSelected                   = 1LLU  << 49,
+    EndOfReasons                          = 1LLU  << 50
 };
 const unsigned NoReason = 0;
 
@@ -211,8 +211,8 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
     AvoidanceReasonFlags reasons = { };
     if (style.textOverflow())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (style.textDecorationsInEffect() != TextDecorationNone)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextDecoration, reasons, includeReasons);
+    if ((style.textDecorationsInEffect() & TextDecorationUnderline) && style.textUnderlinePosition() == TextUnderlinePositionUnder)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedUnderlineDecoration, reasons, includeReasons);
     if (style.textAlign() == JUSTIFY)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsJustifyAligned, reasons, includeReasons);
     // Non-visible overflow should be pretty easy to support.
@@ -820,8 +820,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case FlowHasUnsupportedFloat:
         stream << "complicated float";
         break;
-    case FlowHasTextDecoration:
-        stream << "text-decoration";
+    case FlowHasUnsupportedUnderlineDecoration:
+        stream << "text-underline-position: under";
         break;
     case FlowIsJustifyAligned:
         stream << "text-align: justify";

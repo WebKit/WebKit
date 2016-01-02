@@ -35,12 +35,14 @@
 #include "InlineTextBox.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
+#include "RenderIterator.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "SimpleLineLayoutResolver.h"
 #include "Text.h"
+#include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
 
@@ -78,6 +80,16 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     textPainter.setFont(style.fontCascade());
     textPainter.setTextPaintStyle(computeTextPaintStyle(flow.frame(), style, paintInfo));
 
+    Optional<TextDecorationPainter> textDecorationPainter;
+    if (style.textDecorationsInEffect() != TextDecorationNone) {
+        const RenderText* textRenderer = childrenOfType<RenderText>(flow).first();
+        if (textRenderer) {
+            textDecorationPainter = TextDecorationPainter(paintInfo.context(), style.textDecorationsInEffect(), *textRenderer, false);
+            textDecorationPainter->setFont(style.fontCascade());
+            textDecorationPainter->setBaseline(style.fontMetrics().ascent());
+        }
+    }
+
     LayoutRect paintRect = paintInfo.rect;
     paintRect.moveBy(-paintOffset);
 
@@ -100,6 +112,10 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         textRun.setXPos(0);
         FloatPoint textOrigin = FloatPoint(rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor));
         textPainter.paintText(textRun, textRun.length(), rect, textOrigin);
+        if (textDecorationPainter) {
+            textDecorationPainter->setWidth(rect.width());
+            textDecorationPainter->paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);
+        }
         if (debugBordersEnabled)
             paintDebugBorders(paintInfo.context(), LayoutRect(run.rect()), paintOffset);
     }

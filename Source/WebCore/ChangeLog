@@ -1,3 +1,22 @@
+2016-01-02  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout:: Add text-decoration support.
+        https://bugs.webkit.org/show_bug.cgi?id=152623
+
+        Reviewed by Antti Koivisto.
+
+        This patch enables text-decoration for simple line layout.
+        -webkit-text-underline-position: under requires normal line layout context, skip it for now.
+
+        Test: fast/css3-text/css3-text-decoration/simple-line-layout-text-decoration.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::printReason):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow): In case of multiple RenderText renderers (long text), it's ok
+        to pass the first text renderer as they all share the same set of decorations. 
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Replace WTF::move with WTFMove
