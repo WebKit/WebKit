@@ -794,6 +794,8 @@ webkit.org/b/152043 [ Debug ] http/tests/media/hls/video-controller-getStartDate
 webkit.org/b/152043 [ Debug ] http/tests/media/hls/video-controls-live-stream.html [ Crash ]
 webkit.org/b/152043 [ Debug ] http/tests/media/hls/video-cookie.html [ Crash ]
 
+webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Crash Pass Timeout Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

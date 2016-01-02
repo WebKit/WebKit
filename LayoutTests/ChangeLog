@@ -1,5 +1,13 @@
 2016-01-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] http/tests/misc/detached-frame-console.html is crashing
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
+2016-01-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] http/tests/media/clearkey/clear-key-hls-aes128.html is crashing
 
         Unreviewed gardening.
