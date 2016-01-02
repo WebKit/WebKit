@@ -1,3 +1,71 @@
+2016-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Some cleanup in ScrollAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=152649
+
+        Reviewed by Zalan Bujtas.
+
+        Change ScrollAnimatorMac::adjustScrollPositionIfNecessary() and similar code in
+        ScrollingTreeFrameScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary() to
+        constrain between minimumScrollPosition() and maximumScrollPosition(), rather than
+        rolling their own code.
+        
+        This revealed several issues. First, RenderLayer::maximumScrollPosition() is
+        wrong when the layer has borders, because RenderLayer::visibleContentRectInternal()
+        seems to have incorrect logic. However, we can just remove it, and use the ScrollableArea
+        implementation.
+        
+        Second, ScrollAnimatorMac::scrollToOffsetWithoutAnimation() was failing to do a
+        position/offset conversion, so do one. We're converting too much, and should probably
+        just change ScrollAnimator to do everything in terms of positions.
+        
+        Third, ScrollAnimator::scroll() was clamping a scroll position as an offset
+        (detected by scrollbars/scroll-rtl-or-bt-layer.html), so fix that.
+        
+        Remove ScrollController::absoluteScrollPosition() and overrides, since this was
+        confusingly named, and could just be removed.
+        
+        Remove ScrollController::m_origOrigin which was assigned to, but never read.
+
+        Test: fast/scrolling/arrow-key-scroll-in-rtl-document.html: new
+              fast/dom/horizontal-scrollbar-in-rtl.html: progressed with these changes.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::absoluteScrollPosition): Deleted.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::notifyPositionChanged):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::constrainScrollPosition):
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::snapRubberBandTimerFired): Deleted.
+        (WebCore::ScrollController::snapRubberBand): Deleted.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollAnimationHelperDelegate _immediateScrollToPoint:]):
+        (WebCore::ScrollAnimatorMac::scroll):
+        (WebCore::ScrollAnimatorMac::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionIfNecessary):
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary):
+        (WebCore::ScrollAnimatorMac::immediateScrollToPosition):
+        (WebCore::ScrollAnimatorMac::immediateScrollToPositionForScrollAnimation):
+        (WebCore::ScrollAnimatorMac::immediateScrollTo): Deleted.
+        (WebCore::ScrollAnimatorMac::immediateScrollToPointForScrollAnimation): Deleted.
+        (WebCore::ScrollAnimatorMac::absoluteScrollPosition): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::visibleContentRectInternal):
+        (WebCore::RenderLayer::overhangAmount):
+        (WebCore::RenderLayer::maximumScrollPosition): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::minimumScrollPosition):
+        (WebCore::RenderListBox::maximumScrollPosition): RenderListBox scrolls by lines,
+        so it needs a custom implementation of this.
+        * rendering/RenderListBox.h:
+
 2016-01-02  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout:: Add text-decoration support.

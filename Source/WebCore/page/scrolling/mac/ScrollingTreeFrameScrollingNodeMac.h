@@ -58,7 +58,6 @@ private:
     bool canScrollHorizontally() override;
     bool canScrollVertically() override;
     bool shouldRubberBandInDirection(ScrollDirection) override;
-    IntPoint absoluteScrollPosition() override;
     void immediateScrollBy(const FloatSize&) override;
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
     void stopSnapRubberbandTimer() override;

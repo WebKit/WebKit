@@ -188,6 +188,11 @@ public:
     virtual ScrollPosition minimumScrollPosition() const;
     virtual ScrollPosition maximumScrollPosition() const;
 
+    ScrollPosition constrainScrollPosition(const ScrollPosition& position) const
+    {
+        return position.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
+    }
+
     ScrollOffset maximumScrollOffset() const;
 
     WEBCORE_EXPORT ScrollPosition scrollPositionFromOffset(ScrollOffset) const;

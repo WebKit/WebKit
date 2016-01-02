@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html dir="rtl">
+<head>
+    <style>
+        .wide {
+            width: 2000px;
+            height: 10px;
+            background-color: silver;
+        }
+        .origin {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function checkForScroll()
+        {
+            var expectedScrollLeft = -120;
+            var scrollLeft = document.scrollingElement.scrollLeft;
+            if (scrollLeft != expectedScrollLeft)
+                document.getElementById('result').textContent = "FAIL: scrollLeft is " + scrollLeft +  ", expected " + expectedScrollLeft;
+            else
+                document.getElementById('result').textContent = "PASS: scrollLeft is " + scrollLeft;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function doTest()
+        {
+            if (window.eventSender) {
+                eventSender.monitorWheelEvents();
+                eventSender.keyDown("leftArrow");
+                eventSender.keyDown("leftArrow");
+                eventSender.keyDown("leftArrow");
+                eventSender.callAfterScrollingCompletes(checkForScroll);
+            }
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="wide"></div>
+    <div class="origin"></div>
+    <div id="result"></div>
+</body>
+</html>

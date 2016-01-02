@@ -349,12 +349,10 @@ void ScrollController::snapRubberBandTimerFired()
                 m_stretchScrollForce = FloatSize();
                 m_startTime = 0;
                 m_startStretch = FloatSize();
-                m_origOrigin = FloatPoint();
                 m_origVelocity = FloatSize();
                 return;
             }
 
-            m_origOrigin = m_client.absoluteScrollPosition() - m_startStretch;
             m_origVelocity = m_momentumVelocity;
 
             // Just like normal scrolling, prefer vertical rubberbanding
@@ -387,7 +385,6 @@ void ScrollController::snapRubberBandTimerFired()
             m_stretchScrollForce = FloatSize();
             m_startTime = 0;
             m_startStretch = FloatSize();
-            m_origOrigin = FloatPoint();
             m_origVelocity = FloatSize();
         }
     } else {
@@ -451,7 +448,6 @@ void ScrollController::snapRubberBand()
 
     m_startTime = [NSDate timeIntervalSinceReferenceDate];
     m_startStretch = FloatSize();
-    m_origOrigin = FloatPoint();
     m_origVelocity = FloatSize();
 
     startSnapRubberbandTimer();

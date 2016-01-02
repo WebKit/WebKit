@@ -52,7 +52,7 @@ public:
     ScrollAnimatorMac(ScrollableArea&);
     virtual ~ScrollAnimatorMac();
 
-    void immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition);
+    void immediateScrollToPositionForScrollAnimation(const FloatPoint& newPosition);
     bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
 
     void updateScrollerStyle();
@@ -134,7 +134,7 @@ private:
 
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
-    void immediateScrollTo(const FloatPoint&);
+    void immediateScrollToPosition(const FloatPoint&);
 
     bool isRubberBandInProgress() const override;
     bool isScrollSnapInProgress() const override;
@@ -148,7 +148,6 @@ private:
     virtual bool canScrollHorizontally() override;
     virtual bool canScrollVertically() override;
     virtual bool shouldRubberBandInDirection(ScrollDirection) override;
-    virtual WebCore::IntPoint absoluteScrollPosition() override;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
     virtual void immediateScrollBy(const FloatSize&) override;
     virtual void adjustScrollPositionToBoundsIfNecessary() override;

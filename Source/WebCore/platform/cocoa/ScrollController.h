@@ -60,9 +60,6 @@ public:
     virtual bool canScrollVertically() = 0;
     virtual bool shouldRubberBandInDirection(ScrollDirection) = 0;
 
-    // Return the absolute scroll position, not relative to the scroll origin.
-    virtual WebCore::IntPoint absoluteScrollPosition() = 0;
-
     virtual void immediateScrollBy(const FloatSize&) = 0;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
     virtual void startSnapRubberbandTimer()
@@ -179,7 +176,6 @@ private:
     // Rubber band state.
     CFTimeInterval m_startTime { 0 };
     FloatSize m_startStretch;
-    FloatPoint m_origOrigin;
     FloatSize m_origVelocity;
     RunLoop::Timer<ScrollController> m_snapRubberbandTimer;
 #endif

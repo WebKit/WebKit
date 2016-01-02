@@ -866,7 +866,6 @@ private:
     virtual void setScrollOffset(const ScrollOffset&) override;
 
     virtual ScrollPosition scrollPosition() const override { return m_scrollPosition; }
-    virtual ScrollPosition maximumScrollPosition() const override;
 
     virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
     virtual IntSize visibleSize() const override;

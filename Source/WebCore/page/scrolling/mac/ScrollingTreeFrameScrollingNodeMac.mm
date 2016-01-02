@@ -325,11 +325,6 @@ bool ScrollingTreeFrameScrollingNodeMac::shouldRubberBandInDirection(ScrollDirec
     return true;
 }
 
-IntPoint ScrollingTreeFrameScrollingNodeMac::absoluteScrollPosition()
-{
-    return roundedIntPoint(scrollPosition());
-}
-
 void ScrollingTreeFrameScrollingNodeMac::immediateScrollBy(const FloatSize& delta)
 {
     scrollBy(delta);
@@ -350,15 +345,9 @@ void ScrollingTreeFrameScrollingNodeMac::stopSnapRubberbandTimer()
 
 void ScrollingTreeFrameScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary()
 {
-    FloatPoint currentScrollPosition = absoluteScrollPosition();
-    FloatPoint minPosition = minimumScrollPosition();
-    FloatPoint maxPosition = maximumScrollPosition();
-
-    float nearestXWithinBounds = std::max(std::min(currentScrollPosition.x(), maxPosition.x()), minPosition.x());
-    float nearestYWithinBounds = std::max(std::min(currentScrollPosition.y(), maxPosition.y()), minPosition.y());
-
-    FloatPoint nearestPointWithinBounds(nearestXWithinBounds, nearestYWithinBounds);
-    immediateScrollBy(nearestPointWithinBounds - currentScrollPosition);
+    FloatPoint currentScrollPosition = scrollPosition();
+    FloatPoint constainedPosition = currentScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
+    immediateScrollBy(constainedPosition - currentScrollPosition);
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeMac::scrollPosition() const

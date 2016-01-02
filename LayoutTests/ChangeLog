@@ -1,3 +1,18 @@
+2016-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Some cleanup in ScrollAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=152649
+
+        Reviewed by Zalan Bujtas.
+        
+        Added fast/scrolling/arrow-key-scroll-in-rtl-document.html to test for arrow
+        key scrolling in an RTL document, which an earlier version of the patch
+        regressed without detection.
+
+        * fast/dom/horizontal-scrollbar-in-rtl-expected.txt:
+        * fast/scrolling/arrow-key-scroll-in-rtl-document-expected.txt: Added.
+        * fast/scrolling/arrow-key-scroll-in-rtl-document.html: Added.
+
 2016-01-02  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout:: Add text-decoration support.

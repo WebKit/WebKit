@@ -608,6 +608,16 @@ int RenderListBox::scrollPosition(Scrollbar*) const
     return m_indexOffset;
 }
 
+ScrollPosition RenderListBox::minimumScrollPosition() const
+{
+    return { 0, 0 };
+}
+
+ScrollPosition RenderListBox::maximumScrollPosition() const
+{
+    return { 0, numItems() - numVisibleItems() };
+}
+
 void RenderListBox::setScrollOffset(const ScrollOffset& offset)
 {
     scrollTo(offset.y());

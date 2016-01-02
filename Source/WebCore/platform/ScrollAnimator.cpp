@@ -63,15 +63,22 @@ ScrollAnimator::~ScrollAnimator()
 
 bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
 {
-    float* currentPos = (orientation == HorizontalScrollbar) ? &m_currentPosX : &m_currentPosY;
-    float newPos = std::max(std::min(*currentPos + (step * multiplier), static_cast<float>(m_scrollableArea.scrollSize(orientation))), 0.0f);
-    float delta = *currentPos - newPos;
-    if (*currentPos == newPos)
+    FloatPoint currentPosition(m_currentPosX, m_currentPosY);
+    FloatSize delta;
+    if (orientation == HorizontalScrollbar)
+        delta.setWidth(step * multiplier);
+    else
+        delta.setHeight(step * multiplier);
+
+    FloatPoint newPosition = FloatPoint(currentPosition + delta).constrainedBetween(m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition());
+    if (currentPosition == newPosition)
         return false;
-    *currentPos = newPos;
 
-    notifyPositionChanged(orientation == HorizontalScrollbar ? FloatSize(delta, 0) : FloatSize(0, delta));
+    // FIXME: m_currentPosX/Y should just be a FloatPoint.
+    m_currentPosX = newPosition.x();
+    m_currentPosY = newPosition.y();
 
+    notifyPositionChanged(newPosition - currentPosition);
     return true;
 }
 
@@ -194,7 +201,8 @@ void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
 {
     UNUSED_PARAM(delta);
-    m_scrollableArea.setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
+    // FIXME: need to not map back and forth all the time.
+    m_scrollableArea.setScrollOffsetFromAnimation(m_scrollableArea.scrollOffsetFromPosition(IntPoint(m_currentPosX, m_currentPosY)));
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
