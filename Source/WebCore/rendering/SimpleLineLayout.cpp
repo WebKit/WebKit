@@ -58,6 +58,7 @@ namespace SimpleLineLayout {
 #ifndef NDEBUG
 void printSimpleLineLayoutCoverage();
 void printSimpleLineLayoutBlockList();
+void toggleSimpleLineLayout();
 #endif
 
 enum AvoidanceReason_ : uint64_t {
@@ -267,6 +268,7 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Inc
     std::call_once(onceFlag, [] {
         registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutCoverage", printSimpleLineLayoutCoverage);
         registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutReasons", printSimpleLineLayoutBlockList);
+        registerNotifyCallback("com.apple.WebKit.toggleSimpleLineLayout", toggleSimpleLineLayout);
     });
 #endif
     AvoidanceReasonFlags reasons = { };
@@ -1002,6 +1004,16 @@ static void collectNonEmptyLeafRenderBlockFlowsForCurrentPage(HashSet<const Rend
         if (!document->isHTMLDocument() && !document->isXHTMLDocument())
             continue;
         collectNonEmptyLeafRenderBlockFlows(*document->renderView(), leafRenderers);
+    }
+}
+
+void toggleSimpleLineLayout()
+{
+    for (const auto* document : Document::allDocuments()) {
+        auto* settings = document->settings();
+        if (!settings)
+            continue;
+        settings->setSimpleLineLayoutEnabled(!settings->simpleLineLayoutEnabled());
     }
 }
 

@@ -1,3 +1,16 @@
+2016-01-01  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add support for toggling simple line layout from command line.
+        https://bugs.webkit.org/show_bug.cgi?id=152636
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        (WebCore::SimpleLineLayout::toggleSimpleLineLayout):
+
 2016-01-01  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/database-deletepending-flag.html fails.
