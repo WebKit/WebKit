@@ -1,3 +1,40 @@
+2016-01-02  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add list-style properties to Visual Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=152631
+
+        Reviewed by Timothy Hatcher.
+
+        Seeing as lists are very common in web pages across the internet, adding
+        a section to let users edit the properties unique to lists seems prudent.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/ListStylePositionInside.svg: Added.
+        * UserInterface/Images/ListStylePositionOutside.svg: Added.
+        * UserInterface/Main.html:
+        Re-added UserInterface/Views/VisualStyleURLInput.js
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateListStyleSection):
+
+        * UserInterface/Views/VisualStyleKeywordIconList.css:
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon):
+        Added specified color property to ensure that :active doesn't break the color of the svg.
+
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:matches(.computed, .selected)):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected):
+        Changed the background-color and border-color values to match the rest of Web Inspector.
+
+        * UserInterface/Views/VisualStyleKeywordIconList.js:
+        (WebInspector.VisualStyleKeywordIconList):
+        (WebInspector.VisualStyleKeywordIconList.dashToCapital): Deleted.
+        (WebInspector.VisualStyleKeywordIconList.createListItem):
+        The "initial" keyword will also use UserInterface/Images/VisualStyleNone.svg
+
+        * UserInterface/Views/VisualStyleURLInput.js: Added.
+        Previously removed in r192705.
+
 2016-01-02  Alberto Garcia  <berto@igalia.com>
 
         [GTK] webkit 2.3.5 build failure with python 3.3.4

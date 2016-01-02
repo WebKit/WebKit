@@ -35,6 +35,7 @@
     position: relative;
     width: 26px;
     height: 18px;
+    color: black;
     background-color: hsl(0, 100%, 100%);
     border: 1px solid hsl(0, 0%, 83%);
     border-right: none;
@@ -54,11 +55,11 @@
 .visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:matches(.computed, .selected) {
     width: 27px;
     border-right: 1px solid;
-    border-color: hsl(213, 92%, 55%);
+    border-color: hsl(212, 92%, 54%);
 }
 
 .visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected {
-    background-color: hsl(213, 92%, 55%);
+    background-color: hsl(212, 92%, 54%);
     color: hsl(0, 100%, 100%);
 }
 

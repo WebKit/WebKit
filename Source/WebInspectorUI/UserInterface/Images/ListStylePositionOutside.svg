@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <circle fill="currentColor" stroke="currentColor" cx="3.5" cy="7.5" r="2.5"/>
+    <rect fill="none" stroke="currentColor" x="9" y="2" width="6" height="11"/>
+</svg>

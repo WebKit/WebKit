@@ -36,11 +36,7 @@ WebInspector.VisualStyleKeywordIconList = class VisualStyleKeywordIconList exten
         this._computedIcon = null;
         this._selectedIcon = null;
 
-        function dashToCapital(match) {
-            return match[1].toUpperCase();
-        }
-
-        let prettyPropertyReferenceName = this._propertyReferenceName.capitalize().replace(/(-.)/g, dashToCapital);
+        let prettyPropertyReferenceName = this._propertyReferenceName.capitalize().replace(/(-.)/g, (match) => match[1].toUpperCase());
 
         function createListItem(value, title) {
             let iconButtonElement = document.createElement("button");
@@ -49,7 +45,7 @@ WebInspector.VisualStyleKeywordIconList = class VisualStyleKeywordIconList exten
             iconButtonElement.classList.add("keyword-icon");
             iconButtonElement.addEventListener("click", this._handleKeywordChanged.bind(this));
 
-            let imageName = value === "none" ? "VisualStyleNone" : prettyPropertyReferenceName + title.replace(/\s/g, "");
+            let imageName = (value === "none" || value === "initial") ? "VisualStyleNone" : prettyPropertyReferenceName + title.replace(/\s/g, "");
             iconButtonElement.appendChild(useSVGSymbol("Images/" + imageName + ".svg"));
 
             return iconButtonElement;
