@@ -2,6 +2,9 @@ GTest v.1.5.0
 
 http://googletest.googlecode.com/svn/tags/release-1.5.0/ 
 
+2016-01-02 Ting-Wei Lan (lantw44@gmail.com)
+      Remove usage of environ global variable to fix the build on FreeBSD.
+
 2012-01-04 Dmitry Lomov (dslomov@google.com)  David Kilzer (ddkilzer@apple.com)
       - WebKit port of gtest uses FastMalloc "new" and "delete" operators from JavaScriptCore.
       - The gtest.framework target now links to JavaScriptCore.framework.

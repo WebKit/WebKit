@@ -1,3 +1,17 @@
+2016-01-02  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Remove usage of environ in gtest
+        https://bugs.webkit.org/show_bug.cgi?id=138420
+
+        Reviewed by Michael Catanzaro.
+
+        FreeBSD libc.so.7 does not contain an environ symbol, which causes
+        undefined reference problem when using -Wl,--no-undefined. As gtest
+        only uses environ as an argument to call execve, we can simply remove
+        its usage by replacing execve with execv.
+
+        * gtest/src/gtest-death-test.cc:
+
 2015-12-01  Dana Burkart  <dburkart@apple.com>
 
         Remove Mountain Lion support from gtest

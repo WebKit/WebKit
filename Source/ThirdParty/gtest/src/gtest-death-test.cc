@@ -832,20 +832,6 @@ struct ExecDeathTestArgs {
   int close_fd;       // File descriptor to close; the read end of a pipe
 };
 
-#if GTEST_OS_MAC
-inline char** GetEnviron() {
-  // When Google Test is built as a framework on MacOS X, the environ variable
-  // is unavailable. Apple's documentation (man environ) recommends using
-  // _NSGetEnviron() instead.
-  return *_NSGetEnviron();
-}
-#else
-// Some POSIX platforms expect you to declare environ. extern "C" makes
-// it reside in the global namespace.
-extern "C" char** environ;
-inline char** GetEnviron() { return environ; }
-#endif  // GTEST_OS_MAC
-
 // The main function for a threadsafe-style death test child process.
 // This function is called in a clone()-ed process and thus must avoid
 // any potentially unsafe operations like malloc or libc functions.
@@ -871,8 +857,11 @@ static int ExecDeathTestChildMain(void* child_arg) {
   // unsafe.  Since execve() doesn't search the PATH, the user must
   // invoke the test program via a valid path that contains at least
   // one path separator.
-  execve(args->argv[0], args->argv, GetEnviron());
-  DeathTestAbort(String::Format("execve(%s, ...) in %s failed: %s",
+  // We have replaced execve() with execv() for WebKit to avoid using
+  // environ. It should be safe because execv() is just a simple wrapper
+  // of execve().
+  execv(args->argv[0], args->argv);
+  DeathTestAbort(String::Format("execv(%s, ...) in %s failed: %s",
                                 args->argv[0],
                                 original_dir,
                                 GetLastErrnoDescription().c_str()));
