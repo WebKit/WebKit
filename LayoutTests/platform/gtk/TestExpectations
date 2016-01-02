@@ -2660,6 +2660,12 @@ webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirk
 
 webkit.org/b/152057 accessibility/textarea-selected-text-range.html [ Failure Timeout ]
 
+webkit.org/b/152643 imported/w3c/indexeddb/idbcursor-advance.htm [ Failure ]
+webkit.org/b/152643 imported/w3c/indexeddb/idbcursor-continue.htm [ Failure ]
+webkit.org/b/152643 imported/w3c/indexeddb/idbcursor-direction-index.htm [ Failure ]
+webkit.org/b/152643 imported/w3c/indexeddb/idbindex_get2.htm [ Failure ]
+webkit.org/b/152643 imported/w3c/indexeddb/idbindex_getKey2.htm [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
