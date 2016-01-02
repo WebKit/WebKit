@@ -1,3 +1,15 @@
+2016-01-02  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] webkit 2.3.5 build failure with python 3.3.4
+        https://bugs.webkit.org/show_bug.cgi?id=128971
+
+        Reviewed by Michael Catanzaro.
+
+        Make sure that the stdin encoding is 'UTF-8' if using Python 3,
+        otherwise the build will break.
+
+        * Scripts/cssmin.py:
+
 2016-01-01  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: shadow visual sidebar section can be confused with the box shadow section
