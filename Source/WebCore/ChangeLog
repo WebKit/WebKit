@@ -1,3 +1,24 @@
+2016-01-01  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/database-deletepending-flag.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152600
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes, and at least 2 crashing tests now timeout).
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteBackingStore):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2016-01-01  Simon Fraser  <simon.fraser@apple.com>
 
         Fix reload and programmatic scrolling in RTL documents

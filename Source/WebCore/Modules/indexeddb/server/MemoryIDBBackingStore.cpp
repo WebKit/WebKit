@@ -459,6 +459,11 @@ std::unique_ptr<MemoryObjectStore> MemoryIDBBackingStore::takeObjectStoreByName(
     return objectStore;
 }
 
+void MemoryIDBBackingStore::deleteBackingStore()
+{
+    // The in-memory IDB backing store doesn't need to do any cleanup when it is deleted.
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

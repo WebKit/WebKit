@@ -163,11 +163,15 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
 
 void UniqueIDBDatabase::performCurrentDeleteOperation()
 {
+    ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::performCurrentDeleteOperation");
 
     ASSERT(m_databaseInfo);
     ASSERT(m_currentOpenDBRequest);
     ASSERT(m_currentOpenDBRequest->isDeleteRequest());
+
+    if (m_deleteBackingStoreInProgress)
+        return;
 
     if (hasAnyOpenConnections()) {
         maybeNotifyConnectionsOfVersionChange();
@@ -179,9 +183,41 @@ void UniqueIDBDatabase::performCurrentDeleteOperation()
     ASSERT(m_pendingTransactions.isEmpty());
     ASSERT(m_openDatabaseConnections.isEmpty());
 
+    m_deleteBackingStoreInProgress = true;
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::deleteBackingStore));
+}
+
+void UniqueIDBDatabase::deleteBackingStore()
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::deleteBackingStore");
+
+    if (m_backingStore) {
+        m_backingStore->deleteBackingStore();
+        m_backingStore = nullptr;
+    }
+
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didDeleteBackingStore));
+}
+
+void UniqueIDBDatabase::didDeleteBackingStore()
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didDeleteBackingStore");
+
+    ASSERT(m_databaseInfo);
+    ASSERT(m_currentOpenDBRequest);
+    ASSERT(m_currentOpenDBRequest->isDeleteRequest());
+    ASSERT(!hasAnyPendingCallbacks());
+    ASSERT(m_inProgressTransactions.isEmpty());
+    ASSERT(m_pendingTransactions.isEmpty());
+    ASSERT(m_openDatabaseConnections.isEmpty());
+
     m_currentOpenDBRequest->notifyDidDeleteDatabase(*m_databaseInfo);
     m_currentOpenDBRequest = nullptr;
+    m_databaseInfo = nullptr;
     m_deletePending = false;
+    m_deleteBackingStoreInProgress = false;
 
     if (m_pendingOpenDBRequests.isEmpty())
         m_server.deleteUniqueIDBDatabase(*this);

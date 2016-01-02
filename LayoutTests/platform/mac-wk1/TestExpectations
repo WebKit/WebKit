@@ -69,8 +69,6 @@ imported/w3c/indexeddb
 inspector/indexeddb
 
 # IDB tests that crash
-storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
-storage/indexeddb/intversion-long-queue.html [ Skip ]
 storage/indexeddb/lazy-index-population.html [ Skip ]
 storage/indexeddb/structured-clone.html [ Skip ]
 
@@ -90,11 +88,12 @@ webkit.org/b/152264 storage/indexeddb/deleted-objects.html [ Failure Crash ]
 
 # IDB tests that timeout                                                               
 storage/indexeddb/database-quota.html [ Skip ]
+storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
 storage/indexeddb/dont-wedge.html [ Skip ]
+storage/indexeddb/intversion-long-queue.html [ Skip ]
 storage/indexeddb/transaction-starvation.html [ Skip ]
 
 # IDB tests with text failures                                                             
-storage/indexeddb/database-deletepending-flag.html [ Failure ]
 storage/indexeddb/intversion-gated-on-delete.html [ Failure ]
 storage/indexeddb/odd-strings.html [ Failure ]
 storage/indexeddb/open-db-private-browsing.html [ Failure ]

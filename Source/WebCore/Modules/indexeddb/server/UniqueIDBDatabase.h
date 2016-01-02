@@ -124,6 +124,7 @@ private:
     void inProgressTransactionCompleted(const IDBResourceIdentifier&);
 
     // Database thread operations
+    void deleteBackingStore();
     void openBackingStore(const IDBDatabaseIdentifier&);
     void performCommitTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void performAbortTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
@@ -143,6 +144,7 @@ private:
     void performActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBTransactionInfo&);
 
     // Main thread callbacks
+    void didDeleteBackingStore();
     void didOpenBackingStore(const IDBDatabaseInfo&);
     void didPerformCreateObjectStore(uint64_t callbackIdentifier, const IDBError&, const IDBObjectStoreInfo&);
     void didPerformDeleteObjectStore(uint64_t callbackIdentifier, const IDBError&, const String& objectStoreName);
@@ -208,6 +210,7 @@ private:
     HashCountedSet<uint64_t> m_objectStoreTransactionCounts;
 
     bool m_deletePending { false };
+    bool m_deleteBackingStoreInProgress { false };
 };
 
 } // namespace IDBServer
