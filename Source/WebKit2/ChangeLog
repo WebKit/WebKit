@@ -1,5 +1,14 @@
 2016-01-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the iOS and EFL builds, after an over-eager commit-queue commit.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::restorePageState):
+
+2016-01-01  Simon Fraser  <simon.fraser@apple.com>
+
         Fix naming in HistoryItem to refer to scrollPositions
         https://bugs.webkit.org/show_bug.cgi?id=152646
 

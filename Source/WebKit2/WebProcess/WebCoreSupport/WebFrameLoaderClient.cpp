@@ -1206,7 +1206,7 @@ void WebFrameLoaderClient::restoreViewState()
         if (m_frame->isMainFrame())
             m_frame->page()->restorePageState(*currentItem);
         else if (!view->wasScrolledByUser())
-            view->setScrollPosition(currentItem->scrollPoint());
+            view->setScrollPosition(currentItem->scrollPosition());
     }
 #else
     // Inform the UI process of the scale factor.

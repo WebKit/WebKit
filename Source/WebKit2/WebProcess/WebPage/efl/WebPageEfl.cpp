@@ -232,12 +232,12 @@ String WebPage::platformUserAgent(const URL&) const
 void WebPage::restorePageState(const HistoryItem& historyItem)
 {
     float restorePageScaleFactor = historyItem.pageScaleFactor();
-    IntPoint restoreScrollPoint = historyItem.scrollPoint();
+    IntPoint restoreScrollPosition = historyItem.scrollPosition();
 
     // A scale factor or scroll point of zero means that the history item has the default scale factor or scroll position,
     // thus we don't need to update it.
-    if (restorePageScaleFactor || restoreScrollPoint != IntPoint(0, 0))
-        scalePage(restorePageScaleFactor, restoreScrollPoint);
+    if (restorePageScaleFactor || restoreScrollPosition != IntPoint())
+        scalePage(restorePageScaleFactor, restoreScrollPosition);
 }
 
 void WebPage::savePageState(HistoryItem&)

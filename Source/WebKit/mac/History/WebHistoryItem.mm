@@ -377,7 +377,7 @@ WebHistoryItem *kit(HistoryItem* item)
     NSNumber *scrollPointXValue = [dict objectForKey:scrollPointXKey];
     NSNumber *scrollPointYValue = [dict objectForKey:scrollPointYKey];
     if (scrollPointXValue && scrollPointYValue)
-        core(_private)->setScrollPoint(IntPoint([scrollPointXValue intValue], [scrollPointYValue intValue]));
+        core(_private)->setScrollPosition(IntPoint([scrollPointXValue intValue], [scrollPointYValue intValue]));
 
     uint32_t bookmarkIDValue = [[dict objectForKey:bookmarkIDKey] unsignedIntValue];
     if (bookmarkIDValue)
@@ -471,9 +471,9 @@ WebHistoryItem *kit(HistoryItem* item)
     if (viewportArguments)
         [dict setObject:viewportArguments forKey:@"WebViewportArguments"];
 
-    IntPoint scrollPoint = core(_private)->scrollPoint();
-    [dict setObject:[NSNumber numberWithInt:scrollPoint.x()] forKey:scrollPointXKey];
-    [dict setObject:[NSNumber numberWithInt:scrollPoint.y()] forKey:scrollPointYKey];
+    IntPoint scrollPosition = core(_private)->scrollPosition();
+    [dict setObject:[NSNumber numberWithInt:scrollPosition.x()] forKey:scrollPointXKey];
+    [dict setObject:[NSNumber numberWithInt:scrollPosition.y()] forKey:scrollPointYKey];
 
     uint32_t bookmarkID = core(_private)->bookmarkID();
     if (bookmarkID)
