@@ -98,6 +98,8 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
             this._element.classList.remove(WebInspector.DetailsSection.CollapsedStyleClassName);
 
         this._collapsedSetting.value = flag || false;
+
+        this.dispatchEventToListeners(WebInspector.DetailsSection.Event.CollapsedStateChanged, {collapsed: this._collapsedSetting.value});
     }
 
     get groups()
@@ -147,3 +149,7 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
 
 WebInspector.DetailsSection.CollapsedStyleClassName = "collapsed";
 WebInspector.DetailsSection.MouseOverOptionsElementStyleClassName = "mouse-over-options-element";
+
+WebInspector.DetailsSection.Event = {
+    CollapsedStateChanged: "details-section-collapsed-state-changed"
+};

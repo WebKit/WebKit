@@ -1,3 +1,24 @@
+2016-01-01  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: The Computed Styles Properties section shows warning icons and doesn't update if collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=152609
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded):
+        If the CodeMirror instance is read-only, don't add any warning icons.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._handleCollapsedStateChanged):
+        The properties text editor will now refresh whenever the details section
+        becomes un-collapsed.
+
+        * UserInterface/Views/DetailsSection.js:
+        (WebInspector.DetailsSection.prototype.set collapsed):
+        Now fires an event with the current collapsed state as data.
+
 2015-12-31  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: "No Filter Results" message overlaps Debugger sidebar sections
