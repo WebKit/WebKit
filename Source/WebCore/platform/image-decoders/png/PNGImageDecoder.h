@@ -80,11 +80,16 @@ namespace WebCore {
             return true;
         }
 
+        bool isCompleteAtIndex(size_t index)
+        {
+            return (index < m_frameBufferCache.size() && m_frameBufferCache[index].status() == ImageFrame::FrameComplete);
+        }
+
     private:
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
-        void decode(bool onlySize);
+        void decode(bool onlySize, unsigned haltAtFrame);
 #if ENABLE(APNG)
         void initFrameBuffer(size_t frameIndex);
         void frameComplete();

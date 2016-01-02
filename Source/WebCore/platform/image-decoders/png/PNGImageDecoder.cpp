@@ -161,7 +161,7 @@ public:
         m_readOffset = 0;
     }
 
-    bool decode(const SharedBuffer& data, bool sizeOnly)
+    bool decode(const SharedBuffer& data, bool sizeOnly, unsigned haltAtFrame)
     {
         m_decodingSizeOnly = sizeOnly;
         PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
@@ -178,7 +178,7 @@ public:
             // We explicitly specify the superclass isSizeAvailable() because we
             // merely want to check if we've managed to set the size, not
             // (recursively) trigger additional decoding if we haven't.
-            if (sizeOnly ? decoder->ImageDecoder::isSizeAvailable() : decoder->isComplete())
+            if (sizeOnly ? decoder->ImageDecoder::isSizeAvailable() : decoder->isCompleteAtIndex(haltAtFrame))
                 return true;
         }
         return false;
@@ -274,7 +274,7 @@ PNGImageDecoder::~PNGImageDecoder()
 bool PNGImageDecoder::isSizeAvailable()
 {
     if (!ImageDecoder::isSizeAvailable())
-         decode(true);
+        decode(true, 0);
 
     return ImageDecoder::isSizeAvailable();
 }
@@ -308,7 +308,7 @@ ImageFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
 
     ImageFrame& frame = m_frameBufferCache[index];
     if (frame.status() != ImageFrame::FrameComplete)
-        decode(false);
+        decode(false, index);
     return &frame;
 }
 
@@ -687,7 +687,7 @@ void PNGImageDecoder::pngComplete()
         m_frameBufferCache.first().setStatus(ImageFrame::FrameComplete);
 }
 
-void PNGImageDecoder::decode(bool onlySize)
+void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame)
 {
     if (failed())
         return;
@@ -697,7 +697,7 @@ void PNGImageDecoder::decode(bool onlySize)
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.
-    if (!m_reader->decode(*m_data, onlySize) && isAllDataReceived())
+    if (!m_reader->decode(*m_data, onlySize, haltAtFrame) && isAllDataReceived())
         setFailed();
     // If we're done decoding the image, we don't need the PNGImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)
@@ -769,6 +769,27 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             || m_dispose > 2 || m_blend > 1) {
             fallbackNotAnimated();
             return;
+        }
+
+        if (m_frameBufferCache.isEmpty()) {
+            m_frameBufferCache.resize(1);
+            m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
+        }
+
+        if (m_currentFrame < m_frameBufferCache.size()) {
+            ImageFrame& buffer = m_frameBufferCache[m_currentFrame];
+
+            if (!m_delayDenominator)
+                buffer.setDuration(m_delayNumerator * 10);
+            else
+                buffer.setDuration(m_delayNumerator * 1000 / m_delayDenominator);
+
+            if (m_dispose == 2)
+                buffer.setDisposalMethod(ImageFrame::DisposeOverwritePrevious);
+            else if (m_dispose == 1)
+                buffer.setDisposalMethod(ImageFrame::DisposeOverwriteBgcolor);
+            else
+                buffer.setDisposalMethod(ImageFrame::DisposeKeep);
         }
 
         m_frameInfo = true;
@@ -926,18 +947,6 @@ void PNGImageDecoder::frameComplete()
 
     ImageFrame& buffer = m_frameBufferCache[m_currentFrame];
     buffer.setStatus(ImageFrame::FrameComplete);
-
-    if (!m_delayDenominator)
-        buffer.setDuration(m_delayNumerator * 10);
-    else
-        buffer.setDuration(m_delayNumerator * 1000 / m_delayDenominator);
-
-    if (m_dispose == 2)
-        buffer.setDisposalMethod(ImageFrame::DisposeOverwritePrevious);
-    else if (m_dispose == 1)
-        buffer.setDisposalMethod(ImageFrame::DisposeOverwriteBgcolor);
-    else
-        buffer.setDisposalMethod(ImageFrame::DisposeKeep);
 
     png_bytep interlaceBuffer = m_reader->interlaceBuffer();
 
