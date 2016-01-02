@@ -201,10 +201,10 @@ x86: MulFloat U:F:32, UD:F:32
     Tmp, Tmp
     Addr, Tmp
 
-arm64: DivDouble U:F:32, U:F:32, D:F:32
+arm64: DivDouble U:F:64, U:F:32, D:F:64
     Tmp, Tmp, Tmp
 
-x86: DivDouble U:F:32, UD:F:32
+x86: DivDouble U:F:64, UD:F:64
     Tmp, Tmp
     Addr, Tmp
 

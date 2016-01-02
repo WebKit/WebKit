@@ -1,3 +1,43 @@
+2015-12-28  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should be able to run all of the old V8v7 tests
+        https://bugs.webkit.org/show_bug.cgi?id=152579
+
+        Reviewed by Saam Barati.
+
+        Fixes some silly bugs that were preventing us from running all of the old V8v7 tests.
+
+        IRC's analysis of when to turn a Move into a Move32 when spilling is based on the premise
+        that if the dst has a 32-bit def width, then the src must also have a 32-bit def width. But
+        that doesn't happen if the src is an immediate.
+
+        This changes that condition in IRC to use the combined use/def width of both src and dst
+        rather than being clever. This is great because it's the combined width that determines the
+        size of the spill slot.
+
+        Also added some more debug support to TmpWidth.
+
+        This also fixes Air's description of DivDouble; previously it claimed to be a 32-bit
+        operation. Also implements Output::unsignedToDouble(), since we already had everything we
+        needed to implement this optimally.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirTmpWidth.cpp:
+        (JSC::B3::Air::TmpWidth::recompute):
+        (JSC::B3::Air::TmpWidth::Widths::dump):
+        * b3/air/AirTmpWidth.h:
+        (JSC::B3::Air::TmpWidth::Widths::Widths):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::doubleToUInt):
+        (JSC::FTL::Output::unsignedToDouble):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::zeroExt):
+        (JSC::FTL::Output::zeroExtPtr):
+        (JSC::FTL::Output::intToDouble):
+        (JSC::FTL::Output::castToInt32):
+        (JSC::FTL::Output::unsignedToDouble): Deleted.
+
 2016-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2016

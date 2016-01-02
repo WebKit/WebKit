@@ -125,6 +125,11 @@ LValue Output::doubleToUInt(LValue value)
     return result;
 }
 
+LValue Output::unsignedToDouble(LValue value)
+{
+    return intToDouble(zeroExt(value, Int64));
+}
+
 LValue Output::load8SignExt32(TypedPointer pointer)
 {
     LValue load = m_block->appendNew<MemoryValue>(m_proc, Load8S, Int32, origin(), pointer.value());

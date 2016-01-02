@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirInstInlines.h"
+#include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -50,6 +51,13 @@ void TmpWidth::recompute(Code& code)
 {
     // Set this to true to cause this analysis to always return pessimistic results.
     const bool beCareful = false;
+
+    const bool verbose = false;
+
+    if (verbose) {
+        dataLog("Code before TmpWidth:\n");
+        dataLog(code);
+    }
     
     m_width.clear();
     
@@ -150,6 +158,14 @@ void TmpWidth::recompute(Code& code)
             }
         }
     }
+
+    if (verbose)
+        dataLog("width: ", mapDump(m_width), "\n");
+}
+
+void TmpWidth::Widths::dump(PrintStream& out) const
+{
+    out.print("{use = ", use, ", def = ", def, "}");
 }
 
 } } } // namespace JSC::B3::Air

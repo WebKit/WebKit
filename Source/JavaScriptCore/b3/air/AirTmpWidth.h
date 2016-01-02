@@ -92,6 +92,8 @@ private:
             use = Arg::minimumWidth(type);
             def = Arg::minimumWidth(type);
         }
+
+        void dump(PrintStream& out) const;
         
         Arg::Width use;
         Arg::Width def;

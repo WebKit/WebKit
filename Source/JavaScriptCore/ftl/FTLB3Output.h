@@ -189,7 +189,7 @@ public:
     }
     LValue zeroExtPtr(LValue value) { return zeroExt(value, B3::Int64); }
     LValue intToDouble(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::IToD, origin(), value); }
-    LValue unsignedToDouble(LValue value) { CRASH(); }
+    LValue unsignedToDouble(LValue);
     LValue castToInt32(LValue value)
     {
         return value->type() == B3::Int32 ? value :
