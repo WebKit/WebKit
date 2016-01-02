@@ -829,6 +829,9 @@ END
     def test_changed_files(self):
         self._shared_test_changed_files()
 
+    def test_untracked_files(self):
+        self._shared_test_untracked_files(self.scm)
+
     def test_changed_files_for_revision(self):
         self._shared_test_changed_files_for_revision()
 

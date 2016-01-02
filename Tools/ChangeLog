@@ -1,3 +1,15 @@
+2016-01-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Python SCM should be able to retrieve untracked files - Add SVN support
+        https://bugs.webkit.org/show_bug.cgi?id=152546
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (test_untracked_files): Activating test for SVN.
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.untracked_files): Implementing untracked files retrieval for SVN.
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Replace WTF::move with WTFMove
