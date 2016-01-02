@@ -2757,7 +2757,7 @@ IntSize RenderLayer::overhangAmount() const
     IntSize stretch;
 
     // FIXME: use maximumScrollOffset()
-    ScrollOffset scrollOffset = scrollOffsetFromPosition(scrollOrigin());
+    ScrollOffset scrollOffset = scrollOffsetFromPosition(scrollPosition());
     if (scrollOffset.y() < 0)
         stretch.setHeight(scrollOffset.y());
     else if (scrollableContentsSize().height() && scrollOffset.y() > scrollableContentsSize().height() - visibleHeight())

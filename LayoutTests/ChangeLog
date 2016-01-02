@@ -1,3 +1,16 @@
+2016-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r194448): Scrolling overflow:scroll goes too far
+        https://bugs.webkit.org/show_bug.cgi?id=152645
+
+        Reviewed by Zalan Bujtas.
+        
+        Test that scrolls and overflow div with wheel events, then checks that it has
+        not passed the max scroll offset.
+
+        * fast/scrolling/overflow-scroll-past-max-expected.txt: Added.
+        * fast/scrolling/overflow-scroll-past-max.html: Added.
+
 2016-01-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Several IndexedDB tests failing

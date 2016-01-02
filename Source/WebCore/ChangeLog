@@ -1,3 +1,18 @@
+2016-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r194448): Scrolling overflow:scroll goes too far
+        https://bugs.webkit.org/show_bug.cgi?id=152645
+
+        Reviewed by Zalan Bujtas.
+        
+        Fix a bug introduced in r194448: use the scrollPosition, not the scrollOrigin
+        to compute the overhang amount.
+
+        Test: fast/scrolling/overflow-scroll-past-max.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::overhangAmount):
+
 2015-12-22  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Blacklisted OpenGL contexts are not safe to use
