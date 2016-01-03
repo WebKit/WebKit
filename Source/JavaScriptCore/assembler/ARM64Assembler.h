@@ -2899,7 +2899,7 @@ public:
 #if OS(LINUX) && COMPILER(GCC_OR_CLANG)
     static inline void linuxPageFlush(uintptr_t begin, uintptr_t end)
     {
-        __builtin___clear_cache(reinterpret_cast<void*>(begin), reinterpret_cast<void*>(end));
+        __builtin___clear_cache(reinterpret_cast<char*>(begin), reinterpret_cast<char*>(end));
     }
 #endif
 

@@ -1,3 +1,17 @@
+2016-01-02  Khem Raj  <raj.khem@gmail.com>
+
+        Clang's builtin for clear_cache accepts char* and errors out
+        when using void*, using char* work on both gcc and clang
+        since char* is auto-converted to void* in gcc case.
+
+        https://bugs.webkit.org/show_bug.cgi?id=152654
+
+       Unreviewed
+
+       * assembler/ARM64Assembler.h:
+       (linuxPageFlush): Convert arguments to __builtin___clear_cache()
+       to char*.
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Replace WTF::move with WTFMove
