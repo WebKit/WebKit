@@ -1,3 +1,20 @@
+2016-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Some cleanup in ScrollAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=152649
+
+        Try to fix GTK scroll position errors in RTL.
+        
+        ScrollAnimatorNone::scrollToOffsetWithoutAnimation() was failing to map from
+        offset to position.
+        
+        Also add logging in ScrollableArea::scrollToOffsetWithoutAnimation().
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::scrollToOffsetWithoutAnimation):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollToOffsetWithoutAnimation):
+
 2016-01-02  Simon Fraser  <simon.fraser@apple.com>
 
         Temporarily turn on Scrolling logging on GTK, to investigate

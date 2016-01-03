@@ -448,16 +448,17 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
 void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
     stopAnimationTimerIfNeeded();
-
-    FloatSize delta = FloatSize(offset.x() - *m_horizontalData.m_currentPosition, offset.y() - *m_verticalData.m_currentPosition);
+    
+    FloatPoint position = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
+    FloatSize delta = position - FloatPoint(*m_horizontalData.m_currentPosition, *m_verticalData.m_currentPosition);
 
     m_horizontalData.reset();
-    *m_horizontalData.m_currentPosition = offset.x();
-    m_horizontalData.m_desiredPosition = offset.x();
+    *m_horizontalData.m_currentPosition = position.x();
+    m_horizontalData.m_desiredPosition = position.x();
 
     m_verticalData.reset();
-    *m_verticalData.m_currentPosition = offset.y();
-    m_verticalData.m_desiredPosition = offset.y();
+    *m_verticalData.m_currentPosition = position.y();
+    m_verticalData.m_desiredPosition = position.y();
 
     notifyPositionChanged(delta);
 }

@@ -36,9 +36,11 @@
 #include "GraphicsLayer.h"
 #include "FloatPoint.h"
 #include "LayoutRect.h"
+#include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -134,6 +136,7 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
     scrollAnimator().scrollToOffsetWithoutAnimation(offset);
 }
 
