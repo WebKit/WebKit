@@ -1,5 +1,27 @@
 2016-01-03  Andreas Kling  <akling@apple.com>
 
+        StringBuilder often creates two StringImpls.
+        <https://webkit.org/b/152662>
+
+        Reviewed by Anders Carlsson.
+
+        If StringBuilder didn't manage to guess the exact final length of the
+        string being built, it would still keep the buffer around, and the final
+        build process would then return a substring into that buffer.
+
+        This effectively yielded two StringImpls instead of one, with the substring
+        retaining the longer buffer StringImpl.
+
+        This patch improves the situation by having StringImpl crop the buffer's
+        m_length field to the final built string length. That way we never have to
+        return a substring.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::reifyString):
+        * wtf/text/StringImpl.h:
+
+2016-01-03  Andreas Kling  <akling@apple.com>
+
         Remove redundant StringImpl substring creation function.
         <https://webkit.org/b/152652>
 

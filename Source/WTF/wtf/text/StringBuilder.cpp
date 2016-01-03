@@ -54,12 +54,14 @@ void StringBuilder::reifyString() const
         return;
     }
 
-    // Must be valid in the buffer, take a substring (unless string fills the buffer).
-    ASSERT(m_buffer && m_length <= m_buffer->length());
-    if (m_length == m_buffer->length())
-        m_string = m_buffer.get();
-    else
-        m_string = StringImpl::createSubstringSharingImpl(m_buffer, 0, m_length);
+    ASSERT(m_buffer);
+    ASSERT(m_length <= m_buffer->length());
+
+    // "Crop" the StringImpl by updating its m_length field. Note that this will
+    // result in some StringImpl objects being backed by a slightly larger allocation
+    // than their m_length field indicates.
+    m_buffer->m_length = m_length;
+    m_string = m_buffer.get();
 }
 
 void StringBuilder::resize(unsigned newSize)

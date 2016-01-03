@@ -135,6 +135,7 @@ class StringImpl {
     friend struct WTF::UCharBufferTranslator;
     friend class JSC::LLInt::Data;
     friend class JSC::LLIntOffsetsExtractor;
+    friend class WTF::StringBuilder;
     
 private:
     enum BufferOwnership {
