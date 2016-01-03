@@ -1,3 +1,15 @@
+2016-01-03  Andreas Kling  <akling@apple.com>
+
+        Unreviewed, rolling out r194510.
+
+        Broke 2 API tests, no time to investigate right now
+
+        Reverted changeset:
+
+        "StringBuilder often creates two StringImpls."
+        https://bugs.webkit.org/show_bug.cgi?id=152662
+        http://trac.webkit.org/changeset/194510
+
 2016-01-03  Khem Raj  <raj.khem@gmail.com>
 
         WebKit fails to build with musl libc library
