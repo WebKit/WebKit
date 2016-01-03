@@ -2627,6 +2627,18 @@
             "sky"
          ]
       },
+      "Sebastian Dr\u00f6ge" : {
+         "emails" : [
+            "slomo@coaxion.net",
+            "sebastian@centricular.com",
+            "sebastian.droege@collabora.co.uk",
+            "sebastian.droege@collabora.com"
+         ],
+         "expertise" : "WebKitGTK+, Media support (focused on the GStreamer implementation)",
+         "nicks" : [
+            "slomo"
+         ]
+      },
       "Seokju Kwon" : {
          "emails" : [
             "seokju@webkit.org",
@@ -3534,18 +3546,6 @@
          ],
          "nicks" : [
             "rmondello"
-         ]
-      },
-      "Sebastian Dr\u00f6ge" : {
-         "emails" : [
-            "slomo@coaxion.net",
-            "sebastian@centricular.com",
-            "sebastian.droege@collabora.co.uk",
-            "sebastian.droege@collabora.com"
-         ],
-         "expertise" : "WebKitGTK+, Media support (focused on the GStreamer implementation)",
-         "nicks" : [
-            "slomo"
          ]
       },
       "Sungmann Cho" : {

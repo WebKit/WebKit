@@ -1,3 +1,14 @@
+2016-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, move Sebastian Dröge to committers list harder
+
+        He accidentally added himself to the reviewers list because the file is confusing. Then I
+        accidentially moved him to the contributors list because the file is confusing, even though
+        I knew the contributors list existed in this file and was attempting to add him to the
+        committers list. Really move him to the committers list now.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-01-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Python SCM should be able to retrieve untracked files - Add SVN support
