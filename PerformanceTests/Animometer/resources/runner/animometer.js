@@ -5,7 +5,6 @@ window.benchmarkRunnerClient = {
 
     initialize: function(suites, options)
     {
-        this.testsCount = this.iterationCount * suites.reduce(function (count, suite) { return count + suite.tests.length; }, 0);
         this.options = options;
     },
 

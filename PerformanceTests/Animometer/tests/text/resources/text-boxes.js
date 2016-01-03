@@ -1,65 +1,58 @@
-function BouncingTextBox(stage, sampleText)
-{
-    BouncingParticle.call(this, stage);
+(function() {
 
-    this.element = document.createElement("div");
-    this.element.classList.add('particle');
-    this.element.style.width = this._size.x + "px";
-    this.element.style.height = this._size.y + "px";
-    this.element.textContent = sampleText;
-    
-    stage.element.appendChild(this.element);
-    this._move();
-}
+BouncingTextBox = Utilities.createSubclass(BouncingParticle,
+    function(stage, sampleText)
+    {
+        BouncingParticle.call(this, stage);
 
-BouncingTextBox.prototype = Object.create(BouncingParticle.prototype);
-BouncingTextBox.prototype.constructor = BouncingTextBox;
+        this.element = document.createElement("div");
+        this.element.classList.add('particle');
+        this.element.style.width = this.size.x + "px";
+        this.element.style.height = this.size.y + "px";
+        this.element.textContent = sampleText;
 
-BouncingTextBox.prototype._move = function()
-{
-    this.element.style.left = this._position.x + "px";
-    this.element.style.top = this._position.y + "px";
-}
-    
-BouncingTextBox.prototype.animate = function(timeDelta)
-{
-    BouncingParticle.prototype.animate.call(this, timeDelta);
-    this._move();
-}
+        stage.element.appendChild(this.element);
+        this._move();
+    }, {
 
-function BouncingTextBoxStage(element, options)
-{
-    BouncingParticlesStage.call(this, element, options);
-    this._sampleText = document.getElementById('sample-text').textContent;
-}
+    _move: function()
+    {
+        this.element.style.left = this.position.x + "px";
+        this.element.style.top = this.position.y + "px";
+    },
 
-BouncingTextBoxStage.prototype = Object.create(BouncingParticlesStage.prototype);
-BouncingTextBoxStage.prototype.constructor = BouncingTextBoxStage;
+    animate: function(timeDelta)
+    {
+        BouncingParticle.prototype.animate.call(this, timeDelta);
+        this._move();
+    }
+});
 
-BouncingTextBoxStage.prototype.createParticle = function()
-{
-    return new BouncingTextBox(this, this._sampleText);
-}
+BouncingTextBoxStage = Utilities.createSubclass(BouncingParticlesStage,
+    function()
+    {
+        BouncingParticlesStage.call(this);
+        this._sampleText = document.getElementById('sample-text').textContent;
+    }, {
 
-BouncingTextBoxStage.prototype.particleWillBeRemoved = function(particle)
-{
-    particle.element.remove();
-}
+    createParticle: function()
+    {
+        return new BouncingTextBox(this, this._sampleText);
+    },
 
-function BouncingTextBoxsBenchmark(suite, test, options, recordTable, progressBar)
-{
-    BouncingParticlesBenchmark.call(this, suite, test, options, recordTable, progressBar);
-}
+    particleWillBeRemoved: function(particle)
+    {
+        particle.element.remove();
+    }
+});
 
-BouncingTextBoxsBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
-BouncingTextBoxsBenchmark.prototype.constructor = BouncingTextBoxsBenchmark;
+BouncingTextBoxBenchmark = Utilities.createSubclass(Benchmark,
+    function(options)
+    {
+        Benchmark.call(this, new BouncingTextBoxStage(), options);
+    }
+);
 
-BouncingTextBoxsBenchmark.prototype.createStage = function(element)
-{
-    return new BouncingTextBoxStage(element, this._options);
-}
+window.benchmarkClass = BouncingTextBoxBenchmark;
 
-window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
-{
-    return new BouncingTextBoxsBenchmark(suite, test, options, recordTable, progressBar);
-}
+})();

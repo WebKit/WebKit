@@ -2,15 +2,21 @@ Utilities.extendObject(window.benchmarkRunnerClient, {
     testsCount: null,
     progressBar: null,
 
-    didRunTest: function ()
+    initialize: function(suites, options)
     {
-        this.progressBar.incRange();
+        this.testsCount = this.iterationCount * suites.reduce(function (count, suite) { return count + suite.tests.length; }, 0);
+        this.options = options;
     },
-    
+
     willStartFirstIteration: function ()
     {
         this.results = new ResultsDashboard();
         this.progressBar = new ProgressBar(document.getElementById("progress-completed"), this.testsCount);
+    },
+
+    didRunTest: function()
+    {
+        this.progressBar.incrementRange();
     }
 });
 
@@ -30,7 +36,7 @@ window.optionsManager =
             return formElement.checked;
         return formElement.value;
     },
-    
+
     updateUIFromLocalStorage: function()
     {
         var formElements = document.forms["benchmark-options"].elements;
@@ -56,7 +62,7 @@ window.optionsManager =
     updateLocalStorageFromUI: function()
     {
         var formElements = document.forms["benchmark-options"].elements;
-        var options = {};        
+        var options = {};
 
         for (var i = 0; i < formElements.length; ++i) {
             var formElement = formElements[i];
@@ -69,10 +75,10 @@ window.optionsManager =
                 options[name] = formElement.checked;
             else if (type == "radio")
                 options[name] = formElements[name].value;
-    
+
             localStorage.setItem(name, options[name]);
         }
-        
+
         return options;
     }
 }
@@ -83,12 +89,12 @@ window.suitesManager =
     {
         return document.querySelector("#suites > .tree");
     },
-    
+
     _suitesElements: function()
     {
         return document.querySelectorAll("#suites > ul > li");
     },
-    
+
     _checkboxElement: function(element)
     {
         return element.querySelector("input[type='checkbox']:not(.expand-button)");
@@ -103,7 +109,7 @@ window.suitesManager =
     {
         return document.querySelectorAll("#suites input[type='number']");
     },
-        
+
     _localStorageNameForTest: function(suiteName, testName)
     {
         return suiteName + "/" + testName;
@@ -125,17 +131,17 @@ window.suitesManager =
     {
         var suitesElements = this._suitesElements();
         var startButton = document.querySelector("#intro button");
-        
+
         for (var i = 0; i < suitesElements.length; ++i) {
             var suiteElement = suitesElements[i];
             var suiteCheckbox = this._checkboxElement(suiteElement);
-            
+
             if (suiteCheckbox.checked) {
                 startButton.disabled = false;
                 return;
             }
         }
-    
+
         startButton.disabled = true;
     },
 
@@ -144,7 +150,7 @@ window.suitesManager =
         var selected = event.target.checked;
         event.target.testsElements.forEach(function(testElement) {
             var testCheckbox = this._checkboxElement(testElement);
-            testCheckbox.checked = selected;        
+            testCheckbox.checked = selected;
         }, this);
         this._updateStartButtonState();
     },
@@ -201,7 +207,7 @@ window.suitesManager =
             }, this);
         }, this);
     },
-    
+
     updateEditsElementsState: function()
     {
         var editsElements = this._editsElements();
@@ -224,17 +230,17 @@ window.suitesManager =
     updateUIFromLocalStorage: function()
     {
         var suitesElements = this._suitesElements();
-        
+
         for (var i = 0; i < suitesElements.length; ++i) {
             var suiteElement = suitesElements[i];
             var suiteCheckbox = this._checkboxElement(suiteElement);
             var suite = suiteCheckbox.suite;
-            
+
             suiteCheckbox.testsElements.forEach(function(testElement) {
                 var testCheckbox = this._checkboxElement(testElement);
                 var testEdit = this._editElement(testElement);
                 var test = testCheckbox.test;
-                
+
                 var str = localStorage.getItem(this._localStorageNameForTest(suite.name, test.name));
                 if (str === null)
                     return;
@@ -246,7 +252,7 @@ window.suitesManager =
 
             this._updateSuiteCheckboxState(suiteCheckbox);
         }
-        
+
         this._updateStartButtonState();
     },
 
@@ -254,7 +260,7 @@ window.suitesManager =
     {
         var suitesElements = this._suitesElements();
         var suites = [];
-        
+
         for (var i = 0; i < suitesElements.length; ++i) {
             var suiteElement = suitesElements[i];
             var suiteCheckbox = this._checkboxElement(suiteElement);
@@ -265,13 +271,13 @@ window.suitesManager =
                 var testCheckbox = this._checkboxElement(testElement);
                 var testEdit = this._editElement(testElement);
                 var test = testCheckbox.test;
-                
+
                 if (testCheckbox.checked) {
                     test.complexity = testEdit.value;
                     tests.push(test);
                 }
 
-                var value = { checked: testCheckbox.checked, complexity: testEdit.value }; 
+                var value = { checked: testCheckbox.checked, complexity: testEdit.value };
                 localStorage.setItem(this._localStorageNameForTest(suite.name, test.name), JSON.stringify(value));
             }, this);
 
@@ -281,7 +287,7 @@ window.suitesManager =
 
         return suites;
     },
-    
+
     updateLocalStorageFromJSON: function(iterationResults)
     {
         for (var suiteName in iterationResults[Strings.json.results.suites]) {

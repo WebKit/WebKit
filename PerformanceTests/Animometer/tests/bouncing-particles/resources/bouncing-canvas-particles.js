@@ -1,10 +1,55 @@
-function BouncingCanvasParticle(stage)
-{
-    BouncingParticle.call(this, stage);
-    this._context = stage.context;
-    this._shape = "";
-    this._clip = stage.clip;
-}
+BouncingCanvasParticle = Utilities.createSubclass(BouncingParticle,
+    function(stage, shape)
+    {
+        BouncingParticle.call(this, stage);
+        this.context = stage.context;
+        this._shape = shape;
+        this._clip = stage.clip;
+    }, {
+
+    applyRotation: function()
+    {
+        if (this._shape == "circle")
+            return;
+
+        this.context.translate(this.size.x / 2, this.size.y / 2);
+        this.context.rotate(this.rotater.degree() * Math.PI / 180);
+        this.context.translate(-this.size.x / 2, -this.size.y / 2);
+    },
+
+    applyClipping: function()
+    {
+        var clipPoints = BouncingCanvasParticle.clips[this._clip];
+        if (!clipPoints)
+            return;
+
+        this.context.beginPath();
+        clipPoints.forEach(function(point, index) {
+            var point = this.size.multiply(point);
+            if (!index)
+                this.context.moveTo(point.x, point.y);
+            else
+                this.context.lineTo(point.x, point.y);
+        }, this);
+
+        this.context.closePath();
+        this.context.clip();
+    },
+
+    _draw: function()
+    {
+        throw "Not implemented";
+    },
+
+    animate: function(timeDelta)
+    {
+        BouncingParticle.prototype.animate.call(this, timeDelta);
+        this.context.save();
+            this.context.translate(this.position.x, this.position.y);
+            this._draw();
+        this.context.restore();
+    }
+});
 
 BouncingCanvasParticle.clips = {
     star: [
@@ -18,88 +63,26 @@ BouncingCanvasParticle.clips = {
         new Point(0.70, 0.60),
         new Point(1.00, 0.38),
         new Point(0.62, 0.38)
-    ],
+    ]
 };
 
-BouncingCanvasParticle.prototype = Object.create(BouncingParticle.prototype);
-BouncingCanvasParticle.prototype.constructor = BouncingCanvasParticle;
+BouncingCanvasParticlesStage = Utilities.createSubclass(BouncingParticlesStage,
+    function()
+    {
+        BouncingParticlesStage.call(this);
+    }, {
 
-BouncingCanvasParticle.prototype._applyRotation = function()
-{
-    if (this._shape == "circle")
-        return;
+    initialize: function(benchmark)
+    {
+        BouncingParticlesStage.prototype.initialize.call(this, benchmark);
+        this.context = this.element.getContext("2d");
+    },
 
-    this._context.translate(this._size.x / 2, this._size.y / 2);
-    this._context.rotate(this._rotater.degree() * Math.PI / 180);
-    this._context.translate(-this._size.x / 2, -this._size.y / 2);
-}
-
-BouncingCanvasParticle.prototype._applyClipping = function()
-{
-    var clipPoints = BouncingCanvasParticle.clips[this._clip];
-    if (!clipPoints)
-        return;
-        
-    this._context.beginPath();
-    clipPoints.forEach(function(point, index) {
-        var point = this._size.multiply(point);
-        if (!index)
-            this._context.moveTo(point.x, point.y);
-        else
-            this._context.lineTo(point.x, point.y);
-    }, this);
-
-    this._context.closePath();
-    this._context.clip();
-}
-
-BouncingCanvasParticle.prototype._draw = function()
-{
-    throw "Not implemented";
-}
-
-BouncingCanvasParticle.prototype.animate = function(timeDelta)
-{
-    BouncingParticle.prototype.animate.call(this, timeDelta);
-    this._context.save();
-        this._context.translate(this._position.x, this._position.y);
-        this._draw();
-    this._context.restore();
-}
-
-function BouncingCanvasParticlesStage(element, options)
-{
-    BouncingParticlesStage.call(this, element, options);
-    this.context = this.element.getContext("2d");
-}
-
-BouncingCanvasParticlesStage.prototype = Object.create(BouncingParticlesStage.prototype);
-BouncingCanvasParticlesStage.prototype.constructor = BouncingCanvasParticlesStage;
-
-function BouncingCanvasParticlesAnimator(benchmark, options)
-{
-    BouncingParticlesAnimator.call(this, benchmark, options);
-    this._context = benchmark._stage.context;
-}
-
-BouncingCanvasParticlesAnimator.prototype = Object.create(BouncingParticlesAnimator.prototype);
-BouncingCanvasParticlesAnimator.prototype.constructor = BouncingCanvasParticlesAnimator;
-
-BouncingCanvasParticlesAnimator.prototype.animate = function()
-{
-    this._context.clearRect(0, 0, this._benchmark._stage.size.x, this._benchmark._stage.size.y);
-    return BouncingParticlesAnimator.prototype.animate.call(this);
-}
-
-function BouncingCanvasParticlesBenchmark(suite, test, options, progressBar)
-{
-    StageBenchmark.call(this, suite, test, options, progressBar);
-}
-
-BouncingCanvasParticlesBenchmark.prototype = Object.create(StageBenchmark.prototype);
-BouncingCanvasParticlesBenchmark.prototype.constructor = BouncingCanvasParticlesBenchmark;
-
-BouncingCanvasParticlesBenchmark.prototype.createAnimator = function()
-{
-    return new BouncingCanvasParticlesAnimator(this, this._options);
-}
+    animate: function(timeDelta)
+    {
+        this.context.clearRect(0, 0, this.size.x, this.size.y);
+        this.particles.forEach(function(particle) {
+            particle.animate(timeDelta);
+        });
+    }
+});

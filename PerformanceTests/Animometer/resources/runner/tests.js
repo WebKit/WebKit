@@ -7,16 +7,6 @@ var Suite = function(name, tests) {
     this.name = name;
     this.tests = tests;
 };
-Suite.prototype.prepare = function(runner, contentWindow, contentDocument)
-{
-    return runner.waitForElement("#stage").then(function (element) {
-        return element;
-    });
-};
-Suite.prototype.run = function(contentWindow, test, options, progressBar)
-{
-    return contentWindow.runBenchmark(this, test, options, progressBar);
-};
 
 var Suites = [];
 

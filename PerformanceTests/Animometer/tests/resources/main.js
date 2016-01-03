@@ -1,3 +1,37 @@
+function Rotater(rotateInterval)
+{
+    this._timeDelta = 0;
+    this._rotateInterval = rotateInterval;
+}
+
+Rotater.prototype =
+{
+    get interval()
+    {
+        return this._rotateInterval;
+    },
+
+    next: function(timeDelta)
+    {
+        this._timeDelta = (this._timeDelta + timeDelta) % this._rotateInterval;
+    },
+
+    degree: function()
+    {
+        return (360 * this._timeDelta) / this._rotateInterval;
+    },
+
+    rotateZ: function()
+    {
+        return "rotateZ(" + Math.floor(this.degree()) + "deg)";
+    },
+
+    rotate: function(center)
+    {
+        return "rotate(" + Math.floor(this.degree()) + ", " + center.x + "," + center.y + ")";
+    }
+};
+
 function BenchmarkState(testInterval)
 {
     this._currentTimeOffset = 0;
@@ -9,11 +43,6 @@ BenchmarkState.stages = {
     WARMING: 0,
     SAMPLING: 1,
     FINISHED: 2,
-    messages: [ 
-        Strings.text.runningState.warming,
-        Strings.text.runningState.sampling,
-        Strings.text.runningState.finished
-    ]
 }
 
 BenchmarkState.prototype =
@@ -22,7 +51,7 @@ BenchmarkState.prototype =
     {
         return stage * this._stageInterval;
     },
-    
+
     _message: function(stage, timeOffset)
     {
         if (stage == BenchmarkState.stages.FINISHED)
@@ -32,17 +61,17 @@ BenchmarkState.prototype =
             + Math.floor((timeOffset - this._timeOffset(stage)) / 1000) + "/"
             + Math.floor((this._timeOffset(stage + 1) - this._timeOffset(stage)) / 1000) + ")";
     },
-    
+
     update: function(currentTimeOffset)
     {
         this._currentTimeOffset = currentTimeOffset;
     },
-    
+
     samplingTimeOffset: function()
     {
         return this._timeOffset(BenchmarkState.stages.SAMPLING);
     },
-    
+
     currentStage: function()
     {
         for (var stage = BenchmarkState.stages.WARMING; stage < BenchmarkState.stages.FINISHED; ++stage) {
@@ -50,27 +79,110 @@ BenchmarkState.prototype =
                 return stage;
         }
         return BenchmarkState.stages.FINISHED;
-    },
-    
-    currentMessage: function()
-    {
-        return this._message(this.currentStage(), this._currentTimeOffset);
-    },
-    
-    currentProgress: function()
-    {
-        return this._currentTimeOffset / this._timeOffset(BenchmarkState.stages.FINISHED);
     }
 }
 
-function Animator(benchmark, options)
+
+function Stage() {}
+
+Stage.prototype =
 {
-    this._benchmark = benchmark;
-    this._options = options;
-    
+    initialize: function(benchmark)
+    {
+        this._benchmark = benchmark;
+        this._element = document.getElementById("stage");
+        this._element.setAttribute("width", document.body.offsetWidth);
+        this._element.setAttribute("height", document.body.offsetHeight);
+        this._size = Point.elementClientSize(this._element).subtract(Insets.elementPadding(this._element).size);
+    },
+
+    get element()
+    {
+        return this._element;
+    },
+
+    get size()
+    {
+        return this._size;
+    },
+
+    complexity: function()
+    {
+        return 0;
+    },
+
+    random: function(min, max)
+    {
+        return (Math.random() * (max - min)) + min;
+    },
+
+    randomBool: function()
+    {
+        return !!Math.round(this.random(0, 1));
+    },
+
+    randomInt: function(min, max)
+    {
+        return Math.round(this.random(min, max));
+    },
+
+    randomPosition: function(maxPosition)
+    {
+        return new Point(this.randomInt(0, maxPosition.x), this.randomInt(0, maxPosition.y));
+    },
+
+    randomSquareSize: function(min, max)
+    {
+        var side = this.random(min, max);
+        return new Point(side, side);
+    },
+
+    randomVelocity: function(maxVelocity)
+    {
+        return this.random(maxVelocity / 8, maxVelocity);
+    },
+
+    randomAngle: function()
+    {
+        return this.random(0, Math.PI * 2);
+    },
+
+    randomColor: function()
+    {
+        var min = 32;
+        var max = 256 - 32;
+        return "#"
+            + this.randomInt(min, max).toString(16)
+            + this.randomInt(min, max).toString(16)
+            + this.randomInt(min, max).toString(16);
+    },
+
+    randomRotater: function()
+    {
+        return new Rotater(this.random(1000, 10000));
+    },
+
+    tune: function()
+    {
+        throw "Not implemented";
+    },
+
+    animate: function()
+    {
+        throw "Not implemented";
+    },
+
+    clear: function()
+    {
+        return this.tune(-this.tune(0));
+    }
+};
+
+function Animator()
+{
     this._frameCount = 0;
     this._dropFrameCount = 1;
-    this._measureFrameCount = 3; 
+    this._measureFrameCount = 3;
     this._referenceTime = 0;
     this._currentTimeOffset = 0;
     this._estimator = new KalmanEstimator(60);
@@ -78,12 +190,23 @@ function Animator(benchmark, options)
 
 Animator.prototype =
 {
+    initialize: function(benchmark)
+    {
+        this._benchmark = benchmark;
+        this._estimateFrameRate = benchmark.options["estimated-frame-rate"];
+    },
+
+    get benchmark()
+    {
+        return this._benchmark;
+    },
+
     timeDelta: function()
     {
         return this._currentTimeOffset - this._startTimeOffset;
     },
-    
-    animate: function()
+
+    _shouldRequestAnotherFrame: function()
     {
         var currentTime = performance.now();
         
@@ -108,34 +231,41 @@ Animator.prototype =
         // Get the average FPS of _measureFrameCount frames over measureTimeDelta.
         var measureTimeDelta = this._currentTimeOffset - this._measureTimeOffset;
         var currentFrameRate = Math.floor(1000 / (measureTimeDelta / this._measureFrameCount));
-         
+
         // Use Kalman filter to get a more non-fluctuating frame rate.
-        if (this._options["estimated-frame-rate"])
+        if (this._estimateFrameRate)
             currentFrameRate = this._estimator.estimate(currentFrameRate);
-        
+
         // Adjust the test to reach the desired FPS.
         var result = this._benchmark.update(this._currentTimeOffset, this.timeDelta(), currentFrameRate);
-        
+
         // Start the next drop/measure cycle.
         this._frameCount = 0;
-        
+
         // If result == 0, no more requestAnimationFrame() will be invoked.
         return result;
     },
-    
-    animateLoop: function(timestamp)
+
+    animateLoop: function()
     {
-        if (this.animate())
+        if (this._shouldRequestAnotherFrame()) {
+            this._benchmark.stage.animate(this.timeDelta());
             requestAnimationFrame(this.animateLoop.bind(this));
+        }
     }
 }
 
-function Benchmark(options)
+function Benchmark(stage, options)
 {
     this._options = options;
-    this._recordInterval = 200;    
-    this._isSampling = false;
 
+    this._stage = stage;
+    this._stage.initialize(this);
+    this._animator = new Animator();
+    this._animator.initialize(this);
+
+    this._recordInterval = 200;
+    this._isSampling = false;
     this._controller = new PIDController(this._options["frame-rate"]);
     this._sampler = new Sampler(2);
     this._state = new BenchmarkState(this._options["test-interval"] * 1000);
@@ -143,20 +273,35 @@ function Benchmark(options)
 
 Benchmark.prototype =
 {
+    get options()
+    {
+        return this._options;
+    },
+
+    get stage()
+    {
+        return this._stage;
+    },
+
+    get animator()
+    {
+        return this._animator;
+    },
+
     // Called from the load event listener or from this.run().
     start: function()
     {
         this._animator.animateLoop();
     },
-    
+
     // Called from the animator to adjust the complexity of the test.
     update: function(currentTimeOffset, timeDelta, currentFrameRate)
     {
         this._state.update(currentTimeOffset);
-        
+
         var stage = this._state.currentStage();
         if (stage == BenchmarkState.stages.FINISHED) {
-            this.clear();
+            this._stage.clear();
             return false;
         }
 
@@ -168,8 +313,8 @@ Benchmark.prototype =
         var tuneValue = 0;
         if (this._options["adjustment"] == "fixed") {
             if (this._options["complexity"]) {
-                // this.tune(0) returns the current complexity of the test.
-                tuneValue = this._options["complexity"] - this.tune(0);
+                // this._stage.tune(0) returns the current complexity of the test.
+                tuneValue = this._options["complexity"] - this._stage.tune(0);
             }
         }
         else if (!(this._isSampling && this._options["adjustment"] == "fixed-after-warmup")) {
@@ -179,15 +324,15 @@ Benchmark.prototype =
             tuneValue = tuneValue > 0 ? Math.floor(tuneValue) : Math.ceil(tuneValue);
         }
 
-        var currentComplexity = this.tune(tuneValue);
+        var currentComplexity = this._stage.tune(tuneValue);
         this.record(currentTimeOffset, currentComplexity, currentFrameRate);
         return true;
     },
-    
+
     record: function(currentTimeOffset, currentComplexity, currentFrameRate)
     {
         this._sampler.sample(currentTimeOffset, [currentComplexity, currentFrameRate]);
-        
+
         if (typeof this._recordTimeOffset == "undefined")
             this._recordTimeOffset = currentTimeOffset;
 
@@ -195,10 +340,9 @@ Benchmark.prototype =
         if (stage != BenchmarkState.stages.FINISHED && currentTimeOffset < this._recordTimeOffset + this._recordInterval)
             return;
 
-        this.showResults(this._state.currentProgress(), this._state.currentMessage());
         this._recordTimeOffset = currentTimeOffset;
     },
-    
+
     run: function()
     {
         this.start();
@@ -210,29 +354,8 @@ Benchmark.prototype =
                 return promise.resolve(self._sampler);
             setTimeout(resolveWhenFinished.bind(self), 50);
         }
-        
+
         resolveWhenFinished();
         return promise;
     }
-}
-
-window.benchmarkClient = {};
-
-// This event listener runs the test if it is loaded outside the benchmark runner.
-window.addEventListener("load", function()
-{
-    if (window.self !== window.top)
-        return;
-    window.benchmark = window.benchmarkClient.create(null, null, 30000, 50, null, null);
-    window.benchmark.start();
-});
-
-// This function is called from the suite controller run-callback when running the benchmark runner.
-window.runBenchmark = function(suite, test, options, progressBar)
-{
-    var benchmarkOptions = { complexity: test.complexity };
-    benchmarkOptions = Utilities.mergeObjects(benchmarkOptions, options);
-    benchmarkOptions = Utilities.mergeObjects(benchmarkOptions, Utilities.parseParameters());
-    window.benchmark = window.benchmarkClient.create(suite, test, benchmarkOptions, progressBar);
-    return window.benchmark.run();
-}
+};

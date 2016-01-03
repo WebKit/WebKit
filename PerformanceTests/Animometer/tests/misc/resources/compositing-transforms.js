@@ -1,67 +1,66 @@
-function BouncingCompositedImage(stage)
-{
-    BouncingParticle.call(this, stage);
+(function() {
 
-    this.element = document.createElement("img");
-    this.element.style.width = this._size.x + "px";
-    this.element.style.height = this._size.y + "px";
-    this.element.setAttribute("src", stage.imageSrc);
-    
-    if (stage.useFilters)
-        this.element.style.filter = "hue-rotate(" + stage.randomAngle() + "rad)";
-    
-    stage.element.appendChild(this.element);
-    this._move();
-}
+BouncingCompositedImage = Utilities.createSubclass(BouncingParticle,
+    function(stage)
+    {
+        BouncingParticle.call(this, stage);
 
-BouncingCompositedImage.prototype = Object.create(BouncingParticle.prototype);
-BouncingCompositedImage.prototype.constructor = BouncingCompositedImage;
+        this.element = document.createElement("img");
+        this.element.style.width = this.size.x + "px";
+        this.element.style.height = this.size.y + "px";
+        this.element.setAttribute("src", stage.imageSrc);
 
-BouncingCompositedImage.prototype._move = function()
-{
-    this.element.style.transform = "translate3d(" + this._position.x + "px," + this._position.y + "px, 0) " + this._rotater.rotateZ();
-}
-    
-BouncingCompositedImage.prototype.animate = function(timeDelta)
-{
-    BouncingParticle.prototype.animate.call(this, timeDelta);
-    this._move();
-}
+        if (stage.useFilters)
+            this.element.style.filter = "hue-rotate(" + stage.randomAngle() + "rad)";
 
-function CompositingTransformsStage(element, options)
-{
-    BouncingParticlesStage.call(this, element, options);
-    this.imageSrc = options["imageSrc"] || "../resources/yin-yang.svg";
-    this.useFilters = options["filters"] == "yes";
-}
+        stage.element.appendChild(this.element);
+        this._move();
+    }, {
 
-CompositingTransformsStage.prototype = Object.create(BouncingParticlesStage.prototype);
-CompositingTransformsStage.prototype.constructor = CompositingTransformsStage;
+    _move: function()
+    {
+        this.element.style.transform = "translate3d(" + this.position.x + "px," + this.position.y + "px, 0) " + this.rotater.rotateZ();
+    },
 
-CompositingTransformsStage.prototype.createParticle = function()
-{
-    return new BouncingCompositedImage(this);
-}
+    animate: function(timeDelta)
+    {
+        BouncingParticle.prototype.animate.call(this, timeDelta);
+        this._move();
+    }
+});
 
-CompositingTransformsStage.prototype.particleWillBeRemoved = function(particle)
-{
-    particle.element.remove();
-}
+CompositingTransformsStage = Utilities.createSubclass(BouncingParticlesStage,
+    function()
+    {
+        BouncingParticlesStage.call(this);
+    }, {
 
-function CompositedTransformsBenchmark(suite, test, options, progressBar)
-{
-    BouncingParticlesBenchmark.call(this, suite, test, options, progressBar);
-}
+    initialize: function(benchmark)
+    {
+        BouncingParticlesStage.prototype.initialize.call(this, benchmark);
 
-CompositedTransformsBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
-CompositedTransformsBenchmark.prototype.constructor = CompositedTransformsBenchmark;
+        this.imageSrc = benchmark.options["imageSrc"] || "../resources/yin-yang.svg";
+        this.useFilters = benchmark.options["filters"] == "yes";
+    },
 
-CompositedTransformsBenchmark.prototype.createStage = function(element)
-{
-    return new CompositingTransformsStage(element, this._options);
-}
+    createParticle: function()
+    {
+        return new BouncingCompositedImage(this);
+    },
 
-window.benchmarkClient.create = function(suite, test, options, progressBar)
-{
-    return new CompositedTransformsBenchmark(suite, test, options, progressBar);
-}
+    particleWillBeRemoved: function(particle)
+    {
+        particle.element.remove();
+    }
+});
+
+CompositedTransformsBenchmark = Utilities.createSubclass(Benchmark,
+    function(options)
+    {
+        Benchmark.call(this, new CompositingTransformsStage(), options);
+    }
+);
+
+window.benchmarkClass = CompositedTransformsBenchmark;
+
+})();

@@ -73,15 +73,15 @@ Utilities.extendObject(Headers, {
 
 Suites.push(new Suite("HTML suite",
     [
-        { 
+        {
             url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=12&particleHeight=12&shape=circle",
             name: "CSS bouncing circles"
         },
-        { 
+        {
             url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=40&particleHeight=40&shape=rect&clip=star",
             name: "CSS bouncing clipped rects"
         },
-        { 
+        {
             url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=50&particleHeight=50&shape=circle&fill=gradient",
             name: "CSS bouncing gradient circles"
         },
@@ -106,19 +106,19 @@ Suites.push(new Suite("HTML suite",
 
 Suites.push(new Suite("Canvas suite",
     [
-        { 
+        {
             url: "bouncing-particles/bouncing-canvas-shapes.html?particleWidth=12&particleHeight=12&shape=circle",
             name: "canvas bouncing circles"
         },
-        { 
+        {
             url: "bouncing-particles/bouncing-canvas-shapes.html?particleWidth=40&particleHeight=40&shape=rect&clip=star",
             name: "canvas bouncing clipped rects"
         },
-        { 
+        {
             url: "bouncing-particles/bouncing-canvas-shapes.html?particleWidth=50&particleHeight=50&shape=circle&fill=gradient",
             name: "canvas bouncing gradient circles"
         },
-        { 
+        {
             url: "bouncing-particles/bouncing-canvas-images.html?particleWidth=80&particleHeight=80&imageSrc=../resources/yin-yang.svg",
             name: "canvas bouncing SVG images"
         },
@@ -246,12 +246,12 @@ Suites.push(new Suite("Miscellaneous Tests",
             name: "Composited Transforms"
         },
         {
-            url: "examples/canvas-electrons.html",
-            name: "canvas electrons"
+            url: "misc/canvas-electrons.html",
+            name: "Canvas electrons"
         },
         {
-            url: "examples/canvas-stars.html",
-            name: "canvas stars"
+            url: "misc/canvas-stars.html",
+            name: "Canvas stars"
         },
     ]
 ));

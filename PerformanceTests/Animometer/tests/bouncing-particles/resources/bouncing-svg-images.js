@@ -1,45 +1,43 @@
-function BouncingSvgImage(stage)
-{
-    BouncingSvgParticle.call(this, stage);
-    this._shape = "image";
-    
-    var attrs = { x: 0, y: 0, width: this._size.x, height: this._size.y };
-    var xlinkAttrs = { href: stage.imageSrc };
-    this.element = DocumentExtension.createSvgElement("image", attrs, xlinkAttrs, stage.element);
-    this._move();
-}
+(function() {
 
-BouncingSvgImage.prototype = Object.create(BouncingSvgParticle.prototype);
-BouncingSvgImage.prototype.constructor = BouncingSvgImage;
+BouncingSvgImage = Utilities.createSubclass(BouncingSvgParticle,
+    function(stage)
+    {
+        BouncingSvgParticle.call(this, stage, "image");
 
-function BouncingSvgImagesStage(element, options)
-{
-    BouncingParticlesStage.call(this, element, options);
-    this.imageSrc = options["imageSrc"] || "resources/yin-yang.svg";
-}
+        var attrs = { x: 0, y: 0, width: this.size.x, height: this.size.y };
+        var xlinkAttrs = { href: stage.imageSrc };
+        this.element = DocumentExtension.createSvgElement("image", attrs, xlinkAttrs, stage.element);
+        this._move();
+    }
+);
 
-BouncingSvgImagesStage.prototype = Object.create(BouncingSvgParticlesStage.prototype);
-BouncingSvgImagesStage.prototype.constructor = BouncingSvgImagesStage;
+BouncingSvgImagesStage = Utilities.createSubclass(BouncingSvgParticlesStage,
+    function()
+    {
+        BouncingSvgParticlesStage.call(this);
+    }, {
 
-BouncingSvgImagesStage.prototype.createParticle = function()
-{
-    return new BouncingSvgImage(this);
-}
+    initialize: function(benchmark)
+    {
+        BouncingSvgParticlesStage.prototype.initialize.call(this, benchmark);
+        this.imageSrc = benchmark.options["imageSrc"] || "resources/yin-yang.svg";
+    },
 
-function BouncingSvgImagesBenchmark(suite, test, options, progressBar)
-{
-    BouncingParticlesBenchmark.call(this, suite, test, options, progressBar);
-}
+    createParticle: function()
+    {
+        return new BouncingSvgImage(this);
+    }
+});
 
-BouncingSvgImagesBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
-BouncingSvgImagesBenchmark.prototype.constructor = BouncingSvgImagesBenchmark;
+BouncingSvgImagesBenchmark = Utilities.createSubclass(Benchmark,
+    function(options)
+    {
+        Benchmark.call(this, new BouncingSvgImagesStage(), options);
+    }
+);
 
-BouncingSvgImagesBenchmark.prototype.createStage = function(element)
-{
-    return new BouncingSvgImagesStage(element, this._options);
-}
+window.benchmarkClass = BouncingSvgImagesBenchmark;
 
-window.benchmarkClient.create = function(suite, test, options, progressBar)
-{
-    return new BouncingSvgImagesBenchmark(suite, test, options, progressBar);
-}
+})();
+

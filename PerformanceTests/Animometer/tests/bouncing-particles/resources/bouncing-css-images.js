@@ -1,63 +1,61 @@
-function BouncingCssImage(stage)
-{
-    BouncingParticle.call(this, stage);
+(function() {
 
-    this.element = document.createElement("img");
-    this.element.style.width = this._size.x + "px";
-    this.element.style.height = this._size.y + "px";
-    this.element.setAttribute("src", stage.imageSrc);
-    
-    stage.element.appendChild(this.element);
-    this._move();
-}
+BouncingCssImage = Utilities.createSubclass(BouncingParticle,
+    function(stage)
+    {
+        BouncingParticle.call(this, stage);
 
-BouncingCssImage.prototype = Object.create(BouncingParticle.prototype);
-BouncingCssImage.prototype.constructor = BouncingCssImage;
+        this.element = document.createElement("img");
+        this.element.style.width = this.size.x + "px";
+        this.element.style.height = this.size.y + "px";
+        this.element.setAttribute("src", stage.imageSrc);
 
-BouncingCssImage.prototype._move = function()
-{
-    this.element.style.transform = "translate(" + this._position.x + "px," + this._position.y + "px) " + this._rotater.rotateZ();
-}
-    
-BouncingCssImage.prototype.animate = function(timeDelta)
-{
-    BouncingParticle.prototype.animate.call(this, timeDelta);
-    this._move();
-}
+        stage.element.appendChild(this.element);
+        this._move();
+    }, {
 
-function BouncingCssImagesStage(element, options)
-{
-    BouncingParticlesStage.call(this, element, options);
-    this.imageSrc = options["imageSrc"] || "../resources/yin-yang.svg";
-}
+    _move: function()
+    {
+        this.element.style.transform = "translate(" + this.position.x + "px," + this.position.y + "px) " + this.rotater.rotateZ();
+    },
 
-BouncingCssImagesStage.prototype = Object.create(BouncingParticlesStage.prototype);
-BouncingCssImagesStage.prototype.constructor = BouncingCssImagesStage;
+    animate: function(timeDelta)
+    {
+        BouncingParticle.prototype.animate.call(this, timeDelta);
+        this._move();
+    }
+});
 
-BouncingCssImagesStage.prototype.createParticle = function()
-{
-    return new BouncingCssImage(this);
-}
+BouncingCssImagesStage = Utilities.createSubclass(BouncingParticlesStage,
+    function()
+    {
+        BouncingParticlesStage.call(this);
+    }, {
 
-BouncingCssImagesStage.prototype.particleWillBeRemoved = function(particle)
-{
-    particle.element.remove();
-}
+    initialize: function(benchmark)
+    {
+        BouncingParticlesStage.prototype.initialize.call(this, benchmark);
+        this.imageSrc = benchmark.options["imageSrc"] || "../resources/yin-yang.svg";
+    },
 
-function BouncingCssImagesBenchmark(suite, test, options, progressBar)
-{
-    BouncingParticlesBenchmark.call(this, suite, test, options, progressBar);
-}
+    createParticle: function()
+    {
+        return new BouncingCssImage(this);
+    },
 
-BouncingCssImagesBenchmark.prototype = Object.create(BouncingParticlesBenchmark.prototype);
-BouncingCssImagesBenchmark.prototype.constructor = BouncingCssImagesBenchmark;
+    particleWillBeRemoved: function(particle)
+    {
+        particle.element.remove();
+    }
+});
 
-BouncingCssImagesBenchmark.prototype.createStage = function(element)
-{
-    return new BouncingCssImagesStage(element, this._options);
-}
+BouncingCssImagesBenchmark = Utilities.createSubclass(Benchmark,
+    function(options)
+    {
+        Benchmark.call(this, new BouncingCssImagesStage(), options);
+    }
+);
 
-window.benchmarkClient.create = function(suite, test, options, progressBar)
-{
-    return new BouncingCssImagesBenchmark(suite, test, options, progressBar);
-}
+window.benchmarkClass = BouncingCssImagesBenchmark;
+
+})();

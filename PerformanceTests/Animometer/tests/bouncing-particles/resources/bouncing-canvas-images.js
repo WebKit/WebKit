@@ -1,51 +1,47 @@
-function BouncingCanvasImage(stage)
-{
-    BouncingCanvasParticle.call(this, stage);
-    this._imageElement = stage.imageElement;
-    this._shape = "image";
-}
+(function() {
 
-BouncingCanvasImage.prototype = Object.create(BouncingCanvasParticle.prototype);
-BouncingCanvasImage.prototype.constructor = BouncingCanvasImage;
+BouncingCanvasImage = Utilities.createSubclass(BouncingCanvasParticle,
+    function(stage)
+    {
+        BouncingCanvasParticle.call(this, stage, "image");
+        this._imageElement = stage.imageElement;
+    }, {
 
-BouncingCanvasImage.prototype._draw = function()
-{
-    this._context.save();
-        this._applyRotation();
-        this._context.drawImage(this._imageElement, 0, 0, this._size.x, this._size.y);
-    this._context.restore();
-}
+    _draw: function()
+    {
+        this.context.save();
+            this.applyRotation();
+            this.context.drawImage(this._imageElement, 0, 0, this.size.x, this.size.y);
+        this.context.restore();
+    }
+});
 
-function BouncingCanvasImagesStage(element, options)
-{
-    BouncingCanvasParticlesStage.call(this, element, options);
+BouncingCanvasImagesStage = Utilities.createSubclass(BouncingCanvasParticlesStage,
+    function()
+    {
+        BouncingCanvasParticlesStage.call(this);
+    }, {
 
-    var imageSrc = options["imageSrc"] || "resources/yin-yang.svg";
-    this.imageElement = document.querySelector(".hidden[src=\"" + imageSrc + "\"]");
-}
+    initialize: function(benchmark)
+    {
+        BouncingCanvasParticlesStage.prototype.initialize.call(this, benchmark);
+        var imageSrc = benchmark.options["imageSrc"] || "resources/yin-yang.svg";
+        this.imageElement = document.querySelector(".hidden[src=\"" + imageSrc + "\"]");
+    },
 
-BouncingCanvasImagesStage.prototype = Object.create(BouncingCanvasParticlesStage.prototype);
-BouncingCanvasImagesStage.prototype.constructor = BouncingCanvasImagesStage;
+    createParticle: function()
+    {
+        return new BouncingCanvasImage(this);
+    }
+});
 
-BouncingCanvasImagesStage.prototype.createParticle = function()
-{
-    return new BouncingCanvasImage(this);
-}
+BouncingCanvasImagesBenchmark = Utilities.createSubclass(Benchmark,
+    function(options)
+    {
+        Benchmark.call(this, new BouncingCanvasImagesStage(), options);
+    }
+);
 
-function BouncingCanvasImagesBenchmark(suite, test, options, progressBar)
-{
-    BouncingCanvasParticlesBenchmark.call(this, suite, test, options, progressBar);
-}
+window.benchmarkClass = BouncingCanvasImagesBenchmark;
 
-BouncingCanvasImagesBenchmark.prototype = Object.create(BouncingCanvasParticlesBenchmark.prototype);
-BouncingCanvasImagesBenchmark.prototype.constructor = BouncingCanvasImagesBenchmark;
-
-BouncingCanvasImagesBenchmark.prototype.createStage = function(element)
-{
-    return new BouncingCanvasImagesStage(element, this._options);
-}
-
-window.benchmarkClient.create = function(suite, test, options, progressBar)
-{
-    return new BouncingCanvasImagesBenchmark(suite, test, options, progressBar);
-}
+})();

@@ -1,3 +1,5 @@
+(function() {
+
 // === PAINT OBJECTS ===
 
 function CanvasLineSegment(stage) {
@@ -172,124 +174,162 @@ CanvasRectFill.prototype.draw = function(context) {
 
 // === STAGES ===
 
-function SimpleCanvasPathStrokeStage(element, options, canvasObject) {
-    SimpleCanvasStage.call(this, element, options, canvasObject);
-}
-SimpleCanvasPathStrokeStage.prototype = Object.create(SimpleCanvasStage.prototype);
-SimpleCanvasPathStrokeStage.prototype.constructor = SimpleCanvasPathStrokeStage;
-SimpleCanvasPathStrokeStage.prototype.animate = function() {
-    var context = this.context;
-    context.lineWidth = this.randomInt(1, 20);
-    context.strokeStyle = this.randomColor();
-    context.beginPath();
-    context.moveTo(0,0);
-    this._objects.forEach(function(object) {
-        object.draw(context);
-    });
-    context.stroke();
-}
+SimpleCanvasPathStrokeStage = Utilities.createSubclass(SimpleCanvasStage,
+    function(canvasObject) {
+        SimpleCanvasStage.call(this, canvasObject);
+    }, {
 
-function SimpleCanvasPathFillStage(element, options, canvasObject) {
-    SimpleCanvasStage.call(this, element, options, canvasObject);
-}
-SimpleCanvasPathFillStage.prototype = Object.create(SimpleCanvasStage.prototype);
-SimpleCanvasPathFillStage.prototype.constructor = SimpleCanvasPathFillStage;
-SimpleCanvasPathFillStage.prototype.animate = function() {
-    var context = this.context;
-    context.fillStyle = this.randomColor();
-    context.beginPath();
-    context.moveTo(0,0);
-    this._objects.forEach(function(object) {
-        object.draw(context);
-    });
-    context.fill();
-}
+    animate: function()
+    {
+        var context = this.context;
+        context.clearRect(0, 0, this.size.x, this.size.y);
+        context.lineWidth = this.randomInt(1, 20);
+        context.strokeStyle = this.randomColor();
+        context.beginPath();
+        context.moveTo(0,0);
+        this.objects.forEach(function(object) {
+            object.draw(context);
+        });
+        context.stroke();
+    }
+});
 
-function CanvasLineSegmentStage(element, options)
-{
-    SimpleCanvasStage.call(this, element, options, CanvasLineSegment);
-    this.context.lineCap = options["lineCap"] || "butt";
-}
-CanvasLineSegmentStage.prototype = Object.create(SimpleCanvasStage.prototype);
-CanvasLineSegmentStage.prototype.constructor = CanvasLineSegmentStage;
+SimpleCanvasPathFillStage = Utilities.createSubclass(SimpleCanvasStage,
+    function(canvasObject) {
+        SimpleCanvasStage.call(this, canvasObject);
+    }, {
 
-function CanvasLinePathStage(element, options)
-{
-    SimpleCanvasPathStrokeStage.call(this, element, options, CanvasLinePoint);
-    this.context.lineJoin = options["lineJoin"] || "bevel";
-}
-CanvasLinePathStage.prototype = Object.create(SimpleCanvasPathStrokeStage.prototype);
-CanvasLinePathStage.prototype.constructor = CanvasLinePathStage;
+    animate: function()
+    {
+        var context = this.context;
+        context.clearRect(0, 0, this.size.x, this.size.y);
+        context.fillStyle = this.randomColor();
+        context.beginPath();
+        context.moveTo(0,0);
+        this.objects.forEach(function(object) {
+            object.draw(context);
+        });
+        context.fill();
+    }
+});
 
-function CanvasLineDashStage(element, options)
-{
-    SimpleCanvasStage.call(this, element, options, CanvasLinePoint);
-    this.context.setLineDash([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    this.context.lineWidth = 1;
-    this.context.strokeStyle = "#000";
-    this._step = 0;
-}
-CanvasLineDashStage.prototype = Object.create(SimpleCanvasStage.prototype);
-CanvasLineDashStage.prototype.constructor = CanvasLineDashStage;
-CanvasLineDashStage.prototype.animate = function() {
-    var context = this.context;
-    context.lineDashOffset = this._step++;
-    context.beginPath();
-    context.moveTo(0,0);
-    this._objects.forEach(function(object) {
-        object.draw(context);
-    });
-    context.stroke();
-};
+CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
+    function()
+    {
+        SimpleCanvasStage.call(this, CanvasLineSegment);
+    }, {
+
+    initialize: function(benchmark)
+    {
+        SimpleCanvasStage.prototype.initialize.call(this, benchmark);
+        this.context.lineCap = benchmark.options["lineCap"] || "butt";
+    }
+});
+
+CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasPathStrokeStage,
+    function()
+    {
+        SimpleCanvasPathStrokeStage.call(this, CanvasLinePoint);
+    }, {
+
+    initialize: function(benchmark)
+    {
+        SimpleCanvasPathStrokeStage.prototype.initialize.call(this, benchmark);
+        this.context.lineJoin = benchmark.options["lineJoin"] || "bevel";
+    }
+});
+
+CanvasLineDashStage = Utilities.createSubclass(SimpleCanvasStage,
+    function()
+    {
+        SimpleCanvasStage.call(this, CanvasLinePoint);
+        this._step = 0;
+    }, {
+
+    initialize: function(benchmark)
+    {
+        SimpleCanvasStage.prototype.initialize.call(this, benchmark);
+        this.context.setLineDash([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+        this.context.lineWidth = 1;
+        this.context.strokeStyle = "#000";
+    },
+
+    animate: function()
+    {
+        var context = this.context;
+        context.clearRect(0, 0, this.size.x, this.size.y);
+        context.lineDashOffset = this._step++;
+        context.beginPath();
+        context.moveTo(0,0);
+        this.objects.forEach(function(object) {
+            object.draw(context);
+        });
+        context.stroke();
+    }
+});
 
 // === BENCHMARK ===
 
-function CanvasPathBenchmark(suite, test, options, progressBar) {
-    SimpleCanvasBenchmark.call(this, suite, test, options, progressBar);
-}
-CanvasPathBenchmark.prototype = Object.create(SimpleCanvasBenchmark.prototype);
-CanvasPathBenchmark.prototype.constructor = CanvasPathBenchmark;
-CanvasPathBenchmark.prototype.createStage = function(element)
-{
-    switch (this._options["pathType"]) {
-    case "line":
-        return new CanvasLineSegmentStage(element, this._options);
-    case "linePath": {
-        if ("lineJoin" in this._options)
-            return new CanvasLinePathStage(element, this._options);
-        if ("lineDash" in this._options)
-            return new CanvasLineDashStage(element, this._options);
-        break;
-    }
-    case "quadratic":
-        return new SimpleCanvasStage(element, this._options, CanvasQuadraticSegment);
-    case "quadraticPath":
-        return new SimpleCanvasPathStrokeStage(element, this._options, CanvasQuadraticPoint);
-    case "bezier":
-        return new SimpleCanvasStage(element, this._options, CanvasBezierSegment);
-    case "bezierPath":
-        return new SimpleCanvasPathStrokeStage(element, this._options, CanvasBezierPoint);
-    case "arcTo":
-        return new SimpleCanvasStage(element, this._options, CanvasArcToSegment);
-    case "arc":
-        return new SimpleCanvasStage(element, this._options, CanvasArcSegment);
-    case "rect":
-        return new SimpleCanvasStage(element, this._options, CanvasRect);
-    case "lineFill":
-        return new SimpleCanvasPathFillStage(element, this._options, CanvasLinePoint);
-    case "quadraticFill":
-        return new SimpleCanvasPathFillStage(element, this._options, CanvasQuadraticPoint);
-    case "bezierFill":
-        return new SimpleCanvasPathFillStage(element, this._options, CanvasBezierPoint);
-    case "arcToFill":
-        return new SimpleCanvasStage(element, this._options, CanvasArcToSegmentFill);
-    case "arcFill":
-        return new SimpleCanvasStage(element, this._options, CanvasArcSegmentFill);
-    case "rectFill":
-        return new SimpleCanvasStage(element, this._options, CanvasRectFill);
-    }
-}
+CanvasPathBenchmark = Utilities.createSubclass(Benchmark,
+    function(options)
+    {
+        var stage;
+        switch (options["pathType"]) {
+        case "line":
+            stage = new CanvasLineSegmentStage();
+            break;
+        case "linePath": {
+            if ("lineJoin" in options)
+                stage = new CanvasLinePathStage();
+            if ("lineDash" in options)
+                stage = new CanvasLineDashStage();
+            break;
+        }
+        case "quadratic":
+            stage = new SimpleCanvasStage(CanvasQuadraticSegment);
+            break;
+        case "quadraticPath":
+            stage = new SimpleCanvasPathStrokeStage(CanvasQuadraticPoint);
+            break;
+        case "bezier":
+            stage = new SimpleCanvasStage(CanvasBezierSegment);
+            break;
+        case "bezierPath":
+            stage = new SimpleCanvasPathStrokeStage(CanvasBezierPoint);
+            break;
+        case "arcTo":
+            stage = new SimpleCanvasStage(CanvasArcToSegment);
+            break;
+        case "arc":
+            stage = new SimpleCanvasStage(CanvasArcSegment);
+            break;
+        case "rect":
+            stage = new SimpleCanvasStage(CanvasRect);
+            break;
+        case "lineFill":
+            stage = new SimpleCanvasPathFillStage(CanvasLinePoint);
+            break;
+        case "quadraticFill":
+            stage = new SimpleCanvasPathFillStage(CanvasQuadraticPoint);
+            break;
+        case "bezierFill":
+            stage = new SimpleCanvasPathFillStage(CanvasBezierPoint);
+            break;
+        case "arcToFill":
+            stage = new SimpleCanvasStage(CanvasArcToSegmentFill);
+            break;
+        case "arcFill":
+            stage = new SimpleCanvasStage(CanvasArcSegmentFill);
+            break;
+        case "rectFill":
+            stage = new SimpleCanvasStage(CanvasRectFill);
+            break;
+        }
 
-window.benchmarkClient.create = function(suite, test, options, progressBar) {
-    return new CanvasPathBenchmark(suite, test, options, progressBar);
-}
+        Benchmark.call(this, stage, options);
+    }
+);
+
+window.benchmarkClass = CanvasPathBenchmark;
+
+})();

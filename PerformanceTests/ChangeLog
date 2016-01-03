@@ -1,3 +1,268 @@
+2015-12-27  Jon Lee  <jonlee@apple.com>
+
+        Simplify the test harness
+        https://bugs.webkit.org/show_bug.cgi?id=152562
+
+        Reviewed by Simon Fraser.
+
+        All of the benchmarks use the default Animator(). Don't require new tests
+        to pass a new instance, and instead just make one in the Benchmark constructor.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+        * Animometer/tests/master/resources/canvas-tests.js:
+        * Animometer/tests/misc/resources/canvas-electrons.js:
+        * Animometer/tests/misc/resources/canvas-stars.js:
+        * Animometer/tests/misc/resources/compositing-transforms.js:
+        * Animometer/tests/resources/main.js:
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        * Animometer/tests/template/resources/template-canvas.js:
+        * Animometer/tests/template/resources/template-css.js:
+        * Animometer/tests/template/resources/template-svg.js:
+        * Animometer/tests/text/resources/layering-text.js:
+        * Animometer/tests/text/resources/text-boxes.js:
+
+        Refactor the template.
+
+        * Animometer/tests/template/resources/template-canvas.js:
+        * Animometer/tests/template/resources/template-css.js:
+        * Animometer/tests/template/resources/template-svg.js:
+        * Animometer/tests/template/template-canvas.html:
+        * Animometer/tests/template/template-css.html:
+        * Animometer/tests/template/template-svg.html:
+
+        Refactor the SVG suite.
+
+        * Animometer/tests/bouncing-particles/bouncing-svg-images.html: Move scripts to the end.
+        * Animometer/tests/bouncing-particles/bouncing-svg-shapes.html: Ditto.
+
+        * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html: Remove extraneous includes
+        to stage.js.
+        * Animometer/tests/text/text-boxes.html: Ditto.
+
+        BouncingCanvasParticlesBenchmark is not necessary. Use Benchmark directly when subclassing.
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js: Remove
+        BouncingCanvasParticlesBenchmark.
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js: Use Benchmark.
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js: Ditto.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-particles.js: Require the shape
+        in the constructor instead of having subclasses set the private variable.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js: Refactor.
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+
+        Refactor the HTML suite.
+
+        Move scripts to the end.
+        * Animometer/tests/bouncing-particles/bouncing-css-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-shapes.html:
+        * Animometer/tests/text/layering-text.html:
+        * Animometer/tests/text/text-boxes.html:
+
+        Refactor to use the new variables.
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        * Animometer/tests/text/resources/layering-text.js:
+        * Animometer/tests/text/resources/text-boxes.js:
+
+        Refactor the bouncing canvas tests.
+
+        * Animometer/tests/bouncing-particles/bouncing-canvas-images.html: Move scripts to the end.
+        * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html: Move scripts to the end.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js: Promote a few
+        properties to "public" since they are used by subclasses.
+        (BouncingParticlesStage): Fix the constructor, which was missing "this". Make particles
+        "public" for subclasses.
+        (BouncingParticlesStage.initialize): Fix the max velocity, which was accidentally changed.
+        * Animometer/tests/misc/resources/compositing-transforms.js: Refactor.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js:
+        BouncingCanvasParticlesAnimator is no longer needed.
+        (BouncingCanvasParticle): Change constructor to take a shape as a parameter instead of
+        having subclasses set the variable.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js: Refactor.
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js: Refactor.
+
+        Move example/ files into misc/.
+
+        * Animometer/tests/misc/canvas-electrons.html: Renamed from PerformanceTests/Animometer/tests/examples/canvas-electrons.html.
+        * Animometer/tests/misc/canvas-stars.html: Renamed from PerformanceTests/Animometer/tests/examples/canvas-stars.html.
+        * Animometer/tests/misc/resources/canvas-electrons.js: Renamed from PerformanceTests/Animometer/tests/examples/resources/canvas-electrons.js.
+        * Animometer/tests/misc/resources/canvas-stars.js: Renamed from PerformanceTests/Animometer/tests/examples/resources/canvas-stars.js.
+
+        * Animometer/resources/debug-runner/tests.js: Update test URLs.
+
+        Refactor miscellaneous suite.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        Remove BouncingParticlesAnimator and BouncingParticleBenchmark, which are
+        not needed.
+        (tune): Remove console assert.
+        * Animometer/tests/resources/main.js: Add Rotater back in from stage.js.
+
+        * Animometer/tests/examples/resources/canvas-electrons.js: Remove CanvasElectronsAnimator.
+        * Animometer/tests/examples/resources/canvas-stars.js: Remove CanvasStarsAnimator.
+        * Animometer/tests/misc/resources/compositing-transforms.js:
+        * Animometer/tests/examples/canvas-electrons.html: Move scripts to the end.
+        * Animometer/tests/examples/canvas-stars.html: Ditto.
+        * Animometer/tests/misc/compositing-transforms.html: Ditto.
+
+        Refactor the simple suite.
+
+        * Animometer/tests/master/resources/canvas-stage.js:
+        (tune): Remove coordinateMaximum since it is not needed in any
+        of the master tests.
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        SimpleCanvasAnimator and SimpleCanvasBenchmark are no longer
+        needed.
+        (tune): Manage the objects differently, but instead of duplicating
+        all of SimpleCanvasStage here, just replace tune(). Include
+        coordinateMaximum, and remove items from the end of the list
+        instead of the beginning.
+        (StageBenchmark.call.createAnimator): Deleted.
+        (StageBenchmark.call): Deleted.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        * Animometer/tests/simple/simple-canvas-paths.html: Move
+        scripts to the end.
+
+        Get rid of stage.js, StageAnimator, and StageBenchmark. Don't have the progress bar update during the test.
+
+        * Animometer/resources/debug-runner/animometer.js:
+        (initialize): Move the setting of testsCount to the debug runner.
+        (didRunTest): Nicer name.
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runBenchmarkAndRecordResults): Don't pass in the progress bar to benchmarks.
+        * Animometer/resources/extensions.js:
+        (ProgressBar): Refactor. Make variables "private". Resetting the progress when instantiating.
+        (ProgressBar.prototype.incrementRange): This is called every time a benchmark completes.
+        * Animometer/resources/runner/animometer.js:
+        (window.benchmarkRunnerClient.initialize): Remove unneeded setting of testsCount.
+        * Animometer/resources/strings.js: These are no longer needed.
+        * Animometer/tests/master/canvas-stage.html: Remove script inclusion. Other tests will follow.
+        * Animometer/tests/master/resources/canvas-tests.js: Use Benchmark instead of StageBenchmark.
+        * Animometer/tests/resources/main.js: Messages are no longer needed
+        (Animator.prototype._shouldRequestAnotherFrame): Rename from animate(), since this method returns a boolean
+        indicating whether another frame should be requested. Collapse the logic from StageAnimator into animateLoop.
+        (BenchmarkState.prototype.currentStage): Deleted.
+        (BenchmarkState.prototype.currentMessage): Deleted.
+        (BenchmarkState.prototype.currentProgress): Deleted.
+        (Animator.prototype.animate): Deleted.
+        (Animator.prototype.animateLoop): The stage is animated only when we have another frame to draw.
+        (Benchmark.prototype.record): No need to update the progress bar.
+        * Animometer/tests/resources/stage.js: Removed. Rotater will appear in a later patch, in main.js.
+
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runBenchmarkAndRecordResults): Each test is run as a benchmark.
+        Remove the call to runBenchmark by merging the options here, and calling benchmark.run()
+        directly.
+
+        Make the class relationships more easily understandable. The benchmark owns the stage,
+        animator, and options. Make the stage and animator no longer have their own references to
+        the options. Make Stage a first-class citizen by promoting it to main.js. Later patches
+        will try to get rid of stage.js altogether.
+        * Animometer/tests/resources/main.js:
+        (Stage): Moved from stage.js.
+        (Animator): Don't pass in benchmark and options in its constructor. It will get initialized
+        by benchmark-related parameters in initialize().
+        (Animator.prototype.initialize): Add a back-reference to benchmark and cache an option.
+        (Animator.prototype.get benchmark):
+        (Animator.prototype.animate): Refactor to use the cached option, to remove its dependency on
+        the options dictionary.
+        (Benchmark): Require all benchmarks to have a stage and animator. The instance will initialize
+        them.
+        (Benchmark.prototype.get options):
+        (Benchmark.prototype.get stage): BenchmarkStates.stages will need to be renamed to avoid confusion.
+        (Benchmark.prototype.get animator):
+        (Benchmark.prototype.start):
+        (Benchmark.prototype.update): Ask the stage directly to tune or clear instead of adding another
+        level of indirection.
+        (window.runBenchmark): Deleted. Remove the need for a benchmarkClient. Also remove the standalone
+        path, since tests can be individually selected, and remove the need for runBenchmark since that is
+        handled in BenchmarkRunner._runBenchmarkAndRecordResults.
+        * Animometer/tests/resources/stage.js:
+        (Stage): Deleted. Moved to main.js.
+        (StageBenchmark): What's left is updating the progress bar; to be removed.
+        (StageAnimator): What's left can be folded in Animator.
+
+        Refactor master suite.
+        * Animometer/tests/master/resources/canvas-stage.js: This now only has SimpleCanvasStage.
+        (animate): Push the clearRect() into each stage.
+        (complexity):
+        (StageBenchmark.call.createAnimator): Deleted.
+        (StageBenchmark.call): Deleted.
+        * Animometer/tests/master/resources/canvas-tests.js: SimpleCanvasPathStrokeStage is no longer needed.
+        (CanvasLineSegment.prototype.draw):
+        (CanvasArc):
+        (CanvasLinePoint): Remove the draw call because depending on its index it either needs to be moveTo
+        or lineTo, and it is otherwise a very small draw operation that doesn't need the overhead of the
+        function call. Do all of the drawing through the stage.
+
+        Refactor the subclass pattern. Introduce Utilities.createSubclass().
+
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        * Animometer/resources/extensions.js:
+        (window.Utilities.createSubclass): Takes the super class, a function representing
+        the class's constructor, and additional methods to attach to the new class's
+        prototype object.
+        * Animometer/tests/text/text-boxes.html: Remove unneeded reference to utilities.js.
+
+        Refactor tests.
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-particles.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
+        * Animometer/tests/examples/resources/canvas-electrons.js:
+        * Animometer/tests/examples/resources/canvas-stars.js:
+        * Animometer/tests/master/resources/canvas-stage.js:
+        * Animometer/tests/master/resources/canvas-tests.js:
+        * Animometer/tests/misc/resources/compositing-transforms.js:
+        * Animometer/tests/resources/stage.js:
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        * Animometer/tests/template/resources/template-canvas.js:
+        * Animometer/tests/template/resources/template-css.js:
+        * Animometer/tests/template/resources/template-svg.js:
+        * Animometer/tests/text/resources/layering-text.js: Reorder some of the methods
+        and properties since they rely on each other.
+        * Animometer/tests/text/resources/text-boxes.js:
+
+        * Animometer/resources/debug-runner/animometer.js: Arrange calls
+        in the order they are evoked.
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        (BenchmarkRunnerState.prototype.next): Get rid of return value since
+        no caller to next() uses it.
+        (BenchmarkRunnerState.prototype.prepareCurrentTest): Refactor the
+        promise to resolve simply when onload() is called instead of
+        looking for #stage.
+        (BenchmarkRunner.prototype._runTestAndRecordResults): Suite.run
+        simply calls runBenchmark(). Call it directly rather than through
+        the Suite.
+        (BenchmarkRunner.prototype.step): Remove unused parameter in
+        resolve callback.
+        (BenchmarkRunner.prototype.runMultipleIterations): Use this instead
+        of self since it is outside of the closure which needed the self
+        variable.
+        (resolveIfReady): Deleted.
+        (BenchmarkRunner.prototype.waitForElement): Deleted.
+        * Animometer/resources/runner/tests.js: prepare() and run() are
+        no longer needed.
+        (Suite.prototype.prepare): Deleted.
+        (Suite.prototype.run): Deleted.
+        * Animometer/tests/master/canvas-stage.html: Move all scripts to
+        the end of the page.
+
 2015-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         Add an Animometer developer test which animates text-rich boxes

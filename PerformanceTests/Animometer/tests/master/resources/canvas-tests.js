@@ -22,7 +22,7 @@ CanvasLineSegment.prototype.draw = function(context)
     context.strokeStyle = this._color;
     context.lineWidth = this._lineWidth;
 
-    this._length+=Math.sin(Date.now()/100*this._omega);
+    this._length += Math.sin(Date.now()/100*this._omega);
 
     context.beginPath();
     context.moveTo(this._startX, this._startY);
@@ -41,7 +41,7 @@ function CanvasArc(stage)
 
     this._point = new Point(distanceX * (randX + (randY % 2) / 2), distanceY * (randY + .5));
 
-    this._radius = 20 + Math.pow(Math.random(), 5) * (Math.min(distanceX, distanceY) / 1.6);
+    this._radius = 20 + Math.pow(Math.random(), 5) * (Math.min(distanceX, distanceY) / 1.8);
     this._startAngle = stage.randomAngle();
     this._endAngle = stage.randomAngle();
     this._omega = (Math.random() - 0.5) * 0.3;
@@ -74,6 +74,8 @@ CanvasArc.prototype.draw = function(context)
     }
 };
 
+// CanvasLinePoint contains no draw() method since it is either moveTo or
+// lineTo depending on its index.
 function CanvasLinePoint(stage, coordinateMaximum)
 {
     var X_LOOPS = 40;
@@ -83,8 +85,8 @@ function CanvasLinePoint(stage, coordinateMaximum)
     var offset = offsets[Math.floor(Math.random() * offsets.length)];
 
     this.coordinate = new Point(X_LOOPS/2, Y_LOOPS/2);
-    if (stage._objects.length) {
-        var head = stage._objects[stage._objects.length - 1].coordinate;
+    if (stage.objects.length) {
+        var head = stage.objects[stage.objects.length - 1].coordinate;
         this.coordinate.x = head.x;
         this.coordinate.y = head.y;
     }
@@ -103,119 +105,116 @@ function CanvasLinePoint(stage, coordinateMaximum)
     var xOff = .25 * (this.coordinate.y % 2);
     var randX = (xOff + this.coordinate.x) * stage.size.x / X_LOOPS;
     var randY = this.coordinate.y * stage.size.y / Y_LOOPS;
-    var colors = ["#101010", "#808080", "#c0c0c0", "#e01040"];
-    this._color = colors[Math.floor(Math.random() * colors.length)];
+    var colors = ["#101010", "#808080", "#c0c0c0", "#101010", "#808080", "#c0c0c0", "#e01040"];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
 
-    this._width = Math.pow(Math.random(), 5) * 20 + 1;
-    this._isSplit = Math.random() > 0.9;
-    this._point = new Point(randX, randY);
-
+    this.width = Math.pow(Math.random(), 5) * 20 + 1;
+    this.isSplit = Math.random() > 0.9;
+    this.point = new Point(randX, randY);
 }
-
-CanvasLinePoint.prototype.draw = function(context, stage)
-{
-    context.lineTo(this._point.x, this._point.y);
-};
-
 
 // === STAGES ===
 
-function SimpleCanvasPathStrokeStage(element, options, canvasObject)
-{
-    SimpleCanvasStage.call(this, element, options, canvasObject);
-    this.context.lineCap = options["lineCap"] || "butt";
-    this.context.lineJoin = options["lineJoin"] || "bevel";
-}
-SimpleCanvasPathStrokeStage.prototype = Object.create(SimpleCanvasStage.prototype);
-SimpleCanvasPathStrokeStage.prototype.constructor = SimpleCanvasPathStrokeStage;
-SimpleCanvasPathStrokeStage.prototype.animate = function() {
-    var context = this.context;
-    var stage = this;
+CanvasLineSegmentStage = Utilities.createSubclass(SimpleCanvasStage,
+    function()
+    {
+        SimpleCanvasStage.call(this, CanvasLineSegment);
+    }, {
 
-    context.beginPath();
-    this._objects.forEach(function(object, index) {
-        if (index == 0) {
-            context.lineWidth = object._width;
-            context.strokeStyle = object._color;
-            context.moveTo(object._point.x, object._point.y);
-        } else {
-            if (object._isSplit) {
-                context.stroke();
+    initialize: function(benchmark)
+    {
+        SimpleCanvasStage.prototype.initialize.call(this, benchmark);
+        this.context.lineCap = benchmark.options["lineCap"] || "butt";
+        this.circleRadius = this.size.x / 3 / 2 - 20;
+    },
 
-                context.lineWidth = object._width;
-                context.strokeStyle = object._color;
-                context.beginPath();
-            }
+    animate: function()
+    {
+        var context = this.context;
+        var stage = this;
 
-            if (Math.random() > 0.999)
-                object._isSplit = !object._isSplit;
-
-            object.draw(context);
+        context.clearRect(0, 0, this.size.x, this.size.y);
+        context.lineWidth = 30;
+        for(var i = 0; i < 3; i++) {
+            context.strokeStyle = ["#e01040", "#10c030", "#e05010"][i];
+            context.fillStyle = ["#70051d", "#016112", "#702701"][i];
+            context.beginPath();
+                context.arc((0.5 + i) / 3 * stage.size.x, stage.size.y/2, stage.circleRadius, 0, Math.PI*2);
+            context.stroke();
+            context.fill();
         }
-    });
-    context.stroke();
-}
 
-function CanvasLineSegmentStage(element, options)
-{
-    SimpleCanvasStage.call(this, element, options, CanvasLineSegment);
-    this.context.lineCap = options["lineCap"] || "butt";
-    this.circleRadius = this.size.x / 3 / 2 - 20;
-}
-CanvasLineSegmentStage.prototype = Object.create(SimpleCanvasStage.prototype);
-CanvasLineSegmentStage.prototype.constructor = CanvasLineSegmentStage;
-CanvasLineSegmentStage.prototype.animate = function()
-{
-    var context = this.context;
-    var stage = this;
-
-    context.lineWidth = 30;
-    for(var i = 0; i < 3; i++) {
-        context.strokeStyle = ["#e01040", "#10c030", "#e05010"][i];
-        context.fillStyle = ["#70051d", "#016112", "#702701"][i];
-        context.beginPath();
-            context.arc((0.5 + i) / 3 * stage.size.x, stage.size.y/2, stage.circleRadius, 0, Math.PI*2);
-        context.stroke();
-        context.fill();
+        this.objects.forEach(function(object) {
+            object.draw(context);
+        });
     }
+});
 
-    this._objects.forEach(function(object) {
-        object.draw(context);
-    });
-}
+CanvasLinePathStage = Utilities.createSubclass(SimpleCanvasStage,
+    function()
+    {
+        SimpleCanvasStage.call(this, CanvasLinePoint);
+    }, {
 
-function CanvasLinePathStage(element, options)
-{
-    SimpleCanvasPathStrokeStage.call(this, element, options, CanvasLinePoint);
-    this.context.lineJoin = options["lineJoin"] || "bevel";
-    this.context.lineCap = options["lineCap"] || "butt";
-}
-CanvasLinePathStage.prototype = Object.create(SimpleCanvasPathStrokeStage.prototype);
-CanvasLinePathStage.prototype.constructor = CanvasLinePathStage;
+    initialize: function(benchmark)
+    {
+        SimpleCanvasStage.prototype.initialize.call(this, benchmark);
+        this.context.lineJoin = benchmark.options["lineJoin"] || "bevel";
+        this.context.lineCap = benchmark.options["lineCap"] || "butt";
+    },
+
+    animate: function() {
+        var context = this.context;
+        var stage = this;
+
+        context.clearRect(0, 0, this.size.x, this.size.y);
+        context.beginPath();
+        this.objects.forEach(function(object, index) {
+            if (index == 0) {
+                context.lineWidth = object.width;
+                context.strokeStyle = object.color;
+                context.moveTo(object.point.x, object.point.y);
+            } else {
+                if (object.isSplit) {
+                    context.stroke();
+
+                    context.lineWidth = object.width;
+                    context.strokeStyle = object.color;
+                    context.beginPath();
+                }
+
+                context.lineTo(object.point.x, object.point.y);
+
+                if (Math.random() > 0.999)
+                    object.isSplit = !object.isSplit;
+            }
+        });
+        context.stroke();
+    }
+});
 
 // === BENCHMARK ===
 
-function CanvasPathBenchmark(suite, test, options, progressBar)
-{
-    SimpleCanvasBenchmark.call(this, suite, test, options, progressBar);
-}
-CanvasPathBenchmark.prototype = Object.create(SimpleCanvasBenchmark.prototype);
-CanvasPathBenchmark.prototype.constructor = CanvasPathBenchmark;
-CanvasPathBenchmark.prototype.createStage = function(element)
-{
-    switch (this._options["pathType"]) {
-    case "line":
-        return new CanvasLineSegmentStage(element, this._options);
-    case "arcs":
-        return new SimpleCanvasStage(element, this._options, CanvasArc);
-    case "linePath":
-        return new CanvasLinePathStage(element, this._options);
-    }
-}
+CanvasPathBenchmark = Utilities.createSubclass(Benchmark,
+    function(options)
+    {
+        var stage;
+        switch (options["pathType"]) {
+        case "line":
+            stage = new CanvasLineSegmentStage();
+            break;
+        case "linePath":
+            stage = new CanvasLinePathStage();
+            break;
+        case "arcs":
+            stage = new SimpleCanvasStage(CanvasArc);
+            break;
+        }
 
-window.benchmarkClient.create = function(suite, test, options, progressBar)
-{
-    return new CanvasPathBenchmark(suite, test, options, progressBar);
-}
+        Benchmark.call(this, stage, options);
+    }
+);
+
+window.benchmarkClass = CanvasPathBenchmark;
 
 })();
