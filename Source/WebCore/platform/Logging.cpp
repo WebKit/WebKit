@@ -65,6 +65,11 @@ void initializeLoggingChannelsIfNecessary()
     haveInitializedLoggingChannels = true;
 
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, logLevelString().utf8().data());
+
+#if PLATFORM(GTK)
+    // Temporarily get Scrolling channel data for https://bugs.webkit.org/show_bug.cgi?id=152649.
+    LogScrolling.state = WTFLogChannelOn;
+#endif
 }
 
 #ifndef NDEBUG

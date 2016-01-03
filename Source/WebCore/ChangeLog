@@ -1,5 +1,13 @@
 2016-01-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Temporarily turn on Scrolling logging on GTK, to investigate
+        GTK failures from https://bugs.webkit.org/show_bug.cgi?id=152649.
+        
+        * platform/Logging.cpp:
+        (WebCore::initializeLoggingChannelsIfNecessary):
+
+2016-01-02  Simon Fraser  <simon.fraser@apple.com>
+
         Some cleanup in ScrollAnimator
         https://bugs.webkit.org/show_bug.cgi?id=152649
 
