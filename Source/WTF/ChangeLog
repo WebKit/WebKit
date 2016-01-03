@@ -1,3 +1,19 @@
+2016-01-03  Andreas Kling  <akling@apple.com>
+
+        Remove redundant StringImpl substring creation function.
+        <https://webkit.org/b/152652>
+
+        Reviewed by Daniel Bates.
+
+        Remove StringImpl::createSubstringSharingImpl8() and make the only
+        caller use createSubstringSharingImpl() instead.
+        
+        They do the same thing anyway, the only difference is that the branch
+        on is8Bit() now happens in the callee instead of at the call site.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::createSubstringSharingImpl8): Deleted.
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Replace WTF::move with WTFMove

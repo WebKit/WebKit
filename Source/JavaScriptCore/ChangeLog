@@ -1,3 +1,17 @@
+2016-01-03  Andreas Kling  <akling@apple.com>
+
+        Remove redundant StringImpl substring creation function.
+        <https://webkit.org/b/152652>
+
+        Reviewed by Daniel Bates.
+
+        Remove jsSubstring8() and make the only call site use jsSubstring().
+
+        * runtime/JSString.h:
+        (JSC::jsSubstring8): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+
 2016-01-02  Khem Raj  <raj.khem@gmail.com>
 
         Clang's builtin for clear_cache accepts char* and errors out

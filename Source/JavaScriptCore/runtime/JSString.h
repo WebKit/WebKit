@@ -47,8 +47,6 @@ JSString* jsSingleCharacterString(VM*, UChar);
 JSString* jsSingleCharacterString(ExecState*, UChar);
 JSString* jsSubstring(VM*, const String&, unsigned offset, unsigned length);
 JSString* jsSubstring(ExecState*, const String&, unsigned offset, unsigned length);
-JSString* jsSubstring8(VM*, const String&, unsigned offset, unsigned length);
-JSString* jsSubstring8(ExecState*, const String&, unsigned offset, unsigned length);
 
 // Non-trivial strings are two or more characters long.
 // These functions are faster than just calling jsString.
@@ -555,21 +553,6 @@ inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsi
     return JSRopeString::create(*exec, *s, offset, length);
 }
 
-inline JSString* jsSubstring8(VM* vm, const String& s, unsigned offset, unsigned length)
-{
-    ASSERT(offset <= static_cast<unsigned>(s.length()));
-    ASSERT(length <= static_cast<unsigned>(s.length()));
-    ASSERT(offset + length <= static_cast<unsigned>(s.length()));
-    if (!length)
-        return vm->smallStrings.emptyString();
-    if (length == 1) {
-        UChar c = s.characterAt(offset);
-        if (c <= maxSingleCharacterString)
-            return vm->smallStrings.singleCharacterString(c);
-    }
-    return JSString::createHasOtherOwner(*vm, StringImpl::createSubstringSharingImpl8(s.impl(), offset, length));
-}
-
 inline JSString* jsSubstring(VM* vm, const String& s, unsigned offset, unsigned length)
 {
     ASSERT(offset <= static_cast<unsigned>(s.length()));
@@ -606,7 +589,6 @@ inline JSRopeString* jsStringBuilder(VM* vm)
 inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->vm()); }
 inline JSString* jsString(ExecState* exec, const String& s) { return jsString(&exec->vm(), s); }
 inline JSString* jsSingleCharacterString(ExecState* exec, UChar c) { return jsSingleCharacterString(&exec->vm(), c); }
-inline JSString* jsSubstring8(ExecState* exec, const String& s, unsigned offset, unsigned length) { return jsSubstring8(&exec->vm(), s, offset, length); }
 inline JSString* jsSubstring(ExecState* exec, const String& s, unsigned offset, unsigned length) { return jsSubstring(&exec->vm(), s, offset, length); }
 inline JSString* jsNontrivialString(ExecState* exec, const String& s) { return jsNontrivialString(&exec->vm(), s); }
 inline JSString* jsNontrivialString(ExecState* exec, String&& s) { return jsNontrivialString(&exec->vm(), WTFMove(s)); }
