@@ -226,7 +226,7 @@ void ScrollAnimatorNone::PerAxisData::reset()
 }
 
 
-bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(float step, float multiplier, float scrollableSize, double currentTime, Parameters* parameters)
+bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(float step, float multiplier, float minScrollPosition, float maxScrollPosition, double currentTime, Parameters* parameters)
 {
     float delta = step * multiplier;
     if (!m_startTime || !delta || (delta < 0) != (m_desiredPosition - *m_currentPosition < 0)) {
@@ -235,8 +235,7 @@ bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(float step, float
     }
     float newPosition = m_desiredPosition + delta;
 
-    if (newPosition < 0 || newPosition > scrollableSize)
-        newPosition = max(min(newPosition, scrollableSize), 0.0f);
+    newPosition = max(min(newPosition, maxScrollPosition), minScrollPosition);
 
     if (newPosition == m_desiredPosition)
         return false;
@@ -426,10 +425,18 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     // This is an animatable scroll. Set the animation in motion using the appropriate parameters.
-    float scrollableSize = static_cast<float>(m_scrollableArea.scrollSize(orientation));
+    float minScrollPosition;
+    float maxScrollPosition;
+    if (orientation == HorizontalScrollbar) {
+        minScrollPosition = m_scrollableArea.minimumScrollPosition().x();
+        maxScrollPosition = m_scrollableArea.maximumScrollPosition().x();
+    } else {
+        minScrollPosition = m_scrollableArea.minimumScrollPosition().y();
+        maxScrollPosition = m_scrollableArea.maximumScrollPosition().y();
+    }
 
     PerAxisData& data = (orientation == VerticalScrollbar) ? m_verticalData : m_horizontalData;
-    bool needToScroll = data.updateDataFromParameters(step, multiplier, scrollableSize, monotonicallyIncreasingTime(), &parameters);
+    bool needToScroll = data.updateDataFromParameters(step, multiplier, minScrollPosition, maxScrollPosition, monotonicallyIncreasingTime(), &parameters);
     if (needToScroll && !animationTimerActive()) {
         m_startTime = data.m_startTime;
         animationWillStart();

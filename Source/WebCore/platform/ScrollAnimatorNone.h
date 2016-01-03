@@ -107,7 +107,7 @@ protected:
     struct PerAxisData {
         PerAxisData(ScrollAnimatorNone* parent, float* currentPos, int visibleLength);
         void reset();
-        bool updateDataFromParameters(float step, float multiplier, float scrollableSize, double currentTime, Parameters*);
+        bool updateDataFromParameters(float step, float multiplier, float minScrollPosition, float maxScrollPosition, double currentTime, Parameters*);
         bool animateScroll(double currentTime);
         void updateVisibleLength(int visibleLength);
 
