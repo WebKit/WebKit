@@ -508,12 +508,16 @@ void ScrollView::completeUpdatesAfterScrollTo(const IntSize& scrollDelta)
     updateCompositingLayersAfterScrolling();
 }
 
-int ScrollView::scrollPosition(Scrollbar* scrollbar) const
+int ScrollView::scrollOffset(ScrollbarOrientation orientation) const
 {
-    if (scrollbar->orientation() == HorizontalScrollbar)
-        return scrollPosition().x() + scrollOrigin().x();
-    if (scrollbar->orientation() == VerticalScrollbar)
-        return scrollPosition().y() + scrollOrigin().y();
+    ScrollOffset offset = scrollOffsetFromPosition(scrollPosition());
+
+    if (orientation == HorizontalScrollbar)
+        return offset.x();
+
+    if (orientation == VerticalScrollbar)
+        return offset.y();
+
     return 0;
 }
 

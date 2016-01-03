@@ -1,3 +1,19 @@
+2016-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename scrollPosition(Scrollbar*) to scrollOffset(ScrollbarOrientation)
+        https://bugs.webkit.org/show_bug.cgi?id=152666
+
+        Reviewed by Dan Bernstein.
+
+        Scrollbar values take offsets (zero-based), so rename the accessor used
+        by scrollbars to set their value, and pass in an orientation, rather than
+        a pointer to the scrollbar.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h:
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::scrollOffset):
+        (WebKit::PDFPlugin::scrollPosition): Renamed.
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Replace WTF::move with WTFMove

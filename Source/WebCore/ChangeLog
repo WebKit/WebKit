@@ -1,5 +1,35 @@
 2016-01-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename scrollPosition(Scrollbar*) to scrollOffset(ScrollbarOrientation)
+        https://bugs.webkit.org/show_bug.cgi?id=152666
+
+        Reviewed by Dan Bernstein.
+
+        Scrollbar values take offsets (zero-based), so rename the accessor used
+        by scrollbars to set their value, and pass in an orientation, rather than
+        a pointer to the scrollbar.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollOffset): Use scrollOffsetFromPosition rather than
+        manually adding scrollOrigin.
+        (WebCore::ScrollView::scrollPosition): Renamed.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::cachedScrollPosition):
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::offsetDidChange):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollOffset):
+        (WebCore::RenderLayer::scrollPosition): Renamed.
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollOffset):
+        (WebCore::RenderListBox::scrollPosition): Renamed.
+        * rendering/RenderListBox.h:
+
+2016-01-03  Simon Fraser  <simon.fraser@apple.com>
+
         scrollLeft returns different values for viewport and non-viewport scrolling with rtl
         https://bugs.webkit.org/show_bug.cgi?id=94405
         rdar://problem/21829754

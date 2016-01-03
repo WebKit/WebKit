@@ -66,7 +66,7 @@ public:
 
     // ScrollableArea functions.
     virtual int scrollSize(ScrollbarOrientation) const override;
-    virtual int scrollPosition(Scrollbar*) const override;
+    virtual int scrollOffset(ScrollbarOrientation) const override;
     WEBCORE_EXPORT virtual void setScrollOffset(const ScrollOffset&) override;
     virtual bool isScrollCornerVisible() const override;
     virtual void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
@@ -263,7 +263,7 @@ public:
     virtual IntSize overhangAmount() const override;
 
     void cacheCurrentScrollPosition() { m_cachedScrollPosition = scrollPosition(); }
-    IntPoint cachedScrollPosition() const { return m_cachedScrollPosition; }
+    ScrollPosition cachedScrollPosition() const { return m_cachedScrollPosition; }
 
     // Functions for scrolling the view.
     virtual void setScrollPosition(const ScrollPosition&);

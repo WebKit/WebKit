@@ -603,7 +603,7 @@ int RenderListBox::scrollSize(ScrollbarOrientation orientation) const
     return ((orientation == VerticalScrollbar) && m_vBar) ? (m_vBar->totalSize() - m_vBar->visibleSize()) : 0;
 }
 
-int RenderListBox::scrollPosition(Scrollbar*) const
+int RenderListBox::scrollOffset(ScrollbarOrientation) const
 {
     return m_indexOffset;
 }

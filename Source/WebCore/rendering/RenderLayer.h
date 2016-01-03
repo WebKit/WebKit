@@ -855,7 +855,7 @@ private:
 
     bool shouldBeSelfPaintingLayer() const;
 
-    virtual int scrollPosition(Scrollbar*) const override;
+    virtual int scrollOffset(ScrollbarOrientation) const override;
     
     // ScrollableArea interface
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;

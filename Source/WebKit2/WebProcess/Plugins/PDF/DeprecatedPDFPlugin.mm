@@ -773,12 +773,14 @@ bool PDFPlugin::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
     return false;
 }
 
-int PDFPlugin::scrollPosition(Scrollbar* scrollbar) const
+int PDFPlugin::scrollOffset(ScrollbarOrientation orientation) const
 {
-    if (scrollbar->orientation() == HorizontalScrollbar)
+    if (orientation == HorizontalScrollbar)
         return m_scrollOffset.width();
-    if (scrollbar->orientation() == VerticalScrollbar)
+
+    if (orientation == VerticalScrollbar)
         return m_scrollOffset.height();
+
     ASSERT_NOT_REACHED();
     return 0;
 }

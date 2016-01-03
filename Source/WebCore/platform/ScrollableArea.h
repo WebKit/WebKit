@@ -146,7 +146,7 @@ public:
 
     virtual bool isActive() const = 0;
     virtual int scrollSize(ScrollbarOrientation) const = 0;
-    virtual int scrollPosition(Scrollbar*) const = 0;
+    virtual int scrollOffset(ScrollbarOrientation) const = 0;
     WEBCORE_EXPORT virtual void invalidateScrollbar(Scrollbar*, const IntRect&);
     virtual bool isScrollCornerVisible() const = 0;
     virtual IntRect scrollCornerRect() const = 0;
@@ -281,10 +281,10 @@ public:
     void serviceScrollAnimations();
 
 #if PLATFORM(IOS)
-    bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollPosition(horizontalScrollbar()) <= minimumScrollPosition().x(); }
-    bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollPosition(horizontalScrollbar()) >= maximumScrollPosition().x(); }
-    bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollPosition(verticalScrollbar()) <= minimumScrollPosition().y(); }
-    bool isVerticalScrollerPinnedToMaximumPosition() const { return !verticalScrollbar() || scrollPosition(verticalScrollbar()) >= maximumScrollPosition().y(); } 
+    bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollOffset(HorizontalScrollbar) <= 0; }
+    bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollOffset(HorizontalScrollbar) >= maximumScrollOffset().x(); }
+    bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollOffset(VerticalScrollbar) <= 0; }
+    bool isVerticalScrollerPinnedToMaximumPosition() const { return !verticalScrollbar() || scrollOffset(VerticalScrollbar) >= maximumScrollOffset().y(); }
 
     bool isPinnedInBothDirections(const IntSize&) const; 
     bool isPinnedHorizontallyInDirection(int horizontalScrollDelta) const; 

@@ -110,7 +110,7 @@ private:
 
     // ScrollableArea interface.
     virtual int scrollSize(ScrollbarOrientation) const override;
-    virtual int scrollPosition(Scrollbar*) const override;
+    virtual int scrollOffset(ScrollbarOrientation) const override;
     virtual void setScrollOffset(const ScrollOffset&) override;
     virtual ScrollPosition minimumScrollPosition() const override;
     virtual ScrollPosition maximumScrollPosition() const override;

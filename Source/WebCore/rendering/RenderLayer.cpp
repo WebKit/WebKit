@@ -2735,12 +2735,14 @@ void RenderLayer::setScrollOffset(const ScrollOffset& offset)
     scrollTo(scrollPositionFromOffset(offset));
 }
 
-int RenderLayer::scrollPosition(Scrollbar* scrollbar) const
+int RenderLayer::scrollOffset(ScrollbarOrientation orientation) const
 {
-    if (scrollbar->orientation() == HorizontalScrollbar)
+    if (orientation == HorizontalScrollbar)
         return scrollOffset().x();
-    if (scrollbar->orientation() == VerticalScrollbar)
+
+    if (orientation == VerticalScrollbar)
         return scrollOffset().y();
+
     return 0;
 }
 
