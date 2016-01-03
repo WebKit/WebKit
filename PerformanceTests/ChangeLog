@@ -5,6 +5,25 @@
 
         Reviewed by Simon Fraser.
 
+        Update the simple canvas tests. For the paths, start from the center instead of the
+        top-left corner. Instead of using a coordinate limit, use a canonized factor, and
+        use that along both the x and y axes, so that more capable tests use more of the
+        canvas.
+
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        (CanvasLinePoint): Rewrite to use the coordinate maximum factor.
+        (CanvasQuadraticPoint): Ditto.
+        (CanvasBezierPoint): Ditto.
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        (tune): Calculate a factor instead of a maximum coordinate.
+
+2015-12-27  Jon Lee  <jonlee@apple.com>
+
+        Simplify the test harness
+        https://bugs.webkit.org/show_bug.cgi?id=152562
+
+        Reviewed by Simon Fraser.
+
         All of the benchmarks use the default Animator(). Don't require new tests
         to pass a new instance, and instead just make one in the Benchmark constructor.
 

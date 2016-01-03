@@ -21,8 +21,9 @@ CanvasLineSegment.prototype.draw = function(context) {
     context.stroke();
 };
 
-function CanvasLinePoint(stage, coordinateMaximum) {
-    this._point = stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximum), Math.min(stage.size.y, coordinateMaximum)));
+function CanvasLinePoint(stage, coordinateMaximumFactor) {
+    var pointMaximum = new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y));
+    this._point = stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
 }
 CanvasLinePoint.prototype.draw = function(context) {
     context.lineTo(this._point.x, this._point.y);
@@ -47,10 +48,10 @@ CanvasQuadraticSegment.prototype.draw = function(context) {
     context.stroke();
 };
 
-function CanvasQuadraticPoint(stage, coordinateMaximum) {
-    var pointMaximum = new Point(Math.min(stage.size.x, coordinateMaximum), Math.min(stage.size.y, coordinateMaximum));
-    this._point1 = stage.randomPosition(pointMaximum);
-    this._point2 = stage.randomPosition(pointMaximum);
+function CanvasQuadraticPoint(stage, coordinateMaximumFactor) {
+    var pointMaximum = stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y)));
+    this._point1 = stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+    this._point2 = stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
 };
 CanvasQuadraticPoint.prototype.draw = function(context) {
     context.quadraticCurveTo(this._point1.x, this._point1.y, this._point2.x, this._point2.y);
@@ -76,11 +77,11 @@ CanvasBezierSegment.prototype.draw = function(context) {
     context.stroke();
 };
 
-function CanvasBezierPoint(stage, coordinateMaximum) {
-    var pointMaximum = new Point(Math.min(stage.size.x, coordinateMaximum), Math.min(stage.size.y, coordinateMaximum));
-    this._point1 = stage.randomPosition(pointMaximum);
-    this._point2 = stage.randomPosition(pointMaximum);
-    this._point3 = stage.randomPosition(pointMaximum);
+function CanvasBezierPoint(stage, coordinateMaximumFactor) {
+    var pointMaximum = stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximumFactor * stage.size.x), Math.min(stage.size.y, coordinateMaximumFactor * stage.size.y)));
+    this._point1 = stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+    this._point2 = stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
+    this._point3 = stage.randomPosition(pointMaximum).add(new Point((stage.size.x - pointMaximum.x) / 2, (stage.size.y - pointMaximum.y) / 2));
 };
 CanvasBezierPoint.prototype.draw = function(context) {
     context.bezierCurveTo(this._point1.x, this._point1.y, this._point2.x, this._point2.y, this._point3.x, this._point3.y);
@@ -186,7 +187,7 @@ SimpleCanvasPathStrokeStage = Utilities.createSubclass(SimpleCanvasStage,
         context.lineWidth = this.randomInt(1, 20);
         context.strokeStyle = this.randomColor();
         context.beginPath();
-        context.moveTo(0,0);
+        context.moveTo(this.size.x / 2, this.size.y / 2);
         this.objects.forEach(function(object) {
             object.draw(context);
         });
@@ -205,7 +206,7 @@ SimpleCanvasPathFillStage = Utilities.createSubclass(SimpleCanvasStage,
         context.clearRect(0, 0, this.size.x, this.size.y);
         context.fillStyle = this.randomColor();
         context.beginPath();
-        context.moveTo(0,0);
+        context.moveTo(this.size.x / 2, this.size.y / 2);
         this.objects.forEach(function(object) {
             object.draw(context);
         });
@@ -260,7 +261,7 @@ CanvasLineDashStage = Utilities.createSubclass(SimpleCanvasStage,
         context.clearRect(0, 0, this.size.x, this.size.y);
         context.lineDashOffset = this._step++;
         context.beginPath();
-        context.moveTo(0,0);
+        context.moveTo(this.size.x / 2, this.size.y / 2);
         this.objects.forEach(function(object) {
             object.draw(context);
         });

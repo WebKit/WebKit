@@ -5,11 +5,11 @@ Utilities.extendObject(SimpleCanvasStage.prototype, {
             return this.objects.length;
 
         if (count > 0) {
-            // For path-based tests, use the object length as a maximum coordinate value
-            // to make it easier to see what the test is doing
-            var coordinateMaximum = Math.max(this.objects.length, 200);
+            // For some tests, it may be easier to see how well the test is going
+            // by limiting the range of coordinates in which new objects can reside
+            var coordinateMaximumFactor = Math.min(this.objects.length, Math.min(this.size.x, this.size.y)) / Math.min(this.size.x, this.size.y);
             for (var i = 0; i < count; ++i)
-                this.objects.push(new this._canvasObject(this, coordinateMaximum));
+                this.objects.push(new this._canvasObject(this, coordinateMaximumFactor));
             return this.objects.length;
         }
 
