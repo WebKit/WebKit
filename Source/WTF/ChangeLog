@@ -1,3 +1,19 @@
+2016-01-03  Khem Raj  <raj.khem@gmail.com>
+
+        WebKit fails to build with musl libc library
+        https://bugs.webkit.org/show_bug.cgi?id=152625
+
+        Reviewed by Daniel Bates.
+
+        Disable ctype.h check for musl C library on Linux.
+        Enable backtrace on Linux when using glibc.
+        We don't have backtrace() implemented on non-glibc system
+        C libraries on Linux e.g. musl.
+
+        * wtf/DisallowCType.h: Check for __GLIBC__.
+        * wtf/Assertions.cpp:
+        (WTFGetBacktrace): Check if libc is glibc.
+
 2016-01-03  Andreas Kling  <akling@apple.com>
 
         StringBuilder often creates two StringImpls.

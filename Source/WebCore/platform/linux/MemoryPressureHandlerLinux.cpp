@@ -201,8 +201,10 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
 
 void MemoryPressureHandler::platformReleaseMemory(Critical)
 {
+#ifdef __GLIBC__
     ReliefLogger log("Run malloc_trim");
     malloc_trim(0);
+#endif
 }
 
 void MemoryPressureHandler::ReliefLogger::platformLog()

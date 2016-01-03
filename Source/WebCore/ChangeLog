@@ -1,3 +1,16 @@
+2016-01-03  Khem Raj  <raj.khem@gmail.com>
+
+        WebKit fails to build with musl libc library
+        https://bugs.webkit.org/show_bug.cgi?id=152625
+
+        Reviewed by Daniel Bates and Alexey Proskuryakov.
+
+        malloc_trim is glibc specific API so guard it with __GLIBC__.
+
+        * platform/linux/MemoryPressureHandlerLinux.cpp:
+        (MemoryPressureHandler::platformReleaseMemory): Guard malloc_trim()
+        call with __GLIBC_.
+
 2016-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Minor cleanup in ScrollAnimator
