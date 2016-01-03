@@ -2143,6 +2143,24 @@ WebInspector.linkifyStringAsFragment = function(string)
     return WebInspector.linkifyStringAsFragmentWithCustomLinkifier(string, linkifier);
 };
 
+WebInspector.createResourceLink = function(resource, className)
+{
+    function handleClick(event)
+    {
+        event.stopPropagation();
+        event.preventDefault();
+
+        WebInspector.showRepresentedObject(resource);
+    }
+
+    let linkNode = document.createElement("a");
+    linkNode.classList.add("resource-link", className);
+    linkNode.title = resource.url;
+    linkNode.textContent = (resource.urlComponents.lastPathComponent || resource.url).insertWordBreakCharacters();
+    linkNode.addEventListener("click", handleClick.bind(this));
+    return linkNode;
+}
+
 WebInspector._undoKeyboardShortcut = function(event)
 {
     if (!this.isEditingAnyField() && !this.isEventTargetAnEditableField(event)) {

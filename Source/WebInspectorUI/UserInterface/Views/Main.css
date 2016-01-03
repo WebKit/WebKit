@@ -243,6 +243,15 @@ body.window-inactive #split-content-browser {
     content: "";
 }
 
+.resource-link {
+    display: block;
+}
+
+.resource-link + .resource-link {
+    margin-top: 2px;
+}
+
+.resource-link,
 .go-to-link {
     color: hsl(0, 0%, 33%);
     text-decoration: underline;

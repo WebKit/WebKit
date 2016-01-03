@@ -1,5 +1,37 @@
 2016-01-02  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: List all resources that are initiated by the selected resource in the Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=152647
+
+        Reviewed by Timothy Hatcher.
+
+        Selecting resources in the Network tab will now display a list of all resources
+        that the selected resource loaded, allowing for easier understanding of the
+        relationship between all the resources loaded on a page.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        Added functions to generate link(s) to Resource instead of SourceCodeLocation.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.get initiatedResources):
+        (WebInspector.Resource.prototype.addInitiatedResource):
+        Each time a resource is added, if it has an initiator, it adds itself to the
+        initiator's list of initiated resources.
+
+        * UserInterface/Views/Main.css:
+        (.resource-list > .resource-link):
+        (.resource-list > .resource-link::before):
+        (.resource-list > .resource-link + .resource-link):
+        (.resource-link):
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshURL):
+
+2016-01-02  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Add list-style properties to Visual Sidebar
         https://bugs.webkit.org/show_bug.cgi?id=152631
 
