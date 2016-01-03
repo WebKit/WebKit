@@ -1,5 +1,14 @@
 2016-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, move Frédéric Wang to committers list
+
+        He seems to be on the contributors list by accident. He has been landing his own commits for
+        about two years now.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2016-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, move Sebastian Dröge to committers list harder
 
         He accidentally added himself to the reviewers list because the file is confusing. Then I
