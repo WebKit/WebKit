@@ -1,3 +1,28 @@
+2016-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        scrollLeft returns different values for viewport and non-viewport scrolling with rtl
+        https://bugs.webkit.org/show_bug.cgi?id=94405
+        rdar://problem/21829754
+
+        Reviewed by Zalan Bujtas.
+        
+        programmatic-overflow-rtl-scrollIntoView.html is a basic test for negative scrollLeft
+        in an RTL scroller.
+        
+        Other tests are fixed to programmatically scroll to negative scroll positions.
+
+        * compositing/rtl/rtl-overflow-scrolling.html:
+        * fast/overflow/scroll-div-hide-show-expected.txt:
+        * fast/overflow/scroll-div-hide-show.html:
+        * fast/repaint/horizontal-bt-overflow-parent.html:
+        * fast/repaint/horizontal-bt-overflow-same.html:
+        * fast/repaint/vertical-overflow-parent.html:
+        * fast/repaint/vertical-overflow-same.html:
+        * fast/scrolling/programmatic-overflow-rtl-scrollIntoView-expected.txt: Added.
+        * fast/scrolling/programmatic-overflow-rtl-scrollIntoView.html: Added.
+        * fast/writing-mode/flipped-blocks-hit-test-overflow-scroll.html:
+        * imported/blink/compositing/overflow/rtl-overflow.html:
+
 2016-01-02  Simon Fraser  <simon.fraser@apple.com>
 
         Some cleanup in ScrollAnimator

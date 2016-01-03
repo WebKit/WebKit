@@ -2314,6 +2314,18 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
     }
 }
 
+void RenderLayer::scrollToXPosition(int x, ScrollOffsetClamping clamp)
+{
+    ScrollPosition position(x, m_scrollPosition.y());
+    scrollToOffset(scrollOffsetFromPosition(position), clamp);
+}
+
+void RenderLayer::scrollToYPosition(int y, ScrollOffsetClamping clamp)
+{
+    ScrollPosition position(m_scrollPosition.x(), y);
+    scrollToOffset(scrollOffsetFromPosition(position), clamp);
+}
+
 ScrollOffset RenderLayer::clampScrollOffset(const ScrollOffset& scrollOffset) const
 {
     return scrollOffset.constrainedBetween(IntPoint(), maximumScrollOffset());

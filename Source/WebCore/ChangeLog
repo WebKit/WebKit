@@ -1,5 +1,28 @@
 2016-01-03  Simon Fraser  <simon.fraser@apple.com>
 
+        scrollLeft returns different values for viewport and non-viewport scrolling with rtl
+        https://bugs.webkit.org/show_bug.cgi?id=94405
+        rdar://problem/21829754
+
+        Reviewed by Zalan Bujtas.
+        
+        Use scrollPosition for DOM-exposed scroll* values on overflow scroll elements,
+        matching the CSS OM View spec, and Gecko behavior.
+
+        Test: fast/scrolling/programmatic-overflow-rtl-scrollIntoView.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollLeft):
+        (WebCore::RenderBox::scrollTop):
+        (WebCore::RenderBox::setScrollLeft):
+        (WebCore::RenderBox::setScrollTop):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToXPosition):
+        (WebCore::RenderLayer::scrollToYPosition):
+        * rendering/RenderLayer.h:
+
+2016-01-03  Simon Fraser  <simon.fraser@apple.com>
+
         Some cleanup in ScrollAnimator
         https://bugs.webkit.org/show_bug.cgi?id=152649
 

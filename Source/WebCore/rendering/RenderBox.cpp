@@ -578,12 +578,12 @@ int RenderBox::scrollHeight() const
 
 int RenderBox::scrollLeft() const
 {
-    return hasOverflowClip() && layer() ? layer()->scrollOffset().x() : 0;
+    return hasOverflowClip() && layer() ? layer()->scrollPosition().x() : 0;
 }
 
 int RenderBox::scrollTop() const
 {
-    return hasOverflowClip() && layer() ? layer()->scrollOffset().y() : 0;
+    return hasOverflowClip() && layer() ? layer()->scrollPosition().y() : 0;
 }
 
 static void setupWheelEventTestTrigger(RenderLayer& layer, Frame* frame)
@@ -603,7 +603,7 @@ void RenderBox::setScrollLeft(int newLeft)
     if (!hasOverflowClip() || !layer())
         return;
     setupWheelEventTestTrigger(*layer(), document().frame());
-    layer()->scrollToXOffset(newLeft, RenderLayer::ScrollOffsetClamped);
+    layer()->scrollToXPosition(newLeft, RenderLayer::ScrollOffsetClamped);
 }
 
 void RenderBox::setScrollTop(int newTop)
@@ -611,7 +611,7 @@ void RenderBox::setScrollTop(int newTop)
     if (!hasOverflowClip() || !layer())
         return;
     setupWheelEventTestTrigger(*layer(), document().frame());
-    layer()->scrollToYOffset(newTop, RenderLayer::ScrollOffsetClamped);
+    layer()->scrollToYPosition(newTop, RenderLayer::ScrollOffsetClamped);
 }
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const

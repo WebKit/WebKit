@@ -197,6 +197,9 @@ public:
     void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), clamp); }
     void scrollToYOffset(int y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), clamp); }
 
+    void scrollToXPosition(int x, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollToYPosition(int y, ScrollOffsetClamping = ScrollOffsetUnclamped);
+
     ScrollOffset scrollOffset() const { return scrollOffsetFromPosition(m_scrollPosition); }
     IntSize scrollableContentsSize() const;
 
@@ -216,6 +219,8 @@ public:
     bool hasVerticalScrollbar() const { return verticalScrollbar(); }
 
     // ScrollableArea overrides
+    virtual ScrollPosition scrollPosition() const override { return m_scrollPosition; }
+
     virtual Scrollbar* horizontalScrollbar() const override { return m_hBar.get(); }
     virtual Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
     virtual ScrollableArea* enclosingScrollableArea() const override;
@@ -864,8 +869,6 @@ private:
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const override;
     virtual int scrollSize(ScrollbarOrientation) const override;
     virtual void setScrollOffset(const ScrollOffset&) override;
-
-    virtual ScrollPosition scrollPosition() const override { return m_scrollPosition; }
 
     virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
     virtual IntSize visibleSize() const override;
