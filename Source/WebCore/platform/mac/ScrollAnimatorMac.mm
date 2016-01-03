@@ -702,7 +702,7 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
     if (granularity == ScrollByPixel)
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
-    FloatPoint currentPosition(m_currentPosX, m_currentPosY);
+    FloatPoint currentPosition = this->currentPosition();
     FloatSize delta;
     if (orientation == HorizontalScrollbar)
         delta.setWidth(step * multiplier);
@@ -721,7 +721,7 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
             newPosition.setX(targetOrigin.x);
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollAnimatorMac::scroll " << " from " << FloatPoint(m_currentPosX, m_currentPosY) << " to " << newPosition);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollAnimatorMac::scroll " << " from " << currentPosition << " to " << newPosition);
     [m_scrollAnimationHelper scrollToPoint:newPosition];
     return true;
 }
@@ -755,16 +755,15 @@ void ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary()
 
 void ScrollAnimatorMac::immediateScrollToPosition(const FloatPoint& newPosition)
 {
+    FloatPoint currentPosition = this->currentPosition();
     FloatPoint adjustedPosition = adjustScrollPositionIfNecessary(newPosition);
  
-    bool positionChanged = adjustedPosition.x() != m_currentPosX || adjustedPosition.y() != m_currentPosY;
+    bool positionChanged = adjustedPosition != currentPosition;
     if (!positionChanged && !scrollableArea().scrollOriginChanged())
         return;
 
-    FloatSize delta = FloatSize(adjustedPosition.x() - m_currentPosX, adjustedPosition.y() - m_currentPosY);
-
-    m_currentPosX = adjustedPosition.x();
-    m_currentPosY = adjustedPosition.y();
+    FloatSize delta = adjustedPosition - currentPosition;
+    setCurrentPositionInternal(adjustedPosition);
     notifyPositionChanged(delta);
     updateActiveScrollSnapIndexForOffset();
 }
@@ -1299,14 +1298,13 @@ void ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints(const Flo
 
 void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
 {
-    FloatPoint newPos = adjustScrollPositionIfNecessary(FloatPoint(m_currentPosX, m_currentPosY) + delta);
-    if (newPos.x() == m_currentPosX && newPos.y() == m_currentPosY)
+    FloatPoint currentPosition = this->currentPosition();
+    FloatPoint newPosition = adjustScrollPositionIfNecessary(currentPosition + delta);
+    if (newPosition == currentPosition)
         return;
 
-    FloatSize adjustedDelta = FloatSize(newPos.x() - m_currentPosX, newPos.y() - m_currentPosY);
-
-    m_currentPosX = newPos.x();
-    m_currentPosY = newPos.y();
+    FloatSize adjustedDelta = newPosition - currentPosition;
+    setCurrentPositionInternal(newPosition);
     notifyPositionChanged(adjustedDelta);
     updateActiveScrollSnapIndexForOffset();
 }

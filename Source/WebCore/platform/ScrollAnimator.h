@@ -32,7 +32,7 @@
 #ifndef ScrollAnimator_h
 #define ScrollAnimator_h
 
-#include "FloatSize.h"
+#include "FloatPoint.h"
 #include "LayoutUnit.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
@@ -85,7 +85,7 @@ public:
 #endif
 
     void setCurrentPosition(const FloatPoint&);
-    FloatPoint currentPosition() const;
+    FloatPoint currentPosition() const { return FloatPoint(m_currentPosX, m_currentPosY); }
 
     virtual void cancelAnimations() { }
     virtual void serviceScrollAnimations() { }
@@ -145,13 +145,19 @@ protected:
     virtual void notifyPositionChanged(const FloatSize& delta);
     void updateActiveScrollSnapIndexForOffset();
 
+    void setCurrentPositionInternal(const FloatPoint& p)
+    {
+        m_currentPosX = p.x();
+        m_currentPosY = p.y();
+    }
+
     ScrollableArea& m_scrollableArea;
     RefPtr<WheelEventTestTrigger> m_wheelEventTestTrigger;
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     ScrollController m_scrollController;
 #endif
-    float m_currentPosX; // We avoid using a FloatPoint in order to reduce
-    float m_currentPosY; // subclass code complexity.
+    float m_currentPosX { 0 }; // ScrollAnimatorNone takes addresses of these, so can't use a FloatPoint.
+    float m_currentPosY { 0 };
 };
 
 } // namespace WebCore
