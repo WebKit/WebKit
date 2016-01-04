@@ -113,6 +113,11 @@ LayeringTextStage = Utilities.createSubclass(Stage,
             this._popTextElement();
 
         return this._textElements.length;
+    },
+
+    complexity: function()
+    {
+        return this._textElements.length;
     }
 });
 

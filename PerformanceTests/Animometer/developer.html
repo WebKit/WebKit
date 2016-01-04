@@ -78,8 +78,11 @@
                 <table id="results-header"></table>
             </div>
             <div id="results-json">
-                JSON:
-                <textarea rows=1 onclick="this.focus();this.select()" readonly></textarea>
+                <button class="small-button" onclick="benchmarkController.showJSONResults()">JSON results</button>
+                <div class="hidden">
+                    JSON:
+                    <textarea rows=1 onclick="this.focus();this.select()" readonly></textarea>
+                </div>
             </div>
             <button onclick="benchmarkController.startBenchmark()">Test Again</button>
             <p>'s': Select different data for copy/paste</p>
@@ -89,6 +92,23 @@
                 <button onclick="benchmarkController.showResults()">&lt; Results</button>
                 <h1>Graph:</h1>
             </header>
+            <nav>
+                <form name="graph-options">
+                    <ul>
+                        <li><label><input type="checkbox" name="markers" checked> Markers</label>
+                            <span>time: <span class="time"></span></span></li>
+                        <li><label><input type="checkbox" name="averages" checked> Averages</label></li>
+                        <li><label><input type="checkbox" name="complexity" checked> Complexity</label>
+                            <span class="complexity"></span></li>
+                        <li><label><input type="checkbox" name="rawFPS"> Raw FPS</label>
+                            <span class="rawFPS"></span></li>
+                        <li><label><input type="checkbox" name="filteredFPS" checked> Filtered FPS</label>
+                            <span class="filteredFPS"></span></li>
+                        <li><label><input type="checkbox" name="intervalFPS"> Average FPS per sample interval</label>
+                            <span class="intervalFPS"></span></li>
+                    </ul>
+                </form>
+            </nav>
             <p class="score"></p>
             <p class="mean"></p>
             <div id="test-graph-data"></div>

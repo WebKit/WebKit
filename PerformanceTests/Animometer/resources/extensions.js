@@ -248,7 +248,7 @@ ResultsDashboard.prototype =
         this._iterationsSamplers.push(suitesSamplers);
     },
 
-    _processData: function(statistics, graph)
+    _processData: function()
     {
         var iterationsResults = [];
         var iterationsScores = [];
@@ -290,7 +290,7 @@ ResultsDashboard.prototype =
     {
         if (this._processedData)
             return this._processedData;
-        this._processData(true, true);
+        this._processData();
         return this._processedData;
     },
 
@@ -346,9 +346,6 @@ ResultsTable.prototype =
         var button = DocumentExtension.createElement("button", { class: "small-button" }, td);
 
         button.addEventListener("click", function() {
-            var samples = data[Strings.json.graph.points];
-            var samplingTimeOffset = data[Strings.json.graph.samplingTimeOffset];
-            var axes = [Strings.text.experiments.complexity, Strings.text.experiments.frameRate];
             var score = testResults[Strings.json.score].toFixed(2);
             var complexity = testResults[Strings.json.experiments.complexity];
             var mean = [
@@ -360,7 +357,19 @@ ResultsTable.prototype =
                 complexity[Strings.json.measurements.percent].toFixed(2),
                 "%), worst 5%: ",
                 complexity[Strings.json.measurements.concern].toFixed(2)].join("");
-            benchmarkController.showTestGraph(testName, score, mean, axes, samples, samplingTimeOffset);
+
+            var graphData = {
+                axes: [Strings.text.experiments.complexity, Strings.text.experiments.frameRate],
+                mean: [
+                    testResults[Strings.json.experiments.complexity][Strings.json.measurements.average],
+                    testResults[Strings.json.experiments.frameRate][Strings.json.measurements.average]
+                ],
+                samples: data,
+                samplingTimeOffset: testResults[Strings.json.samplingTimeOffset]
+            }
+            if (testResults[Strings.json.targetFPS])
+                graphData.targetFPS = testResults[Strings.json.targetFPS];
+            benchmarkController.showTestGraph(testName, score, mean, graphData);
         });
 
         button.textContent = Strings.text.results.graph + "...";

@@ -308,7 +308,8 @@ window.suitesManager =
 Utilities.extendObject(window.benchmarkController, {
     initialize: function()
     {
-        document.forms["benchmark-options"].addEventListener("change", benchmarkController.onFormChanged, true);
+        document.forms["benchmark-options"].addEventListener("change", benchmarkController.onBenchmarkOptionsChanged, true);
+        document.forms["graph-options"].addEventListener("change", benchmarkController.onGraphOptionsChanged, true);
         optionsManager.updateUIFromLocalStorage();
         suitesManager.createElements();
         suitesManager.updateUIFromLocalStorage();
@@ -316,7 +317,7 @@ Utilities.extendObject(window.benchmarkController, {
         suitesManager.updateEditsElementsState();
     },
 
-    onFormChanged: function(event)
+    onBenchmarkOptionsChanged: function(event)
     {
         if (event.target.name == "adjustment") {
             suitesManager.updateEditsElementsState();
@@ -346,22 +347,28 @@ Utilities.extendObject(window.benchmarkController, {
         sectionsManager.populateTable("results-header", Headers.testName, data);
         sectionsManager.populateTable("results-score", Headers.score, data);
         sectionsManager.populateTable("results-data", Headers.details, data);
-        document.querySelector("#results-json textarea").textContent = JSON.stringify(benchmarkRunnerClient.results.data, function(key, value) {
-            if (typeof value == "number")
-                return value.toFixed(2);
-            return value;
-        });
         sectionsManager.showSection("results", true);
 
         suitesManager.updateLocalStorageFromJSON(data[0]);
     },
 
-    showTestGraph: function(testName, score, mean, axes, samples, samplingTimeOffset)
+    showJSONResults: function()
+    {
+        document.querySelector("#results-json textarea").textContent = JSON.stringify(benchmarkRunnerClient.results.data, function(key, value) {
+            if (typeof value == "number")
+                return value.toFixed(2);
+            return value;
+        });
+        document.querySelector("#results-json button").remove();
+        document.querySelector("#results-json div").classList.remove("hidden");
+    },
+
+    showTestGraph: function(testName, score, mean, graphData)
     {
         sectionsManager.setSectionHeader("test-graph", testName);
         sectionsManager.setSectionScore("test-graph", score, mean);
         sectionsManager.showSection("test-graph", true);
-        graph("#test-graph-data", new Insets(10, 20, 30, 40), axes, samples, samplingTimeOffset);
+        this.updateGraphData(graphData);
     }
 });
 

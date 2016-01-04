@@ -180,12 +180,10 @@ Stage.prototype =
 
 function Animator()
 {
-    this._frameCount = 0;
-    this._dropFrameCount = 1;
-    this._measureFrameCount = 3;
+    this._intervalFrameCount = 0;
+    this._numberOfFramesToMeasurePerInterval = 3;
     this._referenceTime = 0;
     this._currentTimeOffset = 0;
-    this._estimator = new KalmanEstimator(60);
 }
 
 Animator.prototype =
@@ -193,7 +191,12 @@ Animator.prototype =
     initialize: function(benchmark)
     {
         this._benchmark = benchmark;
-        this._estimateFrameRate = benchmark.options["estimated-frame-rate"];
+
+        // Use Kalman filter to get a more non-fluctuating frame rate.
+        if (benchmark.options["estimated-frame-rate"])
+            this._estimator = new KalmanEstimator(60);
+        else
+            this._estimator = new IdentityEstimator;
     },
 
     get benchmark()
@@ -201,55 +204,55 @@ Animator.prototype =
         return this._benchmark;
     },
 
-    timeDelta: function()
+    _intervalTimeDelta: function()
     {
         return this._currentTimeOffset - this._startTimeOffset;
     },
 
     _shouldRequestAnotherFrame: function()
     {
+        // Cadence is number of frames to measure, then one more frame to adjust the scene, and drop
         var currentTime = performance.now();
-        
+
         if (!this._referenceTime)
             this._referenceTime = currentTime;
-        else
-            this._currentTimeOffset = currentTime - this._referenceTime;
 
-        if (!this._frameCount)
+        this._currentTimeOffset = currentTime - this._referenceTime;
+
+        if (!this._intervalFrameCount)
             this._startTimeOffset = this._currentTimeOffset;
 
-        ++this._frameCount;
-
-        // Start measuring after dropping _dropFrameCount frames.
-        if (this._frameCount == this._dropFrameCount)
-            this._measureTimeOffset = this._currentTimeOffset;
+        // Start the work for the next frame.
+        ++this._intervalFrameCount;
 
         // Drop _dropFrameCount frames and measure the average of _measureFrameCount frames.
-        if (this._frameCount < this._dropFrameCount + this._measureFrameCount)
+        if (this._intervalFrameCount <= this._numberOfFramesToMeasurePerInterval) {
+            this._benchmark.record(this._currentTimeOffset, -1, -1);
             return true;
+        }
 
-        // Get the average FPS of _measureFrameCount frames over measureTimeDelta.
-        var measureTimeDelta = this._currentTimeOffset - this._measureTimeOffset;
-        var currentFrameRate = Math.floor(1000 / (measureTimeDelta / this._measureFrameCount));
-
-        // Use Kalman filter to get a more non-fluctuating frame rate.
-        if (this._estimateFrameRate)
-            currentFrameRate = this._estimator.estimate(currentFrameRate);
+        // Get the average FPS of _measureFrameCount frames over intervalTimeDelta.
+        var intervalTimeDelta = this._intervalTimeDelta();
+        var intervalFrameRate = 1000 / (intervalTimeDelta / this._numberOfFramesToMeasurePerInterval);
+        var estimatedIntervalFrameRate = this._estimator.estimate(intervalFrameRate);
+        // Record the complexity of the frame we just rendered. The next frame's time respresents the adjusted
+        // complexity
+        this._benchmark.record(this._currentTimeOffset, estimatedIntervalFrameRate, intervalFrameRate);
 
         // Adjust the test to reach the desired FPS.
-        var result = this._benchmark.update(this._currentTimeOffset, this.timeDelta(), currentFrameRate);
+        var shouldContinueRunning = this._benchmark.update(this._currentTimeOffset, intervalTimeDelta, estimatedIntervalFrameRate);
 
         // Start the next drop/measure cycle.
-        this._frameCount = 0;
+        this._intervalFrameCount = 0;
 
-        // If result == 0, no more requestAnimationFrame() will be invoked.
-        return result;
+        // If result is false, no more requestAnimationFrame() will be invoked.
+        return shouldContinueRunning;
     },
 
     animateLoop: function()
     {
         if (this._shouldRequestAnotherFrame()) {
-            this._benchmark.stage.animate(this.timeDelta());
+            this._benchmark.stage.animate(this._intervalTimeDelta());
             requestAnimationFrame(this.animateLoop.bind(this));
         }
     }
@@ -267,7 +270,7 @@ function Benchmark(stage, options)
     this._recordInterval = 200;
     this._isSampling = false;
     this._controller = new PIDController(this._options["frame-rate"]);
-    this._sampler = new Sampler(2);
+    this._sampler = new Sampler(4, 60 * this._options["test-interval"], this);
     this._state = new BenchmarkState(this._options["test-interval"] * 1000);
 }
 
@@ -295,7 +298,7 @@ Benchmark.prototype =
     },
 
     // Called from the animator to adjust the complexity of the test.
-    update: function(currentTimeOffset, timeDelta, currentFrameRate)
+    update: function(currentTimeOffset, intervalTimeDelta, estimatedIntervalFrameRate)
     {
         this._state.update(currentTimeOffset);
 
@@ -306,7 +309,9 @@ Benchmark.prototype =
         }
 
         if (stage == BenchmarkState.stages.SAMPLING && !this._isSampling) {
-            this._sampler.startSampling(this._state.samplingTimeOffset());
+            this._sampler.mark(Strings.json.samplingTimeOffset, {
+                time: this._state.samplingTimeOffset() / 1000
+            });
             this._isSampling = true;
         }
 
@@ -320,27 +325,27 @@ Benchmark.prototype =
         else if (!(this._isSampling && this._options["adjustment"] == "fixed-after-warmup")) {
             // The relationship between frameRate and test complexity is inverse-proportional so we
             // need to use the negative of PIDController.tune() to change the complexity of the test.
-            tuneValue = -this._controller.tune(currentTimeOffset, timeDelta, currentFrameRate);
+            tuneValue = -this._controller.tune(currentTimeOffset, intervalTimeDelta, estimatedIntervalFrameRate);
             tuneValue = tuneValue > 0 ? Math.floor(tuneValue) : Math.ceil(tuneValue);
         }
 
-        var currentComplexity = this._stage.tune(tuneValue);
-        this.record(currentTimeOffset, currentComplexity, currentFrameRate);
-        return true;
-    },
-
-    record: function(currentTimeOffset, currentComplexity, currentFrameRate)
-    {
-        this._sampler.sample(currentTimeOffset, [currentComplexity, currentFrameRate]);
+        this._stage.tune(tuneValue);
 
         if (typeof this._recordTimeOffset == "undefined")
             this._recordTimeOffset = currentTimeOffset;
 
         var stage = this._state.currentStage();
         if (stage != BenchmarkState.stages.FINISHED && currentTimeOffset < this._recordTimeOffset + this._recordInterval)
-            return;
+            return true;
 
         this._recordTimeOffset = currentTimeOffset;
+        return true;
+    },
+
+    record: function(currentTimeOffset, estimatedFrameRate, intervalFrameRate)
+    {
+        // If the frame rate is -1 it means we are still recording for this sample
+        this._sampler.record(currentTimeOffset, this.stage.complexity(), estimatedFrameRate, intervalFrameRate);
     },
 
     run: function()
@@ -357,5 +362,57 @@ Benchmark.prototype =
 
         resolveWhenFinished();
         return promise;
+    },
+
+    processSamples: function(results)
+    {
+        var complexity = new Experiment;
+        var smoothedFPS = new Experiment;
+        var samplingIndex = 0;
+
+        var samplingMark = this._sampler.marks[Strings.json.samplingTimeOffset];
+        if (samplingMark) {
+            samplingIndex = samplingMark.index;
+            results[Strings.json.samplingTimeOffset] = samplingMark.time;
+        }
+
+        results[Strings.json.samples] = this._sampler.samples[0].map(function(d, i) {
+            var result = {
+                // time offsets represented as seconds
+                time: d/1000,
+                complexity: this._sampler.samples[1][i]
+            };
+
+            // time offsets represented as FPS
+            if (i == 0)
+                result.fps = 60;
+            else
+                result.fps = 1000 / (d - this._sampler.samples[0][i - 1]);
+
+            var smoothedFPSresult = this._sampler.samples[2][i];
+            if (smoothedFPSresult != -1) {
+                result.smoothedFPS = smoothedFPSresult;
+                result.intervalFPS = this._sampler.samples[3][i];
+            }
+
+            if (i >= samplingIndex) {
+                complexity.sample(result.complexity);
+                if (smoothedFPSresult != -1) {
+                    smoothedFPS.sample(smoothedFPSresult);
+                }
+            }
+
+            return result;
+        }, this);
+
+        results[Strings.json.score] = complexity.score(Experiment.defaults.CONCERN);
+        [complexity, smoothedFPS].forEach(function(experiment, index) {
+            var jsonExperiment = !index ? Strings.json.experiments.complexity : Strings.json.experiments.frameRate;
+            results[jsonExperiment] = {};
+            results[jsonExperiment][Strings.json.measurements.average] = experiment.mean();
+            results[jsonExperiment][Strings.json.measurements.concern] = experiment.concern(Experiment.defaults.CONCERN);
+            results[jsonExperiment][Strings.json.measurements.stdev] = experiment.standardDeviation();
+            results[jsonExperiment][Strings.json.measurements.percent] = experiment.percentage();
+        });
     }
 };

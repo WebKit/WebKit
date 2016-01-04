@@ -91,6 +91,11 @@ CanvasStarsStage = Utilities.createSubclass(Stage,
         this._objects.forEach(function(object) {
             object.animate(timeDelta);
         });
+    },
+
+    complexity: function()
+    {
+        return this._objects.length;
     }
 });
 

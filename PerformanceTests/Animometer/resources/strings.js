@@ -26,6 +26,9 @@ var Strings = {
         score: "score",
         samples: "samples",
 
+        targetFPS: "targetFPS",
+        samplingTimeOffset: "samplingTimeOffset",
+
         experiments: {
             complexity: "complexity",
             frameRate: "frameRate"
@@ -42,11 +45,6 @@ var Strings = {
             iterations: "iterationsResults",
             suites: "suitesResults",
             tests: "testsResults"
-        },
-
-        graph: {
-            points: "points",
-            samplingTimeOffset: "samplingTimeOffset"
         }
     }
 };

@@ -96,7 +96,7 @@ BenchmarkRunner.prototype = {
         var benchmark = new contentWindow.benchmarkClass(options);
         benchmark.run().then(function(sampler) {
             var samplers = self._suitesSamplers[suite.name] || {};
-            samplers[test.name] = sampler.toJSON(true, true);
+            samplers[test.name] = sampler.process(options);
             self._suitesSamplers[suite.name] = samplers;
 
             if (self._client && self._client.didRunTest)

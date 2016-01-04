@@ -1,3 +1,130 @@
+2016-01-03  Jon Lee  <jonlee@apple.com>
+
+        Update data reporting and analysis
+        https://bugs.webkit.org/show_bug.cgi?id=152670
+
+        Reviewed by Simon Fraser.
+
+        Show new graph data. Provide controls to show different series data. Provide an
+        interactive cursor that shows the data at a given sample.
+
+        * Animometer/developer.html: Add a nav section in #results. Each part of the graph
+        has a checkbox for visual toggling, as well as companion spans to contain the data.
+                The numbers will always be shown even if the SVG isn't.
+        * Animometer/resources/debug-runner/animometer.css:
+        (#suites): Adjust spacing when doing fixed complexity.
+        (#test-graph nav): Place the nav in the upper right corner.
+        (#test-graph-data > svg): Fix the FPS scale from 0-60. It makes the raw FPS goes past
+        that scale. Allow it to show.
+        (.target-fps): Add a dotted line for where the benchmark is supposed to settle for FPS.
+        (#cursor line): The cursor contains a line and highlight circles for the data being shown.
+        (#cursor circle):
+        (#complexity path): This and rules afterward are named by series type.
+        (#complexity circle):
+        (#filteredFPS path):
+        (#filteredFPS circle):
+        (#rawFPS path):
+        (#intervalFPS circle):
+        (.left-samples): Deleted.
+        (.right-samples): Deleted.
+        * Animometer/resources/debug-runner/animometer.js:
+        (initialize): Add a "changed" listener when the checkboxes change in the nav.
+        (onBenchmarkOptionsChanged): Renamed.
+        (showTestGraph): All graph data is passed in as graphData instead of as arguments.
+        * Animometer/resources/debug-runner/graph.js: Extend BenchmarkController. When showing
+        a new graph, call updateGraphData(). It creates all of the d3 graphs. onGraphOptionsChanged()
+        toggles the data on and off.
+        (updateGraphData): Add the axes. Add the average lines and markers for sample time and
+        target FPS. Add the cursor group. Use helper function addData() to add the data. On top of
+        everything add a transparent area which will catch all of the mouse events. When the mouse
+        moves in the graph, find the closest data point, show the data in the nav area, and highlight
+        the data points.
+        (addData): Adds a line and circle for each data point. Also adds a highlight cursor with a
+        size a little larger than the circle radius for the data points.
+        (onGraphOptionsChanged): Called when data is visually toggled.
+        (showOrHideNodes): Helper function to toggle the .hidden class.
+        * Animometer/resources/extensions.js:
+        (ResultsDashboard.prototype.get data): Get rid of the arguments for _processData.
+        (ResultsTable.prototype._addGraphButton): Shove all of the graph data into a singular object.
+
+        Producing the JSON can take a while with all of the data. Make it on-demand with a
+        button.
+
+        * Animometer/resources/debug-runner/animometer.js:
+        (showResults): When showing the results, don't serialize the JSON data. Move that to...
+        (showJSONResults): ...here. Remove the button.
+
+        * Animometer/developer.html: Add a button. The button will remove itself and populate
+        the textarea with the JSON data.
+        * Animometer/resources/debug-runner/animometer.css:
+        (.hidden): Add a universal hidden class.
+        (#results button.small-button): Promote the small-button styles to the whole results
+        section for use in the JSON button.
+        (#results button.small-button:active):
+        (#results-data button.small-button): Deleted.
+        (#results-data button.small-button:active): Deleted.
+
+        Refactor how Animator does its recording.
+
+        * Animometer/tests/resources/math.js: Create a new, simple estimator that just returns
+        the same interval frame rate for adjustment.
+        * Animometer/tests/resources/main.js:
+        (Animator): Remove _dropFrameCount, and make variables more accurate described.
+        (Animator.prototype.initialize): Use the identity estimator instead of using a bool.
+        (Animator.prototype._intervalTimeDelta): Rename, only used internally.
+        (Animator.prototype._shouldRequestAnotherFrame): Assume we drop one frame for adjustment
+        of the scene. If we are within the number of frames to measure for the interval, just
+        record the timestamp. Otherwise we are ready to evaluate and adjust the scene. Record
+        the interval frame rate and the estimator's frame rate.
+
+        Avoid processing the data through the Experiment while the test is running. Reconfigure
+        the sampler to just record the raw samples. After the test is done, run the samples through
+        the Experiment to get the score.
+
+        * Animometer/resources/sampler.js:
+        (Experiment): Fold _init() into the constructor since nobody else will call it. This is not
+        needed until the test concludes, so remove startSampling(). Clients should just call sample().
+        (Sampler): Pre-allocate arrays given the number of data points being recorded, and a capacity
+        of how many samples will be used. The processor is a called when it's time to process the data
+        since that is the client also telling the Sampler what to record.
+                Introduce the notion of marks as well, which allows the client to mark when an
+        event occurs. When we mark sample start, we can attach the timestamp there, instead of storing
+        it separately.
+        (Sampler.prototype.startSampling): Deleted. Clients should just call record().
+        (Sampler.prototype.record): The data to record is passed in as variable arguments.
+        (Sampler.prototype.mark): When adding a mark, a client needs to provide a unique string, and
+        can provide extra data object for later retrieval.
+        (Sampler.prototype.process): Renamed from toJSON. Trim the sampling arrays to what was used.
+        Call the processor to process the samples.
+        * Animometer/resources/debug-runner/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runBenchmarkAndRecordResults): Call process().
+
+        * Animometer/resources/strings.js: Add some new strings, remove the graph ones since they are
+        not used.
+        * Animometer/tests/resources/main.js:
+        (Benchmark): Create a sampler with 4 series. The maximum number of points expected is the
+        number of seconds multiplied by 60 fps. Benchmark, as a client of the Sampler, knows about all
+        of the data being added to the Sampler. It is added through record(), and processed through
+        processSamples().
+        (Benchmark.prototype.update): Mark when we've passed warmup and are starting to sample. Include
+        the timestamp in the custom data for the mark. This avoids the need to store is separately in
+        the Sampler. Fold what was in record() here, since nothing else needs this functionality.
+        record() now just relays the information to the sampler.
+        (Benchmark.prototype.record): Called by Animator, which provides the data to the sampler.
+        Animator's calls to this is part of a later patch. Requires each stage to return its complexity.
+        (Benchmark.prototype.processSamples): If the sampling mark exists, add it to the results.
+                Go through all of the samples. All samples contain a timestamp and complexity. We
+        calculate "raw FPS" which is the time differential from the previous sample. At regular intervals
+        the Kalman-filtered FPS and the interval average FPS are also recorded. We also create two
+        experiments, to get the scores for the complexity and smoothed FPS, and add those samples to
+        the experiments. Grab those scores and add them into results also.
+
+        Add complexity() to the tests for Benchmark.record().
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        * Animometer/tests/misc/resources/canvas-electrons.js:
+        * Animometer/tests/misc/resources/canvas-stars.js:
+        * Animometer/tests/text/resources/layering-text.js:
+
 2015-12-27  Jon Lee  <jonlee@apple.com>
 
         Simplify the test harness

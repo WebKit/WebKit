@@ -113,5 +113,10 @@ BouncingParticlesStage = Utilities.createSubclass(Stage,
 
         this.particles.splice(-count, count);
         return this.particles.length;
+    },
+
+    complexity: function()
+    {
+        return this.particles.length;
     }
 });

@@ -3,6 +3,10 @@ body {
     color: rgb(235, 235, 235);
 }
 
+.hidden {
+    display: none;
+}
+
 h1 {
     margin: 5vh 0;
 }
@@ -139,6 +143,7 @@ label.tree-label {
 
 #suites {
     padding-left: 15vw;
+    padding-right: 2em;
     flex: 0 1 40%;
 }
 
@@ -149,7 +154,7 @@ label.tree-label {
 #intro input[type="number"] {
     width: 50px;
 }
- 
+
 #suites input[type="number"] {
     display: none;
     float: right;
@@ -266,6 +271,20 @@ label.tree-label {
     font-size: 2em;
 }
 
+#results button.small-button {
+    border: 1px solid rgba(235, 235, 235, .9);
+    color: rgba(235, 235, 235, .9);
+    border-radius: 2px;
+    padding: 1px 4px;
+    margin: 0 0 0 1em;
+    font-size: 9px;
+}
+
+#results button.small-button:active {
+    background-color: rgba(235, 235, 235, .2);
+    color: inherit;
+}
+
 .score {
     font-size: 3em;
 }
@@ -285,20 +304,6 @@ label.tree-label {
 #results-data .stdev {
     text-align: left;
     padding-left: .25em;
-}
-
-#results-data button.small-button {
-    border: 1px solid rgba(235, 235, 235, .9);
-    color: rgba(235, 235, 235, .9);
-    border-radius: 2px;
-    padding: 1px 4px;
-    margin: 0 0 0 1em;
-    font-size: 9px;
-}
-
-#results-data button.small-button:active {
-    background-color: rgba(235, 235, 235, .2);
-    color: inherit;
 }
 
 #results-tables td.noisy-results {
@@ -346,6 +351,36 @@ label.tree-label {
     align-self: stretch;
 }
 
+#test-graph nav {
+    position: absolute;
+    top: 1.5em;
+    right: 0;
+    font-size: .8em;
+    width: 25%;
+}
+
+#test-graph nav ul {
+    margin: 0 30px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+#test-graph nav ul ul {
+    padding-left: 2em;
+}
+
+#test-graph nav li {
+    padding: .1em 0;
+}
+
+#test-graph nav li > span {
+    float: right;
+}
+
+#test-graph nav.hide-data span {
+    display: none;
+}
+
 /* -------------------------------------------------------------------------- */
 /*                           Graph Section                                    */
 /* -------------------------------------------------------------------------- */
@@ -357,6 +392,7 @@ label.tree-label {
 
 #test-graph-data > svg {
     fill: none;
+    overflow: visible;
 }
 
 .axis path,
@@ -364,16 +400,6 @@ label.tree-label {
     fill: none;
     stroke: #999999;
     shape-rendering: crispEdges;
-}
-
-.left-samples {
-    stroke: #7ADD49;
-    stroke-width: 1.5px;
-}
-
-.right-samples {
-    stroke: #FA4925;
-    stroke-width: 1.5px;
 }
 
 .sample-time {
@@ -385,7 +411,50 @@ label.tree-label {
     opacity: .8;
 }
 
+.target-fps {
+    stroke: rgba(250, 73, 37, .4);
+    stroke-width: 1px;
+    stroke-dasharray: 10, 10;
+}
+
 .right-mean {
     stroke: #FA4925;
     opacity: .8;
+}
+
+#cursor line {
+    stroke: rgb(250, 250, 250);
+    stroke-width: 1px;
+}
+
+#cursor circle {
+    fill: rgb(250, 250, 250);
+}
+
+#complexity path {
+    stroke: rgba(122, 221, 73, .7);
+    stroke-width: 2px;
+}
+
+#complexity circle {
+    fill: rgb(122, 221, 73);
+}
+
+#filteredFPS path {
+    stroke: rgba(250, 73, 37, .7);
+    stroke-width: 2px;
+}
+
+#filteredFPS circle {
+    fill: rgb(250, 73, 37);
+}
+
+#rawFPS path {
+    stroke: rgba(250, 73, 37, .7);
+    stroke-width: 1px;
+}
+
+#rawFPS circle,
+#intervalFPS circle {
+    fill: rgb(250, 73, 37);
 }

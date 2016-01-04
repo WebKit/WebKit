@@ -30,7 +30,7 @@ var Matrix =
             out += A[i];
             if (i < n * m - 1)
                 out += ", ";
-        }       
+        }
         return out + "]";
     },
 
@@ -193,7 +193,7 @@ function PIDController(ysp)
 
     this._Kp = 0;
     this._stage = PIDController.stages.WARMING;
-    
+
     this._eold = 0;
     this._I = 0;
 }
@@ -208,12 +208,12 @@ PIDController.yPositions = {
 // The Ziegler–Nichols method for is used tuning the PID controller. The workflow of
 // the tuning is split into four stages. The first two stages determine the values
 // of the PID controller gains. During these two stages we return the proportional
-// term only. The third stage is used to determine the min-max values of the 
+// term only. The third stage is used to determine the min-max values of the
 // saturation actuator. In the last stage back-calculation and tracking are applied
 // to avoid integrator windup. During the last two stages, we return a PID control
 // value.
 PIDController.stages = {
-    WARMING: 0,         // Increase the value of the Kp until the system output reaches ysp. 
+    WARMING: 0,         // Increase the value of the Kp until the system output reaches ysp.
     OVERSHOOT: 1,       // Measure the oscillation period and the overshoot value
     UNDERSHOOT: 2,      // Return PID value and measure the undershoot value
     SATURATE: 3         // Return PID value and apply back-calculation and tracking.
@@ -237,7 +237,7 @@ PIDController.prototype =
     // proportional gain very small but achieves the desired progress. But if y does
     // not change significantly after adding few items, that means we need a much
     // bigger gain. So we need to move over a cubic curve which increases very
-    // slowly with small t values but moves very fast with larger t values. 
+    // slowly with small t values but moves very fast with larger t values.
     // The basic formula is: y = t^3
     // Change the formula to reach y=1 after 1000 ms: y = (t/1000)^3
     // Change the formula to reach y=(ysp - y0) after 1000 ms: y = (ysp - y0) * (t/1000)^3
@@ -257,7 +257,7 @@ PIDController.prototype =
 
     // Decides how much the proportional gain should be increased during the manual
     // gain stage. We choose to use the ratio of the ultimate distance to the current
-    // distance as an indication of how much the system is responsive. We want 
+    // distance as an indication of how much the system is responsive. We want
     // to keep the increment under control so it does not cause the system instability
     // So we choose to take the natural logarithm of this ratio.
     _gainIncrement: function(t, y, e)
@@ -277,7 +277,7 @@ PIDController.prototype =
             if (yPosition == PIDController.yPositions.AFTER_SETPOINT)
                 this._stage = PIDController.stages.OVERSHOOT;
             break;
-        
+
         case PIDController.stages.OVERSHOOT:
             if (yPosition == PIDController.yPositions.BEFORE_SETPOINT)
                 this._stage = PIDController.stages.UNDERSHOOT;
@@ -313,7 +313,7 @@ PIDController.prototype =
         // The ouput is a PID function.
        return P + this._I + D;
     },
-    
+
     // Apply different strategies for the tuning based on the stage of the controller.
     _tune: function(t, h, y, e)
     {
@@ -332,7 +332,7 @@ PIDController.prototype =
                 // set-point yet
                 this._Kp += this._gainIncrement(t, y, e);
             }
-        
+
             return this._tuneP(e);
 
         case PIDController.stages.OVERSHOOT:
@@ -343,41 +343,41 @@ PIDController.prototype =
                 this._t0 = t;
                 this._Kp /= 2;
             }
-        
+
             return this._tuneP(e);
-    
+
         case PIDController.stages.UNDERSHOOT:
             // This is the end of the ZieglerâNichols method. We need to calculate the
             // integral and derivative periods.
             if (typeof this._Ti == "undefined") {
                 // t is the time of the end of the first overshot
                 var Tu = t - this._t0;
-        
+
                 // Calculate the system parameters from Kp and Tu assuming
                 // a "some overshoot" control type. See:
                 // https://en.wikipedia.org/wiki/Ziegler%E2%80%93Nichols_method
                 this._Ti = Tu / 2;
                 this._Td = Tu / 3;
                 this._Kp = 0.33 * this._Kp;
-        
+
                 // Calculate the tracking time.
                 this._Tt = Math.sqrt(this._Ti * this._Td);
             }
-        
+
             return this._tunePID(h, y, e);
-        
+
         case PIDController.stages.SATURATE:
             return this._tunePID(h, y, e);
         }
-        
+
         return 0;
     },
-    
+
     // Ensures the system does not fluctuates.
     _saturate: function(v, e)
     {
         var u = v;
-        
+
         switch (this._stage) {
         case PIDController.stages.OVERSHOOT:
         case PIDController.stages.UNDERSHOOT:
@@ -389,7 +389,7 @@ PIDController.prototype =
                 this._max = Math.max(this._max, this._out);
             }
             break;
-        
+
         case PIDController.stages.SATURATE:
             const limitPercentage = 0.90;
             var min = this._min > 0 ? Math.min(this._min, this._max * limitPercentage) : this._min;
@@ -399,13 +399,13 @@ PIDController.prototype =
             // Clip the controller output to the min-max values
             out = Math.max(Math.min(max, out), min);
             u = out - this._out;
-    
+
             // Apply the back-calculation and tracking
             if (u != v)
                 u += (this._Kp * this._Tt / this._Ti) * e;
             break;
         }
-        
+
         this._out += u;
         return u;
     },
@@ -415,14 +415,14 @@ PIDController.prototype =
     tune: function(t, h, y)
     {
         this._updateStage(y);
-        
+
         // Current error.
         var e = this._ysp - y;
         var v = this._tune(t, h, y, e);
-        
+
         // Save e for the next call.
         this._eold = e;
-        
+
         // Apply back-calculation and tracking to avoid integrator windup
         return this._saturate(v, e);
     }
@@ -480,3 +480,12 @@ KalmanEstimator.prototype =
         return Vector3.multiplyVector3(this._vecH,  this._vecX_est);
     }
 }
+
+function IdentityEstimator() {}
+IdentityEstimator.prototype =
+{
+    estimate: function(current)
+    {
+        return current;
+    }
+};

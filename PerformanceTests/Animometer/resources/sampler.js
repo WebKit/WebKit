@@ -22,12 +22,14 @@ var Statistics =
             return 0;
         var roots = values.map(function(value) { return  Math.pow(value, 1 / values.length); })
         return roots.reduce(function(a, b) { return a * b; });
-    }   
+    }
 }
 
 function Experiment()
 {
-    this._init();
+    this._sum = 0;
+    this._squareSum = 0;
+    this._numberOfSamples = 0;
     this._maxHeap = Algorithm.createMaxHeap(Experiment.defaults.CONCERN_SIZE);
 }
 
@@ -39,22 +41,6 @@ Experiment.defaults =
 
 Experiment.prototype =
 {
-    _init: function()
-    {
-        this._sum = 0;
-        this._squareSum = 0;
-        this._numberOfSamples = 0;
-    },
-    
-    // Called after a warm-up period
-    startSampling: function()
-    {
-        var mean = this.mean();
-        this._init();
-        this._maxHeap.init();
-        this.sample(mean);
-    },
-    
     sample: function(value)
     {
         this._sum += value;
@@ -62,91 +48,82 @@ Experiment.prototype =
         this._maxHeap.push(value);
         ++this._numberOfSamples;
     },
-    
+
     mean: function()
     {
         return Statistics.sampleMean(this._numberOfSamples, this._sum);
     },
-    
+
     standardDeviation: function()
     {
         return Statistics.unbiasedSampleStandardDeviation(this._numberOfSamples, this._sum, this._squareSum);
     },
-    
+
     percentage: function()
     {
         var mean = this.mean();
         return mean ? this.standardDeviation() * 100 / mean : 0;
     },
-    
+
     concern: function(percentage)
     {
         var size = Math.ceil(this._numberOfSamples * percentage / 100);
         var values = this._maxHeap.values(size);
         return values.length ? values.reduce(function(a, b) { return a + b; }) / values.length : 0;
     },
-    
+
     score: function(percentage)
     {
         return Statistics.geometricMean([this.mean(), Math.max(this.concern(percentage), 1)]);
     }
 }
 
-function Sampler(count)
+function Sampler(seriesCount, expectedSampleCount, processor)
 {
-    this.experiments = [];
-    while (count--)
-        this.experiments.push(new Experiment());
+    this._processor = processor;
+
     this.samples = [];
-    this.samplingTimeOffset = 0;
+    for (var i = 0; i < seriesCount; ++i) {
+        var array = new Array(expectedSampleCount);
+        array.fill(0);
+        this.samples[i] = array;
+    }
+    this.sampleCount = 0;
+    this.marks = {};
 }
 
 Sampler.prototype =
 {
-    startSampling: function(samplingTimeOffset)
-    {
-        this.experiments.forEach(function(experiment) {
-            experiment.startSampling();
-        });
-            
-        this.samplingTimeOffset = samplingTimeOffset / 1000;
+    record: function() {
+        // Assume that arguments.length == this.samples.length
+        for (var i = 0; i < arguments.length; i++) {
+            this.samples[i][this.sampleCount] = arguments[i];
+        }
+        ++this.sampleCount;
     },
-    
-    sample: function(timeOffset, values)
-    {
-        if (values.length < this.experiments.length)
-            throw "Not enough sample points";
 
-        this.experiments.forEach(function(experiment, index) {
-            experiment.sample(values[index]);
-        });
-                    
-        this.samples.push({ timeOffset: timeOffset / 1000, values: values });
+    mark: function(comment, data) {
+        data = data || {};
+        // The mark exists after the last recorded sample
+        data.index = this.sampleCount;
+
+        this.marks[comment] = data;
     },
-    
-    toJSON: function(statistics, graph)
+
+    process: function(options)
     {
         var results = {};
-         
-        results[Strings.json.score] = this.experiments[0].score(Experiment.defaults.CONCERN);
-           
-        if (statistics) {
-            this.experiments.forEach(function(experiment, index) {
-                var jsonExperiment = !index ? Strings.json.experiments.complexity : Strings.json.experiments.frameRate;
-                results[jsonExperiment] = {};
-                results[jsonExperiment][Strings.json.measurements.average] = experiment.mean();
-                results[jsonExperiment][Strings.json.measurements.concern] = experiment.concern(Experiment.defaults.CONCERN);
-                results[jsonExperiment][Strings.json.measurements.stdev] = experiment.standardDeviation();
-                results[jsonExperiment][Strings.json.measurements.percent] = experiment.percentage()
-            });
-        }
-        
-        if (graph) {
-            results[Strings.json.samples] = {};
-            results[Strings.json.samples][Strings.json.graph.points] = this.samples;
-            results[Strings.json.samples][Strings.json.graph.samplingTimeOffset] = this.samplingTimeOffset;
-        }
-        
+
+        if (options["adjustment"] == "adaptive")
+            results[Strings.json.targetFPS] = +options["frame-rate"];
+
+        // Remove unused capacity
+        this.samples = this.samples.map(function(array) {
+            return array.slice(0, this.sampleCount);
+        }, this);
+
+        this._processor.processSamples(results);
+
         return results;
     }
 }

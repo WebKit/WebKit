@@ -95,6 +95,11 @@ CanvasElectronsStage = Utilities.createSubclass(Stage,
         this._electrons.forEach(function(electron) {
             electron.animate(timeDelta);
         });
+    },
+
+    complexity: function()
+    {
+        return this._electrons.length;
     }
 });
 
