@@ -1,3 +1,31 @@
+2016-01-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: reproducible debug ASSERT when inspecting the inspector (WK2)
+        https://bugs.webkit.org/show_bug.cgi?id=152080
+
+        Reviewed by Timothy Hatcher.
+
+        We hit an assert underneath ChildProcessProxy::addMessageReceiver when opening Inspector[2]
+        because we try to add WebInpectorProxy as a message receiver twice for the same process.
+
+        On investigating, I found several interrelated issues that caused this state of affairs:
+
+         - WebInspectorProxy adds message receivers for inspector page's WebProcess and the
+        inspected page's WebProcess. When inspecting the inspector, we mistakenly add a receiver
+        again because the inspector is now the inspected page.
+         - We mixed up process ids when adding message receivers.
+         - invalidate() is re-entrant, causing us to try and double-remove the message receiver.
+
+        Fix this by removing add/remove of message recievers for the inspector page when then
+        inspected page is itself an inspector page. In that case, the receivers are managed by
+        the inspector page's WebInspectorProxy instance.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::invalidate): Re-arrange to guard against useless reentrancy.
+        (WebKit::WebInspectorProxy::didRelaunchInspectorPageProcess):
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage):
+        (WebKit::WebInspectorProxy::didClose):
+
 2016-01-04  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r194536 when using NetworkSession.
