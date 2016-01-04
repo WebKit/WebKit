@@ -1,3 +1,11 @@
+2016-01-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB TestExpectations gardening.
+
+        Rubberstamped by Andy Estes.
+
+        * platform/mac-wk1/TestExpectations: Remove the failure entry for a test that passes.
+
 2016-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         scrollLeft returns different values for viewport and non-viewport scrolling with rtl

@@ -94,7 +94,6 @@ storage/indexeddb/intversion-long-queue.html [ Skip ]
 storage/indexeddb/transaction-starvation.html [ Skip ]
 
 # IDB tests with text failures                                                             
-storage/indexeddb/intversion-gated-on-delete.html [ Failure ]
 storage/indexeddb/odd-strings.html [ Failure ]
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
