@@ -53,8 +53,12 @@
 #include "FTLWeightedTarget.h"
 #include "JITAddGenerator.h"
 #include "JITBitAndGenerator.h"
+#include "JITBitOrGenerator.h"
+#include "JITBitXorGenerator.h"
 #include "JITDivGenerator.h"
+#include "JITLeftShiftGenerator.h"
 #include "JITMulGenerator.h"
+#include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
 #include "JSArrowFunction.h"
 #include "JSCInlines.h"
@@ -2303,8 +2307,12 @@ private:
     
     void compileBitOr()
     {
-        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+        if (m_node->isBinaryUseKind(UntypedUse)) {
+#if FTL_USES_B3
+            emitBinaryBitOpSnippet<JITBitOrGenerator>(operationValueBitOr);
+#else // FTL_USES_B3
             compileUntypedBinaryOp<BitOrDescriptor>();
+#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.bitOr(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
@@ -2312,8 +2320,12 @@ private:
     
     void compileBitXor()
     {
-        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+        if (m_node->isBinaryUseKind(UntypedUse)) {
+#if FTL_USES_B3
+            emitBinaryBitOpSnippet<JITBitXorGenerator>(operationValueBitXor);
+#else // FTL_USES_B3
             compileUntypedBinaryOp<BitXorDescriptor>();
+#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.bitXor(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
@@ -2321,8 +2333,12 @@ private:
     
     void compileBitRShift()
     {
-        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+        if (m_node->isBinaryUseKind(UntypedUse)) {
+#if FTL_USES_B3
+            emitRightShiftSnippet(JITRightShiftGenerator::SignedShift);
+#else // FTL_USES_B3
             compileUntypedBinaryOp<BitRShiftDescriptor>();
+#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.aShr(
@@ -2332,8 +2348,12 @@ private:
     
     void compileBitLShift()
     {
-        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+        if (m_node->isBinaryUseKind(UntypedUse)) {
+#if FTL_USES_B3
+            emitBinaryBitOpSnippet<JITLeftShiftGenerator>(operationValueBitLShift);
+#else // FTL_USES_B3
             compileUntypedBinaryOp<BitLShiftDescriptor>();
+#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.shl(
@@ -2343,8 +2363,12 @@ private:
     
     void compileBitURShift()
     {
-        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+        if (m_node->isBinaryUseKind(UntypedUse)) {
+#if FTL_USES_B3
+            emitRightShiftSnippet(JITRightShiftGenerator::UnsignedShift);
+#else // FTL_USES_B3
             compileUntypedBinaryOp<BitURShiftDescriptor>();
+#endif // FTL_USES_B3
             return;
         }
         setInt32(m_out.lShr(
@@ -7501,6 +7525,65 @@ private:
                         CCallHelpers::JumpList exceptions;
 
                         generator->slowPathJumpList().link(&jit);
+                        callOperation(
+                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            &exceptions, slowPathFunction, params[0].gpr(), params[1].gpr(),
+                            params[2].gpr());
+                        jit.jump().linkTo(done, &jit);
+                    });
+            });
+
+        setJSValue(patchpoint);
+    }
+
+    void emitRightShiftSnippet(JITRightShiftGenerator::ShiftType shiftType)
+    {
+        Node* node = m_node;
+        
+        // FIXME: Make this do exceptions.
+        // https://bugs.webkit.org/show_bug.cgi?id=151686
+            
+        LValue left = lowJSValue(node->child1());
+        LValue right = lowJSValue(node->child2());
+
+        SnippetOperand leftOperand(m_state.forNode(node->child1()).resultType());
+        SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
+            
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->append(left, ValueRep::SomeRegister);
+        patchpoint->append(right, ValueRep::SomeRegister);
+        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->numGPScratchRegisters = 1;
+        patchpoint->numFPScratchRegisters = 1;
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        State* state = &m_ftlState;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                    
+                auto generator = Box<JITRightShiftGenerator>::create(
+                    leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
+                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()),
+                    params.fpScratch(0), params.gpScratch(0), InvalidFPRReg, shiftType);
+
+                generator->generateFastPath(jit);
+                generator->endJumpList().link(&jit);
+                CCallHelpers::Label done = jit.label();
+
+                params.addLatePath(
+                    [=] (CCallHelpers& jit) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                            
+                        // FIXME: Make this do something.
+                        CCallHelpers::JumpList exceptions;
+
+                        generator->slowPathJumpList().link(&jit);
+
+                        J_JITOperation_EJJ slowPathFunction =
+                            shiftType == JITRightShiftGenerator::SignedShift
+                            ? operationValueBitRShift : operationValueBitURShift;
+                        
                         callOperation(
                             *state, params.unavailableRegisters(), jit, node->origin.semantic,
                             &exceptions, slowPathFunction, params[0].gpr(), params[1].gpr(),

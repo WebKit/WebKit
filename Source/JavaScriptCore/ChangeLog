@@ -1,3 +1,52 @@
+2016-01-04  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should do binary snippets
+        https://bugs.webkit.org/show_bug.cgi?id=152668
+
+        Reviewed by Mark Lam.
+
+        This finishes all of the rest of the snippets.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitOr):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitXor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitRShift):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitLShift):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitURShift):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitRightShiftSnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateCell):
+        * tests/stress/object-bit-or.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/object-bit-xor.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/object-lshift.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/object-rshift.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/object-urshift.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/untyped-bit-or.js: Added.
+        (foo):
+        (valueOf):
+        * tests/stress/untyped-bit-xor.js: Added.
+        (foo):
+        (valueOf):
+        * tests/stress/untyped-lshift.js: Added.
+        (foo):
+        (valueOf):
+        * tests/stress/untyped-rshift.js: Added.
+        (foo):
+        (valueOf):
+        * tests/stress/untyped-urshift.js: Added.
+        (foo):
+        (valueOf):
+
 2016-01-04  Mark Lam  <mark.lam@apple.com>
 
         isUntypedSpeculationForArithmetic is wrong.
