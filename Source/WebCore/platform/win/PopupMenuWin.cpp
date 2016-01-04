@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2011, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile Inc.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
@@ -36,6 +36,7 @@
 #include "HWndDC.h"
 #include "HostWindow.h"
 #include "LengthFunctions.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScreen.h"
@@ -103,16 +104,6 @@ static FloatRect monitorFromHwnd(HWND hwnd)
 
 PopupMenuWin::PopupMenuWin(PopupMenuClient* client)
     : m_popupClient(client)
-    , m_scrollbar(0)
-    , m_popup(0)
-    , m_wasClicked(false)
-    , m_itemHeight(0)
-    , m_scrollOffset(0)
-    , m_wheelDelta(0)
-    , m_focusedIndex(0)
-    , m_hoveredIndex(0)
-    , m_scrollbarCapturingMouse(false)
-    , m_showPopup(false)
 {
 }
 
@@ -1091,8 +1082,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 }
 
 AccessiblePopupMenu::AccessiblePopupMenu(const PopupMenuWin& popupMenu)
-    : m_refCount(0)
-    , m_popupMenu(popupMenu)
+    : m_popupMenu(popupMenu)
 {
 }
 
@@ -1100,8 +1090,10 @@ AccessiblePopupMenu::~AccessiblePopupMenu()
 {
 }
 
-HRESULT AccessiblePopupMenu::QueryInterface(REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
+HRESULT AccessiblePopupMenu::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
+    if (!ppvObject)
+        return E_POINTER;
     if (IsEqualGUID(riid, __uuidof(IAccessible)))
         *ppvObject = static_cast<IAccessible*>(this);
     else if (IsEqualGUID(riid, __uuidof(IDispatch)))
@@ -1109,7 +1101,7 @@ HRESULT AccessiblePopupMenu::QueryInterface(REFIID riid, __RPC__deref_out void _
     else if (IsEqualGUID(riid, __uuidof(IUnknown)))
         *ppvObject = static_cast<IAccessible*>(this);
     else {
-        *ppvObject = 0;
+        *ppvObject = nullptr;
         return E_NOINTERFACE;
     }
     AddRef();
@@ -1129,32 +1121,46 @@ ULONG AccessiblePopupMenu::Release()
     return refCount;
 }
 
-HRESULT AccessiblePopupMenu::GetTypeInfoCount(UINT* count)
+HRESULT AccessiblePopupMenu::GetTypeInfoCount(_Out_ UINT* count)
 {
+    if (!count)
+        return E_POINTER;
+    *count = 0;
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::GetTypeInfo(UINT, LCID, ITypeInfo** ppTInfo)
+HRESULT AccessiblePopupMenu::GetTypeInfo(UINT, LCID, _COM_Outptr_opt_ ITypeInfo** ppTInfo)
 {
+    if (!ppTInfo)
+        return E_POINTER;
+    *ppTInfo = nullptr;
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::GetIDsOfNames(REFIID, LPOLESTR*, UINT, LCID, DISPID*)
+HRESULT AccessiblePopupMenu::GetIDsOfNames(_In_ REFIID, __in_ecount(cNames) LPOLESTR*, UINT cNames, LCID, __out_ecount_full(cNames) DISPID*)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
 HRESULT AccessiblePopupMenu::Invoke(DISPID, REFIID, LCID, WORD, DISPPARAMS*, VARIANT*, EXCEPINFO*, UINT*)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::get_accParent(IDispatch**)
+HRESULT AccessiblePopupMenu::get_accParent(_COM_Outptr_opt_ IDispatch** parent)
 {
+    if (!parent)
+        return E_POINTER;
+    *parent = nullptr;
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::get_accChildCount(long* count)
+HRESULT AccessiblePopupMenu::get_accChildCount(_Out_ long* count)
 {
     if (!count)
         return E_POINTER;
@@ -1163,28 +1169,31 @@ HRESULT AccessiblePopupMenu::get_accChildCount(long* count)
     return S_OK;
 }
 
-HRESULT AccessiblePopupMenu::get_accChild(VARIANT vChild, IDispatch** ppChild)
+HRESULT AccessiblePopupMenu::get_accChild(VARIANT vChild, _COM_Outptr_opt_ IDispatch** ppChild)
 {
     if (!ppChild)
         return E_POINTER;
 
-    if (vChild.vt != VT_I4) {
-        *ppChild = nullptr;
-        return E_INVALIDARG;
-    }
     *ppChild = nullptr;
+
+    if (vChild.vt != VT_I4)
+        return E_INVALIDARG;
+
+    notImplemented();
     return S_FALSE;
 }
 
-HRESULT AccessiblePopupMenu::get_accName(VARIANT vChild, BSTR* name)
+HRESULT AccessiblePopupMenu::get_accName(VARIANT vChild, __deref_out_opt BSTR* name)
 {
     return get_accValue(vChild, name);
 }
 
-HRESULT AccessiblePopupMenu::get_accValue(VARIANT vChild, BSTR* value)
+HRESULT AccessiblePopupMenu::get_accValue(VARIANT vChild, __deref_out_opt BSTR* value)
 {
     if (!value)
         return E_POINTER;
+
+    *value = nullptr;
 
     if (vChild.vt != VT_I4)
         return E_INVALIDARG;
@@ -1200,16 +1209,16 @@ HRESULT AccessiblePopupMenu::get_accValue(VARIANT vChild, BSTR* value)
     return S_OK;
 }
 
-HRESULT AccessiblePopupMenu::get_accDescription(VARIANT, BSTR*)
+HRESULT AccessiblePopupMenu::get_accDescription(VARIANT, __deref_out_opt BSTR*)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::get_accRole(VARIANT vChild, VARIANT* pvRole)
+HRESULT AccessiblePopupMenu::get_accRole(VARIANT vChild, _Out_ VARIANT* pvRole)
 {
     if (!pvRole)
         return E_POINTER;
-
     if (vChild.vt != VT_I4)
         return E_INVALIDARG;
 
@@ -1225,7 +1234,7 @@ HRESULT AccessiblePopupMenu::get_accRole(VARIANT vChild, VARIANT* pvRole)
     return S_OK;
 }
 
-HRESULT AccessiblePopupMenu::get_accState(VARIANT vChild, VARIANT* pvState)
+HRESULT AccessiblePopupMenu::get_accState(VARIANT vChild, _Out_ VARIANT* pvState)
 {
     if (!pvState)
         return E_POINTER;
@@ -1239,37 +1248,43 @@ HRESULT AccessiblePopupMenu::get_accState(VARIANT vChild, VARIANT* pvState)
     return S_OK;
 }
 
-HRESULT AccessiblePopupMenu::get_accHelp(VARIANT vChild, BSTR* helpText)
+HRESULT AccessiblePopupMenu::get_accHelp(VARIANT vChild, __deref_out_opt BSTR* helpText)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::get_accKeyboardShortcut(VARIANT vChild, BSTR*)
+HRESULT AccessiblePopupMenu::get_accKeyboardShortcut(VARIANT vChild, __deref_out_opt BSTR*)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::get_accFocus(VARIANT* pvFocusedChild)
+HRESULT AccessiblePopupMenu::get_accFocus(_Out_ VARIANT* pvFocusedChild)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::get_accSelection(VARIANT* pvSelectedChild)
+HRESULT AccessiblePopupMenu::get_accSelection(_Out_ VARIANT* pvSelectedChild)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::get_accDefaultAction(VARIANT vChild, BSTR* actionDescription)
+HRESULT AccessiblePopupMenu::get_accDefaultAction(VARIANT vChild, __deref_out_opt BSTR* actionDescription)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
 HRESULT AccessiblePopupMenu::accSelect(long selectionFlags, VARIANT vChild)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::accLocation(long* left, long* top, long* width, long* height, VARIANT vChild)
+HRESULT AccessiblePopupMenu::accLocation(_Out_ long* left, _Out_ long* top, _Out_ long* width, _Out_ long* height, VARIANT vChild)
 {
     if (!left || !top || !width || !height)
         return E_POINTER;
@@ -1333,12 +1348,13 @@ HRESULT AccessiblePopupMenu::accLocation(long* left, long* top, long* width, lon
     return S_OK;
 }
 
-HRESULT AccessiblePopupMenu::accNavigate(long direction, VARIANT vFromChild, VARIANT* pvNavigatedTo)
+HRESULT AccessiblePopupMenu::accNavigate(long direction, VARIANT vFromChild, _Out_ VARIANT* pvNavigatedTo)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::accHitTest(long x, long y, VARIANT* pvChildAtPoint)
+HRESULT AccessiblePopupMenu::accHitTest(long x, long y, _Out_ VARIANT* pvChildAtPoint)
 {
     if (!pvChildAtPoint)
         return E_POINTER;
@@ -1381,21 +1397,25 @@ HRESULT AccessiblePopupMenu::accHitTest(long x, long y, VARIANT* pvChildAtPoint)
 
 HRESULT AccessiblePopupMenu::accDoDefaultAction(VARIANT vChild)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
 HRESULT AccessiblePopupMenu::put_accName(VARIANT, BSTR)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
 HRESULT AccessiblePopupMenu::put_accValue(VARIANT, BSTR)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 
-HRESULT AccessiblePopupMenu::get_accHelpTopic(BSTR* helpFile, VARIANT, long* topicID)
+HRESULT AccessiblePopupMenu::get_accHelpTopic(BSTR* helpFile, VARIANT, _Out_ long* topicID)
 {
+    notImplemented();
     return E_NOTIMPL;
 }
 

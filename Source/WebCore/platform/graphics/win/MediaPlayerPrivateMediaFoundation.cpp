@@ -749,8 +749,10 @@ MediaPlayerPrivateMediaFoundation::AsyncCallback::~AsyncCallback()
         m_mediaPlayer->removeListener(this);
 }
 
-HRESULT MediaPlayerPrivateMediaFoundation::AsyncCallback::QueryInterface(REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
+HRESULT MediaPlayerPrivateMediaFoundation::AsyncCallback::QueryInterface(_In_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
 {
+    if (!ppvObject)
+        return E_POINTER;
     if (!IsEqualGUID(riid, IID_IMFAsyncCallback)) {
         *ppvObject = nullptr;
         return E_NOINTERFACE;

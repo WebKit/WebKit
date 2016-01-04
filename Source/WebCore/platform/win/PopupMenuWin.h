@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
@@ -121,21 +121,21 @@ private:
     LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     static void registerClass();
 
-    PopupMenuClient* m_popupClient;
     RefPtr<Scrollbar> m_scrollbar;
-    HWND m_popup;
+    COMPtr<IAccessible> m_accessiblePopupMenu;
     GDIObject<HDC> m_DC;
     GDIObject<HBITMAP> m_bmp;
-    bool m_wasClicked;
+    PopupMenuClient* m_popupClient;
+    HWND m_popup { nullptr };
     IntRect m_windowRect;
-    int m_itemHeight;
-    int m_scrollOffset;
-    int m_wheelDelta;
-    int m_focusedIndex;
-    int m_hoveredIndex;
-    bool m_scrollbarCapturingMouse;
-    bool m_showPopup;
-    COMPtr<IAccessible> m_accessiblePopupMenu;
+    int m_itemHeight { 0 };
+    int m_scrollOffset { 0 };
+    int m_wheelDelta { 0 };
+    int m_focusedIndex { 0 };
+    int m_hoveredIndex { 0 };
+    bool m_wasClicked { false };
+    bool m_scrollbarCapturingMouse { false };
+    bool m_showPopup { false };
 
     friend class AccessiblePopupMenu;
 };
@@ -146,41 +146,41 @@ public:
     ~AccessiblePopupMenu();
 
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID, _COM_Outptr_ void**);
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
     // IDispatch - Not to be implemented.
-    virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(UINT* count);
-    virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT, LCID, ITypeInfo** ppTInfo);
-    virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(REFIID, LPOLESTR*, UINT, LCID, DISPID*);
+    virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(_Out_ UINT* count);
+    virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT, LCID, _COM_Outptr_opt_ ITypeInfo**);
+    virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(_In_ REFIID, __in_ecount(cNames) LPOLESTR*, UINT cNames, LCID, __out_ecount_full(cNames) DISPID*);
     virtual HRESULT STDMETHODCALLTYPE Invoke(DISPID, REFIID, LCID, WORD, DISPPARAMS*, VARIANT*, EXCEPINFO*, UINT*);
 
     // IAccessible
-    virtual HRESULT STDMETHODCALLTYPE get_accParent(IDispatch**);
-    virtual HRESULT STDMETHODCALLTYPE get_accChildCount(long*);
-    virtual HRESULT STDMETHODCALLTYPE get_accChild(VARIANT vChild, IDispatch** ppChild);
-    virtual HRESULT STDMETHODCALLTYPE get_accName(VARIANT vChild, BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_accValue(VARIANT vChild, BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_accDescription(VARIANT, BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_accRole(VARIANT vChild, VARIANT* pvRole);
-    virtual HRESULT STDMETHODCALLTYPE get_accState(VARIANT vChild, VARIANT* pvState);
-    virtual HRESULT STDMETHODCALLTYPE get_accHelp(VARIANT vChild, BSTR* helpText);
-    virtual HRESULT STDMETHODCALLTYPE get_accKeyboardShortcut(VARIANT vChild, BSTR*);
-    virtual HRESULT STDMETHODCALLTYPE get_accFocus(VARIANT* pvFocusedChild);
-    virtual HRESULT STDMETHODCALLTYPE get_accSelection(VARIANT* pvSelectedChild);
-    virtual HRESULT STDMETHODCALLTYPE get_accDefaultAction(VARIANT vChild, BSTR* actionDescription);
+    virtual HRESULT STDMETHODCALLTYPE get_accParent(_COM_Outptr_opt_ IDispatch**);
+    virtual HRESULT STDMETHODCALLTYPE get_accChildCount(_Out_ long*);
+    virtual HRESULT STDMETHODCALLTYPE get_accChild(VARIANT vChild, _COM_Outptr_opt_ IDispatch** ppChild);
+    virtual HRESULT STDMETHODCALLTYPE get_accName(VARIANT vChild, __deref_out_opt BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_accValue(VARIANT vChild, __deref_out_opt BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_accDescription(VARIANT, __deref_out_opt BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_accRole(VARIANT vChild, _Out_ VARIANT* pvRole);
+    virtual HRESULT STDMETHODCALLTYPE get_accState(VARIANT vChild, _Out_ VARIANT* pvState);
+    virtual HRESULT STDMETHODCALLTYPE get_accHelp(VARIANT vChild, __deref_out_opt BSTR* helpText);
+    virtual HRESULT STDMETHODCALLTYPE get_accKeyboardShortcut(VARIANT vChild, __deref_out_opt BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_accFocus(_Out_ VARIANT* pvFocusedChild);
+    virtual HRESULT STDMETHODCALLTYPE get_accSelection(_Out_ VARIANT* pvSelectedChild);
+    virtual HRESULT STDMETHODCALLTYPE get_accDefaultAction(VARIANT vChild, __deref_out_opt BSTR* actionDescription);
     virtual HRESULT STDMETHODCALLTYPE accSelect(long selectionFlags, VARIANT vChild);
-    virtual HRESULT STDMETHODCALLTYPE accLocation(long* left, long* top, long* width, long* height, VARIANT vChild);
-    virtual HRESULT STDMETHODCALLTYPE accNavigate(long direction, VARIANT vFromChild, VARIANT* pvNavigatedTo);
-    virtual HRESULT STDMETHODCALLTYPE accHitTest(long x, long y, VARIANT* pvChildAtPoint);
+    virtual HRESULT STDMETHODCALLTYPE accLocation(_Out_ long* left, _Out_ long* top, _Out_ long* width, _Out_ long* height, VARIANT vChild);
+    virtual HRESULT STDMETHODCALLTYPE accNavigate(long direction, VARIANT vFromChild, _Out_ VARIANT* pvNavigatedTo);
+    virtual HRESULT STDMETHODCALLTYPE accHitTest(long x, long y, _Out_ VARIANT* pvChildAtPoint);
     virtual HRESULT STDMETHODCALLTYPE accDoDefaultAction(VARIANT vChild);
-    virtual HRESULT STDMETHODCALLTYPE put_accName(VARIANT, BSTR);
-    virtual HRESULT STDMETHODCALLTYPE put_accValue(VARIANT, BSTR);
-    virtual HRESULT STDMETHODCALLTYPE get_accHelpTopic(BSTR* helpFile, VARIANT, long* topicID);
+    virtual HRESULT STDMETHODCALLTYPE put_accName(VARIANT, _In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE put_accValue(VARIANT, _In_ BSTR);
+    virtual HRESULT STDMETHODCALLTYPE get_accHelpTopic(BSTR* helpFile, VARIANT, _Out_ long* topicID);
 
 private:
-    int m_refCount;
+    int m_refCount { 0 };
     const PopupMenuWin& m_popupMenu;
 };
 

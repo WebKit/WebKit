@@ -1,3 +1,25 @@
+2016-01-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Clean up some Windows WebCore files
+        https://bugs.webkit.org/show_bug.cgi?id=148275
+
+        Reviewed by Dean Jackson.
+
+        No new tests because there is no behavior change.
+
+        Update a handful of Windows-specific WebCore files to use
+        the proper method signatures for our updated interfaces,
+        get rid of cruft in the COM bindings, and use proper C++14
+        initializers.
+
+        * accessibility/win/AccessibilityObjectWrapperWin.h:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        * platform/win/PopupMenuWin.cpp:
+        * platform/win/PopupMenuWin.h:
+        * platform/win/WCDataObject.cpp:
+        * platform/win/WCDataObject.h:
+
 2016-01-04  Andreas Kling  <akling@apple.com>
 
         Simplify the CachedScript ASCII optimization.
