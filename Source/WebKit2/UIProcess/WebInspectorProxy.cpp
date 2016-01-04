@@ -108,17 +108,13 @@ void WebInspectorProxy::invalidate()
         WebInspectorServer::singleton().unregisterPage(m_remoteInspectionPageId);
 #endif
 
-    // We can be called reentrantly through platformInvalidate(), in which case nothing needs to be done.
-    if (!m_inspectedPage)
-        return;
-
     m_inspectedPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID());
-
-    pageLevelMap().remove(m_inspectedPage);
-    m_inspectedPage = nullptr;
 
     didClose();
     platformInvalidate();
+
+    pageLevelMap().remove(m_inspectedPage);
+    m_inspectedPage = nullptr;
 }
 
 // Public APIs
@@ -184,8 +180,7 @@ void WebInspectorProxy::close()
 
 void WebInspectorProxy::didRelaunchInspectorPageProcess()
 {
-    if (inspectionLevel() == 1)
-        m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
+    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
 
     // When didRelaunchInspectorPageProcess is called we can assume it is during a load request.
@@ -515,8 +510,7 @@ void WebInspectorProxy::eagerlyCreateInspectorPage()
     WKPageSetPageLoaderClient(toAPI(m_inspectorPage), &loaderClient.base);
     WKPageSetPageContextMenuClient(toAPI(m_inspectorPage), &contextMenuClient.base);
 
-    if (inspectionLevel() == 1)
-        m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
+    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
 }
 
@@ -578,9 +572,7 @@ void WebInspectorProxy::didClose()
     if (!m_inspectorPage)
         return;
 
-    if (inspectionLevel() == 1)
-        m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectorPage->pageID());
-
+    m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID());
     m_inspectorPage = nullptr;
 
     m_isVisible = false;
