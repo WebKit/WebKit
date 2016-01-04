@@ -744,7 +744,6 @@ class Parser
                 moduleName = @tokens[@idx].string
                 fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
                 @idx += 1
-                $stderr.puts "offlineasm: Including file #{fileName}"
                 list << parse(fileName)
             else
                 parseError "Expecting terminal #{final} #{comment}"

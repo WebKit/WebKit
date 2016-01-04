@@ -154,23 +154,13 @@ if __name__ == "__main__":
             initBytecodesReadFile.close()
 
     if not needToGenerate:
-        print "Nothing changed.\n"
         exit(0)
-
-    genString = "Generating "
 
     if bytecodeHFilename:
         bytecodeHFile = openOrExit(bytecodeHFilename, "wb")
-        genString = genString + "{0} ".format(bytecodeHFilename)
 
     if initASMFileName:
         initBytecodesFile = openOrExit(initASMFileName, "wb")
-        if bytecodeHFilename:
-            genString = genString + "and "
-        genString = genString + "{0} ".format(initASMFileName)
-
-    print "{0}from {1}\n".format(genString, bytecodeJSONFile)
-
 
     try:
         bytecodeSections = json.load(bytecodeFile, encoding = "utf-8")

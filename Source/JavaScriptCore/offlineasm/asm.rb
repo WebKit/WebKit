@@ -282,8 +282,6 @@ asmFile = ARGV.shift
 offsetsFile = ARGV.shift
 outputFlnm = ARGV.shift
 
-$stderr.puts "offlineasm: Parsing #{asmFile} and #{offsetsFile} and creating assembly file #{outputFlnm}."
-
 begin
     configurationList = offsetsAndConfigurationIndex(offsetsFile)
 rescue MissingMagicValuesException
@@ -335,6 +333,3 @@ File.open(outputFlnm, "w") {
         }
     }
 }
-
-$stderr.puts "offlineasm: Assembly file #{outputFlnm} successfully generated."
-

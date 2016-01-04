@@ -45,8 +45,6 @@ if validBackends
     includeOnlyBackends(validBackends.split(","))
 end
 
-$stderr.puts "offlineasm: Parsing #{inputFlnm} and creating offset extractor #{outputFlnm}."
-
 def emitMagicNumber
     OFFSET_MAGIC_NUMBERS.each {
         | number |
@@ -149,6 +147,3 @@ File.open(outputFlnm, "w") {
     }
     outp.puts "};"
 }
-
-$stderr.puts "offlineasm: offset extractor #{outputFlnm} successfully generated."
-

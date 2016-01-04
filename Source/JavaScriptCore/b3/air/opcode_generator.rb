@@ -456,8 +456,6 @@ $fileName = ARGV[0]
 parser = Parser.new(IO::read($fileName), $fileName)
 $opcodes = parser.parse
 
-$stderr.puts "Generating code for #{$fileName}."
-
 def writeH(filename)
     File.open("Air#{filename}.h", "w") {
         | outp |
