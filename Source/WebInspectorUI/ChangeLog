@@ -1,3 +1,14 @@
+2016-01-03  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Visual sidebar selector section displays inherited section for non-editable rules
+        https://bugs.webkit.org/show_bug.cgi?id=152659
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection.prototype.update):
+        Only add a new inherited section header if it will contain at least one inherited rule.
+
 2016-01-02  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: List all resources that are initiated by the selected resource in the Network tab

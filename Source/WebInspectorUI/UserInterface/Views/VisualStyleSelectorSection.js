@@ -184,14 +184,18 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             if (!inherited.matchedRules || !inherited.matchedRules.length)
                 continue;
 
-            let dividerText = WebInspector.UIString("Inherited from %s").format(WebInspector.displayNameForNode(inherited.node));
-            let divider = new WebInspector.GeneralTreeElement("section-divider", dividerText);
-            divider.selectable = false;
-            this._selectors.appendChild(divider);
+            let divider = null;
 
             for (let rule of uniqueOrderedRules(inherited.matchedRules)) {
                 if (rule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
                     continue;
+
+                if (!divider) {
+                    let dividerText = WebInspector.UIString("Inherited from %s").format(WebInspector.displayNameForNode(inherited.node));
+                    divider = new WebInspector.GeneralTreeElement("section-divider", dividerText);
+                    divider.selectable = false;
+                    this._selectors.appendChild(divider);
+                }
 
                 createSelectorItem.call(this, rule.style, rule.selectorText, rule.mediaText);
             }
