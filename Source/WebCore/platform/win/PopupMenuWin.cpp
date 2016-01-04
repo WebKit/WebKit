@@ -685,7 +685,7 @@ int PopupMenuWin::scrollSize(ScrollbarOrientation orientation) const
     return ((orientation == VerticalScrollbar) && m_scrollbar) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
 }
 
-int PopupMenuWin::scrollPosition(Scrollbar*) const
+int PopupMenuWin::scrollOffset(ScrollbarOrientation) const
 {
     return m_scrollOffset;
 }

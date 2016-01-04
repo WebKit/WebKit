@@ -1,3 +1,12 @@
+2016-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build after r194515.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::scrollOffset):
+        (WebCore::PopupMenuWin::scrollPosition): Renamed.
+        * platform/win/PopupMenuWin.h:
+
 2016-01-03  Khem Raj  <raj.khem@gmail.com>
 
         WebKit fails to build with musl libc library
