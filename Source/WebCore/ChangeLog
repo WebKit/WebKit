@@ -1,3 +1,15 @@
+2016-01-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Post-commit update for r193484.
+        https://bugs.webkit.org/show_bug.cgi?id=151884
+
+        Unreviwed.
+
+        The same null check needs to be applied in fontHasVerticalGlyphs() as well.
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::fontHasVerticalGlyphs):
+
 2016-01-04  David Hyatt  <hyatt@apple.com>
 
         Video/audio-related cleanup after changes to the source element for picture support.
