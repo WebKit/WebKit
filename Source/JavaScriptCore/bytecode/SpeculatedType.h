@@ -387,12 +387,12 @@ inline bool isEmptySpeculation(SpeculatedType value)
 
 inline bool isUntypedSpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullNumber | SpecBoolean));
+    return !!(value & ~(SpecFullNumber | SpecBoolean));
 }
 
 inline bool isUntypedSpeculationForBitOps(SpeculatedType value)
 {
-    return !(value & (SpecFullNumber | SpecBoolean | SpecOther));
+    return !!(value & ~(SpecFullNumber | SpecBoolean | SpecOther));
 }
 
 void dumpSpeculation(PrintStream&, SpeculatedType);

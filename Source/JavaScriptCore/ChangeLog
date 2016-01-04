@@ -1,3 +1,21 @@
+2016-01-04  Mark Lam  <mark.lam@apple.com>
+
+        isUntypedSpeculationForArithmetic is wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=152708
+
+        Reviewed by Filip Pizlo.
+
+        The isUntypedSpeculation...() checks should return true is we ever see
+        non-numeric types, regardless of whether numeric types are seen or not.
+        Previously, they only return true if we only see non-numeric types, and false if
+        we ever see numeric types.
+
+        This patch is perf neutral on both x86_64 and x86.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isUntypedSpeculationForArithmetic):
+        (JSC::isUntypedSpeculationForBitOps):
+
 2016-01-04  Tim Horton  <timothy_horton@apple.com>
 
         Turn on gesture events when building for Yosemite
