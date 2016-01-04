@@ -1,3 +1,11 @@
+2016-01-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build after r194454.
+
+        * Source/cmake/OptionsMac.cmake:
+        _macosx, _iphoneos, and _iphonesimulator are used in FeatureDefines.xcconfig but won't be used in CMake.
+        If we actually switch to CMake, we will need to verify that all the feature enabling is equivalent, and it isn't right now.
+
 2015-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK][CMake] Do not override default values of build options with the default value
