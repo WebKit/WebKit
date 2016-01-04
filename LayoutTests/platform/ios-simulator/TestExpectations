@@ -223,9 +223,6 @@ svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
 webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Skip ] # Pass, Crash
 
-# window.requestAnimationFrame() broken in iOS Simulator
-webkit.org/b/137588 fast/animation
-
 # Animation tests that fail:
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 animations/cross-fade-webkit-mask-box-image.html [ Failure ]
