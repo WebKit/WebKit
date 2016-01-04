@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shadowing then()</title>
+</head>
+<body>
+This test verifies that the implementation of navigator.webkitGetUserMedia does not use public promise APIs. Test passes if no message about a shadowed public .then() is printed.
+<p id="output"></p>
+<script>
+    // Shadow Promise.prototype.then
+    Promise.prototype.then = (function () {
+        const realThen = Promise.prototype.then;
+        return function (successCallback, errorCallback) {
+            document.getElementById("output").textContent = "Executed shadowed, public .then()";
+            realThen.call(this, successCallback, errorCallback);
+        }
+    })();
+
+    function gotUserMedia(mediaStream) {
+        console.log("Got user media");
+    }
+
+    function userMediaError(error) {
+        console.log(error);
+    }
+
+    var options = { audio: false, video: true };
+    navigator.webkitGetUserMedia(options, gotUserMedia, userMediaError);
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+</script>
+</body>
+</html>

@@ -1,3 +1,15 @@
+2016-01-04  John Wilander  <wilander@apple.com>
+
+        webkitGetUserMedia built-in should use @then and not then
+        https://bugs.webkit.org/show_bug.cgi?id=152296
+
+        Reviewed by Brent Fulgham.
+
+        Test: streams/webkitGetUserMedia-shadowing-then.html
+
+        * Modules/mediastream/NavigatorUserMedia.js:
+        (webkitGetUserMedia): Modified to use @then syntax.
+
 2016-01-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Post-commit update for r193484.

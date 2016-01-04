@@ -42,5 +42,5 @@ function webkitGetUserMedia(options, successCallback, errorCallback)
     if (typeof errorCallback !== "function")
         throw new @TypeError("Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function");
 
-    this.mediaDevices.@getUserMediaFromJS(options).then(successCallback, errorCallback);
+    this.mediaDevices.@getUserMediaFromJS(options).@then(successCallback, errorCallback);
 }
