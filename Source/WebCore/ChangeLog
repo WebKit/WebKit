@@ -1,3 +1,16 @@
+2016-01-03  David Kilzer  <ddkilzer@apple.com>
+
+        -[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:] is missing an m_handle->client() NULL check
+        <https://webkit.org/b/152673>
+        <rdar://problem/23560530>
+
+        Reviewed by Daniel Bates.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        Add NULL check for m_handle->client() so we don't crash due to a
+        NULL dereference inside the dispatch_async() block.
+
 2016-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, turn off temporary scrolling logging on GTK

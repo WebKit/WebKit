@@ -196,7 +196,7 @@ using namespace WebCore;
     RetainPtr<id> protector(self);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_handle) {
+        if (!m_handle || !m_handle->client()) {
             dispatch_semaphore_signal(m_semaphore);
             return;
         }
