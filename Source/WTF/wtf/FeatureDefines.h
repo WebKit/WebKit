@@ -258,10 +258,8 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_SHADOW_DOM 1
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 #if !defined(ENABLE_MAC_GESTURE_EVENTS) && USE(APPLE_INTERNAL_SDK)
 #define ENABLE_MAC_GESTURE_EVENTS 1
-#endif
 #endif
 
 #endif /* PLATFORM(MAC) */

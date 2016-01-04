@@ -1,3 +1,13 @@
+2016-01-04  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on gesture events when building for Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=152704
+        rdar://problem/24042472
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-01-04  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should do BitAnd binary snippets
