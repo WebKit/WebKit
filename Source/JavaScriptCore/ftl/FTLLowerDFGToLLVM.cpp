@@ -51,6 +51,9 @@
 #include "FTLOutput.h"
 #include "FTLThunks.h"
 #include "FTLWeightedTarget.h"
+#include "JITAddGenerator.h"
+#include "JITDivGenerator.h"
+#include "JITMulGenerator.h"
 #include "JITSubGenerator.h"
 #include "JSArrowFunction.h"
 #include "JSCInlines.h"
@@ -1596,7 +1599,11 @@ private:
     
     void compileValueAdd()
     {
+#if FTL_USES_B3
+        emitBinarySnippet<JITAddGenerator>(operationValueAdd);
+#else // FTL_USES_B3
         compileUntypedBinaryOp<ValueAddDescriptor>();
+#endif // FTL_USES_B3
     }
     
     void compileStrCat()
@@ -1845,7 +1852,11 @@ private:
         }
 
         case UntypedUse: {
+#if FTL_USES_B3
+            emitBinarySnippet<JITMulGenerator>(operationValueMul);
+#else // FTL_USES_B3
             compileUntypedBinaryOp<ArithMulDescriptor>();
+#endif // FTL_USES_B3
             break;
         }
 
@@ -1914,7 +1925,11 @@ private:
         }
 
         case UntypedUse: {
+#if FTL_USES_B3
+            emitBinarySnippet<JITDivGenerator, NeedScratchFPR>(operationValueDiv);
+#else // FTL_USES_B3
             compileUntypedBinaryOp<ArithDivDescriptor, HasConstInt32OperandOptimization, HasConstDoubleOperandOptimization>();
+#endif // FTL_USES_B3
             break;
         }
 

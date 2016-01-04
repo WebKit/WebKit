@@ -1,5 +1,36 @@
 2016-01-04  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 should do all of the non-bitop binary snippets
+        https://bugs.webkit.org/show_bug.cgi?id=152709
+
+        Reviewed by Mark Lam.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStrCat):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithDiv):
+        * tests/stress/object-add.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/object-div.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/object-mul.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/untyped-add.js: Added.
+        (foo):
+        (valueOf):
+        * tests/stress/untyped-div.js: Added.
+        (foo):
+        (valueOf):
+        * tests/stress/untyped-mul.js: Added.
+        (foo):
+        (valueOf):
+
+2016-01-04  Filip Pizlo  <fpizlo@apple.com>
+
         FTL B3 should do the ArithSub binary snippet
         https://bugs.webkit.org/show_bug.cgi?id=152705
 
