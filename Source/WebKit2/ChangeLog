@@ -1,5 +1,16 @@
 2016-01-04  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix after r194536 when using NetworkSession.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::dataTaskBecameDownloadTask):
+        (WebKit::DownloadManager::convertHandleToDownload):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        WTFMove changed underneath me.
+
+2016-01-04  Alex Christensen  <achristensen@webkit.org>
+
         Progress towards implementing downloads with NetworkSession
         https://bugs.webkit.org/show_bug.cgi?id=152576
 

@@ -189,7 +189,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         auto& downloadManager = WebKit::NetworkProcess::singleton().downloadManager();
         auto download = std::make_unique<WebKit::Download>(downloadManager, *_session, downloadID);
         download->didStart([downloadTask currentRequest]);
-        downloadManager.dataTaskBecameDownloadTask(downloadID, WTF::move(download));
+        downloadManager.dataTaskBecameDownloadTask(downloadID, WTFMove(download));
 
         if (auto* client = networkDataTask->client())
             client->didBecomeDownload();

@@ -61,7 +61,7 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
 #if USE(NETWORK_SESSION)
 void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
 {
-    m_downloads.add(downloadID, WTF::move(download));
+    m_downloads.add(downloadID, WTFMove(download));
 }
 #else
 void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
