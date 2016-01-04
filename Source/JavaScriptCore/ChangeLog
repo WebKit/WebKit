@@ -1,5 +1,26 @@
 2016-01-04  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 should do BitAnd binary snippets
+        https://bugs.webkit.org/show_bug.cgi?id=152713
+
+        Reviewed by Mark Lam.
+
+        Getting ready to finish up the binary bitop snippets.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitAnd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateCell):
+        * tests/stress/object-bit-and.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/untyped-bit-and.js: Added.
+        (foo):
+        (valueOf):
+
+2016-01-04  Filip Pizlo  <fpizlo@apple.com>
+
         FTL B3 should do all of the non-bitop binary snippets
         https://bugs.webkit.org/show_bug.cgi?id=152709
 
