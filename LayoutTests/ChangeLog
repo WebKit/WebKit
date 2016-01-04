@@ -1,5 +1,14 @@
 2016-01-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip failing test fast/animation/request-animation-frame-disabled.html on ios-simulator
+        fast/animation/request-animation-frame-disabled.html
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-01-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Re-enable fast/animation tests on ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=137588
 
