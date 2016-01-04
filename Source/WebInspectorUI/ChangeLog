@@ -1,3 +1,82 @@
+2016-01-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add a DebugUI context menu item for saving inspector protocol traffic to file
+        https://bugs.webkit.org/show_bug.cgi?id=152671
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new tracer that captures all messages, and debug context menu
+        items to control whether to capture protocol traffic and export it.
+        In later patches, a reciprocal "Import..." context menu item will
+        allow opening saved protocol traces and viewing them in a debug UI
+        content view for debugging/visualizing protocol traffic.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Debug/CapturingProtocolTracer.js: Copied from Source/WebInspectorUI/UserInterface/Protocol/ProtocolTracer.js.
+
+            This tracer saves everything into a flat array. JSON protocol
+            messages are saved as escaped strings, in case they are not
+            valid JSON. We want to be able to debug such scenarios.
+
+        (WebInspector.CapturingProtocolTracer):
+        (WebInspector.CapturingProtocolTracer.prototype.get trace):
+        (WebInspector.CapturingProtocolTracer.prototype.logFrontendException):
+        (WebInspector.CapturingProtocolTracer.prototype.logProtocolError):
+        (WebInspector.CapturingProtocolTracer.prototype.logFrontendRequest):
+        (WebInspector.CapturingProtocolTracer.prototype.logDidHandleResponse):
+        (WebInspector.CapturingProtocolTracer.prototype.logDidHandleEvent):
+        (WebInspector.CapturingProtocolTracer.prototype._stringifyMessage):
+        (WebInspector.CapturingProtocolTracer.prototype._processEntry):
+
+        * UserInterface/Debug/ProtocolTrace.js: Added.
+
+            This is a dumb container that holds protocol trace data. It will
+            be responsible for deserializing saved trace files in later work.
+
+        (WebInspector.ProtocolTrace):
+        (WebInspector.ProtocolTrace.prototype.addEntry):
+        (WebInspector.ProtocolTrace.prototype.get saveData):
+        * UserInterface/Main.html:
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+
+            Simplify the implementation. Now there are one or two tracers
+            at any given time. The default tracer handles legacy logging
+            behavior and always exists. The custom tracer is installed when
+            the "Capture Protocol Traffic" context menu item is toggled.
+
+            Dispatch to the array of active tracers at each trace point.
+            Tracers now get the actual JSON message instead of a stringified
+            version passed as an argument.
+
+        (InspectorBackendClass.prototype.set dumpInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.get dumpInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.set dumpInspectorTimeStats):
+        (InspectorBackendClass.prototype.set customTracer):
+        (InspectorBackendClass.prototype.get activeTracers):
+        (InspectorBackendClass.prototype._startOrStopAutomaticTracing):
+        (InspectorBackendClass.prototype._sendMessageToBackend):
+        (InspectorBackendClass.prototype._dispatchResponse):
+        (InspectorBackendClass.prototype._dispatchEvent):
+        (InspectorBackendClass.prototype.set activeTracer): Deleted.
+        (InspectorBackendClass.prototype.get activeTracer): Deleted.
+        * UserInterface/Protocol/LoggingProtocolTracer.js:
+        (WebInspector.LoggingProtocolTracer.prototype._processEntry):
+        (WebInspector.LoggingProtocolTracer):
+        (WebInspector.LoggingProtocolTracer.prototype.logFrontendRequest):
+        (WebInspector.LoggingProtocolTracer.prototype.logWillHandleResponse):
+        (WebInspector.LoggingProtocolTracer.prototype.logDidHandleResponse):
+        (WebInspector.LoggingProtocolTracer.prototype.logWillHandleEvent):
+        (WebInspector.LoggingProtocolTracer.prototype.logDidHandleEvent):
+        * UserInterface/Protocol/ProtocolTracer.js:
+        (WebInspector.ProtocolTracer.prototype.logFrontendException):
+        (WebInspector.ProtocolTracer.prototype.logProtocolError):
+        (WebInspector.ProtocolTracer.prototype.logFrontendRequest):
+        (WebInspector.ProtocolTracer.prototype.logWillHandleResponse):
+        (WebInspector.ProtocolTracer.prototype.logDidHandleResponse):
+        (WebInspector.ProtocolTracer.prototype.logWillHandleEvent):
+        (WebInspector.ProtocolTracer.prototype.logDidHandleEvent):
+
 2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Comma separated values in the Visual sidebar are appended with )

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,92 +23,67 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LoggingProtocolTracer = class LoggingProtocolTracer extends WebInspector.ProtocolTracer
+WebInspector.CapturingProtocolTracer = class CapturingProtocolTracer extends WebInspector.ProtocolTracer
 {
     constructor()
     {
         super();
 
-        this._dumpMessagesToConsole = false;
-        this._dumpTimingDataToConsole = false;
-        this._logToConsole = window.InspectorTest ? InspectorFrontendHost.unbufferedLog.bind(InspectorFrontendHost) : console.log.bind(console);
+        this._trace = new WebInspector.ProtocolTrace;
     }
 
     // Public
 
-    set dumpMessagesToConsole(value)
+    get trace()
     {
-        this._dumpMessagesToConsole = !!value;
-    }
-
-    get dumpMessagesToConsole()
-    {
-        return this._dumpMessagesToConsole;
-    }
-
-    set dumpTimingDataToConsole(value)
-    {
-        this._dumpTimingDataToConsole = !!value;
-    }
-
-    get dumpTimingDataToConsole()
-    {
-        return this._dumpTimingDataToConsole;
+        return this._trace;
     }
 
     logFrontendException(message, exception)
     {
-        this._processEntry({type: "exception", message, exception});
+        this._processEntry({type: "exception", message: this._stringifyMessage(message), exception});
     }
 
     logProtocolError(message, error)
     {
-        this._processEntry({type: "error", message, error});
+        this._processEntry({type: "error", message: this._stringifyMessage(message), error});
     }
 
     logFrontendRequest(message)
     {
-        this._processEntry({type: "request", message});
-    }
-
-    logWillHandleResponse(message)
-    {
-        let entry = {type: "response", message};
-        this._processEntry(entry);
+        this._processEntry({type: "request", message: this._stringifyMessage(message)});
     }
 
     logDidHandleResponse(message, timings = null)
     {
-        let entry = {type: "response", message};
+        let entry = {type: "response", message: this._stringifyMessage(message)};
         if (timings)
             entry.timings = Object.shallowCopy(timings);
 
-        this._processEntry(entry);
-    }
-
-    logWillHandleEvent(message)
-    {
-        let entry = {type: "event", message};
         this._processEntry(entry);
     }
 
     logDidHandleEvent(message, timings = null)
     {
-        let entry = {type: "event", message};
+        let entry = {type: "event", message: this._stringifyMessage(message)};
         if (timings)
             entry.timings = Object.shallowCopy(timings);
 
         this._processEntry(entry);
     }
 
+    _stringifyMessage(message)
+    {
+        try {
+            return JSON.stringify(message);
+        } catch (e) {
+            console.error("couldn't stringify object:", message, e);
+            return {};
+        }
+    }
+
     _processEntry(entry)
     {
-        if (this._dumpTimingDataToConsole && entry.timings) {
-            if (entry.timings.rtt && entry.timings.dispatch)
-                this._logToConsole(`time-stats: Handling: ${entry.timings.dispatch || NaN}ms; RTT: ${entry.timings.rtt}ms`);
-            else if (entry.timings.dispatch)
-                this._logToConsole(`time-stats: Handling: ${entry.timings.dispatch || NaN}ms`);
-        } else if (this._dumpMessagesToConsole && !entry.timings)
-            this._logToConsole(`${entry.type}: ${JSON.stringify(entry.message)}`);
+        this._trace.addEntry(entry);
     }
 };

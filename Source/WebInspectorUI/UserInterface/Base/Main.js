@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1378,6 +1378,23 @@ WebInspector._contextMenuRequested = function(event)
         proposedContextMenu.appendItem(WebInspector.unlocalizedString("Reload Web Inspector"), () => {
             window.location.reload();
         });
+
+        let protocolSubMenu = proposedContextMenu.appendSubMenuItem(WebInspector.unlocalizedString("Protocol Debugging"), null, false);
+        let isCapturingTraffic = InspectorBackend.activeTracer instanceof WebInspector.CapturingProtocolTracer;
+
+        protocolSubMenu.appendCheckboxItem(WebInspector.unlocalizedString("Capture Trace"), () => {
+            if (isCapturingTraffic)
+                InspectorBackend.activeTracer = null;
+            else
+                InspectorBackend.activeTracer = new WebInspector.CapturingProtocolTracer;
+        }, isCapturingTraffic);
+
+        protocolSubMenu.appendSeparator();
+
+        protocolSubMenu.appendItem(WebInspector.unlocalizedString("Export Trace\u2014"), () => {
+            const forceSaveAs = true;
+            WebInspector.saveDataToFile(InspectorBackend.activeTracer.trace.saveData, forceSaveAs);
+        }, !isCapturingTraffic);
     } else {
         const onlyExisting = true;
         proposedContextMenu = WebInspector.ContextMenu.createFromEvent(event, onlyExisting);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProtocolTracer = class ProtocolTracer extends WebInspector.Object
+WebInspector.ProtocolTrace = class ProtocolTrace extends WebInspector.Object
 {
+    constructor()
+    {
+        super();
+
+        this._entries = [];
+    }
+
     // Public
 
-    logStarted()
-    {
-        // To be overridden by subclasses.
+    addEntry(entry) {
+        this._entries.push(entry);
     }
 
-    logFrontendException(message, exception)
-    {
-        // To be overridden by subclasses.
-    }
+    get saveData() {
+        let now = new Date();
+        let YYYY = now.getFullYear();
+        let MM = now.getMonth() + 1;
+        let DD = now.getDate();
+        let hh = now.getHours();
+        let mm = now.getMinutes();
+        let ss = now.getSeconds();
 
-    logProtocolError(message, error)
-    {
-        // To be overridden by subclasses.
-    }
-
-    logFrontendRequest(message)
-    {
-        // To be overridden by subclasses.
-    }
-
-    logWillHandleResponse(message)
-    {
-        // To be overridden by subclasses.
-    }
-
-    logDidHandleResponse(message, timings = null)
-    {
-        // To be overridden by subclasses.
-    }
-
-    logWillHandleEvent(message)
-    {
-        // To be overridden by subclasses.
-    }
-
-    logDidHandleEvent(message, timings = null)
-    {
-        // To be overridden by subclasses.
-    }
-
-    logFinished()
-    {
-        // To be overridden by subclasses.
+        // This follows the file name of screen shots on OS X (en-US):
+        // "Protocol Trace 2015-12-31 at 12.43.04.json".
+        // When the Intl API is implemented, we can do a better job.
+        let filename = WebInspector.unlocalizedString(`Protocol Trace at ${YYYY}-${MM}-${DD} ${hh}.${mm}.${ss}.json`);
+        return {url: "web-inspector:///" + encodeURIComponent(filename), content: JSON.stringify(this._entries)};
     }
 };

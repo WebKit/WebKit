@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,8 +38,10 @@ InspectorBackendClass = class InspectorBackendClass
         this._pendingResponses = new Map;
         this._agents = {};
         this._deferredScripts = [];
-        this._activeTracer = null;
-        this._automaticTracer = null;
+
+        this._customTracer = null;
+        this._defaultTracer = new WebInspector.LoggingProtocolTracer;
+        this._activeTracers = [this._defaultTracer];
 
         this._dumpInspectorTimeStats = false;
 
@@ -59,16 +61,12 @@ InspectorBackendClass = class InspectorBackendClass
         let setting = WebInspector.autoLogProtocolMessagesSetting;
         setting.value = value;
 
-        if (this.activeTracer !== this._automaticTracer)
-            return;
-
-        if (this.activeTracer)
-            this.activeTracer.dumpMessagesToConsole = value;
+        this._defaultTracer.dumpMessagesToConsole = value;
     }
 
     get dumpInspectorProtocolMessages()
     {
-        return !!this._automaticTracer;
+        return WebInspector.autoLogProtocolMessagesSetting.value;
     }
 
     set dumpInspectorTimeStats(value)
@@ -76,11 +74,7 @@ InspectorBackendClass = class InspectorBackendClass
         if (!this.dumpInspectorProtocolMessages)
             this.dumpInspectorProtocolMessages = true;
 
-        if (this.activeTracer !== this._automaticTracer)
-            return;
-
-        if (this.activeTracer)
-            this.activeTracer.dumpTimingDataToConsole = value;
+        this._defaultTracer.dumpTimingDataToConsole = value;
     }
 
     get dumpInspectorTimeStats()
@@ -88,40 +82,36 @@ InspectorBackendClass = class InspectorBackendClass
         return this._dumpInspectorTimeStats;
     }
 
-    set activeTracer(tracer)
+    set customTracer(tracer)
     {
-        console.assert(!tracer || tracer instanceof WebInspector.ProtocolTracer);
+        console.assert(!tracer || tracer instanceof WebInspector.ProtocolTracer, tracer);
+        console.assert(!tracer || tracer !== this._defaultTracer, tracer);
 
         // Bail early if no state change is to be made.
-        if (!tracer && !this._activeTracer)
+        if (!tracer && !this._customTracer)
             return;
 
-        if (tracer === this._activeTracer)
+        if (tracer === this._customTracer)
             return;
 
-        // Don't allow an automatic tracer to dislodge a custom tracer.
-        if (this._activeTracer && tracer === this._automaticTracer)
+        if (tracer === this._defaultTracer)
             return;
 
-        if (this.activeTracer)
-            this.activeTracer.logFinished();
+        if (this._customTracer)
+            this._customTracer.logFinished();
 
-        if (this._activeTracer === this._automaticTracer)
-            this._automaticTracer = null;
+        this._customTracer = tracer;
+        this._activeTracers = [this._defaultTracer];
 
-        this._activeTracer = tracer;
-        if (this.activeTracer)
-            this.activeTracer.logStarted();
-        else {
-            // If the custom tracer was removed and automatic tracing is enabled,
-            // then create a new automatic tracer and install it in its place.
-            this._startOrStopAutomaticTracing();
+        if (this._customTracer) {
+            this._customTracer.logStarted();
+            this._activeTracers.push(this._customTracer);
         }
     }
 
-    get activeTracer()
+    get activeTracers()
     {
-        return this._activeTracer || null;
+        return this._activeTracers;
     }
 
     registerCommand(qualifiedName, callSignature, replySignature)
@@ -187,24 +177,8 @@ InspectorBackendClass = class InspectorBackendClass
 
     _startOrStopAutomaticTracing()
     {
-        let setting = WebInspector.autoLogProtocolMessagesSetting;
-
-        // Bail if there is no state transition to be made.
-        if (!(setting.value ^ !!this.activeTracer))
-            return;
-
-        if (!setting.value) {
-            if (this.activeTracer === this._automaticTracer)
-                this.activeTracer = null;
-
-            this._automaticTracer = null;
-        } else {
-            this._automaticTracer = new WebInspector.LoggingProtocolTracer;
-            this._automaticTracer.dumpMessagesToConsole = this.dumpInspectorProtocolMessages;
-            this._automaticTracer.dumpTimingDataToConsole = this.dumpTimingDataToConsole;
-            // This will be ignored if a custom tracer is installed.
-            this.activeTracer = this._automaticTracer;
-        }
+        this._defaultTracer.dumpMessagesToConsole = this.dumpInspectorProtocolMessages;
+        this._defaultTracer.dumpTimingDataToConsole = this.dumpTimingDataToConsole;
     }
 
     _agentForDomain(domainName)
@@ -267,11 +241,10 @@ InspectorBackendClass = class InspectorBackendClass
 
     _sendMessageToBackend(messageObject)
     {
-        let stringifiedMessage = JSON.stringify(messageObject);
-        if (this.activeTracer)
-            this.activeTracer.logFrontendRequest(stringifiedMessage);
+        for (let tracer of this.activeTracers)
+            tracer.logFrontendRequest(messageObject);
 
-        InspectorFrontendHost.sendMessageToBackend(stringifiedMessage);
+        InspectorFrontendHost.sendMessageToBackend(JSON.stringify(messageObject));
     }
 
     _dispatchResponse(messageObject)
@@ -286,14 +259,12 @@ InspectorBackendClass = class InspectorBackendClass
         let sequenceId = messageObject["id"];
         console.assert(this._pendingResponses.has(sequenceId), sequenceId, this._pendingResponses);
 
-        let responseData = this._pendingResponses.take(sequenceId);
+        let responseData = this._pendingResponses.take(sequenceId) || {};
         let {command, callback, promise} = responseData;
 
-        let processingStartTimestamp;
-        if (this.activeTracer) {
-            processingStartTimestamp = timestamp();
-            this.activeTracer.logWillHandleResponse(JSON.stringify(messageObject));
-        }
+        let processingStartTimestamp = timestamp();
+        for (let tracer of this.activeTracers)
+            tracer.logWillHandleResponse(messageObject);
 
         if (typeof callback === "function")
             this._dispatchResponseToCallback(command, messageObject, callback);
@@ -302,11 +273,11 @@ InspectorBackendClass = class InspectorBackendClass
         else
             console.error("Received a command response without a corresponding callback or promise.", messageObject, command);
 
-        if (this.activeTracer) {
-            let processingTime = (timestamp() - processingStartTimestamp).toFixed(3);
-            let roundTripTime = (processingStartTimestamp - responseData.sendRequestTimestamp).toFixed(3);
-            this.activeTracer.logDidHandleResponse(JSON.stringify(messageObject), {rtt: roundTripTime, dispatch: processingTime});
-        }
+        let processingTime = (timestamp() - processingStartTimestamp).toFixed(3);
+        let roundTripTime = (processingStartTimestamp - responseData.sendRequestTimestamp).toFixed(3);
+
+        for (let tracer of this.activeTracers)
+            tracer.logDidHandleResponse(messageObject, {rtt: roundTripTime, dispatch: processingTime});
 
         if (this._deferredScripts.length && !this._pendingResponses.size)
             this._flushPendingScripts();
@@ -363,24 +334,21 @@ InspectorBackendClass = class InspectorBackendClass
         if (messageObject["params"])
             eventArguments = event.parameterNames.map((name) => messageObject["params"][name]);
 
-        let processingStartTimestamp;
-        if (this.activeTracer) {
-            processingStartTimestamp = timestamp();
-            this.activeTracer.logWillHandleEvent(JSON.stringify(messageObject));
-        }
+        let processingStartTimestamp = timestamp();
+        for (let tracer of this.activeTracers)
+            tracer.logWillHandleEvent(messageObject);
 
         try {
             agent.dispatchEvent(eventName, eventArguments);
         } catch (e) {
             console.error("Uncaught exception in inspector page while handling event " + qualifiedName, e);
-            if (this.activeTracer)
-                this.activeTracer.logFrontendException(JSON.stringify(messageObject), e);
+            for (let tracer of this.activeTracers)
+                tracer.logFrontendException(messageObject, e);
         }
 
-        if (this.activeTracer) {
-            let processingTime = (timestamp() - processingStartTimestamp).toFixed(3);
-            this.activeTracer.logDidHandleEvent(JSON.stringify(messageObject), {dispatch: processingTime});
-        }
+        let processingDuration = (timestamp() - processingStartTimestamp).toFixed(3);
+        for (let tracer of this.activeTracers)
+            tracer.logDidHandleEvent(messageObject, {dispatch: processingDuration});
     }
 
     _reportProtocolError(messageObject)
