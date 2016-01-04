@@ -249,12 +249,14 @@ public:
 
     const GraphicsContextState& state() const { return m_state; }
 
+#if USE(CG) || USE(CAIRO)
+    WEBCORE_EXPORT void drawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
+#endif
+
 #if USE(CG)
     void applyStrokePattern();
     void applyFillPattern();
     void drawPath(const Path&);
-
-    WEBCORE_EXPORT void drawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
 
     void clipToNativeImage(PassNativeImagePtr, const FloatRect& destRect, const FloatSize& bufferSize);
     

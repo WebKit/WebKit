@@ -1597,7 +1597,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
 
     checkOrigin(video);
 
-#if USE(CG)
+#if USE(CG) || (ENABLE(ACCELERATED_2D_CANVAS) && USE(GSTREAMER_GL) && USE(CAIRO))
     if (PassNativeImagePtr image = video->nativeImageForCurrentTime()) {
         c->drawNativeImage(image, FloatSize(video->videoWidth(), video->videoHeight()), dstRect, srcRect);
         if (rectContainsCanvas(dstRect))

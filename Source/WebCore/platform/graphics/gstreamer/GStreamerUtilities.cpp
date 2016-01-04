@@ -26,7 +26,6 @@
 
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
-#include <gst/video/video-info.h>
 #include <wtf/MathExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -70,6 +69,22 @@ bool getVideoSizeAndFormatFromCaps(GstCaps* caps, WebCore::IntSize& size, GstVid
     pixelAspectRatioNumerator = GST_VIDEO_INFO_PAR_N(&info);
     pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
     stride = GST_VIDEO_INFO_PLANE_STRIDE(&info, 0);
+
+    return true;
+}
+
+bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)
+{
+    if (!GST_IS_SAMPLE(sample))
+        return false;
+
+    GstCaps* caps = gst_sample_get_caps(sample);
+    if (!caps)
+        return false;
+
+    gst_video_info_init(&videoInfo);
+    if (!gst_video_info_from_caps(&videoInfo, caps))
+        return false;
 
     return true;
 }

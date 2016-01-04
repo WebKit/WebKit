@@ -87,6 +87,10 @@
 #endif
 #endif // USE(GSTREAMER_GL)
 
+#if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
+#include <cairo-gl.h>
+#endif
+
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
@@ -111,9 +115,7 @@ public:
     explicit GstVideoFrameHolder(GstSample* sample)
     {
         GstVideoInfo videoInfo;
-        gst_video_info_init(&videoInfo);
-        GstCaps* caps = gst_sample_get_caps(sample);
-        if (UNLIKELY(!gst_video_info_from_caps(&videoInfo, caps)))
+        if (UNLIKELY(!getSampleVideoInfo(sample, videoInfo)))
             return;
 
         m_size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
@@ -497,13 +499,8 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
     layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
     m_platformLayerProxy->pushNextBuffer(WTFMove(layerBuffer));
 #else
-    GstCaps* caps = gst_sample_get_caps(m_sample.get());
-    if (UNLIKELY(!caps))
-        return;
-
     GstVideoInfo videoInfo;
-    gst_video_info_init(&videoInfo);
-    if (UNLIKELY(!gst_video_info_from_caps(&videoInfo, caps)))
+    if (UNLIKELY(!getSampleVideoInfo(m_sample.get(), videoInfo)))
         return;
 
     IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
@@ -636,16 +633,8 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
         {
             WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
 
-            if (!m_sample)
-                return;
-
-            GstCaps* caps = gst_sample_get_caps(m_sample.get());
-            if (UNLIKELY(!caps))
-                return;
-
             GstVideoInfo videoInfo;
-            gst_video_info_init(&videoInfo);
-            if (UNLIKELY(!gst_video_info_from_caps(&videoInfo, caps)))
+            if (UNLIKELY(!getSampleVideoInfo(m_sample.get(), videoInfo)))
                 return;
 
             IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
@@ -657,16 +646,8 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
     }
 
 #if USE(GSTREAMER_GL)
-    if (!GST_IS_SAMPLE(m_sample.get()))
-        return;
-
-    GstCaps* caps = gst_sample_get_caps(m_sample.get());
-    if (!caps)
-        return;
-
     GstVideoInfo videoInfo;
-    gst_video_info_init(&videoInfo);
-    if (!gst_video_info_from_caps(&videoInfo, caps))
+    if (!getSampleVideoInfo(m_sample.get(), videoInfo))
         return;
 
     GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
@@ -682,6 +663,43 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
     textureMapperGL.drawTexture(textureID, flags, size, targetRect, matrix, opacity);
     gst_video_frame_unmap(&videoFrame);
 #endif
+}
+#endif
+
+#if USE(GSTREAMER_GL)
+PassNativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
+{
+#if !USE(CAIRO) || !ENABLE(ACCELERATED_2D_CANVAS)
+    return nullptr;
+#endif
+
+    if (m_usingFallbackVideoSink)
+        return nullptr;
+
+    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+
+    GstVideoInfo videoInfo;
+    if (!getSampleVideoInfo(m_sample.get(), videoInfo))
+        return nullptr;
+
+    GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
+    GstVideoFrame videoFrame;
+    if (!gst_video_frame_map(&videoFrame, &videoInfo, buffer, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL)))
+        return nullptr;
+
+    GLContext* context = GLContext::sharingContext();
+    context->makeContextCurrent();
+    cairo_device_t* device = context->cairoDevice();
+
+    // Thread-awareness is a huge performance hit on non-Intel drivers.
+    cairo_gl_device_set_thread_aware(device, FALSE);
+
+    unsigned textureID = *reinterpret_cast<unsigned*>(videoFrame.data[0]);
+    IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
+    cairo_surface_t* surface = cairo_gl_surface_create_for_texture(device, CAIRO_CONTENT_COLOR_ALPHA, textureID, size.width(), size.height());
+    gst_video_frame_unmap(&videoFrame);
+
+    return adoptRef(surface);
 }
 #endif
 

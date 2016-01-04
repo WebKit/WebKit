@@ -20,6 +20,7 @@
 
 #include <gst/gst.h>
 #include <gst/video/video-format.h>
+#include <gst/video/video-info.h>
 
 #define LOG_MEDIA_MESSAGE(...) do { \
     GST_DEBUG(__VA_ARGS__); \
@@ -65,6 +66,7 @@ inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, const gchar* name, GstPad* target);
 #if ENABLE(VIDEO)
 bool getVideoSizeAndFormatFromCaps(GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
+bool getSampleVideoInfo(GstSample*, GstVideoInfo&);
 #endif
 GstBuffer* createGstBuffer(GstBuffer*);
 GstBuffer* createGstBufferForData(const char* data, int length);

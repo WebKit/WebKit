@@ -1,3 +1,27 @@
+2016-01-04  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] A video element isn't drawn onto the canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=132671
+
+        Reviewed by Michael Catanzaro.
+
+        When both cairo-gl and gst-gl are available the texture coming
+        from glimagesink can be used to create a cairo-gl surface that can
+        be used for video rendering within a canvas element.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage): Use NativeImage
+        drawing if both cairo-gl and gst-gl are available.
+        * platform/graphics/GraphicsContext.h: Implement drawNativeImage
+        for Cairo GraphicsContext.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawNativeImage): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        Implement nativeImageForCurrentTime(), this method is used by the
+        canvas rendering context.
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2016-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Fix -Wpessimizing-move warnings after switch to WTFMove
