@@ -1,3 +1,9 @@
+2016-01-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build after r194378.
+
+        * CMakeLists.txt:
+
 2016-01-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: reproducible debug ASSERT when inspecting the inspector (WK2)

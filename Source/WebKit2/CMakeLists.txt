@@ -112,6 +112,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/transforms"
     "${WEBCORE_DIR}/platform/mediastream"
     "${WEBCORE_DIR}/platform/network"
+    "${WEBCORE_DIR}/platform/spi/cf"
     "${WEBCORE_DIR}/platform/sql"
     "${WEBCORE_DIR}/platform/text"
     "${WEBCORE_DIR}/plugins"
