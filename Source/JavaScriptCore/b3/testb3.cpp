@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -6157,6 +6157,72 @@ void testPatchpointAny(ValueRep rep)
     CHECK(compileAndRun<int>(proc, 1, 2) == 3);
 }
 
+void testPatchpointGPScratch()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->append(arg1, ValueRep::SomeRegister);
+    patchpoint->append(arg2, ValueRep::SomeRegister);
+    patchpoint->numGPScratchRegisters = 2;
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            // We shouldn't have spilled the inputs, so we assert that they're in registers.
+            CHECK(params.size() == 3);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            CHECK(params[2].isGPR());
+            CHECK(params.gpScratch(0) != InvalidGPRReg);
+            CHECK(params.gpScratch(0) != params[0].gpr());
+            CHECK(params.gpScratch(0) != params[1].gpr());
+            CHECK(params.gpScratch(0) != params[2].gpr());
+            CHECK(params.gpScratch(1) != InvalidGPRReg);
+            CHECK(params.gpScratch(1) != params.gpScratch(0));
+            CHECK(params.gpScratch(1) != params[0].gpr());
+            CHECK(params.gpScratch(1) != params[1].gpr());
+            CHECK(params.gpScratch(1) != params[2].gpr());
+            CHECK(!params.unavailableRegisters().get(params.gpScratch(0)));
+            CHECK(!params.unavailableRegisters().get(params.gpScratch(1)));
+            add32(jit, params[1].gpr(), params[2].gpr(), params[0].gpr());
+        });
+    root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+}
+
+void testPatchpointFPScratch()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->append(arg1, ValueRep::SomeRegister);
+    patchpoint->append(arg2, ValueRep::SomeRegister);
+    patchpoint->numFPScratchRegisters = 2;
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            // We shouldn't have spilled the inputs, so we assert that they're in registers.
+            CHECK(params.size() == 3);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            CHECK(params[2].isGPR());
+            CHECK(params.fpScratch(0) != InvalidFPRReg);
+            CHECK(params.fpScratch(1) != InvalidFPRReg);
+            CHECK(params.fpScratch(1) != params.fpScratch(0));
+            CHECK(!params.unavailableRegisters().get(params.fpScratch(0)));
+            CHECK(!params.unavailableRegisters().get(params.fpScratch(1)));
+            add32(jit, params[1].gpr(), params[2].gpr(), params[0].gpr());
+        });
+    root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+}
+
 void testPatchpointLotsOfLateAnys()
 {
     Procedure proc;
@@ -9598,6 +9664,8 @@ void run(const char* filter)
     RUN(testPatchpointFixedRegister());
     RUN(testPatchpointAny(ValueRep::WarmAny));
     RUN(testPatchpointAny(ValueRep::ColdAny));
+    RUN(testPatchpointGPScratch());
+    RUN(testPatchpointFPScratch());
     RUN(testPatchpointLotsOfLateAnys());
     RUN(testPatchpointAnyImm(ValueRep::WarmAny));
     RUN(testPatchpointAnyImm(ValueRep::ColdAny));

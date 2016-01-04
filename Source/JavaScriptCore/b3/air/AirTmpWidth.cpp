@@ -119,7 +119,7 @@ void TmpWidth::recompute(Code& code)
 
                     if (Arg::isZDef(role))
                         widths.def = std::max(widths.def, width);
-                    else if (Arg::isDef(role))
+                    else if (Arg::isAnyDef(role))
                         widths.def = Arg::conservativeWidth(type);
                 });
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,24 +95,48 @@ inline const RegisterSet& Inst::extraEarlyClobberedRegs()
     return args[0].special()->extraEarlyClobberedRegs(*this);
 }
 
-template<typename Functor>
-inline void Inst::forEachTmpWithExtraClobberedRegs(Inst* nextInst, const Functor& functor)
+template<typename Thing, typename Functor>
+inline void Inst::forEachDef(Inst* prevInst, Inst* nextInst, const Functor& functor)
 {
-    forEachTmp(
-        [&] (Tmp& tmpArg, Arg::Role role, Arg::Type argType, Arg::Width argWidth) {
-            functor(tmpArg, role, argType, argWidth);
-        });
+    if (prevInst) {
+        prevInst->forEach<Thing>(
+            [&] (Thing& thing, Arg::Role role, Arg::Type argType, Arg::Width argWidth) {
+                if (Arg::isLateDef(role))
+                    functor(thing, role, argType, argWidth);
+            });
+    }
 
+    if (nextInst) {
+        nextInst->forEach<Thing>(
+            [&] (Thing& thing, Arg::Role role, Arg::Type argType, Arg::Width argWidth) {
+                if (Arg::isEarlyDef(role))
+                    functor(thing, role, argType, argWidth);
+            });
+    }
+}
+
+template<typename Thing, typename Functor>
+inline void Inst::forEachDefWithExtraClobberedRegs(
+    Inst* prevInst, Inst* nextInst, const Functor& functor)
+{
+    forEachDef<Thing>(prevInst, nextInst, functor);
+
+    Arg::Role regDefRole;
+    
     auto reportReg = [&] (Reg reg) {
         Arg::Type type = reg.isGPR() ? Arg::GP : Arg::FP;
-        functor(Tmp(reg), Arg::Def, type, Arg::conservativeWidth(type));
+        functor(Thing(reg), regDefRole, type, Arg::conservativeWidth(type));
     };
 
-    if (hasSpecial())
-        extraClobberedRegs().forEach(reportReg);
+    if (prevInst && prevInst->hasSpecial()) {
+        regDefRole = Arg::Def;
+        prevInst->extraClobberedRegs().forEach(reportReg);
+    }
 
-    if (nextInst && nextInst->hasSpecial())
+    if (nextInst && nextInst->hasSpecial()) {
+        regDefRole = Arg::EarlyDef;
         nextInst->extraEarlyClobberedRegs().forEach(reportReg);
+    }
 }
 
 inline void Inst::reportUsedRegisters(const RegisterSet& usedRegisters)

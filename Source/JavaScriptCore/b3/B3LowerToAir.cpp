@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2007,6 +2007,11 @@ private:
             }
             
             fillStackmap(inst, patchpointValue, 0);
+
+            for (unsigned i = patchpointValue->numGPScratchRegisters; i--;)
+                inst.args.append(m_code.newTmp(Arg::GP));
+            for (unsigned i = patchpointValue->numFPScratchRegisters; i--;)
+                inst.args.append(m_code.newTmp(Arg::FP));
             
             m_insts.last().append(WTFMove(inst));
             m_insts.last().appendVector(after);

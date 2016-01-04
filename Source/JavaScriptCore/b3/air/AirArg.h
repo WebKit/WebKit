@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,9 +92,13 @@ public:
         ColdUse,
 
         // LateUse means that the Inst will read from this value after doing its Def's. Note that LateUse
-        // on an Addr or Index still means Use on the internal temporaries. LateUse also currently also
-        // implies ColdUse.
+        // on an Addr or Index still means Use on the internal temporaries. Note that specifying the
+        // same Tmp once as Def and once as LateUse has undefined behavior: the use may happen before
+        // the def, or it may happen after it.
         LateUse,
+
+        // Combination of LateUse and ColdUse.
+        LateColdUse,
 
         // Def means that the Inst will write to this value after doing everything else.
         //
@@ -126,6 +130,16 @@ public:
 
         // This is a combined Use and ZDef. It means that both things happen.
         UseZDef,
+
+        // This is like Def, but implies that the assignment occurs before the start of the Inst's
+        // execution rather than after. Note that specifying the same Tmp once as EarlyDef and once
+        // as Use has undefined behavior: the use may happen before the def, or it may happen after
+        // it.
+        EarlyDef,
+
+        // Some instructions need a scratch register. We model this by saying that the temporary is
+        // defined early and used late. This role implies that.
+        Scratch,
 
         // This is a special kind of use that is only valid for addresses. It means that the
         // instruction will evaluate the address expression and consume the effective address, but it
@@ -171,10 +185,13 @@ public:
         case UseDef:
         case UseZDef:
         case LateUse:
+        case LateColdUse:
+        case Scratch:
             return true;
         case Def:
         case ZDef:
         case UseAddr:
+        case EarlyDef:
             return false;
         }
     }
@@ -183,14 +200,17 @@ public:
     {
         switch (role) {
         case ColdUse:
-        case LateUse:
+        case LateColdUse:
             return true;
         case Use:
         case UseDef:
         case UseZDef:
+        case LateUse:
         case Def:
         case ZDef:
         case UseAddr:
+        case Scratch:
+        case EarlyDef:
             return false;
         }
     }
@@ -213,6 +233,9 @@ public:
         case ZDef:
         case UseAddr:
         case LateUse:
+        case LateColdUse:
+        case Scratch:
+        case EarlyDef:
             return false;
         }
     }
@@ -220,17 +243,74 @@ public:
     // Returns true if the Role implies that the Inst will Use the Arg after doing everything else.
     static bool isLateUse(Role role)
     {
-        return role == LateUse;
+        switch (role) {
+        case LateUse:
+        case LateColdUse:
+        case Scratch:
+            return true;
+        case ColdUse:
+        case Use:
+        case UseDef:
+        case UseZDef:
+        case Def:
+        case ZDef:
+        case UseAddr:
+        case EarlyDef:
+            return false;
+        }
     }
 
     // Returns true if the Role implies that the Inst will Def the Arg.
-    static bool isDef(Role role)
+    static bool isAnyDef(Role role)
     {
         switch (role) {
         case Use:
         case ColdUse:
         case UseAddr:
         case LateUse:
+        case LateColdUse:
+            return false;
+        case Def:
+        case UseDef:
+        case ZDef:
+        case UseZDef:
+        case EarlyDef:
+        case Scratch:
+            return true;
+        }
+    }
+
+    // Returns true if the Role implies that the Inst will Def the Arg before start of execution.
+    static bool isEarlyDef(Role role)
+    {
+        switch (role) {
+        case Use:
+        case ColdUse:
+        case UseAddr:
+        case LateUse:
+        case Def:
+        case UseDef:
+        case ZDef:
+        case UseZDef:
+        case LateColdUse:
+            return false;
+        case EarlyDef:
+        case Scratch:
+            return true;
+        }
+    }
+
+    // Returns true if the Role implies that the Inst will Def the Arg after the end of execution.
+    static bool isLateDef(Role role)
+    {
+        switch (role) {
+        case Use:
+        case ColdUse:
+        case UseAddr:
+        case LateUse:
+        case EarlyDef:
+        case Scratch:
+        case LateColdUse:
             return false;
         case Def:
         case UseDef:
@@ -250,6 +330,9 @@ public:
         case LateUse:
         case Def:
         case UseDef:
+        case EarlyDef:
+        case Scratch:
+        case LateColdUse:
             return false;
         case ZDef:
         case UseZDef:
@@ -328,6 +411,11 @@ public:
     Arg(Air::Tmp tmp)
         : m_kind(Tmp)
         , m_base(tmp)
+    {
+    }
+
+    Arg(Reg reg)
+        : Arg(Air::Tmp(reg))
     {
     }
 
@@ -845,7 +933,7 @@ public:
         case CallArg:
             return isValidAddrForm(offset());
         case Index:
-            return isValidIndexForm(offset(), scale(), width);
+            return isValidIndexForm(scale(), offset(), width);
         case RelCond:
         case ResCond:
         case DoubleCond:
@@ -882,7 +970,7 @@ public:
     {
         switch (m_kind) {
         case Tmp:
-            ASSERT(isAnyUse(argRole) || isDef(argRole));
+            ASSERT(isAnyUse(argRole) || isAnyDef(argRole));
             functor(m_base, argRole, argType, argWidth);
             break;
         case Addr:

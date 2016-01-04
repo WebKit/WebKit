@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,12 +59,27 @@ public:
     // This tells you the registers that were used.
     const RegisterSet& usedRegisters() const;
 
-    // This is a useful helper if you want to do register allocation inside of a patchpoint. You
-    // can only use callee-save registers if they were saved in the prologue. This gives you the
-    // used register set that's useful for such settings by returning:
+    // This is a useful helper if you want to do register allocation inside of a patchpoint. The
+    // usedRegisters() set is not directly useful for this purpose because:
     //
-    //     usedRegisters() | (RegisterSet::calleeSaveRegisters() - proc.calleeSaveRegisters())
-    RegisterSet unavailableRegisters() const;
+    // - You can only use callee-save registers for scratch if they were saved in the prologue. So,
+    //   if a register is callee-save, it's not enough that it's not in usedRegisters().
+    //
+    // - Scratch registers are going to be in usedRegisters() at the patchpoint. So, if you want to
+    //   find one of your requested scratch registers using usedRegisters(), you'll have a bad time.
+    //
+    // This gives you the used register set that's useful for allocating scratch registers. This set
+    // is defined as:
+    //
+    //     (usedRegisters() | (RegisterSet::calleeSaveRegisters() - proc.calleeSaveRegisters()))
+    //     - gpScratchRegisters - fpScratchRegisters
+    //
+    // I.e. it is like usedRegisters() but also includes unsaved callee-saves and excludes scratch
+    // registers.
+    JS_EXPORT_PRIVATE RegisterSet unavailableRegisters() const;
+
+    GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }
+    FPRReg fpScratch(unsigned index) const { return m_fpScratch[index]; }
 
     // This is provided for convenience; it means that you don't have to capture it if you don't want to.
     Procedure& proc() const;
@@ -90,6 +105,8 @@ private:
 
     StackmapValue* m_value;
     Vector<ValueRep> m_reps;
+    Vector<GPRReg> m_gpScratch;
+    Vector<FPRReg> m_fpScratch;
     Air::GenerationContext& m_context;
 };
 

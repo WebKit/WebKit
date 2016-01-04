@@ -1,3 +1,112 @@
+2016-01-04  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 patchpoints should allow requesting scratch registers
+        https://bugs.webkit.org/show_bug.cgi?id=152669
+
+        Reviewed by Benjamin Poulain.
+
+        Scratch registers are something that we often need in many patchpoint use cases. In LLVM's
+        patchpoints, we didn't have a good way to request scratch registers. So, our current FTL code
+        often does crazy scratch register allocation madness even when it would be better to just ask
+        the backend for some registers. This patch adds a mechanism for requesting scratch registers
+        in B3, and wires it all the way to all of our register allocation and liveness
+        infrastructure.
+
+        From the standpoint of a patchpoint, a "scratch register" is an instruction argument that
+        only admits Tmp and is defined early (like an early clobber register) and is used late (like
+        what we previously called LateUse, except that this time it's also a warm use). We already
+        had the beginning of support for early def's because of early clobbers, and we already
+        supported late uses albeit cold ones. I really only needed to add one new role: "Scratch",
+        which means both early def and late use in much the same way as "UseDef" means both early
+        use and late def. But, it feels better to complete the set of roles, so I added LateColdUse
+        to differentiate from LateUse (which is now a warm use) and EarlyDef to differentiate from
+        Def (which is, and always has been, a late def). Forcing the code to deal with the full
+        matrix of possibilities resulted in what is probably a progression in how we handle defs in
+        the register and stack allocators. The new Inst::forEachDef(Inst*, Inst*, callback) fully
+        recognizes that a "def" is something that can come from either the preceding instruction or
+        the succeeding one.
+
+        This doesn't add any new functionality to FTL B3 yet, but the new scratch register mechanism
+        is covered by new testb3 tests.
+
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::isValid):
+        (JSC::B3::CheckSpecial::admitsStack):
+        (JSC::B3::CheckSpecial::generate):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        (JSC::B3::PatchpointSpecial::isValid):
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        (JSC::B3::PatchpointSpecial::generate):
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::dumpMeta):
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        * b3/B3PatchpointValue.h:
+        * b3/B3StackmapGenerationParams.cpp:
+        (JSC::B3::StackmapGenerationParams::unavailableRegisters):
+        * b3/B3StackmapGenerationParams.h:
+        (JSC::B3::StackmapGenerationParams::gpScratch):
+        (JSC::B3::StackmapGenerationParams::fpScratch):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isValidImpl):
+        (JSC::B3::StackmapSpecial::admitsStackImpl):
+        (JSC::B3::StackmapSpecial::repsImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForValue):
+        (JSC::B3::StackmapSpecial::appendRepsImpl): Deleted.
+        * b3/B3StackmapSpecial.h:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirArg.cpp:
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isAnyUse):
+        (JSC::B3::Air::Arg::isColdUse):
+        (JSC::B3::Air::Arg::isEarlyUse):
+        (JSC::B3::Air::Arg::isLateUse):
+        (JSC::B3::Air::Arg::isAnyDef):
+        (JSC::B3::Air::Arg::isEarlyDef):
+        (JSC::B3::Air::Arg::isLateDef):
+        (JSC::B3::Air::Arg::isZDef):
+        (JSC::B3::Air::Arg::Arg):
+        (JSC::B3::Air::Arg::imm):
+        (JSC::B3::Air::Arg::isDef): Deleted.
+        * b3/air/AirBasicBlock.h:
+        (JSC::B3::Air::BasicBlock::at):
+        (JSC::B3::Air::BasicBlock::get):
+        (JSC::B3::Air::BasicBlock::last):
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode):
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        (JSC::B3::Air::fixPartialRegisterStalls):
+        * b3/air/AirInst.cpp:
+        (JSC::B3::Air::Inst::hasArgEffects):
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::extraEarlyClobberedRegs):
+        (JSC::B3::Air::Inst::forEachDef):
+        (JSC::B3::Air::Inst::forEachDefWithExtraClobberedRegs):
+        (JSC::B3::Air::Inst::reportUsedRegisters):
+        (JSC::B3::Air::Inst::forEachTmpWithExtraClobberedRegs): Deleted.
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::AbstractLiveness::AbstractLiveness):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::execute):
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirTmpWidth.cpp:
+        (JSC::B3::Air::TmpWidth::recompute):
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+        * b3/testb3.cpp:
+        (JSC::B3::testPatchpointAny):
+        (JSC::B3::testPatchpointGPScratch):
+        (JSC::B3::testPatchpointFPScratch):
+        (JSC::B3::testPatchpointLotsOfLateAnys):
+        (JSC::B3::run):
+
 2016-01-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(INTL) build after r193493

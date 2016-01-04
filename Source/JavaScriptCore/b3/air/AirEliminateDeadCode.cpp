@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,9 @@ bool eliminateDeadCode(Code& code)
         bool storesToLive = false;
         inst.forEachArg(
             [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
-                if (!Arg::isDef(role))
+                if (!Arg::isAnyDef(role))
+                    return;
+                if (role == Arg::Scratch)
                     return;
                 storesToLive |= isArgLive(arg);
             });

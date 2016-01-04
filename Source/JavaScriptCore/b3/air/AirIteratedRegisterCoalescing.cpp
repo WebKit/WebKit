@@ -770,40 +770,43 @@ private:
             typename TmpLiveness<type>::LocalCalc localCalc(liveness, block);
             for (unsigned instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
-                Inst* nextInst = instIndex + 1 < block->size() ? &block->at(instIndex + 1) : nullptr;
-                build(inst, nextInst, localCalc);
+                Inst* nextInst = block->get(instIndex + 1);
+                build(&inst, nextInst, localCalc);
                 localCalc.execute(instIndex);
             }
+            build(nullptr, &block->at(0), localCalc);
         }
     }
 
-    void build(Inst& inst, Inst* nextInst, const typename TmpLiveness<type>::LocalCalc& localCalc)
+    void build(Inst* prevInst, Inst* nextInst, const typename TmpLiveness<type>::LocalCalc& localCalc)
     {
-        inst.forEachTmpWithExtraClobberedRegs(
-            nextInst,
-            [&] (const Tmp& arg, Arg::Role role, Arg::Type argType, Arg::Width) {
-                if (!Arg::isDef(role) || argType != type)
+        Inst::forEachDefWithExtraClobberedRegs<Tmp>(
+            prevInst, nextInst,
+            [&] (const Tmp& arg, Arg::Role, Arg::Type argType, Arg::Width) {
+                if (argType != type)
                     return;
                 
                 // All the Def()s interfere with each other and with all the extra clobbered Tmps.
-                // We should not use forEachDefAndExtraClobberedTmp() here since colored Tmps
+                // We should not use forEachDefWithExtraClobberedRegs() here since colored Tmps
                 // do not need interference edges in our implementation.
-                inst.forEachTmp([&] (Tmp& otherArg, Arg::Role role, Arg::Type argType, Arg::Width) {
-                    if (!Arg::isDef(role) || argType != type)
-                        return;
-
-                    addEdge(arg, otherArg);
-                });
+                Inst::forEachDef<Tmp>(
+                    prevInst, nextInst,
+                    [&] (Tmp& otherArg, Arg::Role, Arg::Type argType, Arg::Width) {
+                        if (argType != type)
+                            return;
+                        
+                        addEdge(arg, otherArg);
+                    });
             });
 
-        if (mayBeCoalescable(inst)) {
+        if (prevInst && mayBeCoalescable(*prevInst)) {
             // We do not want the Use() of this move to interfere with the Def(), even if it is live
             // after the Move. If we were to add the interference edge, it would be impossible to
             // coalesce the Move even if the two Tmp never interfere anywhere.
             Tmp defTmp;
             Tmp useTmp;
-            inst.forEachTmp([&defTmp, &useTmp] (Tmp& argTmp, Arg::Role role, Arg::Type, Arg::Width) {
-                if (Arg::isDef(role))
+            prevInst->forEachTmp([&defTmp, &useTmp] (Tmp& argTmp, Arg::Role role, Arg::Type, Arg::Width) {
+                if (Arg::isLateDef(role))
                     defTmp = argTmp;
                 else {
                     ASSERT(Arg::isEarlyUse(role));
@@ -822,7 +825,7 @@ private:
             ASSERT(nextMoveIndex <= m_activeMoves.size());
             m_activeMoves.ensureSize(nextMoveIndex + 1);
 
-            for (const Arg& arg : inst.args) {
+            for (const Arg& arg : prevInst->args) {
                 auto& list = m_moveList[AbsoluteTmpMapper<type>::absoluteIndex(arg.tmp())];
                 list.add(nextMoveIndex);
             }
@@ -832,26 +835,20 @@ private:
                     addEdge(defTmp, liveTmp);
             }
 
-            // The next instruction could have early clobbers. We need to consider those now.
-            if (nextInst && nextInst->hasSpecial()) {
-                nextInst->extraEarlyClobberedRegs().forEach([&] (Reg reg) {
-                    if (reg.isGPR() == (type == Arg::GP)) {
-                        for (const Tmp& liveTmp : localCalc.live())
-                            addEdge(Tmp(reg), liveTmp);
-                    }
-                });
-            }
+            // The next instruction could have early clobbers or early def's. We need to consider
+            // those now.
+            addEdges(nullptr, nextInst, localCalc.live());
         } else
-            addEdges(inst, nextInst, localCalc.live());
+            addEdges(prevInst, nextInst, localCalc.live());
     }
 
-    void addEdges(Inst& inst, Inst* nextInst, typename TmpLiveness<type>::LocalCalc::Iterable liveTmps)
+    void addEdges(Inst* prevInst, Inst* nextInst, typename TmpLiveness<type>::LocalCalc::Iterable liveTmps)
     {
         // All the Def()s interfere with everthing live.
-        inst.forEachTmpWithExtraClobberedRegs(
-            nextInst,
-            [&] (const Tmp& arg, Arg::Role role, Arg::Type argType, Arg::Width) {
-                if (!Arg::isDef(role) || argType != type)
+        Inst::forEachDefWithExtraClobberedRegs<Tmp>(
+            prevInst, nextInst,
+            [&] (const Tmp& arg, Arg::Role, Arg::Type argType, Arg::Width) {
+                if (argType != type)
                     return;
                 
                 for (const Tmp& liveTmp : liveTmps) {
@@ -1082,6 +1079,12 @@ private:
     void iteratedRegisterCoalescingOnType()
     {
         HashSet<unsigned> unspillableTmps;
+
+        // FIXME: If a Tmp is used only from a Scratch role and that argument is !admitsStack, then
+        // we should add the Tmp to unspillableTmps. That will help avoid relooping only to turn the
+        // Tmp into an unspillable Tmp.
+        // https://bugs.webkit.org/show_bug.cgi?id=152699
+        
         while (true) {
             ++m_numIterations;
 
@@ -1242,15 +1245,12 @@ private:
                         break;
                     }
 
-                    if (Arg::isAnyUse(role)) {
-                        Tmp newTmp = m_code.newTmp(type);
-                        insertionSet.insert(instIndex, move, inst.origin, arg, newTmp);
-                        tmp = newTmp;
+                    tmp = m_code.newTmp(type);
+                    unspillableTmps.add(AbsoluteTmpMapper<type>::absoluteIndex(tmp));
 
-                        // Any new Fill() should never be spilled.
-                        unspillableTmps.add(AbsoluteTmpMapper<type>::absoluteIndex(tmp));
-                    }
-                    if (Arg::isDef(role))
+                    if (Arg::isAnyUse(role) && role != Arg::Scratch)
+                        insertionSet.insert(instIndex, move, inst.origin, arg, tmp);
+                    if (Arg::isAnyDef(role))
                         insertionSet.insert(instIndex + 1, move, inst.origin, tmp, arg);
                 });
             }

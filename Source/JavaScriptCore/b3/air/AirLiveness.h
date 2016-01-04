@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,6 +118,13 @@ public:
                 for (size_t instIndex = block->size(); instIndex--;)
                     localCalc.execute(instIndex);
 
+                // Handle the early def's of the first instruction.
+                block->at(0).forEach<typename Adapter::Thing>(
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
+                        if (Arg::isEarlyDef(role) && Adapter::acceptsType(type))
+                            m_workset.remove(Adapter::valueToIndex(thing));
+                    });
+
                 Vector<unsigned>& liveAtHead = m_liveAtHead[block];
 
                 // We only care about Tmps that were discovered in this iteration. It is impossible
@@ -213,10 +220,21 @@ public:
         {
             Inst& inst = m_block->at(instIndex);
             auto& workset = m_liveness.m_workset;
-            // First handle def's.
+
+            // First handle the early def's of the next instruction.
+            if (instIndex + 1 < m_block->size()) {
+                Inst& nextInst = m_block->at(instIndex + 1);
+                nextInst.forEach<typename Adapter::Thing>(
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
+                        if (Arg::isEarlyDef(role) && Adapter::acceptsType(type))
+                            workset.remove(Adapter::valueToIndex(thing));
+                    });
+            }
+            
+            // Then handle def's.
             inst.forEach<typename Adapter::Thing>(
                 [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type, Arg::Width) {
-                    if (Arg::isDef(role) && Adapter::acceptsType(type))
+                    if (Arg::isLateDef(role) && Adapter::acceptsType(type))
                         workset.remove(Adapter::valueToIndex(thing));
                 });
 

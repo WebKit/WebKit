@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,32 +46,56 @@ PatchpointSpecial::~PatchpointSpecial()
 
 void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
-    // FIXME: Allow B3 Patchpoints to specify LateUse.
-    // https://bugs.webkit.org/show_bug.cgi?id=151335
-    
-    if (inst.origin->type() == Void) {
-        forEachArgImpl(0, 1, inst, SameAsRep, callback);
-        return;
-    }
+    unsigned argIndex = 1;
 
-    callback(inst.args[1], Arg::Def, inst.origin->airType(), inst.origin->airWidth());
-    forEachArgImpl(0, 2, inst, SameAsRep, callback);
+    if (inst.origin->type() != Void)
+        callback(inst.args[argIndex++], Arg::Def, inst.origin->airType(), inst.origin->airWidth());
+
+    forEachArgImpl(0, argIndex, inst, SameAsRep, callback);
+    argIndex += inst.origin->numChildren();
+
+    for (unsigned i = inst.origin->as<PatchpointValue>()->numGPScratchRegisters; i--;)
+        callback(inst.args[argIndex++], Arg::Scratch, Arg::GP, Arg::conservativeWidth(Arg::GP));
+    for (unsigned i = inst.origin->as<PatchpointValue>()->numFPScratchRegisters; i--;)
+        callback(inst.args[argIndex++], Arg::Scratch, Arg::FP, Arg::conservativeWidth(Arg::FP));
 }
 
 bool PatchpointSpecial::isValid(Inst& inst)
 {
-    if (inst.origin->type() == Void)
-        return isValidImpl(0, 1, inst);
-
-    if (inst.args.size() < 2)
-        return false;
     PatchpointValue* patchpoint = inst.origin->as<PatchpointValue>();
-    if (!isArgValidForValue(inst.args[1], patchpoint))
+    unsigned argIndex = 1;
+
+    if (inst.origin->type() != Void) {
+        if (argIndex >= inst.args.size())
+            return false;
+        
+        if (!isArgValidForValue(inst.args[argIndex], patchpoint))
+            return false;
+        if (!isArgValidForRep(code(), inst.args[argIndex], patchpoint->resultConstraint))
+            return false;
+        argIndex++;
+    }
+
+    if (!isValidImpl(0, argIndex, inst))
         return false;
-    if (!isArgValidForRep(code(), inst.args[1], patchpoint->resultConstraint))
+    argIndex += patchpoint->numChildren();
+
+    if (argIndex + patchpoint->numGPScratchRegisters + patchpoint->numFPScratchRegisters
+        != inst.args.size())
         return false;
 
-    return isValidImpl(0, 2, inst);
+    for (unsigned i = patchpoint->numGPScratchRegisters; i--;) {
+        Arg arg = inst.args[argIndex++];
+        if (!arg.isGPTmp())
+            return false;
+    }
+    for (unsigned i = patchpoint->numFPScratchRegisters; i--;) {
+        Arg arg = inst.args[argIndex++];
+        if (!arg.isFPTmp())
+            return false;
+    }
+
+    return true;
 }
 
 bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
@@ -99,16 +123,24 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
 CCallHelpers::Jump PatchpointSpecial::generate(
     Inst& inst, CCallHelpers& jit, GenerationContext& context)
 {
-    StackmapValue* value = inst.origin->as<StackmapValue>();
+    PatchpointValue* value = inst.origin->as<PatchpointValue>();
     ASSERT(value);
 
     Vector<ValueRep> reps;
     unsigned offset = 1;
     if (inst.origin->type() != Void)
         reps.append(repForArg(*context.code, inst.args[offset++]));
-    appendRepsImpl(context, offset, inst, reps);
+    reps.appendVector(repsImpl(context, 0, offset, inst));
+    offset += value->numChildren();
+
+    StackmapGenerationParams params(value, reps, context);
+
+    for (unsigned i = value->numGPScratchRegisters; i--;)
+        params.m_gpScratch.append(inst.args[offset++].gpr());
+    for (unsigned i = value->numFPScratchRegisters; i--;)
+        params.m_fpScratch.append(inst.args[offset++].fpr());
     
-    value->m_generator->run(jit, StackmapGenerationParams(value, reps, context));
+    value->m_generator->run(jit, params);
 
     return CCallHelpers::Jump();
 }

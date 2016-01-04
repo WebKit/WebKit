@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,9 +81,9 @@ void StackmapSpecial::forEachArgImpl(
     // Check that insane things have not happened.
     ASSERT(inst.args.size() >= numIgnoredAirArgs);
     ASSERT(value->children().size() >= numIgnoredB3Args);
-    ASSERT(inst.args.size() - numIgnoredAirArgs == value->children().size() - numIgnoredB3Args);
+    ASSERT(inst.args.size() - numIgnoredAirArgs >= value->children().size() - numIgnoredB3Args);
     
-    for (unsigned i = 0; i < inst.args.size() - numIgnoredAirArgs; ++i) {
+    for (unsigned i = 0; i < value->children().size() - numIgnoredB3Args; ++i) {
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         ConstrainedValue child = value->constrainedChild(i + numIgnoredB3Args);
 
@@ -103,12 +103,12 @@ void StackmapSpecial::forEachArgImpl(
                 role = Arg::ColdUse;
                 break;
             case ValueRep::LateColdAny:
-                role = Arg::LateUse;
+                role = Arg::LateColdUse;
                 break;
             }
             break;
         case ForceLateUse:
-            role = Arg::LateUse;
+            role = Arg::LateColdUse;
             break;
         }
 
@@ -129,13 +129,13 @@ bool StackmapSpecial::isValidImpl(
     ASSERT(value->children().size() >= numIgnoredB3Args);
 
     // For the Inst to be valid, it needs to have the right number of arguments.
-    if (inst.args.size() - numIgnoredAirArgs != value->children().size() - numIgnoredB3Args)
+    if (inst.args.size() - numIgnoredAirArgs < value->children().size() - numIgnoredB3Args)
         return false;
 
     // Regardless of constraints, stackmaps have some basic requirements for their arguments. For
     // example, you can't have a non-FP-offset address. This verifies those conditions as well as the
     // argument types.
-    for (unsigned i = 0; i < inst.args.size() - numIgnoredAirArgs; ++i) {
+    for (unsigned i = 0; i < value->children().size() - numIgnoredB3Args; ++i) {
         Value* child = value->child(i + numIgnoredB3Args);
         Arg& arg = inst.args[i + numIgnoredAirArgs];
 
@@ -167,6 +167,11 @@ bool StackmapSpecial::admitsStackImpl(
 
     unsigned stackmapArgIndex = argIndex - numIgnoredAirArgs + numIgnoredB3Args;
 
+    if (stackmapArgIndex >= value->numChildren()) {
+        // It's not a stackmap argument, so as far as we are concerned, it doesn't admit stack.
+        return false;
+    }
+
     if (stackmapArgIndex >= value->m_reps.size()) {
         // This means that there was no constraint.
         return true;
@@ -180,11 +185,13 @@ bool StackmapSpecial::admitsStackImpl(
     return false;
 }
 
-void StackmapSpecial::appendRepsImpl(
-    GenerationContext& context, unsigned numIgnoredArgs, Inst& inst, Vector<ValueRep>& result)
+Vector<ValueRep> StackmapSpecial::repsImpl(
+    GenerationContext& context, unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs, Inst& inst)
 {
-    for (unsigned i = numIgnoredArgs; i < inst.args.size(); ++i)
-        result.append(repForArg(*context.code, inst.args[i]));
+    Vector<ValueRep> result;
+    for (unsigned i = 0; i < inst.origin->numChildren() - numIgnoredB3Args; ++i)
+        result.append(repForArg(*context.code, inst.args[i + numIgnoredAirArgs]));
+    return result;
 }
 
 bool StackmapSpecial::isArgValidForValue(const Air::Arg& arg, Value* value)

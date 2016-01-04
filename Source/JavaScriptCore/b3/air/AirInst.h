@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,7 +115,7 @@ public:
             });
     }
 
-    // Thing can be either Arg or Tmp.
+    // Thing can be either Arg, Tmp, or StackSlot*.
     template<typename Thing, typename Functor>
     void forEach(const Functor&);
 
@@ -127,10 +127,18 @@ public:
     const RegisterSet& extraClobberedRegs();
     const RegisterSet& extraEarlyClobberedRegs();
 
-    // Iterate over the Defs and the extra clobbered registers. You must supply the next instruction if
-    // there is one.
-    template<typename Functor>
-    void forEachTmpWithExtraClobberedRegs(Inst* nextInst, const Functor& functor);
+    // Iterate over all Def's that happen at the end of an instruction. You supply a pair
+    // instructions. The instructions must appear next to each other, in that order, in some basic
+    // block. You can pass null for the first instruction when analyzing what happens at the top of
+    // a basic block. You can pass null for the second instruction when analyzing what happens at the
+    // bottom of a basic block.
+    template<typename Thing, typename Functor>
+    static void forEachDef(Inst* prevInst, Inst* nextInst, const Functor&);
+
+    // Iterate over all Def's that happen at the end of this instruction, including extra clobbered
+    // registers. Note that Thing can only be Arg or Tmp when you use this functor.
+    template<typename Thing, typename Functor>
+    static void forEachDefWithExtraClobberedRegs(Inst* prevInst, Inst* nextInst, const Functor&);
 
     // Use this to report which registers are live. This should be done just before codegen. Note
     // that for efficiency, reportUsedRegisters() only works if hasSpecial() returns true.

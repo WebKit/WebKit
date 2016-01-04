@@ -84,7 +84,7 @@ public:
                             counts.numWarmUses += frequency;
                         if (Arg::isColdUse(role))
                             counts.numColdUses += frequency;
-                        if (Arg::isDef(role))
+                        if (Arg::isAnyDef(role))
                             counts.numDefs += frequency;
                     });
             }

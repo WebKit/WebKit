@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,8 @@ protected:
         Air::Inst&, unsigned argIndex);
 
     // Appends the reps for the Inst's args, starting with numIgnoredArgs, to the given vector.
-    void appendRepsImpl(Air::GenerationContext&, unsigned numIgnoredArgs, Air::Inst&, Vector<ValueRep>&);
+    Vector<ValueRep> repsImpl(
+        Air::GenerationContext&, unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs, Air::Inst&);
 
     static bool isArgValidForValue(const Air::Arg&, Value*);
     static bool isArgValidForRep(Air::Code&, const Air::Arg&, const ValueRep&);

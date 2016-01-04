@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,11 @@ public:
 
     const Inst& at(unsigned index) const { return m_insts[index]; }
     Inst& at(unsigned index) { return m_insts[index]; }
+
+    Inst* get(unsigned index)
+    {
+        return index < size() ? &at(index) : nullptr;
+    }
 
     const Inst& last() const { return m_insts.last(); }
     Inst& last() { return m_insts.last(); }

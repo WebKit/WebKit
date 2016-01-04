@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,14 +143,13 @@ void allocateStack(Code& code)
     for (BasicBlock* block : code) {
         StackSlotLiveness::LocalCalc localCalc(liveness, block);
 
-        auto interfere = [&] (Inst& inst) {
+        auto interfere = [&] (unsigned instIndex) {
             if (verbose)
                 dataLog("Interfering: ", WTF::pointerListDump(localCalc.live()), "\n");
 
-            inst.forEachArg(
-                [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
-                    if (!Arg::isDef(role))
-                        return;
+            Inst::forEachDef<Arg>(
+                block->get(instIndex), block->get(instIndex + 1),
+                [&] (Arg& arg, Arg::Role, Arg::Type, Arg::Width) {
                     if (!arg.isStack())
                         return;
                     StackSlot* slot = arg.stackSlot();
@@ -167,12 +166,10 @@ void allocateStack(Code& code)
         for (unsigned instIndex = block->size(); instIndex--;) {
             if (verbose)
                 dataLog("Analyzing: ", block->at(instIndex), "\n");
-            Inst& inst = block->at(instIndex);
-            interfere(inst);
+            interfere(instIndex);
             localCalc.execute(instIndex);
         }
-        Inst nop;
-        interfere(nop);
+        interfere(-1);
     }
 
     if (verbose) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,7 +124,8 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
 bool CheckSpecial::isValid(Inst& inst)
 {
     return hiddenBranch(inst).isValidForm()
-        && isValidImpl(numB3Args(inst), m_numCheckArgs + 1, inst);
+        && isValidImpl(numB3Args(inst), m_numCheckArgs + 1, inst)
+        && inst.args.size() - m_numCheckArgs - 1 == inst.origin->numChildren() - numB3Args(inst);
 }
 
 bool CheckSpecial::admitsStack(Inst& inst, unsigned argIndex)
@@ -142,8 +143,7 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
 
-    Vector<ValueRep> reps;
-    appendRepsImpl(context, m_numCheckArgs + 1, inst, reps);
+    Vector<ValueRep> reps = repsImpl(context, numB3Args(inst), m_numCheckArgs + 1, inst);
 
     // Set aside the args that are relevant to undoing the operation. This is because we don't want to
     // capture all of inst in the closure below.

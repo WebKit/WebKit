@@ -50,6 +50,12 @@ RegisterSet StackmapGenerationParams::unavailableRegisters() const
         unsavedCalleeSaves.clear(regAtOffset.reg());
 
     result.merge(unsavedCalleeSaves);
+
+    for (GPRReg gpr : m_gpScratch)
+        result.clear(gpr);
+    for (FPRReg fpr : m_fpScratch)
+        result.clear(fpr);
+    
     return result;
 }
 
