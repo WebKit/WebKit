@@ -1,3 +1,39 @@
+2016-01-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Rename _WebKitWebContextPrivate.context to _WebKitWebContextPrivate.processPool
+        https://bugs.webkit.org/show_bug.cgi?id=152672
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        (attachDownloadClientToContext):
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (attachInjectedBundleClientToContext):
+        * UIProcess/API/gtk/WebKitSecurityManager.cpp:
+        (registerSecurityPolicyForURIScheme):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkitWebContextDispose):
+        (webkit_web_context_set_cache_model):
+        (webkit_web_context_get_cache_model):
+        (webkit_web_context_clear_cache):
+        (webkit_web_context_get_cookie_manager):
+        (ensureFaviconDatabase):
+        (webkit_web_context_set_favicon_database_directory):
+        (webkit_web_context_set_additional_plugins_directory):
+        (webkitWebContextGetPluginThread):
+        (webkit_web_context_set_tls_errors_policy):
+        (webkit_web_context_set_disk_cache_directory):
+        (webkit_web_context_prefetch_dns):
+        (webkit_web_context_allow_tls_certificate_for_host):
+        (webkit_web_context_set_process_model):
+        (webkit_web_context_set_web_process_count_limit):
+        (webkitWebContextStartDownload):
+        (webkitWebContextGetProcessPool):
+        (webkitWebContextCreatePageForWebView):
+        (webkitWebContextGetContext): Deleted.
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+
 2016-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Rename scrollPosition(Scrollbar*) to scrollOffset(ScrollbarOrientation)

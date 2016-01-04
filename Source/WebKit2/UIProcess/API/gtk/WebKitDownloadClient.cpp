@@ -111,6 +111,6 @@ void attachDownloadClientToContext(WebKitWebContext* webContext)
         didCancel,
         0, // processDidCrash
     };
-    WKContextSetDownloadClient(toAPI(webkitWebContextGetContext(webContext)), &wkDownloadClient.base);
+    WKContextSetDownloadClient(toAPI(webkitWebContextGetProcessPool(webContext)), &wkDownloadClient.base);
 }
 

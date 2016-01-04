@@ -69,7 +69,7 @@ WebKitSecurityManager* webkitSecurityManagerCreate(WebKitWebContext* webContext)
 static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, const char* scheme, SecurityPolicy policy)
 {
     String urlScheme = String::fromUTF8(scheme);
-    WebProcessPool* webContext = webkitWebContextGetContext(manager->priv->webContext);
+    WebProcessPool* processPool = webkitWebContextGetProcessPool(manager->priv->webContext);
 
     // We keep the WebCore::SchemeRegistry of the UI process in sync with the
     // web process one, so that we can return the SecurityPolicy for
@@ -77,27 +77,27 @@ static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, c
     switch (policy) {
     case SecurityPolicyLocal:
         WebCore::SchemeRegistry::registerURLSchemeAsLocal(urlScheme);
-        webContext->registerURLSchemeAsLocal(urlScheme);
+        processPool->registerURLSchemeAsLocal(urlScheme);
         break;
     case SecurityPolicyNoAccess:
         WebCore::SchemeRegistry::registerURLSchemeAsNoAccess(urlScheme);
-        webContext->registerURLSchemeAsNoAccess(urlScheme);
+        processPool->registerURLSchemeAsNoAccess(urlScheme);
         break;
     case SecurityPolicyDisplayIsolated:
         WebCore::SchemeRegistry::registerURLSchemeAsDisplayIsolated(urlScheme);
-        webContext->registerURLSchemeAsDisplayIsolated(urlScheme);
+        processPool->registerURLSchemeAsDisplayIsolated(urlScheme);
         break;
     case SecurityPolicySecure:
         WebCore::SchemeRegistry::registerURLSchemeAsSecure(urlScheme);
-        webContext->registerURLSchemeAsSecure(urlScheme);
+        processPool->registerURLSchemeAsSecure(urlScheme);
         break;
     case SecurityPolicyCORSEnabled:
         WebCore::SchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
-        webContext->registerURLSchemeAsCORSEnabled(urlScheme);
+        processPool->registerURLSchemeAsCORSEnabled(urlScheme);
         break;
     case SecurityPolicyEmptyDocument:
         WebCore::SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
-        webContext->registerURLSchemeAsEmptyDocument(urlScheme);
+        processPool->registerURLSchemeAsEmptyDocument(urlScheme);
         break;
     }
 }
