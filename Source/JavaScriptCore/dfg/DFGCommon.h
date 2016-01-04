@@ -38,7 +38,7 @@ namespace JSC { namespace DFG {
 // We are in the middle of an experimental transition from LLVM to B3 as the backend for the FTL. We don't
 // yet know how it will turn out. For now, this flag will control whether FTL uses B3. Remember to set this
 // to 0 before committing!
-#define FTL_USES_B3 1
+#define FTL_USES_B3 0
 
 struct Node;
 

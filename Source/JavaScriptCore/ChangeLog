@@ -1,5 +1,11 @@
 2016-01-04  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, disable FTL B3 for now. I didn't intend to enable it yet.
+
+        * dfg/DFGCommon.h:
+
+2016-01-04  Filip Pizlo  <fpizlo@apple.com>
+
         B3 patchpoints should allow requesting scratch registers
         https://bugs.webkit.org/show_bug.cgi?id=152669
 
