@@ -29,7 +29,9 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLDocument.h"
+#if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
+#endif
 #include "HTMLNames.h"
 #include "HTMLPictureElement.h"
 #include "Logging.h"

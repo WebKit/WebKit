@@ -4147,7 +4147,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         
         if (source->fastHasAttribute(mediaAttr)) {
             MediaQueryEvaluator screenEval("screen", document().frame(), renderer() ? &renderer()->style() : nullptr);
-            RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(source->media());
+            RefPtr<MediaQuerySet> media = source->mediaQuerySet();
 #if !LOG_DISABLED
             if (shouldLog)
                 LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) - 'media' is %s", this, source->media().utf8().data());
