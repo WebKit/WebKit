@@ -1,3 +1,16 @@
+2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Comma separated values in the Visual sidebar are appended with )
+        https://bugs.webkit.org/show_bug.cgi?id=152653
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.set value):
+        Modified the RexExp used to split the comma separated value to account for strings
+        with commas inside parenthesis (such as rgba() or hsla()) as well as ones without
+        commas (such as "arial" and "red").
+
 2016-01-03  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Visual sidebar selector section displays inherited section for non-editable rules
