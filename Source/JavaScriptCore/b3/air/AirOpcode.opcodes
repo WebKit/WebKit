@@ -484,7 +484,7 @@ Load16SignedExtendTo32 U:G:16, ZD:G:32
 
 Store16 U:G:16, D:G:16
     Tmp, Index
-    Tmp, Addr
+    x86: Tmp, Addr
 
 Compare32 U:G:32, U:G:32, U:G:32, ZD:G:32
     RelCond, Tmp, Tmp, Tmp

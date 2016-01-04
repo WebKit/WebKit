@@ -6296,8 +6296,8 @@ void testPatchpointWithStackArgumentResult()
             CHECK(params[0] == ValueRep::stack(-static_cast<intptr_t>(proc.frameSize())));
             CHECK(params[1].isGPR());
             CHECK(params[2].isGPR());
-            jit.store32(params[1].gpr(), CCallHelpers::Address(CCallHelpers::stackPointerRegister, 0));
-            jit.add32(params[2].gpr(), CCallHelpers::Address(CCallHelpers::stackPointerRegister, 0));
+            jit.add32(params[1].gpr(), params[2].gpr(), jit.scratchRegister());
+            jit.store32(jit.scratchRegister(), CCallHelpers::Address(CCallHelpers::stackPointerRegister, 0));
         });
     root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
 

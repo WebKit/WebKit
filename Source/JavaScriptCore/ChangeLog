@@ -1,3 +1,33 @@
+2016-01-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Build B3 by default on iOS ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=152525
+
+        Reviewed by Filip Pizlo.
+
+        Minor changes required to get testb3 to compile.
+
+        * Configurations/ToolExecutable.xcconfig:
+        We need an entitlement to allocate executable memory.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::scratchRegister):
+        (JSC::MacroAssemblerARM64::getCachedDataTempRegisterIDAndInvalidate):
+        (JSC::MacroAssemblerARM64::getCachedMemoryTempRegisterIDAndInvalidate):
+        Expose one of the scratch registers for ValueRep::emitRestore().
+        Guard the use of scratch registers when not allowed.
+
+        * b3/air/AirOpcode.opcodes:
+        ARM addressing is a bit different. Skip Addr to make things build.
+
+        * b3/testb3.cpp:
+        (JSC::B3::testPatchpointWithStackArgumentResult):
+        Add on memory only exists on x86.
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::macroScratchRegisters):
+        Add the two scratch registers, useful for patchpoints.
+
 2016-01-03  Khem Raj  <raj.khem@gmail.com>
 
         WebKit fails to build with musl libc library

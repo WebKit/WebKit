@@ -39,6 +39,12 @@ public:
     static const RegisterID dataTempRegister = ARM64Registers::ip0;
     static const RegisterID memoryTempRegister = ARM64Registers::ip1;
 
+    RegisterID scratchRegister()
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return getCachedDataTempRegisterIDAndInvalidate();
+    }
+
 private:
     static const ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;
     static const ARM64Assembler::SetFlags S = ARM64Assembler::S;
@@ -2788,8 +2794,16 @@ protected:
     }
     
 private:
-    ALWAYS_INLINE RegisterID getCachedDataTempRegisterIDAndInvalidate() { return m_dataMemoryTempRegister.registerIDInvalidate(); }
-    ALWAYS_INLINE RegisterID getCachedMemoryTempRegisterIDAndInvalidate() { return m_cachedMemoryTempRegister.registerIDInvalidate(); }
+    ALWAYS_INLINE RegisterID getCachedDataTempRegisterIDAndInvalidate()
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return m_dataMemoryTempRegister.registerIDInvalidate();
+    }
+    ALWAYS_INLINE RegisterID getCachedMemoryTempRegisterIDAndInvalidate()
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return m_cachedMemoryTempRegister.registerIDInvalidate();
+    }
 
     ALWAYS_INLINE bool isInIntRange(intptr_t value)
     {

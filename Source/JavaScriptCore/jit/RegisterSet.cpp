@@ -84,6 +84,8 @@ RegisterSet RegisterSet::macroScratchRegisters()
 {
 #if CPU(X86_64)
     return RegisterSet(MacroAssembler::s_scratchRegister);
+#elif CPU(ARM64)
+    return RegisterSet(MacroAssembler::dataTempRegister, MacroAssembler::memoryTempRegister);
 #else
     return RegisterSet();
 #endif
