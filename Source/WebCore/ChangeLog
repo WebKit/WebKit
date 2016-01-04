@@ -1,3 +1,25 @@
+2016-01-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION(r194143): Float width incorrectly calculated on Wikipedia
+        https://bugs.webkit.org/show_bug.cgi?id=152644
+
+        Reviewed by Myles C. Maxfield.
+
+        The min/max-content contribution computation for non replaced
+        blocks changed in r194143. The implementation was actually
+        more complex than it should be and actually incomplete as it
+        was not considering the case of out of flow elements (because
+        it was directly calling computeLogicalWidthInRegion()).
+
+        This new implementation simplifies a lot the code and makes it
+        more complete as it relies on min|maxPreferredLogicalWidth()
+        calls which already consider all the different types of boxes.
+
+        Test: fast/css-intrinsic-dimensions/inlinesize-contribution-floats.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+
 2016-01-04  David Hyatt  <hyatt@apple.com>
 
         word-wrap: break-word broken inside a flexbox
