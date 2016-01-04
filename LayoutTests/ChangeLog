@@ -1,3 +1,13 @@
+2016-01-04  David Hyatt  <hyatt@apple.com>
+
+        word-wrap: break-word broken inside a flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=152321
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/word-break-on-flexbox-child-expected.html: Added.
+        * fast/text/word-break-on-flexbox-child.html: Added.
+
 2016-01-04  John Wilander  <wilander@apple.com>
 
         webkitGetUserMedia built-in should use @then and not then

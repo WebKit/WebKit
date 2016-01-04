@@ -1,3 +1,22 @@
+2016-01-04  David Hyatt  <hyatt@apple.com>
+
+        word-wrap: break-word broken inside a flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=152321
+
+        Reviewed by Simon Fraser.
+
+        Added fast/text/word-break-on-flexbox-child.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+
+        At some point word-wrap:break-word was mapped to CSS overflow-wrap, but the code
+        in RenderText was never updated to use the breakWords() RenderStyle function that
+        checks overflow-wrap's value.
+
+        This means all uses of word-wrap:break-word were broken when measuring the
+        intrinsic width of a RenderText.
+
 2016-01-04  John Wilander  <wilander@apple.com>
 
         webkitGetUserMedia built-in should use @then and not then

@@ -737,7 +737,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     Optional<int> firstGlyphLeftOverflow;
 
     bool breakNBSP = style.autoWrap() && style.nbspMode() == SPACE;
-    bool breakAll = (style.wordBreak() == BreakAllWordBreak || style.wordBreak() == BreakWordBreak) && style.autoWrap();
+    bool breakAll = (style.wordBreak() == BreakAllWordBreak || style.breakWords()) && style.autoWrap();
     bool keepAllWords = style.wordBreak() == KeepAllWordBreak;
     bool isLooseCJKMode = breakIterator.isLooseCJKMode();
 
