@@ -1,5 +1,16 @@
 2016-01-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r194533.
+
+        The test that was re-enabled with this change is still flaky
+
+        Reverted changeset:
+
+        "Modern IDB TestExpectations gardening."
+        http://trac.webkit.org/changeset/194533
+
+2016-01-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip failing test fast/animation/request-animation-frame-disabled.html on ios-simulator
         fast/animation/request-animation-frame-disabled.html
 
