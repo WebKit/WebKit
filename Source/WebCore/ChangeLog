@@ -1,3 +1,34 @@
+2016-01-04  Andreas Kling  <akling@apple.com>
+
+        Simplify the CachedScript ASCII optimization.
+        <https://webkit.org/b/152596>
+
+        Reviewed by Antti Koivisto.
+
+        There's actually no need to keep a non-copying StringImpl around for the
+        CachedScript's internal SharedBuffer. Get rid of that so we don't need
+        to fidget with that string when the SharedBuffer changes underneath.
+
+        Renamed CachedScript::ASCIIOptimizationState to DecodingState to better
+        reflect what it's used for. Also added explicit caching of the string
+        hash since we can't rely on a StringImpl to keep that around now.
+
+        Bonus: Implement Darin's suggestion to let TextEncoding answer whether
+        an encoding is byte-based and thus eligible for the ASCII optimization.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::tryReplaceEncodedData): Deleted.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::didReplaceSharedBufferContents): Deleted.
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+        (WebCore::CachedScript::scriptHash):
+        (WebCore::encodingMayBeAllASCII): Deleted.
+        (WebCore::CachedScript::didReplaceSharedBufferContents): Deleted.
+        * loader/cache/CachedScript.h:
+        * platform/text/TextEncoding.h:
+        (WebCore::TextEncoding::isByteBasedEncoding):
+
 2016-01-04  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] A video element isn't drawn onto the canvas.

@@ -72,6 +72,7 @@ namespace WebCore {
         CString encode(StringView, UnencodableHandling) const;
 
         UChar backslashAsCurrencySymbol() const;
+        bool isByteBasedEncoding() const { return !isNonByteBasedEncoding(); }
 
     private:
         bool isNonByteBasedEncoding() const;

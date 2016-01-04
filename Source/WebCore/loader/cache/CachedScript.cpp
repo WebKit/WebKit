@@ -69,50 +69,44 @@ String CachedScript::mimeType() const
     return extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)).lower();
 }
 
-static bool encodingMayBeAllASCII(const String& encoding)
-{
-    return encoding == "UTF-8" || encoding == "ISO-8859-1" || encoding == "ASCII";
-}
-
 StringView CachedScript::script()
 {
-    if (!m_script && m_data) {
-        if (m_ASCIIOptimizationState == Unknown
-            && encodingMayBeAllASCII(encoding())
-            && m_data->size()
-            && charactersAreAllASCII(reinterpret_cast<const LChar*>(m_data->data()), m_data->size())) {
+    if (!m_data)
+        return { };
 
-            m_script = StringImpl::createWithoutCopying(reinterpret_cast<const LChar*>(m_data->data()), m_data->size());
-            m_ASCIIOptimizationState = DataAndDecodedStringHaveSameBytes;
+    if (m_decodingState == NeverDecoded
+        && TextEncoding(encoding()).isByteBasedEncoding()
+        && m_data->size()
+        && charactersAreAllASCII(reinterpret_cast<const LChar*>(m_data->data()), m_data->size())) {
 
-            // If the encoded and decoded data are the same, there is no decoded data cost!
-            setDecodedSize(0);
-            m_decodedDataDeletionTimer.stop();
-            return m_script;
-        }
+        m_decodingState = DataAndDecodedStringHaveSameBytes;
+
+        // If the encoded and decoded data are the same, there is no decoded data cost!
+        setDecodedSize(0);
+        m_decodedDataDeletionTimer.stop();
+
+        m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(reinterpret_cast<const LChar*>(m_data->data()), m_data->size());
+    }
+
+    if (m_decodingState == DataAndDecodedStringHaveSameBytes)
+        return { reinterpret_cast<const LChar*>(m_data->data()), m_data->size() };
+
+    if (!m_script) {
         m_script = m_decoder->decodeAndFlush(m_data->data(), encodedSize());
-        m_ASCIIOptimizationState = DataAndDecodedStringHaveDifferentBytes;
+        m_scriptHash = m_script.impl()->hash();
+        m_decodingState = DataAndDecodedStringHaveDifferentBytes;
         setDecodedSize(m_script.sizeInBytes());
     }
-    if (m_ASCIIOptimizationState == DataAndDecodedStringHaveDifferentBytes)
-        m_decodedDataDeletionTimer.restart();
+
+    m_decodedDataDeletionTimer.restart();
     return m_script;
 }
 
 unsigned CachedScript::scriptHash()
 {
-    script();
-    return m_script.impl()->hash();
-}
-
-void CachedScript::didReplaceSharedBufferContents()
-{
-    // We receive this callback when the CachedResource's internal SharedBuffer has had its contents
-    // replaced by the memory-mapping-of-file-backed-resources optimization. If m_script is just a
-    // non-copying wrapper around the old SharedBuffer contents, we have to retarget it.
-    if (m_ASCIIOptimizationState == DataAndDecodedStringHaveSameBytes)
-        m_script = StringImpl::createWithoutCopying(reinterpret_cast<const LChar*>(m_data->data()), m_data->size());
-    CachedResource::didReplaceSharedBufferContents();
+    if (m_decodingState == NeverDecoded)
+        script();
+    return m_scriptHash;
 }
 
 void CachedScript::finishLoading(SharedBuffer* data)

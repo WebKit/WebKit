@@ -46,8 +46,6 @@ public:
     bool mimeTypeAllowedByNosniff() const;
 #endif
 
-    void didReplaceSharedBufferContents() override;
-
 private:
     virtual bool mayTryReplaceEncodedData() const override { return true; }
 
@@ -60,9 +58,10 @@ private:
     virtual void destroyDecodedData() override;
 
     String m_script;
+    unsigned m_scriptHash { 0 };
 
-    enum ASCIIResourceOptimizationState { Unknown, DataAndDecodedStringHaveSameBytes, DataAndDecodedStringHaveDifferentBytes };
-    ASCIIResourceOptimizationState m_ASCIIOptimizationState { Unknown };
+    enum DecodingState { NeverDecoded, DataAndDecodedStringHaveSameBytes, DataAndDecodedStringHaveDifferentBytes };
+    DecodingState m_decodingState { NeverDecoded };
 
     RefPtr<TextResourceDecoder> m_decoder;
 };
