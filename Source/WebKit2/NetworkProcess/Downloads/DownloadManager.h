@@ -71,7 +71,9 @@ public:
     explicit DownloadManager(Client*);
 
     void startDownload(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&);
-#if !USE(NETWORK_SESSION)
+#if USE(NETWORK_SESSION)
+    void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
+#else
     void convertHandleToDownload(DownloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 #endif
 

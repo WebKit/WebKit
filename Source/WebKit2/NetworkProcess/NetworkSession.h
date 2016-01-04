@@ -91,9 +91,18 @@ public:
     NetworkSessionTaskClient* client() { return m_client; }
     void clearClient() { m_client = nullptr; }
 
+    DownloadID downloadID() { return m_downloadID; }
+    void setDownloadID(DownloadID downloadID)
+    {
+        ASSERT(!m_downloadID.downloadID());
+        ASSERT(downloadID.downloadID());
+        m_downloadID = downloadID;
+    }
+    
 private:
     NetworkSession& m_session;
     NetworkSessionTaskClient* m_client;
+    DownloadID m_downloadID;
 #if PLATFORM(COCOA)
     explicit NetworkDataTask(NetworkSession&, NetworkSessionTaskClient&, RetainPtr<NSURLSessionDataTask>&&);
     RetainPtr<NSURLSessionDataTask> m_task;

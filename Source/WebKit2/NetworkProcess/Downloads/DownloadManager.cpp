@@ -47,7 +47,8 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
     auto* networkSession = SessionTracker::networkSession(sessionID);
     if (!networkSession)
         return;
-    auto download = std::make_unique<Download>(*this, *networkSession, downloadID, request);
+    auto download = std::make_unique<Download>(*this, *networkSession, downloadID);
+    download->didStart(request);
 #else
     auto download = std::make_unique<Download>(*this, downloadID, request);
 #endif
@@ -57,7 +58,12 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
     m_downloads.add(downloadID, WTFMove(download));
 }
 
-#if !USE(NETWORK_SESSION)
+#if USE(NETWORK_SESSION)
+void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
+{
+    m_downloads.add(downloadID, WTF::move(download));
+}
+#else
 void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
 {
     auto download = std::make_unique<Download>(*this, downloadID, request);

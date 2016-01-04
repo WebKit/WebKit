@@ -28,6 +28,7 @@
 
 #if USE(NETWORK_SESSION)
 
+#import "NetworkProcess.h"
 #import "SessionTracker.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/AuthenticationChallenge.h>
@@ -183,10 +184,16 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
 {
-    auto* networkDataTask = _session->dataTaskForIdentifier([dataTask taskIdentifier]);
-    ASSERT(networkDataTask);
-    if (auto* client = networkDataTask->client())
-        client->didBecomeDownload();
+    if (auto* networkDataTask = _session->dataTaskForIdentifier([dataTask taskIdentifier])) {
+        auto downloadID = networkDataTask->downloadID();
+        auto& downloadManager = WebKit::NetworkProcess::singleton().downloadManager();
+        auto download = std::make_unique<WebKit::Download>(downloadManager, *_session, downloadID);
+        download->didStart([downloadTask currentRequest]);
+        downloadManager.dataTaskBecameDownloadTask(downloadID, WTF::move(download));
+
+        if (auto* client = networkDataTask->client())
+            client->didBecomeDownload();
+    }
 }
 
 @end

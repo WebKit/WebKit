@@ -156,8 +156,10 @@ void NetworkLoad::sharedWillSendRedirectedRequest(const ResourceRequest& request
 
 #if USE(NETWORK_SESSION)
 
-void NetworkLoad::convertTaskToDownload()
+void NetworkLoad::convertTaskToDownload(DownloadID downloadID)
 {
+    m_task->setDownloadID(downloadID);
+    
     ASSERT(m_responseCompletionHandler);
     m_responseCompletionHandler(PolicyDownload);
     m_responseCompletionHandler = nullptr;

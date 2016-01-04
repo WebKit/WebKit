@@ -31,6 +31,7 @@
 #include "RemoteNetworkingContext.h"
 
 #if USE(NETWORK_SESSION)
+#include "DownloadID.h"
 #include "NetworkSession.h"
 #include <WebCore/AuthenticationChallenge.h>
 #else
@@ -60,7 +61,7 @@ public:
     void continueDidReceiveResponse();
 
 #if USE(NETWORK_SESSION)
-    void convertTaskToDownload();
+    void convertTaskToDownload(DownloadID);
     
     // NetworkSessionTaskClient.
     virtual void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, std::function<void(const WebCore::ResourceRequest&)>) final override;
@@ -124,6 +125,7 @@ private:
     ChallengeCompletionHandler m_challengeCompletionHandler;
     ResponseCompletionHandler m_responseCompletionHandler;
     RedirectCompletionHandler m_redirectCompletionHandler;
+    DownloadID m_downloadID;
 #else
     RefPtr<WebCore::ResourceHandle> m_handle;
 #endif
