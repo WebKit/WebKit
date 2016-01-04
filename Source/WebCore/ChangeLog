@@ -1,3 +1,11 @@
+2016-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, turn off temporary scrolling logging on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=152649
+
+        * platform/Logging.cpp:
+        (WebCore::initializeLoggingChannelsIfNecessary): Deleted.
+
 2016-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Fix Windows build after r194515.
