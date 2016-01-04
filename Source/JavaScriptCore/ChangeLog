@@ -1,5 +1,38 @@
 2016-01-04  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 should do the ArithSub binary snippet
+        https://bugs.webkit.org/show_bug.cgi?id=152705
+
+        Reviewed by Saam Barati.
+
+        This implements the ArithSub binary snippet generator in FTL B3.
+
+        While doing this, I discovered that the DFG type inference logic for ArithSub contains a
+        classic mistake: it causes the snippets to kick in when the type set does not contain numbers
+        rather than kicking in when the type set contains non-numbers. So, the original test that I
+        wrote for this doesn't work right (it runs to completion but OSR exits ad infinitum). I wrote
+        a second test that is simpler, and that one shows that the binary snippets "work". That's
+        sort of a joke though, since the only way to trigger binary snippets is to never pass numbers
+        and the only way to actually cause a binary snippet to do meaninful work is to pass numbers.
+        I filed a bug about this mess: https://bugs.webkit.org/show_bug.cgi?id=152708.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileUntypedBinaryOp):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToLLVM::nonSpeculativeCompare):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateCell):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitDescriptor):
+        * tests/stress/object-sub.js: Added.
+        (foo):
+        (things.valueOf):
+        * tests/stress/untyped-sub.js: Added.
+        (foo):
+        (valueOf):
+
+2016-01-04  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, disable FTL B3 for now. I didn't intend to enable it yet.
 
         * dfg/DFGCommon.h:

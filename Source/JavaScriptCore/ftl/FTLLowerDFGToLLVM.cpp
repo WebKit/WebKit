@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,7 @@
 #include "FTLOutput.h"
 #include "FTLThunks.h"
 #include "FTLWeightedTarget.h"
+#include "JITSubGenerator.h"
 #include "JSArrowFunction.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
@@ -1087,20 +1088,16 @@ private:
 
         if (constInt32Opt == HasConstInt32OperandOptimization && leftChild->isInt32Constant())
             leftOperand.setConstInt32(leftChild->asInt32());
-#if USE(JSVALUE64)
         else if (constDoubleOpt == HasConstDoubleOperandOptimization && leftChild->isDoubleConstant())
             leftOperand.setConstDouble(leftChild->asNumber());
-#endif
 
         if (leftOperand.isConst()) {
             // Because the snippet does not support both operands being constant, if the left
             // operand is already a constant, we'll just pretend the right operand is not.
         } else if (constInt32Opt == HasConstInt32OperandOptimization && rightChild->isInt32Constant())
             rightOperand.setConstInt32(rightChild->asInt32());
-#if USE(JSVALUE64)
         else if (constDoubleOpt == HasConstDoubleOperandOptimization && rightChild->isDoubleConstant())
             rightOperand.setConstDouble(rightChild->asNumber());
-#endif
 
         RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
@@ -1747,8 +1744,12 @@ private:
                 DFG_CRASH(m_graph, m_node, "Bad use kind");
                 break;
             }
-            
+
+#if FTL_USES_B3
+            emitBinarySnippet<JITSubGenerator>(operationValueSub);
+#else // FTL_USES_B3
             compileUntypedBinaryOp<ArithSubDescriptor, DoesNotHaveConstInt32OperandOptimization, DoesNotHaveConstDoubleOperandOptimization>();
+#endif // FTL_USES_B3
             break;
         }
 
@@ -7375,6 +7376,70 @@ private:
         setBoolean(m_out.phi(m_out.boolean, fastResult, slowResult));
     }
 
+#if FTL_USES_B3
+    enum ScratchFPRUsage {
+        DontNeedScratchFPR,
+        NeedScratchFPR
+    };
+    template<typename BinaryArithOpGenerator, ScratchFPRUsage scratchFPRUsage = DontNeedScratchFPR>
+    void emitBinarySnippet(J_JITOperation_EJJ slowPathFunction)
+    {
+        Node* node = m_node;
+        
+        // FIXME: Make this do exceptions.
+        // https://bugs.webkit.org/show_bug.cgi?id=151686
+            
+        LValue left = lowJSValue(node->child1());
+        LValue right = lowJSValue(node->child2());
+
+        SnippetOperand leftOperand(m_state.forNode(node->child1()).resultType());
+        SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
+            
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->append(left, ValueRep::SomeRegister);
+        patchpoint->append(right, ValueRep::SomeRegister);
+        patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        patchpoint->numGPScratchRegisters = 1;
+        patchpoint->numFPScratchRegisters = 2;
+        if (scratchFPRUsage == NeedScratchFPR)
+            patchpoint->numFPScratchRegisters++;
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        State* state = &m_ftlState;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                    
+                auto generator = Box<BinaryArithOpGenerator>::create(
+                    leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
+                    JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()),
+                    params.fpScratch(0), params.fpScratch(1), params.gpScratch(0),
+                    scratchFPRUsage == NeedScratchFPR ? params.fpScratch(2) : InvalidFPRReg);
+
+                generator->generateFastPath(jit);
+                generator->endJumpList().link(&jit);
+                CCallHelpers::Label done = jit.label();
+
+                params.addLatePath(
+                    [=] (CCallHelpers& jit) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                            
+                        // FIXME: Make this do something.
+                        CCallHelpers::JumpList exceptions;
+
+                        generator->slowPathJumpList().link(&jit);
+                        callOperation(
+                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                            &exceptions, slowPathFunction, params[0].gpr(), params[1].gpr(),
+                            params[2].gpr());
+                        jit.jump().linkTo(done, &jit);
+                    });
+            });
+
+        setJSValue(patchpoint);
+    }
+#endif // FTL_USES_B3
+
     LValue allocateCell(LValue allocator, LBasicBlock slowPath)
     {
         LBasicBlock success = FTL_NEW_BLOCK(m_out, ("object allocation success"));
@@ -9859,7 +9924,6 @@ private:
     {
         return m_blocks.get(block);
     }
-
 
 #if FTL_USES_B3
     OSRExitDescriptor* appendOSRExitDescriptor(FormattedValue lowValue, Node* highValue)
