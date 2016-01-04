@@ -209,7 +209,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType wi
     if (!context)
         context = createPbufferContext(eglSharingContext);
 
-    return WTFMove(context);
+    return context;
 }
 
 GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, EGLSurfaceType type)

@@ -1,3 +1,17 @@
+2016-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Fix -Wpessimizing-move warnings after switch to WTFMove
+        https://bugs.webkit.org/show_bug.cgi?id=152677
+
+        Reviewed by Andy Estes.
+
+        * platform/glib/KeyedDecoderGlib.cpp:
+        (WebCore::KeyedDecoderGlib::dictionaryFromGVariant):
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createContext):
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::createContext):
+
 2016-01-03  David Kilzer  <ddkilzer@apple.com>
 
         -[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:] is missing an m_handle->client() NULL check

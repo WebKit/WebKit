@@ -136,7 +136,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext*
     if (!context)
         return nullptr;
 
-    return WTFMove(context);
+    return context;
 }
 
 GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XID window)
