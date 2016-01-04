@@ -436,18 +436,61 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
-        if (!this._style.inherited) {
-            contextMenu.appendItem(WebInspector.UIString("Duplicate Selector"), () => {
-                if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
-                    this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
-
-                this._style.nodeStyles.addRule(this._currentSelectorText);
-            });
-        }
-
         contextMenu.appendItem(WebInspector.UIString("Copy Rule"), () => {
             InspectorFrontendHost.copyText(this._style.generateCSSRuleString());
         });
+
+        if (this._style.inherited)
+            return;
+
+        contextMenu.appendItem(WebInspector.UIString("Duplicate Selector"), () => {
+            if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
+                this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
+
+            this._style.nodeStyles.addRule(this._currentSelectorText);
+        });
+
+        // Only used one colon temporarily since single-colon pseudo elements are valid CSS.
+        if (WebInspector.CSSStyleManager.PseudoElementNames.some((className) => this._style.selectorText.includes(":" + className)))
+            return;
+
+        if (WebInspector.CSSStyleManager.ForceablePseudoClasses.every((className) => !this._style.selectorText.includes(":" + className))) {
+            for (let pseudoClass of WebInspector.CSSStyleManager.ForceablePseudoClasses) {
+                if (pseudoClass === "visited" && this._style.node.nodeName() !== "A")
+                    continue;
+
+                let pseudoClassSelector = ":" + pseudoClass;
+
+                contextMenu.appendItem(WebInspector.UIString("Add %s Rule").format(pseudoClassSelector), () => {
+                    this._style.node.setPseudoClassEnabled(pseudoClass, true);
+
+                    if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
+                        this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
+
+                    if (this._style.ownerRule) {
+                        let pseudoSelectors = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoClassSelector);
+                        this._style.nodeStyles.addRule(pseudoSelectors.join(","));
+                    } else
+                        this._style.nodeStyles.addRule(this._currentSelectorText + pseudoClassSelector);
+                });
+            }
+        }
+
+        for (let pseudoElement of WebInspector.CSSStyleManager.PseudoElementNames) {
+            let pseudoElementSelector = "::" + pseudoElement;
+            const styleText = "content: \"\";";
+
+            contextMenu.appendItem(WebInspector.UIString("Create %s Rule").format(pseudoElementSelector), () => {
+                if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
+                    this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
+
+                if (this._style.ownerRule) {
+                    let pseudoSelectors = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoElementSelector);
+                    this._style.nodeStyles.addRule(pseudoSelectors.join(","), styleText);
+                } else
+                    this._style.nodeStyles.addRule(this._currentSelectorText + pseudoElementSelector, styleText);
+            });
+        }
     }
 
     _handleIconElementClicked()

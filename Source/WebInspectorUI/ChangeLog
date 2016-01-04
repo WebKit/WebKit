@@ -1,3 +1,32 @@
+2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add context menu items to CSS selectors to auto-generate pseudo selectors
+        https://bugs.webkit.org/show_bug.cgi?id=152657
+
+        Reviewed by Timothy Hatcher.
+
+        Instead of having to copy a selector, create a new one, paste it, and then add
+        a pseudo class or element, a context menu item has been added to automate this
+        process for the user for each CSS pseudo-selector.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Controllers/CSSStyleManager.js:
+        Added a static object containing the list of CSS pseudo-element names.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.addRule.completed):
+        (WebInspector.DOMNodeStyles.prototype.addRule.styleChanged):
+        (WebInspector.DOMNodeStyles.prototype.addRule.addedRule):
+        (WebInspector.DOMNodeStyles.prototype.addRule):
+        Now accepts a second argument for setting the starting text value of the new rule.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleSelectorPaste):
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent):
+
 2016-01-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add a DebugUI context menu item for saving inspector protocol traffic to file

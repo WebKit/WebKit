@@ -540,5 +540,6 @@ WebInspector.CSSStyleManager.Event = {
     StyleSheetRemoved: "css-style-manager-style-sheet-removed",
 };
 
+WebInspector.CSSStyleManager.PseudoElementNames = ["before", "after"];
 WebInspector.CSSStyleManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
 WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol = Symbol("css-style-manager-preferred-inspector-stylesheet");
