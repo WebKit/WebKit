@@ -31,6 +31,7 @@
 #include "Performance.h"
 #include "PerformanceMark.h"
 #include "PerformanceMeasure.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/dtoa/utils.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,34 +39,40 @@ namespace WebCore {
 
 namespace {
 
-typedef HashMap<String, NavigationTimingFunction> RestrictedKeyMap;
-static RestrictedKeyMap restrictedKeyMap()
+static NavigationTimingFunction restrictedMarkFunction(const String& markName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(RestrictedKeyMap, map, ());
-    if (map.isEmpty()) {
-        map.add("navigationStart", &PerformanceTiming::navigationStart);
-        map.add("unloadEventStart", &PerformanceTiming::unloadEventStart);
-        map.add("unloadEventEnd", &PerformanceTiming::unloadEventEnd);
-        map.add("redirectStart", &PerformanceTiming::redirectStart);
-        map.add("redirectEnd", &PerformanceTiming::redirectEnd);
-        map.add("fetchStart", &PerformanceTiming::fetchStart);
-        map.add("domainLookupStart", &PerformanceTiming::domainLookupStart);
-        map.add("domainLookupEnd", &PerformanceTiming::domainLookupEnd);
-        map.add("connectStart", &PerformanceTiming::connectStart);
-        map.add("connectEnd", &PerformanceTiming::connectEnd);
-        map.add("secureConnectionStart", &PerformanceTiming::secureConnectionStart);
-        map.add("requestStart", &PerformanceTiming::requestStart);
-        map.add("responseStart", &PerformanceTiming::responseStart);
-        map.add("responseEnd", &PerformanceTiming::responseEnd);
-        map.add("domLoading", &PerformanceTiming::domLoading);
-        map.add("domInteractive", &PerformanceTiming::domInteractive);
-        map.add("domContentLoadedEventStart", &PerformanceTiming::domContentLoadedEventStart);
-        map.add("domContentLoadedEventEnd", &PerformanceTiming::domContentLoadedEventEnd);
-        map.add("domComplete", &PerformanceTiming::domComplete);
-        map.add("loadEventStart", &PerformanceTiming::loadEventStart);
-        map.add("loadEventEnd", &PerformanceTiming::loadEventEnd);
+    using MapPair = std::pair<ASCIILiteral, NavigationTimingFunction>;
+    static const std::array<MapPair, 21> pairs = { {
+        MapPair{ ASCIILiteral("navigationStart"), &PerformanceTiming::navigationStart },
+        MapPair{ ASCIILiteral("unloadEventStart"), &PerformanceTiming::unloadEventStart },
+        MapPair{ ASCIILiteral("unloadEventEnd"), &PerformanceTiming::unloadEventEnd },
+        MapPair{ ASCIILiteral("redirectStart"), &PerformanceTiming::redirectStart },
+        MapPair{ ASCIILiteral("redirectEnd"), &PerformanceTiming::redirectEnd },
+        MapPair{ ASCIILiteral("fetchStart"), &PerformanceTiming::fetchStart },
+        MapPair{ ASCIILiteral("domainLookupStart"), &PerformanceTiming::domainLookupStart },
+        MapPair{ ASCIILiteral("domainLookupEnd"), &PerformanceTiming::domainLookupEnd },
+        MapPair{ ASCIILiteral("connectStart"), &PerformanceTiming::connectStart },
+        MapPair{ ASCIILiteral("connectEnd"), &PerformanceTiming::connectEnd },
+        MapPair{ ASCIILiteral("secureConnectionStart"), &PerformanceTiming::secureConnectionStart },
+        MapPair{ ASCIILiteral("requestStart"), &PerformanceTiming::requestStart },
+        MapPair{ ASCIILiteral("responseStart"), &PerformanceTiming::responseStart },
+        MapPair{ ASCIILiteral("responseEnd"), &PerformanceTiming::responseEnd },
+        MapPair{ ASCIILiteral("domLoading"), &PerformanceTiming::domLoading },
+        MapPair{ ASCIILiteral("domInteractive"), &PerformanceTiming::domInteractive },
+        MapPair{ ASCIILiteral("domContentLoadedEventStart"), &PerformanceTiming::domContentLoadedEventStart },
+        MapPair{ ASCIILiteral("domContentLoadedEventEnd"), &PerformanceTiming::domContentLoadedEventEnd },
+        MapPair{ ASCIILiteral("domComplete"), &PerformanceTiming::domComplete },
+        MapPair{ ASCIILiteral("loadEventStart"), &PerformanceTiming::loadEventStart },
+        MapPair{ ASCIILiteral("loadEventEnd"), &PerformanceTiming::loadEventEnd },
+    } };
+
+    static NeverDestroyed<HashMap<String, NavigationTimingFunction>> map;
+    if (map.get().isEmpty()) {
+        for (auto& pair : pairs)
+            map.get().add(pair.first, pair.second);
     }
-    return map;
+
+    return map.get().get(markName);
 }
 
 } // namespace anonymous
@@ -98,7 +105,7 @@ static void clearPeformanceEntries(PerformanceEntryMap& performanceEntryMap, con
 void UserTiming::mark(const String& markName, ExceptionCode& ec)
 {
     ec = 0;
-    if (restrictedKeyMap().contains(markName)) {
+    if (restrictedMarkFunction(markName)) {
         ec = SYNTAX_ERR;
         return;
     }
@@ -119,8 +126,8 @@ double UserTiming::findExistingMarkStartTime(const String& markName, ExceptionCo
     if (m_marksMap.contains(markName))
         return m_marksMap.get(markName).last()->startTime();
 
-    if (restrictedKeyMap().contains(markName)) {
-        double value = static_cast<double>((m_performance->timing()->*(restrictedKeyMap().get(markName)))());
+    if (auto function = restrictedMarkFunction(markName)) {
+        double value = static_cast<double>((m_performance->timing()->*(function))());
         if (!value) {
             ec = INVALID_ACCESS_ERR;
             return 0.0;

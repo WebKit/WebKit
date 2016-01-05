@@ -1,5 +1,24 @@
 2016-01-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        [PerformanceTiming] Don't expose the restrictedKeyMap() HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=147366
+
+        Reviewed by Sam Weinig.
+
+        Instead of the callers looking up in the HashMap that's returned by restrictedKeyMap(),
+        keep the HashMap local in the static restrictedMarkFunction(). This function accepts
+        a String reference and performs the lookup, returning the pointer to a PerformanceTiming
+        method that corresponds to the passed-in mark or returns nullptr otherwise.
+
+        The HashMap is now wrapped in a NeverDestroyed object and is populated when the first
+        mark function is looked for.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::UserTiming::mark):
+        (WebCore::UserTiming::findExistingMarkStartTime):
+
+2016-01-04  Zan Dobersek  <zdobersek@igalia.com>
+
         [TextureMapper] Move ClipStack into its own file
         https://bugs.webkit.org/show_bug.cgi?id=152661
 
