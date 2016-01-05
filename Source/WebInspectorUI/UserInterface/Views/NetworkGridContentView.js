@@ -82,7 +82,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         this._dataGrid = new WebInspector.TimelineDataGrid(this._contentTreeOutline, columns);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
-        this._dataGrid.sortColumnIdentifier = "requestSent";
+        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("network-grid-content-view-sort", "requestSent");
         this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
         this.element.classList.add("network-grid");

@@ -72,7 +72,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
 
-        this._dataGrid.sortColumnIdentifier = "startTime";
+        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("layout-timeline-view-sort", "startTime");
         this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
         this._hoveredTreeElement = null;

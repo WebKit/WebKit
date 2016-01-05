@@ -43,7 +43,7 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
 
         this._dataGrid = new WebInspector.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
         this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
-        this._dataGrid.sortColumnIdentifier = "key";
+        this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("dom-storage-content-view-sort", "key");
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
         this.addSubview(this._dataGrid);

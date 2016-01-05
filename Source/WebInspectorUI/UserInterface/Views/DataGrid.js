@@ -33,6 +33,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this.orderedColumns = [];
 
         this._sortColumnIdentifier = null;
+        this._sortColumnIdentifierSetting = null;
         this._sortOrder = WebInspector.DataGrid.SortOrder.Indeterminate;
 
         this.children = [];
@@ -208,17 +209,33 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         if (this._sortColumnIdentifier === columnIdentifier)
             return;
 
-        var oldSortColumnIdentifier = this._sortColumnIdentifier;
+        let oldSortColumnIdentifier = this._sortColumnIdentifier;
         this._sortColumnIdentifier = columnIdentifier;
+        this._updateSortedColumn(oldSortColumnIdentifier);
+    }
+
+    set sortColumnIdentifierSetting(setting)
+    {
+        console.assert(setting instanceof WebInspector.Setting);
+
+        this._sortColumnIdentifierSetting = setting;
+        if (this._sortColumnIdentifierSetting.value)
+            this.sortColumnIdentifier = this._sortColumnIdentifierSetting.value;
+    }
+
+    _updateSortedColumn(oldSortColumnIdentifier)
+    {
+        if (this._sortColumnIdentifierSetting)
+            this._sortColumnIdentifierSetting.value = this._sortColumnIdentifier;
 
         if (oldSortColumnIdentifier) {
-            var oldSortHeaderCellElement = this._headerTableCellElements.get(oldSortColumnIdentifier);
+            let oldSortHeaderCellElement = this._headerTableCellElements.get(oldSortColumnIdentifier);
             oldSortHeaderCellElement.classList.remove(WebInspector.DataGrid.SortColumnAscendingStyleClassName);
             oldSortHeaderCellElement.classList.remove(WebInspector.DataGrid.SortColumnDescendingStyleClassName);
         }
 
         if (this._sortColumnIdentifier) {
-            var newSortHeaderCellElement = this._headerTableCellElements.get(this._sortColumnIdentifier);
+            let newSortHeaderCellElement = this._headerTableCellElements.get(this._sortColumnIdentifier);
             newSortHeaderCellElement.classList.toggle(WebInspector.DataGrid.SortColumnAscendingStyleClassName, this._sortOrder === WebInspector.DataGrid.SortOrder.Ascending);
             newSortHeaderCellElement.classList.toggle(WebInspector.DataGrid.SortColumnDescendingStyleClassName, this._sortOrder === WebInspector.DataGrid.SortOrder.Descending);
         }

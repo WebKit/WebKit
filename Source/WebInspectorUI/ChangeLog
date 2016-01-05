@@ -1,5 +1,50 @@
 2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Timelines view doesn't remember how I like to sort things
+        https://bugs.webkit.org/show_bug.cgi?id=152626
+
+        Reviewed by Joseph Pecoraro.
+
+        Currently, all instances of DataGrid have their sort column reset with each
+        open/close of Web Inspector. This doesn't really make sense seeing as we save
+        the user's settings in many other cases, so the sort method (which column)
+        should be saved between inspector sessions.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView.prototype._createDataGrid):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView):
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.set sortColumnIdentifier):
+        Moved the logic for classLists and events to _updateSortedColumn.
+
+        (WebInspector.DataGrid.prototype.set sortColumnIdentifierSetting):
+        Instead of just setting the original sort method when instantiating the DataGrid,
+        a WebInspector.Setting object is now able to be passed in via this setter
+        to give the DataGrid access to the stored sort method value.
+
+        (WebInspector.DataGrid.prototype._updateSortedColumn):
+        Updates the classLists and fires events. If a sort column setting object
+        exists, update its value.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildDataGridSection):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView):
+
+2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Add debounce to URL inputs in the Visual sidebar
         https://bugs.webkit.org/show_bug.cgi?id=152655
 
