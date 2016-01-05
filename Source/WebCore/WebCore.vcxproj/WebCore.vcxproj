@@ -19199,6 +19199,7 @@
     <ClCompile Include="..\storage\StorageNamespaceProvider.cpp" />
     <ClCompile Include="..\style\InlineTextBoxStyle.cpp" />
     <ClCompile Include="..\style\RenderTreePosition.cpp" />
+    <ClCompile Include="..\style\StyleChange.cpp" />
     <ClCompile Include="..\style\StyleFontSizeFunctions.cpp" />
     <ClCompile Include="..\style\StyleResolveForDocument.cpp" />
     <ClCompile Include="..\style\StyleResolveTree.cpp" />
@@ -22762,6 +22763,7 @@
     <ClInclude Include="..\storage\StorageNamespaceProvider.h" />
     <ClInclude Include="..\style\InlineTextBoxStyle.h" />
     <ClInclude Include="..\style\RenderTreePosition.h" />
+    <ClInclude Include="..\style\StyleChange.h" />
     <ClInclude Include="..\style\StyleFontSizeFunctions.h" />
     <ClInclude Include="..\style\StyleResolveForDocument.h" />
     <ClInclude Include="..\style\StyleResolveTree.h" />

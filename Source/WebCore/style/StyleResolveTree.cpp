@@ -70,61 +70,6 @@ static void detachRenderTree(Element&, DetachType);
 static void resolveTextNode(Text&, RenderTreePosition&);
 static void resolveTree(Element&, RenderStyle& inheritedStyle, RenderTreePosition&, Change);
 
-Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
-{
-    if (s1.display() != s2.display())
-        return Detach;
-    if (s1.hasPseudoStyle(FIRST_LETTER) != s2.hasPseudoStyle(FIRST_LETTER))
-        return Detach;
-    // We just detach if a renderer acquires or loses a column-span, since spanning elements
-    // typically won't contain much content.
-    if (s1.columnSpan() != s2.columnSpan())
-        return Detach;
-    if (!s1.contentDataEquivalent(&s2))
-        return Detach;
-    // When text-combine property has been changed, we need to prepare a separate renderer object.
-    // When text-combine is on, we use RenderCombineText, otherwise RenderText.
-    // https://bugs.webkit.org/show_bug.cgi?id=55069
-    if (s1.hasTextCombine() != s2.hasTextCombine())
-        return Detach;
-    // We need to reattach the node, so that it is moved to the correct RenderFlowThread.
-    if (s1.flowThread() != s2.flowThread())
-        return Detach;
-    // When the region thread has changed, we need to prepare a separate render region object.
-    if (s1.regionThread() != s2.regionThread())
-        return Detach;
-    // FIXME: Multicolumn regions not yet supported (http://dev.w3.org/csswg/css-regions/#multi-column-regions)
-    // When the node has region style and changed its multicol style, we have to prepare
-    // a separate render region object.
-    if (s1.hasFlowFrom() && (s1.specifiesColumns() != s2.specifiesColumns()))
-        return Detach;
-
-    if (s1 != s2) {
-        if (s1.inheritedNotEqual(&s2))
-            return Inherit;
-        if (s1.hasExplicitlyInheritedProperties() || s2.hasExplicitlyInheritedProperties())
-            return Inherit;
-
-        return NoInherit;
-    }
-    // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
-    // because setStyle will do the right thing with anything else.
-    if (s1.hasAnyPublicPseudoStyles()) {
-        for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < FIRST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
-            if (s1.hasPseudoStyle(pseudoId)) {
-                RenderStyle* ps2 = s2.getCachedPseudoStyle(pseudoId);
-                if (!ps2)
-                    return NoInherit;
-                RenderStyle* ps1 = s1.getCachedPseudoStyle(pseudoId);
-                if (!ps1 || *ps1 != *ps2)
-                    return NoInherit;
-            }
-        }
-    }
-
-    return NoChange;
-}
-
 static bool shouldCreateRenderer(const Element& element, const RenderElement& parentRenderer)
 {
     if (!element.document().shouldCreateRenderers())

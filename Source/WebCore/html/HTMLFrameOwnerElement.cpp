@@ -28,6 +28,7 @@
 #include "RenderWidget.h"
 #include "ShadowRoot.h"
 #include "SVGDocument.h"
+#include "StyleResolveTree.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleResolveTree_h
-#define StyleResolveTree_h
-
-#include "StyleChange.h"
-#include <functional>
+#ifndef StyleChange_h
+#define StyleChange_h
 
 namespace WebCore {
 
-class Document;
-class Element;
 class RenderStyle;
-class Settings;
-class Text;
 
 namespace Style {
 
-void resolveTree(Document&, Change);
+enum Change { NoChange, NoInherit, Inherit, Detach, Force };
 
-void detachRenderTree(Element&);
-void detachTextRenderer(Text&);
-
-void updateTextRendererAfterContentChange(Text&, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
-
-void queuePostResolutionCallback(std::function<void ()>);
-bool postResolutionCallbacksAreSuspended();
-
-class PostResolutionCallbackDisabler {
-public:
-    explicit PostResolutionCallbackDisabler(Document&);
-    ~PostResolutionCallbackDisabler();
-};
+Change determineChange(const RenderStyle&, const RenderStyle&);
 
 }
-
 }
 
 #endif

@@ -154,6 +154,7 @@
 #include "ShadowRoot.h"
 #include "StorageEvent.h"
 #include "StyleProperties.h"
+#include "StyleResolveTree.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"

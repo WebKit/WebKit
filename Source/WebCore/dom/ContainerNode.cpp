@@ -54,6 +54,7 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SelectorQuery.h"
+#include "StyleResolveTree.h"
 #include "TemplateContentDocumentFragment.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>

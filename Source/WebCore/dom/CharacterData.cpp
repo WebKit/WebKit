@@ -32,6 +32,7 @@
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
+#include "StyleResolveTree.h"
 #include "TextBreakIterator.h"
 #include <wtf/Ref.h>
 

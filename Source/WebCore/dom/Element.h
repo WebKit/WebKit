@@ -32,7 +32,7 @@
 #include "RegionOversetState.h"
 #include "ScrollTypes.h"
 #include "SimulatedClickOptions.h"
-#include "StyleResolveTree.h"
+#include "StyleChange.h"
 
 namespace WebCore {
 

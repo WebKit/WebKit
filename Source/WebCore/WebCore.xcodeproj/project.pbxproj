@@ -6461,6 +6461,8 @@
 		E38838981BAD145F00D62EE3 /* JSModuleLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38838941BAD145F00D62EE3 /* JSModuleLoader.cpp */; };
 		E38838991BAD145F00D62EE3 /* JSModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E38838951BAD145F00D62EE3 /* JSModuleLoader.h */; };
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E401E0A41C3C0B8300F34D10 /* StyleChange.h in Headers */ = {isa = PBXBuildFile; fileRef = E401E0A31C3C0B8300F34D10 /* StyleChange.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E401E0A61C3C0CF700F34D10 /* StyleChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */; };
 		E424A39E1330DF0100CF6DC9 /* LegacyTileGridTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */; };
 		E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */ = {isa = PBXBuildFile; fileRef = E424A39F1330DF1E00CF6DC9 /* LegacyTileGridTile.mm */; };
 		E425A49A18292B840020CFCF /* CollectionIndexCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E425A49918292B840020CFCF /* CollectionIndexCache.h */; };
@@ -14364,6 +14366,8 @@
 		E38838941BAD145F00D62EE3 /* JSModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleLoader.cpp; sourceTree = "<group>"; };
 		E38838951BAD145F00D62EE3 /* JSModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleLoader.h; sourceTree = "<group>"; };
 		E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIteratorAssertions.h; sourceTree = "<group>"; };
+		E401E0A31C3C0B8300F34D10 /* StyleChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleChange.h; sourceTree = "<group>"; };
+		E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleChange.cpp; sourceTree = "<group>"; };
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueKeywords.cpp; sourceTree = "<group>"; };
@@ -23110,6 +23114,8 @@
 				1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */,
 				5824ABA81AE849C8009074B7 /* RenderTreePosition.cpp */,
 				5824ABA91AE849C8009074B7 /* RenderTreePosition.h */,
+				E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */,
+				E401E0A31C3C0B8300F34D10 /* StyleChange.h */,
 				E4D58EB617B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp */,
 				E4D58EB717B4ED8900CBDCA8 /* StyleFontSizeFunctions.h */,
 				E4D58EB217B4DBDC00CBDCA8 /* StyleResolveForDocument.cpp */,
@@ -28012,6 +28018,7 @@
 				A5E616741894581F009ADF50 /* WebDebuggerAgent.h in Headers */,
 				FE0D84E910484348001A179E /* WebEvent.h in Headers */,
 				225A16B50D5C11E900090295 /* WebEventRegion.h in Headers */,
+				E401E0A41C3C0B8300F34D10 /* StyleChange.h in Headers */,
 				A19D93471A9FEC7200B46C24 /* WebFilterEvaluatorSPI.h in Headers */,
 				D3F3D36E1A69B7E00059FC2B /* WebGL2RenderingContext.h in Headers */,
 				A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */,
@@ -29051,6 +29058,7 @@
 				85526C380AB0A17E000302EA /* DOMNodeIterator.mm in Sources */,
 				85ACAA8E0A9B759C00671E90 /* DOMNodeList.mm in Sources */,
 				856C8AE50A912649005C687B /* DOMObject.mm in Sources */,
+				E401E0A61C3C0CF700F34D10 /* StyleChange.cpp in Sources */,
 				85C7F5D10AAFB8D9004014DD /* DOMOverflowEvent.mm in Sources */,
 				E1284BD51044A01E00EAEB52 /* DOMPageTransitionEvent.mm in Sources */,
 				1ACE53E70A8D18E70022947D /* DOMParser.cpp in Sources */,

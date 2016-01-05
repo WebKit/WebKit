@@ -48,6 +48,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleResolveTree.h"
 #include "StyleResolver.h"
 #include "SubframeLoader.h"
 #include "TypedElementDescendantIterator.h"

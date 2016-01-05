@@ -77,6 +77,7 @@
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "StyleProperties.h"
+#include "StyleResolveTree.h"
 #include "StyleResolver.h"
 #include "TextIterator.h"
 #include "VoidCallback.h"
