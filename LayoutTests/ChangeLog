@@ -1,3 +1,34 @@
+2016-01-05  Mark Lam  <mark.lam@apple.com>
+
+        Make ftl-polymorphic-xxx tests more polymorphic.
+        https://bugs.webkit.org/show_bug.cgi?id=152736
+
+        Reviewed by Saam Barati.
+
+        1. Change the test driver to alternate inputs between numeric operands and
+           an object with a valueOf() method.
+        2. Changed busy work blob to use the operator being tested instead of always using
+           the + operator.
+        3. Updated test results.
+
+        With these change, the tests each triggers around 49000+ speculation failures when
+        run as a benchmark on the VM before the fix for https://webkit.org/b/152708
+        landed (in r194560: <http://trac.webkit.org/r194560>).  After the fix, the
+        number of speculation failures is around 11 or lower.
+
+        The benchmark perf with these tests shows about a 10% gain on x86 (32-bit with no
+        FTL) and about 2x on x86_64 (64-bit with FTL).
+
+        * js/regress/script-tests/ftl-polymorphic-bitand.js:
+        * js/regress/script-tests/ftl-polymorphic-bitor.js:
+        * js/regress/script-tests/ftl-polymorphic-bitxor.js:
+        * js/regress/script-tests/ftl-polymorphic-div.js:
+        * js/regress/script-tests/ftl-polymorphic-lshift.js:
+        * js/regress/script-tests/ftl-polymorphic-mul.js:
+        * js/regress/script-tests/ftl-polymorphic-rshift.js:
+        * js/regress/script-tests/ftl-polymorphic-sub.js:
+        * js/regress/script-tests/ftl-polymorphic-urshift.js:
+
 2016-01-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Error message updates for two failing tests.

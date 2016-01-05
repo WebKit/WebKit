@@ -13,11 +13,20 @@ function foo(a, b) {
             temp = a / b;
         else
             temp = b / 1;
-        temp = temp | 0;
         result += temp;
     }
-    for (var i = 0; i < 1000; i++)
-        result += i;
+
+    // Remove rounding errors so we can have a predictable test result.
+    result = result | 0;
+
+    // Busy work just to allow the DFG and FTL to optimize this out. If the above causes
+    // us to speculation fail out to the baseline, this busy work will take a lot longer
+    // to run.
+    // This loop below also gets the DFG to compile this function sooner.
+    var origResult = result;
+    for (var i = 1; i < 1000; i++)
+        result = result / i;
+    result = origResult > result ? origResult : result;
     return result;
 }
 noInline(foo);
@@ -27,16 +36,19 @@ var expectedResult;
 if (this.window) {
     // The layout test doesn't like too many iterations and may time out.
     iterations = 10000;
-    expectedResult = 5045480390;
+    expectedResult = 50002814;
 } else {
     iterations = 100000;
-    expectedResult = 54950300390;
+    expectedResult = 5000017595;
 }
 
 
 for (var i = 0; i <= iterations; i++) {
-    o1.i = i + 2;
-    result += foo(o1, 10);
+    o1.i = i;
+    if (i % 2)
+        result += foo(o1, 10);
+    else
+        result += foo(i, 10);
 }
 
 if (result != expectedResult)
