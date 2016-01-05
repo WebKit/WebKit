@@ -1,3 +1,32 @@
+2015-12-24  Mark Lam  <mark.lam@apple.com>
+
+        Add validation of JSC options to catch typos.
+        https://bugs.webkit.org/show_bug.cgi?id=152549
+
+        Reviewed by Benjamin Poulain.
+
+        1. If a JSC_xxx option is found and xxx is not a valid option, we will now log
+           an error message.
+        2. The jsc app is commonly used as follows:
+
+               $ jsc [jsc options] [scripts]
+     
+           Previously, we'll continue to parse for [jsc options] after [scripts] is seen.
+           We won't do this anymore.  Any --xxx jsc options must precede the [scripts]
+           arguments.
+
+        3. If a --xxx jsc option is specified, but xxx is not a valid option, we will
+           now log an error message.
+
+        4. Added JSC_validateOptions, which if set to true will cause the VM to crash if
+           an invalid option was seen during options parsing.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+
 2016-01-04  Keith Miller  <keith_miller@apple.com>
 
         Turn off Internal Function inlining in the DFG for super calls.

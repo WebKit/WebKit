@@ -102,6 +102,7 @@ typedef OptionRange optionRange;
 typedef const char* optionString;
 
 #define JSC_OPTIONS(v) \
+    v(bool, validateOptions, false, "crashes if mis-typed JSC options were passed to the VM") \
     v(unsigned, dumpOptions, 0, "dumps JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)") \
     \
     v(bool, useLLInt,  true, "allows the LLINT to be used if true") \

@@ -1889,79 +1889,93 @@ void CommandLine::parseArguments(int argc, char** argv)
     bool needToDumpOptions = false;
     bool needToExit = false;
 
+    bool doneWithJSCOptions = false;
+    bool hasBadJSCOptions = false;
     for (; i < argc; ++i) {
         const char* arg = argv[i];
-        if (!strcmp(arg, "-f")) {
-            if (++i == argc)
-                printUsageStatement();
-            m_scripts.append(Script(true, argv[i]));
-            continue;
-        }
-        if (!strcmp(arg, "-e")) {
-            if (++i == argc)
-                printUsageStatement();
-            m_scripts.append(Script(false, argv[i]));
-            continue;
-        }
-        if (!strcmp(arg, "-i")) {
-            m_interactive = true;
-            continue;
-        }
-        if (!strcmp(arg, "-d")) {
-            m_dump = true;
-            continue;
-        }
-        if (!strcmp(arg, "-p")) {
-            if (++i == argc)
-                printUsageStatement();
-            m_profile = true;
-            m_profilerOutput = argv[i];
-            continue;
-        }
-        if (!strcmp(arg, "-m")) {
-            m_module = true;
-            continue;
-        }
-        if (!strcmp(arg, "-s")) {
+
+        if (!doneWithJSCOptions) {
+            if (!strcmp(arg, "-f")) {
+                if (++i == argc)
+                    printUsageStatement();
+                m_scripts.append(Script(true, argv[i]));
+                continue;
+            }
+            if (!strcmp(arg, "-e")) {
+                if (++i == argc)
+                    printUsageStatement();
+                m_scripts.append(Script(false, argv[i]));
+                continue;
+            }
+            if (!strcmp(arg, "-i")) {
+                m_interactive = true;
+                continue;
+            }
+            if (!strcmp(arg, "-d")) {
+                m_dump = true;
+                continue;
+            }
+            if (!strcmp(arg, "-p")) {
+                if (++i == argc)
+                    printUsageStatement();
+                m_profile = true;
+                m_profilerOutput = argv[i];
+                continue;
+            }
+            if (!strcmp(arg, "-m")) {
+                m_module = true;
+                continue;
+            }
+            if (!strcmp(arg, "-s")) {
 #if HAVE(SIGNAL_H)
-            signal(SIGILL, _exit);
-            signal(SIGFPE, _exit);
-            signal(SIGBUS, _exit);
-            signal(SIGSEGV, _exit);
+                signal(SIGILL, _exit);
+                signal(SIGFPE, _exit);
+                signal(SIGBUS, _exit);
+                signal(SIGSEGV, _exit);
 #endif
-            continue;
-        }
-        if (!strcmp(arg, "-x")) {
-            m_exitCode = true;
-            continue;
-        }
-        if (!strcmp(arg, "--")) {
-            ++i;
-            break;
-        }
-        if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
-            printUsageStatement(true);
+                continue;
+            }
+            if (!strcmp(arg, "-x")) {
+                m_exitCode = true;
+                continue;
+            }
+            if (!strcmp(arg, "--")) {
+                ++i;
+                break;
+            }
+            if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
+                printUsageStatement(true);
 
-        if (!strcmp(arg, "--options")) {
-            needToDumpOptions = true;
-            needToExit = true;
-            continue;
-        }
-        if (!strcmp(arg, "--dumpOptions")) {
-            needToDumpOptions = true;
-            continue;
-        }
+            if (!strcmp(arg, "--options")) {
+                needToDumpOptions = true;
+                needToExit = true;
+                continue;
+            }
+            if (!strcmp(arg, "--dumpOptions")) {
+                needToDumpOptions = true;
+                continue;
+            }
 
-        // See if the -- option is a JSC VM option.
-        if (strstr(arg, "--") == arg && JSC::Options::setOption(&arg[2])) {
-            // The arg was recognized as a VM option and has been parsed.
-            continue; // Just continue with the next arg. 
-        }
+            // See if the -- option is a JSC VM option.
+            if (strstr(arg, "--") == arg) {
+                if (!JSC::Options::setOption(&arg[2])) {
+                    hasBadJSCOptions = true;
+                    dataLog("ERROR: invalid option: ", arg, "\n");
+                }
+                continue;
+            }
+
+            doneWithJSCOptions = true;
+
+        } // !doneWithJSCOptions
 
         // This arg is not recognized by the VM nor by jsc. Pass it on to the
         // script.
         m_scripts.append(Script(true, argv[i]));
     }
+
+    if (hasBadJSCOptions && JSC::Options::validateOptions())
+        CRASH();
 
     if (m_scripts.isEmpty())
         m_interactive = true;
