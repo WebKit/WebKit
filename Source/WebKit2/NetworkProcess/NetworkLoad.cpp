@@ -65,7 +65,6 @@ NetworkLoad::~NetworkLoad()
 #if USE(NETWORK_SESSION)
     if (m_responseCompletionHandler)
         m_responseCompletionHandler(PolicyIgnore);
-    m_task->clearClient();
 #else
     if (m_handle)
         m_handle->clearClient();

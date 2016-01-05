@@ -1,5 +1,41 @@
 2016-01-04  Alex Christensen  <achristensen@webkit.org>
 
+        Use unique_ptr for NetworkDataTasks and references for NetworkSessionTaskClients
+        https://bugs.webkit.org/show_bug.cgi?id=152724
+
+        Reviewed by Andy Estes.
+
+        There is no reason to have a NetworkSessionTaskClient* instead of a 
+        NetworkSessionTaskClient& just so we can clear it in the NetworkLoad destructor, 
+        which immediately calls ~NetworkDataTask.
+        Also, NetworkDataTasks are owned only by the NetworkLoad, so there's no reason to refcount them.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::~NetworkLoad):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSessionTaskClient::~NetworkSessionTaskClient):
+        (WebKit::NetworkDataTask::client):
+        (WebKit::NetworkDataTask::downloadID):
+        (WebKit::NetworkDataTask::setDownloadID):
+        (WebKit::NetworkDataTask::clearClient): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveData:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didFinishDownloadingToURL:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::createDataTaskWithRequest):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        (WebKit::NetworkDataTask::NetworkDataTask):
+
+2016-01-04  Alex Christensen  <achristensen@webkit.org>
+
         Progress towards implementing downloads with NetworkSession
         https://bugs.webkit.org/show_bug.cgi?id=152716
 

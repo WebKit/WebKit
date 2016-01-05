@@ -77,9 +77,15 @@ public:
     virtual ~NetworkSessionTaskClient() { }
 };
 
-class NetworkDataTask : public RefCounted<NetworkDataTask> {
+class NetworkDataTask {
     friend class NetworkSession;
 public:
+#if PLATFORM(COCOA)
+    explicit NetworkDataTask(NetworkSession&, NetworkSessionTaskClient&, RetainPtr<NSURLSessionDataTask>&&);
+#else
+    explicit NetworkDataTask(NetworkSession&, NetworkSessionTaskClient&);
+#endif
+
     void cancel();
     void resume();
 
@@ -88,8 +94,7 @@ public:
 
     ~NetworkDataTask();
 
-    NetworkSessionTaskClient* client() { return m_client; }
-    void clearClient() { m_client = nullptr; }
+    NetworkSessionTaskClient& client() { return m_client; }
 
     DownloadID downloadID() { return m_downloadID; }
     void setDownloadID(DownloadID downloadID)
@@ -101,13 +106,10 @@ public:
     
 private:
     NetworkSession& m_session;
-    NetworkSessionTaskClient* m_client;
+    NetworkSessionTaskClient& m_client;
     DownloadID m_downloadID;
 #if PLATFORM(COCOA)
-    explicit NetworkDataTask(NetworkSession&, NetworkSessionTaskClient&, RetainPtr<NSURLSessionDataTask>&&);
     RetainPtr<NSURLSessionDataTask> m_task;
-#else
-    explicit NetworkDataTask(NetworkSession&, NetworkSessionTaskClient&);
 #endif
 };
 
@@ -123,7 +125,7 @@ public:
 
     static NetworkSession& defaultSession();
     
-    Ref<NetworkDataTask> createDataTaskWithRequest(const WebCore::ResourceRequest&, NetworkSessionTaskClient&);
+    std::unique_ptr<NetworkDataTask> createDataTaskWithRequest(const WebCore::ResourceRequest&, NetworkSessionTaskClient&);
 
     NetworkDataTask* dataTaskForIdentifier(NetworkDataTask::TaskIdentifier);
 

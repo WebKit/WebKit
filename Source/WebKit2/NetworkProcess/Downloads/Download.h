@@ -69,7 +69,6 @@ namespace WebKit {
 
 class DownloadAuthenticationClient;
 class DownloadManager;
-class NetworkDataTask;
 class NetworkSession;
 class WebPage;
 

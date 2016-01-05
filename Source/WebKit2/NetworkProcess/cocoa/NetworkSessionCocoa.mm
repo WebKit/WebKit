@@ -94,66 +94,50 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
-    if (auto* networkingTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
-        if (auto* client = networkingTask->client()) {
-            auto completionHandlerCopy = Block_copy(completionHandler);
-            client->willPerformHTTPRedirection(response, request, [completionHandlerCopy](const WebCore::ResourceRequest& request)
-                {
-                    completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
-                    Block_release(completionHandlerCopy);
-                }
-            );
-        }
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
+        auto completionHandlerCopy = Block_copy(completionHandler);
+        networkDataTask->client().willPerformHTTPRedirection(response, request, [completionHandlerCopy](const WebCore::ResourceRequest& request) {
+            completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
+            Block_release(completionHandlerCopy);
+        });
     }
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    if (auto* networkingTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
-        if (auto* client = networkingTask->client()) {
-            auto completionHandlerCopy = Block_copy(completionHandler);
-            client->didReceiveChallenge(challenge, [completionHandlerCopy](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
-                {
-                    completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
-                    Block_release(completionHandlerCopy);
-                }
-            );
-        }
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
+        auto completionHandlerCopy = Block_copy(completionHandler);
+        networkDataTask->client().didReceiveChallenge(challenge, [completionHandlerCopy](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
+            completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
+            Block_release(completionHandlerCopy);
+        });
     }
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-    if (auto* networkingTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
-        if (auto* client = networkingTask->client())
-            client->didCompleteWithError(error);
-    }
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier))
+        networkDataTask->client().didCompleteWithError(error);
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    if (auto* networkingTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier)) {
-        if (auto* client = networkingTask->client()) {
-            ASSERT(isMainThread());
-            WebCore::ResourceResponse resourceResponse(response);
-            copyTimingData([dataTask _timingData], resourceResponse.resourceLoadTiming());
-            auto completionHandlerCopy = Block_copy(completionHandler);
-            client->didReceiveResponse(resourceResponse, [completionHandlerCopy](WebCore::PolicyAction policyAction)
-                {
-                    completionHandlerCopy(toNSURLSessionResponseDisposition(policyAction));
-                    Block_release(completionHandlerCopy);
-                }
-            );
-        }
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier)) {
+        ASSERT(isMainThread());
+        WebCore::ResourceResponse resourceResponse(response);
+        copyTimingData([dataTask _timingData], resourceResponse.resourceLoadTiming());
+        auto completionHandlerCopy = Block_copy(completionHandler);
+        networkDataTask->client().didReceiveResponse(resourceResponse, [completionHandlerCopy](WebCore::PolicyAction policyAction) {
+            completionHandlerCopy(toNSURLSessionResponseDisposition(policyAction));
+            Block_release(completionHandlerCopy);
+        });
     }
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-    if (auto* networkingTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier)) {
-        if (auto* client = networkingTask->client())
-            client->didReceiveData(WebCore::SharedBuffer::wrapNSData(data));
-    }
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier))
+        networkDataTask->client().didReceiveData(WebCore::SharedBuffer::wrapNSData(data));
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
@@ -188,8 +172,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         download->didReceiveResponse([downloadTask response]);
         downloadManager.dataTaskBecameDownloadTask(downloadID, WTFMove(download));
 
-        if (auto* client = networkDataTask->client())
-            client->didBecomeDownload();
+        networkDataTask->client().didBecomeDownload();
 
         _session->addDownloadID([downloadTask taskIdentifier], downloadID);
     }
@@ -241,9 +224,9 @@ NetworkSession::~NetworkSession()
     [m_session invalidateAndCancel];
 }
 
-Ref<NetworkDataTask> NetworkSession::createDataTaskWithRequest(const WebCore::ResourceRequest& request, NetworkSessionTaskClient& client)
+std::unique_ptr<NetworkDataTask> NetworkSession::createDataTaskWithRequest(const WebCore::ResourceRequest& request, NetworkSessionTaskClient& client)
 {
-    return adoptRef(*new NetworkDataTask(*this, client, [m_session dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)]));
+    return std::make_unique<NetworkDataTask>(*this, client, [m_session dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)]);
 }
 
 NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier)
@@ -277,7 +260,7 @@ DownloadID NetworkSession::takeDownloadID(NetworkDataTask::TaskIdentifier taskId
 
 NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkSessionTaskClient& client, RetainPtr<NSURLSessionDataTask>&& task)
     : m_session(session)
-    , m_client(&client)
+    , m_client(client)
     , m_task(WTFMove(task))
 {
     ASSERT(!m_session.m_dataTaskMap.contains(taskIdentifier()));
