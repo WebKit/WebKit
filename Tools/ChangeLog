@@ -1,3 +1,15 @@
+2016-01-04  Aakash Jain  <aakash_jain@apple.com>
+
+        error running layout tests on iOS simulator on latest build
+        https://bugs.webkit.org/show_bug.cgi?id=152719
+        <rdar://problem/24009549>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator.wait_until_device_is_booted): Ensure that simulator device is in booted state
+          before running simctl spawn command.
+
 2016-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, move Frédéric Wang to committers list
