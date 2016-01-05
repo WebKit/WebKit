@@ -1,3 +1,14 @@
+2016-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSCustomXPathNSResolver::lookupNamespaceURI Console Message should render with a column number
+        https://bugs.webkit.org/show_bug.cgi?id=114312
+
+        Reviewed by Brent Fulgham.
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI): Deleted.
+        This now behaves as expected.
+
 2016-01-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Memory indexes aren't deleted when their owning memory object stores are deleted.
