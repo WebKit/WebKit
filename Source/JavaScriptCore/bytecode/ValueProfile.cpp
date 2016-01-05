@@ -54,6 +54,10 @@ void printInternal(PrintStream& out, const ResultProfile& profile)
             out.print("Int32Overflow");
             separator = "|";
         }
+        if (profile.didObserveInt52Overflow()) {
+            out.print("Int52Overflow");
+            separator = "|";
+        }
     }
     if (profile.specialFastPathCount()) {
         out.print(" special fast path: ");

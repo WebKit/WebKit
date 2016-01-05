@@ -352,6 +352,14 @@ public:
         store32(dataTempRegister, addressTempRegister);
     }
 
+    void or32(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+        load32(addressTempRegister, dataTempRegister);
+        or32(imm, dataTempRegister, dataTempRegister);
+        store32(dataTempRegister, addressTempRegister);
+    }
+
     void or32(TrustedImm32 imm, Address address)
     {
         load32(address, dataTempRegister);

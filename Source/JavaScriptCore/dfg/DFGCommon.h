@@ -107,7 +107,7 @@ enum NoResultTag { NoResult };
 // The prediction propagator effectively does four passes, with the last pass
 // being done by the separate FixuPhase.
 enum PredictionPass {
-    // We're converging in a straght-forward forward flow fixpoint. This is the
+    // We're converging in a straight-forward forward flow fixpoint. This is the
     // most conventional part of the propagator - it makes only monotonic decisions
     // based on value profiles and rare case profiles. It ignores baseline JIT rare
     // case profiles. The goal here is to develop a good guess of which variables

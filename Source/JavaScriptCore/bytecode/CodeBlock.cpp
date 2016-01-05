@@ -4188,32 +4188,10 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(int bytecodeOffset)
 
 ResultProfile* CodeBlock::resultProfileForBytecodeOffset(int bytecodeOffset)
 {
-    return tryBinarySearch<ResultProfile, int>(
-        m_resultProfiles, m_resultProfiles.size(), bytecodeOffset,
-        getResultProfileBytecodeOffset);
-}
-
-void CodeBlock::updateResultProfileForBytecodeOffset(int bytecodeOffset, JSValue result)
-{
-#if ENABLE(DFG_JIT)
-    ResultProfile* profile = resultProfileForBytecodeOffset(bytecodeOffset);
-    if (!profile)
-        profile = addResultProfile(bytecodeOffset);
-
-    if (result.isNumber()) {
-        if (!result.isInt32()) {
-            double doubleVal = result.asNumber();
-            if (!doubleVal && std::signbit(doubleVal))
-                profile->setObservedNegZeroDouble();
-            else
-                profile->setObservedNonNegZeroDouble();
-        }
-    } else
-        profile->setObservedNonNumber();
-#else
-    UNUSED_PARAM(bytecodeOffset);
-    UNUSED_PARAM(result);
-#endif
+    auto iterator = m_bytecodeOffsetToResultProfileIndexMap.find(bytecodeOffset);
+    if (iterator == m_bytecodeOffsetToResultProfileIndexMap.end())
+        return nullptr;
+    return &m_resultProfiles[iterator->value];
 }
 
 #if ENABLE(JIT)

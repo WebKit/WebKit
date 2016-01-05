@@ -35,6 +35,7 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_left.payloadGPR());
     ASSERT(m_scratchGPR != m_right.payloadGPR());
+    ASSERT(m_scratchGPR != m_result.payloadGPR());
 #if USE(JSVALUE32_64)
     ASSERT(m_scratchGPR != m_left.tagGPR());
     ASSERT(m_scratchGPR != m_right.tagGPR());
@@ -91,24 +92,7 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
         rightNotInt = jit.branchIfNotInt32(m_right);
 
         m_slowPathJumpList.append(jit.branchMul32(CCallHelpers::Overflow, m_right.payloadGPR(), m_left.payloadGPR(), m_scratchGPR));
-        if (!m_resultProfile) {
-            m_slowPathJumpList.append(jit.branchTest32(CCallHelpers::Zero, m_scratchGPR)); // Go slow if potential negative zero.
-
-        } else {
-            CCallHelpers::JumpList notNegativeZero;
-            notNegativeZero.append(jit.branchTest32(CCallHelpers::NonZero, m_scratchGPR));
-
-            CCallHelpers::Jump negativeZero = jit.branch32(CCallHelpers::LessThan, m_left.payloadGPR(), CCallHelpers::TrustedImm32(0));
-            notNegativeZero.append(jit.branch32(CCallHelpers::GreaterThanOrEqual, m_right.payloadGPR(), CCallHelpers::TrustedImm32(0)));
-
-            negativeZero.link(&jit);
-            // Record this, so that the speculative JIT knows that we failed speculation
-            // because of a negative zero.
-            jit.add32(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfSpecialFastPathCount()));
-            m_slowPathJumpList.append(jit.jump());
-
-            notNegativeZero.link(&jit);
-        }
+        m_slowPathJumpList.append(jit.branchTest32(CCallHelpers::Zero, m_scratchGPR)); // Go slow if potential negative zero.
 
         jit.boxInt32(m_scratchGPR, m_result);
         m_endJumpList.append(jit.jump());
@@ -147,7 +131,58 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
 
     // Do doubleVar * doubleVar.
     jit.mulDouble(m_rightFPR, m_leftFPR);
-    jit.boxDouble(m_leftFPR, m_result);
+
+    if (!m_resultProfile)
+        jit.boxDouble(m_leftFPR, m_result);
+    else {
+        // The Int52 overflow check below intentionally omits 1ll << 51 as a valid negative Int52 value.
+        // Therefore, we will get a false positive if the result is that value. This is intentionally
+        // done to simplify the checking algorithm.
+
+        const int64_t negativeZeroBits = 1ll << 63;
+#if USE(JSVALUE64)
+        jit.moveDoubleTo64(m_leftFPR, m_result.payloadGPR());
+        CCallHelpers::Jump notNegativeZero = jit.branch64(CCallHelpers::NotEqual, m_result.payloadGPR(), CCallHelpers::TrustedImm64(negativeZeroBits));
+
+        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        CCallHelpers::Jump done = jit.jump();
+
+        notNegativeZero.link(&jit);
+        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+
+        jit.move(m_result.payloadGPR(), m_scratchGPR);
+        jit.urshiftPtr(CCallHelpers::Imm32(52), m_scratchGPR);
+        jit.and32(CCallHelpers::Imm32(0x7ff), m_scratchGPR);
+        CCallHelpers::Jump noInt52Overflow = jit.branch32(CCallHelpers::LessThanOrEqual, m_scratchGPR, CCallHelpers::TrustedImm32(0x431));
+
+        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::Int52Overflow), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        noInt52Overflow.link(&jit);
+
+        done.link(&jit);
+        jit.sub64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR()); // Box the double.
+#else
+        jit.boxDouble(m_leftFPR, m_result);
+        CCallHelpers::JumpList notNegativeZero;
+        notNegativeZero.append(jit.branch32(CCallHelpers::NotEqual, m_result.payloadGPR(), CCallHelpers::TrustedImm32(0)));
+        notNegativeZero.append(jit.branch32(CCallHelpers::NotEqual, m_result.tagGPR(), CCallHelpers::TrustedImm32(negativeZeroBits >> 32)));
+
+        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+        CCallHelpers::Jump done = jit.jump();
+
+        notNegativeZero.link(&jit);
+        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::NonNegZeroDouble), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+
+        jit.move(m_result.tagGPR(), m_scratchGPR);
+        jit.urshiftPtr(CCallHelpers::Imm32(52 - 32), m_scratchGPR);
+        jit.and32(CCallHelpers::Imm32(0x7ff), m_scratchGPR);
+        CCallHelpers::Jump noInt52Overflow = jit.branch32(CCallHelpers::LessThanOrEqual, m_scratchGPR, CCallHelpers::TrustedImm32(0x431));
+        
+        jit.or32(CCallHelpers::TrustedImm32(ResultProfile::Int52Overflow), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
+
+        m_endJumpList.append(noInt52Overflow);
+        m_endJumpList.append(done);
+#endif
+    }
 }
 
 } // namespace JSC

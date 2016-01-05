@@ -452,15 +452,19 @@ public:
         return value >= Options::couldTakeSlowCaseMinimumCount();
     }
 
-    ResultProfile* addResultProfile(int bytecodeOffset)
+    ResultProfile* ensureResultProfile(int bytecodeOffset)
     {
-        m_resultProfiles.append(ResultProfile(bytecodeOffset));
-        return &m_resultProfiles.last();
+        ResultProfile* profile = resultProfileForBytecodeOffset(bytecodeOffset);
+        if (!profile) {
+            m_resultProfiles.append(ResultProfile(bytecodeOffset));
+            profile = &m_resultProfiles.last();
+            ASSERT(&m_resultProfiles.last() == &m_resultProfiles[m_resultProfiles.size() - 1]);
+            m_bytecodeOffsetToResultProfileIndexMap.add(bytecodeOffset, m_resultProfiles.size() - 1);
+        }
+        return profile;
     }
     unsigned numberOfResultProfiles() { return m_resultProfiles.size(); }
     ResultProfile* resultProfileForBytecodeOffset(int bytecodeOffset);
-
-    void updateResultProfileForBytecodeOffset(int bytecodeOffset, JSValue result);
 
     unsigned specialFastCaseProfileCountForBytecodeOffset(int bytecodeOffset)
     {
@@ -476,16 +480,6 @@ public:
             return false;
         unsigned specialFastCaseCount = specialFastCaseProfileCountForBytecodeOffset(bytecodeOffset);
         return specialFastCaseCount >= Options::couldTakeSlowCaseMinimumCount();
-    }
-
-    bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
-    {
-        if (!hasBaselineJITProfiling())
-            return false;
-        unsigned slowCaseCount = rareCaseProfileCountForBytecodeOffset(bytecodeOffset);
-        unsigned specialFastCaseCount = specialFastCaseProfileCountForBytecodeOffset(bytecodeOffset);
-        unsigned value = slowCaseCount - specialFastCaseCount;
-        return value >= Options::likelyToTakeSlowCaseMinimumCount();
     }
 
     unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
@@ -1068,6 +1062,7 @@ private:
     Vector<ValueProfile> m_valueProfiles;
     SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
     SegmentedVector<ResultProfile, 8> m_resultProfiles;
+    HashMap<unsigned, unsigned, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_bytecodeOffsetToResultProfileIndexMap;
     Vector<ArrayAllocationProfile> m_arrayAllocationProfiles;
     ArrayProfileVector m_arrayProfiles;
     Vector<ObjectAllocationProfile> m_objectAllocationProfiles;

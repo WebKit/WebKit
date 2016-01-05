@@ -760,7 +760,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
 
     ResultProfile* resultProfile = nullptr;
     if (shouldEmitProfiling())
-        resultProfile = m_codeBlock->addResultProfile(m_bytecodeOffset);
+        resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());
@@ -835,7 +835,7 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
 
     ResultProfile* resultProfile = nullptr;
     if (shouldEmitProfiling())
-        resultProfile = m_codeBlock->addResultProfile(m_bytecodeOffset);
+        resultProfile = m_codeBlock->ensureResultProfile(m_bytecodeOffset);
 
     SnippetOperand leftOperand(types.first());
     SnippetOperand rightOperand(types.second());

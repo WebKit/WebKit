@@ -135,15 +135,6 @@ namespace JSC {
         JSValue::encode(value);                  \
     } while (false)
 
-#define RETURN_WITH_RESULT_PROFILING(value__) \
-    RETURN_WITH_PROFILING(value__, PROFILE_RESULT(returnValue__))
-    
-#define PROFILE_RESULT(value__) do { \
-        CodeBlock* codeBlock = exec->codeBlock();                                   \
-        unsigned bytecodeOffset = codeBlock->bytecodeOffset(pc);                    \
-        codeBlock->updateResultProfileForBytecodeOffset(bytecodeOffset, value__);   \
-    } while (false)
-
 #define CALL_END_IMPL(exec, callTarget) RETURN_TWO((callTarget), (exec))
 
 #define CALL_THROW(exec, pc, exceptionToThrow) do {                     \
@@ -358,19 +349,57 @@ SLOW_PATH_DECL(slow_path_negate)
     RETURN(jsNumber(-OP_C(2).jsValue().toNumber(exec)));
 }
 
+#if ENABLE(DFG_JIT)
+static void updateResultProfileForBinaryArithOp(ExecState* exec, Instruction* pc, JSValue result, JSValue left, JSValue right)
+{
+    CodeBlock* codeBlock = exec->codeBlock();
+    unsigned bytecodeOffset = codeBlock->bytecodeOffset(pc);
+    ResultProfile* profile = codeBlock->ensureResultProfile(bytecodeOffset);
+
+    if (result.isNumber()) {
+        if (!result.isInt32()) {
+            if (left.isInt32() && right.isInt32())
+                profile->setObservedInt32Overflow();
+
+            double doubleVal = result.asNumber();
+            if (!doubleVal && std::signbit(doubleVal))
+                profile->setObservedNegZeroDouble();
+            else {
+                profile->setObservedNonNegZeroDouble();
+
+                // The Int52 overflow check here intentionally omits 1ll << 51 as a valid negative Int52 value.
+                // Therefore, we will get a false positive if the result is that value. This is intentionally
+                // done to simplify the checking algorithm.
+                static const int64_t int52OverflowPoint = (1ll << 51);
+                int64_t int64Val = static_cast<int64_t>(std::abs(doubleVal));
+                if (int64Val >= int52OverflowPoint)
+                    profile->setObservedInt52Overflow();
+            }
+        }
+    } else
+        profile->setObservedNonNumber();
+}
+#else
+static void updateResultProfileForBinaryArithOp(ExecState*, Instruction*, JSValue, JSValue, JSValue) { }
+#endif
+
 SLOW_PATH_DECL(slow_path_add)
 {
     BEGIN();
     JSValue v1 = OP_C(2).jsValue();
     JSValue v2 = OP_C(3).jsValue();
-    
+    JSValue result;
+
     if (v1.isString() && !v2.isObject())
-        RETURN_WITH_RESULT_PROFILING(jsString(exec, asString(v1), v2.toString(exec)));
-    
-    if (v1.isNumber() && v2.isNumber())
-        RETURN_WITH_RESULT_PROFILING(jsNumber(v1.asNumber() + v2.asNumber()));
-    
-    RETURN_WITH_RESULT_PROFILING(jsAddSlowCase(exec, v1, v2));
+        result = jsString(exec, asString(v1), v2.toString(exec));
+    else if (v1.isNumber() && v2.isNumber())
+        result = jsNumber(v1.asNumber() + v2.asNumber());
+    else
+        result = jsAddSlowCase(exec, v1, v2);
+
+    RETURN_WITH_PROFILING(result, {
+        updateResultProfileForBinaryArithOp(exec, pc, result, v1, v2);
+    });
 }
 
 // The following arithmetic and bitwise operations need to be sure to run
@@ -380,25 +409,40 @@ SLOW_PATH_DECL(slow_path_add)
 SLOW_PATH_DECL(slow_path_mul)
 {
     BEGIN();
-    double a = OP_C(2).jsValue().toNumber(exec);
-    double b = OP_C(3).jsValue().toNumber(exec);
-    RETURN_WITH_RESULT_PROFILING(jsNumber(a * b));
+    JSValue left = OP_C(2).jsValue();
+    JSValue right = OP_C(3).jsValue();
+    double a = left.toNumber(exec);
+    double b = right.toNumber(exec);
+    JSValue result = jsNumber(a * b);
+    RETURN_WITH_PROFILING(result, {
+        updateResultProfileForBinaryArithOp(exec, pc, result, left, right);
+    });
 }
 
 SLOW_PATH_DECL(slow_path_sub)
 {
     BEGIN();
-    double a = OP_C(2).jsValue().toNumber(exec);
-    double b = OP_C(3).jsValue().toNumber(exec);
-    RETURN_WITH_RESULT_PROFILING(jsNumber(a - b));
+    JSValue left = OP_C(2).jsValue();
+    JSValue right = OP_C(3).jsValue();
+    double a = left.toNumber(exec);
+    double b = right.toNumber(exec);
+    JSValue result = jsNumber(a - b);
+    RETURN_WITH_PROFILING(result, {
+        updateResultProfileForBinaryArithOp(exec, pc, result, left, right);
+    });
 }
 
 SLOW_PATH_DECL(slow_path_div)
 {
     BEGIN();
-    double a = OP_C(2).jsValue().toNumber(exec);
-    double b = OP_C(3).jsValue().toNumber(exec);
-    RETURN_WITH_RESULT_PROFILING(jsNumber(a / b));
+    JSValue left = OP_C(2).jsValue();
+    JSValue right = OP_C(3).jsValue();
+    double a = left.toNumber(exec);
+    double b = right.toNumber(exec);
+    JSValue result = jsNumber(a / b);
+    RETURN_WITH_PROFILING(result, {
+        updateResultProfileForBinaryArithOp(exec, pc, result, left, right);
+    });
 }
 
 SLOW_PATH_DECL(slow_path_mod)

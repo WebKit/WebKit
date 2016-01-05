@@ -1,3 +1,78 @@
+2016-01-04  Mark Lam  <mark.lam@apple.com>
+
+        Profiling should detect when multiplication overflows but does not create negative zero.
+        https://bugs.webkit.org/show_bug.cgi?id=132470
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::or32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::or32):
+        - New or32 emitter needed by the mul snippet.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resultProfileForBytecodeOffset):
+        (JSC::CodeBlock::updateResultProfileForBytecodeOffset): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::ensureResultProfile):
+        (JSC::CodeBlock::addResultProfile): Deleted.
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase): Deleted.
+        - Added a m_bytecodeOffsetToResultProfileIndexMap because we can now add result
+          profiles in any order (based on runtime execution), not necessarily in bytecode
+          order at baseline compilation time.
+
+        * bytecode/ValueProfile.cpp:
+        (WTF::printInternal):
+        * bytecode/ValueProfile.h:
+        (JSC::ResultProfile::didObserveInt52Overflow):
+        (JSC::ResultProfile::setObservedInt52Overflow):
+        - Add new Int52Overflow flags.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        - Now with more straightforward mapping of profiling info.
+
+        * dfg/DFGCommon.h:
+        - Fixed a typo in a comment.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        (JSC::DFG::Node::mayHaveNonIntResult):
+        (JSC::DFG::Node::hasConstantBuffer):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        (JSC::DFG::nodeMayOverflowInt52):
+        (JSC::DFG::nodeCanSpeculateInt52):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        - We now have profiling info for whether the result was ever seen to be a non-Int.
+          Use this to make a better prediction.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+        - Switch to using CodeBlock::ensureResultProfile().  ResultProfiles can now be
+          created at any time (including the slow path), not just in bytecode order
+          during baseline compilation.
+
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath):
+        - Removed the fast path profiling code for NegZero because we'll go to the slow
+          path anyway.  Let the slow path do the profiling for us.
+        - Added profiling for NegZero and potential Int52 overflows in the fast path
+          that does double math.
+
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateResultProfileForBinaryArithOp):
+        - Removed the RETURN_WITH_RESULT_PROFILING macro (2 less macros), and just use
+          the RETURN_WITH_PROFILING macro instead with a call to
+          updateResultProfileForBinaryArithOp().  This makes it clear what we're doing
+          to do profiling in each case, and also allows us to do custom profiling for
+          each opcode if needed.  However, so far, we always call
+          updateResultProfileForBinaryArithOp().
+
 2016-01-05  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Arrays should be subclassable.

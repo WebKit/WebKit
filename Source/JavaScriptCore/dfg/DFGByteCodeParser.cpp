@@ -909,18 +909,19 @@ private:
             node->mergeFlags(NodeMayNegZeroInBaseline);
             break;
 
-        case ArithMul:
-            // FIXME: We should detect cases where we only overflowed but never created
-            // negative zero.
-            // https://bugs.webkit.org/show_bug.cgi?id=132470
-            if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)
-                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
-                node->mergeFlags(NodeMayOverflowInt32InBaseline | NodeMayNegZeroInBaseline);
-            else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
-                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+        case ArithMul: {
+            ResultProfile& resultProfile = *m_inlineStackTop->m_profiledBlock->resultProfileForBytecodeOffset(m_currentIndex);
+            if (resultProfile.didObserveInt52Overflow())
+                node->mergeFlags(NodeMayOverflowInt52);
+            if (resultProfile.didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+                node->mergeFlags(NodeMayOverflowInt32InBaseline);
+            if (resultProfile.didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
                 node->mergeFlags(NodeMayNegZeroInBaseline);
+            if (resultProfile.didObserveNonInt32())
+                node->mergeFlags(NodeMayHaveNonIntResult);
             break;
-            
+        }
+
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;

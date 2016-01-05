@@ -208,7 +208,7 @@ inline int getRareCaseProfileBytecodeOffset(RareCaseProfile* rareCaseProfile)
 
 struct ResultProfile {
 private:
-    static const int numberOfFlagBits = 4;
+    static const int numberOfFlagBits = 5;
 
 public:
     ResultProfile(int bytecodeOffset)
@@ -222,6 +222,7 @@ public:
         NegZeroDouble    = 1 << 1,
         NonNumber        = 1 << 2,
         Int32Overflow    = 1 << 3,
+        Int52Overflow    = 1 << 4,
     };
 
     int bytecodeOffset() const { return m_bytecodeOffsetAndFlags >> numberOfFlagBits; }
@@ -233,11 +234,13 @@ public:
     bool didObserveNegZeroDouble() const { return hasBits(NegZeroDouble); }
     bool didObserveNonNumber() const { return hasBits(NonNumber); }
     bool didObserveInt32Overflow() const { return hasBits(Int32Overflow); }
+    bool didObserveInt52Overflow() const { return hasBits(Int52Overflow); }
 
     void setObservedNonNegZeroDouble() { setBit(NonNegZeroDouble); }
     void setObservedNegZeroDouble() { setBit(NegZeroDouble); }
     void setObservedNonNumber() { setBit(NonNumber); }
     void setObservedInt32Overflow() { setBit(Int32Overflow); }
+    void setObservedInt52Overflow() { setBit(Int52Overflow); }
 
     void* addressOfFlags() { return &m_bytecodeOffsetAndFlags; }
     void* addressOfSpecialFastPathCount() { return &m_specialFastPathCount; }

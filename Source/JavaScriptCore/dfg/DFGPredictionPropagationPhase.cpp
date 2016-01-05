@@ -343,8 +343,12 @@ private:
                         changed |= mergePrediction(SpecInt52);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-                } else
-                    changed |= mergePrediction(SpecInt32 | SpecBytecodeDouble);
+                } else {
+                    if (node->mayHaveNonIntResult())
+                        changed |= mergePrediction(SpecInt32 | SpecBytecodeDouble);
+                    else
+                        changed |= mergePrediction(SpecInt32);
+                }
             }
             break;
         }
