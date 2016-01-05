@@ -68,23 +68,15 @@ webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass
 imported/w3c/indexeddb
 inspector/indexeddb
 
-# IDB tests that crash
+# IDB tests that crash/assert in MemoryBackingStore code
+storage/indexeddb/key-generator.html [ Skip ]
 storage/indexeddb/lazy-index-population.html [ Skip ]
+
+# IDB tests that crash/assert in CloneDeserializer
 storage/indexeddb/structured-clone.html [ Skip ]
 
 # IDB tests that crash with GuardMalloc or ASan
 storage/indexeddb/index-multientry.html [ Skip ]
-
-# Causes crashes downstream
-storage/indexeddb/key-generator.html [ Skip ]
-storage/indexeddb/keypath-basics.html [ Skip ]
-
-# IDB flaky crashes
-fast/history/page-cache-indexed-closed-db.html [ Skip ]
-storage/indexeddb/mozilla/cursor-mutation.html [ Skip ]
-storage/indexeddb/mozilla/cursor-mutation-objectstore-only.html [ Skip ]
-storage/indexeddb/mutating-cursor.html [ Skip ]
-webkit.org/b/152264 storage/indexeddb/deleted-objects.html [ Failure Crash ]
 
 # IDB tests that timeout                                                               
 storage/indexeddb/database-quota.html [ Skip ]
@@ -93,7 +85,12 @@ storage/indexeddb/dont-wedge.html [ Skip ]
 storage/indexeddb/intversion-long-queue.html [ Skip ]
 storage/indexeddb/transaction-starvation.html [ Skip ]
 
-# IDB tests with text failures                                                             
+# IDB tests with text failures related to error message differences
+storage/indexeddb/deleted-objects.html [ Failure ]
+storage/indexeddb/keypath-basics.html [ Failure ]
+
+# IDB tests with other text failures
+fast/history/page-cache-indexed-closed-db.html [ Failure ]
 storage/indexeddb/intversion-gated-on-delete.html [ Failure ]
 storage/indexeddb/odd-strings.html [ Failure ]
 storage/indexeddb/open-db-private-browsing.html [ Failure ]

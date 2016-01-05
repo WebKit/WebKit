@@ -1,5 +1,17 @@
 2016-01-05  Brady Eidson  <beidson@apple.com>
 
+        IndexedDB TestExpectations gardening.
+
+        Reviewed by Alex Christensen.
+
+        - Enable 3 flakes that should now not be flakey.
+        - Unskip some previously crashing tests, but mark as text failures.
+        - Move some tests around with better comments.
+        
+        * platform/mac-wk1/TestExpectations: 
+
+2016-01-05  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Transactions from a previous page can leak forward to the next.
         https://bugs.webkit.org/show_bug.cgi?id=152698
 
