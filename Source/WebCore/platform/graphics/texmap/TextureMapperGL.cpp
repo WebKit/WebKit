@@ -156,67 +156,6 @@ TextureMapperGLData::~TextureMapperGLData()
         context->deleteBuffer(entry.value);
 }
 
-void TextureMapperGL::ClipStack::reset(const IntRect& rect, TextureMapperGL::ClipStack::YAxisMode mode)
-{
-    clipStack.clear();
-    size = rect.size();
-    yAxisMode = mode;
-    clipState = TextureMapperGL::ClipState(rect);
-    clipStateDirty = true;
-}
-
-void TextureMapperGL::ClipStack::intersect(const IntRect& rect)
-{
-    clipState.scissorBox.intersect(rect);
-    clipStateDirty = true;
-}
-
-void TextureMapperGL::ClipStack::setStencilIndex(int stencilIndex)
-{
-    clipState.stencilIndex = stencilIndex;
-    clipStateDirty = true;
-}
-
-void TextureMapperGL::ClipStack::push()
-{
-    clipStack.append(clipState);
-    clipStateDirty = true;
-}
-
-void TextureMapperGL::ClipStack::pop()
-{
-    if (clipStack.isEmpty())
-        return;
-    clipState = clipStack.last();
-    clipStack.removeLast();
-    clipStateDirty = true;
-}
-
-void TextureMapperGL::ClipStack::apply(GraphicsContext3D* context)
-{
-    if (clipState.scissorBox.isEmpty())
-        return;
-
-    context->scissor(clipState.scissorBox.x(),
-        (yAxisMode == InvertedYAxis) ? size.height() - clipState.scissorBox.maxY() : clipState.scissorBox.y(),
-        clipState.scissorBox.width(), clipState.scissorBox.height());
-    context->stencilOp(GraphicsContext3D::KEEP, GraphicsContext3D::KEEP, GraphicsContext3D::KEEP);
-    context->stencilFunc(GraphicsContext3D::EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1);
-    if (clipState.stencilIndex == 1)
-        context->disable(GraphicsContext3D::STENCIL_TEST);
-    else
-        context->enable(GraphicsContext3D::STENCIL_TEST);
-}
-
-void TextureMapperGL::ClipStack::applyIfNeeded(GraphicsContext3D* context)
-{
-    if (!clipStateDirty)
-        return;
-
-    clipStateDirty = false;
-    apply(context);
-}
-
 void TextureMapperGLData::initializeStencil()
 {
     if (currentSurface) {
@@ -242,7 +181,7 @@ TextureMapperGL::TextureMapperGL()
 #endif
 }
 
-TextureMapperGL::ClipStack& TextureMapperGL::clipStack()
+ClipStack& TextureMapperGL::clipStack()
 {
     return data().currentSurface ? toBitmapTextureGL(data().currentSurface.get())->clipStack() : m_clipStack;
 }
@@ -258,7 +197,7 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
     m_context3D->depthMask(0);
     m_context3D->getIntegerv(GraphicsContext3D::VIEWPORT, data().viewport);
     m_context3D->getIntegerv(GraphicsContext3D::SCISSOR_BOX, data().previousScissor);
-    m_clipStack.reset(IntRect(0, 0, data().viewport[2], data().viewport[3]), ClipStack::InvertedYAxis);
+    m_clipStack.reset(IntRect(0, 0, data().viewport[2], data().viewport[3]), ClipStack::YAxisMode::Inverted);
     m_context3D->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
     data().PaintFlags = flags;
     bindSurface(0);
@@ -682,7 +621,7 @@ void TextureMapperGL::bindDefaultSurface()
     IntSize viewportSize(data().viewport[2], data().viewport[3]);
     data().projectionMatrix = createProjectionMatrix(viewportSize, data().PaintFlags & PaintingMirrored);
     m_context3D->viewport(data().viewport[0], data().viewport[1], viewportSize.width(), viewportSize.height());
-    m_clipStack.apply(m_context3D.get());
+    m_clipStack.apply(*m_context3D);
     data().currentSurface = nullptr;
 }
 
@@ -718,7 +657,7 @@ bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatr
         return false;
 
     clipStack().intersect(rect);
-    clipStack().applyIfNeeded(m_context3D.get());
+    clipStack().applyIfNeeded(*m_context3D);
     return true;
 }
 
@@ -770,13 +709,13 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     // Increase stencilIndex and apply stencil testing.
     clipStack().setStencilIndex(stencilIndex * 2);
-    clipStack().applyIfNeeded(m_context3D.get());
+    clipStack().applyIfNeeded(*m_context3D);
 }
 
 void TextureMapperGL::endClip()
 {
     clipStack().pop();
-    clipStack().applyIfNeeded(m_context3D.get());
+    clipStack().applyIfNeeded(*m_context3D);
 }
 
 IntRect TextureMapperGL::clipBounds()

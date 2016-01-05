@@ -1,5 +1,67 @@
 2016-01-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TextureMapper] Move ClipStack into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=152661
+
+        Reviewed by Michael Catanzaro.
+
+        Move TextureMapperGL::ClipStack into its own file and clean it up a bit.
+        Move ClipState under the ClipStack class, and simply name it State.
+
+        Move the ClipState methods into a more sensible order. Remove the inline
+        specifiers, these aren't really needed for the methods defined in the header.
+        apply() and applyIfNeeded() now accept a reference to the GraphicsContext3D
+        object, not a pointer.
+
+        Turn YAxisMode enum into an enum class, update the uses to properly specify
+        the scope of the enum value.
+
+        Reorder the ClipStack member variables into a more efficient order.
+
+        No new tests -- no change in behavior.
+
+        * CMakeLists.txt:
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::clearIfNeeded):
+        (WebCore::BitmapTextureGL::bindAsSurface):
+        * platform/graphics/texmap/BitmapTextureGL.h:
+        (WebCore::BitmapTextureGL::clipStack):
+        * platform/graphics/texmap/ClipStack.cpp: Added.
+        (WebCore::ClipStack::push):
+        (WebCore::ClipStack::pop):
+        (WebCore::ClipStack::reset):
+        (WebCore::ClipStack::intersect):
+        (WebCore::ClipStack::setStencilIndex):
+        (WebCore::ClipStack::apply):
+        (WebCore::ClipStack::applyIfNeeded):
+        * platform/graphics/texmap/ClipStack.h: Added.
+        (WebCore::ClipStack::State::State):
+        (WebCore::ClipStack::current):
+        (WebCore::ClipStack::getStencilIndex):
+        (WebCore::ClipStack::isCurrentScissorBoxEmpty):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::clipStack):
+        (WebCore::TextureMapperGL::beginPainting):
+        (WebCore::TextureMapperGL::bindDefaultSurface):
+        (WebCore::TextureMapperGL::beginScissorClip):
+        (WebCore::TextureMapperGL::beginClip):
+        (WebCore::TextureMapperGL::endClip):
+        (WebCore::TextureMapperGL::ClipStack::reset): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::intersect): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::setStencilIndex): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::push): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::pop): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::apply): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::applyIfNeeded): Deleted.
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (WebCore::TextureMapperGL::ClipState::ClipState): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::ClipStack): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::current): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::getStencilIndex): Deleted.
+        (WebCore::TextureMapperGL::ClipStack::isCurrentScissorBoxEmpty): Deleted.
+
+2016-01-04  Zan Dobersek  <zdobersek@igalia.com>
+
         Shave off a TransformationMatrix copy if RenderLayer's transparencyClipBox()
         https://bugs.webkit.org/show_bug.cgi?id=152119
 

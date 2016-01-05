@@ -24,6 +24,7 @@
 #if USE(TEXTURE_MAPPER_GL)
 
 #include "BitmapTexture.h"
+#include "ClipStack.h"
 #include "FilterOperation.h"
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
@@ -67,7 +68,7 @@ public:
             { }
     };
     const FilterInfo* filterInfo() const { return &m_filterInfo; }
-    TextureMapperGL::ClipStack& clipStack() { return m_clipStack; }
+    ClipStack& clipStack() { return m_clipStack; }
 
     GC3Dint internalFormat() const { return m_internalFormat; }
 
@@ -80,7 +81,7 @@ private:
     Platform3DObject m_rbo;
     Platform3DObject m_depthBufferObject;
     bool m_shouldClear;
-    TextureMapperGL::ClipStack m_clipStack;
+    ClipStack m_clipStack;
     RefPtr<GraphicsContext3D> m_context3D;
 
     BitmapTextureGL();

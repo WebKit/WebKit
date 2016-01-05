@@ -23,6 +23,7 @@
 
 #if USE(TEXTURE_MAPPER_GL)
 
+#include "ClipStack.h"
 #include "FilterOperation.h"
 #include "FloatQuad.h"
 #include "GraphicsContext3D.h"
@@ -39,52 +40,6 @@ class FilterOperation;
 // An OpenGL-ES2 implementation of TextureMapper.
 class TextureMapperGL : public TextureMapper {
 public:
-    struct ClipState {
-        IntRect scissorBox;
-        int stencilIndex;
-        ClipState(const IntRect& scissors = IntRect(), int stencil = 1)
-            : scissorBox(scissors)
-            , stencilIndex(stencil)
-        { }
-    };
-
-    class ClipStack {
-    public:
-        ClipStack()
-            : clipStateDirty(false)
-        { }
-
-        // Y-axis should be inverted only when painting into the window.
-        enum YAxisMode {
-            DefaultYAxis,
-            InvertedYAxis
-        };
-
-        void push();
-        void pop();
-        void apply(GraphicsContext3D*);
-        void applyIfNeeded(GraphicsContext3D*);
-        inline ClipState& current() { return clipState; }
-        void reset(const IntRect&, YAxisMode);
-        void intersect(const IntRect&);
-        void setStencilIndex(int);
-        inline int getStencilIndex() const
-        {
-            return clipState.stencilIndex;
-        }
-        inline bool isCurrentScissorBoxEmpty() const
-        {
-            return clipState.scissorBox.isEmpty();
-        }
-
-    private:
-        ClipState clipState;
-        Vector<ClipState> clipStack;
-        bool clipStateDirty;
-        IntSize size;
-        YAxisMode yAxisMode;
-    };
-
     TextureMapperGL();
     virtual ~TextureMapperGL();
 
