@@ -352,6 +352,45 @@ typedef const char* optionString;
     v(bool, dumpModuleLoadingState, false, nullptr) \
     v(bool, exposeInternalModuleLoader, false, "expose the internal module loader object to the global space for debugging") \
 
+enum OptionEquivalence {
+    SameOption,
+    InvertedOption,
+};
+
+#define JSC_ALIASED_OPTIONS(v) \
+    v(enableFunctionDotArguments, useFunctionDotArguments, SameOption) \
+    v(enableTailCalls, useTailCalls, SameOption) \
+    v(showDisassembly, dumpDisassembly, SameOption) \
+    v(showDFGDisassembly, dumpDFGDisassembly, SameOption) \
+    v(showFTLDisassembly, dumpFTLDisassembly, SameOption) \
+    v(showAllDFGNodes, dumpAllDFGNodes, SameOption) \
+    v(alwaysDoFullCollection, useGenerationalGC, InvertedOption) \
+    v(enableOSREntryToDFG, useOSREntryToDFG, SameOption) \
+    v(enableOSREntryToFTL, useOSREntryToFTL, SameOption) \
+    v(enableLLVMFastISel, useLLVMFastISel, SameOption) \
+    v(enableAccessInlining, useAccessInlining, SameOption) \
+    v(enablePolyvariantDevirtualization, usePolyvariantDevirtualization, SameOption) \
+    v(enablePolymorphicAccessInlining, usePolymorphicAccessInlining, SameOption) \
+    v(enablePolymorphicCallInlining, usePolymorphicCallInlining, SameOption) \
+    v(enableMovHintRemoval, useMovHintRemoval, SameOption) \
+    v(enableObjectAllocationSinking, useObjectAllocationSinking, SameOption) \
+    v(enableCopyBarrierOptimization, useCopyBarrierOptimization, SameOption) \
+    v(enableConcurrentJIT, useConcurrentJIT, SameOption) \
+    v(enableProfiler, useProfiler, SameOption) \
+    v(enableArchitectureSpecificOptimizations, useArchitectureSpecificOptimizations, SameOption) \
+    v(enablePolyvariantCallInlining, usePolyvariantCallInlining, SameOption) \
+    v(enablePolyvariantByIdInlining, usePolyvariantByIdInlining, SameOption) \
+    v(enableMaximalFlushInsertionPhase, useMaximalFlushInsertionPhase, SameOption) \
+    v(objectsAreImmortal, useImmortalObjects, SameOption) \
+    v(showObjectStatistics, dumpObjectStatistics, SameOption) \
+    v(disableGC, useGC, InvertedOption) \
+    v(enableTypeProfiler, useTypeProfiler, SameOption) \
+    v(enableControlFlowProfiler, useControlFlowProfiler, SameOption) \
+    v(enableExceptionFuzz, useExceptionFuzz, SameOption) \
+    v(enableExecutableAllocationFuzz, useExecutableAllocationFuzz, SameOption) \
+    v(enableOSRExitFuzz, useOSRExitFuzz, SameOption) \
+    v(enableDollarVM, useDollarVM, SameOption) \
+
 class Options {
 public:
     enum class DumpLevel {
@@ -437,6 +476,10 @@ private:
         const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
     static void dumpOption(StringBuilder&, DumpLevel, OptionID,
         const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
+
+    static bool setOptionWithoutAlias(const char* arg);
+    static bool setAliasedOption(const char* arg);
+    static bool overrideAliasedOptionWithHeuristic(const char* name);
 
     // Declare the singleton instance of the options store:
     JS_EXPORTDATA static Entry s_options[numberOfOptions];

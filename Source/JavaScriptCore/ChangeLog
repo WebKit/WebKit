@@ -1,4 +1,38 @@
-2015-12-24  Mark Lam  <mark.lam@apple.com>
+2016-01-05  Mark Lam  <mark.lam@apple.com>
+
+        Add support for aliasing JSC Options.
+        https://bugs.webkit.org/show_bug.cgi?id=152551
+
+        Reviewed by Filip Pizlo.
+
+        This allows us to use old options names as well.  This is for the benefit of
+        third party tools which may have been built to rely on those old options.  The
+        old option names will be mapped to the current option names in setOption().
+
+        For some options, the old option name specifies the inverse boolean value of the
+        current option name.  setOption() will take care of inverting the value before
+        applying it to the option.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        - Switch to dumping only overridden options here.  Verbose dumping is too much
+          for common usage.
+        * runtime/Options.cpp:
+        (JSC::overrideOptionWithHeuristic):
+        (JSC::Options::overrideAliasedOptionWithHeuristic):
+        (JSC::computeNumberOfWorkerThreads):
+        (JSC::Options::initialize):
+        (JSC::Options::setOptionWithoutAlias):
+        (JSC::invertBoolOptionValue):
+        (JSC::Options::setAliasedOption):
+        (JSC::Options::setOption):
+        (JSC::Options::dumpAllOptions):
+        - String.ascii() converts newline characters to '?', and this was messing up the
+          printing of the options.  Switched to using String.utf8() instead.
+        (JSC::Options::dumpOption):
+        * runtime/Options.h:
+
+2016-01-05  Mark Lam  <mark.lam@apple.com>
 
         Add validation of JSC options to catch typos.
         https://bugs.webkit.org/show_bug.cgi?id=152549

@@ -127,6 +127,21 @@ bool overrideOptionWithHeuristic(T& variable, const char* name)
     return false;
 }
 
+bool Options::overrideAliasedOptionWithHeuristic(const char* name)
+{
+    const char* stringValue = getenv(name);
+    if (!stringValue)
+        return false;
+
+    String aliasedOption;
+    aliasedOption = String(&name[4]) + "=" + stringValue;
+    if (Options::setOption(aliasedOption.utf8().data()))
+        return true;
+
+    fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
+    return false;
+}
+
 static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int minimum = 1)
 {
     int cpusToUse = std::min(WTF::numberOfProcessorCores(), maxNumberOfWorkerThreads);
@@ -385,6 +400,11 @@ void Options::initialize()
 #undef FOR_EACH_OPTION
 #endif // PLATFORM(COCOA)
 
+#define FOR_EACH_OPTION(aliasedName_, unaliasedName_, equivalence_) \
+            overrideAliasedOptionWithHeuristic("JSC_" #aliasedName_);
+            JSC_ALIASED_OPTIONS(FOR_EACH_OPTION)
+#undef FOR_EACH_OPTION
+
 #if 0
                 ; // Deconfuse editors that do auto indentation
 #endif
@@ -527,7 +547,7 @@ bool Options::setOptions(const char* optionsStr)
 
 // Parses a single command line option in the format "<optionName>=<value>"
 // (no spaces allowed) and set the specified option if appropriate.
-bool Options::setOption(const char* arg)
+bool Options::setOptionWithoutAlias(const char* arg)
 {
     // arg should look like this:
     //   <jscOptionName>=<appropriate value>
@@ -559,6 +579,57 @@ bool Options::setOption(const char* arg)
     return false; // No option matched.
 }
 
+static bool invertBoolOptionValue(const char* valueStr, const char*& invertedValueStr)
+{
+    bool boolValue;
+    if (!parse(valueStr, boolValue))
+        return false;
+    invertedValueStr = boolValue ? "false" : "true";
+    return true;
+}
+
+
+bool Options::setAliasedOption(const char* arg)
+{
+    // arg should look like this:
+    //   <jscOptionName>=<appropriate value>
+    const char* equalStr = strchr(arg, '=');
+    if (!equalStr)
+        return false;
+
+    // For each option, check if the specify arg is a match. If so, set the arg
+    // if the value makes sense. Otherwise, move on to checking the next option.
+#define FOR_EACH_OPTION(aliasedName_, unaliasedName_, equivalence) \
+    if (strlen(#aliasedName_) == static_cast<size_t>(equalStr - arg)    \
+        && !strncmp(arg, #aliasedName_, equalStr - arg)) {              \
+        String unaliasedOption(#unaliasedName_);                        \
+        if (equivalence == SameOption)                                  \
+            unaliasedOption = unaliasedOption + equalStr;               \
+        else {                                                          \
+            ASSERT(equivalence == InvertedOption);                      \
+            const char* invertedValueStr = nullptr;                     \
+            if (!invertBoolOptionValue(equalStr + 1, invertedValueStr)) \
+                return false;                                           \
+            unaliasedOption = unaliasedOption + "=" + invertedValueStr; \
+        }                                                               \
+        return setOptionWithoutAlias(unaliasedOption.utf8().data());   \
+    }
+
+    JSC_ALIASED_OPTIONS(FOR_EACH_OPTION)
+#undef FOR_EACH_OPTION
+
+    return false; // No option matched.
+}
+
+bool Options::setOption(const char* arg)
+{
+    bool success = setOptionWithoutAlias(arg);
+    if (success)
+        return true;
+    return setAliasedOption(arg);
+}
+
+
 void Options::dumpAllOptions(StringBuilder& builder, DumpLevel level, const char* title,
     const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption dumpDefaultsOption)
 {
@@ -583,7 +654,7 @@ void Options::dumpAllOptions(FILE* stream, DumpLevel level, const char* title)
 {
     StringBuilder builder;
     dumpAllOptions(builder, level, title, nullptr, "   ", "\n", DumpDefaults);
-    fprintf(stream, "%s", builder.toString().ascii().data());
+    fprintf(stream, "%s", builder.toString().utf8().data());
 }
 
 void Options::dumpOption(StringBuilder& builder, DumpLevel level, OptionID id,
