@@ -1,3 +1,16 @@
+2016-01-05  Filip Pizlo  <fpizlo@apple.com>
+
+        stress/v8-crypto-strict.js.ftl-eager-no-cjit in FTL B3 fails with an assertion in the callframe shuffler
+        https://bugs.webkit.org/show_bug.cgi?id=152756
+
+        Reviewed by Saam Barati.
+
+        This fixes a really obvious and dumb tail call bug in FTL B3. I think that tail calls work
+        for real now. I have no idea why I got any tail call tests to pass before this fix.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileTailCall):
+
 2016-01-04  Mark Lam  <mark.lam@apple.com>
 
         Profiling should detect when multiplication overflows but does not create negative zero.

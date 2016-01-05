@@ -5144,6 +5144,7 @@ private:
         // anyway.
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
+        State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -5152,6 +5153,7 @@ private:
                 // https://bugs.webkit.org/show_bug.cgi?id=151686
 
                 CallFrameShuffleData shuffleData;
+                shuffleData.numLocals = state->jitCode->common.frameRegisterCount;
                 shuffleData.callee = ValueRecovery::inGPR(GPRInfo::regT0, DataFormatJS);
 
                 for (unsigned i = 0; i < numArgs; ++i)
