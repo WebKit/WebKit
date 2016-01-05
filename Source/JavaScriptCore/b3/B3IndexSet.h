@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,15 @@ public:
     bool add(T* value)
     {
         return !m_set.set(value->index());
+    }
+
+    template<typename Iterable>
+    bool addAll(const Iterable& iterable)
+    {
+        bool result = false;
+        for (T* value : iterable)
+            result |= add(value);
+        return result;
     }
 
     bool remove(T* value)

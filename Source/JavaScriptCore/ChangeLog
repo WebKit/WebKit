@@ -1,3 +1,29 @@
+2016-01-05  Filip Pizlo  <fpizlo@apple.com>
+
+        regress/script-tests/deltablue-varargs.js.ftl-no-cjit-no-put-stack-validate on FTL B3 gets a B3 validation failure
+        https://bugs.webkit.org/show_bug.cgi?id=152754
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+
+        It turns out that the FTL was creating orphans. Rather than making the FTL handle them by
+        itself, I gave B3 the power to eliminate them for you. I also made the dumper print them
+        since otherwise, you wouldn't know anything about the orphan when looking at a validation
+        failure or other kind of procedure dump.
+
+        * b3/B3IndexSet.h:
+        (JSC::B3::IndexSet::add):
+        (JSC::B3::IndexSet::addAll):
+        (JSC::B3::IndexSet::remove):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::dump):
+        (JSC::B3::Procedure::deleteValue):
+        (JSC::B3::Procedure::deleteOrphans):
+        (JSC::B3::Procedure::dominators):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::cfg):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+
 2015-12-24  Mark Lam  <mark.lam@apple.com>
 
         Re-landing: Add validation of JSC options to catch typos.

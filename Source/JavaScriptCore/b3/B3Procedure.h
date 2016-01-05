@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -218,6 +218,12 @@ public:
     ValuesCollection values() const { return ValuesCollection(*this); }
 
     void deleteValue(Value*);
+
+    // A valid procedure cannot contain any orphan values. An orphan is a value that is not in
+    // any basic block. It is possible to create an orphan value during code generation or during
+    // transformation. If you know that you may have created some, you can call this method to
+    // delete them, making the procedure valid again.
+    void deleteOrphans();
 
     CFG& cfg() const { return *m_cfg; }
 

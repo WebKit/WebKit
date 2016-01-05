@@ -403,6 +403,19 @@ public:
         for (DFG::BasicBlock* block : preOrder)
             compileBlock(block);
 
+#if FTL_USES_B3
+        // We create all Phi's up front, but we may then decide not to compile the basic block
+        // that would have contained one of them. So this creates orphans, which triggers B3
+        // validation failures. Calling this fixes the issue.
+        //
+        // Note that you should avoid the temptation to make this call conditional upon
+        // validation being enabled. B3 makes no guarantees of any kind of correctness when
+        // dealing with IR that would have failed validation. For example, it would be valid to
+        // write a B3 phase that so aggressively assumes the lack of orphans that it would crash
+        // if any orphans were around. We might even have such phases already.
+        m_proc.deleteOrphans();
+#endif // FTL_USES_B3
+
 #if !FTL_USES_B3
         if (Options::dumpLLVMIR())
             dumpModule(m_ftlState.module);
