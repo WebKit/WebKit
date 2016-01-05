@@ -1,3 +1,15 @@
+2016-01-05  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Download should use header values from provided request object.
+        https://bugs.webkit.org/show_bug.cgi?id=152694
+
+        Reviewed by Alex Christensen.
+
+        Copy header values from request object parameter.
+
+        * WebDownloadCurl.cpp:
+        (WebDownload::initWithRequest):
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Replace WTF::move with WTFMove

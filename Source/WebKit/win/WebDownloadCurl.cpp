@@ -83,12 +83,26 @@ HRESULT WebDownload::initWithRequest(
         /* [in] */ IWebURLRequest* request, 
         /* [in] */ IWebDownloadDelegate* delegate)
 {
+    if (!request)
+        return E_POINTER;
+
+    COMPtr<WebMutableURLRequest> webRequest;
+    if (FAILED(request->QueryInterface(&webRequest)))
+        return E_FAIL;
+
     BString url;
 
     if (!SUCCEEDED(request->URL(&url)))
         return E_FAIL;
 
-    init(URL(ParsedURLString, String(url)), delegate);
+    ResourceRequest resourceRequest;
+    resourceRequest.setURL(URL(ParsedURLString, String(url)));
+
+    const HTTPHeaderMap& headerMap = webRequest->httpHeaderFields();
+    for (HTTPHeaderMap::const_iterator it = headerMap.begin(); it != headerMap.end(); ++it)
+        resourceRequest.setHTTPHeaderField(it->key, it->value);
+
+    init(nullptr, resourceRequest, ResourceResponse(), delegate);
 
     return S_OK;
 }
