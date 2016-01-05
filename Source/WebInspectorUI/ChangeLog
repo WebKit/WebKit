@@ -1,3 +1,13 @@
+2016-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix debug context menu string and reload without cache tooltip string
+        https://bugs.webkit.org/show_bug.cgi?id=152725
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+
 2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: add context menu items to switch CSS color property value syntax between RGB, HSL, etc
