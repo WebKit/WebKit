@@ -32,6 +32,7 @@
 #include "JSIDBObjectStore.h"
 
 #include "IDBBindingUtilities.h"
+#include "IDBDatabaseException.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStore.h"
 #include "JSDOMBinding.h"
@@ -113,7 +114,14 @@ JSValue JSIDBObjectStore::createIndex(ExecState& state)
     IDBKeyPath keyPath;
     JSValue keyPathValue = state.argument(1);
     if (!keyPathValue.isUndefinedOrNull())
-        keyPath = idbKeyPathFromValue(&state, state.argument(1));
+        keyPath = idbKeyPathFromValue(&state, keyPathValue);
+    else {
+        ExceptionCodeWithMessage ec;
+        ec.code = IDBDatabaseException::SyntaxError;
+        ec.message = ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.");
+        setDOMException(&state, ec);
+        return jsUndefined();
+    }
 
     if (state.hadException())
         return jsUndefined();

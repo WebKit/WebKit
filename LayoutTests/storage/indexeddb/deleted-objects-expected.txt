@@ -17,12 +17,12 @@ Expecting exception from deletedStore.put(0, 0)
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The object store has been deleted.
+Exception message: Failed to store record in an IDBObjectStore: The object store has been deleted.
 Expecting exception from deletedStore.add(0, 0)
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'add' on 'IDBObjectStore': The object store has been deleted.
+Exception message: Failed to store record in an IDBObjectStore: The object store has been deleted.
 Expecting exception from deletedStore.delete(0)
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
@@ -73,31 +73,6 @@ PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
 Exception message: Failed to execute 'openCursor' on 'IDBObjectStore': The object store has been deleted.
-Expecting exception from deletedStore.openKeyCursor()
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'openKeyCursor' on 'IDBObjectStore': The object store has been deleted.
-Expecting exception from deletedStore.openKeyCursor(0)
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'openKeyCursor' on 'IDBObjectStore': The object store has been deleted.
-Expecting exception from deletedStore.openKeyCursor(0, 'next')
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'openKeyCursor' on 'IDBObjectStore': The object store has been deleted.
-Expecting exception from deletedStore.openKeyCursor(IDBKeyRange.only(0))
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'openKeyCursor' on 'IDBObjectStore': The object store has been deleted.
-Expecting exception from deletedStore.openKeyCursor(IDBKeyRange.only(0), 'next')
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'openKeyCursor' on 'IDBObjectStore': The object store has been deleted.
 Expecting exception from deletedStore.createIndex('name', 'path')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR

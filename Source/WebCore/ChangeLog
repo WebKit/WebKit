@@ -1,3 +1,41 @@
+2016-01-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Error message updates for two failing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=152735
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by existing tests).
+
+        Add error messages for various operations on deleted objects.
+        
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::update):
+        (WebCore::IDBClient::IDBCursor::advance):
+        (WebCore::IDBClient::IDBCursor::continueFunction):
+        (WebCore::IDBClient::IDBCursor::deleteFunction):
+        
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::openCursor):
+        (WebCore::IDBClient::IDBIndex::doCount):
+        (WebCore::IDBClient::IDBIndex::openKeyCursor):
+        (WebCore::IDBClient::IDBIndex::doGet):
+        (WebCore::IDBClient::IDBIndex::doGetKey):
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::openCursor):
+        (WebCore::IDBClient::IDBObjectStore::get):
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd):
+        (WebCore::IDBClient::IDBObjectStore::deleteFunction):
+        (WebCore::IDBClient::IDBObjectStore::clear):
+        (WebCore::IDBClient::IDBObjectStore::createIndex):
+        (WebCore::IDBClient::IDBObjectStore::index):
+        (WebCore::IDBClient::IDBObjectStore::deleteIndex):
+        (WebCore::IDBClient::IDBObjectStore::doCount):
+
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::JSIDBObjectStore::createIndex):
+
 2016-01-05  Eric Carlson  <eric.carlson@apple.com>
 
         Avoid NULL deference in Page::updateIsPlayingMedia

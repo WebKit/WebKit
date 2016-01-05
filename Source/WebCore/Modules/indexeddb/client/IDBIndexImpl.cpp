@@ -92,6 +92,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context
 
     if (m_deleted || m_objectStore->isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'openCursor' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
     }
 
@@ -178,6 +179,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doCount(ScriptExecutionContext& context, c
 {
     if (m_deleted || m_objectStore->isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'count' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
     }
 
@@ -202,6 +204,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* cont
 
     if (m_deleted || m_objectStore->isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'openKeyCursor' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
     }
 
@@ -269,6 +272,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGet(ScriptExecutionContext& context, con
 {
     if (m_deleted || m_objectStore->isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'get' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
     }
 
@@ -323,6 +327,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, 
 {
     if (m_deleted || m_objectStore->isDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'getKey' on 'IDBIndex': The index or its object store has been deleted.");
         return nullptr;
     }
 

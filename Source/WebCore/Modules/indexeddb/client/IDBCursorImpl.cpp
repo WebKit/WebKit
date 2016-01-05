@@ -116,6 +116,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The cursor's source or effective object store has been deleted.");
         return nullptr;
     }
 
@@ -182,6 +183,7 @@ void IDBCursor::advance(unsigned long count, ExceptionCodeWithMessage& ec)
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': The cursor's source or effective object store has been deleted.");
         return;
     }
 
@@ -238,6 +240,7 @@ void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The cursor's source or effective object store has been deleted.");
         return;
     }
 
@@ -293,6 +296,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* co
 
     if (sourcesDeleted()) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'delete' on 'IDBCursor': The cursor's source or effective object store has been deleted.");
         return nullptr;
     }
 

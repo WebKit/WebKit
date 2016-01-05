@@ -15,8 +15,6 @@ function prepareDatabase()
     deleteAllObjectStores(db);
 
     testKeyPaths = [
-        { keyPath: "null", storeExpected: "null", indexExpected: "'null'" },
-        { keyPath: "undefined", storeExpected: "null", indexExpected: "'undefined'" },
         { keyPath: "''" },
         { keyPath: "'foo'" },
         { keyPath: "'foo.bar.baz'" },
@@ -78,6 +76,12 @@ function testInvalidKeyPaths()
 
     debug("");
     debug("Key paths which are never valid:");
+
+    evalAndExpectException("db.createObjectStore('name').createIndex('name', null)", "DOMException.SYNTAX_ERR");
+    deleteAllObjectStores(db);
+    evalAndExpectException("db.createObjectStore('name').createIndex('name', undefined)", "DOMException.SYNTAX_ERR");
+    deleteAllObjectStores(db);
+    
     testKeyPaths = [
         "' '",
         "'foo '",
@@ -141,6 +145,7 @@ function testInvalidKeyPaths()
         "'_\\uFFFE'", // Special
         "'_\\uFFFF'"  // Special
     ];
+   
     testKeyPaths.forEach(function (keyPath) {
         evalAndExpectException("db.createObjectStore('name', {keyPath: " + keyPath + "})", "DOMException.SYNTAX_ERR");
         evalAndExpectException("db.createObjectStore('name').createIndex('name', " + keyPath + ")", "DOMException.SYNTAX_ERR");

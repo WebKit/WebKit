@@ -85,10 +85,6 @@ storage/indexeddb/dont-wedge.html [ Skip ]
 storage/indexeddb/intversion-long-queue.html [ Skip ]
 storage/indexeddb/transaction-starvation.html [ Skip ]
 
-# IDB tests with text failures related to error message differences
-storage/indexeddb/deleted-objects.html [ Failure ]
-storage/indexeddb/keypath-basics.html [ Failure ]
-
 # IDB tests with other text failures
 fast/history/page-cache-indexed-closed-db.html [ Failure ]
 storage/indexeddb/intversion-gated-on-delete.html [ Failure ]
