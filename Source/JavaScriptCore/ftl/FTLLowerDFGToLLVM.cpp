@@ -6090,17 +6090,73 @@ private:
     
     void compileIn()
     {
-#if FTL_USES_B3
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
-#else
-        Edge base = m_node->child2();
+        Node* node = m_node;
+        Edge base = node->child2();
         LValue cell = lowCell(base);
-        speculateObject(base, cell);
-        if (JSString* string = m_node->child1()->dynamicCastConstant<JSString*>()) {
+        if (JSString* string = node->child1()->dynamicCastConstant<JSString*>()) {
             if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
-
                 UniquedStringImpl* str = bitwise_cast<UniquedStringImpl*>(string->tryGetValueImpl());
+#if FTL_USES_B3
+                B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+                patchpoint->append(cell, ValueRep::SomeRegister);
+                patchpoint->clobber(RegisterSet::macroScratchRegisters());
+
+                State* state = &m_ftlState;
+                patchpoint->setGenerator(
+                    [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                        GPRReg baseGPR = params[1].gpr();
+                        GPRReg resultGPR = params[0].gpr();
+
+                        StructureStubInfo* stubInfo =
+                            jit.codeBlock()->addStubInfo(AccessType::In);
+                        stubInfo->callSiteIndex =
+                            state->jitCode->common.addCodeOrigin(node->origin.semantic);
+                        stubInfo->codeOrigin = node->origin.semantic;
+                        stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
+                        stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
+                        stubInfo->patch.usedRegisters = params.unavailableRegisters();
+
+                        CCallHelpers::PatchableJump jump = jit.patchableJump();
+                        CCallHelpers::Label done = jit.label();
+
+                        params.addLatePath(
+                            [=] (CCallHelpers& jit) {
+                                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                                jump.m_jump.link(&jit);
+                                CCallHelpers::Label slowPathBegin = jit.label();
+                                CCallHelpers::Call slowPathCall = callOperation(
+                                    *state, params.unavailableRegisters(), jit,
+                                    node->origin.semantic, nullptr, operationInOptimize,
+                                    resultGPR, CCallHelpers::TrustedImmPtr(stubInfo), baseGPR,
+                                    CCallHelpers::TrustedImmPtr(str)).call();
+                                jit.jump().linkTo(done, &jit);
+
+                                jit.addLinkTask(
+                                    [=] (LinkBuffer& linkBuffer) {
+                                        CodeLocationCall callReturnLocation =
+                                            linkBuffer.locationOf(slowPathCall);
+                                        stubInfo->patch.deltaCallToDone =
+                                            CCallHelpers::differenceBetweenCodePtr(
+                                                callReturnLocation,
+                                                linkBuffer.locationOf(done));
+                                        stubInfo->patch.deltaCallToJump =
+                                            CCallHelpers::differenceBetweenCodePtr(
+                                                callReturnLocation,
+                                                linkBuffer.locationOf(jump));
+                                        stubInfo->callReturnLocation = callReturnLocation;
+                                        stubInfo->patch.deltaCallToSlowCase =
+                                            CCallHelpers::differenceBetweenCodePtr(
+                                                callReturnLocation,
+                                                linkBuffer.locationOf(slowPathBegin));
+                                    });
+                            });
+                    });
+
+                setJSValue(patchpoint);
+#else // FTL_USES_B3
                 unsigned stackmapID = m_stackmapIDs++;
             
                 LValue call = m_out.call(
@@ -6110,14 +6166,14 @@ private:
 
                 setInstructionCallingConvention(call, LLVMAnyRegCallConv);
 
-                m_ftlState.checkIns.append(CheckInDescriptor(stackmapID, m_node->origin.semantic, str));
+                m_ftlState.checkIns.append(CheckInDescriptor(stackmapID, node->origin.semantic, str));
                 setJSValue(call);
+#endif // FTL_USES_B3
                 return;
             }
         } 
 
         setJSValue(vmCall(m_out.int64, m_out.operation(operationGenericIn), m_callFrame, cell, lowJSValue(m_node->child1())));
-#endif
     }
 
     void compileOverridesHasInstance()
