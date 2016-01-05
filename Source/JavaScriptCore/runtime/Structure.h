@@ -413,7 +413,7 @@ public:
     }
 
     static Structure* createStructure(VM&);
-    JS_EXPORT_PRIVATE static Structure* createSubclassStructure(VM&, Structure* baseStructure, JSValue prototype);
+    static Structure* createSubclassStructure(VM&, Structure* baseStructure, JSValue prototype);
         
     bool transitionWatchpointSetHasBeenInvalidated() const
     {
