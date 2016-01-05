@@ -7,6 +7,13 @@
 //  http://code.google.com/p/google-toolbox-for-mac/
 //
 
+#include "../../../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
+
+USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
+USE_INTERNAL_SDK_Production = YES;
+USE_INTERNAL_SDK_Debug = $(HAVE_INTERNAL_SDK);
+USE_INTERNAL_SDK_Release = $(HAVE_INTERNAL_SDK);
+
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT);
@@ -64,10 +71,5 @@ GTEST_VERSIONINFO_ABOUT =  © 2008 Google Inc.
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
-
-SDKROOT[sdk=iphone*] = $(SDKROOT);
-SDKROOT = $(SDKROOT_$(PLATFORM_NAME)_$(USE_INTERNAL_SDK));
-SDKROOT_macosx_ = macosx;
-SDKROOT_macosx_YES = macosx.internal;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
