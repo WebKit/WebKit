@@ -2247,11 +2247,19 @@ private:
             if (!shouldCheckOverflow(m_node->arithMode()))
                 result = m_out.neg(value);
             else if (!shouldCheckNegativeZero(m_node->arithMode())) {
+                // "0 - x" is the canonical way of saying "-x" in both B3 and LLVM. This gets
+                // lowered to the right thing.
+#if FTL_USES_B3
+                CheckValue* check = m_out.speculateSub(m_out.int32Zero, value);
+                blessSpeculation(check, Overflow, noValue(), nullptr, m_origin);
+                result = check;
+#else // FTL_USES_B3
                 // We don't have a negate-with-overflow intrinsic. Hopefully this
                 // does the trick, though.
                 LValue overflowResult = m_out.subWithOverflow32(m_out.int32Zero, value);
                 speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
                 result = m_out.extractValue(overflowResult, 0);
+#endif // FTL_USES_B3
             } else {
                 speculate(Overflow, noValue(), 0, m_out.testIsZero32(value, m_out.constInt32(0x7fffffff)));
                 result = m_out.neg(value);
@@ -2273,9 +2281,14 @@ private:
             }
             
             LValue value = lowInt52(m_node->child1());
+#if FTL_USES_B3
+            CheckValue* result = m_out.speculateSub(m_out.int64Zero, value);
+            blessSpeculation(result, Int52Overflow, noValue(), nullptr, m_origin);
+#else // FTL_USES_B3
             LValue overflowResult = m_out.subWithOverflow64(m_out.int64Zero, value);
             speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
             LValue result = m_out.extractValue(overflowResult, 0);
+#endif // FTL_USES_B3
             speculate(NegativeZero, noValue(), 0, m_out.isZero64(result));
             setInt52(result);
             break;

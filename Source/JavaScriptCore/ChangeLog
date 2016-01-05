@@ -1,3 +1,13 @@
+2016-01-05  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should do ArithNegate
+        https://bugs.webkit.org/show_bug.cgi?id=152745
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithNegate):
+
 2016-01-05  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [ES6] Date.prototype should be a plain object
