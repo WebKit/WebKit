@@ -238,7 +238,7 @@ public:
         return !!(indexingTypeIncludingHistory() & MayHaveIndexedAccessors);
     }
         
-    bool anyObjectInChainMayInterceptIndexedAccesses() const;
+    JS_EXPORT_PRIVATE bool anyObjectInChainMayInterceptIndexedAccesses() const;
     bool holesMustForwardToPrototype(VM&) const;
         
     bool needsSlowPutIndexing() const;
@@ -413,6 +413,7 @@ public:
     }
 
     static Structure* createStructure(VM&);
+    JS_EXPORT_PRIVATE static Structure* createSubclassStructure(VM&, Structure* baseStructure, JSValue prototype);
         
     bool transitionWatchpointSetHasBeenInvalidated() const
     {

@@ -46,7 +46,7 @@ public:
 
     JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
     void clearEmptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
-    void addPrototype(JSObject*);
+    JS_EXPORT_PRIVATE void addPrototype(JSObject*);
     TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
 
 private:

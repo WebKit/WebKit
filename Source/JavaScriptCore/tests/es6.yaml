@@ -711,9 +711,9 @@
 - path: es6/well-known_symbols_Symbol.unscopables.js
   cmd: runES6 :normal
 - path: es6/Array_is_subclassable_Array.from.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Array_is_subclassable_Array.of.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Array_is_subclassable_Array.prototype.concat.js
   cmd: runES6 :fail
 - path: es6/Array_is_subclassable_Array.prototype.filter.js
@@ -725,7 +725,7 @@
 - path: es6/Array_is_subclassable_Array.prototype.splice.js
   cmd: runES6 :fail
 - path: es6/Array_is_subclassable_correct_prototype_chain.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Array_static_methods_Array.from_generator_instances.js
   cmd: runES6 :normal
 - path: es6/Array_static_methods_Array.from_generic_iterables.js
