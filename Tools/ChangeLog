@@ -1,3 +1,12 @@
+2016-01-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Bump EFL version to 1.16.1
+        https://bugs.webkit.org/show_bug.cgi?id=152688
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+
 2016-01-04  Aakash Jain  <aakash_jain@apple.com>
 
         error running layout tests on iOS simulator on latest build
