@@ -1,0 +1,40 @@
+Makes sure transactions stop on navigation to a new page.<br>
+If the previous page's transaction is blindly charging forward, this test will probably timeout.<br>
+If the previous page's connection/transactions did not clean up properly, the delete request in this test will incorrectly be blocked.<br>
+If every thing is peachy keen, the delete request in this test will correctly succeed.<br>
+<div id="logger"></div>
+<script>
+
+function log(msg)
+{
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+function done()
+{
+    log("Done.");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// Calling "deleteDatabase" while there are already open connections causes those connections to first receive a versionChange event.
+// If the transaction/connection from the previous page is still active, then deleting the database will timeout because the previous connection will never be able to respond to the version change event.
+// Deleting the database should immediately succeed.
+
+var request = window.indexedDB.deleteDatabase('transactions-stop-on-navigation.html');
+request.onsuccess = deleteSuccess;
+request.onblocked = deleteBlocked;
+
+function deleteSuccess()
+{
+    log("Delete request was successful.");
+    done();
+}
+
+function deleteBlocked()
+{
+    log("Delete request was blocked - it should not have been.");
+    done();
+}
+
+</script>

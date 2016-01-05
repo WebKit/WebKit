@@ -178,8 +178,14 @@ void UniqueIDBDatabase::performCurrentDeleteOperation()
         return;
     }
 
+    // Even though we have no open database connections, we might have close-pending database connections
+    // that are waiting on transactions to complete.
+    if (!m_inProgressTransactions.isEmpty()) {
+        ASSERT(!m_closePendingDatabaseConnections.isEmpty());
+        return;
+    }
+
     ASSERT(!hasAnyPendingCallbacks());
-    ASSERT(m_inProgressTransactions.isEmpty());
     ASSERT(m_pendingTransactions.isEmpty());
     ASSERT(m_openDatabaseConnections.isEmpty());
 
@@ -975,7 +981,7 @@ void UniqueIDBDatabase::didPerformAbortTransaction(uint64_t callbackIdentifier, 
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformAbortTransaction");
 
     if (m_versionChangeTransaction && m_versionChangeTransaction->info().identifier() == transactionIdentifier) {
-        ASSERT(&m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
+        ASSERT(!m_versionChangeDatabaseConnection || &m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
         ASSERT(m_versionChangeTransaction->originalDatabaseInfo());
         m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*m_versionChangeTransaction->originalDatabaseInfo());
     }

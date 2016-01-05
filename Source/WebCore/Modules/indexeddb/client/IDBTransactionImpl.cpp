@@ -67,6 +67,8 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     , m_openDBRequest(request)
 
 {
+    LOG(IndexedDB, "IDBTransaction::IDBTransaction - %s", m_info.loggingString().utf8().data());
+
     relaxAdoptionRequirement();
 
     if (m_info.mode() == IndexedDB::TransactionMode::VersionChange) {
@@ -211,9 +213,7 @@ void IDBTransaction::abortOnServerAndCancelRequests(TransactionOperation&)
     for (auto& operation : m_abortQueue)
         operation->completed(IDBResultData::error(operation->identifier(), error));
 
-    // Since we're aborting, this abortOnServerAndCancelRequests() operation should be the only
-    // in-progress operation, and it should be impossible to have queued any further operations.
-    ASSERT(m_transactionOperationMap.size() == 1);
+    // Since we're aborting, it should be impossible to have queued any further operations.
     ASSERT(m_transactionOperationQueue.isEmpty());
 }
 
@@ -234,8 +234,20 @@ bool IDBTransaction::hasPendingActivity() const
 
 void IDBTransaction::stop()
 {
-    ASSERT(!m_contextStopped);
+    LOG(IndexedDB, "IDBTransaction::stop");
+
+    // IDBDatabase::stop() calls IDBTransaction::stop() for each of its active transactions.
+    // Since the order of calling ActiveDOMObject::stop() is random, we might already have been stopped.
+    if (m_contextStopped)
+        return;
+
     m_contextStopped = true;
+
+    if (isFinishedOrFinishing())
+        return;
+
+    ExceptionCodeWithMessage ec;
+    abort(ec);
 }
 
 bool IDBTransaction::isActive() const

@@ -1,3 +1,37 @@
+2016-01-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Transactions from a previous page can leak forward to the next.
+        https://bugs.webkit.org/show_bug.cgi?id=152698
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/indexeddb/modern/transactions-stop-on-navigation.html
+
+        This patch is mostly about actually implementing IDBDatabase::stop and IDBTransaction::stop.
+        Most of the rest of the scattered changes are about cleaning up now-incorrect ASSERTs.
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::close):
+        (WebCore::IDBClient::IDBDatabase::maybeCloseInServer):
+        (WebCore::IDBClient::IDBDatabase::stop):
+        (WebCore::IDBClient::IDBDatabase::startVersionChangeTransaction):
+        (WebCore::IDBClient::IDBDatabase::didAbortTransaction):
+        * Modules/indexeddb/client/IDBDatabaseImpl.h:
+        
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::requestCompleted):
+        
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::IDBTransaction):
+        (WebCore::IDBClient::IDBTransaction::stop):
+        (WebCore::IDBClient::IDBTransaction::abortOnServerAndCancelRequests):
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformAbortTransaction):
+
 2016-01-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Attempting to fix the AppleWin build after r194577.

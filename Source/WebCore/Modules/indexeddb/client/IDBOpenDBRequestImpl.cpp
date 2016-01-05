@@ -162,6 +162,9 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
 
+    if (m_contextStopped)
+        return;
+
     switch (data.type()) {
     case IDBResultType::Error:
         onError(data);

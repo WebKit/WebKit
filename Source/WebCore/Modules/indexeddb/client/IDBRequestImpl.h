@@ -129,6 +129,7 @@ protected:
     RefPtr<DOMError> m_domError;
     IDBError m_idbError;
     IndexedDB::RequestType m_requestType = { IndexedDB::RequestType::Other };
+    bool m_contextStopped { false };
 
 private:
     void onError();
@@ -143,8 +144,6 @@ private:
     IndexedDB::IndexRecordType m_requestedIndexRecordType;
 
     RefPtr<IDBCursor> m_pendingCursor;
-
-    bool m_contextStopped { false };
 };
 
 } // namespace IDBClient
