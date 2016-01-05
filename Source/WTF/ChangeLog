@@ -1,3 +1,15 @@
+2016-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Allow to save and restore session
+        https://bugs.webkit.org/show_bug.cgi?id=115600
+
+        Reviewed by Michael Catanzaro.
+
+        Add GVariantIter specialization of GUniquePtr.
+
+        * wtf/glib/GTypedefs.h:
+        * wtf/glib/GUniquePtr.h:
+
 2016-01-04  Tim Horton  <timothy_horton@apple.com>
 
         Turn on gesture events when building for Yosemite

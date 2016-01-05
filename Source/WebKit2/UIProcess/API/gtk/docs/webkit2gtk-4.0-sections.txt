@@ -212,6 +212,8 @@ webkit_web_view_get_background_color
 webkit_web_view_set_editable
 webkit_web_view_is_editable
 webkit_web_view_get_editor_state
+webkit_web_view_get_session_state
+webkit_web_view_restore_session_state
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
@@ -230,6 +232,13 @@ webkit_script_dialog_prompt_get_default_text
 webkit_script_dialog_prompt_set_text
 webkit_web_view_get_main_resource
 
+<SUBSECTION WebKitWebViewSessionState>
+WebKitWebViewSessionState
+webkit_web_view_session_state_new
+webkit_web_view_session_state_ref
+webkit_web_view_session_state_unref
+webkit_web_view_session_state_serialize
+
 <SUBSECTION Standard>
 WebKitWebViewClass
 WEBKIT_WEB_VIEW
@@ -240,11 +249,13 @@ WEBKIT_IS_WEB_VIEW_CLASS
 WEBKIT_WEB_VIEW_GET_CLASS
 WEBKIT_TYPE_JAVASCRIPT_RESULT
 WEBKIT_TYPE_SCRIPT_DIALOG
+WEBKIT_TYPE_WEB_VIEW_SESSION_STATE
 
 <SUBSECTION Private>
 webkit_web_view_get_type
 webkit_javascript_result_get_type
 webkit_script_dialog_get_type
+webkit_web_view_session_state_get_type
 WebKitWebViewPrivate
 </SECTION>
 

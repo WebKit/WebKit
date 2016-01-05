@@ -61,6 +61,7 @@
 #include "WebKitWebResourcePrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include "WebKitWebViewSessionStatePrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/CertificateInfo.h>
@@ -3716,4 +3717,39 @@ WebKitEditorState* webkit_web_view_get_editor_state(WebKitWebView *webView)
         webView->priv->editorState = adoptGRef(webkitEditorStateCreate(getPage(webView)->editorState()));
 
     return webView->priv->editorState.get();
+}
+
+/**
+ * webkit_web_view_get_session_state:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the current session state of @web_view
+ *
+ * Returns: (transfer full): a #WebKitWebViewSessionState
+ *
+ * Since: 2.12
+ */
+WebKitWebViewSessionState* webkit_web_view_get_session_state(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    SessionState sessionState = getPage(webView)->sessionState(nullptr);
+    return webkitWebViewSessionStateCreate(WTFMove(sessionState));
+}
+
+/**
+ * webkit_web_view_restore_session_state:
+ * @web_view: a #WebKitWebView
+ * @state: a #WebKitWebViewSessionState
+ *
+ * Restore the @web_view session state from @state
+ *
+ * Since: 2.12
+ */
+void webkit_web_view_restore_session_state(WebKitWebView* webView, WebKitWebViewSessionState* state)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(state);
+
+    getPage(webView)->restoreFromSessionState(webkitWebViewSessionStateGetSessionState(state), false);
 }

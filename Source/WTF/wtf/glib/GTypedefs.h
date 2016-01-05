@@ -61,6 +61,7 @@ typedef struct _GSocketConnection GSocketConnection;
 typedef struct _GSource GSource;
 typedef struct _GVariant GVariant;
 typedef struct _GVariantBuilder GVariantBuilder;
+typedef struct _GVariantIter GVariantIter;
 typedef union _GdkEvent GdkEvent;
 typedef struct _GTimer GTimer;
 typedef struct _GKeyFile GKeyFile;
