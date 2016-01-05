@@ -268,6 +268,7 @@ imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/r
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1b.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers [ Skip ]
 
 # Skip W3C tests that are too slow in debug builds.
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/interfaces.html [ Skip ]

@@ -1,5 +1,169 @@
 2016-01-05  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Activate service-workers import
+        https://bugs.webkit.org/show_bug.cgi?id=152686
+
+        Reviewed by Daniel Bates.
+
+        Importing service-workers tests, as some resource files are used by other test files.
+        These tests are skipped as WebKit does not support service worker.
+        Revision used is 5932fd48d519a83b4cca6ed69778547a4fdfc5ae as for all other WPT tests.
+
+        * resources/ImportExpectations: Activating import of service worker tests.
+        * web-platform-tests/service-workers/cache-storage/common.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/resources/blank.html: Added.
+        * web-platform-tests/service-workers/cache-storage/resources/common-worker.js: Added.
+        (self.onmessage):
+        * web-platform-tests/service-workers/cache-storage/resources/fetch-status.py: Added.
+        (main):
+        * web-platform-tests/service-workers/cache-storage/resources/iframe.html: Added.
+        * web-platform-tests/service-workers/cache-storage/resources/simple.txt: Added.
+        * web-platform-tests/service-workers/cache-storage/resources/test-helpers.js: Added.
+        (create_temporary_cache):
+        (cache_test):
+        * web-platform-tests/service-workers/cache-storage/resources/testharness-helpers.js: Added.
+        (assert_promise_rejects):
+        (assert_response_equals):
+        (assert_response_array_equivalent):
+        (assert_response_array_equals):
+        (assert_response_in_array):
+        * web-platform-tests/service-workers/cache-storage/resources/w3c-import.log: Added.
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-add.js: Added.
+        (cache_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-delete.js: Added.
+        (new_test_request):
+        (new_test_response):
+        (cache_test):
+        (prepopulated_cache_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-match.js: Added.
+        (response.new.Response):
+        (return.cache.matchAll.string_appeared_here.then):
+        (return.cache.match.string_appeared_here.then):
+        (return.cache.matchAll.entries.a.request.url.then):
+        (return.cache.match.entries.a.request.url.then):
+        (return.cache.matchAll.entries.a.request.then):
+        (return.cache.match.entries.a.request.then):
+        (return.cache.matchAll.new.Request.entries.a.request.url.then):
+        (return.cache.match.new.Request.entries.a.request.url.then):
+        (then):
+        (return.cache.matchAll.entries.cat.request.url.string_appeared_here.then):
+        (return.cache.match.entries.cat.request.url.string_appeared_here.then):
+        (cache_test):
+        (return.cache.match.request.then):
+        (prepopulated_cache_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-put.js: Added.
+        (cache_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-storage-keys.js: Added.
+        (promise_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-storage-match.js: Added.
+        (create_unique_transaction):
+        (cache_test):
+        (promise_test):
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-storage.js: Added.
+        (promise_test):
+        (promise_test.):
+        * web-platform-tests/service-workers/cache-storage/script-tests/w3c-import.log: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-delete.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-put.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-keys.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/serviceworker/w3c-import.log: Added.
+        * web-platform-tests/service-workers/cache-storage/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/service-workers/cache-storage/window/cache-add.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/window/cache-delete.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/window/cache-match.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/window/cache-put.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/window/cache-storage-keys.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/window/cache-storage.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/window/sandboxed-iframes.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/window/w3c-import.log: Added.
+        * web-platform-tests/service-workers/cache-storage/worker/cache-add.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/worker/cache-delete.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/worker/cache-match.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/worker/cache-put.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/worker/cache-storage-keys.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/worker/cache-storage.https.html: Added.
+        * web-platform-tests/service-workers/cache-storage/worker/w3c-import.log: Added.
+        * web-platform-tests/service-workers/service-workers/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/service-workers/specgen.json: Added.
+        * web-platform-tests/service-workers/stub-3.1-service-worker-obj.html: Added.
+        * web-platform-tests/service-workers/stub-3.1.1-service-worker-scope.html: Added.
+        * web-platform-tests/service-workers/stub-3.1.2-service-worker-url.html: Added.
+        * web-platform-tests/service-workers/stub-3.1.3-service-worker-state.html: Added.
+        * web-platform-tests/service-workers/stub-3.1.4-service-worker-on-state-change.html: Added.
+        * web-platform-tests/service-workers/stub-3.2-navigator-service-worker.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.1-navigator-service-worker-installing.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.10-navigator-service-worker-oncontrollerchange.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.11-navigator-service-worker-onreloadpage.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.12-navigator-service-worker-onerror.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.2-navigator-service-worker-waiting.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.3-navigator-service-worker-active.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.4-navigator-service-worker-controller.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.5-navigator-service-worker-ready.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.6-navigator-service-worker-getAll.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.7-navigator-service-worker-register.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.8-navigator-service-worker-unregister.html: Added.
+        * web-platform-tests/service-workers/stub-3.2.9-navigator-service-worker-onupdatefound.html: Added.
+        * web-platform-tests/service-workers/stub-4.1-service-worker-global-scope.html: Added.
+        * web-platform-tests/service-workers/stub-4.1.1-service-worker-global-scope-caches.html: Added.
+        * web-platform-tests/service-workers/stub-4.1.2-service-worker-global-scope-clients.html: Added.
+        * web-platform-tests/service-workers/stub-4.1.3-service-worker-global-scope-scope.html: Added.
+        * web-platform-tests/service-workers/stub-4.1.4-service-worker-global-scope-fetch.html: Added.
+        * web-platform-tests/service-workers/stub-4.1.5-service-worker-global-scope-update.html: Added.
+        * web-platform-tests/service-workers/stub-4.1.6-service-worker-global-scope-unregister.html: Added.
+        * web-platform-tests/service-workers/stub-4.1.7-service-worker-global-scope-onmessage.html: Added.
+        * web-platform-tests/service-workers/stub-4.2-client.html: Added.
+        * web-platform-tests/service-workers/stub-4.3-service-worker-clients.html: Added.
+        * web-platform-tests/service-workers/stub-4.3.1-get-serviced-method.html: Added.
+        * web-platform-tests/service-workers/stub-4.3.2-reloadall-method.html: Added.
+        * web-platform-tests/service-workers/stub-4.4-request-objects.html: Added.
+        * web-platform-tests/service-workers/stub-4.5-response-objects.html: Added.
+        * web-platform-tests/service-workers/stub-4.5.2-response.html: Added.
+        * web-platform-tests/service-workers/stub-4.5.4-opaque-response.html: Added.
+        * web-platform-tests/service-workers/stub-4.6-cache-objects.html: Added.
+        * web-platform-tests/service-workers/stub-4.6.1-cache-lifetimes.html: Added.
+        * web-platform-tests/service-workers/stub-4.6.2-cache.html: Added.
+        * web-platform-tests/service-workers/stub-4.6.3-cache-storage.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.1-install-phase-event.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.1.1-wait-until-method.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.2-install-event.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.2.1-install-event-section.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.2.2-replace-method.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.3-activate-event.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.4.1-fetch-event-section.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.4.2-respond-with-method.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.4.3-default-method.html: Added.
+        * web-platform-tests/service-workers/stub-4.7.4.4-is-reload-attribute.html: Added.
+        * web-platform-tests/service-workers/stub-5.1-origin-relativity.html: Added.
+        * web-platform-tests/service-workers/stub-5.2-cross-origin-resources.html: Added.
+        * web-platform-tests/service-workers/tools/blink-import.py: Added.
+        (get_extra_files):
+        (resources_path):
+        (python_to_php):
+        (testharness_helpers):
+        (service_worker_path):
+        (server_names):
+        (source_paths):
+        (do_subs):
+        (get_head):
+        (get_changes):
+        (copy):
+        (copy_local_files):
+        (copy_extra_files):
+        (sub_changed_filenames):
+        (is_top_level_test):
+        (add_suffix):
+        (main):
+        * web-platform-tests/service-workers/tools/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/service-workers/w3c-import.log: Added.
+
+2016-01-05  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Update web-platform-tests test suite
         https://bugs.webkit.org/show_bug.cgi?id=151984
 

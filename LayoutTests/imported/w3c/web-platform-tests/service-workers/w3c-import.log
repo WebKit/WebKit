@@ -1,0 +1,68 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/specgen.json
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.1-service-worker-obj.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.1.1-service-worker-scope.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.1.2-service-worker-url.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.1.3-service-worker-state.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.1.4-service-worker-on-state-change.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2-navigator-service-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.1-navigator-service-worker-installing.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.10-navigator-service-worker-oncontrollerchange.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.11-navigator-service-worker-onreloadpage.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.12-navigator-service-worker-onerror.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.2-navigator-service-worker-waiting.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.3-navigator-service-worker-active.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.4-navigator-service-worker-controller.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.5-navigator-service-worker-ready.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.6-navigator-service-worker-getAll.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.7-navigator-service-worker-register.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.8-navigator-service-worker-unregister.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-3.2.9-navigator-service-worker-onupdatefound.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.1-service-worker-global-scope.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.1.1-service-worker-global-scope-caches.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.1.2-service-worker-global-scope-clients.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.1.3-service-worker-global-scope-scope.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.1.4-service-worker-global-scope-fetch.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.1.5-service-worker-global-scope-update.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.1.6-service-worker-global-scope-unregister.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.1.7-service-worker-global-scope-onmessage.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.2-client.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.3-service-worker-clients.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.3.1-get-serviced-method.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.3.2-reloadall-method.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.4-request-objects.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.5-response-objects.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.5.2-response.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.5.4-opaque-response.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.6-cache-objects.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.6.1-cache-lifetimes.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.6.2-cache.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.6.3-cache-storage.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.1-install-phase-event.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.1.1-wait-until-method.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.2-install-event.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.2.1-install-event-section.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.2.2-replace-method.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.3-activate-event.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.4.1-fetch-event-section.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.4.2-respond-with-method.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.4.3-default-method.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-4.7.4.4-is-reload-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-5.1-origin-relativity.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/stub-5.2-cross-origin-resources.html
