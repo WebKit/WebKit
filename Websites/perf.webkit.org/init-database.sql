@@ -17,6 +17,8 @@ DROP TABLE reports CASCADE;
 DROP TABLE tracker_repositories CASCADE;
 DROP TABLE bug_trackers CASCADE;
 DROP TABLE analysis_tasks CASCADE;
+DROP TABLE analysis_strategies CASCADE;
+DROP TYPE analysis_task_result_type CASCADE;
 DROP TABLE build_triggerables CASCADE;
 DROP TABLE triggerable_configurations CASCADE;
 DROP TABLE triggerable_repositories CASCADE;
@@ -191,7 +193,9 @@ CREATE TABLE analysis_tasks (
     task_platform integer REFERENCES platforms NOT NULL,
     task_metric integer REFERENCES test_metrics NOT NULL,
     task_start_run integer REFERENCES test_runs,
+    task_start_run_time timestamp,
     task_end_run integer REFERENCES test_runs,
+    task_end_run_time timestamp,
     task_result analysis_task_result_type,
     task_needed boolean,
     CONSTRAINT analysis_task_should_be_unique_for_range UNIQUE(task_start_run, task_end_run),

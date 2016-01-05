@@ -25,6 +25,11 @@ function main() {
 
     $config = ensure_config_from_runs($db, $start_run, $end_run);
 
+    $start_run_time = time_for_run($db, $start_run_id);
+    $end_run_time = time_for_run($db, $end_run_id);
+    if (!$start_run_time || !$end_run_time)
+        exit_with_error('InvalidTimeRange', array('startTime' => $start_run_time, 'endTime' => $end_run_time));
+
     $db->begin_transaction();
 
     $segmentation_id = NULL;
@@ -57,7 +62,9 @@ function main() {
         'platform' => $config['config_platform'],
         'metric' => $config['config_metric'],
         'start_run' => $start_run_id,
+        'start_run_time' => $start_run_time,
         'end_run' => $end_run_id,
+        'end_run_time' => $end_run_time,
         'segmentation' => $segmentation_id,
         'test_range' => $test_range_id));
     $db->commit_transaction();
@@ -79,6 +86,15 @@ function ensure_config_from_runs($db, $start_run, $end_run) {
         exit_with_error('RunConfigMismatch', $range);
 
     return ensure_row_by_id($db, 'test_configurations', 'config', $start_run['run_config'], 'ConfigNotFound', $range);
+}
+
+function time_for_run($db, $run_id) {
+    $result = $db->query_and_fetch_all('SELECT max(commit_time) as time
+        FROM test_runs JOIN builds ON run_build = build_id
+            JOIN build_commits ON commit_build = build_id
+            JOIN commits ON build_commit = commit_id
+        WHERE run_id = $1', array($run_id));
+    return $result ? $result[0]['time'] : null;
 }
 
 main();

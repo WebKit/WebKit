@@ -1,3 +1,26 @@
+2015-12-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Analysis task page is slow to load
+        https://bugs.webkit.org/show_bug.cgi?id=152517
+
+        Reviewed by Andreas Kling.
+
+        The slowness comes from r194130 which made the JSON API at /api/analysis-tasks to report the start
+        and the end of each analysis task. This query was adding ~2s to the total JSON generation time.
+
+        Cache these values on analysis_task table since they never change once an analysis task is created.
+
+        * init-database.sql: Added columns task_start_run_time and task_end_run_time to analysis_task table.
+        Also added the missing drop statements at the top.
+
+        * public/api/analysis-tasks.php:
+        (fetch_and_push_bugs_to_tasks): Don't fetch the latest commit time of the start and the end.
+        (format_task): Report task_start_run_time and task_end_run_time as startRunTime and endRunTime.
+
+        * public/privileged-api/create-analysis-task.php:
+        (main): Set start_run_time and end_run_time when creating an analysis task.
+        (time_for_run): Added.
+
 2015-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         v3 UI shouldn't open/close pane selector by mouseenter/leave
