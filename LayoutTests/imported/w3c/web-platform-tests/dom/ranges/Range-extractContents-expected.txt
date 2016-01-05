@@ -113,9 +113,9 @@ PASS Returned fragment for range 35 [detachedXmlComment, 2, detachedXmlComment, 
 PASS Resulting DOM for range 36 [docfrag, 0, docfrag, 0] 
 PASS Resulting cursor position for range 36 [docfrag, 0, docfrag, 0] 
 PASS Returned fragment for range 36 [docfrag, 0, docfrag, 0] 
-FAIL Resulting DOM for range 37 [processingInstruction, 0, processingInstruction, 4] assert_true: First differing node: expected ProcessingInstruction node with target "somePI" and data "Did you know that \":syn sync fromstart\" is very useful wh...", got ProcessingInstruction node with target "somePI" and data "you know that \":syn sync fromstart\" is very useful when u..." [Actual and expected mismatch for tree root.  ] expected true got false
-FAIL Resulting cursor position for range 37 [processingInstruction, 0, processingInstruction, 4] assert_true: The resulting DOMs were not equal, so comparing positions makes no sense expected true got false
-FAIL Returned fragment for range 37 [processingInstruction, 0, processingInstruction, 4] assert_unreached: DOMs were not equal but we couldn't figure out why Reached unreachable code
+PASS Resulting DOM for range 37 [processingInstruction, 0, processingInstruction, 4] 
+PASS Resulting cursor position for range 37 [processingInstruction, 0, processingInstruction, 4] 
+PASS Returned fragment for range 37 [processingInstruction, 0, processingInstruction, 4] 
 PASS Resulting DOM for range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] 
 PASS Resulting cursor position for range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] 
 PASS Returned fragment for range 38 [paras[1].firstChild, 0, paras[1].firstChild, 1] 

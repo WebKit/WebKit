@@ -6,6 +6,7 @@ PASS The 'for' attribute points to an inexistent id.
 PASS A non-control follows by a control with same ID. 
 PASS The 'for' attribute is an empty string. 
 PASS A form control has multiple labels. 
+PASS A form control has an implicit label. 
 PASS A form control has no label 1. 
 PASS A form control has no label 2. 
 PASS A label's form attribute should return its form owner. 

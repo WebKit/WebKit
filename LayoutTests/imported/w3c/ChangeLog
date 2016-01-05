@@ -1,3 +1,199 @@
+2016-01-05  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Update web-platform-tests test suite
+        https://bugs.webkit.org/show_bug.cgi?id=151984
+
+        Reviewed by Daniel Bates.
+
+        Bumping WPT test revision from dd553279c3 to 5932fd48d519a83b4cca6ed69778547a4fdfc5ae.
+        New revision includes test improvements, test renaming to ensure WebKit test expectations do not clash and XHR test clean-up.
+
+        * resources/ImportExpectations: Updated to not include new tests. Improved ordering.
+        * resources/TestRepositories: Updated revision.
+        * resources/web-platform-tests-modules.json: Updated revision.
+        * web-platform-tests/README.md:
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials-expected.txt:
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.js:
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-url-worker-simple.htm:
+        * web-platform-tests/XMLHttpRequest/resources/empty-div-utf8-html.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/img-utf8-html.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/w3c-import.log:
+        * web-platform-tests/XMLHttpRequest/send-content-type-charset-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-content-type-charset.htm:
+        * web-platform-tests/XMLHttpRequest/send-content-type-string-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-content-type-string.htm:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document.htm:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-abortedonmain.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overrides.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overridesexpires.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-simple.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-synconmain.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-twice.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-aborted.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overrides.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overridesexpires.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-simple.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-synconworker.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice.html:
+        * web-platform-tests/dom/common.js:
+        (myExtractContents):
+        (myInsertNode):
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/lists/DOMTokenList-stringifier-expected.txt:
+        * web-platform-tests/dom/lists/DOMTokenList-stringifier.html:
+        * web-platform-tests/dom/nodes/Document-Element-getElementsByTagName.js:
+        (test_getElementsByTagName):
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace.html:
+        * web-platform-tests/dom/nodes/Document-getElementsByTagName-expected.txt:
+        * web-platform-tests/dom/nodes/DocumentType-literal-xhtml-expected.txt: Added.
+        * web-platform-tests/dom/nodes/DocumentType-literal-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DocumentType-literal.xhtml.
+        * web-platform-tests/dom/nodes/Element-childElementCount-dynamic-add-xhtml-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-childElementCount-dynamic-add-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-dynamic-add.xhtml.
+        * web-platform-tests/dom/nodes/Element-childElementCount-nochild-xhtml-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-childElementCount-nochild-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-childElementCount-nochild.xhtml.
+        * web-platform-tests/dom/nodes/Element-children-expected.txt:
+        * web-platform-tests/dom/nodes/Element-children.html:
+        * web-platform-tests/dom/nodes/Element-classlist-expected.txt:
+        * web-platform-tests/dom/nodes/Element-classlist.html:
+        * web-platform-tests/dom/nodes/Element-firstElementChild-xhtml-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-firstElementChild-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-firstElementChild.xhtml.
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess-iframe-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess-iframe.xml: Added.
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess.html: Added.
+        * web-platform-tests/dom/nodes/Element-getElementsByTagName-expected.txt:
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/Element-nextElementSibling-xhtml-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-nextElementSibling-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-nextElementSibling.xhtml.
+        * web-platform-tests/dom/nodes/Element-previousElementSibling-xhtml-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Element-previousElementSibling-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-previousElementSibling.xhtml.
+        * web-platform-tests/dom/nodes/MutationObserver-childList-expected.txt:
+        * web-platform-tests/dom/nodes/MutationObserver-childList.html:
+        * web-platform-tests/dom/nodes/MutationObserver-document-expected.txt:
+        * web-platform-tests/dom/nodes/MutationObserver-document.html:
+        * web-platform-tests/dom/nodes/Node-contains-xhtml-expected.txt: Removed.
+        * web-platform-tests/dom/nodes/Node-contains-xhtml.xhtml: Removed.
+        * web-platform-tests/dom/nodes/Node-isEqualNode-expected.txt:
+        * web-platform-tests/dom/nodes/Node-isEqualNode-iframe1-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Node-isEqualNode-iframe1.xml: Added.
+        * web-platform-tests/dom/nodes/Node-isEqualNode-iframe2-expected.txt: Added.
+        * web-platform-tests/dom/nodes/Node-isEqualNode-iframe2.xml: Added.
+        * web-platform-tests/dom/nodes/Node-isEqualNode.xhtml:
+        * web-platform-tests/dom/nodes/Node-lookupNamespaceURI-expected.txt:
+        * web-platform-tests/dom/nodes/Node-lookupNamespaceURI.html:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-xhtml-expected.txt.
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-xhtml.xht.
+        * web-platform-tests/dom/nodes/attributes-expected.txt:
+        * web-platform-tests/dom/nodes/attributes.html:
+        * web-platform-tests/dom/nodes/getElementsByClassName-10.xml:
+        * web-platform-tests/dom/nodes/getElementsByClassName-11.xml:
+        * web-platform-tests/dom/nodes/resources/ParentNode-querySelector-All-content.xht: Removed.
+        * web-platform-tests/dom/nodes/selectors.js:
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/dom/ranges/Range-deleteContents-expected.txt:
+        * web-platform-tests/dom/ranges/Range-deleteContents.html:
+        * web-platform-tests/dom/ranges/Range-extractContents-expected.txt:
+        * web-platform-tests/dom/ranges/Range-insertNode-expected.txt:
+        * web-platform-tests/dom/ranges/Range-intersectsNode-expected.txt:
+        * web-platform-tests/dom/ranges/Range-intersectsNode.html:
+        * web-platform-tests/dom/ranges/Range-mutations.html:
+        * web-platform-tests/dom/ranges/Range-surroundContents-expected.txt:
+        * web-platform-tests/dom/ranges/Range-surroundContents.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-case-xhtml-expected.txt: Added.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-case-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-case.xhtml.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-id-xhtml-expected.txt: Added.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-id-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-id.xhtml.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace-xhtml-expected.txt: Added.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace.xhtml.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-expected.txt.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.xhtml.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-null-undef-xhtml-expected.txt: Added.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-null-undef-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-null-undef.xhtml.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-param-xhtml-expected.txt: Added.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-param-xhtml.xhtml: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-param.xhtml.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/w3c-import.log:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-03-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-03.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-09-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-09.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-06-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-06.html:
+        * web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified-01.html:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010-expected.txt:
+        * web-platform-tests/html/dom/elements-embedded.js:
+        * web-platform-tests/html/dom/elements-text.js:
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-ref-expected.html: Added.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN-ref.html: Added.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs-ref-expected.html: Added.
+        * web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs-ref.html: Added.
+        * web-platform-tests/html/dom/elements/global-attributes/w3c-import.log:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/reflection.js:
+        (ReflectionTests.doReflects):
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resources/delayed-broken-video.py: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resources/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/seeking/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/synchronising-multiple-media-elements/media-controllers/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/Image-constructor.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/basic-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/basic.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing.html:
+        * web-platform-tests/html/semantics/forms/constraints/support/validator.js:
+        (validator.set_conditions):
+        (validator.set_dirty): Deleted.
+        (validator.pre_check): Deleted.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection.html:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete.html:
+        * web-platform-tests/html/semantics/forms/the-label-element/label-attributes-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-label-element/label-attributes.html:
+        * web-platform-tests/html/semantics/forms/the-label-element/labelable-elements-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-label-element/labelable-elements.html:
+        * web-platform-tests/html/semantics/forms/the-option-element/option-text-recurse-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-option-element/option-text-recurse.html:
+        * web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-namedItem-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-namedItem.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-frameset.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/disabled-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/disabled.html:
+        * web-platform-tests/html/semantics/tabular-data/attributes-common-to-td-and-th-elements/cellIndex-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/attributes-common-to-td-and-th-elements/cellIndex.html:
+        * web-platform-tests/html/semantics/tabular-data/html-table-section-element.js: Added.
+        (testRowsAttribute):
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/deleteRow-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/deleteRow.html:
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/insertRow-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/insertRow.html:
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/deleteCell-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/deleteCell.html:
+        * web-platform-tests/html/semantics/tabular-data/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/w3c-import.log.
+        * web-platform-tests/lint:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/media/2048x1360-random.jpg: Added.
+        * web-platform-tests/media/w3c-import.log: Added.
+
 2015-12-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] In RS during enqueuing error should be reported only if readable

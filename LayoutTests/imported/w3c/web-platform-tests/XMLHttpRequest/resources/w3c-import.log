@@ -24,11 +24,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/corsenabled.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/delay.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/echo-method.py
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/empty-div-utf8-html.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/folder.txt
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/form.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/gzip.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/headers.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/image.gif
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/img-utf8-html.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/img.jpg
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/infinite-redirects.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/init.htm

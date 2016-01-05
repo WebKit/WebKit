@@ -5,6 +5,6 @@ CONSOLE MESSAGE: line 24: Blocked a frame with origin "http://localhost:8800" fr
   
 
 PASS XMLHttpRequest: send() - Content-Type 
-FAIL XMLHttpRequest: send() - Content-Type 1 assert_equals: expected "application/xml;charset=windows-1252" but got "NO"
-FAIL XMLHttpRequest: send() - Content-Type 2 assert_equals: expected "text/html;charset=windows-1252" but got "NO"
+FAIL XMLHttpRequest: send() - Content-Type 1 assert_equals: expected "application/xml;charset=UTF-8" but got "NO"
+FAIL XMLHttpRequest: send() - Content-Type 2 assert_equals: expected "text/html;charset=UTF-8" but got "NO"
 

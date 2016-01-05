@@ -8,7 +8,7 @@ FAIL Shouldn't be able to set unsigned properties on a HTMLCollection (strict mo
     }" did not throw
 PASS Should be able to set expando shadowing a proto prop (item) 
 PASS Should be able to set expando shadowing a proto prop (namedItem) 
-FAIL hasOwnProperty, getOwnPropertyDescriptor, getOwnPropertyNames assert_array_equals: lengths differ, expected 2 got 4
+FAIL hasOwnProperty, getOwnPropertyDescriptor, getOwnPropertyNames assert_array_equals: lengths differ, expected 7 got 9
 PASS HTML element with uppercase tagName never matches in HTML Documents 
 PASS Element in non-HTML namespace, no prefix, lowercase name 
 PASS Element in non-HTML namespace, no prefix, uppercase name 

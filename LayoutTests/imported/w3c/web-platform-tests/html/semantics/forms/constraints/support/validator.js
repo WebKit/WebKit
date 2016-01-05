@@ -279,22 +279,16 @@ var validator = {
       ctl.removeAttribute(item);
     });
     for (var attr in obj) {
-      if (obj[attr] || obj[attr] === "")
+      if (attr === "checked" || obj[attr] || obj[attr] === "")
         ctl[attr] = obj[attr];
     }
   },
 
   set_dirty: function(ctl) {
-    document.designMode = "on";
     ctl.focus();
     var old_value = ctl.value;
     ctl.value = "a";
     ctl.value = old_value;
-    if (ctl.type !== 'email') {
-      ctl.setSelectionRange(ctl.value.length, ctl.value.length);
-    }
-    document.execCommand("Delete");
-    document.designMode = "off";
   },
 
   pre_check: function(ctl, item) {

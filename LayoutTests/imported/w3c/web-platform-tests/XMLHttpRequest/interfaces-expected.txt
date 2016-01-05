@@ -17,6 +17,7 @@ XMLHttpRequest IDL tests
 
 FAIL XMLHttpRequestEventTarget interface: existence and properties of interface object assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequestEventTarget interface object length assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
+FAIL XMLHttpRequestEventTarget interface object name assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequestEventTarget interface: existence and properties of interface prototype object assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequestEventTarget interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequestEventTarget interface: attribute onloadstart assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
@@ -28,6 +29,7 @@ FAIL XMLHttpRequestEventTarget interface: attribute ontimeout assert_own_propert
 FAIL XMLHttpRequestEventTarget interface: attribute onloadend assert_own_property: self does not have own property "XMLHttpRequestEventTarget" expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequestUpload interface: existence and properties of interface object assert_equals: class string of XMLHttpRequestUpload expected "[object Function]" but got "[object XMLHttpRequestUploadConstructor]"
 PASS XMLHttpRequestUpload interface object length 
+PASS XMLHttpRequestUpload interface object name 
 FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequestUpload interface: existence and properties of interface prototype object's "constructor" property assert_true: XMLHttpRequestUpload.prototype.constructor is not writable expected true got false
 PASS XMLHttpRequestUpload must be primary interface of (new XMLHttpRequest()).upload 
@@ -51,6 +53,7 @@ PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property 
 PASS EventTarget interface: calling dispatchEvent(Event) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError 
 FAIL XMLHttpRequest interface: existence and properties of interface object assert_equals: class string of XMLHttpRequest expected "[object Function]" but got "[object XMLHttpRequestConstructor]"
 PASS XMLHttpRequest interface object length 
+PASS XMLHttpRequest interface object name 
 FAIL XMLHttpRequest interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequest interface: existence and properties of interface prototype object's "constructor" property assert_true: XMLHttpRequest.prototype.constructor is not writable expected true got false
 FAIL XMLHttpRequest interface: attribute onreadystatechange assert_throws: getting property on prototype object must throw TypeError function "function () {
@@ -155,6 +158,7 @@ PASS EventTarget interface: new XMLHttpRequest() must inherit property "dispatch
 PASS EventTarget interface: calling dispatchEvent(Event) on new XMLHttpRequest() with too few arguments must throw TypeError 
 FAIL FormData interface: existence and properties of interface object assert_equals: class string of FormData expected "[object Function]" but got "[object FormDataConstructor]"
 PASS FormData interface object length 
+PASS FormData interface object name 
 PASS FormData interface: existence and properties of interface prototype object 
 FAIL FormData interface: existence and properties of interface prototype object's "constructor" property assert_true: FormData.prototype.constructor is not writable expected true got false
 FAIL FormData interface: operation append(USVString,Blob,USVString) assert_equals: property has wrong .length expected 2 but got 0
@@ -211,6 +215,7 @@ FAIL FormData interface: new FormData(form) must inherit property "set" with the
 FAIL FormData interface: calling set(USVString,USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "set" not found in prototype chain
 FAIL ProgressEvent interface: existence and properties of interface object assert_equals: class string of ProgressEvent expected "[object Function]" but got "[object ProgressEventConstructor]"
 PASS ProgressEvent interface object length 
+PASS ProgressEvent interface object name 
 PASS ProgressEvent interface: existence and properties of interface prototype object 
 FAIL ProgressEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: ProgressEvent.prototype.constructor is not writable expected true got false
 FAIL ProgressEvent interface: attribute lengthComputable assert_throws: getting property on prototype object must throw TypeError function "function () {

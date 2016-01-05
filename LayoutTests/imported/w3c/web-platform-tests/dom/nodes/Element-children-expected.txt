@@ -1,5 +1,5 @@
 
 
 PASS HTMLCollection edge cases 
-FAIL HTMLCollection edge cases 1 assert_array_equals: lengths differ, expected 3 got 4
+FAIL HTMLCollection edge cases 1 assert_array_equals: lengths differ, expected 6 got 7
 

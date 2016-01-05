@@ -183,9 +183,9 @@ PASS In-document Element.matches: :not pseudo-class selector, matching  (with no
 PASS In-document Element.matches: Class selector, matching element with specified class (with no refNodes): .class-p 
 PASS In-document Element.matches: Class selector, chained, matching only elements with all specified classes (with no refNodes): #class .apple.orange.banana 
 PASS In-document Element.matches: Class Selector, chained, with type selector (with no refNodes): div.apple.banana.orange 
-PASS In-document Element.matches: Class selector, matching element with class value using non-ASCII characters (with no refNodes): .台北Táiběi 
+PASS In-document Element.matches: Class selector, matching element with class value using non-ASCII characters (1) (with no refNodes): .台北Táiběi 
 PASS In-document Element.matches: Class selector, matching multiple elements with class value using non-ASCII characters (with no refNodes): .台北 
-PASS In-document Element.matches: Class selector, chained, matching element with multiple class values using non-ASCII characters (with no refNodes): .台北Táiběi.台北 
+PASS In-document Element.matches: Class selector, chained, matching element with multiple class values using non-ASCII characters (1) (with no refNodes): .台北Táiběi.台北 
 PASS In-document Element.matches: Class selector, matching element with class with escaped character (with no refNodes): .foo\:bar 
 PASS In-document Element.matches: Class selector, matching element with class with escaped character (with no refNodes): .test\.foo\[5\]bar 
 PASS In-document Element.matches: ID selector, matching element with specified id (with no refNodes): #id #id-div1 
@@ -193,9 +193,9 @@ PASS In-document Element.matches: ID selector, chained, matching element with sp
 PASS In-document Element.matches: ID selector, chained, matching element with specified id (with no refNodes): #id-div1, #id-div2 
 PASS In-document Element.matches: ID Selector, chained, with type selector (with no refNodes): div#id-div1, div#id-div2 
 PASS In-document Element.matches: ID selector, matching multiple elements with duplicate id (with no refNodes): #id-li-duplicate 
-PASS In-document Element.matches: ID selector, matching id value using non-ASCII characters (with no refNodes): #台北Táiběi 
-PASS In-document Element.matches: ID selector, matching id value using non-ASCII characters (with no refNodes): #台北 
-PASS In-document Element.matches: ID selector, matching id values using non-ASCII characters (with no refNodes): #台北Táiběi, #台北 
+PASS In-document Element.matches: ID selector, matching id value using non-ASCII characters (1) (with no refNodes): #台北Táiběi 
+PASS In-document Element.matches: ID selector, matching id value using non-ASCII characters (2) (with no refNodes): #台北 
+PASS In-document Element.matches: ID selector, matching id values using non-ASCII characters (1) (with no refNodes): #台北Táiběi, #台北 
 PASS In-document Element.matches: Descendant combinator, matching element that is a descendant of an element with id (with no refNodes): #descendant div 
 PASS In-document Element.matches: Descendant combinator, matching element with id that is a descendant of an element (with no refNodes): body #descendant-div1 
 PASS In-document Element.matches: Descendant combinator, matching element with id that is a descendant of an element (with no refNodes): div #descendant-div1 
@@ -343,9 +343,9 @@ PASS Detached Element.matches: :not pseudo-class selector, matching  (with no re
 PASS Detached Element.matches: Class selector, matching element with specified class (with no refNodes): .class-p 
 PASS Detached Element.matches: Class selector, chained, matching only elements with all specified classes (with no refNodes): #class .apple.orange.banana 
 PASS Detached Element.matches: Class Selector, chained, with type selector (with no refNodes): div.apple.banana.orange 
-PASS Detached Element.matches: Class selector, matching element with class value using non-ASCII characters (with no refNodes): .台北Táiběi 
+PASS Detached Element.matches: Class selector, matching element with class value using non-ASCII characters (1) (with no refNodes): .台北Táiběi 
 PASS Detached Element.matches: Class selector, matching multiple elements with class value using non-ASCII characters (with no refNodes): .台北 
-PASS Detached Element.matches: Class selector, chained, matching element with multiple class values using non-ASCII characters (with no refNodes): .台北Táiběi.台北 
+PASS Detached Element.matches: Class selector, chained, matching element with multiple class values using non-ASCII characters (1) (with no refNodes): .台北Táiběi.台北 
 PASS Detached Element.matches: Class selector, matching element with class with escaped character (with no refNodes): .foo\:bar 
 PASS Detached Element.matches: Class selector, matching element with class with escaped character (with no refNodes): .test\.foo\[5\]bar 
 PASS Detached Element.matches: ID selector, matching element with specified id (with no refNodes): #id #id-div1 
@@ -353,9 +353,9 @@ PASS Detached Element.matches: ID selector, chained, matching element with speci
 PASS Detached Element.matches: ID selector, chained, matching element with specified id (with no refNodes): #id-div1, #id-div2 
 PASS Detached Element.matches: ID Selector, chained, with type selector (with no refNodes): div#id-div1, div#id-div2 
 PASS Detached Element.matches: ID selector, matching multiple elements with duplicate id (with no refNodes): #id-li-duplicate 
-PASS Detached Element.matches: ID selector, matching id value using non-ASCII characters (with no refNodes): #台北Táiběi 
-PASS Detached Element.matches: ID selector, matching id value using non-ASCII characters (with no refNodes): #台北 
-PASS Detached Element.matches: ID selector, matching id values using non-ASCII characters (with no refNodes): #台北Táiběi, #台北 
+PASS Detached Element.matches: ID selector, matching id value using non-ASCII characters (1) (with no refNodes): #台北Táiběi 
+PASS Detached Element.matches: ID selector, matching id value using non-ASCII characters (2) (with no refNodes): #台北 
+PASS Detached Element.matches: ID selector, matching id values using non-ASCII characters (1) (with no refNodes): #台北Táiběi, #台北 
 PASS Detached Element.matches: Descendant combinator, matching element that is a descendant of an element with id (with no refNodes): #descendant div 
 PASS Detached Element.matches: Descendant combinator, matching element with id that is a descendant of an element (with no refNodes): div #descendant-div1 
 PASS Detached Element.matches: Descendant combinator, matching element with id that is a descendant of an element with id (with no refNodes): #descendant #descendant-div2 
@@ -502,9 +502,9 @@ PASS Fragment Element.matches: :not pseudo-class selector, matching  (with no re
 PASS Fragment Element.matches: Class selector, matching element with specified class (with no refNodes): .class-p 
 PASS Fragment Element.matches: Class selector, chained, matching only elements with all specified classes (with no refNodes): #class .apple.orange.banana 
 PASS Fragment Element.matches: Class Selector, chained, with type selector (with no refNodes): div.apple.banana.orange 
-PASS Fragment Element.matches: Class selector, matching element with class value using non-ASCII characters (with no refNodes): .台北Táiběi 
+PASS Fragment Element.matches: Class selector, matching element with class value using non-ASCII characters (1) (with no refNodes): .台北Táiběi 
 PASS Fragment Element.matches: Class selector, matching multiple elements with class value using non-ASCII characters (with no refNodes): .台北 
-PASS Fragment Element.matches: Class selector, chained, matching element with multiple class values using non-ASCII characters (with no refNodes): .台北Táiběi.台北 
+PASS Fragment Element.matches: Class selector, chained, matching element with multiple class values using non-ASCII characters (1) (with no refNodes): .台北Táiběi.台北 
 PASS Fragment Element.matches: Class selector, matching element with class with escaped character (with no refNodes): .foo\:bar 
 PASS Fragment Element.matches: Class selector, matching element with class with escaped character (with no refNodes): .test\.foo\[5\]bar 
 PASS Fragment Element.matches: ID selector, matching element with specified id (with no refNodes): #id #id-div1 
@@ -512,9 +512,9 @@ PASS Fragment Element.matches: ID selector, chained, matching element with speci
 PASS Fragment Element.matches: ID selector, chained, matching element with specified id (with no refNodes): #id-div1, #id-div2 
 PASS Fragment Element.matches: ID Selector, chained, with type selector (with no refNodes): div#id-div1, div#id-div2 
 PASS Fragment Element.matches: ID selector, matching multiple elements with duplicate id (with no refNodes): #id-li-duplicate 
-PASS Fragment Element.matches: ID selector, matching id value using non-ASCII characters (with no refNodes): #台北Táiběi 
-PASS Fragment Element.matches: ID selector, matching id value using non-ASCII characters (with no refNodes): #台北 
-PASS Fragment Element.matches: ID selector, matching id values using non-ASCII characters (with no refNodes): #台北Táiběi, #台北 
+PASS Fragment Element.matches: ID selector, matching id value using non-ASCII characters (1) (with no refNodes): #台北Táiběi 
+PASS Fragment Element.matches: ID selector, matching id value using non-ASCII characters (2) (with no refNodes): #台北 
+PASS Fragment Element.matches: ID selector, matching id values using non-ASCII characters (1) (with no refNodes): #台北Táiběi, #台北 
 PASS Fragment Element.matches: Descendant combinator, matching element that is a descendant of an element with id (with no refNodes): #descendant div 
 PASS Fragment Element.matches: Descendant combinator, matching element with id that is a descendant of an element (with no refNodes): div #descendant-div1 
 PASS Fragment Element.matches: Descendant combinator, matching element with id that is a descendant of an element with id (with no refNodes): #descendant #descendant-div2 
@@ -663,9 +663,9 @@ PASS In-document Element.matches: :not pseudo-class selector, matching (1) (with
 PASS In-document Element.matches: Class selector, matching element with specified class (1) (with no refNodes): .class-p 
 PASS In-document Element.matches: Class selector, chained, matching only elements with all specified classes (1) (with no refNodes): #class .apple.orange.banana 
 PASS In-document Element.matches: Class Selector, chained, with type selector (1) (with no refNodes): div.apple.banana.orange 
-FAIL In-document Element.matches: Class selector, matching element with class value using non-ASCII characters (with no refNodes): .台北Táiběi assert_true: The element #class-span1 should match the selector. expected true got false
+PASS In-document Element.matches: Class selector, matching element with class value using non-ASCII characters (2) (with no refNodes): .台北Táiběi 
 PASS In-document Element.matches: Class selector, matching multiple elements with class value using non-ASCII characters (1) (with no refNodes): .台北 
-FAIL In-document Element.matches: Class selector, chained, matching element with multiple class values using non-ASCII characters (with no refNodes): .台北Táiběi.台北 assert_true: The element #class-span1 should match the selector. expected true got false
+PASS In-document Element.matches: Class selector, chained, matching element with multiple class values using non-ASCII characters (2) (with no refNodes): .台北Táiběi.台北 
 PASS In-document Element.matches: Class selector, matching element with class with escaped character (1) (with no refNodes): .foo\:bar 
 PASS In-document Element.matches: Class selector, matching element with class with escaped character (1) (with no refNodes): .test\.foo\[5\]bar 
 PASS In-document Element.matches: ID selector, matching element with specified id (1) (with no refNodes): #id #id-div1 
@@ -673,9 +673,9 @@ PASS In-document Element.matches: ID selector, chained, matching element with sp
 PASS In-document Element.matches: ID selector, chained, matching element with specified id (1) (with no refNodes): #id-div1, #id-div2 
 PASS In-document Element.matches: ID Selector, chained, with type selector (1) (with no refNodes): div#id-div1, div#id-div2 
 PASS In-document Element.matches: ID selector, matching multiple elements with duplicate id (1) (with no refNodes): #id-li-duplicate 
-FAIL In-document Element.matches: ID selector, matching id value using non-ASCII characters (with no refNodes): #台北Táiběi null is not an object (evaluating 'element.matches')
-PASS In-document Element.matches: ID selector, matching id value using non-ASCII characters (1) (with no refNodes): #台北 
-FAIL In-document Element.matches: ID selector, matching id values using non-ASCII characters (with no refNodes): #台北Táiběi, #台北 null is not an object (evaluating 'element.matches')
+PASS In-document Element.matches: ID selector, matching id value using non-ASCII characters (3) (with no refNodes): #台北Táiběi 
+PASS In-document Element.matches: ID selector, matching id value using non-ASCII characters (4) (with no refNodes): #台北 
+PASS In-document Element.matches: ID selector, matching id values using non-ASCII characters (2) (with no refNodes): #台北Táiběi, #台北 
 PASS In-document Element.matches: Descendant combinator, matching element that is a descendant of an element with id (1) (with no refNodes): #descendant div 
 PASS In-document Element.matches: Descendant combinator, matching element with id that is a descendant of an element (1) (with no refNodes): body #descendant-div1 
 PASS In-document Element.matches: Descendant combinator, matching element with id that is a descendant of an element (1) (with no refNodes): div #descendant-div1 

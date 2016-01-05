@@ -36,4 +36,14 @@ PASS First set attribute is returned with mapped attribute set later
 PASS Non-HTML element with upper-case attribute 
 PASS Attribute with prefix in local name 
 PASS Attribute loses its owner when removed 
+PASS Basic functionality of getAttributeNode/getAttributeNodeNS 
+PASS Basic functionality of setAttributeNode 
+PASS Basic functionality of setAttributeNodeNS 
+PASS Basic functionality of removeAttributeNode 
+FAIL setAttributeNode on bound attribute should throw InUseAttributeError Test bug: unrecognized DOMException code "INUSE_ATTRIBUTE_ERR" passed to assert_throws()
+FAIL getAttributeNames tests el.getAttributeNames is not a function. (In 'el.getAttributeNames()', 'el.getAttributeNames' is undefined)
+FAIL Own property correctness with basic attributes assert_array_equals: lengths differ, expected 2 got 3
+FAIL Own property correctness with non-namespaced attribute before same-name namespaced one assert_array_equals: lengths differ, expected 3 got 4
+FAIL Own property correctness with namespaced attribute before same-name non-namespaced one assert_array_equals: lengths differ, expected 3 got 4
+FAIL Own property correctness with two namespaced attributes with the same name-with-prefix assert_array_equals: lengths differ, expected 3 got 4
 

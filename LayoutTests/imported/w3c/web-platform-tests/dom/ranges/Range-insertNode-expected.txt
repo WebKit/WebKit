@@ -3,8 +3,11 @@ To debug test failures, add a query parameter "subtest" with the test id (like "
 
 PASS 0,0: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0] 
 PASS 0,0: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0] 
-PASS 0,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild 
-PASS 0,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild 
+FAIL 0,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 0,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild assert_true: First differing node: expected Text node "Äb̈c̈d̈ëf̈g̈ḧ
+", got Text node "" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 0,2: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[1].firstChild 
 PASS 0,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[1].firstChild 
 PASS 0,3: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1 
@@ -47,8 +50,11 @@ PASS 0,21: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild,
 PASS 0,21: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignDoctype 
 PASS 1,0: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0] 
 PASS 1,0: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0] 
-PASS 1,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild 
-PASS 1,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild 
+FAIL 1,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 1,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild assert_true: First differing node: expected Text node "Äb̈c̈d̈ëf̈g̈ḧ
+", got Text node "" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 1,2: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[1].firstChild 
 PASS 1,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[1].firstChild 
 PASS 1,3: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignPara1 
@@ -91,8 +97,11 @@ PASS 1,21: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild,
 PASS 1,21: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignDoctype 
 PASS 2,0: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0] 
 PASS 2,0: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0] 
-PASS 2,1: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0].firstChild 
-PASS 2,1: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0].firstChild 
+FAIL 2,1: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 2,1: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0].firstChild assert_true: First differing node: expected Text node "Äb̈c̈d̈ëf̈g̈ḧ
+", got Text node "Ä" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 2,2: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[1].firstChild 
 PASS 2,2: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[1].firstChild 
 PASS 2,3: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node foreignPara1 
@@ -135,8 +144,11 @@ PASS 2,21: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild,
 PASS 2,21: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node foreignDoctype 
 PASS 3,0: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0] 
 PASS 3,0: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0] 
-PASS 3,1: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0].firstChild 
-PASS 3,1: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0].firstChild 
+FAIL 3,1: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 3,1: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0].firstChild assert_true: First differing node: expected Text node "Äb̈c̈d̈ëf̈g̈ḧ
+", got Text node "Ä" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 3,2: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[1].firstChild 
 PASS 3,2: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[1].firstChild 
 PASS 3,3: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node foreignPara1 
@@ -181,8 +193,11 @@ PASS 4,0: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 
 PASS 4,0: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
 PASS 4,1: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
 PASS 4,1: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
-PASS 4,2: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
-PASS 4,2: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
+FAIL 4,2: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 4,2: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild assert_true: First differing node: expected Text node "Ijklmnop
+", got Text node "" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 4,3: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 
 PASS 4,3: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 
 PASS 4,4: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1.firstChild 
@@ -225,8 +240,11 @@ PASS 5,0: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 
 PASS 5,0: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[0] 
 PASS 5,1: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[0].firstChild 
 PASS 5,1: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[0].firstChild 
-PASS 5,2: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[1].firstChild 
-PASS 5,2: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[1].firstChild 
+FAIL 5,2: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[1].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 5,2: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[1].firstChild assert_true: First differing node: expected Text node "Ijklmnop
+", got Text node "Ij" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 5,3: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignPara1 
 PASS 5,3: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignPara1 
 PASS 5,4: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignPara1.firstChild 
@@ -277,8 +295,10 @@ PASS 6,4: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.fi
 PASS 6,4: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild 
 PASS 6,5: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1 
 PASS 6,5: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1 
-PASS 6,6: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild 
-PASS 6,6: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild 
+FAIL 6,6: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 6,6: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild assert_true: First differing node: expected Text node "Opqrstuv", got Text node "" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 6,7: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node document 
 PASS 6,7: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node document 
 PASS 6,8: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedDiv 
@@ -321,8 +341,10 @@ PASS 7,4: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.fi
 PASS 7,4: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara1.firstChild 
 PASS 7,5: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1 
 PASS 7,5: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1 
-PASS 7,6: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1.firstChild 
-PASS 7,6: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1.firstChild 
+FAIL 7,6: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1.firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 7,6: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1.firstChild assert_true: First differing node: expected Text node "Opqrstuv", got Text node "Op" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 7,7: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node document 
 PASS 7,7: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node document 
 PASS 7,8: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedDiv 
@@ -361,8 +383,10 @@ PASS 8,2: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firs
 PASS 8,2: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[1].firstChild 
 PASS 8,3: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1 
 PASS 8,3: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1 
-PASS 8,4: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild 
-PASS 8,4: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild 
+FAIL 8,4: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 8,4: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild assert_true: First differing node: expected Text node "Efghijkl", got Text node "" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 8,5: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1 
 PASS 8,5: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1 
 PASS 8,6: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1.firstChild 
@@ -405,8 +429,10 @@ PASS 9,2: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firs
 PASS 9,2: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node paras[1].firstChild 
 PASS 9,3: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1 
 PASS 9,3: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1 
-PASS 9,4: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1.firstChild 
-PASS 9,4: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1.firstChild 
+FAIL 9,4: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1.firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 9,4: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1.firstChild assert_true: First differing node: expected Text node "Efghijkl", got Text node "Ef" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 9,5: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node detachedPara1 
 PASS 9,5: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node detachedPara1 
 PASS 9,6: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node detachedPara1.firstChild 
@@ -795,8 +821,11 @@ PASS 17,21: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node f
 PASS 17,21: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node foreignDoctype 
 PASS 18,0: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
 PASS 18,0: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
-PASS 18,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
-PASS 18,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
+FAIL 18,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 18,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild assert_true: First differing node: expected Text node "Äb̈c̈d̈ëf̈g̈ḧ
+", got Text node "" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 18,2: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
 PASS 18,2: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
 PASS 18,3: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 
@@ -839,8 +868,11 @@ PASS 18,21: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild
 PASS 18,21: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignDoctype 
 PASS 19,0: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0] 
 PASS 19,0: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0] 
-PASS 19,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild 
-PASS 19,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild 
+FAIL 19,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 19,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild assert_true: First differing node: expected Text node "Äb̈c̈d̈ëf̈g̈ḧ
+", got Text node "" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 19,2: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[1].firstChild 
 PASS 19,2: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[1].firstChild 
 PASS 19,3: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignPara1 
@@ -883,8 +915,11 @@ PASS 19,21: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild
 PASS 19,21: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignDoctype 
 PASS 20,0: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0] 
 PASS 20,0: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[0] 
-PASS 20,1: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild 
-PASS 20,1: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild 
+FAIL 20,1: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild assert_throws: A HIERARCHY_REQUEST_ERR DOMException must be thrown in this case function "function () {
+                try {
+                    a..." did not throw
+FAIL 20,1: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild assert_true: First differing node: expected Text node "Äb̈c̈d̈ëf̈g̈ḧ
+", got Text node "Äb" [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 20,2: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[1].firstChild 
 PASS 20,2: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[1].firstChild 
 PASS 20,3: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node foreignPara1 

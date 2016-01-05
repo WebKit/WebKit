@@ -1,48 +1,48 @@
 
 PASS Created element's namespace in current document 
 PASS Created element's namespace in created HTML document 
-PASS Created element's namespace in created XML document 
+FAIL Created element's namespace in created XML document assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 FAIL Created element's namespace in created XHTML document assert_equals: Wrong MIME type -- incorrect server config? expected "application/xml" but got "application/xhtml+xml"
 FAIL Created element's namespace in created SVG document assert_equals: Wrong MIME type -- incorrect server config? expected "application/xml" but got "image/svg+xml"
-PASS Created element's namespace in created MathML document 
-FAIL Created element's namespace in empty.html assert_equals: Wrong MIME type -- incorrect server config? expected "text/html" but got "application/json"
-FAIL Created element's namespace in empty.xhtml assert_equals: Wrong MIME type -- incorrect server config? expected "application/xhtml+xml" but got "application/json"
-FAIL Created element's namespace in empty.xml assert_equals: Wrong MIME type -- incorrect server config? expected "application/xml" but got "application/json"
-FAIL Created element's namespace in empty.svg assert_equals: Wrong MIME type -- incorrect server config? expected "image/svg+xml" but got "application/json"
+FAIL Created element's namespace in created MathML document assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+PASS Created element's namespace in empty.html 
+PASS Created element's namespace in empty.xhtml 
+FAIL Created element's namespace in empty.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in empty.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in minimal_html.html 
 PASS Created element's namespace in minimal_html.xhtml 
-PASS Created element's namespace in minimal_html.xml 
-PASS Created element's namespace in minimal_html.svg 
+FAIL Created element's namespace in minimal_html.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in minimal_html.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in xhtml.html 
 PASS Created element's namespace in xhtml.xhtml 
-PASS Created element's namespace in xhtml.xml 
-PASS Created element's namespace in xhtml.svg 
+FAIL Created element's namespace in xhtml.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in xhtml.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in svg.html 
 PASS Created element's namespace in svg.xhtml 
-PASS Created element's namespace in svg.xml 
-PASS Created element's namespace in svg.svg 
+FAIL Created element's namespace in svg.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in svg.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in mathml.html 
 PASS Created element's namespace in mathml.xhtml 
-PASS Created element's namespace in mathml.xml 
-PASS Created element's namespace in mathml.svg 
+FAIL Created element's namespace in mathml.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in mathml.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in bare_xhtml.html 
 PASS Created element's namespace in bare_xhtml.xhtml 
-PASS Created element's namespace in bare_xhtml.xml 
-PASS Created element's namespace in bare_xhtml.svg 
+FAIL Created element's namespace in bare_xhtml.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in bare_xhtml.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in bare_svg.html 
 PASS Created element's namespace in bare_svg.xhtml 
-PASS Created element's namespace in bare_svg.xml 
-PASS Created element's namespace in bare_svg.svg 
+FAIL Created element's namespace in bare_svg.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in bare_svg.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in bare_mathml.html 
 PASS Created element's namespace in bare_mathml.xhtml 
-PASS Created element's namespace in bare_mathml.xml 
-PASS Created element's namespace in bare_mathml.svg 
+FAIL Created element's namespace in bare_mathml.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in bare_mathml.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in xhtml_ns_removed.html 
 PASS Created element's namespace in xhtml_ns_removed.xhtml 
-PASS Created element's namespace in xhtml_ns_removed.xml 
-PASS Created element's namespace in xhtml_ns_removed.svg 
+FAIL Created element's namespace in xhtml_ns_removed.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in xhtml_ns_removed.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 PASS Created element's namespace in xhtml_ns_changed.html 
 PASS Created element's namespace in xhtml_ns_changed.xhtml 
-PASS Created element's namespace in xhtml_ns_changed.xml 
-PASS Created element's namespace in xhtml_ns_changed.svg 
+FAIL Created element's namespace in xhtml_ns_changed.xml assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
+FAIL Created element's namespace in xhtml_ns_changed.svg assert_equals: expected (string) "http://www.w3.org/1999/xhtml" but got (object) null
 

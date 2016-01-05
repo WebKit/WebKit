@@ -1,14 +1,17 @@
-          
+              
 
 PASS <img src="/images/green-256x256.png" data-expect="256"> 
 PASS <img srcset="/images/green-256x256.png 1x" data-expect="256"> 
-PASS <img srcset="/images/green-256x256.png 1.6x" data-expect="160"> 
-PASS <img srcset="/images/green-256x256.png 2x" data-expect="128"> 
-PASS <img srcset="/images/green-256x256.png 10000x" data-expect="0"> 
-PASS <img srcset="/images/green-256x256.png 9e99999999999999999999999x" data-expect="0"> 
+FAIL <img srcset="/images/green-256x256.png 1.6x" data-expect="160"> assert_equals: naturalWidth expected 160 but got 256
+FAIL <img srcset="/images/green-256x256.png 2x" data-expect="128"> assert_equals: naturalWidth expected 128 but got 256
+FAIL <img srcset="/images/green-256x256.png 10000x" data-expect="0"> assert_equals: naturalWidth expected 0 but got 256
+FAIL <img srcset="/images/green-256x256.png 9e99999999999999999999999x" data-expect="0"> assert_equals: naturalWidth expected 0 but got 256
 PASS <img srcset="/images/green-256x256.png 256w" sizes="256px" data-expect="256"> 
-PASS <img srcset="/images/green-256x256.png 512w" sizes="256px" data-expect="128"> 
-PASS <img srcset="/images/green-256x256.png 256w" sizes="512px" data-expect="512"> 
-PASS <img srcset="/images/green-256x256.png 256w" sizes="1px" data-expect="1"> 
-PASS <img srcset="/images/green-256x256.png 256w" sizes="0px" data-expect="0"> 
+FAIL <img srcset="/images/green-256x256.png 512w" sizes="256px" data-expect="128"> assert_equals: naturalWidth expected 128 but got 256
+FAIL <img srcset="/images/green-256x256.png 256w" sizes="512px" data-expect="512"> assert_equals: naturalWidth expected 512 but got 256
+FAIL <img srcset="/images/green-256x256.png 256w" sizes="1px" data-expect="1"> assert_equals: naturalWidth expected 1 but got 256
+FAIL <img srcset="/images/green-256x256.png 256w" sizes="0px" data-expect="0"> assert_equals: naturalWidth expected 0 but got 256
+PASS <img srcset="data:image/svg+xml,&lt;svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='-1%20-1%202%202'%20width='20'%20height='20'&gt;&lt;circle%20r='1'/&gt;&lt;/svg&gt; 2x" data-expect="10"> 
+PASS <img srcset="data:image/svg+xml,&lt;svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='-1%20-1%202%202'%20width='20'&gt;&lt;circle%20r='1'/&gt;&lt;/svg&gt; 2x" data-expect="10"> 
+PASS <img srcset="data:image/svg+xml,&lt;svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='-1%20-1%202%202'%20height='20'&gt;&lt;circle%20r='1'/&gt;&lt;/svg&gt; 2x" data-expect="10"> 
 

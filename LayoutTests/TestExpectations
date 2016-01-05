@@ -236,6 +236,9 @@ webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
 # Resource files not in resources folder
 imported/w3c/web-platform-tests/common/blank.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests [ Skip ]
+imported/w3c/web-platform-tests/dom/nodes/Element-getElementsByTagName-change-document-HTMLNess-iframe.xml [ Skip ]
+imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-iframe1.xml [ Skip ]
+imported/w3c/web-platform-tests/dom/nodes/Node-isEqualNode-iframe2.xml [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/Node-parentNode-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.xht [ Skip ]
@@ -275,6 +278,11 @@ webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-m
 webkit.org/b/148546 [ Debug ] imported/w3c/web-platform-tests/dom/ranges/Range-set.html [ Skip ]
 webkit.org/b/148736 [ Debug ] imported/w3c/web-platform-tests/html/dom/interfaces.html [ Skip ]
 webkit.org/b/148822 [ Debug ] imported/w3c/web-platform-tests/html/semantics/interfaces.html [ Skip ]
+
+# WPT tests that fail after doing full test repository reimport and need further investigation
+imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-document.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/dom/nodes/MutationObserver-childList.html [ Timeout ]
+imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]
 
 # W3C XMLHttpRequest tests
 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted.html [ Slow ]

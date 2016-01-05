@@ -4,24 +4,24 @@
         "path": [
             "."
         ], 
-        "url": "https://github.com/w3c/testharness.js/archive/7756b113373ec09f7159c68c4ba7eb8f0ad7c964.tar.gz",
-        "url_subpath": "testharness.js-7756b113373ec09f7159c68c4ba7eb8f0ad7c964"
+        "url": "https://github.com/w3c/testharness.js/archive/698441212391d5177b2f1806d97c7fd15cc46715.tar.gz",
+        "url_subpath": "testharness.js-698441212391d5177b2f1806d97c7fd15cc46715"
     }, 
     {
         "name": "webidl2",
         "path": [
             "resources"
         ],
-        "url": "https://github.com/darobin/webidl2.js/archive/997fb214e02980ef4c27137553857ae6da533590.tar.gz",
-        "url_subpath": "webidl2.js-997fb214e02980ef4c27137553857ae6da533590"
+        "url": "https://github.com/darobin/webidl2.js/archive/bd216bcd5596d60734450adc938155deab1e1a80.tar.gz",
+        "url_subpath": "webidl2.js-bd216bcd5596d60734450adc938155deab1e1a80"
     },
     {
         "name": "tools", 
         "path": [
             "."
         ], 
-        "url": "https://github.com/w3c/wpt-tools/archive/92f14770d10d44027a1c27b72958578ddc381ce3.tar.gz", 
-        "url_subpath": "wpt-tools-92f14770d10d44027a1c27b72958578ddc381ce3"
+        "url": "https://github.com/w3c/wpt-tools/archive/80bc792988aff1422f43b9e1d5909673eca960a2.tar.gz", 
+        "url_subpath": "wpt-tools-80bc792988aff1422f43b9e1d5909673eca960a2"
     },
     {
         "name": "html5lib", 
@@ -52,7 +52,7 @@
         "path": [
             "tools"
         ], 
-        "url": "https://github.com/w3c/wptserve/archive/b6b082fb70c592c6164c76aa167ae4dc284ebb69.tar.gz", 
-        "url_subpath": "wptserve-b6b082fb70c592c6164c76aa167ae4dc284ebb69"
+        "url": "https://github.com/w3c/wptserve/archive/b12d799c0be4fab1055df9a1e4dd5e45646b46ea.tar.gz", 
+        "url_subpath": "wptserve-b12d799c0be4fab1055df9a1e4dd5e45646b46ea"
     }
 ]

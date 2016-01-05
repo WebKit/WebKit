@@ -3,7 +3,7 @@
 PASS if only one item has a *name* or id value matching the parameter, return that object and stop 
 PASS if only one item has a name or *id* value matching the parameter, return that object and stop 
 PASS if no item has a name or id value matching the parameter, return null and stop 
-FAIL return an HTMLOptionsCollection in correct order for repeated 'id' value assert_array_equals: lengths differ, expected 2 got 0
-FAIL return an HTMLOptionsCollection in correct order for repeated 'name' value assert_array_equals: lengths differ, expected 2 got 0
-FAIL return an HTMLOptionsCollection in correct order for repeated mixed value assert_array_equals: lengths differ, expected 2 got 0
+PASS if multiple items have a name or *id* value matching the parameter, return the first object and stop 
+PASS if multiple items have a *name* or id value matching the parameter, return the first object and stop 
+PASS if multiple items have a *name* or *id* value matching the parameter, return the first object and stop 
 

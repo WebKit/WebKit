@@ -1,7 +1,7 @@
-12345
 
 PASS HTMLTableSectionElement deleteRow(0) 
 PASS HTMLTableSectionElement deleteRow(-1) 
 PASS HTMLTableSectionElement deleteRow(rows.length) 
 PASS HTMLTableSectionElement deleteRow(-2) 
+FAIL HTMLTableSectionElement deleteRow(-1) with no rows IndexSizeError: DOM Exception 1
 

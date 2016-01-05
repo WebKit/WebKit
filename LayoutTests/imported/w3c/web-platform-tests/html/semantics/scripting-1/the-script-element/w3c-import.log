@@ -18,10 +18,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/log.py
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-before-after-events.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-language-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-languages-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-languages-02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-noembed-noframes-iframe.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-onload-string.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/script-text.html

@@ -6,7 +6,7 @@ FAIL Correct text/plain MIME with charset assert_equals: expected "text/plain;ch
 PASS If no charset= param is given, implementation should not add one - unknown MIME 
 PASS If no charset= param is given, implementation should not add one - known MIME 
 FAIL charset given but wrong, fix it (unknown MIME, bogus charset) assert_equals: expected "text/x-thepiano;charset=UTF-8" but got "text/x-thepiano;charset= UTF-8"
-PASS charset given but wrong, fix it (known MIME, bogus charset) 
+FAIL charset given but wrong, fix it (known MIME, bogus charset) assert_equals: expected "text/plain;charset=utf-8;charset=UTF-8" but got "text/plain;charset=UTF-8;charset=UTF-8"
 PASS charset given but wrong, fix it (known MIME, actual charset) 
 PASS If multiple charset parameters are given, all should be rewritten 
 PASS No content type set, give MIME and charset 

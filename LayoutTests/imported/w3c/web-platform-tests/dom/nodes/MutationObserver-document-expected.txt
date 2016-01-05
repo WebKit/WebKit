@@ -3,6 +3,7 @@ MutationObservers: document mutations
 
 PASS setup test 
 PASS parser insertion mutations 
-PASS parser script insertion mutation 
+FAIL parser script insertion mutation assert_equals: target node must match expected Element node <p id="n00"><script id="inserted_script">document.body.ap... but got Element node <body><h1>MutationObservers: document mutations</h1>
+<div...
 PASS removal of parent during parsing 
 

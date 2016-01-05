@@ -9,7 +9,6 @@ FAIL ':disabled' should match only disabled elements assert_array_equals: length
 FAIL ':disabled' should not match elements whose disabled attribute has been removed assert_array_equals: lengths differ, expected 8 got 9
 FAIL ':disabled' should also match elements whose disabled attribute has been set assert_array_equals: lengths differ, expected 9 got 10
 FAIL ':disabled' should also match elements whose disabled attribute has been set twice assert_array_equals: lengths differ, expected 9 got 10
-FAIL ':disabled' should also match elements whose disabled attribute has been set twice assert_array_equals: lengths differ, expected 9 got 10
 FAIL ':disabled' should also match disabled elements whose type has changed assert_array_equals: lengths differ, expected 9 got 10
 FAIL ':disabled' should not match elements not in the document assert_array_equals: lengths differ, expected 9 got 10
 

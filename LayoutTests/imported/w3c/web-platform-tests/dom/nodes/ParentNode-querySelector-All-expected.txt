@@ -599,12 +599,12 @@ PASS Document.querySelectorAll: Class selector, chained, matching only elements 
 PASS Document.querySelector: Class selector, chained, matching only elements with all specified classes: #class .apple.orange.banana 
 PASS Document.querySelectorAll: Class Selector, chained, with type selector: div.apple.banana.orange 
 PASS Document.querySelector: Class Selector, chained, with type selector: div.apple.banana.orange 
-PASS Document.querySelectorAll: Class selector, matching element with class value using non-ASCII characters: .台北Táiběi 
-PASS Document.querySelector: Class selector, matching element with class value using non-ASCII characters: .台北Táiběi 
+PASS Document.querySelectorAll: Class selector, matching element with class value using non-ASCII characters (1): .台北Táiběi 
+PASS Document.querySelector: Class selector, matching element with class value using non-ASCII characters (1): .台北Táiběi 
 PASS Document.querySelectorAll: Class selector, matching multiple elements with class value using non-ASCII characters: .台北 
 PASS Document.querySelector: Class selector, matching multiple elements with class value using non-ASCII characters: .台北 
-PASS Document.querySelectorAll: Class selector, chained, matching element with multiple class values using non-ASCII characters: .台北Táiběi.台北 
-PASS Document.querySelector: Class selector, chained, matching element with multiple class values using non-ASCII characters: .台北Táiběi.台北 
+PASS Document.querySelectorAll: Class selector, chained, matching element with multiple class values using non-ASCII characters (1): .台北Táiběi.台北 
+PASS Document.querySelector: Class selector, chained, matching element with multiple class values using non-ASCII characters (1): .台北Táiběi.台北 
 PASS Document.querySelectorAll: Class selector, matching element with class with escaped character: .foo\:bar 
 PASS Document.querySelector: Class selector, matching element with class with escaped character: .foo\:bar 
 PASS Document.querySelectorAll: Class selector, matching element with class with escaped character: .test\.foo\[5\]bar 
@@ -623,12 +623,12 @@ PASS Document.querySelectorAll: ID selector, not matching non-existent ancestor:
 PASS Document.querySelector: ID selector, not matching non-existent ancestor: #none #id-div1 
 PASS Document.querySelectorAll: ID selector, matching multiple elements with duplicate id: #id-li-duplicate 
 PASS Document.querySelector: ID selector, matching multiple elements with duplicate id: #id-li-duplicate 
-PASS Document.querySelectorAll: ID selector, matching id value using non-ASCII characters: #台北Táiběi 
-PASS Document.querySelector: ID selector, matching id value using non-ASCII characters: #台北Táiběi 
-PASS Document.querySelectorAll: ID selector, matching id value using non-ASCII characters: #台北 
-PASS Document.querySelector: ID selector, matching id value using non-ASCII characters: #台北 
-PASS Document.querySelectorAll: ID selector, matching id values using non-ASCII characters: #台北Táiběi, #台北 
-PASS Document.querySelector: ID selector, matching id values using non-ASCII characters: #台北Táiběi, #台北 
+PASS Document.querySelectorAll: ID selector, matching id value using non-ASCII characters (1): #台北Táiběi 
+PASS Document.querySelector: ID selector, matching id value using non-ASCII characters (1): #台北Táiběi 
+PASS Document.querySelectorAll: ID selector, matching id value using non-ASCII characters (2): #台北 
+PASS Document.querySelector: ID selector, matching id value using non-ASCII characters (2): #台北 
+PASS Document.querySelectorAll: ID selector, matching id values using non-ASCII characters (1): #台北Táiběi, #台北 
+PASS Document.querySelector: ID selector, matching id values using non-ASCII characters (1): #台北Táiběi, #台北 
 PASS Document.querySelectorAll: ID selector, matching element with id with escaped character: #\#foo\:bar 
 PASS Document.querySelector: ID selector, matching element with id with escaped character: #\#foo\:bar 
 PASS Document.querySelectorAll: ID selector, matching element with id with escaped character: #test\.foo\[5\]bar 
@@ -1017,12 +1017,12 @@ PASS Detached Element.querySelectorAll: Class selector, chained, matching only e
 PASS Detached Element.querySelector: Class selector, chained, matching only elements with all specified classes: #class .apple.orange.banana 
 PASS Detached Element.querySelectorAll: Class Selector, chained, with type selector: div.apple.banana.orange 
 PASS Detached Element.querySelector: Class Selector, chained, with type selector: div.apple.banana.orange 
-PASS Detached Element.querySelectorAll: Class selector, matching element with class value using non-ASCII characters: .台北Táiběi 
-PASS Detached Element.querySelector: Class selector, matching element with class value using non-ASCII characters: .台北Táiběi 
+PASS Detached Element.querySelectorAll: Class selector, matching element with class value using non-ASCII characters (1): .台北Táiběi 
+PASS Detached Element.querySelector: Class selector, matching element with class value using non-ASCII characters (1): .台北Táiběi 
 PASS Detached Element.querySelectorAll: Class selector, matching multiple elements with class value using non-ASCII characters: .台北 
 PASS Detached Element.querySelector: Class selector, matching multiple elements with class value using non-ASCII characters: .台北 
-PASS Detached Element.querySelectorAll: Class selector, chained, matching element with multiple class values using non-ASCII characters: .台北Táiběi.台北 
-PASS Detached Element.querySelector: Class selector, chained, matching element with multiple class values using non-ASCII characters: .台北Táiběi.台北 
+PASS Detached Element.querySelectorAll: Class selector, chained, matching element with multiple class values using non-ASCII characters (1): .台北Táiběi.台北 
+PASS Detached Element.querySelector: Class selector, chained, matching element with multiple class values using non-ASCII characters (1): .台北Táiběi.台北 
 PASS Detached Element.querySelectorAll: Class selector, matching element with class with escaped character: .foo\:bar 
 PASS Detached Element.querySelector: Class selector, matching element with class with escaped character: .foo\:bar 
 PASS Detached Element.querySelectorAll: Class selector, matching element with class with escaped character: .test\.foo\[5\]bar 
@@ -1041,12 +1041,12 @@ PASS Detached Element.querySelectorAll: ID selector, not matching non-existent a
 PASS Detached Element.querySelector: ID selector, not matching non-existent ancestor: #none #id-div1 
 PASS Detached Element.querySelectorAll: ID selector, matching multiple elements with duplicate id: #id-li-duplicate 
 PASS Detached Element.querySelector: ID selector, matching multiple elements with duplicate id: #id-li-duplicate 
-PASS Detached Element.querySelectorAll: ID selector, matching id value using non-ASCII characters: #台北Táiběi 
-PASS Detached Element.querySelector: ID selector, matching id value using non-ASCII characters: #台北Táiběi 
-PASS Detached Element.querySelectorAll: ID selector, matching id value using non-ASCII characters: #台北 
-PASS Detached Element.querySelector: ID selector, matching id value using non-ASCII characters: #台北 
-PASS Detached Element.querySelectorAll: ID selector, matching id values using non-ASCII characters: #台北Táiběi, #台北 
-PASS Detached Element.querySelector: ID selector, matching id values using non-ASCII characters: #台北Táiběi, #台北 
+PASS Detached Element.querySelectorAll: ID selector, matching id value using non-ASCII characters (1): #台北Táiběi 
+PASS Detached Element.querySelector: ID selector, matching id value using non-ASCII characters (1): #台北Táiběi 
+PASS Detached Element.querySelectorAll: ID selector, matching id value using non-ASCII characters (2): #台北 
+PASS Detached Element.querySelector: ID selector, matching id value using non-ASCII characters (2): #台北 
+PASS Detached Element.querySelectorAll: ID selector, matching id values using non-ASCII characters (1): #台北Táiběi, #台北 
+PASS Detached Element.querySelector: ID selector, matching id values using non-ASCII characters (1): #台北Táiběi, #台北 
 PASS Detached Element.querySelectorAll: ID selector, matching element with id with escaped character: #\#foo\:bar 
 PASS Detached Element.querySelector: ID selector, matching element with id with escaped character: #\#foo\:bar 
 PASS Detached Element.querySelectorAll: ID selector, matching element with id with escaped character: #test\.foo\[5\]bar 
@@ -1433,12 +1433,12 @@ PASS Fragment.querySelectorAll: Class selector, chained, matching only elements 
 PASS Fragment.querySelector: Class selector, chained, matching only elements with all specified classes: #class .apple.orange.banana 
 PASS Fragment.querySelectorAll: Class Selector, chained, with type selector: div.apple.banana.orange 
 PASS Fragment.querySelector: Class Selector, chained, with type selector: div.apple.banana.orange 
-PASS Fragment.querySelectorAll: Class selector, matching element with class value using non-ASCII characters: .台北Táiběi 
-PASS Fragment.querySelector: Class selector, matching element with class value using non-ASCII characters: .台北Táiběi 
+PASS Fragment.querySelectorAll: Class selector, matching element with class value using non-ASCII characters (1): .台北Táiběi 
+PASS Fragment.querySelector: Class selector, matching element with class value using non-ASCII characters (1): .台北Táiběi 
 PASS Fragment.querySelectorAll: Class selector, matching multiple elements with class value using non-ASCII characters: .台北 
 PASS Fragment.querySelector: Class selector, matching multiple elements with class value using non-ASCII characters: .台北 
-PASS Fragment.querySelectorAll: Class selector, chained, matching element with multiple class values using non-ASCII characters: .台北Táiběi.台北 
-PASS Fragment.querySelector: Class selector, chained, matching element with multiple class values using non-ASCII characters: .台北Táiběi.台北 
+PASS Fragment.querySelectorAll: Class selector, chained, matching element with multiple class values using non-ASCII characters (1): .台北Táiběi.台北 
+PASS Fragment.querySelector: Class selector, chained, matching element with multiple class values using non-ASCII characters (1): .台北Táiběi.台北 
 PASS Fragment.querySelectorAll: Class selector, matching element with class with escaped character: .foo\:bar 
 PASS Fragment.querySelector: Class selector, matching element with class with escaped character: .foo\:bar 
 PASS Fragment.querySelectorAll: Class selector, matching element with class with escaped character: .test\.foo\[5\]bar 
@@ -1457,12 +1457,12 @@ PASS Fragment.querySelectorAll: ID selector, not matching non-existent ancestor:
 PASS Fragment.querySelector: ID selector, not matching non-existent ancestor: #none #id-div1 
 PASS Fragment.querySelectorAll: ID selector, matching multiple elements with duplicate id: #id-li-duplicate 
 PASS Fragment.querySelector: ID selector, matching multiple elements with duplicate id: #id-li-duplicate 
-PASS Fragment.querySelectorAll: ID selector, matching id value using non-ASCII characters: #台北Táiběi 
-PASS Fragment.querySelector: ID selector, matching id value using non-ASCII characters: #台北Táiběi 
-PASS Fragment.querySelectorAll: ID selector, matching id value using non-ASCII characters: #台北 
-PASS Fragment.querySelector: ID selector, matching id value using non-ASCII characters: #台北 
-PASS Fragment.querySelectorAll: ID selector, matching id values using non-ASCII characters: #台北Táiběi, #台北 
-PASS Fragment.querySelector: ID selector, matching id values using non-ASCII characters: #台北Táiběi, #台北 
+PASS Fragment.querySelectorAll: ID selector, matching id value using non-ASCII characters (1): #台北Táiběi 
+PASS Fragment.querySelector: ID selector, matching id value using non-ASCII characters (1): #台北Táiběi 
+PASS Fragment.querySelectorAll: ID selector, matching id value using non-ASCII characters (2): #台北 
+PASS Fragment.querySelector: ID selector, matching id value using non-ASCII characters (2): #台北 
+PASS Fragment.querySelectorAll: ID selector, matching id values using non-ASCII characters (1): #台北Táiběi, #台北 
+PASS Fragment.querySelector: ID selector, matching id values using non-ASCII characters (1): #台北Táiběi, #台北 
 PASS Fragment.querySelectorAll: ID selector, matching element with id with escaped character: #\#foo\:bar 
 PASS Fragment.querySelector: ID selector, matching element with id with escaped character: #\#foo\:bar 
 PASS Fragment.querySelectorAll: ID selector, matching element with id with escaped character: #test\.foo\[5\]bar 
@@ -1849,12 +1849,12 @@ PASS In-document Element.querySelectorAll: Class selector, chained, matching onl
 PASS In-document Element.querySelector: Class selector, chained, matching only elements with all specified classes: #class .apple.orange.banana 
 PASS In-document Element.querySelectorAll: Class Selector, chained, with type selector: div.apple.banana.orange 
 PASS In-document Element.querySelector: Class Selector, chained, with type selector: div.apple.banana.orange 
-PASS In-document Element.querySelectorAll: Class selector, matching element with class value using non-ASCII characters: .台北Táiběi 
-PASS In-document Element.querySelector: Class selector, matching element with class value using non-ASCII characters: .台北Táiběi 
+PASS In-document Element.querySelectorAll: Class selector, matching element with class value using non-ASCII characters (1): .台北Táiběi 
+PASS In-document Element.querySelector: Class selector, matching element with class value using non-ASCII characters (1): .台北Táiběi 
 PASS In-document Element.querySelectorAll: Class selector, matching multiple elements with class value using non-ASCII characters: .台北 
 PASS In-document Element.querySelector: Class selector, matching multiple elements with class value using non-ASCII characters: .台北 
-PASS In-document Element.querySelectorAll: Class selector, chained, matching element with multiple class values using non-ASCII characters: .台北Táiběi.台北 
-PASS In-document Element.querySelector: Class selector, chained, matching element with multiple class values using non-ASCII characters: .台北Táiběi.台北 
+PASS In-document Element.querySelectorAll: Class selector, chained, matching element with multiple class values using non-ASCII characters (1): .台北Táiběi.台北 
+PASS In-document Element.querySelector: Class selector, chained, matching element with multiple class values using non-ASCII characters (1): .台北Táiběi.台北 
 PASS In-document Element.querySelectorAll: Class selector, matching element with class with escaped character: .foo\:bar 
 PASS In-document Element.querySelector: Class selector, matching element with class with escaped character: .foo\:bar 
 PASS In-document Element.querySelectorAll: Class selector, matching element with class with escaped character: .test\.foo\[5\]bar 
@@ -1873,12 +1873,12 @@ PASS In-document Element.querySelectorAll: ID selector, not matching non-existen
 PASS In-document Element.querySelector: ID selector, not matching non-existent ancestor: #none #id-div1 
 PASS In-document Element.querySelectorAll: ID selector, matching multiple elements with duplicate id: #id-li-duplicate 
 PASS In-document Element.querySelector: ID selector, matching multiple elements with duplicate id: #id-li-duplicate 
-PASS In-document Element.querySelectorAll: ID selector, matching id value using non-ASCII characters: #台北Táiběi 
-PASS In-document Element.querySelector: ID selector, matching id value using non-ASCII characters: #台北Táiběi 
-PASS In-document Element.querySelectorAll: ID selector, matching id value using non-ASCII characters: #台北 
-PASS In-document Element.querySelector: ID selector, matching id value using non-ASCII characters: #台北 
-PASS In-document Element.querySelectorAll: ID selector, matching id values using non-ASCII characters: #台北Táiběi, #台北 
-PASS In-document Element.querySelector: ID selector, matching id values using non-ASCII characters: #台北Táiběi, #台北 
+PASS In-document Element.querySelectorAll: ID selector, matching id value using non-ASCII characters (1): #台北Táiběi 
+PASS In-document Element.querySelector: ID selector, matching id value using non-ASCII characters (1): #台北Táiběi 
+PASS In-document Element.querySelectorAll: ID selector, matching id value using non-ASCII characters (2): #台北 
+PASS In-document Element.querySelector: ID selector, matching id value using non-ASCII characters (2): #台北 
+PASS In-document Element.querySelectorAll: ID selector, matching id values using non-ASCII characters (1): #台北Táiběi, #台北 
+PASS In-document Element.querySelector: ID selector, matching id values using non-ASCII characters (1): #台北Táiběi, #台北 
 PASS In-document Element.querySelectorAll: ID selector, matching element with id with escaped character: #\#foo\:bar 
 PASS In-document Element.querySelector: ID selector, matching element with id with escaped character: #\#foo\:bar 
 PASS In-document Element.querySelectorAll: ID selector, matching element with id with escaped character: #test\.foo\[5\]bar 
