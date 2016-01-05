@@ -1,3 +1,24 @@
+2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add debounce to URL inputs in the Visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=152655
+
+        Reviewed by Joseph Pecoraro.
+
+        Adding a debounce to url() based Visual sidebar editors will prevent needless
+        errors from being thrown as the user types, since incomplete URL's will not
+        be able to be located.
+
+        * UserInterface/Base/Utilities.js:
+        (Function.prototype.debounce):
+        Prevents the given function from executing more than once in the specified amount of time.
+
+        * UserInterface/Views/VisualStyleBackgroundPicker.js:
+        (WebInspector.VisualStyleBackgroundPicker):
+
+        * UserInterface/Views/VisualStyleURLInput.js:
+        (WebInspector.VisualStyleURLInput):
+
 2016-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix debug context menu string and reload without cache tooltip string

@@ -43,7 +43,7 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
         this._valueInputElement.classList.add("value-input");
         this._valueInputElement.type = "url";
         this._valueInputElement.placeholder = WebInspector.UIString("Enter a URL");
-        this._valueInputElement.addEventListener("input", this._valueInputValueChanged.bind(this));
+        this._valueInputElement.addEventListener("input", this._valueInputValueChanged.debounce(250, this));
         this.contentElement.appendChild(this._valueInputElement);
 
         this._valueTypePickerElement = document.createElement("select");
