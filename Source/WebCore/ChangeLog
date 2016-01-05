@@ -1,3 +1,15 @@
+2016-01-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Avoid NULL deference in Page::updateIsPlayingMedia
+        https://bugs.webkit.org/show_bug.cgi?id=152732
+
+        No new tests, this fixes a rare crash that I am unable to reproduce.
+
+        Reviewed by David Kilzer.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateIsPlayingMedia): frame->document() can return NULL.
+
 2016-01-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Transactions from a previous page can leak forward to the next.
