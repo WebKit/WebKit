@@ -210,6 +210,18 @@ void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBa
         FrequentedBlock(notTaken, notTakenWeight.frequencyClass()));
 }
 
+void Output::check(LValue condition, WeightedTarget taken, Weight notTakenWeight)
+{
+    LBasicBlock continuation = FTL_NEW_BLOCK(*this, ("Output::check continuation"));
+    branch(condition, taken, WeightedTarget(continuation, notTakenWeight));
+    appendTo(continuation);
+}
+
+void Output::check(LValue condition, WeightedTarget taken)
+{
+    check(condition, taken, taken.weight().inverse());
+}
+
 } } // namespace JSC::FTL
 
 #endif // FTL_USES_B3

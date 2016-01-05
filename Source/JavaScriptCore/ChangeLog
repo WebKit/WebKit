@@ -1,3 +1,19 @@
+2016-01-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Implement B3 version of FTL::Output::check()
+        https://bugs.webkit.org/show_bug.cgi?id=152743
+
+        Reviewed by Geoffrey Garen.
+
+        Turns out this was just like the LLVM version.
+
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::branch):
+        (JSC::FTL::Output::check):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::switchInstruction):
+        (JSC::FTL::Output::check): Deleted.
+
 2016-01-05  Mark Lam  <mark.lam@apple.com>
 
         Add support for aliasing JSC Options.

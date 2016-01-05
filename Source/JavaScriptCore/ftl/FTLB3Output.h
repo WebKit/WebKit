@@ -389,11 +389,11 @@ public:
 
     // Branches to an already-created handler if true, "falls through" if false. Fall-through is
     // simulated by creating a continuation for you.
-    void check(LValue condition, WeightedTarget taken, Weight notTakenWeight) { CRASH(); }
-
+    void check(LValue condition, WeightedTarget taken, Weight notTakenWeight);
+    
     // Same as check(), but uses Weight::inverse() to compute the notTakenWeight.
-    void check(LValue condition, WeightedTarget taken) { CRASH(); }
-
+    void check(LValue condition, WeightedTarget taken);
+    
     template<typename VectorType>
     void switchInstruction(LValue value, const VectorType& cases, LBasicBlock fallThrough, Weight fallThroughWeight)
     {
