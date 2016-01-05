@@ -1,3 +1,15 @@
+2016-01-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Shave off a TransformationMatrix copy if RenderLayer's transparencyClipBox()
+        https://bugs.webkit.org/show_bug.cgi?id=152119
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::transparencyClipBox): Multiply the transformation matrix returned by
+        layer.transform() directly into the transform object, instead of first
+        multiplying them and then copying the result back into the transform object.
+
 2016-01-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         TextBreakIterator uses an internal implementation detail of NSLocale

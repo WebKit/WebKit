@@ -1754,7 +1754,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
 
         TransformationMatrix transform;
         transform.translate(delta.width(), delta.height());
-        transform = transform * *layer.transform();
+        transform.multiply(*layer.transform());
 
         // We don't use fragment boxes when collecting a transformed layer's bounding box, since it always
         // paints unfragmented.
