@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DownloadManager::DownloadManager(Client* client)
+DownloadManager::DownloadManager(Client& client)
     : m_client(client)
 {
 }
@@ -105,22 +105,22 @@ void DownloadManager::downloadFinished(Download* download)
 
 void DownloadManager::didCreateDownload()
 {
-    m_client->didCreateDownload();
+    m_client.didCreateDownload();
 }
 
 void DownloadManager::didDestroyDownload()
 {
-    m_client->didDestroyDownload();
+    m_client.didDestroyDownload();
 }
 
 IPC::Connection* DownloadManager::downloadProxyConnection()
 {
-    return m_client->downloadProxyConnection();
+    return m_client.downloadProxyConnection();
 }
 
 AuthenticationManager& DownloadManager::downloadsAuthenticationManager()
 {
-    return m_client->downloadsAuthenticationManager();
+    return m_client.downloadsAuthenticationManager();
 }
 
 } // namespace WebKit

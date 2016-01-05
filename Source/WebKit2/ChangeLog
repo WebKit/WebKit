@@ -1,3 +1,26 @@
+2016-01-05  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up download code
+        https://bugs.webkit.org/show_bug.cgi?id=152739
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::DownloadManager):
+        (WebKit::DownloadManager::didCreateDownload):
+        (WebKit::DownloadManager::didDestroyDownload):
+        (WebKit::DownloadManager::downloadProxyConnection):
+        (WebKit::DownloadManager::downloadsAuthenticationManager):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        Keep a Client& instead of a Client*.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::downloadManager):
+        * NetworkProcess/NetworkSession.h:
+        m_sessionID is not used. There is no need to store the sessionID if it is only used in the NetworkSession constructor.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::defaultSession):
+        (WebKit::NetworkSession::NetworkSession):
+
 2016-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Allow to save and restore session

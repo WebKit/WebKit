@@ -26,7 +26,7 @@
 #ifndef DownloadManager_h
 #define DownloadManager_h
 
-#include "Download.h"
+#include "DownloadID.h"
 #include "SandboxExtension.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/Forward.h>
@@ -51,7 +51,6 @@ namespace WebKit {
 
 class AuthenticationManager;
 class Download;
-class WebPage;
 
 class DownloadManager {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
@@ -67,7 +66,7 @@ public:
         virtual AuthenticationManager& downloadsAuthenticationManager() = 0;
     };
 
-    explicit DownloadManager(Client*);
+    explicit DownloadManager(Client&);
 
     void startDownload(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&);
 #if USE(NETWORK_SESSION)
@@ -93,7 +92,7 @@ public:
     AuthenticationManager& downloadsAuthenticationManager();
 
 private:
-    Client* m_client;
+    Client& m_client;
     HashMap<DownloadID, std::unique_ptr<Download>> m_downloads;
 };
 

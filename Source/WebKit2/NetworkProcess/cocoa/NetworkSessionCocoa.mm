@@ -28,6 +28,7 @@
 
 #if USE(NETWORK_SESSION)
 
+#import "Download.h"
 #import "NetworkProcess.h"
 #import "SessionTracker.h"
 #import <Foundation/NSURLSession.h>
@@ -200,7 +201,6 @@ NetworkSession& NetworkSession::defaultSession()
 }
 
 NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID)
-    : m_sessionID(sessionID)
 {
     m_sessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this]);
 

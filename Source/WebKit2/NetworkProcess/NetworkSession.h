@@ -134,7 +134,6 @@ public:
     DownloadID takeDownloadID(NetworkDataTask::TaskIdentifier);
     
 private:
-    WebCore::SessionID m_sessionID;
     HashMap<NetworkDataTask::TaskIdentifier, NetworkDataTask*> m_dataTaskMap;
     HashMap<NetworkDataTask::TaskIdentifier, DownloadID> m_downloadMap;
 #if PLATFORM(COCOA)

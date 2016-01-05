@@ -103,7 +103,7 @@ AuthenticationManager& NetworkProcess::authenticationManager()
 
 DownloadManager& NetworkProcess::downloadManager()
 {
-    static NeverDestroyed<DownloadManager> downloadManager(this);
+    static NeverDestroyed<DownloadManager> downloadManager(*this);
     return downloadManager;
 }
 
