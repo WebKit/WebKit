@@ -1,3 +1,17 @@
+2016-01-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r187929): Web Inspector: Forced Layout and Style Recalculation records do not show up in Layout & Rendering timeline DataGrid
+        https://bugs.webkit.org/show_bug.cgi?id=152747
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype._layoutTimelineRecordAdded):
+        We want top-level Layout records. Not necessarily Layout records that are
+        at the top of all records. Layout events such as style recalculation
+        and forced layout may be triggered by script and therefore not be at
+        the top of all records.
+
 2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Timelines view doesn't remember how I like to sort things

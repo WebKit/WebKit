@@ -225,7 +225,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord);
 
         // Only add top-level records, to avoid processing child records multiple times.
-        if (!(layoutTimelineRecord.parent instanceof WebInspector.RenderingFrameTimelineRecord))
+        if (layoutTimelineRecord.parent instanceof WebInspector.LayoutTimelineRecord)
             return;
 
         this._pendingRecords.push(layoutTimelineRecord);
