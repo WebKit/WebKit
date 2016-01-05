@@ -2243,7 +2243,6 @@ set(WebCore_SOURCES
 
     platform/graphics/opentype/OpenTypeMathData.cpp
 
-    platform/graphics/texmap/ClipStack.cpp
     platform/graphics/texmap/TextureMapper.cpp
     platform/graphics/texmap/TextureMapperAnimation.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp

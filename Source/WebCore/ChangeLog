@@ -1,3 +1,16 @@
+2016-01-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Attempting to fix the AppleWin build after r194577.
+
+        Add the ClipStack.cpp build target alongside the TextureMapperGL.cpp
+        one, since both include GraphicsContext3D.h and ANGLEWebKitBridge.h
+        indirectly, the latter requiring specific include flags.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformWinCairo.cmake:
+
 2016-01-05  Antti Koivisto  <antti@apple.com>
 
         Move StyleChange enum into a separate file

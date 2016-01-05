@@ -59,6 +59,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTextureGL.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
+    platform/graphics/texmap/ClipStack.cpp
     platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
     platform/graphics/texmap/TextureMapper.cpp
     platform/graphics/texmap/TextureMapperAnimation.cpp
