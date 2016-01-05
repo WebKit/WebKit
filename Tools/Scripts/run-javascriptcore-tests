@@ -162,7 +162,7 @@ if (defined($gmallocPath)) {
 
 my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-$ENV{JSC_timeout} = 60 unless $ENV{JSC_timeout}; # Set a 60 second timeout on all jsc tests (if environment variable not defined already).
+$ENV{JSCTEST_timeout} = 60 unless $ENV{JSCTEST_timeout}; # Set a 60 second timeout on all jsc tests (if environment variable not defined already).
 $ENV{TZ}="US/Pacific"; # Some tests fail if the time zone is not set to US/Pacific (<https://webkit.org/b/136363>)
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 

@@ -1,3 +1,16 @@
+2016-01-05  Mark Lam  <mark.lam@apple.com>
+
+        Rename badly named JSC_timeout env var to JSCTEST_timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=152748
+
+        Reviewed by Geoffrey Garen.
+
+        Now that we validate JSC options, the badly named JSC_timeout env var causes the
+        bots to have a bad time.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-jsc-stress-tests:
+
 2016-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Allow to save and restore session
