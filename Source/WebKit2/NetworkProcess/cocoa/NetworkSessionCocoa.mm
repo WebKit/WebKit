@@ -94,8 +94,6 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
-    UNUSED_PARAM(session);
-
     if (auto* networkingTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
         if (auto* client = networkingTask->client()) {
             auto completionHandlerCopy = Block_copy(completionHandler);
@@ -111,8 +109,6 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    UNUSED_PARAM(session);
-
     if (auto* networkingTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
         if (auto* client = networkingTask->client()) {
             auto completionHandlerCopy = Block_copy(completionHandler);
@@ -128,8 +124,6 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-    UNUSED_PARAM(session);
-
     if (auto* networkingTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
         if (auto* client = networkingTask->client())
             client->didCompleteWithError(error);
@@ -138,8 +132,6 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    UNUSED_PARAM(session);
-
     if (auto* networkingTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier)) {
         if (auto* client = networkingTask->client()) {
             ASSERT(isMainThread());
@@ -158,8 +150,6 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-    UNUSED_PARAM(session);
-
     if (auto* networkingTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier)) {
         if (auto* client = networkingTask->client())
             client->didReceiveData(WebCore::SharedBuffer::wrapNSData(data));
@@ -168,13 +158,19 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
 {
+    auto downloadID = _session->takeDownloadID([downloadTask taskIdentifier]);
     notImplemented();
+    if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
+        download->didFinish();
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
     ASSERT_WITH_MESSAGE(!_session->dataTaskForIdentifier([downloadTask taskIdentifier]), "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
-    notImplemented();
+
+    auto downloadID = _session->downloadID([downloadTask taskIdentifier]);
+    if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
+        download->didReceiveData(bytesWritten);
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
@@ -189,10 +185,13 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         auto& downloadManager = WebKit::NetworkProcess::singleton().downloadManager();
         auto download = std::make_unique<WebKit::Download>(downloadManager, *_session, downloadID);
         download->didStart([downloadTask currentRequest]);
+        download->didReceiveResponse([downloadTask response]);
         downloadManager.dataTaskBecameDownloadTask(downloadID, WTFMove(download));
 
         if (auto* client = networkDataTask->client())
             client->didBecomeDownload();
+
+        _session->addDownloadID([downloadTask taskIdentifier], downloadID);
     }
 }
 
@@ -251,6 +250,29 @@ NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIden
 {
     ASSERT(isMainThread());
     return m_dataTaskMap.get(taskIdentifier);
+}
+
+void NetworkSession::addDownloadID(NetworkDataTask::TaskIdentifier taskIdentifier, DownloadID downloadID)
+{
+#ifndef NDEBUG
+    ASSERT(!m_downloadMap.contains(taskIdentifier));
+    for (auto idInMap : m_downloadMap.values())
+        ASSERT(idInMap != downloadID);
+#endif
+    m_downloadMap.add(taskIdentifier, downloadID);
+}
+
+DownloadID NetworkSession::downloadID(NetworkDataTask::TaskIdentifier taskIdentifier)
+{
+    ASSERT(m_downloadMap.get(taskIdentifier).downloadID());
+    return m_downloadMap.get(taskIdentifier);
+}
+
+DownloadID NetworkSession::takeDownloadID(NetworkDataTask::TaskIdentifier taskIdentifier)
+{
+    auto downloadID = m_downloadMap.take(taskIdentifier);
+    ASSERT(downloadID.downloadID());
+    return downloadID;
 }
 
 NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkSessionTaskClient& client, RetainPtr<NSURLSessionDataTask>&& task)

@@ -1,3 +1,53 @@
+2016-01-04  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards implementing downloads with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=152716
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadID.h:
+        (WebKit::DownloadID::DownloadID):
+        (WebKit::DownloadID::operator==):
+        (WebKit::DownloadID::operator!=):
+        (WebKit::DownloadID::downloadID):
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::download):
+        (WebKit::DownloadManager::isDownloading):
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+        (WebKit::Download::platformInvalidate):
+        (WebKit::Download::platformDidFinish):
+        (WebKit::Download::start): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveData:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didFinishDownloadingToURL:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+
+        When using NSURLSession, a data task is converted to a download task after the connection has already
+        been established, the headers have been received, and WebCore looks at the response and decides that
+        this connection should become a download.  We call the didReceiveResponse to match the behavior of 
+        NSURLDownload, but this could be cleaned up later to match what is actually happening.  We also do not
+        need to tell the download to start because it has already started.
+
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        (WebKit::NetworkSession::addDownloadID):
+        (WebKit::NetworkSession::downloadID):
+        (WebKit::NetworkSession::takeDownloadID):
+        (WebKit::NetworkDataTask::NetworkDataTask):
+
+        NSURLSessionDownloadTask taskIdentifiers are unique to that NSURLSession, but we have one global DownloadManager
+        in the NetworkProcess.  We need to have each NetworkSession keep a map of taskIdentifiers to global DownloadID.
+
 2016-01-04  Tim Horton  <timothy_horton@apple.com>
 
         Turn on gesture events when building for Yosemite

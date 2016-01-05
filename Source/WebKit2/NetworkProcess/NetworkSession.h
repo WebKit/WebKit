@@ -127,6 +127,10 @@ public:
 
     NetworkDataTask* dataTaskForIdentifier(NetworkDataTask::TaskIdentifier);
 
+    void addDownloadID(NetworkDataTask::TaskIdentifier, DownloadID);
+    DownloadID downloadID(NetworkDataTask::TaskIdentifier);
+    DownloadID takeDownloadID(NetworkDataTask::TaskIdentifier);
+    
 private:
     WebCore::SessionID m_sessionID;
     HashMap<NetworkDataTask::TaskIdentifier, NetworkDataTask*> m_dataTaskMap;

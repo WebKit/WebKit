@@ -80,6 +80,8 @@ public:
     void resumeDownload(WebCore::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
 
     void cancelDownload(DownloadID);
+    
+    Download* download(DownloadID downloadID) { return m_downloads.get(downloadID); }
 
     void downloadFinished(Download*);
     bool isDownloading() const { return !m_downloads.isEmpty(); }

@@ -45,6 +45,7 @@ public:
     }
 
     bool operator==(DownloadID other) const { return m_downloadID == other.m_downloadID; }
+    bool operator!=(DownloadID other) const { return m_downloadID != other.m_downloadID; }
 
     uint64_t downloadID() const { return m_downloadID; }
 private:

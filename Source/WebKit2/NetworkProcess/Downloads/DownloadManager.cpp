@@ -51,8 +51,8 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
     download->didStart(request);
 #else
     auto download = std::make_unique<Download>(*this, downloadID, request);
-#endif
     download->start();
+#endif
 
     ASSERT(!m_downloads.contains(downloadID));
     m_downloads.add(downloadID, WTFMove(download));

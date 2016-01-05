@@ -32,11 +32,6 @@
 
 namespace WebKit {
 
-void Download::start()
-{
-    notImplemented();
-}
-
 void Download::resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     notImplemented();
@@ -52,6 +47,10 @@ void Download::platformInvalidate()
     notImplemented();
 }
 
+void Download::platformDidFinish()
+{
+}
+    
 }
 
 #endif // USE(NETWORK_SESSION)

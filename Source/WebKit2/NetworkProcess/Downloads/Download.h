@@ -83,10 +83,10 @@ public:
 #endif
     ~Download();
 
-    void start();
 #if USE(NETWORK_SESSION) && PLATFORM(COCOA)
     void dataTaskDidBecomeDownloadTask(const NetworkSession&, RetainPtr<NSURLSessionDownloadTask>&&);
 #else
+    void start();
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
 #endif
     void resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
