@@ -116,6 +116,8 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(std::unique_ptr<MemoryObj
     ASSERT(m_objectStores.contains(objectStore.get()));
     m_objectStores.remove(objectStore.get());
 
+    objectStore->deleteAllIndexes(*this);
+
     auto addResult = m_deletedObjectStores.add(objectStore->info().name(), nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = WTFMove(objectStore);

@@ -156,6 +156,18 @@ IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transacti
     return { };
 }
 
+void MemoryObjectStore::deleteAllIndexes(MemoryBackingStoreTransaction& transaction)
+{
+    Vector<String> indexNames;
+    indexNames.reserveInitialCapacity(m_indexesByName.size());
+
+    for (auto& name : m_indexesByName.keys())
+        indexNames.uncheckedAppend(name);
+
+    for (auto& name : indexNames)
+        deleteIndex(transaction, name);
+}
+
 bool MemoryObjectStore::containsRecord(const IDBKeyData& key)
 {
     if (!m_keyValueStore)

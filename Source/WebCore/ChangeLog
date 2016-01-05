@@ -1,3 +1,18 @@
+2016-01-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Memory indexes aren't deleted when their owning memory object stores are deleted.
+        https://bugs.webkit.org/show_bug.cgi?id=152717
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/indexeddb/modern/memory-index-not-deleted-with-objectstore.html
+
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::objectStoreDeleted):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::deleteAllIndexes):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+
 2016-01-04  Tim Horton  <timothy_horton@apple.com>
 
         Turn on gesture events when building for Yosemite

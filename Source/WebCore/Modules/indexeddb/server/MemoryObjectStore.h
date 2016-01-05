@@ -67,6 +67,7 @@ public:
 
     IDBError createIndex(MemoryBackingStoreTransaction&, const IDBIndexInfo&);
     IDBError deleteIndex(MemoryBackingStoreTransaction&, const String& indexName);
+    void deleteAllIndexes(MemoryBackingStoreTransaction&);
     void registerIndex(std::unique_ptr<MemoryIndex>&&);
 
     bool containsRecord(const IDBKeyData&);
