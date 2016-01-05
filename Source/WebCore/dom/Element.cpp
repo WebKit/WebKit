@@ -1888,8 +1888,6 @@ void Element::removeAllEventListeners()
 void Element::beginParsingChildren()
 {
     clearIsParsingChildrenFinished();
-    if (auto styleResolver = document().styleResolverIfExists())
-        styleResolver->pushParentElement(this);
 }
 
 void Element::finishParsingChildren()
@@ -1897,8 +1895,6 @@ void Element::finishParsingChildren()
     ContainerNode::finishParsingChildren();
     setIsParsingChildrenFinished();
     checkForSiblingStyleChanges(*this, FinishedParsingChildren, ElementTraversal::lastChild(*this), nullptr);
-    if (auto styleResolver = document().styleResolverIfExists())
-        styleResolver->popParentElement(this);
 }
 
 #if ENABLE(TREE_DEBUGGING)
