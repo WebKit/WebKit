@@ -208,7 +208,7 @@ private:
     template<typename ChecksFunctor>
     bool handleTypedArrayConstructor(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
-    bool handleConstantInternalFunction(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, const ChecksFunctor& insertChecks);
+    bool handleConstantInternalFunction(Node* callTargetNode, int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, const ChecksFunctor& insertChecks);
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, const InferredType::Descriptor&, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, const InferredType::Descriptor&, NodeType = GetByOffset);
 
@@ -1588,7 +1588,7 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
     // calling LoadVarargs twice.
     if (!InlineCallFrame::isVarargs(kind)) {
         if (InternalFunction* function = callee.internalFunction()) {
-            if (handleConstantInternalFunction(resultOperand, function, registerOffset, argumentCountIncludingThis, specializationKind, insertChecksWithAccounting)) {
+            if (handleConstantInternalFunction(callTargetNode, resultOperand, function, registerOffset, argumentCountIncludingThis, specializationKind, insertChecksWithAccounting)) {
                 RELEASE_ASSERT(didInsertChecks);
                 addToGraph(Phantom, callTargetNode);
                 emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
@@ -2420,12 +2420,21 @@ bool ByteCodeParser::handleTypedArrayConstructor(
 
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleConstantInternalFunction(
-    int resultOperand, InternalFunction* function, int registerOffset,
+    Node* callTargetNode, int resultOperand, InternalFunction* function, int registerOffset,
     int argumentCountIncludingThis, CodeSpecializationKind kind, const ChecksFunctor& insertChecks)
 {
     if (verbose)
         dataLog("    Handling constant internal function ", JSValue(function), "\n");
-    
+
+    if (kind == CodeForConstruct) {
+        Node* newTargetNode = get(virtualRegisterForArgument(0, registerOffset));
+        // We cannot handle the case where new.target != callee (i.e. a construct from a super call) because we
+        // don't know what the prototype of the constructed object will be.
+        // FIXME: If we have inlined super calls up to the call site, however, we should be able to figure out the structure. https://bugs.webkit.org/show_bug.cgi?id=152700
+        if (newTargetNode != callTargetNode)
+            return false;
+    }
+
     if (function->classInfo() == ArrayConstructor::info()) {
         if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
             return false;
@@ -2437,7 +2446,6 @@ bool ByteCodeParser::handleConstantInternalFunction(
             return true;
         }
         
-        // FIXME: Array constructor should use "this" as newTarget.
         for (int i = 1; i < argumentCountIncludingThis; ++i)
             addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
         set(VirtualRegister(resultOperand),
