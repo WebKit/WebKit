@@ -38,7 +38,7 @@ static inline RetainPtr<CFStringRef> textBreakLocalePreference()
 
 static RetainPtr<CFStringRef> topLanguagePreference()
 {
-    NSArray *languagesArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"AppleLanguages"];
+    NSArray *languagesArray = [NSLocale preferredLanguages];
     if (!languagesArray)
         return 0;
     if ([languagesArray count] < 1)

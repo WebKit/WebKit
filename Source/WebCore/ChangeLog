@@ -1,3 +1,18 @@
+2016-01-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        TextBreakIterator uses an internal implementation detail of NSLocale
+        https://bugs.webkit.org/show_bug.cgi?id=152715
+        <rdar://problem/23775121>
+
+        Reviewed by Tim Horton.
+
+        Instead of directly querying AppleLanguages, we should use [NSLocale preferredLanguages].
+
+        No new tests because there is no behavior change.
+
+        * platform/text/mac/TextBreakIteratorInternalICUMac.mm:
+        (WebCore::topLanguagePreference):
+
 2016-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSCustomXPathNSResolver::lookupNamespaceURI Console Message should render with a column number
