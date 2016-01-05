@@ -1108,7 +1108,7 @@ WebInspector.NativePrototypeFunctionParameters = {
     },
 
     Navigator: {
-        webkitGetUserMedia: "options, successCallback, [errorCallback]",
+        webkitGetUserMedia: "options, successCallback, errorCallback",
         __proto__: null,
     },
 

@@ -1,3 +1,13 @@
+2016-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Mark last parameter of webkitGetUserMedia as non-optional to match updated IDL
+        https://bugs.webkit.org/show_bug.cgi?id=152702
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        New IDL, and tests, show that the error callback is non-optional.
+
 2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add context menu items to CSS selectors to auto-generate pseudo selectors
