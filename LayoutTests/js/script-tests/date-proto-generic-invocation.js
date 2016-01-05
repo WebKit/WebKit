@@ -1,4 +1,4 @@
-description("This test verifies that the functions of the Date prototype object are not generic, and the prototype is a plain object, as documented in ECMA-262 rev6 section 20.3.4 Properties of the Date Prototype Object.");
+description("This test verifies that the functions of the Date prototype object are not generic, as documented in ECMA-262 rev3 section 15.9.5 Properties of the Date Prototype Object.");
 
 var functionNames = [
         "Date.prototype.toString",
@@ -38,11 +38,3 @@ for (var i = 0; i < functionNames.length; i++) {
     eval(testFunctionName + " = " + functionNames[i]);
     shouldThrow(testFunctionName + "()", '"TypeError: Type error"');
 }
-for (var i = 0; i < functionNames.length; i++) {
-    shouldThrow(functionNames[i] + "()", '"TypeError: Type error"');
-}
-
-shouldBeTrue("new Date instanceof Date");
-shouldBe("(new Date).__proto__", "Date.prototype");
-shouldBeFalse("(new Date).__proto__ instanceof Date");
-shouldBeFalse("Date.prototype instanceof Date");

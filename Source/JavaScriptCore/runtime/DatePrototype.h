@@ -27,12 +27,12 @@ namespace JSC {
 
 class ObjectPrototype;
 
-class DatePrototype : public JSNonFinalObject {
+class DatePrototype : public DateInstance {
 private:
     DatePrototype(VM&, Structure*);
 
 public:
-    typedef JSNonFinalObject Base;
+    typedef DateInstance Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     static DatePrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
