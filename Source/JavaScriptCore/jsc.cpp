@@ -1889,6 +1889,7 @@ void CommandLine::parseArguments(int argc, char** argv)
     bool needToDumpOptions = false;
     bool needToExit = false;
 
+    bool hasBadJSCOptions = false;
     for (; i < argc; ++i) {
         const char* arg = argv[i];
         if (!strcmp(arg, "-f")) {
@@ -1953,15 +1954,21 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
 
         // See if the -- option is a JSC VM option.
-        if (strstr(arg, "--") == arg && JSC::Options::setOption(&arg[2])) {
-            // The arg was recognized as a VM option and has been parsed.
-            continue; // Just continue with the next arg. 
+        if (strstr(arg, "--") == arg) {
+            if (!JSC::Options::setOption(&arg[2])) {
+                hasBadJSCOptions = true;
+                dataLog("ERROR: invalid option: ", arg, "\n");
+            }
+            continue;
         }
 
         // This arg is not recognized by the VM nor by jsc. Pass it on to the
         // script.
         m_scripts.append(Script(true, argv[i]));
     }
+
+    if (hasBadJSCOptions && JSC::Options::validateOptions())
+        CRASH();
 
     if (m_scripts.isEmpty())
         m_interactive = true;

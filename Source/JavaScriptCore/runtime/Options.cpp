@@ -39,6 +39,10 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(COCOA)
+#include <crt_externs.h>
+#endif
+
 #if OS(WINDOWS)
 #include "MacroAssemblerX86.h"
 #endif
@@ -376,10 +380,25 @@ void Options::initialize()
             // Allow environment vars to override options if applicable.
             // The evn var should be the name of the option prefixed with
             // "JSC_".
+#if PLATFORM(COCOA)
+            bool hasBadOptions = false;
+            for (char** envp = *_NSGetEnviron(); *envp; envp++) {
+                const char* env = *envp;
+                if (!strncmp("JSC_", env, 4)) {
+                    if (!Options::setOption(&env[4])) {
+                        dataLog("ERROR: invalid option: ", *envp, "\n");
+                        hasBadOptions = true;
+                    }
+                }
+            }
+            if (hasBadOptions && Options::validateOptions())
+                CRASH();
+#else // PLATFORM(COCOA)
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, description_)      \
             overrideOptionWithHeuristic(name_(), "JSC_" #name_);
             JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
+#endif // PLATFORM(COCOA)
 
 #define FOR_EACH_OPTION(aliasedName_, unaliasedName_, equivalence_) \
             overrideAliasedOptionWithHeuristic("JSC_" #aliasedName_);

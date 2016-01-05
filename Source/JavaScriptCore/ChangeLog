@@ -1,3 +1,27 @@
+2015-12-24  Mark Lam  <mark.lam@apple.com>
+
+        Re-landing: Add validation of JSC options to catch typos.
+        https://bugs.webkit.org/show_bug.cgi?id=152549
+
+        Reviewed by Benjamin Poulain.
+
+        1. If a JSC_xxx option is found and xxx is not a valid option, we will now log
+           an error message.
+        2. If a --xxx jsc option is specified, but xxx is not a valid option, we will
+           now log an error message.
+        3. Added JSC_validateOptions, which if set to true will cause the VM to crash if
+           an invalid option was seen during options parsing.
+
+        In this version for re-landing, I removed the change where I disallowed -- options
+        after the script name.  Apparently, we have some test harnesses that do append the
+        -- options after the script name.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+
 2016-01-05  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should do ArithNegate
