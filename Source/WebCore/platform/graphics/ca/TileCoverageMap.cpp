@@ -34,6 +34,7 @@ namespace WebCore {
 
 TileCoverageMap::TileCoverageMap(const TileController& controller)
     : m_controller(controller)
+    , m_updateTimer(*this, &TileCoverageMap::updateTimerFired)
     , m_layer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeSimpleLayer, this))
     , m_visibleRectIndicatorLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
     , m_coverageRectIndicatorLayer(*controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr))
@@ -46,10 +47,12 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     m_layer.get().setPosition(FloatPoint(2, 2));
     m_layer.get().setContentsScale(m_controller.deviceScaleFactor());
 
+    m_visibleRectIndicatorLayer.get().setName("visible rect indicator");
     m_visibleRectIndicatorLayer.get().setBorderWidth(2);
     m_visibleRectIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
     m_visibleRectIndicatorLayer.get().setBorderColor(Color(255, 0, 0));
     
+    m_coverageRectIndicatorLayer.get().setName("coverage indicator");
     m_coverageRectIndicatorLayer.get().setBorderWidth(2);
     m_coverageRectIndicatorLayer.get().setAnchorPoint(FloatPoint3D());
     m_coverageRectIndicatorLayer.get().setBorderColor(Color(0, 0, 128));
@@ -63,6 +66,17 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
 TileCoverageMap::~TileCoverageMap()
 {
     m_layer.get().setOwner(nullptr);
+}
+
+void TileCoverageMap::setNeedsUpdate()
+{
+    if (!m_updateTimer.isActive())
+        m_updateTimer.startOneShot(0);
+}
+
+void TileCoverageMap::updateTimerFired()
+{
+    update();
 }
 
 void TileCoverageMap::update()

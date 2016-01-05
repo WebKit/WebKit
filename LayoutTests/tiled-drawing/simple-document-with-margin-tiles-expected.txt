@@ -10,7 +10,7 @@
       (bounds 1208.00 2021.00)
       (contentsOpaque 1)
       (visible rect 0.00, 0.00 785.00 x 585.00)
-      (coverage rect -512.00, -512.00 1809.00 x 1609.00)
+      (coverage rect -392.50, -512.00 1570.00 x 1755.00)
       (intersects coverage rect 1)
       (contentsScale 1.00)
       (tile cache coverage -512, -512 2048 x 2048)

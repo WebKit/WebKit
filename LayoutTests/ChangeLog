@@ -1,3 +1,20 @@
+2016-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Adjust tile coverage with margin tiles, and tidy up the indicator
+        https://bugs.webkit.org/show_bug.cgi?id=152742
+
+        Reviewed by Beth Dakin.
+
+        New baselines. simple-document-with-margin-tiles.html needs to wait for over 0.5s
+        for the FrameView::enableSpeculativeTilingIfNeeded() timer to fire before
+        dumping coverage (ouch).
+
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-expected.txt:
+        * tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler-expected.txt:
+        * tiled-drawing/simple-document-with-margin-tiles.html:
+
 2016-01-05  Brady Eidson  <beidson@apple.com>
 
         IDB test gardening.

@@ -106,7 +106,7 @@ public:
     virtual int leftMarginWidth() const override;
     virtual int rightMarginWidth() const override;
     virtual TileCoverage tileCoverage() const override { return m_tileCoverage; }
-    virtual FloatRect computeTileCoverageRect(const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const override;
+    virtual void adjustTileCoverageRect(FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const override;
     virtual bool unparentsOffscreenTiles() const override { return m_unparentsOffscreenTiles; }
     virtual bool scrollingPerformanceLoggingEnabled() const override { return m_scrollingPerformanceLoggingEnabled; }
 

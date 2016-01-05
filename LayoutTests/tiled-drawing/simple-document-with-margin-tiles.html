@@ -13,16 +13,26 @@
         }
     </style>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
         function doTest()
         {
-            if (window.internals) {
+            if (window.internals)
                 window.internals.settings.setBackgroundShouldExtendBeyondPage(true);
-                document.getElementById('layers').innerText = internals.layerTreeAsText(document,
-                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
-            }
+
+            // FrameView::enableSpeculativeTilingIfNeeded() uses a 0.5s timer to enable speculative tiling.
+            window.setTimeout(function() {
+                if (window.internals) {
+                    document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                        internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+                }
+                
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 550);
         }
         window.addEventListener('load', doTest, false);
     </script>

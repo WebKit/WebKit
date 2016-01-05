@@ -1,3 +1,39 @@
+2016-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Adjust tile coverage with margin tiles, and tidy up the indicator
+        https://bugs.webkit.org/show_bug.cgi?id=152742
+
+        Reviewed by Beth Dakin.
+
+        The tile coverage rect was unfeasibly large when margin tiles are present, and
+        could be bigger than the layer itself, making the indicator look odd.
+
+        Fix by improving the logic in TileController::adjustTileCoverageRect(): this
+        now first extends the visible rect for scrolling, and then constrains it
+        within the bounds with margin padding. It also unites with the passed-in
+        coverageRect, ensuring that we don't lose information about overhang for
+        margin tile coverage.
+
+        Second, update the tiled scrolling indicator when the visible rect changes,
+        and coalesce the map updates on a timer.
+
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::adjustCoverageRect):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setVisibleRect):
+        (WebCore::TileController::setTiledScrollingIndicatorPosition):
+        (WebCore::expandRectWithinRect):
+        (WebCore::TileController::adjustTileCoverageRect):
+        (WebCore::TileController::updateTileCoverageMap):
+        (WebCore::TileController::computeTileCoverageRect): Deleted.
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        (WebCore::TileCoverageMap::setNeedsUpdate):
+        (WebCore::TileCoverageMap::updateTimerFired):
+        * platform/graphics/ca/TileCoverageMap.h:
+
 2016-01-05  Antti Koivisto  <antti@apple.com>
 
         Remove selector filter update calls from Element child parsing callbacks

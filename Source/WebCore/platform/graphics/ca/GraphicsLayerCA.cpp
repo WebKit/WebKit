@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "GraphicsLayerFactory.h"
 #include "Image.h"
+#include "Logging.h"
 #include "PlatformCAFilters.h"
 #include "PlatformCALayer.h"
 #include "RotateTransformOperation.h"
@@ -1243,7 +1244,7 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
     // ways of computing coverage.
     switch (type()) {
     case Type::PageTiledBacking:
-        coverageRect = tiledBacking()->computeTileCoverageRect(size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
+        tiledBacking()->adjustTileCoverageRect(coverageRect, size(), oldVisibleRect, rects.visibleRect, pageScaleFactor() * deviceScaleFactor());
         break;
     case Type::Normal:
         if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)

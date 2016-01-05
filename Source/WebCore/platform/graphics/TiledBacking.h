@@ -110,7 +110,7 @@ public:
     virtual void setTileCoverage(TileCoverage) = 0;
     virtual TileCoverage tileCoverage() const = 0;
 
-    virtual FloatRect computeTileCoverageRect(const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const = 0;
+    virtual void adjustTileCoverageRect(FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) const = 0;
 
     virtual IntSize tileSize() const = 0;
 
