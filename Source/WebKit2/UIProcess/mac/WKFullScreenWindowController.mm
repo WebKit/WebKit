@@ -373,8 +373,15 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 
 - (void)finishedExitFullScreenAnimation:(bool)completed
 {
-    if (_fullScreenState != ExitingFullScreen)
-        return;
+    if (_fullScreenState != ExitingFullScreen) {
+        // If we are not currently in the ExitingFullScreen state, this notification is unexpected, meaning
+        // fullscreen was exited without being initiated by WebKit. Do not return early, but continue to
+        // clean up our state by calling those methods which would have been called by -exitFullscreen,
+        // and proceed to close the fullscreen window.
+        [_webViewPlaceholder setTarget:nil];
+        [self _manager]->setAnimatingFullScreen(false);
+        [self _manager]->willExitFullScreen();
+    }
     _fullScreenState = NotInFullScreen;
 
     // Screen updates to be re-enabled in completeFinishExitFullScreenAnimationAfterRepaint.

@@ -1,3 +1,17 @@
+2016-01-05  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Exiting fullscreen via Mission Control leaves fullcreen window frontmost on desktop
+        https://bugs.webkit.org/show_bug.cgi?id=152733
+
+        Reviewed by Eric Carlson.
+
+        Rather than ignore -windowDidExitFullScreen: notifications when fullscreen exit was
+        not initiated by WebKit (and the -window:startCustomAnimationToEnterFullScreenWithDuration:
+        method was not called), continue to exit fullscreen normally.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+
 2016-01-05  Alex Christensen  <achristensen@webkit.org>
 
         Clean up download code
