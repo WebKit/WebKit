@@ -1,3 +1,14 @@
+2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: add context menu items to switch CSS color property value syntax between RGB, HSL, etc
+        https://bugs.webkit.org/show_bug.cgi?id=151918
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/color-expected.html:
+        * inspector/model/color.html:
+        Changed "nickname" to "keyword".
+
 2016-01-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Memory indexes aren't deleted when their owning memory object stores are deleted.

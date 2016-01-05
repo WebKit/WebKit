@@ -52,17 +52,17 @@ PASS: 'hsla(999, 999%, 999%, 999)' was the expected 'HSLA' format
 PASS: 'hsla( 0 , 0% , 50% , 0.5 )' should be detected
 PASS: 'hsla( 0 , 0% , 50% , 0.5 )' was the expected 'HSLA' format
 PASS: 'blue' should be detected
-PASS: 'blue' was the expected 'Nickname' format
+PASS: 'blue' was the expected 'Keyword' format
 PASS: 'BLuE' should be detected
-PASS: 'BLuE' was the expected 'Nickname' format
+PASS: 'BLuE' was the expected 'Keyword' format
 PASS: 'midnightblue' should be detected
-PASS: 'midnightblue' was the expected 'Nickname' format
+PASS: 'midnightblue' was the expected 'Keyword' format
 PASS: 'royalblue' should be detected
-PASS: 'royalblue' was the expected 'Nickname' format
+PASS: 'royalblue' was the expected 'Keyword' format
 PASS: 'steelblue' should be detected
-PASS: 'steelblue' was the expected 'Nickname' format
+PASS: 'steelblue' was the expected 'Keyword' format
 PASS: 'transparent' should be detected
-PASS: 'transparent' was the expected 'Nickname' format
+PASS: 'transparent' was the expected 'Keyword' format
 
 PASS: ' #000 ' should not be detected
 PASS: '#rgb' should not be detected
@@ -80,16 +80,26 @@ PASS: 'superblue' should not be detected
 -- Running test case: WebInspector.Color properties
 PASS: 'red' should have alpha of 1.
 PASS: 'red' should be simple.
+PASS: 'red' should be a keyword.
 PASS: 'red' has rgb of [255, 0, 0].
 PASS: 'red' has rgba of [255, 0, 0, 1].
 PASS: 'red' has hsl of [0, 100, 50].
 PASS: 'red' has hsla of [0, 100, 50, 1].
+PASS: 'red' should be serializable as a short Hex
 PASS: 'transparent' should have alpha of 0.
-PASS: 'transparent' should be not be simple.
+PASS: 'transparent' should not be simple.
+PASS: 'transparent' should be a keyword.
 PASS: 'transparent' has rgb of [0, 0, 0].
 PASS: 'transparent' has rgba of [0, 0, 0, 0].
 PASS: 'transparent' has hsl of [0, 0, 0].
 PASS: 'transparent' has hsla of [0, 0, 0, 0].
+PASS: 'transparent' should be serializable as a short Hex
+PASS: '#11122233' should not have alpha of 0.
+PASS: '#11122233' should be not be simple.
+PASS: '#11122233' should not be a keyword.
+PASS: '#11122233' has rgba of [17, 18, 34, 0.2].
+PASS: '#11122233' has hsla of [236, 33, 10, 0.2].
+PASS: '#11122233' should not be serializable as a short Hex
 
 -- Running test case: WebInspector.Color.prototype.nextFormat
 PASS: All format phases of 'transparent' should be as expected.
@@ -99,7 +109,7 @@ PASS: All format phases of 'rgba(100, 150, 200, 0.5)' should be as expected.
 
 -- Running test case: WebInspector.Color.prototype.toString
 PASS: Color as 'Original' should be 'RED'
-PASS: Color as 'Nickname' should be 'red'
+PASS: Color as 'Keyword' should be 'red'
 PASS: Color as 'Short HEX' should be '#f00'
 PASS: Color as 'HEX' should be '#ff0000'
 PASS: Color as 'Short HEX with Alpha' should be '#f00f'
@@ -109,7 +119,7 @@ PASS: Color as 'RGBA' should be 'rgba(255, 0, 0, 1)'
 PASS: Color as 'HSL' should be 'hsl(0, 100%, 50%)'
 PASS: Color as 'HSLA' should be 'hsla(0, 100%, 50%, 1)'
 PASS: Color as 'Original' should be 'rgba(100, 200, 255, 0.5)'
-PASS: Color as 'Nickname' should be 'rgba(100, 200, 255, 0.5)'
+PASS: Color as 'Keyword' should be 'rgba(100, 200, 255, 0.5)'
 PASS: Color as 'Short HEX' should be 'rgba(100, 200, 255, 0.5)'
 PASS: Color as 'HEX' should be 'rgba(100, 200, 255, 0.5)'
 PASS: Color as 'Short HEX with Alpha' should be '#64c8ff80'

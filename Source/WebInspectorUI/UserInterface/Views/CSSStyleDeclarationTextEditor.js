@@ -876,24 +876,19 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     {
         function update()
         {
-            var range = typeof lineNumber === "number" ? new WebInspector.TextRange(lineNumber, 0, lineNumber + 1, 0) : null;
+            let range = typeof lineNumber === "number" ? new WebInspector.TextRange(lineNumber, 0, lineNumber + 1, 0) : null;
 
             // Look for color strings and add swatches in front of them.
             createCodeMirrorColorTextMarkers(this._codeMirror, range, function(marker, color, colorString) {
-                var swatchElement = document.createElement("span");
-                swatchElement.title = WebInspector.UIString("Click to select a color. Shift-click to switch color formats.");
-                swatchElement.className = WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName;
-                swatchElement.addEventListener("click", this._colorSwatchClicked.bind(this));
+                let swatch = new WebInspector.ColorSwatch(color, this._codeMirror.getOption("readOnly"));
+                swatch.addEventListener(WebInspector.ColorSwatch.Event.ColorChanged, this._colorSwatchColorChanged, this);
 
-                var swatchInnerElement = document.createElement("span");
-                swatchInnerElement.style.backgroundColor = colorString;
-                swatchElement.appendChild(swatchInnerElement);
+                let codeMirrorTextMarker = marker.codeMirrorTextMarker;
+                let codeMirrorTextMarkerRange = codeMirrorTextMarker.find();
+                this._codeMirror.setUniqueBookmark(codeMirrorTextMarkerRange.from, swatch.element);
 
-                var codeMirrorTextMarker = marker.codeMirrorTextMarker;
-                this._codeMirror.setUniqueBookmark(codeMirrorTextMarker.find().from, swatchElement);
-
-                swatchInnerElement.__colorTextMarker = codeMirrorTextMarker;
-                swatchInnerElement.__color = color;
+                swatch.__colorTextMarker = codeMirrorTextMarker;
+                swatch.__colorTextMarkerRange = codeMirrorTextMarkerRange;
             }.bind(this));
         }
 
@@ -1324,107 +1319,68 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._codeMirror.operation(update.bind(this));
     }
 
-    _colorSwatchClicked(event)
+    _colorSwatchColorChanged(event)
     {
-        if (this._colorPickerPopover)
+        let swatch = event && event.target;
+        console.assert(swatch);
+        if (!swatch)
             return;
 
-        var swatch = event.target;
-
-        var color = swatch.__color;
-        console.assert(color);
-        if (!color)
+        let colorString = event && event.data && event.data.color && event.data.color.toString();
+        console.assert(colorString);
+        if (!colorString)
             return;
 
-        var colorTextMarker = swatch.__colorTextMarker;
-        console.assert(colorTextMarker);
-        if (!colorTextMarker)
-            return;
-
-        var range = colorTextMarker.find();
+        let colorTextMarker = swatch.__colorTextMarker;
+        let range = swatch.__colorTextMarkerRange;
         console.assert(range);
         if (!range)
             return;
 
-        function updateCodeMirror(newColorText)
+        function update()
         {
-            function update()
-            {
-                // The original text marker might have been cleared by a style update,
-                // in this case we need to find the new color text marker so we know
-                // the right range for the new style color text.
-                if (!colorTextMarker || !colorTextMarker.find()) {
-                    colorTextMarker = null;
+            // The original text marker might have been cleared by a style update,
+            // in this case we need to find the new color text marker so we know
+            // the right range for the new style color text.
+            if (!colorTextMarker || !colorTextMarker.find()) {
+                colorTextMarker = null;
 
-                    var marks = this._codeMirror.findMarksAt(range.from);
-                    if (!marks.length)
-                        return;
+                let marks = this._codeMirror.findMarksAt(range.from);
+                if (!marks.length)
+                    return;
 
-                    for (var i = 0; i < marks.length; ++i) {
-                        var mark = marks[i];
-                        if (WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(mark).type !== WebInspector.TextMarker.Type.Color)
-                            continue;
-                        colorTextMarker = mark;
-                        break;
-                    }
+                for (let mark of marks) {
+                    if (WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(mark).type !== WebInspector.TextMarker.Type.Color)
+                        continue;
+                    colorTextMarker = mark;
+                    break;
                 }
-
-                if (!colorTextMarker)
-                    return;
-
-                // Sometimes we still might find a stale text marker with findMarksAt.
-                var newRange = colorTextMarker.find();
-                if (!newRange)
-                    return;
-
-                range = newRange;
-
-                colorTextMarker.clear();
-
-                this._codeMirror.replaceRange(newColorText, range.from, range.to);
-
-                // The color's text format could have changed, so we need to update the "range"
-                // variable to anticipate a different "range.to" property.
-                range.to.ch = range.from.ch + newColorText.length;
-
-                colorTextMarker = this._codeMirror.markText(range.from, range.to);
-
-                swatch.__colorTextMarker = colorTextMarker;
             }
 
-            this._codeMirror.operation(update.bind(this));
-        }
-
-        if (event.shiftKey || this._codeMirror.getOption("readOnly")) {
-            var nextFormat = color.nextFormat();
-            console.assert(nextFormat);
-            if (!nextFormat)
+            if (!colorTextMarker)
                 return;
-            color.format = nextFormat;
 
-            var newColorText = color.toString();
+            // Sometimes we still might find a stale text marker with findMarksAt.
+            let newRange = colorTextMarker.find();
+            if (!newRange)
+                return;
 
-            // Ignore the change so we don't commit the format change. However, any future user
-            // edits will commit the color format.
-            this._ignoreCodeMirrorContentDidChangeEvent = true;
-            updateCodeMirror.call(this, newColorText);
-            delete this._ignoreCodeMirrorContentDidChangeEvent;
-        } else {
-            this._colorPickerPopover = new WebInspector.Popover(this);
+            range = newRange;
 
-            var colorPicker = new WebInspector.ColorPicker;
+            colorTextMarker.clear();
 
-            colorPicker.addEventListener(WebInspector.ColorPicker.Event.ColorChanged, function(event) {
-                updateCodeMirror.call(this, event.data.color.toString());
-            }.bind(this));
+            this._codeMirror.replaceRange(colorString, range.from, range.to);
 
-            var bounds = WebInspector.Rect.rectFromClientRect(swatch.getBoundingClientRect());
+            // The color's text format could have changed, so we need to update the "range"
+            // variable to anticipate a different "range.to" property.
+            range.to.ch = range.from.ch + colorString.length;
 
-            this._colorPickerPopover.content = colorPicker.element;
-            this._colorPickerPopover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_X]);
+            colorTextMarker = this._codeMirror.markText(range.from, range.to);
 
-            colorPicker.color = color;
+            swatch.__colorTextMarker = colorTextMarker;
         }
+
+        this._codeMirror.operation(update.bind(this));
     }
 
     _cubicBezierMarkerClicked(event)
@@ -1815,7 +1771,6 @@ WebInspector.CSSStyleDeclarationTextEditor.Event = {
 
 WebInspector.CSSStyleDeclarationTextEditor.StyleClassName = "css-style-text-editor";
 WebInspector.CSSStyleDeclarationTextEditor.ReadOnlyStyleClassName = "read-only";
-WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName = "color-swatch";
 WebInspector.CSSStyleDeclarationTextEditor.BezierEditorClassName = "cubic-bezier-marker";
 WebInspector.CSSStyleDeclarationTextEditor.CheckboxPlaceholderElementStyleClassName = "checkbox-placeholder";
 WebInspector.CSSStyleDeclarationTextEditor.EditingLineStyleClassName = "editing-line";

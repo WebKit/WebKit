@@ -1,3 +1,76 @@
+2016-01-04  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: add context menu items to switch CSS color property value syntax between RGB, HSL, etc
+        https://bugs.webkit.org/show_bug.cgi?id=151918
+
+        Reviewed by Timothy Hatcher.
+
+        Created a ColorSwatch class to hold all functionality for color swatches,
+        allowing all context menu and popover events to be centralized.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Models/Color.js:
+        Changed all 'var' to 'let' and 'nickname' to 'keyword' as per the spec.
+        Mostly mechanical changes.
+
+        (WebInspector.Color.prototype.isKeyword):
+        Looks at the RGB values of each keyword to see if the current color
+        matches any of them.
+
+        (WebInspector.Color.prototype.canBeSerializedAsShortHEX):
+        Fixed to account for alpha values, since HEXAlpha is now supported.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch): Deleted.
+        (@media (-webkit-max-device-pixel-ratio: 1)): Deleted.
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch > span): Deleted.
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch:hover > span): Deleted.
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch:active > span): Deleted.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchColorChanged.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchColorChanged):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchClicked.updateCodeMirror.update): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchClicked.updateCodeMirror): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchClicked): Deleted.
+
+        * UserInterface/Views/ColorSwatch.css: Copied from Source/WebInspectorUI/UserInterface/Views/VisualStyleColorPicker.css.
+        (.color-swatch):
+        (@media (-webkit-max-device-pixel-ratio: 1)):
+        (.color-swatch > span):
+        (.color-swatch:hover > span):
+        (.color-swatch:active > span):
+
+        * UserInterface/Views/ColorSwatch.js: Added.
+        (WebInspector.ColorSwatch):
+        (WebInspector.ColorSwatch.prototype.get element):
+        (WebInspector.ColorSwatch.prototype.set color):
+        (WebInspector.ColorSwatch.prototype.get color):
+        (WebInspector.ColorSwatch.prototype._colorSwatchClicked):
+        (WebInspector.ColorSwatch.prototype._colorPickerColorDidChange):
+        (WebInspector.ColorSwatch.prototype._handleContextMenuEvent):
+        (WebInspector.ColorSwatch.prototype._getNextValidHEXFormat.hexMatchesCurrentColor):
+        (WebInspector.ColorSwatch.prototype._getNextValidHEXFormat):
+        Loops through the list of HEX formats to find the first format that is valid
+        for the current color in the list after the current format.
+
+        (WebInspector.ColorSwatch.prototype._updateSwatch):
+
+        * UserInterface/Views/VisualStyleColorPicker.css:
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch > span):
+
+        * UserInterface/Views/VisualStyleColorPicker.js:
+        (WebInspector.VisualStyleColorPicker):
+        (WebInspector.VisualStyleColorPicker.prototype._colorSwatchColorChanged):
+        (WebInspector.VisualStyleColorPicker.prototype._updateColorSwatch):
+        (WebInspector.VisualStyleColorPicker.prototype._colorSwatchClicked): Deleted.
+        (WebInspector.VisualStyleColorPicker.prototype._colorPickerColorDidChange): Deleted.
+
 2016-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Mark last parameter of webkitGetUserMedia as non-optional to match updated IDL

@@ -9,8 +9,8 @@ function test()
         switch (format) {
         case WebInspector.Color.Format.Original:
             return "Original";
-        case WebInspector.Color.Format.Nickname:
-            return "Nickname";
+        case WebInspector.Color.Format.Keyword:
+            return "Keyword";
         case WebInspector.Color.Format.HEX:
             return "HEX";
         case WebInspector.Color.Format.ShortHEX:
@@ -80,12 +80,12 @@ function test()
             testGood("hsla(999, 999%, 999%, 999)", WebInspector.Color.Format.HSLA);
             testGood("hsla( 0 , 0% , 50% , 0.5 )", WebInspector.Color.Format.HSLA);
 
-            testGood("blue", WebInspector.Color.Format.Nickname);
-            testGood("BLuE", WebInspector.Color.Format.Nickname);
-            testGood("midnightblue", WebInspector.Color.Format.Nickname);
-            testGood("royalblue", WebInspector.Color.Format.Nickname);
-            testGood("steelblue", WebInspector.Color.Format.Nickname);
-            testGood("transparent", WebInspector.Color.Format.Nickname);
+            testGood("blue", WebInspector.Color.Format.Keyword);
+            testGood("BLuE", WebInspector.Color.Format.Keyword);
+            testGood("midnightblue", WebInspector.Color.Format.Keyword);
+            testGood("royalblue", WebInspector.Color.Format.Keyword);
+            testGood("steelblue", WebInspector.Color.Format.Keyword);
+            testGood("transparent", WebInspector.Color.Format.Keyword);
 
             InspectorTest.log("");
 
@@ -100,7 +100,7 @@ function test()
             testBad("rgba(255, 255, 255, 0.5, 1)"); // extra values
             testBad("hsl(0, 0%, 50%, 1)"); // extra value
             testBad("hsla(0, 0%, 50%, 1, 2)"); // extra values
-            testBad("superblue"); // not a nickname
+            testBad("superblue"); // not a keyword
 
             // FIXME: currentColor?
             // FIXME: Should we consider missing %s as bad? Currently we just strip them.
@@ -132,18 +132,30 @@ function test()
             color = WebInspector.Color.fromString("red");
             InspectorTest.expectThat(color.alpha === 1, "'red' should have alpha of 1.");
             InspectorTest.expectThat(color.simple === true, "'red' should be simple.");
+            InspectorTest.expectThat(color.isKeyword() === true, "'red' should be a keyword.");
             InspectorTest.expectThat(shallowEqual(color.rgb, [255, 0, 0]), "'red' has rgb of [255, 0, 0].");
             InspectorTest.expectThat(shallowEqual(color.rgba, [255, 0, 0, 1]), "'red' has rgba of [255, 0, 0, 1].");
             InspectorTest.expectThat(shallowEqual(color.hsl, [0, 100, 50]), "'red' has hsl of [0, 100, 50].");
             InspectorTest.expectThat(shallowEqual(color.hsla, [0, 100, 50, 1]), "'red' has hsla of [0, 100, 50, 1].");
+            InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === true, "'red' should be serializable as a short Hex");
 
             color = WebInspector.Color.fromString("transparent");
             InspectorTest.expectThat(color.alpha === 0, "'transparent' should have alpha of 0.");
-            InspectorTest.expectThat(color.simple === false, "'transparent' should be not be simple.");
+            InspectorTest.expectThat(color.simple === false, "'transparent' should not be simple.");
+            InspectorTest.expectThat(color.isKeyword() === true, "'transparent' should be a keyword.");
             InspectorTest.expectThat(shallowEqual(color.rgb, [0, 0, 0]), "'transparent' has rgb of [0, 0, 0].");
             InspectorTest.expectThat(shallowEqual(color.rgba, [0, 0, 0, 0]), "'transparent' has rgba of [0, 0, 0, 0].");
             InspectorTest.expectThat(shallowEqual(color.hsl, [0, 0, 0]), "'transparent' has hsl of [0, 0, 0].");
             InspectorTest.expectThat(shallowEqual(color.hsla, [0, 0, 0, 0]), "'transparent' has hsla of [0, 0, 0, 0].");
+            InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === true, "'transparent' should be serializable as a short Hex");
+
+            color = WebInspector.Color.fromString("#11122233");
+            InspectorTest.expectThat(color.alpha !== 0, "'#11122233' should not have alpha of 0.");
+            InspectorTest.expectThat(color.simple === false, "'#11122233' should be not be simple.");
+            InspectorTest.expectThat(color.isKeyword() === false, "'#11122233' should not be a keyword.");
+            InspectorTest.expectThat(shallowEqual(color.rgba, [17, 18, 34, 0.2]), "'#11122233' has rgba of [17, 18, 34, 0.2].");
+            InspectorTest.expectThat(shallowEqual(color.hsla, [236, 33, 10, 0.2]), "'#11122233' has hsla of [236, 33, 10, 0.2].");
+            InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11122233' should not be serializable as a short Hex");
 
             resolve();
         }
@@ -172,7 +184,7 @@ function test()
             test("transparent", [
                 WebInspector.Color.Format.RGBA,
                 WebInspector.Color.Format.HSLA,
-                WebInspector.Color.Format.Nickname,
+                WebInspector.Color.Format.Keyword,
                 WebInspector.Color.Format.ShortHEXAlpha,
                 WebInspector.Color.Format.HEXAlpha,
                 WebInspector.Color.Format.Original,
@@ -182,13 +194,13 @@ function test()
             test("red", [
                 WebInspector.Color.Format.RGB,
                 WebInspector.Color.Format.HSL,
-                WebInspector.Color.Format.Nickname,
+                WebInspector.Color.Format.Keyword,
                 WebInspector.Color.Format.ShortHEX,
                 WebInspector.Color.Format.HEX,
                 WebInspector.Color.Format.Original,
             ]);
 
-            // No short hex or nickname.
+            // No short hex or keyword.
             test("rgb(100, 150, 200)", [
                 WebInspector.Color.Format.RGB,
                 WebInspector.Color.Format.HSL,
@@ -196,7 +208,7 @@ function test()
                 WebInspector.Color.Format.Original,
             ]);
 
-            // No short hex alpha or nickname.
+            // No short hex alpha or keyword.
             test("rgba(100, 150, 200, 0.5)", [
                 WebInspector.Color.Format.RGBA,
                 WebInspector.Color.Format.HSLA,
@@ -222,7 +234,7 @@ function test()
             // A color with all formats.
             color = WebInspector.Color.fromString("RED");
             test("RED", WebInspector.Color.Format.Original);
-            test("red", WebInspector.Color.Format.Nickname);
+            test("red", WebInspector.Color.Format.Keyword);
             test("#f00", WebInspector.Color.Format.ShortHEX);
             test("#ff0000", WebInspector.Color.Format.HEX);
             test("#f00f", WebInspector.Color.Format.ShortHEXAlpha);
@@ -235,7 +247,7 @@ function test()
             // A color which cannot be some formats, those fallback to something else.
             color = WebInspector.Color.fromString("rGbA(  100, 200, 255, 0.5  )");
             test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.Original); // Original text ignored for some formats.
-            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.Nickname); // fallback (rgba)
+            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.Keyword); // fallback (rgba)
             test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.ShortHEX); // fallback (rgba)
             test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.HEX); // fallback (rgba)
             test("#64c8ff80", WebInspector.Color.Format.ShortHEXAlpha); // fallback (hex alpha)
