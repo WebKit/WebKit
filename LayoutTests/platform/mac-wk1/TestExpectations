@@ -58,6 +58,8 @@ webkit.org/b/152487 inspector/debugger/command-line-api-exception-nested-catch.h
 
 webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass Timeout ]
 
+webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pass Crash ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
