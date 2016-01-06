@@ -1,3 +1,21 @@
+2016-01-06  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add remaining background style properties to Visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=152757
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBackgroundStyleSection):
+        Added background-blend-mode and background-origin property editors.
+
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection.prototype._handleMouseOver):
+        Unrelated error that occurred when the user was hovering over a selector item
+        before the tree outline was able to create the selected item.
+
 2016-01-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r187929): Web Inspector: Forced Layout and Style Recalculation records do not show up in Layout & Rendering timeline DataGrid

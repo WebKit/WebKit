@@ -760,10 +760,19 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let backgroundStyleRow = new WebInspector.DetailsSectionRow;
 
         properties.backgroundColor = new WebInspector.VisualStyleColorPicker("background-color", WebInspector.UIString("Color"));
-        properties.backgroundClip = new WebInspector.VisualStyleKeywordPicker("background-clip", WebInspector.UIString("Clip"), ["Inherit", "Border Box", "Padding Box", "Content Box"]);
+        properties.backgroundBlendMode = new WebInspector.VisualStyleKeywordPicker("background-blend-mode", WebInspector.UIString("Blend"), ["Normal", "Multiply", "Screen", "Overlay", "Darken", "Lighten", "Color", "Color Dodge", "Saturation", "Luminosity"]);
 
         backgroundStyleRow.element.appendChild(properties.backgroundColor.element);
-        backgroundStyleRow.element.appendChild(properties.backgroundClip.element);
+        backgroundStyleRow.element.appendChild(properties.backgroundBlendMode.element);
+
+        let backgroundClipRow = new WebInspector.DetailsSectionRow;
+
+        let backgroundClipKeywords = ["Initial", "Border Box", "Padding Box", "Content Box"];
+        properties.backgroundClip = new WebInspector.VisualStyleKeywordPicker("background-clip", WebInspector.UIString("Clip"), backgroundClipKeywords);
+        properties.backgroundOrigin = new WebInspector.VisualStyleKeywordPicker("background-origin", WebInspector.UIString("Origin"), backgroundClipKeywords);
+
+        backgroundClipRow.element.appendChild(properties.backgroundClip.element);
+        backgroundClipRow.element.appendChild(properties.backgroundOrigin.element);
 
         let backgroundSizeRow = new WebInspector.DetailsSectionRow;
 
@@ -829,7 +838,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         group.autocompleteCompatibleProperties = [properties.backgroundColor];
 
-        let backgroundStyleGroup = new WebInspector.DetailsSectionGroup([backgroundStyleRow, backgroundSizeRow, backgroundRow, backgroundImageRow, backgroundPositionRow, backgroundRepeatRow]);
+        let backgroundStyleGroup = new WebInspector.DetailsSectionGroup([backgroundStyleRow, backgroundClipRow, backgroundSizeRow, backgroundRow, backgroundImageRow, backgroundPositionRow, backgroundRepeatRow]);
         this._populateSection(group, [backgroundStyleGroup]);
     }
 

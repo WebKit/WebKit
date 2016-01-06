@@ -279,6 +279,9 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             return;
 
         let style = this.currentStyle();
+        if (!style)
+            return;
+
         if (!style.ownerRule) {
             WebInspector.domTreeManager.highlightDOMNode(style.node.id);
             return;
