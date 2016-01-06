@@ -177,11 +177,7 @@ CTFontRef FontPlatformData::ctFont() const
 
     ASSERT(m_font);
     ASSERT(m_cgFont);
-    m_ctFont = m_font;
-    CTFontDescriptorRef fontDescriptor;
-    RetainPtr<CFStringRef> postScriptName = adoptCF(CTFontCopyPostScriptName(m_ctFont.get()));
-    fontDescriptor = cascadeToLastResortFontDescriptor();
-    m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_ctFont.get(), m_size, 0, fontDescriptor));
+    m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
 
     if (m_widthVariant != RegularWidth) {
         int featureTypeValue = kTextSpacingType;
