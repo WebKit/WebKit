@@ -397,8 +397,10 @@ public:
 
     void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_value && !m_fixedWidth)
+        if (!imm.m_value && !m_fixedWidth) {
+            move(src, dest);
             return;
+        }
 
         if (imm.m_value > 0 && imm.m_value < 65535 && !m_fixedWidth) {
             m_assembler.ori(dest, src, imm.m_value);
