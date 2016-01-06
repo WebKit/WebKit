@@ -17,7 +17,7 @@ class DomainControlToolbar extends Toolbar {
 
     setStartTime(startTime)
     {
-        this.setNumberOfDays(Math.max(1, Math.ceil((this._present - startTime) / this._millisecondsPerDay)));
+        this.setNumberOfDays(Math.max(1, Math.round((this._present - startTime) / this._millisecondsPerDay)));
         this._startTime = startTime;
     }
 
