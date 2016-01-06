@@ -94,11 +94,12 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._sections.background = new WebInspector.DetailsSection("background", WebInspector.UIString("Background"), [this._groups.backgroundStyle.section, this._groups.border.section, this._groups.outline.section, this._groups.boxShadow.section, this._groups.listStyle.section]);
         this.element.appendChild(this._sections.background.element);
 
-        // Animation Section
+        // Effects Section
         this._generateSection("transition", WebInspector.UIString("Transition"));
+        this._generateSection("animation", WebInspector.UIString("Animation"));
 
-        this._sections.animation = new WebInspector.DetailsSection("animation", WebInspector.UIString("Animation"), [this._groups.transition.section]);
-        this.element.appendChild(this._sections.animation.element);
+        this._sections.effects = new WebInspector.DetailsSection("effects", WebInspector.UIString("Effects"), [this._groups.transition.section, this._groups.animation.section]);
+        this.element.appendChild(this._sections.effects.element);
     }
 
     // Public
@@ -1131,6 +1132,55 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let transitionGroup = new WebInspector.DetailsSectionGroup([transitionRow, transitionPropertyRow, transitionDurationRow]);
         this._populateSection(group, [transitionGroup]);
+    }
+
+    _populateAnimationSection()
+    {
+        let group = this._groups.animation;
+        let properties = group.properties;
+
+        let animationNameRow = new WebInspector.DetailsSectionRow;
+
+        properties.animationName = new WebInspector.VisualStyleBasicInput("animation-name", WebInspector.UIString("Name"), WebInspector.UIString("Enter the name of a Keyframe"));
+
+        animationNameRow.element.appendChild(properties.animationName.element);
+
+        let animationTimingRow = new WebInspector.DetailsSectionRow;
+
+        properties.animationTiming = new WebInspector.VisualStyleTimingEditor("animation-timing-function", WebInspector.UIString("Timing"), ["Linear", "Ease", "Ease In", "Ease Out", "Ease In Out"]);
+        properties.animationIterationCount = new WebInspector.VisualStyleNumberInputBox("animation-iteration-count", WebInspector.UIString("Iterations"), this._keywords.defaults.concat(["Infinite"]), null);
+
+        animationTimingRow.element.appendChild(properties.animationTiming.element);
+        animationTimingRow.element.appendChild(properties.animationIterationCount.element);
+
+        let animationDurationRow = new WebInspector.DetailsSectionRow;
+
+        let animationTimeKeywords = ["s", "ms"];
+        properties.animationDuration = new WebInspector.VisualStyleNumberInputBox("animation-duration", WebInspector.UIString("Duration"), null, animationTimeKeywords);
+        properties.animationDelay = new WebInspector.VisualStyleNumberInputBox("animation-delay", WebInspector.UIString("Delay"), null, animationTimeKeywords);
+
+        animationDurationRow.element.appendChild(properties.animationDuration.element);
+        animationDurationRow.element.appendChild(properties.animationDelay.element);
+
+        let animationDirectionRow = new WebInspector.DetailsSectionRow;
+
+        properties.animationDirection = new WebInspector.VisualStyleKeywordPicker("animation-direction", WebInspector.UIString("Direction"), {
+            basic: this._keywords.defaults.concat(["Normal", "Reverse"]),
+            advanced: ["Alternate", "Alternate Reverse"]
+        });
+        properties.animationFillMode = new WebInspector.VisualStyleKeywordPicker("animation-fill-mode", WebInspector.UIString("Fill Mode"), this._keywords.defaults.concat(["None", "Forwards", "Backwards", "Both"]));
+
+        animationDirectionRow.element.appendChild(properties.animationDirection.element);
+        animationDirectionRow.element.appendChild(properties.animationFillMode.element);
+
+        let animationStateRow = new WebInspector.DetailsSectionRow;
+
+        properties.animationPlayState = new WebInspector.VisualStyleKeywordIconList("animation-play-state", WebInspector.UIString("State"), ["Running", "Paused", "Initial"]);
+
+        animationStateRow.element.appendChild(properties.animationPlayState.element);
+
+        let animationGroup = new WebInspector.DetailsSectionGroup([animationNameRow, animationTimingRow, animationDurationRow, animationDirectionRow, animationStateRow]);
+        this._populateSection(group, [animationGroup]);
     }
 
     _noRemainingCommaSeparatedEditorItems(propertyCombiner, propertyEditors)
