@@ -1,5 +1,24 @@
 2016-01-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The sampling of time series on v3 UI is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=152804
+
+        Reviewed by Chris Dumez.
+
+        Fixed a bug that we were always halving the number of data points in _sampleTimeSeries
+        and increased the number of data points allowed to make the sampling less aggressive.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype._ensureSampledTimeSeries): Increase the number of maximum points
+        to 2x the number of pixels divided by the radius of each point.
+        (TimeSeriesChart.prototype._sampleTimeSeries.findMedian): Changed the semantics of endIndex
+        to mean the index after the last point and renamed it to indexAfterEnd.
+        (TimeSeriesChart.prototype._sampleTimeSeries): Fixed a bug that this code always coerced two
+        data points into one sampled data point despite of the fact i and j are sufficiently apart
+        since data[j].time - data[i].time > timePerSample by definition.
+
+2016-01-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Commit the forgotten change for r194651.
 
         * public/v3/pages/domain-control-toolbar.js:

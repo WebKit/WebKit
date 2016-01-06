@@ -437,8 +437,8 @@ class TimeSeriesChart extends ComponentBase {
             if (!timeSeries)
                 return null;
 
-            // A chart with X px width shouldn't have more than X / <radius-of-points> data points.
-            var maximumNumberOfPoints = metrics.chartWidth / source.pointRadius;
+            // A chart with X px width shouldn't have more than 2X / <radius-of-points> data points.
+            var maximumNumberOfPoints = 2 * metrics.chartWidth / source.pointRadius;
 
             var pointAfterStart = timeSeries.findPointAfterTime(startTime);
             var pointBeforeStart = (pointAfterStart ? timeSeries.previousPoint(pointAfterStart) : null) || timeSeries.firstPoint();
@@ -448,7 +448,7 @@ class TimeSeriesChart extends ComponentBase {
 
             // FIXME: Move this to TimeSeries.prototype.
             var filteredData = timeSeries.dataBetweenPoints(pointBeforeStart, pointAfterEnd);
-            if (filteredData.length <= maximumNumberOfPoints || !source.sampleData)
+            if (!source.sampleData)
                 return filteredData;
             else
                 return self._sampleTimeSeries(filteredData, maximumNumberOfPoints);
@@ -467,9 +467,9 @@ class TimeSeriesChart extends ComponentBase {
         Instrumentation.startMeasuringTime('TimeSeriesChart', 'sampleTimeSeries');
 
         // FIXME: Do this in O(n) using quickselect: https://en.wikipedia.org/wiki/Quickselect
-        function findMedian(list, startIndex, endIndex)
+        function findMedian(list, startIndex, indexAfterEnd)
         {
-            var sortedList = list.slice(startIndex, endIndex + 1).sort(function (a, b) { return a.value - b.value; });
+            var sortedList = list.slice(startIndex, indexAfterEnd).sort(function (a, b) { return a.value - b.value; });
             return sortedList[Math.floor(sortedList.length / 2)];
         }
 
@@ -493,9 +493,9 @@ class TimeSeriesChart extends ComponentBase {
                 if (endPoint.time - startPoint.time >= timePerSample)
                     break;
             }
-            if (i < j) {
+            if (i < j - 1) {
                 sampledData.push(findMedian(data, i, j));
-                i = j + 1;
+                i = j;
             } else {
                 sampledData.push(startPoint);
                 i++;
