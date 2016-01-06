@@ -996,8 +996,13 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     if (s_affectsParentBlock)
         handleDynamicFloatPositionChange();
 
-    if (s_noLongerAffectsParentBlock)
+    if (s_noLongerAffectsParentBlock) {
         removeAnonymousWrappersForInlinesIfNecessary();
+        // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
+        // It copies the logic of RenderBlock::addChildIgnoringContinuation
+        if (style().isFloating() && previousSibling() && previousSibling()->isAnonymousBlock())
+            downcast<RenderBoxModelObject>(*parent()).moveChildTo(&downcast<RenderBoxModelObject>(*previousSibling()), this);
+    }
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
 
