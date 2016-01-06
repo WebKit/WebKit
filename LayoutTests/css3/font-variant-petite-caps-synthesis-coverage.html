@@ -7,6 +7,12 @@
     font-family: "testfontotf";
     src: url("resources/FontWithFeatures.otf") format("opentype");
 }
+@font-face {
+    /* Truetype. "S" responds to smcp; "V" responds to c2sc */
+    /* Truetype. "T" responds to smcp; "W" responds to c2sc */
+    font-family: "testfontttf";
+    src: url("resources/FontWithFeatures.ttf") format("truetype");
+}
 .test {
     font-size: 20px;
     display: inline-block;
@@ -42,6 +48,23 @@ This test makes sure that font-variant synthesis is correctly applied. The test 
 <div class="test" style="font-variant-caps: petite-caps;">AM</div>
 <div class="test" style="font-variant-caps: petite-caps;">MA</div>
 </div>
+<div style="font-family: testfontttf; border: solid black 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test">AB</div>
+<div class="test">a</div>
+<div class="test">T</div>
+<div class="test">W</div>
+<div class="test" style="font-variant-caps: petite-caps;">a</div>
+<div class="test" style="font-variant-caps: petite-caps;">T</div>
+<div class="test" style="font-variant-caps: petite-caps;">aT</div>
+<div class="test" style="font-variant-caps: petite-caps;">Ta</div>
+<div class="test" style="font-variant-caps: petite-caps;">AT</div>
+<div class="test" style="font-variant-caps: petite-caps;">TA</div>
+<div class="test" style="font-variant-caps: petite-caps;">W</div>
+<div class="test" style="font-variant-caps: petite-caps;">aW</div>
+<div class="test" style="font-variant-caps: petite-caps;">Wa</div>
+<div class="test" style="font-variant-caps: petite-caps;">AW</div>
+<div class="test" style="font-variant-caps: petite-caps;">WA</div>
+</div>
 <div style="font-family: testfontotf; border: solid blue 1px; margin: 5px; font-feature-settings: 'ntrl';">
 <div class="test" style="font-variant-caps: all-petite-caps;">a</div>
 <div class="test" style="font-variant-caps: all-petite-caps;">L</div>
@@ -54,6 +77,19 @@ This test makes sure that font-variant synthesis is correctly applied. The test 
 <div class="test" style="font-variant-caps: all-petite-caps;">Ma</div>
 <div class="test" style="font-variant-caps: all-petite-caps;">AM</div>
 <div class="test" style="font-variant-caps: all-petite-caps;">MA</div>
+</div>
+<div style="font-family: testfontttf; border: solid blue 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="font-variant-caps: all-petite-caps;">a</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">T</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">aT</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">Ta</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">AT</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">TA</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">W</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">aW</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">Wa</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">AW</div>
+<div class="test" style="font-variant-caps: all-petite-caps;">WA</div>
 </div>
 </div>
 </body>
