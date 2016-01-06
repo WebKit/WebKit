@@ -35,6 +35,7 @@
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirIteratedRegisterCoalescing.h"
+#include "AirOpcodeUtils.h"
 #include "AirOptimizeBlockOrder.h"
 #include "AirReportUsedRegisters.h"
 #include "AirSimplifyCFG.h"
@@ -152,7 +153,7 @@ void generate(Code& code, CCallHelpers& jit)
             && block->successorBlock(0) == code.findNextBlock(block))
             continue;
 
-        if (block->last().opcode == Ret) {
+        if (isReturn(block->last().opcode)) {
             // We currently don't represent the full prologue/epilogue in Air, so we need to
             // have this override.
             if (code.frameSize())
@@ -162,7 +163,7 @@ void generate(Code& code, CCallHelpers& jit)
             jit.ret();
             continue;
         }
-        
+
         CCallHelpers::Jump jump = block->last().generate(jit, context);
         switch (block->numSuccessors()) {
         case 0:

@@ -2175,17 +2175,31 @@ private:
 
         case Return: {
             Value* value = m_value->child(0);
-            Air::Opcode move;
-            Tmp dest;
-            if (isInt(value->type())) {
-                move = Move;
-                dest = Tmp(GPRInfo::returnValueGPR);
-            } else {
-                move = MoveDouble;
-                dest = Tmp(FPRInfo::returnValueFPR);
+            Tmp returnValueGPR = Tmp(GPRInfo::returnValueGPR);
+            Tmp returnValueFPR = Tmp(FPRInfo::returnValueFPR);
+            switch (value->type()) {
+            case Void:
+                // It's impossible for a void value to be used as a child. If we did want to have a
+                // void return, we'd introduce a different opcode, like ReturnVoid.
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            case Int32:
+                append(Move, immOrTmp(value), returnValueGPR);
+                append(Ret32, returnValueGPR);
+                break;
+            case Int64:
+                append(Move, immOrTmp(value), returnValueGPR);
+                append(Ret64, returnValueGPR);
+                break;
+            case Float:
+                append(MoveFloat, tmp(value), returnValueFPR);
+                append(RetFloat, returnValueFPR);
+                break;
+            case Double:
+                append(MoveDouble, tmp(value), returnValueFPR);
+                append(RetDouble, returnValueFPR);
+                break;
             }
-            append(move, immOrTmp(value), dest);
-            append(Ret);
             return;
         }
 

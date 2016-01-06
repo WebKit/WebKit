@@ -634,7 +634,17 @@ MoveDoubleConditionallyFloat U:G:32, U:F:32, U:F:32, U:F:64, UD:F:64
 
 Jump /branch
 
-Ret /terminal
+Ret32 U:G:32 /return
+    Tmp
+
+64: Ret64 U:G:64 /return
+    Tmp
+
+RetFloat U:F:32 /return
+    Tmp
+
+RetDouble U:F:64 /return
+    Tmp
 
 Oops /terminal
 

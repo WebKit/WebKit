@@ -385,10 +385,14 @@ class Parser
                     case token.string
                     when "branch"
                         opcode.attributes[:branch] = true
+                        opcode.attributes[:terminal] = true
                     when "terminal"
                         opcode.attributes[:terminal] = true
                     when "effects"
                         opcode.attributes[:effects] = true
+                    when "return"
+                        opcode.attributes[:return] = true
+                        opcode.attributes[:terminal] = true
                     else
                         parseError("Bad / directive")
                     end
@@ -698,13 +702,36 @@ writeH("OpcodeUtils") {
     outp.puts "inline bool isTerminal(Opcode opcode)"
     outp.puts "{"
     outp.puts "switch (opcode) {"
+    didFindTerminals = false
     $opcodes.values.each {
         | opcode |
-        if opcode.attributes[:terminal] or opcode.attributes[:branch]
+        if opcode.attributes[:terminal]
             outp.puts "case #{opcode.name}:"
+            didFindTerminals = true
         end
     }
-    outp.puts "return true;"
+    if didFindTerminals
+        outp.puts "return true;"
+    end
+    outp.puts "default:"
+    outp.puts "return false;"
+    outp.puts "}"
+    outp.puts "}"
+
+    outp.puts "inline bool isReturn(Opcode opcode)"
+    outp.puts "{"
+    outp.puts "switch (opcode) {"
+    didFindReturns = false
+    $opcodes.values.each {
+        | opcode |
+        if opcode.attributes[:return]
+            outp.puts "case #{opcode.name}:"
+            didFindReturns = true
+        end
+    }
+    if didFindReturns
+        outp.puts "return true;"
+    end
     outp.puts "default:"
     outp.puts "return false;"
     outp.puts "}"
@@ -960,7 +987,7 @@ writeH("OpcodeGenerated") {
     foundTrue = false
     $opcodes.values.each {
         | opcode |
-        if opcode.attributes[:branch] or opcode.attributes[:terminal] or opcode.attributes[:effects]
+        if opcode.attributes[:terminal] or opcode.attributes[:effects]
             outp.puts "case #{opcode.name}:"
             foundTrue = true
         end

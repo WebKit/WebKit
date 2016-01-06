@@ -1,3 +1,60 @@
+2016-01-05  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 fails cdjs-tests.yaml/red_black_tree_test.js.ftl-eager-no-cjit
+        https://bugs.webkit.org/show_bug.cgi?id=152770
+
+        Reviewed by Mark Lam.
+
+        It turns out that liveness didn't know that the return value GPR or FPR is live at the
+        return. Consequently, we can end up with code that clobbers the return value register after
+        the move of the return value into that register. This could happen if we start with
+        something like:
+
+            Move 42(%tmp1), %tmp2
+            Move 50(%tmp1), %tmp3
+            Move %tmp3, 58(%tmp1)
+            Move %tmp2, %rax
+            Ret
+
+        Then we might coalesce %tmp2 with %rax:
+
+            Move 42(%tmp1), %rax
+            Move 50(%tmp1), %tmp3
+            Move %tmp3, 58(%tmp1)
+            Ret
+
+        But now there is no use of %rax after that first instruction, so %rax appears dead at the
+        other two Move's. So, the register allocator could then do this:
+
+            Move 42(%tmp1), %rax
+            Move 50(%tmp1), %rax
+            Move %rax, 58(%tmp1)
+            Ret
+
+        And that's clearly wrong. This patch solves this issue by replacing the old Ret instruction
+        with Ret32, Ret64, RetFloat, and RetDouble. These all take the return value register as an
+        argument. They also tell Air which parts of the return value register the caller will
+        observe. That's great for width analysis.
+
+        This resolves a test failure in the CDjs red_black_tree_test. This reduces the total number
+        of JSC test failures from 217 to 191.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::oops):
+        (JSC::MacroAssembler::ret32):
+        (JSC::MacroAssembler::ret64):
+        (JSC::MacroAssembler::retFloat):
+        (JSC::MacroAssembler::retDouble):
+        (JSC::MacroAssembler::shouldConsiderBlinding):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+
 2016-01-05  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed build fix. A symbol was being exported that should not have been.

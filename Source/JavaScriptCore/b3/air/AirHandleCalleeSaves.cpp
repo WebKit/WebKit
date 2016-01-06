@@ -89,7 +89,7 @@ void handleCalleeSaves(Code& code)
     // Now insert restore code at epilogues.
     for (BasicBlock* block : code) {
         Inst& last = block->last();
-        if (last.opcode != Ret)
+        if (!isReturn(last.opcode))
             continue;
 
         for (const RegisterAtOffset& entry : code.calleeSaveRegisters()) {
