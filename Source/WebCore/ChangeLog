@@ -1,3 +1,26 @@
+2016-01-06  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/transaction-scope-sequencing.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=152775
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes, plus changes to another existing test).
+        
+        Any transaction enqueued after a read-write transaction whose scope overlaps with
+        that read-write transaction cannot run until after that read-write transaction runs.
+        
+        Additionally, read-only transactions were actually sometimes running even though their scopes
+        overlapped with a running read-write transaction.
+        
+        This patch fixes both of those issues.
+    
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        (WebCore::IDBServer::UniqueIDBDatabase::takeNextRunnableTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::inProgressTransactionCompleted):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2016-01-06  Zalan Bujtas  <zalan@apple.com>
 
         Float with media query positioned incorrectly after window resize.

@@ -1,3 +1,18 @@
+2016-01-06  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/transaction-scope-sequencing.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=152775
+
+        Reviewed by Alex Christensen.
+
+        In addition to enabling the previously skipped test, this also completely rewrites transaction-scheduler-4, 
+        which covered incorrect behavior, to cover newly implemented correct behavior.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/resources/transaction-scheduler-4.js: Added.
+        * storage/indexeddb/modern/transaction-scheduler-4-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-4.html:
+
 2016-01-06  Zalan Bujtas  <zalan@apple.com>
 
         Float with media query positioned incorrectly after window resize.

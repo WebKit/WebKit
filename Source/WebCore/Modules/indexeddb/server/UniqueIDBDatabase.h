@@ -203,11 +203,10 @@ private:
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
 
-    // The key into this set is the object store ID.
-    // The set counts how many transactions are open to the given object store.
-    // This helps make sure opening narrowly scoped transactions (one or two object stores)
-    // doesn't continuously block widely scoped write transactions.
+    // The keys into these sets are the object store ID.
+    // These sets help to decide which transactions can be started and which must be deferred.
     HashCountedSet<uint64_t> m_objectStoreTransactionCounts;
+    HashSet<uint64_t> m_objectStoreWriteTransactions;
 
     bool m_deletePending { false };
     bool m_deleteBackingStoreInProgress { false };

@@ -1,20 +1,34 @@
-ALERT: Upgrade needed: Old version - 0 New version - 1
-ALERT: versionchange transaction completed
-ALERT: Success opening database connection - Starting readonly transaction
-ALERT: Other objectstore read transaction get success - [object Event]
-ALERT: Other objectstore read transaction complete - [object Event]
-ALERT: Read transaction complete - [object Event]
-ALERT: Write transaction first put success
-ALERT: Second read-only transaction get success - [object Event]
-ALERT: Write transaction complete - [object Event]
-ALERT: Second read-only transaction complete - [object Event]
-ALERT: Done
-This test opens a long running read-only transaction to an object store, and then a read-write transaction to the same object store.
-The read-write transaction should be blocked while the long running read-only transaction is in progress.
-It also queues up a second read-only transaction to that same object store behind the blocked read-write transaction.
-Even though that second read-only transaction could start while the first is in progress and the read-write transaction is blocked,
-it should *not* start because doing so would risk continuing to block the read-write transaction.
-It also queues up a read-only to a different object store behind those first three transactions.
-That last read-only transaction *should* start while the read-write transaction is still blocked,
-as doing so won't risk blocking the read-write transaction further.
+Makes sure that a read-only transaction scheduled after a read-write transaction with overlapping scope does not start until the read-write transaction completes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "transaction-scheduler-4.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+connection = event.target.result;
+objectStore = connection.createObjectStore('store');
+transaction1 = connection.transaction('store', 'readwrite');
+transaction2 = connection.transaction('store', 'readonly');
+getRequest = transaction2.objectStore('store').get('foo');
+Starting a series of 20 puts in the readwrite transaction to make sure the readonly transaction is deferred for some time
+putCount = 0;
+readWriteTransactionDone = false;
+getRequestDone = false;
+20th put complete
+Transaction 1 (readwrite) completed with 20 puts completed.
+PASS getRequestDone is false
+PASS putCount is 20
+Getting the value of 'foo' completed - This means the readonly transaction started. At this point 20 puts completed in the readwrite transaction.
+PASS readWriteTransactionDone is true
+PASS putCount is 20
+Transaction 1 (readonly) completed
+PASS readWriteTransactionDone is true
+PASS getRequestDone is true
+PASS putCount is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

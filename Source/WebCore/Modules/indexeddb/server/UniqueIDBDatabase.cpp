@@ -1067,8 +1067,13 @@ void UniqueIDBDatabase::operationAndTransactionTimerFired()
 
     if (transaction) {
         m_inProgressTransactions.set(transaction->info().identifier(), transaction);
-        for (auto objectStore : transaction->objectStoreIdentifiers())
+        for (auto objectStore : transaction->objectStoreIdentifiers()) {
             m_objectStoreTransactionCounts.add(objectStore);
+            if (!transaction->isReadOnly()) {
+                m_objectStoreWriteTransactions.add(objectStore);
+                ASSERT(m_objectStoreTransactionCounts.count(objectStore) == 1);
+            }
+        }
 
         activateTransactionInBackingStore(*transaction);
 
@@ -1125,26 +1130,33 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> deferredTransactions;
     RefPtr<UniqueIDBDatabaseTransaction> currentTransaction;
 
+    HashSet<uint64_t> deferredReadWriteScopes;
+
     while (!m_pendingTransactions.isEmpty()) {
         currentTransaction = m_pendingTransactions.takeFirst();
 
         switch (currentTransaction->info().mode()) {
-        case IndexedDB::TransactionMode::ReadOnly:
-            // If there are any deferred transactions, the first one is a read-write transaction we need to unblock.
-            // Therefore, skip this read-only transaction if its scope overlaps with that read-write transaction.
-            if (!deferredTransactions.isEmpty()) {
-                ASSERT(deferredTransactions.first()->info().mode() == IndexedDB::TransactionMode::ReadWrite);
-                if (scopesOverlap(deferredTransactions.first()->objectStoreIdentifiers(), currentTransaction->objectStoreIdentifiers()))
-                    deferredTransactions.append(WTFMove(currentTransaction));
-            }
+        case IndexedDB::TransactionMode::ReadOnly: {
+            bool hasOverlappingScopes = scopesOverlap(deferredReadWriteScopes, currentTransaction->objectStoreIdentifiers());
+            hasOverlappingScopes |= scopesOverlap(m_objectStoreWriteTransactions, currentTransaction->objectStoreIdentifiers());
 
-            break;
-        case IndexedDB::TransactionMode::ReadWrite:
-            // If this read-write transaction's scope overlaps with running transactions, it must be deferred.
-            if (scopesOverlap(m_objectStoreTransactionCounts, currentTransaction->objectStoreIdentifiers()))
+            if (hasOverlappingScopes)
                 deferredTransactions.append(WTFMove(currentTransaction));
 
             break;
+        }
+        case IndexedDB::TransactionMode::ReadWrite: {
+            bool hasOverlappingScopes = scopesOverlap(m_objectStoreTransactionCounts, currentTransaction->objectStoreIdentifiers());
+            hasOverlappingScopes |= scopesOverlap(deferredReadWriteScopes, currentTransaction->objectStoreIdentifiers());
+
+            if (hasOverlappingScopes) {
+                for (auto objectStore : currentTransaction->objectStoreIdentifiers())
+                    deferredReadWriteScopes.add(objectStore);
+                deferredTransactions.append(WTFMove(currentTransaction));
+            }
+
+            break;
+        }
         case IndexedDB::TransactionMode::VersionChange:
             // Version change transactions should never be scheduled in the traditional manner.
             RELEASE_ASSERT_NOT_REACHED();
@@ -1171,8 +1183,13 @@ void UniqueIDBDatabase::inProgressTransactionCompleted(const IDBResourceIdentifi
     auto transaction = m_inProgressTransactions.take(transactionIdentifier);
     ASSERT(transaction);
 
-    for (auto objectStore : transaction->objectStoreIdentifiers())
+    for (auto objectStore : transaction->objectStoreIdentifiers()) {
+        if (!transaction->isReadOnly()) {
+            m_objectStoreWriteTransactions.remove(objectStore);
+            ASSERT(m_objectStoreTransactionCounts.count(objectStore) == 1);
+        }
         m_objectStoreTransactionCounts.remove(objectStore);
+    }
 
     if (!transaction->databaseConnection().hasNonFinishedTransactions())
         m_closePendingDatabaseConnections.remove(&transaction->databaseConnection());

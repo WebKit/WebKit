@@ -89,7 +89,6 @@ storage/indexeddb/odd-strings.html [ Failure ]
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Failure ]
-storage/indexeddb/transaction-scope-sequencing.html [ Failure ]
 
 # Relies on internals.observeGC
 storage/indexeddb/connection-leak.html [ Skip ]
