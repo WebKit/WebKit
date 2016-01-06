@@ -1,5 +1,21 @@
 2016-01-06  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r194404. rdar://problem/23982006
+
+    2015-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+            Minor cleanup in RenderBox::canBeProgramaticallyScrolled()
+            https://bugs.webkit.org/show_bug.cgi?id=152515
+
+            Reviewed by Tim Horton.
+
+            Test that programmatic scrolling works inside overflow:hidden.
+
+            * fast/overflow/overflow-hidden-scroll-into-view-expected.html: Added.
+            * fast/overflow/overflow-hidden-scroll-into-view.html: Added.
+
+2016-01-06  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r194114. rdar://problem/23982010
 
     2015-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
