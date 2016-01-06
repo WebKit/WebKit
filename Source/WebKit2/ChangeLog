@@ -1,3 +1,15 @@
+2016-01-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Set WebKit2 process output name
+        https://bugs.webkit.org/show_bug.cgi?id=152773
+
+        Reviewed by Benjamin Poulain.
+
+        If we add *WebKit* prefix to each WK2 process, it is more clear when checking what process is running.
+        So this patch sets wk2 process output name.
+
+        * PlatformEfl.cmake:
+
 2016-01-05  Alex Christensen  <achristensen@webkit.org>
 
         Implement defersLoading with NetworkSession
