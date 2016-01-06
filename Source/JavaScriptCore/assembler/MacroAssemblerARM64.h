@@ -762,7 +762,7 @@ public:
     
     void urshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.lsr<64>(dest, src, imm.m_value & 0x1f);
+        m_assembler.lsr<64>(dest, src, imm.m_value & 0x3f);
     }
 
     void urshift64(RegisterID shiftAmount, RegisterID dest)

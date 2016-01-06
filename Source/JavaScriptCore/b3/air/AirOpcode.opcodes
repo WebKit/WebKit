@@ -232,14 +232,14 @@ x86: Lea UA:G:Ptr, D:G:Ptr
 
 And32 U:G:32, UZD:G:32
     Tmp, Tmp
-    Imm, Tmp
+    x86: Imm, Tmp
     x86: Tmp, Addr
     x86: Addr, Tmp
     x86: Imm, Addr
 
 64: And64 U:G:64, UD:G:64
     Tmp, Tmp
-    Imm, Tmp
+    x86: Imm, Tmp
 
 arm64: AndDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
@@ -303,18 +303,18 @@ x86_64: Urshift64 U:G:64, UD:G:64
 
 Or32 U:G:32, UZD:G:32
     Tmp, Tmp
-    Imm, Tmp
+    x86: Imm, Tmp
     x86: Tmp, Addr
     x86: Addr, Tmp
     x86: Imm, Addr
 
 64: Or64 U:G:64, UD:G:64
     Tmp, Tmp
-    Imm, Tmp
+    x86: Imm, Tmp
 
 Xor32 U:G:32, UZD:G:32
     Tmp, Tmp
-    Imm, Tmp
+    x86: Imm, Tmp
     x86: Tmp, Addr
     x86: Addr, Tmp
     x86: Imm, Addr
@@ -322,7 +322,7 @@ Xor32 U:G:32, UZD:G:32
 64: Xor64 U:G:64, UD:G:64
     Tmp, Tmp
     x86: Tmp, Addr
-    Imm, Tmp
+    x86: Imm, Tmp
 
 arm64: Not32 U:G:32, ZD:G:32
     Tmp, Tmp

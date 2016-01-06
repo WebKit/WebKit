@@ -1267,37 +1267,39 @@ private:
             }
         }
 
-        if (canCommitInternal && value->as<MemoryValue>()) {
-            // Handle things like Branch(Load8Z(value))
+        if (Arg::isValidImmForm(-1)) {
+            if (canCommitInternal && value->as<MemoryValue>()) {
+                // Handle things like Branch(Load8Z(value))
 
-            if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8Z), Arg::imm(-1))) {
-                commitInternal(value);
-                return result;
+                if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8Z), Arg::imm(-1))) {
+                    commitInternal(value);
+                    return result;
+                }
+
+                if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8S), Arg::imm(-1))) {
+                    commitInternal(value);
+                    return result;
+                }
+
+                if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16Z), Arg::imm(-1))) {
+                    commitInternal(value);
+                    return result;
+                }
+
+                if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16S), Arg::imm(-1))) {
+                    commitInternal(value);
+                    return result;
+                }
+
+                if (Inst result = tryTest(width, loadPromise(value), Arg::imm(-1))) {
+                    commitInternal(value);
+                    return result;
+                }
             }
 
-            if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8S), Arg::imm(-1))) {
-                commitInternal(value);
+            if (Inst result = test(width, resCond, tmpPromise(value), Arg::imm(-1)))
                 return result;
-            }
-
-            if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16Z), Arg::imm(-1))) {
-                commitInternal(value);
-                return result;
-            }
-
-            if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16S), Arg::imm(-1))) {
-                commitInternal(value);
-                return result;
-            }
-
-            if (Inst result = tryTest(width, loadPromise(value), Arg::imm(-1))) {
-                commitInternal(value);
-                return result;
-            }
         }
-
-        if (Inst result = test(width, resCond, tmpPromise(value), Arg::imm(-1)))
-            return result;
         
         // Sometimes this is the only form of test available. We prefer not to use this because
         // it's less canonical.
