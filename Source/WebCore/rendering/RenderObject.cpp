@@ -57,6 +57,7 @@
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h" 
+#include "RenderRuby.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
@@ -1732,6 +1733,11 @@ void RenderObject::updateDragState(bool dragOn)
 bool RenderObject::isComposited() const
 {
     return hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->isComposited();
+}
+
+bool RenderObject::isAnonymousInlineBlock() const
+{
+    return isAnonymous() && style().display() == INLINE_BLOCK && style().styleType() == NOPSEUDO && isRenderBlockFlow() && !isRubyRun() && !isRubyBase() && !isRuby(parent());
 }
 
 bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter hitTestFilter)
