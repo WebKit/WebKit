@@ -6580,7 +6580,6 @@ void HTMLMediaElement::updateMediaState(UpdateMediaState updateState)
 
 MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
 {
-
     MediaStateFlags state = IsNotPlaying;
 
     bool hasActiveVideo = isVideo() && hasVideo();
@@ -6589,12 +6588,18 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
     if (m_player && m_player->isCurrentPlaybackTargetWireless())
         state |= IsPlayingToExternalDevice;
 
-    if (m_player && m_hasPlaybackTargetAvailabilityListeners && !m_mediaSession->wirelessVideoPlaybackDisabled(*this))
-        state |= RequiresPlaybackTargetMonitoring;
+    if (m_hasPlaybackTargetAvailabilityListeners) {
+        state |= HasPlaybackTargetAvailabilityListener;
+        if (!m_mediaSession->wirelessVideoPlaybackDisabled(*this))
+            state |= RequiresPlaybackTargetMonitoring;
+    }
 
     bool requireUserGesture = m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
     if (m_readyState >= HAVE_METADATA && !requireUserGesture && !m_failedToPlayToWirelessTarget)
         state |= ExternalDeviceAutoPlayCandidate;
+
+    if (hasActiveVideo || hasAudio)
+        state |= HasAudioOrVideo;
 
     if (hasActiveVideo && endedPlayback())
         state |= DidPlayToEnd;

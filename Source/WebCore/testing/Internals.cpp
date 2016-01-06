@@ -2977,10 +2977,14 @@ void Internals::setMockMediaPlaybackTargetPickerState(const String& deviceName, 
     Page* page = contextDocument()->frame()->page();
     ASSERT(page);
 
-    MediaPlaybackTargetContext::State state = MediaPlaybackTargetContext::Unavailable;
+    MediaPlaybackTargetContext::State state = MediaPlaybackTargetContext::Unknown;
 
     if (equalIgnoringCase(deviceState, "DeviceAvailable"))
         state = MediaPlaybackTargetContext::OutputDeviceAvailable;
+    else if (equalIgnoringCase(deviceState, "DeviceUnavailable"))
+        state = MediaPlaybackTargetContext::OutputDeviceUnavailable;
+    else if (equalIgnoringCase(deviceState, "Unknown"))
+        state = MediaPlaybackTargetContext::Unknown;
     else {
         ec = INVALID_ACCESS_ERR;
         return;

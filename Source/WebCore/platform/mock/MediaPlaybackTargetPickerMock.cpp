@@ -60,7 +60,7 @@ MediaPlaybackTargetPickerMock::~MediaPlaybackTargetPickerMock()
 bool MediaPlaybackTargetPickerMock::externalOutputDeviceAvailable()
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::externalOutputDeviceAvailable");
-    return m_state & MediaPlaybackTargetContext::OutputDeviceAvailable;
+    return m_state == MediaPlaybackTargetContext::OutputDeviceAvailable;
 }
 
 Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMock::playbackTarget()
@@ -93,10 +93,10 @@ void MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets");
 
-    if (m_state & MediaPlaybackTargetContext::OutputDeviceAvailable)
+    if (m_state == MediaPlaybackTargetContext::OutputDeviceAvailable)
         availableDevicesDidChange();
 
-    if (!m_deviceName.isEmpty())
+    if (!m_deviceName.isEmpty() && m_state != MediaPlaybackTargetContext::Unknown)
         currentDeviceDidChange();
 }
 
@@ -108,14 +108,14 @@ void MediaPlaybackTargetPickerMock::stopMonitoringPlaybackTargets()
 void MediaPlaybackTargetPickerMock::invalidatePlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::invalidatePlaybackTargets");
-    setState(WTF::emptyString(), MediaPlaybackTargetContext::Unavailable);
+    setState(emptyString(), MediaPlaybackTargetContext::Unknown);
 }
 
 void MediaPlaybackTargetPickerMock::setState(const String& deviceName, MediaPlaybackTargetContext::State state)
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", deviceName.utf8().data(), (unsigned)state);
 
-    if (deviceName != m_deviceName) {
+    if (deviceName != m_deviceName && state != MediaPlaybackTargetContext::Unknown) {
         m_deviceName = deviceName;
         currentDeviceDidChange();
     }

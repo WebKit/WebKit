@@ -48,8 +48,9 @@ public:
     };
 
     enum ContextState {
-        Unavailable = 0,
-        OutputDeviceAvailable = 1 << 0,
+        Unknown = 0,
+        OutputDeviceUnavailable = 1,
+        OutputDeviceAvailable = 2,
     };
     typedef unsigned State;
 
@@ -97,7 +98,7 @@ private:
     Type m_type { None };
     AVOutputContext *m_outputContext { nullptr };
     String m_name;
-    State m_state { Unavailable };
+    State m_state { Unknown };
 };
 
 }

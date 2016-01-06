@@ -41,6 +41,8 @@ public:
         IsSourceElementPlaying = 1 << 6,
         IsNextTrackControlEnabled = 1 << 7,
         IsPreviousTrackControlEnabled = 1 << 8,
+        HasPlaybackTargetAvailabilityListener = 1 << 9,
+        HasAudioOrVideo = 1 << 10,
     };
     typedef unsigned MediaStateFlags;
 

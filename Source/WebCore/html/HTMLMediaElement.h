@@ -759,6 +759,7 @@ private:
         Synchronously,
     };
     void updateMediaState(UpdateMediaState updateState = UpdateMediaState::Synchronously);
+    bool hasPlaybackTargetAvailabilityListeners() const { return m_hasPlaybackTargetAvailabilityListeners; }
 #endif
 
     void isVisibleInViewportChanged() override final;

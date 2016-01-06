@@ -2712,6 +2712,9 @@ css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 # Media controls tests are OS X only
 media/controls [ Skip ]
 
+# WIRELESS_PLAYBACK_TARGET not enabled.
+media/airplay-target-availability.html
+
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Pass ]

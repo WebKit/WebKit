@@ -3321,6 +3321,9 @@ webkit.org/b/150948 [ Debug ] imported/blink/transitions/unprefixed-transform.ht
 
 webkit.org/b/151756 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
 
+# WIRELESS_PLAYBACK_TARGET not enabled.
+media/airplay-target-availability.html
+
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html [ Failure ]
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html [ Failure ]
 webkit.org/b/152411 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-never.html [ Failure ]

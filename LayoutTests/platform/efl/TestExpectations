@@ -2705,6 +2705,9 @@ css2.1/tables/table-anonymous-objects-206.xht [ Missing ]
 css2.1/tables/table-anonymous-objects-207.xht [ Missing ]
 css2.1/tables/table-anonymous-objects-208.xht [ Missing ]
 
+# WIRELESS_PLAYBACK_TARGET not enabled.
+media/airplay-target-availability.html
+
 webkit.org/b/151943 imported/blink/editing/execCommand/4128080-2.html [ Failure ]
 webkit.org/b/151943 imported/blink/fast/events/click-with-large-negative-text-indent.html [ Failure ]
 webkit.org/b/151943 imported/blink/fast/replaced/image-map-alt-content.html [ Failure ]

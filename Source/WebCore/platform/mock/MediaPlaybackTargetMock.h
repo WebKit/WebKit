@@ -55,7 +55,7 @@ protected:
     MediaPlaybackTargetMock(const String&, MediaPlaybackTargetContext::State);
 
     String m_name;
-    MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unavailable };
+    MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unknown };
     mutable MediaPlaybackTargetContext m_context;
 };
 
