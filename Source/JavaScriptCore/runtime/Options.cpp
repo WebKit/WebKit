@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>
@@ -597,6 +598,13 @@ bool Options::setAliasedOption(const char* arg)
     if (!equalStr)
         return false;
 
+#if COMPILER(CLANG)
+#if __has_warning("-Wtautological-compare")
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wtautological-compare"
+#endif
+#endif
+
     // For each option, check if the specify arg is a match. If so, set the arg
     // if the value makes sense. Otherwise, move on to checking the next option.
 #define FOR_EACH_OPTION(aliasedName_, unaliasedName_, equivalence) \
@@ -617,6 +625,12 @@ bool Options::setAliasedOption(const char* arg)
 
     JSC_ALIASED_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
+
+#if COMPILER(CLANG)
+#if __has_warning("-Wtautological-compare")
+#pragma clang diagnostic pop
+#endif
+#endif
 
     return false; // No option matched.
 }
