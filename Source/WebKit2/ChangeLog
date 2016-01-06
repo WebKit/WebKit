@@ -1,3 +1,13 @@
+2016-01-06  Daniel Bates  <dabates@apple.com>
+
+        Use code signed identifier as part of user directory suffix
+        https://bugs.webkit.org/show_bug.cgi?id=152310
+        <rdar://problem/13352225>
+
+        As pointed out by Sam Weinig, the year is 2016! I inadvertently added the copyright year 2015 instead of 2016.
+
+        * Shared/mac/ChildProcessMac.mm:
+
 2016-01-06  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Revert overflow:hidden on the body affecting viewport scale (r186786)
