@@ -1069,11 +1069,6 @@ InjectedScript.RemoteObject.prototype = {
     _generatePreview: function(object, firstLevelKeys, secondLevelKeys)
     {
         var preview = this._initialPreview();
-
-        // Primitives just have a value.
-        if (this.type !== "object")
-            return;
-
         var isTableRowsRequest = secondLevelKeys === null || secondLevelKeys;
         var firstLevelKeysCount = firstLevelKeys ? firstLevelKeys.length : 0;
 
