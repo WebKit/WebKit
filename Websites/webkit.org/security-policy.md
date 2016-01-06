@@ -8,12 +8,14 @@ The current member list is published on the [Security Team](/security-team) page
 
 ### How To Join the WebKit Security Group
 
-1. **Criteria:** Nominees for WebKit Security Group membership should meet at least one of the following criteria:  
-    Individuals:
-    - The nominee specializes in fixing WebKit security related bugs or often participates in their exploration and resolution.
-    - The nominee has a track record of finding security vulnerabilities and responsible disclosure of those vulnerabilities.
-    - The nominee is a web technology expert who has specific interests in knowing about, resolving, and preventing future security vulnerabilities.Vendor contacts:
-    - The nominee represents an organization or company which ships products that include their own copy of WebKit. Due to their position in the organization, the nominee has a reasonable need to know about security issues and disclosure embargoes.
+1. **Criteria:** Nominees for WebKit Security Group membership should meet at least one of the following criteria:
+    - **Individuals:**
+        - The nominee specializes in fixing WebKit security related bugs or often participates in their exploration and resolution.
+        - The nominee has a track record of finding security vulnerabilities and responsible disclosure of those vulnerabilities.
+        - The nominee is a web technology expert who has specific interests in knowing about, resolving, and preventing future security vulnerabilities.
+    - **Vendor contacts:**
+        - The nominee represents an organization or company which ships products that include their own copy of WebKit. Due to their position in the organization, the nominee has a reasonable need to know about security issues and disclosure embargoes.
+    
 2. **Nomination process:** Anyone who feels they meet these criteria can nominate themselves by mailing [security@webkit.org](mailto:security@webkit.org), or may be nominated by a third party such as an existing WebKit Security Group member. The nomination email should state whether the nominee is nominated as an individual or as a vendor contact and clearly describe the grounds for nomination.
 3. **Choosing new members:** If a nomination for Security Group membership is supported by at least three existing Security Group members (either one initial nomination and two seconds, or in the case of self-nomination, three seconds), then it carries within 5 business days unless an existing member of the Security Group objects. If an objection is raised, the WebKit Security Group members should discuss the matter and try to come to consensus; failing this, the nomination will succeed only by majority vote of the WebKit Security Group. After a vote is called for on the mailing list, voting will be open for 5 business days.
 4. **Accepting membership:** Before new WebKit Security Group membership is finalized, the successful nominee should accept membership and agree to abide by this security policy, particularly Privileges and Responsibilities of WebKit Security Group members.
