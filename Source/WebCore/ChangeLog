@@ -1,5 +1,23 @@
 2016-01-06  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/odd-strings.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=152800
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Existing flaky test is now rock solid and unskipped).
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::IDBDatabase):
+        (WebCore::IDBClient::IDBDatabase::maybeCloseInServer): Only refuse to close in the server if there
+          are active transactions. In the case of page navigation where stop() has been called on active DOM objects,
+          there will never be any active transactions.
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+
+2016-01-06  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/intversion-gated-on-delete.html is flaky.
         https://bugs.webkit.org/show_bug.cgi?id=152795
 

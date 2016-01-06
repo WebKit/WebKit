@@ -912,7 +912,7 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
     ASSERT(&transaction.databaseConnection().database() == this);
 
     if (m_versionChangeTransaction == &transaction) {
-        ASSERT(&m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
+        ASSERT(!m_versionChangeDatabaseConnection || &m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
         ASSERT(m_databaseInfo->version() == transaction.info().newVersion());
 
         invokeOperationAndTransactionTimer();

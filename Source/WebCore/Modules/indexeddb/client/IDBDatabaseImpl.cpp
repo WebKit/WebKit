@@ -52,7 +52,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBConnectionToServer&
     , m_info(resultData.databaseInfo())
     , m_databaseConnectionIdentifier(resultData.databaseConnectionIdentifier())
 {
-    LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64, m_info.name().utf8().data(), m_info.version());
+    LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64 " connection %" PRIu64, m_info.name().utf8().data(), m_info.version(), m_databaseConnectionIdentifier);
     suspendIfNeeded();
     relaxAdoptionRequirement();
     m_serverConnection->registerDatabaseConnection(*this);
@@ -239,7 +239,7 @@ void IDBDatabase::maybeCloseInServer()
     // 3.3.9 Database closing steps
     // Wait for all transactions created using this connection to complete.
     // Once they are complete, this connection is closed.
-    if (!m_activeTransactions.isEmpty() || !m_committingTransactions.isEmpty())
+    if (!m_activeTransactions.isEmpty())
         return;
 
     m_closedInServer = true;
