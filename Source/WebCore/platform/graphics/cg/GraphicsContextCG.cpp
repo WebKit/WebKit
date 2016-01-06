@@ -482,30 +482,6 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
         CGContextSetShouldAntialias(context, true);
 }
 
-#if PLATFORM(IOS)
-void GraphicsContext::drawJoinedLines(CGPoint points[], unsigned count, bool antialias, CGLineCap lineCap)
-{
-    if (paintingDisabled() || !count)
-        return;
-
-    CGContextRef context = platformContext();
-    float width = CGContextGetLineWidth(context);
-
-    CGContextStateSaver stateSaver(context);
-    
-    CGContextSetShouldAntialias(context, antialias);
-    CGContextSetLineWidth(context, width < 1 ? 1 : width);
-    CGContextBeginPath(context);
-    CGContextSetLineCap(context, lineCap);
-    CGContextMoveToPoint(context, points[0].x, points[0].y);
-    
-    for (unsigned i = 1; i < count; ++i)
-        CGContextAddLineToPoint(context, points[i].x, points[i].y);
-
-    CGContextStrokePath(context);
-}
-#endif
-
 void GraphicsContext::drawEllipse(const FloatRect& rect)
 {
     if (paintingDisabled())

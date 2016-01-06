@@ -358,6 +358,19 @@ static CGPoint shortened(CGPoint start, CGPoint end, float width)
     return CGPointMake(start.x + x * ratio, start.y + y * ratio);
 }
 
+static void drawJoinedLines(CGContextRef context, CGPoint points[], unsigned count, bool antialias, CGLineCap lineCap)
+{
+    CGContextSetShouldAntialias(context, antialias);
+    CGContextBeginPath(context);
+    CGContextSetLineCap(context, lineCap);
+    CGContextMoveToPoint(context, points[0].x, points[0].y);
+    
+    for (unsigned i = 1; i < count; ++i)
+        CGContextAddLineToPoint(context, points[i].x, points[i].y);
+
+    CGContextStrokePath(context);
+}
+
 bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(paintInfo.context());
@@ -391,15 +404,15 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
             shortened(line[2], line[1], lineWidth / 4.0f)
         };
 
-        paintInfo.context().setStrokeThickness(lineWidth);
-        paintInfo.context().setStrokeColor(Color(0.0f, 0.0f, 0.0f, 0.7f));
+        lineWidth = std::max<float>(lineWidth, 1);
+        CGContextSetLineWidth(cgContext, lineWidth);
+        CGContextSetStrokeColorWithColor(cgContext, cachedCGColor(Color(0.0f, 0.0f, 0.0f, 0.7f)));
+        drawJoinedLines(cgContext, shadow, 3, true, kCGLineCapSquare);
 
-        paintInfo.context().drawJoinedLines(shadow, 3, true, kCGLineCapSquare);
-
-        paintInfo.context().setStrokeThickness(std::min(clip.width(), clip.height()) * thicknessRatio);
-        paintInfo.context().setStrokeColor(Color(1.0f, 1.0f, 1.0f, 240 / 255.0f));
-
-        paintInfo.context().drawJoinedLines(line, 3, true);
+        lineWidth = std::max<float>(std::min(clip.width(), clip.height()) * thicknessRatio, 1);
+        CGContextSetLineWidth(cgContext, lineWidth);
+        CGContextSetStrokeColorWithColor(cgContext, cachedCGColor(Color(1.0f, 1.0f, 1.0f, 240 / 255.0f)));
+        drawJoinedLines(cgContext, line, 3, true, kCGLineCapButt);
     } else {
         FloatPoint bottomCenter(clip.x() + clip.width() / 2.0f, clip.maxY());
         drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);

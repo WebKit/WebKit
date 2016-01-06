@@ -1,3 +1,22 @@
+2016-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove GraphicsContext::drawJoinedLines()
+        https://bugs.webkit.org/show_bug.cgi?id=152764
+
+        Reviewed by Zalan Bujtas.
+
+        GraphicsContext::drawJoinedLines() was only used by iOS form-control drawing
+        and polluted GraphicsContext with platform-specific types.
+
+        Rewrite RenderThemeIOS::paintCheckboxDecorations() to use the CGContextRef directly.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawJoinedLines): Deleted.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::drawJoinedLines):
+        (WebCore::RenderThemeIOS::paintCheckboxDecorations):
+
 2016-01-05  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/structured-clone.html crashes.

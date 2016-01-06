@@ -278,10 +278,6 @@ public:
     void drawRect(const FloatRect&, float borderThickness = 1);
     void drawLine(const FloatPoint&, const FloatPoint&);
 
-#if PLATFORM(IOS)
-    void drawJoinedLines(CGPoint points[], unsigned count, bool antialias, CGLineCap = kCGLineCapButt);
-#endif
-
     void drawEllipse(const FloatRect&);
     void drawRaisedEllipse(const FloatRect&, const Color& ellipseColor, const Color& shadowColor);
     void drawConvexPolygon(size_t numPoints, const FloatPoint*, bool shouldAntialias = false);
