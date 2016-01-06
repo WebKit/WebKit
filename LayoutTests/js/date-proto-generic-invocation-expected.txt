@@ -1,4 +1,4 @@
-This test verifies that the functions of the Date prototype object are not generic, as documented in ECMA-262 rev3 section 15.9.5 Properties of the Date Prototype Object.
+This test verifies that the functions of the Date prototype object are not generic, and the prototype is a plain object, as documented in ECMA-262 rev6 section 20.3.4 Properties of the Date Prototype Object.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -31,6 +31,38 @@ PASS o.__proto__.setDate() threw exception TypeError: Type error.
 PASS o.__proto__.setMonth() threw exception TypeError: Type error.
 PASS o.__proto__.setFullYear() threw exception TypeError: Type error.
 PASS o.__proto__.setYear() threw exception TypeError: Type error.
+PASS Date.prototype.toString() threw exception TypeError: Type error.
+PASS Date.prototype.toDateString() threw exception TypeError: Type error.
+PASS Date.prototype.toTimeString() threw exception TypeError: Type error.
+PASS Date.prototype.toGMTString() threw exception TypeError: Type error.
+PASS Date.prototype.toUTCString() threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleString() threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleDateString() threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString() threw exception TypeError: Type error.
+PASS Date.prototype.getTime() threw exception TypeError: Type error.
+PASS Date.prototype.getYear() threw exception TypeError: Type error.
+PASS Date.prototype.getFullYear() threw exception TypeError: Type error.
+PASS Date.prototype.getMonth() threw exception TypeError: Type error.
+PASS Date.prototype.getDate() threw exception TypeError: Type error.
+PASS Date.prototype.getDay() threw exception TypeError: Type error.
+PASS Date.prototype.getHours() threw exception TypeError: Type error.
+PASS Date.prototype.getMinutes() threw exception TypeError: Type error.
+PASS Date.prototype.getSeconds() threw exception TypeError: Type error.
+PASS Date.prototype.getMilliseconds() threw exception TypeError: Type error.
+PASS Date.prototype.getTimezoneOffset() threw exception TypeError: Type error.
+PASS Date.prototype.setTime() threw exception TypeError: Type error.
+PASS Date.prototype.setMilliseconds() threw exception TypeError: Type error.
+PASS Date.prototype.setSeconds() threw exception TypeError: Type error.
+PASS Date.prototype.setMinutes() threw exception TypeError: Type error.
+PASS Date.prototype.setHours() threw exception TypeError: Type error.
+PASS Date.prototype.setDate() threw exception TypeError: Type error.
+PASS Date.prototype.setMonth() threw exception TypeError: Type error.
+PASS Date.prototype.setFullYear() threw exception TypeError: Type error.
+PASS Date.prototype.setYear() threw exception TypeError: Type error.
+PASS new Date instanceof Date is true
+PASS (new Date).__proto__ is Date.prototype
+PASS (new Date).__proto__ instanceof Date is false
+PASS Date.prototype instanceof Date is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
