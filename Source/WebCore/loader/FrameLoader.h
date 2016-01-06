@@ -133,6 +133,7 @@ public:
     void retryAfterFailedCacheOnlyMainResourceLoad();
 
     static void reportLocalLoadFailed(Frame*, const String& url);
+    static void reportBlockedPortFailed(Frame*, const String& url);
 
     // FIXME: These are all functions which stop loads. We have too many.
     WEBCORE_EXPORT void stopAllLoaders(ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
@@ -171,6 +172,7 @@ public:
 
     WEBCORE_EXPORT ResourceError cancelledError(const ResourceRequest&) const;
     WEBCORE_EXPORT ResourceError blockedByContentBlockerError(const ResourceRequest&) const;
+    ResourceError blockedError(const ResourceRequest&) const;
 
     bool isHostedByObjectElement() const;
 
