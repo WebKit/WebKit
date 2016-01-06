@@ -1664,6 +1664,12 @@ public:
         return branchAdd32(cond, immTempRegister, dest);
     }
 
+    Jump branchAdd32(ResultCondition cond, Address address, RegisterID dest)
+    {
+        load32(address, immTempRegister);
+        return branchAdd32(cond, immTempRegister, dest);
+    }
+
     Jump branchAdd32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         move(imm, immTempRegister);
