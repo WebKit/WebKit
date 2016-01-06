@@ -56,9 +56,6 @@ function test()
 
     let suite = InspectorTest.createAsyncSuite("WebInspector.ScopeChainNode");
 
-    InspectorTest.dumpActivityToSystemConsole = true;
-    InspectorBackend.dumpInspectorProtocolMessages = true;
-
     suite.addTestCase({
         name: "WebInspector.ScopeChainNode.AllTypes",
         description: "Tests for each of the different scope chain node types.",

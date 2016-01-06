@@ -10,9 +10,6 @@ function test()
 {
     let suite = ProtocolTest.createAsyncSuite("Debugger.scriptParsed.enable");
 
-    ProtocolTest.dumpActivityToSystemConsole = true;
-    ProtocolTest.dumpInspectorProtocolMessages = true;
-
     // Because InspectorTest output causes scripts to be parsed
     // this test only checks the scripts the frontend is notified
     // of when enabling the Debugger domain.
