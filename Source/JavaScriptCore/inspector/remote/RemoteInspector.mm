@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -236,6 +236,18 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
         ASSERT(m_automaticInspectionCandidateIdentifier);
         m_automaticInspectionCandidateIdentifier = 0;
     }
+}
+
+void RemoteInspector::setRemoteInspectorClient(RemoteInspector::Client* client)
+{
+    ASSERT_ARG(client, client);
+    ASSERT(!m_client);
+
+    std::lock_guard<Lock> lock(m_mutex);
+    m_client = client;
+
+    // Send an updated listing that includes whether the client allows remote automation.
+    pushListingsSoon();
 }
 
 void RemoteInspector::sendAutomaticInspectionCandidateMessage()
@@ -543,6 +555,9 @@ void RemoteInspector::pushListingsNow()
 
     RetainPtr<NSMutableDictionary> message = adoptNS([[NSMutableDictionary alloc] init]);
     [message setObject:listings.get() forKey:WIRListingKey];
+
+    BOOL isAllowed = m_client && m_client->remoteAutomationAllowed();
+    [message setObject:@(isAllowed) forKey:WIRRemoteAutomationEnabledKey];
 
     m_xpcConnection->sendMessage(WIRListingMessage, message.get());
 }

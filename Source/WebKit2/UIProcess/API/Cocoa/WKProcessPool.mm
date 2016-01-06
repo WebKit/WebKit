@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "AutomationClient.h"
 #import "CacheModel.h"
 #import "DownloadClient.h"
 #import "SandboxUtilities.h"
@@ -37,6 +38,7 @@
 #import "WebCookieManagerProxy.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
+#import "_WKAutomationDelegate.h"
 #import "_WKDownloadDelegate.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import <WebCore/CFNetworkSPI.h>
@@ -49,6 +51,7 @@
 #endif
 
 @implementation WKProcessPool {
+    WebKit::WeakObjCPtr<id <_WKAutomationDelegate>> _automationDelegate;
     WebKit::WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
 
 #if PLATFORM(IOS)
@@ -219,9 +222,25 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     _processPool->setDownloadClient(std::make_unique<WebKit::DownloadClient>(downloadDelegate));
 }
 
+- (id <_WKAutomationDelegate>)_automationDelegate
+{
+    return _automationDelegate.getAutoreleased();
+}
+
+- (void)_setAutomationDelegate:(id <_WKAutomationDelegate>)automationDelegate
+{
+    _automationDelegate = automationDelegate;
+    _processPool->setAutomationClient(std::make_unique<WebKit::AutomationClient>(self, automationDelegate));
+}
+
 - (void)_warmInitialProcess
 {
     _processPool->warmInitialProcess();
+}
+
+- (void)_automationCapabilitiesDidChange
+{
+    _processPool->updateAutomationCapabilities();
 }
 
 @end

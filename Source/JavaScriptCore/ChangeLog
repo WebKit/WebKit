@@ -1,3 +1,31 @@
+2016-01-06  Brian Burg  <bburg@apple.com>
+
+        Add a WebKit SPI for registering an automation controller with RemoteInspector
+        https://bugs.webkit.org/show_bug.cgi?id=151576
+
+        Reviewed by Dan Bernstein and Joseph Pecoraro.
+
+        Given a RemoteInspector endpoint that is instantiated in UIProcess, there
+        should be a way to delegate automation-related functionality and policy to
+        clients of WebKit.
+
+        This class adds a RemoteInspector::Client interface that serves a delegate.
+        This is ultimately delegated via _WKAutomationDelegate, which is an SPI
+        that allows clients to install an Objective-C delegate for automation.
+
+        The setting for whether remote automation is allowed is included in the
+        listing that RemoteInspector sends out. It is updated when RemoteInspector::Client
+        is assigned, or when the client signals that its capabilities have changed.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::setRemoteInspectorClient): Added.
+        (Inspector::RemoteInspector::pushListingsNow):
+
+            In the listing, include whether the application supports remote automation.
+
+        * inspector/remote/RemoteInspectorConstants.h: Add a constant.
+
 2016-01-05  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Boolean, Number, Map, RegExp, and Set should be subclassable

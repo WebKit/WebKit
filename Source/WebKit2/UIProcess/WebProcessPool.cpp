@@ -27,6 +27,7 @@
 #include "WebProcessPool.h"
 
 #include "APIArray.h"
+#include "APIAutomationClient.h"
 #include "APIDownloadClient.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APIPageConfiguration.h"
@@ -138,6 +139,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_haveInitialEmptyProcess(false)
     , m_processWithPageCache(0)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
+    , m_automationClient(std::make_unique<API::AutomationClient>())
     , m_downloadClient(std::make_unique<API::DownloadClient>())
     , m_historyClient(std::make_unique<API::LegacyContextHistoryClient>())
     , m_visitedLinkStore(VisitedLinkStore::create())
@@ -275,6 +277,14 @@ void WebProcessPool::setDownloadClient(std::unique_ptr<API::DownloadClient> down
         m_downloadClient = std::make_unique<API::DownloadClient>();
     else
         m_downloadClient = WTFMove(downloadClient);
+}
+
+void WebProcessPool::setAutomationClient(std::unique_ptr<API::AutomationClient> automationClient)
+{
+    if (!automationClient)
+        m_automationClient = std::make_unique<API::AutomationClient>();
+    else
+        m_automationClient = WTFMove(automationClient);
 }
 
 void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
@@ -1063,6 +1073,13 @@ void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateIn
 {
     if (m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
+}
+
+void WebProcessPool::updateAutomationCapabilities() const
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    Inspector::RemoteInspector::singleton().clientCapabilitiesDidChange();
+#endif
 }
 
 void WebProcessPool::setHTTPPipeliningEnabled(bool enabled)

@@ -70,6 +70,7 @@ OBJC_CLASS NSString;
 #endif
 
 namespace API {
+class AutomationClient;
 class DownloadClient;
 class LegacyContextHistoryClient;
 class PageConfiguration;
@@ -134,6 +135,7 @@ public:
     void initializeConnectionClient(const WKContextConnectionClientBase*);
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>);
     void setDownloadClient(std::unique_ptr<API::DownloadClient>);
+    void setAutomationClient(std::unique_ptr<API::AutomationClient>);
 
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
     unsigned maximumNumberOfProcesses() const { return !m_configuration->maximumProcessCount() ? UINT_MAX : m_configuration->maximumProcessCount(); }
@@ -248,6 +250,8 @@ public:
 
     void disableProcessTermination() { m_processTerminationEnabled = false; }
     void enableProcessTermination();
+
+    void updateAutomationCapabilities() const;
 
     // Defaults to false.
     void setHTTPPipeliningEnabled(bool);
@@ -416,6 +420,7 @@ private:
 
     WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
+    std::unique_ptr<API::AutomationClient> m_automationClient;
     std::unique_ptr<API::DownloadClient> m_downloadClient;
     std::unique_ptr<API::LegacyContextHistoryClient> m_historyClient;
 

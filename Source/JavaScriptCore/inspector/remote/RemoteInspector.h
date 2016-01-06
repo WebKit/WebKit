@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015, 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,13 @@ class RemoteInspectorClient;
 
 class JS_EXPORT_PRIVATE RemoteInspector final : public RemoteInspectorXPCConnection::Client {
 public:
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual bool remoteAutomationAllowed() const = 0;
+        virtual void requestAutomationSession() = 0;
+    };
+
     static void startDisabled();
     static RemoteInspector& singleton();
     friend class NeverDestroyed<RemoteInspector>;
@@ -58,10 +65,12 @@ public:
     void sendMessageToRemote(unsigned identifier, const String& message);
 
     void updateAutomaticInspectionCandidate(RemoteInspectionTarget*);
+    void setRemoteInspectorClient(RemoteInspector::Client*);
 
     void setupFailed(unsigned identifier);
     void setupCompleted(unsigned identifier);
     bool waitingForAutomaticInspection(unsigned identifier);
+    void clientCapabilitiesDidChange() { pushListingsSoon(); }
 
     bool enabled() const { return m_enabled; }
     bool hasActiveDebugSession() const { return m_hasActiveDebugSession; }
@@ -122,6 +131,8 @@ private:
     HashMap<unsigned, RefPtr<RemoteConnectionToTarget>> m_connectionMap;
 
     RefPtr<RemoteInspectorXPCConnection> m_xpcConnection;
+
+    RemoteInspector::Client* m_client { nullptr };
 
     dispatch_queue_t m_xpcQueue;
     unsigned m_nextAvailableIdentifier { 1 };

@@ -1247,6 +1247,10 @@
 		93A88B471BC8829700ABA5C2 /* APIHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A88B421BC8828C00ABA5C2 /* APIHitTestResult.cpp */; };
 		93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E6A4EE1BC5DD3900F8A0E7 /* _WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99C81D591C20E1E5005C4C82 /* AutomationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C81D561C20DFBE005C4C82 /* AutomationClient.mm */; };
+		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
+		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
+		99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F54F88E16488E87007DF81A /* ChildProcessMac.mm */; };
 		9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */; };
 		9FB5F394169E6A80002C25BF /* WKContextPrivateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */; };
@@ -3442,6 +3446,10 @@
 		93A88B431BC8828C00ABA5C2 /* APIHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHitTestResult.h; sourceTree = "<group>"; };
 		93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageLoadTypesPrivate.h; sourceTree = "<group>"; };
 		93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResult.h; sourceTree = "<group>"; };
+		99C81D551C20DFBE005C4C82 /* AutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationClient.h; sourceTree = "<group>"; };
+		99C81D561C20DFBE005C4C82 /* AutomationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomationClient.mm; sourceTree = "<group>"; };
+		99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationClient.h; sourceTree = "<group>"; };
+		99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationDelegate.h; sourceTree = "<group>"; };
 		9F54F88E16488E87007DF81A /* ChildProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessMac.mm; sourceTree = "<group>"; };
 		9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessManagerMac.mm; sourceTree = "<group>"; };
 		9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = mac/WKContextPrivateMac.mm; sourceTree = "<group>"; };
@@ -4906,6 +4914,8 @@
 			isa = PBXGroup;
 			children = (
 				517DD5BB180DA7C40081660B /* Databases */,
+				99C81D551C20DFBE005C4C82 /* AutomationClient.h */,
+				99C81D561C20DFBE005C4C82 /* AutomationClient.mm */,
 				83891B6A1A68C30B0030F386 /* DiagnosticLoggingClient.h */,
 				83891B6B1A68C30B0030F386 /* DiagnosticLoggingClient.mm */,
 				A1DF631118E0B7C8003A3E2A /* DownloadClient.h */,
@@ -5276,6 +5286,7 @@
 				37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */,
 				37A5E01118BBF937000A081E /* _WKActivatedElementInfo.mm */,
 				379A873518BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h */,
+				99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */,
 				1A5704F61BE01FF400874AF1 /* _WKContextMenuElementInfo.h */,
 				1A5704F51BE01FF400874AF1 /* _WKContextMenuElementInfo.mm */,
 				83891B681A68BEBC0030F386 /* _WKDiagnosticLoggingDelegate.h */,
@@ -6267,6 +6278,7 @@
 				37C4C08318149C2A003688B9 /* Cocoa */,
 				BC8A501311765F4500757573 /* cpp */,
 				BC111B47112F616900337BAB /* mac */,
+				99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */,
 				076E884D1A13CADF005E90FC /* APIContextMenuClient.h */,
 				83891B621A68B3420030F386 /* APIDiagnosticLoggingClient.h */,
 				1F7D36C018DA513F00D9D659 /* APIDownloadClient.h */,
@@ -7794,6 +7806,7 @@
 				E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */,
 				834B250F1A831A8D00CFB150 /* NetworkCacheFileSystem.h in Headers */,
 				E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */,
+				99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */,
 				E4436ECE1A0D040B00EAD204 /* NetworkCacheKey.h in Headers */,
 				831EEBBD1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.h in Headers */,
 				832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */,
@@ -7915,6 +7928,7 @@
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				753E3E0E1887398900188496 /* SessionTracker.h in Headers */,
+				99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */,
@@ -8347,6 +8361,7 @@
 				1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */,
 				7C8EB11718DB6A19007917C2 /* WKPreferencesPrivate.h in Headers */,
 				BCD597D0112B56AC00EC8C23 /* WKPreferencesRef.h in Headers */,
+				99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */,
 				762B748D120BC75C00819339 /* WKPreferencesRefPrivate.h in Headers */,
 				0FCB4E6618BBE3D9000FCFC9 /* WKPrintingView.h in Headers */,
 				BCBAACEB145225E30053F82F /* WKProcessGroup.h in Headers */,
@@ -10066,6 +10081,7 @@
 				1A7E377818E4A4FE003D0FFF /* WKScriptMessage.mm in Sources */,
 				0FCB4E5518BBE044000FCFC9 /* WKScrollView.mm in Sources */,
 				51CD1C661B34B9DC00142CA5 /* WKSecurityOrigin.mm in Sources */,
+				99C81D591C20E1E5005C4C82 /* AutomationClient.mm in Sources */,
 				51CD1C5D1B3493AF00142CA5 /* WKSecurityOriginRef.cpp in Sources */,
 				BC407603124FF0270068F20A /* WKSerializedScriptValue.cpp in Sources */,
 				75A8D2D8187D304000C39C9E /* WKSessionRef.cpp in Sources */,

@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 @class _WKProcessPoolConfiguration;
+@protocol _WKAutomationDelegate;
 @protocol _WKDownloadDelegate;
 
 @interface WKProcessPool ()
@@ -48,11 +49,13 @@
 - (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
+@property (nonatomic, weak, setter=_setAutomationDelegate:) id <_WKAutomationDelegate> _automationDelegate WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL bundleIdentifierIfNotInContainer:(NSString *)bundleIdentifier;
 
 - (void)_warmInitialProcess WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)_automationCapabilitiesDidChange WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end
 

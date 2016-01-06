@@ -1,3 +1,56 @@
+2016-01-06  Brian Burg  <bburg@apple.com>
+
+        Add a WebKit SPI for registering an automation controller with RemoteInspector
+        https://bugs.webkit.org/show_bug.cgi?id=151576
+
+        Reviewed by Dan Bernstein and Joseph Pecoraro.
+
+        _WKAutomationDelegate is a new SPI that allows WKProcessPool clients to decide
+        policy and implement actions for remote automation.
+
+        The SPI's implementation connects the client's delegate to RemoteInspector::Client.
+        This allows the delegate to handle some commands, such as requestAutomationSession,
+        that come over XPC from an external test runner but are not associated with a specific
+        automation target.
+
+        * PlatformMac.cmake:
+        * UIProcess/API/APIAutomationClient.h: Added. Boilerplate for WebKit::AutomationClient.
+        (API::AutomationClient::~AutomationClient):
+        (API::AutomationClient::allowsRemoteAutomation):
+        (API::AutomationClient::requestAutomationSession):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _automationDelegate]): Added.
+        (-[WKProcessPool _setAutomationDelegate:]): Added.
+        (-[WKProcessPool _automationCapabilitiesDidChange]): Added.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h: Add delegate.
+        * UIProcess/API/Cocoa/_WKAutomationDelegate.h: Added.
+
+            This is a new delegate SPI of WKProcessPool; it corresponds to AutomationClient.
+
+        * UIProcess/Cocoa/AutomationClient.h: Added.
+        * UIProcess/Cocoa/AutomationClient.mm: Added.
+
+            This implements a bridge between RemoteInspector::Client and _WKAutomationDelegate.
+            Since the delegate can be called from JavaScriptCore, save the delegating
+            WKProcessPool and pass it as the self parameter to delegate methods.
+
+        (WebKit::AutomationClient::AutomationClient):
+        (WebKit::AutomationClient::~AutomationClient):
+
+            This client automatically registers and unregisters as a RemoteInspector::Client.
+
+        (WebKit::AutomationClient::remoteAutomationAllowed):
+        (WebKit::AutomationClient::requestAutomationSession):
+
+            Forward requests from RemoteInspector to the automation delegate.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::setAutomationClient): Added.
+        (WebKit::WebProcessPool::updateAutomationCapabilities): Added, it notifies RemoteInspector.
+        * UIProcess/WebProcessPool.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-01-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Set WebKit2 process output name

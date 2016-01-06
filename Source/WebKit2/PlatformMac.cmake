@@ -189,6 +189,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/mac/WKView.mm
 
+    UIProcess/Cocoa/AutomationClient.mm
     UIProcess/Cocoa/DiagnosticLoggingClient.mm
     UIProcess/Cocoa/DownloadClient.mm
     UIProcess/Cocoa/FindClient.mm
