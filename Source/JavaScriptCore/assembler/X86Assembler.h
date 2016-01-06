@@ -29,6 +29,7 @@
 #if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
 
 #include "AssemblerBuffer.h"
+#include "AssemblerCommon.h"
 #include "JITCompilationEffort.h"
 #include <limits.h>
 #include <stdint.h>

@@ -285,7 +285,7 @@ x86_64: Rshift64 U:G:64, UD:G:64
     Tmp*, Tmp
     Imm, Tmp
 
-arm64: urshift32 U:G:32, U:G:32, ZD:G:32
+arm64: Urshift32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
 
@@ -338,6 +338,12 @@ x86: Not64 UD:G:64
     Tmp
     Addr
 
+arm64: AbsDouble U:F:64, D:F:64
+    Tmp, Tmp
+
+arm64: AbsFloat U:F:32, D:F:32
+    Tmp, Tmp
+
 CeilDouble U:F:64, UD:F:64
     Tmp, Tmp
     x86: Addr, Tmp
@@ -385,17 +391,17 @@ Move U:G:Ptr, D:G:Ptr
     Tmp, Tmp
     Imm, Tmp as signExtend32ToPtr
     Imm64, Tmp
-    x86: Addr, Tmp as loadPtr # This means that "Move Addr, Tmp" is code-generated as "load" not "move".
+    Addr, Tmp as loadPtr # This means that "Move Addr, Tmp" is code-generated as "load" not "move".
     Index, Tmp as loadPtr
-    x86: Tmp, Addr as storePtr
+    Tmp, Addr as storePtr
     Tmp, Index as storePtr
     x86: Imm, Addr as storePtr
 
 Move32 U:G:32, ZD:G:32
     Tmp, Tmp as zeroExtend32ToPtr
-    x86: Addr, Tmp as load32
+    Addr, Tmp as load32
     Index, Tmp as load32
-    x86: Tmp, Addr as store32
+    Tmp, Addr as store32
     Tmp, Index as store32
     x86: Imm, Addr as store32
     x86: Imm, Index as store32
@@ -405,36 +411,36 @@ SignExtend32ToPtr U:G:32, D:G:Ptr
 
 ZeroExtend8To32 U:G:8, ZD:G:32
     Tmp, Tmp
-    x86: Addr, Tmp as load8
+    Addr, Tmp as load8
     Index, Tmp as load8
 
 SignExtend8To32 U:G:8, ZD:G:32
     Tmp, Tmp
-    x86: Addr, Tmp as load8SignedExtendTo32
+    Addr, Tmp as load8SignedExtendTo32
     Index, Tmp as load8SignedExtendTo32
 
 ZeroExtend16To32 U:G:16, ZD:G:32
     Tmp, Tmp
-    x86: Addr, Tmp as load16
+    Addr, Tmp as load16
     Index, Tmp as load16
 
 SignExtend16To32 U:G:16, ZD:G:32
     Tmp, Tmp
-    x86: Addr, Tmp as load16SignedExtendTo32
+    Addr, Tmp as load16SignedExtendTo32
     Index, Tmp as load16SignedExtendTo32
 
 MoveFloat U:F:32, D:F:32
     Tmp, Tmp as moveDouble
-    x86: Addr, Tmp as loadFloat
+    Addr, Tmp as loadFloat
     Index, Tmp as loadFloat
-    x86: Tmp, Addr as storeFloat
+    Tmp, Addr as storeFloat
     Tmp, Index as storeFloat
 
 MoveDouble U:F:64, D:F:64
     Tmp, Tmp
-    x86: Addr, Tmp as loadDouble
+    Addr, Tmp as loadDouble
     Index, Tmp as loadDouble
-    x86: Tmp, Addr as storeDouble
+    Tmp, Addr as storeDouble
     Tmp, Index as storeDouble
 
 MoveZeroToDouble D:F:64
@@ -452,39 +458,39 @@ Move32ToFloat U:G:32, D:F:32
 
 64: MoveDoubleTo64 U:F:64, D:G:64
     Tmp, Tmp
-    x86: Addr, Tmp as load64
+    Addr, Tmp as load64
     Index, Tmp as load64
 
 MoveFloatTo32 U:F:32, D:G:32
     Tmp, Tmp
-    x86: Addr, Tmp as load32
+    Addr, Tmp as load32
     Index, Tmp as load32
 
 Load8 U:G:8, ZD:G:32
-    x86: Addr, Tmp
+    Addr, Tmp
     Index, Tmp
 
 Store8 U:G:8, D:G:8
     Tmp, Index
-    x86: Tmp, Addr
+    Tmp, Addr
     x86: Imm, Index
     x86: Imm, Addr
 
 Load8SignedExtendTo32 U:G:8, ZD:G:32
-    x86: Addr, Tmp
+    Addr, Tmp
     Index, Tmp
 
 Load16 U:G:16, ZD:G:32
-    x86: Addr, Tmp
+    Addr, Tmp
     Index, Tmp
 
 Load16SignedExtendTo32 U:G:16, ZD:G:32
-    x86: Addr, Tmp
+    Addr, Tmp
     Index, Tmp
 
 Store16 U:G:16, D:G:16
     Tmp, Index
-    x86: Tmp, Addr
+    Tmp, Addr
 
 Compare32 U:G:32, U:G:32, U:G:32, ZD:G:32
     RelCond, Tmp, Tmp, Tmp

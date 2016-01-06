@@ -993,6 +993,15 @@ public:
         load16(address, dest);
     }
 
+    void load16SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    {
+        if (tryLoadSignedWithOffset<16>(dest, address.base, address.offset))
+            return;
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.ldrsh<32>(dest, address.base, memoryTempRegister);
+    }
+
     void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
         if (!address.offset && (!address.scale || address.scale == 1)) {
@@ -1042,6 +1051,15 @@ public:
         m_assembler.ldrb(dest, memoryTempRegister, ARM64Registers::zr);
         if (dest == memoryTempRegister)
             m_cachedMemoryTempRegister.invalidate();
+    }
+
+    void load8SignedExtendTo32(ImplicitAddress address, RegisterID dest)
+    {
+        if (tryLoadSignedWithOffset<8>(dest, address.base, address.offset))
+            return;
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.ldrsb<32>(dest, address.base, memoryTempRegister);
     }
 
     void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
@@ -1194,6 +1212,15 @@ public:
         return label;
     }
 
+    void store16(RegisterID src, ImplicitAddress address)
+    {
+        if (tryStoreWithOffset<16>(src, address.base, address.offset))
+            return;
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.str<16>(src, address.base, memoryTempRegister);
+    }
+
     void store16(RegisterID src, BaseIndex address)
     {
         if (!address.offset && (!address.scale || address.scale == 1)) {
@@ -1268,6 +1295,11 @@ public:
     void absDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.fabs<64>(dest, src);
+    }
+
+    void absFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fabs<32>(dest, src);
     }
 
     void addDouble(FPRegisterID src, FPRegisterID dest)
@@ -1457,6 +1489,15 @@ public:
         m_assembler.ldr<64>(dest, memoryTempRegister, ARM64Registers::zr);
     }
 
+    void loadFloat(ImplicitAddress address, FPRegisterID dest)
+    {
+        if (tryLoadWithOffset<32>(dest, address.base, address.offset))
+            return;
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.ldr<32>(dest, address.base, memoryTempRegister);
+    }
+
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
         if (!address.offset && (!address.scale || address.scale == 2)) {
@@ -1603,6 +1644,15 @@ public:
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
         m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, ARM64Assembler::UXTX, address.scale);
         m_assembler.str<64>(src, address.base, memoryTempRegister);
+    }
+
+    void storeFloat(FPRegisterID src, ImplicitAddress address)
+    {
+        if (tryStoreWithOffset<32>(src, address.base, address.offset))
+            return;
+
+        signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
+        m_assembler.str<32>(src, address.base, memoryTempRegister);
     }
     
     void storeFloat(FPRegisterID src, BaseIndex address)
@@ -2890,6 +2940,18 @@ private:
     }
 
     template<int datasize>
+    ALWAYS_INLINE void loadSignedAddressedByUnsignedImmediate(RegisterID rt, RegisterID rn, unsigned pimm)
+    {
+        loadUnsignedImmediate<datasize>(rt, rn, pimm);
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void loadSignedAddressedByUnscaledImmediate(RegisterID rt, RegisterID rn, int simm)
+    {
+        loadUnscaledImmediate<datasize>(rt, rn, simm);
+    }
+
+    template<int datasize>
     ALWAYS_INLINE void storeUnsignedImmediate(RegisterID rt, RegisterID rn, unsigned pimm)
     {
         m_assembler.str<datasize>(rt, rn, pimm);
@@ -3072,6 +3134,20 @@ private:
     }
 
     template<int datasize>
+    ALWAYS_INLINE bool tryLoadSignedWithOffset(RegisterID rt, RegisterID rn, int32_t offset)
+    {
+        if (ARM64Assembler::canEncodeSImmOffset(offset)) {
+            loadSignedAddressedByUnscaledImmediate<datasize>(rt, rn, offset);
+            return true;
+        }
+        if (ARM64Assembler::canEncodePImmOffset<datasize>(offset)) {
+            loadSignedAddressedByUnsignedImmediate<datasize>(rt, rn, static_cast<unsigned>(offset));
+            return true;
+        }
+        return false;
+    }
+
+    template<int datasize>
     ALWAYS_INLINE bool tryLoadWithOffset(FPRegisterID rt, RegisterID rn, int32_t offset)
     {
         if (ARM64Assembler::canEncodeSImmOffset(offset)) {
@@ -3165,6 +3241,18 @@ ALWAYS_INLINE void MacroAssemblerARM64::loadUnsignedImmediate<16>(RegisterID rt,
 }
 
 template<>
+ALWAYS_INLINE void MacroAssemblerARM64::loadSignedAddressedByUnsignedImmediate<8>(RegisterID rt, RegisterID rn, unsigned pimm)
+{
+    m_assembler.ldrsb<64>(rt, rn, pimm);
+}
+
+template<>
+ALWAYS_INLINE void MacroAssemblerARM64::loadSignedAddressedByUnsignedImmediate<16>(RegisterID rt, RegisterID rn, unsigned pimm)
+{
+    m_assembler.ldrsh<64>(rt, rn, pimm);
+}
+
+template<>
 ALWAYS_INLINE void MacroAssemblerARM64::loadUnscaledImmediate<8>(RegisterID rt, RegisterID rn, int simm)
 {
     m_assembler.ldurb(rt, rn, simm);
@@ -3174,6 +3262,18 @@ template<>
 ALWAYS_INLINE void MacroAssemblerARM64::loadUnscaledImmediate<16>(RegisterID rt, RegisterID rn, int simm)
 {
     m_assembler.ldurh(rt, rn, simm);
+}
+
+template<>
+ALWAYS_INLINE void MacroAssemblerARM64::loadSignedAddressedByUnscaledImmediate<8>(RegisterID rt, RegisterID rn, int simm)
+{
+    m_assembler.ldursb<64>(rt, rn, simm);
+}
+
+template<>
+ALWAYS_INLINE void MacroAssemblerARM64::loadSignedAddressedByUnscaledImmediate<16>(RegisterID rt, RegisterID rn, int simm)
+{
+    m_assembler.ldursh<64>(rt, rn, simm);
 }
 
 template<>

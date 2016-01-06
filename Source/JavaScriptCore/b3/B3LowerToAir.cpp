@@ -356,7 +356,7 @@ private:
         // work. We solve this by requiring a just-before-lowering phase that legalizes offsets.
         // FIXME: Implement such a legalization phase.
         // https://bugs.webkit.org/show_bug.cgi?id=152530
-        ASSERT(Arg::isValidAddrForm(offset));
+        ASSERT(Arg::isValidAddrForm(offset, width));
 
         auto fallback = [&] () -> Arg {
             return Arg::addr(tmp(address), offset);
@@ -1707,6 +1707,12 @@ private:
 
         case Clz: {
             appendUnOp<CountLeadingZeros32, CountLeadingZeros64>(m_value->child(0));
+            return;
+        }
+
+        case Abs: {
+            RELEASE_ASSERT_WITH_MESSAGE(!isX86(), "Abs is not supported natively on x86. It must be replaced before generation.");
+            appendUnOp<Air::Oops, Air::Oops, AbsDouble, AbsFloat>(m_value->child(0));
             return;
         }
 

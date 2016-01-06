@@ -1,3 +1,49 @@
+2016-01-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Get more of testb3 to pass on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=152737
+
+        Reviewed by Geoffrey Garen.
+
+        A bunch of minor bugs and missing function to make most of testb3
+        run on ARM64.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::canEncodePImmOffset):
+        (JSC::ARM64Assembler::canEncodeSImmOffset):
+        (JSC::isInt9): Deleted.
+        (JSC::isUInt12): Deleted.
+        * assembler/ARMv7Assembler.h:
+        * assembler/AssemblerCommon.h: Added.
+        (JSC::isInt9):
+        (JSC::isUInt12):
+        (JSC::isValidScaledUImm12):
+        (JSC::isValidSignedImm9):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::store16):
+        (JSC::MacroAssemblerARM64::absFloat):
+        (JSC::MacroAssemblerARM64::loadFloat):
+        (JSC::MacroAssemblerARM64::storeFloat):
+        (JSC::MacroAssemblerARM64::loadSignedAddressedByUnsignedImmediate):
+        (JSC::MacroAssemblerARM64::loadSignedAddressedByUnscaledImmediate):
+        (JSC::MacroAssemblerARM64::tryLoadSignedWithOffset):
+        (JSC::MacroAssemblerARM64::loadSignedAddressedByUnsignedImmediate<8>):
+        (JSC::MacroAssemblerARM64::loadSignedAddressedByUnsignedImmediate<16>):
+        (JSC::MacroAssemblerARM64::loadSignedAddressedByUnscaledImmediate<8>):
+        (JSC::MacroAssemblerARM64::loadSignedAddressedByUnscaledImmediate<16>):
+        * assembler/X86Assembler.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isValidImmForm):
+        (JSC::B3::Air::Arg::isValidAddrForm):
+        (JSC::B3::Air::Arg::isValidForm):
+        * b3/air/AirOpcode.opcodes:
+
 2016-01-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Remove USE_UDIS86 variable

@@ -888,18 +888,33 @@ public:
     {
         if (isX86())
             return B3::isRepresentableAs<int32_t>(value);
-        // FIXME: ARM has some specific rules about what kinds of immediates are valid.
-        // https://bugs.webkit.org/show_bug.cgi?id=152530
+        if (isARM64())
+            return isUInt12(value);
         return false;
     }
 
-    static bool isValidAddrForm(int32_t offset)
+    static bool isValidAddrForm(int32_t offset, Optional<Width> width = Nullopt)
     {
         if (isX86())
             return true;
-        // FIXME: ARM has some specific rules about what kinds of offsets are valid.
-        // https://bugs.webkit.org/show_bug.cgi?id=152530
-        UNUSED_PARAM(offset);
+        if (isARM64()) {
+            if (!width)
+                return true;
+
+            if (isValidSignedImm9(offset))
+                return true;
+
+            switch (*width) {
+            case Width8:
+                return isValidScaledUImm12<8>(offset);
+            case Width16:
+                return isValidScaledUImm12<16>(offset);
+            case Width32:
+                return isValidScaledUImm12<32>(offset);
+            case Width64:
+                return isValidScaledUImm12<64>(offset);
+            }
+        }
         return false;
     }
 
@@ -931,7 +946,7 @@ public:
         case Addr:
         case Stack:
         case CallArg:
-            return isValidAddrForm(offset());
+            return isValidAddrForm(offset(), width);
         case Index:
             return isValidIndexForm(scale(), offset(), width);
         case RelCond:
