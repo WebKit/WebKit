@@ -1,3 +1,19 @@
+2016-01-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Remove USE_UDIS86 variable
+        https://bugs.webkit.org/show_bug.cgi?id=152731
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove the USE_UDIS86 variable in CMake files. The specific build guard
+        is now enabled by default in Source/WTF/wtf/Platform.h, so the handling
+        in CMake isn't required anymore. The Udis86-specific files have to be
+        built unconditionally now, though.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+
 2016-01-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build after r194454.

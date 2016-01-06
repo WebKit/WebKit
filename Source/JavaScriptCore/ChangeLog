@@ -1,3 +1,12 @@
+2016-01-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Remove USE_UDIS86 variable
+        https://bugs.webkit.org/show_bug.cgi?id=152731
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt: Unconditionally build the Udis86-specific files.
+
 2016-01-05  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 fails cdjs-tests.yaml/red_black_tree_test.js.ftl-eager-no-cjit

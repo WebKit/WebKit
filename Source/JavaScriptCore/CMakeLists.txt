@@ -16,6 +16,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/bytecompiler"
     "${JAVASCRIPTCORE_DIR}/dfg"
     "${JAVASCRIPTCORE_DIR}/disassembler"
+    "${JAVASCRIPTCORE_DIR}/disassembler/udis86"
     "${JAVASCRIPTCORE_DIR}/ftl"
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
@@ -359,11 +360,20 @@ set(JavaScriptCore_SOURCES
     disassembler/ARMv7Disassembler.cpp
     disassembler/Disassembler.cpp
     disassembler/LLVMDisassembler.cpp
+    disassembler/UDis86Disassembler.cpp
     disassembler/X86Disassembler.cpp
 
     disassembler/ARM64/A64DOpcode.cpp
 
     disassembler/ARMv7/ARMv7DOpcode.cpp
+
+    disassembler/udis86/udis86.c
+    disassembler/udis86/udis86_decode.c
+    disassembler/udis86/udis86_input.c
+    disassembler/udis86/udis86_itab_holder.c
+    disassembler/udis86/udis86_syn-att.c
+    disassembler/udis86/udis86_syn-intel.c
+    disassembler/udis86/udis86_syn.c
 
     heap/CodeBlockSet.cpp
     heap/ConservativeRoots.cpp
@@ -834,37 +844,21 @@ foreach (_file ${JavaScriptCore_SCRIPTS_SOURCES})
     list(APPEND JavaScriptCore_SCRIPTS ${JavaScriptCore_SCRIPTS_DIR}/${_script})
 endforeach ()
 
-if (USE_UDIS86)
-    set(UDIS_GEN_DEP
-        disassembler/udis86/ud_opcode.py
-        disassembler/udis86/ud_optable.py
-    )
+set(UDIS_GEN_DEP
+    disassembler/udis86/ud_opcode.py
+    disassembler/udis86/ud_optable.py
+)
 
-    add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.c ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
-        DEPENDS ${UDIS_GEN_DEP}
-        WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
-        COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/disassembler/udis86/itab.py ${JAVASCRIPTCORE_DIR}/disassembler/udis86/optable.xml
-        VERBATIM)
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.c ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
+    DEPENDS ${UDIS_GEN_DEP}
+    WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/disassembler/udis86/itab.py ${JAVASCRIPTCORE_DIR}/disassembler/udis86/optable.xml
+    VERBATIM)
 
-    list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
-        ${JAVASCRIPTCORE_DIR}/disassembler/udis86
-    )
-    list(APPEND JavaScriptCore_HEADERS
-        ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
-    )
-    list(APPEND JavaScriptCore_SOURCES
-        disassembler/UDis86Disassembler.cpp
-
-        disassembler/udis86/udis86.c
-        disassembler/udis86/udis86_decode.c
-        disassembler/udis86/udis86_input.c
-        disassembler/udis86/udis86_itab_holder.c
-        disassembler/udis86/udis86_syn-att.c
-        disassembler/udis86/udis86_syn-intel.c
-        disassembler/udis86/udis86_syn.c
-    )
-endif ()
+list(APPEND JavaScriptCore_HEADERS
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
+)
 
 set(LLINT_ASM
     llint/LowLevelInterpreter.asm

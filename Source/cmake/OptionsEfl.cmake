@@ -12,7 +12,6 @@ if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif ()
 
 set(USE_SOUP 1)
-set(USE_UDIS86 1)
 
 set(WTF_LIBRARY_TYPE STATIC)
 set(WTF_OUTPUT_NAME wtf_efl)
