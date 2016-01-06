@@ -81,6 +81,11 @@ FloatRect ImageBuffer::clampedRect(const FloatRect& rect)
 }
 
 #if !USE(CG)
+FloatSize ImageBuffer::sizeForDestinationSize(FloatSize size) const
+{
+    return size;
+}
+
 void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(Vector<int>, deviceRgbLUT, ());

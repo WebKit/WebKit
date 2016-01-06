@@ -350,14 +350,20 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const
     }
 }
 
-void GraphicsContext::clipToNativeImage(PassNativeImagePtr image, const FloatRect& destRect, const FloatSize& bufferSize)
+void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
 {
+    if (paintingDisabled())
+        return;
+
+    FloatSize bufferDestinationSize = buffer.sizeForDestinationSize(destRect.size());
+    RetainPtr<CGImageRef> image = buffer.copyNativeImage(DontCopyBackingStore);
+
     CGContextRef context = platformContext();
     // FIXME: This image needs to be grayscale to be used as an alpha mask here.
-    CGContextTranslateCTM(context, destRect.x(), destRect.y() + bufferSize.height());
+    CGContextTranslateCTM(context, destRect.x(), destRect.y() + bufferDestinationSize.height());
     CGContextScaleCTM(context, 1, -1);
-    CGContextClipToRect(context, FloatRect(FloatPoint(0, bufferSize.height() - destRect.height()), destRect.size()));
-    CGContextClipToMask(context, FloatRect(FloatPoint(), bufferSize), image);
+    CGContextClipToRect(context, FloatRect(FloatPoint(0, bufferDestinationSize.height() - destRect.height()), destRect.size()));
+    CGContextClipToMask(context, FloatRect(FloatPoint(), bufferDestinationSize), image.get());
     CGContextScaleCTM(context, 1, -1);
     CGContextTranslateCTM(context, -destRect.x(), -destRect.y() - destRect.height());
 }

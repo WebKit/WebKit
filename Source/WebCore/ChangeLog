@@ -1,5 +1,38 @@
 2016-01-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Move ImageBuffer::clip() code into GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=152769
+
+        Reviewed by Zalan Bujtas.
+
+        For CG, GraphicsContext had clipToNativeImage(PassNativeImagePtr...), which
+        was ugly and platform-specific.
+        
+        Fix by moving code from ImageBuffer::clip() for CG and Cairo into the platform-specific
+        GraphicsContext implementations. This required some minor refactoring of scaleSizeToUserSpace()
+        in ImageBufferCG.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer): Deleted.
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::sizeForDestinationSize):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::clip): Deleted.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        (WebCore::GraphicsContext::clipToNativeImage): Deleted.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::sizeForDestinationSize):
+        (WebCore::ImageBuffer::putByteArray):
+        (WebCore::ImageBuffer::toDataURL):
+        (WebCore::ImageBuffer::clip): Deleted.
+
+2016-01-05  Simon Fraser  <simon.fraser@apple.com>
+
         Remove GraphicsContext::drawJoinedLines()
         https://bugs.webkit.org/show_bug.cgi?id=152764
 

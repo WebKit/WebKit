@@ -258,8 +258,6 @@ public:
     void applyFillPattern();
     void drawPath(const Path&);
 
-    void clipToNativeImage(PassNativeImagePtr, const FloatRect& destRect, const FloatSize& bufferSize);
-    
     WEBCORE_EXPORT void setIsCALayerContext(bool);
     bool isCALayerContext() const;
 

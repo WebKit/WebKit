@@ -43,6 +43,7 @@
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
+#include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "Path.h"
@@ -535,6 +536,17 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     cairo_set_fill_rule(cr, savedFillRule);
 
     m_data->clip(path);
+}
+
+void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+{
+    if (paintingDisabled())
+        return;
+
+    RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
+    RefPtr<cairo_surface_t> surface = image->nativeImageForCurrentFrame();
+    if (surface)
+        platformContext()->pushImageMask(surface.get(), destRect);
 }
 
 IntRect GraphicsContext::clipBounds() const

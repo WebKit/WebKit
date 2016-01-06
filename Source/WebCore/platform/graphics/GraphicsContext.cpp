@@ -500,13 +500,6 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     clipOut(path);
 }
 
-void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& rect)
-{
-    if (paintingDisabled())
-        return;
-    buffer.clip(*this, rect);
-}
-
 #if !USE(CG) && !USE(CAIRO)
 IntRect GraphicsContext::clipBounds() const
 {

@@ -214,11 +214,6 @@ BackingStoreCopy ImageBuffer::fastCopyImageMode()
     return DontCopyBackingStore;
 }
 
-void ImageBuffer::clip(GraphicsContext& context, const FloatRect& maskRect) const
-{
-    context.platformContext()->pushImageMask(m_data.m_surface.get(), maskRect);
-}
-
 void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
     imageBuffer->draw(destContext, destRect, srcRect, op, blendMode, useLowQualityScale);

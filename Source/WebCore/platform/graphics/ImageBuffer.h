@@ -87,6 +87,8 @@ public:
     const IntSize& internalSize() const { return m_size; }
     const IntSize& logicalSize() const { return m_logicalSize; }
 
+    FloatSize sizeForDestinationSize(FloatSize) const;
+
     float resolutionScale() const { return m_resolutionScale; }
 
     WEBCORE_EXPORT GraphicsContext& context() const;
@@ -116,6 +118,10 @@ public:
 #endif
     PlatformLayer* platformLayer() const;
 
+#if USE(CAIRO)
+    NativeImagePtr nativeImage() const;
+#endif
+
     // FIXME: current implementations of this method have the restriction that they only work
     // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.
     bool copyToPlatformTexture(GraphicsContext3D&, GC3Denum, Platform3DObject, GC3Denum, bool, bool);
@@ -135,8 +141,7 @@ private:
     static RetainPtr<CGImageRef> sinkIntoNativeImage(std::unique_ptr<ImageBuffer>);
     void flushContext() const;
 #endif
-    void clip(GraphicsContext&, const FloatRect&) const;
-
+    
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
     void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
 
