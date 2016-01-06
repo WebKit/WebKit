@@ -6,23 +6,22 @@ function main() {
     $program_start_time = microtime(true);
 
     $arguments = validate_arguments($_GET, array(
-        'platform' => 'int',
-        'metric' => 'int',
-        'testGroup' => 'int?',
-        'startTime' => 'int?',
-        'endTime' => 'int?'));
+        'platform' => 'int?',
+        'metric' => 'int?',
+        'analysisTask' => 'int?'));
 
     $platform_id = $arguments['platform'];
     $metric_id = $arguments['metric'];
-
-    $start_time = $arguments['startTime'];
-    $end_time = $arguments['endTime'];
-    if (!!$start_time != !!$end_time)
-        exit_with_error('InvalidTimeRange', array('startTime' => $start_time, 'endTime' => $end_time));
+    $task_id = $arguments['analysisTask'];
+    if (!(($platform_id && $metric_id && !$task_id) || ($task_id && !$platform_id && !$metric_id)))
+        exit_with_error('AmbiguousRequest');
 
     $db = new Database;
     if (!$db->connect())
         exit_with_error('DatabaseConnectionFailure');
+
+    if ($task_id)
+        exit_with_success((new AnalysisResultsFetcher($db, $task_id))->fetch());
 
     $fetcher = new MeasurementSetFetcher($db);
     if (!$fetcher->fetch_config_list($platform_id, $metric_id)) {
@@ -211,6 +210,76 @@ class MeasurementSetFetcher {
             array_push($revisions, array(intval(trim($name_and_revision[0], '"')), trim($name_and_revision[1], '"'), $time));
         }
         return $revisions;
+    }
+}
+
+class AnalysisResultsFetcher {
+
+    function __construct($db, $task_id) {
+        $this->db = $db;
+        $this->task_id = $task_id;
+        $this->build_to_commits = array();
+    }
+
+    function fetch()
+    {
+        $start_time = microtime(TRUE);
+
+        // Fetch commmits separately from test_runs since number of builds is much smaller than number of runs here.
+        $this->fetch_commits();
+
+        $query = $this->db->query('SELECT test_runs.*, builds.*, test_configurations.*
+            FROM builds,
+                test_runs JOIN test_configurations ON run_config = config_id,
+                build_requests JOIN analysis_test_groups ON request_group = testgroup_id
+            WHERE run_build = build_id AND build_id = request_build
+                AND testgroup_task = $1 AND run_config = config_id', array($this->task_id));
+
+        $results = array();
+        while ($row = $this->db->fetch_next_row($query))
+            array_push($results, $this->format_measurement($row));
+
+        return array(
+            'formatMap' => self::format_map(),
+            'measurements' => $results,
+            'elapsedTime' => (microtime(TRUE) - $start_time) * 1000);
+    }
+
+    function fetch_commits()
+    {
+        $query = $this->db->query('SELECT commit_build, commit_repository, commit_revision, commit_time
+            FROM commits, build_commits, build_requests, analysis_test_groups
+            WHERE commit_id = build_commit AND commit_build = request_build
+                AND request_group = testgroup_id AND testgroup_task = $1', array($this->task_id));
+        while ($row = $this->db->fetch_next_row($query)) {
+            $commit_time = Database::to_js_time($row['commit_time']);
+            array_push(array_ensure_item_has_array($this->build_to_commits, $row['commit_build']),
+                array($row['commit_repository'], $row['commit_revision'], $commit_time));
+        }
+    }
+
+    function format_measurement($row)
+    {
+        $build_id = $row['build_id'];
+        return array(
+            intval($row['run_id']),
+            floatval($row['run_mean_cache']),
+            intval($row['run_iteration_count_cache']),
+            floatval($row['run_sum_cache']),
+            floatval($row['run_square_sum_cache']),
+            $this->build_to_commits[$build_id],
+            intval($build_id),
+            Database::to_js_time($row['build_time']),
+            $row['build_number'],
+            intval($row['build_builder']),
+            intval($row['config_metric']),
+            $row['config_type']);
+    }
+
+    static function format_map()
+    {
+        return array('id', 'mean', 'iterationCount', 'sum', 'squareSum', 'revisions',
+            'build', 'buildTime', 'buildNumber', 'builder', 'metric', 'configType');
     }
 }
 

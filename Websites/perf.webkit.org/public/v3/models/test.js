@@ -9,7 +9,7 @@ class Test extends LabeledObject {
         this._metrics = [];
 
         if (isTopLevel)
-            this.namedStaticMap('topLevelTests').push(this);
+            this.ensureNamedStaticMap('topLevelTests').push(this);
     }
 
     static topLevelTests() { return this.sortByName(this.namedStaticMap('topLevelTests')); }

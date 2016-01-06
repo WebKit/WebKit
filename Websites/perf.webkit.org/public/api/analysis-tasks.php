@@ -10,9 +10,15 @@ function main($path) {
     if (count($path) > 1)
         exit_with_error('InvalidRequest');
 
+    $build_request_id = array_get($_GET, 'buildRequest');
     $task_id = count($path) > 0 && $path[0] ? $path[0] : array_get($_GET, 'id');
 
-    if ($task_id) {
+    if ($build_request_id) {
+        $tasks = $db->query_and_fetch_all('SELECT analysis_tasks.* FROM build_requests, analysis_test_groups, analysis_tasks
+            WHERE request_id = $1 AND request_group = testgroup_id AND testgroup_task = task_id', array(intval($build_request_id)));
+        if (!$tasks)
+            exit_with_error('TaskNotFound', array('buildRequest' => $build_request_id));
+    } else if ($task_id) {
         $task_id = intval($task_id);
         $task = $db->select_first_row('analysis_tasks', 'task', array('id' => $task_id));
         if (!$task)

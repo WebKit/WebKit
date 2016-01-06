@@ -33,7 +33,9 @@ class AnalysisTask extends LabeledObject {
     hasPendingRequests() { return this._finishedBuildRequestCount < this._buildRequestCount; }
     requestLabel() { return `${this._finishedBuildRequestCount} of ${this._buildRequestCount}`; }
 
+    startMeasurementId() { return this._startMeasurementId; }
     startTime() { return this._startTime; }
+    endMeasurementId() { return this._endMeasurementId; }
     endTime() { return this._endTime; }
 
     author() { return this._author || ''; }
@@ -59,6 +61,11 @@ class AnalysisTask extends LabeledObject {
         return this._fetchSubset({id: id}).then(function (data) { return AnalysisTask.findById(id); });
     }
 
+    static fetchByBuildRequestId(id)
+    {
+        return this._fetchSubset({buildRequest: id}).then(function (tasks) { return tasks[0]; });
+    }
+
     static fetchByPlatformAndMetric(platformId, metricId)
     {
         return this._fetchSubset({platform: platformId, metric: metricId}).then(function (data) {
@@ -70,24 +77,7 @@ class AnalysisTask extends LabeledObject {
     {
         if (this._fetchAllPromise)
             return this._fetchAllPromise;
-
-        var query = [];
-        for (var key in params)
-            query.push(key + '=' + parseInt(params[key]));
-        var queryString = query.join('&');
-
-        if (!this._fetchSubsetPromises)
-            this._fetchSubsetPromises = {};
-        else {
-            var existingPromise = this._fetchSubsetPromises[queryString];
-            if (existingPromise)
-                return existingPromise;
-        }
-
-        var newPromise = getJSONWithStatus('../api/analysis-tasks?' + queryString).then(this._constructAnalysisTasksFromRawData.bind(this));
-        this._fetchSubsetPromises[queryString] = newPromise;
-
-        return newPromise;
+        return this.cachedFetch('../api/analysis-tasks', params).then(this._constructAnalysisTasksFromRawData.bind(this));
     }
 
     static fetchAll()

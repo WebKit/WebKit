@@ -19,6 +19,17 @@ class ChartsPage extends PageWithCharts {
         return state;
     }
 
+    static createStateForAnalysisTask(task)
+    {
+        var diff = (task.endTime() - task.startTime()) * 0.1;
+        var state = {
+            paneList: [[task.platform().id(), task.metric().id()]],
+            since: Math.round(task.startTime() - (Date.now() - task.startTime()) * 0.1),
+            zoom: [task.startTime() - diff, task.endTime() + diff],
+        };
+        return state;
+    }
+
     open(state)
     {
         this.toolbar().setNumberOfDaysCallback(this.setNumberOfDaysFromToolbar.bind(this));

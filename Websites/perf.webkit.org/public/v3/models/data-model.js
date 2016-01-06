@@ -3,26 +3,28 @@ class DataModelObject {
     constructor(id)
     {
         this._id = id;
-        this.namedStaticMap('id')[id] = this;
+        this.ensureNamedStaticMap('id')[id] = this;
     }
     id() { return this._id; }
-
-    namedStaticMap(name)
-    {
-        var newTarget = this.__proto__.constructor;
-        if (!newTarget[DataModelObject.StaticMapSymbol])
-            newTarget[DataModelObject.StaticMapSymbol] = {};
-        var staticMap = newTarget[DataModelObject.StaticMapSymbol];
-        if (!staticMap[name])
-            staticMap[name] = [];
-        return staticMap[name];
-    }
 
     static namedStaticMap(name)
     {
         var staticMap = this[DataModelObject.StaticMapSymbol];
         return staticMap ? staticMap[name] : null;
     }
+
+    static ensureNamedStaticMap(name)
+    {
+        if (!this[DataModelObject.StaticMapSymbol])
+            this[DataModelObject.StaticMapSymbol] = {};
+        var staticMap = this[DataModelObject.StaticMapSymbol];
+        if (!staticMap[name])
+            staticMap[name] = [];
+        return staticMap[name];
+    }
+
+    namedStaticMap(name) { return this.__proto__.constructor.namedStaticMap(name); }
+    ensureNamedStaticMap(name) { return this.__proto__.constructor.ensureNamedStaticMap(name); }
 
     static findById(id)
     {
@@ -40,15 +42,34 @@ class DataModelObject {
         }
         return list;
     }
+
+    static cachedFetch(path, params)
+    {
+        var query = [];
+        if (params) {
+            for (var key in params)
+                query.push(key + '=' + parseInt(params[key]));
+        }
+        if (query.length)
+            path += '?' + query.join('&');
+
+        var cacheMap = this.ensureNamedStaticMap(DataModelObject.CacheMapSymbol);
+        if (!cacheMap[path])
+            cacheMap[path] = getJSONWithStatus(path);
+
+        return cacheMap[path];
+    }
+
 }
 DataModelObject.StaticMapSymbol = Symbol();
+DataModelObject.CacheMapSymbol = Symbol();
 
 class LabeledObject extends DataModelObject {
     constructor(id, object)
     {
         super(id);
         this._name = object.name;
-        this.namedStaticMap('name')[this._name] = this;
+        this.ensureNamedStaticMap('name')[this._name] = this;
     }
 
     static findByName(name)

@@ -1,11 +1,27 @@
 
-class CommitLog {
-    constructor(repository, rawData)
+class CommitLog extends DataModelObject {
+    constructor(id, repository, rawData)
     {
+        super(id);
         this._repository = repository;
         this._rawData = rawData;
     }
 
+    static ensureSingleton(repository, rawData)
+    {
+        var id = repository.id() + '-' + rawData['revision'];
+        var singleton = this.findById(id);
+        if (singleton) {
+            if (rawData.authorName)
+                singleton._rawData.authorName = rawData.authorName;
+            if (rawData.message)
+                singleton._rawData.message = rawData.message;
+            return singleton;
+        }
+        return new CommitLog(id, repository, rawData);
+    }
+
+    repository() { return this._repository; }
     time() { return new Date(this._rawData['time']); }
     author() { return this._rawData['authorName']; }
     revision() { return this._rawData['revision']; }
@@ -42,7 +58,7 @@ class CommitLog {
 
         var self = this;
         return getJSONWithStatus(url).then(function (data) {
-            var commits = data['commits'].map(function (rawData) { return new CommitLog(repository, rawData); });
+            var commits = data['commits'].map(function (rawData) { return CommitLog.ensureSingleton(repository, rawData); });
             self._cacheCommitLogs(repository, from, to, commits);
             return commits;
         });

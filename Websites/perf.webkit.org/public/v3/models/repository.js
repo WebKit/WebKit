@@ -8,6 +8,8 @@ class Repository extends LabeledObject {
         this._hasReportedCommits = object.hasReportedCommits;
     }
 
+    hasUrlForRevision() { return !!this._url; }
+
     urlForRevision(currentRevision)
     {
         return (this._url || '').replace(/\$1/g, currentRevision);
