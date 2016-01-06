@@ -53,7 +53,8 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters&
     , m_currentRequest(parameters.request)
 {
 #if USE(NETWORK_SESSION)
-    m_task->resume();
+    if (!parameters.defersLoading)
+        m_task->resume();
 #else
     m_handle = ResourceHandle::create(m_networkingContext.get(), parameters.request, this, parameters.defersLoading, parameters.contentSniffingPolicy == SniffContent);
 #endif
@@ -74,8 +75,10 @@ NetworkLoad::~NetworkLoad()
 void NetworkLoad::setDefersLoading(bool defers)
 {
 #if USE(NETWORK_SESSION)
-    // FIXME: Do something here.
-    notImplemented();
+    if (defers)
+        m_task->suspend();
+    else
+        m_task->resume();
 #else
     if (m_handle)
         m_handle->setDefersLoading(defers);

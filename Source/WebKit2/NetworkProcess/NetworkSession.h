@@ -86,6 +86,7 @@ public:
     explicit NetworkDataTask(NetworkSession&, NetworkSessionTaskClient&);
 #endif
 
+    void suspend();
     void cancel();
     void resume();
 

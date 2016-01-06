@@ -286,6 +286,11 @@ void NetworkDataTask::resume()
     [m_task resume];
 }
 
+void NetworkDataTask::suspend()
+{
+    [m_task suspend];
+}
+    
 auto NetworkDataTask::taskIdentifier() -> TaskIdentifier
 {
     return [m_task taskIdentifier];
