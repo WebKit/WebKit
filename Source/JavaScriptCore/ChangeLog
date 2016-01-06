@@ -1,3 +1,34 @@
+2016-01-05  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Boolean, Number, Map, RegExp, and Set should be subclassable
+        https://bugs.webkit.org/show_bug.cgi?id=152765
+
+        Reviewed by Michael Saboff.
+
+        This patch enables subclassing of five more builtins: Boolean, Number, Map, RegExp, and Set.
+
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructWithBooleanConstructor):
+        (JSC::constructBoolean): Deleted.
+        * runtime/BooleanConstructor.h:
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::getRegExpStructure):
+        (JSC::constructRegExp):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * tests/es6.yaml:
+        * tests/stress/class-subclassing-misc.js: Added.
+        (B):
+        (N):
+        (M):
+        (R):
+        (S):
+        (test):
+
 2016-01-06  Julien Brianceau  <jbriance@cisco.com>
 
         [mips] Fix branchTruncateDoubleToUint32 implementation in macro assembler

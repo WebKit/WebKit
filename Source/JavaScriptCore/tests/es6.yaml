@@ -1087,7 +1087,7 @@
 - path: es6/RegExp.prototype_properties_RegExp[Symbol.species].js
   cmd: runES6 :fail
 - path: es6/RegExp_is_subclassable_correct_prototype_chain.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/RegExp_y_and_u_flags_u_flag.js
   cmd: runES6 :fail
 - path: es6/RegExp_y_and_u_flags_u_flag_Unicode_code_point_escapes.js

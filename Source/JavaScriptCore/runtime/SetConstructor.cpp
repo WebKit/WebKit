@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,8 +54,14 @@ static EncodedJSValue JSC_HOST_CALL callSet(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
 {
+    JSValue prototype = JSValue();
+    JSValue newTarget = exec->newTarget();
+
+    if (newTarget != exec->callee())
+        prototype = newTarget.get(exec, exec->propertyNames().prototype);
+
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
-    Structure* setStructure = globalObject->setStructure();
+    Structure* setStructure = Structure::createSubclassStructure(exec->vm(), globalObject->setStructure(), prototype);
     JSSet* set = JSSet::create(exec, setStructure);
     JSValue iterable = exec->argument(0);
     if (iterable.isUndefinedOrNull())

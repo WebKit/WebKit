@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2016 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
 #include "JSCInlines.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpPrototype.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
@@ -242,6 +243,16 @@ void setRegExpConstructorMultiline(ExecState* exec, JSObject* baseObject, Encode
         constructor->setMultiline(JSValue::decode(value).toBoolean(exec));
 }
 
+inline Structure* getRegExpStructure(ExecState* exec, JSGlobalObject* globalObject, bool callAsConstructor)
+{
+    Structure* structure = globalObject->regExpStructure();
+    if (callAsConstructor && exec->newTarget() != exec->callee()) {
+        JSValue prototype = exec->newTarget().get(exec, exec->propertyNames().prototype);
+        structure = Structure::createSubclassStructure(exec->vm(), structure, prototype);
+    }
+    return structure;
+}
+
 // ECMA 15.10.4
 JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, bool callAsConstructor)
 {
@@ -254,7 +265,8 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         // If called as a function, this just returns the first argument (see 15.10.3.1).
         if (callAsConstructor) {
             RegExp* regExp = static_cast<RegExpObject*>(asObject(arg0))->regExp();
-            return RegExpObject::create(exec->vm(), globalObject->regExpStructure(), regExp);
+
+            return RegExpObject::create(exec->vm(), getRegExpStructure(exec, globalObject, callAsConstructor), regExp);
         }
         return asObject(arg0);
     }
@@ -276,7 +288,8 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
     RegExp* regExp = RegExp::create(vm, pattern, flags);
     if (!regExp->isValid())
         return vm.throwException(exec, createSyntaxError(exec, regExp->errorMessage()));
-    return RegExpObject::create(vm, globalObject->regExpStructure(), regExp);
+
+    return RegExpObject::create(vm, getRegExpStructure(exec, globalObject, callAsConstructor), regExp);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* exec)
