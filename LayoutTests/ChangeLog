@@ -1,5 +1,11 @@
 2016-01-05  Brady Eidson  <beidson@apple.com>
 
+        Unreviewed IndexedDB test gardening
+
+        * platform/mac-wk1/TestExpectations: Update the current known status of a few tests.
+
+2016-01-05  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/structured-clone.html crashes.
         https://bugs.webkit.org/show_bug.cgi?id=152763
 

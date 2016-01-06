@@ -78,7 +78,6 @@ storage/indexeddb/index-multientry.html [ Skip ]
 # IDB tests that timeout                                                               
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
-storage/indexeddb/transaction-starvation.html [ Skip ]
 
 # IDB tests with other text failures
 fast/history/page-cache-indexed-closed-db.html [ Failure ]
@@ -91,9 +90,10 @@ storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Failure ]
 storage/indexeddb/transaction-scope-sequencing.html [ Failure ]
 
 # Relies on internals.observeGC
-storage/indexeddb/delete-closed-database-object.html [ Skip ]
+storage/indexeddb/connection-leak.html [ Skip ]
 storage/indexeddb/cursor-leak.html [ Failure ]
 storage/indexeddb/cursor-request-cycle.html [ Failure ]
+storage/indexeddb/delete-closed-database-object.html [ Skip ]
 storage/indexeddb/request-leak.html [ Failure ]
 
 # No workers support in Modern IDB yet
@@ -114,8 +114,9 @@ storage/indexeddb/pending-version-change-stuck.html
 storage/indexeddb/transaction-complete-workers.html
 storage/indexeddb/unprefix-workers.html
 
-# Complicated IDB failures that need a closer look
-storage/indexeddb/connection-leak.html
+# Test's behavior specific to Legacy IDB with LevelDB backend
+# Modern IDB is spec-compliant without supporting this behavior
+storage/indexeddb/transaction-starvation.html [ Skip ]
 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
