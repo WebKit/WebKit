@@ -141,6 +141,7 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
                 fill: #666;
                 border: solid 1px #ccc;
                 border-radius: 0.2rem;
+                z-index: 20;
             }
 
             .time-series-chart-annotation-label {

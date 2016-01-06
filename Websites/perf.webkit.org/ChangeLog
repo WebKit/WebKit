@@ -1,5 +1,17 @@
 2016-01-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Zooming button is broken on v3 UI
+        https://bugs.webkit.org/show_bug.cgi?id=152777
+
+        Reviewed by Chris Dumez.
+
+        Bring up the zoom button in z-index so that users can click it.
+
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.cssTemplate):
+
+2016-01-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         v3 UI doesn't preserve the time range when charts page is opened from a dashboard
         https://bugs.webkit.org/show_bug.cgi?id=152776
 
