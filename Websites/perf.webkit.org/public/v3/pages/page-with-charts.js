@@ -108,6 +108,7 @@ class PageWithCharts extends PageWithHeading {
     static mainChartOptions(valueFormatter)
     {
         var options = this.dashboardOptions(valueFormatter);
+        options.axis.xAxisEndPadding = 5;
         options.axis.yAxisWidth = 5;
         options.selection = {
             lineStyle: '#f93',

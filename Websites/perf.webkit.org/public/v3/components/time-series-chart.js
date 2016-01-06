@@ -182,6 +182,9 @@ class TimeSeriesChart extends ComponentBase {
         var chartWidth = this._width - chartX;
         var chartHeight = this._height - this._options.axis.xAxisHeight * fontSize;
 
+        if (this._options.axis.xAxisEndPadding)
+            timeDiff += this._options.axis.xAxisEndPadding / (chartWidth / timeDiff);
+
         return {
             xToTime: function (x)
             {
