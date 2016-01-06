@@ -1567,11 +1567,9 @@ static NSMutableSet *knownPluginMIMETypes()
     return _private->page->renderTreeSize();
 }
 
+// FIXME: This is incorrectly named, and should be removed <rdar://problem/22242515>.
 - (NSSize)_contentsSizeRespectingOverflow
 {
-    if (FrameView* view = [self _mainCoreFrame]->view())
-        return view->contentsSizeRespectingOverflow();
-    
     return [[[[self mainFrame] frameView] documentView] bounds].size;
 }
 
