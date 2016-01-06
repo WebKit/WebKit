@@ -1,3 +1,18 @@
+2016-01-05  Zalan Bujtas  <zalan@apple.com>
+
+        showRenderTree: add inline-block/inline/block column.
+        https://bugs.webkit.org/show_bug.cgi?id=152771
+
+        Reviewed by Simon Fraser.
+
+        The name of the renderer (RenderBlock etc) does not always reflect the associated display type.
+
+        No change in functionality.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::showRenderTreeLegend):
+        (WebCore::RenderObject::showRenderObject):
+
 2016-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         Move ImageBuffer::clip() code into GraphicsContext
