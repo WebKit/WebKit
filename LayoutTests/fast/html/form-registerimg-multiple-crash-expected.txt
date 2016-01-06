@@ -1,0 +1,3 @@
+
+
+Test passes if no crash on ASSERT.

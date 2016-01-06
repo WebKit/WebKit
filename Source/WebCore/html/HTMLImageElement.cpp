@@ -298,14 +298,14 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
     if (m_formSetByParser) {
         m_form = m_formSetByParser;
         m_formSetByParser = nullptr;
+        m_form->registerImgElement(this);
     }
 
-    if (!m_form)
+    if (!m_form) {
         m_form = HTMLFormElement::findClosestFormAncestor(*this);
-
-    if (m_form)
-        m_form->registerImgElement(this);
-
+        if (m_form)
+            m_form->registerImgElement(this);
+    }
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
     Node::InsertionNotificationRequest insertNotificationRequest = HTMLElement::insertedInto(insertionPoint);

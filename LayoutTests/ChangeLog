@@ -1,3 +1,14 @@
+2016-01-05  Pranjal Jumde  <pjumde@apple.com>
+
+        Image should not be re-registered if m_form already exists. This leads to an assertion failure.
+        https://bugs.webkit.org/show_bug.cgi?id=152741
+        <rdar://problem/24030778>
+
+        Reviewed by Brent Fulgham.
+
+        * LayoutTests/fast/html/form-registerimg-multiple-crash-expected.txt: Added.
+        * LayoutTests/fast/html/form-registerimg-multiple-crash.html: Added.
+
 2016-01-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194603.
