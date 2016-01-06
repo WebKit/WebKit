@@ -207,7 +207,7 @@ class MeasurementSet {
                 series: series,
                 seriesIndex: series._series.length,
                 measurement: null,
-                time: Date.now() + 24 * 3600 * 1000,
+                time: Date.now() + 365 * 24 * 3600 * 1000,
                 value: lastPoint.value,
                 interval: lastPoint.interval,
             });
