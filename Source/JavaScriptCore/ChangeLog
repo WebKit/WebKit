@@ -1,3 +1,27 @@
+2016-01-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Make sure that the basic throw-from-operation mode of throwing makes sense in FTL B3
+        https://bugs.webkit.org/show_bug.cgi?id=152798
+
+        Reviewed by Oliver Hunt.
+
+        This really just contains one change: we inline emitBranchToOSRExitIfWillCatchException()
+        into callCheck(), since that was its only caller. This makes it a bit more clear what is
+        going on.
+
+        It turns out that FTL B3 already handled this case properly. I added a test that I believe
+        illustrates this. Note that although the test uses GetById, which ordinarily throws
+        exceptions from inside a patchpoint, it uses it in such a way that the exception is thrown
+        from the operation call for the non-cell bypass path of a GetById(UntypedUse:).
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBranchToOSRExitIfWillCatchException): Deleted.
+        * tests/stress/ftl-operation-exception.js: Added.
+        (foo):
+
 2016-01-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove duplicate check

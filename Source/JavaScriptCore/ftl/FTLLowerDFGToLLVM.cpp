@@ -10113,9 +10113,16 @@ private:
         LValue exception = m_out.load64(m_out.absolute(vm().addressOfException()));
         LValue hadException = m_out.notZero64(exception);
 
-        bool emittedExceptionHandlingCodeForOSRExit = emitBranchToOSRExitIfWillCatchException(hadException);
-        if (emittedExceptionHandlingCodeForOSRExit) // It already took care of exception handling logic.
+        CodeOrigin opCatchOrigin;
+        HandlerInfo* exceptionHandler;
+        if (m_graph.willCatchExceptionInMachineFrame(m_origin.forExit, opCatchOrigin, exceptionHandler)) {
+            bool exitOK = true;
+            bool isExceptionHandler = true;
+            appendOSRExit(
+                Uncountable, noValue(), nullptr, hadException,
+                m_origin.withForExitAndExitOK(opCatchOrigin, exitOK), isExceptionHandler);
             return;
+        }
 
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Exception check continuation"));
 
@@ -10148,18 +10155,6 @@ private:
     }
 #endif // !FTL_USES_B3
 
-    bool emitBranchToOSRExitIfWillCatchException(LValue hadException)
-    {
-        CodeOrigin opCatchOrigin;
-        HandlerInfo* exceptionHandler;
-        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_origin.forExit, opCatchOrigin, exceptionHandler); 
-        if (!willCatchException)
-            return false;
-
-        appendOSRExit(Uncountable, noValue(), nullptr, hadException, m_origin.withForExitAndExitOK(opCatchOrigin, true), true);
-        return true;
-    }
-    
     LBasicBlock lowBlock(DFG::BasicBlock* block)
     {
         return m_blocks.get(block);
