@@ -41,6 +41,7 @@
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -183,7 +184,7 @@ private:
     Deque<Ref<ServerOpenDBRequest>> m_pendingOpenDBRequests;
     RefPtr<ServerOpenDBRequest> m_currentOpenDBRequest;
 
-    HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
+    ListHashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_closePendingDatabaseConnections;
 
     RefPtr<UniqueIDBDatabaseConnection> m_versionChangeDatabaseConnection;

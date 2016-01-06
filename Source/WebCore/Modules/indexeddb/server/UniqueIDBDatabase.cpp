@@ -1020,9 +1020,10 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
     if (!pendingTransactions.isEmpty())
         m_pendingTransactions.swap(pendingTransactions);
 
-    auto removedConnection = m_openDatabaseConnections.take(&connection);
-    if (removedConnection->hasNonFinishedTransactions()) {
-        m_closePendingDatabaseConnections.add(WTFMove(removedConnection));
+    RefPtr<UniqueIDBDatabaseConnection> refConnection(&connection);
+    m_openDatabaseConnections.remove(&connection);
+    if (connection.hasNonFinishedTransactions()) {
+        m_closePendingDatabaseConnections.add(WTFMove(refConnection));
         return;
     }
 
