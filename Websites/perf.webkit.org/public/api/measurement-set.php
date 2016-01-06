@@ -20,8 +20,10 @@ function main() {
     if (!$db->connect())
         exit_with_error('DatabaseConnectionFailure');
 
-    if ($task_id)
-        exit_with_success((new AnalysisResultsFetcher($db, $task_id))->fetch());
+    if ($task_id) {
+        $fetcher = new AnalysisResultsFetcher($db, $task_id);
+        exit_with_success($fetcher->fetch());
+    }
 
     $fetcher = new MeasurementSetFetcher($db);
     if (!$fetcher->fetch_config_list($platform_id, $metric_id)) {

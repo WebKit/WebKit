@@ -1,5 +1,11 @@
 2016-01-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix for an old version of PHP after r194618.
+
+        * public/api/measurement-set.php:
+
+2016-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         A/B testing results should be visualized intuitively on v3 UI
         https://bugs.webkit.org/show_bug.cgi?id=152496
 
