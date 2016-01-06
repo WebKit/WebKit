@@ -214,6 +214,15 @@ class Git(SCM, SVNRepository):
         updated_in_index_regexp = '^M[ M] (?P<filename>.+)$'
         return self.run_status_and_extract_filenames(status_command, updated_in_index_regexp)
 
+    def untracked_files(self, include_ignored_files=False):
+        status_command = [self.executable_name, 'status', '--short']
+        if include_ignored_files:
+            status_command.append('--ignored')
+        status_command.extend(self._patch_directories)
+        # Remove the last / for folders to match SVN behavior.
+        extractor = "^[?!][?!] (?P<filename>.+)$"
+        return [value if not value.endswith('/') else value[:-1] for value in self.run_status_and_extract_filenames(status_command, extractor)]
+
     def changed_files(self, git_commit=None):
         # FIXME: --diff-filter could be used to avoid the "extract_filenames" step.
         status_command = [self.executable_name, 'diff', '-r', '--name-status', "--no-renames", "--no-ext-diff", "--full-index", self.merge_base(git_commit), '--']
