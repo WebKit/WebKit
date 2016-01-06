@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #ifdef __has_include
@@ -79,6 +80,18 @@ void ChildProcess::platformInitialize()
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 
+static RetainPtr<SecCodeRef> findSecCodeForProcess(pid_t pid)
+{
+    RetainPtr<CFNumberRef> pidCFNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &pid));
+    const void* keys[] = { kSecGuestAttributePid };
+    const void* values[] = { pidCFNumber.get() };
+    RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    SecCodeRef code = nullptr;
+    if (SecCodeCopyGuestWithAttributes(nullptr, attributes.get(), kSecCSDefaultFlags, &code))
+        return nullptr;
+    return adoptCF(code);
+}
+
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
@@ -89,8 +102,35 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         if (userDirectorySuffix != parameters.extraInitializationData.end())
             sandboxParameters.setUserDirectorySuffix([makeString(userDirectorySuffix->value, '/', String([[NSBundle mainBundle] bundleIdentifier])) fileSystemRepresentation]);
         else {
-            String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier);
-            sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
+            String clientIdentifierToUse;
+            RetainPtr<SecCodeRef> code = findSecCodeForProcess(xpc_connection_get_pid(parameters.connectionIdentifier.xpcConnection.get()));
+            RELEASE_ASSERT(code);
+
+            CFStringRef appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement = CFSTR("(anchor apple) or (anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.9]) or (anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] and certificate leaf[field.1.2.840.113635.100.6.1.13])");
+            SecRequirementRef signingRequirement;
+            OSStatus status = SecRequirementCreateWithString(appleSignedOrMacAppStoreSignedOrAppleDeveloperSignedRequirement, kSecCSDefaultFlags, &signingRequirement);
+            RELEASE_ASSERT(status == errSecSuccess);
+
+            status = SecCodeCheckValidity(code.get(), kSecCSDefaultFlags, signingRequirement);
+            if (status == errSecSuccess) {
+                CFDictionaryRef signingInfo = nullptr;
+                if (!SecCodeCopySigningInformation(code.get(), kSecCSDefaultFlags, &signingInfo)) {
+                    if (CFDictionaryRef plist = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(signingInfo, kSecCodeInfoPList)))
+                        clientIdentifierToUse = String(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(plist, kCFBundleIdentifierKey)));
+                    else
+                        clientIdentifierToUse = String(dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(signingInfo, kSecCodeInfoIdentifier)));
+                    CFRelease(signingInfo);
+                }
+            } else {
+                // Unsigned, signed by a third party, or has an invalid/malformed signature
+                clientIdentifierToUse = parameters.clientIdentifier;
+            }
+            CFRelease(signingRequirement);
+            if (clientIdentifierToUse.isEmpty()) {
+                WTFLogAlways("%s: Couldn't get code signed identifier for client: %d\n", getprogname(), status);
+                exit(EX_NOPERM);
+            }
+            sandboxParameters.setUserDirectorySuffix(makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', clientIdentifierToUse));
         }
     }
 
