@@ -95,7 +95,7 @@ Try to insert a value not handled by structured clone:
 Expecting exception from store.add({x: 'bar', y: self}, 'bar')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
-Exception message: DataCloneError: DOM Exception 25
+Exception message: Failed to store record in an IDBObjectStore: An object could not be cloned.
 Try to insert data where key path yields a Date key:
 store.add({x: testDateB, y: 'value'}, 'key')
 addSuccess():

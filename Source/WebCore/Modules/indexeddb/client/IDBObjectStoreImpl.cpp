@@ -265,6 +265,9 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
 
     RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(&state, value, nullptr, nullptr);
     if (state.hadException()) {
+        // Clear the DOM exception from the serializer so we can give a more targeted exception.
+        state.clearException();
+
         ec.code = IDBDatabaseException::DataCloneError;
         ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: An object could not be cloned.");
         return nullptr;

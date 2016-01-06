@@ -72,9 +72,6 @@ inspector/indexeddb
 storage/indexeddb/key-generator.html [ Skip ]
 storage/indexeddb/lazy-index-population.html [ Skip ]
 
-# IDB tests that crash/assert in CloneDeserializer
-storage/indexeddb/structured-clone.html [ Skip ]
-
 # IDB tests that crash with GuardMalloc or ASan
 storage/indexeddb/index-multientry.html [ Skip ]
 

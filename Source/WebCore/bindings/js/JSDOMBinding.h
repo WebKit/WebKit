@@ -411,6 +411,13 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
     return view->wrap(exec, globalObject);
 }
 
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView* view)
+{
+    if (!view)
+        return JSC::jsNull();
+    return view->wrap(exec, globalObject);
+}
+
 template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, RefPtr<T> ptr)
 {
     return toJS(exec, globalObject, ptr.get());

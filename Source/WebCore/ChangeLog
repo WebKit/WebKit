@@ -1,3 +1,29 @@
+2016-01-05  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/structured-clone.html crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=152763
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+        
+        A lot of SerializedScriptValue code incorrectly assumed the global object is a JSDOMGlobalObject,
+        which doesn't have to be true for native Javascript types like typed arrays.
+        
+        Fixing that fixes the test.
+
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd): If serializing the script value caused an exception,
+          clear that exception and return a better IDB specific exception.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS): Add a ArrayBufferView specialization for toJS that skips the need for a JSDOMGlobalObject.
+        
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readArrayBufferView): Call toJS directly instead of getJSValue, which 
+          incorrectly assumes the existence of a JSDOMGlobalObject (vs a JSGlobalObject)
+        (WebCore::CloneDeserializer::readTerminal): Instead of getJSValue, call JSArrayBuffer::create directly.
+
 2016-01-05  Pranjal Jumde  <pjumde@apple.com>
 
         Image should not be re-registered if m_form already exists. This leads to an assertion failure.
