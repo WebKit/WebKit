@@ -13,9 +13,9 @@ class ChartsPage extends PageWithCharts {
 
     routeName() { return 'charts'; }
 
-    static createStateForDashboardItem(platformId, metricId)
+    static createStateForDashboardItem(platformId, metricId, startTime)
     {
-        var state = {paneList: [[platformId, metricId]]};
+        var state = {paneList: [[platformId, metricId]], since: startTime};
         return state;
     }
 

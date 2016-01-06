@@ -1,3 +1,26 @@
+2016-01-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        v3 UI doesn't preserve the time range when charts page is opened from a dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=152776
+
+        Reviewed by Chris Dumez.
+
+        Fixed the bug by moving the construction of charts URL from DashboardPage.prototype.open to
+        DashboardPage.prototype.render and re-rendering the entire page upon an URL state transition.
+
+        * public/v3/pages/charts-page.js:
+        (ChartsPage.createStateForDashboardItem): Takes the start time for the charts page.
+
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype.updateFromSerializedState): Merged _numberOfDaysDidChange and
+        _updateChartsDomainFromToolbar into this function since they're not used elsewhere. Also re-render
+        the entire page when transition between different number of days to show.
+        (DashboardPage.prototype._numberOfDaysDidChange): Deleted.
+        (DashboardPage.prototype._updateChartsDomainFromToolbar): Deleted.
+        (DashboardPage.prototype.render): Construct URL for each charts here.
+        (DashboardPage.prototype._createChartForCell): Don't construct URL here since this function is
+        called once when the dashboard page is opened, and not when the time range is changed.
+
 2016-01-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix for an old version of PHP after r194618.
