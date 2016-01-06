@@ -1,3 +1,12 @@
+gi2016-01-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: report and mark new SVG failures
+        after r192138 and new media timeouts after r191948. Mark also the
+        RTSP test as skip because it was failing, and update the expectation
+        for a slow inspector test that now timeouts.
+
 2016-01-06  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/transaction-scope-sequencing.html fails

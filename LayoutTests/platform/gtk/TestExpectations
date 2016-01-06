@@ -132,7 +132,7 @@ webkit.org/b/152455 css2.1/tables/table-anonymous-objects-208.xht [ Missing ]
 Bug(GTK) fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
 
 # This test assumes we cannot play RTSP, but we can.
-Bug(GTK) media/unsupported-rtsp.html [ WontFix Timeout ]
+Bug(GTK) media/unsupported-rtsp.html [ WontFix Skip ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
@@ -1305,7 +1305,7 @@ webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
 
 Bug(GTK) [ Release ] http/tests/media/hls/video-cookie.html [ Pass Slow ]
 
-webkit.org/b/149916 inspector/codemirror/prettyprinting-css-rules.html [ Pass Slow ]
+webkit.org/b/149916 inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
 webkit.org/b/149916 inspector/codemirror/prettyprinting-css.html [ Pass Slow ]
 webkit.org/b/149916 inspector/codemirror/prettyprinting-javascript.html [ Pass Slow ]
 webkit.org/b/149916 inspector/console/addInspectedNode.html [ Pass Slow ]
@@ -2467,7 +2467,11 @@ webkit.org/b/144765 fast/events/touch/touch-slider-no-js-touch-listener.html [ F
 
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
-webkit.org/b/141835 media/video-controls-no-scripting.html [ Failure ]
+webkit.org/b/141835 media/video-controls-no-scripting.html [ Failure Timeout ]
+webkit.org/b/152797 media/video-source-error.html [ Timeout ]
+webkit.org/b/152797 media/video-source-load.html [ Timeout ]
+webkit.org/b/152797 media/video-source-moved.html [ Timeout ]
+
 webkit.org/b/145048 http/tests/misc/bad-charset-alias.html [ Failure ]
 webkit.org/b/145049 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 
@@ -2666,13 +2670,19 @@ webkit.org/b/152643 imported/w3c/indexeddb/idbcursor-direction-index.htm [ Failu
 webkit.org/b/152643 imported/w3c/indexeddb/idbindex_get2.htm [ Failure ]
 webkit.org/b/152643 imported/w3c/indexeddb/idbindex_getKey2.htm [ Failure ]
 
+webkit.org/b/152788 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure ]
+webkit.org/b/152788 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
+webkit.org/b/152788 svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
+webkit.org/b/152788 svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
+webkit.org/b/152788 svg/filters/feComposite-background-rect-control-operators.svg [ ImageOnlyFailure ]
+webkit.org/b/152788 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # This tests are passing on GTK+ but they do not in the Apple ports
 css3/flexbox/multiline-reverse-wrap-baseline.html [ Pass ]
-imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 mathml/presentation/style-changed.html [ Pass ]
 transitions/svg-text-shadow-transition.html [ Pass ]
