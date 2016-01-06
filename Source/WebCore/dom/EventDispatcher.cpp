@@ -417,7 +417,7 @@ EventPath::EventPath(Node& targetNode, Event& event)
 {
     bool inDocument = targetNode.inDocument();
     bool isSVGElement = targetNode.isSVGElement();
-    bool isMouseOrFocusEvent = event.isMouseEvent() || event.isFocusEvent();
+    bool isMouseOrFocusEvent = event.isMouseEvent() || event.isWheelEvent() || event.isFocusEvent();
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     bool isTouchEvent = event.isTouchEvent();
 #endif
