@@ -1,3 +1,22 @@
+2016-01-05  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r192432): Keyboard repeat doesn't work anymore for arrow keys/spacebar
+        https://bugs.webkit.org/show_bug.cgi?id=152767
+        <rdar://problem/24017380>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didHandleKeyEvent:eventWasHandled:]):
+        Instead of always bailing, call [super _handleKeyUIEvent:] if we aren't
+        in an editable area, because we won't have done so in _handleKeyUIEvent.
+
+        It's important that the event makes it to the root UIResponder (even if
+        we handled it!) for key repeat to function.
+
+        The double-scrolling case is still fixed because we notice the resent
+        event coming back in to us and bail if we've already seen it.
+
 2016-01-05  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Exiting fullscreen via Mission Control leaves fullcreen window frontmost on desktop

@@ -2848,7 +2848,10 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
             [[UIKeyboardImpl sharedInstance] didHandleWebKeyEvent];
     }
 
-    if (eventWasHandled)
+    // If we aren't interacting with editable content, we still need to call [super _handleKeyUIEvent:]
+    // so that keyboard repeat will work correctly. If we are interacting with editable content,
+    // we already did so in _handleKeyUIEvent.
+    if (eventWasHandled && _page->editorState().isContentEditable)
         return;
 
     if (![event isKindOfClass:[WKWebEvent class]])
