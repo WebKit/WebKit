@@ -35,8 +35,9 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
     ASSERT(m_scratchGPR != InvalidGPRReg);
     ASSERT(m_scratchGPR != m_left.payloadGPR());
     ASSERT(m_scratchGPR != m_right.payloadGPR());
+#if USE(JSVALUE64)
     ASSERT(m_scratchGPR != m_result.payloadGPR());
-#if USE(JSVALUE32_64)
+#else
     ASSERT(m_scratchGPR != m_left.tagGPR());
     ASSERT(m_scratchGPR != m_right.tagGPR());
     ASSERT(m_scratchFPR != InvalidFPRReg);
@@ -180,6 +181,9 @@ void JITMulGenerator::generateFastPath(CCallHelpers& jit)
         jit.or32(CCallHelpers::TrustedImm32(ResultProfile::Int52Overflow), CCallHelpers::AbsoluteAddress(m_resultProfile->addressOfFlags()));
 
         m_endJumpList.append(noInt52Overflow);
+        if (m_scratchGPR == m_result.tagGPR() || m_scratchGPR == m_result.payloadGPR())
+            jit.boxDouble(m_leftFPR, m_result);
+
         m_endJumpList.append(done);
 #endif
     }

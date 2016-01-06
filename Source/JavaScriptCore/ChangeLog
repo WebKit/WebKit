@@ -1,3 +1,17 @@
+2016-01-06  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION(r194613): JITMulGenerator needs a scratch GPR on 32-bit too.
+        https://bugs.webkit.org/show_bug.cgi?id=152805
+
+        Reviewed by Michael Saboff.
+
+        There aren't enough registers on x86 32-bit to allocate the needed scratch GPR.
+        So, we'll continue to use one of the result registers as the scratch, and
+        re-compute the result at the end.
+
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath):
+
 2016-01-06  Anders Carlsson  <andersca@apple.com>
 
         Add a smart block pointer
