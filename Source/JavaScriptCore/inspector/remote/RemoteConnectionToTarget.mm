@@ -68,7 +68,7 @@ static void RemoteTargetQueueTaskOnGlobalQueue(void (^task)())
 
     {
         std::lock_guard<StaticLock> lock(rwiQueueMutex);
-        rwiQueue->append(RemoteTargetBlock(task));
+        rwiQueue->append(task);
     }
 
     CFRunLoopSourceSignal(rwiRunLoopSource);
@@ -266,7 +266,7 @@ void RemoteConnectionToTarget::queueTaskOnPrivateRunLoop(void (^block)())
 
     {
         std::lock_guard<Lock> lock(m_queueMutex);
-        m_queue.append(RemoteTargetBlock(block));
+        m_queue.append(block);
     }
 
     CFRunLoopSourceSignal(m_runLoopSource.get());

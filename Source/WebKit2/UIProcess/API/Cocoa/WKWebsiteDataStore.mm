@@ -30,6 +30,7 @@
 
 #import "WKNSArray.h"
 #import "WKWebsiteDataRecordInternal.h"
+#import <wtf/BlockPtr.h>
 
 @implementation WKWebsiteDataStore
 
@@ -76,7 +77,7 @@ static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
 
 - (void)fetchDataRecordsOfTypes:(NSSet *)dataTypes completionHandler:(void (^)(WK_ARRAY(WKWebsiteDataRecord *) *))completionHandler
 {
-    auto completionHandlerCopy = Block_copy(completionHandler);
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
 
     _websiteDataStore->websiteDataStore().fetchData(WebKit::toWebsiteDataTypes(dataTypes), [completionHandlerCopy](Vector<WebKit::WebsiteDataRecord> websiteDataRecords) {
         Vector<RefPtr<API::Object>> elements;
@@ -86,17 +87,14 @@ static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
             elements.uncheckedAppend(API::WebsiteDataRecord::create(WTFMove(websiteDataRecord)));
 
         completionHandlerCopy(wrapper(API::Array::create(WTFMove(elements))));
-
-        Block_release(completionHandlerCopy);
     });
 }
 
 - (void)removeDataOfTypes:(NSSet *)dataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler
 {
-    auto completionHandlerCopy = Block_copy(completionHandler);
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
     _websiteDataStore->websiteDataStore().removeData(WebKit::toWebsiteDataTypes(dataTypes), toSystemClockTime(date ? date : [NSDate distantPast]), [completionHandlerCopy] {
         completionHandlerCopy();
-        Block_release(completionHandlerCopy);
     });
 }
 
@@ -112,11 +110,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)removeDataOfTypes:(NSSet *)dataTypes forDataRecords:(NSArray *)dataRecords completionHandler:(void (^)(void))completionHandler
 {
-    auto completionHandlerCopy = Block_copy(completionHandler);
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
 
     _websiteDataStore->websiteDataStore().removeData(WebKit::toWebsiteDataTypes(dataTypes), toWebsiteDataRecords(dataRecords), [completionHandlerCopy] {
         completionHandlerCopy();
-        Block_release(completionHandlerCopy);
     });
 }
 

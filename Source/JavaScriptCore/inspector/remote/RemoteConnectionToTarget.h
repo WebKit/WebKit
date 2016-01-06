@@ -32,6 +32,7 @@
 #import "RemoteConnectionToTarget.h"
 #import "RemoteInspector.h"
 #import <mutex>
+#import <wtf/BlockPtr.h>
 #import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/ThreadSafeRefCounted.h>
@@ -40,41 +41,7 @@ OBJC_CLASS NSString;
 
 namespace Inspector {
 
-class RemoteTargetBlock {
-public:
-    RemoteTargetBlock(void (^task)())
-        : m_task(Block_copy(task))
-    {
-    }
-
-    RemoteTargetBlock(const RemoteTargetBlock& other)
-        : m_task(Block_copy(other.m_task))
-    {
-    }
-
-    ~RemoteTargetBlock()
-    {
-        Block_release(m_task);
-    }
-
-    RemoteTargetBlock& operator=(const RemoteTargetBlock& other)
-    {
-        void (^oldTask)() = m_task;
-        m_task = Block_copy(other.m_task);
-        Block_release(oldTask);
-        return *this;
-    }
-
-    void operator()() const
-    {
-        m_task();
-    }
-
-private:
-    void (^m_task)();
-};
-
-typedef Vector<RemoteTargetBlock> RemoteTargetQueue;
+typedef Vector<BlockPtr<void ()>> RemoteTargetQueue;
 
 class RemoteConnectionToTarget final : public ThreadSafeRefCounted<RemoteConnectionToTarget>, public FrontendChannel {
 public:
@@ -92,7 +59,7 @@ public:
     NSString *destination() const;
 
     Lock& queueMutex() { return m_queueMutex; }
-    RemoteTargetQueue queue() const { return m_queue; }
+    const RemoteTargetQueue& queue() const { return m_queue; }
     void clearQueue() { m_queue.clear(); }
 
     // FrontendChannel overrides.
