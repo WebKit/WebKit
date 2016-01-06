@@ -42,4 +42,12 @@ IntPoint::IntPoint(const FloatPoint& p)
 {
 }
 
+IntPoint IntPoint::constrainedBetween(const IntPoint& min, const IntPoint& max) const
+{
+    return {
+        std::max(min.x(), std::min(max.x(), m_x)),
+        std::max(min.y(), std::min(max.y(), m_y))
+    };
+}
+
 }
