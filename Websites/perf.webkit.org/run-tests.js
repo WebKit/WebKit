@@ -88,8 +88,9 @@ function SerializedTaskQueue() {
     }
 }
 
-function main() {
+function main(argv) {
     var client = connect(true);
+    var filter = argv[2];
     confirmUserWantsDatabaseToBeInitializedIfNeeded(client, function (error, shouldContinue) {
         if (error)
             console.error(error);
@@ -110,7 +111,7 @@ function main() {
             var testCaseQueue = new SerializedTaskQueue();
             var testFileQueue = new SerializedTaskQueue();
             fs.readdirSync(pathToTests()).map(function (testFile) {
-                if (!testFile.match(/.js$/))
+                if (!testFile.match(/.js$/) || (filter && testFile.indexOf(filter) != 0))
                     return;
                 testFileQueue.addTask(function (error, callback) {
                     var testContent = fs.readFileSync(pathToTests(testFile), 'utf-8');
@@ -282,6 +283,8 @@ function TestEnvironment(testCaseQueue) {
         return hash.digest('hex');
     }
 
+    this.config = config;
+
     this.notifyDone = function () { currentTestContext.done(); }
 }
 
@@ -334,4 +337,4 @@ function TestContext(testGroup, testCase, callback) {
     process.stdout.write(this.description() + ': ');
 }
 
-main();
+main(process.argv);

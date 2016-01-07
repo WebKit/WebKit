@@ -1,3 +1,37 @@
+2016-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should automatically add aggregators
+        https://bugs.webkit.org/show_bug.cgi?id=152818
+
+        Reviewed by Chris Dumez.
+
+        When an aggregator entry is missing in aggregators table, automatically insert it in /api/report.
+
+        In a very early version of the perf dashboard, we had the ability to define a custom aggregator
+        in an admin page. In practice, nobody used or needed this feature so we got rid of it even before
+        the dashboard was landed into WebKit repository. This patch cleans up that mess.
+
+        * run-tests.js:
+        (main): Added the filtering capability.
+        (TestEnvironment): Expose the config JSON in the test environment.
+
+        * public/include/report-processor.php:
+        (ReportProcessor): Renamed name_to_aggregator now that it only contains ID.
+        (ReportProcessor::__construct): No longer fetches the aggregator table. An equivalent work is done
+        in newly added ensure_aggregators.
+        (ReportProcessor::process): Calls ensure_aggregators which populates name_to_aggregator_id.
+        (ReportProcessor::ensure_aggregators): Added. Add the builtin aggregators: Arithmetic, Geometric,
+        Harmonic, and Total.
+        (TestRunsGenerator): Renamed name_to_aggregator now that it only contains ID.
+        (TestRunsGenerator::__construct):
+        (TestRunsGenerator::add_aggregated_metric): Don't include aggregator_definition here since it's
+        never used now that all the aggregations are done natively in PHP.
+        (TestRunsGenerator::$aggregators): Added. We don't include SquareSum since it's only used for
+        computing run_square_sum_cache in test_runs table and it's useless elsewhere.
+        (TestRunsGenerator::aggregate_values): Add a comment about that.
+
+        * tests/api-report.js: Updated a test case to reflect the change.
+
 2016-01-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard JSON API should fail gracefully when postgres is down

@@ -372,12 +372,12 @@ describe("/api/report", function () {
         });
     }
 
-    it("should reject when aggregators are missing", function () {
+    it("should not reject when aggregators are missing", function () {
         addBuilder(reportWithTwoLevelsOfAggregations, function () {
             postJSON('/api/report/', reportWithTwoLevelsOfAggregations, function (response) {
                 assert.equal(response.statusCode, 200);
-                assert.equal(JSON.parse(response.responseText)['status'], 'AggregatorNotFound');
-                assert.equal(JSON.parse(response.responseText)['failureStored'], true);
+                assert.equal(JSON.parse(response.responseText)['status'], 'OK');
+                assert.equal(JSON.parse(response.responseText)['failureStored'], false);
                 notifyDone();
             });
         });
