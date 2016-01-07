@@ -1,3 +1,18 @@
+2016-01-07  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect position: fixed; rendering when child of position:relative/sticky.
+        https://bugs.webkit.org/show_bug.cgi?id=147284
+
+        Reviewed by Simon Fraser and David Hyatt.
+
+        Computing logical left for positioned objects should take the relative positioned ancestors' offset
+        into account.
+
+        * fast/block/positioning/fixed-container-with-relative-parent-expected.html: Added.
+        * fast/block/positioning/fixed-container-with-relative-parent.html: Added.
+        * fast/block/positioning/fixed-container-with-sticky-parent-expected.html: Added.
+        * fast/block/positioning/fixed-container-with-sticky-parent.html: Added.
+
 2016-01-07  Chris Dumez  <cdumez@apple.com>
 
         Directly-composited animated GIFs never resume once scrolled offscreen

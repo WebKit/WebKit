@@ -3331,25 +3331,32 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     if (child->parent()->style().direction() == LTR) {
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() - containerBlock->borderLogicalLeft();
         for (auto* current = child->parent(); current && current != containerBlock; current = current->container()) {
-            if (is<RenderBox>(*current)) {
-                staticPosition += downcast<RenderBox>(*current).logicalLeft();
-                if (region && is<RenderBlock>(*current)) {
-                    const RenderBlock& currentBlock = downcast<RenderBlock>(*current);
-                    region = currentBlock.clampToStartAndEndRegions(region);
-                    RenderBoxRegionInfo* boxInfo = currentBlock.renderBoxRegionInfo(region);
-                    if (boxInfo)
-                        staticPosition += boxInfo->logicalLeft();
-                }
+            if (!is<RenderBox>(*current))
+                continue;
+            const auto& renderBox = downcast<RenderBox>(*current);
+            staticPosition += renderBox.logicalLeft();
+            if (renderBox.isInFlowPositioned())
+                staticPosition += renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().width() : renderBox.offsetForInFlowPosition().height();
+            if (region && is<RenderBlock>(*current)) {
+                const RenderBlock& currentBlock = downcast<RenderBlock>(*current);
+                region = currentBlock.clampToStartAndEndRegions(region);
+                RenderBoxRegionInfo* boxInfo = currentBlock.renderBoxRegionInfo(region);
+                if (boxInfo)
+                    staticPosition += boxInfo->logicalLeft();
             }
         }
         logicalLeft.setValue(Fixed, staticPosition);
     } else {
-        RenderBox& enclosingBox = child->parent()->enclosingBox();
+        const RenderBox& enclosingBox = child->parent()->enclosingBox();
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock->borderLogicalLeft();
-        for (RenderElement* current = &enclosingBox; current; current = current->container()) {
+        for (const RenderElement* current = &enclosingBox; current; current = current->container()) {
             if (is<RenderBox>(*current)) {
-                if (current != containerBlock)
-                    staticPosition -= downcast<RenderBox>(*current).logicalLeft();
+                if (current != containerBlock) {
+                    const auto& renderBox = downcast<RenderBox>(*current);
+                    staticPosition -= renderBox.logicalLeft();
+                    if (renderBox.isInFlowPositioned())
+                        staticPosition -= renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().width() : renderBox.offsetForInFlowPosition().height();
+                }
                 if (current == &enclosingBox)
                     staticPosition -= enclosingBox.logicalWidth();
                 if (region && is<RenderBlock>(*current)) {
@@ -3713,8 +3720,13 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
     // FIXME: The static distance computation has not been patched for mixed writing modes.
     LayoutUnit staticLogicalTop = child->layer()->staticBlockPosition() - containerBlock->borderBefore();
     for (RenderElement* container = child->parent(); container && container != containerBlock; container = container->container()) {
-        if (is<RenderBox>(*container) && !is<RenderTableRow>(*container))
-            staticLogicalTop += downcast<RenderBox>(*container).logicalTop();
+        if (!is<RenderBox>(*container))
+            continue;
+        const auto& renderBox = downcast<RenderBox>(*container);
+        if (!is<RenderTableRow>(renderBox))
+            staticLogicalTop += renderBox.logicalTop();
+        if (renderBox.isInFlowPositioned())
+            staticLogicalTop += renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().height() : renderBox.offsetForInFlowPosition().width();
     }
     logicalTop.setValue(Fixed, staticLogicalTop);
 }

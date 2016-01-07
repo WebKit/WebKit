@@ -1,3 +1,19 @@
+2016-01-07  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect position: fixed; rendering when child of position:relative/sticky.
+        https://bugs.webkit.org/show_bug.cgi?id=147284
+
+        Reviewed by Simon Fraser and David Hyatt.
+
+        Computing logical left for positioned objects should take the relative positioned ancestors' offset
+        into account.
+
+        Tests: fast/block/positioning/fixed-container-with-relative-parent.html
+               fast/block/positioning/fixed-container-with-sticky-parent.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::computeInlineStaticDistance):
+
 2016-01-06  Simon Fraser  <simon.fraser@apple.com>
 
         Initial implementation files for display-list recording and playback
