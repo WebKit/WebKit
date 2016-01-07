@@ -2040,4 +2040,11 @@ webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-she
 fast/loader/location-hash-user-gesture.html [ Skip ]
 
 # No touch events
-webkit.org/b/141906 http/tests/contentdispositionattachmentsandbox [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-never.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-when-downgrade.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html [ Skip ]
+http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html [ Skip ]

@@ -1,3 +1,10 @@
+2016-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Better test gardening. Only skip those tests that use touch events, not the whole
+        directory.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-01-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Various imported/w3c/indexeddb tests fail due to expecting the wrong exception.
