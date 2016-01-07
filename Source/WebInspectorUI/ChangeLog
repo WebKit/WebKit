@@ -1,3 +1,14 @@
+2016-01-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DOMContentLoaded label in the Timeline tab should be "DOM Content Loaded"
+        https://bugs.webkit.org/show_bug.cgi?id=152746
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.addMarker):
+
 2016-01-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Scope chain shows too many scopes for functions (`let` and `var` in the same function are two scopes)

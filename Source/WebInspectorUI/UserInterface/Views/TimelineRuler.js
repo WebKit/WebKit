@@ -310,7 +310,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
             markerElement.title = WebInspector.UIString("Load \u2014 %s").format(Number.secondsToString(markerTime));
             break;
         case WebInspector.TimelineMarker.Type.DOMContentEvent:
-            markerElement.title = WebInspector.UIString("DOMContentLoaded \u2014 %s").format(Number.secondsToString(markerTime));
+            markerElement.title = WebInspector.UIString("DOM Content Loaded \u2014 %s").format(Number.secondsToString(markerTime));
             break;
         case WebInspector.TimelineMarker.Type.TimeStamp:
             if (marker.details)
