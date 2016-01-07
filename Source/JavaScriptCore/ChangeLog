@@ -1,3 +1,15 @@
+2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [mips] Implemented missing branch patching methods.
+        https://bugs.webkit.org/show_bug.cgi?id=152845
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::canJumpReplacePatchableBranch32WithPatch):
+        (JSC::MacroAssemblerMIPS::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerMIPS::revertJumpReplacementToPatchableBranch32WithPatch):
+
 2016-01-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] When resolving Stack arguments, use addressing from SP when addressing from FP is invalid
