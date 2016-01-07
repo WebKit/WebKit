@@ -1,3 +1,12 @@
+2016-01-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaselining media/airplay-target-availability.html
+        hhttps://bugs.webkit.org/show_bug.cgi?id=152815
+
+        Unreviewed test gardening.
+
+        * media/airplay-target-availability-expected.txt:
+
 2016-01-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Debug Logging from some Inspector Tests

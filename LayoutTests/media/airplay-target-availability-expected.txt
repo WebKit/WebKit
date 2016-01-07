@@ -5,6 +5,9 @@ Test that 'webkitplaybacktargetavailabilitychanged' event is sent when at least 
 
 EVENT: 'webkitplaybacktargetavailabilitychanged', event.availability = 'not-available'
 
+
+EVENT: 'webkitplaybacktargetavailabilitychanged', event.availability = 'not-available'
+
 ** setting src on video that does not have event listener
 
 EVENT: 'webkitplaybacktargetavailabilitychanged', event.availability = 'available'
