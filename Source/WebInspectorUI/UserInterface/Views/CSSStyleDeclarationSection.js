@@ -444,8 +444,16 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             return;
 
         contextMenu.appendItem(WebInspector.UIString("Duplicate Selector"), () => {
-            if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
-                this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
+            if (this._delegate && typeof this._delegate.focusEmptySectionWithStyle === "function") {
+                let existingRules = this._style.nodeStyles.rulesForSelector(this._currentSelectorText);
+                for (let rule of existingRules) {
+                    if (this._delegate.focusEmptySectionWithStyle(rule.style))
+                        return;
+                }
+            }
+
+            if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector === "function")
+                this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector(this._currentSelectorText);
 
             this._style.nodeStyles.addRule(this._currentSelectorText);
         });
@@ -464,14 +472,16 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                 contextMenu.appendItem(WebInspector.UIString("Add %s Rule").format(pseudoClassSelector), () => {
                     this._style.node.setPseudoClassEnabled(pseudoClass, true);
 
-                    if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
-                        this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
+                    let selector;
+                    if (this._style.ownerRule)
+                        selector = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoClassSelector).join(", ");
+                    else
+                        selector = this._currentSelectorText + pseudoClassSelector;
 
-                    if (this._style.ownerRule) {
-                        let pseudoSelectors = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoClassSelector);
-                        this._style.nodeStyles.addRule(pseudoSelectors.join(","));
-                    } else
-                        this._style.nodeStyles.addRule(this._currentSelectorText + pseudoClassSelector);
+                    if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector === "function")
+                        this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector(selector);
+
+                    this._style.nodeStyles.addRule(selector);
                 });
             }
         }
@@ -480,15 +490,34 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             let pseudoElementSelector = "::" + pseudoElement;
             const styleText = "content: \"\";";
 
-            contextMenu.appendItem(WebInspector.UIString("Create %s Rule").format(pseudoElementSelector), () => {
-                if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
-                    this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
+            let existingSection = null;
+            if (this._delegate && typeof this._delegate.sectionForStyle === "function") {
+                let existingRules = this._style.nodeStyles.rulesForSelector(this._currentSelectorText + pseudoElementSelector);
+                if (existingRules.length) {
+                    // There shouldn't really ever be more than one pseudo-element rule
+                    // that is not in a media query. As such, just focus the first rule
+                    // on the assumption that it is the only one necessary.
+                    existingSection = this._delegate.sectionForStyle(existingRules[0].style);
+                }
+            }
 
-                if (this._style.ownerRule) {
-                    let pseudoSelectors = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoElementSelector);
-                    this._style.nodeStyles.addRule(pseudoSelectors.join(","), styleText);
-                } else
-                    this._style.nodeStyles.addRule(this._currentSelectorText + pseudoElementSelector, styleText);
+            let title = existingSection ? WebInspector.UIString("Focus %s Rule") : WebInspector.UIString("Create %s Rule");
+            contextMenu.appendItem(title.format(pseudoElementSelector), () => {
+                if (existingSection) {
+                    existingSection.focus();
+                    return;
+                }
+
+                let selector;
+                if (this._style.ownerRule)
+                    selector = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoElementSelector).join(", ");
+                else
+                    selector = this._currentSelectorText + pseudoElementSelector;
+
+                if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector === "function")
+                    this._delegate.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector(selector);
+
+                this._style.nodeStyles.addRule(selector, styleText);
             });
         }
     }

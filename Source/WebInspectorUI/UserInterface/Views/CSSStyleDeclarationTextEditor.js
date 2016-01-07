@@ -338,7 +338,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     commentAllProperties()
     {
-        if (!this._style.properties.length)
+        if (!this._style.hasProperties())
             return false;
 
         for (var property of this._style.properties) {

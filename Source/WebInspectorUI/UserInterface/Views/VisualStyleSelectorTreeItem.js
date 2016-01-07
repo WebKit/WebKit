@@ -25,7 +25,7 @@
 
 WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem extends WebInspector.GeneralTreeElement
 {
-    constructor(style, title, subtitle)
+    constructor(delegate, style, title, subtitle)
     {
         let iconClassName;
         switch (style.type) {
@@ -56,6 +56,8 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         title = title.trim();
 
         super(["visual-style-selector-item", iconClassName], title, subtitle, style);
+
+        this._delegate = delegate;
 
         this._iconClassName = iconClassName;
         this._lastValue = title;
@@ -141,10 +143,12 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
             InspectorFrontendHost.copyText(this.representedObject.generateCSSRuleString());
         });
 
-        contextMenu.appendItem(WebInspector.UIString("Reset"), () => {
-            this.representedObject.resetText();
-            this.dispatchEventToListeners(WebInspector.VisualStyleSelectorTreeItem.Event.StyleTextReset);
-        });
+        if (this.representedObject.modified) {
+            contextMenu.appendItem(WebInspector.UIString("Reset"), () => {
+                this.representedObject.resetText();
+                this.dispatchEventToListeners(WebInspector.VisualStyleSelectorTreeItem.Event.StyleTextReset);
+            });
+        }
 
         if (!this.representedObject.ownerRule)
             return;
@@ -169,12 +173,8 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
                 contextMenu.appendItem(WebInspector.UIString("Add %s Rule").format(pseudoClassSelector), () => {
                     this.representedObject.node.setPseudoClassEnabled(pseudoClass, true);
-
-                    if (this.representedObject.ownerRule) {
-                        let pseudoSelectors = this.representedObject.ownerRule.selectors.map((selector) => selector.text + pseudoClassSelector);
-                        this.representedObject.nodeStyles.addRule(pseudoSelectors.join(","));
-                    } else
-                        this.representedObject.nodeStyles.addRule(this._currentSelectorText + pseudoClassSelector);
+                    let pseudoSelectors = this.representedObject.ownerRule.selectors.map((selector) => selector.text + pseudoClassSelector);
+                    this.representedObject.nodeStyles.addRule(pseudoSelectors.join(", "));
                 });
             }
         }
@@ -183,12 +183,27 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
             let pseudoElementSelector = "::" + pseudoElement;
             const styleText = "content: \"\";";
 
-            contextMenu.appendItem(WebInspector.UIString("Create %s Rule").format(pseudoElementSelector), () => {
-                if (this.representedObject.ownerRule) {
-                    let pseudoSelectors = this.representedObject.ownerRule.selectors.map((selector) => selector.text + pseudoElementSelector);
-                    this.representedObject.nodeStyles.addRule(pseudoSelectors.join(","), styleText);
-                } else
-                    this.representedObject.nodeStyles.addRule(this._currentSelectorText + pseudoElementSelector, styleText);
+            let existingTreeItem = null;
+            if (this._delegate && typeof this._delegate.treeItemForStyle === "function") {
+                let selectorText = this.representedObject.ownerRule.selectorText;
+                let existingRules = this.representedObject.nodeStyles.rulesForSelector(selectorText + pseudoElementSelector);
+                if (existingRules.length) {
+                    // There shouldn't really ever be more than one pseudo-element rule
+                    // that is not in a media query. As such, just focus the first rule
+                    // on the assumption that it is the only one necessary.
+                    existingTreeItem = this._delegate.treeItemForStyle(existingRules[0].style);
+                }
+            }
+
+            let title = existingTreeItem ? WebInspector.UIString("Select %s Rule") : WebInspector.UIString("Create %s Rule");
+            contextMenu.appendItem(title.format(pseudoElementSelector), () => {
+                if (existingTreeItem) {
+                    existingTreeItem.select(true, true);
+                    return;
+                }
+
+                let pseudoSelectors = this.representedObject.ownerRule.selectors.map((selector) => selector.text + pseudoElementSelector);
+                this.representedObject.nodeStyles.addRule(pseudoSelectors.join(", "), styleText);
             });
         }
     }

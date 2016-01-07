@@ -193,7 +193,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
         this._boxElements = [];
         var boxes = ["content", "padding", "border", "margin", "position"];
 
-        if (!style.properties.length) {
+        if (!style.hasProperties()) {
             this.showEmptyMessage();
             return;
         }

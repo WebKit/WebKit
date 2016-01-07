@@ -332,6 +332,16 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         return styleText;
     }
 
+    isInspectorRule()
+    {
+        return this._ownerRule && this._ownerRule.type === WebInspector.CSSStyleSheet.Type.Inspector;
+    }
+
+    hasProperties()
+    {
+        return !!this._properties.length;
+    }
+
     // Protected
 
     get nodeStyles()

@@ -1,3 +1,79 @@
+2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Make creating new rules in the Styles sidebar simpler
+        https://bugs.webkit.org/show_bug.cgi?id=152726
+
+        Reviewed by Timothy Hatcher.
+
+        When creating a new rules of any kind, first look to see if it already exists in
+        another rule that has no properties. If found, focus/select it instead of creating
+        a new rule. Otherwise, create the new rule like normal.
+
+        Also changed the way in which previously-focused sections/tree-items are saved
+        to rely upon the selector of the new rule and whether the section for that rule
+        is empty and an inspector rule.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WebInspector.CSSStyleDeclaration.prototype.isInspectorRule):
+        Returns true if the style is an inspector rule.
+
+        (WebInspector.CSSStyleDeclaration.prototype.hasProperties):
+        Returns true if the style has CSS properties.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.rulesForSelector.ruleHasSelector):
+        (WebInspector.DOMNodeStyles.prototype.rulesForSelector):
+        Returns a list of CSSRule that match the given selector and are not
+        in media queries.
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow.prototype._updateMetrics):
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleContextMenuEvent):
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.commentAllProperties):
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.appendStyleSection):
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.cssStyleDeclarationSectionEditorFocused):
+        Now saves the newly focused section as the previously-focused section.
+
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionFocusNewInspectorRuleWithSelector):
+        Renamed from cssStyleDeclarationSectionFocusNextNewInspectorRule. Now needs
+        a selector argument.
+
+        (WebInspector.RulesStyleDetailsPanel.prototype.newRuleButtonClicked):
+        (WebInspector.RulesStyleDetailsPanel.prototype.sectionForStyle):
+        Returns the first section that has a style with matching selector.
+
+        (WebInspector.RulesStyleDetailsPanel.prototype.focusEmptySectionWithStyle):
+        Finds the section corresponding to the given style and, if empty, focuses it.
+
+        (WebInspector.RulesStyleDetailsPanel.prototype.nodeStylesRefreshed):
+        No longer clears the previously-focused section.
+
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection):
+        (WebInspector.VisualStyleSelectorSection.prototype.update.createSelectorItem):
+        (WebInspector.VisualStyleSelectorSection.prototype.update):
+        (WebInspector.VisualStyleSelectorSection.prototype.treeItemForStyle):
+        Returns the first tree item that has a style with matching selector.
+
+        (WebInspector.VisualStyleSelectorSection.prototype.selectEmptyStyleTreeItem):
+        Finds the tree item corresponding to the given style and, if empty, selects it.
+
+        (WebInspector.VisualStyleSelectorSection.prototype._addNewRule):
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem):
+        Now requires a delegate object.
+
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent):
+
 2016-01-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH Attempting to pause on CSP violation not inside of script

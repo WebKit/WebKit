@@ -268,6 +268,22 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         WebInspector.cssStyleManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
     }
 
+    rulesForSelector(selector)
+    {
+        selector = selector || this._node.appropriateSelectorFor(true);
+
+        function ruleHasSelector(rule) {
+            return !rule.mediaList.length && rule.selectorText === selector;
+        }
+
+        let rules = this._matchedRules.filter(ruleHasSelector);
+
+        for (let id in this._pseudoElements)
+            rules = rules.concat(this._pseudoElements[id].matchedRules.filter(ruleHasSelector));
+
+        return rules;
+    }
+
     get matchedRules()
     {
         return this._matchedRules;
