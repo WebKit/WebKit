@@ -1,5 +1,16 @@
 2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
 
+        [mips] Make repatchCall public to fix compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=152843
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::repatchCall):
+        (JSC::MacroAssemblerMIPS::linkCall): Deleted.
+
+2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
+
         [mips] Replaced subi with addi in getHostCallReturnValue
         https://bugs.webkit.org/show_bug.cgi?id=152841
 
