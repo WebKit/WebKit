@@ -1,3 +1,21 @@
+2016-01-07  Doug Russell  <d_russell@apple.com>
+
+        AX: AXObjectCacheMac is passing WebCore enum values directly to VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=151755
+
+        Reviewed by Chris Fleizach.
+
+        No new tests, covered by existing tests.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (platformChangeTypeForWebCoreChangeType):
+        (platformEditTypeForWebCoreEditType):
+        (platformDirectionForWebCoreDirection):
+        (platformGranularityForWebCoreGranularity):
+        (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+        (WebCore::textReplacementChangeDictionary):
+        (WebCore::AXObjectCache::postTextReplacementPlatformNotification):
+
 2016-01-06  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix up IDBDatabaseIdentifier hash issues.
