@@ -1,5 +1,21 @@
 2016-01-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard JSON API should fail gracefully when postgres is down
+        https://bugs.webkit.org/show_bug.cgi?id=152812
+
+        Reviewed by Chris Dumez.
+
+        Even though all JSON APIs returned DatabaseConnectionFailure as the status when Database::connect
+        returned a falsy value, PHP was spitting out warnings and producing HTTP responses that cannot be
+        parsed as a JSON when pg_connect failed.
+
+        Fixed the bug by suppressing warning messages in pg_connect.
+
+        * public/include/db.php:
+        (Database::connect): Use '@' prefix to suppress warning messages.
+
+2016-01-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard should auto-generate manifest file when one is missing
         https://bugs.webkit.org/show_bug.cgi?id=152813
 

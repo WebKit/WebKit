@@ -82,7 +82,7 @@ class Database
 
     function connect() {
         $databaseConfig = config('database');
-        $this->connection = pg_connect('host=' . $databaseConfig['host'] . ' port=' . $databaseConfig['port']
+        $this->connection = @pg_connect('host=' . $databaseConfig['host'] . ' port=' . $databaseConfig['port']
             . ' dbname=' . $databaseConfig['name'] . ' user=' . $databaseConfig['username'] . ' password=' . $databaseConfig['password']);
         return $this->connection ? true : false;
     }
