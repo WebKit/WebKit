@@ -1,3 +1,9 @@
+2016-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-01-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: imported/w3c/indexeddb/idbcursor-continue.htm fails.
