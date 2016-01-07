@@ -239,11 +239,13 @@ public:
 
     void or32(TrustedImm32 imm, RegisterID dest)
     {
+        ASSERT(dest != ARMRegisters::S0);
         m_assembler.orrs(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
     void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
+        ASSERT(src != ARMRegisters::S0);
         m_assembler.orrs(dest, src, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 

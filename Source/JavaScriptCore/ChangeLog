@@ -1,3 +1,25 @@
+2016-01-07  Mark Lam  <mark.lam@apple.com>
+
+        ARMv7 or32(TrustedImm32, AbsoluteAddress) may have a bug with its use of dataTempRegister.
+        https://bugs.webkit.org/show_bug.cgi?id=152833
+
+        Reviewed by Benjamin Poulain.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::or32):
+        - Added some assertions to make sure it is safe to use ARMRegisters::S0 as a temp.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::or32):
+        - Implement an optimization that avoids reloading the memoryTempRegister when
+          the immediate is encodable as an instruction immediate.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::or32):
+        - Added an assertion to make sure it is safe to use the dataTempRegister as a temp.
+        - Implement an optimization that avoids reloading the memoryTempRegister when
+          the immediate is encodable as an instruction immediate.  In the event that we
+          cannot encode the immediate, we'll use the addressTempRegister as a temp, and
+          reload it later.
+
 2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] JSC shell sources should include JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES

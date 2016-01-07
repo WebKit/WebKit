@@ -537,9 +537,16 @@ public:
 
     void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        load32(address.m_ptr, getCachedMemoryTempRegisterIDAndInvalidate());
-        or32(imm, memoryTempRegister, memoryTempRegister);
-        store32(memoryTempRegister, address.m_ptr);
+        LogicalImmediate logicalImm = LogicalImmediate::create32(imm.m_value);
+        if (logicalImm.isValid()) {
+            load32(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
+            m_assembler.orr<32>(dataTempRegister, dataTempRegister, logicalImm);
+            store32(dataTempRegister, address.m_ptr);
+        } else {
+            load32(address.m_ptr, getCachedMemoryTempRegisterIDAndInvalidate());
+            or32(imm, memoryTempRegister, memoryTempRegister);
+            store32(memoryTempRegister, address.m_ptr);
+        }
     }
 
     void or32(TrustedImm32 imm, Address address)
