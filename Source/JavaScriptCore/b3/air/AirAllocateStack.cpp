@@ -235,22 +235,36 @@ void allocateStack(Code& code)
     
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
-            for (Arg& arg : inst.args) {
-                switch (arg.kind()) {
-                case Arg::Stack:
-                    arg = Arg::addr(
-                        Tmp(GPRInfo::callFrameRegister),
-                        arg.offset() + arg.stackSlot()->offsetFromFP());
-                    break;
-                case Arg::CallArg:
-                    arg = Arg::addr(
-                        Tmp(GPRInfo::callFrameRegister),
-                        arg.offset() - code.frameSize());
-                    break;
-                default:
-                    break;
+            inst.forEachArg(
+                [&] (Arg& arg, Arg::Role, Arg::Type, Arg::Width width)
+                {
+                    switch (arg.kind()) {
+                    case Arg::Stack: {
+                        arg = Arg::addr(
+                            Tmp(MacroAssembler::stackPointerRegister),
+                            arg.offset() + arg.stackSlot()->offsetFromFP());
+                        if (!arg.isValidForm(width)) {
+                            arg = Arg::addr(
+                                Tmp(MacroAssembler::stackPointerRegister),
+                                arg.offset() + code.frameSize());
+                        }
+                        break;
+                    }
+                    case Arg::CallArg:
+                        arg = Arg::addr(
+                            Tmp(GPRInfo::callFrameRegister),
+                            arg.offset() - code.frameSize());
+                        if (!arg.isValidForm(width)) {
+                            arg = Arg::addr(
+                                Tmp(MacroAssembler::stackPointerRegister),
+                                arg.offset() + code.frameSize());
+                        }
+                        break;
+                    default:
+                        break;
+                    }
                 }
-            }
+            );
         }
     }
 }
