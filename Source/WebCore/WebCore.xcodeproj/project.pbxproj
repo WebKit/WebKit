@@ -550,6 +550,14 @@
 		0FDF45A91BD1C82500E4FA8C /* TimingFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF45A81BD1C82500E4FA8C /* TimingFunction.cpp */; };
 		0FE5806319327A6200DE32EB /* ScrollingTreeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE5806119327A6200DE32EB /* ScrollingTreeMac.cpp */; };
 		0FE5806419327A6200DE32EB /* ScrollingTreeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5806219327A6200DE32EB /* ScrollingTreeMac.h */; };
+		0FE5FBD21C3DD51E0007A2CA /* DisplayList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE5FBCA1C3DD51E0007A2CA /* DisplayList.cpp */; };
+		0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCB1C3DD51E0007A2CA /* DisplayList.h */; };
+		0FE5FBD41C3DD51E0007A2CA /* DisplayListItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE5FBCC1C3DD51E0007A2CA /* DisplayListItems.cpp */; };
+		0FE5FBD51C3DD51E0007A2CA /* DisplayListItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCD1C3DD51E0007A2CA /* DisplayListItems.h */; };
+		0FE5FBD61C3DD51E0007A2CA /* DisplayListRecorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE5FBCE1C3DD51E0007A2CA /* DisplayListRecorder.cpp */; };
+		0FE5FBD71C3DD51E0007A2CA /* DisplayListRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBCF1C3DD51E0007A2CA /* DisplayListRecorder.h */; };
+		0FE5FBD81C3DD51E0007A2CA /* DisplayListReplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE5FBD01C3DD51E0007A2CA /* DisplayListReplayer.cpp */; };
+		0FE5FBD91C3DD51E0007A2CA /* DisplayListReplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE5FBD11C3DD51E0007A2CA /* DisplayListReplayer.h */; };
 		0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */; };
 		0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */; };
 		0FEA3E7B191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E79191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7839,6 +7847,14 @@
 		0FDF45A81BD1C82500E4FA8C /* TimingFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimingFunction.cpp; sourceTree = "<group>"; };
 		0FE5806119327A6200DE32EB /* ScrollingTreeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeMac.cpp; sourceTree = "<group>"; };
 		0FE5806219327A6200DE32EB /* ScrollingTreeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeMac.h; sourceTree = "<group>"; };
+		0FE5FBCA1C3DD51E0007A2CA /* DisplayList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayList.cpp; path = displaylists/DisplayList.cpp; sourceTree = "<group>"; };
+		0FE5FBCB1C3DD51E0007A2CA /* DisplayList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayList.h; path = displaylists/DisplayList.h; sourceTree = "<group>"; };
+		0FE5FBCC1C3DD51E0007A2CA /* DisplayListItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayListItems.cpp; path = displaylists/DisplayListItems.cpp; sourceTree = "<group>"; };
+		0FE5FBCD1C3DD51E0007A2CA /* DisplayListItems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayListItems.h; path = displaylists/DisplayListItems.h; sourceTree = "<group>"; };
+		0FE5FBCE1C3DD51E0007A2CA /* DisplayListRecorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayListRecorder.cpp; path = displaylists/DisplayListRecorder.cpp; sourceTree = "<group>"; };
+		0FE5FBCF1C3DD51E0007A2CA /* DisplayListRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayListRecorder.h; path = displaylists/DisplayListRecorder.h; sourceTree = "<group>"; };
+		0FE5FBD01C3DD51E0007A2CA /* DisplayListReplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayListReplayer.cpp; path = displaylists/DisplayListReplayer.cpp; sourceTree = "<group>"; };
+		0FE5FBD11C3DD51E0007A2CA /* DisplayListReplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayListReplayer.h; path = displaylists/DisplayListReplayer.h; sourceTree = "<group>"; };
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMock.h; sourceTree = "<group>"; };
 		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
@@ -15654,6 +15670,21 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		0FE5FBC91C3DD5060007A2CA /* displaylists */ = {
+			isa = PBXGroup;
+			children = (
+				0FE5FBCA1C3DD51E0007A2CA /* DisplayList.cpp */,
+				0FE5FBCB1C3DD51E0007A2CA /* DisplayList.h */,
+				0FE5FBCC1C3DD51E0007A2CA /* DisplayListItems.cpp */,
+				0FE5FBCD1C3DD51E0007A2CA /* DisplayListItems.h */,
+				0FE5FBCE1C3DD51E0007A2CA /* DisplayListRecorder.cpp */,
+				0FE5FBCF1C3DD51E0007A2CA /* DisplayListRecorder.h */,
+				0FE5FBD01C3DD51E0007A2CA /* DisplayListReplayer.cpp */,
+				0FE5FBD11C3DD51E0007A2CA /* DisplayListReplayer.h */,
+			);
+			name = displaylists;
+			sourceTree = "<group>";
+		};
 		14DFB33F0A7DF7630018F769 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -21529,6 +21560,7 @@
 				B27535290B053814002CE64F /* cg */,
 				B5320D68122A24E9002D1440 /* cocoa */,
 				9332AB3B16515D7700D827EC /* cpu */,
+				0FE5FBC91C3DD5060007A2CA /* displaylists */,
 				A75E8B7F0E1DE2B0007F2481 /* filters */,
 				498770C11242C50D002226BA /* gpu */,
 				441AF0A70EBA7BBF0044ED4B /* ios */,
@@ -25068,6 +25100,10 @@
 				2D5646B01B8F8493003C4994 /* DictionaryPopupInfo.h in Headers */,
 				FDAF19991513D131008DB0C3 /* DirectConvolver.h in Headers */,
 				7EDAAFC919A2CCDC0034DFD1 /* DiskCacheMonitorCocoa.h in Headers */,
+				0FE5FBD31C3DD51E0007A2CA /* DisplayList.h in Headers */,
+				0FE5FBD51C3DD51E0007A2CA /* DisplayListItems.h in Headers */,
+				0FE5FBD71C3DD51E0007A2CA /* DisplayListRecorder.h in Headers */,
+				0FE5FBD91C3DD51E0007A2CA /* DisplayListReplayer.h in Headers */,
 				49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */,
 				2D29ECC6192ECC8300984B78 /* DisplayRefreshMonitorClient.h in Headers */,
 				2D29ECCA192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h in Headers */,
@@ -28902,6 +28938,10 @@
 				937FF3D71A10131B008EBA31 /* DictionaryLookup.mm in Sources */,
 				FDAF19981513D131008DB0C3 /* DirectConvolver.cpp in Sources */,
 				7E4DE10D198B10B60051CB02 /* DiskCacheMonitorCocoa.mm in Sources */,
+				0FE5FBD21C3DD51E0007A2CA /* DisplayList.cpp in Sources */,
+				0FE5FBD41C3DD51E0007A2CA /* DisplayListItems.cpp in Sources */,
+				0FE5FBD61C3DD51E0007A2CA /* DisplayListRecorder.cpp in Sources */,
+				0FE5FBD81C3DD51E0007A2CA /* DisplayListReplayer.cpp in Sources */,
 				49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */,
 				2D29ECC5192ECC8300984B78 /* DisplayRefreshMonitorClient.cpp in Sources */,
 				0F97A658155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm in Sources */,

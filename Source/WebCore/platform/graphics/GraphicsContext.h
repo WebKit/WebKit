@@ -127,6 +127,33 @@ struct GraphicsContextState {
     {
     }
 
+    enum Change : uint32_t {
+        NoChange                                = 0,
+        StrokeGradientChange                    = 1 << 1,
+        StrokePatternChange                     = 1 << 2,
+        FillGradientChange                      = 1 << 3,
+        FillPatternChange                       = 1 << 4,
+        StrokeThicknessChange                   = 1 << 5,
+        StrokeColorChange                       = 1 << 6,
+        StrokeStyleChange                       = 1 << 7,
+        FillColorChange                         = 1 << 8,
+        FillRuleChange                          = 1 << 9,
+        ShadowChange                            = 1 << 10,
+        ShadowColorChange                       = 1 << 11,
+        ShadowsIgnoreTransformsChange           = 1 << 12,
+        AlphaChange                             = 1 << 13,
+        CompositeOperationChange                = 1 << 14,
+        BlendModeChange                         = 1 << 15,
+        TextDrawingModeChange                   = 1 << 16,
+        ShouldAntialiasChange                   = 1 << 17,
+        ShouldSmoothFontsChange                 = 1 << 18,
+        AntialiasedFontDilationEnabledChange    = 1 << 19,
+        ShouldSubpixelQuantizeFontsChange       = 1 << 20,
+        DrawLuminanceMaskChange                 = 1 << 21,
+        ImageInterpolationQualityChange         = 1 << 22,
+    };
+    typedef uint32_t StateChangeFlags;
+
     RefPtr<Gradient> strokeGradient;
     RefPtr<Pattern> strokePattern;
     
@@ -194,6 +221,28 @@ struct ImagePaintingOptions {
     ImageOrientationDescription m_orientationDescription;
     bool m_useLowQualityScale;
 };
+
+struct GraphicsContextStateChange {
+    GraphicsContextStateChange() = default;
+    GraphicsContextStateChange(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+        : m_state(state)
+        , m_changeFlags(flags)
+    {
+    }
+
+    GraphicsContextState::StateChangeFlags changesFromState(const GraphicsContextState&) const;
+
+    void accumulate(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+    void apply(GraphicsContext&) const;
+    
+    void dump(TextStream&) const;
+
+    GraphicsContextState m_state;
+    GraphicsContextState::StateChangeFlags m_changeFlags { GraphicsContextState::NoChange };
+};
+
+TextStream& operator<<(TextStream&, const GraphicsContextStateChange&);
+
 
 class GraphicsContext {
     WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;

@@ -70,6 +70,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics"
     "${WEBCORE_DIR}/platform/graphics/cpu/arm"
     "${WEBCORE_DIR}/platform/graphics/cpu/arm/filters"
+    "${WEBCORE_DIR}/platform/graphics/displaylists"
     "${WEBCORE_DIR}/platform/graphics/filters"
     "${WEBCORE_DIR}/platform/graphics/filters/texmap"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
@@ -2214,6 +2215,11 @@ set(WebCore_SOURCES
     platform/graphics/WidthIterator.cpp
 
     platform/graphics/cpu/arm/filters/FELightingNEON.cpp
+
+    platform/graphics/displaylists/DisplayList.cpp
+    platform/graphics/displaylists/DisplayListItems.cpp
+    platform/graphics/displaylists/DisplayListRecorder.cpp
+    platform/graphics/displaylists/DisplayListReplayer.cpp
 
     platform/graphics/filters/DistantLightSource.cpp
     platform/graphics/filters/FEBlend.cpp
