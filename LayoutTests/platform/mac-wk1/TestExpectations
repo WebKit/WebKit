@@ -73,23 +73,25 @@ inspector/indexeddb
 imported/w3c/indexeddb/interfaces.html [ Skip ]
 imported/w3c/indexeddb/keyorder.htm [ Skip ]
 
-# W3C IDB test text failures
+# W3C IDB tests - Legacy IDB passes, Modern IDB fails
 imported/w3c/indexeddb/idbcursor-continue.htm [ Failure ]
+imported/w3c/indexeddb/idbobjectstore_add16.htm [ Failure ]
+imported/w3c/indexeddb/idbobjectstore_clear4.htm [ Failure ]
+imported/w3c/indexeddb/idbobjectstore_count4.htm [ Failure ]
+imported/w3c/indexeddb/idbobjectstore_delete7.htm [ Failure ]
+imported/w3c/indexeddb/idbobjectstore_put16.htm [ Failure ]
+imported/w3c/indexeddb/request_bubble-and-capture.htm [ Failure ]
+imported/w3c/indexeddb/transaction_bubble-and-capture.htm [ Failure ]
+
+# W3C IDB tests - Legacy IDB fails, Modern IDB fails differently
 imported/w3c/indexeddb/idbindex_get7.htm [ Failure ]
 imported/w3c/indexeddb/idbindex_getKey7.htm [ Failure ]
 imported/w3c/indexeddb/idbindex_openCursor2.htm [ Failure ]
 imported/w3c/indexeddb/idbindex_openKeyCursor3.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_add16.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_clear4.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_count4.htm [ Failure ]
 imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order.htm [ Failure ]
 imported/w3c/indexeddb/idbobjectstore_createIndex7-event_order.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_delete7.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_put16.htm [ Failure ]
 imported/w3c/indexeddb/idbversionchangeevent.htm [ Failure ]
 imported/w3c/indexeddb/keypath.htm [ Failure ]
-imported/w3c/indexeddb/request_bubble-and-capture.htm [ Failure ]
-imported/w3c/indexeddb/transaction_bubble-and-capture.htm [ Failure ]
 
 # IDB tests that crash/assert in MemoryBackingStore code
 storage/indexeddb/key-generator.html [ Skip ]
