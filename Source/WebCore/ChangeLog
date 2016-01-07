@@ -1,3 +1,15 @@
+2016-01-07  Zalan Bujtas  <zalan@apple.com>
+
+        Use wavy offset for decoration painting when line style is TextDecorationStyleWavy.
+        https://bugs.webkit.org/show_bug.cgi?id=152856
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+
 2016-01-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Various imported/w3c/indexeddb tests fail due to expecting the wrong exception.
