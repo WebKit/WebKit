@@ -47,14 +47,16 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters&
     : m_client(client)
     , m_parameters(parameters)
     , m_networkingContext(RemoteNetworkingContext::create(parameters.sessionID, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect))
-#if USE(NETWORK_SESSION)
-    , m_task(SessionTracker::networkSession(parameters.sessionID)->createDataTaskWithRequest(parameters.request, *this))
-#endif
     , m_currentRequest(parameters.request)
 {
 #if USE(NETWORK_SESSION)
-    if (!parameters.defersLoading)
-        m_task->resume();
+    if (!parameters.defersLoading) {
+        if (auto* networkSession = SessionTracker::networkSession(parameters.sessionID)) {
+            m_task = networkSession->createDataTaskWithRequest(parameters.request, *this);
+            m_task->resume();
+        } else
+            ASSERT_NOT_REACHED();
+    }
 #else
     m_handle = ResourceHandle::create(m_networkingContext.get(), parameters.request, this, parameters.defersLoading, parameters.contentSniffingPolicy == SniffContent);
 #endif
@@ -88,7 +90,8 @@ void NetworkLoad::setDefersLoading(bool defers)
 void NetworkLoad::cancel()
 {
 #if USE(NETWORK_SESSION)
-    m_task->cancel();
+    if (m_task)
+        m_task->cancel();
 #else
     if (m_handle)
         m_handle->cancel();
@@ -160,11 +163,16 @@ void NetworkLoad::sharedWillSendRedirectedRequest(const ResourceRequest& request
 
 void NetworkLoad::convertTaskToDownload(DownloadID downloadID)
 {
-    m_task->setDownloadID(downloadID);
+    m_task->setPendingDownloadID(downloadID);
     
     ASSERT(m_responseCompletionHandler);
     m_responseCompletionHandler(PolicyDownload);
     m_responseCompletionHandler = nullptr;
+}
+
+void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
+{
+    m_task->setPendingDownloadID(downloadID);
 }
 
 void NetworkLoad::willPerformHTTPRedirection(const ResourceResponse& response, const ResourceRequest& request, RedirectCompletionHandler completionHandler)
@@ -202,7 +210,9 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
 void NetworkLoad::didReceiveResponse(const ResourceResponse& response, ResponseCompletionHandler completionHandler)
 {
     ASSERT(isMainThread());
-    if (sharedDidReceiveResponse(response) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
+    if (m_task && m_task->pendingDownloadID().downloadID())
+        completionHandler(PolicyDownload);
+    else if (sharedDidReceiveResponse(response) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
         completionHandler(PolicyUse);
     else
         m_responseCompletionHandler = completionHandler;

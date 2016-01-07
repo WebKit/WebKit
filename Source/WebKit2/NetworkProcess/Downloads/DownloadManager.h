@@ -27,6 +27,7 @@
 #define DownloadManager_h
 
 #include "DownloadID.h"
+#include "PendingDownload.h"
 #include "SandboxExtension.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/Forward.h>
@@ -51,6 +52,7 @@ namespace WebKit {
 
 class AuthenticationManager;
 class Download;
+class PendingDownload;
 
 class DownloadManager {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
@@ -70,7 +72,7 @@ public:
 
     void startDownload(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&);
 #if USE(NETWORK_SESSION)
-    void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
+    std::unique_ptr<PendingDownload> dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
 #else
     void convertHandleToDownload(DownloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 #endif
@@ -93,6 +95,9 @@ public:
 
 private:
     Client& m_client;
+#if USE(NETWORK_SESSION)
+    HashMap<DownloadID, std::unique_ptr<PendingDownload>> m_pendingDownloads;
+#endif
     HashMap<DownloadID, std::unique_ptr<Download>> m_downloads;
 };
 

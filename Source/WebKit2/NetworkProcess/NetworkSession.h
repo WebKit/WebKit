@@ -97,18 +97,18 @@ public:
 
     NetworkSessionTaskClient& client() { return m_client; }
 
-    DownloadID downloadID() { return m_downloadID; }
-    void setDownloadID(DownloadID downloadID)
+    DownloadID pendingDownloadID() { return m_pendingDownloadID; }
+    void setPendingDownloadID(DownloadID downloadID)
     {
-        ASSERT(!m_downloadID.downloadID());
+        ASSERT(!m_pendingDownloadID.downloadID());
         ASSERT(downloadID.downloadID());
-        m_downloadID = downloadID;
+        m_pendingDownloadID = downloadID;
     }
     
 private:
     NetworkSession& m_session;
     NetworkSessionTaskClient& m_client;
-    DownloadID m_downloadID;
+    DownloadID m_pendingDownloadID;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDataTask> m_task;
 #endif

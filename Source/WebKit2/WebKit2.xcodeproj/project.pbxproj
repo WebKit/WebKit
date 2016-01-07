@@ -1068,6 +1068,7 @@
 		5C14271D1C23F8CF00D41183 /* CustomProtocolManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C14271B1C23F8CC00D41183 /* CustomProtocolManagerCocoa.mm */; };
 		5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
+		5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C298D9E1C3DEF2900470AFE /* PendingDownload.h */; };
 		5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */; };
 		5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
@@ -3252,6 +3253,7 @@
 		5C14271B1C23F8CC00D41183 /* CustomProtocolManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolManagerCocoa.mm; path = NetworkProcess/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkSessionCocoa.mm; path = NetworkProcess/cocoa/NetworkSessionCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSession.h; path = NetworkProcess/NetworkSession.h; sourceTree = "<group>"; };
+		5C298D9E1C3DEF2900470AFE /* PendingDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PendingDownload.h; path = NetworkProcess/Downloads/PendingDownload.h; sourceTree = "<group>"; };
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
 		5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerEnvironmentExtractor.h; sourceTree = "<group>"; };
 		5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicLinkerEnvironmentExtractor.mm; sourceTree = "<group>"; };
@@ -5826,6 +5828,7 @@
 		5C1426F11C23F81700D41183 /* Downloads */ = {
 			isa = PBXGroup;
 			children = (
+				5C298D9E1C3DEF2900470AFE /* PendingDownload.h */,
 				5C14270C1C23F87700D41183 /* ios */,
 				5C14270B1C23F87100D41183 /* mac */,
 				5C1427081C23F85200D41183 /* cocoa */,
@@ -8305,6 +8308,7 @@
 				1ABC3DFC1899F51C004F0626 /* WKNavigationDelegate.h in Headers */,
 				1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */,
 				1ABC3DF11899C6B6004F0626 /* WKNavigationInternal.h in Headers */,
+				5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */,
 				1ACC87BA1981C341003D1AF4 /* WKNavigationPrivate.h in Headers */,
 				2D3A65E31A7C3A9300CAC637 /* WKNavigationRef.h in Headers */,
 				1A1B0EB618A424950038481A /* WKNavigationResponse.h in Headers */,

@@ -27,6 +27,8 @@
 #include "DownloadManager.h"
 
 #include "Download.h"
+#include "NetworkSession.h"
+#include "PendingDownload.h"
 #include "SessionTracker.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SessionID.h>
@@ -47,21 +49,27 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
     auto* networkSession = SessionTracker::networkSession(sessionID);
     if (!networkSession)
         return;
-    auto download = std::make_unique<Download>(*this, *networkSession, downloadID);
-    download->didStart(request);
+    NetworkLoadParameters parameters;
+    parameters.sessionID = sessionID;
+    parameters.request = request;
+    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(parameters, downloadID));
 #else
     auto download = std::make_unique<Download>(*this, downloadID, request);
     download->start();
-#endif
 
     ASSERT(!m_downloads.contains(downloadID));
     m_downloads.add(downloadID, WTFMove(download));
+#endif
 }
 
 #if USE(NETWORK_SESSION)
-void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
+std::unique_ptr<PendingDownload> DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
 {
+    // This is needed for downloads started with startDownload, otherwise it will return nullptr.
+    auto pendingDownload = m_pendingDownloads.take(downloadID);
+
     m_downloads.add(downloadID, WTFMove(download));
+    return pendingDownload;
 }
 #else
 void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
