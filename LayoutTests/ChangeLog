@@ -1,3 +1,13 @@
+2016-01-06  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Initial enabling of imported W3C IDB tests.
+        https://bugs.webkit.org/show_bug.cgi?id=152824
+
+        Reviewed by Daniel Bates.
+
+        * platform/mac-wk1/TestExpectations: Unskip the entire W3C IDB test directory,
+          but add appropriate results for all the tests that don't yet pass.
+
 2016-01-06  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add test for Color.canBeSerializedAsShortHex
