@@ -1,3 +1,18 @@
+2016-01-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Re-enable lea() in Air on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=152832
+
+        Reviewed by Michael Saboff.
+
+        Lea() on the MacroAssembler is not the full x86 Lea (the real one being
+        x86Lea32()). Instead, it is a addPtr() with SP and a constant.
+
+        The instruction is required to implement B3's StackSlot. It is not
+        safe for big offsets but none of the stack operations are at the moment.
+
+        * b3/air/AirOpcode.opcodes:
+
 2016-01-07  Julien Brianceau  <jbriance@cisco.com>
 
         [mips] Add two missing abortWithReason implementations

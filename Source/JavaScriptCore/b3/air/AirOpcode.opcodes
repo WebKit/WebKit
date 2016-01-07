@@ -227,7 +227,7 @@ x86: X86Div32 UZD:G:32, UZD:G:32, U:G:32
 x86_64: X86Div64 UZD:G:64, UZD:G:64, U:G:64
     Tmp*, Tmp*, Tmp
 
-x86: Lea UA:G:Ptr, D:G:Ptr
+Lea UA:G:Ptr, D:G:Ptr
     Addr, Tmp
 
 And32 U:G:32, UZD:G:32
