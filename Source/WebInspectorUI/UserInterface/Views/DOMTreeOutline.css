@@ -40,12 +40,10 @@
 }
 
 .dom-tree-outline li.hovered:not(.selected) .selection {
-    display: block;
     background-color: hsla(209, 100%, 49%, 0.1);
 }
 
 .dom-tree-outline li .selection {
-    display: none;
     position: absolute;
     left: 0;
     right: 0;
@@ -54,12 +52,10 @@
 }
 
 .dom-tree-outline li.selected .selection {
-    display: block;
     background-color: hsl(0, 0%, 83%);
 }
 
 .dom-tree-outline li.elements-drag-over .selection {
-    display: block;
     margin-top: -2px;
     border-top: 2px solid hsl(209, 100%, 49%);
 }
@@ -98,12 +94,28 @@
     word-wrap: break-word;
 }
 
+.dom-tree-outline li.pseudo-class-enabled > .selection::before {
+    display: inline-block;
+    position: absolute;
+    top: 4px;
+    left: 2px;
+    width: 5px;
+    height: 5px;
+    content: "";
+    background-color: hsl(212, 92%, 54%);
+    border-radius: 50%;
+}
+
 .dom-tree-outline.single-node li {
     padding-left: 2px;
 }
 
 .dom-tree-outline:focus li.selected {
     color: white;
+}
+
+.dom-tree-outline:focus li.selected.pseudo-class-enabled > .selection::before {
+    background-color: hsl(0, 100%, 100%);
 }
 
 .dom-tree-outline:focus li.selected * {

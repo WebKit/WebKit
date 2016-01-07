@@ -44,6 +44,8 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         this._nodeStateChanges = [];
         this._boundNodeChangedAnimationEnd = this._nodeChangedAnimationEnd.bind(this);
+
+        node.addEventListener(WebInspector.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
     }
 
     isCloseTag()
@@ -1521,6 +1523,14 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             if (this._nodeStateChanges[i].element === element)
                 this._nodeStateChanges.splice(i, 1);
         }
+    }
+
+    _nodePseudoClassesDidChange(event)
+    {
+        if (this._elementCloseTag)
+            return;
+
+        this._listItemNode.classList.toggle("pseudo-class-enabled", !!this.representedObject.enabledPseudoClasses.length);
     }
 
     _fireDidChange()

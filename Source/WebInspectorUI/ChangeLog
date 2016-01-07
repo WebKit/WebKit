@@ -1,5 +1,30 @@
 2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Add indicator that element has pseudo-class in DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=152680
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement):
+        (WebInspector.DOMTreeElement.prototype._nodePseudoClassesDidChange):
+        Added an event listener to the node for when pseudo-classes change.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline li.pseudo-class-enabled > .selection::before):
+        (.dom-tree-outline:focus li.selected.pseudo-class-enabled > .selection::before):
+        Used the hover/selected background style element to ensure that the indicator
+        is always positioned evenly with the first line of the opening tag.
+
+        (.dom-tree-outline li.hovered:not(.selected) .selection):
+        (.dom-tree-outline li .selection):
+        (.dom-tree-outline li.selected .selection):
+        (.dom-tree-outline li.elements-drag-over .selection):
+        Removed "display: none;" (as well as the "block" declarations) to allow
+        the ::before pseudo-element to display.
+
+2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Make creating new rules in the Styles sidebar simpler
         https://bugs.webkit.org/show_bug.cgi?id=152726
 
