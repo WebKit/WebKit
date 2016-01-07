@@ -39,7 +39,9 @@ public:
     {
         return adoptRef(*new UIScriptController(context));
     }
-    
+
+    void contextDestroyed();
+
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
     
     void doAsyncTask(JSValueRef callback);
@@ -87,7 +89,7 @@ private:
 
     JSObjectRef objectFromRect(const WKRect&) const;
 
-    UIScriptContext& m_context;
+    UIScriptContext* m_context;
 };
 
 }

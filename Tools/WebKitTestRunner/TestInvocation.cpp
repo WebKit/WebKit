@@ -75,6 +75,8 @@ TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
 
 TestInvocation::~TestInvocation()
 {
+    if (m_pendingUIScriptInvocationData)
+        m_pendingUIScriptInvocationData->testInvocation = nullptr;
 }
 
 WKURLRef TestInvocation::url() const
@@ -643,6 +645,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         invocationData->testInvocation = this;
         invocationData->callbackID = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, callbackIDKey.get())));
         invocationData->scriptString = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, scriptKey.get()));
+        m_pendingUIScriptInvocationData = invocationData;
         WKPageCallAfterNextPresentationUpdate(TestController::singleton().mainWebView()->page(), invocationData, runUISideScriptAfterUpdateCallback);
         return;
     }
@@ -695,12 +698,17 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 void TestInvocation::runUISideScriptAfterUpdateCallback(WKErrorRef, void* context)
 {
     UIScriptInvocationData* data = static_cast<UIScriptInvocationData*>(context);
-    data->testInvocation->runUISideScript(data->scriptString.get(), data->callbackID);
+    if (TestInvocation* invocation = data->testInvocation) {
+        RELEASE_ASSERT(TestController::singleton().isCurrentInvocation(invocation));
+        invocation->runUISideScript(data->scriptString.get(), data->callbackID);
+    }
     delete data;
 }
 
 void TestInvocation::runUISideScript(WKStringRef script, unsigned scriptCallbackID)
 {
+    m_pendingUIScriptInvocationData = nullptr;
+
     if (!m_UIScriptContext)
         m_UIScriptContext = std::make_unique<UIScriptContext>(*this);
     

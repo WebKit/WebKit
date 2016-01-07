@@ -33,8 +33,13 @@
 namespace WTR {
 
 UIScriptController::UIScriptController(UIScriptContext& context)
-    : m_context(context)
+    : m_context(&context)
 {
+}
+
+void UIScriptController::contextDestroyed()
+{
+    m_context = nullptr;
 }
 
 void UIScriptController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
@@ -55,57 +60,57 @@ void UIScriptController::doAsyncTask(JSValueRef)
 
 void UIScriptController::setWillBeginZoomingCallback(JSValueRef callback)
 {
-    m_context.registerCallback(callback, CallbackTypeWillBeginZooming);
+    m_context->registerCallback(callback, CallbackTypeWillBeginZooming);
     platformSetWillBeginZoomingCallback();
 }
 
 JSValueRef UIScriptController::willBeginZoomingCallback() const
 {
-    return m_context.callbackWithID(CallbackTypeWillBeginZooming);
+    return m_context->callbackWithID(CallbackTypeWillBeginZooming);
 }
 
 void UIScriptController::setDidEndZoomingCallback(JSValueRef callback)
 {
-    m_context.registerCallback(callback, CallbackTypeDidEndZooming);
+    m_context->registerCallback(callback, CallbackTypeDidEndZooming);
     platformSetDidEndZoomingCallback();
 }
 
 JSValueRef UIScriptController::didEndZoomingCallback() const
 {
-    return m_context.callbackWithID(CallbackTypeDidEndZooming);
+    return m_context->callbackWithID(CallbackTypeDidEndZooming);
 }
 
 void UIScriptController::setDidEndScrollingCallback(JSValueRef callback)
 {
-    m_context.registerCallback(callback, CallbackTypeDidEndScrolling);
+    m_context->registerCallback(callback, CallbackTypeDidEndScrolling);
     platformSetDidEndScrollingCallback();
 }
 
 JSValueRef UIScriptController::didEndScrollingCallback() const
 {
-    return m_context.callbackWithID(CallbackTypeDidEndScrolling);
+    return m_context->callbackWithID(CallbackTypeDidEndScrolling);
 }
 
 void UIScriptController::setDidShowKeyboardCallback(JSValueRef callback)
 {
-    m_context.registerCallback(callback, CallbackTypeDidShowKeyboard);
+    m_context->registerCallback(callback, CallbackTypeDidShowKeyboard);
     platformSetDidShowKeyboardCallback();
 }
 
 JSValueRef UIScriptController::didShowKeyboardCallback() const
 {
-    return m_context.callbackWithID(CallbackTypeDidShowKeyboard);
+    return m_context->callbackWithID(CallbackTypeDidShowKeyboard);
 }
 
 void UIScriptController::setDidHideKeyboardCallback(JSValueRef callback)
 {
-    m_context.registerCallback(callback, CallbackTypeDidHideKeyboard);
+    m_context->registerCallback(callback, CallbackTypeDidHideKeyboard);
     platformSetDidHideKeyboardCallback();
 }
 
 JSValueRef UIScriptController::didHideKeyboardCallback() const
 {
-    return m_context.callbackWithID(CallbackTypeDidHideKeyboard);
+    return m_context->callbackWithID(CallbackTypeDidHideKeyboard);
 }
 
 #if !PLATFORM(IOS)
@@ -172,7 +177,7 @@ void UIScriptController::platformClearAllCallbacks()
 
 void UIScriptController::uiScriptComplete(JSStringRef result)
 {
-    m_context.requestUIScriptCompletion(result);
+    m_context->requestUIScriptCompletion(result);
     platformClearAllCallbacks();
 }
 

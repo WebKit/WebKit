@@ -32,10 +32,12 @@ namespace WTR {
 
 void UIScriptController::doAsyncTask(JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        m_context.asyncTaskComplete(callbackID);
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
     });
 }
 

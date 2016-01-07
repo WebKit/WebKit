@@ -42,10 +42,12 @@ namespace WTR {
 
 void UIScriptController::doAsyncTask(JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        m_context.asyncTaskComplete(callbackID);
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
     });
 }
 
@@ -53,10 +55,12 @@ void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
 
-    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     [webView zoomToScale:scale animated:YES completionHandler:^{
-        m_context.asyncTaskComplete(callbackID);
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
     }];
 }
 
@@ -77,29 +81,35 @@ static CGPoint globalToContentCoordinates(TestRunnerWKWebView *webView, long x, 
 
 void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
-        m_context.asyncTaskComplete(callbackID);
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
     }];
 }
 
 void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     [[HIDEventGenerator sharedHIDEventGenerator] doubleTap:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
-        m_context.asyncTaskComplete(callbackID);
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
     }];
 }
 
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     // Assumes that the keyboard is already shown.
     [[HIDEventGenerator sharedHIDEventGenerator] keyDown:toWTFString(toWK(character)) completionBlock:^{
-        m_context.asyncTaskComplete(callbackID);
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
     }];
 }
 
@@ -122,14 +132,16 @@ JSObjectRef UIScriptController::contentVisibleRect() const
     CGRect contentVisibleRect = webView._contentVisibleRect;
     
     WKRect wkRect = WKRectMake(contentVisibleRect.origin.x, contentVisibleRect.origin.y, contentVisibleRect.size.width, contentVisibleRect.size.height);
-    return m_context.objectFromRect(wkRect);
+    return m_context->objectFromRect(wkRect);
 }
 
 void UIScriptController::platformSetWillBeginZoomingCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.willBeginZoomingCallback = ^{
-        m_context.fireCallback(CallbackTypeWillBeginZooming);
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeWillBeginZooming);
     };
 }
 
@@ -137,7 +149,9 @@ void UIScriptController::platformSetDidEndZoomingCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.didEndZoomingCallback = ^{
-        m_context.fireCallback(CallbackTypeDidEndZooming);
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidEndZooming);
     };
 }
 
@@ -145,7 +159,9 @@ void UIScriptController::platformSetDidShowKeyboardCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.didShowKeyboardCallback = ^{
-        m_context.fireCallback(CallbackTypeDidShowKeyboard);
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidShowKeyboard);
     };
 }
 
@@ -153,7 +169,9 @@ void UIScriptController::platformSetDidHideKeyboardCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.didHideKeyboardCallback = ^{
-        m_context.fireCallback(CallbackTypeDidHideKeyboard);
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidHideKeyboard);
     };
 }
 
@@ -161,7 +179,9 @@ void UIScriptController::platformSetDidEndScrollingCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.didEndScrollingCallback = ^{
-        m_context.fireCallback(CallbackTypeDidEndScrolling);
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidEndScrolling);
     };
 }
 

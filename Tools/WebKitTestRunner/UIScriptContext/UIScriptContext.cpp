@@ -53,6 +53,11 @@ UIScriptContext::UIScriptContext(UIScriptContextDelegate& delegate)
     m_controller->makeWindowObject(m_context.get(), globalObject, &exception);
 }
 
+UIScriptContext::~UIScriptContext()
+{
+    m_controller->contextDestroyed();
+}
+
 void UIScriptContext::runUIScript(WKStringRef script, unsigned scriptCallbackID)
 {
     m_currentScriptCallbackID = scriptCallbackID;

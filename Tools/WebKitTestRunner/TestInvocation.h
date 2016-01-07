@@ -115,7 +115,7 @@ private:
     std::string m_errorMessage;
     
     std::unique_ptr<UIScriptContext> m_UIScriptContext;
-
+    UIScriptInvocationData* m_pendingUIScriptInvocationData { nullptr };
 };
 
 } // namespace WTR

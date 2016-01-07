@@ -51,9 +51,10 @@ typedef enum  {
 } CallbackType;
 
 class UIScriptContext {
+    WTF_MAKE_NONCOPYABLE(UIScriptContext);
 public:
-
     UIScriptContext(UIScriptContextDelegate&);
+    ~UIScriptContext();
 
     void runUIScript(WKStringRef script, unsigned scriptCallbackID);
     void requestUIScriptCompletion(JSStringRef);

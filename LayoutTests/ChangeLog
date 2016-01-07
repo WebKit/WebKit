@@ -1,3 +1,13 @@
+2016-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        testRunner.runUIScript crashes while running multiple tests in a row that invokes the same UIScript
+        https://bugs.webkit.org/show_bug.cgi?id=152390
+        <rdar://problem/23948321>
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-simulator/TestExpectations: Unskipped tests that used to be affected.
+
 2016-01-07  Zalan Bujtas  <zalan@apple.com>
 
         Incorrect position: fixed; rendering when child of position:relative/sticky.
