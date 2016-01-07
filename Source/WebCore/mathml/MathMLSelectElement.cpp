@@ -35,7 +35,7 @@
 #include "RenderMathMLRow.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
-#include "StyleResolveTree.h"
+#include "StyleTreeResolver.h"
 
 namespace WebCore {
 

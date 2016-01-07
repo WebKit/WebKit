@@ -2605,7 +2605,7 @@ set(WebCore_SOURCES
     style/StyleChange.cpp
     style/StyleFontSizeFunctions.cpp
     style/StyleResolveForDocument.cpp
-    style/StyleResolveTree.cpp
+    style/StyleTreeResolver.cpp
 
     svg/SVGAElement.cpp
     svg/SVGAltGlyphDefElement.cpp

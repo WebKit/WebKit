@@ -19202,7 +19202,7 @@
     <ClCompile Include="..\style\StyleChange.cpp" />
     <ClCompile Include="..\style\StyleFontSizeFunctions.cpp" />
     <ClCompile Include="..\style\StyleResolveForDocument.cpp" />
-    <ClCompile Include="..\style\StyleResolveTree.cpp" />
+    <ClCompile Include="..\style\StyleTreeResolver.cpp" />
     <ClCompile Include="..\bridge\jsc\BridgeJSC.cpp" />
     <ClCompile Include="..\bridge\c\c_class.cpp" />
     <ClCompile Include="..\bridge\c\c_instance.cpp" />
@@ -22766,7 +22766,7 @@
     <ClInclude Include="..\style\StyleChange.h" />
     <ClInclude Include="..\style\StyleFontSizeFunctions.h" />
     <ClInclude Include="..\style\StyleResolveForDocument.h" />
-    <ClInclude Include="..\style\StyleResolveTree.h" />
+    <ClInclude Include="..\style\StyleTreeResolver.h" />
     <ClInclude Include="..\bridge\Bridge.h" />
     <ClInclude Include="..\bridge\jsc\BridgeJSC.h" />
     <ClInclude Include="..\bridge\c\c_class.h" />

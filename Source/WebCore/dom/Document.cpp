@@ -154,10 +154,11 @@
 #include "ShadowRoot.h"
 #include "StorageEvent.h"
 #include "StyleProperties.h"
-#include "StyleResolveTree.h"
+#include "StyleResolveForDocument.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
+#include "StyleTreeResolver.h"
 #include "SubresourceLoader.h"
 #include "TextEvent.h"
 #include "TextNodeTraversal.h"
@@ -1851,9 +1852,23 @@ void Document::recalcStyle(Style::Change change)
         if (change == Style::Force) {
             // This may get set again during style resolve.
             m_hasNodesWithPlaceholderStyle = false;
+
+            auto documentStyle = Style::resolveForDocument(*this);
+
+            // Inserting the pictograph font at the end of the font fallback list is done by the
+            // font selector, so set a font selector if needed.
+            if (Settings* settings = this->settings()) {
+                if (settings->fontFallbackPrefersPictographs())
+                    documentStyle.get().fontCascade().update(&fontSelector());
+            }
+
+            auto documentChange = Style::determineChange(documentStyle.get(), m_renderView->style());
+            if (documentChange != Style::NoChange)
+                renderView()->setStyle(WTFMove(documentStyle));
         }
 
-        Style::resolveTree(*this, change);
+        Style::TreeResolver resolver(*this);
+        resolver.resolve(change);
 
         updatedCompositingLayers = frameView.updateCompositingLayersAfterStyleChange();
 

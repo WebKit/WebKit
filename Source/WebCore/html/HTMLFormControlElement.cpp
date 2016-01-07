@@ -38,7 +38,7 @@
 #include "HTMLTextAreaElement.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
-#include "StyleResolveTree.h"
+#include "StyleTreeResolver.h"
 #include "ValidationMessage.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>

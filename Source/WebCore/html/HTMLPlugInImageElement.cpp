@@ -48,8 +48,8 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "StyleResolveTree.h"
 #include "StyleResolver.h"
+#include "StyleTreeResolver.h"
 #include "SubframeLoader.h"
 #include "TypedElementDescendantIterator.h"
 #include <JavaScriptCore/APICast.h>
