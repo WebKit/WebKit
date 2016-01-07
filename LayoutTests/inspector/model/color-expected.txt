@@ -100,6 +100,8 @@ PASS: '#11122233' should not be a keyword.
 PASS: '#11122233' has rgba of [17, 18, 34, 0.2].
 PASS: '#11122233' has hsla of [236, 33, 10, 0.2].
 PASS: '#11122233' should not be serializable as a short Hex
+PASS: '#11223344' should be serializable as a short Hex
+PASS: '#11223345' should not be serializable as a short Hex
 
 -- Running test case: WebInspector.Color.prototype.nextFormat
 PASS: All format phases of 'transparent' should be as expected.

@@ -157,6 +157,12 @@ function test()
             InspectorTest.expectThat(shallowEqual(color.hsla, [236, 33, 10, 0.2]), "'#11122233' has hsla of [236, 33, 10, 0.2].");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11122233' should not be serializable as a short Hex");
 
+            color = WebInspector.Color.fromString("#11223344");
+            InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === true, "'#11223344' should be serializable as a short Hex");
+
+            color = WebInspector.Color.fromString("#11223345");
+            InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11223345' should not be serializable as a short Hex");
+
             resolve();
         }
     });

@@ -1,3 +1,16 @@
+2016-01-06  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add test for Color.canBeSerializedAsShortHex
+        https://bugs.webkit.org/show_bug.cgi?id=152809
+
+        Reviewed by Brian Burg.
+
+        Added more specific tests for the canBeSerializedAsShortHex
+        method of Web Inspector model class Color.
+
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+
 2016-01-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Scope chain shows too many scopes for functions (`let` and `var` in the same function are two scopes)
