@@ -85,6 +85,7 @@ usesEncodingDetector initial=false
 allowScriptsToCloseWindows initial=false
 canvasUsesAcceleratedDrawing initial=false
 acceleratedDrawingEnabled initial=false
+displayListDrawingEnabled initial=false
 acceleratedFiltersEnabled initial=false
 useLegacyTextAlignPositionedElementBehavior initial=false
 javaScriptRuntimeFlags type=JSC::RuntimeFlags

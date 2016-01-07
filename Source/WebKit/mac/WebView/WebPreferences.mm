@@ -490,6 +490,7 @@ public:
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSRegionsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSCompositingEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitDisplayListDrawingEnabledPreferenceKey,
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
         [NSNumber numberWithBool:YES],  WebKitAcceleratedDrawingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
@@ -1815,6 +1816,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setAcceleratedDrawingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitAcceleratedDrawingEnabledPreferenceKey];
+}
+
+- (BOOL)displayListDrawingEnabled
+{
+    return [self _boolValueForKey:WebKitDisplayListDrawingEnabledPreferenceKey];
+}
+
+- (void)setDisplayListDrawingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitDisplayListDrawingEnabledPreferenceKey];
 }
 
 - (BOOL)canvasUsesAcceleratedDrawing

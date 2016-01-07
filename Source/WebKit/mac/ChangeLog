@@ -1,5 +1,24 @@
 2016-01-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Add a setting and preferences to enable display-list drawing. Does nothing yet.
+        https://bugs.webkit.org/show_bug.cgi?id=152807
+
+        Reviewed by Zalan Bujtas.
+        
+        WK1 pref for display-list drawing, defaults to off.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences displayListDrawingEnabled]):
+        (-[WebPreferences setDisplayListDrawingEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        (-[WebView _preferencesChanged:]):
+
+2016-01-06  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] Revert overflow:hidden on the body affecting viewport scale (r186786)
         https://bugs.webkit.org/show_bug.cgi?id=152803
         rdar://problem/22242515

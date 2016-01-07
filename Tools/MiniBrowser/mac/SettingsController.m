@@ -38,6 +38,7 @@ static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScr
 static NSString * const ResourceUsageOverlayVisiblePreferenceKey = @"ResourceUsageOverlayVisible";
 static NSString * const IncrementalRenderingSuppressedPreferenceKey = @"IncrementalRenderingSuppressed";
 static NSString * const AcceleratedDrawingEnabledPreferenceKey = @"AcceleratedDrawingEnabled";
+static NSString * const DisplayListDrawingEnabledPreferenceKey = @"DisplayListDrawingEnabled";
 
 static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
 static NSString * const WheelEventHandlerRegionOverlayVisiblePreferenceKey = @"WheelEventHandlerRegionOverlayVisible";
@@ -110,6 +111,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Show Simple Line Layout Borders" action:@selector(toggleSimpleLineLayoutDebugBordersEnabled:) indented:NO];
     [self _addItemWithTitle:@"Suppress Incremental Rendering in New Windows" action:@selector(toggleIncrementalRenderingSuppressed:) indented:NO];
     [self _addItemWithTitle:@"Enable Accelerated Drawing" action:@selector(toggleAcceleratedDrawingEnabled:) indented:NO];
+    [self _addItemWithTitle:@"Enable Display List Drawing" action:@selector(toggleDisplayListDrawingEnabled:) indented:NO];
 
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
 
@@ -158,6 +160,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self incrementalRenderingSuppressed] ? NSOnState : NSOffState];
     else if (action == @selector(toggleAcceleratedDrawingEnabled:))
         [menuItem setState:[self acceleratedDrawingEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleDisplayListDrawingEnabled:))
+        [menuItem setState:[self displayListDrawingEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
         [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowResourceUsageOverlay:))
@@ -280,6 +284,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (BOOL)acceleratedDrawingEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:AcceleratedDrawingEnabledPreferenceKey];
+}
+
+- (void)toggleDisplayListDrawingEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:DisplayListDrawingEnabledPreferenceKey];
+}
+
+- (BOOL)displayListDrawingEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:DisplayListDrawingEnabledPreferenceKey];
 }
 
 - (void)toggleShowTiledScrollingIndicator:(id)sender

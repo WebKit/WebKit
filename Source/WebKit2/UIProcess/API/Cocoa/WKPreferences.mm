@@ -257,6 +257,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
 }
 
+- (BOOL)_displayListDrawingEnabled
+{
+    return _preferences->displayListDrawingEnabled();
+}
+
+- (void)_setDisplayListDrawingEnabled:(BOOL)displayListDrawingEnabled
+{
+    _preferences->setDisplayListDrawingEnabled(displayListDrawingEnabled);
+}
+
 - (BOOL)_developerExtrasEnabled
 {
     return _preferences->developerExtrasEnabled();
