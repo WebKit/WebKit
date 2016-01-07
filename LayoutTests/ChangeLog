@@ -1,3 +1,12 @@
+2016-01-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: imported/w3c/indexeddb/idbcursor-continue.htm fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152849
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         testRunner.runUIScript crashes while running multiple tests in a row that invokes the same UIScript

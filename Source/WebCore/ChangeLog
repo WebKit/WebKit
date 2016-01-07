@@ -1,3 +1,16 @@
+2016-01-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: imported/w3c/indexeddb/idbcursor-continue.htm fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152849
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/server/MemoryIndexCursor.cpp:
+        (WebCore::IDBServer::MemoryIndexCursor::iterate): Don't allow returning an iterator outside of
+          the cursor's assigned range.
+
 2016-01-07  Zalan Bujtas  <zalan@apple.com>
 
         Incorrect position: fixed; rendering when child of position:relative/sticky.

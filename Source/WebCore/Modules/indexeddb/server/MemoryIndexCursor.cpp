@@ -99,6 +99,9 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetRes
         else
             m_currentIterator = valueStore->reverseFind(key, m_info.duplicity());
 
+        if (m_currentIterator.isValid() && !m_info.range().containsKey(m_currentIterator.key()))
+            m_currentIterator.invalidate();
+
         if (!m_currentIterator.isValid()) {
             m_currentKey = { };
             m_currentPrimaryKey = { };
