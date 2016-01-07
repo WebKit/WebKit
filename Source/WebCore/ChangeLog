@@ -1,3 +1,18 @@
+2016-01-06  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Fix up IDBDatabaseIdentifier hash issues.
+        https://bugs.webkit.org/show_bug.cgi?id=152822
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No explicitly testable behavior change, existing tests pass, flakiness will be reduced).
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::IDBDatabaseIdentifier):
+        (WebCore::IDBDatabaseIdentifier::isEmpty):
+        (WebCore::IDBDatabaseIdentifierHashTraits::isEmptyValue):
+        * page/SecurityOriginData.h:
+
 2016-01-06  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the project file.

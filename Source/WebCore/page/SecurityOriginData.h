@@ -43,7 +43,7 @@ struct SecurityOriginData {
 
     String protocol;
     String host;
-    int port;
+    int port { 0 };
 
     WEBCORE_EXPORT SecurityOriginData isolatedCopy() const;
 

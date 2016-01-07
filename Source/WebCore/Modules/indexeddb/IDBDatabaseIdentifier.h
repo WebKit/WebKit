@@ -42,6 +42,8 @@ class IDBDatabaseIdentifier {
 public:
     IDBDatabaseIdentifier()
     {
+        m_openingOrigin.port = -2;
+        m_mainFrameOrigin.port = -2;
     }
 
     IDBDatabaseIdentifier(WTF::HashTableDeletedValueType)
@@ -76,6 +78,11 @@ public:
         return !m_databaseName.isNull() && m_openingOrigin.port >= 0 && m_mainFrameOrigin.port >= 0;
     }
 
+    bool isEmpty() const
+    {
+        return m_openingOrigin.port == -2 && m_mainFrameOrigin.port == -2;
+    }
+
     bool operator==(const IDBDatabaseIdentifier& other) const
     {
         return other.m_databaseName == m_databaseName
@@ -103,7 +110,8 @@ struct IDBDatabaseIdentifierHash {
 
 struct IDBDatabaseIdentifierHashTraits : WTF::SimpleClassHashTraits<IDBDatabaseIdentifier> {
     static const bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const IDBDatabaseIdentifier& info) { return !info.isValid(); }
+    static const bool emptyValueIsZero = false;
+    static bool isEmptyValue(const IDBDatabaseIdentifier& info) { return info.isEmpty(); }
 };
 
 } // namespace WebCore
