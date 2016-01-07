@@ -1,3 +1,15 @@
+2016-01-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r194662. rdar://problem/24043055
+
+    2016-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Merge for rdar://problem/24043055.
+
+            * dom/EventDispatcher.cpp:
+            (WebCore::EventPath::EventPath):
+            Set the isMouseOrFocusEvent boolean flag to True if the event is a wheelEvent.
+
 2015-12-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r194114.
