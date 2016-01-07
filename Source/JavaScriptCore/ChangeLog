@@ -1,3 +1,13 @@
+2016-01-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add new or32 implementation to MacroAssemblerARM after r194613
+        https://bugs.webkit.org/show_bug.cgi?id=152784
+
+        Reviewed by Benjamin Poulain.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::or32):
+
 2016-01-06  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION(r194613): JITMulGenerator needs a scratch GPR on 32-bit too.
