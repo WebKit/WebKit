@@ -69,10 +69,6 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 # Legacy IndexedDB will never be enabled in Mac WK1.
 inspector/indexeddb
 
-# W3C IDB tests that need expectations
-imported/w3c/indexeddb/idbfactory_open10.htm [ Skip ]
-imported/w3c/indexeddb/key_valid.html [ Skip ]
-
 # W3C IDB test timeouts
 imported/w3c/indexeddb/interfaces.html [ Skip ]
 imported/w3c/indexeddb/keyorder.htm [ Skip ]
