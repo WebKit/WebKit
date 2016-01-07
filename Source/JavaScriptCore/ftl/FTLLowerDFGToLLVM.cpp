@@ -5036,6 +5036,10 @@ private:
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendVector(arguments);
+
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(patchpoint);
+        
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
@@ -5047,10 +5051,7 @@ private:
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex = state->jitCode->common.addUniqueCallSiteIndex(codeOrigin);
 
-                // FIXME: If we were handling exceptions, then at this point we would ask our descriptor
-                // to prepare and then we would modify the OSRExit data structure inside the
-                // OSRExitHandle to link it up to this call.
-                // https://bugs.webkit.org/show_bug.cgi?id=151686
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
 
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
@@ -5140,6 +5141,9 @@ private:
         // convenient. The generator then shuffles those arguments into our own call frame,
         // destroying our frame in the process.
 
+        // Note that we don't have to do anything special for exceptions. A tail call is only a
+        // tail call if it is not inside a try block.
+
         Vector<ConstrainedValue> arguments;
 
         arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(GPRInfo::regT0)));
@@ -5169,9 +5173,6 @@ private:
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-
-                // FIXME: There may be some exception things that need to happen here.
-                // https://bugs.webkit.org/show_bug.cgi?id=151686
 
                 CallFrameShuffleData shuffleData;
                 shuffleData.numLocals = state->jitCode->common.frameRegisterCount;
@@ -5281,9 +5282,6 @@ private:
         }
         
 #if FTL_USES_B3
-        // FIXME: Need a story for exceptions.
-        // https://bugs.webkit.org/show_bug.cgi?id=151686
-
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
 
         // Append the forms of the arguments that we will use before any clobbering happens.
@@ -5301,6 +5299,9 @@ private:
             patchpoint->append(thisArg, ValueRep::LateColdAny);
         }
 
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(patchpoint);
+        
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
         patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
@@ -5320,11 +5321,10 @@ private:
                 CallSiteIndex callSiteIndex =
                     state->jitCode->common.addUniqueCallSiteIndex(codeOrigin);
 
-                // FIXME: We would ask the OSR exit descriptor to prepare and then we would modify
-                // the OSRExit data structure inside the OSRExitHandle to link it up to this call.
-                // Also, the exception checks JumpList should be linked to somewhere.
-                // https://bugs.webkit.org/show_bug.cgi?id=151686
-                CCallHelpers::JumpList exceptions;
+                Box<CCallHelpers::JumpList> exceptions =
+                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
 
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
@@ -5406,7 +5406,7 @@ private:
                 auto callWithExceptionCheck = [&] (void* callee) {
                     jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR);
                     jit.call(GPRInfo::nonPreservedNonArgumentGPR);
-                    exceptions.append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
+                    exceptions->append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
                 auto adjustStack = [&] (GPRReg amount) {

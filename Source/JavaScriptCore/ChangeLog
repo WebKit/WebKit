@@ -1,5 +1,30 @@
 2016-01-07  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 JS calls should do exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=152851
+
+        Reviewed by Geoffrey Garen.
+
+        This reduces the number of JSC test failures with FTL B3 to 111.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        * tests/stress/ftl-call-bad-args-exception-interesting-live-state.js: Added.
+        * tests/stress/ftl-call-bad-callee-exception-interesting-live-state.js: Added.
+        * tests/stress/ftl-call-exception-interesting-live-state.js: Added.
+        * tests/stress/ftl-call-exception-no-catch.js: Added.
+        * tests/stress/ftl-call-exception.js: Added.
+        * tests/stress/ftl-call-varargs-bad-callee-exception-interesting-live-state.js: Added.
+        * tests/stress/ftl-call-varargs-exception-interesting-live-state.js: Added.
+        * tests/stress/ftl-call-varargs-exception-no-catch.js: Added.
+        * tests/stress/ftl-call-varargs-exception.js: Added.
+
+2016-01-07  Filip Pizlo  <fpizlo@apple.com>
+
         FTL B3 PutById should do exceptions
         https://bugs.webkit.org/show_bug.cgi?id=152850
 
