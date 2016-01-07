@@ -522,6 +522,8 @@ def mipsLowerMisplacedImmediates(list)
                 end
             when /^(addi|subi)/
                 newList << node.riscLowerMalformedImmediatesRecurse(newList, -0x7fff..0x7fff)
+            when "andi", "andp", "ori", "orp", "xori", "xorp"
+                newList << node.riscLowerMalformedImmediatesRecurse(newList, 0..0x7fff)
             else
                 newList << node
             end

@@ -1,3 +1,15 @@
+2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [mips] Lower immediates of logical operations.
+        https://bugs.webkit.org/show_bug.cgi?id=152693
+
+        On MIPS immediate operands of andi, ori, and xori are required to be 16-bit
+        non-negative numbers.
+
+        Reviewed by Michael Saboff.
+
+        * offlineasm/mips.rb:
+
 2016-01-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Update testCheckSubBadImm() for ARM64
