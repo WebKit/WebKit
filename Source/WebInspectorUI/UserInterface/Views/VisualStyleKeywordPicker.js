@@ -129,7 +129,7 @@ WebInspector.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends W
     {
         if (event.altKey)
             this._addAdvancedValues();
-        else if (!this._valueIsSupportedAdvancedKeyword())
+        else if (!this._valueIsSupportedAdvancedKeyword(this.value))
             this._removeAdvancedValues();
     }
 

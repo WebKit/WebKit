@@ -25,7 +25,7 @@
 
 WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner extends WebInspector.Object
 {
-    constructor(propertyName, propertyEditors)
+    constructor(propertyName, propertyEditors, spreadNumberValues)
     {
         super();
 
@@ -33,6 +33,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         this._propertyName = propertyName;
         this._propertyMissing = false;
         this._propertyEditors = propertyEditors || [];
+        this._spreadNumberValues = !!spreadNumberValues && this._propertyEditors.length >= 4;
 
         for (let editor of this._propertyEditors) {
             editor.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, this._handlePropertyEditorValueChanged, this);
@@ -60,7 +61,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
             else if (editor.optionalProperty)
                 continue;
 
-            if (editor.masterProperty && editor.valueIsSupportedKeyword()) {
+            if (editor.masterProperty && editor.valueIsSupportedKeyword(editor.value)) {
                 this._markEditors(editor, true);
                 return editorValue;
             }
@@ -117,6 +118,34 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         for (let editor of this._propertyEditors)
             editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol] = false;
 
+        function updateEditor(editor, value) {
+            let updatedValues = editor.getValuesFromText(value || "", propertyMissing);
+            if (!updatedValues)
+                return;
+
+            editor.updateEditorValues(updatedValues);
+            editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol] = true;
+        }
+
+        if (this._spreadNumberValues) {
+            let numberValues = styleText.match(/\d+[\w%]*/g);
+            let count = numberValues && numberValues.length;
+            if (count === 1) {
+                for (let editor of this._propertyEditors)
+                    updateEditor(editor, numberValues[0]);
+            } else if (count === 2) {
+                for (let i = 0; i < count; ++i) {
+                    updateEditor(this._propertyEditors[i], numberValues[i]);
+                    updateEditor(this._propertyEditors[i + 2], numberValues[i]);
+                }
+            } else if (count === 3) {
+                updateEditor(this._propertyEditors[0], numberValues[0]);
+                updateEditor(this._propertyEditors[1], numberValues[1]);
+                updateEditor(this._propertyEditors[2], numberValues[2]);
+                updateEditor(this._propertyEditors[3], numberValues[1]);
+            }
+        }
+
         function updateCompatibleEditor(value) {
             for (let editor of this._propertyEditors) {
                 if (value && !editor.valueIsCompatible(value) || editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol])
@@ -125,11 +154,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
                 if (this._currentValueIsKeyword && editor.disabled)
                     continue;
 
-                let updatedValues = editor.getValuesFromText(value || "", propertyMissing);
-                if (updatedValues)
-                    editor.updateEditorValues(updatedValues);
-                editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol] = true;
-
+                updateEditor(editor, value);
                 if (value)
                     return;
             }

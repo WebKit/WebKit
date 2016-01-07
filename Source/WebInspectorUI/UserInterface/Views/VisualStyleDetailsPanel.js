@@ -962,10 +962,74 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._addMetricsMouseListeners(group.properties.borderLeftWidth, highlightMode);
         this._addMetricsMouseListeners(group.properties.borderRightWidth, highlightMode);
 
+        let borderGroup = new WebInspector.DetailsSectionGroup([borderTabController, borderAllGroup, borderTopGroup, borderRightGroup, borderBottomGroup, borderLeftGroup]);
+
+        let borderImageSourceRow = new WebInspector.DetailsSectionRow;
+
+        properties.borderImageSource = new WebInspector.VisualStyleURLInput("border-image-source", WebInspector.UIString("Image"), this._keywords.defaults.concat(["None"]));
+
+        borderImageSourceRow.element.appendChild(properties.borderImageSource.element);
+
+        let borderImageRepeatRow = new WebInspector.DetailsSectionRow;
+
+        let borderImageSliceFill = new WebInspector.VisualStyleKeywordCheckbox("border-image-slice", WebInspector.UIString("Fill"), "Fill");
+        borderImageSliceFill.optionalProperty = true;
+        properties.borderImageRepeat = new WebInspector.VisualStyleKeywordPicker("border-image-repeat", WebInspector.UIString("Repeat"), this._keywords.defaults.concat(["Stretch", "Repeat", "Round", "Space"]));
+
+        borderImageRepeatRow.element.appendChild(borderImageSliceFill.element);
+        borderImageRepeatRow.element.appendChild(properties.borderImageRepeat.element);
+
+        function generateBorderImagePropertyEditors(propertyName, keywords, units) {
+            let vertical = new WebInspector.DetailsSectionRow;
+
+            let top = new WebInspector.VisualStyleNumberInputBox(propertyName, WebInspector.UIString("Top"), keywords, units);
+            top.masterProperty = true;
+            let bottom = new WebInspector.VisualStyleNumberInputBox(propertyName, WebInspector.UIString("Bottom"), keywords, units);
+            bottom.masterProperty = true;
+
+            vertical.element.appendChild(top.element);
+            vertical.element.appendChild(bottom.element);
+
+            let horizontal = new WebInspector.DetailsSectionRow;
+
+            let left = new WebInspector.VisualStyleNumberInputBox(propertyName, WebInspector.UIString("Left"), keywords, units);
+            left.masterProperty = true;
+            let right = new WebInspector.VisualStyleNumberInputBox(propertyName, WebInspector.UIString("Right"), keywords, units);
+            right.masterProperty = true;
+
+            horizontal.element.appendChild(left.element);
+            horizontal.element.appendChild(right.element);
+
+            return {group: new WebInspector.DetailsSectionGroup([vertical, horizontal]), properties: [top, bottom, left, right]};
+        }
+
+        let nonKeywordUnits = [WebInspector.UIString("Number")];
+
+        let borderImageUnits = this._units.defaults;
+        borderImageUnits.basic = nonKeywordUnits.concat(borderImageUnits.basic);
+        let borderImageWidth = generateBorderImagePropertyEditors("border-image-width", this._keywords.boxModel, borderImageUnits);
+        properties.borderImageWidth = new WebInspector.VisualStylePropertyCombiner("border-image-width", borderImageWidth.properties, true);
+
+        let borderOutsetUnits = this._units.defaultsSansPercent;
+        borderOutsetUnits.basic = nonKeywordUnits.concat(borderOutsetUnits.basic);
+        let borderImageOutset = generateBorderImagePropertyEditors("border-image-outset", this._keywords.defaults, borderOutsetUnits);
+        properties.borderImageOutset = new WebInspector.VisualStylePropertyCombiner("border-image-outset", borderImageOutset.properties, true);
+
+        let borderImageSlice = generateBorderImagePropertyEditors("border-image-slice", this._keywords.defaults, ["%"].concat(nonKeywordUnits));
+        borderImageSlice.properties.push(borderImageSliceFill);
+        properties.borderImageSlice = new WebInspector.VisualStylePropertyCombiner("border-image-slice", borderImageSlice.properties, true);
+
+        let borderImagePropertiesTabController = new WebInspector.VisualStyleTabbedPropertiesRow({
+            "width": {title: WebInspector.UIString("Width"), element: borderImageWidth.group.element, properties: [properties.borderImageWidth]},
+            "outset": {title: WebInspector.UIString("Outset"), element: borderImageOutset.group.element, properties: [properties.borderImageOutset]},
+            "slice": {title: WebInspector.UIString("Slice"), element: borderImageSlice.group.element, properties: [properties.borderImageSlice]}
+        });
+
+        let borderImageGroup = new WebInspector.DetailsSectionGroup([borderImageSourceRow, borderImageRepeatRow, borderImagePropertiesTabController, borderImageWidth.group, borderImageOutset.group, borderImageSlice.group]);
+
         group.autocompleteCompatibleProperties = [properties.borderColor, properties.borderTopColor, properties.borderBottomColor, properties.borderLeftColor, properties.borderRightColor];
 
-        let borderGroup = new WebInspector.DetailsSectionGroup([borderTabController, borderAllGroup, borderTopGroup, borderRightGroup, borderBottomGroup, borderLeftGroup]);
-        this._populateSection(group, [borderGroup]);
+        this._populateSection(group, [borderGroup, borderImageGroup]);
     }
 
     _populateOutlineSection()

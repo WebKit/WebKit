@@ -206,7 +206,7 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
     {
         if (event.altKey)
             this._addAdvancedValues();
-        else if (!this._valueIsSupportedAdvancedKeyword())
+        else if (!this._valueIsSupportedAdvancedKeyword(this.value))
             this._removeAdvancedValues();
     }
 

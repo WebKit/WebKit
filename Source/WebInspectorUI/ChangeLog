@@ -1,5 +1,76 @@
 2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Add border-image properties to Visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=152755
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        Switched the order of VisualStyleURLInput and VisualStyleUnitSlider
+        to be ordered alphabetically.
+
+        * UserInterface/Views/VisualStyleBackgroundPicker.js:
+        (WebInspector.VisualStyleBackgroundPicker.prototype._keywordSelectMouseDown):
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .content > .group + .group > .row:first-child):
+        (.sidebar > .panel.details.css-style .visual > .details-section.background .details-section.border .visual-style-property-container.keyword-checkbox.border-image-slice):
+        Since the checkbox is so small, give it less room.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBorderSection.generateBorderImagePropertyEditors):
+        The three properties "border-image-width", "border-image-outset", and
+        "border-image-slice" all have the same syntax, so one function to generate
+        the layout for all three is much simpler.
+
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBorderSection):
+        Added the border image properties to a seperate group under Background > Border.
+
+        * UserInterface/Views/VisualStyleKeywordPicker.js:
+        (WebInspector.VisualStyleKeywordPicker.prototype._keywordSelectMouseDown):
+
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox):
+        (WebInspector.VisualStyleNumberInputBox.prototype.set units):
+        Reordered logic to allow a value of ""/null to set the units to the "Number"
+        value if it is allowed for that editor.
+
+        (WebInspector.VisualStyleNumberInputBox.prototype.get synthesizedValue):
+        Instead of relying upon whether the editor has any units, just check to see if
+        the selected units are "Number" and, if not, add them to the value.
+
+        (WebInspector.VisualStyleNumberInputBox.prototype._unitsElementTextContent):
+
+        * UserInterface/Views/VisualStylePropertyCombiner.js:
+        (WebInspector.VisualStylePropertyCombiner):
+        Now has another argument that, when true, assumes the combiner has at least 4
+        numerical values and is of the form (can have units):
+            property-name: value1 [value2 [value3 [value4 [...]]]];
+
+        (WebInspector.VisualStylePropertyCombiner.prototype.get synthesizedValue):
+        (WebInspector.VisualStylePropertyCombiner.prototype.updateValuesFromText.updateEditor):
+        (WebInspector.VisualStylePropertyCombiner.prototype.updateValuesFromText.updateCompatibleEditor):
+        (WebInspector.VisualStylePropertyCombiner.prototype.updateValuesFromText):
+        If the new argument is true, assigns the existing values in the following way:
+         - If there is 1 value, assign it to all of the editors.
+         - If there are 2 values, assign the 1st one to editors 1 and 3 and the 2nd one
+            to editors 2 and 4.
+         - If there are 3 values, assign the 1st one to editor 1, the 2nd one to editors
+            2 and 4, and the 3rd one to editor 3.
+         - If there are 4 or more values, assign them normally.
+
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor.prototype.valueIsSupportedKeyword):
+        (WebInspector.VisualStylePropertyEditor.prototype._valueIsSupportedAdvancedKeyword):
+        Removed call to this.value to prevent recursion from VisualStyleNumberInputBox.
+
+        (WebInspector.VisualStylePropertyEditor.prototype.valueIsSupportedUnit):
+        (WebInspector.VisualStylePropertyEditor.prototype._valueIsSupportedAdvancedUnit):
+        Removed call to this.units to prevent recursion from VisualStyleNumberInputBox.
+
+2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Add indicator that element has pseudo-class in DOM tree
         https://bugs.webkit.org/show_bug.cgi?id=152680
 

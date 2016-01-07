@@ -379,7 +379,6 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         if (!this._possibleValues)
             return false;
 
-        value = value || this.value;
         if (Object.keys(this._possibleValues.basic).includes(value))
             return true;
 
@@ -391,7 +390,6 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         if (!this._possibleUnits)
             return false;
 
-        unit = unit || this.units;
         if (this._possibleUnits.basic.includes(unit))
             return true;
 
@@ -419,12 +417,12 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
     _valueIsSupportedAdvancedKeyword(value)
     {
-        return this._possibleValues.advanced && Object.keys(this._possibleValues.advanced).includes(value || this.value);
+        return this._possibleValues.advanced && Object.keys(this._possibleValues.advanced).includes(value);
     }
 
     _valueIsSupportedAdvancedUnit(unit)
     {
-        return this._possibleUnits.advanced && this._possibleUnits.advanced.includes(unit || this.units);
+        return this._possibleUnits.advanced && this._possibleUnits.advanced.includes(unit);
     }
 
     _canonicalizedKeywordForKey(value)
