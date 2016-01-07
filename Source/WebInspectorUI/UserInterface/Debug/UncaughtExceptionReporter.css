@@ -109,4 +109,5 @@
 .uncaught-exception-sheet li {
     margin-bottom: 20px;
     word-break: break-word;
+    -webkit-user-select: text;
 }

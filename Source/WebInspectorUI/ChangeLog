@@ -1,5 +1,16 @@
 2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Allow error items on Exception page to be selected
+        https://bugs.webkit.org/show_bug.cgi?id=152861
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css:
+        (.uncaught-exception-sheet li):
+        Allowed user-select on text.
+
+2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Add border-image properties to Visual sidebar
         https://bugs.webkit.org/show_bug.cgi?id=152755
 
