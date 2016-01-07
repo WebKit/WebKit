@@ -1,3 +1,15 @@
+2016-01-07  Tim Horton  <timothy_horton@apple.com>
+
+        Can't play inline video in a stock WK1 WebView on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=152860
+
+        Rubber-stamped by Jer Noble.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        The default for this preference is supposed to be NO on Mac. It is in
+        Settings.in, and in WebKit2, but this one place got it wrong.
+
 2016-01-06  Simon Fraser  <simon.fraser@apple.com>
 
         Add a setting and preferences to enable display-list drawing. Does nothing yet.
