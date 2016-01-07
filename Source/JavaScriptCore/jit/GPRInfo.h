@@ -770,6 +770,13 @@ public:
         return registerForIndex[index];
     }
 
+    static GPRReg toArgumentRegister(unsigned index)
+    {
+        ASSERT(index < numberOfArgumentRegisters);
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
+        return registerForIndex[index];
+    }
+
     static unsigned toIndex(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
