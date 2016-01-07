@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "FTLJSCallVarargs.h"
 #include "FTLJSTailCall.h"
 #include "FTLStackMaps.h"
+#include <wtf/Box.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -50,6 +51,8 @@ class StackSlotValue;
 } // namespace B3
 
 namespace FTL {
+
+class PatchpointExceptionHandle;
 
 inline bool verboseCompilationEnabled()
 {
@@ -82,8 +85,10 @@ public:
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
 #if FTL_USES_B3
-    B3::PatchpointValue* handleStackOverflowExceptionValue { nullptr };
-    B3::PatchpointValue* handleExceptionValue { nullptr };
+    // Top-level exception handler. Jump here if you know that you have to genericUnwind() and there
+    // are no applicable catch blocks anywhere in the Graph.
+    RefPtr<PatchpointExceptionHandle> defaultExceptionHandle;
+    Box<CCallHelpers::Label> exceptionHandler { Box<CCallHelpers::Label>::create() };
     B3::StackSlotValue* capturedValue { nullptr };
 #else // FTL_USES_B3
     unsigned handleStackOverflowExceptionStackmapID { UINT_MAX };

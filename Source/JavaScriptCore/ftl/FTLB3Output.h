@@ -410,21 +410,6 @@ public:
 
     void unreachable() { m_block->appendNew<B3::ControlValue>(m_proc, B3::Oops, origin()); }
 
-    template<typename Functor>
-    void speculate(LValue value, const StackmapArgumentList& arguments, const Functor& functor)
-    {
-        B3::CheckValue* check = speculate(value, arguments);
-        check->setGenerator(functor);
-    }
-
-    B3::CheckValue* speculate(LValue value, const StackmapArgumentList& arguments)
-    {
-        B3::CheckValue* check = speculate(value);
-        for (LValue value : arguments)
-            check->append(B3::ConstrainedValue(value));
-        return check;
-    }
-
     B3::CheckValue* speculate(LValue value)
     {
         return m_block->appendNew<B3::CheckValue>(m_proc, B3::Check, origin(), value);

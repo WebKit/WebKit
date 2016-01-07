@@ -518,6 +518,10 @@
 		0F9D339B1803ADB70073C2BC /* FTLStackMaps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D33991803ADB70073C2BC /* FTLStackMaps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9D36941AE9CC33000D4DFB /* DFGCleanUpPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D36921AE9CC33000D4DFB /* DFGCleanUpPhase.cpp */; };
 		0F9D36951AE9CC33000D4DFB /* DFGCleanUpPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D36931AE9CC33000D4DFB /* DFGCleanUpPhase.h */; };
+		0F9D4C0C1C3E1C11006CD984 /* FTLExceptionTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D4C0A1C3E1C11006CD984 /* FTLExceptionTarget.cpp */; };
+		0F9D4C0D1C3E1C11006CD984 /* FTLExceptionTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D4C0B1C3E1C11006CD984 /* FTLExceptionTarget.h */; };
+		0F9D4C101C3E2C74006CD984 /* FTLPatchpointExceptionHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D4C0E1C3E2C74006CD984 /* FTLPatchpointExceptionHandle.cpp */; };
+		0F9D4C111C3E2C74006CD984 /* FTLPatchpointExceptionHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D4C0F1C3E2C74006CD984 /* FTLPatchpointExceptionHandle.h */; };
 		0F9E32631B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9E32611B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp */; };
 		0F9E32641B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9E32621B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h */; };
 		0F9FB4F417FCB91700CB67F8 /* DFGStackLayoutPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9FB4F217FCB91700CB67F8 /* DFGStackLayoutPhase.cpp */; };
@@ -2650,6 +2654,10 @@
 		0F9D33991803ADB70073C2BC /* FTLStackMaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLStackMaps.h; path = ftl/FTLStackMaps.h; sourceTree = "<group>"; };
 		0F9D36921AE9CC33000D4DFB /* DFGCleanUpPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCleanUpPhase.cpp; path = dfg/DFGCleanUpPhase.cpp; sourceTree = "<group>"; };
 		0F9D36931AE9CC33000D4DFB /* DFGCleanUpPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCleanUpPhase.h; path = dfg/DFGCleanUpPhase.h; sourceTree = "<group>"; };
+		0F9D4C0A1C3E1C11006CD984 /* FTLExceptionTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExceptionTarget.cpp; path = ftl/FTLExceptionTarget.cpp; sourceTree = "<group>"; };
+		0F9D4C0B1C3E1C11006CD984 /* FTLExceptionTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExceptionTarget.h; path = ftl/FTLExceptionTarget.h; sourceTree = "<group>"; };
+		0F9D4C0E1C3E2C74006CD984 /* FTLPatchpointExceptionHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLPatchpointExceptionHandle.cpp; path = ftl/FTLPatchpointExceptionHandle.cpp; sourceTree = "<group>"; };
+		0F9D4C0F1C3E2C74006CD984 /* FTLPatchpointExceptionHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLPatchpointExceptionHandle.h; path = ftl/FTLPatchpointExceptionHandle.h; sourceTree = "<group>"; };
 		0F9E32611B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStoreBarrierInsertionPhase.cpp; path = dfg/DFGStoreBarrierInsertionPhase.cpp; sourceTree = "<group>"; };
 		0F9E32621B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStoreBarrierInsertionPhase.h; path = dfg/DFGStoreBarrierInsertionPhase.h; sourceTree = "<group>"; };
 		0F9FB4F217FCB91700CB67F8 /* DFGStackLayoutPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStackLayoutPhase.cpp; path = dfg/DFGStackLayoutPhase.cpp; sourceTree = "<group>"; };
@@ -4544,6 +4552,8 @@
 				0F9C5E5D18E35F5E00D431C3 /* FTLDWARFRegister.h */,
 				79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */,
 				79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */,
+				0F9D4C0A1C3E1C11006CD984 /* FTLExceptionTarget.cpp */,
+				0F9D4C0B1C3E1C11006CD984 /* FTLExceptionTarget.h */,
 				0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */,
 				0F235BBE17178E1C00690C7F /* FTLExitArgument.h */,
 				0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */,
@@ -4602,6 +4612,8 @@
 				0F9B1DB61C0E42BD00E5BFD2 /* FTLOSRExitHandle.h */,
 				0FEA0A291709629600BB722C /* FTLOutput.cpp */,
 				0FEA0A06170513DB00BB722C /* FTLOutput.h */,
+				0F9D4C0E1C3E2C74006CD984 /* FTLPatchpointExceptionHandle.cpp */,
+				0F9D4C0F1C3E2C74006CD984 /* FTLPatchpointExceptionHandle.h */,
 				0F485325187DFDEC0083B687 /* FTLRecoveryOpcode.cpp */,
 				0F485326187DFDEC0083B687 /* FTLRecoveryOpcode.h */,
 				0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */,
@@ -7127,6 +7139,7 @@
 				0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */,
 				0FEA0A32170D40BF00BB722C /* DFGCommonData.h in Headers */,
 				0F38B01817CFE75500B144D3 /* DFGCompilationKey.h in Headers */,
+				0F9D4C111C3E2C74006CD984 /* FTLPatchpointExceptionHandle.h in Headers */,
 				0F38B01A17CFE75500B144D3 /* DFGCompilationMode.h in Headers */,
 				0F3B3A1B153E68F4003ED0FF /* DFGConstantFoldingPhase.h in Headers */,
 				0FED67BA1B26256D0066CE15 /* DFGConstantHoistingPhase.h in Headers */,
@@ -7827,6 +7840,7 @@
 				E33637A61B63220200EE0840 /* ReflectObject.h in Headers */,
 				996B73231BDA08EF00331B84 /* ReflectObject.lut.h in Headers */,
 				0FA7A8EC18B413C80052371D /* Reg.h in Headers */,
+				0F9D4C0D1C3E1C11006CD984 /* FTLExceptionTarget.h in Headers */,
 				BC18C45A0E16F5CD00B34460 /* RegExp.h in Headers */,
 				A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */,
 				BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */,
@@ -9072,6 +9086,7 @@
 				1428083A107EC0750013E7B2 /* JSStack.cpp in Sources */,
 				147F39D5107EC37600427A48 /* JSString.cpp in Sources */,
 				70EC0EC21AA0D7DA00B6AAFA /* JSStringIterator.cpp in Sources */,
+				0F9D4C101C3E2C74006CD984 /* FTLPatchpointExceptionHandle.cpp in Sources */,
 				2600B5A6152BAAA70091EE5F /* JSStringJoiner.cpp in Sources */,
 				1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */,
 				146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */,
@@ -9176,6 +9191,7 @@
 				0F190CAC189D82F6000AE5F0 /* ProfilerJettisonReason.cpp in Sources */,
 				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,
 				0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */,
+				0F9D4C0C1C3E1C11006CD984 /* FTLExceptionTarget.cpp in Sources */,
 				0FB1058B1675483100F8AB6E /* ProfilerOSRExit.cpp in Sources */,
 				0FB1058D1675483700F8AB6E /* ProfilerOSRExitSite.cpp in Sources */,
 				0F13912B16771C3A009CCB07 /* ProfilerProfiledBytecodes.cpp in Sources */,

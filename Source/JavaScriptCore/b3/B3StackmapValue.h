@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,12 +77,19 @@ public:
             append(value);
     }
 
+    // Helper for appending a bunch of values with some ValueRep.
+    template<typename VectorType>
+    void appendVectorWithRep(const VectorType& vector, const ValueRep& rep)
+    {
+        for (Value* value : vector)
+            append(value, rep);
+    }
+
     // Helper for appending cold any's. This often used by clients to implement OSR.
     template<typename VectorType>
     void appendColdAnys(const VectorType& vector)
     {
-        for (Value* value : vector)
-            append(ConstrainedValue(value, ValueRep::ColdAny));
+        appendVectorWithRep(vector, ValueRep::ColdAny);
     }
 
     // This is a helper for something you might do a lot of: append a value that should be constrained

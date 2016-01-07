@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "GPRInfo.h"
 #include "JSCJSValue.h"
 #include "Reg.h"
+#include "RegisterSet.h"
 #include "ValueRecovery.h"
 #include <wtf/PrintStream.h>
 
@@ -207,7 +208,7 @@ public:
         return bitwise_cast<double>(value());
     }
 
-    ValueRep withOffset(intptr_t offset)
+    ValueRep withOffset(intptr_t offset) const
     {
         switch (kind()) {
         case Stack:
@@ -217,6 +218,20 @@ public:
         default:
             return *this;
         }
+    }
+
+    void addUsedRegistersTo(RegisterSet&) const;
+    
+    RegisterSet usedRegisters() const;
+
+    // Get the used registers for a vector of ValueReps.
+    template<typename VectorType>
+    static RegisterSet usedRegisters(const VectorType& vector)
+    {
+        RegisterSet result;
+        for (const ValueRep& value : vector)
+            value.addUsedRegistersTo(result);
+        return result;
     }
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;

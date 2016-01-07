@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -168,7 +168,13 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
 {
 #if FTL_USES_B3
-    UNUSED_PARAM(callSiteIndex);
+    for (OSRExit& exit : osrExit) {
+        if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
+            RELEASE_ASSERT(exit.m_isExceptionHandler);
+            RELEASE_ASSERT(exit.m_isUnwindHandler);
+            return ValueRep::usedRegisters(exit.m_valueReps);
+        }
+    }
 #else // FTL_USES_B3
     for (OSRExit& exit : osrExit) {
         if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {

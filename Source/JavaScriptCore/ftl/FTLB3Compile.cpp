@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,6 +111,18 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     CCallHelpers jit(&vm, codeBlock);
     B3::generate(*state.proc, jit);
+
+    // Emit the exception handler.
+    *state.exceptionHandler = jit.label();
+    jit.copyCalleeSavesToVMCalleeSavesBuffer();
+    jit.move(MacroAssembler::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
+    jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+    CCallHelpers::Call call = jit.call();
+    jit.jumpToExceptionHandler();
+    jit.addLinkTask(
+        [=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(call, FunctionPtr(lookupExceptionHandler));
+        });
 
     state.finalizer->b3CodeLinkBuffer = std::make_unique<LinkBuffer>(
         vm, jit, codeBlock, JITCompilationCanFail);

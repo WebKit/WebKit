@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,34 @@
 #include "JSCInlines.h"
 
 namespace JSC { namespace B3 {
+
+void ValueRep::addUsedRegistersTo(RegisterSet& set) const
+{
+    switch (m_kind) {
+    case WarmAny:
+    case ColdAny:
+    case LateColdAny:
+    case SomeRegister:
+    case Constant:
+        return;
+    case Register:
+        set.set(reg());
+        return;
+    case Stack:
+    case StackArgument:
+        set.set(MacroAssembler::stackPointerRegister);
+        set.set(GPRInfo::callFrameRegister);
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+RegisterSet ValueRep::usedRegisters() const
+{
+    RegisterSet result;
+    addUsedRegistersTo(result);
+    return result;
+}
 
 void ValueRep::dump(PrintStream& out) const
 {

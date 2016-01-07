@@ -1023,6 +1023,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLDWARFRegister.cpp
         ftl/FTLDataSection.cpp
         ftl/FTLExceptionHandlerManager.cpp
+        ftl/FTLExceptionTarget.cpp
         ftl/FTLExitArgument.cpp
         ftl/FTLExitArgumentForOperand.cpp
         ftl/FTLExitPropertyValue.cpp
@@ -1049,6 +1050,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLOSRExitHandle.cpp
         ftl/FTLOperations.cpp
         ftl/FTLOutput.cpp
+        ftl/FTLPatchpointExceptionHandle.cpp
         ftl/FTLRecoveryOpcode.cpp
         ftl/FTLSaveRestore.cpp
         ftl/FTLSlowPathCall.cpp

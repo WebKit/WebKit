@@ -1,3 +1,118 @@
+2016-01-07  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 getById() should do exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=152810
+
+        Reviewed by Saam Barati.
+
+        This adds abstractions for doing exceptions from patchpoints, and uses them to implement
+        exceptions from GetById. This covers all of the following ways that a GetById might throw an
+        exceptions:
+
+        - Throw without try/catch from the vmCall() in a GetById(Untyped:)
+        - Throw with try/catch from the vmCall() in a GetById(Untyped:)
+        - Throw without try/catch from the callOperation() in the patchpoint of a GetById
+        - Throw with try/catch from the callOperation() in the patchpoint of a GetById
+        - Throw without try/catch from the Call IC generated in the patchpoint of a GetById
+        - Throw with try/catch from the Call IC generated in the patchpoint of a GetById
+
+        This requires having a default exception target in FTL-generated code, and ensuring that this
+        target is generated regardless of whether we have branches to the B3 basic block of the
+        default exception target. This also requires adding some extra arguments to a
+        PatchpointValue, and then knowing that the arguments are used for OSR exit and not anything
+        else. This also requires associating the CallSiteIndex of the patchpoint with the register
+        set used for exit and with the OSR exit label for the unwind exit.
+
+        All of the stuff that you have to worry about when wiring a patchpoint to exception handling
+        is covered by the new PatchpointExceptionHandle object. You create one by calling
+        preparePatchpointForExceptions(). This sets up the B3 IR representation of the patchpoint
+        with stackmap arguments for the exceptional exit, and creates a PatchpointExceptionHandle
+        object that can be used to create zero or more actual OSR exits. It can create both OSR exits
+        for operation calls and OSR exits for unwind. You call the
+        PatchpointExceptionHandle::scheduleExitCreationXXX() methods from the generator callback to
+        actually get OSR exits.
+
+        This API makes heavy use of Box<>, late paths, and link tasks. For example, you can use the
+        PatchpointExceptionHandle to get a Box<JumpList> that you can append exception jumps to. When
+        you use this API, it automatically registers a link task that will link the JumpList to the
+        actual OSR exit label.
+
+        This API is very flexible about how you get to the label of the OSR exit. You are encouraged
+        to use the Box<JumpList> approach, but if you really just need the label, you can also get
+        a RefPtr<ExceptionTarget> and rely on the fact that the ExceptionTarget object will be able
+        to vend you the OSR exit label at link-time.
+
+        This reduces the number of JSC test failures with FTL B3 from 186 to 133. It also adds a
+        bunch of new tests specifically for all of the ways you might throw from GetById, and B3
+        passes all of these new tests. Note that I'm not counting the new tests as part of the
+        previous 186 test failures (FTL B3 failed all of the new tests prior to this change).
+
+        After this change, it should be easy to make all of the other patchpoints also handle
+        exceptions by just following the preparePatchpointForExceptions() idiom.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3StackmapValue.h:
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::addUsedRegistersTo):
+        (JSC::B3::ValueRep::usedRegisters):
+        (JSC::B3::ValueRep::dump):
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::doubleValue):
+        (JSC::B3::ValueRep::withOffset):
+        (JSC::B3::ValueRep::usedRegisters):
+        * ftl/FTLB3Compile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::unreachable):
+        (JSC::FTL::Output::speculate):
+        * ftl/FTLExceptionTarget.cpp: Added.
+        (JSC::FTL::ExceptionTarget::~ExceptionTarget):
+        (JSC::FTL::ExceptionTarget::label):
+        (JSC::FTL::ExceptionTarget::jumps):
+        (JSC::FTL::ExceptionTarget::ExceptionTarget):
+        * ftl/FTLExceptionTarget.h: Added.
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIn):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitRightShiftSnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::preparePatchpointForExceptions):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+        * ftl/FTLPatchpointExceptionHandle.cpp: Added.
+        (JSC::FTL::PatchpointExceptionHandle::create):
+        (JSC::FTL::PatchpointExceptionHandle::defaultHandle):
+        (JSC::FTL::PatchpointExceptionHandle::~PatchpointExceptionHandle):
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreation):
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreationForUnwind):
+        (JSC::FTL::PatchpointExceptionHandle::PatchpointExceptionHandle):
+        (JSC::FTL::PatchpointExceptionHandle::createHandle):
+        * ftl/FTLPatchpointExceptionHandle.h: Added.
+        * ftl/FTLState.cpp:
+        * ftl/FTLState.h:
+        (JSC::FTL::verboseCompilationEnabled):
+        * tests/stress/ftl-get-by-id-getter-exception-interesting-live-state.js: Added.
+        * tests/stress/ftl-get-by-id-getter-exception-no-catch.js: Added.
+        * tests/stress/ftl-get-by-id-getter-exception.js: Added.
+        * tests/stress/ftl-get-by-id-slow-exception-interesting-live-state.js: Added.
+        * tests/stress/ftl-get-by-id-slow-exception-no-catch.js: Added.
+        * tests/stress/ftl-get-by-id-slow-exception.js: Added.
+        * tests/stress/ftl-operation-exception-interesting-live-state.js: Added.
+        * tests/stress/ftl-operation-exception-no-catch.js: Added.
+
 2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
 
         [mips] Implemented missing branch patching methods.

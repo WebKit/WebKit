@@ -42,6 +42,7 @@
 #include "FTLAbstractHeapRepository.h"
 #include "FTLAvailableRecovery.h"
 #include "FTLB3Output.h"
+#include "FTLExceptionTarget.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLFormattedValue.h"
 #include "FTLInlineCacheSize.h"
@@ -49,6 +50,7 @@
 #include "FTLLoweredNodeValue.h"
 #include "FTLOperations.h"
 #include "FTLOutput.h"
+#include "FTLPatchpointExceptionHandle.h"
 #include "FTLThunks.h"
 #include "FTLWeightedTarget.h"
 #include "JITAddGenerator.h"
@@ -138,6 +140,8 @@ public:
     
     void lower()
     {
+        State* state = &m_ftlState;
+        
         CString name;
         if (verboseCompilationEnabled()) {
             name = toCString(
@@ -149,16 +153,16 @@ public:
         m_graph.ensureDominators();
 
 #if !FTL_USES_B3
-        m_ftlState.module =
-            moduleCreateWithNameInContext(name.data(), m_ftlState.context);
+        state->module =
+            moduleCreateWithNameInContext(name.data(), state->context);
         
-        m_ftlState.function = addFunction(
-            m_ftlState.module, name.data(), functionType(m_out.int64));
-        setFunctionCallingConv(m_ftlState.function, LLVMCCallConv);
+        state->function = addFunction(
+            state->module, name.data(), functionType(m_out.int64));
+        setFunctionCallingConv(state->function, LLVMCCallConv);
         if (isX86() && Options::llvmDisallowAVX()) {
             // AVX makes V8/raytrace 80% slower. It makes Kraken/audio-oscillator 4.5x
             // slower. It should be disabled.
-            addTargetDependentFunctionAttr(m_ftlState.function, "target-features", "-avx");
+            addTargetDependentFunctionAttr(state->function, "target-features", "-avx");
         }
 #endif // !FTL_USES_B3
         
@@ -168,7 +172,7 @@ public:
 #if FTL_USES_B3
         m_out.initialize(m_heaps);
 #else
-        m_out.initialize(m_ftlState.module, m_ftlState.function, m_heaps);
+        m_out.initialize(state->module, state->function, m_heaps);
 #endif
 
         // We use prologue frequency for all of the initialization code.
@@ -201,7 +205,7 @@ public:
         size_t sizeOfCaptured = sizeof(JSValue) * m_graph.m_nextMachineLocal;
         B3::StackSlotValue* capturedBase = m_out.lockedStackSlot(sizeOfCaptured);
         m_captured = m_out.add(capturedBase, m_out.constIntPtr(sizeOfCaptured));
-        m_ftlState.capturedValue = capturedBase;
+        state->capturedValue = capturedBase;
 #else // FTL_USES_B3
         LValue capturedAlloca = m_out.alloca(arrayType(m_out.int64, m_graph.m_nextMachineLocal));
         
@@ -209,9 +213,9 @@ public:
             m_out.ptrToInt(capturedAlloca, m_out.intPtr),
             m_out.constIntPtr(m_graph.m_nextMachineLocal * sizeof(Register)));
         
-        m_ftlState.capturedStackmapID = m_stackmapIDs++;
+        state->capturedStackmapID = m_stackmapIDs++;
         m_out.call(
-            m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.capturedStackmapID),
+            m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(state->capturedStackmapID),
             m_out.int32Zero, capturedAlloca);
 #endif // FTL_USE_B3
 
@@ -286,10 +290,10 @@ public:
         if (hasVarargs) {
             LValue varargsSpillSlots = m_out.alloca(
                 arrayType(m_out.int64, JSCallVarargs::numSpillSlotsNeeded()));
-            m_ftlState.varargsSpillSlotsStackmapID = m_stackmapIDs++;
+            state->varargsSpillSlotsStackmapID = m_stackmapIDs++;
             m_out.call(
                 m_out.voidType, m_out.stackmapIntrinsic(),
-                m_out.constInt64(m_ftlState.varargsSpillSlotsStackmapID),
+                m_out.constInt64(state->varargsSpillSlotsStackmapID),
                 m_out.int32Zero, varargsSpillSlots);
         }
 
@@ -300,10 +304,10 @@ public:
 
             LValue exceptionHandlingVolatileRegistersSpillSlots = m_out.alloca(
                 arrayType(m_out.int64, maxNumberOfCatchSpills));
-            m_ftlState.exceptionHandlingSpillSlotStackmapID = m_stackmapIDs++;
+            state->exceptionHandlingSpillSlotStackmapID = m_stackmapIDs++;
             m_out.call(
                 m_out.voidType, m_out.stackmapIntrinsic(),
-                m_out.constInt64(m_ftlState.exceptionHandlingSpillSlotStackmapID),
+                m_out.constInt64(state->exceptionHandlingSpillSlotStackmapID),
                 m_out.int32Zero, exceptionHandlingVolatileRegistersSpillSlots);
         }
 #endif // !FTL_USES_B3
@@ -337,21 +341,30 @@ public:
 #if FTL_USES_B3
         // FIXME
 #else
-        m_ftlState.handleStackOverflowExceptionStackmapID = m_stackmapIDs++;
+        state->handleStackOverflowExceptionStackmapID = m_stackmapIDs++;
         m_out.call(
             m_out.voidType, m_out.stackmapIntrinsic(),
-            m_out.constInt64(m_ftlState.handleStackOverflowExceptionStackmapID),
+            m_out.constInt64(state->handleStackOverflowExceptionStackmapID),
             m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
 #endif
         m_out.unreachable();
         
         m_out.appendTo(m_handleExceptions, checkArguments);
 #if FTL_USES_B3
-        // FIXME
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        Box<CCallHelpers::Label> exceptionHandler = state->exceptionHandler;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+                CCallHelpers::Jump jump = jit.jump();
+                jit.addLinkTask(
+                    [=] (LinkBuffer& linkBuffer) {
+                        linkBuffer.link(jump, linkBuffer.locationOf(*exceptionHandler));
+                    });
+            });
 #else
-        m_ftlState.handleExceptionStackmapID = m_stackmapIDs++;
+        state->handleExceptionStackmapID = m_stackmapIDs++;
         m_out.call(
-            m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.handleExceptionStackmapID),
+            m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(state->handleExceptionStackmapID),
             m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
 #endif
         m_out.unreachable();
@@ -418,11 +431,11 @@ public:
 
 #if !FTL_USES_B3
         if (Options::dumpLLVMIR())
-            dumpModule(m_ftlState.module);
+            dumpModule(state->module);
         if (verboseCompilationEnabled())
-            m_ftlState.dumpState("after lowering");
+            state->dumpState("after lowering");
         if (validationEnabled())
-            verifyModule(m_ftlState.module);
+            verifyModule(state->module);
 #endif
     }
 
@@ -1656,7 +1669,7 @@ private:
             }
 
 #if FTL_USES_B3
-            B3::CheckValue* result =
+            CheckValue* result =
                 isSub ? m_out.speculateSub(left, right) : m_out.speculateAdd(left, right);
             blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
             setInt32(result);
@@ -1712,7 +1725,7 @@ private:
             LValue left = lowInt52(m_node->child1());
             LValue right = lowInt52(m_node->child2());
 #if FTL_USES_B3
-            B3::CheckValue* result =
+            CheckValue* result =
                 isSub ? m_out.speculateSub(left, right) : m_out.speculateAdd(left, right);
             blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
             setInt52(result);
@@ -1803,7 +1816,7 @@ private:
                 result = m_out.mul(left, right);
             else {
 #if FTL_USES_B3
-                B3::CheckValue* speculation = m_out.speculateMul(left, right);
+                CheckValue* speculation = m_out.speculateMul(left, right);
                 blessSpeculation(speculation, Overflow, noValue(), nullptr, m_origin);
                 result = speculation;
 #else // FTL_USES_B3
@@ -1837,7 +1850,7 @@ private:
             LValue right = lowInt52(m_node->child2(), opposite(kind));
 
 #if FTL_USES_B3
-            B3::CheckValue* result = m_out.speculateMul(left, right);
+            CheckValue* result = m_out.speculateMul(left, right);
             blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
 #else // FTL_USES_B3
             LValue overflowResult = m_out.mulWithOverflow64(left, right);
@@ -2643,8 +2656,8 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=151686
 
         B3::PatchpointValue* patchpoint = m_out.patchpoint(Void);
-        patchpoint->append(base, ValueRep::SomeRegister);
-        patchpoint->append(value, ValueRep::SomeRegister);
+        patchpoint->appendSomeRegister(base);
+        patchpoint->appendSomeRegister(value);
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
         State* state = &m_ftlState;
@@ -4291,7 +4304,7 @@ private:
         for (unsigned i = 1; i < numKids; ++i) {
             flags = m_out.bitAnd(flags, m_out.load32(kids[i], m_heaps.JSString_flags));
 #if FTL_USES_B3
-            B3::CheckValue* lengthCheck = m_out.speculateAdd(
+            CheckValue* lengthCheck = m_out.speculateAdd(
                 length, m_out.load32(kids[i], m_heaps.JSString_length));
             blessSpeculation(lengthCheck, Uncountable, noValue(), nullptr, m_origin);
             length = lengthCheck;
@@ -5268,8 +5281,8 @@ private:
         // Append the forms of the arguments that we will use before any clobbering happens.
         patchpoint->append(jsCallee, ValueRep::reg(GPRInfo::regT0));
         if (jsArguments)
-            patchpoint->append(jsArguments, ValueRep::SomeRegister);
-        patchpoint->append(thisArg, ValueRep::SomeRegister);
+            patchpoint->appendSomeRegister(jsArguments);
+        patchpoint->appendSomeRegister(thisArg);
 
         if (!forwarding) {
             // Now append them again for after clobbering. Note that the compiler may ask us to use a
@@ -6126,7 +6139,7 @@ private:
                 UniquedStringImpl* str = bitwise_cast<UniquedStringImpl*>(string->tryGetValueImpl());
 #if FTL_USES_B3
                 B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
-                patchpoint->append(cell, ValueRep::SomeRegister);
+                patchpoint->appendSomeRegister(cell);
                 patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
                 State* state = &m_ftlState;
@@ -7205,21 +7218,38 @@ private:
         UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
 
 #if FTL_USES_B3
-        // FIXME: Make this do exceptions.
-        // https://bugs.webkit.org/show_bug.cgi?id=151686
-        
         B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
-        patchpoint->append(base, ValueRep::SomeRegister);
+        patchpoint->appendSomeRegister(base);
+
+        // FIXME: If this is a GetByIdFlush, we might get some performance boost if we claim that it
+        // clobbers volatile registers late. It's not necessary for correctness, though, since the
+        // IC code is super smart about saving registers.
+        // https://bugs.webkit.org/show_bug.cgi?id=152848
+        
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
+
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(patchpoint);
 
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
+                CallSiteIndex callSiteIndex =
+                    state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic);
+
+                // This is the direct exit target for operation calls.
+                Box<CCallHelpers::JumpList> exceptions =
+                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+                // This is the exit for call IC's created by the getById for getters. We don't have
+                // to do anything weird other than call this, since it will associate the exit with
+                // the callsite index.
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
                 auto generator = Box<JITGetByIdGenerator>::create(
-                    jit.codeBlock(), node->origin.semantic,
-                    state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic),
+                    jit.codeBlock(), node->origin.semantic, callSiteIndex,
                     params.unavailableRegisters(), JSValueRegs(params[1].gpr()),
                     JSValueRegs(params[0].gpr()));
 
@@ -7229,15 +7259,12 @@ private:
                 params.addLatePath(
                     [=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
-                        
-                        // FIXME: Make this do something.
-                        CCallHelpers::JumpList exceptions;
 
                         generator->slowPathJump().link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
                         CCallHelpers::Call slowPathCall = callOperation(
                             *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                            &exceptions, operationGetByIdOptimize, params[0].gpr(),
+                            exceptions.get(), operationGetByIdOptimize, params[0].gpr(),
                             CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
                             CCallHelpers::TrustedImmPtr(uid)).call();
                         jit.jump().linkTo(done, &jit);
@@ -7524,8 +7551,8 @@ private:
         SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
             
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
-        patchpoint->append(left, ValueRep::SomeRegister);
-        patchpoint->append(right, ValueRep::SomeRegister);
+        patchpoint->appendSomeRegister(left);
+        patchpoint->appendSomeRegister(right);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         patchpoint->numGPScratchRegisters = 1;
@@ -7582,8 +7609,8 @@ private:
         SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
             
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
-        patchpoint->append(left, ValueRep::SomeRegister);
-        patchpoint->append(right, ValueRep::SomeRegister);
+        patchpoint->appendSomeRegister(left);
+        patchpoint->appendSomeRegister(right);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         patchpoint->numGPScratchRegisters = 1;
@@ -7634,8 +7661,8 @@ private:
         SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
             
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
-        patchpoint->append(left, ValueRep::SomeRegister);
-        patchpoint->append(right, ValueRep::SomeRegister);
+        patchpoint->appendSomeRegister(left);
+        patchpoint->appendSomeRegister(right);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         patchpoint->numGPScratchRegisters = 1;
@@ -10132,7 +10159,43 @@ private:
         m_out.appendTo(continuation);
     }
 
-#if !FTL_USES_B3
+#if FTL_USES_B3
+    RefPtr<PatchpointExceptionHandle> preparePatchpointForExceptions(PatchpointValue* value)
+    {
+        CodeOrigin opCatchOrigin;
+        HandlerInfo* exceptionHandler;
+        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_origin.forExit, opCatchOrigin, exceptionHandler);
+        if (!willCatchException)
+            return PatchpointExceptionHandle::defaultHandle(m_ftlState);
+
+        if (verboseCompilationEnabled()) {
+            dataLog("    Patchpoint exception OSR exit #", m_ftlState.jitCode->osrExitDescriptors.size(), " with availability: ", availabilityMap(), "\n");
+            if (!m_availableRecoveries.isEmpty())
+                dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
+        }
+
+        bool exitOK = true;
+        NodeOrigin origin = m_origin.withForExitAndExitOK(opCatchOrigin, exitOK);
+
+        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(noValue(), nullptr);
+
+        // Compute the offset into the StackmapGenerationParams where we will find the exit arguments
+        // we are about to append. We need to account for both the children we've already added, and
+        // for the possibility of a result value if the patchpoint is not void.
+        unsigned offset = value->numChildren();
+        if (value->type() != Void)
+            offset++;
+
+        // Use LateColdAny to ensure that the stackmap arguments interfere with the patchpoint's
+        // result and with any late-clobbered registers.
+        value->appendVectorWithRep(
+            buildExitArguments(exitDescriptor, opCatchOrigin, noValue()),
+            ValueRep::LateColdAny);
+
+        return PatchpointExceptionHandle::create(
+            m_ftlState, exitDescriptor, origin, offset, *exceptionHandler);
+    }
+#else // FTL_USES_B3
     void appendOSRExitArgumentsForPatchpointIfWillCatchException(StackmapArgumentList& arguments, ExceptionType exceptionType, unsigned offsetOfExitArguments)
     {
         CodeOrigin opCatchOrigin;
@@ -10153,7 +10216,7 @@ private:
             buildExitArguments(exitDescriptor, exitDescriptorImpl.m_codeOrigin, noValue(), offsetOfExitArguments);
         arguments.appendVector(freshList);
     }
-#endif // !FTL_USES_B3
+#endif // FTL_USES_B3
 
     LBasicBlock lowBlock(DFG::BasicBlock* block)
     {
@@ -10245,7 +10308,7 @@ private:
     }
 
 #if FTL_USES_B3
-    void blessSpeculation(B3::CheckValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin, bool isExceptionHandler = false)
+    void blessSpeculation(CheckValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin, bool isExceptionHandler = false)
     {
         OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(lowValue, highValue);
         
