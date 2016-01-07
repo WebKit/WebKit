@@ -43,6 +43,8 @@ class ManifestGenerator {
         return TRUE;
     }
 
+    function manifest() { return $this->manifest; }
+
     function store() {
         return generate_data_file('manifest.json', json_encode($this->manifest));
     }
