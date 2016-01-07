@@ -146,7 +146,6 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         if (this.representedObject.modified) {
             contextMenu.appendItem(WebInspector.UIString("Reset"), () => {
                 this.representedObject.resetText();
-                this.dispatchEventToListeners(WebInspector.VisualStyleSelectorTreeItem.Event.StyleTextReset);
             });
         }
 
@@ -282,6 +281,5 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 };
 
 WebInspector.VisualStyleSelectorTreeItem.Event = {
-    StyleTextReset: "visual-style-selector-item-style-text-reset",
     CheckboxChanged: "visual-style-selector-item-checkbox-changed"
 };

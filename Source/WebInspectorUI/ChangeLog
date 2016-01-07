@@ -1,5 +1,55 @@
 2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Add warnings to section that require specific values of other properties
+        https://bugs.webkit.org/show_bug.cgi?id=148254
+
+        Reviewed by Timothy Hatcher.
+
+        Added a function to VisualStylePropertyEditor to allow dependencies to be set which,
+        whenever the editor is updated or changed, will be checked against the computed styles
+        of the element to see if all the necessary property values are set.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel):
+        (WebInspector.VisualStyleDetailsPanel.prototype.refresh):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populatePositionSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateFlexboxSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateAlignmentSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBorderSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateOutlineSection):
+        Added dependencies to relevant property editors.
+
+        (WebInspector.VisualStyleDetailsPanel.prototype._prepareForChange): Deleted.
+        No longer needed as the sidebar panel will refresh whenever triggered.
+
+        * UserInterface/Views/VisualStylePropertyEditor.css:
+        (.visual-style-property-container.layout-reversed > .visual-style-property-title):
+        (.visual-style-property-container > .visual-style-property-title > .property-reference-info):
+        (.visual-style-property-container > .visual-style-property-editor-warning):
+        (.visual-style-property-container.layout-reversed > .visual-style-property-editor-warning):
+        (.visual-style-property-container > .visual-style-property-editor-warning.missing-dependency):
+        (.visual-style-property-container > .visual-style-property-value-container):
+        (.visual-style-property-container.layout-reversed > .visual-style-property-value-container):
+
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor):
+        (WebInspector.VisualStylePropertyEditor.prototype.updateEditorValues):
+        (WebInspector.VisualStylePropertyEditor.prototype.addDependency):
+        (WebInspector.VisualStylePropertyEditor.prototype._valueDidChange):
+        (WebInspector.VisualStylePropertyEditor.prototype._checkDependencies):
+        Looks at the computed style for the node to see if any dependent properties do not
+        have one of the required values.
+
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection.prototype.update.createSelectorItem):
+        (WebInspector.VisualStyleSelectorSection.prototype._styleTextReset): Deleted.
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent):
+
+2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Allow error items on Exception page to be selected
         https://bugs.webkit.org/show_bug.cgi?id=152861
 

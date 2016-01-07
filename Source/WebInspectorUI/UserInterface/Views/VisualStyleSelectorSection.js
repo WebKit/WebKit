@@ -97,7 +97,6 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
 
         function createSelectorItem(style, title, subtitle) {
             let selector = new WebInspector.VisualStyleSelectorTreeItem(this, style, title, subtitle);
-            selector.addEventListener(WebInspector.VisualStyleSelectorTreeItem.Event.StyleTextReset, this._styleTextReset, this);
             selector.addEventListener(WebInspector.VisualStyleSelectorTreeItem.Event.CheckboxChanged, this._treeElementCheckboxToggled, this);
             this._selectors.appendChild(selector);
 
@@ -257,11 +256,6 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         this.dispatchEventToListeners(WebInspector.VisualStyleSelectorSection.Event.SelectorChanged);
     }
 
-    _styleTextReset()
-    {
-        this.dispatchEventToListeners(WebInspector.VisualStyleSelectorSection.Event.StyleTextChanged);
-    }
-
     _addNewRule(event)
     {
         if (!this._nodeStyles || this._nodeStyles.node.isInShadowTree())
@@ -331,6 +325,5 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
 WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol = Symbol("visual-style-selector-section-last-selected-rule");
 
 WebInspector.VisualStyleSelectorSection.Event = {
-    SelectorChanged: "visual-style-selector-section-selector-changed",
-    StyleTextChanged: "visual-style-selector-section-style-text-changed"
+    SelectorChanged: "visual-style-selector-section-selector-changed"
 }
