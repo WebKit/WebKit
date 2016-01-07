@@ -1,3 +1,3 @@
 
-FAIL IDBDatabase.deleteObjectStore() - the object store is not reused assert_array_equals: keys property 1, expected 6 but got 1
+PASS IDBDatabase.deleteObjectStore() - the object store is not reused 
 

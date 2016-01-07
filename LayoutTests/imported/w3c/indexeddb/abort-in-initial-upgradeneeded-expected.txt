@@ -1,3 +1,3 @@
 
-FAIL Test that an abort in the initial upgradeneeded sets version back to 0 assert_equals: expected (undefined) undefined but got (object) object "[object IDBDatabase]"
+PASS Test that an abort in the initial upgradeneeded sets version back to 0 
 

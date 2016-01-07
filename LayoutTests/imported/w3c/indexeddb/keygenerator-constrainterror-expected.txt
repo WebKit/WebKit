@@ -1,3 +1,3 @@
 
-FAIL Keygenerator ConstraintError when using same id as already generated assert_unreached: unexpected db.error (ConstraintError) Reached unreachable code
+PASS Keygenerator ConstraintError when using same id as already generated 
 

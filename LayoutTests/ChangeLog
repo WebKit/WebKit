@@ -1,3 +1,37 @@
+2016-01-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Update results for W3C tests marked as failures that actually pass.
+        https://bugs.webkit.org/show_bug.cgi?id=152827
+
+        Reviewed by Daniel Bates.
+        
+        - Update FAIL expectations to PASS expectations for Modern IDB.
+        - Copy the FAIL expectations over to platform/wk2 to keep testing Legacy IDB.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/wk2/imported/w3c/indexeddb/abort-in-initial-upgradeneeded-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/abort-in-initial-upgradeneeded-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor-advance-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor-advance-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_advance_index5-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index5-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_advance_index9-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_index9-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_advance_objectstore5-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_advance_objectstore5-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_index8-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_index8-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_objectstore6-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_continue_objectstore6-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_delete_index4-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_index4-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_delete_objectstore4-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbcursor_delete_objectstore4-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbdatabase_close2-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_close2-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbdatabase_deleteObjectStore4-not_reused-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbdatabase_deleteObjectStore4-not_reused-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbfactory_deleteDatabase3-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbfactory_deleteDatabase3-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbindex-multientry-big-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbindex-multientry-big-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_get3-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbindex_get3-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_add4-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_add4-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_createIndex2-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex2-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_createIndex4-deleteIndex-event_order-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_createIndex4-deleteIndex-event_order-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbobjectstore_put4-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbobjectstore_put4-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/idbtransaction_abort-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/idbtransaction_abort-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/keygenerator-constrainterror-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/keygenerator-constrainterror-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/keygenerator-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/keygenerator-expected.txt.
+        * platform/wk2/imported/w3c/indexeddb/transaction-requestqueue-expected.txt: Copied from LayoutTests/imported/w3c/indexeddb/transaction-requestqueue-expected.txt.
+
 2016-01-06  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Initial enabling of imported W3C IDB tests.

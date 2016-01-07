@@ -1,0 +1,5 @@
+
+FAIL IDBCursor.continue() - object store - throw InvalidStateError caused by object store been deleted assert_throws: If the cursor's source or effective object store has been deleted, the implementation MUST throw a DOMException of type InvalidStateError function "function () {
+                cursor.continue();
+        ..." did not throw
+

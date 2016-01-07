@@ -1,0 +1,5 @@
+
+PASS Keygenerator - starts at one, and increments by one 
+FAIL Keygenerator - increments by one from last set key assert_unreached: unexpected db.error (ConstraintError) Reached unreachable code
+FAIL Keygenerator - don't increment when new key is not bigger than current assert_unreached: unexpected db.error (ConstraintError) Reached unreachable code
+
