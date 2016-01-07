@@ -6993,10 +6993,15 @@ void testCheckSubBadImm()
             AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.size() == 2);
             CHECK(params[0].isGPR());
-            CHECK(params[1].isConstant());
-            CHECK(params[1].value() == badImm);
             jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(badImm), FPRInfo::fpRegT1);
+
+            if (params[1].isConstant()) {
+                CHECK(params[1].value() == badImm);
+                jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(badImm), FPRInfo::fpRegT1);
+            } else {
+                CHECK(params[1].isGPR());
+                jit.convertInt32ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
+            }
             jit.subDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();

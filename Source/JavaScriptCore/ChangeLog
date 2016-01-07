@@ -1,3 +1,15 @@
+2016-01-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Update testCheckSubBadImm() for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=152846
+
+        Reviewed by Mark Lam.
+
+        * b3/testb3.cpp:
+        (JSC::B3::testCheckSubBadImm):
+        The test was assuming the constant can always be used
+        as immediate. That's obviously not the case on ARM64.
+
 2016-01-07  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 getById() should do exceptions
