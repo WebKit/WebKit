@@ -544,8 +544,8 @@ public:
             store32(dataTempRegister, address.m_ptr);
         } else {
             load32(address.m_ptr, getCachedMemoryTempRegisterIDAndInvalidate());
-            or32(imm, memoryTempRegister, memoryTempRegister);
-            store32(memoryTempRegister, address.m_ptr);
+            or32(imm, memoryTempRegister, getCachedDataTempRegisterIDAndInvalidate());
+            store32(dataTempRegister, address.m_ptr);
         }
     }
 
@@ -3038,6 +3038,7 @@ private:
     template<int datasize>
     ALWAYS_INLINE void store(RegisterID src, const void* address)
     {
+        ASSERT(src != memoryTempRegister);
         intptr_t currentRegisterContents;
         if (m_cachedMemoryTempRegister.value(currentRegisterContents)) {
             intptr_t addressAsInt = reinterpret_cast<intptr_t>(address);

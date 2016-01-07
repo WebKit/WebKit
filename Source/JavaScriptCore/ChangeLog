@@ -1,3 +1,17 @@
+2016-01-07  Mark Lam  <mark.lam@apple.com>
+
+        ARMv7 or32(TrustedImm32, AbsoluteAddress) may have a bug with its use of dataTempRegister.
+        https://bugs.webkit.org/show_bug.cgi?id=152833
+
+        Reviewed by Michael Saboff.
+
+        Follow-up patch to fix illegal use of memoryTempRegister as the src for ARM64's
+        store32.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::or32):
+        (JSC::MacroAssemblerARM64::store):
+
 2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
 
         [mips] GPRInfo::toArgumentRegister missing
