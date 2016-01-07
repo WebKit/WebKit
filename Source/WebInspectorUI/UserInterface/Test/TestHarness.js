@@ -88,9 +88,22 @@ TestHarness = class TestHarness extends WebInspector.Object
 
     expectThat(condition, message)
     {
-        let prefix = condition ? "PASS" : "FAIL";
+        if (condition)
+            this.pass(message);
+        else
+            this.fail(message);
+    }
+
+    pass(message)
+    {
         let stringifiedMessage = TestHarness.messageAsString(message);
-        this.log(`${prefix}: ${stringifiedMessage}`);
+        this.log("PASS: " + stringifiedMessage);
+    }
+
+    fail(message)
+    {
+        let stringifiedMessage = TestHarness.messageAsString(message);
+        this.log("FAIL: " + stringifiedMessage);
     }
 
     // Protected

@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 11: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+
+CONSOLE MESSAGE: line 7: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'none'".
+
+Test for the CSP exception handling when pause on all exceptions is enabled.
+
+
+== Running test suite: PauseOnCSPExceptionDoesNotCrash
+-- Running test case: TriggerCSPExceptionInsideOfScript
+PASS: CSP Exception caused by script evaluation should pause.
+Uncaught exception in test page: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+ [csp-exceptions.html:11]
+
+-- Running test case: TriggerCSPExceptionOutsideOfScript
+PASS: CSP Exception caused outside of script evaluation should not pause.
+

@@ -1,3 +1,18 @@
+2016-01-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH Attempting to pause on CSP violation not inside of script
+        https://bugs.webkit.org/show_bug.cgi?id=152825
+        <rdar://problem/24021276>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.expectThat):
+        (TestHarness.prototype.pass):
+        (TestHarness.prototype.fail):
+        Add a simple way to output a standard pass/fail message. These are
+        often nicer than expectThat(true, ...) or assert(false, ...).
+
 2016-01-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DOMContentLoaded label in the Timeline tab should be "DOM Content Loaded"

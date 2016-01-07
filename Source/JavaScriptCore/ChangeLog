@@ -1,3 +1,15 @@
+2016-01-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH Attempting to pause on CSP violation not inside of script
+        https://bugs.webkit.org/show_bug.cgi?id=152825
+        <rdar://problem/24021276>
+
+        Reviewed by Timothy Hatcher.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::breakProgram):
+        We cannot pause if we are not evaluating JavaScript, so bail.
+
 2016-01-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Re-enable lea() in Air on ARM64

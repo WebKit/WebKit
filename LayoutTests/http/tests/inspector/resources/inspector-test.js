@@ -139,6 +139,7 @@ TestPage.addResult = function(text)
     this._resultElement.append(text, document.createElement("br"));
 }
 
+TestPage.allowUncaughtExceptions = false;
 TestPage.needToSanitizeUncaughtExceptionURLs = false;
 
 TestPage.reportUncaughtException = function(message, url, lineNumber)
@@ -155,7 +156,9 @@ TestPage.reportUncaughtException = function(message, url, lineNumber)
 
     let result = `Uncaught exception in test page: ${message} [${url}:${lineNumber}]`;
     TestPage.addResult(result);
-    TestPage.completeTest();
+
+    if (!TestPage.allowUncaughtExceptions)
+        TestPage.completeTest();
 }
 
 // Catch syntax errors, type errors, and other exceptions. Run this before loading other files.

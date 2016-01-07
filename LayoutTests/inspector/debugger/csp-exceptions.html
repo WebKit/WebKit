@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+TestPage.needToSanitizeUncaughtExceptionURLs = true;
+
+function triggerCSPExceptionInsideScript() {
+    eval("console.log('CSP should prevent this')");
+}
+
+function triggerCSPExceptionOutsideScript() {
+    let iframe = document.createElement("iframe");
+    iframe.src = "resources/csp-exception-iframe.html";
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("PauseOnCSPExceptionDoesNotCrash");
+
+    suite.addTestCase({
+        name: "TriggerCSPExceptionInsideOfScript",
+        description: "Trigger a CSP Exception inside of script should pause.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("setTimeout(triggerCSPExceptionInsideScript)");
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.pass("CSP Exception caused by script evaluation should pause.");
+                WebInspector.debuggerManager.resume();
+            });
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "TriggerCSPExceptionOutsideOfScript",
+        description: "Trigger a CSP Exception outside of script should not pause or crash.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("setTimeout(triggerCSPExceptionOutsideScript)");
+            let tempPauseFailListener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.fail("CSP Exception caused outside of script evaluation should not pause, but did.");
+                WebInspector.debuggerManager.resume();
+                reject();
+            });
+            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, tempPauseFailListener, null);
+                InspectorTest.pass("CSP Exception caused outside of script evaluation should not pause.");
+                resolve();
+            });
+        }
+    });
+
+    DebuggerAgent.setPauseOnExceptions("all");
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the CSP exception handling when pause on all exceptions is enabled.</p>
+</body>
+</html>
