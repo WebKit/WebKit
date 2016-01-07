@@ -648,9 +648,8 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float width, f
 
 FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& origin, float width, bool printing)
 {
-    bool dummyBool;
     Color dummyColor;
-    return computeLineBoundsAndAntialiasingModeForText(origin, width, printing, dummyBool, dummyColor);
+    return computeLineBoundsAndAntialiasingModeForText(origin, width, printing, dummyColor);
 }
 
 void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing, bool doubleUnderlines)
@@ -671,8 +670,7 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
 
     Color localStrokeColor(strokeColor());
 
-    bool shouldAntialiasLine;
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(point, widths.last(), printing, shouldAntialiasLine, localStrokeColor);
+    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(point, widths.last(), printing, localStrokeColor);
 
     Vector<FloatRect, 4> dashBounds;
     ASSERT(!(widths.size() % 2));

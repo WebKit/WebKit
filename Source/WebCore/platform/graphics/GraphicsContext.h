@@ -599,7 +599,7 @@ private:
 
     void platformFillRoundedRect(const FloatRoundedRect&, const Color&);
 
-    FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing, bool& shouldAntialias, Color&);
+    FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing,  Color&);
 
     GraphicsContextPlatformPrivate* m_data;
 

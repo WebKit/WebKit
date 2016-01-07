@@ -985,17 +985,13 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
 }
 #endif
 
-FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const FloatPoint& point, float width, bool printing, bool& shouldAntialias, Color& color)
+FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const FloatPoint& point, float width, bool printing, Color& color)
 {
     FloatPoint origin = point;
     float thickness = std::max(strokeThickness(), 0.5f);
 
-    shouldAntialias = true;
     if (!printing) {
         AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-        if (transform.preservesAxisAlignment())
-            shouldAntialias = false;
-
         // This code always draws a line that is at least one-pixel line high,
         // which tends to visually overwhelm text at small scales. To counter this
         // effect, an alpha is applied to the underline color when text is at small scales.

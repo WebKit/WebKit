@@ -1321,9 +1321,8 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
 
 FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& point, float width, bool printing)
 {
-    bool dummyBool;
     Color dummyColor;
-    return computeLineBoundsAndAntialiasingModeForText(point, width, printing, dummyBool, dummyColor);
+    return computeLineBoundsAndAntialiasingModeForText(point, width, printing, dummyColor);
 }
 
 void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing, bool doubleLines)
@@ -1344,8 +1343,7 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
 
     Color localStrokeColor(strokeColor());
 
-    bool shouldAntialiasLine;
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(point, widths.last(), printing, shouldAntialiasLine, localStrokeColor);
+    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(point, widths.last(), printing, localStrokeColor);
     bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
     
     Vector<CGRect, 4> dashBounds;
