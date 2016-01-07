@@ -32,6 +32,7 @@
 #include "AnimationController.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardController.h"
+#include "BitmapImage.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -586,6 +587,21 @@ void Internals::pruneMemoryCacheToSize(unsigned size)
 unsigned Internals::memoryCacheSize() const
 {
     return MemoryCache::singleton().size();
+}
+
+size_t Internals::imageFrameIndex(Element* element, ExceptionCode& ec)
+{
+    if (!is<HTMLImageElement>(element)) {
+        ec = TypeError;
+        return 0;
+    }
+
+    auto* cachedImage = downcast<HTMLImageElement>(*element).cachedImage();
+    if (!cachedImage)
+        return 0;
+
+    auto* image = cachedImage->image();
+    return is<BitmapImage>(image) ? downcast<BitmapImage>(*image).currentFrame() : 0;
 }
 
 void Internals::clearPageCache()

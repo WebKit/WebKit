@@ -205,6 +205,8 @@ enum MediaControlEvent {
 
     [RaisesException] boolean isPageBoxVisible(long pageNumber);
 
+    [RaisesException] unsigned long imageFrameIndex(Element element);
+
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;
 

@@ -104,6 +104,8 @@ public:
     void pruneMemoryCacheToSize(unsigned size);
     unsigned memoryCacheSize() const;
 
+    size_t imageFrameIndex(Element*, ExceptionCode&);
+
     void clearPageCache();
     unsigned pageCacheSize() const;
 

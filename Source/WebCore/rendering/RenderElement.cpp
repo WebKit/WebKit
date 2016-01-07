@@ -1517,7 +1517,13 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
     ASSERT(m_hasPausedImageAnimations);
     if (!shouldRepaintForImageAnimation(*this, visibleRect))
         return false;
+
     repaint();
+
+    // For directly-composited animated GIFs it does not suffice to call repaint() to resume animation. We need to mark the image as changed.
+    if (is<RenderBoxModelObject>(*this))
+        downcast<RenderBoxModelObject>(*this).contentChanged(ImageChanged);
+
     return true;
 }
 

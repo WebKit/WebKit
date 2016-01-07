@@ -183,6 +183,8 @@ public:
 
     bool allowSubsampling() const { return m_allowSubsampling; }
     void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
+
+    size_t currentFrame() const { return m_currentFrame; }
     
 private:
     virtual bool isBitmapImage() const override { return true; }
@@ -210,7 +212,6 @@ protected:
         const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect);
 #endif
 
-    size_t currentFrame() const { return m_currentFrame; }
     size_t frameCount();
 
     PassNativeImagePtr frameAtIndex(size_t, float presentationScaleHint = 1);
