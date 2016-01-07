@@ -756,6 +756,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
     return controller.offsetForPosition(x, includePartialGlyphs);
 }
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
 const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
 {
     UChar32 baseCharacter;
@@ -808,5 +809,66 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
 
     return Font::systemFallback();
 }
+
+#else
+const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length, FontVariant variant) const
+{
+    UChar32 baseCharacter;
+    size_t baseCharacterLength = 0;
+    U16_NEXT(characters, baseCharacterLength, length, baseCharacter);
+
+    GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, variant);
+
+    if (!baseCharacterGlyphData.glyph)
+        return 0;
+
+    if (length == baseCharacterLength)
+        return baseCharacterGlyphData.font;
+
+    bool triedBaseCharacterFont = false;
+
+    for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
+        const Font* font = fallbackRangesAt(i).fontForCharacter(baseCharacter);
+        if (!font)
+            continue;
+#if PLATFORM(IOS)
+        if (baseCharacter >= 0x0600 && baseCharacter <= 0x06ff && font->shouldNotBeUsedForArabic())
+            continue;
+#endif
+        if (variant == NormalVariant) {
+            if (font->platformData().orientation() == Vertical) {
+                if (isCJKIdeographOrSymbol(baseCharacter) && !font->hasVerticalGlyphs()) {
+                    variant = BrokenIdeographVariant;
+                    font = font->brokenIdeographFont().get();
+                } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientationVerticalRight) {
+                    Font* verticalRightFont = font->verticalRightOrientationFont().get();
+                    Glyph verticalRightGlyph = verticalRightFont->glyphForCharacter(baseCharacter);
+                    if (verticalRightGlyph == baseCharacterGlyphData.glyph)
+                        font = verticalRightFont;
+                } else {
+                    Font* uprightFont = font->uprightOrientationFont().get();
+                    Glyph uprightGlyph = uprightFont->glyphForCharacter(baseCharacter);
+                    if (uprightGlyph != baseCharacterGlyphData.glyph)
+                        font = uprightFont;
+                }
+            }
+        } else {
+            if (const Font* variantFont = font->variantFont(m_fontDescription, variant).get())
+                font = variantFont;
+        }
+
+        if (font == baseCharacterGlyphData.font)
+            triedBaseCharacterFont = true;
+
+        if (font->canRenderCombiningCharacterSequence(characters, length))
+            return font;
+    }
+
+    if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(characters, length))
+        return baseCharacterGlyphData.font;
+
+    return Font::systemFallback();
+}
+#endif
 
 }

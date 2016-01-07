@@ -315,6 +315,7 @@ void Font::platformDestroy()
 {
 }
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
 bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantCaps, UChar32 character) const
 {
 #if (PLATFORM(IOS) && TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101104)
@@ -604,15 +605,73 @@ RefPtr<Font> Font::createFontWithoutSynthesizableFeatures() const
     RetainPtr<CTFontRef> ctFont = createCTFontWithoutSynthesizableFeatures(m_platformData.font());
     return createDerivativeFont(ctFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.m_syntheticBold, m_platformData.m_syntheticOblique);
 }
+#endif
 
 PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
     float size = m_platformData.size() * scaleFactor;
     CTFontSymbolicTraits fontTraits = CTFontGetSymbolicTraits(m_platformData.font());
     RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontCopyFontDescriptor(m_platformData.font()));
     RetainPtr<CTFontRef> scaledFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
 
     return createDerivativeFont(scaledFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.m_syntheticBold, m_platformData.m_syntheticOblique);
+#else
+#if !CORETEXT_WEB_FONTS
+    if (isCustomFont()) {
+        FontPlatformData scaledFontData(m_platformData);
+        scaledFontData.m_size = scaledFontData.m_size * scaleFactor;
+        return Font::create(scaledFontData, true, false);
+    }
+#endif
+
+    float size = m_platformData.size() * scaleFactor;
+
+#if USE(APPKIT)
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    FontPlatformData scaledFontData(reinterpret_cast<CTFontRef>([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toSize:size]), size, false, false, m_platformData.orientation());
+
+    if (scaledFontData.font()) {
+        NSFontManager *fontManager = [NSFontManager sharedFontManager];
+        NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_platformData.nsFont()];
+
+        if (m_platformData.m_syntheticBold)
+            fontTraits |= NSBoldFontMask;
+        if (m_platformData.m_syntheticOblique)
+            fontTraits |= NSItalicFontMask;
+
+        NSFontTraitMask scaledFontTraits = [fontManager traitsOfFont:scaledFontData.nsFont()];
+        scaledFontData.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(scaledFontTraits & NSBoldFontMask);
+        scaledFontData.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(scaledFontTraits & NSItalicFontMask);
+
+        return Font::create(scaledFontData);
+    }
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return nullptr;
+#else
+    CTFontSymbolicTraits fontTraits = CTFontGetSymbolicTraits(m_platformData.font());
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontCopyFontDescriptor(m_platformData.font()));
+    RetainPtr<CTFontRef> scaledFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+    FontPlatformData scaledFontData(scaledFont.get(), size, false, false, m_platformData.orientation());
+
+    if (scaledFontData.font()) {
+        if (m_platformData.m_syntheticBold)
+            fontTraits |= kCTFontBoldTrait;
+        if (m_platformData.m_syntheticOblique)
+            fontTraits |= kCTFontItalicTrait;
+
+        CTFontSymbolicTraits scaledFontTraits = CTFontGetSymbolicTraits(scaledFontData.font());
+        scaledFontData.m_syntheticBold = (fontTraits & kCTFontBoldTrait) && !(scaledFontTraits & kCTFontTraitBold);
+        scaledFontData.m_syntheticOblique = (fontTraits & kCTFontItalicTrait) && !(scaledFontTraits & kCTFontTraitItalic);
+
+        return Font::create(scaledFontData);
+    }
+
+    return nullptr;
+#endif
+#endif
 }
 
 void Font::determinePitch()

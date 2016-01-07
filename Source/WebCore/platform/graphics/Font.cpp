@@ -307,7 +307,7 @@ PassRefPtr<Font> Font::smallCapsFont(const FontDescription& fontDescription) con
     return m_derivedFontData->smallCaps;
 }
 
-#if PLATFORM(COCOA)
+#if (PLATFORM(COCOA) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
 const Font& Font::noSynthesizableFeaturesFont() const
 {
     if (!m_derivedFontData)

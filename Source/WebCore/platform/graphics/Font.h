@@ -106,7 +106,9 @@ public:
     PassRefPtr<Font> emphasisMarkFont(const FontDescription&) const;
     PassRefPtr<Font> brokenIdeographFont() const;
     PassRefPtr<Font> nonSyntheticItalicFont() const;
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
     const Font& noSynthesizableFeaturesFont() const;
+#endif
 
     PassRefPtr<Font> variantFont(const FontDescription& description, FontVariant variant) const
     {

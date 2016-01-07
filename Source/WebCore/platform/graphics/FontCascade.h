@@ -191,7 +191,11 @@ public:
     GlyphData glyphDataForCharacter(UChar32, bool mirror, FontVariant = AutoVariant) const;
     
 #if PLATFORM(COCOA)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
     const Font* fontForCombiningCharacterSequence(const UChar*, size_t length) const;
+#else
+    const Font* fontForCombiningCharacterSequence(const UChar*, size_t length, FontVariant) const;
+#endif
 #endif
 
     static bool isCJKIdeograph(UChar32);

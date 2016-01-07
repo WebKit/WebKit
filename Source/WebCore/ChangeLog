@@ -1,3 +1,32 @@
+2016-01-07  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Fix the Mavericks build after r194287. rdar://problem/23769758
+
+        Unreviewed build fix.
+
+        * platform/graphics/Font.cpp:
+        Do not implement Font::noSynthesizableFeaturesFont() on Mavericks.
+
+        * platform/graphics/Font.h:
+        No not declare Font::noSynthesizableFeaturesFont() on Mavericks.
+
+        * platform/graphics/FontCascade.h:
+        Declare the old method signature for fontForCombiningCharacterSequence on Mavericks.
+
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence):
+        Implement the old method (with old method signature) on Mavericks.
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformCreateScaledFont):
+        Use the old implementation (prior to the merge of r194287) on Mavericks.
+        Use the new implementation (which uses noSynthesizableFeaturesFont) on > Mavericks.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns):
+        Use the old implementation (prior to the merge of r194287) on Mavericks.
+        Use the new implementation (which uses noSynthesizableFeaturesFont) on > Mavericks.
+
 2016-01-06  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r194405. rdar://problem/23982006
