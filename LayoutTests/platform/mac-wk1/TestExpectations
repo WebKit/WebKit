@@ -74,11 +74,6 @@ imported/w3c/indexeddb/interfaces.html [ Skip ]
 imported/w3c/indexeddb/keyorder.htm [ Skip ]
 
 # W3C IDB tests - Legacy IDB passes, Modern IDB fails
-imported/w3c/indexeddb/idbobjectstore_add16.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_clear4.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_count4.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_delete7.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_put16.htm [ Failure ]
 imported/w3c/indexeddb/request_bubble-and-capture.htm [ Failure ]
 imported/w3c/indexeddb/transaction_bubble-and-capture.htm [ Failure ]
 

@@ -1,3 +1,19 @@
+2016-01-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Various imported/w3c/indexeddb tests fail due to expecting the wrong exception.
+        https://bugs.webkit.org/show_bug.cgi?id=152866
+
+        Reviewed by Alex Christensen.
+
+        No new tests (5 skipped tests now pass).
+
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd): Reorder the exceptions, violating the spec but matching
+          a vast majority of browsers.
+        (WebCore::IDBClient::IDBObjectStore::deleteFunction): Ditto.
+        (WebCore::IDBClient::IDBObjectStore::clear): Ditto.
+        (WebCore::IDBClient::IDBObjectStore::doCount): Ditto.
+
 2016-01-07  Zalan Bujtas  <zalan@apple.com>
 
         Remove unused shouldAntialias parameter from GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
