@@ -623,8 +623,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         // COMPATIBILITY (iOS 9): Debugger.ScopeType.Local used to be provided by the backend.
         // Newer backends no longer send this enum value, it should be computed by the frontend.
+        // Map this to "Closure" type. The frontend can recalculate this when needed.
         case DebuggerAgent.ScopeType.Local:
-            type = WebInspector.ScopeChainNode.Type.Local;
+            type = WebInspector.ScopeChainNode.Type.Closure;
             break;
 
         default:
@@ -632,7 +633,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         }
 
         var object = WebInspector.RemoteObject.fromPayload(payload.object);
-        return new WebInspector.ScopeChainNode(type, object);
+        return new WebInspector.ScopeChainNode(type, [object]);
     }
 
     _pauseReasonFromPayload(payload)

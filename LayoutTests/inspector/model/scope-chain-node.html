@@ -30,7 +30,7 @@ function test()
                 if (scope.type === WebInspector.ScopeChainNode.Type.Global)
                     resolve({scope, propertyDescriptors: []});
                 else {
-                    scope.object.getDisplayablePropertyDescriptors((propertyDescriptors) => {
+                    scope.objects[0].getDisplayablePropertyDescriptors((propertyDescriptors) => {
                         resolve({scope, propertyDescriptors});
                     });
                 }

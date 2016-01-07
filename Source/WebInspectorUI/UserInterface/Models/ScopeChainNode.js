@@ -25,18 +25,18 @@
 
 WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
 {
-    constructor(type, object)
+    constructor(type, objects)
     {
         super();
 
         console.assert(typeof type === "string");
-        console.assert(object instanceof WebInspector.RemoteObject);
+        console.assert(objects.every(function(x) { return x instanceof WebInspector.RemoteObject; }));
 
         if (type in WebInspector.ScopeChainNode.Type)
             type = WebInspector.ScopeChainNode.Type[type];
 
         this._type = type || null;
-        this._object = object || null;
+        this._objects = objects || [];
     }
 
     // Public
@@ -46,9 +46,9 @@ WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
         return this._type;
     }
 
-    get object()
+    get objects()
     {
-        return this._object;
+        return this._objects;
     }
 };
 

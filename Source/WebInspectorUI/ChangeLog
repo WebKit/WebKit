@@ -1,3 +1,35 @@
+2016-01-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Scope chain shows too many scopes for functions (`let` and `var` in the same function are two scopes)
+        https://bugs.webkit.org/show_bug.cgi?id=152349
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New "Closure Variables (%s)" string for including the function name alongside
+        the closure scope section.
+
+        * UserInterface/Models/ScopeChainNode.js:
+        (WebInspector.ScopeChainNode):
+        (WebInspector.ScopeChainNode.prototype.get objects):
+        (WebInspector.ScopeChainNode.prototype.get object): Deleted.
+        Allow a ScopeChainNode to hold onto multiple RemoteObjects (for multiple JSScopes).
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._scopeChainNodeFromPayload):
+        Simplify the legacy case and convert "Local" to "Closure". The UI will now
+        determine and display "Local" where appropriate in a backwards compatible way.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateCallFramesSection):
+        Associate ScopeChain nodes with CallFrame frames so that we can better combine
+        variable sections and better label closure sections.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.css:
+        (.scope-chain .details-section > .content > .group > .row.properties:not(.empty)):
+        (.scope-chain .details-section > .content > .group > .row.properties:not(.empty):last-child):
+        Styles for two object trees property sections next to eachother.
+
 2016-01-06  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add basic Animation section to Visual Sidebar

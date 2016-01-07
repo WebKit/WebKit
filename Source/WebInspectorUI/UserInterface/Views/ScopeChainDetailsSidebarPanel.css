@@ -46,3 +46,15 @@
     width: calc(100% - 2px);
     overflow: hidden;
 }
+
+.scope-chain .details-section > .content > .group > .row.properties:not(.empty) {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.scope-chain .details-section > .content > .group > .row.properties:not(.empty):last-child {
+    position: relative;
+    top: -2px;
+
+    padding-bottom: 2px;
+}

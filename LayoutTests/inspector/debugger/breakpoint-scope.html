@@ -57,7 +57,7 @@ function test()
         for (var scope of scopeChain) {
             scopeTypes.push(scope.type);
             if (scope.type !== WebInspector.ScopeChainNode.Type.Global) {
-                scope.object.getAllPropertyDescriptors(function(properties) {
+                scope.objects[0].getAllPropertyDescriptors(function(properties) {
                     InspectorTest.log(scopeTypes[scopeTypeIndex++] + " properties:");
                     for (var propertyDescriptor of properties)
                         InspectorTest.log("    " + propertyDescriptor.name);
