@@ -176,7 +176,6 @@ fast/mediastream/RTCPeerConnection-remoteDescription.html
 fast/mediastream/RTCPeerConnection-stats.html
 fast/mediastream/RTCPeerConnection-statsSelector.html
 fast/mediastream/RTCPeerConnection-stable.html
-fast/mediastream/RTCPeerConnection-state.html
 fast/mediastream/RTCPeerConnection.html
 
 # Asserts in debug.
