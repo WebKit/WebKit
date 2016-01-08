@@ -30,12 +30,10 @@
 
 #include "LLVMAPI.h"
 #include "Options.h"
-#include <pthread.h>
+#include <mutex>
 #include <wtf/DataLog.h>
 
 namespace JSC {
-
-static pthread_once_t initializeLLVMOnceKey = PTHREAD_ONCE_INIT;
 
 static void initializeLLVMImpl()
 {
@@ -67,7 +65,9 @@ static void initializeLLVMImpl()
 
 bool initializeLLVM()
 {
-    pthread_once(&initializeLLVMOnceKey, initializeLLVMImpl);
+    static std::once_flag initializeLLVMOnceKey;
+
+    std::call_once(initializeLLVMOnceKey, initializeLLVMImpl);
     return !!llvm;
 }
 

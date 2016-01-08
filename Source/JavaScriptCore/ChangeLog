@@ -1,3 +1,16 @@
+2016-01-08  Per Arne Vollan  <peavo@outlook.com>
+
+        [JSC] Use std::call_once instead of pthread_once when initializing LLVM.
+        https://bugs.webkit.org/show_bug.cgi?id=152893
+
+        Reviewed by Mark Lam.
+
+        Use std::call_once since pthreads is not present on all platforms.
+
+        * llvm/InitializeLLVM.cpp:
+        (JSC::initializeLLVMImpl):
+        (JSC::initializeLLVM):
+
 2016-01-08  Mark Lam  <mark.lam@apple.com>
 
         Rename StringFromCharCode to StringFromSingleCharCode.
