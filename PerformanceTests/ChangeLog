@@ -1,3 +1,39 @@
+2016-01-03  Jon Lee  <jonlee@apple.com>
+
+        Update benchmark test suite
+        https://bugs.webkit.org/show_bug.cgi?id=152679
+
+        Reviewed by Simon Fraser.
+
+        Move algorithm.js and sampler.js to tests/ and benchmark-runner.js to runner/.
+
+        Needed by both harnesses.
+        * Animometer/resources/runner/benchmark-runner.js: Renamed from PerformanceTests/Animometer/resources/debug-runner/benchmark-runner.js.
+        * Animometer/developer.html:
+        * Animometer/index.html:
+
+        Needed only by the tests. Move to tests/. Statistics, in sampler.js, is used by ResultsDashboard, so move that
+        into extensions.js.
+        * Animometer/resources/extensions.js:
+        * Animometer/tests/resources/algorithm.js: Renamed from PerformanceTests/Animometer/resources/algorithm.js.
+        * Animometer/tests/resources/sampler.js: Renamed from PerformanceTests/Animometer/resources/sampler.js.
+        * Animometer/tests/bouncing-particles/bouncing-canvas-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-shapes.html:
+        * Animometer/tests/bouncing-particles/bouncing-svg-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-svg-shapes.html:
+        * Animometer/tests/master/canvas-stage.html:
+        * Animometer/tests/misc/canvas-electrons.html:
+        * Animometer/tests/misc/canvas-stars.html:
+        * Animometer/tests/misc/compositing-transforms.html:
+        * Animometer/tests/simple/simple-canvas-paths.html:
+        * Animometer/tests/template/template-canvas.html:
+        * Animometer/tests/template/template-css.html:
+        * Animometer/tests/template/template-svg.html:
+        * Animometer/tests/text/layering-text.html:
+        * Animometer/tests/text/text-boxes.html:
+
 2016-01-07  Jon Lee  <jonlee@apple.com>
 
         Update benchmark test suite

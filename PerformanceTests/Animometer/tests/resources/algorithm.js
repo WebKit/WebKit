@@ -23,19 +23,19 @@ Heap.prototype =
     {
         return i > 0 ? Math.floor((i - 1) / 2) : -1;
     },
-    
+
     _leftIndex: function(i)
     {
         var leftIndex = i * 2 + 1;
         return leftIndex < this._size ? leftIndex : -1;
     },
-    
+
     _rightIndex: function(i)
     {
         var rightIndex = i * 2 + 2;
         return rightIndex < this._size ? rightIndex : -1;
     },
-    
+
     // Return the child index that may violate the heap property at index i.
     _childIndex: function(i)
     {
@@ -44,20 +44,20 @@ Heap.prototype =
 
         if (left != -1 && right != -1)
             return this._compare(this._values[left], this._values[right]) > 0 ? left : right;
-        
+
         return left != -1 ? left : right;
     },
-    
+
     init: function()
     {
         this._size = 0;
     },
-    
+
     top: function()
     {
         return this._size ? this._values[0] : NaN;
     },
-    
+
     push: function(value)
     {
         if (this._size == this._maxSize) {
@@ -75,11 +75,11 @@ Heap.prototype =
     {
         if (!this._size)
             return NaN;
-        
+
         this._values[0] = this._values[--this._size];
         this._sink(0);
     },
-    
+
     _bubble: function(i)
     {
         // Fix the heap property at index i given that parent is the only node that
@@ -87,11 +87,11 @@ Heap.prototype =
         for (var pi = this._parentIndex(i); pi != -1; i = pi, pi = this._parentIndex(pi)) {
             if (this._compare(this._values[pi], this._values[i]) > 0)
                 break;
-                
+
             this._values.swap(pi, i);
         }
     },
-    
+
     _sink: function(i)
     {
         // Fix the heap property at index i given that each of the left and the right
@@ -99,11 +99,11 @@ Heap.prototype =
         for (var ci = this._childIndex(i); ci != -1; i = ci, ci = this._childIndex(ci)) {
             if (this._compare(this._values[i], this._values[ci]) > 0)
                 break;
-            
+
             this._values.swap(ci, i);
         }
     },
-    
+
     str: function()
     {
         var out = "Heap[" + this._size + "] = [";
@@ -114,7 +114,7 @@ Heap.prototype =
         }
         return out + "]";
     },
-    
+
     values: function(size) {
         // Return the last "size" heap elements values.
         var values = this._values.slice(0, this._size);
@@ -127,7 +127,7 @@ var Algorithm = {
     {
         return new Heap(maxSize, function(a, b) { return b - a; });
     },
-    
+
     createMaxHeap: function(maxSize) {
         return new Heap(maxSize, function(a, b) { return a - b; });
     }
