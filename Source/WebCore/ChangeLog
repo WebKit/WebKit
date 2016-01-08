@@ -1,3 +1,15 @@
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: imported/w3c/indexeddb/keyorder.htm times out.
+        https://bugs.webkit.org/show_bug.cgi?id=152929
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Existing test now runs in the test harness).
+
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::setGetResult):
+
 2016-01-08  Simon Fraser  <simon.fraser@apple.com>
 
         Consider painting to be disabled on a GraphicsContext with no platform data, and make updatingControlTints() immutable state

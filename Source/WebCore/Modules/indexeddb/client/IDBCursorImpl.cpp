@@ -329,7 +329,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* co
 
 void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 {
-    LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData().loggingString().utf8().data());
+    LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData().loggingString().substring(0, 100).utf8().data());
 
     auto* context = request.scriptExecutionContext();
     if (!context)

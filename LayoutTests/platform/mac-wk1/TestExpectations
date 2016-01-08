@@ -68,7 +68,6 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 
 # W3C IDB test timeouts
 imported/w3c/indexeddb/interfaces.html [ Skip ]
-imported/w3c/indexeddb/keyorder.htm [ Skip ]
 
 # W3C IDB tests where the test is wrong (the spec, other browsers, and WebKit all agree)
 # Covered by https://github.com/w3c/web-platform-tests/issues/2456
