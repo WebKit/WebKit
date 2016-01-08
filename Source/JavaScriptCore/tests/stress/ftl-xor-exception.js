@@ -1,3 +1,5 @@
+//@ skip
+
 function foo(a, b) {
     try {
         return a ^ b;
