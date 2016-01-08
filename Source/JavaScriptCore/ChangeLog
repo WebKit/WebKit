@@ -1,3 +1,42 @@
+2016-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Rename StringFromCharCode to StringFromSingleCharCode.
+        https://bugs.webkit.org/show_bug.cgi?id=152897
+
+        Reviewed by Daniel Bates.
+
+        StringFromSingleCharCode is a better name because the intrinsic it represents
+        only applies when we are converting from a single char code.  This is purely
+        a refactoring patch.  There is no semantic change.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileFromCharCode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCode):
+        (JSC::stringFromSingleCharCode):
+        * runtime/StringConstructor.h:
+
 2016-01-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         [mips] Fixed unused parameter warnings

@@ -530,7 +530,7 @@ private:
             break;
         }
         
-        case StringFromCharCode: {
+        case StringFromSingleCharCode: {
             changed |= setPrediction(SpecString);
             changed |= node->child1()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsInt);            
             break;

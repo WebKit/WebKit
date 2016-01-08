@@ -1306,11 +1306,11 @@ double JIT_OPERATION operationRandom(JSGlobalObject* globalObject)
 }
 #endif
 
-JSCell* JIT_OPERATION operationStringFromCharCode(ExecState* exec, int32_t op1)
+JSCell* JIT_OPERATION operationStringFromSingleCharCode(ExecState* exec, int32_t op1)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    return JSC::stringFromCharCode(exec, op1);
+    return JSC::stringFromSingleCharCode(exec, op1);
 }
 
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue encodedValue)

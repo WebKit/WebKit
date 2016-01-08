@@ -2490,7 +2490,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case StringFromCharCode: {
+    case StringFromSingleCharCode: {
         compileFromCharCode(node);
         break;
     }

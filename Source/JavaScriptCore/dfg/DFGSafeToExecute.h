@@ -283,7 +283,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CountExecution:
     case ForceOSRExit:
     case CheckWatchdogTimer:
-    case StringFromCharCode:
+    case StringFromSingleCharCode:
     case NewTypedArray:
     case Unreachable:
     case ExtractOSREntryLocal:
