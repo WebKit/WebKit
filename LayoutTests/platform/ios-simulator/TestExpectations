@@ -2857,3 +2857,5 @@ webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.htm
 
 webkit.org/b/152282 css3/filters/composited-during-animation-layertree.html [ Failure ]
 webkit.org/b/152282 css3/filters/composited-during-transition-layertree.html [ Failure ]
+
+webkit.org/b/152448 js/intl-collator.html [ Failure ]
