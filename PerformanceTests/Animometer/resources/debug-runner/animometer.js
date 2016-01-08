@@ -76,7 +76,9 @@ window.optionsManager =
             else if (type == "radio")
                 options[name] = formElements[name].value;
 
-            localStorage.setItem(name, options[name]);
+            try {
+                localStorage.setItem(name, options[name]);
+            } catch (e) {}
         }
 
         return options;
@@ -278,7 +280,9 @@ window.suitesManager =
                 }
 
                 var value = { checked: testCheckbox.checked, complexity: testEdit.value };
-                localStorage.setItem(this._localStorageNameForTest(suite.name, test.name), JSON.stringify(value));
+                try {
+                    localStorage.setItem(this._localStorageNameForTest(suite.name, test.name), JSON.stringify(value));
+                } catch (e) {}
             }, this);
 
             if (tests.length)

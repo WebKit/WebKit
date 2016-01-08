@@ -350,17 +350,24 @@ Benchmark.prototype =
 
     run: function()
     {
-        this.start();
+        return this.waitUntilReady().then(function() {
+            this.start();
+            var promise = new SimplePromise;
+            var resolveWhenFinished = function() {
+                if (typeof this._state != "undefined" && (this._state.currentStage() == BenchmarkState.stages.FINISHED))
+                    return promise.resolve(this._sampler);
+                setTimeout(resolveWhenFinished, 50);
+            }.bind(this);
 
+            resolveWhenFinished();
+            return promise;
+        }.bind(this));
+    },
+
+    waitUntilReady: function()
+    {
         var promise = new SimplePromise;
-        var self = this;
-        function resolveWhenFinished() {
-            if (typeof self._state != "undefined" && (self._state.currentStage() == BenchmarkState.stages.FINISHED))
-                return promise.resolve(self._sampler);
-            setTimeout(resolveWhenFinished.bind(self), 50);
-        }
-
-        resolveWhenFinished();
+        promise.resolve();
         return promise;
     },
 

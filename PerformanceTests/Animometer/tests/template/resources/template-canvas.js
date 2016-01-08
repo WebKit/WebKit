@@ -72,8 +72,23 @@ TemplateCanvasBenchmark = Utilities.createSubclass(Benchmark,
     function(options)
     {
         Benchmark.call(this, new TemplateCanvasStage(), options);
+    }, {
+
+    // Override this function if the benchmark needs to wait for resources to be
+    // loaded.
+    //
+    // Default implementation returns a resolved promise, so that the benchmark
+    // benchmark starts right away. Here's an example where we're waiting 5
+    // seconds before starting the benchmark.
+    waitUntilReady: function()
+    {
+        var promise = new SimplePromise;
+        window.setTimeout(function() {
+            promise.resolve();
+        }, 5000);
+        return promise;
     }
-);
+});
 
 window.benchmarkClass = TemplateCanvasBenchmark;
 

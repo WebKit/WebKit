@@ -1,3 +1,23 @@
+2016-01-07  Jon Lee  <jonlee@apple.com>
+
+        Add a waitUntilReady() step
+        https://bugs.webkit.org/show_bug.cgi?id=152862
+
+        Reviewed by Simon Fraser.
+
+        Add a waitUntilReady() callback that lets the benchmark complete
+        its setup before running the benchmark.
+
+        * Animometer/tests/resources/main.js:
+        (Benchmark.prototype.run): First call waitUntilReady, which returns
+        a promise. When the promise resolves, run everything that was in this
+        function.
+        (Benchmark.prototype.waitUntilReady): Default implementation returns
+        a resolved promise.
+        (Benchmark.prototype.resolveWhenFinished): Deleted.
+        * Animometer/tests/template/resources/template-canvas.js:
+        (new.TemplateCanvasStage.waitUntilReady): Example on how to override.
+
 2016-01-03  Jon Lee  <jonlee@apple.com>
 
         Update data reporting and analysis
