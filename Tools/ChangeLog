@@ -1,3 +1,25 @@
+2016-01-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        prepare-ChangeLog should include radar number
+        https://bugs.webkit.org/show_bug.cgi?id=152839
+        <rdar://problem/24093563>
+
+        Reviewed by Daniel Bates.
+
+        When running `prepare-ChangeLog -b ###`, check for a bugzilla comment that
+        starts with a "<rdar://problem/####>" URL. If found, include that radar URL
+        in the ChangeLog description after the bug URL.
+
+        * Scripts/prepare-ChangeLog:
+        (main): Update signatures.
+        (fetchBugXMLData): XML Data is now used for multiple reasons. Extract this to just get the data.
+        (fetchBugDescriptionFromBugXMLData): Search data for <short_desc>.
+        (fetchRadarURLFromBugXMLData): Search comment text for radar URL.
+        (generateNewChangeLogs): Include radar URL if we found one.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/fetchRadarURLFromBugXMLData.pl: Added.
+        Tests for the radar URL extraction.
+
 2016-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         testRunner.runUIScript crashes while running multiple tests in a row that invokes the same UIScript

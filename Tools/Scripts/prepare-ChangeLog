@@ -76,13 +76,15 @@ sub diffFromToString($$$);
 sub diffHeaderFormat();
 sub extractLineRangeAfterChange($);
 sub extractLineRangeBeforeChange($);
-sub fetchBugDescriptionFromURL($$);
+sub fetchBugXMLData($$);
+sub fetchBugDescriptionFromBugXMLData($$$);
+sub fetchRadarURLFromBugXMLData($$);
 sub findChangeLogs($$);
 sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$);
 sub generateFunctionLists($$$$$);
 sub generateFunctionListsByRanges($$$$);
-sub generateNewChangeLogs($$$$$$$$$$$$$);
+sub generateNewChangeLogs($$$$$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_cpp($$);
@@ -129,6 +131,7 @@ exit(main());
 sub main()
 {
     my $bugDescription;
+    my $bugRadarURL;
     my $bugNumber;
     my $name;
     my $emailAddress;
@@ -221,7 +224,9 @@ sub main()
     }
 
     if ($bugNumber && !$bugDescription) {
-        $bugDescription = fetchBugDescriptionFromURL($bugURL, $bugNumber);
+        my $bugXMLData = fetchBugXMLData($bugURL, $bugNumber);
+        $bugDescription = fetchBugDescriptionFromBugXMLData($bugURL, $bugNumber, $bugXMLData);
+        $bugRadarURL = fetchRadarURLFromBugXMLData($bugNumber, $bugXMLData);
     }
 
     my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists, $writeChangeLogs);
@@ -233,7 +238,7 @@ sub main()
         resolveConflictedChangeLogs($changeLogs);
     }
 
-    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters);
+    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters);
 
     if ($writeChangeLogs) {
         print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -418,7 +423,7 @@ sub changeLogEmailAddressFromArgs($$)
     return $emailAddressFromArgs || changeLogEmailAddress();
 }
 
-sub fetchBugDescriptionFromURL($$)
+sub fetchBugXMLData($$)
 {
     my ($bugURL, $bugNumber) = @_;
 
@@ -426,23 +431,44 @@ sub fetchBugDescriptionFromURL($$)
     # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
     # Pass --insecure because some cygwin installs have no certs we don't
     # care about validating that bugs.webkit.org is who it says it is here.
-    my $descriptionLine = `curl --insecure --silent "$bugXMLURL" | grep short_desc`;
-    if ($descriptionLine !~ /<short_desc>(.*)<\/short_desc>/) {
+    my $xmlData = `curl --insecure --silent "$bugXMLURL"`;
+    if ($xmlData !~ /<\?xml/) {
         # Maybe the reason the above did not work is because the curl that is installed doesn't
         # support ssl at all.
         if (`curl --version | grep ^Protocols` !~ /\bhttps\b/) {
             print STDERR "  Could not get description for bug $bugNumber.\n";
             print STDERR "  It looks like your version of curl does not support ssl.\n";
             print STDERR "  If you are using macports, this can be fixed with sudo port install curl +ssl.\n";
-        } else {
-            print STDERR "  Bug $bugNumber has no bug description. Maybe you set wrong bug ID?\n";
-            print STDERR "  The bug URL: $bugXMLURL\n";
         }
         exit 1;
     }
+    return $xmlData;
+}
+
+sub fetchBugDescriptionFromBugXMLData($$$)
+{
+    my ($bugURL, $bugNumber, $bugXMLData) = @_;
+
+    if ($bugXMLData !~ /<short_desc>(.*)<\/short_desc>/) {
+        print STDERR "  Bug $bugNumber has no bug description. Maybe you set wrong bug ID?\n";
+        print STDERR "  The bug URL: $bugURL\n";
+        exit 1;
+    }
+
     my $bugDescription = decodeEntities($1);
     print STDERR "  Description from bug $bugNumber:\n    \"$bugDescription\".\n";
     return $bugDescription;
+}
+
+sub fetchRadarURLFromBugXMLData($$)
+{
+    my ($bugNumber, $bugXMLData) = @_;
+
+    return "" if $bugXMLData !~ m|<thetext>\s*(&lt;rdar://problem/\d+&gt;)|;
+
+    my $bugRadarURL = decodeEntities($1);
+    print STDERR "  Radar URL from bug $bugNumber:\n    \"$bugRadarURL\".\n";
+    return $bugRadarURL;
 }
 
 sub findChangeLogs($$)
@@ -556,9 +582,9 @@ sub resolveConflictedChangeLogs($)
     close RESOLVE;
 }
 
-sub generateNewChangeLogs($$$$$$$$$$$$$)
+sub generateNewChangeLogs($$$$$$$$$$$$$$)
 {
-    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters) = @_;
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters) = @_;
 
     # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
     foreach my $prefix (@$prefixes) {
@@ -595,6 +621,7 @@ sub generateNewChangeLogs($$$$$$$$$$$$$)
         $bugDescription = "Need a short description (OOPS!).\n        Need the bug URL (OOPS!)." unless $bugDescription;
         print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
         print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
+        print CHANGE_LOG normalizeLineEndings("        $bugRadarURL\n", $endl) if $bugRadarURL;
         print CHANGE_LOG normalizeLineEndings("\n", $endl);
 
         print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
