@@ -1,5 +1,28 @@
 2016-01-07  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 binary snippets should do exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=152852
+
+        Reviewed by Saam Barati.
+
+        This reduces the number of JSC test failures to 110.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitRightShiftSnippet):
+        * tests/stress/ftl-shr-exception.js: Added.
+        (foo):
+        (result.foo.valueOf):
+        * tests/stress/ftl-sub-exception.js: Added.
+        (foo):
+        (result.foo.valueOf):
+        * tests/stress/ftl-xor-exception.js: Added.
+        (foo):
+        (result.foo.valueOf):
+
+2016-01-07  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, skipping this test. Looks like LLVM can't handle this one, either.
 
         * tests/stress/ftl-call-varargs-bad-args-exception-interesting-live-state.js:

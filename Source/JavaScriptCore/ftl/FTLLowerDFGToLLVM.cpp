@@ -7549,9 +7549,6 @@ private:
     {
         Node* node = m_node;
         
-        // FIXME: Make this do exceptions.
-        // https://bugs.webkit.org/show_bug.cgi?id=151686
-            
         LValue left = lowJSValue(node->child1());
         LValue right = lowJSValue(node->child2());
 
@@ -7563,6 +7560,8 @@ private:
         patchpoint->appendSomeRegister(right);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->numFPScratchRegisters = 2;
         if (scratchFPRUsage == NeedScratchFPR)
@@ -7572,6 +7571,9 @@ private:
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                Box<CCallHelpers::JumpList> exceptions =
+                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
                     
                 auto generator = Box<BinaryArithOpGenerator>::create(
                     leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
@@ -7587,14 +7589,11 @@ private:
                     [=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
                             
-                        // FIXME: Make this do something.
-                        CCallHelpers::JumpList exceptions;
-
                         generator->slowPathJumpList().link(&jit);
                         callOperation(
                             *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                            &exceptions, slowPathFunction, params[0].gpr(), params[1].gpr(),
-                            params[2].gpr());
+                            exceptions.get(), slowPathFunction, params[0].gpr(),
+                            params[1].gpr(), params[2].gpr());
                         jit.jump().linkTo(done, &jit);
                     });
             });
@@ -7621,12 +7620,17 @@ private:
         patchpoint->appendSomeRegister(right);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
+                    
+                Box<CCallHelpers::JumpList> exceptions =
+                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
                     
                 auto generator = Box<BinaryBitOpGenerator>::create(
                     leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
@@ -7640,14 +7644,11 @@ private:
                     [=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
                             
-                        // FIXME: Make this do something.
-                        CCallHelpers::JumpList exceptions;
-
                         generator->slowPathJumpList().link(&jit);
                         callOperation(
                             *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                            &exceptions, slowPathFunction, params[0].gpr(), params[1].gpr(),
-                            params[2].gpr());
+                            exceptions.get(), slowPathFunction, params[0].gpr(),
+                            params[1].gpr(), params[2].gpr());
                         jit.jump().linkTo(done, &jit);
                     });
             });
@@ -7673,6 +7674,8 @@ private:
         patchpoint->appendSomeRegister(right);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(patchpoint);
         patchpoint->numGPScratchRegisters = 1;
         patchpoint->numFPScratchRegisters = 1;
         patchpoint->clobber(RegisterSet::macroScratchRegisters());
@@ -7680,6 +7683,9 @@ private:
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
+                    
+                Box<CCallHelpers::JumpList> exceptions =
+                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
                     
                 auto generator = Box<JITRightShiftGenerator>::create(
                     leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
@@ -7694,9 +7700,6 @@ private:
                     [=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
                             
-                        // FIXME: Make this do something.
-                        CCallHelpers::JumpList exceptions;
-
                         generator->slowPathJumpList().link(&jit);
 
                         J_JITOperation_EJJ slowPathFunction =
@@ -7705,8 +7708,8 @@ private:
                         
                         callOperation(
                             *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                            &exceptions, slowPathFunction, params[0].gpr(), params[1].gpr(),
-                            params[2].gpr());
+                            exceptions.get(), slowPathFunction, params[0].gpr(),
+                            params[1].gpr(), params[2].gpr());
                         jit.jump().linkTo(done, &jit);
                     });
             });
