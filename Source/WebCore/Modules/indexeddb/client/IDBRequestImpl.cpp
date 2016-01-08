@@ -276,10 +276,8 @@ bool IDBRequest::dispatchEvent(Event& event)
 
     if (&event == m_openDatabaseSuccessEvent)
         m_openDatabaseSuccessEvent = nullptr;
-    else if (m_transaction) {
-        if (!m_transaction->isFinished())
+    else if (m_transaction && !m_transaction->isFinished()) {
             targets.append(m_transaction);
-        if (!m_transaction->database().isClosingOrClosed())
             targets.append(m_transaction->db());
     }
 

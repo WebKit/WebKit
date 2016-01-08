@@ -74,8 +74,6 @@ imported/w3c/indexeddb/interfaces.html [ Skip ]
 imported/w3c/indexeddb/keyorder.htm [ Skip ]
 
 # W3C IDB tests - Legacy IDB fails, Modern IDB fails differently
-imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order.htm [ Failure ]
-imported/w3c/indexeddb/idbobjectstore_createIndex7-event_order.htm [ Failure ]
 imported/w3c/indexeddb/idbversionchangeevent.htm [ Failure ]
 imported/w3c/indexeddb/keypath.htm [ Failure ]
 

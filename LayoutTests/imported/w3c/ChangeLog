@@ -1,3 +1,13 @@
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order.htm fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152891
+
+        Reviewed by Alex Christensen.
+
+        * indexeddb/idbobjectstore_createIndex6-event_order-expected.txt:
+        * indexeddb/idbobjectstore_createIndex7-event_order-expected.txt:
+
 2016-01-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add expectations for W3C tests that were missing them.

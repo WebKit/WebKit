@@ -1,3 +1,16 @@
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order.htm fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152891
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least two failing tests now pass).
+
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::dispatchEvent): Whenever we add the IDBTransaction as an event target,
+          also add the IDBDatabase.
+
 2016-01-07  Antti Koivisto  <antti@apple.com>
 
         Enable selector filtering for shadow trees
