@@ -1,3 +1,24 @@
+2016-01-08  Anders Carlsson  <andersca@apple.com>
+
+        InputType::findClosestTickMarkValue should return an Optional<Decimal>
+        https://bugs.webkit.org/show_bug.cgi?id=152931
+
+        Reviewed by Andreas Kling.
+
+        This will make it possible to get rid of the notion of infinity from Decimal, allowing for more code simplification.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::findClosestTickMarkValue):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::findClosestTickMarkValue):
+        * html/InputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::findClosestTickMarkValue):
+        * html/RangeInputType.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+
 2016-01-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBBindingUtilities chokes on unicode strings for get/set.

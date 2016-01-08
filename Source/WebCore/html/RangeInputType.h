@@ -72,7 +72,7 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged() override;
     void updateTickMarkValues();
-    virtual Decimal findClosestTickMarkValue(const Decimal&) override;
+    virtual Optional<Decimal> findClosestTickMarkValue(const Decimal&) override;
 
     bool m_tickMarkValuesDirty;
     Vector<Decimal> m_tickMarkValues;

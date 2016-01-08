@@ -382,11 +382,11 @@ void RangeInputType::updateTickMarkValues()
     std::sort(m_tickMarkValues.begin(), m_tickMarkValues.end());
 }
 
-Decimal RangeInputType::findClosestTickMarkValue(const Decimal& value)
+Optional<Decimal> RangeInputType::findClosestTickMarkValue(const Decimal& value)
 {
     updateTickMarkValues();
     if (!m_tickMarkValues.size())
-        return Decimal::nan();
+        return Nullopt;
 
     size_t left = 0;
     size_t right = m_tickMarkValues.size();
@@ -408,10 +408,18 @@ Decimal RangeInputType::findClosestTickMarkValue(const Decimal& value)
         else
             right = middle;
     }
-    const Decimal closestLeft = middle ? m_tickMarkValues[middle - 1] : Decimal::infinity(Decimal::Negative);
-    const Decimal closestRight = middle != m_tickMarkValues.size() ? m_tickMarkValues[middle] : Decimal::infinity(Decimal::Positive);
-    if (closestRight - value < value - closestLeft)
+
+    Optional<Decimal> closestLeft = middle ? makeOptional(m_tickMarkValues[middle - 1]) : Nullopt;
+    Optional<Decimal> closestRight = middle != m_tickMarkValues.size() ? makeOptional(m_tickMarkValues[middle]) : Nullopt;
+
+    if (!closestLeft)
         return closestRight;
+    if (!closestRight)
+        return closestLeft;
+
+    if (*closestRight - value < value - *closestLeft)
+        return closestRight;
+
     return closestLeft;
 }
 #endif
