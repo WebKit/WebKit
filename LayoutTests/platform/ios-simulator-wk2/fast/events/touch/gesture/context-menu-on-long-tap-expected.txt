@@ -1,5 +1,0 @@
-gestureLongTap not implemented by this platform
-This test checks that the context menu is shown on long tap gesture.
-
-Testing
-FAIL

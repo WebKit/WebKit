@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: line 53: ReferenceError: Can't find variable: debug
-This test checks that on a long press or a two finger tap gesture in a text area, the cursor is first set to the right position (this is done by sending a right mouse button down event just before long press).
-
-
-Testing
-FAIL
