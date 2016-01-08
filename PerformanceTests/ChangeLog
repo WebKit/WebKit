@@ -1,3 +1,30 @@
+2016-01-07  Jon Lee  <jonlee@apple.com>
+
+        Update benchmark test suite
+        https://bugs.webkit.org/show_bug.cgi?id=152679
+
+        Reviewed by Simon Fraser.
+
+        Add a new test. The test has a rotating background
+        gradient, and does a better job physically simulating
+        particles.
+
+        * Animometer/resources/extensions.js: Teach Point to take constants as well as other Points.
+        (Point.prototype.length): Added.
+        (Point.prototype.normalize): Added.
+        * Animometer/resources/runner/tests.js: Add the test to the master suite.
+        * Animometer/tests/master/particles.html: Added.
+        * Animometer/tests/master/resources/particles.js: Added. Parent class for different kinds of particles.
+        (Particle):
+        (Particle.prototype.reset): If the particle starts slowing down in terms of its animation,
+        reset it.
+        (Particle.prototype.animate): Bounce off the walls elastically, and include gravity.
+        (Particle.prototype.move): Subclasses should override.
+        (ParticlesStage): Stage includes a rotating gradient background.
+        * Animometer/tests/master/resources/dom-particles.js: Added. Creates a <div> and adds it to
+        the stage.
+        * Animometer/tests/resources/star.svg: Added.
+
 2016-01-03  Jon Lee  <jonlee@apple.com>
 
         Update benchmark test suite

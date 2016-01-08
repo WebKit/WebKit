@@ -92,24 +92,41 @@ Point.prototype =
 
     add: function(other)
     {
+        if(isNaN(other.x))
+            return new Point(this.x + other, this.y + other);
         return new Point(this.x + other.x, this.y + other.y);
     },
 
     subtract: function(other)
     {
+        if(isNaN(other.x))
+            return new Point(this.x - other, this.y - other);
         return new Point(this.x - other.x, this.y - other.y);
     },
 
     multiply: function(other)
     {
+        if(isNaN(other.x))
+            return new Point(this.x * other, this.y * other);
         return new Point(this.x * other.x, this.y * other.y);
     },
 
     move: function(angle, velocity, timeDelta)
     {
         return this.add(Point.pointOnCircle(angle, velocity * (timeDelta / 1000)));
+    },
+
+    length: function() {
+        return Math.sqrt( this.x * this.x + this.y * this.y );
+    },
+
+    normalize: function() {
+        var l = Math.sqrt( this.x * this.x + this.y * this.y );
+        this.x /= l;
+        this.y /= l;
+        return this;
     }
-}
+};
 
 function Insets(top, right, bottom, left)
 {
