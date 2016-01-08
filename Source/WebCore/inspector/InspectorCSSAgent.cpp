@@ -442,18 +442,22 @@ void InspectorCSSAgent::setActiveStyleSheetsForDocument(Document& document, Vect
 
     for (auto* cssStyleSheet : removedStyleSheets) {
         previouslyKnownActiveStyleSheets.remove(cssStyleSheet);
+
         RefPtr<InspectorStyleSheet> inspectorStyleSheet = m_cssStyleSheetToInspectorStyleSheet.get(cssStyleSheet);
         if (m_idToInspectorStyleSheet.contains(inspectorStyleSheet->id())) {
             String id = unbindStyleSheet(inspectorStyleSheet.get());
-            m_frontendDispatcher->styleSheetRemoved(id);
+            if (m_frontendDispatcher)
+                m_frontendDispatcher->styleSheetRemoved(id);
         }
     }
 
     for (auto* cssStyleSheet : addedStyleSheets) {
         previouslyKnownActiveStyleSheets.add(cssStyleSheet);
+
         if (!m_cssStyleSheetToInspectorStyleSheet.contains(cssStyleSheet)) {
             InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(cssStyleSheet);
-            m_frontendDispatcher->styleSheetAdded(inspectorStyleSheet->buildObjectForStyleSheetInfo());
+            if (m_frontendDispatcher)
+                m_frontendDispatcher->styleSheetAdded(inspectorStyleSheet->buildObjectForStyleSheetInfo());
         }
     }
 }
