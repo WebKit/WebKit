@@ -192,6 +192,7 @@ public:
     void dumpBytecode(
         PrintStream&, unsigned bytecodeOffset,
         const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
+    void dumpExceptionHandlers(PrintStream&);
     void printStructures(PrintStream&, const Instruction*);
     void printStructure(PrintStream&, const char* name, const Instruction*, int operand);
 

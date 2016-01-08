@@ -639,16 +639,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         } while (i < count);
     }
 
-    if (m_rareData && !m_rareData->m_exceptionHandlers.isEmpty()) {
-        out.printf("\nException Handlers:\n");
-        unsigned i = 0;
-        do {
-            HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
-            out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] } %s\n",
-                i + 1, handler.start, handler.end, handler.target, handler.typeName());
-            ++i;
-        } while (i < m_rareData->m_exceptionHandlers.size());
-    }
+    dumpExceptionHandlers(out);
     
     if (m_rareData && !m_rareData->m_switchJumpTables.isEmpty()) {
         out.printf("Switch Jump Tables:\n");
@@ -693,6 +684,20 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     }
 
     out.printf("\n");
+}
+
+void CodeBlock::dumpExceptionHandlers(PrintStream& out)
+{
+    if (m_rareData && !m_rareData->m_exceptionHandlers.isEmpty()) {
+        out.printf("\nException Handlers:\n");
+        unsigned i = 0;
+        do {
+            HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
+            out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] } %s\n",
+                i + 1, handler.start, handler.end, handler.target, handler.typeName());
+            ++i;
+        } while (i < m_rareData->m_exceptionHandlers.size());
+    }
 }
 
 void CodeBlock::beginDumpProfiling(PrintStream& out, bool& hasPrintedProfiling)

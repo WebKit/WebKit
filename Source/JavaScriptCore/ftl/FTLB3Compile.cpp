@@ -109,6 +109,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
             materialization->accountForLocalsOffset(localsOffset);
     }
 
+    // We will add exception handlers while generating.
+    codeBlock->clearExceptionHandlers();
+
     CCallHelpers jit(&vm, codeBlock);
     B3::generate(*state.proc, jit);
 

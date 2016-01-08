@@ -1,5 +1,29 @@
 2016-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 compile() doesn't clear exception handlers before we add FTL-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=152922
+
+        Reviewed by Saam Barati.
+
+        FTL B3 was generating a handler table that first contained the old baseline handlers keyed
+        by baseline's bytecode indices and then the FTL handlers keyed by FTL callsite index. That's
+        wrong, since the FTL code block should not contain any baseline handlers. The fix is to
+        clear the handlers before generation, sort of like FTL LLVM does.
+
+        Also added some stuff to make it easier to inspect the handler table.
+
+        This reduces the numbe rof failures from 25 to 13.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::dumpExceptionHandlers):
+        (JSC::CodeBlock::beginDumpProfiling):
+        * bytecode/CodeBlock.h:
+        * ftl/FTLB3Compile.cpp:
+        (JSC::FTL::compile):
+
+2016-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         B3 incorrectly turns NotEqual(bool, 1) into Equal(bool, 1) instead of Equal(bool, 0)
         https://bugs.webkit.org/show_bug.cgi?id=152916
 
