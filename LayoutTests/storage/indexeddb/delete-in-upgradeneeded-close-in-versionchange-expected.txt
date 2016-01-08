@@ -27,14 +27,9 @@ sawVersionChange = true
 Closing the connection before the IDBOpenDBRequest's success fires will cause the open to fail.
 db.close()
 
-deleteBlockedCallback():
-PASS sawVersionChange is true
-sawDeleteBlocked = true
-
 deleteSuccessCallback():
 PASS sawVersionChange is true
-FIXME: Blocked events shouldn't fire if connections close in versionchange handler. http://crbug.com/100123
-FAIL sawDeleteBlocked should be false. Was true.
+PASS sawDeleteBlocked is false
 PASS sawUpgradeNeeded is true
 PASS successfullyParsed is true
 

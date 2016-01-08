@@ -42,7 +42,6 @@ function onOpen(evt)
     request.onsuccess = function h2OpenSuccess(evt) {
         preamble(evt);
         shouldBeTrue("versionchangeEventFired");
-        debug("FIXME: blocked should not have fired since connection closed; http://webkit.org/b/71130");
         shouldBeFalse("blockedEventFired");
         finishJSTest();
     };

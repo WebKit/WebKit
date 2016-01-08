@@ -193,6 +193,7 @@ private:
     bool m_isOpeningBackingStore { false };
     std::unique_ptr<IDBBackingStore> m_backingStore;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
+    std::unique_ptr<IDBDatabaseInfo> m_mostRecentDeletedDatabaseInfo;
 
     HashMap<uint64_t, ErrorCallback> m_errorCallbacks;
     HashMap<uint64_t, KeyDataCallback> m_keyDataCallbacks;

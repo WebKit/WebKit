@@ -27,9 +27,6 @@ onVersionChange():
 event.target.close()
 sawVersionChangeEvent = true
 
-onBlocked():
-FIXME: Blocked event shouldn't fire. http://crbug.com/100123
-
 openAgainSuccess():
 PASS sawVersionChangeEvent is true
 PASS successfullyParsed is true

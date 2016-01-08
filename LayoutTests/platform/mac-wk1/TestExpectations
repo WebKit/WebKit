@@ -74,7 +74,6 @@ imported/w3c/indexeddb/interfaces.html [ Skip ]
 imported/w3c/indexeddb/keyorder.htm [ Skip ]
 
 # W3C IDB tests - Legacy IDB fails, Modern IDB fails differently
-imported/w3c/indexeddb/idbversionchangeevent.htm [ Failure ]
 imported/w3c/indexeddb/keypath.htm [ Failure ]
 
 # W3C IDB tests where the test is wrong (the spec, other browsers, and WebKit all agree)

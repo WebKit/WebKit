@@ -1,3 +1,22 @@
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Blocked event can fire on a delete request even after the last open connection has closed.
+        https://bugs.webkit.org/show_bug.cgi?id=152896
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Progression in many tests).
+
+        * Modules/indexeddb/client/IDBFactoryImpl.cpp:
+        (WebCore::IDBClient::IDBFactory::deleteDatabase):
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation): Allow for handling 2+ delete operations in a row.
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore): Ditto.
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient): Call "notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent"
+          after the connection is actually removed from the set of open connections.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2016-01-08  Zalan Bujtas  <zalan@apple.com>
 
         Hovering link on http://help.apple.com/appletv/#/ does not show text underline.

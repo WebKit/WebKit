@@ -124,7 +124,7 @@ RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* contex
 
 RefPtr<WebCore::IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
-    LOG(IndexedDB, "IDBFactory::deleteDatabase");
+    LOG(IndexedDB, "IDBFactory::deleteDatabase - %s", name.utf8().data());
 
     if (name.isNull()) {
         ec = TypeError;

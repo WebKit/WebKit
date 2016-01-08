@@ -22,19 +22,13 @@ PASS event.oldVersion is 1
 PASS event.newVersion is 2
 h1.close()
 
-h2OpenBlocked():
-PASS event.oldVersion is 1
-PASS event.newVersion is 2
-blockedEventFired = true
-
 h2UpgradeNeeded():
 PASS event.oldVersion is 1
 PASS event.newVersion is 2
 
 h2OpenSuccess():
 PASS versionchangeEventFired is true
-FIXME: blocked should not have fired since connection closed; http://webkit.org/b/71130
-FAIL blockedEventFired should be false. Was true.
+PASS blockedEventFired is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

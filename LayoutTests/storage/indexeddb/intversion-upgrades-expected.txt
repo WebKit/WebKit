@@ -23,9 +23,6 @@ request = indexedDB.open(dbname, 2)
 connection1VersionChangeCallback():
 connection1.close()
 
-connection2BlockedCallback():
-This should not be called: http://crbug.com/100123
-
 connection2UpgradeNeeded():
 connection2 = event.target.result
 PASS String(connection2) is "[object IDBDatabase]"

@@ -34,7 +34,6 @@ function test() {
         };
         request.onsuccess = function deleteDatabaseOnSuccess(evt) {
             preamble(evt);
-            debug("FIXME: blocked event should not fire since connection closed. http://webkit.org/b/71130");
             shouldBeFalse("blockedEventFired");
             finishJSTest();
         };

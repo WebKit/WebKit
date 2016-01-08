@@ -164,9 +164,8 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
 void UniqueIDBDatabase::performCurrentDeleteOperation()
 {
     ASSERT(isMainThread());
-    LOG(IndexedDB, "(main) UniqueIDBDatabase::performCurrentDeleteOperation");
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::performCurrentDeleteOperation - %s", m_identifier.debugString().utf8().data());
 
-    ASSERT(m_databaseInfo);
     ASSERT(m_currentOpenDBRequest);
     ASSERT(m_currentOpenDBRequest->isDeleteRequest());
 
@@ -189,8 +188,17 @@ void UniqueIDBDatabase::performCurrentDeleteOperation()
     ASSERT(m_pendingTransactions.isEmpty());
     ASSERT(m_openDatabaseConnections.isEmpty());
 
-    m_deleteBackingStoreInProgress = true;
-    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::deleteBackingStore));
+    // It's possible to have multiple delete requests queued up in a row.
+    // In that scenario only the first request will actually have to delete the database.
+    // Subsequent requests can immediately notify their completion.
+
+    if (m_databaseInfo) {
+        m_deleteBackingStoreInProgress = true;
+        m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::deleteBackingStore));
+    } else {
+        ASSERT(m_mostRecentDeletedDatabaseInfo);
+        didDeleteBackingStore();
+    }
 }
 
 void UniqueIDBDatabase::deleteBackingStore()
@@ -211,7 +219,6 @@ void UniqueIDBDatabase::didDeleteBackingStore()
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didDeleteBackingStore");
 
-    ASSERT(m_databaseInfo);
     ASSERT(m_currentOpenDBRequest);
     ASSERT(m_currentOpenDBRequest->isDeleteRequest());
     ASSERT(!hasAnyPendingCallbacks());
@@ -219,9 +226,13 @@ void UniqueIDBDatabase::didDeleteBackingStore()
     ASSERT(m_pendingTransactions.isEmpty());
     ASSERT(m_openDatabaseConnections.isEmpty());
 
-    m_currentOpenDBRequest->notifyDidDeleteDatabase(*m_databaseInfo);
+    if (m_databaseInfo)
+        m_mostRecentDeletedDatabaseInfo = WTFMove(m_databaseInfo);
+
+    ASSERT(m_mostRecentDeletedDatabaseInfo);
+    m_currentOpenDBRequest->notifyDidDeleteDatabase(*m_mostRecentDeletedDatabaseInfo);
     m_currentOpenDBRequest = nullptr;
-    m_databaseInfo = nullptr;
+
     m_deletePending = false;
     m_deleteBackingStoreInProgress = false;
 
@@ -1007,9 +1018,6 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
 
     ASSERT(m_openDatabaseConnections.contains(&connection));
 
-    if (m_currentOpenDBRequest)
-        notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connection.identifier());
-
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> pendingTransactions;
     while (!m_pendingTransactions.isEmpty()) {
         auto transaction = m_pendingTransactions.takeFirst();
@@ -1022,6 +1030,10 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
 
     RefPtr<UniqueIDBDatabaseConnection> refConnection(&connection);
     m_openDatabaseConnections.remove(&connection);
+
+    if (m_currentOpenDBRequest)
+        notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connection.identifier());
+
     if (connection.hasNonFinishedTransactions()) {
         m_closePendingDatabaseConnections.add(WTFMove(refConnection));
         return;
