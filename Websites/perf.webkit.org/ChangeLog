@@ -1,3 +1,53 @@
+2016-01-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make v3 UI analysis task page is hard to understand
+        https://bugs.webkit.org/show_bug.cgi?id=152917
+
+        Reviewed by Antti Koivisto.
+
+        Add a dark gray border around the selected block in the analysis results viewer instead of using darker
+        shades since that looks as if they were bigger regression/progression.
+
+        Explicitly show "Failed" as the label instead of omitting with "-" when all build requests in an A/B
+        testing group fails.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.cssTemplate): Tweaked the style to underline text in the hovered blocks and the
+        selected blocks and show a dark gray border around the selected blocks.
+        (AnalysisResultsViewer.TestGroupStackingBlock):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype.createStackingCell): Use this._title for title.
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._computeTestGroupStatus):
+        (AnalysisResultsViewer.TestGroupStackingBlock.prototype._valuesForRootSet): Deleted.
+
+        * public/v3/components/results-table.js:
+        (ResultsTable.prototype.render):
+        (ResultsTable.prototype._createRevisionListCells): Extracted from ResultsTable.prototype.render.
+        (ResultsTable.cssTemplate): Tweaked the style.
+        (ResultsTableRow):
+        (ResultsTableRow.prototype.constructor): Added _labelForWholeRow to store the label for the entire row.
+        This is used to show the comparison result of two root sets (e.g. A vs B).
+        (ResultsTableRow.prototype.setLabelForWholeRow): Added.
+        (ResultsTableRow.prototype.labelForWholeRow): Added.
+        (ResultsTableRow.prototype.resultContent): Extracted from buildHeading. Creates a hyperlinked bar graph
+        used for each A/B testing result.
+        (ResultsTableRow.prototype.buildHeading): Deleted since we need to set colspan on the second table cell
+        when we're creating a row with _labelForWholeRow.
+
+        * public/v3/components/test-group-results-table.js:
+        (TestGroupResultsTable.prototype.buildRowGroups): Added rows to show relative differences and statistical
+        significance between root sets (e.g. A vs B).
+
+        * public/v3/models/build-request.js:
+        (BuildRequest.prototype.hasCompleted): Added.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.compareTestResults): Extracted from AnalysisResultsViewer.TestGroupStackingBlock's
+        _computeTestGroupStatus and generalized to be reused in TestGroupResultsTable.
+        (TestGroup.prototype._valuesForRootSet): Moved from AnalysisResultsViewer.TestGroupStackingBlock.
+
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskPage.cssTemplate): Tweaked the style.
+
 2016-01-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should automatically add aggregators

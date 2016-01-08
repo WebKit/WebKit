@@ -239,6 +239,7 @@ class AnalysisResultsViewer extends ResultsTable {
     {
         return ResultsTable.cssTemplate() + `
             .analysis-view .stacking-block {
+                position: relative;
                 border: solid 1px #fff;
                 cursor: pointer;
             }
@@ -249,62 +250,43 @@ class AnalysisResultsViewer extends ResultsTable {
                 color: inherit;
                 font-size: 0.8rem;
                 padding: 0 0.1rem;
+                max-width: 3rem;
             }
 
             .analysis-view .stacking-block:not(.failed) {
-                color: white;
+                color: black;
                 opacity: 1;
             }
 
-            .analysis-view .stacking-block.selected {
+            .analysis-view .stacking-block.selected,
+            .analysis-view .stacking-block:hover {
+                text-decoration: underline;
+            }
 
+            .analysis-view .stacking-block.selected:before {
+                content: '';
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                width: calc(100% - 2px);
+                height: calc(100% - 2px);
+                border: solid 1px #333;
             }
 
             .analysis-view .stacking-block.failed {
-                background: rgba(128, 51, 128, 0.4);
+                background: rgba(128, 51, 128, 0.5);
             }
-            .analysis-view .stacking-block.failed:hover {
-                background: rgba(128, 51, 128, 0.6);
-            }
-            .analysis-view .stacking-block.failed.selected {
-                background: rgba(128, 51, 128, 1);
-                color: white;
-            }
-
             .analysis-view .stacking-block.unchanged {
-                background: rgba(128, 128, 128, 0.3);
-                color: black;
+                background: rgba(128, 128, 128, 0.5);
             }
-            .analysis-view .stacking-block.unchanged:hover {
-                background: rgba(128, 128, 128, 0.6);
+            .analysis-view .stacking-block.incomplete {
+                background: rgba(204, 204, 51, 0.5);
             }
-            .analysis-view .stacking-block.unchanged.selected {
-                background: rgba(128, 128, 128, 1);
-                color: white;
-            }
-
             .analysis-view .stacking-block.worse {
-                background: rgba(255, 102, 102, 0.4);
-                color: black;
+                background: rgba(255, 102, 102, 0.5);
             }
-            .analysis-view .stacking-block.worse:hover {
-                background: rgba(255, 102, 102, 0.6);
-            }
-            .analysis-view .stacking-block.worse.selected {
-                background: rgba(255, 102, 102, 1);
-                color: white;
-            }
-
             .analysis-view .stacking-block.better {
-                background: rgba(102, 102, 255, 0.4);
-                color: black;
-            }
-            .analysis-view .stacking-block.better:hover {
-                background: rgba(102, 102, 255, 0.6);
-            }
-            .analysis-view .stacking-block.better.selected {
-                background: rgba(102, 102, 255, 1);
-                color: white;
+                background: rgba(102, 102, 255, 0.5);
             }
         `;
     }
@@ -332,7 +314,8 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
         this._smallerIsBetter = smallerIsBetter;
         this._rootSetIndexRowIndexMap = [];
         this._className = className;
-        this._label = '-';
+        this._label = null;
+        this._title = null;
         this._status = null;
         this._callback = callback;
     }
@@ -349,13 +332,12 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
     {
         this._computeTestGroupStatus();
 
-        var title = this._testGroup.label();
         return ComponentBase.createElement('td', {
             rowspan: this.endRowIndex() - this.startRowIndex() + 1,
-            title: title,
+            title: this._title,
             class: 'stacking-block ' + this._className + ' ' + this._status,
             onclick: this._callback,
-        }, ComponentBase.createLink(this._label, title, this._callback));
+        }, ComponentBase.createLink(this._label, this._title, this._callback));
     }
 
     isComplete() { return this._rootSetIndexRowIndexMap.length >= 2; }
@@ -375,32 +357,12 @@ AnalysisResultsViewer.TestGroupStackingBlock = class {
 
         console.assert(this._rootSetIndexRowIndexMap.length <= 2); // FIXME: Support having more root sets.
 
-        var beforeValues = this._valuesForRootSet(this._rootSetIndexRowIndexMap[0].rootSet);
-        var afterValues = this._valuesForRootSet(this._rootSetIndexRowIndexMap[1].rootSet);
+        var result = this._testGroup.compareTestResults(
+            this._rootSetIndexRowIndexMap[0].rootSet, this._rootSetIndexRowIndexMap[1].rootSet);
 
-        var status = 'failed';
-        var beforeMean = Statistics.sum(beforeValues) / beforeValues.length;
-        var afterMean = Statistics.sum(afterValues) / afterValues.length;
-        if (beforeValues.length && afterValues.length) {
-            var diff = afterMean - beforeMean;
-            this._label = (diff / beforeMean * 100).toFixed(2) + '%';
-            status = 'unchanged';
-            if (Statistics.testWelchsT(beforeValues, afterValues))
-                status = diff < 0 == this._smallerIsBetter ? 'better' : 'worse';
-        }
-
-        this._status = status;
-    }
-
-    _valuesForRootSet(rootSet)
-    {
-        var requests = this._testGroup.requestsForRootSet(rootSet);
-        var values = [];
-        for (var request of requests) {
-            if (request.result())
-                values.push(request.result().value);
-        }
-        return values;
+        this._label = result.label;
+        this._title = result.fullLabel;
+        this._status = result.status;
     }
 }
 

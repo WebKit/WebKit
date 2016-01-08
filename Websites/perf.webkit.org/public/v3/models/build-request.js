@@ -20,6 +20,7 @@ class BuildRequest extends DataModelObject {
     order() { return this._order; }
     rootSet() { return this._rootSet; }
 
+    hasCompleted() { return this._status == 'failed' || this._status == 'completed'; }
     statusLabel()
     {
         switch (this._status) {

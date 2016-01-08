@@ -29,12 +29,14 @@ class TestGroupResultsTable extends ResultsTable {
         if (!testGroup)
             return [];
 
-        return this._testGroup.requestedRootSets().map(function (rootSet, setIndex) {
+        var rootSets = this._testGroup.requestedRootSets();
+        var groups = rootSets.map(function (rootSet, setIndex) {
             var rows = [new ResultsTableRow('Mean', rootSet)];
             var results = [];
 
             for (var request of testGroup.requestsForRootSet(rootSet)) {
                 var result = request.result();
+                // Call result.rootSet() for each result since the set of revisions used in testing maybe different from requested ones.
                 var row = new ResultsTableRow(1 + +request.order(), result ? result.rootSet() : null);
                 rows.push(row);
                 if (result) {
@@ -50,7 +52,27 @@ class TestGroupResultsTable extends ResultsTable {
                 rows[0].setResult(aggregatedResult);
 
             return {heading: String.fromCharCode('A'.charCodeAt(0) + setIndex), rows:rows};
-        })
+        });
+
+        var comparisonRows = [];
+        for (var i = 0; i < rootSets.length; i++) {
+            for (var j = i + 1; j < rootSets.length; j++) {
+                var startConfig = String.fromCharCode('A'.charCodeAt(0) + i);
+                var endConfig = String.fromCharCode('A'.charCodeAt(0) + j);
+
+                var result = this._testGroup.compareTestResults(rootSets[i], rootSets[j]);
+                if (result.status == 'incomplete' || result.status == 'failed')
+                    continue;
+
+                var row = new ResultsTableRow(`${startConfig} to ${endConfig}`, null);
+                row.setLabelForWholeRow(result.fullLabel);
+                comparisonRows.push(row);
+            }
+        }
+
+        groups.push({heading: '', rows: comparisonRows});
+
+        return groups;
     }
 }
 

@@ -204,11 +204,8 @@ class AnalysisTaskPage extends PageWithHeading {
     {
         return `
             .analysis-tasl-page-container {
-                text-align: center;
             }
             .analysis-tasl-page {
-                display: inline-block;
-                text-align: left;
             }
 
             .analysis-task-name {
@@ -245,20 +242,6 @@ class AnalysisTaskPage extends PageWithHeading {
                 margin: 1rem;
             }
 
-            .test-group-view {
-                display: flex;
-                flex-direction: row;
-                align-items: stretch;
-                align-content: stretch;
-                margin: 0 1rem;
-            }
-
-            .test-group-details {
-                display: flex;
-                flex-grow: 1;
-                margin-bottom: 1rem;
-            }
-
             .test-configuration h3 {
                 font-size: 1rem;
                 font-weight: inherit;
@@ -267,12 +250,26 @@ class AnalysisTaskPage extends PageWithHeading {
                 padding: 0;
             }
 
+            .test-group-view {
+                display: table;
+                margin: 0 1rem;
+            }
+
+            .test-group-details {
+                display: table-cell;
+                margin-bottom: 1rem;
+            }
+
+            .test-group-list {
+                display: table-cell;
+            }
+
             .test-group-list:not(:empty) {
                 margin: 0;
                 padding: 0.2rem 0;
                 list-style: none;
-                display: inline-block;
                 border-right: solid 1px #ccc;
+                white-space: nowrap;
             }
 
             .test-group-list li {

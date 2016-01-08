@@ -22,50 +22,24 @@ class ResultsTable extends ComponentBase {
 
         var barGraphGroup = new BarGraphGroup(this._valueFormatter);
         var element = ComponentBase.createElement;
-        var link = ComponentBase.createLink;
+        var self = this;
         var tableBodies = rowGroups.map(function (group) {
             var groupHeading = group.heading;
             var revisionSupressionCount = {};
 
             return element('tbody', group.rows.map(function (row, rowIndex) {
-                var cells = row.buildHeading(barGraphGroup);
+                var cells = [];
 
-                if (groupHeading && !rowIndex)
-                    cells.unshift(element('th', {rowspan: group.rows.length}, groupHeading));
+                if (groupHeading !== undefined && !rowIndex)
+                    cells.push(element('th', {rowspan: group.rows.length}, groupHeading));
+                cells.push(element('td', row.heading()));
 
-                var rootSet = row.rootSet();
-                repositoryList.forEach(function (repository) {
-                    var commit = rootSet ? rootSet.commitForRepository(repository) : null;
-
-                    if (revisionSupressionCount[repository.id()]) {
-                        revisionSupressionCount[repository.id()]--;
-                        return;
-                    }
-
-                    var succeedingRowIndex = rowIndex + 1;
-                    while (succeedingRowIndex < group.rows.length) {
-                        var succeedingRootSet = group.rows[succeedingRowIndex].rootSet();
-                        if (succeedingRootSet && commit != succeedingRootSet.commitForRepository(repository))
-                            break;
-                        succeedingRowIndex++;
-                    }
-                    var rowSpan = succeedingRowIndex - rowIndex;
-                    var attributes = {class: 'revision'};
-                    if (rowSpan > 1) {
-                        revisionSupressionCount[repository.id()] = rowSpan - 1;
-                        attributes['rowspan'] = rowSpan;                       
-                    }
-                    if (rowIndex + rowSpan >= group.rows.length)
-                        attributes['class'] += ' lastRevision';
-
-                    var content = 'Missing';
-                    if (commit) {
-                        var url = commit.url();
-                        content = url ? link(commit.label(), url) : commit.label();
-                    }
-
-                    cells.push(element('td', attributes, content));
-                });
+                if (row.labelForWholeRow())
+                    cells.push(element('td', {class: 'whole-row-label', colspan: repositoryList.length + 1}, row.labelForWholeRow()));
+                else {
+                    cells.push(element('td', row.resultContent(barGraphGroup)));
+                    cells.push(self._createRevisionListCells(repositoryList, revisionSupressionCount, group, row.rootSet(), rowIndex));
+                }
 
                 return element('tr', [cells, row.additionalColumns()]);
             }));
@@ -87,6 +61,46 @@ class ResultsTable extends ComponentBase {
         barGraphGroup.render();
 
         Instrumentation.endMeasuringTime('ResultsTable', 'render');
+    }
+
+    _createRevisionListCells(repositoryList, revisionSupressionCount, testGroup, rootSet, rowIndex)
+    {
+        var element = ComponentBase.createElement;
+        var link = ComponentBase.createLink;
+        var cells = [];
+        for (var repository of repositoryList) {
+            var commit = rootSet ? rootSet.commitForRepository(repository) : null;
+
+            if (revisionSupressionCount[repository.id()]) {
+                revisionSupressionCount[repository.id()]--;
+                continue;
+            }
+
+            var succeedingRowIndex = rowIndex + 1;
+            while (succeedingRowIndex < testGroup.rows.length) {
+                var succeedingRootSet = testGroup.rows[succeedingRowIndex].rootSet();
+                if (succeedingRootSet && commit != succeedingRootSet.commitForRepository(repository))
+                    break;
+                succeedingRowIndex++;
+            }
+            var rowSpan = succeedingRowIndex - rowIndex;
+            var attributes = {class: 'revision'};
+            if (rowSpan > 1) {
+                revisionSupressionCount[repository.id()] = rowSpan - 1;
+                attributes['rowspan'] = rowSpan;                       
+            }
+            if (rowIndex + rowSpan >= testGroup.rows.length)
+                attributes['class'] += ' lastRevision';
+
+            var content = 'Missing';
+            if (commit) {
+                var url = commit.url();
+                content = url ? link(commit.label(), url) : commit.label();
+            }
+
+            cells.push(element('td', attributes, content));
+        }
+        return cells;
     }
 
     heading() { throw 'NotImplemented'; }
@@ -152,7 +166,11 @@ class ResultsTable extends ComponentBase {
                 height: 1.4rem;
                 text-align: center;
             }
-            
+
+            .results-table td.whole-row-label {
+                text-align: left;
+            }
+
             .results-table thead {
                 color: #c93;
             }
@@ -228,10 +246,11 @@ class ResultsTableRow {
         this._label = '-';
         this._rootSet = rootSet;
         this._additionalColumns = [];
+        this._labelForWholeRow = null;
     }
 
+    heading() { return this._heading; }
     rootSet() { return this._rootSet; }
-
     setResult(result) { this._result = result; }
     setLink(link, label)
     {
@@ -239,18 +258,15 @@ class ResultsTableRow {
         this._label = label;
     }
 
+    setLabelForWholeRow(label) { this._labelForWholeRow = label; }
+    labelForWholeRow() { return this._labelForWholeRow; }
+
     additionalColumns() { return this._additionalColumns; }
     setAdditionalColumns(additionalColumns) { this._additionalColumns = additionalColumns; }
 
-    buildHeading(barGraphGroup)
+    resultContent(barGraphGroup)
     {
-        var element = ComponentBase.createElement;
-        var link = ComponentBase.createLink;
-
         var resultContent = this._result ? barGraphGroup.addBar(this._result.value, this._result.interval) : this._label;
-        return [
-            element('th', this._heading),
-            element('td', this._link ? link(resultContent, this._label, this._link) : resultContent),
-        ];
+        return this._link ? ComponentBase.createLink(resultContent, this._label, this._link) : resultContent;
     }
 }

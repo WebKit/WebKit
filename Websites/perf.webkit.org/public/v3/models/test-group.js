@@ -59,6 +59,50 @@ class TestGroup extends LabeledObject {
         this._allRootSets = null;
     }
 
+    hasCompleted()
+    {
+        return this._buildRequests.every(function (request) { return request.hasCompleted(); });
+    }
+
+    compareTestResults(rootSetA, rootSetB)
+    {
+        var beforeValues = this._valuesForRootSet(rootSetA);
+        var afterValues = this._valuesForRootSet(rootSetB);
+        var beforeMean = Statistics.sum(beforeValues) / beforeValues.length;
+        var afterMean = Statistics.sum(afterValues) / afterValues.length;
+
+        var result = {changeType: null, status: 'failed', label: 'Failed', fullLabel: 'Failed', isStatisticallySignificant: false};
+        if (beforeValues.length && afterValues.length) {
+            var diff = afterMean - beforeMean;
+            result.changeType = diff < 0 == this._smallerIsBetter ? 'better' : 'worse';
+            result.label = Math.abs(diff / beforeMean * 100).toFixed(2) + '% ' + result.changeType;
+            result.isStatisticallySignificant = Statistics.testWelchsT(beforeValues, afterValues);
+            result.status = result.isStatisticallySignificant ? result.changeType : 'unchanged';
+        }
+
+        if (!this.hasCompleted()) {
+            result.status = 'incomplete';
+            result.label = 'Running';
+            result.fullLabel = 'Running';
+        } else if (result.changeType) {
+            var significance = result.isStatisticallySignificant ? 'significant' : 'insignificant';
+            result.fullLabel = `${result.label} (statistically ${significance})`;
+        }
+
+        return result;
+    }
+
+    _valuesForRootSet(rootSet)
+    {
+        var requests = this.requestsForRootSet(rootSet);
+        var values = [];
+        for (var request of requests) {
+            if (request.result())
+                values.push(request.result().value);
+        }
+        return values;
+    }
+
     static fetchByTask(taskId)
     {
         return this.cachedFetch('../api/test-groups', {task: taskId}).then(function (data) {
