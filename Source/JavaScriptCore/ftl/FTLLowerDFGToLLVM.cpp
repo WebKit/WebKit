@@ -7733,12 +7733,8 @@ private:
         LValue result;
         LValue condition;
         if (Options::forceGCSlowPaths()) {
-#if FTL_USES_B3
-            CRASH();
-#else
-            result = getUndef(m_out.int64);
+            result = m_out.intPtrZero;
             condition = m_out.booleanFalse;
-#endif
         } else {
             result = m_out.loadPtr(
                 allocator, m_heaps.MarkedAllocator_freeListHead);

@@ -1,5 +1,22 @@
 2016-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 allocateCell() should not crash
+        https://bugs.webkit.org/show_bug.cgi?id=152909
+
+        Reviewed by Mark Lam.
+
+        This code was crashing in some tests that forced GC slow paths because it was stubbed out
+        due to the use of undef. B3 doesn't have undef. In this case, there's no good reason to use
+        undef. We can just use zero. Since the path is dead anyway in that case, we weren't gaining
+        any LLVM optimizations by using undef.
+
+        This reduces the number of failures from 35 to 27.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateCell):
+
+2016-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         FTL B3 fails to realize that binary snippets might choose to omit their fast path
         https://bugs.webkit.org/show_bug.cgi?id=152901
 
