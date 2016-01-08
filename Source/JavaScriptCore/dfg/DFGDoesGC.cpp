@@ -168,7 +168,7 @@ bool doesGC(Graph& graph, Node* node)
     case CountExecution:
     case ForceOSRExit:
     case CheckWatchdogTimer:
-    case StringFromSingleCharCode:
+    case StringFromCharCode:
     case Unreachable:
     case ExtractOSREntryLocal:
     case CheckTierUpInLoop:

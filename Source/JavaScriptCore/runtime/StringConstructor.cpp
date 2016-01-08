@@ -88,7 +88,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
     return JSValue::encode(stringFromCharCodeSlowCase(exec));
 }
 
-JSCell* JSC_HOST_CALL stringFromSingleCharCode(ExecState* exec, int32_t arg)
+JSCell* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
 {
     return jsSingleCharacterString(exec, arg);
 }

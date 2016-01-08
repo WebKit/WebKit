@@ -1341,7 +1341,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecInt32);
         break;
         
-    case StringFromSingleCharCode:
+    case StringFromCharCode:
         forNode(node).setType(m_graph, SpecString);
         break;
 

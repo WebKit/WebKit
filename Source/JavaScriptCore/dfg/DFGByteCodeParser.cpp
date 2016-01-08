@@ -2161,7 +2161,7 @@ bool ByteCodeParser::handleIntrinsicCall(int resultOperand, Intrinsic intrinsic,
 
         insertChecks();
         VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
-        Node* charCode = addToGraph(StringFromSingleCharCode, get(indexOperand));
+        Node* charCode = addToGraph(StringFromCharCode, get(indexOperand));
 
         set(VirtualRegister(resultOperand), charCode);
 

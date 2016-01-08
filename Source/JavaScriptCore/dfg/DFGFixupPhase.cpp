@@ -604,7 +604,7 @@ private:
             break;
         }
 
-        case StringFromSingleCharCode:
+        case StringFromCharCode:
             fixEdge<Int32Use>(node->child1());
             break;
 

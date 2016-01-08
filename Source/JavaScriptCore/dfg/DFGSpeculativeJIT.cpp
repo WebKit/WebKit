@@ -1885,7 +1885,7 @@ void SpeculativeJIT::compileFromCharCode(Node* node)
     m_jit.loadPtr(MacroAssembler::BaseIndex(smallStringsReg, propertyReg, MacroAssembler::ScalePtr, 0), scratchReg);
 
     slowCases.append(m_jit.branchTest32(MacroAssembler::Zero, scratchReg));
-    addSlowPathGenerator(slowPathCall(slowCases, this, operationStringFromSingleCharCode, scratchReg, propertyReg));
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationStringFromCharCode, scratchReg, propertyReg));
     cellResult(scratchReg, m_currentNode);
 }
 

@@ -1,3 +1,38 @@
+2016-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Rolling out: Rename StringFromCharCode to StringFromSingleCharCode.
+        https://bugs.webkit.org/show_bug.cgi?id=152897
+
+        Not reviewed.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileFromCharCode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCode):
+        (JSC::stringFromSingleCharCode): Deleted.
+        * runtime/StringConstructor.h:
+
 2016-01-08  Per Arne Vollan  <peavo@outlook.com>
 
         [JSC] Use std::call_once instead of pthread_once when initializing LLVM.

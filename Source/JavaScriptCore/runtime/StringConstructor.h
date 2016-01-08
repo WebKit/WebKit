@@ -55,7 +55,7 @@ private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
-JSCell* JSC_HOST_CALL stringFromSingleCharCode(ExecState*, int32_t);
+JSCell* JSC_HOST_CALL stringFromCharCode(ExecState*, int32_t);
 JSCell* stringConstructor(ExecState*, JSValue);
 
 } // namespace JSC
