@@ -67,6 +67,8 @@ class TestRunResults(object):
     def add(self, test_result, expected, test_is_slow):
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
         self.results_by_name[test_result.test_name] = test_result
+        if test_result.is_other_crash:
+            return
         if test_result.type != test_expectations.SKIP:
             self.all_results.append(test_result)
         self.remaining -= 1

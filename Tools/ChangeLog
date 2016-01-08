@@ -1,3 +1,14 @@
+2016-01-08  Aakash Jain  <aakash_jain@apple.com>
+
+        run-webkit-tests mis-counts totals when there are other crashes
+        https://bugs.webkit.org/show_bug.cgi?id=152894
+        <rdar://problem/24098697>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.add): Do not update result counters for other crashes.
+
 2016-01-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         webkit-patch build-and-test should have an option to iterate over new tests
