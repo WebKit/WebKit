@@ -45,14 +45,7 @@ struct MatchedRule {
 
 class ElementRuleCollector {
 public:
-    ElementRuleCollector(Element& element, RenderStyle* style, const DocumentRuleSets& ruleSets, const SelectorFilter& selectorFilter)
-        : m_element(element)
-        , m_style(style)
-        , m_ruleSets(ruleSets)
-        , m_selectorFilter(selectorFilter)
-        , m_canUseFastReject(m_selectorFilter.parentStackIsConsistent(element.parentNode()))
-    {
-    }
+    ElementRuleCollector(Element&, RenderStyle*, const DocumentRuleSets&, const SelectorFilter*);
 
     void matchAllRules(bool matchAuthorAndUserStyles, bool includeSMILProperties);
     void matchUARules();
@@ -94,14 +87,13 @@ private:
     Element& m_element;
     RenderStyle* m_style;
     const DocumentRuleSets& m_ruleSets;
-    const SelectorFilter& m_selectorFilter;
+    const SelectorFilter* m_selectorFilter;
 
     bool m_isPrintStyle { false };
     const RenderRegion* m_regionForStyling { nullptr };
     PseudoStyleRequest m_pseudoStyleRequest { NOPSEUDO };
     bool m_sameOriginOnly { false };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
-    bool m_canUseFastReject;
 
     Vector<MatchedRule, 64> m_matchedRules;
 

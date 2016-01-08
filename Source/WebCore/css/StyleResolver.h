@@ -35,7 +35,6 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScrollTypes.h"
 #include "SelectorChecker.h"
-#include "SelectorFilter.h"
 #include "StyleInheritedData.h"
 #include "ViewportStyleResolver.h"
 #include <bitset>
@@ -76,6 +75,7 @@ class RenderRegion;
 class RenderScrollbar;
 class RuleData;
 class RuleSet;
+class SelectorFilter;
 class Settings;
 class StyleImage;
 class StyleKeyframe;
@@ -135,12 +135,8 @@ public:
     StyleResolver(Document&);
     ~StyleResolver();
 
-    // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
-    void pushParentElement(Element*);
-    void popParentElement(Element*);
-
     Ref<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle, StyleSharingBehavior = AllowStyleSharing,
-        RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr);
+        RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
     void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
 
@@ -160,7 +156,6 @@ public:
 
     DocumentRuleSets& ruleSets() { return m_ruleSets; }
     const DocumentRuleSets& ruleSets() const { return m_ruleSets; }
-    SelectorFilter& selectorFilter() { return m_selectorFilter; }
 
     const MediaQueryEvaluator& mediaQueryEvaluator() const { return *m_medium; }
 
@@ -385,7 +380,7 @@ public:
 
     public:
         void initElement(Element*);
-        void initForStyleResolve(Document&, Element*, RenderStyle* parentStyle, const RenderRegion* regionForStyling = nullptr);
+        void initForStyleResolve(Document&, Element*, RenderStyle* parentStyle, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
         void clear();
 
         Document& document() const { return m_element->document(); }
@@ -443,6 +438,8 @@ public:
         
         void setAuthorRollback(std::unique_ptr<CascadedProperties>& rollback) { m_authorRollback = WTFMove(rollback); }
         void setUserRollback(std::unique_ptr<CascadedProperties>& rollback) { m_userRollback = WTFMove(rollback); }
+
+        const SelectorFilter* selectorFilter() const { return m_selectorFilter; }
         
     private:
         void updateConversionData();
@@ -480,6 +477,8 @@ public:
         CascadeLevel m_cascadeLevel { UserAgentLevel };
         std::unique_ptr<CascadedProperties> m_authorRollback;
         std::unique_ptr<CascadedProperties> m_userRollback;
+
+        const SelectorFilter* m_selectorFilter { nullptr };
     };
 
     State& state() { return m_state; }
@@ -559,7 +558,6 @@ private:
     RefPtr<RenderStyle> m_rootDefaultStyle;
 
     Document& m_document;
-    SelectorFilter m_selectorFilter;
 
     bool m_matchAuthorAndUserStyles;
 
@@ -617,34 +615,6 @@ inline bool checkRegionSelector(const CSSSelector* regionSelector, Element* regi
     }
     return false;
 }
-
-class StyleResolverParentPusher {
-public:
-    StyleResolverParentPusher(Element* parent)
-        : m_parent(parent)
-        , m_pushedStyleResolver(nullptr)
-    { }
-    void push()
-    {
-        if (m_pushedStyleResolver)
-            return;
-        m_pushedStyleResolver = &m_parent->styleResolver();
-        m_pushedStyleResolver->pushParentElement(m_parent);
-    }
-    ~StyleResolverParentPusher()
-    {
-        if (!m_pushedStyleResolver)
-            return;
-        // This tells us that our pushed style selector is in a bad state,
-        // so we should just bail out in that scenario.
-        ASSERT(m_pushedStyleResolver == &m_parent->styleResolver());
-        m_pushedStyleResolver->popParentElement(m_parent);
-    }
-    
-private:
-    Element* m_parent;
-    StyleResolver* m_pushedStyleResolver;
-};
 
 } // namespace WebCore
 

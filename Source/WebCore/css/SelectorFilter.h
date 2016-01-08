@@ -43,11 +43,10 @@ public:
     void pushParentStackFrame(Element* parent);
     void popParentStackFrame();
 
-    void setupParentStack(Element* parent);
     void pushParent(Element* parent);
     void popParent() { popParentStackFrame(); }
     bool parentStackIsEmpty() const { return m_parentStack.isEmpty(); }
-    bool parentStackIsConsistent(const ContainerNode* parentNode) const { return !m_parentStack.isEmpty() && m_parentStack.last().element == parentNode; }
+    bool parentStackIsConsistent(const ContainerNode* parentNode) const;
 
     template <unsigned maximumIdentifierCount>
     inline bool fastRejectSelector(const unsigned* identifierHashes) const;
@@ -64,15 +63,14 @@ private:
 
     // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
     static const unsigned bloomFilterKeyBits = 12;
-    std::unique_ptr<CountingBloomFilter<bloomFilterKeyBits>> m_ancestorIdentifierFilter;
+    CountingBloomFilter<bloomFilterKeyBits> m_ancestorIdentifierFilter;
 };
 
 template <unsigned maximumIdentifierCount>
 inline bool SelectorFilter::fastRejectSelector(const unsigned* identifierHashes) const
 {
-    ASSERT(m_ancestorIdentifierFilter);
     for (unsigned n = 0; n < maximumIdentifierCount && identifierHashes[n]; ++n) {
-        if (!m_ancestorIdentifierFilter->mayContain(identifierHashes[n]))
+        if (!m_ancestorIdentifierFilter.mayContain(identifierHashes[n]))
             return true;
     }
     return false;

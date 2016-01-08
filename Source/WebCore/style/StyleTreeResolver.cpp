@@ -66,6 +66,36 @@ static void attachTextRenderer(Text&, RenderTreePosition&);
 static void detachRenderTree(Element&, DetachType);
 static void resolveTextNode(Text&, RenderTreePosition&);
 
+class SelectorFilterPusher {
+public:
+    enum PushMode { Push, NoPush };
+    SelectorFilterPusher(SelectorFilter& selectorFilter, Element& parent, PushMode pushMode = Push)
+        : m_selectorFilter(selectorFilter)
+        , m_parent(parent)
+    {
+        if (pushMode == Push)
+            push();
+    }
+    void push()
+    {
+        if (m_didPush)
+            return;
+        m_didPush = true;
+        m_selectorFilter.pushParent(&m_parent);
+    }
+    ~SelectorFilterPusher()
+    {
+        if (!m_didPush)
+            return;
+        m_selectorFilter.popParent();
+    }
+    
+private:
+    SelectorFilter& m_selectorFilter;
+    Element& m_parent;
+    bool m_didPush { false };
+};
+
 TreeResolver::TreeResolver(Document& document)
     : m_document(document)
     , m_styleResolver(document.ensureStyleResolver())
@@ -97,7 +127,7 @@ Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& in
         if (RefPtr<RenderStyle> style = element.customStyleForRenderer(inheritedStyle))
             return style.releaseNonNull();
     }
-    return m_styleResolver.styleForElement(&element, &inheritedStyle);
+    return m_styleResolver.styleForElement(&element, &inheritedStyle, AllowStyleSharing, MatchAllRules, nullptr, &m_selectorFilter);
 }
 
 #if ENABLE(CSS_REGIONS)
@@ -410,8 +440,10 @@ void TreeResolver::createRenderTreeForSlotAssignees(HTMLSlotElement& slot, Rende
             else if (is<Element>(*child))
                 m_shadowHostTreeResolver->createRenderTreeRecursively(downcast<Element>(*child), inheritedStyle, renderTreePosition, nullptr);
         }
-    } else
+    } else {
+        SelectorFilterPusher selectorFilterPusher(m_selectorFilter, slot);
         createRenderTreeForChildren(slot, inheritedStyle, renderTreePosition);
+    }
 
     slot.clearNeedsStyleRecalc();
     slot.clearChildNeedsStyleRecalc();
@@ -436,16 +468,17 @@ void TreeResolver::createRenderTreeRecursively(Element& current, RenderStyle& in
     createRenderer(current, inheritedStyle, renderTreePosition, WTFMove(resolvedStyle));
 
     if (auto* renderer = current.renderer()) {
-        StyleResolverParentPusher parentPusher(&current);
+        SelectorFilterPusher selectorFilterPusher(m_selectorFilter, current, SelectorFilterPusher::NoPush);
 
         RenderTreePosition childRenderTreePosition(*renderer);
         createRenderTreeForBeforeOrAfterPseudoElement(current, BEFORE, childRenderTreePosition);
 
         auto* shadowRoot = current.shadowRoot();
-        if (shadowRoot)
+        if (shadowRoot) {
+            selectorFilterPusher.push();
             createRenderTreeForShadowRoot(*shadowRoot);
-        else if (current.firstChild())
-            parentPusher.push();
+        } else if (current.firstChild())
+            selectorFilterPusher.push();
 
         bool skipChildren = shadowRoot;
         if (!skipChildren)
@@ -730,7 +763,7 @@ private:
 
 void TreeResolver::resolveChildren(Element& current, RenderStyle& inheritedStyle, Change change, RenderTreePosition& childRenderTreePosition)
 {
-    StyleResolverParentPusher parentPusher(&current);
+    SelectorFilterPusher selectorFilterPusher(m_selectorFilter, current, SelectorFilterPusher::NoPush);
 
     bool elementNeedingStyleRecalcAffectsNextSiblingElementStyle = false;
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
@@ -751,7 +784,7 @@ void TreeResolver::resolveChildren(Element& current, RenderStyle& inheritedStyle
         } else if (childElement.needsStyleRecalc())
             elementNeedingStyleRecalcAffectsNextSiblingElementStyle = childElement.affectsNextSiblingElementStyle();
         if (change >= Inherit || childElement.childNeedsStyleRecalc() || childElement.needsStyleRecalc()) {
-            parentPusher.push();
+            selectorFilterPusher.push();
             resolveRecursively(childElement, inheritedStyle, childRenderTreePosition, change);
         }
     }
@@ -803,6 +836,8 @@ void TreeResolver::resolveRecursively(Element& current, RenderStyle& inheritedSt
     if (change != Detach && renderer) {
         auto* shadowRoot = current.shadowRoot();
         if (shadowRoot && (change >= Inherit || shadowRoot->childNeedsStyleRecalc() || shadowRoot->needsStyleRecalc())) {
+            SelectorFilterPusher selectorFilterPusher(m_selectorFilter, current);
+
             TreeResolver shadowTreeResolver(*shadowRoot, *this);
             shadowTreeResolver.resolveShadowTree(change, renderer->style());
         }

@@ -97,7 +97,7 @@ StyleInvalidationAnalysis::CheckDescendants StyleInvalidationAnalysis::invalidat
 
     switch (element.styleChangeType()) {
     case NoStyleChange: {
-        ElementRuleCollector ruleCollector(element, nullptr, m_ruleSets, filter);
+        ElementRuleCollector ruleCollector(element, nullptr, m_ruleSets, &filter);
         ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
         ruleCollector.matchAuthorRules(false);
 
@@ -145,11 +145,6 @@ void StyleInvalidationAnalysis::invalidateStyleForTree(Element& root, SelectorFi
         else
             it.traverseNextSkippingChildren();
     }
-
-    while (!parentStack.isEmpty()) {
-        parentStack.removeLast();
-        filter.popParent();
-    }
 }
 
 void StyleInvalidationAnalysis::invalidateStyle(Document& document)
@@ -163,7 +158,6 @@ void StyleInvalidationAnalysis::invalidateStyle(Document& document)
         return;
 
     SelectorFilter filter;
-    filter.setupParentStack(documentElement);
     invalidateStyleForTree(*documentElement, filter);
 }
 

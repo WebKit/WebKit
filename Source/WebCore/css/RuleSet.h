@@ -84,6 +84,8 @@ public:
     static const unsigned maximumIdentifierCount = 4;
     const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
+    void disableSelectorFiltering() { m_descendantSelectorIdentifierHashes[0] = 0; }
+
 #if ENABLE(CSS_SELECTOR_JIT)
     SelectorCompilationStatus compilationStatus() const { return m_compilationStatus; }
     JSC::MacroAssemblerCodeRef compiledSelectorCodeRef() const { return m_compiledSelectorCodeRef; }

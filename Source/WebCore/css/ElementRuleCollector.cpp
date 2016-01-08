@@ -40,6 +40,7 @@
 #include "RenderRegion.h"
 #include "SVGElement.h"
 #include "SelectorCompiler.h"
+#include "SelectorFilter.h"
 #include "ShadowRoot.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
@@ -74,6 +75,15 @@ public:
     const RuleSet* ruleSet;
     const bool includeEmptyRules;
 };
+
+ElementRuleCollector::ElementRuleCollector(Element& element, RenderStyle* style, const DocumentRuleSets& ruleSets, const SelectorFilter* selectorFilter)
+    : m_element(element)
+    , m_style(style)
+    , m_ruleSets(ruleSets)
+    , m_selectorFilter(selectorFilter)
+{
+    ASSERT(!m_selectorFilter || m_selectorFilter->parentStackIsConsistent(element.parentNode()));
+}
 
 StyleResolver::MatchResult& ElementRuleCollector::matchedResult()
 {
@@ -352,7 +362,7 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         if (!ruleData.canMatchPseudoElement() && m_pseudoStyleRequest.pseudoId != NOPSEUDO)
             continue;
 
-        if (m_canUseFastReject && m_selectorFilter.fastRejectSelector<RuleData::maximumIdentifierCount>(ruleData.descendantSelectorIdentifierHashes()))
+        if (m_selectorFilter && m_selectorFilter->fastRejectSelector<RuleData::maximumIdentifierCount>(ruleData.descendantSelectorIdentifierHashes()))
             continue;
 
         StyleRule* rule = ruleData.rule();

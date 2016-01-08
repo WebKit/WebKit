@@ -225,6 +225,8 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
 #endif
 
         if (selector->isCustomPseudoElement()) {
+            // FIXME: Custom pseudo elements are handled by the shadow tree's selector filter. It doesn't know about the main DOM.
+            ruleData.disableSelectorFiltering();
             addToRuleSet(selector->value().impl(), m_shadowPseudoElementRules, ruleData);
             return;
         }

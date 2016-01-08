@@ -27,6 +27,7 @@
 #define StyleTreeResolver_h
 
 #include "RenderStyleConstants.h"
+#include "SelectorFilter.h"
 #include "StyleChange.h"
 #include <functional>
 #include <wtf/RefPtr.h>
@@ -82,6 +83,8 @@ private:
 
     ShadowRoot* m_shadowRoot { nullptr };
     TreeResolver* m_shadowHostTreeResolver { nullptr };
+
+    SelectorFilter m_selectorFilter;
 };
 
 void detachRenderTree(Element&);

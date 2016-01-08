@@ -293,28 +293,6 @@ void StyleResolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&
 #endif
 }
 
-void StyleResolver::pushParentElement(Element* parent)
-{
-    const ContainerNode* parentsParent = parent->parentOrShadowHostElement();
-
-    // We are not always invoked consistently. For example, script execution can cause us to enter
-    // style recalc in the middle of tree building. We may also be invoked from somewhere within the tree.
-    // Reset the stack in this case, or if we see a new root element.
-    // Otherwise just push the new parent.
-    if (!parentsParent || m_selectorFilter.parentStackIsEmpty())
-        m_selectorFilter.setupParentStack(parent);
-    else
-        m_selectorFilter.pushParent(parent);
-}
-
-void StyleResolver::popParentElement(Element* parent)
-{
-    // Note that we may get invoked for some random elements in some wacky cases during style resolve.
-    // Pause maintaining the stack in this case.
-    if (m_selectorFilter.parentStackIsConsistent(parent))
-        m_selectorFilter.popParent();
-}
-
 // This is a simplified style setting function for keyframe styles
 void StyleResolver::addKeyframeStyle(PassRefPtr<StyleRuleKeyframes> rule)
 {
@@ -387,7 +365,7 @@ inline void StyleResolver::initElement(Element* e)
     }
 }
 
-inline void StyleResolver::State::initForStyleResolve(Document& document, Element* e, RenderStyle* parentStyle, const RenderRegion* regionForStyling)
+inline void StyleResolver::State::initForStyleResolve(Document& document, Element* e, RenderStyle* parentStyle, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
 {
     m_regionForStyling = regionForStyling;
 
@@ -407,6 +385,8 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
     
     m_authorRollback = nullptr;
     m_userRollback = nullptr;
+
+    m_selectorFilter = selectorFilter;
 
     updateConversionData();
 }
@@ -475,7 +455,7 @@ bool StyleResolver::styleSharingCandidateMatchesRuleSet(RuleSet* ruleSet)
     if (!ruleSet)
         return false;
 
-    ElementRuleCollector collector(*m_state.element(), m_state.style(), m_ruleSets, m_selectorFilter);
+    ElementRuleCollector collector(*m_state.element(), m_state.style(), m_ruleSets, m_state.selectorFilter());
     return collector.hasAnyMatchingRules(ruleSet);
 }
 
@@ -723,7 +703,7 @@ static inline bool isAtShadowBoundary(const Element* element)
 }
 
 Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* defaultParent,
-    StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling)
+    StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
 
@@ -741,7 +721,8 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
 
     State& state = m_state;
     initElement(element);
-    state.initForStyleResolve(document(), element, defaultParent, regionForStyling);
+    state.initForStyleResolve(document(), element, defaultParent, regionForStyling, selectorFilter);
+
     if (sharingBehavior == AllowStyleSharing) {
         if (RenderStyle* sharedStyle = locateSharedStyle()) {
             state.clear();
@@ -773,7 +754,7 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
     if (needsCollection)
         m_ruleSets.collectFeatures();
 
-    ElementRuleCollector collector(*element, state.style(), m_ruleSets, m_selectorFilter);
+    ElementRuleCollector collector(*element, state.style(), m_ruleSets, m_state.selectorFilter());
     collector.setRegionForStyling(regionForStyling);
     collector.setMedium(m_medium.get());
 
@@ -939,7 +920,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
     // those rules.
 
     // Check UA, user and author rules.
-    ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_selectorFilter);
+    ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_state.selectorFilter());
     collector.setPseudoStyleRequest(pseudoStyleRequest);
     collector.setMedium(m_medium.get());
     collector.matchUARules();
@@ -1418,7 +1399,7 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
     initElement(element);
     m_state.initForStyleResolve(document(), element, nullptr);
 
-    ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_selectorFilter);
+    ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_state.selectorFilter());
     collector.setMode(SelectorChecker::Mode::CollectingRules);
     collector.setPseudoStyleRequest(PseudoStyleRequest(pseudoId));
     collector.setMedium(m_medium.get());

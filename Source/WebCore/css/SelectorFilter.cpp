@@ -30,6 +30,7 @@
 #include "SelectorFilter.h"
 
 #include "CSSSelector.h"
+#include "ShadowRoot.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -53,11 +54,18 @@ static inline void collectElementIdentifierHashes(const Element* element, Vector
     }
 }
 
+bool SelectorFilter::parentStackIsConsistent(const ContainerNode* parentNode) const
+{
+    if (!parentNode || is<Document>(parentNode) || is<ShadowRoot>(parentNode))
+        return m_parentStack.isEmpty();
+
+    return !m_parentStack.isEmpty() && m_parentStack.last().element == parentNode;
+}
+
 void SelectorFilter::pushParentStackFrame(Element* parent)
 {
-    ASSERT(m_ancestorIdentifierFilter);
-    ASSERT(m_parentStack.isEmpty() || m_parentStack.last().element == parent->parentOrShadowHostElement());
-    ASSERT(!m_parentStack.isEmpty() || !parent->parentOrShadowHostElement());
+    ASSERT(m_parentStack.isEmpty() || m_parentStack.last().element == parent->parentElement());
+    ASSERT(!m_parentStack.isEmpty() || !parent->parentElement());
     m_parentStack.append(ParentStackFrame(parent));
     ParentStackFrame& parentFrame = m_parentStack.last();
     // Mix tags, class names and ids into some sort of weird bouillabaisse.
@@ -65,50 +73,25 @@ void SelectorFilter::pushParentStackFrame(Element* parent)
     collectElementIdentifierHashes(parent, parentFrame.identifierHashes);
     size_t count = parentFrame.identifierHashes.size();
     for (size_t i = 0; i < count; ++i)
-        m_ancestorIdentifierFilter->add(parentFrame.identifierHashes[i]);
+        m_ancestorIdentifierFilter.add(parentFrame.identifierHashes[i]);
 }
 
 void SelectorFilter::popParentStackFrame()
 {
     ASSERT(!m_parentStack.isEmpty());
-    ASSERT(m_ancestorIdentifierFilter);
     const ParentStackFrame& parentFrame = m_parentStack.last();
     size_t count = parentFrame.identifierHashes.size();
     for (size_t i = 0; i < count; ++i)
-        m_ancestorIdentifierFilter->remove(parentFrame.identifierHashes[i]);
+        m_ancestorIdentifierFilter.remove(parentFrame.identifierHashes[i]);
     m_parentStack.removeLast();
     if (m_parentStack.isEmpty()) {
-        ASSERT(m_ancestorIdentifierFilter->likelyEmpty());
-        m_ancestorIdentifierFilter = nullptr;
+        ASSERT(m_ancestorIdentifierFilter.likelyEmpty());
+        m_ancestorIdentifierFilter.clear();
     }
-}
-
-void SelectorFilter::setupParentStack(Element* parent)
-{
-    ASSERT(m_parentStack.isEmpty() == !m_ancestorIdentifierFilter);
-    // Kill whatever we stored before.
-    m_parentStack.shrink(0);
-    m_ancestorIdentifierFilter = std::make_unique<CountingBloomFilter<bloomFilterKeyBits>>();
-    // Fast version if parent is a root element:
-    if (!parent->parentNode() && !parent->isShadowRoot()) {
-        pushParentStackFrame(parent);
-        return;
-    }
-    // Otherwise climb up the tree.
-    Vector<Element*, 30> ancestors;
-    for (Element* ancestor = parent; ancestor; ancestor = ancestor->parentOrShadowHostElement())
-        ancestors.append(ancestor);
-    for (size_t n = ancestors.size(); n; --n)
-        pushParentStackFrame(ancestors[n - 1]);
 }
 
 void SelectorFilter::pushParent(Element* parent)
 {
-    ASSERT(m_ancestorIdentifierFilter);
-    // We may get invoked for some random elements in some wacky cases during style resolve.
-    // Pause maintaining the stack in this case.
-    if (m_parentStack.last().element != parent->parentOrShadowHostElement())
-        return;
     pushParentStackFrame(parent);
 }
 

@@ -1,3 +1,116 @@
+2016-01-07  Antti Koivisto  <antti@apple.com>
+
+        Enable selector filtering for shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=152831
+
+        Reviewed by Simon Fraser.
+
+        Selector filtering doesn't currently work in shadow trees making style resolve for them slow.
+        This is because SelectorFilter is not in "consistent" state.
+
+        This patch moves SelectorFilter ownership from StyleResolver to TreeResolver and guarantees
+        it is always upadated consistently. It eliminates a bunch of now unnecessary consistency checks
+        and special cases.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+
+            Assert for consistency instead of testing for it.
+
+        (WebCore::ElementRuleCollector::matchedResult):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+
+            Selector filter can now be used if it exists.
+
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::ElementRuleCollector): Deleted.
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+
+            Disable selector filtering for custom shadow pseudo rules. They are resolved by shadow DOM resolver
+            but may contain components matching the normal DOM.
+
+        * css/RuleSet.h:
+        (WebCore::RuleData::descendantSelectorIdentifierHashes):
+        (WebCore::RuleData::disableSelectorFiltering):
+        (WebCore::RuleData::compilationStatus):
+        (WebCore::RuleData::compiledSelectorCodeRef):
+        * css/SelectorFilter.cpp:
+        (WebCore::collectElementIdentifierHashes):
+        (WebCore::SelectorFilter::parentStackIsConsistent):
+
+            New consistency conditions. This is now used for asserts only.
+
+        (WebCore::SelectorFilter::pushParentStackFrame):
+        (WebCore::SelectorFilter::popParentStackFrame):
+
+            Selector filter only filters the current tree context, replace parentOrShadowHostElement with parentElement.
+
+        (WebCore::SelectorFilter::setupParentStack): Deleted.
+
+            No longer needed.
+
+        (WebCore::SelectorFilter::pushParent):
+
+            Remove consistency check. These cases no longer happen.
+
+        * css/SelectorFilter.h:
+        (WebCore::SelectorFilter::popParent):
+        (WebCore::SelectorFilter::parentStackIsEmpty):
+        (WebCore::SelectorFilter::fastRejectSelector):
+        (WebCore::SelectorFilter::parentStackIsConsistent): Deleted.
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::StyleInvalidationAnalysis::invalidateIfNeeded):
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        (WebCore::StyleResolver::addKeyframeStyle):
+        (WebCore::StyleResolver::initElement):
+        (WebCore::StyleResolver::State::initForStyleResolve):
+
+            We no longer owner the selector filter. Move it to State.
+
+        (WebCore::StyleResolver::styleSharingCandidateMatchesRuleSet):
+        (WebCore::isAtShadowBoundary):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        (WebCore::StyleResolver::pushParentElement): Deleted.
+        (WebCore::StyleResolver::popParentElement): Deleted.
+
+            No need for this logic.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::ruleSets):
+        (WebCore::StyleResolver::mediaQueryEvaluator):
+        (WebCore::StyleResolver::State::document):
+        (WebCore::StyleResolver::State::setAuthorRollback):
+        (WebCore::StyleResolver::State::setUserRollback):
+        (WebCore::StyleResolver::State::selectorFilter):
+        (WebCore::StyleResolver::state):
+        (WebCore::checkRegionSelector):
+        (WebCore::StyleResolver::selectorFilter): Deleted.
+        (WebCore::StyleResolverParentPusher::StyleResolverParentPusher): Deleted.
+        (WebCore::StyleResolverParentPusher::push): Deleted.
+        (WebCore::StyleResolverParentPusher::~StyleResolverParentPusher): Deleted.
+        * style/StyleTreeResolver.cpp:
+
+            This now owns the selector filter for a tree context.
+
+        (WebCore::Style::SelectorFilterPusher::SelectorFilterPusher):
+        (WebCore::Style::SelectorFilterPusher::push):
+        (WebCore::Style::SelectorFilterPusher::~SelectorFilterPusher):
+        (WebCore::Style::TreeResolver::TreeResolver):
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::TreeResolver::createRenderTreeForSlotAssignees):
+        (WebCore::Style::TreeResolver::createRenderTreeRecursively):
+        (WebCore::Style::TreeResolver::resolveChildren):
+        (WebCore::Style::TreeResolver::resolveRecursively):
+
+            Push the filter in a few more places to keep it consistent in shadow trees.
+
+        * style/StyleTreeResolver.h:
+
 2016-01-07  Zalan Bujtas  <zalan@apple.com>
 
         Move computeLineBoundsForText from GraphicsContext* to GraphicsContext.
