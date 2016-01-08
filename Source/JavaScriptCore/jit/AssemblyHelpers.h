@@ -297,31 +297,8 @@ public:
 #endif
     }
 
-    void restoreCalleeSavesFromVMCalleeSavesBuffer(const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
-    {
-#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-        GPRReg temp1 = usedRegisters.getFreeGPR(0);
-        
-        move(TrustedImmPtr(m_vm->calleeSaveRegistersBuffer), temp1);
+    void restoreCalleeSavesFromVMCalleeSavesBuffer();
 
-        RegisterAtOffsetList* allCalleeSaves = m_vm->getAllCalleeSaveRegisterOffsets();
-        RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
-        unsigned registerCount = allCalleeSaves->size();
-        
-        for (unsigned i = 0; i < registerCount; i++) {
-            RegisterAtOffset entry = allCalleeSaves->at(i);
-            if (dontRestoreRegisters.get(entry.reg()))
-                continue;
-            if (entry.reg().isGPR())
-                loadPtr(Address(temp1, entry.offset()), entry.reg().gpr());
-            else
-                loadDouble(Address(temp1, entry.offset()), entry.reg().fpr());
-        }
-#else
-        UNUSED_PARAM(usedRegisters);
-#endif
-    }
-    
     void copyCalleeSavesFromFrameOrRegisterToVMCalleeSavesBuffer(const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0

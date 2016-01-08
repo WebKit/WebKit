@@ -517,6 +517,27 @@ void AssemblyHelpers::emitRandomThunk(GPRReg scratch0, GPRReg scratch1, GPRReg s
 }
 #endif
 
+void AssemblyHelpers::restoreCalleeSavesFromVMCalleeSavesBuffer()
+{
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+    char* sourceBuffer = bitwise_cast<char*>(m_vm->calleeSaveRegistersBuffer);
+
+    RegisterAtOffsetList* allCalleeSaves = m_vm->getAllCalleeSaveRegisterOffsets();
+    RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
+    unsigned registerCount = allCalleeSaves->size();
+    
+    for (unsigned i = 0; i < registerCount; i++) {
+        RegisterAtOffset entry = allCalleeSaves->at(i);
+        if (dontRestoreRegisters.get(entry.reg()))
+            continue;
+        if (entry.reg().isGPR())
+            loadPtr(static_cast<void*>(sourceBuffer + entry.offset()), entry.reg().gpr());
+        else
+            loadDouble(TrustedImmPtr(sourceBuffer + entry.offset()), entry.reg().fpr());
+    }
+#endif
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)
