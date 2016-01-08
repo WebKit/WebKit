@@ -84,7 +84,10 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
     ASSERT(m_result->type() == IDBAny::Type::IDBDatabase);
     m_transaction->addRequest(*this);
 
-    enqueueEvent(Event::create(eventNames().successEvent, false, false));
+    auto event = Event::create(eventNames().successEvent, false, false);
+    m_openDatabaseSuccessEvent = &event.get();
+
+    enqueueEvent(WTFMove(event));
 }
 
 void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()

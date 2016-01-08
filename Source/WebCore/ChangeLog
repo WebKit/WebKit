@@ -1,3 +1,20 @@
+2016-01-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Success-after-open event should only have the IDBOpenDBRequest as its target.
+        https://bugs.webkit.org/show_bug.cgi?id=152875
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least 2 failing tests now pass).
+
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit):
+
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::dispatchEvent): Only add the transaction and database as potential
+          targets for this event if it is *not* the success-after-open event.
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+
 2016-01-07  Brent Fulgham  <bfulgham@apple.com>
 
         Correct missing EXT_sRGB Format Handling

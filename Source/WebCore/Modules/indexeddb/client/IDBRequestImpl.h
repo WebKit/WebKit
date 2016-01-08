@@ -131,6 +131,8 @@ protected:
     IndexedDB::RequestType m_requestType = { IndexedDB::RequestType::Other };
     bool m_contextStopped { false };
 
+    Event* m_openDatabaseSuccessEvent { nullptr };
+
 private:
     void onError();
     void onSuccess();

@@ -73,10 +73,6 @@ inspector/indexeddb
 imported/w3c/indexeddb/interfaces.html [ Skip ]
 imported/w3c/indexeddb/keyorder.htm [ Skip ]
 
-# W3C IDB tests - Legacy IDB passes, Modern IDB fails
-imported/w3c/indexeddb/request_bubble-and-capture.htm [ Failure ]
-imported/w3c/indexeddb/transaction_bubble-and-capture.htm [ Failure ]
-
 # W3C IDB tests - Legacy IDB fails, Modern IDB fails differently
 imported/w3c/indexeddb/idbindex_get7.htm [ Failure ]
 imported/w3c/indexeddb/idbindex_getKey7.htm [ Failure ]
