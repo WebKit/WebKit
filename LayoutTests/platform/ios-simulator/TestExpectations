@@ -2853,5 +2853,4 @@ webkit.org/b/152449 fast/events/can-click-element-on-page-with-active-pseudo-cla
 
 webkit.org/b/152701 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
-webkit.org/b/152276 platform/ios-simulator/ios/scrolling/scroll-events-back-forward-after-pageshow.html [ Failure ]
-webkit.org/b/152276 platform/ios-simulator/ios/scrolling/scroll-events-back-forward.html [ Failure ]
+webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
