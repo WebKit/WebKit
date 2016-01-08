@@ -59,7 +59,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._transferSize = NaN;
         this._cached = false;
 
-        if (this._initiatorSourceCodeLocation)
+        if (this._initiatorSourceCodeLocation && this._initiatorSourceCodeLocation.sourceCode instanceof WebInspector.Resource)
             this._initiatorSourceCodeLocation.sourceCode.addInitiatedResource(this);
     }
 
@@ -224,7 +224,8 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         return this._parentFrame ? this._parentFrame.mainResource === this : false;
     }
 
-    addInitiatedResource(resource) {
+    addInitiatedResource(resource)
+    {
         if (!(resource instanceof WebInspector.Resource))
             return;
 

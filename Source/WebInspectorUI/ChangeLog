@@ -1,3 +1,17 @@
+2016-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception: TypeError: this._initiatorSourceCodeLocation.sourceCode.addInitiatedResource is not a function
+        https://bugs.webkit.org/show_bug.cgi?id=152905
+        <rdar://problem/24109809>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.addInitiatedResource):
+        Only Resource has addInitiatedResource, so only call it if the
+        SourceCode in the SourceCodeLocation is a Resource.
+
 2016-01-07  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add warnings to section that require specific values of other properties
