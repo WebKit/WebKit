@@ -710,7 +710,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(CDMSession* session)
     m_session = toCDMSessionMediaSourceAVFObjC(session);
 
     if (CDMSessionAVStreamSession* cdmStreamSession = toCDMSessionAVStreamSession(m_session))
-        cdmStreamSession->setStreamSession(m_streamSession.get());
+        cdmStreamSession->setStreamSession(streamSession());
     for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
         sourceBuffer->setCDMSession(m_session);
 }

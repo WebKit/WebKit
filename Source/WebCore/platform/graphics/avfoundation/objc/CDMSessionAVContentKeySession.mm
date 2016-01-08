@@ -343,7 +343,19 @@ void CDMSessionAVContentKeySession::didProvideContentKeyRequest(AVContentKeyRequ
 AVContentKeySession* CDMSessionAVContentKeySession::contentKeySession()
 {
     if (!m_contentKeySession) {
-        m_contentKeySession = adoptNS([[getAVContentKeySessionClass() alloc] initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath()]]);
+
+        String storagePath = this->storagePath();
+        if (storagePath.isEmpty())
+            return nil;
+
+        String storageDirectory = directoryName(storagePath);
+
+        if (!fileExists(storageDirectory)) {
+            if (!makeAllDirectories(storageDirectory))
+                return nil;
+        }
+
+        m_contentKeySession = adoptNS([[getAVContentKeySessionClass() alloc] initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
         m_contentKeySession.get().delegate = m_contentKeySessionDelegate.get();
     }
 
