@@ -7574,7 +7574,7 @@ private:
 
                 Box<CCallHelpers::JumpList> exceptions =
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
-                    
+
                 auto generator = Box<BinaryArithOpGenerator>::create(
                     leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()),
@@ -7582,20 +7582,28 @@ private:
                     scratchFPRUsage == NeedScratchFPR ? params.fpScratch(2) : InvalidFPRReg);
 
                 generator->generateFastPath(jit);
-                generator->endJumpList().link(&jit);
-                CCallHelpers::Label done = jit.label();
 
-                params.addLatePath(
-                    [=] (CCallHelpers& jit) {
-                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                if (generator->didEmitFastPath()) {
+                    generator->endJumpList().link(&jit);
+                    CCallHelpers::Label done = jit.label();
+                    
+                    params.addLatePath(
+                        [=] (CCallHelpers& jit) {
+                            AllowMacroScratchRegisterUsage allowScratch(jit);
                             
-                        generator->slowPathJumpList().link(&jit);
-                        callOperation(
-                            *state, params.unavailableRegisters(), jit, node->origin.semantic,
-                            exceptions.get(), slowPathFunction, params[0].gpr(),
-                            params[1].gpr(), params[2].gpr());
-                        jit.jump().linkTo(done, &jit);
-                    });
+                            generator->slowPathJumpList().link(&jit);
+                            callOperation(
+                                *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                exceptions.get(), slowPathFunction, params[0].gpr(),
+                                params[1].gpr(), params[2].gpr());
+                            jit.jump().linkTo(done, &jit);
+                        });
+                } else {
+                    callOperation(
+                        *state, params.unavailableRegisters(), jit, node->origin.semantic,
+                        exceptions.get(), slowPathFunction, params[0].gpr(), params[1].gpr(),
+                        params[2].gpr());
+                }
             });
 
         setJSValue(patchpoint);
