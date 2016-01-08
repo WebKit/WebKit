@@ -1,3 +1,20 @@
+2016-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct missing EXT_sRGB Format Handling
+        https://bugs.webkit.org/show_bug.cgi?id=152876
+        <rdar://problem/23284389>
+
+        Reviewed by Alex Christensen.
+
+        Tested by WebGL 1.0.4 suite.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (getDataFormat): Handle missing SRGB and SRGB_ALPHA cases.
+        * platform/graphics/GraphicsContext3D.h: Add missing SRGB_ALPHA value from the Khronos standard.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::texImage2D): Add an assertion that we are not being handed
+        an internal format to a method that works with normal formats.
+
 2016-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Use an appropriate buffer format for swipe snapshots

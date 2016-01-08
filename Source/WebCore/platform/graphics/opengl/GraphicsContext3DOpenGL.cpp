@@ -355,6 +355,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
         type = GL_HALF_FLOAT_ARB;
     }
 
+    ASSERT(format != Extensions3D::SRGB8_ALPHA8_EXT);
     if (format == Extensions3D::SRGB_ALPHA_EXT)
         openGLFormat = GL_RGBA;
     else if (format == Extensions3D::SRGB_EXT)
