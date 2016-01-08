@@ -34,9 +34,11 @@ CanvasElectron.prototype = {
             this._context.fillStyle = this._color;
 
             // Draw the orbit of the object.
-            this._context.beginPath();
-            this._context.ellipse(this._stageSize.center.x, this._stageSize.center.y, this._orbitRadiuses.x, this._orbitRadiuses.y, 0, 0, 2 * Math.PI);
-            this._context.stroke();
+            if (this._context.ellipse) {
+                this._context.beginPath();
+                this._context.ellipse(this._stageSize.center.x, this._stageSize.center.y, this._orbitRadiuses.x, this._orbitRadiuses.y, 0, 0, 2 * Math.PI);
+                this._context.stroke();
+            }
 
             // Draw the object.
             this._context.beginPath();

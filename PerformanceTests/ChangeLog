@@ -1,5 +1,20 @@
 2016-01-07  Jon Lee  <jonlee@apple.com>
 
+        Update benchmark test suite
+        https://bugs.webkit.org/show_bug.cgi?id=152679
+
+        Reviewed by Simon Fraser.
+
+        Fix tests for other browsers.
+
+        * Animometer/resources/extensions.js:
+        (Point.elementClientSize): Some browsers return 0 for SVG clientWidth and clientHeight.
+        Use getBoundingClientRect() instead.
+        * Animometer/tests/misc/resources/canvas-electrons.js:
+        (CanvasElectron.prototype._draw): Some browsers don't support ellipse.
+
+2016-01-07  Jon Lee  <jonlee@apple.com>
+
         Add a waitUntilReady() step
         https://bugs.webkit.org/show_bug.cgi?id=152862
 

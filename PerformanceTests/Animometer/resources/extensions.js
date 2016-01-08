@@ -66,7 +66,8 @@ Point.pointOnEllipse = function(angle, radiuses)
 
 Point.elementClientSize = function(element)
 {
-    return new Point(element.clientWidth, element.clientHeight);
+    var rect = element.getBoundingClientRect();
+    return new Point(rect.width, rect.height);
 }
 
 Point.prototype =
