@@ -3,26 +3,18 @@
 DOMParticle = Utilities.createSubclass(Particle,
     function(stage)
     {
-        Particle.call(this, stage);
         this.element = document.createElement("div");
         stage.element.appendChild(this.element);
 
-        this._applyAttributes();
-        this.move();
+        Particle.call(this, stage);
     }, {
 
     reset: function()
     {
         Particle.prototype.reset.call(this);
-        if (this.element)
-            this._applyAttributes();
-    },
-
-    _applyAttributes: function()
-    {
         this.element.style.width = this.size.x + "px";
         this.element.style.height = this.size.y + "px";
-        this.element.style.backgroundColor = "hsl(" + (((Date.now()/2000)%1)*360) + ", 70%, 45%)";
+        this.element.style.backgroundColor = "hsl(" + ((Date.now()/2000)%1)*360 + ", 70%, 45%)";
     },
 
     move: function()

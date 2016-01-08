@@ -1,5 +1,20 @@
 2016-01-07  Jon Lee  <jonlee@apple.com>
 
+        Fix new test.
+
+        * Animometer/resources/runner/tests.js: Wrong URL from an
+        old patch.
+        * Animometer/tests/master/particles.html:
+        * Animometer/tests/master/resources/dom-particles.js:
+        (Particle.call.reset): Figured out a simpler way to set up
+        the particles.
+        (this.move.reset): Deleted.
+        (this.move._applyAttributes): Deleted.
+        * Animometer/tests/master/resources/particles.js:
+        (Particle): Call move() after reset().
+
+2016-01-07  Jon Lee  <jonlee@apple.com>
+
         Update benchmark test suite
         https://bugs.webkit.org/show_bug.cgi?id=152679
 
@@ -513,7 +528,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=152544
 
         Reviewed by Zalan Bujtas.
-        
+
         Add a test that draws lots of international text. This is a particle test,
         moving the boxes around with absolution positioning.
 
@@ -897,11 +912,11 @@
         https://bugs.webkit.org/show_bug.cgi?id=151724
 
         Reviewed by Dean Jackson.
-        
+
         Add a "bouncing particles" test that moves composited layers around, optionally with a filter.
-        
+
         This is added under a new "Miscellaneous" category.
-        
+
         Remove the test templates category from the UI.
 
         * Animometer/runner/resources/tests.js:
@@ -944,7 +959,7 @@
         clipboard.
 
         * Animometer/runner/animometer.html: Add a new button to select the results table or JSON.
-        
+
         * Animometer/runner/resources/animometer.js:
         (window.sectionsManager._sectionDataElement): Selects the container <data> element.
         (window.sectionsManager._sectionDataDivElement): Replace a literal string with a string table entry.
@@ -962,9 +977,9 @@
         https://bugs.webkit.org/show_bug.cgi?id=151526
 
         Reviewed by Simon Fraser.
-        
+
         Having the graphs do interpolation is misleading, because you can't see the actual data.
-        
+
         Also remove "shape-rendering: crispEdges;" so the lines get antialiased.
 
         * Animometer/runner/resources/animometer.css:
@@ -990,17 +1005,17 @@
         * Animometer/resources/extensions.js:
         (ResultsTable.prototype._isNoisyMeasurement): Fix a parameter name.
         (ResultsTable.prototype._isNoisyTest): Since score is a member of testResults, we need to limit our search to frame rate and complexity.
-        (ResultsTable.prototype._showTest): Pass the correct parameter to _isNoisyMeasurement(). 
-        
+        (ResultsTable.prototype._showTest): Pass the correct parameter to _isNoisyMeasurement().
+
         * Animometer/resources/strings.js: Fix the indentation and name and value of a string.
 
         * Animometer/runner/resources/tests.js: Remove all the manual gains and limits parameters which had to be passed to every test.
-        
+
         * Animometer/tests/resources/main.js:
         (BenchmarkState.prototype.currentStage): Fix an enum name.
         (Benchmark): Get rid of manual gain and limits.
         (Benchmark.prototype.update): Simplify the calculation by having all the times in ms.
-        
+
         * Animometer/tests/resources/math.js:
         (PIDController): Get rid of the manual gain and limits and the magic numbers for Ti and Td.
         (PIDController.prototype._yPosition): Tells whether the test current output is moving towards the set-point or away from it.
@@ -1013,7 +1028,7 @@
         (PIDController.prototype._tune):
         (PIDController.prototype._saturate):
         (PIDController.prototype.tune): Manages calculating the controller parameters. It then returns a PID tuning value.
-        (PIDController.prototype._sat): Deleted. We may need to return it back but the limits have to be calculated adaptively not manually. 
+        (PIDController.prototype._sat): Deleted. We may need to return it back but the limits have to be calculated adaptively not manually.
 
 2015-11-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
@@ -1021,7 +1036,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=151334
 
         Reviewed by Simon Fraser.
-        
+
         Make the graphics benchmark string table be an object of sub-objects. Each
         sub-object represents an associative array, the key is the string name and
         the value is the string data.
@@ -1054,7 +1069,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=151361
 
         Reviewed by Simon Fraser.
-        
+
         Use fixed size for stage iframe of the graphics benchmark to disable
         flattening the iframe while animating the particles. Also ensure the
         bouncing particles do not go outside the iframe's boundaries.
@@ -1099,7 +1114,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=151283
 
         Reviewed by Darin Adler.
-        
+
         Get rid of the option to run animation using setInterval().
 
         * Animometer/tests/resources/main.js:
@@ -1114,10 +1129,10 @@
         https://bugs.webkit.org/show_bug.cgi?id=151286
 
         Reviewed by Simon Fraser.
-        
+
         When showing the results of a test in the graphics benchmark the following
         criteria is going to be applied:
-        
+
         1. If the standard deviation of the test complexity or the frame rate is
            equal to or more than 10%, the standard deviation and the test name
            will be displayed in red.
@@ -1205,7 +1220,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=151289
 
         Reviewed by Simon Fraser.
-        
+
         Cache the stage size when it is created instead of requesting every time
         an object is added via clientWidth and clientHeight.
 
@@ -1229,14 +1244,14 @@
         Add "defer" back when loading resources/animometer.js since this script
         depends on many other scripts and we need to wait till the page is parsed.
         Also change the default test interval to be 10 seconds.
-        
+
         * Animometer/runner/resources/graph.js:
         (graph): Make the test results curves smoother.
-        
+
         * Animometer/tests/resources/main.js:
         (Animator): Initialize the Kalman filter with 60 FPS which should be true
         if the test page is empty.
-        
+
         (Animator.prototype.animate):
         * Animometer/tests/resources/math.js:
         (KalmanEstimator): Fix the initial value of _vecX_est.
@@ -1247,7 +1262,7 @@
 
 2015-11-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
-        Remove "defer" from the scripts' references in the graphics benchmark home page 
+        Remove "defer" from the scripts' references in the graphics benchmark home page
         https://bugs.webkit.org/show_bug.cgi?id=150915
 
         Reviewed by Simon Fraser.
@@ -1272,13 +1287,13 @@
         frame rate will also be measured.
 
         * Animometer/runner/animometer.html: Add a new option for the non-adaptive mode.
-        
+
         * Animometer/runner/resources/animometer.css:
         (section#home input[type="number"]): Define the width of all the edit control in the <home> section.
         (section#home > suites input[type="number"]): The edit controls in the <suites> box will be right aligned and hidden by default.
         (section#home > suites input[type="number"].selected): When the class "selected" is added, the edit controls will be visible.
         (section#home > options > label > input[type="number"]): Deleted.
-        
+
         * Animometer/runner/resources/animometer.js:
         (window.benchmarkRunnerClient.didFinishLastIteration): Update the local storage with the results of each test.
         (window.optionsManager._adaptiveTestElement): Returns the checkbox for setting the adaptive test option.
@@ -1292,8 +1307,8 @@
         (window.suitesManager.updateLocalStorageFromJSON): Saves the last run results to the local storage.
         (window.benchmarkController.initialize): Shows/Hides the test edit controls based on the adaptive test option.
         (window.benchmarkController.onChangeAdaptiveTestCheckbox): An onchange event handler for the adaptive test checkbox.
-        
-        * Animometer/tests/resources/main.js: 
+
+        * Animometer/tests/resources/main.js:
         (Benchmark.prototype.update): Fix the complexity of the test if the running mode is non-adaptive test and desired complexity is not zero.
         (window.runBenchmark): Add the test complexity as a new benchmark option.
 
@@ -1303,13 +1318,13 @@
         https://bugs.webkit.org/show_bug.cgi?id=150530
 
         Reviewed by Darin Adler.
-        
+
         We want to set the size of the benchmark stage dynamically such that it
-        depends on the screen resolution and the device scale factor. This patch 
+        depends on the screen resolution and the device scale factor. This patch
         does more than that because the home page css was not done properly. To
         use the flex box layout, the animometer.css has to be rewritten almost from
         scratch. The suites tree has to be rewritten also because it was not collapsing
-        and with the flex box layout it was going outside of the window area. The 
+        and with the flex box layout it was going outside of the window area. The
         options handling and the local storage handling had to be rewritten to
         allow more flexibility with this patch and the future patches. The code
         in animometer.js was reorganized into objects to allow distributing the code
@@ -1320,30 +1335,30 @@
         (Insets.prototype.get width): Follow the function opening brace style guidelines.
         (Insets.prototype.get height):
         (Insets.prototype.get size): Returns the size of an Insets as a Point object.
-        
+
         (window.DocumentExtension): Provides document helper functions. It should be assailable from the runner and the tests.
-        (window.DocumentExtension.createElement): Creates an HTMLElement given its name, attributes and parentElement. 
-        (window.DocumentExtension.createSvgElement): Creates an SVGElement given its name, attributes and parentElement (moved from utilities.js). 
+        (window.DocumentExtension.createElement): Creates an HTMLElement given its name, attributes and parentElement.
+        (window.DocumentExtension.createSvgElement): Creates an SVGElement given its name, attributes and parentElement (moved from utilities.js).
         (window.DocumentExtension.insertCssRuleAfter): Inserts a CSS rule after an exiting rule given its text.
-        
+
         (ResultsTable.prototype._showHeader): Use DocumentExtension functions.
         (ResultsTable.prototype._showGraph): Use DocumentExtension functions and create a real button for "Graph..." option.
         (ResultsTable.prototype._showJSON): Use DocumentExtension functions and create a real button for "JSON..." option.
         (Options): Deleted.
-        
+
         * Animometer/runner/animometer.html: Restructure the page to use the flex box layout.
-        
+
         * Animometer/runner/resources/animometer.css:
         (html,body):
         (button):
-        
+
         (button.large-button):The large button appears in the animometer.html.
         (button.large-button:active):
         (button.large-button:disabled):
-        
+
         (button.small-button): The small button appears in the results table.
         (button.small-button:active):
-        
+
         (.tree): The tree class is used to list the suites and their tests.
         (.tree .expand-button): This button expands a tree element.
         (.tree .expand-button ~ ul): Hide the children (<ul>...</ul>) of a parent node by default.
@@ -1356,33 +1371,33 @@
         (label.tree-label): Style for the labels in the top level only (the suites nodes in our case).
         (label.tree-label:before): Style the unchecked case of the expand-button.
         (:checked ~ label.tree-label:before): Style the checked case of the expand-button.
-        
+
         (table.results-table): The results table appears while running the test and at the end.
         (.results-table td):
         (.results-table th):
-        
+
         (div.results-json): The JSON div appears per test or for the whole run.
-        
+
         (main): This is the flex box container.
-        
+
         (section): A section is displayed exclusively inside the <main>. It is hidden by default.
         (section.selected): When it is selected, its layout is flex layout.
         (section > footer): The header or the footer of a section should not take more than 15% of the container.
-        
+
         (section#home): The home section has <suites> and <options> parts to be laid out in the middle.
-        (section#home > options): 
+        (section#home > options):
         (section#home > suites): The <suites> should not take more than 40% of the width.
         (section#home > options > label): The benchmark title.
         (section#home > header > h2): The benchmark title.
         (section#home > options > label > input[type="number"]): Sets the width of the option edit control.
-        
+
         (section#running): The running section contain the runner <iframe> which takes the whole area of the <main>.
         (section#running > #running-test): This is the <iframe> container.
         (section#running > #running-test > iframe): The <iframe> is created by the runner for each test.
         (section#running > #progress): This is the progress bar.
         (section#running > #progress > #progress-completed): This is another element which grows while the runner is progressing.
         (section#running > #record): This the container of the record results table which is shown while running a test.
-        
+
         (section#results):
         (section#json):
         (section#test-json):
@@ -1392,13 +1407,13 @@
         (section#json > data):
         (section#test-json > data):
         (section#test-graph > data): The <data> element should take 70% of the <section>.
-        
+
         (section#test-graph > data > svg):
         (.axis line):
         (.left-samples): These styles are for the d3 graph.
-        
+
         (section#test-json > data): This is the style of the JSON <data> element.
-        
+
         (iframe): Deleted.
         (label, p): Deleted.
         (section > p): Deleted.
@@ -1426,12 +1441,12 @@
         (.sample-time): Deleted.
         (.left-mean): Deleted.
         (.right-mean): Deleted.
-        
+
         * Animometer/runner/resources/animometer.js:
         (window.benchmarkRunnerClient.initialize): Initialize the client object with the options and the suites.
         (window.benchmarkRunnerClient.willStartFirstIteration): Use new css selectors for results and the record table.
         (window.benchmarkRunnerClient.didFinishLastIteration): Move the code which sets the JSON text to sectionsManager.showJSON().
-        
+
         (window.sectionsManager): Responsible of managing the <section>s elements inside animometer.html.
         (window.sectionsManager._sectionHeaderH1Element): Return the <h1> inside the <header> of a given section.
         (window.sectionsManager._sectionDataDivElement): Return the <div> inside the <data> of a given section.
@@ -1441,12 +1456,12 @@
         (window.sectionsManager.showSection): Shows a specific <section> in the <main> container.
         (window.sectionsManager.setupSectionStyle): Sets css attributes for all the <section>s.
         (window.sectionsManager.setupRunningSectionStyle): Sets the css attributes for the running <section> only.
-        
+
         (window.optionsManager): Responsible of managing the user options and streaming them to/form the localStorage.
         (window.optionsManager._optionsElements): Returns the children <input> elements of the <options>.
         (window.optionsManager.updateUIFromLocalStorage): Restore the values of the <options> UI elements from the local storage.
         (window.optionsManager.updateLocalStorageFromUI): Saves the values of the <options> UI elements to the local storage.
-        
+
         (window.suitesManager): Responsible of managing the user suites and streaming them to/form the localStorage.
         (window.suitesManager._treeElement): Returns the suites tree container element.
         (window.suitesManager._suitesElements): Returns a list of the suites elements.
@@ -1461,7 +1476,7 @@
         (window.suitesManager.createElements): Creates the suites tree dynamically from the array Suites.
         (window.suitesManager.updateUIFromLocalStorage): Restore the values of the <suites> UI elements from the local storage.
         (window.suitesManager.updateLocalStorageFromUI): aves the values of the <suites> UI elements to the local storage.
-        
+
         (window.benchmarkController): This is the UI controller of the animometer.html page.
         (window.benchmarkController.initialize): Called when the animometer.html page is loaded.
         (window.benchmarkController._runBenchmark): Starts a benchmark run.
@@ -1470,7 +1485,7 @@
         (window.benchmarkController.showJson): Called from the results page to show the JSON of the last benchmark run.
         (window.benchmarkController.showTestGraph): Called from the results the table to show a graph for the samples of a specific test.
         (window.benchmarkController.showTestJSON): Called from the results the table to show a JSON for the samples of a specific test.
-        
+
         (showSection): Deleted.
         (startTest): Deleted.
         (showResults): Deleted.
@@ -1485,7 +1500,7 @@
         (localStorageNameForTest): Deleted.
         (populateSettings.): Deleted.
         (populateSettings): Deleted.
-        
+
         * Animometer/runner/resources/benchmark-runner.js:
         (BenchmarkRunner): Pass the frameContainer element to the BenchmarkRunner.
         (BenchmarkRunner.prototype._appendFrame): Remove unused parameter unwanted styling code.
@@ -1493,17 +1508,17 @@
 
         * Animometer/runner/resources/graph.js:
         (graph): Calculate the size of the chart from the container element.
-        
+
         * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js:
         (BouncingSvgImage):
         * Animometer/tests/bouncing-particles/resources/bouncing-svg-particles.js:
         (BouncingSvgParticlesStage.prototype._createDefs):
-        (BouncingSvgParticlesStage.prototype._createClipStar):        
+        (BouncingSvgParticlesStage.prototype._createClipStar):
         * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js:
         (BouncingSvgShape.prototype._createShape):
         (BouncingSvgShapesStage.prototype.createGradient):
         Call DocumentExtension.createSvgElement() instead of calling Utilities.createSvgElement().
-        
+
         * Animometer/tests/resources/main.js:
         (Animator.prototype.animate):
         (Benchmark):
@@ -1511,10 +1526,10 @@
         * Animometer/tests/resources/stage.js:
         (StageBenchmark.prototype.showResults):
         Rename the options to match the <input> ids in animometer.html.
-        
+
         * Animometer/tests/resources/utilities.js:
         (window.Utilities.createSvgElement): Deleted.
-        
+
         * Animometer/tests/text/layering-text.html:
         * Animometer/tests/text/resources/layering-text.js:
         (LayeringTextStage):
@@ -1526,7 +1541,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=150698
 
         Reviewed by Tim Horton.
-        
+
         The existing code incremented this._frameCount after checking against this._dropFrameCount.
         This has the effect of setting this._measureTimeOffset one frame too late, so
         we were measuring only two frames, not three, and thus computing an incorrect fps.
@@ -1591,8 +1606,8 @@
         (RecordTable.prototype._showTest): Shows the results of a single test.
         (RecordTable.prototype._showSuite): Shows the results of a single suite.
         (RecordTable.prototype.showRecord): Shows a single iteration for a single test.
-        (RecordTable.prototype.showIterations): Shows the results of all the suites of the iterations. 
-        
+        (RecordTable.prototype.showIterations): Shows the results of all the suites of the iterations.
+
         (ResultsTable): RecordTable was renamed to ResultsTable.
         (ResultsTable.prototype.clear): Clears the table element.
         (ResultsTable.prototype._showHeaderRow): Shows a row in the results table header.
@@ -1618,22 +1633,22 @@
         (RecordTable.prototype._showSuite): Deleted.
         (RecordTable.prototype.showRecord): Deleted.
         (RecordTable.prototype.showIterations): Deleted.
-        
+
         * Animometer/resources/sampler.js:
         (Sampler.prototype.startSampling): Use forEach.
         (Sampler.prototype.sample): Use forEach.
         (Sampler.prototype.toJSON): Converts the sampler data to JSON format.
-        
+
         * Animometer/resources/strings.js: Added.
         This new file will be used to associate the strings used by the benchmark
         with IDs. A string can be changed in one place without having to change
         all the instances of this string in multiple files. There two groups of
         strings in this file. The first one is used by the UI elements and the second
         group is used when constructing the results JSON.
-        
+
         * Animometer/runner/animometer.html:
         * Animometer/runner/resources/animometer.css:
-        
+
         * Animometer/runner/resources/animometer.js:
         (window.benchmarkRunnerClient.willAddTestFrame):
         (window.benchmarkRunnerClient.willStartFirstIteration):
@@ -1642,20 +1657,20 @@
         Make benchmarkRunnerClient uses ResultsDashboard instead of _iterationsSamplers
         Get the JSON from ResultsDashboard.toJSON() and pass it to ResultsTable.showIterations().
         Also set the textContent of the "#json" textarea with the results JSON.
-        
+
         (showResults): Delete unneeded code.
         (showJson): Shows the "json" section.
         (showTestGraph): Rename showGraph() to be showTestGraph().
         (showTestJSON): Shows the JSON of a single testResults.
         (showGraph): Deleted.
-        
+
         * Animometer/runner/resources/tests.js:
         Use the string table instead of putting literal strings.
 
         * Animometer/tests/resources/stage.js:
         (StageBenchmark.prototype.showResults):
         Fix the parameters which are passed to RecordTable.showRecord().
-        
+
         * Animometer/tests/bouncing-particles/bouncing-canvas-images.html:
         * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html:
         * Animometer/tests/bouncing-particles/bouncing-css-images.html:
@@ -1974,11 +1989,11 @@
         This directory includes all the test suites to be run by the benchmark.
         runner. All the tests should try to run on three stages: CSS, canvas and
         SVG.
-        
+
         * Animometer/tests/bouncing-particles: Added.
         * Animometer/tests/bouncing-particles/resources: Added.
         The bouncing particles test is an example of a simple animation technique.
-        
+
         * Animometer/tests/bouncing-particles/bouncing-canvas-images.html: Added.
         * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html: Added.
         * Animometer/tests/bouncing-particles/bouncing-css-images.html: Added.
@@ -1991,15 +2006,15 @@
         (BouncingParticle): Base class for a bouncing particle.
         (BouncingParticle.prototype.center): Returns the center point or the particle.
         (BouncingParticle.prototype.animate): Moves the particle based on its current position, angle and velocity.
-        
+
         (BouncingParticlesAnimator): A sub class of Animator.
-        
+
         (BouncingParticlesStage): Represents the container of all the bouncing particles.
         (BouncingParticlesStage.prototype.parseShapeParamters): Gets the shape parameters for shape animating tests.
         (BouncingParticlesStage.prototype.randomRotater): Creates a rotater for the particles.
         (BouncingParticlesStage.prototype.animate): Animates all the particles.
         (BouncingParticlesStage.prototype.tune): Changes the test by adding or removing particles.
-        
+
         (BouncingParticlesBenchmark): Runs the benchmark for bouncing particles test.
         (BouncingParticlesBenchmark.prototype.createAnimator): Creates an animator of type BouncingParticlesAnimator.
 
@@ -2008,52 +2023,52 @@
         (BouncingCssShape.prototype._createSpan): Creates a <span> element and takes the shape and clipping classes into consideration.
         (BouncingCssShape.prototype._move): Moves the particle to a new location. Apply transform since it does not require layout.
         (BouncingCssShape.prototype.animate): Rotates and moves the shape to a new location.
-        
+
         (BouncingCssShapesStage): A sub class of BouncingParticlesStage for animating CSS shapes.
         (BouncingCssShapesStage.prototype.createParticle): Creates a particle of type BouncingCssShape.
         (BouncingCssShapesStage.prototype.particleWillBeRemoved): Removes the corresponding element form the parent children list.
-        
+
         (BouncingCssShapesBenchmark): A sub class of BouncingParticlesBenchmark for animating CSS shapes.
         (BouncingCssShapesBenchmark.prototype.createStage): Creates a stage of type BouncingCssShapesStage.
         (window.benchmarkClient.create): Creates a benchmark of type BouncingCssShapesBenchmark.
-        
+
         * Animometer/tests/bouncing-particles/resources/bouncing-css-images.js: Added.
         (BouncingCssImage): A sub class of BouncingParticle for animating CSS images.
         (BouncingCssImage.prototype._move): Move the particle to a new location. Apply transform since it does not require layout.
         (BouncingCssImage.prototype.animate): Rotates and moves the shape to a new location.
-        
+
         (BouncingCssImagesStage): A sub class of BouncingParticlesStage for animating CSS images.
         (BouncingCssImagesStage.prototype.createParticle): Creates a particle of type BouncingCssImage.
         (BouncingCssImagesStage.prototype.particleWillBeRemoved): Removes the corresponding element form the parent children list.
-        
+
         (BouncingCssImagesBenchmark): A sub class of BouncingParticlesBenchmark for animating CSS images.
         (BouncingCssImagesBenchmark.prototype.createStage): Creates a stage of type BouncingCssImagesStage.
         (window.benchmarkClient.create): Creates a benchmark of type BouncingCssImagesBenchmark.
-        
+
         * Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js: Added.
         (BouncingCanvasParticle): A base sub-class of BouncingParticle for animating canvas particles.
         (BouncingCanvasParticle.prototype._applyRotation): Apply the particle rotation-around-center transform to the canvas context.
         (BouncingCanvasParticle.prototype._applyClipping): Apply the particle clipping to the canvas context.
         (BouncingCanvasParticle.prototype._draw): A non-implemented version of the drawing function.
         (BouncingCanvasParticle.prototype.animate): Carries out all the steps to redraw the canvas particle.
-        
+
         (BouncingCanvasParticlesStage): A base sub-class of BouncingParticlesStage for animating canvas particles.
-        
+
         (BouncingCanvasParticlesAnimator): A concrete sub-class of BouncingParticlesAnimator for animating canvas particles.
         (BouncingCanvasParticlesAnimator.prototype.animate): Overrides the base class method to clear the canvas before redrawing the stage.
-        
+
         (BouncingCanvasParticlesBenchmark): A base sub-class of StageBenchmark for animating canvas particles.
         (BouncingCanvasParticlesBenchmark.prototype.createAnimator): Creates the canvas particles animator.
-        
+
         * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js: Added.
         (BouncingCanvasShape): A concrete sub-class of BouncingCanvasParticle for animating canvas shapes.
         (BouncingCanvasShape.prototype._applyFill): Sets the fillStyle in the canvas context.
         (BouncingCanvasShape.prototype._drawShape): Carries out the actual drawing.
         (BouncingCanvasShape.prototype._draw): Carries out all the steps to draw the shape.
-        
+
         (BouncingCanvasShapesStage): A concrete sub-class of BouncingCanvasParticle for animating canvas shapes.
         (BouncingCanvasShapesStage.prototype.createParticle): Creates a particle of type BouncingCanvasShape.
-        
+
         (BouncingCanvasShapesBenchmark): A concrete sub-class of BouncingCanvasParticlesBenchmark for animating canvas shapes.
         (BouncingCanvasShapesBenchmark.prototype.createStage): Creates a stage of type BouncingCanvasShapesStage.
         (window.benchmarkClient.create): Creates a benchmark of type BouncingCanvasShapesBenchmark.
@@ -2061,10 +2076,10 @@
         * Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js: Added.
         (BouncingCanvasImage): A concrete sub-class of BouncingCanvasParticle for animating canvas images.
         (BouncingCanvasImage.prototype._draw): Draws an image on the context of a canvas.
-        
+
         (BouncingCanvasImagesStage): A concrete sub-class of BouncingCanvasParticlesBenchmark for animating canvas images.
         (BouncingCanvasImagesStage.prototype.createParticle): Creates a particle of type BouncingCanvasImage.
-        
+
         (BouncingCanvasImagesBenchmark): A concrete sub-class of BouncingCanvasParticlesBenchmark for animating canvas images.
         (BouncingCanvasImagesBenchmark.prototype.createStage): Creates a stage of type BouncingCanvasImagesStage.
         (window.benchmarkClient.create): Creates a benchmark of type BouncingCanvasImagesBenchmark.
@@ -2085,22 +2100,22 @@
         (BouncingSvgShape): A concrete sub-class of BouncingSVGParticle for animating SVG shapes.
         (BouncingSvgShape.prototype._createShape): Creates an SVG shape.
         (BouncingSvgShape.prototype._applyFill): Applies the selected fill style to the SVG shape.
-        
+
         (BouncingSvgShapesStage): A concrete sub-class of BouncingSvgParticlesStage for animating SVG shapes.
         (BouncingSvgShapesStage.prototype.createGradient): Creates an SVGLinearGradientElement.
         (BouncingSvgShapesStage.prototype.createParticle): Creates a particle of type BouncingSvgShape.
         (BouncingSvgShapesStage.prototype.particleWillBeRemoved): Ensures the attached SVGLinearGradientElement is removed from the SVGDefsElement.
-        
+
         (BouncingSvgShapesBenchmark): A concrete sub-class of BouncingParticlesBenchmark for animating SVG images.
         (BouncingSvgShapesBenchmark.prototype.createStage): Creates a stage of type BouncingSvgShapesStage.
         (window.benchmarkClient.create): Creates a benchmark of type BouncingSvgShapesBenchmark.
-        
+
         * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js: Added.
         (BouncingSvgImage): A concrete sub-class of BouncingSVGParticle for animating SVG images.
-        
+
         (BouncingSvgImagesStage): A concrete sub-class of BouncingSVGParticlesBenchmark for animating SVG images.
         (BouncingSvgImagesStage.prototype.createParticle): Creates a particle of type BouncingSvgImage.
-        
+
         (BouncingSvgImagesBenchmark): A concrete sub-class of BouncingParticlesBenchmark for animating SVG images.
         (BouncingSvgImagesBenchmark.prototype.createStage): Creates a stage of type BouncingSvgImagesStage.
         (window.benchmarkClient.create): Creates a benchmark of type BouncingSvgImagesBenchmark.
@@ -2108,52 +2123,52 @@
         * Animometer/tests/examples: Added.
         * Animometer/tests/examples/canvas-electrons.html: Added.
         * Animometer/tests/examples/canvas-stars.html: Added.
-        Examples test pages. 
-        
+        Examples test pages.
+
         * Animometer/tests/examples/resources: Added.
         * Animometer/tests/examples/resources/canvas-electrons.js: Added.
         (CanvasElectron): An object which draws and animate a electron object on a canvas stage.
         (CanvasElectron.prototype._draw): Draws the electron object.
         (CanvasElectron.prototype.animate): Animates the electron object.
-        
+
         (CanvasElectronsStage): A concrete sub-class of Stage for animating electrons.
         (CanvasElectronsStage.prototype.tune): Changes the test by adding or removing elements.
         (CanvasElectronsStage.prototype.animate): Animates the test elements.
-        
+
         (CanvasElectronsAnimator): A concrete sub-class of StageAnimator for animating canvas electrons.
         (CanvasElectronsAnimator.prototype.animate): Overrides the base class method to clear the canvas before redrawing the stage.
-        
+
         (CanvasElectronsBenchmark): A concrete sub-class of StageBenchmark for animating electrons.
         (CanvasElectronsBenchmark.prototype.createStage): Creates a stage of CanvasElectronsStage.
         (CanvasElectronsBenchmark.prototype.createAnimator): Creates an animator of type CanvasElectronsAnimator.
         (window.benchmarkClient.create): Creates a benchmark of type CanvasElectronsBenchmark.
-        
+
         * Animometer/tests/examples/resources/canvas-stars.js: Added.
         (CanvasStar): An object which draws and animate a star object on a canvas stage.
         (CanvasStar.prototype._draw): Draws the star object.
         (CanvasStar.prototype.animate): Animates the star object.
-        
+
         (CanvasStarsStage): A concrete sub-class of Stage for animating stars.
         (CanvasStarsStage.prototype.tune): Changes the test by adding or removing elements.
         (CanvasStarsStage.prototype.animate): Animates the test elements.
-        
+
         (CanvasStarsAnimator): A concrete sub-class of StageAnimator for animating canvas stars.
         (CanvasStarsAnimator.prototype.animate): Overrides the base class method to clear the canvas before redrawing the stage.
-        
+
         (CanvasStarsBenchmark): A concrete sub-class of Benchmark for animating stars.
         (CanvasStarsBenchmark.prototype.createStage): Creates a stage of CanvasStarsStage.
         (CanvasStarsBenchmark.prototype.createAnimator): Creates an animator of type CanvasStarsAnimator.
         (window.benchmarkClient.create): Creates a benchmark of type CanvasStarsBenchmark.
 
         * Animometer/tests/resources: Added.
-        This directory includes the script which is required to run an adaptive 
+        This directory includes the script which is required to run an adaptive
         graphics benchmark. From an empty test page, the set of classes in this
         directory are responsible for measuring the current frame rate and
         changing the test to reach a desired FPS. It keeps asking the test page
         to tune itself by a certain value to increase or decrease the frame rate.
         It's also responsible for sampling the test state and the corresponding
         frame rate.
-        
+
         * Animometer/tests/resources/main.js: Added.
         (BenchmarkState): Tracks the state of the benchmark test.
         (BenchmarkState.prototype._timeOffset): Returns the timeOffset of a stage.
@@ -2163,12 +2178,12 @@
         (BenchmarkState.prototype.currentStage): Returns the current stage of the benchmark.
         (BenchmarkState.prototype.currentMessage): Returns the message of the current stage and timeOffset.
         (BenchmarkState.prototype.currentProgress): Returns a percentage of how much the benchmark is running.
-        
+
         (Animator): Manages animating the test.
         (Animator.prototype.start): Called if animating using setInterval is requested.
-        (Animator.prototype.timeDelta): Returns the current timeDelta 
+        (Animator.prototype.timeDelta): Returns the current timeDelta
         (Animator.prototype.animate): Manages the test animation.
-        (Animator.prototype.animateLoop): Called if animating using requestAnimationFrame is requested. 
+        (Animator.prototype.animateLoop): Called if animating using requestAnimationFrame is requested.
 
         (Benchmark): Manages running the test benchmark and recording the sampled data.
         (Benchmark.prototype.start): Starts the benchmark.
@@ -2182,11 +2197,11 @@
         (Matrix): A matrix object.
         (Vector3): A vector of size 3 object.
         (Matrix3): A matrix of size 3x3 object.
-        
+
         (PIDController): Closed-loop controller for a set-point y.
         (PIDController.prototype._sat): Limits the output to a certain range.
         (PIDController.prototype.tune): Given the current output of a system, it produces a new pid value for tuning it.
-        
+
         (KalmanEstimator): Implement Kalman filter to get an estimate for a sampled data point.
         (KalmanEstimator.prototype.estimate): Returns an estimate for for a sampled data point.
 
@@ -2198,7 +2213,7 @@
         (window.Utilities.copyObject): Copies the attributes and their values of an object to a new object.
         (window.Utilities.mergeObjects): Copies the attributes and their values of two objects to a new object.
         (window.Utilities.createSvgElement): Creates an SVGElement given its name and its attributes.
-        
+
         * Animometer/tests/resources/stage.css: Added.
         * Animometer/tests/resources/stage.js: Added.
         (Rotater): Manages rotating an angle within a fixed time interval.
@@ -2207,7 +2222,7 @@
         (Rotater.prototype.degree): Returns the current rotating degree.
         (Rotater.prototype.rotateZ): Returns CSS formatted transform rotateZ() string for the current degree.
         (Rotater.prototype.rotate): Returns SVG formatted transform rotate() string for the current degree.
-        
+
         (Stage): A base class for managing the test complexity and test animation.
         (Stage.prototype.get size): Returns the size of the stage excluding the CSS padding.
         (Stage.prototype.random): Returns a random float.
@@ -2221,21 +2236,21 @@
         (Stage.prototype.tune): A not-implemented version of this function.
         (Stage.prototype.animate): A not-implemented version of this function.
         (Stage.prototype.clear): Clears the stage from all its animation elements.
-        
+
         (StageAnimator): A base class for the stage-based animators.
         (StageAnimator.prototype.animate): Calls Animator.animate() which updates the test page and then calls Stage.animate() to force redraw.
-        
+
         (StageBenchmark): A base class for the stage-based benchmarks.
         (StageBenchmark.prototype.createStage): Creates the default stage.
         (StageBenchmark.prototype.createAnimator): Creates the default animator.
         (StageBenchmark.prototype.tune): Delegates the call to stage.
         (StageBenchmark.prototype.clear): Delegates the call to stage.
         (StageBenchmark.prototype.showResults): Shows the results/progress through its recordTable and progressBar.
-        
+
         * Animometer/tests/resources/yin-yang.png: Added.
         * Animometer/tests/resources/yin-yang.svg: Added.
         These images are shared among all the tests.
-        
+
         * Animometer/tests/template: Added.
         * Animometer/tests/template/resources: Added.
         This directory includes template tests which do nothing. They can be used
@@ -2247,16 +2262,16 @@
         * Animometer/tests/template/template-svg.html: Added.
         Template test pages. They can be used as they are. CSS attributes or hidden
         elements can be added to these derived test pages if needed.
-        
+
         * Animometer/tests/template/resources/template-css.js: Added.
-        
+
         (TemplateCssStage): A stage to create and animate HTMLElements.
         (TemplateCssStage.prototype.tune): Changes the test by adding or removing elements.
         (TemplateCssStage.prototype.animate): Animates the test elements.
-        (TemplateCssBenchmark): 
+        (TemplateCssBenchmark):
         (TemplateCssBenchmark.prototype.createStage): Creates the test stage.
         (window.benchmarkClient.create): Creates a benchmark of type TemplateCssBenchmark.
-        
+
         * Animometer/tests/template/resources/template-canvas.js: Added.
         (TemplateCanvasObject):
         (TemplateCanvasObject.prototype._draw): Draws the objects on the canvas context.
@@ -2265,26 +2280,26 @@
         (TemplateCanvasStage.prototype.tune): hanges the test by adding or removing elements.
         (TemplateCanvasStage.prototype.animate):  Animates the test elements.
         (TemplateCanvasAnimator.prototype.animate): Starts the animation every frame.
-        (TemplateCanvasBenchmark): 
+        (TemplateCanvasBenchmark):
         (TemplateCanvasBenchmark.prototype.createStage): Creates a stage of type TemplateCanvasStage.
         (TemplateCanvasBenchmark.prototype.createAnimator): Creates a animator of type TemplateCanvasAnimator.
         (window.benchmarkClient.create): Creates a benchmark of type TemplateCanvasBenchmark.
-        
+
         * Animometer/tests/template/resources/template-svg.js: Added.
         (TemplateSvgStage): A stage to create and animate SVGElements.
         (TemplateSvgStage.prototype.tune): Changes the test by adding or removing elements.
         (TemplateSvgStage.prototype.animate): Animates the test elements.
         (TemplateSvgBenchmark.prototype.createStage): Creates a stage of type TemplateSvgStage.
         (window.benchmarkClient.create): Creates a benchmark of type TemplateSvgBenchmark.
-        
+
         * Animometer/tests/text: Added.
         * Animometer/tests/text/resources: Added.
         This directory includes the text animating tests which currently runs
         on CSS stage only.
-        
+
         * Animometer/tests/text/layering-text.html: Added.
         Text test page.
-        
+
         * Animometer/tests/text/resources/layering-text.js: Added.
         (LayeringTextStage): Represents the container of all the stacked text layers.
         (LayeringTextStage.parseTextItem): Parses a textItem which may be an opening tag, a closing tag or a self-closing tag.
@@ -2337,7 +2352,7 @@
 
         (Algorithm.createMinHeap): Creates a size-bounded min-heap object.
         (Algorithm.createMaxHeap): Creates a size-bounded max-heap object.
-        
+
         * Animometer/resources/extensions.js: Added.
         (Point): Point object but can be used as size also.
         (Point.pointOnCircle): Given, the radius of the circle and the angle of the point, it returns a point object.
@@ -2376,14 +2391,14 @@
         (RecordTable.prototype._showTest): Shows the results of a single test.
         (RecordTable.prototype._showSuite): Shows the results of a single suite.
         (RecordTable.prototype.showRecord): Shows a single iteration for a single test.
-        (RecordTable.prototype.showIterations): Shows the results of all the suites of the iterations. 
+        (RecordTable.prototype.showIterations): Shows the results of all the suites of the iterations.
 
         * Animometer/resources/sampler.js: Added.
         (Statistics.sampleMean): Returns the sample mean.
         (Statistics.unbiasedSampleStandardDeviation): Returns the unbiased sample variance (i.e. with Bessel's correction)
         (Statistics.geometricMean): Returns the geometric mean.
 
-        (Experiment): Represents a sampling experiment. 
+        (Experiment): Represents a sampling experiment.
         (Experiment.prototype._init): Called when the object is created and when startSampling() is called.
         (Experiment.prototype.startSampling): Called after warmup period. Restarts collecting sampled data points.
         (Experiment.prototype.sample): Add a new data point.
@@ -2397,7 +2412,7 @@
         (Sampler): Represents a compound experiment. It manages sampling multiple data points at the same time offset.
         (Sampler.prototype.startSampling): Called after warming up period. Restarts collecting sampled data points.
         (Sampler.prototype.sample): Add a new data vector at a given time offset.
-        
+
 2015-10-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add the test runner for a new a graphics benchmark
@@ -2413,7 +2428,7 @@
         * Animometer: Added.
         * Animometer/runner: Added.
         * Animometer/runner/resources: Added.
-        
+
         * Animometer/runner/animometer.html: Added.
         * Animometer/runner/resources/animometer.css: Added.
         The benchmark runner page and css.
@@ -2424,12 +2439,12 @@
         (window.benchmarkRunnerClient.willStartFirstIteration): Called at the beginning before running any test.
         (window.benchmarkRunnerClient.didRunSuites): Called after running all tests of a suite.
         (window.benchmarkRunnerClient.didFinishLastIteration): Called after running the last test.
-        
+
         (showSection): Shows a section in the animometer.html page.
         (startTest): Called when the "Start Test" button is clicked.
         (showResults): Called after finishing all the tests.
         (showGraph): Called when "Click..." button in the "Samples" column of the results table is clicked
-        
+
         * Animometer/runner/resources/benchmark-runner.js: Copied from PerformanceTests/Speedometer/resources/benchmark-runner.js.
         (BenchmarkRunnerState): Tracks the current running <suite, test>
         (BenchmarkRunnerState.prototype.currentSuite): Returns the current running suite.
@@ -2437,7 +2452,7 @@
         (BenchmarkRunnerState.prototype.isFirstTest): Returns true if we are running the first test in the current suite.
         (BenchmarkRunnerState.prototype.next): Advances to the next test.
         (BenchmarkRunnerState.prototype.prepareCurrentTest): Creates a new <iframe> and waits for it to load a test.
-        
+
         (BenchmarkRunner): Manages running the tests and communicating with the benchmarkRunnerClient.
         (BenchmarkRunner.prototype.waitForElement): Waits for an element to be created.
         (BenchmarkRunner.prototype._appendFrame): Creates a new <iframe> element.
@@ -2455,7 +2470,7 @@
         (BenchmarkTestStep): Deleted.
         (Fibonacci): Deleted.
         SimplePromise was moved t Animometer/resources/extensions.js because it is used by the runner and the tests.
-        
+
         (BenchmarkRunner.prototype._waitAndWarmUp): Deleted.
         (BenchmarkRunner.prototype._runTest): Deleted.
         (BenchmarkState.prototype.currentSuite): Deleted.
@@ -2464,13 +2479,13 @@
         (BenchmarkState.prototype.isFirstTest): Deleted.
         (BenchmarkState.prototype.prepareCurrentSuite): Deleted.
         BenchmarkState was renamed to BenchmarkRunnerState to not be confused with the tests BenchmarkState.
-        
+
         * Animometer/runner/resources/d3.min.js: Copied from Websites/perf.webkit.org/public/v2/js/d3/d3.min.js.
         Needed for drawing charts for the sampled scores and frame rates.
-        
+
         * Animometer/runner/resources/graph.js: Added.
         (graph): Draws a chart for a test sampled data. It shows two y-axes: one for the animated items and the second for FPS.
-                
+
         * Skipped: Skip the Animometer benchmark for now.
 
 2015-08-27  Csaba Osztrogonác  <ossy@webkit.org>
@@ -2549,7 +2564,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=146378
 
         Reviewed by Mark Lam.
-        
+
         The current percentile is 95%.  When I looked at the sample lists in our GC, it was
         clear that the worst 5% samples completely amortize our GC pauses.  Our GC pauses can
         be quite bad.  Clearly, splay-latency is meant to test whether we have an incremental
@@ -2601,34 +2616,34 @@
         https://bugs.webkit.org/show_bug.cgi?id=146156
 
         Reviewed by Geoffrey Garen.
-        
+
         This adds a JavaScript port of the CDx real-time benchmark to JetStream, and retires
         the cordic test because it was previously the smallest and probably least interesting.
-        
+
         The new test, "cdjs", is mostly a faithful rewrite of the Java code into JavaScript.
         I got the Java code from https://www.cs.purdue.edu/sss/projects/cdx/.
-        
+
         There are some differences:
-        
+
         - It uses RedBlackTree's for all sets and maps rather than hashtables. This is clearly
           more in the spirit of real-time than the CDx benchmark. FWIW, CDx used to use trees
           and I don't know why that changed in the latest version.
-        
+
         - CDjs doesn't attempt to avoid memory allocations, unlike the real-time Java version.
           I wrote the code that I wanted to write for aesthetics, rather than the code that I
           would have written if I tried to write the fastest code possible. Again, I believe
           that this is in the spirit of CDj - it's meant to test what would happen if you wrote
           real-timey stuff in a high level language and actually took advantage of that
           language to be more productive.
-        
+
         The test score reflects the average latency of the worst 10 samples out of 200 samples.
         The simulation uses 1000 aircraft, flying along paths that result in some detected
         collisions every once in a while. The benchmark validates its results by checking the
         total number of collisions detected.
-        
+
         Apart from the integration into the JetStream harness, the CDjs directory contains a
         fully self-contained benchmark that could be run either in the jsc shell or in browser.
-        
+
         This new code uses the same 3-clause BSD license as the Purdue code, and gives
         attribution to Purdue in almost all files. I believe that is appropriate since I wrote
         most of the JS files by looking at the Purdue Java code and trascribing to JavaScript.
@@ -2736,7 +2751,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=145762
 
         Reviewed by Geoffrey Garen.
-        
+
         JetStream has some latency tests that are meant to measure jitter.  Prior to this change, they
         did this by computing the RMS.  But the RMS is a pretty bad metric.  The thing that it rewards
         isn't really the thing that you'd want your browser to do.  These RMS-based tests involve taking
@@ -2757,7 +2772,7 @@
         The worst 1% or the worst 5% would be good things to average.  This will catch cases where the VM
         jittered due to JIT or GC, but it never have the pathology that we end up giving the better score
         to a VM whose best case is worst than another VM's worst case.
-        
+
         For now, this change uses the highest samples above the 95% percentile. I'm not yet sure if that
         is the best thing - it might include too many scores that are around the best-case performance -
         but it's certainly better than RMS and it might be good enough to keep. But because of that
@@ -2801,7 +2816,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=144617
 
         Reviewed by Geoffrey Garen.
-        
+
         Add the hash-map benchmark to LongSpider. LongSpider was already not a perfect match of
         SunSpider. It's not an official benchmark. It contains benchmarks that are relatively
         long-running. So, hash-map sort of belongs here.
@@ -2816,7 +2831,7 @@
         Fix typo bug in Speedometer/resources/main.js
         https://bugs.webkit.org/show_bug.cgi?id=144504
 
-        Reviewed by Ryosuke Niwa. 
+        Reviewed by Ryosuke Niwa.
 
         * Speedometer/resources/main.js: Fix typo.
         (window.benchmarkClient.totalTimeInDisplayUnit):
@@ -2967,7 +2982,7 @@
         * SVG/resources/RenderAnimator.js: Added.
         These are benchmarks for the SVG rendering. Mainly we want to measure how fast
         the SVG rendering will be when only a small part of it is drawn.
-        
+
 2015-01-21  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: support aligned allocation
@@ -3088,7 +3103,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=137245
 
         Reviewed by Oliver Hunt.
-        
+
         This adds the scaffolding for running Octane version 2 inside run-jsc-benchmarks.
         In the future we should just land Octane2 in this directory, and run-jsc-benchmarks
         should be changed to point directly at this directory instead of requiring the
@@ -3823,7 +3838,7 @@
 
         [CSS Shapes] Add no shapes version of RegionsShapes performance test
         https://bugs.webkit.org/show_bug.cgi?id=131455
-        
+
         Reviewed by Ryosuke Niwa.
 
         This is a no shapes version of the RegionsShapes performance test. All the content
@@ -3974,7 +3989,7 @@
         The existing test checks if the leading digit of a sum starts with "-1".
         However, it turned out that the expected sum is in the order of
         -1.8735013540549517e-16 (i.e. very close to 0).  With small errors in
-        the terms of the sum adding up, it is very easy for the resultant sum 
+        the terms of the sum adding up, it is very easy for the resultant sum
         to fluctuate.  There is no guarantee that the resultant sum's most
         significant digit will start with -1 either.
 
@@ -4143,7 +4158,7 @@
 
 2014-02-10  Zoltan Horvath  <zoltan@webkit.org>
 
-        [CSS Shapes] Add initial performance tests for polygon shape 
+        [CSS Shapes] Add initial performance tests for polygon shape
         https://bugs.webkit.org/show_bug.cgi?id=128554
 
         Reviewed by Ryosuke Niwa.
@@ -4642,7 +4657,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=126596
 
         Reviewed by Stephanie Lewis.
-        
+
         Extracted benchmark-runner.js and tests.js out of benchmark.js and benchmark.html.
 
         Added a "client" interface to BenchmarkRunner so that benchmark.html could register necessary hooks to
@@ -4676,7 +4691,7 @@
         (BenchmarkRunner.step): Ditto.
         (BenchmarkRunner._runTestAndRecordResults): Ditto. Note the code to update the UI has been move to
         benchmark.html. Also moved the code to accumulate the totals here from _finalize.
-        (BenchmarkRunner._finalize): Moved. 
+        (BenchmarkRunner._finalize): Moved.
 
         * DoYouEvenBench/resources/tests.js: Copied from PerformanceTests/DoYouEvenBench/benchmark.html.
         Uses BenchmarkTestStep instead of an array for each test step.
@@ -4686,12 +4701,12 @@
         Allow ImageBuffer to re-use IOSurfaces
         https://bugs.webkit.org/show_bug.cgi?id=125477
 
-        Reviewed by Geoff Garen. 
+        Reviewed by Geoff Garen.
 
-        This test times creating a variety of different sizes of canvases 
-        once some have already been created. The second creation of the 
-        canvases should re-use the existing IOSurfaces. 
-        
+        This test times creating a variety of different sizes of canvases
+        once some have already been created. The second creation of the
+        canvases should re-use the existing IOSurfaces.
+
         * Canvas/reuse.html: Added.
 
 2013-12-23  Commit Queue  <commit-queue@webkit.org>
@@ -5040,13 +5055,13 @@
 
         Add line layout performance test that exercises more cases
         https://bugs.webkit.org/show_bug.cgi?id=124041
-        
+
         Reviewed by Anders Carlsson.
 
         The existing line-layout.html covers the most basic left-aligned case only.
         Add a test with more coverage for things that are mostly not yet supported by the simple
         line layout path:
-        
+
         - centered text
         - right aligned text
         - justified text
@@ -5331,7 +5346,7 @@
         * DoYouEvenBench: Added.
         * DoYouEvenBench/benchmark.html: Added.
         * DoYouEvenBench/benchmark.js: Added.
-        (SimplePromise): 
+        (SimplePromise):
         (SimplePromise.prototype.then):
         (SimplePromise.prototype.resolve.else):
         (SimplePromise.prototype.resolve):
@@ -5458,7 +5473,7 @@
         Introduce a version of SunSpider that runs for a really long time (about 1 sec on my machine)
 
         Rubber stamped by Mark Hahnenberg.
-        
+
         This isn't meant for serious VM-to-VM performance comparisons, but it is useful
         to see how these benchmarks behave when they're completely warmed up.
 
@@ -5951,7 +5966,7 @@
         since such tests no longer exist. Also fixed up the code compute y-axis range.
 
         (createTableRow.markupForRun): Updated to use confidenceIntervalDelta() instead of stdev().
-        
+
         (init.addTests): Added. Recursively add metrics.
 
         * resources/statistics.js: Added. Imported from perf.webkit.org.
@@ -6344,7 +6359,7 @@
 
 2012-10-29  Zoltan Horvath  <zoltan@webkit.org>
 
-        Turn PageLoad tests into simple performancetests, commit #7 (last) 
+        Turn PageLoad tests into simple performancetests, commit #7 (last)
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
         Reviewed by Ryosuke Niwa.
@@ -6388,7 +6403,7 @@
 
 2012-10-26  Zoltan Horvath  <zoltan@webkit.org>
 
-        Turn PageLoad tests into simple performancetests, commit #6 
+        Turn PageLoad tests into simple performancetests, commit #6
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
         Reviewed by Ryosuke Niwa.
@@ -6412,7 +6427,7 @@
 
 2012-10-26  Zoltan Horvath  <zoltan@webkit.org>
 
-        Turn PageLoad tests into simple performancetests, commit #5 
+        Turn PageLoad tests into simple performancetests, commit #5
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
         Reviewed by Ryosuke Niwa.
@@ -6438,7 +6453,7 @@
 
 2012-10-25  Zoltan Horvath  <zoltan@webkit.org>
 
-        Turn PageLoad tests into simple performancetests, commit #4 
+        Turn PageLoad tests into simple performancetests, commit #4
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
         Reviewed by Ryosuke Niwa.
@@ -6459,7 +6474,7 @@
 
 2012-10-25  Zoltan Horvath  <zoltan@webkit.org>
 
-        Turn PageLoad tests into simple performancetests, commit #3 
+        Turn PageLoad tests into simple performancetests, commit #3
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
         Reviewed by Ryosuke Niwa.
@@ -6485,7 +6500,7 @@
 
 2012-10-24  Zoltan Horvath  <zoltan@webkit.org>
 
-        Turn PageLoad tests into simple performancetests, commit #2 
+        Turn PageLoad tests into simple performancetests, commit #2
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
         Reviewed by Ryosuke Niwa.
@@ -6509,7 +6524,7 @@
 
 2012-10-24  Zoltan Horvath  <zoltan@webkit.org>
 
-        Turn PageLoad tests into simple performancetests, commit #1 
+        Turn PageLoad tests into simple performancetests, commit #1
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
         Reviewed by Ryosuke Niwa.
@@ -9788,7 +9803,7 @@
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by bradee-oh.
-        
+
         Add new PageLoadTests directory (this one)
         Add LICENSES file to explain where each SVG came from.
 

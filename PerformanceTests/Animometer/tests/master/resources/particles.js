@@ -3,6 +3,7 @@ function Particle(stage)
     this.stage = stage;
     this.rotater = this.stage.randomRotater();
     this.reset();
+    this.move();
 }
 
 Particle.prototype =
