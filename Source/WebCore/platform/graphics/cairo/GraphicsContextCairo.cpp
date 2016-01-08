@@ -646,12 +646,6 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, float width, f
     cairo_restore(cr);
 }
 
-FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& origin, float width, bool printing)
-{
-    Color dummyColor;
-    return computeLineBoundsAndAntialiasingModeForText(origin, width, printing, dummyColor);
-}
-
 void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing, bool doubleUnderlines)
 {
     DashArray widths;

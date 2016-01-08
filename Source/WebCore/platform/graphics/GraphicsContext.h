@@ -393,7 +393,7 @@ public:
     };
     FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides);
 
-    FloatRect computeLineBoundsForText(const FloatPoint&, float width, bool printing);
+    FloatRect computeUnderlineBoundsForText(const FloatPoint&, float width, bool printing);
     WEBCORE_EXPORT void drawLineForText(const FloatPoint&, float width, bool printing, bool doubleLines = false);
     void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines = false);
     enum DocumentMarkerLineStyle {

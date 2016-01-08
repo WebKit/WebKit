@@ -206,7 +206,7 @@ static void drawSkipInkUnderline(GraphicsContext& context, const FontCascade& fo
 {
     FloatPoint adjustedLocalOrigin = localOrigin;
     adjustedLocalOrigin.move(0, underlineOffset);
-    FloatRect underlineBoundingBox = context.computeLineBoundsForText(adjustedLocalOrigin, width, isPrinting);
+    FloatRect underlineBoundingBox = context.computeUnderlineBoundsForText(adjustedLocalOrigin, width, isPrinting);
     DashArray intersections = font.dashesForIntersectionsWithRect(textRun, textOrigin, underlineBoundingBox);
     DashArray a = translateIntersectionPointsToSkipInkBoundaries(intersections, underlineBoundingBox.height(), width);
     ASSERT(!(a.size() % 2));

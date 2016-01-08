@@ -1,3 +1,25 @@
+2016-01-07  Zalan Bujtas  <zalan@apple.com>
+
+        Move computeLineBoundsForText from GraphicsContext* to GraphicsContext.
+        https://bugs.webkit.org/show_bug.cgi?id=152882
+
+        Reviewed by Simon Fraser.
+
+        There is nothing platform specific about it.
+
+        No change in functionality.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::computeUnderlineBoundsForText): Rename to reflect its usage.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::computeLineBoundsForText): Deleted.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLinesForText):
+        (WebCore::GraphicsContext::computeLineBoundsForText): Deleted.
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::drawSkipInkUnderline):
+
 2016-01-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Success-after-open event should only have the IDBOpenDBRequest as its target.

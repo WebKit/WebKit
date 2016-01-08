@@ -985,6 +985,12 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
 }
 #endif
 
+FloatRect GraphicsContext::computeUnderlineBoundsForText(const FloatPoint& point, float width, bool printing)
+{
+    Color dummyColor;
+    return computeLineBoundsAndAntialiasingModeForText(point, width, printing, dummyColor);
+}
+
 FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const FloatPoint& point, float width, bool printing, Color& color)
 {
     FloatPoint origin = point;

@@ -1319,12 +1319,6 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
-FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& point, float width, bool printing)
-{
-    Color dummyColor;
-    return computeLineBoundsAndAntialiasingModeForText(point, width, printing, dummyColor);
-}
-
 void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing, bool doubleLines)
 {
     DashArray widths;
@@ -1338,7 +1332,7 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
     if (paintingDisabled())
         return;
 
-    if (widths.size() <= 0)
+    if (!widths.size())
         return;
 
     Color localStrokeColor(strokeColor());
