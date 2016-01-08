@@ -41,6 +41,7 @@ class StepsTest(unittest.TestCase):
         options.port = 'MOCK port'
         options.quiet = True
         options.test = True
+        options.iterate_on_new_tests = 0
         return options
 
     def _run_step(self, step, tool=None, options=None, state=None):

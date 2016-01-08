@@ -527,6 +527,19 @@ class Port(object):
 
         return reftest_list.get(self._filesystem.join(self.layout_tests_dir(), test_name), [])  # pylint: disable=E1103
 
+    def potential_test_names_from_expected_file(self, path):
+        """Return potential test names if any from a potential expected file path, relative to LayoutTests directory."""
+
+        if not '-expected.' in path:
+            return None
+
+        subpath = self.host.filesystem.relpath(path, self.layout_tests_dir())
+        if path.startswith('platform' + self._filesystem.sep):
+            steps = path.split(self._filesystem.sep)
+            path = self._filesystem.join(self._filesystem.sep.join(steps[2:]))
+
+        return [self.host.filesystem.relpath(test, self.layout_tests_dir()) for test in self._filesystem.glob(re.sub('-expected.*', '.*', self._filesystem.join(self.layout_tests_dir(), path))) if self._filesystem.isfile(test)]
+
     def tests(self, paths):
         """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
         expanded_paths = self._expanded_paths(paths)

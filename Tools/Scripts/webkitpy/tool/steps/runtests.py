@@ -27,12 +27,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import optparse
 import os
 import platform
+import re
 import sys
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 from webkitpy.common.system.executive import ScriptError, Executive
+from webkitpy.common.host import Host
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 
 _log = logging.getLogger(__name__)
 
@@ -45,11 +49,16 @@ class RunTests(AbstractStep):
         return AbstractStep.options() + [
             Options.build_style,
             Options.test,
+            Options.iterate_on_new_tests,
             Options.non_interactive,
             Options.quiet,
         ]
 
     def run(self, state):
+        if self._options.iterate_on_new_tests:
+            _log.info("Running run-webkit-tests on new tests")
+            self._run_webkit_tests(self._options.iterate_on_new_tests)
+
         if not self._options.test:
             return
 
@@ -90,6 +99,19 @@ class RunTests(AbstractStep):
                 _log.info("Error running run-bindings-tests: %s" % e.message_with_output())
 
         _log.info("Running run-webkit-tests")
+        self._run_webkit_tests()
+
+    def _new_or_modified_tests(self):
+        touched_files = self._tool.scm().changed_files()
+        touched_files.extend(self._tool.scm().untracked_files())
+        if not touched_files:
+            return None
+
+        configuration = "Debug" if (self._options.build_style == "debug") else "Release"
+        port = Host().port_factory.get(self._tool.deprecated_port().port_flag_name, optparse.Values({'configuration': configuration}))
+        return LayoutTestFinder(port, optparse.Values({'skipped': 'always', 'skip_failing_tests': False, 'http': True})).find_touched_tests(touched_files)
+
+    def _run_webkit_tests(self, iterate_on_new_tests=0):
         args = self._tool.deprecated_port().run_webkit_tests_command(build_style=self._options.build_style)
         if self._options.non_interactive:
             args.extend([
@@ -109,5 +131,14 @@ class RunTests(AbstractStep):
         if self._options.quiet:
             args.append("--quiet")
 
+        if iterate_on_new_tests:
+            new_tests = self._new_or_modified_tests()
+            if not new_tests:
+                _log.info("No new or modified tests")
+                return
+            _log.info("Touched tests are: " + str(new_tests))
+            for test in new_tests:
+                args.append(test)
+            args.append("--iterations=%d" % iterate_on_new_tests)
+
         self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
-        

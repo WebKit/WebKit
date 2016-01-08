@@ -1,3 +1,46 @@
+2016-01-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        webkit-patch build-and-test should have an option to iterate over new tests
+        https://bugs.webkit.org/show_bug.cgi?id=143093
+
+        Reviewed by Michael Catanzaro.
+
+        This patch introduces the --iterate-on-new-tests option to webkit-patch build-and-test.
+        It allows running run-webkit-tests on modified or new paths in LayoutTests.
+        Computation of new or modified tests is done by LayoutTestFinder.find_touched_tests
+        It implements the translation of -expected.* paths to their related tests.
+        It also implements the removal of skipped tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.find_touched_tests):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_unittest.py: Added.
+        (MockPort):
+        (MockPort.__init__):
+        (MockPort.tests):
+        (LayoutTestFinderTests):
+        (LayoutTestFinderTests.touched_files):
+        (LayoutTestFinderTests.test_touched_test):
+        (LayoutTestFinderTests.test_expected_touched_test):
+        (LayoutTestFinderTests.test_platform_expected_touched_test):
+        (LayoutTestFinderTests.test_platform_duplicate_touched_test):
+        (LayoutTestFinderTests.test_touched_but_skipped_test):
+        * Scripts/webkitpy/port/base.py:
+        (Port.potential_test_names_from_expected_file):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest._default_options):
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.options):
+        (RunTests.run):
+        (RunTests):
+        (RunTests._new_or_modified_tests):
+        (RunTests._run_webkit_tests):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest._step_options):
+
 2016-01-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         prepare-ChangeLog should include radar number
