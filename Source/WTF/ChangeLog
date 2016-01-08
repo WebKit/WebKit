@@ -1,3 +1,30 @@
+2016-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Nullopt and InPlace should be structs, not enum values
+        https://bugs.webkit.org/show_bug.cgi?id=152915
+
+        Reviewed by Andreas Kling.
+
+        Without this, 
+
+        Optional<int> o = flag ? 1 : Nullopt;
+
+        would cause Nullopt to be treated as an integer, causing o to be initialized to 0,
+        instead of Nullopt. With this change, the above code now causes a compile error.
+
+        Also, get rid of the CONSTEXPR macro since all compilers support constexpr properly,
+        and add a WTF::makeOptional to match the current iteration of std::experimental::optional.
+
+        * wtf/Compiler.h:
+        * wtf/Forward.h:
+        * wtf/Optional.h:
+        (WTF::NulloptTag::NulloptTag):
+        (WTF::makeOptional):
+        * wtf/StdLibExtras.h:
+        (std::literals::chrono_literals::operator _s):
+        (std::literals::chrono_literals::operator _ms):
+        (std::move):
+
 2016-01-06  Anders Carlsson  <andersca@apple.com>
 
         Add a smart block pointer

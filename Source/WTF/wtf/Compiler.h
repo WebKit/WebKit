@@ -50,7 +50,6 @@
 #define WTF_COMPILER_CLANG 1
 #define WTF_COMPILER_SUPPORTS_BLOCKS __has_feature(blocks)
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_feature(c_static_assert)
-#define WTF_COMPILER_SUPPORTS_CXX_CONSTEXPR __has_feature(cxx_constexpr)
 #define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_feature(cxx_reference_qualified_functions)
 #define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS __has_feature(cxx_user_literals)
 #define WTF_COMPILER_SUPPORTS_FALLTHROUGH_WARNINGS __has_feature(cxx_attributes) && __has_warning("-Wimplicit-fallthrough")
@@ -65,7 +64,6 @@
 /* Note: This section must come after the Clang section since we check !COMPILER(CLANG) here. */
 #if COMPILER(GCC_OR_CLANG) && !COMPILER(CLANG)
 #define WTF_COMPILER_GCC 1
-#define WTF_COMPILER_SUPPORTS_CXX_CONSTEXPR 1
 #define WTF_COMPILER_SUPPORTS_CXX_USER_LITERALS 1
 #define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS 1
 
@@ -153,16 +151,6 @@
 
 #if !defined(ALWAYS_INLINE)
 #define ALWAYS_INLINE inline
-#endif
-
-/* CONSTEXPR */
-
-#if !defined(CONSTEXPR) && COMPILER_SUPPORTS(CXX_CONSTEXPR)
-#define CONSTEXPR constexpr
-#endif
-
-#if !defined(CONSTEXPR)
-#define CONSTEXPR
 #endif
 
 /* WTF_EXTERN_C_{BEGIN, END} */

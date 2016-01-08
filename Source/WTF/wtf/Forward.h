@@ -28,6 +28,7 @@ namespace WTF {
 template<typename T> class Function;
 template<typename T> class LazyNeverDestroyed;
 template<typename T> class NeverDestroyed;
+template<typename T> class Optional;
 template<typename T> class PassRefPtr;
 template<typename T> class RefPtr;
 template<typename T> class Ref;
@@ -62,6 +63,7 @@ using WTF::Function;
 using WTF::FunctionDispatcher;
 using WTF::LazyNeverDestroyed;
 using WTF::NeverDestroyed;
+using WTF::Optional;
 using WTF::OrdinalNumber;
 using WTF::PassRefPtr;
 using WTF::PrintStream;

@@ -359,12 +359,12 @@ T exchange(T& t, U&& newValue)
 // (User-literals need to have a leading underscore so we add it here - the "real" literals don't have underscores).
 namespace literals {
 namespace chrono_literals {
-    CONSTEXPR inline chrono::seconds operator"" _s(unsigned long long s)
+    constexpr inline chrono::seconds operator"" _s(unsigned long long s)
     {
         return chrono::seconds(static_cast<chrono::seconds::rep>(s));
     }
 
-    CONSTEXPR chrono::milliseconds operator"" _ms(unsigned long long ms)
+    constexpr chrono::milliseconds operator"" _ms(unsigned long long ms)
     {
         return chrono::milliseconds(static_cast<chrono::milliseconds::rep>(ms));
     }
@@ -373,7 +373,7 @@ namespace chrono_literals {
 #endif
 
 template<WTF::CheckMoveParameterTag, typename T>
-ALWAYS_INLINE CONSTEXPR typename remove_reference<T>::type&& move(T&& value)
+ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 {
     static_assert(is_lvalue_reference<T>::value, "T is not an lvalue reference; move() is unnecessary.");
 
