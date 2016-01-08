@@ -1,3 +1,25 @@
+2016-01-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [ANGLE] Correct UNREACHABLE runtime assertion for void constructors
+        https://bugs.webkit.org/show_bug.cgi?id=152900
+        <rdar://problem/24107501>
+
+        Reviewed by Alex Christensen.
+
+        Tested by Khronos WebGL 1.0.4 suite.
+
+        Merge a small part of ANGLE upstream commit r284735:
+        
+            commit    01971113492d9aca386f2bca021b1f4b134fc277
+            author    Dmitry Skiba <dskiba@google.com>  Fri Jul 10 18:54:00 2015
+            committer Jamie Madill <jmadill@chromium.org>  Fri Jul 10 19:03:34 2015
+            tree      47e42eac00f7d64cddb14b3cc21a4e605c189d20
+
+        This issue was found by <https://www.khronos.org/registry/webgl/sdk/tests/conformance/glsl/bugs/angle-constructor-invalid-parameters.html?webglVersion=1&quiet=0>
+
+        * src/compiler/translator/Types.cpp:
+        (TType::buildMangledName): Don't assert with UNREACHABLE here.
+
 2015-12-28  Joonghun Park  <jh718.park@samsung.com>
 
         [ANGLE][EFL][GTK] Remove 'template<class> class std::auto_ptr is deprecated' compile warning
