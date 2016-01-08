@@ -1,3 +1,12 @@
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/dont-wedge.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=152892
+
+        Unreviewed.
+
+        * platform/mac-wk1/TestExpectations: Skip it for now.
+
 2016-01-07  Brady Eidson  <beidson@apple.com>
 
         Unreviewed IndexedDB test gardening.
