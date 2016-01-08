@@ -376,6 +376,17 @@ public:
         m_assembler.orInsn(dest, op1, op2);
     }
 
+    void or32(TrustedImm32 imm, AbsoluteAddress dest)
+    {
+        if (!imm.m_value && !m_fixedWidth)
+            return;
+
+        // TODO: Swap dataTempRegister and immTempRegister usage
+        load32(dest.m_ptr, immTempRegister);
+        or32(imm, immTempRegister);
+        store32(immTempRegister, dest.m_ptr);
+    }
+
     void or32(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_value && !m_fixedWidth)

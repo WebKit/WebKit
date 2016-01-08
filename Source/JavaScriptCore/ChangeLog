@@ -1,3 +1,13 @@
+2016-01-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [mips] Add new or32 implementation after r194613
+        https://bugs.webkit.org/show_bug.cgi?id=152865
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::or32):
+
 2016-01-07  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 lazy slow paths should do exceptions
