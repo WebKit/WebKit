@@ -230,6 +230,8 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             return;
 
         this._initiatedResources.push(resource);
+
+        this.dispatchEventToListeners(WebInspector.Resource.Event.InitiatedResourcesDidChange);
     }
 
     get parentFrame()
@@ -693,7 +695,8 @@ WebInspector.Resource.Event = {
     TimestampsDidChange: "resource-timestamps-did-change",
     SizeDidChange: "resource-size-did-change",
     TransferSizeDidChange: "resource-transfer-size-did-change",
-    CacheStatusDidChange: "resource-cached-did-change"
+    CacheStatusDidChange: "resource-cached-did-change",
+    InitiatedResourcesDidChange: "resource-initiated-resources-did-change",
 };
 
 // Keep these in sync with the "ResourceType" enum defined by the "Page" domain.

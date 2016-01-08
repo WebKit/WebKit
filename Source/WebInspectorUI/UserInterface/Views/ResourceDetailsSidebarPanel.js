@@ -157,6 +157,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._resource.removeEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
             this._resource.removeEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
+            this._resource.removeEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
         }
 
         this._resource = resource;
@@ -170,6 +171,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._resource.addEventListener(WebInspector.Resource.Event.CacheStatusDidChange, this._refreshRequestAndResponse, this);
             this._resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, this._refreshDecodedSize, this);
             this._resource.addEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._refreshTransferSize, this);
+            this._resource.addEventListener(WebInspector.Resource.Event.InitiatedResourcesDidChange, this._refreshRelatedResourcesSection, this);
         }
 
         this.needsRefresh();
@@ -189,6 +191,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._refreshRequestHeaders();
         this._refreshImageSizeSection();
         this._refreshRequestDataSection();
+        this._refreshRelatedResourcesSection();
     }
 
     // Private
@@ -215,6 +218,37 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._locationSection.groups = [this._fullURLGroup, this._relatedResourcesGroup];
         }
 
+        if (urlComponents.queryString) {
+            // Ensure the "Query Parameters" section is displayed, right after the "Request & Response" section.
+            this.contentView.element.insertBefore(this._queryParametersSection.element, this._requestAndResponseSection.element.nextSibling);
+
+            this._queryParametersRow.dataGrid = this._createNameValueDataGrid(parseQueryString(urlComponents.queryString, true));
+        } else {
+            // Hide the "Query Parameters" section if we don't have a query string.
+            var queryParametersSectionElement = this._queryParametersSection.element;
+            if (queryParametersSectionElement.parentNode)
+                queryParametersSectionElement.parentNode.removeChild(queryParametersSectionElement);
+        }
+    }
+
+    _refreshRelatedResourcesSection()
+    {
+        // Hide the section if we don't have anything to show.
+        let groups = this._locationSection.groups;
+        let isSectionVisible = groups.includes(this._relatedResourcesGroup);
+        if (!this._resource.initiatorSourceCodeLocation && !this._resource.initiatedResources.length) {
+            if (isSectionVisible) {
+                groups.remove(this._relatedResourcesGroup);
+                this._locationSection.groups = groups;
+            }
+            return;
+        }
+
+        if (!isSectionVisible) {
+            groups.push(this._relatedResourcesGroup);
+            this._locationSection.groups = groups;
+        }
+
         let initiatorLocation = this._resource.initiatorSourceCodeLocation;
         this._initiatorRow.value = initiatorLocation ? WebInspector.createSourceCodeLocationLink(initiatorLocation, true) : null;
 
@@ -227,18 +261,6 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
             this._initiatedRow.value = resourceLinkContainer;
         } else
             this._initiatedRow.value = null;
-
-        if (urlComponents.queryString) {
-            // Ensure the "Query Parameters" section is displayed, right after the "Request & Response" section.
-            this.contentView.element.insertBefore(this._queryParametersSection.element, this._requestAndResponseSection.element.nextSibling);
-
-            this._queryParametersRow.dataGrid = this._createNameValueDataGrid(parseQueryString(urlComponents.queryString, true));
-        } else {
-            // Hide the "Query Parameters" section if we don't have a query string.
-            var queryParametersSectionElement = this._queryParametersSection.element;
-            if (queryParametersSectionElement.parentNode)
-                queryParametersSectionElement.parentNode.removeChild(queryParametersSectionElement);
-        }
     }
 
     _refreshResourceType()
