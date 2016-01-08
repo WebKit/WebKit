@@ -995,28 +995,28 @@ FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const Flo
 {
     FloatPoint origin = point;
     float thickness = std::max(strokeThickness(), 0.5f);
+    if (printing)
+        return FloatRect(origin, FloatSize(width, thickness));
 
-    if (!printing) {
-        AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    // Just compute scale in x dimension, assuming x and y scales are equal.
+    float scale = transform.b() ? sqrtf(transform.a() * transform.a() + transform.b() * transform.b()) : transform.a();
+    if (scale < 1.0) {
         // This code always draws a line that is at least one-pixel line high,
         // which tends to visually overwhelm text at small scales. To counter this
         // effect, an alpha is applied to the underline color when text is at small scales.
-
-        // Just compute scale in x dimension, assuming x and y scales are equal.
-        float scale = transform.b() ? sqrtf(transform.a() * transform.a() + transform.b() * transform.b()) : transform.a();
-        if (scale < 1.0) {
-            static const float minimumUnderlineAlpha = 0.4f;
-            float shade = scale > minimumUnderlineAlpha ? scale : minimumUnderlineAlpha;
-            int alpha = color.alpha() * shade;
-            color = Color(color.red(), color.green(), color.blue(), alpha);
-        }
-
-        FloatPoint devicePoint = transform.mapPoint(point);
-        FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()));
-        if (auto inverse = transform.inverse())
-            origin = inverse.value().mapPoint(deviceOrigin);
+        static const float minimumUnderlineAlpha = 0.4f;
+        float shade = scale > minimumUnderlineAlpha ? scale : minimumUnderlineAlpha;
+        int alpha = color.alpha() * shade;
+        color = Color(color.red(), color.green(), color.blue(), alpha);
     }
-    return FloatRect(origin.x(), origin.y(), width, thickness);
+
+    FloatPoint devicePoint = transform.mapPoint(point);
+    // Visual overflow might occur here due to integral roundf/ceilf. visualOverflowForDecorations adjusts the overflow value for underline decoration.
+    FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()));
+    if (auto inverse = transform.inverse())
+        origin = inverse.value().mapPoint(deviceOrigin);
+    return FloatRect(origin, FloatSize(width, thickness));
 }
 
 }

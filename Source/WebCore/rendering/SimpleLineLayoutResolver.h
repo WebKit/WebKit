@@ -123,6 +123,7 @@ private:
     const LayoutUnit m_borderAndPaddingBefore;
     const float m_ascent;
     const float m_descent;
+    const float m_visualOverflowOffset;
     const bool m_inQuirksMode;
 };
 

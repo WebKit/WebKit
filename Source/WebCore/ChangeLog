@@ -1,3 +1,28 @@
+2016-01-08  Zalan Bujtas  <zalan@apple.com>
+
+        Hovering link on http://help.apple.com/appletv/#/ does not show text underline.
+        https://bugs.webkit.org/show_bug.cgi?id=152906
+        <rdar://problem/23339617>
+
+        Reviewed by Simon Fraser.
+
+        GraphicsContext::computeLineBoundsAndAntialiasingModeForText() always integral ceils the origin y position to offset underline text.
+        This additional visual overflow offset is not taken into account by visualOverflowForDecorations().
+        Unfortunately we can't compute the exact same offset value while collecting repaint rects, because
+        computeLineBoundsAndAntialiasingModeForText() uses CTM scaling before adjusting the offset position.
+        Use 1px (css) bottom offset to cover this underling overflow.
+
+        Test: fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::computeLineBoundsAndAntialiasingModeForText):
+        * rendering/SimpleLineLayoutResolver.cpp: Add visual overflow to simple line layout.
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect):
+        (WebCore::SimpleLineLayout::RunResolver::RunResolver):
+        * rendering/SimpleLineLayoutResolver.h:
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::visualOverflowForDecorations):
+
 2016-01-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: imported/w3c/indexeddb/idbobjectstore_createIndex6-event_order.htm fails.

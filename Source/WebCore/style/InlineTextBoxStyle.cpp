@@ -123,7 +123,9 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
 
     // These metrics must match where underlines get drawn.
     if (decoration & TextDecorationUnderline) {
-        float underlineOffset = computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), inlineTextBox, strokeThickness);
+        // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
+        int underlineOffset = 1;
+        underlineOffset += computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), inlineTextBox, strokeThickness);
         if (decorationStyle == TextDecorationStyleWavy) {
             extendIntToFloat(overflowResult.bottom, underlineOffset + wavyOffset + controlPointDistance + strokeThickness - height);
             extendIntToFloat(overflowResult.top, -(underlineOffset + wavyOffset - controlPointDistance - strokeThickness));
