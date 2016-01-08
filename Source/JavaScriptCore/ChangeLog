@@ -1,5 +1,12 @@
 2016-01-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, skipping this test. Looks like LLVM can't handle this one, either.
+
+        * tests/stress/ftl-call-varargs-bad-args-exception-interesting-live-state.js:
+        (foo):
+
+2016-01-07  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, skipping this test. Looks like LLVM can't handle it.
 
         * tests/stress/ftl-put-by-id-setter-exception-interesting-live-state.js:
