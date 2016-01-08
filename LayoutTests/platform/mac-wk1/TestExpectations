@@ -66,9 +66,6 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 ########################################
 ### START OF (2) Failures without bug reports
 
-# Legacy IndexedDB will never be enabled in Mac WK1.
-inspector/indexeddb
-
 # W3C IDB test timeouts
 imported/w3c/indexeddb/interfaces.html [ Skip ]
 imported/w3c/indexeddb/keyorder.htm [ Skip ]
@@ -125,6 +122,9 @@ storage/indexeddb/pending-version-change-stuck-works-with-terminate.html
 storage/indexeddb/pending-version-change-stuck.html
 storage/indexeddb/transaction-complete-workers.html
 storage/indexeddb/unprefix-workers.html
+
+# Need a different way to get database names to the web inspector
+inspector/indexeddb/requestDatabaseNames.html
 
 # Test's behavior specific to Legacy IDB with LevelDB backend
 # Modern IDB is spec-compliant without supporting this behavior

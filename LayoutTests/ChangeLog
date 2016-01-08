@@ -1,5 +1,11 @@
 2016-01-08  Brady Eidson  <beidson@apple.com>
 
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
         Removing WK2 specific results for this test.
         
         Legacy IDB passes just the same as Modern IDB.
