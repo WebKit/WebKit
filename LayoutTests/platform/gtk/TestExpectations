@@ -2283,6 +2283,12 @@ webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
 
+# These tests fail when accelerated compositing is enabled or when XVFB_SCREEN_DEPTH=8 is not set.
+webkit.org/b/132126 animations/play-state-paused.html [ Failure ]
+webkit.org/b/132126 animations/play-state-suspend.html [ Failure ]
+webkit.org/b/132126 animations/suspend-resume-animation.html [ Failure ]
+webkit.org/b/132126 animations/transform-non-accelerated.html [ Failure ]
+
 webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
 
 webkit.org/b/132234 fast/regions/scrolling/wheel-scrollable-single-region.html [ ImageOnlyFailure ]
