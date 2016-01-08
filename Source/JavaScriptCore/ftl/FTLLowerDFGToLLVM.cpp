@@ -8840,11 +8840,12 @@ private:
 #if FTL_USES_B3
         CodeOrigin origin = m_node->origin.semantic;
         
-        B3::PatchpointValue* result = m_out.patchpoint(B3::Int64);
+        PatchpointValue* result = m_out.patchpoint(B3::Int64);
         for (LValue arg : userArguments)
             result->append(ConstrainedValue(arg, B3::ValueRep::SomeRegister));
 
-        // FIXME: As part of handling exceptions, we need to append OSR exit state here.
+        RefPtr<PatchpointExceptionHandle> exceptionHandle =
+            preparePatchpointForExceptions(result);
         
         result->clobber(RegisterSet::macroScratchRegisters());
         State* state = &m_ftlState;
@@ -8861,6 +8862,9 @@ private:
                 CCallHelpers::Label done = jit.label();
 
                 RegisterSet usedRegisters = params.unavailableRegisters();
+
+                RefPtr<ExceptionTarget> exceptionTarget =
+                    exceptionHandle->scheduleExitCreation(params);
 
                 // FIXME: As part of handling exceptions, we need to create a concrete OSRExit here.
                 // Doing so should automagically register late paths that emit exit thunks.
@@ -8893,18 +8897,14 @@ private:
                                     linkBuffer.locationOf(patchableJump));
                                 CodeLocationLabel linkedDone = linkBuffer.locationOf(done);
 
-                                // FIXME: Need a story for exceptions in FTL-B3. That basically means
-                                // doing a lookup of the exception entrypoint here. We will have an
-                                // OSR exit data structure of some sort.
-                                // https://bugs.webkit.org/show_bug.cgi?id=151686
-                                CodeLocationLabel exceptionTarget;
                                 CallSiteIndex callSiteIndex =
                                     jitCode->common.addUniqueCallSiteIndex(origin);
                                     
                                 std::unique_ptr<LazySlowPath> lazySlowPath =
                                     std::make_unique<LazySlowPath>(
-                                        linkedPatchableJump, linkedDone, exceptionTarget,
-                                        usedRegisters, callSiteIndex, generator);
+                                        linkedPatchableJump, linkedDone,
+                                        exceptionTarget->label(linkBuffer), usedRegisters,
+                                        callSiteIndex, generator);
                                     
                                 jitCode->lazySlowPaths[index] = WTFMove(lazySlowPath);
                             });
