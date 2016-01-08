@@ -1,5 +1,11 @@
 2016-01-07  Brady Eidson  <beidson@apple.com>
 
+        Unreviewed IndexedDB test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-01-07  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Success-after-open event should only have the IDBOpenDBRequest as its target.
         https://bugs.webkit.org/show_bug.cgi?id=152875
 
