@@ -289,7 +289,7 @@ public:
     {
         if (!imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
-        else if (imm.m_value > 0 && imm.m_value < 65535 && !m_fixedWidth)
+        else if (imm.m_value > 0 && imm.m_value <= 65535 && !m_fixedWidth)
             m_assembler.andi(dest, dest, imm.m_value);
         else {
             /*
@@ -305,7 +305,7 @@ public:
     {
         if (!imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
-        else if (imm.m_value > 0 && imm.m_value < 65535 && !m_fixedWidth)
+        else if (imm.m_value > 0 && imm.m_value <= 65535 && !m_fixedWidth)
             m_assembler.andi(dest, src, imm.m_value);
         else {
             move(imm, immTempRegister);
@@ -392,7 +392,7 @@ public:
         if (!imm.m_value && !m_fixedWidth)
             return;
 
-        if (imm.m_value > 0 && imm.m_value < 65535
+        if (imm.m_value > 0 && imm.m_value <= 65535
             && !m_fixedWidth) {
             m_assembler.ori(dest, dest, imm.m_value);
             return;
@@ -413,7 +413,7 @@ public:
             return;
         }
 
-        if (imm.m_value > 0 && imm.m_value < 65535 && !m_fixedWidth) {
+        if (imm.m_value > 0 && imm.m_value <= 65535 && !m_fixedWidth) {
             m_assembler.ori(dest, src, imm.m_value);
             return;
         }
