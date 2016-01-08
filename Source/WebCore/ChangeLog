@@ -1,3 +1,62 @@
+2016-01-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Consider painting to be disabled on a GraphicsContext with no platform data, and make updatingControlTints() immutable state
+        https://bugs.webkit.org/show_bug.cgi?id=152927
+
+        Reviewed by Tim Horton.
+
+        GraphicsContext had setters for paintingDisabled and updatingControlTints, but neither
+        were changed dynamically.
+        
+        We can eliminate paintingDisabled by simply considering a GraphicsContext that was
+        created with no platform context to be paint-disabled.
+        
+        We make updatingControlTints immutable state by providing a constructor that takes
+        a "NonPaintingReasons" enum, and doesn't create platform data.
+        
+        More functions in platform code were protected by if (paintingDisabled())...
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintControlTints):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setUpdatingControlTints): Deleted.
+        (WebCore::GraphicsContext::clip): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::paintingDisabled):
+        (WebCore::GraphicsContext::updatingControlTints):
+        (WebCore::GraphicsContextState::GraphicsContextState): Deleted.
+        (WebCore::GraphicsContext::setPaintingDisabled): Deleted.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::drawPattern):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipBounds):
+        (WebCore::GraphicsContext::setLineDash):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::setPlatformImageInterpolationQuality):
+        (WebCore::GraphicsContext::setIsCALayerContext):
+        (WebCore::GraphicsContext::isCALayerContext):
+        (WebCore::GraphicsContext::setIsAcceleratedContext):
+        (WebCore::GraphicsContext::isAcceleratedContext):
+        (WebCore::GraphicsContext::platformApplyDeviceScaleFactor):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::GraphicsContext): Deleted.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        (WebCore::GraphicsContext::GraphicsContext): Deleted.
+
 2016-01-08  Anders Carlsson  <andersca@apple.com>
 
         InputType::findClosestTickMarkValue should return an Optional<Decimal>

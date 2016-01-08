@@ -359,10 +359,12 @@ TextStream& operator<<(TextStream& ts, const GraphicsContextStateChange& stateCh
     return ts;
 }
 
+GraphicsContext::GraphicsContext(NonPaintingReasons nonPaintingReasons)
+    : m_nonPaintingReasons(nonPaintingReasons)
+{
+}
 
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext)
-    : m_updatingControlTints(false)
-    , m_transparencyCount(0)
 {
     platformInit(platformGraphicsContext);
 }
@@ -570,12 +572,6 @@ void GraphicsContext::endTransparencyLayer()
     --m_transparencyCount;
 }
 
-void GraphicsContext::setUpdatingControlTints(bool b)
-{
-    setPaintingDisabled(b);
-    m_updatingControlTints = b;
-}
-
 float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())
@@ -732,11 +728,6 @@ void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> imag
     ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
 }
 
-void GraphicsContext::clip(const IntRect& rect)
-{
-    clip(FloatRect(rect));
-}
-
 void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)
 {
     if (paintingDisabled())
@@ -798,6 +789,9 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, Compos
 
 void GraphicsContext::fillRoundedRect(const FloatRoundedRect& rect, const Color& color, BlendMode blendMode)
 {
+    if (paintingDisabled())
+        return;
+
     if (rect.isRounded()) {
         setCompositeOperation(compositeOperation(), blendMode);
         platformFillRoundedRect(rect, color);

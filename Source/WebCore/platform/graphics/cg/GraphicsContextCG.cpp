@@ -115,15 +115,15 @@ static InterpolationQuality convertInterpolationQuality(CGInterpolationQuality q
 
 void GraphicsContext::platformInit(CGContextRef cgContext)
 {
+    if (!cgContext)
+        return;
+
     m_data = new GraphicsContextPlatformPrivate(cgContext);
-    setPaintingDisabled(!cgContext);
-    if (cgContext) {
-        // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor());
-        setPlatformStrokeColor(strokeColor());
-        setPlatformStrokeThickness(strokeThickness());
-        m_state.imageInterpolationQuality = convertInterpolationQuality(CGContextGetInterpolationQuality(platformContext()));
-    }
+    // Make sure the context starts in sync with our state.
+    setPlatformFillColor(fillColor());
+    setPlatformStrokeColor(strokeColor());
+    setPlatformStrokeThickness(strokeThickness());
+    m_state.imageInterpolationQuality = convertInterpolationQuality(CGContextGetInterpolationQuality(platformContext()));
 }
 
 void GraphicsContext::platformDestroy()
@@ -140,6 +140,7 @@ CGContextRef GraphicsContext::platformContext() const
 
 void GraphicsContext::savePlatformState()
 {
+    ASSERT(!paintingDisabled());
     // Note: Do not use this function within this class implementation, since we want to avoid the extra
     // save of the secondary context (in GraphicsContextPlatformPrivateCG.h).
     CGContextSaveGState(platformContext());
@@ -148,6 +149,7 @@ void GraphicsContext::savePlatformState()
 
 void GraphicsContext::restorePlatformState()
 {
+    ASSERT(!paintingDisabled());
     // Note: Do not use this function within this class implementation, since we want to avoid the extra
     // restore of the secondary context (in GraphicsContextPlatformPrivateCG.h).
     CGContextRestoreGState(platformContext());
@@ -157,6 +159,9 @@ void GraphicsContext::restorePlatformState()
 
 void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
 {
+    if (paintingDisabled())
+        return;
+
     RetainPtr<CGImageRef> image(imagePtr);
 
     float currHeight = orientation.usesWidthAsHeight() ? CGImageGetWidth(image.get()) : CGImageGetHeight(image.get());
@@ -271,7 +276,7 @@ static void patternReleaseCallback(void* info)
 
 void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
-    if (!patternTransform.isInvertible())
+    if (paintingDisabled() || !patternTransform.isInvertible())
         return;
 
     CGContextRef context = platformContext();
@@ -371,11 +376,10 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& de
 // Draws a filled rectangle with a stroked border.
 void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
 {
-    // FIXME: this function does not handle patterns and gradients
-    // like drawPath does, it probably should.
     if (paintingDisabled())
         return;
 
+    // FIXME: this function does not handle patterns and gradients like drawPath does, it probably should.
     ASSERT(!rect.isEmpty());
 
     CGContextRef context = platformContext();
@@ -552,6 +556,9 @@ void GraphicsContext::clipConvexPolygon(size_t numberOfPoints, const FloatPoint*
 
 void GraphicsContext::applyStrokePattern()
 {
+    if (paintingDisabled())
+        return;
+
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
@@ -568,6 +575,9 @@ void GraphicsContext::applyStrokePattern()
 
 void GraphicsContext::applyFillPattern()
 {
+    if (paintingDisabled())
+        return;
+
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
@@ -921,6 +931,7 @@ void GraphicsContext::clip(const FloatRect& rect)
 {
     if (paintingDisabled())
         return;
+
     CGContextClipToRect(platformContext(), rect);
     m_data->clip(rect);
 }
@@ -965,6 +976,9 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
 
 IntRect GraphicsContext::clipBounds() const
 {
+    if (paintingDisabled())
+        return IntRect();
+
     return enclosingIntRect(CGContextGetClipBoundingBox(platformContext()));
 }
 
@@ -1172,6 +1186,9 @@ void GraphicsContext::setLineCap(LineCap cap)
 
 void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
 {
+    if (paintingDisabled())
+        return;
+
     if (dashOffset < 0) {
         float length = 0;
         for (size_t i = 0; i < dashes.size(); ++i)
@@ -1277,6 +1294,9 @@ AffineTransform GraphicsContext::getCTM(IncludeDeviceScale includeScale) const
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
 {
+    if (paintingDisabled())
+        return rect;
+
     // It is not enough just to round to pixels in device space. The rotation part of the
     // affine transform matrix to device space can mess with this conversion if we have a
     // rotating image like the hands of the world clock widget. We just need the scale, so
@@ -1390,6 +1410,8 @@ void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
 
 void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality mode)
 {
+    ASSERT(!paintingDisabled());
+
     CGInterpolationQuality quality = kCGInterpolationDefault;
     switch (mode) {
     case InterpolationDefault:
@@ -1413,6 +1435,9 @@ void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality 
 
 void GraphicsContext::setIsCALayerContext(bool isLayerContext)
 {
+    if (paintingDisabled())
+        return;
+
     if (isLayerContext)
         m_data->m_contextFlags |= IsLayerCGContext;
     else
@@ -1421,11 +1446,17 @@ void GraphicsContext::setIsCALayerContext(bool isLayerContext)
 
 bool GraphicsContext::isCALayerContext() const
 {
+    if (paintingDisabled())
+        return false;
+
     return m_data->m_contextFlags & IsLayerCGContext;
 }
 
 void GraphicsContext::setIsAcceleratedContext(bool isAccelerated)
 {
+    if (paintingDisabled())
+        return;
+
     if (isAccelerated)
         m_data->m_contextFlags |= IsAcceleratedCGContext;
     else
@@ -1434,6 +1465,9 @@ void GraphicsContext::setIsAcceleratedContext(bool isAccelerated)
 
 bool GraphicsContext::isAcceleratedContext() const
 {
+    if (paintingDisabled())
+        return false;
+
     return m_data->m_contextFlags & IsAcceleratedCGContext;
 }
 
@@ -1613,6 +1647,9 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode, Blen
 
 void GraphicsContext::platformApplyDeviceScaleFactor(float deviceScaleFactor)
 {
+    if (paintingDisabled())
+        return;
+
     // CoreGraphics expects the base CTM of a HiDPI context to have the scale factor applied to it.
     // Failing to change the base level CTM will cause certain CG features, such as focus rings,
     // to draw with a scale factor of 1 rather than the actual scale factor.

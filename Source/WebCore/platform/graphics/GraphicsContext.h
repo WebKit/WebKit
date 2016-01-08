@@ -116,7 +116,6 @@ struct GraphicsContextState {
         , shouldSmoothFonts(true)
         , antialiasedFontDilationEnabled(true)
         , shouldSubpixelQuantizeFonts(true)
-        , paintingDisabled(false)
         , shadowsIgnoreTransforms(false)
 #if USE(CG)
         // Core Graphics incorrectly renders shadows with radius > 8px (<rdar://problem/8103442>),
@@ -183,7 +182,6 @@ struct GraphicsContextState {
     bool shouldSmoothFonts : 1;
     bool antialiasedFontDilationEnabled : 1;
     bool shouldSubpixelQuantizeFonts : 1;
-    bool paintingDisabled : 1;
     bool shadowsIgnoreTransforms : 1;
 #if USE(CG)
     bool shadowsUseLegacyRadius : 1;
@@ -249,8 +247,17 @@ class GraphicsContext {
 public:
     WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*);
     WEBCORE_EXPORT ~GraphicsContext();
+    
+    enum class NonPaintingReasons {
+        NoReasons,
+        UpdatingControlTints
+    };
+    GraphicsContext(NonPaintingReasons);
 
     WEBCORE_EXPORT PlatformGraphicsContext* platformContext() const;
+
+    bool paintingDisabled() const { return !m_data; }
+    bool updatingControlTints() const { return m_nonPaintingReasons == NonPaintingReasons::UpdatingControlTints; }
 
     void setStrokeThickness(float);
     float strokeThickness() const { return m_state.strokeThickness; }
@@ -367,7 +374,6 @@ public:
     WEBCORE_EXPORT void setImageInterpolationQuality(InterpolationQuality);
     InterpolationQuality imageInterpolationQuality() const { return m_state.imageInterpolationQuality; }
 
-    WEBCORE_EXPORT void clip(const IntRect&);
     WEBCORE_EXPORT void clip(const FloatRect&);
     void clipRoundedRect(const FloatRoundedRect&);
 
@@ -407,12 +413,6 @@ public:
     };
     static void updateDocumentMarkerResources();
     void drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle);
-
-    void setPaintingDisabled(bool paintingDisabled) { m_state.paintingDisabled = paintingDisabled; }
-    bool paintingDisabled() const { return m_state.paintingDisabled; }
-
-    void setUpdatingControlTints(bool);
-    bool updatingControlTints() const { return m_updatingControlTints; }
 
     WEBCORE_EXPORT void beginTransparencyLayer(float opacity);
     WEBCORE_EXPORT void endTransparencyLayer();
@@ -601,12 +601,13 @@ private:
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing,  Color&);
 
-    GraphicsContextPlatformPrivate* m_data;
+    GraphicsContextPlatformPrivate* m_data { nullptr };
 
     GraphicsContextState m_state;
     Vector<GraphicsContextState, 1> m_stack;
-    bool m_updatingControlTints;
-    unsigned m_transparencyCount;
+
+    const NonPaintingReasons m_nonPaintingReasons { NonPaintingReasons::NoReasons };
+    unsigned m_transparencyCount { 0 };
 };
 
 class GraphicsContextStateSaver {

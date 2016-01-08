@@ -175,19 +175,20 @@ static inline void shadowAndStrokeCurrentCairoPath(GraphicsContext& context)
 }
 
 GraphicsContext::GraphicsContext(cairo_t* cr)
-    : m_updatingControlTints(false)
-    , m_transparencyCount(0)
 {
+    if (!cr)
+        return;
+
     m_data = new GraphicsContextPlatformPrivateToplevel(new PlatformContextCairo(cr));
 }
 
 void GraphicsContext::platformInit(PlatformContextCairo* platformContext)
 {
+    if (!platformContext)
+        return;
+
     m_data = new GraphicsContextPlatformPrivate(platformContext);
-    if (platformContext)
-        m_data->syncContext(platformContext->cr());
-    else
-        setPaintingDisabled(true);
+    m_data->syncContext(platformContext->cr());
 }
 
 void GraphicsContext::platformDestroy()

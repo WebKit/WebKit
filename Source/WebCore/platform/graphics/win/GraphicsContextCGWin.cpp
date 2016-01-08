@@ -68,18 +68,18 @@ static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
 }
 
 GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
-    : m_updatingControlTints(false),
-      m_transparencyCount(0)
 {
     platformInit(hdc, hasAlpha);
 }
 
 void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
 {
+    if (!hdc)
+        return;
+
     m_data = new GraphicsContextPlatformPrivate(CGContextWithHDC(hdc, hasAlpha));
     CGContextRelease(m_data->m_cgContext.get());
     m_data->m_hdc = hdc;
-    setPaintingDisabled(!m_data->m_cgContext);
     if (m_data->m_cgContext) {
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor());

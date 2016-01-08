@@ -3897,8 +3897,7 @@ void FrameView::paintControlTints()
     if (needsLayout())
         layout();
 
-    GraphicsContext context((PlatformGraphicsContext*)nullptr);
-    context.setUpdatingControlTints(true);
+    GraphicsContext context(GraphicsContext::NonPaintingReasons::UpdatingControlTints);
     if (platformWidget()) {
         // FIXME: consult paintsEntireContents().
         paintContents(context, visibleContentRect(LegacyIOSDocumentVisibleRect));
