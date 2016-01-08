@@ -1,5 +1,18 @@
 2016-01-08  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: IDBBindingUtilities chokes on unicode strings for get/set.
+        https://bugs.webkit.org/show_bug.cgi?id=152921
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-autoincrement.html:
+        * storage/indexeddb/resources/objectstore-autoincrement.js:
+
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Blocked event can fire on a delete request even after the last open connection has closed.
         https://bugs.webkit.org/show_bug.cgi?id=152896
 

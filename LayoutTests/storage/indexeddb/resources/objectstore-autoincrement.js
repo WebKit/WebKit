@@ -15,7 +15,7 @@ function prepareDatabase()
     self.store = evalAndLog("store = db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})");
     evalAndLog("db.createObjectStore('StoreWithAutoIncrement', {autoIncrement: true})");
     evalAndLog("db.createObjectStore('PlainOldStore', {autoIncrement: false})");
-    evalAndLog("db.createObjectStore('StoreWithLongKeyPath', {keyPath: 'a.b.c.id', autoIncrement: true})");
+    evalAndLog("db.createObjectStore('StoreWithLongKeyPathAndUTF8', {keyPath: 'a.b.c.køi', autoIncrement: true})");
     var storeNames = evalAndLog("storeNames = db.objectStoreNames");
 
     shouldBeEqualToString("store.name", "StoreWithKeyPath");
@@ -131,11 +131,11 @@ function addAdamSuccess()
 function testLongKeyPath()
 {
     debug("testLongKeyPath():");
-    trans = evalAndLog("trans = db.transaction('StoreWithLongKeyPath', 'readwrite')");
+    trans = evalAndLog("trans = db.transaction('StoreWithLongKeyPathAndUTF8', 'readwrite')");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = finishJSTest;
 
-    store = evalAndLog("store = trans.objectStore('StoreWithLongKeyPath')");
+    store = evalAndLog("store = trans.objectStore('StoreWithLongKeyPathAndUTF8')");
     request = evalAndLog("store.add({foo: 'bar'})");
     request.onerror = unexpectedErrorCallback;
     request = evalAndLog("store.add({foo: 'bar', a: {}})");
@@ -155,11 +155,11 @@ function testLongKeyPath()
             return;
         }
         if (expected === null) {
-            evalAndLog("expected = cursor.value.a.b.c.id + 1");
+            evalAndLog("expected = cursor.value.a.b.c.køi + 1");
         } else {
             shouldBeEqualToString("cursor.value.foo", "bar");
-            shouldBe("cursor.value.a.b.c.id", "expected");
-            evalAndLog("expected = cursor.value.a.b.c.id + 1");
+            shouldBe("cursor.value.a.b.c.køi", "expected");
+            evalAndLog("expected = cursor.value.a.b.c.køi + 1");
         }
         count++;
         cursor.continue();

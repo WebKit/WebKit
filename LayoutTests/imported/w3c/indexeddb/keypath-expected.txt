@@ -1,6 +1,6 @@
 
 PASS Keypath - my.key 
-FAIL Keypath - my.køi DataError: DOM IDBDatabase Exception 0
+PASS Keypath - my.køi 
 PASS Keypath - my.key_ya 
 PASS Keypath - public.key$ya 
 PASS Keypath - true.$ 

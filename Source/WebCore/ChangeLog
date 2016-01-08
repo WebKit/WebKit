@@ -1,3 +1,16 @@
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: IDBBindingUtilities chokes on unicode strings for get/set.
+        https://bugs.webkit.org/show_bug.cgi?id=152921
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by existing tests).
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::get): Don't do a potentially lossy utf8() conversion on the string.
+        (WebCore::set): Ditto.
+
 2016-01-08  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Support more video formats.
