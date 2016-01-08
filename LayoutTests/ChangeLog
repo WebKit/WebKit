@@ -1,3 +1,11 @@
+2016-01-08  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] pageoverlay tests are failing
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+
 2016-01-08  Zalan Bujtas  <zalan@apple.com>
 
         Hovering link on http://help.apple.com/appletv/#/ does not show text underline.
