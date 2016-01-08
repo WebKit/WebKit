@@ -1,3 +1,18 @@
+2016-01-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Use an appropriate buffer format for swipe snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=152880
+        rdar://problem/23728299
+
+        Reviewed by Tim Horton.
+        
+        Choose an appropriate buffer format for swipe snapshots, and avoid converting
+        them to YUV422.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (WebKit::bufferFormat):
+        (-[WKWebView _takeViewSnapshot]):
+
 2016-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards implementing downloads with NetworkSession

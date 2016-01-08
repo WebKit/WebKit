@@ -395,6 +395,14 @@ WEBCORE_EXPORT void IOSurface::copyToSurface(IOSurface& destSurface)
         WTFLogAlways("IOSurfaceAcceleratorTransformSurface %p to %p failed with error %d", m_surface.get(), destSurface.surface(), ret);
 }
 
+bool IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, Format destFormat)
+{
+    if ((sourceFormat == Format::RGB10 || sourceFormat == Format::RGB10A8) && destFormat == Format::YUV422)
+        return false;
+
+    return true;
+}
+
 void IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format format, std::function<void(std::unique_ptr<WebCore::IOSurface>)> callback)
 {
     static IOSurfaceAcceleratorRef accelerator;
