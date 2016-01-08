@@ -1,3 +1,13 @@
+2016-01-08  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/24094651> REGRESSION (193350): CrashTracer: [USER] com.apple.WebKit.WebContent at …: Inspector::CSSFrontendDispatcher::styleSheetRemoved + 768
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::setActiveStyleSheetsForDocument):
+        Add null check before using m_frontendDispatcher.
+
 2016-01-07  Matthew Hanson  <matthew_hanson@apple.com>
 
         Fix the Mavericks build after r194287. rdar://problem/23769758
