@@ -1,5 +1,12 @@
 2016-01-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, skipping this test. Looks like LLVM can't handle it.
+
+        * tests/stress/ftl-put-by-id-setter-exception-interesting-live-state.js:
+        (foo):
+
+2016-01-07  Filip Pizlo  <fpizlo@apple.com>
+
         FTL B3 JS calls should do exceptions
         https://bugs.webkit.org/show_bug.cgi?id=152851
 

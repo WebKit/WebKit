@@ -1,3 +1,6 @@
+// This failure will be resolved by https://bugs.webkit.org/show_bug.cgi?id=150279.
+//@ skip
+
 function foo(o, p) {
     var x = 100;
     var result = 101;
