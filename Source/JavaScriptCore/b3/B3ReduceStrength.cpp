@@ -938,7 +938,8 @@ private:
                 // Into this: Equal(bool, 0)
                 if (m_value->child(1)->isInt32(1)) {
                     replaceWithNew<Value>(
-                        Equal, m_value->origin(), m_value->child(0), m_value->child(1));
+                        Equal, m_value->origin(), m_value->child(0),
+                        m_insertionSet.insertIntConstant(m_index, m_value->origin(), Int32, 0));
                     break;
                 }
             }

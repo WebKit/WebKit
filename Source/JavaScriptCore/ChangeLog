@@ -1,5 +1,18 @@
 2016-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 incorrectly turns NotEqual(bool, 1) into Equal(bool, 1) instead of Equal(bool, 0)
+        https://bugs.webkit.org/show_bug.cgi?id=152916
+
+        Reviewed by Mark Lam.
+
+        This was causing a failure in an ancient DFG layout test. Thanks, ftl-eager-no-cjit!
+
+        This reduces the number of failures from 27 to 25.
+
+        * b3/B3ReduceStrength.cpp:
+
+2016-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         FTL B3 allocateCell() should not crash
         https://bugs.webkit.org/show_bug.cgi?id=152909
 
