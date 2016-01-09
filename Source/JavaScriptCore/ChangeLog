@@ -1,3 +1,22 @@
+2016-01-09  Mark Lam  <mark.lam@apple.com>
+
+        The FTL allocated spill slots for BinaryOps is sometimes inaccurate.
+        https://bugs.webkit.org/show_bug.cgi?id=152918
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        * ftl/FTLCompile.cpp:
+        - Updated a comment.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        - The code to compute maxNumberOfCatchSpills was unnecessarily allocating an
+          extra slot for BinaryOps that don't have Untyped operands, and failing to
+          allocate that extra slot for some binary ops.  This is now fixed.
+
+        * tests/stress/ftl-shr-exception.js:
+        * tests/stress/ftl-xor-exception.js:
+        - Un-skipped these tests.  They now pass with this patch.
+
 2016-01-09  Andreas Kling  <akling@apple.com>
 
         Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL

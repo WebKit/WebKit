@@ -543,7 +543,7 @@ static void fixFunctionBasedOnStackMaps(
                     callOperationExit = &state.jitCode->osrExit.last();
                 }
 
-                // Subs and GetByIds have an interesting register preservation story,
+                // BinaryOps and GetByIds have an interesting register preservation story,
                 // see comment below at GetById to read about it.
                 //
                 // We set the registers needing spillage here because they need to be set

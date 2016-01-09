@@ -262,13 +262,21 @@ public:
                     case ArithDiv:
                     case ArithMul:
                     case ArithSub:
+                    case ValueAdd:
+                    case DFG::BitAnd:
+                    case DFG::BitOr:
+                    case DFG::BitXor:
+                    case BitLShift:
+                    case BitRShift:
+                    case BitURShift:
+                        if (!node->isBinaryUseKind(UntypedUse))
+                            break; // We only compile patchpoints for UntypedUse.
+                        FALLTHROUGH;
+
                     case GetById:
-                    case GetByIdFlush:
-                    case ValueAdd: {
-                        // We may have to flush one thing for GetByIds/ArithSubs when the base and result or the left/right and the result
+                    case GetByIdFlush: {
+                        // We may have to flush one thing for GetByIds/ binary ops when the base and result or the left/right and the result
                         // are assigned the same register. For a more comprehensive overview, look at the comment in FTLCompile.cpp
-                        if (node->op() == ArithSub && node->binaryUseKind() != UntypedUse)
-                            break; // We only compile patchpoints for ArithSub UntypedUse.
                         CodeOrigin opCatchOrigin;
                         HandlerInfo* exceptionHandler;
                         bool willCatchException = m_graph.willCatchExceptionInMachineFrame(node->origin.forExit, opCatchOrigin, exceptionHandler);
