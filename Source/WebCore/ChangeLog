@@ -1,3 +1,26 @@
+2016-01-09  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Allow overriding the frameworks directory independently of using a staging install path
+        https://bugs.webkit.org/show_bug.cgi?id=152926
+
+        Reviewed by Tim Horton.
+
+        Introduce a new build setting, WK_OVERRIDE_FRAMEWORKS_DIR. When not empty, it determines
+        where the frameworks are installed. Setting USE_STAGING_INSTALL_PATH to YES sets
+        WK_OVERRIDE_FRAMEWORKS_DIR to $(SYSTEM_LIBRARY_DIR)/StagedFrameworks/Safari.
+
+        Account for the possibility of WK_OVERRIDE_FRAMEWORKS_DIR containing spaces.
+
+        * Configurations/WebCore.xcconfig:
+        - Replace STAGED_FRAMEWORKS_SEARCH_PATH in FRAMEWORK_SEARCH_PATHS with
+          WK_OVERRIDE_FRAMEWORKS_DIR and add quotes to account for spaces.
+        - Define WEBCORE_FRAMEWORKS_DIR and PRODUCTION_FRAMEWORKS_DIR based on
+          WK_OVERRIDE_FRAMEWORKS_DIR.
+
+        * WebCore.xcodeproj/project.pbxproj: Work around make’s inability to handle spaces in paths
+          by creating a symlink to JAVASCRIPTCORE_PRIVATE_HEADERS_DIR under BUILT_PRODUCTS_DIR and
+          using the symlink as the value of JavaScriptCore_SCRIPTS_DIR.
+
 2016-01-09  Andreas Kling  <akling@apple.com>
 
         Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL

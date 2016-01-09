@@ -1,3 +1,27 @@
+2016-01-09  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Allow overriding the frameworks directory independently of using a staging install path
+        https://bugs.webkit.org/show_bug.cgi?id=152926
+
+        Reviewed by Tim Horton.
+
+        Introduce a new build setting, WK_OVERRIDE_FRAMEWORKS_DIR. When not empty, it determines
+        where the frameworks are installed. Setting USE_STAGING_INSTALL_PATH to YES sets
+        WK_OVERRIDE_FRAMEWORKS_DIR to $(SYSTEM_LIBRARY_DIR)/StagedFrameworks/Safari.
+
+        Account for the possibility of WK_OVERRIDE_FRAMEWORKS_DIR containing spaces.
+
+        * Configurations/Base.xcconfig:
+        - Replace STAGED_FRAMEWORKS_SEARCH_PATH in FRAMEWORK_SEARCH_PATHS with
+          WK_OVERRIDE_FRAMEWORKS_DIR and add quotes to account for spaces.
+        - Define JAVASCRIPTCORE_FRAMEWORKS_DIR based on WK_OVERRIDE_FRAMEWORKS_DIR.
+        * Configurations/JSC.xcconfig:
+          Add quotes to account for spaces.
+        * Configurations/ToolExecutable.xcconfig:
+          Ditto.
+        * postprocess-headers.sh:
+          Ditto.
+
 2016-01-09  Mark Lam  <mark.lam@apple.com>
 
         The FTL allocated spill slots for BinaryOps is sometimes inaccurate.

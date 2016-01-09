@@ -87,11 +87,11 @@ function rewrite_headers () {
 
     SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
 
-    for HEADER_PATH in $1/*.h; do
-        if [[ $HEADER_PATH -nt $TIMESTAMP_PATH ]]; then
-            ditto ${HEADER_PATH} ${TARGET_TEMP_DIR}/${HEADER_PATH##*/}
-            sed -i .tmp -E ${SED_OPTIONS[*]} ${TARGET_TEMP_DIR}/${HEADER_PATH##*/} || exit $?
-            mv ${TARGET_TEMP_DIR}/${HEADER_PATH##*/} $HEADER_PATH
+    for HEADER_PATH in "${1}/"*.h; do
+        if [[ "$HEADER_PATH" -nt $TIMESTAMP_PATH ]]; then
+            ditto "${HEADER_PATH}" "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}"
+            sed -i .tmp -E ${SED_OPTIONS[*]} "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" || exit $?
+            mv "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" "$HEADER_PATH"
         fi
     done
 }
@@ -100,7 +100,7 @@ DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework
 
 process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
 
-rewrite_headers ${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}
-rewrite_headers ${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}
+rewrite_headers "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"
+rewrite_headers "${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}"
 
 touch ${TIMESTAMP_PATH}

@@ -1,3 +1,29 @@
+2016-01-09  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Allow overriding the frameworks directory independently of using a staging install path
+        https://bugs.webkit.org/show_bug.cgi?id=152926
+
+        Reviewed by Tim Horton.
+
+        Introduce a new build setting, WK_OVERRIDE_FRAMEWORKS_DIR. When not empty, it determines
+        where the frameworks are installed. Setting USE_STAGING_INSTALL_PATH to YES sets
+        WK_OVERRIDE_FRAMEWORKS_DIR to $(SYSTEM_LIBRARY_DIR)/StagedFrameworks/Safari.
+
+        Account for the possibility of WK_OVERRIDE_FRAMEWORKS_DIR containing spaces.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        - Replace STAGED_FRAMEWORKS_SEARCH_PATH in FRAMEWORK_SEARCH_PATHS with
+          WK_OVERRIDE_FRAMEWORKS_DIR and add quotes to account for spaces.
+        - Define WEBKIT_LEGACY_FRAMEWORKS_DIR, PRODUCTION_FRAMEWORKS_DIR, and
+          WEBCORE_PRIVATE_HEADERS_DIR based on WK_OVERRIDE_FRAMEWORKS_DIR.
+
+        * MigrateHeaders.make:
+          Use a symlink under BUILT_PRODUCTS_DIR to the WebCore Private Headers. Use a
+          BUILT_PRODUCTS_DIR-based path to the framework instead of a TARGET_BUILD_DIR-based one in
+          order to avoid spaces.
+        * migrate-headers.sh:
+          Make the symlink to WEBCORE_PRIVATE_HEADERS_DIR that the makefile now uses.
+
 2016-01-07  Tim Horton  <timothy_horton@apple.com>
 
         Can't play inline video in a stock WK1 WebView on Mac

@@ -9052,7 +9052,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\nmake -C mac -f \"MigrateHeadersFromWebKitLegacy.make\" -j `/usr/sbin/sysctl -n hw.activecpu`\nfi\n";
+			shellScript = "if [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\n    ln -sfh \"${WEBKIT_LEGACY_PRIVATE_HEADERS_DIR}\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2/WebKitLegacyPrivateHeaders\"\n    export WEBKIT_LEGACY_PRIVATE_HEADERS_DIR=\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2/WebKitLegacyPrivateHeaders\"\n    make -C mac -f \"MigrateHeadersFromWebKitLegacy.make\" -j `/usr/sbin/sysctl -n hw.activecpu`\nfi\n";
 		};
 		1AD98ECF191D867300CAA6DF /* Postprocess WKFoundation.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9067,7 +9067,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "WKFOUNDATION_H=${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/WKFoundation.h\n\nif [[ \"${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}\" == \"YES\" ]]; then\n    UNIFDEF_OPTIONS=\"-UWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nelse\n    UNIFDEF_OPTIONS=\"-DWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nfi\n\nunifdef -B ${UNIFDEF_OPTIONS} -o ${WKFOUNDATION_H}.unifdef ${WKFOUNDATION_H}\n\ncase $? in\n0)\n    rm ${WKFOUNDATION_H}.unifdef\n    ;;\n1)\n    mv ${WKFOUNDATION_H}{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
+			shellScript = "WKFOUNDATION_H=${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/WKFoundation.h\n\nif [[ \"${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}\" == \"YES\" ]]; then\n    UNIFDEF_OPTIONS=\"-UWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nelse\n    UNIFDEF_OPTIONS=\"-DWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED\";\nfi\n\nunifdef -B ${UNIFDEF_OPTIONS} -o \"${WKFOUNDATION_H}\".unifdef \"${WKFOUNDATION_H}\"\n\ncase $? in\n0)\n    rm \"${WKFOUNDATION_H}\".unifdef\n    ;;\n1)\n    mv \"${WKFOUNDATION_H}\"{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
 		};
 		1ADAE12F1919A90C00F48E21 /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9133,7 +9133,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "WKBASE_H=${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WKBase.h\n\nunifdef -B -D__APPLE__ -UBUILDING_GTK__ -UUSE_SOUP -UBUILDING_EFL__ -UBUILDING_QT__ -o ${WKBASE_H}.unifdef ${WKBASE_H}\n\ncase $? in\n0)\n    rm ${WKBASE_H}.unifdef\n    ;;\n1)\n    mv ${WKBASE_H}{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
+			shellScript = "WKBASE_H=${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WKBase.h\n\nunifdef -B -D__APPLE__ -UBUILDING_GTK__ -UUSE_SOUP -UBUILDING_EFL__ -UBUILDING_QT__ -o \"${WKBASE_H}\".unifdef \"${WKBASE_H}\"\n\ncase $? in\n0)\n    rm \"${WKBASE_H}\".unifdef\n    ;;\n1)\n    mv \"${WKBASE_H}\"{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
 		};
 		37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */ = {
 			isa = PBXShellScriptBuildPhase;
