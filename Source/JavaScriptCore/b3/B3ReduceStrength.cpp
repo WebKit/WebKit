@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,17 +213,42 @@ private:
                 break;
             }
 
-            // Turn this: Sub(value, constant)
-            // Into this: Add(value, -constant)
             if (isInt(m_value->type())) {
+                // Turn this: Sub(value, constant)
+                // Into this: Add(value, -constant)
                 if (Value* negatedConstant = m_value->child(1)->negConstant(m_proc)) {
                     m_insertionSet.insertValue(m_index, negatedConstant);
                     replaceWithNew<Value>(
                         Add, m_value->origin(), m_value->child(0), negatedConstant);
                     break;
                 }
+                
+                // Turn this: Sub(0, value)
+                // Into this: Neg(value)
+                if (m_value->child(0)->isInt(0)) {
+                    replaceWithNew<Value>(Neg, m_value->origin(), m_value->child(1));
+                    break;
+                }
             }
 
+            break;
+
+        case Neg:
+            // Turn this: Neg(constant)
+            // Into this: -constant
+            if (Value* constant = m_value->child(0)->negConstant(m_proc)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+            
+            // Turn this: Neg(Neg(value))
+            // Into this: value
+            if (m_value->child(0)->opcode() == Neg) {
+                m_value->replaceWithIdentity(m_value->child(0)->child(0));
+                m_changed = true;
+                break;
+            }
+            
             break;
 
         case Mul:

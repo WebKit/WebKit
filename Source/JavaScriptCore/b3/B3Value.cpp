@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -365,6 +365,7 @@ Effects Value::effects() const
     case Add:
     case Sub:
     case Mul:
+    case Neg:
     case ChillDiv:
     case ChillMod:
     case BitAnd:
@@ -468,6 +469,7 @@ ValueKey Value::key() const
     case DoubleToFloat:
     case Check:
     case BitwiseCast:
+    case Neg:
         return ValueKey(opcode(), type(), child(0));
     case Add:
     case Sub:
@@ -553,6 +555,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case Mul:
     case Div:
     case Mod:
+    case Neg:
     case ChillDiv:
     case ChillMod:
     case BitAnd:

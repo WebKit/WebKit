@@ -1,5 +1,68 @@
 2016-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 needs Neg()
+        https://bugs.webkit.org/show_bug.cgi?id=152925
+
+        Reviewed by Mark Lam.
+
+        Previously we said that negation should be represented as Sub(0, x). That's wrong, since
+        for floats, Sub(0, 0) == 0 while Neg(0) == -0.
+
+        One way to solve this would be to say that anyone trying to say Neg(x) where x is a float
+        should instead say BitXor(x, -0). That's actually correct, but I think that it would be odd
+        to use bitops to represent floating point operations. Whatever cuteness this would have
+        bought us would be outweighed by the annoyance of having to write code that matches
+        Sub(0, x) for integer negation and BitXor(x, -0) for double negation. For example, this
+        would mean strictly more code for anyone implementing a Neg(Neg(x))=>x strength reduction.
+        Also, I suspect that the omission of Neg would cause others to make the mistake of using
+        Sub to represent floating point negation.
+
+        So, this introduces a proper Neg() opcode to B3. It's now the canonical way of saying
+        negation for both ints and floats. For ints, we canonicalize Sub(0, x) to Neg(x). For
+        floats, we lower it to BitXor(x, -0) on x86.
+
+        This reduces the number of failures from 13 to 12.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::andFloat):
+        (JSC::MacroAssemblerX86Common::xorDouble):
+        (JSC::MacroAssemblerX86Common::xorFloat):
+        (JSC::MacroAssemblerX86Common::convertInt32ToDouble):
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/air/AirOpcode.opcodes:
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::lockedStackSlot):
+        (JSC::FTL::Output::neg):
+        (JSC::FTL::Output::bitNot):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::chillDiv):
+        (JSC::FTL::Output::mod):
+        (JSC::FTL::Output::chillMod):
+        (JSC::FTL::Output::doubleAdd):
+        (JSC::FTL::Output::doubleSub):
+        (JSC::FTL::Output::doubleMul):
+        (JSC::FTL::Output::doubleDiv):
+        (JSC::FTL::Output::doubleMod):
+        (JSC::FTL::Output::doubleNeg):
+        (JSC::FTL::Output::bitAnd):
+        (JSC::FTL::Output::bitOr):
+        (JSC::FTL::Output::neg): Deleted.
+        * tests/stress/ftl-negate-zero.js: Added. This was already covered by op_negate but since
+        it's such a glaring bug, I thought having a test for it specifically would be good.
+
+2016-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         FTL B3 compile() doesn't clear exception handlers before we add FTL-specific ones
         https://bugs.webkit.org/show_bug.cgi?id=152922
 

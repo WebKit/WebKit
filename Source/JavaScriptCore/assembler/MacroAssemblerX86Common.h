@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1080,6 +1080,16 @@ public:
     void andFloat(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.andps_rr(src, dst);
+    }
+
+    void xorDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.xorps_rr(src, dst);
+    }
+
+    void xorFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.xorps_rr(src, dst);
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)

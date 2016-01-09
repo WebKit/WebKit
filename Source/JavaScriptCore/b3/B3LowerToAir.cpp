@@ -1612,10 +1612,12 @@ private:
         }
 
         case Sub: {
-            if (m_value->child(0)->isInt(0))
-                appendUnOp<Neg32, Neg64>(m_value->child(1));
-            else
-                appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(m_value->child(0), m_value->child(1));
+            appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(m_value->child(0), m_value->child(1));
+            return;
+        }
+
+        case Neg: {
+            appendUnOp<Neg32, Neg64, NegateDouble, Air::Oops>(m_value->child(0));
             return;
         }
 
@@ -1682,7 +1684,7 @@ private:
                 appendUnOp<Not32, Not64>(m_value->child(0));
                 return;
             }
-            appendBinOp<Xor32, Xor64, Commutative>(
+            appendBinOp<Xor32, Xor64, XorDouble, XorFloat, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }

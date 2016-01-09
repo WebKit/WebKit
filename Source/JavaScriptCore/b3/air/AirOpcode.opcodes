@@ -177,6 +177,9 @@ Neg32 UZD:G:32
 64: Neg64 UD:G:64
     Tmp
 
+arm64: NegateDouble U:F:64, D:F:64
+    Tmp, Tmp
+
 Mul32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Addr, Tmp
@@ -251,6 +254,12 @@ arm64: AndFloat U:F:32, U:F:32, D:F:32
     Tmp, Tmp, Tmp
 
 x86: AndFloat U:F:32, UD:F:32
+    Tmp, Tmp
+
+x86: XorDouble U:F:64, UD:F:64
+    Tmp, Tmp
+
+x86: XorFloat U:F:32, UD:F:32
     Tmp, Tmp
 
 arm64: Lshift32 U:G:32, U:G:32, ZD:G:32

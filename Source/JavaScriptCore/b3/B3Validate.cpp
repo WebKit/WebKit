@@ -169,15 +169,20 @@ public:
             case Div:
             case Mod:
             case BitAnd:
+            case BitXor:
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->type() == value->child(0)->type(), ("At ", *value));
                 VALIDATE(value->type() == value->child(1)->type(), ("At ", *value));
                 VALIDATE(value->type() != Void, ("At ", *value));
                 break;
+            case Neg:
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->type() == value->child(0)->type(), ("At ", *value));
+                VALIDATE(value->type() != Void, ("At ", *value));
+                break;
             case ChillDiv:
             case ChillMod:
             case BitOr:
-            case BitXor:
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->type() == value->child(0)->type(), ("At ", *value));
                 VALIDATE(value->type() == value->child(1)->type(), ("At ", *value));
