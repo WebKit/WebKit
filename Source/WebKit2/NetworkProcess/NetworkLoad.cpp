@@ -109,18 +109,17 @@ void NetworkLoad::continueWillSendRequest(const WebCore::ResourceRequest& newReq
 
     if (m_currentRequest.isNull()) {
 #if USE(NETWORK_SESSION)
-        m_task->cancel();
         m_client.didFailLoading(cancelledError(m_currentRequest));
 #else
         m_handle->cancel();
         didFail(m_handle.get(), cancelledError(m_currentRequest));
-#endif
         return;
+#endif
     }
 
 #if USE(NETWORK_SESSION)
     ASSERT(m_redirectCompletionHandler);
-    m_redirectCompletionHandler(newRequest);
+    m_redirectCompletionHandler(m_currentRequest);
     m_redirectCompletionHandler = nullptr;
 #else
     m_handle->continueWillSendRequest(m_currentRequest);
@@ -173,6 +172,11 @@ void NetworkLoad::convertTaskToDownload(DownloadID downloadID)
 void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
 {
     m_task->setPendingDownloadID(downloadID);
+}
+
+void NetworkLoad::setPendingDownload(PendingDownload& pendingDownload)
+{
+    m_task->setPendingDownload(pendingDownload);
 }
 
 void NetworkLoad::willPerformHTTPRedirection(const ResourceResponse& response, const ResourceRequest& request, RedirectCompletionHandler completionHandler)
@@ -323,7 +327,10 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
         return;
     }
     
-    NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, m_challenge, completionHandler);
+    if (auto* pendingDownload = m_task->pendingDownload())
+        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, m_challenge, completionHandler);
+    else
+        NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, m_challenge, completionHandler);
 #else
     m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
 #endif

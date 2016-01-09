@@ -1,3 +1,53 @@
+2016-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Implement download authentication with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=152878
+
+        Reviewed by Brady Eidson.
+
+        * DerivedSources.make:
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/PendingDownload.cpp: Added.
+        (WebKit::PendingDownload::PendingDownload):
+        (WebKit::PendingDownload::willSendRedirectedRequest):
+        (WebKit::PendingDownload::continueWillSendRequest):
+        (WebKit::PendingDownload::canAuthenticateAgainstProtectionSpaceAsync):
+        (WebKit::PendingDownload::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::PendingDownload::didConvertToDownload):
+        (WebKit::PendingDownload::messageSenderConnection):
+        (WebKit::PendingDownload::messageSenderDestinationID):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        (WebKit::PendingDownload::PendingDownload): Deleted.
+        * NetworkProcess/Downloads/PendingDownload.messages.in: Added.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        The completion handler should always be called.  If m_currentRequest is null, then the request will not proceed, which is the same as canceling it.
+        (WebKit::NetworkLoad::setPendingDownloadID):
+        (WebKit::NetworkLoad::setPendingDownload):
+        (WebKit::NetworkLoad::willPerformHTTPRedirection):
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        If this load is going to become a download, then call the PendingDownload version of didReceiveAuthenticationChallenge to communicate with the 
+        UI process directly because there wasn't necessarily a web process associated with this request that will become a download.
+        * NetworkProcess/NetworkLoad.h:
+        (WebKit::NetworkLoad::pendingDownloadID):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkDataTask::client):
+        (WebKit::NetworkDataTask::pendingDownloadID):
+        (WebKit::NetworkDataTask::pendingDownload):
+        (WebKit::NetworkDataTask::setPendingDownloadID):
+        (WebKit::NetworkDataTask::setPendingDownload):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * PlatformMac.cmake:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::canAuthenticateAgainstProtectionSpace):
+        Removed unnecessary protection and move null check to before using the pointer it checks.
+
 2016-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Use an appropriate buffer format for swipe snapshots

@@ -61,6 +61,7 @@ enum class AuthenticationChallengeDisposition {
 };
 
 class NetworkSession;
+class PendingDownload;
 
 class NetworkSessionTaskClient {
 public:
@@ -98,16 +99,23 @@ public:
     NetworkSessionTaskClient& client() { return m_client; }
 
     DownloadID pendingDownloadID() { return m_pendingDownloadID; }
+    PendingDownload* pendingDownload() { return m_pendingDownload; }
     void setPendingDownloadID(DownloadID downloadID)
     {
         ASSERT(!m_pendingDownloadID.downloadID());
         ASSERT(downloadID.downloadID());
         m_pendingDownloadID = downloadID;
     }
+    void setPendingDownload(PendingDownload& pendingDownload)
+    {
+        ASSERT(!m_pendingDownload);
+        m_pendingDownload = &pendingDownload;
+    }
     
 private:
     NetworkSession& m_session;
     NetworkSessionTaskClient& m_client;
+    PendingDownload* m_pendingDownload { nullptr };
     DownloadID m_pendingDownloadID;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDataTask> m_task;

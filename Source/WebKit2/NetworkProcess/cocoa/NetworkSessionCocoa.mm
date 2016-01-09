@@ -29,6 +29,7 @@
 #if USE(NETWORK_SESSION)
 
 #import "Download.h"
+#import "NetworkLoad.h"
 #import "NetworkProcess.h"
 #import "SessionTracker.h"
 #import <Foundation/NSURLSession.h>

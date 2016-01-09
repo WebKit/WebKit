@@ -27,6 +27,7 @@
 #include "DownloadManager.h"
 
 #include "Download.h"
+#include "NetworkLoad.h"
 #include "NetworkSession.h"
 #include "PendingDownload.h"
 #include "SessionTracker.h"
@@ -52,6 +53,7 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
     NetworkLoadParameters parameters;
     parameters.sessionID = sessionID;
     parameters.request = request;
+    parameters.clientCredentialPolicy = AskClientForAllCredentials;
     m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(parameters, downloadID));
 #else
     auto download = std::make_unique<Download>(*this, downloadID, request);

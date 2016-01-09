@@ -44,6 +44,7 @@ namespace WebKit {
 
 class ChildProcess;
 class Download;
+class PendingDownload;
 class WebFrame;
 
 class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::MessageReceiver {
@@ -56,12 +57,15 @@ public:
 #if USE(NETWORK_SESSION)
     typedef NetworkSessionTaskClient::ChallengeCompletionHandler ChallengeCompletionHandler;
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
+    void didReceiveAuthenticationChallenge(PendingDownload&, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
 #endif
     // Called for resources in the WebProcess (NetworkProcess disabled)
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
     // Called for resources in the NetworkProcess (NetworkProcess enabled)
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&);
+#if !USE(NETWORK_SESSION)
     void didReceiveAuthenticationChallenge(Download&, const WebCore::AuthenticationChallenge&);
+#endif
 
     void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const WebCore::CertificateInfo&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);

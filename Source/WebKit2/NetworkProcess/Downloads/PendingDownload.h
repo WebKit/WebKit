@@ -28,36 +28,45 @@
 
 #if USE(NETWORK_SESSION)
 
-#include "NetworkLoad.h"
+#include "MessageSender.h"
+#include "NetworkLoadClient.h"
+
+namespace WebCore {
+class ResourceResponse;
+}
 
 namespace WebKit {
 
-class PendingDownload : public NetworkLoadClient {
+class DownloadID;
+class NetworkLoad;
+class NetworkLoadParameters;
+    
+class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
 public:
-    PendingDownload(const NetworkLoadParameters& parameters, DownloadID downloadID)
-        : m_networkLoad(std::make_unique<NetworkLoad>(*this, parameters))
-    {
-        m_networkLoad->setPendingDownloadID(downloadID);
-    }
+    PendingDownload(const NetworkLoadParameters&, DownloadID);
 
 private:    
     // NetworkLoadClient.
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override { }
-    virtual void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override { }
+    virtual void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override;
     virtual bool isSynchronous() const override { return false; }
-    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse) override
-    {
-        // FIXME: We should ask the UI process directly if we actually want to continue this request.
-        m_networkLoad->continueWillSendRequest(redirectRequest);
-    };
+    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse) override;
     virtual ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override { return ShouldContinueDidReceiveResponse::No; };
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override { };
     virtual void didFinishLoading(double finishTime) override { };
     virtual void didFailLoading(const WebCore::ResourceError&) override { };
-    virtual void didConvertToDownload() override { m_networkLoad = nullptr; }
+    virtual void didConvertToDownload() override;
 #if PLATFORM(COCOA)
     virtual void willCacheResponseAsync(CFCachedURLResponseRef) override { }
 #endif
+    
+    void continueWillSendRequest(const WebCore::ResourceRequest&);
+    void continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate);
+
+    // MessageSender.
+    virtual IPC::Connection* messageSenderConnection() override;
+    virtual uint64_t messageSenderDestinationID() override;
+
 private:
     std::unique_ptr<NetworkLoad> m_networkLoad;
 };

@@ -31,6 +31,7 @@
 #include "Download.h"
 #include "DownloadProxyMessages.h"
 #include "NetworkProcessProxyMessages.h"
+#include "PendingDownload.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -139,6 +140,18 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
         return;
     
     m_process->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, challengeID));
+}
+
+void AuthenticationManager::didReceiveAuthenticationChallenge(PendingDownload& pendingDownload, const WebCore::AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler completionHandler)
+{
+    uint64_t dummyPageID = 0;
+    uint64_t challengeID = addChallengeToChallengeMap({dummyPageID, authenticationChallenge, completionHandler});
+    
+    // Coalesce challenges in the same protection space and in the same page.
+    if (shouldCoalesceChallenge(dummyPageID, challengeID, authenticationChallenge))
+        return;
+    
+    pendingDownload.send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
 }
 #endif
 void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge)

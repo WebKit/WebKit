@@ -63,6 +63,8 @@ public:
 #if USE(NETWORK_SESSION)
     void convertTaskToDownload(DownloadID);
     void setPendingDownloadID(DownloadID);
+    void setPendingDownload(PendingDownload&);
+    DownloadID pendingDownloadID() { return m_task->pendingDownloadID(); }
     
     // NetworkSessionTaskClient.
     virtual void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, std::function<void(const WebCore::ResourceRequest&)>) final override;

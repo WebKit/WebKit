@@ -113,6 +113,7 @@ public:
     DownloadAuthenticationClient* authenticationClient();
 #endif
 
+#if !USE(NETWORK_SESSION)
     // Authentication
     static void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
     static void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
@@ -123,6 +124,7 @@ public:
     void useCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
     void continueWithoutCredential(const WebCore::AuthenticationChallenge&);
     void cancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
+#endif
 
 private:
     // IPC::MessageSender
