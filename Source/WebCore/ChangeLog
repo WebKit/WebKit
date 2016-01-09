@@ -1,3 +1,29 @@
+2016-01-08  Zalan Bujtas  <zalan@apple.com>
+
+        Absolute positioning -webkit-search-cancel-button crashes Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=152847
+        <rdar://problem/24112087>
+
+        Reviewed by Simon Fraser.
+
+        Do not call offsetFromContainer while resolving the painting position for the search/cancel button renderer.
+        It skips the static positioned parent input renderer, when the search/cancel renderer is absolute positioned.
+        This patch also fixes a rendering glitch when the margin-right is > 0.
+
+        Test: fast/forms/absolute-positioned-custom-search-cancel-crash.html
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintSearchFieldCancelButton):
+        (WebCore::RenderTheme::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderTheme::paintSearchFieldResultsButton):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::convertToPaintingPosition):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeMac::convertToPaintingRect): Deleted.
+
 2016-01-08  Simon Fraser  <simon.fraser@apple.com>
 
         Add display-list drawing hooks to platform-specific GraphicsContext files

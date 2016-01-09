@@ -932,7 +932,7 @@ void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(StyleResolver& styleRes
     style.setHeight(Length(decorationSize, Fixed));
 }
 
-bool RenderThemeEfl::paintSearchFieldResultsButton(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldResultsButton(const RenderBox& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchFieldResultsButton, info, rect);
 }
@@ -954,7 +954,7 @@ void RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle(StyleResolver& 
     style.setHeight(Length(decorationSize, Fixed));
 }
 
-bool RenderThemeEfl::paintSearchFieldResultsDecorationPart(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldResultsDecorationPart(const RenderBox& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchFieldResultsDecoration, info, rect);
 }
@@ -978,7 +978,7 @@ void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(StyleResolver& styleReso
     style.setHeight(Length(cancelButtonSize, Fixed));
 }
 
-bool RenderThemeEfl::paintSearchFieldCancelButton(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldCancelButton(const RenderBox& object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchFieldCancelButton, info, rect);
 }

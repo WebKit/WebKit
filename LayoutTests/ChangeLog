@@ -1,3 +1,18 @@
+2016-01-08  Zalan Bujtas  <zalan@apple.com>
+
+        Absolute positioning -webkit-search-cancel-button crashes Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=152847
+        <rdar://problem/24112087>
+
+        Reviewed by Simon Fraser.
+
+        Do not call offsetFromContainer while resolving the painting position for the search/cancel button renderer.
+        It skips the static positioned parent input renderer, when the search/cancel renderer is absolute positioned.
+        This patch also fixes a rendering glitch when the margin-right is > 0.
+
+        * fast/forms/absolute-positioned-custom-search-cancel-crash-expected.txt: Added.
+        * fast/forms/absolute-positioned-custom-search-cancel-crash.html: Added.
+
 2016-01-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/setversion-blocked-by-versionchange-close.html fails.

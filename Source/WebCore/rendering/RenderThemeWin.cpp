@@ -873,7 +873,7 @@ void RenderThemeWin::adjustSearchFieldStyle(StyleResolver& styleResolver, Render
         style.setOutlineOffset(-2);
 }
 
-bool RenderThemeWin::paintSearchFieldCancelButton(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintSearchFieldCancelButton(const RenderBox& o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o.parent());
@@ -922,7 +922,7 @@ void RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&,
     style.setHeight(Length(magnifierSize, Fixed));
 }
 
-bool RenderThemeWin::paintSearchFieldResultsDecorationPart(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintSearchFieldResultsDecorationPart(const RenderBox& o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o.parent());
@@ -955,7 +955,7 @@ void RenderThemeWin::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderS
     style.setHeight(Length(magnifierHeight, Fixed));
 }
 
-bool RenderThemeWin::paintSearchFieldResultsButton(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWin::paintSearchFieldResultsButton(const RenderBox& o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o.parent());
