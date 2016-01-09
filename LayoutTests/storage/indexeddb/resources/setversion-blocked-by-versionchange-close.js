@@ -66,7 +66,6 @@ function h3Success(evt)
     preamble(evt);
     evalAndLog("h3 = event.target.result");
     shouldBe("h3.version", "2");
-    debug("FIXME: blocked should not fire as connection was closed. http://webkit.org/b/71130");
     shouldBeFalse("blockedEventFired");
     shouldBeTrue("versionChangeComplete");
     shouldBeTrue("h2Opened");

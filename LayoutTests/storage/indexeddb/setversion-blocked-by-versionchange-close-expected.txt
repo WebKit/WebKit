@@ -18,9 +18,6 @@ indexedDB.open(dbname, 2)
 indexedDB.open(dbname)
 h1.close()
 
-h2Blocked():
-blockedEventFired = true
-
 h2UpgradeNeeded():
 h2 = event.target.result
 
@@ -33,8 +30,7 @@ h2Opened = true
 h3Success():
 h3 = event.target.result
 PASS h3.version is 2
-FIXME: blocked should not fire as connection was closed. http://webkit.org/b/71130
-FAIL blockedEventFired should be false. Was true.
+PASS blockedEventFired is false
 PASS versionChangeComplete is true
 PASS h2Opened is true
 PASS successfullyParsed is true

@@ -98,9 +98,6 @@ storage/indexeddb/intversion-long-queue.html [ Failure ]
 # With Modern IDB and the in-memory backing store, that should change.
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
 
-# Incorrectly fires a blocked event
-storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Failure ]
-
 # Relies on internals.observeGC
 storage/indexeddb/connection-leak.html [ Skip ]
 storage/indexeddb/cursor-leak.html [ Failure ]
