@@ -23,6 +23,7 @@
 
 #include "HTMLElement.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -87,7 +88,7 @@ public:
 private:
     static HashCountedSet<ContainerNode*>& disabledSubtreeRoots()
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(HashCountedSet<ContainerNode*>, nodes, ());
+        static NeverDestroyed<HashCountedSet<ContainerNode*>> nodes;
         return nodes;
     }
 

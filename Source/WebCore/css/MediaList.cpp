@@ -30,6 +30,7 @@
 #include "MediaQuery.h"
 #include "MediaQueryExp.h"
 #include "ScriptableDocumentParser.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -288,11 +289,11 @@ static void addResolutionWarningMessageToConsole(Document* document, const Strin
     ASSERT(document);
     ASSERT(value);
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, mediaQueryMessage, (ASCIILiteral("Consider using 'dppx' units instead of '%replacementUnits%', as in CSS '%replacementUnits%' means dots-per-CSS-%lengthUnit%, not dots-per-physical-%lengthUnit%, so does not correspond to the actual '%replacementUnits%' of a screen. In media query expression: ")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, mediaValueDPI, (ASCIILiteral("dpi")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, mediaValueDPCM, (ASCIILiteral("dpcm")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, lengthUnitInch, (ASCIILiteral("inch")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, lengthUnitCentimeter, (ASCIILiteral("centimeter")));
+    static NeverDestroyed<String> mediaQueryMessage(ASCIILiteral("Consider using 'dppx' units instead of '%replacementUnits%', as in CSS '%replacementUnits%' means dots-per-CSS-%lengthUnit%, not dots-per-physical-%lengthUnit%, so does not correspond to the actual '%replacementUnits%' of a screen. In media query expression: "));
+    static NeverDestroyed<String> mediaValueDPI(ASCIILiteral("dpi"));
+    static NeverDestroyed<String> mediaValueDPCM(ASCIILiteral("dpcm"));
+    static NeverDestroyed<String> lengthUnitInch(ASCIILiteral("inch"));
+    static NeverDestroyed<String> lengthUnitCentimeter(ASCIILiteral("centimeter"));
 
     String message;
     if (value->isDotsPerInch())

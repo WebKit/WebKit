@@ -61,13 +61,13 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
 
 const AtomicString& SVGFETurbulenceElement::baseFrequencyXIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyX", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGBaseFrequencyX", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 
 const AtomicString& SVGFETurbulenceElement::baseFrequencyYIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyY", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGBaseFrequencyY", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 

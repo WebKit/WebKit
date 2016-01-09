@@ -119,24 +119,24 @@ static bool isLegacySupportedJavaScriptLanguage(const String& language)
 
     // FIXME: This function is not HTML5 compliant. These belong in the MIME registry as "text/javascript<version>" entries.
     typedef HashSet<String, CaseFoldingHash> LanguageSet;
-    DEPRECATED_DEFINE_STATIC_LOCAL(LanguageSet, languages, ());
-    if (languages.isEmpty()) {
-        languages.add("javascript");
-        languages.add("javascript");
-        languages.add("javascript1.0");
-        languages.add("javascript1.1");
-        languages.add("javascript1.2");
-        languages.add("javascript1.3");
-        languages.add("javascript1.4");
-        languages.add("javascript1.5");
-        languages.add("javascript1.6");
-        languages.add("javascript1.7");
-        languages.add("livescript");
-        languages.add("ecmascript");
-        languages.add("jscript");
+    static NeverDestroyed<LanguageSet> languages;
+    if (languages.get().isEmpty()) {
+        languages.get().add("javascript");
+        languages.get().add("javascript");
+        languages.get().add("javascript1.0");
+        languages.get().add("javascript1.1");
+        languages.get().add("javascript1.2");
+        languages.get().add("javascript1.3");
+        languages.get().add("javascript1.4");
+        languages.get().add("javascript1.5");
+        languages.get().add("javascript1.6");
+        languages.get().add("javascript1.7");
+        languages.get().add("livescript");
+        languages.get().add("ecmascript");
+        languages.get().add("jscript");
     }
 
-    return languages.contains(language);
+    return languages.get().contains(language);
 }
 
 void ScriptElement::dispatchErrorEvent()
@@ -347,7 +347,7 @@ void ScriptElement::notifyFinished(CachedResource* resource)
 
     if (m_requestUsesAccessControl && !m_cachedScript->passesSameOriginPolicyCheck(*m_element.document().securityOrigin())) {
         dispatchErrorEvent();
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy.")));
+        static NeverDestroyed<String> consoleMessage(ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
         m_element.document().addConsoleMessage(MessageSource::JS, MessageLevel::Error, consoleMessage);
         return;
     }

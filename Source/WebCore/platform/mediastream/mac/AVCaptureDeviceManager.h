@@ -32,6 +32,7 @@
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +54,7 @@ private:
 };
 
 class AVCaptureDeviceManager final : public CaptureDeviceManager {
+    friend class NeverDestroyed<AVCaptureDeviceManager>;
 public:
     virtual Vector<CaptureDeviceInfo>& captureDeviceList() override;
 

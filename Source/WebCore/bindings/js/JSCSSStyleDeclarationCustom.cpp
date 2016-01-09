@@ -184,8 +184,8 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(PropertyName propertyNa
 
     String stringForCache = String(propertyNameString);
     typedef HashMap<String, CSSPropertyInfo> CSSPropertyInfoMap;
-    DEPRECATED_DEFINE_STATIC_LOCAL(CSSPropertyInfoMap, propertyInfoCache, ());
-    propertyInfo = propertyInfoCache.get(stringForCache);
+    static NeverDestroyed<CSSPropertyInfoMap> propertyInfoCache;
+    propertyInfo = propertyInfoCache.get().get(stringForCache);
     if (propertyInfo.propertyID)
         return propertyInfo;
 
@@ -269,7 +269,7 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(PropertyName propertyNa
     if (propertyID) {
         propertyInfo.hadPixelOrPosPrefix = hadPixelOrPosPrefix;
         propertyInfo.propertyID = static_cast<CSSPropertyID>(propertyID);
-        propertyInfoCache.add(stringForCache, propertyInfo);
+        propertyInfoCache.get().add(stringForCache, propertyInfo);
     }
     return propertyInfo;
 }

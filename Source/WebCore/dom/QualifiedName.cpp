@@ -33,6 +33,7 @@
 #include "XMLNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StaticConstructors.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -74,7 +75,7 @@ struct QNameComponentsTranslator {
 
 static inline QNameSet& qualifiedNameCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(QNameSet, nameCache, ());
+    static NeverDestroyed<QNameSet> nameCache;
     return nameCache;
 }
 
@@ -115,7 +116,7 @@ void QualifiedName::init()
 
 const QualifiedName& nullQName()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, nullName, (nullAtom, nullAtom, nullAtom));
+    static NeverDestroyed<QualifiedName> nullName(nullAtom, nullAtom, nullAtom);
     return nullName;
 }
 

@@ -31,6 +31,7 @@
 #include "JSDOMBinding.h"
 #include "WebCoreThread.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 WKContentChange _WKContentChange                    = WKContentNoChange;
 bool            _WKObservingContentChanges          = false;
@@ -77,8 +78,8 @@ static HashMap<void *, void *> * WebThreadGetObservedContentModifiers()
 {
     ASSERT(WebThreadIsLockedOrDisabled());
     typedef HashMap<void *, void *> VoidVoidMap;
-    DEPRECATED_DEFINE_STATIC_LOCAL(VoidVoidMap, observedContentModifiers, ());
-    return &observedContentModifiers;
+    static NeverDestroyed<VoidVoidMap> observedContentModifiers;
+    return &observedContentModifiers.get();
 }
 
 int WebThreadCountOfObservedContentModifiers(void)

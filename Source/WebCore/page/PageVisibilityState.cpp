@@ -31,14 +31,15 @@
 #include "config.h"
 #include "PageVisibilityState.h"
 
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 String pageVisibilityStateString(PageVisibilityState state)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, visible, (ASCIILiteral("visible")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, hidden, (ASCIILiteral("hidden")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, prerender, (ASCIILiteral("prerender")));
+    static NeverDestroyed<const String> visible(ASCIILiteral("visible"));
+    static NeverDestroyed<const String> hidden(ASCIILiteral("hidden"));
+    static NeverDestroyed<const String> prerender(ASCIILiteral("prerender"));
 
     switch (state) {
     case PageVisibilityStateVisible:

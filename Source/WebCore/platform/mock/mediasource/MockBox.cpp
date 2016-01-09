@@ -31,6 +31,7 @@
 #include <runtime/ArrayBuffer.h>
 #include <runtime/DataView.h>
 #include <runtime/Int8Array.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -76,7 +77,7 @@ MockTrackBox::MockTrackBox(ArrayBuffer* data)
 
 const String& MockTrackBox::type()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, trak, (ASCIILiteral("trak")));
+    static NeverDestroyed<String> trak(ASCIILiteral("trak"));
     return trak;
 }
 
@@ -105,7 +106,7 @@ MockInitializationBox::MockInitializationBox(ArrayBuffer* data)
 
 const String& MockInitializationBox::type()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, init, (ASCIILiteral("init")));
+    static NeverDestroyed<String> init(ASCIILiteral("init"));
     return init;
 }
 
@@ -133,7 +134,7 @@ MockSampleBox::MockSampleBox(ArrayBuffer* data)
 
 const String& MockSampleBox::type()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, smpl, (ASCIILiteral("smpl")));
+    static NeverDestroyed<String> smpl(ASCIILiteral("smpl"));
     return smpl;
 }
 

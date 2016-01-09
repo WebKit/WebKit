@@ -42,6 +42,7 @@
 #include <AudioToolbox/AudioServices.h>
 #include <WebCore/RuntimeApplicationChecksIOS.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 
 SOFT_LINK_FRAMEWORK(AudioToolbox)
 SOFT_LINK(AudioToolbox, AudioComponentFindNext, AudioComponent, (AudioComponent inComponent, const AudioComponentDescription *inDesc), (inComponent, inDesc))
@@ -62,7 +63,7 @@ const int kPreferredBufferSize = 256;
 typedef HashSet<AudioDestinationIOS*> AudioDestinationSet;
 static AudioDestinationSet& audioDestinations()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AudioDestinationSet, audioDestinationSet, ());
+    static NeverDestroyed<AudioDestinationSet> audioDestinationSet;
     return audioDestinationSet;
 }
 

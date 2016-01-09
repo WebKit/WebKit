@@ -40,6 +40,7 @@
 #include "UserStyleSheetTypes.h"
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -284,7 +285,7 @@ void CaptionUserPreferences::setCaptionsStyleSheetOverride(const String& overrid
 void CaptionUserPreferences::updateCaptionStyleSheetOveride()
 {
     // Identify our override style sheet with a unique URL - a new scheme and a UUID.
-    DEPRECATED_DEFINE_STATIC_LOCAL(URL, captionsStyleSheetURL, (ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23"));
+    static NeverDestroyed<URL> captionsStyleSheetURL(ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23");
 
     auto& pages = m_pageGroup.pages();
     for (auto& page : pages) {

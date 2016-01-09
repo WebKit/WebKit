@@ -28,6 +28,7 @@
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <yarr/RegularExpression.h>
 
@@ -44,10 +45,10 @@ static bool isValidEmailAddress(const String& address)
     if (!addressLength)
         return false;
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(const JSC::Yarr::RegularExpression, regExp, (emailPattern, TextCaseInsensitive));
+    static NeverDestroyed<const JSC::Yarr::RegularExpression> regExp(emailPattern, TextCaseInsensitive);
 
     int matchLength;
-    int matchOffset = regExp.match(address, 0, &matchLength);
+    int matchOffset = regExp.get().match(address, 0, &matchLength);
 
     return !matchOffset && matchLength == addressLength;
 }

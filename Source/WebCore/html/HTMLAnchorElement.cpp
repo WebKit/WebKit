@@ -619,7 +619,7 @@ typedef HashMap<const HTMLAnchorElement*, RefPtr<Element>> RootEditableElementMa
 
 static RootEditableElementMap& rootEditableElementMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(RootEditableElementMap, map, ());
+    static NeverDestroyed<RootEditableElementMap> map;
     return map;
 }
 

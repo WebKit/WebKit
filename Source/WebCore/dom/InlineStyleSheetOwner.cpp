@@ -30,6 +30,7 @@
 #include "ShadowRoot.h"
 #include "StyleSheetContents.h"
 #include "TextNodeTraversal.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -113,7 +114,7 @@ void InlineStyleSheetOwner::clearSheet()
 
 inline bool isValidCSSContentType(Element& element, const AtomicString& type)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, cssContentType, ("text/css", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> cssContentType("text/css", AtomicString::ConstructFromLiteral);
     if (type.isEmpty())
         return true;
     return element.isHTMLElement() ? equalIgnoringCase(type, cssContentType) : type == cssContentType;

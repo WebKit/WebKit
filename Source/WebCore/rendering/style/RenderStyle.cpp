@@ -1248,8 +1248,8 @@ const AtomicString& RenderStyle::hyphenString() const
         return hyphenationString;
 
     // FIXME: This should depend on locale.
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphenMinus, 1));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, hyphenString, (&hyphen, 1));
+    static NeverDestroyed<AtomicString> hyphenMinusString(&hyphenMinus, 1);
+    static NeverDestroyed<AtomicString> hyphenString(&hyphen, 1);
     return fontCascade().primaryFont().glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
 }
 
@@ -1261,28 +1261,28 @@ const AtomicString& RenderStyle::textEmphasisMarkString() const
     case TextEmphasisMarkCustom:
         return textEmphasisCustomMark();
     case TextEmphasisMarkDot: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledDotString, (&bullet, 1));
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openDotString, (&whiteBullet, 1));
+        static NeverDestroyed<AtomicString> filledDotString(&bullet, 1);
+        static NeverDestroyed<AtomicString> openDotString(&whiteBullet, 1);
         return textEmphasisFill() == TextEmphasisFillFilled ? filledDotString : openDotString;
     }
     case TextEmphasisMarkCircle: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledCircleString, (&blackCircle, 1));
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openCircleString, (&whiteCircle, 1));
+        static NeverDestroyed<AtomicString> filledCircleString(&blackCircle, 1);
+        static NeverDestroyed<AtomicString> openCircleString(&whiteCircle, 1);
         return textEmphasisFill() == TextEmphasisFillFilled ? filledCircleString : openCircleString;
     }
     case TextEmphasisMarkDoubleCircle: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledDoubleCircleString, (&fisheye, 1));
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openDoubleCircleString, (&bullseye, 1));
+        static NeverDestroyed<AtomicString> filledDoubleCircleString(&fisheye, 1);
+        static NeverDestroyed<AtomicString> openDoubleCircleString(&bullseye, 1);
         return textEmphasisFill() == TextEmphasisFillFilled ? filledDoubleCircleString : openDoubleCircleString;
     }
     case TextEmphasisMarkTriangle: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledTriangleString, (&blackUpPointingTriangle, 1));
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openTriangleString, (&whiteUpPointingTriangle, 1));
+        static NeverDestroyed<AtomicString> filledTriangleString(&blackUpPointingTriangle, 1);
+        static NeverDestroyed<AtomicString> openTriangleString(&whiteUpPointingTriangle, 1);
         return textEmphasisFill() == TextEmphasisFillFilled ? filledTriangleString : openTriangleString;
     }
     case TextEmphasisMarkSesame: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, filledSesameString, (&sesameDot, 1));
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, openSesameString, (&whiteSesameDot, 1));
+        static NeverDestroyed<AtomicString> filledSesameString(&sesameDot, 1);
+        static NeverDestroyed<AtomicString> openSesameString(&whiteSesameDot, 1);
         return textEmphasisFill() == TextEmphasisFillFilled ? filledSesameString : openSesameString;
     }
     case TextEmphasisMarkAuto:
@@ -1297,13 +1297,13 @@ const AtomicString& RenderStyle::textEmphasisMarkString() const
 #if ENABLE(DASHBOARD_SUPPORT)
 const Vector<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<StyleDashboardRegion>, emptyList, ());
+    static NeverDestroyed<Vector<StyleDashboardRegion>> emptyList;
     return emptyList;
 }
 
 const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<StyleDashboardRegion>, noneList, ());
+    static NeverDestroyed<Vector<StyleDashboardRegion>> noneList;
     static bool noneListInitialized = false;
 
     if (!noneListInitialized) {
@@ -1314,7 +1314,7 @@ const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
         region.offset.bottom() = Length();
         region.offset.left() = Length();
         region.type = StyleDashboardRegion::None;
-        noneList.append(region);
+        noneList.get().append(region);
         noneListInitialized = true;
     }
     return noneList;

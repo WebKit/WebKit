@@ -31,6 +31,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <objc/objc-runtime.h>
 #import <wtf/MathExtras.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -68,8 +69,8 @@ static const double kGravity = 9.80665;
 
 + (WebCoreMotionManager *)sharedManager
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(RetainPtr<WebCoreMotionManager>, sharedMotionManager, ([[WebCoreMotionManager alloc] init]));
-    return sharedMotionManager.get();
+    static NeverDestroyed<RetainPtr<WebCoreMotionManager>> sharedMotionManager([[WebCoreMotionManager alloc] init]);
+    return sharedMotionManager.get().get();
 }
 
 - (id)init

@@ -1660,8 +1660,8 @@ RenderBlock* RenderBlock::blockElementContinuation() const
     
 static ContinuationOutlineTableMap* continuationOutlineTable()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ContinuationOutlineTableMap, table, ());
-    return &table;
+    static NeverDestroyed<ContinuationOutlineTableMap> table;
+    return &table.get();
 }
 
 void RenderBlock::addContinuationWithOutline(RenderInline* flow)

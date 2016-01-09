@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
@@ -352,16 +353,16 @@ static void initializeSupportedNonImageMimeTypes()
 
 static MediaMIMETypeMap& mediaMIMETypeMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(MediaMIMETypeMap, mediaMIMETypeForExtensionMap, ());
+    static NeverDestroyed<MediaMIMETypeMap> mediaMIMETypeForExtensionMap;
 
-    if (!mediaMIMETypeForExtensionMap.isEmpty())
+    if (!mediaMIMETypeForExtensionMap.get().isEmpty())
         return mediaMIMETypeForExtensionMap;
 
     const unsigned numPairs = sizeof(commonMediaTypes) / sizeof(commonMediaTypes[0]);
     for (unsigned ndx = 0; ndx < numPairs; ++ndx) {
 
-        if (mediaMIMETypeForExtensionMap.contains(commonMediaTypes[ndx].extension))
-            mediaMIMETypeForExtensionMap.get(commonMediaTypes[ndx].extension)->append(commonMediaTypes[ndx].type);
+        if (mediaMIMETypeForExtensionMap.get().contains(commonMediaTypes[ndx].extension))
+            mediaMIMETypeForExtensionMap.get().get(commonMediaTypes[ndx].extension)->append(commonMediaTypes[ndx].type);
         else {
             Vector<String>* synonyms = new Vector<String>;
 
@@ -371,7 +372,7 @@ static MediaMIMETypeMap& mediaMIMETypeMap()
             if (!systemType.isEmpty() && commonMediaTypes[ndx].type != systemType)
                 synonyms->append(systemType);
             synonyms->append(commonMediaTypes[ndx].type);
-            mediaMIMETypeForExtensionMap.add(commonMediaTypes[ndx].extension, synonyms);
+            mediaMIMETypeForExtensionMap.get().add(commonMediaTypes[ndx].extension, synonyms);
         }
     }
 
@@ -642,7 +643,7 @@ HashSet<String>& MIMETypeRegistry::getUnsupportedTextMIMETypes()
 
 const String& defaultMIMEType()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, defaultMIMEType, (ASCIILiteral("application/octet-stream")));
+    static NeverDestroyed<const String> defaultMIMEType(ASCIILiteral("application/octet-stream"));
     return defaultMIMEType;
 }
 

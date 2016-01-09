@@ -44,7 +44,7 @@ namespace WebCore {
 RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
 {
     ASSERT(isMainThread());
-    DEPRECATED_DEFINE_STATIC_LOCAL(RealtimeMediaSourceCenterMac, center, ());
+    static NeverDestroyed<RealtimeMediaSourceCenterMac> center;
     return center;
 }
 

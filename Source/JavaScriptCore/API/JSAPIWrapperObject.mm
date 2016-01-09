@@ -30,6 +30,7 @@
 #include "JSCallbackObject.h"
 #include "JSVirtualMachineInternal.h"
 #include "Structure.h"
+#include <wtf/NeverDestroyed.h>
 
 #if JSC_OBJC_API_ENABLED
 
@@ -41,8 +42,8 @@ public:
 
 static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSAPIWrapperObjectHandleOwner, jsWrapperObjectHandleOwner, ());
-    return &jsWrapperObjectHandleOwner;
+    static NeverDestroyed<JSAPIWrapperObjectHandleOwner> jsWrapperObjectHandleOwner;
+    return &jsWrapperObjectHandleOwner.get();
 }
 
 void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)

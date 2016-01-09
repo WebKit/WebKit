@@ -56,13 +56,13 @@ Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& 
 
 const AtomicString& SVGFEMorphologyElement::radiusXIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGRadiusX", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGRadiusX", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 
 const AtomicString& SVGFEMorphologyElement::radiusYIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGRadiusY", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGRadiusY", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 

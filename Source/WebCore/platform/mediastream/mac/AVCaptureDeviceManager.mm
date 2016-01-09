@@ -209,7 +209,7 @@ bool AVCaptureDeviceManager::isAvailable()
 
 AVCaptureDeviceManager& AVCaptureDeviceManager::singleton()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AVCaptureDeviceManager, manager, ());
+    static NeverDestroyed<AVCaptureDeviceManager> manager;
     return manager;
 }
 

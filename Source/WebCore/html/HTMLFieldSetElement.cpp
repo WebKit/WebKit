@@ -146,7 +146,7 @@ bool HTMLFieldSetElement::supportsFocus() const
 
 const AtomicString& HTMLFieldSetElement::formControlType() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, fieldset, ("fieldset", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> fieldset("fieldset", AtomicString::ConstructFromLiteral);
     return fieldset;
 }
 

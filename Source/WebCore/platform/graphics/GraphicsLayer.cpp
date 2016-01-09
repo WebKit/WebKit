@@ -34,6 +34,7 @@
 #include "RotateTransformOperation.h"
 #include "TextStream.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -47,7 +48,7 @@ namespace WebCore {
 typedef HashMap<const GraphicsLayer*, Vector<FloatRect>> RepaintMap;
 static RepaintMap& repaintRectMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(RepaintMap, map, ());
+    static NeverDestroyed<RepaintMap> map;
     return map;
 }
 

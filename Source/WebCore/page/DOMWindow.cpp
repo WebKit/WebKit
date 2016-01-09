@@ -110,6 +110,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
@@ -185,13 +186,13 @@ typedef HashCountedSet<DOMWindow*> DOMWindowSet;
 
 static DOMWindowSet& windowsWithUnloadEventListeners()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(DOMWindowSet, windowsWithUnloadEventListeners, ());
+    static NeverDestroyed<DOMWindowSet> windowsWithUnloadEventListeners;
     return windowsWithUnloadEventListeners;
 }
 
 static DOMWindowSet& windowsWithBeforeUnloadEventListeners()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(DOMWindowSet, windowsWithBeforeUnloadEventListeners, ());
+    static NeverDestroyed<DOMWindowSet> windowsWithBeforeUnloadEventListeners;
     return windowsWithBeforeUnloadEventListeners;
 }
 

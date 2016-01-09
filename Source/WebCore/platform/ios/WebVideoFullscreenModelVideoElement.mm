@@ -156,8 +156,8 @@ void WebVideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicSt
         String localizedDeviceName;
 
         if (m_videoElement->mediaControlsHost()) {
-            DEPRECATED_DEFINE_STATIC_LOCAL(String, airplay, (ASCIILiteral("airplay")));
-            DEPRECATED_DEFINE_STATIC_LOCAL(String, tvout, (ASCIILiteral("tvout")));
+            static NeverDestroyed<String> airplay(ASCIILiteral("airplay"));
+            static NeverDestroyed<String> tvout(ASCIILiteral("tvout"));
             
             String type = m_videoElement->mediaControlsHost()->externalDeviceType();
             if (type == airplay)

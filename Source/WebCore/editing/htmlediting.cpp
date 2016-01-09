@@ -428,7 +428,7 @@ bool isTableStructureNode(const Node *node)
 
 const String& nonBreakingSpaceString()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, nonBreakingSpaceString, (&noBreakSpace, 1));
+    static NeverDestroyed<String> nonBreakingSpaceString(&noBreakSpace, 1);
     return nonBreakingSpaceString;
 }
 

@@ -1,3 +1,18 @@
+2016-01-09  Andreas Kling  <akling@apple.com>
+
+        Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL
+        <https://webkit.org/b/152902>
+
+        Reviewed by Anders Carlsson.
+
+        Mostly mechanical conversion to NeverDestroyed throughout WTF.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::current):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::threadMapMutex):
+        (WTF::threadMap):
+
 2016-01-08  Anders Carlsson  <andersca@apple.com>
 
         Nullopt and InPlace should be structs, not enum values

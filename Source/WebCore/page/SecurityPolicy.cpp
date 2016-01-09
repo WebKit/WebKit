@@ -34,6 +34,7 @@
 #include "OriginAccessEntry.h"
 #include "SecurityOrigin.h"
 #include <memory>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ typedef HashMap<String, std::unique_ptr<OriginAccessWhiteList>> OriginAccessMap;
 
 static OriginAccessMap& originAccessMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(OriginAccessMap, originAccessMap, ());
+    static NeverDestroyed<OriginAccessMap> originAccessMap;
     return originAccessMap;
 }
 

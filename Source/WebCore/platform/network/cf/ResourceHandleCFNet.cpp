@@ -48,6 +48,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/Threading.h>
 #include <wtf/text/Base64.h>
@@ -83,14 +84,14 @@ namespace WebCore {
 
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, hosts, ());
+    static NeverDestroyed<HashSet<String>> hosts;
     return hosts;
 }
 
 static HashMap<String, RetainPtr<CFDataRef>>& clientCerts()
 {
     typedef HashMap<String, RetainPtr<CFDataRef>> CertsMap;
-    DEPRECATED_DEFINE_STATIC_LOCAL(CertsMap, certs, ());
+    static NeverDestroyed<CertsMap> certs;
     return certs;
 }
 

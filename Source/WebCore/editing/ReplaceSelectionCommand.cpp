@@ -104,14 +104,14 @@ private:
 
 static bool isInterchangeNewlineNode(const Node *node)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, interchangeNewlineClassString, (AppleInterchangeNewline));
+    static NeverDestroyed<String> interchangeNewlineClassString(AppleInterchangeNewline);
     return node && node->hasTagName(brTag) && 
            static_cast<const Element *>(node)->getAttribute(classAttr) == interchangeNewlineClassString;
 }
 
 static bool isInterchangeConvertedSpaceSpan(const Node *node)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, convertedSpaceSpanClassString, (AppleConvertedSpace));
+    static NeverDestroyed<String> convertedSpaceSpanClassString(AppleConvertedSpace);
     return node->isHTMLElement() && 
            static_cast<const HTMLElement *>(node)->getAttribute(classAttr) == convertedSpaceSpanClassString;
 }

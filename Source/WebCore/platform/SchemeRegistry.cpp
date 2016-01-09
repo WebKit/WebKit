@@ -36,12 +36,12 @@ namespace WebCore {
 
 static URLSchemesMap& localURLSchemes()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, localSchemes, ());
+    static NeverDestroyed<URLSchemesMap> localSchemes;
 
-    if (localSchemes.isEmpty()) {
-        localSchemes.add("file");
+    if (localSchemes.get().isEmpty()) {
+        localSchemes.get().add("file");
 #if PLATFORM(COCOA)
-        localSchemes.add("applewebdata");
+        localSchemes.get().add("applewebdata");
 #endif
     }
 
@@ -50,21 +50,21 @@ static URLSchemesMap& localURLSchemes()
 
 static URLSchemesMap& displayIsolatedURLSchemes()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, displayIsolatedSchemes, ());
+    static NeverDestroyed<URLSchemesMap> displayIsolatedSchemes;
     return displayIsolatedSchemes;
 }
 
 static URLSchemesMap& secureSchemes()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, secureSchemes, ());
+    static NeverDestroyed<URLSchemesMap> secureSchemes;
 
-    if (secureSchemes.isEmpty()) {
-        secureSchemes.add("https");
-        secureSchemes.add("about");
-        secureSchemes.add("data");
-        secureSchemes.add("wss");
+    if (secureSchemes.get().isEmpty()) {
+        secureSchemes.get().add("https");
+        secureSchemes.get().add("about");
+        secureSchemes.get().add("data");
+        secureSchemes.get().add("wss");
 #if USE(QUICK_LOOK)
-        secureSchemes.add(QLPreviewProtocol());
+        secureSchemes.get().add(QLPreviewProtocol());
 #endif
     }
 
@@ -73,14 +73,14 @@ static URLSchemesMap& secureSchemes()
 
 static URLSchemesMap& schemesWithUniqueOrigins()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, schemesWithUniqueOrigins, ());
+    static NeverDestroyed<URLSchemesMap> schemesWithUniqueOrigins;
 
-    if (schemesWithUniqueOrigins.isEmpty()) {
-        schemesWithUniqueOrigins.add("about");
-        schemesWithUniqueOrigins.add("javascript");
+    if (schemesWithUniqueOrigins.get().isEmpty()) {
+        schemesWithUniqueOrigins.get().add("about");
+        schemesWithUniqueOrigins.get().add("javascript");
         // This is a willful violation of HTML5.
         // See https://bugs.webkit.org/show_bug.cgi?id=11885
-        schemesWithUniqueOrigins.add("data");
+        schemesWithUniqueOrigins.get().add("data");
     }
 
     return schemesWithUniqueOrigins;
@@ -88,26 +88,26 @@ static URLSchemesMap& schemesWithUniqueOrigins()
 
 static URLSchemesMap& emptyDocumentSchemes()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, emptyDocumentSchemes, ());
+    static NeverDestroyed<URLSchemesMap> emptyDocumentSchemes;
 
-    if (emptyDocumentSchemes.isEmpty())
-        emptyDocumentSchemes.add("about");
+    if (emptyDocumentSchemes.get().isEmpty())
+        emptyDocumentSchemes.get().add("about");
 
     return emptyDocumentSchemes;
 }
 
 static HashSet<String>& schemesForbiddenFromDomainRelaxation()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, schemes, ());
+    static NeverDestroyed<HashSet<String>> schemes;
     return schemes;
 }
 
 static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, canDisplayOnlyIfCanRequestSchemes, ());
+    static NeverDestroyed<URLSchemesMap> canDisplayOnlyIfCanRequestSchemes;
 
-    if (canDisplayOnlyIfCanRequestSchemes.isEmpty()) {
-        canDisplayOnlyIfCanRequestSchemes.add("blob");
+    if (canDisplayOnlyIfCanRequestSchemes.get().isEmpty()) {
+        canDisplayOnlyIfCanRequestSchemes.get().add("blob");
     }
 
     return canDisplayOnlyIfCanRequestSchemes;
@@ -115,7 +115,7 @@ static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
 
 static URLSchemesMap& notAllowingJavascriptURLsSchemes()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, notAllowingJavascriptURLsSchemes, ());
+    static NeverDestroyed<URLSchemesMap> notAllowingJavascriptURLsSchemes;
     return notAllowingJavascriptURLsSchemes;
 }
 
@@ -142,24 +142,24 @@ const URLSchemesMap& SchemeRegistry::localSchemes()
 
 static URLSchemesMap& schemesAllowingLocalStorageAccessInPrivateBrowsing()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, schemesAllowingLocalStorageAccessInPrivateBrowsing, ());
+    static NeverDestroyed<URLSchemesMap> schemesAllowingLocalStorageAccessInPrivateBrowsing;
     return schemesAllowingLocalStorageAccessInPrivateBrowsing;
 }
 
 static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, schemesAllowingDatabaseAccessInPrivateBrowsing, ());
+    static NeverDestroyed<URLSchemesMap> schemesAllowingDatabaseAccessInPrivateBrowsing;
     return schemesAllowingDatabaseAccessInPrivateBrowsing;
 }
 
 static URLSchemesMap& CORSEnabledSchemes()
 {
     // FIXME: http://bugs.webkit.org/show_bug.cgi?id=77160
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, CORSEnabledSchemes, ());
+    static NeverDestroyed<URLSchemesMap> CORSEnabledSchemes;
 
-    if (CORSEnabledSchemes.isEmpty()) {
-        CORSEnabledSchemes.add("http");
-        CORSEnabledSchemes.add("https");
+    if (CORSEnabledSchemes.get().isEmpty()) {
+        CORSEnabledSchemes.get().add("http");
+        CORSEnabledSchemes.get().add("https");
     }
 
     return CORSEnabledSchemes;
@@ -167,7 +167,7 @@ static URLSchemesMap& CORSEnabledSchemes()
 
 static URLSchemesMap& ContentSecurityPolicyBypassingSchemes()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URLSchemesMap, schemes, ());
+    static NeverDestroyed<URLSchemesMap> schemes;
     return schemes;
 }
 

@@ -35,6 +35,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include <wtf/DateMath.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -365,14 +366,14 @@ void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, u
 
 ContentSecurityPolicy::ReflectedXSSDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidToggle, (ASCIILiteral("expected 0 or 1")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidSeparator, (ASCIILiteral("expected semicolon")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidEquals, (ASCIILiteral("expected equals sign")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidMode, (ASCIILiteral("invalid mode directive")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidReport, (ASCIILiteral("invalid report directive")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonDuplicateMode, (ASCIILiteral("duplicate mode directive")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonDuplicateReport, (ASCIILiteral("duplicate report directive")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, failureReasonInvalidDirective, (ASCIILiteral("unrecognized directive")));
+    static NeverDestroyed<String> failureReasonInvalidToggle(ASCIILiteral("expected 0 or 1"));
+    static NeverDestroyed<String> failureReasonInvalidSeparator(ASCIILiteral("expected semicolon"));
+    static NeverDestroyed<String> failureReasonInvalidEquals(ASCIILiteral("expected equals sign"));
+    static NeverDestroyed<String> failureReasonInvalidMode(ASCIILiteral("invalid mode directive"));
+    static NeverDestroyed<String> failureReasonInvalidReport(ASCIILiteral("invalid report directive"));
+    static NeverDestroyed<String> failureReasonDuplicateMode(ASCIILiteral("duplicate mode directive"));
+    static NeverDestroyed<String> failureReasonDuplicateReport(ASCIILiteral("duplicate report directive"));
+    static NeverDestroyed<String> failureReasonInvalidDirective(ASCIILiteral("unrecognized directive"));
 
     unsigned pos = 0;
 

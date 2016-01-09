@@ -34,6 +34,7 @@
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -54,7 +55,7 @@ Ref<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, D
 
 const AtomicString& HTMLOutputElement::formControlType() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, output, ("output", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> output("output", AtomicString::ConstructFromLiteral);
     return output;
 }
 

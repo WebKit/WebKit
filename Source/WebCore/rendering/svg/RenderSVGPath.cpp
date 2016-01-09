@@ -131,15 +131,15 @@ bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
 
 Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Path, tempPath, ());
+    static NeverDestroyed<Path> tempPath;
 
-    tempPath.clear();
+    tempPath.get().clear();
     if (style().svgStyle().capStyle() == SquareCap)
-        tempPath.addRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
+        tempPath.get().addRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
     else
-        tempPath.addEllipse(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
+        tempPath.get().addEllipse(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
 
-    return &tempPath;
+    return &tempPath.get();
 }
 
 FloatRect RenderSVGPath::zeroLengthSubpathRect(const FloatPoint& linecapPosition, float strokeWidth) const

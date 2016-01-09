@@ -39,6 +39,7 @@
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"
 #include "ScriptValue.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,8 +53,8 @@ const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
 // create objects in the same group.
 static String objectGroupForBreakpointAction(const ScriptBreakpointAction& action)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, objectGroup, ("breakpoint-action-", AtomicString::ConstructFromLiteral));
-    return makeString(objectGroup, String::number(action.identifier));
+    static NeverDestroyed<String> objectGroup(ASCIILiteral("breakpoint-action-"));
+    return makeString(objectGroup.get(), String::number(action.identifier));
 }
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)

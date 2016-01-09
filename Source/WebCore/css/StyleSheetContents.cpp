@@ -36,6 +36,7 @@
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include <wtf/Deque.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -316,11 +317,11 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
 
     if (m_parserContext.needsSiteSpecificQuirks && isStrictParserMode(m_parserContext.mode)) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
-        DEPRECATED_DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, (ASCIILiteral("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n")));
+        static NeverDestroyed<const String> mediaWikiKHTMLFixesStyleSheet(ASCIILiteral("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
         // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
         // while the other lacks the second trailing newline.
-        if (baseURL().string().endsWith("/KHTMLFixes.css") && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
-            && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1)
+        if (baseURL().string().endsWith("/KHTMLFixes.css") && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.get().startsWith(sheetText)
+            && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.get().length() - 1)
             clearRules();
     }
 }

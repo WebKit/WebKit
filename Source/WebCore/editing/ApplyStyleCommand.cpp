@@ -48,6 +48,7 @@
 #include "TextNodeTraversal.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -62,7 +63,7 @@ static int toIdentifier(PassRefPtr<CSSValue> value)
 
 static String& styleSpanClassString()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, styleSpanClassString, ((AppleStyleSpanClass)));
+    static NeverDestroyed<String> styleSpanClassString(AppleStyleSpanClass);
     return styleSpanClassString;
 }
 

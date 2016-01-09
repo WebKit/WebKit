@@ -35,6 +35,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -61,7 +62,7 @@ DateComponents::Type DateInputType::dateType() const
 
 StepRange DateInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (dateDefaultStep, dateDefaultStepBase, dateStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
+    static NeverDestroyed<const StepRange::StepDescription> stepDescription(dateDefaultStep, dateDefaultStepBase, dateStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger);
 
     const Decimal stepBase = parseToNumber(element().fastGetAttribute(minAttr), 0);
     const Decimal minimum = parseToNumber(element().fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumDate()));

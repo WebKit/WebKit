@@ -63,7 +63,7 @@ bool MeterShadowElement::rendererIsNeeded(const RenderStyle& style)
 MeterInnerElement::MeterInnerElement(Document& document)
     : MeterShadowElement(document)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-meter-inner-element", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> pseudoId("-webkit-meter-inner-element", AtomicString::ConstructFromLiteral);
     setPseudo(pseudoId);
 }
 
@@ -80,9 +80,9 @@ RenderPtr<RenderElement> MeterInnerElement::createElementRenderer(Ref<RenderStyl
 
 const AtomicString& MeterValueElement::valuePseudoId() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, optimumPseudoId, ("-webkit-meter-optimum-value", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, suboptimumPseudoId, ("-webkit-meter-suboptimum-value", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, evenLessGoodPseudoId, ("-webkit-meter-even-less-good-value", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> optimumPseudoId("-webkit-meter-optimum-value", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> suboptimumPseudoId("-webkit-meter-suboptimum-value", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> evenLessGoodPseudoId("-webkit-meter-even-less-good-value", AtomicString::ConstructFromLiteral);
 
     HTMLMeterElement* meter = meterElement();
     if (!meter)

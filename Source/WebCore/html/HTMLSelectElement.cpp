@@ -97,8 +97,8 @@ void HTMLSelectElement::didRecalcStyle(Style::Change styleChange)
 
 const AtomicString& HTMLSelectElement::formControlType() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, selectMultiple, ("select-multiple", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, selectOne, ("select-one", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> selectMultiple("select-multiple", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> selectOne("select-one", AtomicString::ConstructFromLiteral);
     return m_multiple ? selectMultiple : selectOne;
 }
 

@@ -1,3 +1,524 @@
+2016-01-09  Andreas Kling  <akling@apple.com>
+
+        Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL
+        <https://webkit.org/b/152902>
+
+        Reviewed by Anders Carlsson.
+
+        Mostly mechanical conversion to NeverDestroyed throughout WebCore.
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp:
+        (WebCore::stringForPlaybackTargetAvailability):
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::directionNext):
+        (WebCore::IDBCursor::directionNextUnique):
+        (WebCore::IDBCursor::directionPrev):
+        (WebCore::IDBCursor::directionPrevUnique):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::modeReadOnly):
+        (WebCore::IDBTransaction::modeReadWrite):
+        (WebCore::IDBTransaction::modeVersionChange):
+        (WebCore::IDBTransaction::modeReadOnlyLegacy):
+        (WebCore::IDBTransaction::modeReadWriteLegacy):
+        * Modules/indexeddb/legacy/LegacyRequest.cpp:
+        (WebCore::LegacyRequest::readyState):
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::automaticKeyword):
+        (WebCore::MediaControlsHost::forcedOnlyKeyword):
+        (WebCore::MediaControlsHost::alwaysOnKeyword):
+        (WebCore::MediaControlsHost::externalDeviceType):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::openKeyword):
+        (WebCore::MediaSource::closedKeyword):
+        (WebCore::MediaSource::endedKeyword):
+        (WebCore::MediaSource::streamEndedWithError):
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::quickTimePluginReplacementScript):
+        (WebCore::QuickTimePluginReplacement::supportsMimeType):
+        (WebCore::QuickTimePluginReplacement::supportsFileExtension):
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::boundaryEventOccurred):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyIDForJSCSSPropertyName):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::globalExceptionString):
+        * css/MediaList.cpp:
+        (WebCore::addResolutionWarningMessageToConsole):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::accumulatorMap):
+        * dom/DOMImplementation.cpp:
+        (WebCore::isSupportedSVG10Feature):
+        (WebCore::isSupportedSVG11Feature):
+        * dom/Document.cpp:
+        (WebCore::Document::readyState):
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRegionOverset):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchSimulatedClick):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::isValidCSSContentType):
+        * dom/MutationObserver.cpp:
+        (WebCore::activeMutationObservers):
+        (WebCore::suspendedMutationObservers):
+        * dom/MutationRecord.cpp:
+        * dom/PseudoElement.cpp:
+        (WebCore::pseudoElementTagName):
+        (WebCore::PseudoElement::pseudoElementNameForEvents):
+        * dom/QualifiedName.cpp:
+        (WebCore::qualifiedNameCache):
+        (WebCore::nullQName):
+        * dom/ScriptElement.cpp:
+        (WebCore::isLegacySupportedJavaScriptLanguage):
+        (WebCore::ScriptElement::notifyFinished):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::styleSpanClassString):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::shouldAddNamespaceElement):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isInterchangeNewlineNode):
+        (WebCore::isInterchangeConvertedSpaceSpan):
+        * editing/htmlediting.cpp:
+        (WebCore::nonBreakingSpaceString):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::styleNodeCloseTag):
+        (WebCore::createMarkupInternal):
+        * fileapi/Blob.cpp:
+        (WebCore::BlobURLRegistry::registry):
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::createShadowSubtree):
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::createStepRange):
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::createStepRange):
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::createStepRange):
+        * html/EmailInputType.cpp:
+        (WebCore::isValidEmailAddress):
+        * html/FormController.cpp:
+        (WebCore::FormKeyGenerator::formKey):
+        (WebCore::formStateSignature):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::rootEditableElementMap):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::formControlType):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::formControlType):
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::SubframeLoadingDisabler::disabledSubtreeRoots):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::formControlType):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::linkLoadEventSender):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::documentToElementSetMap):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::isRecognizedTagName):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::formControlType):
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::formControlType):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::registeredPluginReplacements):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::titleText):
+        (WebCore::subtitleText):
+        (WebCore::HTMLPlugInImageElement::partOfSnapshotOverlay):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::formControlType):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::styleLoadEventSender):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::formControlType):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::directionString):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::appendFormData):
+        * html/InputTypeNames.cpp:
+        (WebCore::InputTypeNames::button):
+        (WebCore::InputTypeNames::checkbox):
+        (WebCore::InputTypeNames::color):
+        (WebCore::InputTypeNames::date):
+        (WebCore::InputTypeNames::datetime):
+        (WebCore::InputTypeNames::datetimelocal):
+        (WebCore::InputTypeNames::email):
+        (WebCore::InputTypeNames::file):
+        (WebCore::InputTypeNames::hidden):
+        (WebCore::InputTypeNames::image):
+        (WebCore::InputTypeNames::month):
+        (WebCore::InputTypeNames::number):
+        (WebCore::InputTypeNames::password):
+        (WebCore::InputTypeNames::radio):
+        (WebCore::InputTypeNames::range):
+        (WebCore::InputTypeNames::reset):
+        (WebCore::InputTypeNames::search):
+        (WebCore::InputTypeNames::submit):
+        (WebCore::InputTypeNames::telephone):
+        (WebCore::InputTypeNames::text):
+        (WebCore::InputTypeNames::time):
+        (WebCore::InputTypeNames::url):
+        (WebCore::InputTypeNames::week):
+        * html/MediaController.cpp:
+        (playbackStateWaiting):
+        (playbackStatePlaying):
+        (playbackStateEnded):
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::createStepRange):
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::createStepRange):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createStepRange):
+        * html/StepRange.cpp:
+        (WebCore::StepRange::acceptableError):
+        (WebCore::StepRange::alignValueForStep):
+        (WebCore::StepRange::stepMismatch):
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::createStepRange):
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::createStepRange):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        (WebCore::XSSAuditor::eraseDangerousAttributesIfInjected):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay):
+        (WebCore::getMediaControlTimeRemainingDisplayElementShadowPseudoId):
+        (WebCore::getMediaControlCurrentTimeDisplayElementShadowPseudoId):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterInnerElement::MeterInnerElement):
+        (WebCore::MeterValueElement::valuePseudoId):
+        * html/shadow/MeterShadowElement.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderThumbShadowPseudoId):
+        (WebCore::mediaSliderThumbShadowPseudoId):
+        (WebCore::SliderContainerElement::shadowPseudoId):
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::alternativeKeyword):
+        (WebCore::AudioTrack::descriptionKeyword):
+        (WebCore::AudioTrack::mainKeyword):
+        (WebCore::AudioTrack::mainDescKeyword):
+        (WebCore::AudioTrack::translationKeyword):
+        (WebCore::AudioTrack::commentaryKeyword):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::subtitlesKeyword):
+        (WebCore::TextTrack::captionsKeyword):
+        (WebCore::TextTrack::descriptionsKeyword):
+        (WebCore::TextTrack::chaptersKeyword):
+        (WebCore::TextTrack::metadataKeyword):
+        (WebCore::TextTrack::forcedKeyword):
+        (WebCore::TextTrack::disabledKeyword):
+        (WebCore::TextTrack::hiddenKeyword):
+        (WebCore::TextTrack::showingKeyword):
+        * html/track/TextTrackCue.h:
+        (WebCore::TextTrackCue::cueShadowPseudoId):
+        * html/track/VTTCue.cpp:
+        (WebCore::startKeyword):
+        (WebCore::middleKeyword):
+        (WebCore::endKeyword):
+        (WebCore::leftKeyword):
+        (WebCore::rightKeyword):
+        (WebCore::verticalGrowingLeftKeyword):
+        (WebCore::verticalGrowingRightKeyword):
+        (WebCore::VTTCueBox::vttCueBoxShadowPseudoId):
+        (WebCore::VTTCue::cueBackdropShadowPseudoId):
+        (WebCore::VTTCue::determineTextDirection):
+        (WebCore::VTTCue::markFutureAndPastNodes):
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::scroll):
+        (WebCore::VTTRegion::setScroll):
+        (WebCore::VTTRegion::parseSettingValue):
+        (WebCore::VTTRegion::textTrackCueContainerScrollingClass):
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::alternativeKeyword):
+        (WebCore::VideoTrack::captionsKeyword):
+        (WebCore::VideoTrack::mainKeyword):
+        (WebCore::VideoTrack::signKeyword):
+        (WebCore::VideoTrack::subtitlesKeyword):
+        (WebCore::VideoTrack::commentaryKeyword):
+        * html/track/WebVTTElement.cpp:
+        (WebCore::nodeTypeToTagName):
+        * html/track/WebVTTElement.h:
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::collectMetadataHeader):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::computePseudoClassMask):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::sourceMapURLForResource):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::selectorsFromSource):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::sourceMapURLForScript):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::corsPolicyPreventedLoad):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::initiatorName):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultDatabaseFilename):
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::updateCaptionStyleSheetOveride):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsBackgroundCSS):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextEdgeCSS):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::allowJavaScriptURLs):
+        (WebCore::CSPDirectiveList::allowInlineEventHandlers):
+        (WebCore::CSPDirectiveList::allowInlineScript):
+        (WebCore::CSPDirectiveList::allowInlineStyle):
+        (WebCore::CSPDirectiveList::allowEval):
+        (WebCore::ContentSecurityPolicy::reportUnsupportedDirective):
+        * page/DOMWindow.cpp:
+        (WebCore::windowsWithUnloadEventListeners):
+        (WebCore::windowsWithBeforeUnloadEventListeners):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dragState):
+        (WebCore::focusDirectionForKey):
+        * page/Frame.cpp:
+        (WebCore::createRegExpForLabels):
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::platform):
+        * page/PageVisibilityState.cpp:
+        (WebCore::pageVisibilityStateString):
+        * page/SecurityPolicy.cpp:
+        (WebCore::originAccessMap):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::shadowForBlending):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        * platform/Cursor.cpp:
+        (WebCore::pointerCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::moveCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::aliasCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        (WebCore::copyCursor):
+        (WebCore::noneCursor):
+        (WebCore::progressCursor):
+        (WebCore::noDropCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::middlePanningCursor):
+        (WebCore::eastPanningCursor):
+        (WebCore::northPanningCursor):
+        (WebCore::northEastPanningCursor):
+        (WebCore::northWestPanningCursor):
+        (WebCore::southPanningCursor):
+        (WebCore::southEastPanningCursor):
+        (WebCore::southWestPanningCursor):
+        (WebCore::westPanningCursor):
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+        * platform/Language.cpp:
+        (WebCore::preferredLanguagesOverride):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::truncatedStringForLookupMenuItem):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::mediaMIMETypeMap):
+        (WebCore::defaultMIMEType):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::localURLSchemes):
+        (WebCore::displayIsolatedURLSchemes):
+        (WebCore::secureSchemes):
+        (WebCore::schemesWithUniqueOrigins):
+        (WebCore::emptyDocumentSchemes):
+        (WebCore::schemesForbiddenFromDomainRelaxation):
+        (WebCore::canDisplayOnlyIfCanRequestSchemes):
+        (WebCore::notAllowingJavascriptURLsSchemes):
+        (WebCore::schemesAllowingLocalStorageAccessInPrivateBrowsing):
+        (WebCore::schemesAllowingDatabaseAccessInPrivateBrowsing):
+        (WebCore::CORSEnabledSchemes):
+        (WebCore::ContentSecurityPolicyBypassingSchemes):
+        * platform/ScrollbarTheme.cpp:
+        (WebCore::ScrollbarTheme::theme):
+        * platform/URL.cpp:
+        (WebCore::blankURL):
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::initialName):
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::sharedSession):
+        * platform/audio/AudioSession.h:
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::getConcatenatedImpulseResponsesForSubject):
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::audioDestinations):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::repaintRectMap):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::transformColorSpace):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::applicationOctetStream):
+        (WebCore::textPlain):
+        (WebCore::codecs):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::singleton):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::playerToPrivateMap):
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::effectName):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::effectName):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::mimeCommonTypesCache):
+        (WebCore::mimeModernTypesCache):
+        * platform/ios/CursorIOS.cpp:
+        (WebCore::cursor):
+        * platform/ios/TileControllerMemoryHandlerIOS.cpp:
+        (WebCore::tileControllerMemoryHandler):
+        * platform/ios/WebCoreMotionManager.mm:
+        (+[WebCoreMotionManager sharedManager]):
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::updateForEventName):
+        * platform/ios/wak/WKContentObservation.cpp:
+        (WebThreadGetObservedContentModifiers):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::fontFromNSFont):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::platformTheme):
+        * platform/mac/ThreadCheck.mm:
+        (WebCoreReportThreadViolation):
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::singleton):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenter::platformCenter):
+        * platform/mock/mediasource/MockBox.cpp:
+        (WebCore::MockTrackBox::type):
+        (WebCore::MockInitializationBox::type):
+        (WebCore::MockSampleBox::type):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseXSSProtectionHeader):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::builtinResourceHandleConstructorMap):
+        (WebCore::builtinResourceHandleSynchronousLoaderMap):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::allowsAnyHTTPSCertificateHosts):
+        (WebCore::clientCerts):
+        * platform/text/AtomicStringKeyedMRUCache.h:
+        (WebCore::AtomicStringKeyedMRUCache::get):
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::cfLocaleCache):
+        * rendering/RenderBlock.cpp:
+        (WebCore::continuationOutlineTable):
+        * rendering/RenderCounter.cpp:
+        (WebCore::counterMaps):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::drawPlatformResizerImage):
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::renderScrollbarTheme):
+        * rendering/RenderTheme.cpp:
+        (WebCore::customFocusRingColor):
+        * rendering/RenderWidget.cpp:
+        (WebCore::WidgetHierarchyUpdatesSuspensionScope::widgetNewParentMap):
+        * rendering/shapes/ShapeOutsideInfo.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::hyphenString):
+        (WebCore::RenderStyle::textEmphasisMarkString):
+        (WebCore::RenderStyle::initialDashboardRegions):
+        (WebCore::RenderStyle::noneDashboardRegions):
+        * rendering/style/RenderStyle.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::zeroLengthLinecapPath):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::nonScalingStrokePath):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::currentContentTransformation):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::clipperFilterMaskerTags):
+        (WebCore::markerTags):
+        (WebCore::fillAndStrokeTags):
+        (WebCore::chainableResourceTags):
+        * svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::valueAsString):
+        * svg/SVGAnimateColorElement.cpp:
+        (WebCore::attributeValueIsCurrentColor):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::rotateMode):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setCalcMode):
+        (WebCore::SVGAnimationElement::setAttributeType):
+        (WebCore::SVGAnimationElement::isAdditive):
+        (WebCore::SVGAnimationElement::isAccumulated):
+        (WebCore::inheritsFromProperty):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::kernelUnitLengthXIdentifier):
+        (WebCore::SVGFEConvolveMatrixElement::kernelUnitLengthYIdentifier):
+        (WebCore::SVGFEConvolveMatrixElement::orderXIdentifier):
+        (WebCore::SVGFEConvolveMatrixElement::orderYIdentifier):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::kernelUnitLengthXIdentifier):
+        (WebCore::SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::stdDeviationXIdentifier):
+        (WebCore::SVGFEDropShadowElement::stdDeviationYIdentifier):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::stdDeviationXIdentifier):
+        (WebCore::SVGFEGaussianBlurElement::stdDeviationYIdentifier):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::radiusXIdentifier):
+        (WebCore::SVGFEMorphologyElement::radiusYIdentifier):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::kernelUnitLengthXIdentifier):
+        (WebCore::SVGFESpecularLightingElement::kernelUnitLengthYIdentifier):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::baseFrequencyXIdentifier):
+        (WebCore::SVGFETurbulenceElement::baseFrequencyYIdentifier):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::filterResXIdentifier):
+        (WebCore::SVGFilterElement::filterResYIdentifier):
+        * svg/SVGGlyphMap.h:
+        (WebCore::SVGGlyphMap::svgGlyphForGlyph):
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::xmlspace):
+        (WebCore::SVGLangSpace::addSupportedAttributes):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::orientTypeIdentifier):
+        (WebCore::SVGMarkerElement::orientAngleIdentifier):
+        (WebCore::SVGMarkerElement::synchronizeOrientType):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::type):
+        (WebCore::SVGStyleElement::media):
+        * svg/SVGTransform.cpp:
+        (WebCore::SVGTransform::transformTypePrefixForParsing):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::viewBoxIdentifier):
+        (WebCore::SVGViewSpec::preserveAspectRatioIdentifier):
+        (WebCore::SVGViewSpec::transformIdentifier):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseClockValue):
+        (WebCore::SVGSMILElement::isSupportedAttribute):
+        (WebCore::SVGSMILElement::restart):
+        (WebCore::SVGSMILElement::fill):
+        (WebCore::SVGSMILElement::repeatCount):
+        (WebCore::SVGSMILElement::notifyDependentsIntervalChanged):
+
 2016-01-08  Zalan Bujtas  <zalan@apple.com>
 
         Absolute positioning -webkit-search-cancel-button crashes Safari.

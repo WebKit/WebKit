@@ -43,6 +43,7 @@
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
 #import <objc/runtime.h>
+#import <wtf/NeverDestroyed.h>
 
 SOFT_LINK_FRAMEWORK(QTKit)
 
@@ -1271,7 +1272,7 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
 
 static HashSet<String> mimeCommonTypesCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    static NeverDestroyed<HashSet<String>> cache;
     static bool typeListInitialized = false;
 
     if (!typeListInitialized) {
@@ -1285,7 +1286,7 @@ static HashSet<String> mimeCommonTypesCache()
 
 static HashSet<String> mimeModernTypesCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    static NeverDestroyed<HashSet<String>> cache;
     static bool typeListInitialized = false;
     
     if (!typeListInitialized) {

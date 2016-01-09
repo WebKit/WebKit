@@ -63,13 +63,13 @@ Ref<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const Quali
 
 const AtomicString& SVGFEDiffuseLightingElement::kernelUnitLengthXIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGKernelUnitLengthX", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGKernelUnitLengthX", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 
 const AtomicString& SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGKernelUnitLengthY", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGKernelUnitLengthY", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 

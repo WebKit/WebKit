@@ -27,6 +27,7 @@
 #import "ThreadCheck.h"
 
 #import <wtf/HashSet.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
@@ -98,12 +99,12 @@ void WebCoreReportThreadViolation(const char* function, WebCore::ThreadViolation
     if (round >= MaximumThreadViolationRound)
         return;
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, loggedFunctions, ());
+    static NeverDestroyed<HashSet<String>> loggedFunctions;
     switch (threadViolationBehavior[round]) {
         case NoThreadCheck:
             break;
         case LogOnFirstThreadViolation:
-            if (loggedFunctions.add(function).isNewEntry) {
+            if (loggedFunctions.get().add(function).isNewEntry) {
                 NSLog(@"WebKit Threading Violation - %s called from secondary thread", function);
                 NSLog(@"Additional threading violations for this function will not be logged.");
             }

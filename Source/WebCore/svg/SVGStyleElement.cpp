@@ -62,9 +62,9 @@ void SVGStyleElement::setDisabled(bool setDisabled)
 
 const AtomicString& SVGStyleElement::type() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> defaultValue("text/css", AtomicString::ConstructFromLiteral);
     const AtomicString& n = getAttribute(SVGNames::typeAttr);
-    return n.isNull() ? defaultValue : n;
+    return n.isNull() ? defaultValue.get() : n;
 }
 
 void SVGStyleElement::setType(const AtomicString& type, ExceptionCode&)
@@ -74,9 +74,9 @@ void SVGStyleElement::setType(const AtomicString& type, ExceptionCode&)
 
 const AtomicString& SVGStyleElement::media() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("all", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> defaultValue("all", AtomicString::ConstructFromLiteral);
     const AtomicString& n = fastGetAttribute(SVGNames::mediaAttr);
-    return n.isNull() ? defaultValue : n;
+    return n.isNull() ? defaultValue.get() : n;
 }
 
 void SVGStyleElement::setMedia(const AtomicString& media, ExceptionCode&)

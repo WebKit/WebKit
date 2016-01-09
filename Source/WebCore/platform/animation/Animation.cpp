@@ -22,6 +22,8 @@
 #include "config.h"
 #include "Animation.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 Animation::Animation()
@@ -160,7 +162,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchPlayStates) co
 
 const String& Animation::initialName()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, initialValue, (ASCIILiteral("none")));
+    static NeverDestroyed<String> initialValue(ASCIILiteral("none"));
     return initialValue;
 }
 

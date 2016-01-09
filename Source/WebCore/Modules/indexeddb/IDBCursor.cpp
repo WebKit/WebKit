@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ExceptionCode.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -38,25 +39,25 @@ IDBCursor::IDBCursor()
 
 const AtomicString& IDBCursor::directionNext()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, next, ("next", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> next("next", AtomicString::ConstructFromLiteral);
     return next;
 }
 
 const AtomicString& IDBCursor::directionNextUnique()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, nextunique, ("nextunique", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> nextunique("nextunique", AtomicString::ConstructFromLiteral);
     return nextunique;
 }
 
 const AtomicString& IDBCursor::directionPrev()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, prev, ("prev", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> prev("prev", AtomicString::ConstructFromLiteral);
     return prev;
 }
 
 const AtomicString& IDBCursor::directionPrevUnique()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, prevunique, ("prevunique", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> prevunique("prevunique", AtomicString::ConstructFromLiteral);
     return prevunique;
 }
 

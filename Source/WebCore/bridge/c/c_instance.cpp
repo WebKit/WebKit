@@ -45,6 +45,7 @@
 #include <runtime/JSLock.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/Assertions.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
@@ -56,7 +57,7 @@ namespace Bindings {
 
 static String& globalExceptionString()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, exceptionStr, ());
+    static NeverDestroyed<String> exceptionStr;
     return exceptionStr;
 }
 

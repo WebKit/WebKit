@@ -40,6 +40,7 @@
 #include "HRTFPanner.h"
 #include <algorithm>
 #include <math.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -68,18 +69,18 @@ const float ResponseSampleRate = 44100;
 static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subjectName)
 {
     typedef HashMap<String, AudioBus*> AudioBusMap;
-    DEPRECATED_DEFINE_STATIC_LOCAL(AudioBusMap, audioBusMap, ());
+    static NeverDestroyed<AudioBusMap> audioBusMap;
 
     AudioBus* bus;
-    AudioBusMap::iterator iterator = audioBusMap.find(subjectName);
-    if (iterator == audioBusMap.end()) {
+    AudioBusMap::iterator iterator = audioBusMap.get().find(subjectName);
+    if (iterator == audioBusMap.get().end()) {
         RefPtr<AudioBus> concatenatedImpulseResponses = AudioBus::loadPlatformResource(subjectName.utf8().data(), ResponseSampleRate);
         ASSERT(concatenatedImpulseResponses);
         if (!concatenatedImpulseResponses)
             return 0;
 
         bus = concatenatedImpulseResponses.release().leakRef();
-        audioBusMap.set(subjectName, bus);
+        audioBusMap.get().set(subjectName, bus);
     } else
         bus = iterator->value;
 

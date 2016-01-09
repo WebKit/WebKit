@@ -33,6 +33,7 @@
 #include "InputTypeNames.h"
 #include "MouseEvent.h"
 #include "RenderImage.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -64,10 +65,10 @@ bool ImageInputType::appendFormData(FormDataList& encoding, bool) const
         return true;
     }
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, dotXString, (ASCIILiteral(".x")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, dotYString, (ASCIILiteral(".y")));
-    encoding.appendData(name + dotXString, m_clickLocation.x());
-    encoding.appendData(name + dotYString, m_clickLocation.y());
+    static NeverDestroyed<String> dotXString(ASCIILiteral(".x"));
+    static NeverDestroyed<String> dotYString(ASCIILiteral(".y"));
+    encoding.appendData(name + dotXString.get(), m_clickLocation.x());
+    encoding.appendData(name + dotYString.get(), m_clickLocation.y());
 
     if (!element().value().isEmpty())
         encoding.appendData(name, element().value());

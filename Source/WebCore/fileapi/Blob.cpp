@@ -35,6 +35,7 @@
 #include "File.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableBlobRegistry.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -61,10 +62,9 @@ void BlobURLRegistry::unregisterURL(const URL& url)
 
 URLRegistry& BlobURLRegistry::registry()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(BlobURLRegistry, instance, ());
+    static NeverDestroyed<BlobURLRegistry> instance;
     return instance;
 }
-
 
 Blob::Blob(UninitializedContructor)
 {

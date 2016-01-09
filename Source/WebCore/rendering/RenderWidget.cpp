@@ -46,7 +46,7 @@ unsigned WidgetHierarchyUpdatesSuspensionScope::s_widgetHierarchyUpdateSuspendCo
 
 WidgetHierarchyUpdatesSuspensionScope::WidgetToParentMap& WidgetHierarchyUpdatesSuspensionScope::widgetNewParentMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(WidgetToParentMap, map, ());
+    static NeverDestroyed<WidgetToParentMap> map;
     return map;
 }
 

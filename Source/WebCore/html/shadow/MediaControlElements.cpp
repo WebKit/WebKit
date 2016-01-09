@@ -721,7 +721,7 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* even
 void MediaControlClosedCaptionsTrackListElement::updateDisplay()
 {
 #if ENABLE(VIDEO_TRACK)
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, selectedClassValue, ("selected", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> selectedClassValue("selected", AtomicString::ConstructFromLiteral);
 
     if (!mediaController()->hasClosedCaptions())
         return;
@@ -1038,7 +1038,7 @@ Ref<MediaControlTimeRemainingDisplayElement> MediaControlTimeRemainingDisplayEle
 
 static const AtomicString& getMediaControlTimeRemainingDisplayElementShadowPseudoId()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-time-remaining-display", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> id("-webkit-media-controls-time-remaining-display", AtomicString::ConstructFromLiteral);
     return id;
 }
 
@@ -1057,7 +1057,7 @@ Ref<MediaControlCurrentTimeDisplayElement> MediaControlCurrentTimeDisplayElement
 
 static const AtomicString& getMediaControlCurrentTimeDisplayElementShadowPseudoId()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-current-time-display", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> id("-webkit-media-controls-current-time-display", AtomicString::ConstructFromLiteral);
     return id;
 }
 

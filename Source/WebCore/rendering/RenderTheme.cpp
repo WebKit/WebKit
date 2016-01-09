@@ -68,7 +68,7 @@ using namespace HTMLNames;
 
 static Color& customFocusRingColor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Color, color, ());
+    static NeverDestroyed<Color> color;
     return color;
 }
 

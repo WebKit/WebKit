@@ -26,14 +26,16 @@
 #include "config.h"
 #include "WebKitPlaybackTargetAvailabilityEvent.h"
 
+#include <wtf/NeverDestroyed.h>
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 namespace WebCore {
 
 static const AtomicString& stringForPlaybackTargetAvailability(bool available)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, availableString, ("available", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, notAvailableString, ("not-available", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> availableString("available", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> notAvailableString("not-available", AtomicString::ConstructFromLiteral);
 
     return available ? availableString : notAvailableString;
 }

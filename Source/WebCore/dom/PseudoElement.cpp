@@ -37,14 +37,14 @@ namespace WebCore {
 
 const QualifiedName& pseudoElementTagName()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, name, (nullAtom, "<pseudo>", nullAtom));
+    static NeverDestroyed<QualifiedName> name(nullAtom, "<pseudo>", nullAtom);
     return name;
 }
 
 String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, after, (ASCIILiteral("::after")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, before, (ASCIILiteral("::before")));
+    static NeverDestroyed<const String> after(ASCIILiteral("::after"));
+    static NeverDestroyed<const String> before(ASCIILiteral("::before"));
     switch (pseudoId) {
     case AFTER:
         return after;

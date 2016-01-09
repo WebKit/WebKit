@@ -27,6 +27,7 @@
 #define TileControllerMemoryHandlerIOS_h
 
 #include <wtf/ListHashSet.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class TileController;
 class TileControllerMemoryHandler {
 public:
     friend TileControllerMemoryHandler& tileControllerMemoryHandler();
+    friend class NeverDestroyed<TileControllerMemoryHandler>;
 
     void removeTileController(TileController*);
     void tileControllerGainedUnparentedTiles(TileController*);

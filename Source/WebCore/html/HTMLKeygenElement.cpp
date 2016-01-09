@@ -34,6 +34,7 @@
 #include "SSLKeyGenerator.h"
 #include "ShadowRoot.h"
 #include "Text.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
@@ -53,7 +54,7 @@ protected:
     KeygenSelectElement(Document& document)
         : HTMLSelectElement(selectTag, document, 0)
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-keygen-select", AtomicString::ConstructFromLiteral));
+        static NeverDestroyed<AtomicString> pseudoId("-webkit-keygen-select", AtomicString::ConstructFromLiteral);
         setPseudo(pseudoId);
     }
 
@@ -112,7 +113,7 @@ bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
 
 const AtomicString& HTMLKeygenElement::formControlType() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, keygen, ("keygen", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> keygen("keygen", AtomicString::ConstructFromLiteral);
     return keygen;
 }
 

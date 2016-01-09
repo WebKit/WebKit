@@ -28,6 +28,7 @@
 
 #include "MemoryPressureHandler.h"
 #include "TileController.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -79,7 +80,7 @@ void TileControllerMemoryHandler::trimUnparentedTilesToTarget(int target)
 
 TileControllerMemoryHandler& tileControllerMemoryHandler()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(TileControllerMemoryHandler, staticTileControllerMemoryHandler, ());
+    static NeverDestroyed<TileControllerMemoryHandler> staticTileControllerMemoryHandler;
     return staticTileControllerMemoryHandler;
 }
 

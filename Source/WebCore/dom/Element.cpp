@@ -89,6 +89,7 @@
 #include "markup.h"
 #include <wtf/BitVector.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -2928,21 +2929,21 @@ const AtomicString& Element::webkitRegionOverset() const
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, undefinedState, ("undefined", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> undefinedState("undefined", AtomicString::ConstructFromLiteral);
     if (!document().cssRegionsEnabled() || !renderNamedFlowFragment())
         return undefinedState;
 
     switch (regionOversetState()) {
     case RegionFit: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, fitState, ("fit", AtomicString::ConstructFromLiteral));
+        static NeverDestroyed<AtomicString> fitState("fit", AtomicString::ConstructFromLiteral);
         return fitState;
     }
     case RegionEmpty: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, emptyState, ("empty", AtomicString::ConstructFromLiteral));
+        static NeverDestroyed<AtomicString> emptyState("empty", AtomicString::ConstructFromLiteral);
         return emptyState;
     }
     case RegionOverset: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, overflowState, ("overset", AtomicString::ConstructFromLiteral));
+        static NeverDestroyed<AtomicString> overflowState("overset", AtomicString::ConstructFromLiteral);
         return overflowState;
     }
     case RegionUndefined:

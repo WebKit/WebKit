@@ -26,11 +26,13 @@
 #include "config.h"
 #include "Cursor.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 static const Cursor& cursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const Cursor, cursor, ());
+    static NeverDestroyed<const Cursor> cursor;
     return cursor;
 }
 

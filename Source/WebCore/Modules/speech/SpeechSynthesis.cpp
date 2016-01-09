@@ -34,6 +34,7 @@
 #include "SpeechSynthesisEvent.h"
 #include "SpeechSynthesisUtterance.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
     
@@ -192,8 +193,8 @@ void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance* utteranc
     
 void SpeechSynthesis::boundaryEventOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance, SpeechBoundary boundary, unsigned charIndex)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, wordBoundaryString, (ASCIILiteral("word")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, sentenceBoundaryString, (ASCIILiteral("sentence")));
+    static NeverDestroyed<const String> wordBoundaryString(ASCIILiteral("word"));
+    static NeverDestroyed<const String> sentenceBoundaryString(ASCIILiteral("sentence"));
 
     switch (boundary) {
     case SpeechWordBoundary:

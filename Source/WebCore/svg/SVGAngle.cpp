@@ -25,6 +25,7 @@
 #include "ExceptionCode.h"
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -112,16 +113,16 @@ String SVGAngle::valueAsString() const
 {
     switch (m_unitType) {
     case SVG_ANGLETYPE_DEG: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, degString, (ASCIILiteral("deg")));
-        return String::number(m_valueInSpecifiedUnits) + degString;
+        static NeverDestroyed<String> degString(ASCIILiteral("deg"));
+        return String::number(m_valueInSpecifiedUnits) + degString.get();
     }
     case SVG_ANGLETYPE_RAD: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, radString, (ASCIILiteral("rad")));
-        return String::number(m_valueInSpecifiedUnits) + radString;
+        static NeverDestroyed<String> radString(ASCIILiteral("rad"));
+        return String::number(m_valueInSpecifiedUnits) + radString.get();
     }
     case SVG_ANGLETYPE_GRAD: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, gradString, (ASCIILiteral("grad")));
-        return String::number(m_valueInSpecifiedUnits) + gradString;
+        static NeverDestroyed<String> gradString(ASCIILiteral("grad"));
+        return String::number(m_valueInSpecifiedUnits) + gradString.get();
     }
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:

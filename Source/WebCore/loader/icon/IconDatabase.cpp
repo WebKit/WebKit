@@ -40,6 +40,7 @@
 #include "SuddenTermination.h"
 #include <wtf/AutodrainedPool.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 // For methods that are meant to support API from the main thread - should not be called internally
@@ -879,8 +880,8 @@ String IconDatabase::databasePath() const
 
 String IconDatabase::defaultDatabaseFilename()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, defaultDatabaseFilename, (ASCIILiteral("WebpageIcons.db")));
-    return defaultDatabaseFilename.isolatedCopy();
+    static NeverDestroyed<String> defaultDatabaseFilename(ASCIILiteral("WebpageIcons.db"));
+    return defaultDatabaseFilename.get().isolatedCopy();
 }
 
 // Unlike getOrCreatePageURLRecord(), getOrCreateIconRecord() does not mark the icon as "interested in import"

@@ -24,6 +24,7 @@
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "TextStream.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,7 +37,7 @@ Ref<SourceAlpha> SourceAlpha::create(FilterEffect& sourceEffect)
 
 const AtomicString& SourceAlpha::effectName()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, s_effectName, ("SourceAlpha", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> s_effectName("SourceAlpha", AtomicString::ConstructFromLiteral);
     return s_effectName;
 }
 

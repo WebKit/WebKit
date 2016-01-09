@@ -575,13 +575,13 @@ HTMLInputElement* SliderThumbElement::hostInput() const
 
 static const AtomicString& sliderThumbShadowPseudoId()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, sliderThumb, ("-webkit-slider-thumb", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> sliderThumb("-webkit-slider-thumb", AtomicString::ConstructFromLiteral);
     return sliderThumb;
 }
 
 static const AtomicString& mediaSliderThumbShadowPseudoId()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderThumb, ("-webkit-media-slider-thumb", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> mediaSliderThumb("-webkit-media-slider-thumb", AtomicString::ConstructFromLiteral);
     return mediaSliderThumb;
 }
 
@@ -641,8 +641,8 @@ const AtomicString& SliderContainerElement::shadowPseudoId() const
     // that value depends on the style, which means the style needs to be computed twice to get
     // a correct value: once to get the Input's appearance, then a second time to style the shadow tree correctly.
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderContainer, ("-webkit-media-slider-container", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, sliderContainer, ("-webkit-slider-container", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> mediaSliderContainer("-webkit-media-slider-container", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> sliderContainer("-webkit-slider-container", AtomicString::ConstructFromLiteral);
 
     if (!is<HTMLInputElement>(*shadowHost()))
         return sliderContainer;

@@ -40,7 +40,7 @@ using namespace HTMLNames;
 
 static StyleEventSender& styleLoadEventSender()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(StyleEventSender, sharedLoadEventSender, (eventNames().loadEvent));
+    static NeverDestroyed<StyleEventSender> sharedLoadEventSender(eventNames().loadEvent);
     return sharedLoadEventSender;
 }
 

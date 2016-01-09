@@ -29,12 +29,13 @@
 #if USE(AUDIO_SESSION)
 
 #include "NotImplemented.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 AudioSession& AudioSession::sharedSession()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AudioSession, session, ());
+    static NeverDestroyed<AudioSession> session;
     return session;
 }
 

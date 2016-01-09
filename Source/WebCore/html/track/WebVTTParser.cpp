@@ -261,7 +261,7 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
 void WebVTTParser::collectMetadataHeader(const String& line)
 {
     // WebVTT header parsing (WebVTT parser algorithm step 12)
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, regionHeaderName, ("Region", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> regionHeaderName("Region", AtomicString::ConstructFromLiteral);
 
     // Step 12.4 If line contains the character ":" (A U+003A COLON), then set metadata's
     // name to the substring of line before the first ":" character and

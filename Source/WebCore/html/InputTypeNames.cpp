@@ -22,6 +22,8 @@
 #include "config.h"
 #include "InputTypeNames.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 namespace InputTypeNames {
@@ -31,139 +33,139 @@ namespace InputTypeNames {
 
 const AtomicString& button()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("button", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("button", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& checkbox()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("checkbox", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("checkbox", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& color()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("color", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("color", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& date()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("date", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("date", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& datetime()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("datetime", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("datetime", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& datetimelocal()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("datetime-local", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("datetime-local", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& email()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("email", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("email", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& file()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("file", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("file", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& hidden()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("hidden", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("hidden", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& image()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("image", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("image", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& month()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("month", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("month", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& number()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("number", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("number", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& password()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("password", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("password", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& radio()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("radio", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("radio", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& range()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("range", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("range", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& reset()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("reset", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("reset", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& search()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("search", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("search", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& submit()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("submit", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("submit", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& telephone()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("tel", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("tel", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& text()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("text", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("text", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& time()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("time", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("time", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& url()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("url", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("url", AtomicString::ConstructFromLiteral);
     return name;
 }
 
 const AtomicString& week()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, name, ("week", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> name("week", AtomicString::ConstructFromLiteral);
     return name;
 }
 

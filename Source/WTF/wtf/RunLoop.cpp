@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RunLoop.h"
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSpecific.h>
 
@@ -56,8 +57,8 @@ void RunLoop::initializeMainRunLoop()
 
 RunLoop& RunLoop::current()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop::Holder>, runLoopHolder, ());
-    return runLoopHolder->runLoop();
+    static NeverDestroyed<ThreadSpecific<Holder>> runLoopHolder;
+    return runLoopHolder.get()->runLoop();
 }
 
 RunLoop& RunLoop::main()

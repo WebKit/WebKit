@@ -38,42 +38,43 @@
 #include "AudioTrackList.h"
 #include "Event.h"
 #include "HTMLMediaElement.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 const AtomicString& AudioTrack::alternativeKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, alternative, ("alternative", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> alternative("alternative", AtomicString::ConstructFromLiteral);
     return alternative;
 }
 
 const AtomicString& AudioTrack::descriptionKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, description, ("description", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> description("description", AtomicString::ConstructFromLiteral);
     return description;
 }
 
 const AtomicString& AudioTrack::mainKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, main, ("main", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> main("main", AtomicString::ConstructFromLiteral);
     return main;
 }
 
 const AtomicString& AudioTrack::mainDescKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, mainDesc, ("main-desc", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> mainDesc("main-desc", AtomicString::ConstructFromLiteral);
     return mainDesc;
 }
 
 const AtomicString& AudioTrack::translationKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, translation, ("translation", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> translation("translation", AtomicString::ConstructFromLiteral);
     return translation;
 }
 
 const AtomicString& AudioTrack::commentaryKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, commentary, ("commentary", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> commentary("commentary", AtomicString::ConstructFromLiteral);
     return commentary;
 }
 

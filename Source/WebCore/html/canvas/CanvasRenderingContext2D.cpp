@@ -58,6 +58,7 @@
 
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 #if USE(CG)
@@ -1959,7 +1960,7 @@ RefPtr<ImageData> CanvasRenderingContext2D::webkitGetImageDataHD(float sx, float
 RefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::CoordinateSystem coordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode& ec) const
 {
     if (!canvas()->originClean()) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Unable to get image data from canvas because the canvas has been tainted by cross-origin data.")));
+        static NeverDestroyed<String> consoleMessage(ASCIILiteral("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
         canvas()->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
         ec = SECURITY_ERR;
         return nullptr;

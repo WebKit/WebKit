@@ -26,6 +26,7 @@
 #include "FloatSize.h"
 #include "SVGAngle.h"
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -134,27 +135,27 @@ const String& SVGTransform::transformTypePrefixForParsing(SVGTransformType type)
     case SVG_TRANSFORM_UNKNOWN:
         return emptyString();
     case SVG_TRANSFORM_MATRIX: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, matrixString, (ASCIILiteral("matrix(")));
+        static NeverDestroyed<String> matrixString(ASCIILiteral("matrix("));
         return matrixString;
     }
     case SVG_TRANSFORM_TRANSLATE: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, translateString, (ASCIILiteral("translate(")));
+        static NeverDestroyed<String> translateString(ASCIILiteral("translate("));
         return translateString;
     }
     case SVG_TRANSFORM_SCALE: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, scaleString, (ASCIILiteral("scale(")));
+        static NeverDestroyed<String> scaleString(ASCIILiteral("scale("));
         return scaleString;
     }
     case SVG_TRANSFORM_ROTATE: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, rotateString, (ASCIILiteral("rotate(")));
+        static NeverDestroyed<String> rotateString(ASCIILiteral("rotate("));
         return rotateString;
     }    
     case SVG_TRANSFORM_SKEWX: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, skewXString, (ASCIILiteral("skewX(")));
+        static NeverDestroyed<String> skewXString(ASCIILiteral("skewX("));
         return skewXString;
     }
     case SVG_TRANSFORM_SKEWY: {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, skewYString, (ASCIILiteral("skewY(")));
+        static NeverDestroyed<String> skewYString(ASCIILiteral("skewY("));
         return skewYString;
     }
     }

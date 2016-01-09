@@ -306,7 +306,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSC::Yarr::RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
+    static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w", TextCaseSensitive);
     StringBuilder pattern;
     pattern.append('(');
     unsigned int numLabels = labels.size();
@@ -317,8 +317,8 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
         bool startsWithWordChar = false;
         bool endsWithWordChar = false;
         if (label.length()) {
-            startsWithWordChar = wordRegExp.match(label.substring(0, 1)) >= 0;
-            endsWithWordChar = wordRegExp.match(label.substring(label.length() - 1, 1)) >= 0;
+            startsWithWordChar = wordRegExp.get().match(label.substring(0, 1)) >= 0;
+            endsWithWordChar = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
         }
 
         if (i)

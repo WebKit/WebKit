@@ -95,19 +95,19 @@ MediaSource::~MediaSource()
 
 const AtomicString& MediaSource::openKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, open, ("open", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> open("open", AtomicString::ConstructFromLiteral);
     return open;
 }
 
 const AtomicString& MediaSource::closedKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, closed, ("closed", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> closed("closed", AtomicString::ConstructFromLiteral);
     return closed;
 }
 
 const AtomicString& MediaSource::endedKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, ended, ("ended", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> ended("ended", AtomicString::ConstructFromLiteral);
     return ended;
 }
 
@@ -440,8 +440,8 @@ void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
 
 void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode& ec)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, network, ("network", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, decode, ("decode", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> network("network", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomicString> decode("decode", AtomicString::ConstructFromLiteral);
 
     LOG(MediaSource, "MediaSource::streamEndedWithError(%p) : %s", this, error.string().ascii().data());
 

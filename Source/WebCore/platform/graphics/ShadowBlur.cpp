@@ -36,6 +36,7 @@
 #include "ImageBuffer.h"
 #include "Timer.h"
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -155,7 +156,7 @@ private:
 
 ScratchBuffer& ScratchBuffer::singleton()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ScratchBuffer, scratchBuffer, ());
+    static NeverDestroyed<ScratchBuffer> scratchBuffer;
     return scratchBuffer;
 }
 

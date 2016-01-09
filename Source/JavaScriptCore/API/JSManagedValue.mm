@@ -37,6 +37,7 @@
 #import "WeakHandleOwner.h"
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
+#import <wtf/NeverDestroyed.h>
 #import <wtf/spi/cocoa/NSMapTableSPI.h>
 
 class JSManagedValueHandleOwner : public JSC::WeakHandleOwner {
@@ -47,8 +48,8 @@ public:
 
 static JSManagedValueHandleOwner* managedValueHandleOwner()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(JSManagedValueHandleOwner, jsManagedValueHandleOwner, ());
-    return &jsManagedValueHandleOwner;
+    static NeverDestroyed<JSManagedValueHandleOwner> jsManagedValueHandleOwner;
+    return &jsManagedValueHandleOwner.get();
 }
 
 class WeakValueRef {

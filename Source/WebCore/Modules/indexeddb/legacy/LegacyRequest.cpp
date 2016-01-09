@@ -47,6 +47,7 @@
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -135,13 +136,13 @@ RefPtr<IDBTransaction> LegacyRequest::transaction() const
 const String& LegacyRequest::readyState() const
 {
     ASSERT(m_readyState == IDBRequestReadyState::Pending || m_readyState == IDBRequestReadyState::Done);
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pending, ("pending", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, done, ("done", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> pending("pending", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> done("done", AtomicString::ConstructFromLiteral);
 
     if (m_readyState == IDBRequestReadyState::Pending)
-        return pending;
+        return pending.get();
 
-    return done;
+    return done.get();
 }
 
 void LegacyRequest::markEarlyDeath()

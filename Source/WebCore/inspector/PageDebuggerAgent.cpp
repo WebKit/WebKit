@@ -46,6 +46,7 @@
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <profiler/Profile.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace Inspector;
 
@@ -73,8 +74,8 @@ void PageDebuggerAgent::disable(bool isBeingDestroyed)
 
 String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("SourceMap")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeaderDeprecated, (ASCIILiteral("X-SourceMap")));
+    static NeverDestroyed<String> sourceMapHTTPHeader(ASCIILiteral("SourceMap"));
+    static NeverDestroyed<String> sourceMapHTTPHeaderDeprecated(ASCIILiteral("X-SourceMap"));
 
     if (!script.url.isEmpty()) {
         CachedResource* resource = m_pageAgent->cachedResource(&m_page.mainFrame(), URL(ParsedURLString, script.url));

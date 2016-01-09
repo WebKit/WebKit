@@ -72,31 +72,31 @@ COMPILE_ASSERT(WTF_ARRAY_LENGTH(displayAlignmentMap) == VTTCue::NumberOfAlignmen
 
 static const String& startKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, start, (ASCIILiteral("start")));
+    static NeverDestroyed<const String> start(ASCIILiteral("start"));
     return start;
 }
 
 static const String& middleKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, middle, (ASCIILiteral("middle")));
+    static NeverDestroyed<const String> middle(ASCIILiteral("middle"));
     return middle;
 }
 
 static const String& endKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, end, (ASCIILiteral("end")));
+    static NeverDestroyed<const String> end(ASCIILiteral("end"));
     return end;
 }
 
 static const String& leftKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, left, ("left"));
+    static NeverDestroyed<const String> left("left");
     return left;
 }
 
 static const String& rightKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, right, ("right"));
+    static NeverDestroyed<const String> right("right");
     return right;
 }
 
@@ -107,13 +107,13 @@ static const String& horizontalKeyword()
 
 static const String& verticalGrowingLeftKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, verticalrl, (ASCIILiteral("rl")));
+    static NeverDestroyed<const String> verticalrl(ASCIILiteral("rl"));
     return verticalrl;
 }
 
 static const String& verticalGrowingRightKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, verticallr, (ASCIILiteral("lr")));
+    static NeverDestroyed<const String> verticallr(ASCIILiteral("lr"));
     return verticallr;
 }
 
@@ -225,7 +225,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
 
 const AtomicString& VTTCueBox::vttCueBoxShadowPseudoId()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, trackDisplayBoxShadowPseudoId, ("-webkit-media-text-track-display", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> trackDisplayBoxShadowPseudoId("-webkit-media-text-track-display", AtomicString::ConstructFromLiteral);
     return trackDisplayBoxShadowPseudoId;
 }
 
@@ -238,7 +238,7 @@ RenderPtr<RenderElement> VTTCueBox::createElementRenderer(Ref<RenderStyle>&& sty
 
 const AtomicString& VTTCue::cueBackdropShadowPseudoId()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, cueBackdropShadowPseudoId, ("-webkit-media-text-track-display-backdrop", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> cueBackdropShadowPseudoId("-webkit-media-text-track-display-backdrop", AtomicString::ConstructFromLiteral);
     return cueBackdropShadowPseudoId;
 }
 
@@ -597,7 +597,7 @@ static bool isCueParagraphSeparator(UChar character)
 
 void VTTCue::determineTextDirection()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, rtTag, (ASCIILiteral("rt")));
+    static NeverDestroyed<const String> rtTag(ASCIILiteral("rt"));
     createWebVTTNodeTree();
     if (!m_webVTTNodeTree)
         return;
@@ -741,7 +741,7 @@ void VTTCue::calculateDisplayParameters()
     
 void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previousTimestamp, const MediaTime& movieTime)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, timestampTag, (ASCIILiteral("timestamp")));
+    static NeverDestroyed<const String> timestampTag(ASCIILiteral("timestamp"));
     
     bool isPastNode = true;
     MediaTime currentTimestamp = previousTimestamp;

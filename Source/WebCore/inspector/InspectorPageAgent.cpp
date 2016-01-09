@@ -230,8 +230,8 @@ void InspectorPageAgent::resourceContent(ErrorString& errorString, Frame* frame,
 //static
 String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResource)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeader, (ASCIILiteral("SourceMap")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, sourceMapHTTPHeaderDeprecated, (ASCIILiteral("X-SourceMap")));
+    static NeverDestroyed<String> sourceMapHTTPHeader(ASCIILiteral("SourceMap"));
+    static NeverDestroyed<String> sourceMapHTTPHeaderDeprecated(ASCIILiteral("X-SourceMap"));
 
     if (!cachedResource)
         return String();

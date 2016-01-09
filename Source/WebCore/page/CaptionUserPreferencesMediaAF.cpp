@@ -41,6 +41,7 @@
 #include "TextTrackList.h"
 #include "UserStyleSheetTypes.h"
 #include "VTTCue.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -246,7 +247,7 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 {
     // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-past-nodes
     // and webkit-media-text-track-future-nodes.
-    DEPRECATED_DEFINE_STATIC_LOCAL(Color, defaultBackgroundColor, (Color(0, 0, 0, 0.8 * 255)));
+    static NeverDestroyed<Color> defaultBackgroundColor(0, 0, 0, 0.8 * 255);
 
     MACaptionAppearanceBehavior behavior;
 
@@ -349,10 +350,10 @@ String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const C
 
 String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, edgeStyleRaised, (" -.05em -.05em 0 ", String::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, edgeStyleDepressed, (" .05em .05em 0 ", String::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, edgeStyleDropShadow, (" .075em .075em 0 ", String::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, edgeStyleUniform, (" .03em ", String::ConstructFromLiteral));
+    static NeverDestroyed<const String> edgeStyleRaised(ASCIILiteral(" -.05em -.05em 0 "));
+    static NeverDestroyed<const String> edgeStyleDepressed(ASCIILiteral(" .05em .05em 0 "));
+    static NeverDestroyed<const String> edgeStyleDropShadow(ASCIILiteral(" .075em .075em 0 "));
+    static NeverDestroyed<const String> edgeStyleUniform(ASCIILiteral(" .03em "));
 
     bool unused;
     Color color = captionsTextColor(unused);

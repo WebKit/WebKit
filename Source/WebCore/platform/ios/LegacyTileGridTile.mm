@@ -37,6 +37,7 @@
 #include "WAKWindow.h"
 #include <algorithm>
 #include <functional>
+#include <wtf/NeverDestroyed.h>
 
 #if __has_include(<WebKitAdditions/LayerBackingStoreAdditions.mm>)
 #import <WebKitAdditions/LayerBackingStoreAdditions.mm>

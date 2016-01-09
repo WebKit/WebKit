@@ -73,7 +73,7 @@ String defaultLanguage()
 
 static Vector<String>& preferredLanguagesOverride()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<String>, override, ());
+    static NeverDestroyed<Vector<String>> override;
     return override;
 }
 

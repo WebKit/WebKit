@@ -33,6 +33,7 @@
 
 #include "CharacterData.h"
 #include "StaticNodeList.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -145,19 +146,19 @@ private:
 
 const AtomicString& ChildListRecord::type()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, childList, ("childList", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> childList("childList", AtomicString::ConstructFromLiteral);
     return childList;
 }
 
 const AtomicString& AttributesRecord::type()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, attributes, ("attributes", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> attributes("attributes", AtomicString::ConstructFromLiteral);
     return attributes;
 }
 
 const AtomicString& CharacterDataRecord::type()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, characterData, ("characterData", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> characterData("characterData", AtomicString::ConstructFromLiteral);
     return characterData;
 }
 

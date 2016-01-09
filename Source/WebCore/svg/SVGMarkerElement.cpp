@@ -90,13 +90,13 @@ Ref<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Doc
 
 const AtomicString& SVGMarkerElement::orientTypeIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrientType", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGOrientType", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 
 const AtomicString& SVGMarkerElement::orientAngleIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrientAngle", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGOrientAngle", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 
@@ -237,7 +237,7 @@ void SVGMarkerElement::synchronizeOrientType(SVGElement* contextElement)
     if (ownerType.m_orientType.value != SVGMarkerOrientAuto)
         return;
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, autoString, ("auto", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> autoString("auto", AtomicString::ConstructFromLiteral);
     ownerType.m_orientType.synchronize(&ownerType, orientTypePropertyInfo()->attributeName, autoString);
 }
 

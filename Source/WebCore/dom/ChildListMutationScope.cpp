@@ -36,6 +36,7 @@
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StaticNodeList.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ namespace WebCore {
 typedef HashMap<ContainerNode*, ChildListMutationAccumulator*> AccumulatorMap;
 static AccumulatorMap& accumulatorMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AccumulatorMap, map, ());
+    static NeverDestroyed<AccumulatorMap> map;
     return map;
 }
 

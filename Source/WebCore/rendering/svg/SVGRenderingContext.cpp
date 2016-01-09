@@ -206,7 +206,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
 static AffineTransform& currentContentTransformation()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AffineTransform, s_currentContentTransformation, ());
+    static NeverDestroyed<AffineTransform> s_currentContentTransformation;
     return s_currentContentTransformation;
 }
 

@@ -27,6 +27,7 @@
 #include "UserContentURLPattern.h"
 
 #include "URL.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -62,7 +63,7 @@ bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>
 
 bool UserContentURLPattern::parse(const String& pattern)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, schemeSeparator, (ASCIILiteral("://")));
+    static NeverDestroyed<const String> schemeSeparator(ASCIILiteral("://"));
 
     size_t schemeEndPos = pattern.find(schemeSeparator);
     if (schemeEndPos == notFound)
@@ -70,7 +71,7 @@ bool UserContentURLPattern::parse(const String& pattern)
 
     m_scheme = pattern.left(schemeEndPos);
 
-    unsigned hostStartPos = schemeEndPos + schemeSeparator.length();
+    unsigned hostStartPos = schemeEndPos + schemeSeparator.get().length();
     if (hostStartPos >= pattern.length())
         return false;
 

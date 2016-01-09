@@ -55,7 +55,7 @@ RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>::create
 
 static AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>& cfLocaleCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>, cache, ());
+    static NeverDestroyed<AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>> cache;
     return cache;
 }
 

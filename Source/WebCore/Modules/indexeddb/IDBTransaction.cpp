@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ExceptionCode.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -39,31 +40,31 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context)
 
 const AtomicString& IDBTransaction::modeReadOnly()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, readonly, ("readonly", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> readonly("readonly", AtomicString::ConstructFromLiteral);
     return readonly;
 }
 
 const AtomicString& IDBTransaction::modeReadWrite()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, readwrite, ("readwrite", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> readwrite("readwrite", AtomicString::ConstructFromLiteral);
     return readwrite;
 }
 
 const AtomicString& IDBTransaction::modeVersionChange()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, versionchange, ("versionchange", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> versionchange("versionchange", AtomicString::ConstructFromLiteral);
     return versionchange;
 }
 
 const AtomicString& IDBTransaction::modeReadOnlyLegacy()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, readonly, ("0", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> readonly("0", AtomicString::ConstructFromLiteral);
     return readonly;
 }
 
 const AtomicString& IDBTransaction::modeReadWriteLegacy()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, readwrite, ("1", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> readwrite("1", AtomicString::ConstructFromLiteral);
     return readwrite;
 }
 

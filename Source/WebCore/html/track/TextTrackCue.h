@@ -37,6 +37,7 @@
 #include "EventTarget.h"
 #include "HTMLElement.h"
 #include <wtf/MediaTime.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ public:
 
     static const AtomicString& cueShadowPseudoId()
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, cue, ("cue", AtomicString::ConstructFromLiteral));
+        static NeverDestroyed<const AtomicString> cue("cue", AtomicString::ConstructFromLiteral);
         return cue;
     }
 

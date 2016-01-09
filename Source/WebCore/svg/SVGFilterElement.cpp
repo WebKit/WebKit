@@ -82,13 +82,13 @@ Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Doc
 
 const AtomicString& SVGFilterElement::filterResXIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGFilterResX", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGFilterResX", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 
 const AtomicString& SVGFilterElement::filterResYIdentifier()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGFilterResY", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> s_identifier("SVGFilterResY", AtomicString::ConstructFromLiteral);
     return s_identifier;
 }
 

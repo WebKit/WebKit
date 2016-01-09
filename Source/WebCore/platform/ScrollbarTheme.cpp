@@ -28,13 +28,14 @@
 
 #include "ScrollbarThemeMock.h"
 #include "Settings.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 ScrollbarTheme& ScrollbarTheme::theme()
 {
     if (Settings::mockScrollbarsEnabled()) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(ScrollbarThemeMock, mockTheme, ());
+        static NeverDestroyed<ScrollbarThemeMock> mockTheme;
         return mockTheme;
     }
     return nativeTheme();

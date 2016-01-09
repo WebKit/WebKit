@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "HTMLElement.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -62,13 +63,13 @@ public:
 
     static const QualifiedName& voiceAttributeName()
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "voice", nullAtom));
+        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom, "voice", nullAtom);
         return voiceAttr;
     }
     
     static const QualifiedName& langAttributeName()
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(QualifiedName, voiceAttr, (nullAtom, "lang", nullAtom));
+        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom, "lang", nullAtom);
         return voiceAttr;
     }
 

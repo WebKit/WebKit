@@ -64,7 +64,7 @@ bool HTMLOptGroupElement::isFocusable() const
 
 const AtomicString& HTMLOptGroupElement::formControlType() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, optgroup, ("optgroup", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> optgroup("optgroup", AtomicString::ConstructFromLiteral);
     return optgroup;
 }
 

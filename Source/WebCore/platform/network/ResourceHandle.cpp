@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include <algorithm>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -48,7 +49,7 @@ static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap(
 #else
     ASSERT(isMainThread());
 #endif
-    DEPRECATED_DEFINE_STATIC_LOCAL(BuiltinResourceHandleConstructorMap, map, ());
+    static NeverDestroyed<BuiltinResourceHandleConstructorMap> map;
     return map;
 }
 
@@ -61,7 +62,7 @@ typedef HashMap<AtomicString, ResourceHandle::BuiltinSynchronousLoader> BuiltinR
 static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandleSynchronousLoaderMap()
 {
     ASSERT(isMainThread());
-    DEPRECATED_DEFINE_STATIC_LOCAL(BuiltinResourceHandleSynchronousLoaderMap, map, ());
+    static NeverDestroyed<BuiltinResourceHandleSynchronousLoaderMap> map;
     return map;
 }
 

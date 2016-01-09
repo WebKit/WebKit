@@ -49,55 +49,55 @@ static const int invalidTrackIndex = -1;
 
 const AtomicString& TextTrack::subtitlesKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, subtitles, ("subtitles", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> subtitles("subtitles", AtomicString::ConstructFromLiteral);
     return subtitles;
 }
 
 const AtomicString& TextTrack::captionsKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, captions, ("captions", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> captions("captions", AtomicString::ConstructFromLiteral);
     return captions;
 }
 
 const AtomicString& TextTrack::descriptionsKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, descriptions, ("descriptions", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> descriptions("descriptions", AtomicString::ConstructFromLiteral);
     return descriptions;
 }
 
 const AtomicString& TextTrack::chaptersKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, chapters, ("chapters", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> chapters("chapters", AtomicString::ConstructFromLiteral);
     return chapters;
 }
 
 const AtomicString& TextTrack::metadataKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, metadata, ("metadata", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> metadata("metadata", AtomicString::ConstructFromLiteral);
     return metadata;
 }
     
 const AtomicString& TextTrack::forcedKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, forced, ("forced", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> forced("forced", AtomicString::ConstructFromLiteral);
     return forced;
 }
 
 const AtomicString& TextTrack::disabledKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, open, ("disabled", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> open("disabled", AtomicString::ConstructFromLiteral);
     return open;
 }
 
 const AtomicString& TextTrack::hiddenKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, closed, ("hidden", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> closed("hidden", AtomicString::ConstructFromLiteral);
     return closed;
 }
 
 const AtomicString& TextTrack::showingKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, ended, ("showing", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> ended("showing", AtomicString::ConstructFromLiteral);
     return ended;
 }
 

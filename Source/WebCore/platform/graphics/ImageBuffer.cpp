@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -88,8 +89,8 @@ FloatSize ImageBuffer::sizeForDestinationSize(FloatSize size) const
 
 void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<int>, deviceRgbLUT, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<int>, linearRgbLUT, ());
+    static NeverDestroyed<Vector<int>> deviceRgbLUT;
+    static NeverDestroyed<Vector<int>> linearRgbLUT;
 
     if (srcColorSpace == dstColorSpace)
         return;
@@ -100,27 +101,27 @@ void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstCo
         return;
 
     if (dstColorSpace == ColorSpaceLinearRGB) {
-        if (linearRgbLUT.isEmpty()) {
+        if (linearRgbLUT.get().isEmpty()) {
             for (unsigned i = 0; i < 256; i++) {
                 float color = i  / 255.0f;
                 color = (color <= 0.04045f ? color / 12.92f : pow((color + 0.055f) / 1.055f, 2.4f));
                 color = std::max(0.0f, color);
                 color = std::min(1.0f, color);
-                linearRgbLUT.append(static_cast<int>(round(color * 255)));
+                linearRgbLUT.get().append(static_cast<int>(round(color * 255)));
             }
         }
-        platformTransformColorSpace(linearRgbLUT);
+        platformTransformColorSpace(linearRgbLUT.get());
     } else if (dstColorSpace == ColorSpaceDeviceRGB) {
-        if (deviceRgbLUT.isEmpty()) {
+        if (deviceRgbLUT.get().isEmpty()) {
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
                 color = (powf(color, 1.0f / 2.4f) * 1.055f) - 0.055f;
                 color = std::max(0.0f, color);
                 color = std::min(1.0f, color);
-                deviceRgbLUT.append(static_cast<int>(round(color * 255)));
+                deviceRgbLUT.get().append(static_cast<int>(round(color * 255)));
             }
         }
-        platformTransformColorSpace(deviceRgbLUT);
+        platformTransformColorSpace(deviceRgbLUT.get());
     }
 }
 #endif // USE(CG)

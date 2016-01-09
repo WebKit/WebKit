@@ -31,6 +31,7 @@
 #include "NotImplemented.h"
 #include "TextBreakIterator.h"
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if USE(CF)
@@ -79,11 +80,11 @@ static String truncatedStringForLookupMenuItem(const String& original)
 
     // Truncate the string if it's too long. This is in consistency with AppKit.
     unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, ellipsis, (&horizontalEllipsis, 1));
+    static NeverDestroyed<String> ellipsis(&horizontalEllipsis, 1);
 
     String trimmed = original.stripWhiteSpace();
     unsigned numberOfCharacters = numCharactersInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);
-    return numberOfCharacters == trimmed.length() ? trimmed : trimmed.left(numberOfCharacters) + ellipsis;
+    return numberOfCharacters == trimmed.length() ? trimmed : trimmed.left(numberOfCharacters) + ellipsis.get();
 }
 #endif
 

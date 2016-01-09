@@ -45,19 +45,19 @@ namespace WebCore {
 
 const AtomicString& MediaControlsHost::automaticKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, automatic, ("automatic", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> automatic("automatic", AtomicString::ConstructFromLiteral);
     return automatic;
 }
 
 const AtomicString& MediaControlsHost::forcedOnlyKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, forcedOn, ("forced-only", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> forcedOn("forced-only", AtomicString::ConstructFromLiteral);
     return forcedOn;
 }
 
 const AtomicString& MediaControlsHost::alwaysOnKeyword()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, alwaysOn, ("always-on", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> alwaysOn("always-on", AtomicString::ConstructFromLiteral);
     return alwaysOn;
 }
 
@@ -230,12 +230,12 @@ String MediaControlsHost::externalDeviceDisplayName() const
 
 String MediaControlsHost::externalDeviceType() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, none, (ASCIILiteral("none")));
+    static NeverDestroyed<String> none(ASCIILiteral("none"));
     String type = none;
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, airplay, (ASCIILiteral("airplay")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, tvout, (ASCIILiteral("tvout")));
+    static NeverDestroyed<String> airplay(ASCIILiteral("airplay"));
+    static NeverDestroyed<String> tvout(ASCIILiteral("tvout"));
     
     MediaPlayer* player = m_mediaElement->player();
     if (!player) {

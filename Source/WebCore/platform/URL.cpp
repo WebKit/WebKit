@@ -1981,7 +1981,7 @@ bool protocolIsInHTTPFamily(const String& url)
 
 const URL& blankURL()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(URL, staticBlankURL, (ParsedURLString, "about:blank"));
+    static NeverDestroyed<URL> staticBlankURL(ParsedURLString, "about:blank");
     return staticBlankURL;
 }
 

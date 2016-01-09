@@ -46,6 +46,7 @@
 #include "SliderThumbElement.h"
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "Touch.h"
@@ -113,7 +114,7 @@ bool RangeInputType::supportsRequired() const
 
 StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor));
+    static NeverDestroyed<const StepRange::StepDescription> stepDescription(rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor);
 
     const Decimal minimum = parseToNumber(element().fastGetAttribute(minAttr), rangeDefaultMinimum);
     const Decimal maximum = ensureMaximum(parseToNumber(element().fastGetAttribute(maxAttr), rangeDefaultMaximum), minimum, rangeDefaultMaximum);

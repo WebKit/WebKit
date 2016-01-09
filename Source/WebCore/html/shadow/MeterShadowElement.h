@@ -34,6 +34,7 @@
 #if ENABLE(METER_ELEMENT)
 #include "HTMLDivElement.h"
 #include <wtf/Forward.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -75,7 +76,7 @@ private:
     MeterBarElement(Document& document)
         : MeterShadowElement(document)
     {
-        DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-meter-bar", AtomicString::ConstructFromLiteral));
+        static NeverDestroyed<AtomicString> pseudoId("-webkit-meter-bar", AtomicString::ConstructFromLiteral);
         setPseudo(pseudoId);
     }
 };

@@ -404,8 +404,8 @@ void HTMLObjectElement::renderFallbackContent()
 // FIXME: This should be removed, all callers are almost certainly wrong.
 static bool isRecognizedTagName(const QualifiedName& tagName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, tagList, ());
-    if (tagList.isEmpty()) {
+    static NeverDestroyed<HashSet<AtomicStringImpl*>> tagList;
+    if (tagList.get().isEmpty()) {
         auto* tags = HTMLNames::getHTMLTags();
         for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {
             if (*tags[i] == bgsoundTag
@@ -420,10 +420,10 @@ static bool isRecognizedTagName(const QualifiedName& tagName)
                 // because that changes how we parse documents.
                 continue;
             }
-            tagList.add(tags[i]->localName().impl());
+            tagList.get().add(tags[i]->localName().impl());
         }
     }
-    return tagList.contains(tagName.localName().impl());
+    return tagList.get().contains(tagName.localName().impl());
 }
 
 void HTMLObjectElement::updateDocNamedItem()

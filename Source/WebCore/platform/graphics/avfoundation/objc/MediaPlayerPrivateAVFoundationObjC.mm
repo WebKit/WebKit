@@ -392,7 +392,7 @@ static const char *boolString(bool val)
 typedef HashMap<MediaPlayer*, MediaPlayerPrivateAVFoundationObjC*> PlayerToPrivateMapType;
 static PlayerToPrivateMapType& playerToPrivateMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(PlayerToPrivateMapType, map, ());
+    static NeverDestroyed<PlayerToPrivateMapType> map;
     return map;
 };
 #endif

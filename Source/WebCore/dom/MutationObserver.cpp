@@ -145,13 +145,13 @@ typedef HashSet<RefPtr<MutationObserver>> MutationObserverSet;
 
 static MutationObserverSet& activeMutationObservers()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(MutationObserverSet, activeObservers, ());
+    static NeverDestroyed<MutationObserverSet> activeObservers;
     return activeObservers;
 }
 
 static MutationObserverSet& suspendedMutationObservers()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(MutationObserverSet, suspendedObservers, ());
+    static NeverDestroyed<MutationObserverSet> suspendedObservers;
     return suspendedObservers;
 }
 

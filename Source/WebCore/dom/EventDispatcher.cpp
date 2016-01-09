@@ -39,6 +39,7 @@
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #include "TouchEvent.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -213,8 +214,8 @@ void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlying
     if (element->isDisabledFormControl())
         return;
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<Element*>, elementsDispatchingSimulatedClicks, ());
-    if (!elementsDispatchingSimulatedClicks.add(element).isNewEntry)
+    static NeverDestroyed<HashSet<Element*>> elementsDispatchingSimulatedClicks;
+    if (!elementsDispatchingSimulatedClicks.get().add(element).isNewEntry)
         return;
 
     if (mouseEventOptions == SendMouseOverUpDownEvents)
@@ -230,7 +231,7 @@ void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlying
     // always send click
     dispatchEvent(element, SimulatedMouseEvent::create(eventNames().clickEvent, element->document().defaultView(), underlyingEvent, element));
 
-    elementsDispatchingSimulatedClicks.remove(element);
+    elementsDispatchingSimulatedClicks.get().remove(element);
 }
 
 static void callDefaultEventHandlersInTheBubblingOrder(Event& event, const EventPath& path)

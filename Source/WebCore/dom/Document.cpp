@@ -178,6 +178,7 @@
 #include <ctime>
 #include <inspector/ScriptCallStack.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/StringBuffer.h>
 #include <yarr/RegularExpression.h>
@@ -1119,9 +1120,9 @@ RefPtr<Element> Document::createElementNS(const String& namespaceURI, const Stri
 
 String Document::readyState() const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, loading, (ASCIILiteral("loading")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, interactive, (ASCIILiteral("interactive")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(const String, complete, (ASCIILiteral("complete")));
+    static NeverDestroyed<const String> loading(ASCIILiteral("loading"));
+    static NeverDestroyed<const String> interactive(ASCIILiteral("interactive"));
+    static NeverDestroyed<const String> complete(ASCIILiteral("complete"));
 
     switch (m_readyState) {
     case Loading:

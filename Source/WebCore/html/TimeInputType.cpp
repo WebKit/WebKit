@@ -38,6 +38,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -77,7 +78,7 @@ Decimal TimeInputType::defaultValueForStepUp() const
 
 StepRange TimeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger));
+    static NeverDestroyed<const StepRange::StepDescription> stepDescription(timeDefaultStep, timeDefaultStepBase, timeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger);
 
     const Decimal stepBase = parseToNumber(element().fastGetAttribute(minAttr), 0);
     const Decimal minimum = parseToNumber(element().fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumTime()));

@@ -53,6 +53,7 @@
 #include "SubframeLoader.h"
 #include "TextDocument.h"
 #include "XMLNames.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -88,7 +89,7 @@ static bool isSupportedSVG10Feature(const String& feature, const String& version
         return false;
 
     static bool initialized = false;
-    DEPRECATED_DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
+    static NeverDestroyed<FeatureSet> svgFeatures;
     if (!initialized) {
 #if ENABLE(SVG_FONTS)
         addString(svgFeatures, "svg");
@@ -108,7 +109,7 @@ static bool isSupportedSVG10Feature(const String& feature, const String& version
         initialized = true;
     }
     return feature.startsWith("org.w3c.", false)
-        && svgFeatures.contains(feature.right(feature.length() - 8));
+        && svgFeatures.get().contains(feature.right(feature.length() - 8));
 }
 
 static bool isSupportedSVG11Feature(const String& feature, const String& version)
@@ -117,7 +118,7 @@ static bool isSupportedSVG11Feature(const String& feature, const String& version
         return false;
 
     static bool initialized = false;
-    DEPRECATED_DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
+    static NeverDestroyed<FeatureSet> svgFeatures;
     if (!initialized) {
         // Sadly, we cannot claim to implement any of the SVG 1.1 generic feature sets
         // lack of Font and Filter support.
@@ -175,7 +176,7 @@ static bool isSupportedSVG11Feature(const String& feature, const String& version
         initialized = true;
     }
     return feature.startsWith("http://www.w3.org/tr/svg11/feature#", false)
-        && svgFeatures.contains(feature.right(feature.length() - 35));
+        && svgFeatures.get().contains(feature.right(feature.length() - 35));
 }
 
 DOMImplementation::DOMImplementation(Document& document)

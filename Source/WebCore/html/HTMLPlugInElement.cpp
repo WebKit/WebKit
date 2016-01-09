@@ -336,7 +336,7 @@ static void registrar(const ReplacementPlugin&);
 
 static Vector<ReplacementPlugin*>& registeredPluginReplacements()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<ReplacementPlugin*>, registeredReplacements, ());
+    static NeverDestroyed<Vector<ReplacementPlugin*>> registeredReplacements;
     static bool enginesQueried = false;
     
     if (enginesQueried)

@@ -50,7 +50,7 @@ static CounterNode* makeCounterNode(RenderElement&, const AtomicString& identifi
 
 static CounterMaps& counterMaps()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(CounterMaps, staticCounterMaps, ());
+    static NeverDestroyed<CounterMaps> staticCounterMaps;
     return staticCounterMaps;
 }
 

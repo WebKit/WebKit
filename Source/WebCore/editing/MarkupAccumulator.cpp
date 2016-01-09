@@ -40,6 +40,7 @@
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -259,8 +260,8 @@ bool MarkupAccumulator::shouldAddNamespaceElement(const Element& element)
     if (prefix.isEmpty())
         return !element.hasAttribute(xmlnsAtom);
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, xmlnsWithColon, (ASCIILiteral("xmlns:")));
-    return !element.hasAttribute(xmlnsWithColon + prefix);
+    static NeverDestroyed<String> xmlnsWithColon(ASCIILiteral("xmlns:"));
+    return !element.hasAttribute(xmlnsWithColon.get() + prefix);
 }
 
 bool MarkupAccumulator::shouldAddNamespaceAttribute(const Attribute& attribute, Namespaces& namespaces)

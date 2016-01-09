@@ -29,6 +29,7 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "Element.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -87,7 +88,7 @@ const AtomicString& CachedResourceRequest::initiatorName() const
     if (!m_initiatorName.isEmpty())
         return m_initiatorName;
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, defaultName, ("resource", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> defaultName("resource", AtomicString::ConstructFromLiteral);
     return defaultName;
 }
 

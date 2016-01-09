@@ -43,6 +43,7 @@
 #include "XLinkNames.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -273,7 +274,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
 
     String httpBodyAsString;
     if (DocumentLoader* documentLoader = document->frame()->loader().documentLoader()) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, (ASCIILiteral("X-XSS-Protection")));
+        static NeverDestroyed<String> XSSProtectionHeader(ASCIILiteral("X-XSS-Protection"));
         String headerValue = documentLoader->response().httpHeaderField(XSSProtectionHeader);
         String errorDetails;
         unsigned errorPosition = 0;
@@ -523,7 +524,7 @@ bool XSSAuditor::filterButtonToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::eraseDangerousAttributesIfInjected(const FilterTokenRequest& request)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, safeJavaScriptURL, (ASCIILiteral("javascript:void(0)")));
+    static NeverDestroyed<String> safeJavaScriptURL(ASCIILiteral("javascript:void(0)"));
 
     bool didBlockScript = false;
     for (size_t i = 0; i < request.token.attributes().size(); ++i) {
@@ -538,7 +539,7 @@ bool XSSAuditor::eraseDangerousAttributesIfInjected(const FilterTokenRequest& re
             continue;
         request.token.eraseValueOfAttribute(i);
         if (valueContainsJavaScriptURL)
-            request.token.appendToAttributeValue(i, safeJavaScriptURL);
+            request.token.appendToAttributeValue(i, safeJavaScriptURL.get());
         didBlockScript = true;
     }
     return didBlockScript;

@@ -34,6 +34,7 @@
 #include "RenderElement.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event*)
 
 void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, valueContainerPseudo, ("-webkit-date-and-time-value", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> valueContainerPseudo("-webkit-date-and-time-value", AtomicString::ConstructFromLiteral);
 
     Ref<HTMLDivElement> valueContainer = HTMLDivElement::create(element().document());
     valueContainer->setPseudo(valueContainerPseudo);

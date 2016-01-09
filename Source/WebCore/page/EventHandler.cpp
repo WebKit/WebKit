@@ -96,6 +96,7 @@
 #include "WindowsKeyboardCodes.h"
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/WeakPtr.h>
@@ -401,7 +402,7 @@ EventHandler::~EventHandler()
 #if ENABLE(DRAG_SUPPORT)
 DragState& EventHandler::dragState()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(DragState, state, ());
+    static NeverDestroyed<DragState> state;
     return state;
 }
 #endif // ENABLE(DRAG_SUPPORT)
@@ -3076,10 +3077,10 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
 static FocusDirection focusDirectionForKey(const AtomicString& keyIdentifier)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, Down, ("Down", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, Up, ("Up", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, Left, ("Left", AtomicString::ConstructFromLiteral));
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, Right, ("Right", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> Down("Down", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> Up("Up", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> Left("Left", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> Right("Right", AtomicString::ConstructFromLiteral);
 
     FocusDirection retVal = FocusDirectionNone;
 

@@ -235,19 +235,19 @@ static void addMediaEngine(CreateMediaEnginePlayer constructor, MediaEngineSuppo
 
 static const AtomicString& applicationOctetStream()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, applicationOctetStream, ("application/octet-stream", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> applicationOctetStream("application/octet-stream", AtomicString::ConstructFromLiteral);
     return applicationOctetStream;
 }
 
 static const AtomicString& textPlain()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, textPlain, ("text/plain", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> textPlain("text/plain", AtomicString::ConstructFromLiteral);
     return textPlain;
 }
 
 static const AtomicString& codecs()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, codecs, ("codecs", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> codecs("codecs", AtomicString::ConstructFromLiteral);
     return codecs;
 }
 

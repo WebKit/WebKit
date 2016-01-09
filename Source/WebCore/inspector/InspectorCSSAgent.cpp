@@ -79,10 +79,10 @@ enum ForcePseudoClassFlags {
 
 static unsigned computePseudoClassMask(const InspectorArray& pseudoClassArray)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, active, (ASCIILiteral("active")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, hover, (ASCIILiteral("hover")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, focus, (ASCIILiteral("focus")));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, visited, (ASCIILiteral("visited")));
+    static NeverDestroyed<String> active(ASCIILiteral("active"));
+    static NeverDestroyed<String> hover(ASCIILiteral("hover"));
+    static NeverDestroyed<String> focus(ASCIILiteral("focus"));
+    static NeverDestroyed<String> visited(ASCIILiteral("visited"));
     if (!pseudoClassArray.length())
         return PseudoClassNone;
 

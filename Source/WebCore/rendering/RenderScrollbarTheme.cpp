@@ -26,14 +26,15 @@
 #include "config.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderScrollbar.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 RenderScrollbarTheme* RenderScrollbarTheme::renderScrollbarTheme()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(RenderScrollbarTheme, theme, ());
-    return &theme;
+    static NeverDestroyed<RenderScrollbarTheme> theme;
+    return &theme.get();
 }
 
 void RenderScrollbarTheme::buttonSizesAlongTrackAxis(Scrollbar& scrollbar, int& beforeSize, int& afterSize)

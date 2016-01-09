@@ -74,29 +74,29 @@ static const auto removeSnapshotTimerDelay = std::chrono::milliseconds { 1500 };
 
 static const String titleText(Page* page, String mimeType)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(MimeTypeToLocalizedStringMap, mimeTypeToLabelTitleMap, ());
-    String titleText = mimeTypeToLabelTitleMap.get(mimeType);
+    static NeverDestroyed<MimeTypeToLocalizedStringMap> mimeTypeToLabelTitleMap;
+    String titleText = mimeTypeToLabelTitleMap.get().get(mimeType);
     if (!titleText.isEmpty())
         return titleText;
 
     titleText = page->chrome().client().plugInStartLabelTitle(mimeType);
     if (titleText.isEmpty())
         titleText = snapshottedPlugInLabelTitle();
-    mimeTypeToLabelTitleMap.set(mimeType, titleText);
+    mimeTypeToLabelTitleMap.get().set(mimeType, titleText);
     return titleText;
 };
 
 static const String subtitleText(Page* page, String mimeType)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(MimeTypeToLocalizedStringMap, mimeTypeToLabelSubtitleMap, ());
-    String subtitleText = mimeTypeToLabelSubtitleMap.get(mimeType);
+    static NeverDestroyed<MimeTypeToLocalizedStringMap> mimeTypeToLabelSubtitleMap;
+    String subtitleText = mimeTypeToLabelSubtitleMap.get().get(mimeType);
     if (!subtitleText.isEmpty())
         return subtitleText;
 
     subtitleText = page->chrome().client().plugInStartLabelSubtitle(mimeType);
     if (subtitleText.isEmpty())
         subtitleText = snapshottedPlugInLabelSubtitle();
-    mimeTypeToLabelSubtitleMap.set(mimeType, subtitleText);
+    mimeTypeToLabelSubtitleMap.get().set(mimeType, subtitleText);
     return subtitleText;
 };
 
@@ -408,11 +408,11 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
 bool HTMLPlugInImageElement::partOfSnapshotOverlay(const Node* node) const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, selector, (".snapshot-overlay", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<AtomicString> selector(".snapshot-overlay", AtomicString::ConstructFromLiteral);
     ShadowRoot* shadow = userAgentShadowRoot();
     if (!shadow)
         return false;
-    RefPtr<Element> snapshotLabel = shadow->querySelector(selector, ASSERT_NO_EXCEPTION);
+    RefPtr<Element> snapshotLabel = shadow->querySelector(selector.get(), ASSERT_NO_EXCEPTION);
     return node && snapshotLabel && (node == snapshotLabel.get() || node->isDescendantOf(snapshotLabel.get()));
 }
 

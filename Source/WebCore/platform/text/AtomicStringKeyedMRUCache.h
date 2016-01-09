@@ -26,6 +26,7 @@
 #ifndef AtomicStringKeyedMRUCache_h
 #define AtomicStringKeyedMRUCache_h
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ public:
     T get(const AtomicString& key)
     {
         if (key.isNull()) {
-            DEPRECATED_DEFINE_STATIC_LOCAL(T, valueForNull, (createValueForNullKey()));
+            static NeverDestroyed<T> valueForNull(createValueForNullKey());
             return valueForNull;
         }
 

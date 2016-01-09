@@ -70,6 +70,7 @@
 #include "UnicodeBidi.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -2008,7 +2009,7 @@ public:
     static unsigned short initialColumnCount() { return 1; }
     static ColumnFill initialColumnFill() { return ColumnFillBalance; }
     static ColumnSpan initialColumnSpan() { return ColumnSpanNone; }
-    static const TransformOperations& initialTransform() { DEPRECATED_DEFINE_STATIC_LOCAL(TransformOperations, ops, ()); return ops; }
+    static const TransformOperations& initialTransform() { static NeverDestroyed<TransformOperations> ops; return ops; }
     static Length initialTransformOriginX() { return Length(50.0f, Percent); }
     static Length initialTransformOriginY() { return Length(50.0f, Percent); }
     static EPointerEvents initialPointerEvents() { return PE_AUTO; }
@@ -2114,9 +2115,9 @@ public:
     static const Vector<StyleDashboardRegion>& initialDashboardRegions();
     static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 #endif
-    static const FilterOperations& initialFilter() { DEPRECATED_DEFINE_STATIC_LOCAL(FilterOperations, ops, ()); return ops; }
+    static const FilterOperations& initialFilter() { static NeverDestroyed<FilterOperations> ops; return ops; }
 #if ENABLE(FILTERS_LEVEL_2)
-    static const FilterOperations& initialBackdropFilter() { DEPRECATED_DEFINE_STATIC_LOCAL(FilterOperations, ops, ()); return ops; }
+    static const FilterOperations& initialBackdropFilter() { static NeverDestroyed<FilterOperations> ops; return ops; }
 #endif
 #if ENABLE(CSS_COMPOSITING)
     static BlendMode initialBlendMode() { return BlendModeNormal; }

@@ -29,6 +29,7 @@
 #include "Image.h"
 #include "IntRect.h"
 #include <wtf/Assertions.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -189,259 +190,259 @@ PlatformCursor Cursor::platformCursor() const
 
 const Cursor& pointerCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Pointer));
+    static NeverDestroyed<Cursor> c(Cursor::Pointer);
     return c;
 }
 
 const Cursor& crossCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Cross));
+    static NeverDestroyed<Cursor> c(Cursor::Cross);
     return c;
 }
 
 const Cursor& handCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Hand));
+    static NeverDestroyed<Cursor> c(Cursor::Hand);
     return c;
 }
 
 const Cursor& moveCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Move));
+    static NeverDestroyed<Cursor> c(Cursor::Move);
     return c;
 }
 
 const Cursor& verticalTextCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::VerticalText));
+    static NeverDestroyed<Cursor> c(Cursor::VerticalText);
     return c;
 }
 
 const Cursor& cellCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Cell));
+    static NeverDestroyed<Cursor> c(Cursor::Cell);
     return c;
 }
 
 const Cursor& contextMenuCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ContextMenu));
+    static NeverDestroyed<Cursor> c(Cursor::ContextMenu);
     return c;
 }
 
 const Cursor& aliasCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Alias));
+    static NeverDestroyed<Cursor> c(Cursor::Alias);
     return c;
 }
 
 const Cursor& zoomInCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ZoomIn));
+    static NeverDestroyed<Cursor> c(Cursor::ZoomIn);
     return c;
 }
 
 const Cursor& zoomOutCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ZoomOut));
+    static NeverDestroyed<Cursor> c(Cursor::ZoomOut);
     return c;
 }
 
 const Cursor& copyCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Copy));
+    static NeverDestroyed<Cursor> c(Cursor::Copy);
     return c;
 }
 
 const Cursor& noneCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::None));
+    static NeverDestroyed<Cursor> c(Cursor::None);
     return c;
 }
 
 const Cursor& progressCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Progress));
+    static NeverDestroyed<Cursor> c(Cursor::Progress);
     return c;
 }
 
 const Cursor& noDropCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NoDrop));
+    static NeverDestroyed<Cursor> c(Cursor::NoDrop);
     return c;
 }
 
 const Cursor& notAllowedCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NotAllowed));
+    static NeverDestroyed<Cursor> c(Cursor::NotAllowed);
     return c;
 }
 
 const Cursor& iBeamCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::IBeam));
+    static NeverDestroyed<Cursor> c(Cursor::IBeam);
     return c;
 }
 
 const Cursor& waitCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Wait));
+    static NeverDestroyed<Cursor> c(Cursor::Wait);
     return c;
 }
 
 const Cursor& helpCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Help));
+    static NeverDestroyed<Cursor> c(Cursor::Help);
     return c;
 }
 
 const Cursor& eastResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastResize));
+    static NeverDestroyed<Cursor> c(Cursor::EastResize);
     return c;
 }
 
 const Cursor& northResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthResize));
+    static NeverDestroyed<Cursor> c(Cursor::NorthResize);
     return c;
 }
 
 const Cursor& northEastResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastResize));
+    static NeverDestroyed<Cursor> c(Cursor::NorthEastResize);
     return c;
 }
 
 const Cursor& northWestResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestResize));
+    static NeverDestroyed<Cursor> c(Cursor::NorthWestResize);
     return c;
 }
 
 const Cursor& southResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthResize));
+    static NeverDestroyed<Cursor> c(Cursor::SouthResize);
     return c;
 }
 
 const Cursor& southEastResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthEastResize));
+    static NeverDestroyed<Cursor> c(Cursor::SouthEastResize);
     return c;
 }
 
 const Cursor& southWestResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthWestResize));
+    static NeverDestroyed<Cursor> c(Cursor::SouthWestResize);
     return c;
 }
 
 const Cursor& westResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::WestResize));
+    static NeverDestroyed<Cursor> c(Cursor::WestResize);
     return c;
 }
 
 const Cursor& northSouthResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthSouthResize));
+    static NeverDestroyed<Cursor> c(Cursor::NorthSouthResize);
     return c;
 }
 
 const Cursor& eastWestResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastWestResize));
+    static NeverDestroyed<Cursor> c(Cursor::EastWestResize);
     return c;
 }
 
 const Cursor& northEastSouthWestResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastSouthWestResize));
+    static NeverDestroyed<Cursor> c(Cursor::NorthEastSouthWestResize);
     return c;
 }
 
 const Cursor& northWestSouthEastResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestSouthEastResize));
+    static NeverDestroyed<Cursor> c(Cursor::NorthWestSouthEastResize);
     return c;
 }
 
 const Cursor& columnResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::ColumnResize));
+    static NeverDestroyed<Cursor> c(Cursor::ColumnResize);
     return c;
 }
 
 const Cursor& rowResizeCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::RowResize));
+    static NeverDestroyed<Cursor> c(Cursor::RowResize);
     return c;
 }
 
 const Cursor& middlePanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::MiddlePanning));
+    static NeverDestroyed<Cursor> c(Cursor::MiddlePanning);
     return c;
 }
     
 const Cursor& eastPanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::EastPanning));
+    static NeverDestroyed<Cursor> c(Cursor::EastPanning);
     return c;
 }
     
 const Cursor& northPanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthPanning));
+    static NeverDestroyed<Cursor> c(Cursor::NorthPanning);
     return c;
 }
     
 const Cursor& northEastPanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthEastPanning));
+    static NeverDestroyed<Cursor> c(Cursor::NorthEastPanning);
     return c;
 }
     
 const Cursor& northWestPanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::NorthWestPanning));
+    static NeverDestroyed<Cursor> c(Cursor::NorthWestPanning);
     return c;
 }
     
 const Cursor& southPanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthPanning));
+    static NeverDestroyed<Cursor> c(Cursor::SouthPanning);
     return c;
 }
     
 const Cursor& southEastPanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthEastPanning));
+    static NeverDestroyed<Cursor> c(Cursor::SouthEastPanning);
     return c;
 }
     
 const Cursor& southWestPanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::SouthWestPanning));
+    static NeverDestroyed<Cursor> c(Cursor::SouthWestPanning);
     return c;
 }
     
 const Cursor& westPanningCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::WestPanning));
+    static NeverDestroyed<Cursor> c(Cursor::WestPanning);
     return c;
 }
 
 const Cursor& grabCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Grab));
+    static NeverDestroyed<Cursor> c(Cursor::Grab);
     return c;
 }
 
 const Cursor& grabbingCursor()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Grabbing));
+    static NeverDestroyed<Cursor> c(Cursor::Grabbing);
     return c;
 }
 
