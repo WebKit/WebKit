@@ -1,5 +1,23 @@
 2016-01-08  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL B3 should do varargs tail calls and stack overflows
+        https://bugs.webkit.org/show_bug.cgi?id=152934
+
+        Reviewed by Saam Barati.
+
+        I was trying to get tail-call-varargs-no-stack-overflow.js.ftl-no-cjit-validate to work and
+        at first I hit the stack overflow issue and then I hit the varargs tail call issue. That's
+        why I have two fixes in one change. Now the test passes.
+
+        This reduces the number of failures from 13 to 0.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower): Implement stack overflow handling.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs): Varargs tail calls need to
+        append an Oops (i.e. "unreachable").
+
+2016-01-08  Filip Pizlo  <fpizlo@apple.com>
+
         B3 needs Neg()
         https://bugs.webkit.org/show_bug.cgi?id=152925
 

@@ -339,21 +339,36 @@ public:
         m_out.appendTo(stackOverflow, m_handleExceptions);
         m_out.call(m_out.voidType, m_out.operation(operationThrowStackOverflowError), m_callFrame, m_out.constIntPtr(codeBlock()));
 #if FTL_USES_B3
-        // FIXME
-#else
+        m_out.patchpoint(Void)->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+                // We are terminal, so we can clobber everything. That's why we don't claim to
+                // clobber scratch.
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                
+                jit.copyCalleeSavesToVMCalleeSavesBuffer();
+                jit.move(CCallHelpers::TrustedImmPtr(jit.vm()), GPRInfo::argumentGPR0);
+                jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
+                CCallHelpers::Call call = jit.call();
+                jit.jumpToExceptionHandler();
+
+                jit.addLinkTask(
+                    [=] (LinkBuffer& linkBuffer) {
+                        linkBuffer.link(call, FunctionPtr(lookupExceptionHandlerFromCallerFrame));
+                    });
+            });
+#else // FTL_USES_B3
         state->handleStackOverflowExceptionStackmapID = m_stackmapIDs++;
         m_out.call(
             m_out.voidType, m_out.stackmapIntrinsic(),
             m_out.constInt64(state->handleStackOverflowExceptionStackmapID),
             m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
-#endif
+#endif // FTL_USES_B3
         m_out.unreachable();
         
         m_out.appendTo(m_handleExceptions, checkArguments);
 #if FTL_USES_B3
-        PatchpointValue* patchpoint = m_out.patchpoint(Void);
         Box<CCallHelpers::Label> exceptionHandler = state->exceptionHandler;
-        patchpoint->setGenerator(
+        m_out.patchpoint(Void)->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
                 CCallHelpers::Jump jump = jit.jump();
                 jit.addLinkTask(
@@ -5510,7 +5525,16 @@ private:
                     });
             });
 
-        setJSValue(patchpoint);
+        switch (node->op()) {
+        case TailCallVarargs:
+        case TailCallForwardVarargs:
+            m_out.unreachable();
+            break;
+
+        default:
+            setJSValue(patchpoint);
+            break;
+        }
 #else
         UNUSED_PARAM(forwarding);
         unsigned stackmapID = m_stackmapIDs++;
