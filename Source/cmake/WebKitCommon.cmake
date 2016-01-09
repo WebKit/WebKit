@@ -1,6 +1,10 @@
 # -----------------------------------------------------------------------------
 # Find common packages (used by all ports)
 # -----------------------------------------------------------------------------
+if (WIN32)
+    list(APPEND CMAKE_PROGRAM_PATH $ENV{SystemDrive}/cygwin/bin)
+endif ()
+
 find_package(BISON 2.1 REQUIRED)
 if (!APPLE)
     find_package(FLEX 2.5.34 REQUIRED)

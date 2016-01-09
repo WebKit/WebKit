@@ -1,3 +1,16 @@
+2016-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=152937
+
+        Reviewed by Brent Fulgham.
+
+        * Source/cmake/WebKitCommon.cmake:
+        Try looking in the default cygwin installation directory for executables like bison, flex, gperf, and ruby.
+        This is needed on Windows builds that are not driven by cygwin, but need to use the cygwin installations of these tools.
+        This is the effective equivalent of this line in WebKitLibraries/win/tools/vsprops/common.props in the old build system:
+        set PATH=%SystemDrive%\cygwin\bin;%PATH%
+
 2016-01-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Set WebKit2 process output name
