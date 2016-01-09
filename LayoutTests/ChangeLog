@@ -1,5 +1,14 @@
 2016-01-08  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking fast/scrolling/scroll-position-on-reload-rtl.html as failing on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152935
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-01-08  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skipping two unsupported mouse event tests on ios-simulator
 
         Unreviewed test gardening.
