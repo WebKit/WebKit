@@ -27,6 +27,12 @@
 
         * platform/mac-wk1/TestExpectations:
 
+2016-01-08  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking js/intl-collator.html as failing on ios-simulator

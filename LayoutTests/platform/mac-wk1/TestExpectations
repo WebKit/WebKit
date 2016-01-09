@@ -76,11 +76,13 @@ imported/w3c/indexeddb/idbindex_getKey7.htm [ Failure ]
 imported/w3c/indexeddb/idbindex_openCursor2.htm [ Failure ]
 imported/w3c/indexeddb/idbindex_openKeyCursor3.htm [ Failure ]
 
-# IDB tests that crash/assert in MemoryBackingStore code
+# Modern IDB doesn't properly handle 2^53 as a key generator value
 storage/indexeddb/key-generator.html [ Skip ]
+
+# ASSERT in MemoryIDBBackingStore::restoreObjectStoreForVersionChangeAbort
 storage/indexeddb/lazy-index-population.html [ Skip ]
 
-# IDB tests that crash with GuardMalloc or ASan
+# Crashes with GuardMalloc or ASan
 storage/indexeddb/index-multientry.html [ Skip ]
 
 # Times out for unexplored reasons                                                             
