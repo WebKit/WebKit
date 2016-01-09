@@ -62,10 +62,13 @@ $ENV{'DERIVED_SOURCES_DIR'} = $DERIVED_SOURCES_DIR;
 
 $ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'} = 'WebInspectorUI';
 
-$ENV{'COMBINE_TEST_RESOURCES'} = 'YES';
 if (($TARGET_BUILD_DIR =~ /Release/) || ($TARGET_BUILD_DIR =~ /Production/)) {
     $ENV{'COMBINE_INSPECTOR_RESOURCES'} = 'YES';
-} 
+}
+
+if ($TARGET_BUILD_DIR !~ /Production/) {
+    $ENV{'COMBINE_TEST_RESOURCES'} = 'YES';
+}
 
 my $targetResourcePath = File::Spec->catdir($ENV{'TARGET_BUILD_DIR'}, $ENV{'UNLOCALIZED_RESOURCES_FOLDER_PATH'});
 my $protocolDir = File::Spec->catdir($targetResourcePath, 'Protocol');

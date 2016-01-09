@@ -1,5 +1,28 @@
 2016-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Test Resources should not be included in Production builds unless FORCE_TOOL_INSTALL
+        https://bugs.webkit.org/show_bug.cgi?id=152941
+        <rdar://problem/24119013>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        Combine inspector resources in production, but not test resources.
+
+        * Configurations/DebugRelease.xcconfig:
+        Do not combine inspector resources in Release/Debug. Combine test resources.
+
+        * Configurations/WebInspectorUIFramework.xcconfig:
+        Simplify by moving to other config files.
+
+        * Scripts/copy-user-interface-resources.pl:
+        Have FORCE_TOOL_INSTALL combine test resources as well.
+
+        * WebInspectorUI.vcxproj/build-webinspectorui.pl:
+        Only combine test resources in non-Production.
+
+2016-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Initiated section of Resource Details Sidebar should not display as empty and should update as the list changes
         https://bugs.webkit.org/show_bug.cgi?id=152907
         <rdar://problem/24109927>

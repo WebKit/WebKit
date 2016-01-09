@@ -137,16 +137,20 @@ make_path($protocolDir, $targetResourcePath);
 # Copy over dynamically loaded files from other frameworks, even if we aren't combining resources.
 copy(File::Spec->catfile($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'}, 'InspectorBackendCommands.js'), File::Spec->catfile($protocolDir, 'InspectorBackendCommands.js')) or die "Copy of InspectorBackendCommands.js failed: $!";
 
-if (defined $ENV{'FORCE_TOOL_INSTALL'} && ($ENV{'FORCE_TOOL_INSTALL'} eq 'YES')) {
+my $forceToolInstall = defined $ENV{'FORCE_TOOL_INSTALL'} && ($ENV{'FORCE_TOOL_INSTALL'} eq 'YES');
+my $shouldCombineMain = defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESOURCES'} eq 'YES');
+my $shouldCombineTest = defined $ENV{'COMBINE_TEST_RESOURCES'} && ($ENV{'COMBINE_TEST_RESOURCES'} eq 'YES');
+my $combineResourcesCmd = File::Spec->catfile($scriptsRoot, 'combine-resources.pl');
+
+if ($forceToolInstall) {
     # Copy all files over individually to ensure we have Test.html / Test.js and files included from Test.html.
     # We may then proceed to include combined & optimized resources which will output mostly to different paths
     # but overwrite Main.html / Main.js with optimized versions.
     ditto($uiRoot, $targetResourcePath);
-}
 
-my $shouldCombineMain = defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESOURCES'} eq 'YES');
-my $shouldCombineTest = defined $ENV{'COMBINE_TEST_RESOURCES'} && ($ENV{'COMBINE_TEST_RESOURCES'} eq 'YES');
-my $combineResourcesCmd = File::Spec->catfile($scriptsRoot, 'combine-resources.pl');
+    # Also force combining test resources for tool installs.
+    $shouldCombineTest = 1;
+}
 
 if ($shouldCombineMain) {
     # Remove Debug JavaScript and CSS files in Production builds.
@@ -239,7 +243,7 @@ if ($shouldCombineMain) {
 }
 
 if ($shouldCombineTest) {
-    # Combine the JavaScript files for testing into a single file (TestCombined.js ).
+    # Combine the JavaScript files for testing into a single file (TestCombined.js).
     system($combineResourcesCmd, '--input-html', File::Spec->catfile($uiRoot, 'Test.html'), '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'TestCombined.js', '--output-style-name', 'TestCombined.css');
 
     my $derivedSourcesTestHTML = File::Spec->catfile($derivedSourcesDir, 'Test.html');
