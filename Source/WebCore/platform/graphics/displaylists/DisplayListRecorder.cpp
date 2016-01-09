@@ -143,7 +143,7 @@ void Recorder::drawPattern(Image& image, const FloatRect& tileRect, const Affine
 void Recorder::save()
 {
     appendItem(Save::create());
-    m_stateStack.append(m_stateStack.last().cloneForSave(m_displayList.size() - 1));
+    m_stateStack.append(m_stateStack.last().cloneForSave(m_displayList.itemCount() - 1));
 }
 
 void Recorder::restore()
@@ -168,7 +168,7 @@ void Recorder::restore()
     
     if (saveIndex) {
         Save& saveItem = downcast<Save>(m_displayList.itemAt(saveIndex));
-        saveItem.setRestoreIndex(m_displayList.size() - 1);
+        saveItem.setRestoreIndex(m_displayList.itemCount() - 1);
     }
 }
 

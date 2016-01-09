@@ -48,6 +48,16 @@ void DisplayList::dump() const
 }
 #endif
 
+void DisplayList::clear()
+{
+    m_list.clear();
+}
+
+void DisplayList::removeItemsFromIndex(size_t index)
+{
+    m_list.resize(index);
+}
+
 void DisplayList::dump(TextStream& ts) const
 {
     TextStream::GroupScope group(ts);

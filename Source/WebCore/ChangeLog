@@ -1,3 +1,76 @@
+2016-01-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add DisplayList hooks into GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=152932
+
+        Reviewed by Zalan Bujtas.
+
+        Add the hooks into GraphicsContext that call into the DisplayListRecorder if there
+        is one.
+        
+        Rename size() to something less ambiguous.
+        
+        Out-of-line some DisplayList functions so that the header doesn't need to see
+        DisplayListItems.h.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::save):
+        (WebCore::GraphicsContext::restore):
+        (WebCore::GraphicsContext::setStrokeThickness):
+        (WebCore::GraphicsContext::setStrokeStyle):
+        (WebCore::GraphicsContext::setStrokeColor):
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::setLegacyShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::setShadowsIgnoreTransforms):
+        (WebCore::GraphicsContext::setShouldAntialias):
+        (WebCore::GraphicsContext::setShouldSmoothFonts):
+        (WebCore::GraphicsContext::setShouldSubpixelQuantizeFonts):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::setAntialiasedFontDilationEnabled):
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillRule):
+        (WebCore::GraphicsContext::setFillGradient):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::drawGlyphs):
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::setTextDrawingMode):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::setDrawLuminanceMask):
+        (WebCore::GraphicsContext::applyDeviceScaleFactor):
+        (WebCore::GraphicsContext::applyState):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::setDisplayListRecorder):
+        (WebCore::GraphicsContext::isRecording):
+        (WebCore::GraphicsContext::setFillRule): Deleted.
+        (WebCore::GraphicsContext::setShadowsIgnoreTransforms): Deleted.
+        (WebCore::GraphicsContext::setShouldSubpixelQuantizeFonts): Deleted.
+        (WebCore::GraphicsContext::setDrawLuminanceMask): Deleted.
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::clear):
+        (WebCore::DisplayList::DisplayList::removeItemsFromIndex):
+        * platform/graphics/displaylists/DisplayList.h:
+        (WebCore::DisplayList::DisplayList::itemCount):
+        (WebCore::DisplayList::DisplayList::clear): Deleted.
+        (WebCore::DisplayList::DisplayList::size): Deleted.
+        (WebCore::DisplayList::DisplayList::removeItemsFromIndex): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::save):
+        (WebCore::DisplayList::Recorder::restore):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        (WebCore::DisplayList::Recorder::itemCount):
+        (WebCore::DisplayList::Recorder::size): Deleted.
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::Replayer::replay):
+
 2016-01-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: imported/w3c/indexeddb/keyorder.htm times out.

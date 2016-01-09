@@ -110,6 +110,10 @@ enum InterpolationQuality {
     InterpolationHigh
 };
 
+namespace DisplayList {
+class Recorder;
+}
+
 struct GraphicsContextState {
     GraphicsContextState()
         : shouldAntialias(true)
@@ -246,6 +250,7 @@ class GraphicsContext {
     WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT GraphicsContext(PlatformGraphicsContext*);
+    GraphicsContext() = default;
     WEBCORE_EXPORT ~GraphicsContext();
     
     enum class NonPaintingReasons {
@@ -256,8 +261,11 @@ public:
 
     WEBCORE_EXPORT PlatformGraphicsContext* platformContext() const;
 
-    bool paintingDisabled() const { return !m_data; }
+    bool paintingDisabled() const { return !m_data && !isRecording(); }
     bool updatingControlTints() const { return m_nonPaintingReasons == NonPaintingReasons::UpdatingControlTints; }
+
+    void setDisplayListRecorder(DisplayList::Recorder* recorder) { m_displayListRecorder = recorder; }
+    bool isRecording() const { return m_displayListRecorder; }
 
     void setStrokeThickness(float);
     float strokeThickness() const { return m_state.strokeThickness; }
@@ -274,7 +282,7 @@ public:
     void setStrokeGradient(Ref<Gradient>&&);
     Gradient* strokeGradient() const { return m_state.strokeGradient.get(); }
 
-    void setFillRule(WindRule fillRule) { m_state.fillRule = fillRule; }
+    void setFillRule(WindRule);
     WindRule fillRule() const { return m_state.fillRule; }
 
     WEBCORE_EXPORT void setFillColor(const Color&);
@@ -286,7 +294,7 @@ public:
     WEBCORE_EXPORT void setFillGradient(Ref<Gradient>&&);
     Gradient* fillGradient() const { return m_state.fillGradient.get(); }
 
-    void setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms) { m_state.shadowsIgnoreTransforms = shadowsIgnoreTransforms; }
+    void setShadowsIgnoreTransforms(bool);
     bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms; }
 
     WEBCORE_EXPORT void setShouldAntialias(bool);
@@ -300,7 +308,7 @@ public:
 
     // Normally CG enables subpixel-quantization because it improves the performance of aligning glyphs.
     // In some cases we have to disable to to ensure a high-quality output of the glyphs.
-    void setShouldSubpixelQuantizeFonts(bool shouldSubpixelQuantizeFonts) { m_state.shouldSubpixelQuantizeFonts = shouldSubpixelQuantizeFonts; }
+    void setShouldSubpixelQuantizeFonts(bool);
     bool shouldSubpixelQuantizeFonts() const { return m_state.shouldSubpixelQuantizeFonts; }
 
     const GraphicsContextState& state() const { return m_state; }
@@ -393,6 +401,8 @@ public:
     void drawEmphasisMarks(const FontCascade&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
     void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
 
+    void applyState(const GraphicsContextState&);
+
     enum RoundingMode {
         RoundAllSides,
         RoundOriginAndDimensions
@@ -452,7 +462,7 @@ public:
     CompositeOperator compositeOperation() const { return m_state.compositeOperator; }
     BlendMode blendModeOperation() const { return m_state.blendMode; }
 
-    void setDrawLuminanceMask(bool drawLuminanceMask) { m_state.drawLuminanceMask = drawLuminanceMask; }
+    void setDrawLuminanceMask(bool);
     bool drawLuminanceMask() const { return m_state.drawLuminanceMask; }
 
     // This clip function is used only by <canvas> code. It allows
@@ -602,6 +612,7 @@ private:
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing,  Color&);
 
     GraphicsContextPlatformPrivate* m_data { nullptr };
+    DisplayList::Recorder* m_displayListRecorder { nullptr };
 
     GraphicsContextState m_state;
     Vector<GraphicsContextState, 1> m_stack;

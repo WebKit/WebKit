@@ -120,7 +120,7 @@ public:
     
     void applyDeviceScaleFactor(float);
 
-    size_t size() const { return m_displayList.size(); }
+    size_t itemCount() const { return m_displayList.itemCount(); }
 
 private:
     Item& appendItem(Ref<Item>&&);

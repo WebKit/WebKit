@@ -50,7 +50,7 @@ void Replayer::replay(const FloatRect& initialClip)
     LOG_WITH_STREAM(DisplayLists, stream << "\nReplaying with clip " << initialClip);
     UNUSED_PARAM(initialClip);
 
-    size_t numItems = m_displayList.size();
+    size_t numItems = m_displayList.itemCount();
     for (size_t i = 0; i < numItems; ++i) {
         auto& item = m_displayList.list()[i].get();
         LOG_WITH_STREAM(DisplayLists, stream << "drawing  " << i << " " << item);
