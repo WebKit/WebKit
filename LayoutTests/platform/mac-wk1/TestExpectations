@@ -66,7 +66,7 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 ########################################
 ### START OF (2) Failures without bug reports
 
-# W3C IDB test timeouts
+# Our IDL parser test harness is not what this test expects
 imported/w3c/indexeddb/interfaces.html [ Skip ]
 
 # W3C IDB tests where the test is wrong (the spec, other browsers, and WebKit all agree)
@@ -83,9 +83,8 @@ storage/indexeddb/lazy-index-population.html [ Skip ]
 # IDB tests that crash with GuardMalloc or ASan
 storage/indexeddb/index-multientry.html [ Skip ]
 
-# IDB tests that timeout                                                               
+# Times out for unexplored reasons                                                             
 storage/indexeddb/database-quota.html [ Skip ]
-storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
 
 # IDB tests with other text failures
 fast/history/page-cache-indexed-closed-db.html [ Failure ]
@@ -128,6 +127,10 @@ inspector/indexeddb/requestDatabaseNames.html
 # Test's behavior specific to Legacy IDB with LevelDB backend
 # Modern IDB is spec-compliant without supporting this behavior
 storage/indexeddb/transaction-starvation.html [ Skip ]
+
+# Times out because we only consider "onblocked"'ing one test at a time,
+# which is allowed by the spec and is what Firefox and Edge do.
+storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
