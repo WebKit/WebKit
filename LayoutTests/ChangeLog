@@ -1,3 +1,11 @@
+2016-01-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping two unsupported mouse event tests on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-01-08  Brady Eidson  <beidson@apple.com>
 
         Unreviewed test gardening.

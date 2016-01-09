@@ -204,6 +204,10 @@ fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html
 
 fast/events/touch [ Skip ]
 
+# Mouse events are not supported on iOS
+fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ]
+fast/scrolling/overflow-scroll-past-max.html [ Skip ]
+
 ###
 # Known failures
 ##
