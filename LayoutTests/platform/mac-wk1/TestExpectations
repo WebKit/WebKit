@@ -86,11 +86,17 @@ storage/indexeddb/index-multientry.html [ Skip ]
 # Times out for unexplored reasons                                                             
 storage/indexeddb/database-quota.html [ Skip ]
 
-# IDB tests with other text failures
+# Modern IDB page cache interaction not yet sorted out
 fast/history/page-cache-indexed-closed-db.html [ Failure ]
+
+# blocked event comes in different order with different parameters
 storage/indexeddb/intversion-long-queue.html [ Failure ]
+
+# IDB is currently disabled in private browsing.
+# With Modern IDB and the in-memory backing store, that should change.
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
-storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
+
+# Incorrectly fires a blocked event
 storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Failure ]
 
 # Relies on internals.observeGC
@@ -131,6 +137,10 @@ storage/indexeddb/transaction-starvation.html [ Skip ]
 # Times out because we only consider "onblocked"'ing one test at a time,
 # which is allowed by the spec and is what Firefox and Edge do.
 storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
+
+# We allowed disabling IDB at runtime to support polyfills in WK1 before Modern IDB.
+# It's unclear if we need to continue supporting this.
+storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
