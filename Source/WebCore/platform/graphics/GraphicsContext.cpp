@@ -682,6 +682,11 @@ float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, con
     if (paintingDisabled())
         return 0;
 
+    if (isRecording()) {
+        // FIXME: Text drawing with display lists TBD.
+        return 0;
+    }
+
     return font.drawText(*this, run, point, from, to);
 }
 
