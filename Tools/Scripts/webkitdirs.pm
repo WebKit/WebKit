@@ -347,16 +347,18 @@ sub determineArchitecture
         }
     }
 
-    if (!$architecture && (isGtk() || isAppleMacWebKit() || isEfl())) {
-        # Fall back to output of `arch', if it is present.
-        $architecture = `arch`;
-        chomp $architecture;
-    }
+    if (!isAnyWindows()) {
+        if (!$architecture) {
+            # Fall back to output of `arch', if it is present.
+            $architecture = `arch`;
+            chomp $architecture;
+        }
 
-    if (!$architecture && (isGtk() || isAppleMacWebKit() || isEfl())) {
-        # Fall back to output of `uname -m', if it is present.
-        $architecture = `uname -m`;
-        chomp $architecture;
+        if (!$architecture) {
+            # Fall back to output of `uname -m', if it is present.
+            $architecture = `uname -m`;
+            chomp $architecture;
+        }
     }
 
     $architecture = 'x86_64' if ($architecture =~ /amd64/ && isBSD());

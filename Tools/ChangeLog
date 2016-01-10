@@ -1,3 +1,20 @@
+2016-01-10  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [webkitdirs] Try arch and uname commands on non-windows OS
+        https://bugs.webkit.org/show_bug.cgi?id=152958
+
+        Reviewed by Michael Catanzaro.
+
+        Right now, determineArchitecture()  uses `arch` and `uname -m`
+        commands to determine architecture in case of condition (isGtk() ||
+        isAppleMacWebKit() || isEfl()) is true. This should be !anyWindows()
+        instead, because this code is applicable to any non-windows OS WebKit
+        supports (even Haiku which once was supported is moderately
+        POSIX-compliant and has uname command).
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+
 2016-01-08  Aakash Jain  <aakash_jain@apple.com>
 
         run-webkit-tests mis-counts totals when there are other crashes
