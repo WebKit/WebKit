@@ -103,7 +103,7 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         }
 
         for (var i = 0; i < this._scopeChain.length; ++i)
-            this._scopeChain[i].object.deprecatedGetAllProperties(propertiesCollected);
+            this._scopeChain[i].objects[0].deprecatedGetAllProperties(propertiesCollected);
     }
 
     // Static
