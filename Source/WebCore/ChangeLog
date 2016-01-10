@@ -1,3 +1,17 @@
+2016-01-10  Andreas Kling  <akling@apple.com>
+
+        Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL cont'd
+        <https://webkit.org/b/152902>
+
+        Reviewed by Andy Estes.
+
+        Convert some more of the remaining clients to use NeverDestroyed.
+
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::textTrackCueContainerShadowPseudoId):
+        (WebCore::VTTRegion::textTrackRegionShadowPseudoId):
+        * svg/properties/SVGAnimatedPropertyMacros.h:
+
 2016-01-09  Simon Fraser  <simon.fraser@apple.com>
 
         Hook up display-list drawing in GraphicsLayerCA

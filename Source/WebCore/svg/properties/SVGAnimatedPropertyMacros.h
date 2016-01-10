@@ -89,14 +89,14 @@ static void registerAnimatedPropertiesFor##OwnerType() \
 // Property definition helpers (used in SVG*.cpp files)
 #define DEFINE_ANIMATED_PROPERTY(AnimatedPropertyTypeEnum, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
 const SVGPropertyInfo* OwnerType::LowerProperty##PropertyInfo() { \
-    DEPRECATED_DEFINE_STATIC_LOCAL(const SVGPropertyInfo, s_propertyInfo, \
+    static NeverDestroyed<const SVGPropertyInfo> s_propertyInfo = SVGPropertyInfo \
                         (AnimatedPropertyTypeEnum, \
                          PropertyIsReadWrite, \
                          DOMAttribute, \
                          SVGDOMAttributeIdentifier, \
                          &OwnerType::synchronize##UpperProperty, \
-                         &OwnerType::lookupOrCreate##UpperProperty##Wrapper)); \
-    return &s_propertyInfo; \
+                         &OwnerType::lookupOrCreate##UpperProperty##Wrapper); \
+    return &s_propertyInfo.get(); \
 } 
 
 // Property declaration helpers (used in SVG*.h files)

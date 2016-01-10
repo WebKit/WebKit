@@ -30,6 +30,7 @@
 
 #import <wtf/HashMap.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -53,6 +54,7 @@ public:
     void didCreateWindow();
 
 private:
+    friend class NeverDestroyed<NetscapePluginHostManager>;
     NetscapePluginHostProxy* hostForPlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier);
 
     NetscapePluginHostManager();

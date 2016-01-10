@@ -34,6 +34,7 @@
 
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/SecurityOrigin.h>
+#import <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS)
 #import "WebDatabaseManagerInternal.h"
@@ -228,7 +229,7 @@ static bool isFileHidden(NSString *file)
 
 static Lock& transactionBackgroundTaskIdentifierLock()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, mutex, ());
+    static NeverDestroyed<Lock> mutex;
     return mutex;
 }
 

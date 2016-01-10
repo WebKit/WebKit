@@ -1,3 +1,13 @@
+2016-01-10  Andreas Kling  <akling@apple.com>
+
+        Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL cont'd
+        <https://webkit.org/b/152902>
+
+        Reviewed by Andy Estes.
+
+        * Storage/StorageThread.cpp:
+        (WebCore::activeStorageThreads):
+
 2015-12-31  Andy Estes  <aestes@apple.com>
 
         Replace WTF::move with WTFMove

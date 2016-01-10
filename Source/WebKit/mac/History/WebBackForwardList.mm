@@ -48,6 +48,7 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
@@ -60,7 +61,7 @@ typedef HashMap<BackForwardList*, WebBackForwardList*> BackForwardListMap;
 // with a pointer to a WebBackForwardList in it.
 static BackForwardListMap& backForwardLists()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(BackForwardListMap, staticBackForwardLists, ());
+    static NeverDestroyed<BackForwardListMap> staticBackForwardLists;
     return staticBackForwardLists;
 }
 

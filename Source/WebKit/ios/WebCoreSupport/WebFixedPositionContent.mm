@@ -37,6 +37,7 @@
 #import <WebCore/WebCoreThreadRun.h>
 
 #import <wtf/HashMap.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
@@ -50,7 +51,7 @@ using namespace std;
 
 static Lock& WebFixedPositionContentDataLock()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, mutex, ());
+    static NeverDestroyed<Lock> mutex;
     return mutex;
 }
 

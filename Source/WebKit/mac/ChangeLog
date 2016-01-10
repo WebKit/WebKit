@@ -1,3 +1,39 @@
+2016-01-10  Andreas Kling  <akling@apple.com>
+
+        Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL cont'd
+        <https://webkit.org/b/152902>
+
+        Reviewed by Andy Estes.
+
+        Convert some more of the remaining clients to use NeverDestroyed.
+
+        * History/WebBackForwardList.mm:
+        (backForwardLists):
+        * History/WebHistoryItem.mm:
+        (historyItemWrappers):
+        * Misc/WebNSPasteboardExtras.mm:
+        (+[NSPasteboard _web_writableTypesForURL]):
+        (_writableTypesForImageWithoutArchive):
+        (_writableTypesForImageWithArchive):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::singleton):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::pluginProxyMap):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::globalExceptionString):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::proxyClass):
+        * Plugins/WebNetscapePluginStream.mm:
+        (streams):
+        * Storage/WebDatabaseManager.mm:
+        (transactionBackgroundTaskIdentifierLock):
+        * WebCoreSupport/WebUserMediaClient.mm:
+        (userMediaCheckMap):
+        * WebView/WebHTMLRepresentation.mm:
+        (regExpForLabels):
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+
 2016-01-09  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Allow overriding the frameworks directory independently of using a staging install path
