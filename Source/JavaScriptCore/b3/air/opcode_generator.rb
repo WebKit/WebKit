@@ -181,8 +181,8 @@ def lex(str, fileName)
     result
 end
 
-def isUD(token)
-    token =~ /\A((U)|(D)|(UD)|(ZD)|(UZD)|(UA))\Z/
+def isRole(token)
+    token =~ /\A((U)|(D)|(UD)|(ZD)|(UZD)|(UA)|(S))\Z/
 end
 
 def isGF(token)
@@ -202,7 +202,7 @@ def isWidth(token)
 end
 
 def isKeyword(token)
-    isUD(token) or isGF(token) or isKind(token) or isArch(token) or isWidth(token) or
+    isRole(token) or isGF(token) or isKind(token) or isArch(token) or isWidth(token) or
         token == "special" or token == "as"
 end
 
@@ -250,7 +250,7 @@ class Parser
 
     def consumeRole
         result = token.string
-        parseError("Expected role (U, D, UD, or UA)") unless isUD(result)
+        parseError("Expected role (U, D, UD, ZD, UZD, UA, or S)") unless isRole(result)
         advance
         result
     end
@@ -365,7 +365,7 @@ class Parser
                 signature = []
                 forms = []
                 
-                if isUD(token)
+                if isRole(token)
                     loop {
                         role = consumeRole
                         consume(":")
@@ -650,6 +650,8 @@ writeH("OpcodeUtils") {
                     role = "UseZDef"
                 when "UA"
                     role = "UseAddr"
+                when "S"
+                    role = "Scratch"
                 else
                     raise
                 end

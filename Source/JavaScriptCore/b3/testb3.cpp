@@ -6240,6 +6240,7 @@ void testPatchpointLotsOfLateAnys()
     }
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
     for (Value* value : values)
         patchpoint->append(ConstrainedValue(value, ValueRep::LateColdAny));
     patchpoint->setGenerator(

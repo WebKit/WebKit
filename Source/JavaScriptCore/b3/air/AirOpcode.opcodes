@@ -34,6 +34,7 @@
 # U:F:64 => use of a double register or value
 # D:F:32 => def of a float register or value
 # UD:F:32 => use and def of a float register or value
+# S:F:32 => scratch float register.
 #
 # Argument kinds:
 # Tmp => temporary or register
@@ -503,7 +504,7 @@ Store16 U:G:16, D:G:16
 
 Compare32 U:G:32, U:G:32, U:G:32, ZD:G:32
     RelCond, Tmp, Tmp, Tmp
-    RelCond, Tmp, Imm, Tmp
+    x86: RelCond, Tmp, Imm, Tmp
 
 64: Compare64 U:G:32, U:G:64, U:G:64, ZD:G:32
     RelCond, Tmp, Imm, Tmp
@@ -552,7 +553,7 @@ BranchTest8 U:G:32, U:G:8, U:G:8 /branch
 
 BranchTest32 U:G:32, U:G:32, U:G:32 /branch
     ResCond, Tmp, Tmp
-    ResCond, Tmp, Imm
+    x86: ResCond, Tmp, Imm
     x86: ResCond, Addr, Imm
     x86: ResCond, Index, Imm
 
@@ -560,7 +561,7 @@ BranchTest32 U:G:32, U:G:32, U:G:32 /branch
 # BranchTest32 in most cases where you use an immediate.
 64: BranchTest64 U:G:32, U:G:64, U:G:64 /branch
     ResCond, Tmp, Tmp
-    ResCond, Tmp, Imm
+    x86: ResCond, Tmp, Imm
     x86: ResCond, Addr, Imm
     x86: ResCond, Addr, Tmp
     x86: ResCond, Index, Imm
@@ -582,15 +583,21 @@ BranchAdd32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Imm, Tmp
     ResCond, Tmp, Tmp
 
-BranchMul32 U:G:32, U:G:32, UZD:G:32 /branch
+x86: BranchMul32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp
-    x86: ResCond, Addr, Tmp
+    ResCond, Addr, Tmp
 
-BranchMul32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
+x86: BranchMul32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
     ResCond, Tmp, Imm, Tmp
 
-64: BranchMul64 U:G:32, U:G:64, UZD:G:64 /branch
+arm64: BranchMul32 U:G:32, U:G:32, U:G:32, S:G:32, S:G:32, ZD:G:32 /branch
+    ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
+
+x86_64: BranchMul64 U:G:32, U:G:64, UZD:G:64 /branch
     ResCond, Tmp, Tmp
+
+arm64: BranchMul64 U:G:32, U:G:64, U:G:64, S:G:64, S:G:64, ZD:G:64 /branch
+    ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
 BranchSub32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp
@@ -637,7 +644,7 @@ MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, UD:F:64
 
 MoveDoubleConditionallyTest32 U:G:32, U:G:32, U:G:32, U:F:64, UD:F:64
     ResCond, Tmp, Tmp, Tmp, Tmp
-    ResCond, Tmp, Imm, Tmp, Tmp
+    x86: ResCond, Tmp, Imm, Tmp, Tmp
 
 64: MoveDoubleConditionallyTest64 U:G:32, U:G:64, U:G:64, U:F:64, UD:F:64
     ResCond, Tmp, Tmp, Tmp, Tmp

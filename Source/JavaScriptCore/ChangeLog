@@ -1,5 +1,42 @@
 2016-01-10  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Make branchMul functional in ARM B3 and minor fixes
+        https://bugs.webkit.org/show_bug.cgi?id=152889
+
+        Reviewed by Mark Lam.
+
+        ARM64 does not have a "S" version of MUL setting the flags.
+        What we do is abstract that in the MacroAssembler. The problem
+        is that form requires scratch registers.
+
+        For simplicity, I just exposed the two scratch registers
+        for Air. Filip already added the concept of Scratch role,
+        all I needed was to expose it for opcodes.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchMul32):
+        (JSC::MacroAssemblerARM64::branchMul64):
+        Expose a version with the scratch registers as arguments.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        Add the new form of CheckMul lowering.
+
+        * b3/air/AirOpcode.opcodes:
+        Expose the new BranchMuls.
+        Remove all the Test variants that use immediates
+        since Air can't handle those immediates correctly yet.
+
+        * b3/air/opcode_generator.rb:
+        Expose the Scratch role.
+
+        * b3/testb3.cpp:
+        (JSC::B3::testPatchpointLotsOfLateAnys):
+        Ooops, the scratch registers were not clobbered. We were just lucky
+        on x86.
+
+2016-01-10  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] B3 is unable to do function calls on ARM64
         https://bugs.webkit.org/show_bug.cgi?id=152895
 
