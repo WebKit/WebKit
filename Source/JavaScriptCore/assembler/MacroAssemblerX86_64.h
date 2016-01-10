@@ -722,6 +722,16 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branch64(RelationalCondition cond, RegisterID left, TrustedImm32 right)
+    {
+        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value) {
+            m_assembler.testq_rr(left, left);
+            return Jump(m_assembler.jCC(x86Condition(cond)));
+        }
+        m_assembler.cmpq_ir(right.m_value, left);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
     Jump branch64(RelationalCondition cond, RegisterID left, TrustedImm64 right)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value) {
@@ -747,6 +757,12 @@ public:
     Jump branch64(RelationalCondition cond, Address left, RegisterID right)
     {
         m_assembler.cmpq_rm(right, left.offset, left.base);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    Jump branch64(RelationalCondition cond, Address left, TrustedImm32 right)
+    {
+        m_assembler.cmpq_im(right.m_value, left.offset, left.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 

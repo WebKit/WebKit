@@ -8868,6 +8868,134 @@ void testPowDoubleByIntegerLoop(double xOperand, int32_t yOperand)
     CHECK(isIdentical(compileAndRun<double>(proc, xOperand, yOperand), pow(xOperand, yOperand)));
 }
 
+void testBranch64Equal(int64_t left, int64_t right)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(proc, Equal, Origin(), arg1, arg2),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    bool trueResult = true;
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            thenCase->appendNew<ConstPtrValue>(proc, Origin(), &trueResult)));
+
+    bool elseResult = false;
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            elseCase->appendNew<ConstPtrValue>(proc, Origin(), &elseResult)));
+
+    CHECK(compileAndRun<bool>(proc, left, right) == (left == right));
+}
+
+void testBranch64EqualImm(int64_t left, int64_t right)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ConstPtrValue>(proc, Origin(), right);
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(proc, Equal, Origin(), arg1, arg2),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    bool trueResult = true;
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            thenCase->appendNew<ConstPtrValue>(proc, Origin(), &trueResult)));
+
+    bool elseResult = false;
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            elseCase->appendNew<ConstPtrValue>(proc, Origin(), &elseResult)));
+
+    CHECK(compileAndRun<bool>(proc, left) == (left == right));
+}
+
+void testBranch64EqualMem(int64_t left, int64_t right)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* arg1 = root->appendNew<MemoryValue>(
+        proc, Load, pointerType(), Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(proc, Equal, Origin(), arg1, arg2),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    bool trueResult = true;
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            thenCase->appendNew<ConstPtrValue>(proc, Origin(), &trueResult)));
+
+    bool elseResult = false;
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            elseCase->appendNew<ConstPtrValue>(proc, Origin(), &elseResult)));
+
+    CHECK(compileAndRun<bool>(proc, &left, right) == (left == right));
+}
+
+void testBranch64EqualMemImm(int64_t left, int64_t right)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* arg1 = root->appendNew<MemoryValue>(
+        proc, Load, pointerType(), Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg2 = root->appendNew<ConstPtrValue>(proc, Origin(), right);
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(proc, Equal, Origin(), arg1, arg2),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    bool trueResult = true;
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            thenCase->appendNew<ConstPtrValue>(proc, Origin(), &trueResult)));
+
+    bool elseResult = false;
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            elseCase->appendNew<ConstPtrValue>(proc, Origin(), &elseResult)));
+
+    CHECK(compileAndRun<bool>(proc, &left) == (left == right));
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -10100,6 +10228,27 @@ void run(const char* filter)
     RUN(testSelectFold(43));
     RUN(testSelectInvert());
     RUN_BINARY(testPowDoubleByIntegerLoop, floatingPointOperands<double>(), int64Operands());
+
+    RUN(testBranch64Equal(0, 0));
+    RUN(testBranch64Equal(1, 1));
+    RUN(testBranch64Equal(-1, -1));
+    RUN(testBranch64Equal(1, -1));
+    RUN(testBranch64Equal(-1, 1));
+    RUN(testBranch64EqualImm(0, 0));
+    RUN(testBranch64EqualImm(1, 1));
+    RUN(testBranch64EqualImm(-1, -1));
+    RUN(testBranch64EqualImm(1, -1));
+    RUN(testBranch64EqualImm(-1, 1));
+    RUN(testBranch64EqualMem(0, 0));
+    RUN(testBranch64EqualMem(1, 1));
+    RUN(testBranch64EqualMem(-1, -1));
+    RUN(testBranch64EqualMem(1, -1));
+    RUN(testBranch64EqualMem(-1, 1));
+    RUN(testBranch64EqualMemImm(0, 0));
+    RUN(testBranch64EqualMemImm(1, 1));
+    RUN(testBranch64EqualMemImm(-1, -1));
+    RUN(testBranch64EqualMemImm(1, -1));
+    RUN(testBranch64EqualMemImm(-1, 1));
 
     if (tasks.isEmpty())
         usage();

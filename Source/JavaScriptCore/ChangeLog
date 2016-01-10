@@ -1,3 +1,25 @@
+2016-01-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should support Branch64 with immediates
+        https://bugs.webkit.org/show_bug.cgi?id=152951
+
+        Reviewed by Oliver Hunt.
+
+        This doesn't significantly improve performance on any benchmarks, but it's great to get this
+        obvious omission out of the way.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branch64):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testPowDoubleByIntegerLoop):
+        (JSC::B3::testBranch64Equal):
+        (JSC::B3::testBranch64EqualImm):
+        (JSC::B3::testBranch64EqualMem):
+        (JSC::B3::testBranch64EqualMemImm):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+
 2016-01-09  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Allow overriding the frameworks directory independently of using a staging install path
