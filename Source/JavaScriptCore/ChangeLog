@@ -1,3 +1,20 @@
+2016-01-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] B3 is unable to do function calls on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=152895
+
+        Reviewed by Mark Lam.
+
+        Apparently iOS does not follow the ARM64 ABI for function calls.
+        Instead of giving each value a 8 bytes slot, it must be packed
+        while preserving alignment.
+
+        This patch adds a #ifdef to make function calls functional.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::marshallCCallArgument):
+        (JSC::B3::Air::LowerToAir::lower):
+
 2016-01-09  Filip Pizlo  <fpizlo@apple.com>
 
         Air should support Branch64 with immediates

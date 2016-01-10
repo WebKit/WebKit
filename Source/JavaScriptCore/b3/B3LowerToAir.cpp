@@ -1542,7 +1542,7 @@ private:
     }
 
     template<typename BankInfo>
-    Arg marshallCCallArgument(unsigned& argumentCount, unsigned& stackCount, Value* child)
+    Arg marshallCCallArgument(unsigned& argumentCount, unsigned& stackOffset, Value* child)
     {
         unsigned argumentIndex = argumentCount++;
         if (argumentIndex < BankInfo::numberOfArgumentRegisters) {
@@ -1551,13 +1551,16 @@ private:
             return result;
         }
 
-        // Compute the place that this goes onto the stack. On X86_64 and probably other calling
-        // conventions that don't involve obsolete computers and operating systems, sub-pointer-size
-        // arguments are still given a full pointer-sized stack slot. Hence we don't have to consider
-        // the type of the argument when deducing the stack index.
-        unsigned stackIndex = stackCount++;
-
-        Arg result = Arg::callArg(stackIndex * sizeof(void*));
+#if CPU(ARM64) && PLATFORM(IOS)
+        // iOS does not follow the ARM64 ABI regarding function calls.
+        // Arguments must be packed.
+        unsigned slotSize = sizeofType(child->type());
+        stackOffset = WTF::roundUpToMultipleOf(slotSize, stackOffset);
+#else
+        unsigned slotSize = sizeof(void*);
+#endif
+        Arg result = Arg::callArg(stackOffset);
+        stackOffset += slotSize;
         
         // Put the code for storing the argument before anything else. This significantly eases the
         // burden on the register allocator. If we could, we'd hoist these stores as far as
@@ -1945,18 +1948,18 @@ private:
             // this, Air does not know what the convention is; it just takes our word for it.
             unsigned gpArgumentCount = 0;
             unsigned fpArgumentCount = 0;
-            unsigned stackCount = 0;
+            unsigned stackOffset = 0;
             for (unsigned i = 1; i < cCall->numChildren(); ++i) {
                 Value* argChild = cCall->child(i);
                 Arg arg;
                 
                 switch (Arg::typeForB3Type(argChild->type())) {
                 case Arg::GP:
-                    arg = marshallCCallArgument<GPRInfo>(gpArgumentCount, stackCount, argChild);
+                    arg = marshallCCallArgument<GPRInfo>(gpArgumentCount, stackOffset, argChild);
                     break;
 
                 case Arg::FP:
-                    arg = marshallCCallArgument<FPRInfo>(fpArgumentCount, stackCount, argChild);
+                    arg = marshallCCallArgument<FPRInfo>(fpArgumentCount, stackOffset, argChild);
                     break;
                 }
 
