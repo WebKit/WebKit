@@ -64,6 +64,8 @@ public:
 
     virtual bool isCommittingChanges() const { return false; }
 
+    virtual bool isUsingDisplayListDrawing(PlatformCALayer*) const { return false; }
+
 protected:
     virtual ~PlatformCALayerClient() {}
 };

@@ -1,3 +1,54 @@
+2016-01-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Hook up display-list drawing in GraphicsLayerCA
+        https://bugs.webkit.org/show_bug.cgi?id=152946
+
+        Reviewed by Zalan Bujtas.
+
+        Have GraphicsLayerCA hold a DisplayList. If enabled, do a display-list record
+        in GraphicsLayerCA::recursiveCommitChanges(), and a playback in GraphicsLayerCA::platformCALayerPaintContents().
+        
+        GraphicsLayerCA needs to maintain a m_hasEverPainted flag to know to do a full record
+        at first paint (when there are no dirty rects).
+        
+        Plumb 'isUsingDisplayListDrawing' through to TileGrid via PlatformCALayer{Client}
+        so that we can decorate the tile paint counters with an outline.
+        
+        Have RenderLayerCompositor push the displayListDrawingEnabled state down through
+        RenderLayerBackings to GraphicsLayers.
+        
+        Convert RenderLayerCompositor to use initializers.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::usesDisplayListDrawing):
+        (WebCore::GraphicsLayer::setUsesDisplayListDrawing):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::setUsesDisplayListDrawing):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+        (WebCore::GraphicsLayerCA::updateDrawsContent):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::isUsingDisplayListDrawing):
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::platformCALayerShowRepaintCounter):
+        (WebCore::TileGrid::isUsingDisplayListDrawing):
+        * platform/graphics/ca/TileGrid.h:
+        * platform/graphics/displaylists/DisplayList.h: Sadly need to include DisplayListItems.h
+        to get things to compile. I wasn't able to avoid this even when making functions non-inline.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+        * rendering/RenderLayerCompositor.h:
+
 2016-01-09  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r194426): First email field is not autofilled on amazon.com

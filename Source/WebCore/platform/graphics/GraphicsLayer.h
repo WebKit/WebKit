@@ -345,6 +345,9 @@ public:
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     virtual void setAcceleratesDrawing(bool b) { m_acceleratesDrawing = b; }
 
+    bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; }
+    virtual void setUsesDisplayListDrawing(bool b) { m_usesDisplayListDrawing = b; }
+
     bool needsBackdrop() const { return !m_backdropFilters.isEmpty(); }
 
     // The color used to paint the layer background. Pass an invalid color to remove it.
@@ -606,6 +609,7 @@ protected:
     bool m_drawsContent : 1;
     bool m_contentsVisible : 1;
     bool m_acceleratesDrawing : 1;
+    bool m_usesDisplayListDrawing : 1;
     bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
     bool m_showDebugBorder : 1;
     bool m_showRepaintCounter : 1;

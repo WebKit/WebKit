@@ -143,6 +143,7 @@ private:
     virtual bool platformCALayerContentsOpaque() const override;
     virtual bool platformCALayerDrawsContent() const override { return true; }
     virtual float platformCALayerDeviceScaleFactor() const override;
+    virtual bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
 
     TileController& m_controller;
     Ref<PlatformCALayer> m_containerLayer;

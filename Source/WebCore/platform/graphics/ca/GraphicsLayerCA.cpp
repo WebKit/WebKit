@@ -28,6 +28,8 @@
 #include "GraphicsLayerCA.h"
 
 #include "Animation.h"
+#include "DisplayListRecorder.h"
+#include "DisplayListReplayer.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsLayerFactory.h"
@@ -360,6 +362,7 @@ GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     , m_usingBackdropLayerType(false)
     , m_isViewportConstrained(false)
     , m_intersectsCoverageRect(false)
+    , m_hasEverPainted(false)
 {
 }
 
@@ -664,6 +667,14 @@ void GraphicsLayerCA::setAcceleratesDrawing(bool acceleratesDrawing)
 
     GraphicsLayer::setAcceleratesDrawing(acceleratesDrawing);
     noteLayerPropertyChanged(AcceleratesDrawingChanged);
+}
+
+void GraphicsLayerCA::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
+{
+    if (usesDisplayListDrawing == m_usesDisplayListDrawing)
+        return;
+
+    GraphicsLayer::setUsesDisplayListDrawing(usesDisplayListDrawing);
 }
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
@@ -1384,6 +1395,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
         maskLayer->commitLayerChangesAfterSublayers(childCommitState);
 
+    bool hadDirtyRects = m_uncommittedChanges & DirtyRectsChanged;
     commitLayerChangesAfterSublayers(childCommitState);
 
     if (affectedByTransformAnimation && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
@@ -1391,6 +1403,24 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 
     if (hadChanges)
         client().didCommitChangesForLayer(this);
+
+    if (usesDisplayListDrawing() && m_drawsContent && (!m_hasEverPainted || hadDirtyRects)) {
+#ifdef LOG_RECORDING_TIME
+        double startTime = currentTime();
+#endif
+        m_displayList = std::make_unique<DisplayList::DisplayList>();
+        
+        FloatRect initialClip(boundsOrigin(), size());
+
+        GraphicsContext context;
+        DisplayList::Recorder recorder(context, *m_displayList, initialClip, AffineTransform());
+        context.setDisplayListRecorder(&recorder);
+        paintGraphicsLayerContents(context, FloatRect(FloatPoint(), size()));
+#ifdef LOG_RECORDING_TIME
+        double duration = currentTime() - startTime;
+        WTFLogAlways("Recording took %.5fms", duration * 1000.0);
+#endif
+    }
 }
 
 void GraphicsLayerCA::platformCALayerCustomSublayersChanged(PlatformCALayer*)
@@ -1410,6 +1440,12 @@ bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platfor
 
 void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsContext& context, const FloatRect& clip)
 {
+    m_hasEverPainted = true;
+    if (m_displayList) {
+        DisplayList::Replayer replayer(context, *m_displayList);
+        replayer.replay(clip);
+        return;
+    }
     paintGraphicsLayerContents(context, clip);
 }
 
@@ -2021,9 +2057,10 @@ GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose(
 
 void GraphicsLayerCA::updateDrawsContent()
 {
-    if (m_drawsContent)
+    if (m_drawsContent) {
         m_layer->setNeedsDisplay();
-    else {
+        m_hasEverPainted = false;
+    } else {
         m_layer->setContents(0);
         if (m_layerClones) {
             LayerMap::const_iterator end = m_layerClones->end();
@@ -3308,6 +3345,13 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
         dumpInnerLayer(textStream, "contents layer", m_contentsLayer.get(), indent, behavior);
         dumpInnerLayer(textStream, "contents shape mask layer", m_contentsShapeMaskLayer.get(), indent, behavior);
         dumpInnerLayer(textStream, "backdrop layer", m_backdropLayer.get(), indent, behavior);
+    }
+
+    if (behavior & LayerTreeAsTextDebug) {
+        writeIndent(textStream, indent + 1);
+        textStream << "(acceleratetes drawing " << m_acceleratesDrawing << ")\n";
+        writeIndent(textStream, indent + 1);
+        textStream << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
     }
 }
 

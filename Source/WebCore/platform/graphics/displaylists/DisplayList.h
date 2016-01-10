@@ -26,6 +26,7 @@
 #ifndef DisplayList_h
 #define DisplayList_h
 
+#include "DisplayListItems.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>

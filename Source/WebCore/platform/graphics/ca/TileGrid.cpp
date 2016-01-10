@@ -693,7 +693,12 @@ bool TileGrid::platformCALayerShowDebugBorders() const
 
 bool TileGrid::platformCALayerShowRepaintCounter(PlatformCALayer*) const
 {
-    return m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(0);
+    return m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(nullptr);
+}
+
+bool TileGrid::isUsingDisplayListDrawing(PlatformCALayer*) const
+{
+    return m_controller.rootLayer().owner()->isUsingDisplayListDrawing(nullptr);
 }
 
 bool TileGrid::platformCALayerContentsOpaque() const

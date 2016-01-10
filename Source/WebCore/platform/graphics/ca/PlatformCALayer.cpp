@@ -27,6 +27,7 @@
 #include "PlatformCALayer.h"
 
 #include "LayerPool.h"
+#include "PlatformCALayerClient.h"
 #include "TextStream.h"
 #include <wtf/StringExtras.h>
 
@@ -84,6 +85,12 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
         CGContextSetRGBFillColor(context, 1, 0, 0, 1);
     else
         CGContextSetRGBFillColor(context, 1, 1, 1, 1);
+
+    if (platformCALayer->owner()->isUsingDisplayListDrawing(platformCALayer)) {
+        CGContextSetRGBStrokeColor(context, 0, 0, 0, 0.65);
+        CGContextSetLineWidth(context, 2);
+        CGContextStrokeRect(context, indicatorBox);
+    }
     
     platformCALayer->drawTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, CGSizeMake(1, -1), 22, text, strlen(text));
     

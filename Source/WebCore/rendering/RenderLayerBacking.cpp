@@ -176,7 +176,8 @@ std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const Str
 #endif
 #if PLATFORM(COCOA) && USE(CA)
     graphicsLayer->setAcceleratesDrawing(compositor().acceleratedDrawingEnabled());
-#endif    
+    graphicsLayer->setUsesDisplayListDrawing(compositor().displayListDrawingEnabled());
+#endif
     
     return graphicsLayer;
 }
