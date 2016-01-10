@@ -1,3 +1,14 @@
+2016-01-10  Johan K. Jensen  <jj@johanjensen.dk>
+
+        Web Inspector: Dashboard log message count doesn't include console.time messages
+        https://bugs.webkit.org/show_bug.cgi?id=151280
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/DefaultDashboard.js:
+        (WebInspector.DefaultDashboard.prototype._incrementConsoleMessageType):
+        Make Info and Debug levels increment the log count.
+
 2016-01-09  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Allow overriding the frameworks directory independently of using a staging install path
