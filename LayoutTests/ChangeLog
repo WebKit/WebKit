@@ -1,3 +1,16 @@
+2016-01-09  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r194426): First email field is not autofilled on amazon.com
+        https://bugs.webkit.org/show_bug.cgi?id=152945
+        <rdar://problem/24082914>
+
+        Reviewed by Simon Fraser.
+
+        r194426 missed marking the m_layoutRoot for layout while converting to full layout (it only marked the new layout root).
+
+        * fast/forms/multiple-subtree-layout-failure-expected.html: Added.
+        * fast/forms/multiple-subtree-layout-failure.html: Added.
+
 2016-01-08  Zalan Bujtas  <zalan@apple.com>
 
         Absolute positioning -webkit-search-cancel-button crashes Safari.
