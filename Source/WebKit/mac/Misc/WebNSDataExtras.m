@@ -92,10 +92,10 @@
     }
     if (somethingChanged) {
         if (useUniCharPtr) {
-            result = (NSString *)CFMakeCollectable(CFStringCreateWithCharactersNoCopy(NULL, uniCharPtr, len, NULL));
+            result = (NSString *)CFStringCreateWithCharactersNoCopy(NULL, uniCharPtr, len, NULL);
         } 
         else {
-            result = (NSString *)CFMakeCollectable(CFStringCreateWithCStringNoCopy(NULL, charPtr, kCFStringEncodingISOLatin1, NULL));
+            result = (NSString *)CFStringCreateWithCStringNoCopy(NULL, charPtr, kCFStringEncodingISOLatin1, NULL);
         }
     } 
     else {
@@ -340,7 +340,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
             else {
                 // Merge the continuation of the previous header
                 NSString *currentValue = [headerFields objectForKey:lastKey];
-                NSString *newValue = (NSString *)CFMakeCollectable(CFStringCreateWithBytes(NULL, line, lineLength, kCFStringEncodingISOLatin1, FALSE));
+                NSString *newValue = (NSString *)CFStringCreateWithBytes(NULL, line, lineLength, kCFStringEncodingISOLatin1, FALSE);
                 ASSERT(currentValue);
                 ASSERT(newValue);
                 NSString *mergedValue = [[NSString alloc] initWithFormat:@"%@%@", currentValue, newValue];
@@ -361,7 +361,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
                 continue;
             }
             else {
-                lastKey = (NSString *)CFMakeCollectable(CFStringCreateWithBytes(NULL, line, colon - line, kCFStringEncodingISOLatin1, FALSE));
+                lastKey = (NSString *)CFStringCreateWithBytes(NULL, line, colon - line, kCFStringEncodingISOLatin1, FALSE);
                 [lastKey autorelease];
                 NSString *value = [lastKey _web_capitalizeRFC822HeaderFieldName];
                 lastKey = value;
@@ -375,7 +375,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
                     [value autorelease];
                 }
                 else {
-                    value = (NSString *)CFMakeCollectable(CFStringCreateWithBytes(NULL, colon, eol-colon, kCFStringEncodingISOLatin1, FALSE));
+                    value = (NSString *)CFStringCreateWithBytes(NULL, colon, eol-colon, kCFStringEncodingISOLatin1, FALSE);
                     [value autorelease];
                 }
                 NSString *oldValue = [headerFields objectForKey:lastKey];

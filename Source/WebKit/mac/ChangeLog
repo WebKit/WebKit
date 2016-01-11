@@ -1,3 +1,16 @@
+2016-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of CFMakeCollectable, it is a no-op
+        https://bugs.webkit.org/show_bug.cgi?id=152988
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebNSDataExtras.m:
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]):
+        (-[NSData _webkit_parseRFC822HeaderFields]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController initWithDocumentView:]):
+
 2016-01-10  Andreas Kling  <akling@apple.com>
 
         Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL cont'd

@@ -38,7 +38,7 @@ using namespace WebKit;
 - (NSObject *)_web_createTarget
 {
     const String& string = static_cast<API::String*>(&self._apiObject)->string();
-    return (NSString *)CFMakeCollectable(string.createCFString().leakRef());
+    return (NSString *)string.createCFString().leakRef();
 }
 
 #pragma mark NSCopying protocol implementation

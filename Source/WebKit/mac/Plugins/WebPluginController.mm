@@ -182,7 +182,7 @@ static void initializeAudioSession()
         return nil;
     _documentView = view;
     _views = [[NSMutableArray alloc] init];
-    _checksInProgress = (NSMutableSet *)CFMakeCollectable(CFSetCreateMutable(NULL, 0, NULL));
+    _checksInProgress = (NSMutableSet *)CFSetCreateMutable(NULL, 0, NULL);
     return self;
 }
 

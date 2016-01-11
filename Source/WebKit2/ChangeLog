@@ -1,3 +1,14 @@
+2016-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of CFMakeCollectable, it is a no-op
+        https://bugs.webkit.org/show_bug.cgi?id=152988
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Cocoa/WKNSString.mm:
+        * Shared/Cocoa/WKNSURL.mm:
+        (-[WKNSURL _web_createTarget]):
+
 2016-01-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194866.
