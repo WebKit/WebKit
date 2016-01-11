@@ -33,18 +33,17 @@ namespace WebCore {
 
 class CSSUnsetValue : public CSSValue {
 public:
-    static Ref<CSSUnsetValue> create()
-    {
-        return adoptRef(*new CSSUnsetValue);
-    }
-
     String customCSSText() const;
 
     bool equals(const CSSUnsetValue&) const { return true; }
 
+#if COMPILER(MSVC)
+    // FIXME: This should be private, but for some reason MSVC then fails to invoke it from LazyNeverDestroyed::construct.
+public:
+#else
 private:
     friend class LazyNeverDestroyed<CSSUnsetValue>;
-
+#endif
     CSSUnsetValue()
         : CSSValue(UnsetClass)
     {

@@ -1880,9 +1880,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
         valueToApply = resolvedVariableValue(id, *downcast<CSSVariableDependentValue>(value));
         if (!valueToApply) {
             if (CSSProperty::isInheritedProperty(id))
-                valueToApply = CSSInheritedValue::create();
+                valueToApply = CSSValuePool::singleton().createInheritedValue();
             else
-                valueToApply = CSSInitialValue::createExplicit();
+                valueToApply = CSSValuePool::singleton().createExplicitInitialValue();
         }
     }
 

@@ -1,5 +1,25 @@
 2016-01-11  Andreas Kling  <akling@apple.com>
 
+        Fix MSVC build after r194848.
+
+        Since MSVC refuses to recognize the friendship between LazyNeverDestroyed
+        and some CSS*Value classes, make their constructors public in MSVC builds.
+
+        Added FIXME's to make it look extra gross.
+
+        * css/CSSInheritedValue.h:
+        (WebCore::CSSInheritedValue::create): Deleted.
+        * css/CSSInitialValue.h:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSRevertValue.h:
+        (WebCore::CSSRevertValue::create): Deleted.
+        * css/CSSUnsetValue.h:
+        (WebCore::CSSUnsetValue::create): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
+2016-01-11  Andreas Kling  <akling@apple.com>
+
         CSSValuePool should use nonfragmented storage for eternal caches.
         <https://webkit.org/b/152960>
 
