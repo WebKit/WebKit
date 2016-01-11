@@ -1,3 +1,58 @@
+2016-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Cleanup ScrollbarThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=152830
+
+        Reviewed by Michael Catanzaro.
+
+        Use a common path for GTK+ 3.19 and previous versions, simplifying
+        the code and removing a lot of ifdefs. Use always a new
+        GtkStyleContext, but when painting cache the newly created one so
+        all paint methods use that one. We were also caching some theme
+        properties assuming they don't change unless the theme changes,
+        but some of them can have different values depending on the state,
+        for example, when hovered or pressed. Those properties are now
+        only cached when we create a new GtkStyleContext.
+        The method updateScrollbarsFrameThickness() has also been removed,
+        since the Scrollbar constructor already initializes the frame rect
+        using the scrollbarThickness(). This method was not doing anything
+        anyway, since that was called on the constructor of the theme,
+        when there were no scrollbars registered. This also means we no
+        longer need to track registered/unregistered scrollbars.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::backButtonRect): Use the cached
+        GtkStyleContext and properties or create a new.
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::trackRect): Ditto.
+        (WebCore::orientationStyleClass):
+        (WebCore::ScrollbarThemeGtk::getOrCreateStyleContext): Create a
+        new GtkStyleContext for the scrollbar if there isn't a cached
+        one. Also initialize the properties that depend on the state.
+        (WebCore::createChildStyleContext): Create a new GtkStyleContext
+        from a parent one.
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties): Get the
+        properties that can only change when the theme changes.
+        (WebCore::ScrollbarThemeGtk::thumbRect): Use the cached
+        GtkStyleContext and properties or create a new.
+        (WebCore::adjustRectAccordingToMargin): Use always the
+        GtkStyleContext state instead of receiving it and setting it again.
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground): Get or create
+        a GtkStyleContext for the scrollbar and create a child one for the trough.
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground): Use the
+        cached GtkStyleContext or create a new one.
+        (WebCore::ScrollbarThemeGtk::paintThumb): Get or create a
+        GtkStyleContext for the scrollbar and create a child ones for
+        trough and slider.
+        (WebCore::ScrollbarThemeGtk::paintButton): Get or create a
+        GtkStyleContext for the scrollbar and create a child one for the button.
+        (WebCore::ScrollbarThemeGtk::paint): Create a GtkStyleContext and
+        cache it temporarily using TemporaryChange until the method finishes.
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness): Use the cached
+        GtkStyleContext and properties or create a new.
+        (WebCore::ScrollbarThemeGtk::buttonSize): Ditto.
+        * platform/gtk/ScrollbarThemeGtk.h:
+
 2016-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Parsing failures cause use of incomplete fonts
