@@ -333,15 +333,16 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
 
                 // Find out the baseline. The baseline is set on the first row in a rowspan.
                 if (cell->isBaselineAligned()) {
-                    LayoutUnit baselinePosition = cell->cellBaselinePosition();
-                    if (baselinePosition > cell->borderAndPaddingBefore()) {
+                    LayoutUnit baselinePosition = cell->cellBaselinePosition() - cell->intrinsicPaddingBefore();
+                    LayoutUnit borderAndComputedPaddingBefore = cell->borderAndPaddingBefore() - cell->intrinsicPaddingBefore();
+                    if (baselinePosition > borderAndComputedPaddingBefore) {
                         m_grid[cellStartRow].baseline = std::max(m_grid[cellStartRow].baseline, baselinePosition);
                         // The descent of a cell that spans multiple rows does not affect the height of the first row it spans, so don't let it
                         // become the baseline descent applied to the rest of the row. Also we don't account for the baseline descent of
                         // non-spanning cells when computing a spanning cell's extent.
                         LayoutUnit cellStartRowBaselineDescent = 0;
                         if (cell->rowSpan() == 1) {
-                            baselineDescent = std::max(baselineDescent, cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
+                            baselineDescent = std::max(baselineDescent, cellLogicalHeight - baselinePosition);
                             cellStartRowBaselineDescent = baselineDescent;
                         }
                         m_rowPos[cellStartRow + 1] = std::max(m_rowPos[cellStartRow + 1], m_rowPos[cellStartRow] + m_grid[cellStartRow].baseline + cellStartRowBaselineDescent);

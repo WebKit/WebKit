@@ -1,3 +1,19 @@
+2016-01-11  Zalan Bujtas  <zalan@apple.com>
+
+        Padding added to table-cell element after font-size change.
+        https://bugs.webkit.org/show_bug.cgi?id=152796
+
+        Reviewed by David Hyatt.
+
+        Do not include intrinsicPaddingBefore value while figuring out the height of a row.
+        In RenderTableSection::calcRowLogicalHeight() we are interested in the height of the content
+        without the additional padding (normal padding is included).
+
+        Test: fast/table/table-baseline-grows.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+
 2016-01-11  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add SPI to opt out a URL scheme from the memory cache

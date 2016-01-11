@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that baseline position is reset properly after font size change.</title>
+<style>
+td {
+	font-size: 30px;
+	vertical-align: baseline;
+}
+</style>
+</head>
+<body><table><tr><td id=first>foo</td><td>bar</td></tr></table></body>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var cell = document.getElementById("first"); 
+setTimeout(function() {
+    cell.style.fontSize = "260px";
+    cell.offsetWidth;
+    cell.style.fontSize = "30px";
+    if (window.testRunner)
+        testRunner.notifyDone(); 
+  }, 0);
+</script>
+</html>

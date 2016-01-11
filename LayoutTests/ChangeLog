@@ -1,3 +1,18 @@
+2016-01-11  Zalan Bujtas  <zalan@apple.com>
+
+        Padding added to table-cell element after font-size change.
+        https://bugs.webkit.org/show_bug.cgi?id=152796
+
+        Reviewed by David Hyatt.
+
+        Do not include intrinsicPaddingBefore value while figuring out the height of a row.
+        In RenderTableSection::calcRowLogicalHeight() we are interested in the height of the content
+        without the additional padding (normal padding is included).
+
+        * TestExpectations: This test fails even without the patch when Ahem font is not used.
+        * fast/table/table-baseline-grows-expected.html: Added.
+        * fast/table/table-baseline-grows.html: Added.
+
 2016-01-11  Dave Hyatt  <hyatt@apple.com>
 
         Picture element needs to work with the preload scanner and select the correct
