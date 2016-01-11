@@ -1,3 +1,16 @@
+2016-01-11  Andreas Kling  <akling@apple.com>
+
+        NeverDestroyed should relax adoption requirements on all RefCountedBase subclasses.
+        <https://webkit.org/b/152960>
+
+        Reviewed by Antti Koivisto.
+
+        Instead of relaxing on subclasses of RefCounted<T>, relax on subclasses of RefCountedBase.
+        This allows e.g NeverDestroyed<CSSPrimitiveValue> to relax its pointee despite the class
+        hierarchy starting with RefCounted<CSSValue> (not RefCounted<CSSPrimitiveValue>.)
+
+        * wtf/NeverDestroyed.h:
+
 2016-01-10  Saam barati  <sbarati@apple.com>
 
         Implement a sampling profiler

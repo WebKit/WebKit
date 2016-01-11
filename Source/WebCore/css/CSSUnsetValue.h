@@ -27,7 +27,7 @@
 #define CSSUnsetValue_h
 
 #include "CSSValue.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -43,6 +43,8 @@ public:
     bool equals(const CSSUnsetValue&) const { return true; }
 
 private:
+    friend class LazyNeverDestroyed<CSSUnsetValue>;
+
     CSSUnsetValue()
         : CSSValue(UnsetClass)
     {

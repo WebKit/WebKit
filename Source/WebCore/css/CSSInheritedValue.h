@@ -22,7 +22,7 @@
 #define CSSInheritedValue_h
 
 #include "CSSValue.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -38,6 +38,8 @@ public:
     bool equals(const CSSInheritedValue&) const { return true; }
 
 private:
+    friend class LazyNeverDestroyed<CSSInheritedValue>;
+
     CSSInheritedValue()
         : CSSValue(InheritedClass)
     {

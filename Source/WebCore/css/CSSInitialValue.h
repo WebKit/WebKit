@@ -22,7 +22,7 @@
 #define CSSInitialValue_h
 
 #include "CSSValue.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -44,6 +44,8 @@ public:
     bool equals(const CSSInitialValue&) const { return true; }
 
 private:
+    friend class LazyNeverDestroyed<CSSInitialValue>;
+
     CSSInitialValue(bool implicit)
         : CSSValue(InitialClass)
         , m_isImplicit(implicit)

@@ -30,7 +30,7 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -383,6 +383,9 @@ public:
 
     static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, unsigned short primitiveType, double value);
 private:
+    friend class CSSValuePool;
+    friend class LazyNeverDestroyed<CSSPrimitiveValue>;
+
     CSSPrimitiveValue(CSSValueID);
     CSSPrimitiveValue(CSSPropertyID);
     // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and operator cases.

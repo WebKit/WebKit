@@ -1,3 +1,33 @@
+2016-01-11  Andreas Kling  <akling@apple.com>
+
+        CSSValuePool should use nonfragmented storage for eternal caches.
+        <https://webkit.org/b/152960>
+
+        Reviewed by Antti Koivisto.
+
+        Store all of the common cached CSS value objects in contiguous arrays
+        instead of lazily allocating them on the heap.
+
+        This reduces heap fragmentation (win) and removes indirection (win)
+
+        * css/CSSInheritedValue.h:
+        * css/CSSInitialValue.h:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSRevertValue.h:
+        * css/CSSUnsetValue.h:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::CSSValuePool):
+        (WebCore::CSSValuePool::createIdentifierValue):
+        (WebCore::CSSValuePool::createColorValue):
+        (WebCore::CSSValuePool::createValue):
+        (WebCore::CSSValuePool::drain): Deleted.
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createInheritedValue):
+        (WebCore::CSSValuePool::createImplicitInitialValue):
+        (WebCore::CSSValuePool::createExplicitInitialValue):
+        (WebCore::CSSValuePool::createUnsetValue):
+        (WebCore::CSSValuePool::createRevertValue):
+
 2016-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Cleanup RenderThemeGtk
