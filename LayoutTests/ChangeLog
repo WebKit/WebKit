@@ -1,3 +1,12 @@
+2016-01-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping unsupported test pageoverlay/overlay-small-frame-mouse-events.html on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152130
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-01-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] W3C CSS2.1 anonymous table tests are failing
