@@ -337,7 +337,7 @@ sub determineArchitecture
                 $architecture = 'armv7';
             }
         }
-    } elsif (isEfl() || isGtk()) {
+    } elsif (isCMakeBuild()) {
         my $host_processor = "";
         $host_processor = `cmake --system-information | grep CMAKE_SYSTEM_PROCESSOR`;
         if ($host_processor =~ m/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {

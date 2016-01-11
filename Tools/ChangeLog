@@ -1,3 +1,13 @@
+2016-01-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [webkitdirs] Use CMake to determine architecture on isCMakeBuild()
+        https://bugs.webkit.org/show_bug.cgi?id=152959
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+
 2016-01-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] W3C CSS2.1 anonymous table tests are failing
