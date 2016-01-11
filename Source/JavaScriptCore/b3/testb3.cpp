@@ -6426,6 +6426,50 @@ void testSimpleCheck()
     CHECK(invoke<int>(*code, 1) == 42);
 }
 
+void testCheckFalse()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    CheckValue* check = root->appendNew<CheckValue>(
+        proc, Check, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    check->setGenerator(
+        [&] (CCallHelpers&, const StackmapGenerationParams&) {
+            CHECK(!"This should not have executed");
+        });
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    
+    CHECK(invoke<int>(*code) == 0);
+}
+
+void testCheckTrue()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    CheckValue* check = root->appendNew<CheckValue>(
+        proc, Check, Origin(), root->appendNew<Const32Value>(proc, Origin(), 1));
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            CHECK(params.value()->opcode() == Patchpoint);
+            CHECK(!params.size());
+
+            // This should always work because a function this simple should never have callee
+            // saves.
+            jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    
+    CHECK(invoke<int>(*code) == 42);
+}
+
 void testCheckLessThan()
 {
     Procedure proc;
@@ -9883,6 +9927,8 @@ void run(const char* filter)
     RUN(testPatchpointWithStackArgumentResult());
     RUN(testPatchpointWithAnyResult());
     RUN(testSimpleCheck());
+    RUN(testCheckFalse());
+    RUN(testCheckTrue());
     RUN(testCheckLessThan());
     RUN(testCheckMegaCombo());
     RUN(testCheckTrickyMegaCombo());

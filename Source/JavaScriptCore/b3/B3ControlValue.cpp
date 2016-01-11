@@ -64,6 +64,19 @@ void ControlValue::convertToJump(BasicBlock* destination)
     this->owner = owner;
 }
 
+void ControlValue::convertToOops()
+{
+    unsigned index = this->index();
+    Origin origin = this->origin();
+    BasicBlock* owner = this->owner;
+
+    this->ControlValue::~ControlValue();
+
+    new (this) ControlValue(index, Oops, origin);
+
+    this->owner = owner;
+}
+
 void ControlValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     for (FrequentedBlock successor : m_successors)

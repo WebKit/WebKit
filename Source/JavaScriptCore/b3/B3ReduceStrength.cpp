@@ -1152,19 +1152,48 @@ private:
             }
             break;
 
-        case Check:
-            if (m_value->child(0)->isLikeZero()) {
-                m_value->replaceWithNop();
+        case Check: {
+            CheckValue* checkValue = m_value->as<CheckValue>();
+            
+            if (checkValue->child(0)->isLikeZero()) {
+                checkValue->replaceWithNop();
                 m_changed = true;
                 break;
             }
 
-            if (m_value->child(0)->opcode() == NotEqual && m_value->child(0)->child(1)->isInt(0)) {
-                m_value->child(0) = m_value->child(0)->child(0);
+            if (checkValue->child(0)->isLikeNonZero()) {
+                PatchpointValue* patchpoint =
+                    m_insertionSet.insert<PatchpointValue>(m_index, Void, checkValue->origin());
+
+                patchpoint->effects = Effects();
+                patchpoint->effects.reads = HeapRange::top();
+                patchpoint->effects.exitsSideways = true;
+
+                for (unsigned i = 1; i < checkValue->numChildren(); ++i)
+                    patchpoint->append(checkValue->constrainedChild(i));
+
+                patchpoint->setGenerator(checkValue->generator());
+
+                // Replace the rest of the block with an Oops.
+                for (unsigned i = m_index + 1; i < m_block->size() - 1; ++i)
+                    m_block->at(i)->replaceWithNop();
+                m_block->last()->as<ControlValue>()->convertToOops();
+                m_block->last()->setOrigin(checkValue->origin());
+
+                // Replace ourselves last.
+                checkValue->replaceWithNop();
+                m_changedCFG = true;
+                break;
+            }
+
+            if (checkValue->child(0)->opcode() == NotEqual
+                && checkValue->child(0)->child(1)->isInt(0)) {
+                checkValue->child(0) = checkValue->child(0)->child(0);
                 m_changed = true;
                 break;
             }
             break;
+        }
 
         case Branch: {
             ControlValue* branch = m_value->as<ControlValue>();

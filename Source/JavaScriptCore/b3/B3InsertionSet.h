@@ -62,7 +62,7 @@ public:
     }
 
     template<typename ValueType, typename... Arguments>
-    Value* insert(size_t index, Arguments... arguments);
+    ValueType* insert(size_t index, Arguments... arguments);
 
     Value* insertIntConstant(size_t index, Origin, Type, int64_t value);
     Value* insertIntConstant(size_t index, Value* likeValue, int64_t value);

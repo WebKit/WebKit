@@ -62,6 +62,7 @@ public:
     Opcode opcode() const { return m_opcode; }
 
     Origin origin() const { return m_origin; }
+    void setOrigin(Origin origin) { m_origin = origin; }
     
     Value*& child(unsigned index) { return m_children[index]; }
     Value* child(unsigned index) const { return m_children[index]; }

@@ -88,6 +88,7 @@ public:
     }
 
     void convertToJump(BasicBlock* destination);
+    void convertToOops();
 
 protected:
     JS_EXPORT_PRIVATE void dumpMeta(CommaPrinter&, PrintStream&) const override;

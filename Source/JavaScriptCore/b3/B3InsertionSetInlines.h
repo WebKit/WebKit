@@ -34,9 +34,9 @@
 namespace JSC { namespace B3 {
 
 template<typename ValueType, typename... Arguments>
-Value* InsertionSet::insert(size_t index, Arguments... arguments)
+ValueType* InsertionSet::insert(size_t index, Arguments... arguments)
 {
-    return insertValue(index, m_procedure.add<ValueType>(arguments...));
+    return static_cast<ValueType*>(insertValue(index, m_procedure.add<ValueType>(arguments...)));
 }
 
 } } // namespace JSC::B3

@@ -201,6 +201,8 @@ public:
         m_generator = createSharedTask<StackmapGeneratorFunction>(functor);
     }
 
+    RefPtr<StackmapGenerator> generator() const { return m_generator; }
+
     ConstrainedValue constrainedChild(unsigned index) const
     {
         return ConstrainedValue(child(index), index < m_reps.size() ? m_reps[index] : ValueRep::ColdAny);

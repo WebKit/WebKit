@@ -1,3 +1,31 @@
+2016-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Turn Check(true) into Patchpoint() followed by Oops
+        https://bugs.webkit.org/show_bug.cgi?id=152968
+
+        Reviewed by Benjamin Poulain.
+
+        This is an obvious strength reduction to have, especially since if we discover that the
+        input to the Check is true after some amount of B3 optimization, then stubbing out the rest
+        of the basic block unlocks CFG simplification opportunities.
+
+        It's also a proof-of-concept for the Check->Patchpoint conversion that I'll use once I
+        implement sinking (bug 152162).
+
+        * b3/B3ControlValue.cpp:
+        (JSC::B3::ControlValue::convertToJump):
+        (JSC::B3::ControlValue::convertToOops):
+        (JSC::B3::ControlValue::dumpMeta):
+        * b3/B3ControlValue.h:
+        * b3/B3InsertionSet.h:
+        (JSC::B3::InsertionSet::insertValue):
+        * b3/B3InsertionSetInlines.h:
+        (JSC::B3::InsertionSet::insert):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3StackmapValue.h:
+        * b3/B3Value.h:
+        * tests/stress/ftl-force-osr-exit.js: Added.
+
 2016-01-11  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] When resolving Stack arguments, use addressing from SP when addressing from FP is invalid
