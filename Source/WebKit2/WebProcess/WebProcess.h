@@ -219,7 +219,6 @@ private:
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsDisplayIsolated(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
-    void registerURLSchemeAsAlwaysRevalidated(const String&) const;
 #if ENABLE(CACHE_PARTITIONING)
     void registerURLSchemeAsCachePartitioned(const String&) const;
 #endif

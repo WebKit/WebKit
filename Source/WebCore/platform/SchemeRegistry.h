@@ -88,10 +88,9 @@ public:
     WEBCORE_EXPORT static void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
     WEBCORE_EXPORT static void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
     static bool schemeShouldBypassContentSecurityPolicy(const String& scheme);
-
-    // Schemes whose responses should never be cached.
-    WEBCORE_EXPORT static void registerURLSchemeAsAlwaysRevalidated(const String&);
-    static bool shouldAlwaysRevalidateURLScheme(const String&);
+    
+    // Schemes whose responses can be cached indefinitely.
+    static bool shouldCacheResponsesFromURLSchemeIndefinitely(const String& scheme);
 
 #if ENABLE(CACHE_PARTITIONING)
     // Schemes whose requests should be partitioned in the cache
