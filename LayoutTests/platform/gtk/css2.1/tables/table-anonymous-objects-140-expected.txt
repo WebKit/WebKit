@@ -1,0 +1,80 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x141
+  RenderBlock {html} at (0,0) size 800x141
+    RenderBody {body} at (8,13) size 784x120
+      RenderBlock {p} at (0,0) size 784x15
+        RenderText {#text} at (0,0) size 488x15
+          text run at (0,0) width 488: "There should be no red below, except for antialiasing issues."
+layer at (8,41) size 784x92
+  RenderBlock (relative positioned) {div} at (0,28) size 784x92
+layer at (8,41) size 784x92
+  RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x92 [color=#FF0000]
+    RenderTable {table} at (1,1) size 673x90
+      RenderTableSection (anonymous) at (0,0) size 673x90
+        RenderTableRow {tr} at (0,0) size 673x30
+          RenderTableCell {td} at (0,0) size 225x30 [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 192x30
+              text run at (0,0) width 192: "Row 1, Col 1"
+          RenderTableCell {td} at (224,0) size 225x30 [r=0 c=1 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 192x30
+              text run at (0,0) width 192: "Row 1, Col 2"
+          RenderTableCell {td} at (448,0) size 225x30 [r=0 c=2 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 192x30
+              text run at (0,0) width 192: "Row 1, Col 3"
+        RenderTableRow {tr} at (0,30) size 673x30
+          RenderTableCell {td} at (0,30) size 225x30 [r=1 c=0 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 208x30
+              text run at (0,0) width 208: "Row 22, Col 1"
+          RenderTableCell {td} at (224,30) size 225x30 [r=1 c=1 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 208x30
+              text run at (0,0) width 208: "Row 22, Col 2"
+          RenderTableCell {td} at (448,30) size 225x30 [r=1 c=2 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 208x30
+              text run at (0,0) width 208: "Row 22, Col 3"
+        RenderTableRow {tr} at (0,60) size 673x30
+          RenderTableCell {td} at (0,60) size 225x30 [r=2 c=0 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 224x30
+              text run at (0,0) width 224: "Row 333, Col 1"
+          RenderTableCell {td} at (224,60) size 225x30 [r=2 c=1 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 224x30
+              text run at (0,0) width 224: "Row 333, Col 2"
+          RenderTableCell {td} at (448,60) size 225x30 [r=2 c=2 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 224x30
+              text run at (0,0) width 224: "Row 333, Col 3"
+layer at (8,41) size 674x92
+  RenderBlock (positioned) zI: 2 {div} at (0,0) size 675x92 [color=#008000]
+    RenderTable {span} at (1,1) size 673x90
+      RenderTableSection {span} at (0,0) size 673x90
+        RenderTableRow {span} at (0,0) size 673x30
+          RenderTableCell {span} at (0,0) size 225x30 [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 192x30
+              text run at (0,0) width 192: "Row 1, Col 1"
+          RenderTableCell {span} at (224,0) size 225x30 [r=0 c=1 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 192x30
+              text run at (0,0) width 192: "Row 1, Col 2"
+          RenderTableCell {span} at (448,0) size 225x30 [r=0 c=2 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 192x30
+              text run at (0,0) width 192: "Row 1, Col 3"
+        RenderTableRow {span} at (0,30) size 673x30
+          RenderTableCell {span} at (0,30) size 225x30 [r=1 c=0 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 208x30
+              text run at (0,0) width 208: "Row 22, Col 1"
+          RenderTableCell {span} at (224,30) size 225x30 [r=1 c=1 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 208x30
+              text run at (0,0) width 208: "Row 22, Col 2"
+          RenderTableCell {span} at (448,30) size 225x30 [r=1 c=2 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 208x30
+              text run at (0,0) width 208: "Row 22, Col 3"
+        RenderTableRow {span} at (0,60) size 673x30
+          RenderTableCell (anonymous) at (0,60) size 225x30 [r=2 c=0 rs=1 cs=1]
+            RenderBlock {span} at (0,0) size 225x30
+              RenderText {#text} at (0,0) size 224x30
+                text run at (0,0) width 224: "Row 333, Col 1"
+          RenderTableCell {span} at (224,60) size 225x30 [r=2 c=1 rs=1 cs=1]
+            RenderText {#text} at (0,0) size 224x30
+              text run at (0,0) width 224: "Row 333, Col 2"
+          RenderTableCell (anonymous) at (448,60) size 225x30 [r=2 c=2 rs=1 cs=1]
+            RenderBlock {span} at (0,0) size 225x30
+              RenderText {#text} at (0,0) size 224x30
+                text run at (0,0) width 224: "Row 333, Col 3"

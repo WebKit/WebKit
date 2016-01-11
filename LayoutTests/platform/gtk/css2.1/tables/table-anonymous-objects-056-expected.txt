@@ -1,0 +1,66 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x303
+  RenderBlock {html} at (0,0) size 800x303
+    RenderBody {body} at (8,16) size 784x279
+      RenderBlock {p} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 380x17
+          text run at (0,0) width 380: "There should be no red below, except for antialiasing issues."
+layer at (8,49) size 784x246
+  RenderBlock (relative positioned) {div} at (0,33) size 784x246
+layer at (8,49) size 784x246
+  RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x246 [color=#FF0000]
+    RenderBlock {div} at (1,1) size 782x244 [border: (1px solid #000000)]
+      RenderBlock {div} at (1,33) size 780x0
+      RenderBlock {div} at (1,33) size 780x38
+        RenderTable at (0,0) size 156x38
+          RenderTableSection (anonymous) at (0,0) size 156x38
+            RenderTableRow (anonymous) at (0,0) size 156x38
+              RenderTableCell {span} at (0,0) size 156x38 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {b} at (0,0) size 153x36
+                  RenderText {#text} at (1,1) size 153x36
+                    text run at (1,1) width 153: "Hello Kitty"
+      RenderBlock {div} at (1,103) size 780x38
+        RenderTable at (0,0) size 156x38
+          RenderTableSection (anonymous) at (0,0) size 156x38
+            RenderTableRow (anonymous) at (0,0) size 156x38
+              RenderTableCell {span} at (0,0) size 156x38 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {b} at (0,0) size 153x36
+                  RenderText {#text} at (1,1) size 153x36
+                    text run at (1,1) width 153: "Hello Kitty"
+      RenderBlock {div} at (1,173) size 780x38
+        RenderTable at (0,0) size 156x38
+          RenderTableSection (anonymous) at (0,0) size 156x38
+            RenderTableRow (anonymous) at (0,0) size 156x38
+              RenderTableCell {span} at (0,0) size 156x38 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {b} at (0,0) size 153x36
+                  RenderText {#text} at (1,1) size 153x36
+                    text run at (1,1) width 153: "Hello Kitty"
+layer at (8,49) size 159x246
+  RenderBlock (positioned) zI: 2 {div} at (0,0) size 160x246 [color=#008000]
+    RenderBlock {div} at (1,1) size 158x244 [border: (1px solid #000000)]
+      RenderBlock {div} at (1,33) size 156x0
+      RenderBlock {div} at (1,33) size 156x38
+        RenderTable at (0,0) size 156x38
+          RenderTableSection (anonymous) at (0,0) size 156x38
+            RenderTableRow (anonymous) at (0,0) size 156x38
+              RenderTableCell {span} at (0,0) size 156x38 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {b} at (0,0) size 153x36
+                  RenderText {#text} at (1,1) size 153x36
+                    text run at (1,1) width 153: "Hello Kitty"
+      RenderBlock {div} at (1,103) size 156x38
+        RenderTable at (0,0) size 156x38
+          RenderTableSection (anonymous) at (0,0) size 156x38
+            RenderTableRow (anonymous) at (0,0) size 156x38
+              RenderTableCell {span} at (0,0) size 156x38 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {b} at (0,0) size 153x36
+                  RenderText {#text} at (1,1) size 153x36
+                    text run at (1,1) width 153: "Hello Kitty"
+      RenderBlock {div} at (1,173) size 156x38
+        RenderTable at (0,0) size 156x38
+          RenderTableSection (anonymous) at (0,0) size 156x38
+            RenderTableRow (anonymous) at (0,0) size 156x38
+              RenderTableCell {span} at (0,0) size 156x38 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {b} at (0,0) size 153x36
+                  RenderText {#text} at (1,1) size 153x36
+                    text run at (1,1) width 153: "Hello Kitty"

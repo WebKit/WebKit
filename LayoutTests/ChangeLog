@@ -1,3 +1,82 @@
+2016-01-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Update test expectations after r194845
+
+        Unreviewed gardening. Mark XHTML tests as passing now that we have patched shared-mime-info
+        to better detect XHTML. Add expectations for additional XHTML tests that were unskipped in
+        r194845.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css2.1/tables/table-anonymous-objects-015-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-016-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-023-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-024-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-035-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-036-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-037-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-038-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-045-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-046-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-047-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-048-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-049-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-050-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-055-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-056-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-091-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-092-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-099-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-100-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-103-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-104-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-105-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-106-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-107-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-108-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-109-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-110-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-111-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-112-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-113-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-114-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-115-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-116-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-117-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-118-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-119-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-120-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-121-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-122-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-123-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-124-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-139-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-140-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-149-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-150-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-155-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-156-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-159-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-160-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-165-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-166-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-177-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-178-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-179-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-180-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-181-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-189-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-190-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-191-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-192-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-193-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-194-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-195-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-196-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-205-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-206-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-207-expected.txt: Added.
+        * platform/gtk/css2.1/tables/table-anonymous-objects-208-expected.txt: Added.
+
 2016-01-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping unsupported test pageoverlay/overlay-small-frame-mouse-events.html on ios-simulator

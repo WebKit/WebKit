@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x89
+  RenderBlock {html} at (0,0) size 800x89
+    RenderBody {body} at (8,16) size 784x65
+      RenderBlock {p} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 380x17
+          text run at (0,0) width 380: "There should be no red below, except for antialiasing issues."
+layer at (8,49) size 784x32
+  RenderBlock (relative positioned) {div} at (0,33) size 784x32
+layer at (8,49) size 784x32
+  RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x32 [color=#FF0000]
+    RenderBlock {div} at (1,1) size 260x30
+      RenderInline {span} at (0,0) size 113x30
+        RenderText {#text} at (0,0) size 32x30
+          text run at (0,0) width 32: "a "
+        RenderText {#text} at (32,0) size 16x30
+          text run at (32,0) width 16: " "
+        RenderTable at (48,0) size 17x30
+          RenderTableSection (anonymous) at (0,0) size 17x30
+            RenderTableRow (anonymous) at (0,0) size 17x30
+              RenderTableCell {span} at (0,0) size 17x30 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 16x30
+                  text run at (0,0) width 16: "b"
+        RenderTable at (64,0) size 49x30
+          RenderTableSection (anonymous) at (0,0) size 49x30
+            RenderTableRow (anonymous) at (0,0) size 49x30
+              RenderTableCell (anonymous) at (0,0) size 49x30 [r=0 c=0 rs=1 cs=1]
+                RenderText at (0,0) size 48x30
+                  text run at (0,0) width 48: " cd"
+layer at (8,49) size 114x32
+  RenderBlock (positioned) zI: 2 {div} at (0,0) size 114x32 [color=#008000]
+    RenderBlock {div} at (1,1) size 112x30
+      RenderText {#text} at (0,0) size 112x30
+        text run at (0,0) width 112: "a  b cd"
