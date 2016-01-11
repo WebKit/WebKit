@@ -52,6 +52,11 @@
 #include "B3ValueInlines.h"
 #include <wtf/ListDump.h>
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 namespace JSC { namespace B3 {
 
 using namespace Air;
@@ -1338,6 +1343,7 @@ private:
                     }
                     return Inst();
                 }
+                ASSERT_NOT_REACHED();
             },
             [this] (
                 Arg::Width width, const Arg& resCond,
@@ -1367,6 +1373,7 @@ private:
                     }
                     return Inst();
                 }
+                ASSERT_NOT_REACHED();
             },
             [this] (Arg doubleCond, const ArgPromise& left, const ArgPromise& right) -> Inst {
                 if (isValidForm(BranchDouble, Arg::DoubleCond, left.kind(), right.kind())) {
@@ -1413,6 +1420,7 @@ private:
                     }
                     return Inst();
                 }
+                ASSERT_NOT_REACHED();
             },
             [this] (
                 Arg::Width width, const Arg& resCond,
@@ -1436,6 +1444,7 @@ private:
                     }
                     return Inst();
                 }
+                ASSERT_NOT_REACHED();
             },
             [this] (const Arg& doubleCond, const ArgPromise& left, const ArgPromise& right) -> Inst {
                 if (isValidForm(CompareDouble, Arg::DoubleCond, left.kind(), right.kind(), Arg::Tmp)) {
@@ -1495,6 +1504,7 @@ private:
                     }
                     return Inst();
                 }
+                ASSERT_NOT_REACHED();
             },
             [&] (
                 Arg::Width width, const Arg& resCond,
@@ -1521,6 +1531,7 @@ private:
                     }
                     return Inst();
                 }
+                ASSERT_NOT_REACHED();
             },
             [&] (Arg doubleCond, const ArgPromise& left, const ArgPromise& right) -> Inst {
                 if (isValidForm(config.moveConditionallyDouble, Arg::DoubleCond, left.kind(), right.kind(), Arg::Tmp, Arg::Tmp)) {
@@ -2298,5 +2309,8 @@ void lowerToAir(Procedure& procedure)
 
 } } // namespace JSC::B3
 
-#endif // ENABLE(B3_JIT)
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC) && ASSERT_DISABLED
 
+#endif // ENABLE(B3_JIT)

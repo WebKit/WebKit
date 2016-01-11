@@ -33,6 +33,11 @@
 #include "B3Type.h"
 #include <wtf/Optional.h>
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 namespace JSC { namespace B3 { namespace Air {
 
 class Special;
@@ -194,6 +199,7 @@ public:
         case EarlyDef:
             return false;
         }
+        ASSERT_NOT_REACHED();
     }
 
     static bool isColdUse(Role role)
@@ -213,6 +219,7 @@ public:
         case EarlyDef:
             return false;
         }
+        ASSERT_NOT_REACHED();
     }
 
     static bool isWarmUse(Role role)
@@ -238,6 +245,7 @@ public:
         case EarlyDef:
             return false;
         }
+        ASSERT_NOT_REACHED();
     }
 
     // Returns true if the Role implies that the Inst will Use the Arg after doing everything else.
@@ -258,6 +266,7 @@ public:
         case EarlyDef:
             return false;
         }
+        ASSERT_NOT_REACHED();
     }
 
     // Returns true if the Role implies that the Inst will Def the Arg.
@@ -278,6 +287,7 @@ public:
         case Scratch:
             return true;
         }
+        ASSERT_NOT_REACHED();
     }
 
     // Returns true if the Role implies that the Inst will Def the Arg before start of execution.
@@ -298,6 +308,7 @@ public:
         case Scratch:
             return true;
         }
+        ASSERT_NOT_REACHED();
     }
 
     // Returns true if the Role implies that the Inst will Def the Arg after the end of execution.
@@ -318,6 +329,7 @@ public:
         case UseZDef:
             return true;
         }
+        ASSERT_NOT_REACHED();
     }
 
     // Returns true if the Role implies that the Inst will ZDef the Arg.
@@ -338,6 +350,7 @@ public:
         case UseZDef:
             return true;
         }
+        ASSERT_NOT_REACHED();
     }
 
     static Type typeForB3Type(B3::Type type)
@@ -370,6 +383,7 @@ public:
         case Double:
             return Width64;
         }
+        ASSERT_NOT_REACHED();
     }
 
     static Width conservativeWidth(Type type)
@@ -760,6 +774,7 @@ public:
         case Invalid:
             return false;
         }
+        ASSERT_NOT_REACHED();
     }
 
     // Tells us if this Arg can be used in a position that requires a FP value.
@@ -782,6 +797,7 @@ public:
         case Tmp:
             return isFPTmp();
         }
+        ASSERT_NOT_REACHED();
     }
 
     bool hasType() const
@@ -810,6 +826,7 @@ public:
         case FP:
             return isFP();
         }
+        ASSERT_NOT_REACHED();
     }
 
     bool isGPR() const
@@ -955,6 +972,7 @@ public:
         case Special:
             return true;
         }
+        ASSERT_NOT_REACHED();
     }
 
     template<typename Functor>
@@ -1160,6 +1178,10 @@ template<> struct HashTraits<JSC::B3::Air::Arg> : SimpleClassHashTraits<JSC::B3:
 };
 
 } // namespace WTF
+
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(B3_JIT)
 

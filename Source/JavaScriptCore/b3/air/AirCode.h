@@ -39,6 +39,11 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 namespace Air {
 
 class CCallSpecial;
@@ -76,6 +81,7 @@ public:
         case Arg::FP:
             return Tmp::fpTmpForIndex(m_numFPTmps++);
         }
+        ASSERT_NOT_REACHED();
     }
 
     unsigned numTmps(Arg::Type type)
@@ -86,6 +92,7 @@ public:
         case Arg::FP:
             return m_numFPTmps;
         }
+        ASSERT_NOT_REACHED();
     }
 
     unsigned callArgAreaSize() const { return m_callArgAreaSize; }
@@ -334,6 +341,10 @@ private:
 };
 
 } } } // namespace JSC::B3::Air
+
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(B3_JIT)
 

@@ -1,3 +1,36 @@
+2016-01-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [B3] Fix control reaches end of non-void function GCC warnings on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=152887
+
+        Reviewed by Mark Lam.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createBranch):
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::createSelect):
+        * b3/B3Type.h:
+        (JSC::B3::sizeofType):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::isRepresentableAs):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isAnyUse):
+        (JSC::B3::Air::Arg::isColdUse):
+        (JSC::B3::Air::Arg::isEarlyUse):
+        (JSC::B3::Air::Arg::isLateUse):
+        (JSC::B3::Air::Arg::isAnyDef):
+        (JSC::B3::Air::Arg::isEarlyDef):
+        (JSC::B3::Air::Arg::isLateDef):
+        (JSC::B3::Air::Arg::isZDef):
+        (JSC::B3::Air::Arg::widthForB3Type):
+        (JSC::B3::Air::Arg::isGP):
+        (JSC::B3::Air::Arg::isFP):
+        (JSC::B3::Air::Arg::isType):
+        (JSC::B3::Air::Arg::isValidForm):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::newTmp):
+        (JSC::B3::Air::Code::numTmps):
+
 2016-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         Make it easier to introduce exotic instructions to Air

@@ -31,6 +31,11 @@
 #include "B3Common.h"
 #include <wtf/StdLibExtras.h>
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 namespace JSC { namespace B3 {
 
 enum Type : int8_t {
@@ -70,6 +75,7 @@ inline size_t sizeofType(Type type)
     case Double:
         return 8;
     }
+    ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::B3
@@ -82,7 +88,10 @@ void printInternal(PrintStream&, JSC::B3::Type);
 
 } // namespace WTF
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 #endif // ENABLE(B3_JIT)
 
 #endif // B3Type_h
-

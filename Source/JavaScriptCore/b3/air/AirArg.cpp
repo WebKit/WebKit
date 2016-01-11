@@ -31,6 +31,11 @@
 #include "AirSpecial.h"
 #include "AirStackSlot.h"
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 namespace JSC { namespace B3 { namespace Air {
 
 bool Arg::isRepresentableAs(Width width, Signedness signedness) const
@@ -59,6 +64,7 @@ bool Arg::isRepresentableAs(Width width, Signedness signedness) const
             return isRepresentableAs<uint64_t>();
         }
     }
+    ASSERT_NOT_REACHED();
 }
 
 void Arg::dump(PrintStream& out) const
@@ -256,5 +262,9 @@ void printInternal(PrintStream& out, Arg::Signedness signedness)
 }
 
 } // namespace WTF
+
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(B3_JIT)
