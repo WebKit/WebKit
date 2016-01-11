@@ -1268,6 +1268,9 @@
 		797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79C4B15D1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */; };
 		79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		79CFC6F01C33B10000C768EA /* LLIntPCRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 79CFC6EF1C33B10000C768EA /* LLIntPCRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		79D5CD5A1C1106A900CECA07 /* SamplingProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79D5CD581C1106A900CECA07 /* SamplingProfiler.cpp */; };
+		79D5CD5B1C1106A900CECA07 /* SamplingProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 79D5CD591C1106A900CECA07 /* SamplingProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79DF66B01BF26A570001CF11 /* FTLExceptionHandlerManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */; };
 		79DF66B11BF26A570001CF11 /* FTLExceptionHandlerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */; };
@@ -3415,6 +3418,9 @@
 		797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalLexicalEnvironment.h; sourceTree = "<group>"; };
 		79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLiveCatchVariablePreservationPhase.cpp; path = dfg/DFGLiveCatchVariablePreservationPhase.cpp; sourceTree = "<group>"; };
 		79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLiveCatchVariablePreservationPhase.h; path = dfg/DFGLiveCatchVariablePreservationPhase.h; sourceTree = "<group>"; };
+		79CFC6EF1C33B10000C768EA /* LLIntPCRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntPCRanges.h; path = llint/LLIntPCRanges.h; sourceTree = "<group>"; };
+		79D5CD581C1106A900CECA07 /* SamplingProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingProfiler.cpp; sourceTree = "<group>"; };
+		79D5CD591C1106A900CECA07 /* SamplingProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingProfiler.h; sourceTree = "<group>"; };
 		79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExceptionHandlerManager.cpp; path = ftl/FTLExceptionHandlerManager.cpp; sourceTree = "<group>"; };
 		79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExceptionHandlerManager.h; path = ftl/FTLExceptionHandlerManager.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
@@ -4480,6 +4486,7 @@
 				0F4680C614BBB16900BFE272 /* LLIntOfflineAsmConfig.h */,
 				0F4680A114BA7F8200BFE272 /* LLIntOffsetsExtractor.cpp */,
 				FED287B115EC9A5700DA8161 /* LLIntOpcode.h */,
+				79CFC6EF1C33B10000C768EA /* LLIntPCRanges.h */,
 				0F46809F14BA7F8200BFE272 /* LLIntSlowPaths.cpp */,
 				0F4680A014BA7F8200BFE272 /* LLIntSlowPaths.h */,
 				0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */,
@@ -5859,6 +5866,8 @@
 				52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */,
 				0F7700911402FF280078EB39 /* SamplingCounter.cpp */,
 				0F77008E1402FDD60078EB39 /* SamplingCounter.h */,
+				79D5CD581C1106A900CECA07 /* SamplingProfiler.cpp */,
+				79D5CD591C1106A900CECA07 /* SamplingProfiler.h */,
 				0FE0501E1AA9095600D33B33 /* ScopedArguments.cpp */,
 				0FE0501F1AA9095600D33B33 /* ScopedArguments.h */,
 				0FE0502E1AAA806900D33B33 /* ScopedArgumentsTable.cpp */,
@@ -6882,6 +6891,8 @@
 				0FEC85761BDACDC70080FF74 /* AirCode.h in Headers */,
 				0F3730931C0D67EE00052BFA /* AirUseCounts.h in Headers */,
 				0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */,
+				79CFC6F01C33B10000C768EA /* LLIntPCRanges.h in Headers */,
+				79D5CD5B1C1106A900CECA07 /* SamplingProfiler.h in Headers */,
 				0FEC85771BDACDC70080FF74 /* AirFrequentedBlock.h in Headers */,
 				0FEC85791BDACDC70080FF74 /* AirGenerate.h in Headers */,
 				79DF66B11BF26A570001CF11 /* FTLExceptionHandlerManager.h in Headers */,
@@ -8984,6 +8995,7 @@
 				70113D4B1A8DB093003848C4 /* IteratorOperations.cpp in Sources */,
 				70DC3E091B2DF2C700054299 /* IteratorPrototype.cpp in Sources */,
 				A503FA19188E0FB000110F14 /* JavaScriptCallFrame.cpp in Sources */,
+				79D5CD5A1C1106A900CECA07 /* SamplingProfiler.cpp in Sources */,
 				1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */,
 				86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */,
 				A75706DE118A2BCF0057F88F /* JITArithmetic32_64.cpp in Sources */,

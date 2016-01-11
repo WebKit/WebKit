@@ -963,6 +963,9 @@
     <ClCompile Include="..\runtime\SamplingCounter.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\SamplingProfiler.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\SmallStrings.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2638,6 +2641,9 @@
     <ClInclude Include="..\llint\LLIntOpcode.h">
       <Filter>llint</Filter>
     </ClInclude>
+    <ClInclude Include="..\llint\LLIntPCRanges.h">
+      <Filter>llint</Filter>
+    </ClInclude>
     <ClInclude Include="..\llint\LLIntSlowPaths.h">
       <Filter>llint</Filter>
     </ClInclude>
@@ -3194,6 +3200,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\SamplingCounter.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\SamplingProfiler.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\SmallStrings.h">

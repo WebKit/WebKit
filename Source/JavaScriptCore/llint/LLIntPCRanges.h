@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConservativeRoots_h
-#define ConservativeRoots_h
-
-#include "Heap.h"
+#ifndef LLIntPCRanges_h
+#define LLIntPCRanges_h
 
 namespace JSC {
 
-class CodeBlockSet;
-class JITStubRoutineSet;
-class JSCell;
+namespace LLInt {
 
-class ConservativeRoots {
-public:
-    ConservativeRoots(MarkedBlockSet*, CopiedSpace*);
-    ~ConservativeRoots();
-
-    void add(void* begin, void* end);
-    void add(void* begin, void* end, JITStubRoutineSet&);
-    void add(void* begin, void* end, JITStubRoutineSet&, CodeBlockSet&);
-    
-    size_t size();
-    JSCell** roots();
-
-private:
-    static const size_t inlineCapacity = 128;
-    static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
-    
-    template<typename MarkHook>
-    void genericAddPointer(void*, TinyBloomFilter, MarkHook&);
-
-    template<typename MarkHook>
-    void genericAddSpan(void*, void* end, MarkHook&);
-    
-    void grow();
-
-    JSCell** m_roots;
-    size_t m_size;
-    size_t m_capacity;
-    MarkedBlockSet* m_blocks;
-    CopiedSpace* m_copiedSpace;
-    JSCell* m_inlineRoots[inlineCapacity];
-};
-
-inline size_t ConservativeRoots::size()
-{
-    return m_size;
+// These are used just to denote where LLInt code begins and where it ends.
+extern "C" {
+    void llintPCRangeStart();
+    void llintPCRangeEnd();
 }
 
-inline JSCell** ConservativeRoots::roots()
+ALWAYS_INLINE bool isLLIntPC(void* pc)
 {
-    return m_roots;
+    uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
+    uintptr_t llintStart = bitwise_cast<uintptr_t>(llintPCRangeStart);
+    uintptr_t llintEnd = bitwise_cast<uintptr_t>(llintPCRangeEnd);
+    RELEASE_ASSERT(llintStart < llintEnd);
+    return llintStart <= pcAsInt && pcAsInt <= llintEnd;
 }
 
-} // namespace JSC
+} } // namespace JSC::LLInt
 
-#endif // ConservativeRoots_h
+#endif // LLIntPCRanges_h

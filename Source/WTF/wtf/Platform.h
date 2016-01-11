@@ -792,7 +792,15 @@
 #undef ENABLE_B3_JIT
 #define ENABLE_DFG_JIT 0
 #define ENABLE_FTL_JIT 0
-#define Enable_B3_JIT 0
+#define ENABLE_B3_JIT 0
+#endif
+
+/* The SamplingProfiler is the probabilistic and low-overhead profiler used by
+ * JSC to measure where time is spent inside a JavaScript program. */
+#if (OS(DARWIN) || OS(WINDOWS)) && ENABLE(JIT)
+#define ENABLE_SAMPLING_PROFILER 1
+#else
+#define ENABLE_SAMPLING_PROFILER 0
 #endif
 
 /* Counts uses of write barriers using sampling counters. Be sure to also

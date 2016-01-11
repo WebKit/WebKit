@@ -743,7 +743,7 @@ def runFTLNoCJIT
 end
 
 def runFTLNoCJITValidate
-    run("ftl-no-cjit-validate", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runFTLNoCJITNoPutStackValidate

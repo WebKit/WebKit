@@ -1,3 +1,462 @@
+2016-01-10  Saam barati  <sbarati@apple.com>
+
+        Implement a sampling profiler
+        https://bugs.webkit.org/show_bug.cgi?id=151713
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements a sampling profiler for JavaScriptCore
+        that will be used in the Inspector UI. The implementation works as follows:
+        We queue the sampling profiler to run a task on a background
+        thread every 1ms. When the queued task executes, the sampling profiler
+        will pause the JSC execution thread and attempt to take a stack trace. 
+        The sampling profiler does everything it can to be very careful
+        while taking this stack trace. Because it's reading arbitrary memory,
+        the sampling profiler must validate every pointer it reads from.
+
+        The sampling profiler tries to get an ExecutableBase for every call frame
+        it reads. It first tries to read the CodeBlock slot. It does this because
+        it can be 100% certain that a pointer is a CodeBlock while it's taking a
+        stack trace. But, not every call frame will have a CodeBlock. So we must read
+        the call frame's callee. For these stack traces where we read the callee, we
+        must verify the callee pointer, and the pointer traversal to an ExecutableBase,
+        on the main JSC execution thread, and not on the thread taking the stack
+        trace. We do this verification either before we run the marking phase in
+        GC, or when somebody asks the SamplingProfiler to materialize its data.
+
+        The SamplingProfiler must also be careful to not grab any locks while the JSC execution
+        thread is paused (this means it can't do anything that mallocs) because
+        that could cause a deadlock. Therefore, the sampling profiler grabs
+        locks for all data structures it consults before it pauses the JSC
+        execution thread.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::clearVisitWeaklyHasBeenCalled):
+        (JSC::CodeBlockSet::mark):
+        * dfg/DFGNodeType.h:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::promoteYoungCodeBlocks):
+        (JSC::CodeBlockSet::clearMarksForFullCollection):
+        (JSC::CodeBlockSet::lastChanceToFinalize):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        (JSC::CodeBlockSet::contains):
+        (JSC::CodeBlockSet::writeBarrierCurrentlyExecutingCodeBlocks):
+        (JSC::CodeBlockSet::remove): Deleted.
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::getLock):
+        (JSC::CodeBlockSet::iterate):
+        The sampling pofiler uses the heap's CodeBlockSet to validate
+        CodeBlock pointers. This data structure must now be under a lock
+        because we must be certain we're not pausing the JSC execution thread
+        while it's manipulating this data structure.
+
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::grow):
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::genericAddSpan):
+        (JSC::ConservativeRoots::add):
+        (JSC::CompositeMarkHook::CompositeMarkHook):
+        (JSC::CompositeMarkHook::mark):
+        * heap/ConservativeRoots.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::visitHandleStack):
+        (JSC::Heap::visitSamplingProfiler):
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines):
+        (JSC::Heap::snapshotMarkedSpace):
+        * heap/Heap.h:
+        (JSC::Heap::structureIDTable):
+        (JSC::Heap::codeBlockSet):
+        * heap/MachineStackMarker.cpp:
+        (pthreadSignalHandlerSuspendResume):
+        (JSC::getCurrentPlatformThread):
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::Thread::createForCurrentThread):
+        (JSC::MachineThreads::Thread::operator==):
+        (JSC::isThreadInList):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::machineThreadForCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        (JSC::MachineThreads::Thread::Thread):
+        (JSC::MachineThreads::Thread::~Thread):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::Thread::resume):
+        (JSC::MachineThreads::Thread::getRegisters):
+        (JSC::MachineThreads::Thread::Registers::stackPointer):
+        (JSC::MachineThreads::Thread::Registers::framePointer):
+        (JSC::MachineThreads::Thread::Registers::instructionPointer):
+        (JSC::MachineThreads::Thread::freeRegisters):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (JSC::pthreadSignalHandlerSuspendResume): Deleted.
+        (JSC::MachineThreads::Thread::operator!=): Deleted.
+        * heap/MachineStackMarker.h:
+        (JSC::MachineThreads::Thread::operator!=):
+        (JSC::MachineThreads::getLock):
+        (JSC::MachineThreads::threadsListHead):
+        We can now ask a MachineThreads::Thread for its frame pointer
+        and program counter on darwin and windows platforms. efl
+        and gtk implementations will happen in another patch.
+
+        * heap/MarkedBlockSet.h:
+        (JSC::MarkedBlockSet::getLock):
+        (JSC::MarkedBlockSet::add):
+        (JSC::MarkedBlockSet::remove):
+        (JSC::MarkedBlockSet::recomputeFilter):
+        (JSC::MarkedBlockSet::filter):
+        (JSC::MarkedBlockSet::set):
+        * heap/MarkedSpace.cpp:
+        (JSC::Free::Free):
+        (JSC::Free::operator()):
+        (JSC::FreeOrShrink::FreeOrShrink):
+        (JSC::FreeOrShrink::operator()):
+        (JSC::MarkedSpace::~MarkedSpace):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::freeBlock):
+        (JSC::MarkedSpace::freeOrShrinkBlock):
+        (JSC::MarkedSpace::shrink):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::forEachLiveCell):
+        (JSC::MarkedSpace::forEachDeadCell):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::calleeAsValue):
+        (JSC::ExecState::callee):
+        (JSC::ExecState::unsafeCallee):
+        (JSC::ExecState::codeBlock):
+        (JSC::ExecState::scope):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::dumpProfile):
+        (JSC::ExecutableAllocator::getLock):
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        (JSC::ExecutableAllocator::getLock):
+        (JSC::ExecutableAllocator::committedByteCount):
+        The sampling profiler consults the ExecutableAllocator to check
+        if the frame pointer it reads is in executable allocated memory.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionCheckModuleSyntax):
+        (functionStartSamplingProfiler):
+        (functionSamplingProfilerStackTraces):
+        * llint/LLIntPCRanges.h: Added.
+        (JSC::LLInt::isLLIntPC):
+        * offlineasm/asm.rb:
+        I added the ability to test whether the PC is executing
+        LLInt code because this code is not part of the memory
+        our executable allocator allocates.
+
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::isModuleProgramExecutable):
+        (JSC::ExecutableBase::isExecutableType):
+        (JSC::ExecutableBase::isHostFunction):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        (JSC::JSLock::unlock):
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp: Added.
+        (JSC::reportStats):
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::FrameWalker::walk):
+        (JSC::FrameWalker::wasValidWalk):
+        (JSC::FrameWalker::advanceToParentFrame):
+        (JSC::FrameWalker::isAtTop):
+        (JSC::FrameWalker::resetAtMachineFrame):
+        (JSC::FrameWalker::isValidFramePointer):
+        (JSC::FrameWalker::isValidCodeBlock):
+        (JSC::FrameWalker::tryToGetExecutableFromCallee):
+        The FrameWalker class is used to walk the stack in a safe
+        manner. It doesn't do anything that would deadlock, and it
+        validates all pointers that it sees.
+
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::~SamplingProfiler):
+        (JSC::SamplingProfiler::visit):
+        (JSC::SamplingProfiler::shutdown):
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::stop):
+        (JSC::SamplingProfiler::pause):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        (JSC::SamplingProfiler::dispatchIfNecessary):
+        (JSC::SamplingProfiler::dispatchFunction):
+        (JSC::SamplingProfiler::noticeJSLockAcquisition):
+        (JSC::SamplingProfiler::noticeVMEntry):
+        (JSC::SamplingProfiler::observeStackTrace):
+        (JSC::SamplingProfiler::clearData):
+        (JSC::displayName):
+        (JSC::startLine):
+        (JSC::startColumn):
+        (JSC::sourceID):
+        (JSC::url):
+        (JSC::SamplingProfiler::stacktracesAsJSON):
+        * runtime/SamplingProfiler.h: Added.
+        (JSC::SamplingProfiler::getLock):
+        (JSC::SamplingProfiler::setTimingInterval):
+        (JSC::SamplingProfiler::stackTraces):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        (JSC::VM::setLastStackTop):
+        (JSC::VM::createContextGroup):
+        (JSC::VM::ensureWatchdog):
+        (JSC::VM::ensureSamplingProfiler):
+        (JSC::thunkGeneratorForIntrinsic):
+        * runtime/VM.h:
+        (JSC::VM::watchdog):
+        (JSC::VM::isSafeToRecurse):
+        (JSC::VM::lastStackTop):
+        (JSC::VM::scratchBufferForSize):
+        (JSC::VM::samplingProfiler):
+        (JSC::VM::setShouldRewriteConstAsVar):
+        (JSC::VM::setLastStackTop): Deleted.
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        * tests/stress/sampling-profiler: Added.
+        * tests/stress/sampling-profiler-anonymous-function.js: Added.
+        (foo):
+        (baz):
+        * tests/stress/sampling-profiler-basic.js: Added.
+        (bar):
+        (foo):
+        (nothing):
+        (top):
+        (jaz):
+        (kaz):
+        (checkInlining):
+        * tests/stress/sampling-profiler-deep-stack.js: Added.
+        (foo):
+        (hellaDeep):
+        (start):
+        * tests/stress/sampling-profiler-microtasks.js: Added.
+        (testResults):
+        (loop.jaz):
+        (loop):
+        * tests/stress/sampling-profiler/samplingProfiler.js: Added.
+        (assert):
+        (let.nodePrototype.makeChildIfNeeded):
+        (makeNode):
+        (updateCallingContextTree):
+        (doesTreeHaveStackTrace):
+        (makeTree):
+        (runTest):
+        (dumpTree):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::isInObjectSpace):
+        (JSC::JSDollarVMPrototype::isInStorageSpace):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::jitCompile):
+        We now have a boolean that's set to true when
+        we're executing a RegExp, and to false otherwise.
+        The boolean lives off of VM.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::clearVisitWeaklyHasBeenCalled):
+        (JSC::CodeBlockSet::mark):
+        * dfg/DFGNodeType.h:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::promoteYoungCodeBlocks):
+        (JSC::CodeBlockSet::clearMarksForFullCollection):
+        (JSC::CodeBlockSet::lastChanceToFinalize):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        (JSC::CodeBlockSet::contains):
+        (JSC::CodeBlockSet::writeBarrierCurrentlyExecutingCodeBlocks):
+        (JSC::CodeBlockSet::remove): Deleted.
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::getLock):
+        (JSC::CodeBlockSet::iterate):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::add):
+        (JSC::CompositeMarkHook::CompositeMarkHook):
+        (JSC::CompositeMarkHook::mark):
+        * heap/ConservativeRoots.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::visitHandleStack):
+        (JSC::Heap::visitSamplingProfiler):
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines):
+        * heap/Heap.h:
+        (JSC::Heap::structureIDTable):
+        (JSC::Heap::codeBlockSet):
+        * heap/HeapInlines.h:
+        (JSC::Heap::didFreeBlock):
+        (JSC::Heap::isPointerGCObject):
+        (JSC::Heap::isValueGCObject):
+        * heap/MachineStackMarker.cpp:
+        (pthreadSignalHandlerSuspendResume):
+        (JSC::getCurrentPlatformThread):
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::Thread::createForCurrentThread):
+        (JSC::MachineThreads::Thread::operator==):
+        (JSC::isThreadInList):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::machineThreadForCurrentThread):
+        (JSC::MachineThreads::removeThread):
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        (JSC::MachineThreads::Thread::Thread):
+        (JSC::MachineThreads::Thread::~Thread):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::Thread::resume):
+        (JSC::MachineThreads::Thread::getRegisters):
+        (JSC::MachineThreads::Thread::Registers::stackPointer):
+        (JSC::MachineThreads::Thread::Registers::framePointer):
+        (JSC::MachineThreads::Thread::Registers::instructionPointer):
+        (JSC::MachineThreads::Thread::freeRegisters):
+        (JSC::pthreadSignalHandlerSuspendResume): Deleted.
+        (JSC::MachineThreads::Thread::operator!=): Deleted.
+        * heap/MachineStackMarker.h:
+        (JSC::MachineThreads::Thread::operator!=):
+        (JSC::MachineThreads::getLock):
+        (JSC::MachineThreads::threadsListHead):
+        * heap/MarkedBlockSet.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::Free::Free):
+        (JSC::Free::operator()):
+        (JSC::FreeOrShrink::FreeOrShrink):
+        (JSC::FreeOrShrink::operator()):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::calleeAsValue):
+        (JSC::ExecState::callee):
+        (JSC::ExecState::unsafeCallee):
+        (JSC::ExecState::codeBlock):
+        (JSC::ExecState::scope):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::dumpProfile):
+        (JSC::ExecutableAllocator::getLock):
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        (JSC::ExecutableAllocator::getLock):
+        (JSC::ExecutableAllocator::committedByteCount):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionCheckModuleSyntax):
+        (functionPlatformSupportsSamplingProfiler):
+        (functionStartSamplingProfiler):
+        (functionSamplingProfilerStackTraces):
+        * llint/LLIntPCRanges.h: Added.
+        (JSC::LLInt::isLLIntPC):
+        * offlineasm/asm.rb:
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::isModuleProgramExecutable):
+        (JSC::ExecutableBase::isExecutableType):
+        (JSC::ExecutableBase::isHostFunction):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        (JSC::JSLock::unlock):
+        * runtime/Options.h:
+        * runtime/SamplingProfiler.cpp: Added.
+        (JSC::reportStats):
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::FrameWalker::walk):
+        (JSC::FrameWalker::wasValidWalk):
+        (JSC::FrameWalker::advanceToParentFrame):
+        (JSC::FrameWalker::isAtTop):
+        (JSC::FrameWalker::resetAtMachineFrame):
+        (JSC::FrameWalker::isValidFramePointer):
+        (JSC::FrameWalker::isValidCodeBlock):
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::~SamplingProfiler):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::visit):
+        (JSC::SamplingProfiler::shutdown):
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::stop):
+        (JSC::SamplingProfiler::pause):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        (JSC::SamplingProfiler::dispatchIfNecessary):
+        (JSC::SamplingProfiler::dispatchFunction):
+        (JSC::SamplingProfiler::noticeJSLockAcquisition):
+        (JSC::SamplingProfiler::noticeVMEntry):
+        (JSC::SamplingProfiler::clearData):
+        (JSC::displayName):
+        (JSC::SamplingProfiler::stacktracesAsJSON):
+        (WTF::printInternal):
+        * runtime/SamplingProfiler.h: Added.
+        (JSC::SamplingProfiler::StackFrame::StackFrame):
+        (JSC::SamplingProfiler::getLock):
+        (JSC::SamplingProfiler::setTimingInterval):
+        (JSC::SamplingProfiler::stackTraces):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        (JSC::VM::setLastStackTop):
+        (JSC::VM::createContextGroup):
+        (JSC::VM::ensureWatchdog):
+        (JSC::VM::ensureSamplingProfiler):
+        (JSC::thunkGeneratorForIntrinsic):
+        * runtime/VM.h:
+        (JSC::VM::watchdog):
+        (JSC::VM::samplingProfiler):
+        (JSC::VM::isSafeToRecurse):
+        (JSC::VM::lastStackTop):
+        (JSC::VM::scratchBufferForSize):
+        (JSC::VM::setLastStackTop): Deleted.
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        * tests/stress/sampling-profiler: Added.
+        * tests/stress/sampling-profiler-anonymous-function.js: Added.
+        (platformSupportsSamplingProfiler.foo):
+        (platformSupportsSamplingProfiler.baz):
+        (platformSupportsSamplingProfiler):
+        * tests/stress/sampling-profiler-basic.js: Added.
+        (platformSupportsSamplingProfiler.bar):
+        (platformSupportsSamplingProfiler.foo):
+        (platformSupportsSamplingProfiler.nothing):
+        (platformSupportsSamplingProfiler.top):
+        (platformSupportsSamplingProfiler.jaz):
+        (platformSupportsSamplingProfiler.kaz):
+        (platformSupportsSamplingProfiler.checkInlining):
+        (platformSupportsSamplingProfiler):
+        * tests/stress/sampling-profiler-deep-stack.js: Added.
+        (platformSupportsSamplingProfiler.foo):
+        (platformSupportsSamplingProfiler.let.hellaDeep):
+        (platformSupportsSamplingProfiler.let.start):
+        (platformSupportsSamplingProfiler):
+        * tests/stress/sampling-profiler-microtasks.js: Added.
+        (platformSupportsSamplingProfiler.testResults):
+        (platformSupportsSamplingProfiler):
+        (platformSupportsSamplingProfiler.loop.jaz):
+        (platformSupportsSamplingProfiler.loop):
+        * tests/stress/sampling-profiler/samplingProfiler.js: Added.
+        (assert):
+        (let.nodePrototype.makeChildIfNeeded):
+        (makeNode):
+        (updateCallingContextTree):
+        (doesTreeHaveStackTrace):
+        (makeTree):
+        (runTest):
+        (dumpTree):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::jitCompile):
+
 2016-01-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Iterating over a Set/Map is too slow

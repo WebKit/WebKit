@@ -52,11 +52,24 @@ class Assembler
 
     def enterAsm
         @outp.puts "OFFLINE_ASM_BEGIN" if !$emitWinAsm
+
+        if !$emitWinAsm
+            @outp.puts "OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeStart)"
+        else
+            putsProc("llintPCRangeStart", "")
+            putsProcEndIfNeeded
+        end
         @state = :asm
     end
     
     def leaveAsm
         putsProcEndIfNeeded if $emitWinAsm
+        if !$emitWinAsm
+            @outp.puts "OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeEnd)"
+        else
+            putsProc("llintPCRangeEnd", "")
+            putsProcEndIfNeeded
+        end
         putsLastComment
         @outp.puts "OFFLINE_ASM_END" if !$emitWinAsm
         @state = :cpp

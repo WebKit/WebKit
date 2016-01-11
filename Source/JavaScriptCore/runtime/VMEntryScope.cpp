@@ -28,6 +28,7 @@
 
 #include "Debugger.h"
 #include "Options.h"
+#include "SamplingProfiler.h"
 #include "VM.h"
 #include "Watchdog.h"
 #include <wtf/StackBounds.h>
@@ -43,11 +44,16 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
         vm.entryScope = this;
 
         // Reset the date cache between JS invocations to force the VM to
-        // observe time xone changes.
+        // observe time zone changes.
         vm.resetDateCache();
 
         if (vm.watchdog())
             vm.watchdog()->enteredVM();
+
+#if ENABLE(SAMPLING_PROFILER)
+        if (SamplingProfiler* samplingProfiler = vm.samplingProfiler())
+            samplingProfiler->noticeVMEntry();
+#endif
     }
 
     vm.clearLastException();

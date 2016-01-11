@@ -232,6 +232,16 @@ void ExecutableAllocator::dumpProfile()
 }
 #endif
 
+Lock& ExecutableAllocator::getLock() const
+{
+    return gAllocator->getLock();
+}
+
+bool ExecutableAllocator::isValidExecutableMemory(const LockHolder& locker, void* address)
+{
+    return gAllocator->isInAllocatedMemory(locker, address);
+}
+
 #endif // ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)

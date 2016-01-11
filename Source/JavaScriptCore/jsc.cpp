@@ -48,6 +48,7 @@
 #include "JSString.h"
 #include "JSWASMModule.h"
 #include "ProfilerDatabase.h"
+#include "SamplingProfiler.h"
 #include "SamplingTool.h"
 #include "StackVisitor.h"
 #include "StructureInlines.h"
@@ -553,6 +554,11 @@ static EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState*);
 #endif
 static EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionPlatformSupportsSamplingProfiler(ExecState*);
+#if ENABLE(SAMPLING_PROFILER)
+static EncodedJSValue JSC_HOST_CALL functionStartSamplingProfiler(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState*);
+#endif
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -739,6 +745,12 @@ protected:
 #endif
         addFunction(vm, "loadModule", functionLoadModule, 1);
         addFunction(vm, "checkModuleSyntax", functionCheckModuleSyntax, 1);
+
+        addFunction(vm, "platformSupportsSamplingProfiler", functionPlatformSupportsSamplingProfiler, 0);
+#if ENABLE(SAMPLING_PROFILER)
+        addFunction(vm, "startSamplingProfiler", functionStartSamplingProfiler, 0);
+        addFunction(vm, "samplingProfilerStackTraces", functionSamplingProfilerStackTraces, 0);
+#endif
 
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -1608,6 +1620,35 @@ EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
         exec->vm().throwException(exec, jsNontrivialString(exec, toString("SyntaxError: ", error.message(), ":", error.line())));
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
+
+EncodedJSValue JSC_HOST_CALL functionPlatformSupportsSamplingProfiler(ExecState*)
+{
+#if ENABLE(SAMPLING_PROFILER)
+    return JSValue::encode(JSValue(JSC::JSValue::JSTrue));
+#else
+    return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
+#endif
+}
+
+#if ENABLE(SAMPLING_PROFILER)
+EncodedJSValue JSC_HOST_CALL functionStartSamplingProfiler(ExecState* exec)
+{
+    exec->vm().ensureSamplingProfiler(WTF::Stopwatch::create());
+    exec->vm().samplingProfiler()->noticeCurrentThreadAsJSCExecutionThread();
+    exec->vm().samplingProfiler()->start();
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState* exec)
+{
+    RELEASE_ASSERT(exec->vm().samplingProfiler());
+    String jsonString = exec->vm().samplingProfiler()->stacktracesAsJSON();
+    exec->vm().samplingProfiler()->clearData();
+    EncodedJSValue result = JSValue::encode(JSONParse(exec, jsonString));
+    RELEASE_ASSERT(!exec->hadException());
+    return result;
+}
+#endif // ENABLE(SAMPLING_PROFILER)
 
 // Use SEH for Release builds only to get rid of the crash report dialog
 // (luckily the same tests fail in Release and Debug builds so far). Need to

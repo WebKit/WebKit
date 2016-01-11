@@ -2582,10 +2582,14 @@ class YarrGenerator : private MacroAssembler {
 #elif CPU(MIPS)
         // Do nothing.
 #endif
+
+        store8(TrustedImm32(1), &m_vm->isExecutingInRegExpJIT);
     }
 
     void generateReturn()
     {
+        store8(TrustedImm32(0), &m_vm->isExecutingInRegExpJIT);
+
 #if CPU(X86_64)
 #if OS(WINDOWS)
         // Store the return value in the allocated space pointed by rcx.
@@ -2614,8 +2618,9 @@ class YarrGenerator : private MacroAssembler {
     }
 
 public:
-    YarrGenerator(YarrPattern& pattern, YarrCharSize charSize)
-        : m_pattern(pattern)
+    YarrGenerator(VM* vm, YarrPattern& pattern, YarrCharSize charSize)
+        : m_vm(vm)
+        , m_pattern(pattern)
         , m_charSize(charSize)
         , m_charScale(m_charSize == Char8 ? TimesOne: TimesTwo)
         , m_shouldFallBack(false)
@@ -2676,6 +2681,8 @@ public:
     }
 
 private:
+    VM* m_vm;
+
     YarrPattern& m_pattern;
 
     YarrCharSize m_charSize;
@@ -2708,9 +2715,9 @@ private:
 void jitCompile(YarrPattern& pattern, YarrCharSize charSize, VM* vm, YarrCodeBlock& jitObject, YarrJITCompileMode mode)
 {
     if (mode == MatchOnly)
-        YarrGenerator<MatchOnly>(pattern, charSize).compile(vm, jitObject);
+        YarrGenerator<MatchOnly>(vm, pattern, charSize).compile(vm, jitObject);
     else
-        YarrGenerator<IncludeSubpatterns>(pattern, charSize).compile(vm, jitObject);
+        YarrGenerator<IncludeSubpatterns>(vm, pattern, charSize).compile(vm, jitObject);
 }
 
 }}

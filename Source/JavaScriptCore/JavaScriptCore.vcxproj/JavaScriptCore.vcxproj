@@ -887,6 +887,7 @@
     <ClCompile Include="..\runtime\RegExpPrototype.cpp" />
     <ClCompile Include="..\runtime\RuntimeType.cpp" />
     <ClCompile Include="..\runtime\SamplingCounter.cpp" />
+    <ClCompile Include="..\runtime\SamplingProfiler.cpp" />
     <ClCompile Include="..\runtime\SetConstructor.cpp" />
     <ClCompile Include="..\runtime\SetIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\SetPrototype.cpp" />
@@ -1523,6 +1524,7 @@
     <ClInclude Include="..\llint\LLIntExceptions.h" />
     <ClInclude Include="..\llint\LLIntOfflineAsmConfig.h" />
     <ClInclude Include="..\llint\LLIntOpcode.h" />
+    <ClInclude Include="..\llint\LLIntPCRanges.h" />
     <ClInclude Include="..\llint\LLIntSlowPaths.h" />
     <ClInclude Include="..\llint\LLIntThunks.h" />
     <ClInclude Include="..\llint\LowLevelInterpreter.h" />
@@ -1803,6 +1805,7 @@
     <ClInclude Include="..\runtime\RuntimeFlags.h" />
     <ClInclude Include="..\runtime\RuntimeType.h" />
     <ClInclude Include="..\runtime\SamplingCounter.h" />
+    <ClInclude Include="..\runtime\SamplingProfiler.h" />
     <ClInclude Include="..\runtime\ScopeOffset.h" />
     <ClInclude Include="..\runtime\ScopedArguments.h" />
     <ClInclude Include="..\runtime\ScopedArgumentsTable.h" />

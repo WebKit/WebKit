@@ -725,6 +725,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/RegExpPrototype.cpp
     runtime/RuntimeType.cpp
     runtime/SamplingCounter.cpp
+    runtime/SamplingProfiler.cpp
     runtime/ScopeOffset.cpp
     runtime/ScopedArguments.cpp
     runtime/ScopedArgumentsTable.cpp

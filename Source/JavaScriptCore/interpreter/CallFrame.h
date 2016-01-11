@@ -67,6 +67,7 @@ namespace JSC  {
     public:
         JSValue calleeAsValue() const { return this[JSStack::Callee].jsValue(); }
         JSObject* callee() const { return this[JSStack::Callee].object(); }
+        JSValue unsafeCallee() const { return this[JSStack::Callee].asanUnsafeJSValue(); }
         CodeBlock* codeBlock() const { return this[JSStack::CodeBlock].Register::codeBlock(); }
         JSScope* scope(int scopeRegisterOffset) const
         {

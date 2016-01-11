@@ -61,20 +61,7 @@
 
 #if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
 #include <signal.h>
-#endif
 
-#endif
-
-using namespace WTF;
-
-namespace JSC {
-
-#if OS(DARWIN)
-typedef mach_port_t PlatformThread;
-#elif OS(WINDOWS)
-typedef DWORD PlatformThread;
-#elif USE(PTHREADS)
-typedef pthread_t PlatformThread;
 static const int SigThreadSuspendResume = SIGUSR2;
 
 #if defined(SA_RESTART)
@@ -85,8 +72,16 @@ static void pthreadSignalHandlerSuspendResume(int)
     sigaddset(&signalSet, SigThreadSuspendResume);
     sigsuspend(&signalSet);
 }
+#endif // defined(SA_RESTART)
+#endif // USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+
 #endif
-#endif
+
+using namespace WTF;
+
+namespace JSC {
+
+using Thread = MachineThreads::Thread;
 
 class ActiveMachineThreadsManager;
 static ActiveMachineThreadsManager& activeMachineThreadsManager();
@@ -157,114 +152,25 @@ static inline PlatformThread getCurrentPlatformThread()
 #endif
 }
 
-class MachineThreads::Thread {
-    WTF_MAKE_FAST_ALLOCATED;
-
-    Thread(const PlatformThread& platThread, void* base, void* end)
-        : platformThread(platThread)
-        , stackBase(base)
-        , stackEnd(end)
-    {
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && defined(SA_RESTART)
-        // if we have SA_RESTART, enable SIGUSR2 debugging mechanism
-        struct sigaction action;
-        action.sa_handler = pthreadSignalHandlerSuspendResume;
-        sigemptyset(&action.sa_mask);
-        action.sa_flags = SA_RESTART;
-        sigaction(SigThreadSuspendResume, &action, 0);
-
-        sigset_t mask;
-        sigemptyset(&mask);
-        sigaddset(&mask, SigThreadSuspendResume);
-        pthread_sigmask(SIG_UNBLOCK, &mask, 0);
-#elif OS(WINDOWS)
-        ASSERT(platformThread == GetCurrentThreadId());
-        bool isSuccessful =
-            DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(),
-                &platformThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
-        RELEASE_ASSERT(isSuccessful);
-#endif
-    }
-
-public:
-    ~Thread()
-    {
-#if OS(WINDOWS)
-        CloseHandle(platformThreadHandle);
-#endif
-    }
-
-    static Thread* createForCurrentThread()
-    {
-        auto stackBounds = wtfThreadData().stack();
-        return new Thread(getCurrentPlatformThread(), stackBounds.origin(), stackBounds.end());
-    }
-
-    struct Registers {
-        inline void* stackPointer() const;
-        
-#if OS(DARWIN)
-#if CPU(X86)
-        typedef i386_thread_state_t PlatformRegisters;
-#elif CPU(X86_64)
-        typedef x86_thread_state64_t PlatformRegisters;
-#elif CPU(PPC)
-        typedef ppc_thread_state_t PlatformRegisters;
-#elif CPU(PPC64)
-        typedef ppc_thread_state64_t PlatformRegisters;
-#elif CPU(ARM)
-        typedef arm_thread_state_t PlatformRegisters;
-#elif CPU(ARM64)
-        typedef arm_thread_state64_t PlatformRegisters;
-#else
-#error Unknown Architecture
-#endif
-        
-#elif OS(WINDOWS)
-        typedef CONTEXT PlatformRegisters;
-#elif USE(PTHREADS)
-        typedef pthread_attr_t PlatformRegisters;
-#else
-#error Need a thread register struct for this platform
-#endif
-        
-        PlatformRegisters regs;
-    };
-    
-    inline bool operator==(const PlatformThread& other) const;
-    inline bool operator!=(const PlatformThread& other) const { return !(*this == other); }
-
-    inline bool suspend();
-    inline void resume();
-    size_t getRegisters(Registers&);
-    void freeRegisters(Registers&);
-    std::pair<void*, size_t> captureStack(void* stackTop);
-
-    Thread* next;
-    PlatformThread platformThread;
-    void* stackBase;
-    void* stackEnd;
-#if OS(WINDOWS)
-    HANDLE platformThreadHandle;
-#endif
-};
-
 MachineThreads::MachineThreads(Heap* heap)
     : m_registeredThreads(0)
-    , m_threadSpecific(0)
+    , m_threadSpecificForMachineThreads(0)
+    , m_threadSpecificForThread(0)
 #if !ASSERT_DISABLED
     , m_heap(heap)
 #endif
 {
     UNUSED_PARAM(heap);
-    threadSpecificKeyCreate(&m_threadSpecific, removeThread);
+    threadSpecificKeyCreate(&m_threadSpecificForMachineThreads, removeThread);
+    threadSpecificKeyCreate(&m_threadSpecificForThread, nullptr);
     activeMachineThreadsManager().add(this);
 }
 
 MachineThreads::~MachineThreads()
 {
     activeMachineThreadsManager().remove(this);
-    threadSpecificKeyDelete(m_threadSpecific);
+    threadSpecificKeyDelete(m_threadSpecificForMachineThreads);
+    threadSpecificKeyDelete(m_threadSpecificForThread);
 
     LockHolder registeredThreadsLock(m_registeredThreadsMutex);
     for (Thread* t = m_registeredThreads; t;) {
@@ -274,7 +180,13 @@ MachineThreads::~MachineThreads()
     }
 }
 
-inline bool MachineThreads::Thread::operator==(const PlatformThread& other) const
+Thread* MachineThreads::Thread::createForCurrentThread()
+{
+    auto stackBounds = wtfThreadData().stack();
+    return new Thread(getCurrentPlatformThread(), stackBounds.origin(), stackBounds.end());
+}
+
+bool MachineThreads::Thread::operator==(const PlatformThread& other) const
 {
 #if OS(DARWIN) || OS(WINDOWS)
     return platformThread == other;
@@ -285,22 +197,52 @@ inline bool MachineThreads::Thread::operator==(const PlatformThread& other) cons
 #endif
 }
 
+#ifndef NDEBUG
+static bool isThreadInList(Thread* listHead, Thread* target)
+{
+    for (Thread* thread = listHead; thread; thread = thread->next) {
+        if (thread == target)
+            return true;
+    }
+
+    return false;
+}
+#endif
+
 void MachineThreads::addCurrentThread()
 {
     ASSERT(!m_heap->vm()->hasExclusiveThread() || m_heap->vm()->exclusiveThread() == std::this_thread::get_id());
 
-    if (threadSpecificGet(m_threadSpecific)) {
-        ASSERT(threadSpecificGet(m_threadSpecific) == this);
+    if (threadSpecificGet(m_threadSpecificForMachineThreads)) {
+#ifndef NDEBUG
+        LockHolder lock(m_registeredThreadsMutex);
+        ASSERT(threadSpecificGet(m_threadSpecificForMachineThreads) == this);
+        ASSERT(threadSpecificGet(m_threadSpecificForThread));
+        ASSERT(isThreadInList(m_registeredThreads, static_cast<Thread*>(threadSpecificGet(m_threadSpecificForThread))));
+#endif
         return;
     }
 
-    threadSpecificSet(m_threadSpecific, this);
     Thread* thread = Thread::createForCurrentThread();
+    threadSpecificSet(m_threadSpecificForMachineThreads, this);
+    threadSpecificSet(m_threadSpecificForThread, thread);
 
     LockHolder lock(m_registeredThreadsMutex);
 
     thread->next = m_registeredThreads;
     m_registeredThreads = thread;
+}
+
+Thread* MachineThreads::machineThreadForCurrentThread()
+{
+    Thread* result = static_cast<Thread*>(threadSpecificGet(m_threadSpecificForThread));
+    RELEASE_ASSERT(result);
+#ifndef NDEBUG
+    LockHolder lock(m_registeredThreadsMutex);
+    ASSERT(isThreadInList(m_registeredThreads, result));
+#endif
+
+    return result;
 }
 
 void MachineThreads::removeThread(void* p)
@@ -349,7 +291,40 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     conservativeRoots.add(stackTop, stackOrigin, jitStubRoutines, codeBlocks);
 }
 
-inline bool MachineThreads::Thread::suspend()
+MachineThreads::Thread::Thread(const PlatformThread& platThread, void* base, void* end)
+    : platformThread(platThread)
+    , stackBase(base)
+    , stackEnd(end)
+{
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && defined(SA_RESTART)
+    // if we have SA_RESTART, enable SIGUSR2 debugging mechanism
+    struct sigaction action;
+    action.sa_handler = pthreadSignalHandlerSuspendResume;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = SA_RESTART;
+    sigaction(SigThreadSuspendResume, &action, 0);
+
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SigThreadSuspendResume);
+    pthread_sigmask(SIG_UNBLOCK, &mask, 0);
+#elif OS(WINDOWS)
+    ASSERT(platformThread == GetCurrentThreadId());
+    bool isSuccessful =
+        DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(),
+            &platformThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+    RELEASE_ASSERT(isSuccessful);
+#endif
+}
+
+MachineThreads::Thread::~Thread()
+{
+#if OS(WINDOWS)
+    CloseHandle(platformThreadHandle);
+#endif
+}
+
+bool MachineThreads::Thread::suspend()
 {
 #if OS(DARWIN)
     kern_return_t result = thread_suspend(platformThread);
@@ -366,7 +341,7 @@ inline bool MachineThreads::Thread::suspend()
 #endif
 }
 
-inline void MachineThreads::Thread::resume()
+void MachineThreads::Thread::resume()
 {
 #if OS(DARWIN)
     thread_resume(platformThread);
@@ -379,7 +354,7 @@ inline void MachineThreads::Thread::resume()
 #endif
 }
 
-size_t MachineThreads::Thread::getRegisters(MachineThreads::Thread::Registers& registers)
+size_t MachineThreads::Thread::getRegisters(Thread::Registers& registers)
 {
     Thread::Registers::PlatformRegisters& regs = registers.regs;
 #if OS(DARWIN)
@@ -435,7 +410,7 @@ size_t MachineThreads::Thread::getRegisters(MachineThreads::Thread::Registers& r
 #endif
 }
 
-inline void* MachineThreads::Thread::Registers::stackPointer() const
+void* MachineThreads::Thread::Registers::stackPointer() const
 {
 #if OS(DARWIN)
 
@@ -503,7 +478,108 @@ inline void* MachineThreads::Thread::Registers::stackPointer() const
 #endif
 }
 
-void MachineThreads::Thread::freeRegisters(MachineThreads::Thread::Registers& registers)
+#if ENABLE(SAMPLING_PROFILER)
+void* MachineThreads::Thread::Registers::framePointer() const
+{
+#if OS(DARWIN)
+
+#if __DARWIN_UNIX03
+
+#if CPU(X86)
+    return reinterpret_cast<void*>(regs.__ebp);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>(regs.__rbp);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>(regs.__r[11]);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>(regs.__x[29]);
+#else
+#error Unknown Architecture
+#endif
+
+#else // !__DARWIN_UNIX03
+
+#if CPU(X86)
+    return reinterpret_cast<void*>(regs.esp);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>(regs.rsp);
+#else
+#error Unknown Architecture
+#endif
+
+#endif // __DARWIN_UNIX03
+
+// end OS(DARWIN)
+#elif OS(WINDOWS)
+
+#if CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.R11);
+#elif CPU(MIPS)
+#error Dont know what to do with mips. Do we even need this?
+#elif CPU(X86)
+    return reinterpret_cast<void*>((uintptr_t) regs.Ebp);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) regs.Rbp);
+#else
+#error Unknown Architecture
+#endif
+
+#else
+#error Need a way to get the frame pointer for another thread on this platform
+#endif
+}
+
+void* MachineThreads::Thread::Registers::instructionPointer() const
+{
+#if OS(DARWIN)
+
+#if __DARWIN_UNIX03
+
+#if CPU(X86)
+    return reinterpret_cast<void*>(regs.__eip);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>(regs.__rip);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>(regs.__pc);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>(regs.__pc);
+#else
+#error Unknown Architecture
+#endif
+
+#else // !__DARWIN_UNIX03
+#if CPU(X86)
+    return reinterpret_cast<void*>(regs.eip);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>(regs.rip);
+#else
+#error Unknown Architecture
+#endif
+
+#endif // __DARWIN_UNIX03
+
+// end OS(DARWIN)
+#elif OS(WINDOWS)
+
+#if CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.Pc);
+#elif CPU(MIPS)
+#error Dont know what to do with mips. Do we even need this?
+#elif CPU(X86)
+    return reinterpret_cast<void*>((uintptr_t) regs.Eip);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) regs.Rip);
+#else
+#error Unknown Architecture
+#endif
+
+#else
+#error Need a way to get the instruction pointer for another thread on this platform
+#endif
+}
+#endif // ENABLE(SAMPLING_PROFILER)
+
+void MachineThreads::Thread::freeRegisters(Thread::Registers& registers)
 {
     Thread::Registers::PlatformRegisters& regs = registers.regs;
 #if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)

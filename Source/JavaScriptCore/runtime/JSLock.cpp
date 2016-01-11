@@ -26,6 +26,7 @@
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
+#include "SamplingProfiler.h"
 #include <thread>
 
 namespace JSC {
@@ -140,6 +141,12 @@ void JSLock::didAcquireLock()
     ASSERT(m_entryAtomicStringTable);
 
     m_vm->heap.machineThreads().addCurrentThread();
+
+#if ENABLE(SAMPLING_PROFILER)
+    // Note: this must come after addCurrentThread().
+    if (SamplingProfiler* samplingProfiler = m_vm->samplingProfiler())
+        samplingProfiler->noticeJSLockAcquisition();
+#endif
 }
 
 void JSLock::unlock()

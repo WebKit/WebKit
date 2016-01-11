@@ -1366,8 +1366,9 @@ inline void CodeBlock::clearVisitWeaklyHasBeenCalled()
     m_visitWeaklyHasBeenCalled.store(false, std::memory_order_relaxed);
 }
 
-inline void CodeBlockSet::mark(void* candidateCodeBlock)
+inline void CodeBlockSet::mark(const LockHolder& locker, void* candidateCodeBlock)
 {
+    ASSERT(m_lock.isLocked());
     // We have to check for 0 and -1 because those are used by the HashMap as markers.
     uintptr_t value = reinterpret_cast<uintptr_t>(candidateCodeBlock);
     
@@ -1381,10 +1382,10 @@ inline void CodeBlockSet::mark(void* candidateCodeBlock)
     if (!m_oldCodeBlocks.contains(codeBlock) && !m_newCodeBlocks.contains(codeBlock))
         return;
 
-    mark(codeBlock);
+    mark(locker, codeBlock);
 }
 
-inline void CodeBlockSet::mark(CodeBlock* codeBlock)
+inline void CodeBlockSet::mark(const LockHolder&, CodeBlock* codeBlock)
 {
     if (!codeBlock)
         return;

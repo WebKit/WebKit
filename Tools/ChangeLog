@@ -1,3 +1,12 @@
+2016-01-10  Saam barati  <sbarati@apple.com>
+
+        Implement a sampling profiler
+        https://bugs.webkit.org/show_bug.cgi?id=151713
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-01-10  Konstantin Tokarev  <annulen@yandex.ru>
 
         [webkitdirs] Try arch and uname commands on non-windows OS

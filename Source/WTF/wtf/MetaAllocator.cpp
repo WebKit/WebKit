@@ -426,6 +426,13 @@ void MetaAllocator::decrementPageOccupancy(void* address, size_t sizeInBytes)
     }
 }
 
+bool MetaAllocator::isInAllocatedMemory(const LockHolder&, void* address)
+{
+    ASSERT(m_lock.isLocked());
+    uintptr_t page = reinterpret_cast<uintptr_t>(address) >> m_logPageSize;
+    return m_pageOccupancyMap.contains(page);
+}
+
 size_t MetaAllocator::roundUp(size_t sizeInBytes)
 {
     if (std::numeric_limits<size_t>::max() - m_allocationGranule <= sizeInBytes)

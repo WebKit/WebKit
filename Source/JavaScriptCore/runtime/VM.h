@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/StackBounds.h>
+#include <wtf/Stopwatch.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/WTFThreadData.h>
@@ -93,6 +94,9 @@ class LegacyProfiler;
 class NativeExecutable;
 class RegExpCache;
 class RegisterAtOffsetList;
+#if ENABLE(SAMPLING_PROFILER)
+class SamplingProfiler;
+#endif
 class ScriptExecutable;
 class SourceProvider;
 class SourceProviderCache;
@@ -241,6 +245,11 @@ public:
 
     JS_EXPORT_PRIVATE Watchdog& ensureWatchdog();
     JS_EXPORT_PRIVATE Watchdog* watchdog() { return m_watchdog.get(); }
+
+#if ENABLE(SAMPLING_PROFILER)
+    JS_EXPORT_PRIVATE SamplingProfiler* samplingProfiler() { return m_samplingProfiler.get(); }
+    JS_EXPORT_PRIVATE void ensureSamplingProfiler(RefPtr<Stopwatch>&&);
+#endif
 
 private:
     RefPtr<JSLock> m_apiLock;
@@ -461,7 +470,7 @@ public:
     }
 
     void* lastStackTop() { return m_lastStackTop; }
-    void setLastStackTop(void* lastStackTop) { m_lastStackTop = lastStackTop; }
+    void setLastStackTop(void*);
 
     const ClassInfo* const jsArrayClassInfo;
     const ClassInfo* const jsFinalObjectClassInfo;
@@ -476,6 +485,8 @@ public:
     void* osrExitJumpDestination;
     Vector<ScratchBuffer*> scratchBuffers;
     size_t sizeOfLastScratchBuffer;
+
+    bool isExecutingInRegExpJIT { false };
 
     ScratchBuffer* scratchBufferForSize(size_t size)
     {
@@ -650,6 +661,9 @@ private:
     Deque<std::unique_ptr<QueuedTask>> m_microtaskQueue;
     MallocPtr<EncodedJSValue> m_exceptionFuzzBuffer;
     RefPtr<Watchdog> m_watchdog;
+#if ENABLE(SAMPLING_PROFILER)
+    RefPtr<SamplingProfiler> m_samplingProfiler;
+#endif
 };
 
 #if ENABLE(GC_VALIDATION)

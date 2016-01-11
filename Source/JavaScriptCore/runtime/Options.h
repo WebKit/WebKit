@@ -117,7 +117,7 @@ typedef const char* optionString;
     v(unsigned, errorModeReservedZoneSize, 64 * KB, nullptr) \
     \
     v(bool, crashIfCantAllocateJITMemory, false, nullptr) \
-    v(unsigned, jitMemoryReservationSize, 0, nullptr) \
+    v(unsigned, jitMemoryReservationSize, 0, "Set this number to change the executable allocation size in ExecutableAllocatorFixedVMPool. (In bytes.)") \
     \
     v(bool, forceCodeBlockLiveness, false, nullptr) \
     v(bool, forceICFailure, false, nullptr) \
@@ -321,6 +321,7 @@ typedef const char* optionString;
     v(bool, logHeapStatisticsAtExit, false, nullptr) \
     v(bool, useTypeProfiler, false, nullptr) \
     v(bool, useControlFlowProfiler, false, nullptr) \
+    v(bool, useSamplingProfiler, false, nullptr) \
     \
     v(bool, verifyHeap, false, nullptr) \
     v(unsigned, numberOfGCCyclesToRecordForVerification, 3, nullptr) \

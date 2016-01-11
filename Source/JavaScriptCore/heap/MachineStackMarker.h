@@ -27,45 +27,122 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSpecific.h>
 
+#if OS(DARWIN)
+#include <mach/thread_act.h>
+#endif
+
+#if OS(DARWIN)
+typedef mach_port_t PlatformThread;
+#elif OS(WINDOWS)
+typedef DWORD PlatformThread;
+#elif USE(PTHREADS)
+typedef pthread_t PlatformThread;
+#endif // OS(DARWIN)
+
 namespace JSC {
 
-    class CodeBlockSet;
-    class ConservativeRoots;
-    class Heap;
-    class JITStubRoutineSet;
+class CodeBlockSet;
+class ConservativeRoots;
+class Heap;
+class JITStubRoutineSet;
 
-    class MachineThreads {
-        WTF_MAKE_NONCOPYABLE(MachineThreads);
+class MachineThreads {
+    WTF_MAKE_NONCOPYABLE(MachineThreads);
+public:
+    typedef jmp_buf RegisterState;
+
+    MachineThreads(Heap*);
+    ~MachineThreads();
+
+    void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters);
+
+    JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
+
+    class Thread {
+        WTF_MAKE_FAST_ALLOCATED;
+        Thread(const PlatformThread& platThread, void* base, void* end);
+
     public:
-        typedef jmp_buf RegisterState;
+        ~Thread();
 
-        MachineThreads(Heap*);
-        ~MachineThreads();
+        static Thread* createForCurrentThread();
 
-        void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters);
+        struct Registers {
+            void* stackPointer() const;
+#if ENABLE(SAMPLING_PROFILER)
+            void* framePointer() const;
+            void* instructionPointer() const;
+#endif // ENABLE(SAMPLING_PROFILER)
+            
+#if OS(DARWIN)
+#if CPU(X86)
+            typedef i386_thread_state_t PlatformRegisters;
+#elif CPU(X86_64)
+            typedef x86_thread_state64_t PlatformRegisters;
+#elif CPU(PPC)
+            typedef ppc_thread_state_t PlatformRegisters;
+#elif CPU(PPC64)
+            typedef ppc_thread_state64_t PlatformRegisters;
+#elif CPU(ARM)
+            typedef arm_thread_state_t PlatformRegisters;
+#elif CPU(ARM64)
+            typedef arm_thread_state64_t PlatformRegisters;
+#else
+#error Unknown Architecture
+#endif
+            
+#elif OS(WINDOWS)
+            typedef CONTEXT PlatformRegisters;
+#elif USE(PTHREADS)
+            typedef pthread_attr_t PlatformRegisters;
+#else
+#error Need a thread register struct for this platform
+#endif
+            
+            PlatformRegisters regs;
+        };
+        
+        bool operator==(const PlatformThread& other) const;
+        bool operator!=(const PlatformThread& other) const { return !(*this == other); }
 
-        JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
+        bool suspend();
+        void resume();
+        size_t getRegisters(Registers&);
+        void freeRegisters(Registers&);
+        std::pair<void*, size_t> captureStack(void* stackTop);
 
-    private:
-        class Thread;
-
-        void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters);
-
-        void tryCopyOtherThreadStack(Thread*, void*, size_t capacity, size_t*);
-        bool tryCopyOtherThreadStacks(LockHolder&, void*, size_t capacity, size_t*);
-
-        static void removeThread(void*);
-
-        template<typename PlatformThread>
-        void removeThreadIfFound(PlatformThread);
-
-        Lock m_registeredThreadsMutex;
-        Thread* m_registeredThreads;
-        WTF::ThreadSpecificKey m_threadSpecific;
-#if !ASSERT_DISABLED
-        Heap* m_heap;
+        Thread* next;
+        PlatformThread platformThread;
+        void* stackBase;
+        void* stackEnd;
+#if OS(WINDOWS)
+        HANDLE platformThreadHandle;
 #endif
     };
+
+    Lock& getLock() { return m_registeredThreadsMutex; }
+    Thread* threadsListHead(const LockHolder&) const { ASSERT(m_registeredThreadsMutex.isLocked()); return m_registeredThreads; }
+    Thread* machineThreadForCurrentThread();
+
+private:
+    void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters);
+
+    void tryCopyOtherThreadStack(Thread*, void*, size_t capacity, size_t*);
+    bool tryCopyOtherThreadStacks(LockHolder&, void*, size_t capacity, size_t*);
+
+    static void removeThread(void*);
+
+    template<typename PlatformThread>
+    void removeThreadIfFound(PlatformThread);
+
+    Lock m_registeredThreadsMutex;
+    Thread* m_registeredThreads;
+    WTF::ThreadSpecificKey m_threadSpecificForMachineThreads;
+    WTF::ThreadSpecificKey m_threadSpecificForThread;
+#if !ASSERT_DISABLED
+    Heap* m_heap;
+#endif
+};
 
 } // namespace JSC
 

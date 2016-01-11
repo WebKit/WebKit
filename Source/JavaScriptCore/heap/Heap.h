@@ -40,6 +40,7 @@
 #include "Options.h"
 #include "SlotVisitor.h"
 #include "StructureIDTable.h"
+#include "TinyBloomFilter.h"
 #include "UnconditionalFinalizer.h"
 #include "WeakHandleOwner.h"
 #include "WeakReferenceHarvester.h"
@@ -100,6 +101,11 @@ public:
     static bool isMarked(const void*);
     static bool testAndSetMarked(const void*);
     static void setMarked(const void*);
+
+    // This function must be run after stopAllocation() is called and 
+    // before liveness data is cleared to be accurate.
+    static bool isPointerGCObject(TinyBloomFilter, MarkedBlockSet&, void* pointer);
+    static bool isValueGCObject(TinyBloomFilter, MarkedBlockSet&, JSValue);
 
     void writeBarrier(const JSCell*);
     void writeBarrier(const JSCell*, JSValue);
@@ -227,6 +233,8 @@ public:
 
     StructureIDTable& structureIDTable() { return m_structureIDTable; }
 
+    CodeBlockSet& codeBlockSet() { return m_codeBlocks; }
+
 #if USE(CF)
         template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
@@ -307,6 +315,7 @@ private:
     void visitException(HeapRootVisitor&);
     void visitStrongHandles(HeapRootVisitor&);
     void visitHandleStack(HeapRootVisitor&);
+    void visitSamplingProfiler();
     void traceCodeBlocksAndJITStubRoutines();
     void converge();
     void visitWeakHandles(HeapRootVisitor&);

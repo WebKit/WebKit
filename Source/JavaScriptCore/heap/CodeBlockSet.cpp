@@ -45,28 +45,32 @@ CodeBlockSet::~CodeBlockSet()
 
 void CodeBlockSet::add(CodeBlock* codeBlock)
 {
+    LockHolder locker(&m_lock);
     bool isNewEntry = m_newCodeBlocks.add(codeBlock).isNewEntry;
     ASSERT_UNUSED(isNewEntry, isNewEntry);
 }
 
-void CodeBlockSet::promoteYoungCodeBlocks()
+void CodeBlockSet::promoteYoungCodeBlocks(const LockHolder&)
 {
+    ASSERT(m_lock.isLocked());
     m_oldCodeBlocks.add(m_newCodeBlocks.begin(), m_newCodeBlocks.end());
     m_newCodeBlocks.clear();
 }
 
 void CodeBlockSet::clearMarksForFullCollection()
 {
+    LockHolder locker(&m_lock);
     for (CodeBlock* codeBlock : m_oldCodeBlocks)
         codeBlock->clearVisitWeaklyHasBeenCalled();
 
     // We promote after we clear marks on the old generation CodeBlocks because
     // none of the young generations CodeBlocks need to be cleared.
-    promoteYoungCodeBlocks();
+    promoteYoungCodeBlocks(locker);
 }
 
 void CodeBlockSet::lastChanceToFinalize()
 {
+    LockHolder locker(&m_lock);
     for (CodeBlock* codeBlock : m_newCodeBlocks)
         codeBlock->classInfo()->methodTable.destroy(codeBlock);
 
@@ -76,6 +80,7 @@ void CodeBlockSet::lastChanceToFinalize()
 
 void CodeBlockSet::deleteUnmarkedAndUnreferenced(HeapOperation collectionType)
 {
+    LockHolder locker(&m_lock);
     HashSet<CodeBlock*>& set = collectionType == EdenCollection ? m_newCodeBlocks : m_oldCodeBlocks;
     Vector<CodeBlock*> unmarked;
     for (CodeBlock* codeBlock : set) {
@@ -91,21 +96,21 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced(HeapOperation collectionType)
 
     // Any remaining young CodeBlocks are live and need to be promoted to the set of old CodeBlocks.
     if (collectionType == EdenCollection)
-        promoteYoungCodeBlocks();
+        promoteYoungCodeBlocks(locker);
 }
 
-void CodeBlockSet::remove(CodeBlock* codeBlock)
+bool CodeBlockSet::contains(const LockHolder&, void* candidateCodeBlock)
 {
-    if (m_oldCodeBlocks.contains(codeBlock)) {
-        m_oldCodeBlocks.remove(codeBlock);
-        return;
-    }
-    ASSERT(m_newCodeBlocks.contains(codeBlock));
-    m_newCodeBlocks.remove(codeBlock);
+    RELEASE_ASSERT(m_lock.isLocked());
+    CodeBlock* codeBlock = static_cast<CodeBlock*>(candidateCodeBlock);
+    if (!HashSet<CodeBlock*>::isValidValue(codeBlock))
+        return false;
+    return m_oldCodeBlocks.contains(codeBlock) || m_newCodeBlocks.contains(codeBlock) || m_currentlyExecuting.contains(codeBlock);
 }
 
 void CodeBlockSet::writeBarrierCurrentlyExecutingCodeBlocks(Heap* heap)
 {
+    LockHolder locker(&m_lock);
     if (verbose)
         dataLog("Remembering ", m_currentlyExecuting.size(), " code blocks.\n");
     for (CodeBlock* codeBlock : m_currentlyExecuting)

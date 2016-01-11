@@ -29,6 +29,7 @@
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
+#include <wtf/Lock.h>
 #include <wtf/MetaAllocatorHandle.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageAllocation.h>
@@ -114,7 +115,11 @@ public:
 
     RefPtr<ExecutableMemoryHandle> allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
 
+    bool isValidExecutableMemory(const LockHolder&, void* address);
+
     static size_t committedByteCount();
+
+    Lock& getLock() const;
 };
 
 #endif // ENABLE(JIT) && ENABLE(ASSEMBLER)
