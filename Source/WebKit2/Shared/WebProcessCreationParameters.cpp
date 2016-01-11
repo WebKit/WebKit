@@ -90,6 +90,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << urlSchemesRegisteredAsNoAccess;
     encoder << urlSchemesRegisteredAsDisplayIsolated;
     encoder << urlSchemesRegisteredAsCORSEnabled;
+    encoder << urlSchemesToRegisterAsAlwaysRevalidated;
 #if ENABLE(CACHE_PARTITIONING)
     encoder << urlSchemesRegisteredAsCachePartitioned;
 #endif
@@ -201,6 +202,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.urlSchemesRegisteredAsDisplayIsolated))
         return false;
     if (!decoder.decode(parameters.urlSchemesRegisteredAsCORSEnabled))
+        return false;
+    if (!decoder.decode(parameters.urlSchemesToRegisterAsAlwaysRevalidated))
         return false;
 #if ENABLE(CACHE_PARTITIONING)
     if (!decoder.decode(parameters.urlSchemesRegisteredAsCachePartitioned))

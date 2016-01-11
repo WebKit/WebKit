@@ -305,6 +305,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     for (auto& scheme : parameters.urlSchemesRegisteredAsCORSEnabled)
         registerURLSchemeAsCORSEnabled(scheme);
 
+    for (auto& scheme : parameters.urlSchemesToRegisterAsAlwaysRevalidated)
+        registerURLSchemeAsAlwaysRevalidated(scheme);
+
     WebCore::Settings::setShouldRewriteConstAsVar(parameters.shouldRewriteConstAsVar);
 
 #if ENABLE(CACHE_PARTITIONING)
@@ -423,6 +426,11 @@ void WebProcess::registerURLSchemeAsDisplayIsolated(const String& urlScheme) con
 void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme) const
 {
     SchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
+}
+
+void WebProcess::registerURLSchemeAsAlwaysRevalidated(const String& urlScheme) const
+{
+    SchemeRegistry::registerURLSchemeAsAlwaysRevalidated(urlScheme);
 }
 
 #if ENABLE(CACHE_PARTITIONING)

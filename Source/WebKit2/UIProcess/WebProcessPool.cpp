@@ -161,6 +161,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_userObservablePageCounter([this](bool) { updateProcessSuppressionState(); })
     , m_processSuppressionDisabledForPageCounter([this](bool) { updateProcessSuppressionState(); })
 {
+    for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())
+        m_schemesToRegisterAsAlwaysRevalidated.add(scheme);
+
 #if ENABLE(CACHE_PARTITIONING)
     for (const auto& urlScheme : m_configuration->cachePartitionedURLSchemes())
         m_schemesToRegisterAsCachePartitioned.add(urlScheme);
@@ -571,6 +574,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     copyToVector(m_schemesToRegisterAsNoAccess, parameters.urlSchemesRegisteredAsNoAccess);
     copyToVector(m_schemesToRegisterAsDisplayIsolated, parameters.urlSchemesRegisteredAsDisplayIsolated);
     copyToVector(m_schemesToRegisterAsCORSEnabled, parameters.urlSchemesRegisteredAsCORSEnabled);
+    copyToVector(m_schemesToRegisterAsAlwaysRevalidated, parameters.urlSchemesToRegisterAsAlwaysRevalidated);
 #if ENABLE(CACHE_PARTITIONING)
     copyToVector(m_schemesToRegisterAsCachePartitioned, parameters.urlSchemesRegisteredAsCachePartitioned);
 #endif

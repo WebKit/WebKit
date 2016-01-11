@@ -1,3 +1,23 @@
+2016-01-11  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add SPI to opt out a URL scheme from the memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=152950
+        rdar://problem/24066652
+
+        Reviewed by Tim Horton.
+
+        Added an API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AlwaysRevalidatedURLSchemes.mm: Added.
+        (+[AlwaysRevalidatedURLSchemeProtocol canInitWithRequest:]):
+        (+[AlwaysRevalidatedURLSchemeProtocol canonicalRequestForRequest:]):
+        (+[AlwaysRevalidatedURLSchemeProtocol requestIsCacheEquivalent:toRequest:]):
+        (-[AlwaysRevalidatedURLSchemeProtocol startLoading]):
+        (-[AlwaysRevalidatedURLSchemeProtocol stopLoading]):
+        (-[AlwaysRevalidatedURLSchemesDelegate webView:didFinishNavigation:]):
+        (TEST):
+
 2016-01-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         [webkitdirs] Use CMake to determine architecture on isCMakeBuild()

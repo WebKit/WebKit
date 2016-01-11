@@ -179,6 +179,12 @@ static URLSchemesMap& cachePartitioningSchemes()
 }
 #endif
 
+static URLSchemesMap& alwaysRevalidatedSchemes()
+{
+    static NeverDestroyed<URLSchemesMap> schemes;
+    return schemes;
+}
+
 bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
 {
     if (scheme.isEmpty())
@@ -329,13 +335,16 @@ bool SchemeRegistry::schemeShouldBypassContentSecurityPolicy(const String& schem
     return ContentSecurityPolicyBypassingSchemes().contains(scheme);
 }
 
-bool SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely(const String& scheme)
+void SchemeRegistry::registerURLSchemeAsAlwaysRevalidated(const String& scheme)
 {
-#if PLATFORM(COCOA)
-    if (equalIgnoringCase(scheme, "applewebdata"))
-        return true;
-#endif
-    return equalIgnoringCase(scheme, "data");
+    alwaysRevalidatedSchemes().add(scheme);
+}
+
+bool SchemeRegistry::shouldAlwaysRevalidateURLScheme(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return alwaysRevalidatedSchemes().contains(scheme);
 }
 
 #if ENABLE(CACHE_PARTITIONING)
