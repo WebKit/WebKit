@@ -29,6 +29,7 @@
       <dep package="gst-libav"/>
       <dep package="openwebrtc"/>
       <dep package="llvm"/>
+      <dep package="shared-mime-info"/>
       <if condition-set="linux">
           <dep package="xserver"/>
           <dep package="mesa"/>
@@ -478,6 +479,20 @@
     <branch module="/pub/GNOME/sources/gsettings-desktop-schemas/3.16/gsettings-desktop-schemas-3.16.1.tar.xz" version="3.16.1"
             repo="ftp.gnome.org"
             hash="sha256:74fe9fdad510c8a6666febeceb7ebafc581ef990b3afcc8c1e8b5d90b24b3461">
+    </branch>
+  </autotools>
+
+  <autotools id="shared-mime-info"
+             autogenargs="--disable-default-make-check">
+    <dependencies>
+      <dep package="libxml2"/>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/~hadess/shared-mime-info-${version}.tar.xz" version="1.5"
+            repo="freedesktop.org"
+            hash="sha256:d6412840eb265bf36e61fd7b6fc6bea21b0f58cb22bed16f2ccccdd54bea4180">
+      <patch file="shared-mime-info-xht-glob.patch" strip="1"/>
+      <patch file="shared-mime-info-xhtml-magic.patch" strip="1"/>
     </branch>
   </autotools>
   

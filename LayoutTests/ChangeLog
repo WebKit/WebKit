@@ -1,3 +1,15 @@
+2016-01-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] W3C CSS2.1 anonymous table tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=152455
+
+        Reviewed by Mario Sanchez Prada.
+
+        Unskip the anonymous table tests, so the bots can generate expected results. The expected
+        results will be committed separately.
+
+        * platform/gtk/TestExpectations:
+
 2016-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Parsing failures cause use of incomplete fonts

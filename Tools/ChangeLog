@@ -1,3 +1,17 @@
+2016-01-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] W3C CSS2.1 anonymous table tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=152455
+
+        Reviewed by Mario Sanchez Prada.
+
+        Add shared-mime-info to the jhbuild environment, since it affects the results of layout
+        tests. Add upstream patches to fix detection of XHTML files.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/shared-mime-info-xht-glob.patch: Added.
+        * gtk/patches/shared-mime-info-xhtml-magic.patch: Added.
+
 2016-01-10  Saam barati  <sbarati@apple.com>
 
         Implement a sampling profiler

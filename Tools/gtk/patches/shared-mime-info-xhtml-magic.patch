@@ -1,0 +1,26 @@
+From 4961dc3e48d13c0c675ad7c135419b864813ca55 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Thu, 7 Jan 2016 15:49:16 +0100
+Subject: Add magic for XHTML files
+
+
+diff --git a/freedesktop.org.xml.in b/freedesktop.org.xml.in
+index 48696d9..9ea2f95 100644
+--- a/freedesktop.org.xml.in
++++ b/freedesktop.org.xml.in
+@@ -3670,6 +3670,12 @@ command to generate the output files.
+     <generic-icon name="text-html"/>
+     <glob pattern="*.xhtml"/>
+     <glob pattern="*.xht"/>
++    <magic priority="60">
++      <match type="string" value="//W3C//DTD XHTML " offset="0:256"/>
++      <match type="string" value="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" offset="0:256"/>
++      <match type="string" value="&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml" offset="0:256"/>
++      <match type="string" value="&lt;HTML xmlns=&quot;http://www.w3.org/1999/xhtml" offset="0:256"/>
++    </magic>
+     <root-XML namespaceURI='http://www.w3.org/1999/xhtml' localName='html'/>
+   </mime-type>
+   <mime-type type="application/zip">
+-- 
+cgit v0.10.2
+
