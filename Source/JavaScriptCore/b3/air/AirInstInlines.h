@@ -43,6 +43,7 @@ template<> struct ForEach<Tmp> {
         inst.forEachTmp(functor);
     }
 };
+
 template<> struct ForEach<Arg> {
     template<typename Functor>
     static void forEach(Inst& inst, const Functor& functor)
@@ -50,6 +51,7 @@ template<> struct ForEach<Arg> {
         inst.forEachArg(functor);
     }
 };
+
 template<> struct ForEach<StackSlot*> {
     template<typename Functor>
     static void forEach(Inst& inst, const Functor& functor)
@@ -68,6 +70,22 @@ template<> struct ForEach<StackSlot*> {
                 
                 functor(stackSlot, role, type, width);
                 arg = Arg::stack(stackSlot, arg.offset());
+            });
+    }
+};
+
+template<> struct ForEach<Reg> {
+    template<typename Functor>
+    static void forEach(Inst& inst, const Functor& functor)
+    {
+        inst.forEachTmp(
+            [&] (Tmp& tmp, Arg::Role role, Arg::Type type, Arg::Width width) {
+                if (!tmp.isReg())
+                    return;
+
+                Reg reg = tmp.reg();
+                functor(reg, role, type, width);
+                tmp = Tmp(reg);
             });
     }
 };

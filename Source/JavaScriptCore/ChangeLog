@@ -1,3 +1,49 @@
+2016-01-10  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to run liveness over registers without also tracking Tmps
+        https://bugs.webkit.org/show_bug.cgi?id=152963
+
+        Reviewed by Saam Barati.
+
+        This adds a RegLivenessAdapter so that we can run Liveness over registers. This makes it
+        easier to write certain kinds of phases, like ReportUsedRegisters. I anticipate writing more
+        code like that for handling cold function calls. It also makes code like that somewhat more
+        scalable, since we're no longer using HashSets.
+
+        Currently, the way we track sets of registers is with a BitVector. Normally, we use the
+        RegisterSet class, which wraps BitVector, so that we can add()/contains() on Reg's. But in
+        the liveness analysis, everything gets turned into an index. So, we want to use BitVector
+        directly. To do that, I needed to make the BitVector API look a bit more like a set API. I
+        think that this is good, because the lack of set methods (add/remove/contains) has caused
+        bugs in the past. This makes BitVector have methods both for set operations on bits and array
+        operations on bits. I think that's good, since BitVector gets used in both contexts.
+
+        * b3/B3IndexSet.h:
+        (JSC::B3::IndexSet::Iterable::iterator::iterator):
+        (JSC::B3::IndexSet::Iterable::begin):
+        (JSC::B3::IndexSet::dump):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::ForEach<Tmp>::forEach):
+        (JSC::B3::Air::ForEach<Arg>::forEach):
+        (JSC::B3::Air::ForEach<Reg>::forEach):
+        (JSC::B3::Air::Inst::forEach):
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::RegLivenessAdapter::RegLivenessAdapter):
+        (JSC::B3::Air::RegLivenessAdapter::maxIndex):
+        (JSC::B3::Air::RegLivenessAdapter::acceptsType):
+        (JSC::B3::Air::RegLivenessAdapter::valueToIndex):
+        (JSC::B3::Air::RegLivenessAdapter::indexToValue):
+        * b3/air/AirReportUsedRegisters.cpp:
+        (JSC::B3::Air::reportUsedRegisters):
+        * jit/Reg.h:
+        (JSC::Reg::next):
+        (JSC::Reg::index):
+        (JSC::Reg::maxIndex):
+        (JSC::Reg::isSet):
+        (JSC::Reg::operator bool):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::forEach):
+
 2016-01-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make branchMul functional in ARM B3 and minor fixes

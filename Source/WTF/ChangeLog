@@ -1,3 +1,46 @@
+2016-01-10  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to run liveness over registers without also tracking Tmps
+        https://bugs.webkit.org/show_bug.cgi?id=152963
+
+        Reviewed by Saam Barati.
+
+        Add set methods (add/contains/remove) to BitVector, since it gets used as a set in a lot of
+        places. This also makes BitVector a drop-in replacement for HashSet<unsigned> in a lot of
+        places.
+
+        Also made the iterator methods of BitVector live on BitVector directly rather than behind the
+        thing returned from setBits(). This makes sense since that makes BitVector even more of a
+        drop-in for HashSet. It's not harmful since we've never added any other mode of iterating a
+        BitVector other than this, so it doesn't make sense to make it harder to access.
+
+        * wtf/BitVector.h:
+        (WTF::BitVector::get):
+        (WTF::BitVector::contains):
+        (WTF::BitVector::set):
+        (WTF::BitVector::add):
+        (WTF::BitVector::ensureSizeAndSet):
+        (WTF::BitVector::clear):
+        (WTF::BitVector::remove):
+        (WTF::BitVector::hash):
+        (WTF::BitVector::iterator::iterator):
+        (WTF::BitVector::iterator::operator*):
+        (WTF::BitVector::iterator::operator++):
+        (WTF::BitVector::iterator::operator==):
+        (WTF::BitVector::iterator::operator!=):
+        (WTF::BitVector::begin):
+        (WTF::BitVector::end):
+        (WTF::BitVector::bitsInPointer):
+        (WTF::BitVector::SetBitsIterable::SetBitsIterable): Deleted.
+        (WTF::BitVector::SetBitsIterable::iterator::iterator): Deleted.
+        (WTF::BitVector::SetBitsIterable::iterator::operator*): Deleted.
+        (WTF::BitVector::SetBitsIterable::iterator::operator++): Deleted.
+        (WTF::BitVector::SetBitsIterable::iterator::operator==): Deleted.
+        (WTF::BitVector::SetBitsIterable::iterator::operator!=): Deleted.
+        (WTF::BitVector::SetBitsIterable::begin): Deleted.
+        (WTF::BitVector::SetBitsIterable::end): Deleted.
+        (WTF::BitVector::setBits): Deleted.
+
 2016-01-09  Andreas Kling  <akling@apple.com>
 
         Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL

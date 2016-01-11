@@ -76,6 +76,22 @@ private:
     Code& m_code;
 };
 
+struct RegLivenessAdapter {
+    typedef Reg Thing;
+    typedef BitVector IndexSet;
+
+    RegLivenessAdapter(Code&) { }
+
+    static unsigned maxIndex(Code&)
+    {
+        return Reg::maxIndex();
+    }
+
+    static bool acceptsType(Arg::Type) { return true; }
+    static unsigned valueToIndex(Reg reg) { return reg.index(); }
+    Reg indexToValue(unsigned index) { return Reg::fromIndex(index); }
+};
+
 template<typename Adapter>
 class AbstractLiveness : private Adapter {
     struct Workset;
@@ -344,6 +360,7 @@ using TmpLiveness = AbstractLiveness<TmpLivenessAdapter<type>>;
 typedef AbstractLiveness<TmpLivenessAdapter<Arg::GP>> GPLiveness;
 typedef AbstractLiveness<TmpLivenessAdapter<Arg::FP>> FPLiveness;
 typedef AbstractLiveness<StackSlotLivenessAdapter> StackSlotLiveness;
+typedef AbstractLiveness<RegLivenessAdapter> RegLiveness;
 
 } } } // namespace JSC::B3::Air
 

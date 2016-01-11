@@ -85,7 +85,7 @@ public:
             {
             }
 
-            iterator(const CollectionType& collection, BitVector::SetBitsIterable::iterator iter)
+            iterator(const CollectionType& collection, BitVector::iterator iter)
                 : m_collection(&collection)
                 , m_iter(iter)
             {
@@ -114,7 +114,7 @@ public:
 
         private:
             const CollectionType* m_collection;
-            BitVector::SetBitsIterable::iterator m_iter;
+            BitVector::iterator m_iter;
         };
 
         iterator begin() const { return iterator(m_collection, m_set.begin()); }
@@ -141,7 +141,7 @@ public:
     void dump(PrintStream& out) const
     {
         CommaPrinter comma;
-        for (size_t index : indices().setBits())
+        for (size_t index : indices())
             out.print(comma, T::dumpPrefix, index);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +103,11 @@ public:
     }
     
     unsigned index() const { return m_index; }
+
+    static unsigned maxIndex()
+    {
+        return last().index();
+    }
     
     bool isSet() const { return m_index != invalid(); }
     explicit operator bool() const { return isSet(); }
