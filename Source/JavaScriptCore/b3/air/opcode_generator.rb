@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2015 Apple Inc. All rights reserved.
+# Copyright (C) 2015-2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,14 +26,14 @@
 require "pathname"
 
 class Opcode
-    attr_reader :name, :special, :overloads
+    attr_reader :name, :custom, :overloads
     attr_reader :attributes
 
-    def initialize(name, special)
+    def initialize(name, custom)
         @name = name
-        @special = special
+        @custom = custom
         @attributes = {}
-        unless special
+        unless custom
             @overloads = []
         end
     end
@@ -72,18 +72,18 @@ end
 
 class Kind
     attr_reader :name
-    attr_accessor :special
+    attr_accessor :custom
 
     def initialize(name)
         @name = name
-        @special = false
+        @custom = false
     end
 
     def ==(other)
         if other.is_a? String
             @name == other
         else
-            @name == other.name and @special == other.special
+            @name == other.name and @custom == other.custom
         end
     end
 
@@ -203,7 +203,7 @@ end
 
 def isKeyword(token)
     isRole(token) or isGF(token) or isKind(token) or isArch(token) or isWidth(token) or
-        token == "special" or token == "as"
+        token == "custom" or token == "as"
 end
 
 def isIdentifier(token)
@@ -342,11 +342,11 @@ class Parser
         loop {
             break if @idx >= @tokens.length
 
-            if token == "special"
-                consume("special")
+            if token == "custom"
+                consume("custom")
                 opcodeName = consumeIdentifier
 
-                parseError("Cannot overload a special opcode") if result[opcodeName]
+                parseError("Cannot overload a custom opcode") if result[opcodeName]
 
                 result[opcodeName] = Opcode.new(opcodeName, true)
             else
@@ -356,7 +356,7 @@ class Parser
 
                 if result[opcodeName]
                     opcode = result[opcodeName]
-                    parseError("Cannot overload a special opcode") if opcode.special
+                    parseError("Cannot overload a custom opcode") if opcode.custom
                 else
                     opcode = Opcode.new(opcodeName, false)
                     result[opcodeName] = opcode
@@ -410,7 +410,7 @@ class Parser
 
                             if token == "*"
                                 parseError("Can only apply * to Tmp") unless kinds[-1].name == "Tmp"
-                                kinds[-1].special = true
+                                kinds[-1].custom = true
                                 consume("*")
                             end
 
@@ -549,7 +549,7 @@ def matchInstOverload(outp, speed, inst)
     $opcodes.values.each {
         | opcode |
         outp.puts "case #{opcode.name}:"
-        if opcode.special
+        if opcode.custom
             yield opcode, nil
         else
             needOverloadSwitch = ((opcode.overloads.size != 1) or speed == :safe)
@@ -576,7 +576,7 @@ end
 def matchInstOverloadForm(outp, speed, inst)
     matchInstOverload(outp, speed, inst) {
         | opcode, overload |
-        if opcode.special
+        if opcode.custom
             yield opcode, nil, nil
         else
             columnGetter = proc {
@@ -612,8 +612,8 @@ end
 
 writeH("OpcodeUtils") {
     | outp |
+    outp.puts "#include \"AirCustom.h\""
     outp.puts "#include \"AirInst.h\""
-    outp.puts "#include \"AirSpecial.h\""
     outp.puts "namespace JSC { namespace B3 { namespace Air {"
     
     outp.puts "inline bool opgenHiddenTruth() { return true; }"
@@ -629,9 +629,8 @@ writeH("OpcodeUtils") {
     outp.puts "{"
     matchInstOverload(outp, :fast, "this") {
         | opcode, overload |
-        if opcode.special
-            outp.puts "functor(args[0], Arg::Use, Arg::GP, Arg::pointerWidth()); // This is basically bogus, but it works for analyses that model Special as an immediate."
-            outp.puts "args[0].special()->forEachArg(*this, scopedLambda<EachArgCallback>(functor));"
+        if opcode.custom
+            outp.puts "#{opcode.name}Custom::forEachArg(*this, functor);"
         else
             overload.signature.each_with_index {
                 | arg, index |
@@ -670,8 +669,10 @@ writeH("OpcodeUtils") {
     $opcodes.values.each {
         | opcode |
         outp.puts "case #{opcode.name}:"
-        outp.puts "switch (sizeof...(Arguments)) {"
-        unless opcode.special
+        if opcode.custom
+            outp.puts "OPGEN_RETURN(#{opcode.name}Custom::isValidFormStatic(arguments...));"
+        else
+            outp.puts "switch (sizeof...(Arguments)) {"
             opcode.overloads.each {
                 | overload |
                 outp.puts "case #{overload.signature.length}:"
@@ -679,8 +680,8 @@ writeH("OpcodeUtils") {
                 filter = proc { false }
                 callback = proc {
                     | form |
-                    notSpecial = (not form.kinds.detect { | kind | kind.special })
-                    if notSpecial
+                    notCustom = (not form.kinds.detect { | kind | kind.custom })
+                    if notCustom
                         beginArchs(outp, form.archs)
                         outp.puts "OPGEN_RETURN(true);"
                         endArchs(outp, form.archs)
@@ -689,10 +690,10 @@ writeH("OpcodeUtils") {
                 matchForms(outp, :safe, overload.forms, 0, columnGetter, filter, callback)
                 outp.puts "break;"
             }
+            outp.puts "default:"
+            outp.puts "break;"
+            outp.puts "}"
         end
-        outp.puts "default:"
-        outp.puts "break;"
-        outp.puts "}"
         outp.puts "break;"
     }
     outp.puts "default:"
@@ -766,12 +767,8 @@ writeH("OpcodeGenerated") {
     outp.puts "{"
     matchInstOverloadForm(outp, :safe, "this") {
         | opcode, overload, form |
-        if opcode.special
-            outp.puts "if (args.size() < 1)"
-            outp.puts "return false;"
-            outp.puts "if (!args[0].isSpecial())"
-            outp.puts "return false;"
-            outp.puts "OPGEN_RETURN(args[0].special()->isValid(*this));"
+        if opcode.custom
+            outp.puts "OPGEN_RETURN(#{opcode.name}Custom::isValidForm(*this));"
         else
             beginArchs(outp, form.archs)
             needsMoreValidation = false
@@ -779,7 +776,7 @@ writeH("OpcodeGenerated") {
                 | index |
                 arg = overload.signature[index]
                 kind = form.kinds[index]
-                needsMoreValidation |= kind.special
+                needsMoreValidation |= kind.custom
 
                 # Some kinds of Args reqire additional validation.
                 case kind.name
@@ -821,10 +818,8 @@ writeH("OpcodeGenerated") {
         | opcode |
         outp.puts "case #{opcode.name}:"
 
-        if opcode.special
-            outp.puts "if (!argIndex)"
-            outp.puts "return false;"
-            outp.puts "OPGEN_RETURN(args[0].special()->admitsStack(*this, argIndex));"
+        if opcode.custom
+            outp.puts "OPGEN_RETURN(#{opcode.name}Custom::admitsStack(*this, argIndex));"
         else
             # Switch on the argIndex.
             outp.puts "switch (argIndex) {"
@@ -967,17 +962,13 @@ writeH("OpcodeGenerated") {
     if foundTrue
         outp.puts "return true;"
     end
-    foundTrue = false
     $opcodes.values.each {
         | opcode |
-        if opcode.special
+        if opcode.custom
             outp.puts "case #{opcode.name}:"
-            foundTrue = true
+            outp.puts "return #{opcode.name}Custom::hasNonArgNonControlEffects(*this);"
         end
     }
-    if foundTrue
-        outp.puts "return args[0].special()->hasNonArgNonControlEffects();"
-    end
     outp.puts "default:"
     outp.puts "return false;"
     outp.puts "}"
@@ -997,17 +988,13 @@ writeH("OpcodeGenerated") {
     if foundTrue
         outp.puts "return true;"
     end
-    foundTrue = false
     $opcodes.values.each {
         | opcode |
-        if opcode.special
+        if opcode.custom
             outp.puts "case #{opcode.name}:"
-            foundTrue = true
+            outp.puts "return #{opcode.name}Custom::hasNonArgNonControlEffects(*this);"
         end
     }
-    if foundTrue
-        outp.puts "return args[0].special()->hasNonArgNonControlEffects();"
-    end
     outp.puts "default:"
     outp.puts "return false;"
     outp.puts "}"
@@ -1020,8 +1007,8 @@ writeH("OpcodeGenerated") {
     outp.puts "CCallHelpers::Jump result;"
     matchInstOverloadForm(outp, :fast, "this") {
         | opcode, overload, form |
-        if opcode.special
-            outp.puts "OPGEN_RETURN(args[0].special()->generate(*this, jit, context));"
+        if opcode.custom
+            outp.puts "OPGEN_RETURN(#{opcode.name}Custom::generate(*this, jit, context));"
         else
             beginArchs(outp, form.archs)
             if form.altName

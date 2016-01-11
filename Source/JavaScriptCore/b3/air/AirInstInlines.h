@@ -96,20 +96,15 @@ void Inst::forEach(const Functor& functor)
     ForEach<Thing>::forEach(*this, functor);
 }
 
-inline bool Inst::hasSpecial() const
-{
-    return args.size() && args[0].isSpecial();
-}
-
 inline const RegisterSet& Inst::extraClobberedRegs()
 {
-    ASSERT(hasSpecial());
+    ASSERT(opcode == Patch);
     return args[0].special()->extraClobberedRegs(*this);
 }
 
 inline const RegisterSet& Inst::extraEarlyClobberedRegs()
 {
-    ASSERT(hasSpecial());
+    ASSERT(opcode == Patch);
     return args[0].special()->extraEarlyClobberedRegs(*this);
 }
 
@@ -146,12 +141,12 @@ inline void Inst::forEachDefWithExtraClobberedRegs(
         functor(Thing(reg), regDefRole, type, Arg::conservativeWidth(type));
     };
 
-    if (prevInst && prevInst->hasSpecial()) {
+    if (prevInst && prevInst->opcode == Patch) {
         regDefRole = Arg::Def;
         prevInst->extraClobberedRegs().forEach(reportReg);
     }
 
-    if (nextInst && nextInst->hasSpecial()) {
+    if (nextInst && nextInst->opcode == Patch) {
         regDefRole = Arg::EarlyDef;
         nextInst->extraEarlyClobberedRegs().forEach(reportReg);
     }
@@ -159,7 +154,7 @@ inline void Inst::forEachDefWithExtraClobberedRegs(
 
 inline void Inst::reportUsedRegisters(const RegisterSet& usedRegisters)
 {
-    ASSERT(hasSpecial());
+    ASSERT(opcode == Patch);
     args[0].special()->reportUsedRegisters(*this, usedRegisters);
 }
 

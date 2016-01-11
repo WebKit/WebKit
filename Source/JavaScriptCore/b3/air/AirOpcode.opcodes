@@ -674,5 +674,5 @@ Oops /terminal
 
 # Air allows for exotic behavior. A Patch's behavior is determined entirely by the Special operand,
 # which must be the first operand.
-special Patch
+custom Patch
 

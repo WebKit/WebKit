@@ -46,7 +46,7 @@ void reportUsedRegisters(Code& code)
 
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
-            if (inst.hasSpecial()) {
+            if (inst.opcode == Patch) {
                 RegisterSet registerSet;
                 for (Reg reg : localCalc.live())
                     registerSet.set(reg);

@@ -1,5 +1,62 @@
 2016-01-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Make it easier to introduce exotic instructions to Air
+        https://bugs.webkit.org/show_bug.cgi?id=152953
+
+        Reviewed by Benjamin Poulain.
+
+        Currently, you can define new "opcodes" in Air using either:
+
+        1) New opcode declared in AirOpcode.opcodes.
+        2) Patch opcode with a new implementation of Air::Special.
+
+        With (1), you are limited to fixed-argument-length instructions. There are other
+        restrictions as well, like that you can only use the roles that the AirOpcode syntax
+        supports.
+
+        With (2), you can do anything you like, but the instruction will be harder to match
+        since it will share the same opcode as any other Patch. Also, the instruction will have
+        the Special argument, which means more busy-work when creating the instruction and
+        validating it.
+
+        This introduces an in-between facility called "custom". This replaces what AirOpcode
+        previously called "special". A custom instruction is one whose behavior is defined by a
+        FooCustom struct with some static methods. Calls to those methods are emitted by
+        opcode_generator.rb.
+
+        The "custom" facility is powerful enough to be used to implement Patch, with the caveat
+        that we now treat the Patch instruction specially in a few places. Those places were
+        already effectively treating it specially by assuming that only Patch instructions have
+        a Special as their first argument.
+
+        This will let me implement the Shuffle instruction (bug 152952), which I think is needed
+        for performance work.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirCustom.h: Added.
+        (JSC::B3::Air::PatchCustom::forEachArg):
+        (JSC::B3::Air::PatchCustom::isValidFormStatic):
+        (JSC::B3::Air::PatchCustom::isValidForm):
+        (JSC::B3::Air::PatchCustom::admitsStack):
+        (JSC::B3::Air::PatchCustom::hasNonArgNonControlEffects):
+        (JSC::B3::Air::PatchCustom::generate):
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::forEach):
+        (JSC::B3::Air::Inst::extraClobberedRegs):
+        (JSC::B3::Air::Inst::extraEarlyClobberedRegs):
+        (JSC::B3::Air::Inst::forEachDefWithExtraClobberedRegs):
+        (JSC::B3::Air::Inst::reportUsedRegisters):
+        (JSC::B3::Air::Inst::hasSpecial): Deleted.
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirReportUsedRegisters.cpp:
+        (JSC::B3::Air::reportUsedRegisters):
+        * b3/air/opcode_generator.rb:
+
+2016-01-11  Filip Pizlo  <fpizlo@apple.com>
+
         Turn Check(true) into Patchpoint() followed by Oops
         https://bugs.webkit.org/show_bug.cgi?id=152968
 
