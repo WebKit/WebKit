@@ -1,3 +1,30 @@
+2016-01-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Iterating over a Set/Map is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=152691
+
+        Reviewed by Saam Barati.
+
+        Add regress tests.
+
+        * js/regress/map-for-each-expected.txt: Added.
+        * js/regress/map-for-each.html: Added.
+        * js/regress/map-for-of-expected.txt: Added.
+        * js/regress/map-for-of.html: Added.
+        * js/regress/script-tests/map-for-each.js: Added.
+        (createMap):
+        (i.map.forEach):
+        * js/regress/script-tests/map-for-of.js: Added.
+        (createMap):
+        * js/regress/script-tests/set-for-each.js: Added.
+        (set forEach):
+        (set createSet):
+        * js/regress/script-tests/set-for-of.js: Added.
+        * js/regress/set-for-each-expected.txt: Added.
+        * js/regress/set-for-each.html: Added.
+        * js/regress/set-for-of-expected.txt: Added.
+        * js/regress/set-for-of.html: Added.
+
 2016-01-09  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r194426): First email field is not autofilled on amazon.com

@@ -1,3 +1,112 @@
+2016-01-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Iterating over a Set/Map is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=152691
+
+        Reviewed by Saam Barati.
+
+        Set#forEach and Set & for-of are very slow. There are 2 reasons.
+
+        1. forEach is implemented in C++. And typically, taking JS callback and calling it from C++.
+
+        C++ to JS transition seems costly. perf result in Linux machine shows this.
+
+            Samples: 23K of event 'cycles', Event count (approx.): 21446074385
+            34.04%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::Interpreter::execute(JSC::CallFrameClosure&)
+            20.48%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] vmEntryToJavaScript
+             9.80%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::JITCode::execute(JSC::VM*, JSC::ProtoCallFrame*)
+             7.95%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::setProtoFuncForEach(JSC::ExecState*)
+             5.65%  jsc  perf-22854.map                      [.] 0x00007f5d2c204a6f
+
+        Writing forEach in JS eliminates this.
+
+            Samples: 23K of event 'cycles', Event count (approx.): 21255691651
+            62.91%  jsc  perf-22890.map                      [.] 0x00007fd117c0a3b9
+            24.89%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::privateFuncSetIteratorNext(JSC::ExecState*)
+             0.29%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::CodeBlock::updateAllPredictionsAndCountLiveness(unsigned int&, unsigned int&)
+             0.24%  jsc  [vdso]                              [.] 0x00000000000008e8
+             0.22%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::CodeBlock::predictedMachineCodeSize()
+             0.16%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] WTF::MetaAllocator::currentStatistics()
+             0.15%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::Lexer<unsigned char>::lex(JSC::JSToken*, unsigned int, bool)
+
+        2. Iterator result object allocation is costly.
+
+        Iterator result object allocation is costly. Even if the (1) is solved, when executing Set & for-of, perf result shows very slow performance due to (2).
+
+            Samples: 108K of event 'cycles', Event count (approx.): 95529273748
+            18.02%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::createIteratorResultObject(JSC::ExecState*, JSC::JSValue, bool)
+            15.68%  jsc  jsc                                 [.] JSC::JSObject::putDirect(JSC::VM&, JSC::PropertyName, JSC::JSValue, unsigned int)
+            14.18%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::PrototypeMap::emptyObjectStructureForPrototype(JSC::JSObject*, unsigned int)
+            13.40%  jsc  perf-25420.map                      [.] 0x00007fce158006a1
+             6.79%  jsc  libjavascriptcoregtk-4.0.so.18.3.1  [.] JSC::StructureTransitionTable::get(WTF::UniquedStringImpl*, unsigned int) const
+
+        In the long term, we should implement SetIterator#next in JS and make the iterator result object allocation written in JS to encourage object allocation elimination in FTL.
+        But seeing the perf result, we can find the easy to fix bottleneck in the current implementation.
+        Every time createIteratorResultObject creates the empty object and use putDirect to store properties.
+        The pre-baked Structure* with `done` and `value` properties makes this implementation fast.
+
+        After these improvements, the micro benchmark[1] shows the following.
+
+        old:
+            Linked List x 212,776 ops/sec ±0.21% (162 runs sampled)
+            Array x 376,156 ops/sec ±0.20% (162 runs sampled)
+            Array forEach x 17,345 ops/sec ±0.99% (137 runs sampled)
+            Array for-of x 16,518 ops/sec ±0.58% (160 runs sampled)
+            Set forEach x 13,263 ops/sec ±0.20% (162 runs sampled)
+            Set for-of x 4,732 ops/sec ±0.34% (123 runs sampled)
+
+        new:
+            Linked List x 210,833 ops/sec ±0.28% (161 runs sampled)
+            Array x 371,347 ops/sec ±0.36% (162 runs sampled)
+            Array forEach x 17,460 ops/sec ±0.84% (136 runs sampled)
+            Array for-of x 16,188 ops/sec ±1.27% (158 runs sampled)
+            Set forEach x 23,684 ops/sec ±2.46% (139 runs sampled)
+            Set for-of x 12,176 ops/sec ±0.54% (157 runs sampled)
+
+        Set#forEach becomes comparable to Array#forEach. And Set#forEach and Set & for-of are improved (1.79x, and 2.57x).
+        After this optimizations, they are still much slower than linked list and array.
+        This should be optimized in the long term.
+
+        [1]: https://gist.github.com/Constellation/8db5f5b8f12fe7e283d0
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/MapPrototype.js: Copied from Source/JavaScriptCore/runtime/IteratorOperations.h.
+        (forEach):
+        * builtins/SetPrototype.js: Copied from Source/JavaScriptCore/runtime/IteratorOperations.h.
+        (forEach):
+        * runtime/CommonIdentifiers.h:
+        * runtime/IteratorOperations.cpp:
+        (JSC::createIteratorResultObjectStructure):
+        (JSC::createIteratorResultObject):
+        * runtime/IteratorOperations.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::iteratorResultObjectStructure):
+        (JSC::JSGlobalObject::iteratorResultStructure): Deleted.
+        (JSC::JSGlobalObject::iteratorResultStructureOffset): Deleted.
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::getOwnPropertySlot):
+        (JSC::privateFuncIsMap):
+        (JSC::privateFuncMapIterator):
+        (JSC::privateFuncMapIteratorNext):
+        (JSC::MapPrototype::finishCreation): Deleted.
+        (JSC::mapProtoFuncForEach): Deleted.
+        * runtime/MapPrototype.h:
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::getOwnPropertySlot):
+        (JSC::privateFuncIsSet):
+        (JSC::privateFuncSetIterator):
+        (JSC::privateFuncSetIteratorNext):
+        (JSC::SetPrototype::finishCreation): Deleted.
+        (JSC::setProtoFuncForEach): Deleted.
+        * runtime/SetPrototype.h:
+
 2016-01-10  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix ARM64 build.

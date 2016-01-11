@@ -30,21 +30,30 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
+#include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunctionInlines.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
+#include "Lookup.h"
 #include "MapDataInlines.h"
 #include "StructureInlines.h"
+
+#include "SetPrototype.lut.h"
 
 namespace JSC {
 
 const ClassInfo SetPrototype::s_info = { "Set", &Base::s_info, 0, CREATE_METHOD_TABLE(SetPrototype) };
 
+/* Source for SetIteratorPrototype.lut.h
+@begin setPrototypeTable
+  forEach   JSBuiltin  DontEnum|Function 0
+@end
+*/
+
 static EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncClear(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(ExecState*);
-static EncodedJSValue JSC_HOST_CALL setProtoFuncForEach(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncHas(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncValues(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(ExecState*);
@@ -61,7 +70,6 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION(vm.propertyNames->add, setProtoFuncAdd, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->clear, setProtoFuncClear, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, setProtoFuncDelete, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->forEach, setProtoFuncForEach, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, setProtoFuncHas, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->entries, setProtoFuncEntries, DontEnum, 0);
 
@@ -76,6 +84,12 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     accessor->setGetter(vm, globalObject, function);
     putDirectNonIndexAccessor(vm, vm.propertyNames->size, accessor, DontEnum | Accessor);
 }
+
+bool SetPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    return getStaticFunctionSlot<Base>(exec, setPrototypeTable, jsCast<SetPrototype*>(object), propertyName, slot);
+}
+
 
 ALWAYS_INLINE static JSSet* getSet(CallFrame* callFrame, JSValue thisValue)
 {
@@ -118,44 +132,6 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(CallFrame* callFrame)
     return JSValue::encode(jsBoolean(set->remove(callFrame, callFrame->argument(0))));
 }
 
-EncodedJSValue JSC_HOST_CALL setProtoFuncForEach(CallFrame* callFrame)
-{
-    JSSet* set = getSet(callFrame, callFrame->thisValue());
-    if (!set)
-        return JSValue::encode(jsUndefined());
-    JSValue callBack = callFrame->argument(0);
-    CallData callData;
-    CallType callType = getCallData(callBack, callData);
-    if (callType == CallTypeNone)
-        return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Set.prototype.forEach called without callback")));
-    JSValue thisValue = callFrame->argument(1);
-    VM* vm = &callFrame->vm();
-    JSSetIterator* iterator = JSSetIterator::create(*vm, callFrame->callee()->globalObject()->setIteratorStructure(), set, SetIterateKey);
-    JSValue key;
-    if (callType == CallTypeJS) {
-        JSFunction* function = jsCast<JSFunction*>(callBack);
-        CachedCall cachedCall(callFrame, function, 3);
-        while (iterator->next(callFrame, key) && !vm->exception()) {
-            cachedCall.setThis(thisValue);
-            cachedCall.setArgument(0, key);
-            cachedCall.setArgument(1, key);
-            cachedCall.setArgument(2, set);
-            cachedCall.call();
-        }
-        iterator->finish();
-    } else {
-        while (iterator->next(callFrame, key) && !vm->exception()) {
-            MarkedArgumentBuffer args;
-            args.append(key);
-            args.append(key);
-            args.append(set);
-            JSC::call(callFrame, callBack, callType, callData, thisValue, args);
-        }
-        iterator->finish();
-    }
-    return JSValue::encode(jsUndefined());
-}
-
 EncodedJSValue JSC_HOST_CALL setProtoFuncHas(CallFrame* callFrame)
 {
     JSSet* set = getSet(callFrame, callFrame->thisValue());
@@ -186,6 +162,32 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(CallFrame* callFrame)
     if (!thisObj)
         return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Set entry iterator for a non-Set object.")));
     return JSValue::encode(JSSetIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, SetIterateKeyValue));
+}
+
+EncodedJSValue JSC_HOST_CALL privateFuncIsSet(ExecState* exec)
+{
+    return JSValue::encode(jsBoolean(jsDynamicCast<JSSet*>(exec->uncheckedArgument(0))));
+}
+
+EncodedJSValue JSC_HOST_CALL privateFuncSetIterator(ExecState* exec)
+{
+    ASSERT(jsDynamicCast<JSSet*>(exec->uncheckedArgument(0)));
+    JSSet* set = jsCast<JSSet*>(exec->uncheckedArgument(0));
+    return JSValue::encode(JSSetIterator::create(exec->vm(), exec->callee()->globalObject()->setIteratorStructure(), set, SetIterateKey));
+}
+
+EncodedJSValue JSC_HOST_CALL privateFuncSetIteratorNext(ExecState* exec)
+{
+    ASSERT(jsDynamicCast<JSSetIterator*>(exec->thisValue()));
+    JSSetIterator* iterator = jsCast<JSSetIterator*>(exec->thisValue());
+    JSValue result;
+    if (iterator->next(exec, result)) {
+        JSArray* resultArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
+        resultArray->putDirectIndex(exec, 0, result);
+        return JSValue::encode(jsBoolean(false));
+    }
+    iterator->finish();
+    return JSValue::encode(jsBoolean(true));
 }
 
 }

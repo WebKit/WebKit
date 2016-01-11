@@ -362,6 +362,12 @@
     macro(isBoundFunction) \
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \
+    macro(isSet) \
+    macro(isMap) \
+    macro(SetIterator) \
+    macro(setIteratorNext) \
+    macro(MapIterator) \
+    macro(mapIteratorNext) \
 
 
 namespace JSC {

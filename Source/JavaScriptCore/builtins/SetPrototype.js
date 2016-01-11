@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IteratorOperations_h
-#define IteratorOperations_h
+function forEach(callback /*, thisArg */)
+{
+    "use strict";
 
-#include "JSCJSValue.h"
-#include "JSObject.h"
+    if (!@isSet(this))
+        throw new @TypeError("Set operation called on non-Set object");
 
-namespace JSC {
+    if (typeof callback !== 'function')
+        throw new @TypeError("Set.prototype.forEach callback must be a function");
 
-JSValue iteratorNext(ExecState*, JSValue iterator, JSValue);
-JSValue iteratorNext(ExecState*, JSValue iterator);
-JSValue iteratorValue(ExecState*, JSValue iterator);
-bool iteratorComplete(ExecState*, JSValue iterator);
-JSValue iteratorStep(ExecState*, JSValue iterator);
-void iteratorClose(ExecState*, JSValue iterator);
-JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(ExecState*, JSValue, bool done);
+    var thisArg = arguments.length > 1 ? arguments[1] : undefined;
+    var iterator = @SetIterator(this);
 
-Structure* createIteratorResultObjectStructure(VM&, JSGlobalObject&);
-
+    // To avoid object allocations for iterator result objects, we pass the placeholder to the special "next" function in order to fill the results.
+    var value = [ undefined ];
+    for (;;) {
+        if (@setIteratorNext.@call(iterator, value))
+            break;
+        callback.@call(thisArg, value[0], value[0], this);
+    }
 }
-
-#endif // !defined(IteratorOperations_h)

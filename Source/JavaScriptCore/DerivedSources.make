@@ -89,6 +89,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/InspectorInstrumentationObject.js \
     $(JavaScriptCore)/builtins/InternalPromiseConstructor.js \
     $(JavaScriptCore)/builtins/IteratorPrototype.js \
+    $(JavaScriptCore)/builtins/MapPrototype.js \
     $(JavaScriptCore)/builtins/ModuleLoaderObject.js \
     $(JavaScriptCore)/builtins/NumberPrototype.js \
     $(JavaScriptCore)/builtins/ObjectConstructor.js \
@@ -96,6 +97,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/PromiseOperations.js \
     $(JavaScriptCore)/builtins/PromisePrototype.js \
     $(JavaScriptCore)/builtins/ReflectObject.js \
+    $(JavaScriptCore)/builtins/SetPrototype.js \
     $(JavaScriptCore)/builtins/StringConstructor.js \
     $(JavaScriptCore)/builtins/StringIteratorPrototype.js \
     $(JavaScriptCore)/builtins/StringPrototype.js \
@@ -136,6 +138,7 @@ OBJECT_LUT_HEADERS = \
     JSONObject.lut.h \
     JSPromisePrototype.lut.h \
     JSPromiseConstructor.lut.h \
+    MapPrototype.lut.h \
     ModuleLoaderObject.lut.h \
     NumberConstructor.lut.h \
     NumberPrototype.lut.h \
@@ -143,6 +146,7 @@ OBJECT_LUT_HEADERS = \
     ReflectObject.lut.h \
     RegExpConstructor.lut.h \
     RegExpPrototype.lut.h \
+    SetPrototype.lut.h \
     StringConstructor.lut.h \
     StringIteratorPrototype.lut.h \
     SymbolConstructor.lut.h \

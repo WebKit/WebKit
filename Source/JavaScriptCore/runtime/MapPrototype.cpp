@@ -30,20 +30,29 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
+#include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunctionInlines.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
+#include "Lookup.h"
 #include "MapDataInlines.h"
 #include "StructureInlines.h"
+
+#include "MapPrototype.lut.h"
 
 namespace JSC {
 
 const ClassInfo MapPrototype::s_info = { "Map", &Base::s_info, 0, CREATE_METHOD_TABLE(MapPrototype) };
 
+/* Source for MapPrototype.lut.h
+@begin mapPrototypeTable
+  forEach   JSBuiltin  DontEnum|Function 0
+@end
+*/
+
 static EncodedJSValue JSC_HOST_CALL mapProtoFuncClear(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mapProtoFuncDelete(ExecState*);
-static EncodedJSValue JSC_HOST_CALL mapProtoFuncForEach(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mapProtoFuncGet(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mapProtoFuncHas(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mapProtoFuncSet(ExecState*);
@@ -61,7 +70,6 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSC_NATIVE_FUNCTION(vm.propertyNames->clear, mapProtoFuncClear, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, mapProtoFuncDelete, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->forEach, mapProtoFuncForEach, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->get, mapProtoFuncGet, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, mapProtoFuncHas, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->set, mapProtoFuncSet, DontEnum, 2);
@@ -81,6 +89,11 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), mapProtoFuncSize);
     accessor->setGetter(vm, globalObject, function);
     putDirectNonIndexAccessor(vm, vm.propertyNames->size, accessor, DontEnum | Accessor);
+}
+
+bool MapPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    return getStaticFunctionSlot<Base>(exec, mapPrototypeTable, jsCast<MapPrototype*>(object), propertyName, slot);
 }
 
 ALWAYS_INLINE static JSMap* getMap(CallFrame* callFrame, JSValue thisValue)
@@ -112,44 +125,6 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncDelete(CallFrame* callFrame)
     if (!map)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(jsBoolean(map->remove(callFrame, callFrame->argument(0))));
-}
-
-EncodedJSValue JSC_HOST_CALL mapProtoFuncForEach(CallFrame* callFrame)
-{
-    JSMap* map = getMap(callFrame, callFrame->thisValue());
-    if (!map)
-        return JSValue::encode(jsUndefined());
-    JSValue callBack = callFrame->argument(0);
-    CallData callData;
-    CallType callType = getCallData(callBack, callData);
-    if (callType == CallTypeNone)
-        return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Map.prototype.forEach called without callback")));
-    JSValue thisValue = callFrame->argument(1);
-    VM* vm = &callFrame->vm();
-    JSMapIterator* iterator = JSMapIterator::create(*vm, callFrame->callee()->globalObject()->mapIteratorStructure(), map, MapIterateKeyValue);
-    JSValue key, value;
-    if (callType == CallTypeJS) {
-        JSFunction* function = jsCast<JSFunction*>(callBack);
-        CachedCall cachedCall(callFrame, function, 3);
-        while (iterator->nextKeyValue(key, value) && !vm->exception()) {
-            cachedCall.setThis(thisValue);
-            cachedCall.setArgument(0, value);
-            cachedCall.setArgument(1, key);
-            cachedCall.setArgument(2, map);
-            cachedCall.call();
-        }
-        iterator->finish();
-    } else {
-        while (iterator->nextKeyValue(key, value) && !vm->exception()) {
-            MarkedArgumentBuffer args;
-            args.append(value);
-            args.append(key);
-            args.append(map);
-            JSC::call(callFrame, callBack, callType, callData, thisValue, args);
-        }
-        iterator->finish();
-    }
-    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncGet(CallFrame* callFrame)
@@ -208,6 +183,33 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncKeys(CallFrame* callFrame)
     if (!thisObj)
         return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Map key iterator for a non-Map object.")));
     return JSValue::encode(JSMapIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, MapIterateKey));
+}
+
+EncodedJSValue JSC_HOST_CALL privateFuncIsMap(ExecState* exec)
+{
+    return JSValue::encode(jsBoolean(jsDynamicCast<JSMap*>(exec->uncheckedArgument(0))));
+}
+
+EncodedJSValue JSC_HOST_CALL privateFuncMapIterator(ExecState* exec)
+{
+    ASSERT(jsDynamicCast<JSMap*>(exec->uncheckedArgument(0)));
+    JSMap* map = jsCast<JSMap*>(exec->uncheckedArgument(0));
+    return JSValue::encode(JSMapIterator::create(exec->vm(), exec->callee()->globalObject()->mapIteratorStructure(), map, MapIterateKeyValue));
+}
+
+EncodedJSValue JSC_HOST_CALL privateFuncMapIteratorNext(ExecState* exec)
+{
+    ASSERT(jsDynamicCast<JSMapIterator*>(exec->thisValue()));
+    JSMapIterator* iterator = jsCast<JSMapIterator*>(exec->thisValue());
+    JSValue key, value;
+    if (iterator->nextKeyValue(key, value)) {
+        JSArray* resultArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
+        resultArray->putDirectIndex(exec, 0, key);
+        resultArray->putDirectIndex(exec, 1, value);
+        return JSValue::encode(jsBoolean(false));
+    }
+    iterator->finish();
+    return JSValue::encode(jsBoolean(true));
 }
 
 }
