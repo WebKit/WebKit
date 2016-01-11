@@ -1,3 +1,12 @@
+2016-01-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: IDBBindingUtilities chokes on unicode strings for get/set.
+        https://bugs.webkit.org/show_bug.cgi?id=152921
+
+        Reviewed by Alex Christensen.
+
+        * indexeddb/keygenerator-overflow-expected.txt:
+
 2016-01-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBBindingUtilities chokes on unicode strings for get/set.

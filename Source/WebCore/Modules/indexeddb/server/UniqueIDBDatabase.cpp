@@ -653,6 +653,37 @@ ExecState& UniqueIDBDatabase::databaseThreadExecState()
     return *globalObject.get()->globalExec();
 }
 
+class ScopeGuard {
+public:
+    ScopeGuard()
+    {
+    }
+
+    ScopeGuard(std::function<void()> function)
+        : m_function(WTFMove(function))
+    {
+    }
+
+    ~ScopeGuard()
+    {
+        if (m_function)
+            m_function();
+    }
+
+    void enable(std::function<void()> function)
+    {
+        m_function = WTFMove(function);
+    }
+
+    void disable()
+    {
+        m_function = nullptr;
+    }
+
+private:
+    std::function<void()> m_function { nullptr };
+};
+
 void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, const ThreadSafeDataBuffer& originalRecordValue, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     ASSERT(!isMainThread());
@@ -672,6 +703,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     }
 
     bool usedKeyIsGenerated = false;
+    ScopeGuard generatedKeyResetter;
     if (objectStoreInfo->autoIncrement() && !keyData.isValid()) {
         uint64_t keyNumber;
         error = m_backingStore->generateKeyNumber(transactionIdentifier, objectStoreIdentifier, keyNumber);
@@ -682,6 +714,9 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
         
         usedKey.setNumberValue(keyNumber);
         usedKeyIsGenerated = true;
+        generatedKeyResetter.enable([this, transactionIdentifier, objectStoreIdentifier, keyNumber]() {
+            m_backingStore->revertGeneratedKeyNumber(transactionIdentifier, objectStoreIdentifier, keyNumber);
+        });
     } else
         usedKey = keyData;
 
@@ -743,6 +778,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     if (overwriteMode != IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor && objectStoreInfo->autoIncrement() && keyData.type() == IndexedDB::KeyType::Number)
         error = m_backingStore->maybeUpdateKeyGeneratorNumber(transactionIdentifier, objectStoreIdentifier, keyData.number());
 
+    generatedKeyResetter.disable();
     m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
 }
 

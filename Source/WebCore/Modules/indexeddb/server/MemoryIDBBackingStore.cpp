@@ -38,6 +38,9 @@
 namespace WebCore {
 namespace IDBServer {
 
+// The IndexedDB spec states the value you can get from the key generator is 2^53
+static uint64_t maxGeneratedKeyValue = 0x20000000000000;
+
 std::unique_ptr<MemoryIDBBackingStore> MemoryIDBBackingStore::create(const IDBDatabaseIdentifier& identifier)
 {
     return std::make_unique<MemoryIDBBackingStore>(identifier);
@@ -343,9 +346,27 @@ IDBError MemoryIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
     RELEASE_ASSERT(objectStore);
 
     keyNumber = objectStore->currentKeyGeneratorValue();
+    if (keyNumber > maxGeneratedKeyValue)
+        return { IDBDatabaseException::ConstraintError, "Cannot generate new key value over 2^53 for object store operation" };
+
     objectStore->setKeyGeneratorValue(keyNumber + 1);
 
     return IDBError();
+}
+
+IDBError MemoryIDBBackingStore::revertGeneratedKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t keyNumber)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::revertGeneratedKeyNumber");
+    ASSERT(objectStoreIdentifier);
+    ASSERT_UNUSED(transactionIdentifier, m_transactions.contains(transactionIdentifier));
+    ASSERT_UNUSED(transactionIdentifier, m_transactions.get(transactionIdentifier)->isWriting());
+
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
+    RELEASE_ASSERT(objectStore);
+
+    objectStore->setKeyGeneratorValue(keyNumber);
+
+    return { };
 }
 
 IDBError MemoryIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, double newKeyNumber)
@@ -362,10 +383,10 @@ IDBError MemoryIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceI
         return { };
 
     uint64_t newKeyInteger(newKeyNumber);
-    if (newKeyInteger <= newKeyNumber)
+    if (newKeyInteger <= uint64_t(newKeyNumber))
         ++newKeyInteger;
 
-    ASSERT(newKeyInteger > newKeyNumber);
+    ASSERT(newKeyInteger > uint64_t(newKeyNumber));
 
     objectStore->setKeyGeneratorValue(newKeyInteger);
 
