@@ -35,7 +35,6 @@
 #include "Heap.h"
 #include "JITInlines.h"
 #include "JSArray.h"
-#include "JSArrowFunction.h"
 #include "JSCell.h"
 #include "JSFunction.h"
 #include "JSPropertyNameEnumerator.h"

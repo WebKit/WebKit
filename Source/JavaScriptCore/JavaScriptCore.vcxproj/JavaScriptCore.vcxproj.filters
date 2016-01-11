@@ -1973,7 +1973,6 @@
     <ClCompile Include="..\dfg\DFGClobbersExitState.cpp" />
     <ClCompile Include="..\dfg\DFGInsertionSet.cpp" />
     <ClCompile Include="..\dfg\DFGNodeOrigin.cpp" />
-    <ClCompile Include="..\runtime\JSArrowFunction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -2973,9 +2972,6 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSArray.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\JSArrowFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSBoundFunction.h">

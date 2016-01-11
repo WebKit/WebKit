@@ -87,11 +87,7 @@ namespace JSC { namespace FTL {
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
     macro(Structure_prototype, Structure::prototypeOffset()) \
     macro(Structure_structureID, Structure::structureIDOffset()) \
-    macro(Symbol_privateName, Symbol::offsetOfPrivateName()) \
-    macro(JSArrowFunction_executable, JSArrowFunction::offsetOfExecutable()) \
-    macro(JSArrowFunction_scope, JSArrowFunction::offsetOfScopeChain()) \
-    macro(JSArrowFunction_rareData, JSArrowFunction::offsetOfRareData()) \
-    macro(JSArrowFunction_this, JSArrowFunction::offsetOfThisValue())
+    macro(Symbol_privateName, Symbol::offsetOfPrivateName())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(DirectArguments_storage, DirectArguments::storageOffset(), sizeof(EncodedJSValue)) \

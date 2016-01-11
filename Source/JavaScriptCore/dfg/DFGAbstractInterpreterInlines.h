@@ -1759,7 +1759,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case NewArrowFunction:
         forNode(node).set(
-            m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->arrowFunctionStructure());
+            m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->functionStructure());
         break;
 
     case NewGeneratorFunction:

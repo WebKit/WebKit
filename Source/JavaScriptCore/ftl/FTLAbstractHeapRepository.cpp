@@ -31,7 +31,6 @@
 #include "DirectArguments.h"
 #include "FTLAbbreviations.h"
 #include "GetterSetter.h"
-#include "JSArrowFunction.h"
 #include "JSEnvironmentRecord.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScope.h"

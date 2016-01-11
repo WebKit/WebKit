@@ -39,7 +39,6 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
-#include "JSArrowFunction.h"
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"

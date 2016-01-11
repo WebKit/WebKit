@@ -62,7 +62,6 @@
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
-#include "JSArrowFunction.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSLexicalEnvironment.h"
@@ -3686,16 +3685,13 @@ private:
     void compileNewFunction()
     {
         ASSERT(m_node->op() == NewFunction || m_node->op() == NewArrowFunction || m_node->op() == NewGeneratorFunction);
-        bool isArrowFunction = m_node->op() == NewArrowFunction;
         bool isGeneratorFunction = m_node->op() == NewGeneratorFunction;
         
         LValue scope = lowCell(m_node->child1());
-        LValue thisValue = isArrowFunction ? lowCell(m_node->child2()) : nullptr;
         
         FunctionExecutable* executable = m_node->castOperand<FunctionExecutable*>();
         if (executable->singletonFunction()->isStillValid()) {
             LValue callResult =
-                isArrowFunction ? vmCall(m_out.int64, m_out.operation(operationNewArrowFunction), m_callFrame, scope, weakPointer(executable), thisValue) :
                 isGeneratorFunction ? vmCall(m_out.int64, m_out.operation(operationNewGeneratorFunction), m_callFrame, scope, weakPointer(executable)) :
                 vmCall(m_out.int64, m_out.operation(operationNewFunction), m_callFrame, scope, weakPointer(executable));
             setJSValue(callResult);
@@ -3703,7 +3699,6 @@ private:
         }
         
         Structure* structure =
-            isArrowFunction ? m_graph.globalObjectFor(m_node->origin.semantic)->arrowFunctionStructure() :
             isGeneratorFunction ? m_graph.globalObjectFor(m_node->origin.semantic)->generatorFunctionStructure() :
             m_graph.globalObjectFor(m_node->origin.semantic)->functionStructure();
         
@@ -3713,20 +3708,15 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         LValue fastObject =
-            isArrowFunction ? allocateObject<JSArrowFunction>(structure, m_out.intPtrZero, slowPath) :
             isGeneratorFunction ? allocateObject<JSGeneratorFunction>(structure, m_out.intPtrZero, slowPath) :
             allocateObject<JSFunction>(structure, m_out.intPtrZero, slowPath);
         
         
         // We don't need memory barriers since we just fast-created the function, so it
         // must be young.
-        m_out.storePtr(scope, fastObject, isArrowFunction ? m_heaps.JSArrowFunction_scope : m_heaps.JSFunction_scope);
-        m_out.storePtr(weakPointer(executable), fastObject, isArrowFunction ?  m_heaps.JSArrowFunction_executable : m_heaps.JSFunction_executable);
-        
-        if (isArrowFunction)
-            m_out.storePtr(thisValue, fastObject, m_heaps.JSArrowFunction_this);
-        
-        m_out.storePtr(m_out.intPtrZero, fastObject, isArrowFunction ?  m_heaps.JSArrowFunction_rareData : m_heaps.JSFunction_rareData);
+        m_out.storePtr(scope, fastObject, m_heaps.JSFunction_scope);
+        m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
+        m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
         
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
@@ -3735,16 +3725,8 @@ private:
 
         Vector<LValue> slowPathArguments;
         slowPathArguments.append(scope);
-        if (isArrowFunction)
-            slowPathArguments.append(thisValue);
         LValue callResult = lazySlowPath(
             [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                if (isArrowFunction) {
-                    return createLazyCallGenerator(
-                        operationNewArrowFunctionWithInvalidatedReallocationWatchpoint,
-                        locations[0].directGPR(), locations[1].directGPR(),
-                        CCallHelpers::TrustedImmPtr(executable), locations[2].directGPR());
-                }
                 if (isGeneratorFunction) {
                     return createLazyCallGenerator(
                         operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint,

@@ -35,7 +35,6 @@
 #include "Exception.h"
 #include "JITInlines.h"
 #include "JSArray.h"
-#include "JSArrowFunction.h"
 #include "JSCell.h"
 #include "JSEnvironmentRecord.h"
 #include "JSFunction.h"

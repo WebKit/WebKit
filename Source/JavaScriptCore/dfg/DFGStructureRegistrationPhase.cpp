@@ -141,7 +141,7 @@ public:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->regExpStructure());
                     break;
                 case NewArrowFunction:
-                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->arrowFunctionStructure());
+                    registerStructure(m_graph.globalObjectFor(node->origin.semantic)->functionStructure());
                     break;
                 case NewFunction:
                     registerStructure(m_graph.globalObjectFor(node->origin.semantic)->functionStructure());

@@ -305,8 +305,6 @@ EncodedJSValue JIT_OPERATION operationNewFunction(ExecState*, JSScope*, JSCell*)
 EncodedJSValue JIT_OPERATION operationNewFunctionWithInvalidatedReallocationWatchpoint(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewGeneratorFunction(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint(ExecState*, JSScope*, JSCell*) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationNewArrowFunction(ExecState*, JSScope*, JSCell*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationNewArrowFunctionWithInvalidatedReallocationWatchpoint(ExecState*, JSScope*, JSCell*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 UnusedPtr JIT_OPERATION operationHandleWatchdogTimer(ExecState*) WTF_INTERNAL;

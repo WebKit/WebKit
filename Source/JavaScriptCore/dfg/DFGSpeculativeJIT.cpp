@@ -47,7 +47,6 @@
 #include "JITMulGenerator.h"
 #include "JITRightShiftGenerator.h"
 #include "JITSubGenerator.h"
-#include "JSArrowFunction.h"
 #include "JSCInlines.h"
 #include "JSEnvironmentRecord.h"
 #include "JSGeneratorFunction.h"
@@ -5409,42 +5408,17 @@ void SpeculativeJIT::compileNewFunction(Node* node)
     ASSERT(nodeType == NewFunction || nodeType == NewArrowFunction || nodeType == NewGeneratorFunction);
     
     SpeculateCellOperand scope(this, node->child1());
-#if USE(JSVALUE64)
-    GPRReg thisValueGPR;
-#else
-    GPRReg thisValuePayloadGPR;
-    GPRReg thisValueTagGPR;
-#endif
     GPRReg scopeGPR = scope.gpr();
 
     FunctionExecutable* executable = node->castOperand<FunctionExecutable*>();
-
-    if (nodeType == NewArrowFunction) {
-#if USE(JSVALUE64)
-        SpeculateCellOperand thisValue(this, node->child2());
-        thisValueGPR = thisValue.gpr();
-#else
-        JSValueOperand thisValue(this, node->child2(), ManualOperandSpeculation);
-        thisValuePayloadGPR = thisValue.payloadGPR();
-        thisValueTagGPR = thisValue.tagGPR();
-        
-        DFG_TYPE_CHECK(thisValue.jsValueRegs(), node->child2(), SpecCell, m_jit.branchIfNotCell(thisValue.jsValueRegs()));
-#endif
-    }
 
     if (executable->singletonFunction()->isStillValid()) {
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         
         flushRegisters();
-        
-        if (nodeType == NewArrowFunction)
-#if USE(JSVALUE64)
-            callOperation(operationNewArrowFunction, resultGPR, scopeGPR, executable, thisValueGPR);
-#else
-            callOperation(operationNewArrowFunction, resultGPR, scopeGPR, executable, thisValueTagGPR, thisValuePayloadGPR);
-#endif
-        else if (nodeType == NewGeneratorFunction)
+
+        if (nodeType == NewGeneratorFunction)
             callOperation(operationNewGeneratorFunction, resultGPR, scopeGPR, executable);
         else
             callOperation(operationNewFunction, resultGPR, scopeGPR, executable);
@@ -5454,7 +5428,6 @@ void SpeculativeJIT::compileNewFunction(Node* node)
     }
 
     Structure* structure =
-        nodeType == NewArrowFunction ? m_jit.graph().globalObjectFor(node->origin.semantic)->arrowFunctionStructure() :
         nodeType == NewGeneratorFunction ? m_jit.graph().globalObjectFor(node->origin.semantic)->generatorFunctionStructure() :
         m_jit.graph().globalObjectFor(node->origin.semantic)->functionStructure();
     
@@ -5468,7 +5441,7 @@ void SpeculativeJIT::compileNewFunction(Node* node)
     
     JITCompiler::JumpList slowPath;
     
-    if (nodeType == NewFunction) {
+    if (nodeType == NewFunction || nodeType == NewArrowFunction) {
         compileNewFunctionCommon<JSFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSFunction::allocationSize(0), executable, JSFunction::offsetOfScopeChain(), JSFunction::offsetOfExecutable(), JSFunction::offsetOfRareData());
             
         addSlowPathGenerator(slowPathCall(slowPath, this, operationNewFunctionWithInvalidatedReallocationWatchpoint, resultGPR, scopeGPR, executable));
@@ -5478,19 +5451,6 @@ void SpeculativeJIT::compileNewFunction(Node* node)
         compileNewFunctionCommon<JSGeneratorFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSGeneratorFunction::allocationSize(0), executable, JSGeneratorFunction::offsetOfScopeChain(), JSGeneratorFunction::offsetOfExecutable(), JSGeneratorFunction::offsetOfRareData());
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, resultGPR, scopeGPR, executable));
-    }
-    
-    if (nodeType == NewArrowFunction) {
-        compileNewFunctionCommon<JSArrowFunction>(resultGPR, structure, scratch1GPR, scratch2GPR, scopeGPR, slowPath, JSArrowFunction::allocationSize(0), executable, JSArrowFunction::offsetOfScopeChain(), JSArrowFunction::offsetOfExecutable(), JSArrowFunction::offsetOfRareData());
-#if USE(JSVALUE64)
-        m_jit.storePtr(thisValueGPR, JITCompiler::Address(resultGPR, JSArrowFunction::offsetOfThisValue()));
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewArrowFunctionWithInvalidatedReallocationWatchpoint, resultGPR, scopeGPR, executable, thisValueGPR));
-#else
-        m_jit.store32(thisValueTagGPR, MacroAssembler::Address(resultGPR, JSArrowFunction::offsetOfThisValue() + TagOffset));
-        m_jit.store32(thisValuePayloadGPR, MacroAssembler::Address(resultGPR, JSArrowFunction::offsetOfThisValue() + PayloadOffset));
-        
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationNewArrowFunctionWithInvalidatedReallocationWatchpoint, resultGPR, scopeGPR, executable, thisValueTagGPR, thisValuePayloadGPR));
-#endif
     }
 
     cellResult(resultGPR, node);

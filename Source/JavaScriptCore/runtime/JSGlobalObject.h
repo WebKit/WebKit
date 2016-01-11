@@ -262,7 +262,6 @@ protected:
     WriteBarrier<Structure> m_calleeStructure;
     WriteBarrier<Structure> m_functionStructure;
     WriteBarrier<Structure> m_boundFunctionStructure;
-    WriteBarrier<Structure> m_arrowFunctionStructure;
     WriteBarrier<Structure> m_nativeStdFunctionStructure;
     WriteBarrier<Structure> m_namedFunctionStructure;
     PropertyOffset m_functionNameOffset;
@@ -511,7 +510,6 @@ public:
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
     Structure* functionStructure() const { return m_functionStructure.get(); }
     Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(); }
-    Structure* arrowFunctionStructure() const { return m_arrowFunctionStructure.get(); }
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(); }
     Structure* namedFunctionStructure() const { return m_namedFunctionStructure.get(); }
     PropertyOffset functionNameOffset() const { return m_functionNameOffset; }

@@ -1,3 +1,40 @@
+2016-01-10  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Get rid of JSArrowFunction and use standard JSFunction class
+        https://bugs.webkit.org/show_bug.cgi?id=149855
+
+        Reviewed by Saam Barati.
+
+        JSArrowFunction.h/cpp were removed from JavaScriptCore, because now is used new approach for storing 
+        'this', 'arguments' and 'super'
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewFunction):
+        * interpreter/Interpreter.cpp:
+        * interpreter/Interpreter.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * runtime/JSArrowFunction.cpp: Removed.
+        * runtime/JSArrowFunction.h: Removed.
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+
 2016-01-10  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to run liveness over registers without also tracking Tmps
