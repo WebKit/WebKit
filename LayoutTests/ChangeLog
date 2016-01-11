@@ -1,3 +1,32 @@
+2016-01-11  Dave Hyatt  <hyatt@apple.com>
+
+        Picture element needs to work with the preload scanner and select the correct
+        source element instead of loading the image.
+        https://bugs.webkit.org/show_bug.cgi?id=152983
+
+        Reviewed by Dean Jackson.
+
+        These tests are imported from Blink, although they have been modified slightly to
+        reflect the fact that we pass the nested <picture> cases that Blink fails.
+
+        * http/tests/loading/hidpi-preload-picture-sizes-expected.txt: Added.
+        * http/tests/loading/hidpi-preload-picture-sizes.html: Added.
+        * http/tests/loading/preload-picture-invalid-expected.txt: Added.
+        * http/tests/loading/preload-picture-invalid.html: Added.
+        * http/tests/loading/preload-picture-nested-expected.txt: Added.
+        * http/tests/loading/preload-picture-nested.html: Added.
+        * http/tests/loading/preload-picture-sizes-expected.txt: Added.
+        * http/tests/loading/preload-picture-sizes.html: Added.
+        * http/tests/loading/resources/base-image1.png: Added.
+        * http/tests/loading/resources/base-image2.png: Added.
+        * http/tests/loading/resources/base-image3.png: Added.
+        * http/tests/loading/resources/dup-image1.png: Added.
+        * http/tests/loading/resources/dup-image2.png: Added.
+        * http/tests/loading/resources/dup-image3.png: Added.
+        * http/tests/loading/resources/image1.png: Added.
+        * http/tests/loading/resources/image2.png: Added.
+        * http/tests/loading/resources/picture-preload-helper.js: Added.
+
 2016-01-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/key-generator.html fails.

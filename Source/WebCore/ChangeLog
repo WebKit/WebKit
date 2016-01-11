@@ -1,3 +1,26 @@
+2016-01-11  Dave Hyatt  <hyatt@apple.com>
+
+        Picture element needs to work with the preload scanner and select the correct
+        source element instead of loading the image.
+        https://bugs.webkit.org/show_bug.cgi?id=152983
+
+        Reviewed by Dean Jackson.
+
+        Added new tests in http/tests/loading.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::tagIdFor):
+        (WebCore::TokenPreloadScanner::initiatorFor):
+        (WebCore::TokenPreloadScanner::StartTagScanner::StartTagScanner):
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+        (WebCore::TokenPreloadScanner::StartTagScanner::processImageAndScriptAttribute):
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        (WebCore::TokenPreloadScanner::StartTagScanner::resourceType):
+        (WebCore::TokenPreloadScanner::scan):
+        * html/parser/HTMLPreloadScanner.h:
+        (WebCore::TokenPreloadScanner::setPredictedBaseElementURL):
+        (WebCore::TokenPreloadScanner::inPicture):
+
 2016-01-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/key-generator.html fails.
