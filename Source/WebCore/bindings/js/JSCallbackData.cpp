@@ -82,8 +82,8 @@ JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer&
 
     returnedException = nullptr;
     JSValue result = context->isDocument()
-        ? JSMainThreadExecState::call(exec, function, callType, callData, callback, args, returnedException)
-        : JSC::call(exec, function, callType, callData, callback, args, returnedException);
+        ? JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, callback, args, returnedException)
+        : JSC::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, callback, args, returnedException);
 
     InspectorInstrumentation::didCallFunction(cookie, context);
 

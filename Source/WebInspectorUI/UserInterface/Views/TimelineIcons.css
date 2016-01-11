@@ -83,6 +83,10 @@
     content: url(../Images/TimelineRecordRenderingFrame.svg);
 }
 
+.api-record .icon {
+    content: url(../Images/TimelineRecordAPI.svg);
+}
+
 .evaluated-record .icon {
     content: url(../Images/TimelineRecordScriptEvaluated.svg);
 }

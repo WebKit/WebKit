@@ -1,3 +1,52 @@
+2016-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Migrate Page Timeline recording to ScriptProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=152727
+
+        Reviewed by Brian Burg.
+
+        Test: inspector/script-profiler/event-type-Other.html
+
+        This now shares the JavaScript profiling code between JSContext and Page
+        inspection. It also moves forward splitting the Page's Timeline domain
+        into smaller components that can be turned on/off individually.
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::profiledCall):
+        (WebCore::JSMainThreadExecState::profiledEvaluate):
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        Identify entry points into JSC that we want to profile for the frontend.
+        These were nearly all already classified for the Timeline. We added missing
+        support for ErrorHandlers (window.onerror handler functions).
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::startProfiling): Deleted.
+        (WebCore::stopProfiling): Deleted.
+        (WebCore::InspectorTimelineAgent::willCallFunction): Deleted.
+        (WebCore::InspectorTimelineAgent::willEvaluateScript): Deleted.
+        * inspector/InspectorTimelineAgent.h:
+        TimelineAgent no longer needs to start/stop the Legacy Profiler
+        since ScriptProfiler will automatically do that for us. Delete
+        all code associated with that. There is still an open question
+        regarding `console.profile` and `console.profileEnd` that
+        starts/stops the profiler.
+
 2016-01-11  Anders Carlsson  <andersca@apple.com>
 
         Get rid of CFMakeCollectable, it is a no-op

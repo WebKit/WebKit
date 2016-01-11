@@ -196,7 +196,6 @@ private:
 
     Vector<TimelineRecordEntry> m_recordStack;
     int m_id { 1 };
-    int m_callStackDepth { 0 };
     int m_maxCallStackDepth { 5 };
 
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;

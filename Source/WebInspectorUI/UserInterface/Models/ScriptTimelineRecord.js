@@ -71,9 +71,14 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
         cookie[WebInspector.ScriptTimelineRecord.DetailsCookieKey] = this._details;
     }
 
-    setProfilePayload(profilePayload)
+    get profilePayload()
     {
-        this._profilePayload = profilePayload;
+        return this._profilePayload;
+    }
+
+    set profilePayload(payload)
+    {
+        this._profilePayload = payload;
     }
 
     // Private
@@ -160,6 +165,7 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
 
 WebInspector.ScriptTimelineRecord.EventType = {
     ScriptEvaluated: "script-timeline-record-script-evaluated",
+    APIScriptEvaluated: "script-timeline-record-api-script-evaluated",
     MicrotaskDispatched: "script-timeline-record-microtask-dispatched",
     EventDispatched: "script-timeline-record-event-dispatched",
     ProbeSampleRecorded: "script-timeline-record-probe-sample-recorded",
@@ -333,6 +339,7 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
 
     switch(eventType) {
     case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
+    case WebInspector.ScriptTimelineRecord.EventType.APIScriptEvaluated:
         return WebInspector.UIString("Script Evaluated");
     case WebInspector.ScriptTimelineRecord.EventType.MicrotaskDispatched:
         return WebInspector.UIString("Microtask Dispatched");

@@ -88,7 +88,7 @@ void JSMutationCallback::call(const Vector<RefPtr<MutationRecord>>& mutations, M
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 
     NakedPtr<Exception> exception;
-    JSMainThreadExecState::call(exec, callback, callType, callData, jsObserver, args, exception);
+    JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, callback, callType, callData, jsObserver, args, exception);
 
     InspectorInstrumentation::didCallFunction(cookie, context);
 

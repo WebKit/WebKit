@@ -328,7 +328,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return nil;
 
     NakedPtr<JSC::Exception> exception;
-    JSC::JSValue result = JSMainThreadExecState::call(exec, function, callType, callData, [self _imp], argList, exception);
+    JSC::JSValue result = JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, [self _imp], argList, exception);
 
     if (exception) {
         addExceptionToConsole(exec, exception);
@@ -351,7 +351,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSLockHolder lock(exec);
     
-    JSC::JSValue returnValue = JSMainThreadExecState::evaluate(exec, makeSource(String(script)), JSC::JSValue());
+    JSC::JSValue returnValue = JSMainThreadExecState::profiledEvaluate(exec, JSC::ProfilingReason::Other, makeSource(String(script)), JSC::JSValue());
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:returnValue originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
     

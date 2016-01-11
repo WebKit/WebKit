@@ -101,9 +101,9 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
 
     NakedPtr<Exception> exception;
     if (is<Document>(context))
-        JSMainThreadExecState::call(exec, m_function.get(), callType, callData, thisValue, args, exception);
+        JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, args, exception);
     else
-        JSC::call(exec, m_function.get(), callType, callData, thisValue, args, exception);
+        JSC::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, args, exception);
 
     InspectorInstrumentation::didCallFunction(cookie, &context);
 

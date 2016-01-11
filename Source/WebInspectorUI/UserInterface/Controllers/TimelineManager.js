@@ -42,7 +42,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._autoCapturingMainResource = null;
         this._boundStopCapturing = this.stopCapturing.bind(this);
 
-        this._scriptProfileRecords = null;
+        this._webTimelineScriptRecordsExpectingScriptProfilerEvents = null;
+        this._scriptProfilerRecords = null;
 
         this.reset();
     }
@@ -135,6 +136,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
         // NOTE: Always stop immediately instead of waiting for a Timeline.recordingStopped event.
         // This way the UI feels as responsive to a stop as possible.
+        // FIXME: <https://webkit.org/b/152904> Web Inspector: Timeline UI should keep up with processing all incoming records
         this.capturingStopped();
     }
 
@@ -160,7 +162,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
     scriptProfilerIsTracking()
     {
-        return this._scriptProfileRecords !== null;
+        return this._scriptProfilerRecords !== null;
     }
 
     // Protected
@@ -174,6 +176,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
         if (startTime)
             this.activeRecording.initializeTimeBoundsIfNecessary(startTime);
+
+        this._webTimelineScriptRecordsExpectingScriptProfilerEvents = [];
 
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingStarted, {startTime});
     }
@@ -347,14 +351,18 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
             var profileData = recordPayload.data.profile;
 
+            var record;
             switch (parentRecordPayload && parentRecordPayload.type) {
             case TimelineAgent.EventType.TimerFire:
-                return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
+                record = new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
+                break;
             default:
-                return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, null, profileData);
+                record = new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, null, profileData);
+                break;
             }
 
-            break;
+            this._webTimelineScriptRecordsExpectingScriptProfilerEvents.push(record);
+            return record;
 
         case TimelineAgent.EventType.ConsoleProfile:
             var profileData = recordPayload.data.profile;
@@ -370,8 +378,10 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         case TimelineAgent.EventType.FunctionCall:
             // FunctionCall always happens as a child of another record, and since the FunctionCall record
             // has useful info we just make the timeline record here (combining the data from both records).
-            if (!parentRecordPayload)
+            if (!parentRecordPayload) {
+                console.warn("Unexpectedly received a FunctionCall timeline record without a parent record");
                 break;
+            }
 
             if (!sourceCodeLocation) {
                 var mainFrame = WebInspector.frameResourceManager.mainFrame;
@@ -387,17 +397,33 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
             var profileData = recordPayload.data.profile;
 
+            var record;
             switch (parentRecordPayload.type) {
             case TimelineAgent.EventType.TimerFire:
-                return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
+                record = new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
+                break;
             case TimelineAgent.EventType.EventDispatch:
-                return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
+                record = new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
+                break;
             case TimelineAgent.EventType.FireAnimationFrame:
-                return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                record = new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                break;
+            case TimelineAgent.EventType.FunctionCall:
+                record = new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                break;
+            case TimelineAgent.EventType.RenderingFrame:
+                record = new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                break;
+
             default:
                 console.assert(false, "Missed FunctionCall embedded inside of: " + parentRecordPayload.type);
+                break;
             }
 
+            if (record) {
+                this._webTimelineScriptRecordsExpectingScriptProfilerEvents.push(record);
+                return record;
+            }
             break;
 
         case TimelineAgent.EventType.ProbeSample:
@@ -621,9 +647,21 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.GarbageCollected, collection.startTime, collection.endTime, null, null, collection));
     }
 
+    _scriptProfilerTypeToScriptTimelineRecordType(type)
+    {
+        switch (type) {
+        case ScriptProfilerAgent.EventType.API:
+            return WebInspector.ScriptTimelineRecord.EventType.APIScriptEvaluated;
+        case ScriptProfilerAgent.EventType.Microtask:
+            return WebInspector.ScriptTimelineRecord.EventType.MicrotaskDispatched;
+        case ScriptProfilerAgent.EventType.Other:
+            return WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated;
+        }
+    }
+
     scriptProfilerTrackingStarted(timestamp)
     {
-        this._scriptProfileRecords = [];
+        this._scriptProfilerRecords = [];
 
         this.capturingStarted(timestamp);
     }
@@ -631,24 +669,97 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
     scriptProfilerTrackingUpdated(event)
     {
         let {startTime, endTime, type} = event;
-        let scriptRecordType = type === ScriptProfilerAgent.EventType.Microtask ? WebInspector.ScriptTimelineRecord.EventType.MicrotaskDispatched : WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated;
+        let scriptRecordType = this._scriptProfilerTypeToScriptTimelineRecordType(type);
         let record = new WebInspector.ScriptTimelineRecord(scriptRecordType, startTime, endTime, null, null, null, null);
-        this._scriptProfileRecords.push(record);
-        this._addRecord(record);
+        record.__scriptProfilerType = type;
+        this._scriptProfilerRecords.push(record);
+
+        // "Other" events, generated by Web content, will have wrapping Timeline records
+        // and need to be merged. Non-Other events, generated purely by the JavaScript
+        // engine or outside of the page via APIs, will not have wrapping Timeline
+        // records, so these records can just be added right now.
+        if (type !== ScriptProfilerAgent.EventType.Other)
+            this._addRecord(record);
     }
 
     scriptProfilerTrackingCompleted(profiles)
     {
+        console.assert(!this._webTimelineScriptRecordsExpectingScriptProfilerEvents || this._scriptProfilerRecords.length >= this._webTimelineScriptRecordsExpectingScriptProfilerEvents.length);
+
+        // Associate the profiles with the ScriptProfiler created records.
         if (profiles) {
-            console.assert(this._scriptProfileRecords.length === profiles.length, this._scriptProfileRecords.length, profiles.length);
-            for (let i = 0; i < this._scriptProfileRecords.length; ++i)
-                this._scriptProfileRecords[i].setProfilePayload(profiles[i]);
+            console.assert(this._scriptProfilerRecords.length === profiles.length, this._scriptProfilerRecords.length, profiles.length);
+            for (let i = 0; i < this._scriptProfilerRecords.length; ++i)
+                this._scriptProfilerRecords[i].profilePayload = profiles[i];
         }
 
-        this._scriptProfileRecords = null;
+        // Associate the ScriptProfiler created records with Web Timeline records.
+        // Filter out the already added ScriptProfiler events which should not have been wrapped.
+        if (WebInspector.debuggableType !== WebInspector.DebuggableType.JavaScript) {
+            this._scriptProfilerRecords = this._scriptProfilerRecords.filter((x) => x.__scriptProfilerType === ScriptProfilerAgent.EventType.Other);
+            this._mergeScriptProfileRecords();
+        }
+
+        this._scriptProfilerRecords = null;
 
         let timeline = this.activeRecording.timelineForRecordType(WebInspector.TimelineRecord.Type.Script);
         timeline.refresh();
+    }
+
+    _mergeScriptProfileRecords()
+    {
+        let nextRecord = function(list) { return list.shift() || null; }
+        let nextWebTimelineRecord = nextRecord.bind(null, this._webTimelineScriptRecordsExpectingScriptProfilerEvents);
+        let nextScriptProfilerRecord = nextRecord.bind(null, this._scriptProfilerRecords);
+        let recordEnclosesRecord = function(record1, record2) {
+            return record1.startTime <= record2.startTime && record1.endTime >= record2.endTime;
+        }
+
+        let webRecord = nextWebTimelineRecord();
+        let profilerRecord = nextScriptProfilerRecord();
+
+        while (webRecord) {
+            // Skip web records with parent web records. For example an EvaluateScript with an EvaluateScript parent.
+            if (webRecord.parent instanceof WebInspector.ScriptTimelineRecord) {
+                console.assert(recordEnclosesRecord(webRecord.parent, webRecord), "Timeline Record incorrectly wrapping another Timeline Record");
+                webRecord = nextWebTimelineRecord();
+                continue;
+            }
+
+            // Normal case of a Web record wrapping a Script record.
+            if (recordEnclosesRecord(webRecord, profilerRecord)) {
+                webRecord.profilePayload = profilerRecord.profilePayload;
+                profilerRecord = nextScriptProfilerRecord();
+
+                // If there are more script profile records in the same time interval, add them
+                // as individual script evaluated records with profiles. This can happen with
+                // web microtask checkpoints that are technically inside of other web records.
+                // FIXME: <https://webkit.org/b/152903> Web Inspector: Timeline Cleanup: Better Timeline Record for Microtask Checkpoints
+                while (profilerRecord && recordEnclosesRecord(webRecord, profilerRecord)) {
+                    this._addRecord(profilerRecord);
+                    profilerRecord = nextScriptProfilerRecord();
+                }
+
+                webRecord = nextWebTimelineRecord();
+                continue;
+            }
+
+            // Profiler Record is entirely after the Web Record. This would mean an empty web record.
+            if (profilerRecord.startTime > webRecord.endTime) {
+                console.warn("Unexpected case of a Timeline record not containing a ScriptProfiler event and profile data");
+                webRecord = nextWebTimelineRecord();
+                continue;
+            }
+
+            // Non-wrapped profiler record.
+            console.warn("Unexpected case of a ScriptProfiler event not being contained by a Timeline record");
+            this._addRecord(profilerRecord);
+            profilerRecord = nextScriptProfilerRecord();
+        }
+
+        // Skipping the remaining ScriptProfiler events to match the current UI for handling Timeline records.
+        // However, the remaining ScriptProfiler records are valid and could be shown.
+        // FIXME: <https://webkit.org/b/152904> Web Inspector: Timeline UI should keep up with processing all incoming records
     }
 };
 

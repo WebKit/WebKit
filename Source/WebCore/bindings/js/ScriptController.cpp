@@ -161,7 +161,7 @@ Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, sourceCode.startLine());
 
     NakedPtr<Exception> evaluationException;
-    JSValue returnValue = JSMainThreadExecState::evaluate(exec, jsSourceCode, shell, evaluationException);
+    JSValue returnValue = JSMainThreadExecState::profiledEvaluate(exec, JSC::ProfilingReason::Other, jsSourceCode, shell, evaluationException);
 
     InspectorInstrumentation::didEvaluateScript(cookie, m_frame);
 

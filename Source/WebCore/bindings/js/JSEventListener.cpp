@@ -127,8 +127,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
         NakedPtr<Exception> exception;
         JSValue retval = scriptExecutionContext->isDocument()
-            ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, thisValue, args, exception)
-            : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args, exception);
+            ? JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception)
+            : JSC::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);
 
         InspectorInstrumentation::didCallFunction(cookie, scriptExecutionContext);
 

@@ -1,3 +1,62 @@
+2016-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Migrate Page Timeline recording to ScriptProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=152727
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Images/TimelineRecordAPI.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordAPI.svg: Added.
+        New [S] image for API initiated script evaluations.
+        Display matches the existing [S] Script Evaluated.
+        Colors match the gray [N] Native image colors.
+
+        * UserInterface/Models/ScriptInstrument.js:
+        (WebInspector.ScriptInstrument.prototype.startInstrumentation):
+        (WebInspector.ScriptInstrument.prototype.stopInstrumentation):
+        (WebInspector.ScriptInstrument):
+        Use ScriptProfiler, if available, in Web debuggables.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.capturingStarted):
+        (WebInspector.TimelineManager.prototype._processRecord):
+        (WebInspector.TimelineManager.prototype._scriptProfilerTypeToScriptTimelineRecordType):
+        (WebInspector.TimelineManager.prototype.scriptProfilerTrackingUpdated):
+        (WebInspector.TimelineManager.prototype.scriptProfilerTrackingCompleted):
+        (WebInspector.TimelineManager.prototype._mergeScriptProfileRecords.let.nextRecord):
+        (WebInspector.TimelineManager.prototype._mergeScriptProfileRecords.let.recordContainsRecord):
+        (WebInspector.TimelineManager.prototype._mergeScriptProfileRecords):
+        When running a timeline on a web debuggable the frontend receives both
+        Timeline event records and ScriptProfiler events. Timeline (Web) records
+        are high level web events like "Script Evaluated", "Event Dispatched",
+        "Timer Fired". The timestamps for these records should always be wrapping
+        a ScriptProfiler event and its associated profile data. So, at the end
+        of a recording we merge ScriptProfiler profile data into the original
+        Timeline (Web) record.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.prototype.get profilePayload):
+        (WebInspector.ScriptTimelineRecord.prototype.set profilePayload):
+        (WebInspector.ScriptTimelineRecord.prototype.setProfilePayload): Deleted.
+        Replace method with getter/setter.
+
+        (WebInspector.ScriptTimelineRecord.EventType.displayName):
+        Add a new event type for API records, but share display name with Script Evaluated.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        Fix typo.
+
+        * UserInterface/Views/ScriptTimelineView.css:
+        (.timeline-view.script > .data-grid .eventType-column): Deleted.
+        There is no "eventType" column in the ScriptTimelineView datagrid, so remove styles.
+
+        * UserInterface/Views/TimelineIcons.css:
+        (.api-record .icon):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        For API Script Evaluation records use the new icon.
+
 2016-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exception selecting IndexedDB host folder in Storage tab

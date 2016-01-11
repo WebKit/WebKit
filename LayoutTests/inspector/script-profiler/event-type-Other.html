@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function triggerScriptEvaluation() {
+    let script = document.createElement("script");
+    script.textContent = "console.log('<script> script evaluation')";
+    document.body.appendChild(script);
+}
+
+function triggerEventDispatchEvaluation() {
+    let button = document.createElement("button");
+    button.addEventListener("click", () => { console.log("'click' event dispatched"); });
+    button.click();
+}
+
+function triggerTimerEvaluation() {
+    setTimeout(() => {
+        console.log("timer fired");
+    }, 0);
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.EventType.Microtask");
+
+    suite.addTestCase({
+        name: "TrackingSession",
+        description: "Start a tracking session that includes multiple web script evaluations classified as an Other event type.",
+        test: function(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then((messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingStart");
+            });
+
+            InspectorProtocol.addEventListener("ScriptProfiler.trackingUpdate", (messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingUpdate");
+                ProtocolTest.expectThat(messageObject.params.event.type === "Other", "Event type should be Other.");
+            });
+
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingComplete");
+                ProtocolTest.expectThat(Array.isArray(messageObject.params.profiles), "Profiles should exist when complete.");
+                ProtocolTest.expectThat(messageObject.params.profiles.length === 3, "Should be 3 profiles for this session.");
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {profile: true});
+            ProtocolTest.evaluateInPage("triggerScriptEvaluation()");
+            ProtocolTest.evaluateInPage("triggerEventDispatchEvaluation()");
+            ProtocolTest.evaluateInPage("triggerTimerEvaluation()");
+            setTimeout(() => { InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {}); }, 50);
+        }
+    });
+
+    // FIXME: <https://webkit.org/b/152193> Web Inspector: Separate Debugger enable state from being attached
+    // Debugger should not need to be enabled for profiling to work.
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for generating a ScriptProfiler.Event with ScriptProfiler.EventType.Other type. Web script evaluations are classified as "Other".</p>
+</body>
+</html>

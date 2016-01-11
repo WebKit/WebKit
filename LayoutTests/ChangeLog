@@ -1,3 +1,14 @@
+2016-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Migrate Page Timeline recording to ScriptProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=152727
+
+        Reviewed by Brian Burg.
+
+        * inspector/script-profiler/event-type-Other-expected.txt: Added.
+        * inspector/script-profiler/event-type-Other.html: Added.
+        Add a test that Web script evaluations create "Other" ScriptProfiler events.
+
 2016-01-11  Zalan Bujtas  <zalan@apple.com>
 
         Padding added to table-cell element after font-size change.

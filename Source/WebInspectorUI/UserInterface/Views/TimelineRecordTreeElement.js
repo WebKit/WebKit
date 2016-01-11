@@ -76,6 +76,9 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
             title = WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeDetailsInMainTitle);
 
             switch (timelineRecord.eventType) {
+            case WebInspector.ScriptTimelineRecord.EventType.APIScriptEvaluated:
+                iconStyleClass = WebInspector.TimelineRecordTreeElement.APIRecordIconStyleClass;
+                break;
             case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
                 iconStyleClass = WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
                 break;
@@ -182,6 +185,7 @@ WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass = "layout-reco
 WebInspector.TimelineRecordTreeElement.PaintRecordIconStyleClass = "paint-record";
 WebInspector.TimelineRecordTreeElement.CompositeRecordIconStyleClass = "composite-record";
 WebInspector.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass = "rendering-frame-record";
+WebInspector.TimelineRecordTreeElement.APIRecordIconStyleClass = "api-record";
 WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass = "evaluated-record";
 WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass = "event-record";
 WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass = "timer-record";
