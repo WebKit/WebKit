@@ -418,6 +418,27 @@ private:
                     m_value->child(0)->child(0), m_value->child(0)->child(1));
                 m_changed = true;
             }
+
+            // Turn this: BitAnd(Op(value, constant1), constant2)
+            //     where !(constant1 & constant2)
+            //       and Op is BitOr or BitXor
+            // into this: BitAnd(value, constant2)
+            if (m_value->child(1)->hasInt()) {
+                int64_t constant2 = m_value->child(1)->asInt();
+                switch (m_value->child(0)->opcode()) {
+                case BitOr:
+                case BitXor:
+                    if (m_value->child(0)->child(1)->hasInt()
+                        && !(m_value->child(0)->child(1)->asInt() & constant2)) {
+                        m_value->child(0) = m_value->child(0)->child(0);
+                        m_changed = true;
+                        break;
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
             break;
 
         case BitOr:
@@ -777,6 +798,26 @@ private:
             if (m_value->child(0)->opcode() == SExt32 || m_value->child(0)->opcode() == ZExt32) {
                 m_value->replaceWithIdentity(m_value->child(0)->child(0));
                 m_changed = true;
+                break;
+            }
+
+            // Turn this: Trunc(Op(value, constant))
+            //     where !(constant & 0xffffffff)
+            //       and Op is Add, Sub, BitOr, or BitXor
+            // into this: Trunc(value)
+            switch (m_value->child(0)->opcode()) {
+            case Add:
+            case Sub:
+            case BitOr:
+            case BitXor:
+                if (m_value->child(0)->child(1)->hasInt64()
+                    && !(m_value->child(0)->child(1)->asInt64() & 0xffffffffll)) {
+                    m_value->child(0) = m_value->child(0)->child(0);
+                    m_changed = true;
+                    break;
+                }
+                break;
+            default:
                 break;
             }
             break;

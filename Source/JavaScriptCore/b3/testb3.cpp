@@ -8869,6 +8869,80 @@ void testPowDoubleByIntegerLoop(double xOperand, int32_t yOperand)
     CHECK(isIdentical(compileAndRun<double>(proc, xOperand, yOperand), pow(xOperand, yOperand)));
 }
 
+void testTruncOrHigh()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<Value>(
+                proc, BitOr, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<Const64Value>(proc, Origin(), 0x100000000))));
+
+    int64_t value = 0x123456781234;
+    CHECK(compileAndRun<int>(proc, value) == 0x56781234);
+}
+
+void testTruncOrLow()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<Value>(
+                proc, BitOr, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<Const64Value>(proc, Origin(), 0x1000000))));
+
+    int64_t value = 0x123456781234;
+    CHECK(compileAndRun<int>(proc, value) == 0x57781234);
+}
+
+void testBitAndOrHigh()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Value>(
+                proc, BitOr, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<Const64Value>(proc, Origin(), 0x8)),
+            root->appendNew<Const64Value>(proc, Origin(), 0x777777777777)));
+
+    int64_t value = 0x123456781234;
+    CHECK(compileAndRun<int64_t>(proc, value) == 0x123456701234ll);
+}
+
+void testBitAndOrLow()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Value>(
+                proc, BitOr, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<Const64Value>(proc, Origin(), 0x1)),
+            root->appendNew<Const64Value>(proc, Origin(), 0x777777777777)));
+
+    int64_t value = 0x123456781234;
+    CHECK(compileAndRun<int64_t>(proc, value) == 0x123456701235ll);
+}
+
 void testBranch64Equal(int64_t left, int64_t right)
 {
     Procedure proc;
@@ -10229,6 +10303,11 @@ void run(const char* filter)
     RUN(testSelectFold(43));
     RUN(testSelectInvert());
     RUN_BINARY(testPowDoubleByIntegerLoop, floatingPointOperands<double>(), int64Operands());
+
+    RUN(testTruncOrHigh());
+    RUN(testTruncOrLow());
+    RUN(testBitAndOrHigh());
+    RUN(testBitAndOrLow());
 
     RUN(testBranch64Equal(0, 0));
     RUN(testBranch64Equal(1, 1));

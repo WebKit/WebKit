@@ -1,3 +1,25 @@
+2016-01-10  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should reduce Trunc(BitOr(value, constant)) where !(constant & 0xffffffff) to Trunc(value)
+        https://bugs.webkit.org/show_bug.cgi?id=152955
+
+        Reviewed by Saam Barati.
+
+        This happens when we box an int32 and then immediately unbox it.
+
+        This makes an enormous difference on AsmBench/FloatMM. It's a 2x speed-up on that
+        benchmark. It's neutral elsewhere.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testPowDoubleByIntegerLoop):
+        (JSC::B3::testTruncOrHigh):
+        (JSC::B3::testTruncOrLow):
+        (JSC::B3::testBitAndOrHigh):
+        (JSC::B3::testBitAndOrLow):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+
 2016-01-10  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Get rid of JSArrowFunction and use standard JSFunction class
