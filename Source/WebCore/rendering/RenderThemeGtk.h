@@ -102,8 +102,9 @@ public:
 #endif
 #endif
 
+    virtual bool shouldHaveCapsLockIndicator(HTMLInputElement&) const override;
+
 private:
-    RenderThemeGtk();
     virtual ~RenderThemeGtk();
 
     virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
@@ -153,8 +154,6 @@ private:
     virtual void adjustSliderThumbSize(RenderStyle&, Element*) const override;
 
 #if ENABLE(VIDEO)
-    void initMediaColors();
-    void initMediaButtons();
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const override;
     virtual bool paintMediaFullscreenButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintMediaPlayButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
@@ -177,8 +176,6 @@ private:
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-    virtual bool paintCapsLockIndicator(const RenderObject&, const PaintInfo&, const IntRect&) override;
-
     virtual void adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintInnerSpinButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
@@ -187,16 +184,10 @@ private:
     static void setTextInputBorders(RenderStyle&);
 
 #if ENABLE(VIDEO)
-    bool paintMediaButton(const RenderObject&, GraphicsContext&, const IntRect&, const char* symbolicIconName, const char* fallbackStockIconName);
+    bool paintMediaButton(const RenderObject&, GraphicsContext&, const IntRect&, const char* iconName);
 #endif
 
     static IntRect calculateProgressRect(const RenderObject&, const IntRect&);
-
-    mutable Color m_panelColor;
-    mutable Color m_sliderColor;
-    mutable Color m_sliderThumbColor;
-    const int m_mediaIconSize;
-    const int m_mediaSliderHeight;
 #endif // GTK_API_VERSION_2
 };
 

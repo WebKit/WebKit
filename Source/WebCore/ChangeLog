@@ -1,5 +1,85 @@
 2016-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Cleanup RenderThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=152888
+
+        Reviewed by Michael Catanzaro.
+
+        Use a common path for GTK+ 3.19 and previous versions, simplifying
+        the code and removing a lot of ifdefs.
+
+         - createStyleContext() now receives a theme part enum value, and
+           an optional parent GtkStyleContext. It encapsulates all the
+           differences between GTK+ 3.19 and previous version leaving the
+           rendering code common and free of ifdefs.
+         - Stock icons support have been removed, simplifying the code
+           that now always renders symbolic icons, updating the colors
+           depending on the current state.
+         - Media button and colors have been removed, because they are
+           unused now that we render the media controls with CSS.
+         - ComboBox separators support has also been removed. In GTK+ 3.19
+           combo boxes no longer have separators and most of the GTK+
+           themes don't use the either, so it's better to simple not render
+           them anymore in WebKit either.
+         - Code to paint caps lock indicator has been removed too, since
+           caps lock indicator is now shadow dom and automatically
+           rendered by WebCore.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::createStyleContext):
+        (WebCore::loadThemedIcon):
+        (WebCore::gtkIconStateFlags):
+        (WebCore::RenderThemeGtk::adjustRepaintRect):
+        (WebCore::setToggleSize):
+        (WebCore::paintToggle):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::paintCheckbox):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::RenderThemeGtk::paintRadio):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::getComboBoxMetrics):
+        (WebCore::RenderThemeGtk::popupInternalPaddingLeft):
+        (WebCore::RenderThemeGtk::popupInternalPaddingRight):
+        (WebCore::RenderThemeGtk::popupInternalPaddingTop):
+        (WebCore::RenderThemeGtk::popupInternalPaddingBottom):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::adjustSearchFieldIconStyle):
+        (WebCore::RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::paintIcon):
+        (WebCore::paintEntryIcon):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeGtk::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::shouldHaveCapsLockIndicator):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::paintSpinArrowButton):
+        (WebCore::RenderThemeGtk::paintInnerSpinButton):
+        (WebCore::styleColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::systemColor):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+        (WebCore::RenderThemeGtk::paintMediaFullscreenButton):
+        (WebCore::RenderThemeGtk::paintMediaMuteButton):
+        (WebCore::RenderThemeGtk::paintMediaPlayButton):
+        (WebCore::RenderThemeGtk::paintMediaSeekBackButton):
+        (WebCore::RenderThemeGtk::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeGtk::paintMediaToggleClosedCaptionsButton):
+        * rendering/RenderThemeGtk.h:
+
+2016-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Cleanup ScrollbarThemeGtk
         https://bugs.webkit.org/show_bug.cgi?id=152830
 
