@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef FunctionRareData_h
 #define FunctionRareData_h
 
+#include "InternalFunctionAllocationProfile.h"
 #include "JSCell.h"
 #include "ObjectAllocationProfile.h"
 #include "Watchpoint.h"
@@ -49,7 +50,7 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
 
-    static FunctionRareData* create(VM&, JSObject* prototype, size_t inlineCapacity);
+    static FunctionRareData* create(VM&);
 
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
@@ -60,42 +61,59 @@ public:
 
     DECLARE_INFO;
 
-    static inline ptrdiff_t offsetOfAllocationProfile()
+    static inline ptrdiff_t offsetOfObjectAllocationProfile()
     {
-        return OBJECT_OFFSETOF(FunctionRareData, m_allocationProfile);
+        return OBJECT_OFFSETOF(FunctionRareData, m_objectAllocationProfile);
     }
 
-    ObjectAllocationProfile* allocationProfile()
+    ObjectAllocationProfile* objectAllocationProfile()
     {
-        return &m_allocationProfile;
+        return &m_objectAllocationProfile;
     }
 
-    Structure* allocationStructure() { return m_allocationProfile.structure(); }
+    Structure* objectAllocationStructure() { return m_objectAllocationProfile.structure(); }
 
     InlineWatchpointSet& allocationProfileWatchpointSet()
     {
-        return m_allocationProfileWatchpoint;
+        return m_objectAllocationProfileWatchpoint;
     }
 
     void clear(const char* reason);
 
-    void initialize(VM&, JSObject* prototype, size_t inlineCapacity);
+    void initializeObjectAllocationProfile(VM&, JSObject* prototype, size_t inlineCapacity);
 
-    bool isInitialized() { return !m_allocationProfile.isNull(); }
+    bool isObjectAllocationProfileInitialized() { return !m_objectAllocationProfile.isNull(); }
+
+    Structure* internalFunctionAllocationStructure() { return m_internalFunctionAllocationProfile.structure(); }
+    Structure* createInternalFunctionAllocationStructureFromBase(VM& vm, JSObject* prototype, Structure* baseStructure)
+    {
+        return m_internalFunctionAllocationProfile.createAllocationStructureFromBase(vm, this, prototype, baseStructure);
+    }
 
 protected:
     FunctionRareData(VM&);
     ~FunctionRareData();
 
-    void finishCreation(VM&, JSObject* prototype, size_t inlineCapacity);
-    using Base::finishCreation;
-
 private:
 
     friend class LLIntOffsetsExtractor;
 
-    ObjectAllocationProfile m_allocationProfile;
-    InlineWatchpointSet m_allocationProfileWatchpoint;
+    // Ideally, there would only be one allocation profile for subclassing but due to Reflect.construct we
+    // have two. There are some pros and cons in comparison to our current system to using the same profile
+    // for both JS constructors and subclasses of builtin constructors:
+    //
+    // 1) + Uses less memory.
+    // 2) + Conceptually simplier as there is only one profile.
+    // 3) - We would need a check in all JSFunction object creations (both with classes and without) that the
+    //      new.target's profiled structure has a JSFinalObject ClassInfo. This is needed, for example, if we have
+    //      `Reflect.construct(Array, args, myConstructor)` since myConstructor will be the new.target of Array
+    //      the Array constructor will set the allocation profile of myConstructor to hold an Array structure
+    //
+    // We don't really care about 1) since this memory is rare and small in total. 2) is unfortunate but is
+    // probably outweighed by the cost of 3).
+    ObjectAllocationProfile m_objectAllocationProfile;
+    InlineWatchpointSet m_objectAllocationProfileWatchpoint;
+    InternalFunctionAllocationProfile m_internalFunctionAllocationProfile;
 };
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -230,7 +230,7 @@ SLOW_PATH_DECL(slow_path_create_this)
         cacheWriteBarrier.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
     size_t inlineCapacity = pc[3].u.operand;
-    Structure* structure = constructor->rareData(exec, inlineCapacity)->allocationProfile()->structure();
+    Structure* structure = constructor->rareData(exec, inlineCapacity)->objectAllocationProfile()->structure();
     RETURN(constructEmptyObject(exec, structure));
 }
 

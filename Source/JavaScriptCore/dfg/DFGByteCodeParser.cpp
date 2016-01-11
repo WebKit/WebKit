@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3273,7 +3273,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             bool alreadyEmitted = false;
             if (function) {
                 if (FunctionRareData* rareData = function->rareData()) {
-                    if (Structure* structure = rareData->allocationStructure()) {
+                    if (Structure* structure = rareData->objectAllocationStructure()) {
                         m_graph.freeze(rareData);
                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
                         // The callee is still live up to this point.

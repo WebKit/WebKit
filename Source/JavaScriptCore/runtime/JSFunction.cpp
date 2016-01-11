@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2015-2016 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *  Copyright (C) 2015 Canon Inc. All rights reserved.
@@ -131,6 +131,19 @@ JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* execut
     return function;
 }
 
+FunctionRareData* JSFunction::allocateRareData(VM& vm)
+{
+    ASSERT(!m_rareData);
+    FunctionRareData* rareData = FunctionRareData::create(vm);
+
+    // A DFG compilation thread may be trying to read the rare data
+    // We want to ensure that it sees it properly allocated
+    WTF::storeStoreFence();
+
+    m_rareData.set(vm, this, rareData);
+    return m_rareData.get();
+}
+
 FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, size_t inlineCapacity)
 {
     ASSERT(!m_rareData);
@@ -138,7 +151,8 @@ FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, siz
     JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, vm.propertyNames->prototype));
     if (!prototype)
         prototype = globalObject()->objectPrototype();
-    FunctionRareData* rareData = FunctionRareData::create(vm, prototype, inlineCapacity);
+    FunctionRareData* rareData = FunctionRareData::create(vm);
+    rareData->initializeObjectAllocationProfile(globalObject()->vm(), prototype, inlineCapacity);
 
     // A DFG compilation thread may be trying to read the rare data
     // We want to ensure that it sees it properly allocated
@@ -155,7 +169,7 @@ FunctionRareData* JSFunction::initializeRareData(ExecState* exec, size_t inlineC
     JSObject* prototype = jsDynamicCast<JSObject*>(get(exec, vm.propertyNames->prototype));
     if (!prototype)
         prototype = globalObject()->objectPrototype();
-    m_rareData->initialize(globalObject()->vm(), prototype, inlineCapacity);
+    m_rareData->initializeObjectAllocationProfile(globalObject()->vm(), prototype, inlineCapacity);
     return m_rareData.get();
 }
 

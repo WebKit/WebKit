@@ -54,7 +54,7 @@ static EncodedJSValue JSC_HOST_CALL callWeakMap(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState* exec)
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
-    Structure* weakMapStructure = globalObject->weakMapStructure();
+    Structure* weakMapStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->weakMapStructure());
     JSWeakMap* weakMap = JSWeakMap::create(exec, weakMapStructure);
     JSValue iterable = exec->argument(0);
     if (iterable.isUndefinedOrNull())

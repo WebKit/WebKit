@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -714,8 +714,8 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     emitGetVirtualRegister(callee, calleeReg);
     loadPtr(Address(calleeReg, JSFunction::offsetOfRareData()), rareDataReg);
     addSlowCase(branchTestPtr(Zero, rareDataReg));
-    loadPtr(Address(rareDataReg, FunctionRareData::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorReg);
-    loadPtr(Address(rareDataReg, FunctionRareData::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureReg);
+    loadPtr(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorReg);
+    loadPtr(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureReg);
     addSlowCase(branchTestPtr(Zero, allocatorReg));
 
     loadPtr(cachedFunction, cachedFunctionReg);

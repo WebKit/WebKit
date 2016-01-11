@@ -53,14 +53,8 @@ static EncodedJSValue JSC_HOST_CALL callMap(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
 {
-    JSValue prototype = JSValue();
-    JSValue newTarget = exec->newTarget();
-
-    if (newTarget != exec->callee())
-        prototype = newTarget.get(exec, exec->propertyNames().prototype);
-
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
-    Structure* mapStructure = Structure::createSubclassStructure(exec->vm(), globalObject->mapStructure(), prototype);
+    Structure* mapStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->mapStructure());
     JSMap* map = JSMap::create(exec, mapStructure);
     JSValue iterable = exec->argument(0);
     if (iterable.isUndefinedOrNull())

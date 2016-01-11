@@ -49,13 +49,8 @@ void BooleanConstructor::finishCreation(VM& vm, BooleanPrototype* booleanPrototy
 static EncodedJSValue JSC_HOST_CALL constructWithBooleanConstructor(ExecState* exec)
 {
     JSValue boolean = jsBoolean(exec->argument(0).toBoolean(exec));
-
-    JSValue prototype = JSValue();
-    JSValue newTarget = exec->newTarget();
-    if (newTarget != exec->callee())
-        prototype = newTarget.get(exec, exec->propertyNames().prototype);
-
-    BooleanObject* obj = BooleanObject::create(exec->vm(), Structure::createSubclassStructure(exec->vm(), asInternalFunction(exec->callee())->globalObject()->booleanObjectStructure(), prototype));
+    Structure* booleanStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->booleanObjectStructure());
+    BooleanObject* obj = BooleanObject::create(exec->vm(), booleanStructure);
     obj->setInternalValue(exec->vm(), boolean);
     return JSValue::encode(obj);
 }

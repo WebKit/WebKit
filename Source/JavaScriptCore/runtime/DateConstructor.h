@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2011, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -57,7 +57,7 @@ private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
-JSObject* constructDate(ExecState*, JSGlobalObject*, const ArgList&);
+JSObject* constructDate(ExecState*, JSGlobalObject*, JSValue newTarget, const ArgList&);
 
 EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
 

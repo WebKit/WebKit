@@ -101,11 +101,8 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
     if (newTarget.isUndefined())
         return throwVMTypeError(exec);
 
-    JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
-    if (!jsDynamicCast<JSPromiseConstructor*>(newTarget)) {
-        JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(promise)->setPrototypeWithCycleCheck(exec, proto);
-    }
+    Structure* promiseStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->promiseStructure());
+    JSPromise* promise = JSPromise::create(vm, promiseStructure);
     promise->initialize(exec, globalObject, exec->argument(0));
 
     return JSValue::encode(promise);

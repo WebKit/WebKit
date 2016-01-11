@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2008, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -51,7 +51,7 @@ void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
 EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
-    Structure* errorStructure = asInternalFunction(exec->callee())->globalObject()->errorStructure();
+    Structure* errorStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->errorStructure());
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -218,9 +218,7 @@ static JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
 template<typename ViewClass>
 static EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
 {
-    Structure* structure =
-        asInternalFunction(exec->callee())->globalObject()->typedArrayStructure(
-            ViewClass::TypedArrayStorageType);
+    Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType));
 
     size_t argCount = exec->argumentCount();
 

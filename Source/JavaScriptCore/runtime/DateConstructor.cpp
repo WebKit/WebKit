@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2011, 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -149,7 +149,7 @@ static double millisecondsFromComponents(ExecState* exec, const ArgList& args, W
 }
 
 // ECMA 15.9.3
-JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
+JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget, const ArgList& args)
 {
     VM& vm = exec->vm();
     int numArgs = args.size();
@@ -171,13 +171,15 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
     } else
         value = millisecondsFromComponents(exec, args, WTF::LocalTime);
 
-    return DateInstance::create(vm, globalObject->dateStructure(), value);
+    Structure* dateStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->dateStructure());
+
+    return DateInstance::create(vm, dateStructure, value);
 }
     
 static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructDate(exec, asInternalFunction(exec->callee())->globalObject(), args));
+    return JSValue::encode(constructDate(exec, asInternalFunction(exec->callee())->globalObject(), exec->newTarget(), args));
 }
 
 ConstructType DateConstructor::getConstructData(JSCell*, ConstructData& constructData)

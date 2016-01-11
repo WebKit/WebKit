@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -599,8 +599,8 @@ _llint_op_create_this:
     loadp [cfr, t0, 8], t0
     loadp JSFunction::m_rareData[t0], t3
     btpz t3, .opCreateThisSlow
-    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t3], t1
-    loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t3], t2
+    loadp FunctionRareData::m_objectAllocationProfile + ObjectAllocationProfile::m_allocator[t3], t1
+    loadp FunctionRareData::m_objectAllocationProfile + ObjectAllocationProfile::m_structure[t3], t2
     btpz t1, .opCreateThisSlow
     loadpFromInstruction(4, t3)
     bpeq t3, 1, .hasSeenMultipleCallee

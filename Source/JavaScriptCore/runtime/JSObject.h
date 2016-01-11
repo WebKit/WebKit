@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2009, 2012-2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2012-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -936,6 +936,9 @@ public:
     {
         return sizeof(JSObject) + inlineCapacity * sizeof(WriteBarrierBase<Unknown>);
     }
+
+    static inline const TypeInfo typeInfo() { return TypeInfo(FinalObjectType, StructureFlags); }
+    static const IndexingType defaultIndexingType = NonArray;
         
     static const unsigned defaultSize = 64;
     static inline unsigned defaultInlineCapacity()
@@ -953,7 +956,7 @@ public:
     static JSFinalObject* create(VM&, Structure*);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, unsigned inlineCapacity)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), info(), NonArray, inlineCapacity);
+        return Structure::create(vm, globalObject, prototype, typeInfo(), info(), defaultIndexingType, inlineCapacity);
     }
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);

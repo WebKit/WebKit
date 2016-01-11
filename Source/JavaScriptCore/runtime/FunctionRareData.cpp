@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,10 @@ namespace JSC {
 
 const ClassInfo FunctionRareData::s_info = { "FunctionRareData", 0, 0, CREATE_METHOD_TABLE(FunctionRareData) };
 
-FunctionRareData* FunctionRareData::create(VM& vm, JSObject* prototype, size_t inlineCapacity)
+FunctionRareData* FunctionRareData::create(VM& vm)
 {
     FunctionRareData* rareData = new (NotNull, allocateCell<FunctionRareData>(vm.heap)) FunctionRareData(vm);
-    rareData->finishCreation(vm, prototype, inlineCapacity);
+    rareData->finishCreation(vm);
     return rareData;
 }
 
@@ -54,12 +54,13 @@ void FunctionRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     FunctionRareData* rareData = jsCast<FunctionRareData*>(cell);
 
-    rareData->m_allocationProfile.visitAggregate(visitor);
+    rareData->m_objectAllocationProfile.visitAggregate(visitor);
+    rareData->m_internalFunctionAllocationProfile.visitAggregate(visitor);
 }
 
 FunctionRareData::FunctionRareData(VM& vm)
     : Base(vm, vm.functionRareDataStructure.get())
-    , m_allocationProfile()
+    , m_objectAllocationProfile()
     // We initialize blind so that changes to the prototype after function creation but before
     // the optimizer kicks in don't disable optimizations. Once the optimizer kicks in, the
     // watchpoint will start watching and any changes will both force deoptimization and disable
@@ -69,7 +70,7 @@ FunctionRareData::FunctionRareData(VM& vm)
     // was clobbered exactly once, but that seems like overkill. In almost all cases it will be
     // clobbered once, and if it's clobbered more than once, that will probably only occur
     // before we started optimizing, anyway.
-    , m_allocationProfileWatchpoint(ClearWatchpoint)
+    , m_objectAllocationProfileWatchpoint(ClearWatchpoint)
 {
 }
 
@@ -77,21 +78,16 @@ FunctionRareData::~FunctionRareData()
 {
 }
 
-void FunctionRareData::finishCreation(VM& vm, JSObject* prototype, size_t inlineCapacity)
+void FunctionRareData::initializeObjectAllocationProfile(VM& vm, JSObject* prototype, size_t inlineCapacity)
 {
-    Base::finishCreation(vm);
-    initialize(vm, prototype, inlineCapacity);
-}
-
-void FunctionRareData::initialize(VM& vm, JSObject* prototype, size_t inlineCapacity)
-{
-    m_allocationProfile.initialize(vm, this, prototype, inlineCapacity);
+    m_objectAllocationProfile.initialize(vm, this, prototype, inlineCapacity);
 }
 
 void FunctionRareData::clear(const char* reason)
 {
-    m_allocationProfile.clear();
-    m_allocationProfileWatchpoint.fireAll(reason);
+    m_objectAllocationProfile.clear();
+    m_internalFunctionAllocationProfile.clear();
+    m_objectAllocationProfileWatchpoint.fireAll(reason);
 }
 
 }

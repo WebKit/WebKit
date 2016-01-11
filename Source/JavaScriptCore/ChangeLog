@@ -1,3 +1,130 @@
+2016-01-08  Keith Miller  <keith_miller@apple.com>
+
+        Use a profile to store allocation structures for subclasses of InternalFunctions
+        https://bugs.webkit.org/show_bug.cgi?id=152942
+
+        Reviewed by Michael Saboff.
+
+        This patch adds InternalFunctionAllocationProfile to FunctionRareData, which holds
+        a cached structure that can be used to quickly allocate any derived class of an InternalFunction.
+        InternalFunctionAllocationProfile ended up being distinct from ObjectAllocationProfile, due to
+        constraints imposed by Reflect.construct. Reflect.construct allows the user to pass an arbitrary
+        constructor as a new.target to any other constructor. This means that a user can pass some
+        non-derived constructor to an InternalFunction (they can even pass another InternalFunction as the
+        new.target). If we use the same profile for both InternalFunctions and JS allocations then we always
+        need to check in both JS code and C++ code that the profiled structure has the same ClassInfo as the
+        current constructor. By using different profiles, we only need to check the profile in InternalFunctions
+        as all JS constructed objects share the same ClassInfo (JSFinalObject). This comes at the relatively
+        low cost of using slightly more memory on FunctionRareData and being slightly more conceptually complex.
+
+        Additionally, this patch adds subclassing to some omitted classes.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeDate):
+        (JSObjectMakeRegExp):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/InternalFunctionAllocationProfile.h: Added.
+        (JSC::InternalFunctionAllocationProfile::structure):
+        (JSC::InternalFunctionAllocationProfile::clear):
+        (JSC::InternalFunctionAllocationProfile::visitAggregate):
+        (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructWithBooleanConstructor):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::constructWithDateConstructor):
+        * runtime/DateConstructor.h:
+        * runtime/ErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithErrorConstructor):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::create):
+        (JSC::FunctionRareData::visitChildren):
+        (JSC::FunctionRareData::FunctionRareData):
+        (JSC::FunctionRareData::initializeObjectAllocationProfile):
+        (JSC::FunctionRareData::clear):
+        (JSC::FunctionRareData::finishCreation): Deleted.
+        (JSC::FunctionRareData::initialize): Deleted.
+        * runtime/FunctionRareData.h:
+        (JSC::FunctionRareData::offsetOfObjectAllocationProfile):
+        (JSC::FunctionRareData::objectAllocationProfile):
+        (JSC::FunctionRareData::objectAllocationStructure):
+        (JSC::FunctionRareData::allocationProfileWatchpointSet):
+        (JSC::FunctionRareData::isObjectAllocationProfileInitialized):
+        (JSC::FunctionRareData::internalFunctionAllocationStructure):
+        (JSC::FunctionRareData::createInternalFunctionAllocationStructureFromBase):
+        (JSC::FunctionRareData::offsetOfAllocationProfile): Deleted.
+        (JSC::FunctionRareData::allocationProfile): Deleted.
+        (JSC::FunctionRareData::allocationStructure): Deleted.
+        (JSC::FunctionRareData::isInitialized): Deleted.
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/InternalFunction.h:
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::allocateRareData):
+        (JSC::JSFunction::allocateAndInitializeRareData):
+        (JSC::JSFunction::initializeRareData):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::rareData):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::typeInfo):
+        (JSC::JSFinalObject::createStructure):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSWeakMap.cpp:
+        * runtime/JSWeakSet.cpp:
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithNativeErrorConstructor):
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::createEmptyStructure):
+        (JSC::PrototypeMap::emptyStructureForPrototypeFromBaseStructure):
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype):
+        (JSC::PrototypeMap::clearEmptyObjectStructureForPrototype):
+        * runtime/PrototypeMap.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::getRegExpStructure):
+        (JSC::constructRegExp):
+        (JSC::constructWithRegExpConstructor):
+        * runtime/RegExpConstructor.h:
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        * tests/stress/class-subclassing-misc.js:
+        (A):
+        (D):
+        (E):
+        (WM):
+        (WS):
+        (test):
+        * tests/stress/class-subclassing-typedarray.js: Added.
+        (test):
+
 2016-01-11  Per Arne Vollan  <peavo@outlook.com>
 
         [B3][Win64] Compile error.

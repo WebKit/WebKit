@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,9 +93,9 @@ static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
     RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(length, 1);
     if (!buffer)
         return throwVMError(exec, createOutOfMemoryError(exec));
-    
-    JSArrayBuffer* result = JSArrayBuffer::create(
-        exec->vm(), constructor->globalObject()->arrayBufferStructure(), buffer.release());
+
+    Structure* arrayBufferStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), constructor->globalObject()->arrayBufferStructure());
+    JSArrayBuffer* result = JSArrayBuffer::create(exec->vm(), arrayBufferStructure, buffer.release());
     
     return JSValue::encode(result);
 }

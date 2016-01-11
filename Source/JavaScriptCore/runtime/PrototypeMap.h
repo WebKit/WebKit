@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,13 +45,16 @@ public:
     }
 
     JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
+    JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSObject*, Structure*);
     void clearEmptyObjectStructureForPrototype(JSObject*, unsigned inlineCapacity);
     JS_EXPORT_PRIVATE void addPrototype(JSObject*);
     TriState isPrototype(JSObject*) const; // Returns a conservative estimate.
 
 private:
+    Structure* createEmptyStructure(JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity);
+
     WeakGCMap<JSObject*, JSObject> m_prototypes;
-    typedef WeakGCMap<std::pair<JSObject*, unsigned>, Structure> StructureMap;
+    typedef WeakGCMap<std::pair<JSObject*, std::pair<unsigned, const ClassInfo*>>, Structure> StructureMap;
     StructureMap m_structures;
 };
 
