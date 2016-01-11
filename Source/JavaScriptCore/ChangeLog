@@ -1,3 +1,14 @@
+2016-01-11  Per Arne Vollan  <peavo@outlook.com>
+
+        [B3][Win64] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=152984
+
+        Reviewed by Alex Christensen.
+
+        Windows does not have bzero, use memset instead.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+
 2016-01-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation of JavaScriptCore with GCC 4.8 on 32-bit platforms
