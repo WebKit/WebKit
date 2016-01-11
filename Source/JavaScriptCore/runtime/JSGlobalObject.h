@@ -23,6 +23,7 @@
 #define JSGlobalObject_h
 
 #include "ArrayAllocationProfile.h"
+#include "InternalFunction.h"
 #include "JSArray.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
@@ -481,13 +482,13 @@ public:
         ASSERT(indexingType & IsArray);
         return m_arrayStructureForIndexingShapeDuringAllocation[(indexingType & IndexingShapeMask) >> IndexingShapeShift].get();
     }
-    Structure* arrayStructureForIndexingTypeDuringAllocation(VM& vm, IndexingType indexingType, JSValue prototype) const
+    Structure* arrayStructureForIndexingTypeDuringAllocation(ExecState* exec, IndexingType indexingType, JSValue newTarget) const
     {
-        return Structure::createSubclassStructure(vm, arrayStructureForIndexingTypeDuringAllocation(indexingType), prototype);
+        return InternalFunction::createSubclassStructure(exec, newTarget, arrayStructureForIndexingTypeDuringAllocation(indexingType));
     }
-    Structure* arrayStructureForProfileDuringAllocation(VM& vm, ArrayAllocationProfile* profile, JSValue prototype) const
+    Structure* arrayStructureForProfileDuringAllocation(ExecState* exec, ArrayAllocationProfile* profile, JSValue newTarget) const
     {
-        return arrayStructureForIndexingTypeDuringAllocation(vm, ArrayAllocationProfile::selectIndexingTypeFor(profile), prototype);
+        return arrayStructureForIndexingTypeDuringAllocation(exec, ArrayAllocationProfile::selectIndexingTypeFor(profile), newTarget);
     }
         
     bool isOriginalArrayStructure(Structure* structure)
@@ -723,51 +724,50 @@ inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, PropertyName
     return symbolTableGet(this, propertyName, slot, slotIsWriteable);
 }
 
-inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0, JSValue prototype = JSValue())
+inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0, JSValue newTarget = JSValue())
 {
-    VM& vm = exec->vm();
     Structure* structure;
     if (initialLength >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
-        structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(vm, ArrayWithArrayStorage, prototype);
+        structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(exec, ArrayWithArrayStorage, newTarget);
     else
-        structure = globalObject->arrayStructureForProfileDuringAllocation(vm, profile, prototype);
+        structure = globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget);
 
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, JSArray::create(vm, structure, initialLength));
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, JSArray::create(exec->vm(), structure, initialLength));
 }
 
-inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, unsigned initialLength = 0, JSValue prototype = JSValue())
+inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, unsigned initialLength = 0, JSValue newTarget = JSValue())
 {
-    return constructEmptyArray(exec, profile, exec->lexicalGlobalObject(), initialLength, prototype);
+    return constructEmptyArray(exec, profile, exec->lexicalGlobalObject(), initialLength, newTarget);
 }
  
-inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const ArgList& values, JSValue prototype = JSValue())
+inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const ArgList& values, JSValue newTarget = JSValue())
 {
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, globalObject->arrayStructureForProfileDuringAllocation(exec->vm(), profile, prototype), values));
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget), values));
 }
 
-inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const ArgList& values, JSValue prototype = JSValue())
+inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const ArgList& values, JSValue newTarget = JSValue())
 {
-    return constructArray(exec, profile, exec->lexicalGlobalObject(), values, prototype);
+    return constructArray(exec, profile, exec->lexicalGlobalObject(), values, newTarget);
 }
 
-inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue prototype = JSValue())
+inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, globalObject->arrayStructureForProfileDuringAllocation(exec->vm(), profile, prototype), values, length));
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget), values, length));
 }
 
-inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue prototype = JSValue())
+inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
-    return constructArray(exec, profile, exec->lexicalGlobalObject(), values, length, prototype);
+    return constructArray(exec, profile, exec->lexicalGlobalObject(), values, length, newTarget);
 }
 
-inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue prototype = JSValue())
+inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
-    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(exec, globalObject->arrayStructureForProfileDuringAllocation(exec->vm(), profile, prototype), values, length));
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(exec, globalObject->arrayStructureForProfileDuringAllocation(exec, profile, newTarget), values, length));
 }
 
-inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue prototype = JSValue())
+inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length, JSValue newTarget = JSValue())
 {
-    return constructArrayNegativeIndexed(exec, profile, exec->lexicalGlobalObject(), values, length, prototype);
+    return constructArrayNegativeIndexed(exec, profile, exec->lexicalGlobalObject(), values, length, newTarget);
 }
 
 inline JSObject* ExecState::globalThisValue() const

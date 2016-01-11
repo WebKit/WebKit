@@ -71,7 +71,11 @@ inline Structure* PrototypeMap::createEmptyStructure(JSObject* prototype, const 
 Structure* PrototypeMap::emptyStructureForPrototypeFromBaseStructure(JSObject* prototype, Structure* baseStructure)
 {
     // We currently do not have inline capacity static analysis for subclasses and all internal function constructors have a default inline capacity of 0.
-    return createEmptyStructure(prototype, baseStructure->typeInfo(), baseStructure->classInfo(), baseStructure->indexingType(), 0);
+    IndexingType indexingType = baseStructure->indexingType();
+    if (prototype->structure()->anyObjectInChainMayInterceptIndexedAccesses())
+        indexingType = (indexingType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
+
+    return createEmptyStructure(prototype, baseStructure->typeInfo(), baseStructure->classInfo(), indexingType, 0);
 }
 
 Structure* PrototypeMap::emptyObjectStructureForPrototype(JSObject* prototype, unsigned inlineCapacity)

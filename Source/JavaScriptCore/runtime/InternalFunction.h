@@ -42,12 +42,12 @@ public:
     const String displayName(ExecState*);
     const String calculatedDisplayName(ExecState*);
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     { 
         return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
     }
 
-    static Structure* createSubclassStructure(ExecState*, JSValue newTarget, Structure*);
+    JS_EXPORT_PRIVATE static Structure* createSubclassStructure(ExecState*, JSValue newTarget, Structure*);
 
 protected:
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*);

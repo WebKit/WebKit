@@ -52,28 +52,6 @@ inline Structure* Structure::createStructure(VM& vm)
     return structure;
 }
 
-inline Structure* Structure::createSubclassStructure(VM& vm, Structure* baseStructure, JSValue prototype)
-{
-    if (!prototype)
-        return baseStructure;
-
-    ASSERT(prototype != baseStructure->m_prototype.get());
-    ASSERT(prototype.isObject() || prototype.isNull());
-
-    if (prototype.isObject())
-        vm.prototypeMap.addPrototype(prototype.getObject());
-
-    // FIXME: This is super bad, not only does this transition the original prototype but it also causes a new structure
-    // to be created each time we allocate a new subclassed object for a builtin. Instead we should allocate a new structure
-    // that is identical other than the new prototype then we should cache it. https://bugs.webkit.org/show_bug.cgi?id=152710
-    Structure* newStructure = changePrototypeTransition(vm, baseStructure, prototype);
-
-    if (hasIndexedProperties(newStructure->indexingType()) && newStructure->anyObjectInChainMayInterceptIndexedAccesses())
-        newStructure->m_blob.setIndexingType((newStructure->indexingType() & ~IndexingShapeMask) | SlowPutArrayStorageShape);
-
-    return newStructure;
-}
-
 inline Structure* Structure::create(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
 {
     ASSERT(vm.structureStructure);

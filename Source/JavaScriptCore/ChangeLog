@@ -1,3 +1,28 @@
+2016-01-11  Keith Miller  <keith_miller@apple.com>
+
+        Arrays should use the InternalFunctionAllocationProfile when constructing new Arrays
+        https://bugs.webkit.org/show_bug.cgi?id=152949
+
+        Reviewed by Michael Saboff.
+
+        This patch updates Array constructors to use the new InternalFunctionAllocationProfile.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        (JSC::constructWithArrayConstructor):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayStructureForIndexingTypeDuringAllocation):
+        (JSC::JSGlobalObject::arrayStructureForProfileDuringAllocation):
+        (JSC::constructEmptyArray):
+        (JSC::constructArray):
+        (JSC::constructArrayNegativeIndexed):
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::emptyStructureForPrototypeFromBaseStructure):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+
 2016-01-08  Keith Miller  <keith_miller@apple.com>
 
         Use a profile to store allocation structures for subclasses of InternalFunctions
