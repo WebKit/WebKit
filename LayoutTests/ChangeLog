@@ -1,3 +1,17 @@
+2016-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Parsing failures cause use of incomplete fonts
+        https://bugs.webkit.org/show_bug.cgi?id=152772
+        <rdar://problem/24043104>
+
+        Reviewed by Simon Fraser.
+
+        Make sure the font renders as if its invalid.
+
+        * fast/text/resources/bustedfont.svg: Added.
+        * fast/text/svg-font-invalid-glyph-path-failure-expected.html: Added.
+        * fast/text/svg-font-invalid-glyph-path-failure.html: Added.
+
 2016-01-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Iterating over a Set/Map is too slow

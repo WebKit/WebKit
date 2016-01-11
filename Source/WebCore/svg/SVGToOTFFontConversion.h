@@ -26,13 +26,14 @@
 #ifndef SVGToOTFFontConversion_h
 #define SVGToOTFFontConversion_h
 
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class SVGFontElement;
 
-Vector<char> convertSVGToOTFFont(const SVGFontElement&);
+Optional<Vector<char>> convertSVGToOTFFont(const SVGFontElement&);
 
 }
 

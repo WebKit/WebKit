@@ -51,11 +51,16 @@ static inline void append32(V& result, uint32_t value)
 class SVGToOTFFontConverter {
 public:
     SVGToOTFFontConverter(const SVGFontElement&);
-    void convertSVGToOTFFont();
+    bool convertSVGToOTFFont();
 
     Vector<char> releaseResult()
     {
         return WTFMove(m_result);
+    }
+
+    bool error() const
+    {
+        return m_error;
     }
 
 private:
@@ -257,6 +262,7 @@ private:
     unsigned m_tablesAppendedCount;
     char m_weight;
     bool m_italic;
+    bool m_error { false };
 };
 
 static uint16_t roundDownToPowerOfTwo(uint16_t x)
@@ -1269,7 +1275,7 @@ Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const SVGEl
 
     ok = SVGPathParser::parse(source, builder);
     if (!ok)
-        result.clear();
+        return { };
 
     boundingBox = builder.boundingBox();
 
@@ -1291,6 +1297,10 @@ void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissing
 
     Optional<FloatRect> glyphBoundingBox;
     auto path = transcodeGlyphPaths(horizontalAdvance, glyphOrMissingGlyphElement, glyphBoundingBox);
+    if (!path.size()) {
+        // It's better to use a fallback font rather than use a font without all its glyphs.
+        m_error = true;
+    }
     if (!boundingBox)
         boundingBox = glyphBoundingBox;
     else if (glyphBoundingBox)
@@ -1521,10 +1531,10 @@ void SVGToOTFFontConverter::appendTable(const char identifier[4], FontAppendingF
     ++m_tablesAppendedCount;
 }
 
-void SVGToOTFFontConverter::convertSVGToOTFFont()
+bool SVGToOTFFontConverter::convertSVGToOTFFont()
 {
     if (m_glyphs.isEmpty())
-        return;
+        return false;
 
     uint16_t numTables = 14;
     uint16_t roundedNumTables = roundDownToPowerOfTwo(numTables);
@@ -1566,12 +1576,16 @@ void SVGToOTFFontConverter::convertSVGToOTFFont()
     // checksumAdjustment: "To compute: set it to 0, calculate the checksum for the 'head' table and put it in the table directory,
     // sum the entire font as uint32, then store B1B0AFBA - sum. The checksum for the 'head' table will now be wrong. That is OK."
     overwrite32(headTableOffset + 8, 0xB1B0AFBAU - calculateChecksum(0, m_result.size()));
+    return true;
 }
 
-Vector<char> convertSVGToOTFFont(const SVGFontElement& element)
+Optional<Vector<char>> convertSVGToOTFFont(const SVGFontElement& element)
 {
     SVGToOTFFontConverter converter(element);
-    converter.convertSVGToOTFFont();
+    if (converter.error())
+        return Nullopt;
+    if (!converter.convertSVGToOTFFont())
+        return Nullopt;
     return converter.releaseResult();
 }
 

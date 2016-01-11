@@ -144,8 +144,8 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
                 SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
                 // FIXME: Re-run this when script modifies the element or any of its descendents
                 // FIXME: We might have already converted this font. Make existing conversions discoverable.
-                Vector<char> otfFont = convertSVGToOTFFont(fontElement);
-                m_generatedOTFBuffer = SharedBuffer::adoptVector(otfFont);
+                if (auto otfFont = convertSVGToOTFFont(fontElement))
+                    m_generatedOTFBuffer = SharedBuffer::adoptVector(otfFont.value());
                 if (!m_generatedOTFBuffer)
                     return nullptr;
                 auto customPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);

@@ -1,3 +1,29 @@
+2016-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Parsing failures cause use of incomplete fonts
+        https://bugs.webkit.org/show_bug.cgi?id=152772
+        <rdar://problem/24043104>
+
+        Reviewed by Simon Fraser.
+
+        Originally, if we fail to parse a glyph, we would simply skip the glyph. However, this means that
+        we will create an incomplete font without all the necessary glyphs. This causes very distressing
+        text where all the occurances of a particular letter are missing. Instead, we should treat the
+        entire font as invalid.
+
+        Test: fast/text/svg-font-invalid-glyph-path-failure.html
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::error):
+        (WebCore::SVGToOTFFontConverter::transcodeGlyphPaths):
+        (WebCore::SVGToOTFFontConverter::processGlyphElement):
+        (WebCore::convertSVGToOTFFont):
+        * svg/SVGToOTFFontConversion.h:
+
 2016-01-10  Andreas Kling  <akling@apple.com>
 
         Use NeverDestroyed instead of DEPRECATED_DEFINE_STATIC_LOCAL cont'd

@@ -92,8 +92,12 @@ bool CachedSVGFont::ensureCustomFontData(bool externalSVG, const AtomicString& r
             maybeInitializeExternalSVGFontElement(remoteURI);
         if (!m_externalSVGFontElement)
             return false;
-        Vector<char> convertedFont = convertSVGToOTFFont(*m_externalSVGFontElement);
-        m_convertedFont = SharedBuffer::adoptVector(convertedFont);
+        if (auto convertedFont = convertSVGToOTFFont(*m_externalSVGFontElement))
+            m_convertedFont = SharedBuffer::adoptVector(convertedFont.value());
+        else {
+            m_externalSVGDocument = nullptr;
+            return false;
+        }
 #endif
     }
 

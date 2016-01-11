@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "bustedfont";
+    src: url("resources/bustedfont.svg") format("svg");
+}
+</style>
+</head>
+<body>
+This test makes sure that a path parsing failure of (a single glyph of) an SVG font is treated as an invalid font. There should be text below (instead of a big black box).
+<div style="font: 50px bustedfont, Avenir">aeiou</div>
+</body>
+</html>
