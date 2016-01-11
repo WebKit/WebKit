@@ -58,6 +58,7 @@
 #include "CSSSupportsRule.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "CSSVariableDependentValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"

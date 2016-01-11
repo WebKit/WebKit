@@ -1,5 +1,11 @@
 2016-01-11  Andreas Kling  <akling@apple.com>
 
+        Fix other builds after my MSVC build fix. :-|
+
+        * css/StyleResolver.cpp:
+
+2016-01-11  Andreas Kling  <akling@apple.com>
+
         Fix MSVC build after r194848.
 
         Since MSVC refuses to recognize the friendship between LazyNeverDestroyed
