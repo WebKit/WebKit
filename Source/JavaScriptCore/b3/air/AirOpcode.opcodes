@@ -541,7 +541,7 @@ Branch32 U:G:32, U:G:32, U:G:32 /branch
 
 64: Branch64 U:G:32, U:G:64, U:G:64 /branch
     RelCond, Tmp, Tmp
-    RelCond, Tmp, Imm
+    x86: RelCond, Tmp, Imm
     x86: RelCond, Tmp, Addr
     x86: RelCond, Addr, Tmp
     x86: RelCond, Addr, Imm

@@ -1,5 +1,11 @@
 2016-01-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix ARM64 build.
+
+        * b3/air/AirOpcode.opcodes:
+
+2016-01-10  Filip Pizlo  <fpizlo@apple.com>
+
         B3 should reduce Trunc(BitOr(value, constant)) where !(constant & 0xffffffff) to Trunc(value)
         https://bugs.webkit.org/show_bug.cgi?id=152955
 
