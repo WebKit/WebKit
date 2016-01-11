@@ -1,3 +1,13 @@
+2016-01-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed compilation of JavaScriptCore with GCC 4.8 on 32-bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=152923
+
+        Reviewed by Alex Christensen.
+
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::assumeCalleeIsCell):
+
 2016-01-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [B3] Fix control reaches end of non-void function GCC warnings on Linux
