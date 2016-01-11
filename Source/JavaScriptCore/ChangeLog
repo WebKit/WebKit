@@ -1,3 +1,24 @@
+2016-01-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] When resolving Stack arguments, use addressing from SP when addressing from FP is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=152840
+
+        Reviewed by Mark Lam.
+
+        ARM64 has two kinds of addressing with immediates:
+        -Signed 9bits direct (really only -256 to 255).
+        -Unsigned 12bits scaled by the load/store size.
+
+        When resolving the stack addresses, we easily run
+        past -256 bytes from FP. Addressing from SP gives us more
+        room to address the stack efficiently because we can
+        use unsigned immediates.
+
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::repForArg):
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+
 2016-01-10  Saam barati  <sbarati@apple.com>
 
         Implement a sampling profiler

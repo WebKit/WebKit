@@ -261,7 +261,7 @@ ValueRep StackmapSpecial::repForArg(Code& code, const Arg& arg)
         if (arg.base() == Tmp(GPRInfo::callFrameRegister))
             return ValueRep::stack(arg.offset());
         ASSERT(arg.base() == Tmp(MacroAssembler::stackPointerRegister));
-        return ValueRep::stack(arg.offset() - code.frameSize());
+        return ValueRep::stack(arg.offset() - static_cast<int32_t>(code.frameSize()));
     default:
         ASSERT_NOT_REACHED();
         return ValueRep();
