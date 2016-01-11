@@ -429,8 +429,6 @@ set(WebKit2_FORWARDING_HEADERS_FILES
 )
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
-    NetworkProcess/Downloads/PendingDownload.messages.in
-
     Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 
     Shared/mac/SecItemShim.messages.in

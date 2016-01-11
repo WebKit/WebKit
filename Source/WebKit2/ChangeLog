@@ -1,3 +1,11 @@
+2016-01-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build after r194810.
+
+        * PlatformMac.cmake:
+        PendingDownload isn't needed until NETWORK_SESSION is used by default.
+        I'll figure this out when I make the switch.
+
 2016-01-11  Mario Sanchez Prada  <mario@endlessm.com>
 
         [WK2][GTK] Propagate motion-notify-event signals from the WebView
