@@ -793,11 +793,11 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (priv->authenticationDialog)
-        return TRUE;
+        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->motion_notify_event(widget, event);
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(event), 0 /* currentClickCount */));
 
-    return TRUE;
+    return FALSE;
 }
 
 #if ENABLE(TOUCH_EVENTS)

@@ -1,3 +1,18 @@
+2016-01-11  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [WK2][GTK] Propagate motion-notify-event signals from the WebView
+        https://bugs.webkit.org/show_bug.cgi?id=152974
+
+        Reviewed by Carlos Garcia Campos.
+
+        Always propagate motion-notify-event signals, regardless of what the
+        web process does, so that we can listen for those events (which does
+        not act on specific targets inside the webview) from the container
+        widget too, and not just from the WebView itself.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseMotionNotifyEvent): Ensure the signal gets propagated.
+
 2016-01-10  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Disable header postprocessing when building for El Capitan
