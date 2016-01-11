@@ -71,21 +71,21 @@ public:
     virtual void deleteBackingStore() override final;
 
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
-    void restoreObjectStoreForVersionChangeAbort(std::unique_ptr<MemoryObjectStore>&&);
+    void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
 
 private:
     MemoryIDBBackingStore(const IDBDatabaseIdentifier&);
 
-    std::unique_ptr<MemoryObjectStore> takeObjectStoreByName(const String& name);
+    RefPtr<MemoryObjectStore> takeObjectStoreByName(const String& name);
 
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;
 
-    void registerObjectStore(std::unique_ptr<MemoryObjectStore>&&);
+    void registerObjectStore(Ref<MemoryObjectStore>&&);
     void unregisterObjectStore(MemoryObjectStore&);
-    HashMap<uint64_t, std::unique_ptr<MemoryObjectStore>> m_objectStoresByIdentifier;
+    HashMap<uint64_t, RefPtr<MemoryObjectStore>> m_objectStoresByIdentifier;
     HashMap<String, MemoryObjectStore*> m_objectStoresByName;
 };
 

@@ -44,9 +44,9 @@ using namespace JSC;
 namespace WebCore {
 namespace IDBServer {
 
-std::unique_ptr<MemoryObjectStore> MemoryObjectStore::create(const IDBObjectStoreInfo& info)
+Ref<MemoryObjectStore> MemoryObjectStore::create(const IDBObjectStoreInfo& info)
 {
-    return std::make_unique<MemoryObjectStore>(info);
+    return adoptRef(*new MemoryObjectStore(info));
 }
 
 MemoryObjectStore::MemoryObjectStore(const IDBObjectStoreInfo& info)
@@ -92,22 +92,20 @@ IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transacti
     auto index = MemoryIndex::create(info, *this);
 
     // If there was an error populating the new index, then the current records in the object store violate its contraints
-    auto error = populateIndexWithExistingRecords(*index);
+    auto error = populateIndexWithExistingRecords(index.get());
     if (!error.isNull())
         return error;
 
     m_info.addExistingIndex(info);
-    transaction.addNewIndex(*index);
+    transaction.addNewIndex(index.get());
     registerIndex(WTFMove(index));
 
     return { };
 }
 
-void MemoryObjectStore::maybeRestoreDeletedIndex(std::unique_ptr<MemoryIndex> index)
+void MemoryObjectStore::maybeRestoreDeletedIndex(Ref<MemoryIndex>&& index)
 {
     LOG(IndexedDB, "MemoryObjectStore::maybeRestoreDeletedIndex");
-
-    ASSERT(index);
 
     if (m_info.hasIndex(index->info().name()))
         return;
@@ -116,7 +114,7 @@ void MemoryObjectStore::maybeRestoreDeletedIndex(std::unique_ptr<MemoryIndex> in
 
     ASSERT(!m_indexesByIdentifier.contains(index->info().identifier()));
     index->clearIndexValueStore();
-    auto error = populateIndexWithExistingRecords(*index);
+    auto error = populateIndexWithExistingRecords(index.get());
 
     // Since this index was installed in the object store before this transaction started,
     // assuming things were in a valid state then, we should definitely be able to successfully
@@ -126,13 +124,13 @@ void MemoryObjectStore::maybeRestoreDeletedIndex(std::unique_ptr<MemoryIndex> in
     registerIndex(WTFMove(index));
 }
 
-std::unique_ptr<MemoryIndex> MemoryObjectStore::takeIndexByName(const String& name)
+RefPtr<MemoryIndex> MemoryObjectStore::takeIndexByName(const String& name)
 {
-    auto rawIndex = m_indexesByName.take(name);
-    if (!rawIndex)
+    auto indexByName = m_indexesByName.take(name);
+    if (!indexByName)
         return nullptr;
 
-    auto index = m_indexesByIdentifier.take(rawIndex->info().identifier());
+    auto index = m_indexesByIdentifier.take(indexByName->info().identifier());
     ASSERT(index);
 
     return index;
@@ -151,7 +149,7 @@ IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transacti
         return IDBError(IDBDatabaseException::ConstraintError);
 
     m_info.deleteIndex(indexName);
-    transaction.indexDeleted(WTFMove(index));
+    transaction.indexDeleted(*index);
 
     return { };
 }
@@ -294,7 +292,7 @@ void MemoryObjectStore::updateCursorsForDeleteRecord(const IDBKeyData& key)
 
 void MemoryObjectStore::updateIndexesForDeleteRecord(const IDBKeyData& value)
 {
-    for (auto* index : m_indexesByName.values())
+    for (auto& index : m_indexesByName.values())
         index->removeEntriesWithValueKey(value);
 }
 
@@ -309,7 +307,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
     IDBError error;
     Vector<std::pair<MemoryIndex*, IndexKey>> changedIndexRecords;
 
-    for (auto* index : m_indexesByName.values()) {
+    for (auto& index : m_indexesByName.values()) {
         IndexKey indexKey;
         generateIndexKeyForValue(UniqueIDBDatabase::databaseThreadExecState(), index->info(), jsValue, indexKey);
 
@@ -320,7 +318,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
         if (!error.isNull())
             break;
 
-        changedIndexRecords.append(std::make_pair(index, indexKey));
+        changedIndexRecords.append(std::make_pair(index.get(), indexKey));
     }
 
     // If any of the index puts failed, revert all of the ones that went through.
@@ -446,13 +444,12 @@ IDBKeyData MemoryObjectStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& 
     return *lowestInRange;
 }
 
-void MemoryObjectStore::registerIndex(std::unique_ptr<MemoryIndex>&& index)
+void MemoryObjectStore::registerIndex(Ref<MemoryIndex>&& index)
 {
-    ASSERT(index);
     ASSERT(!m_indexesByIdentifier.contains(index->info().identifier()));
     ASSERT(!m_indexesByName.contains(index->info().name()));
 
-    m_indexesByName.set(index->info().name(), index.get());
+    m_indexesByName.set(index->info().name(), &index.get());
     m_indexesByIdentifier.set(index->info().identifier(), WTFMove(index));
 }
 

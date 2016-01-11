@@ -62,13 +62,13 @@ public:
     void addExistingObjectStore(MemoryObjectStore&);
     
     void recordValueChanged(MemoryObjectStore&, const IDBKeyData&, ThreadSafeDataBuffer*);
-    void objectStoreDeleted(std::unique_ptr<MemoryObjectStore>);
+    void objectStoreDeleted(Ref<MemoryObjectStore>&&);
     void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&, std::unique_ptr<std::set<IDBKeyData>>&&);
     void indexCleared(MemoryIndex&, std::unique_ptr<IndexValueStore>&&);
 
     void addNewIndex(MemoryIndex&);
     void addExistingIndex(MemoryIndex&);
-    void indexDeleted(std::unique_ptr<MemoryIndex>);
+    void indexDeleted(Ref<MemoryIndex>&&);
 
     void abort();
     void commit();
@@ -86,14 +86,14 @@ private:
     bool m_inProgress { true };
     bool m_isAborting { false };
 
-    HashSet<MemoryObjectStore*> m_objectStores;
-    HashSet<MemoryObjectStore*> m_versionChangeAddedObjectStores;
-    HashSet<MemoryIndex*> m_indexes;
-    HashSet<MemoryIndex*> m_versionChangeAddedIndexes;
+    HashSet<RefPtr<MemoryObjectStore>> m_objectStores;
+    HashSet<RefPtr<MemoryObjectStore>> m_versionChangeAddedObjectStores;
+    HashSet<RefPtr<MemoryIndex>> m_indexes;
+    HashSet<RefPtr<MemoryIndex>> m_versionChangeAddedIndexes;
 
     HashMap<MemoryObjectStore*, uint64_t> m_originalKeyGenerators;
-    HashMap<String, std::unique_ptr<MemoryObjectStore>> m_deletedObjectStores;
-    HashMap<String, std::unique_ptr<MemoryIndex>> m_deletedIndexes;
+    HashMap<String, RefPtr<MemoryObjectStore>> m_deletedObjectStores;
+    HashMap<String, RefPtr<MemoryIndex>> m_deletedIndexes;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_originalValues;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_clearedKeyValueMaps;
     HashMap<MemoryObjectStore*, std::unique_ptr<std::set<IDBKeyData>>> m_clearedOrderedKeys;

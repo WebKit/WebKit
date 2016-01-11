@@ -40,9 +40,9 @@
 namespace WebCore {
 namespace IDBServer {
 
-std::unique_ptr<MemoryIndex> MemoryIndex::create(const IDBIndexInfo& info, MemoryObjectStore& objectStore)
+Ref<MemoryIndex> MemoryIndex::create(const IDBIndexInfo& info, MemoryObjectStore& objectStore)
 {
-    return std::make_unique<MemoryIndex>(info, objectStore);
+    return adoptRef(*new MemoryIndex(info, objectStore));
 }
 
 MemoryIndex::MemoryIndex(const IDBIndexInfo& info, MemoryObjectStore& objectStore)

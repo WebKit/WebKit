@@ -35,6 +35,7 @@
 #include "MemoryIndexCursor.h"
 #include <set>
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -53,10 +54,9 @@ namespace IDBServer {
 class MemoryBackingStoreTransaction;
 class MemoryObjectStore;
 
-class MemoryIndex {
-    friend std::unique_ptr<MemoryIndex> std::make_unique<MemoryIndex>(const WebCore::IDBIndexInfo&, WebCore::IDBServer::MemoryObjectStore&);
+class MemoryIndex : public RefCounted<MemoryIndex> {
 public:
-    static std::unique_ptr<MemoryIndex> create(const IDBIndexInfo&, MemoryObjectStore&);
+    static Ref<MemoryIndex> create(const IDBIndexInfo&, MemoryObjectStore&);
 
     ~MemoryIndex();
 

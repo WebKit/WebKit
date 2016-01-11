@@ -35,6 +35,7 @@
 #include "ThreadSafeDataBuffer.h"
 #include <set>
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -54,10 +55,9 @@ class MemoryBackingStoreTransaction;
 
 typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
 
-class MemoryObjectStore {
-    friend std::unique_ptr<MemoryObjectStore> std::make_unique<MemoryObjectStore>(const WebCore::IDBObjectStoreInfo&);
+class MemoryObjectStore : public RefCounted<MemoryObjectStore> {
 public:
-    static std::unique_ptr<MemoryObjectStore> create(const IDBObjectStoreInfo&);
+    static Ref<MemoryObjectStore> create(const IDBObjectStoreInfo&);
 
     ~MemoryObjectStore();
 
@@ -68,7 +68,7 @@ public:
     IDBError createIndex(MemoryBackingStoreTransaction&, const IDBIndexInfo&);
     IDBError deleteIndex(MemoryBackingStoreTransaction&, const String& indexName);
     void deleteAllIndexes(MemoryBackingStoreTransaction&);
-    void registerIndex(std::unique_ptr<MemoryIndex>&&);
+    void registerIndex(Ref<MemoryIndex>&&);
 
     bool containsRecord(const IDBKeyData&);
     void deleteRecord(const IDBKeyData&);
@@ -94,7 +94,7 @@ public:
 
     MemoryIndex* indexForIdentifier(uint64_t);
 
-    void maybeRestoreDeletedIndex(std::unique_ptr<MemoryIndex>);
+    void maybeRestoreDeletedIndex(Ref<MemoryIndex>&&);
 
 private:
     MemoryObjectStore(const IDBObjectStoreInfo&);
@@ -108,7 +108,7 @@ private:
     void updateCursorsForPutRecord(std::set<IDBKeyData>::iterator);
     void updateCursorsForDeleteRecord(const IDBKeyData&);
 
-    std::unique_ptr<MemoryIndex> takeIndexByName(const String& name);
+    RefPtr<MemoryIndex> takeIndexByName(const String& name);
 
     IDBObjectStoreInfo m_info;
 
@@ -119,8 +119,8 @@ private:
     std::unique_ptr<std::set<IDBKeyData>> m_orderedKeys;
 
     void unregisterIndex(MemoryIndex&);
-    HashMap<uint64_t, std::unique_ptr<MemoryIndex>> m_indexesByIdentifier;
-    HashMap<String, MemoryIndex*> m_indexesByName;
+    HashMap<uint64_t, RefPtr<MemoryIndex>> m_indexesByIdentifier;
+    HashMap<String, RefPtr<MemoryIndex>> m_indexesByName;
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryObjectStoreCursor>> m_cursors;
 };
 

@@ -1,3 +1,41 @@
+2016-01-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Make MemoryIndex and MemoryObjectStore RefCounted.
+        https://bugs.webkit.org/show_bug.cgi?id=152966
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no change in behavior)
+
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::indexDeleted):
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::objectStoreDeleted):
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::abort):
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.h:
+        
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::restoreObjectStoreForVersionChangeAbort):
+        (WebCore::IDBServer::MemoryIDBBackingStore::registerObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::takeObjectStoreByName):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/MemoryIndex.cpp:
+        (WebCore::IDBServer::MemoryIndex::create):
+        * Modules/indexeddb/server/MemoryIndex.h:
+        
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::create):
+        (WebCore::IDBServer::MemoryObjectStore::createIndex):
+        (WebCore::IDBServer::MemoryObjectStore::maybeRestoreDeletedIndex):
+        (WebCore::IDBServer::MemoryObjectStore::takeIndexByName):
+        (WebCore::IDBServer::MemoryObjectStore::deleteIndex):
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForDeleteRecord):
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord):
+        (WebCore::IDBServer::MemoryObjectStore::registerIndex):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+
 2016-01-11  Andreas Kling  <akling@apple.com>
 
         Fix other builds after my MSVC build fix. :-|
