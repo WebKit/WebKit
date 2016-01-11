@@ -220,7 +220,9 @@ void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectS
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort");
 
-    ASSERT(m_objectStoresByIdentifier.contains(objectStore.info().identifier()));
+    if (!m_objectStoresByIdentifier.contains(objectStore.info().identifier()))
+        return;
+
     ASSERT(m_objectStoresByIdentifier.get(objectStore.info().identifier()) == &objectStore);
 
     unregisterObjectStore(objectStore);

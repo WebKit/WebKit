@@ -1,5 +1,21 @@
 2016-01-11  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/lazy-index-population.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152976
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        We were restoring objectstores/indexes incorrectly on transaction abort.
+
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::abort):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort):
+
+2016-01-11  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Make MemoryIndex and MemoryObjectStore RefCounted.
         https://bugs.webkit.org/show_bug.cgi?id=152966
 

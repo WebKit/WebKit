@@ -79,9 +79,6 @@ imported/w3c/indexeddb/idbindex_openKeyCursor3.htm [ Failure ]
 # Modern IDB doesn't properly handle 2^53 as a key generator value
 storage/indexeddb/key-generator.html [ Skip ]
 
-# ASSERT in MemoryIDBBackingStore::restoreObjectStoreForVersionChangeAbort
-storage/indexeddb/lazy-index-population.html [ Skip ]
-
 # Crashes with GuardMalloc or ASan
 storage/indexeddb/index-multientry.html [ Skip ]
 

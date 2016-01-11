@@ -180,6 +180,10 @@ void MemoryBackingStoreTransaction::abort()
 
     TemporaryChange<bool> change(m_isAborting, true);
 
+    for (auto objectStore : m_versionChangeAddedObjectStores)
+        m_backingStore.removeObjectStoreForVersionChangeAbort(*objectStore);
+    m_versionChangeAddedObjectStores.clear();
+
     for (auto& objectStore : m_deletedObjectStores.values()) {
         m_backingStore.restoreObjectStoreForVersionChangeAbort(*objectStore);
         ASSERT(!m_objectStores.contains(objectStore.get()));
@@ -223,9 +227,6 @@ void MemoryBackingStoreTransaction::abort()
     m_deletedIndexes.clear();
 
     finish();
-
-    for (auto objectStore : m_versionChangeAddedObjectStores)
-        m_backingStore.removeObjectStoreForVersionChangeAbort(*objectStore);
 }
 
 void MemoryBackingStoreTransaction::commit()
