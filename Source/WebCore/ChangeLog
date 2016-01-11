@@ -1,3 +1,21 @@
+2016-01-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/index-multientry.html fails under GuardMalloc/ASAN.
+        https://bugs.webkit.org/show_bug.cgi?id=152990
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by re-enabling existing test).
+
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::dispatchEvent): Use String::utf8() instead of AtomicString::characters8() for
+          the format string, as the latter fails under ASAN.
+          
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        (WebCore::IDBServer::IndexValueStore::removeEntriesWithValueKey): We can't save off pointers to IDBKeyDatas
+          used as keys in the map, because the moment we start mutating the map the keys can be rehashed, invalidating
+          our pointers. Save off the IDBKeyDatas by value instead.
+
 2016-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Migrate Page Timeline recording to ScriptProfiler

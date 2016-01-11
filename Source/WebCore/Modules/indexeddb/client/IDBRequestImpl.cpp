@@ -263,7 +263,7 @@ void IDBRequest::enqueueEvent(Ref<Event>&& event)
 
 bool IDBRequest::dispatchEvent(Event& event)
 {
-    LOG(IndexedDB, "IDBRequest::dispatchEvent - %s (%p)", event.type().characters8(), this);
+    LOG(IndexedDB, "IDBRequest::dispatchEvent - %s (%p)", event.type().string().utf8().data(), this);
 
     ASSERT(m_hasPendingActivity);
     ASSERT(!m_contextStopped);

@@ -98,18 +98,19 @@ void IndexValueStore::removeRecord(const IDBKeyData& indexKey, const IDBKeyData&
 
 void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKeyData& valueKey)
 {
-    HashSet<IDBKeyData*> entryKeysToRemove;
+    Vector<IDBKeyData> entryKeysToRemove;
+    entryKeysToRemove.reserveInitialCapacity(m_records.size());
 
     for (auto& entry : m_records) {
         if (entry.value->removeKey(valueKey))
             index.notifyCursorsOfValueChange(entry.key, valueKey);
         if (!entry.value->getCount())
-            entryKeysToRemove.add(&entry.key);
+            entryKeysToRemove.uncheckedAppend(entry.key);
     }
 
-    for (auto* entry : entryKeysToRemove) {
-        m_orderedKeys.erase(*entry);
-        m_records.remove(*entry);
+    for (auto& entry : entryKeysToRemove) {
+        m_orderedKeys.erase(entry);
+        m_records.remove(entry);
     }
 }
 
