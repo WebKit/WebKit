@@ -163,7 +163,7 @@ WebInspector.ApplicationCacheFrameContentView = class ApplicationCacheFrameConte
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("application-cache-frame-content-view-sort", "url");
-        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.sortOrderSetting = new WebInspector.Setting("application-cache-frame-content-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
 
         this.addSubview(this._dataGrid);
         this._dataGrid.updateLayout();

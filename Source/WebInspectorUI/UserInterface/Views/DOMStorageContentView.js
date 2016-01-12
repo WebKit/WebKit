@@ -42,7 +42,7 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
         columns.value = {title: WebInspector.UIString("Value"), sortable: true};
 
         this._dataGrid = new WebInspector.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
-        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.sortOrderSetting = new WebInspector.Setting("dom-storage-content-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("dom-storage-content-view-sort", "key");
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 

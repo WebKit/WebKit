@@ -35,6 +35,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._sortColumnIdentifier = null;
         this._sortColumnIdentifierSetting = null;
         this._sortOrder = WebInspector.DataGrid.SortOrder.Indeterminate;
+        this._sortOrderSetting = null;
 
         this.children = [];
         this.selectedNode = null;
@@ -185,6 +186,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
         this._sortOrder = order;
 
+        if (this._sortOrderSetting)
+            this._sortOrderSetting.value = this._sortOrder;
+
         if (!this._sortColumnIdentifier)
             return;
 
@@ -194,6 +198,15 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         sortHeaderCellElement.classList.toggle(WebInspector.DataGrid.SortColumnDescendingStyleClassName, this._sortOrder === WebInspector.DataGrid.SortOrder.Descending);
 
         this.dispatchEventToListeners(WebInspector.DataGrid.Event.SortChanged);
+    }
+
+    set sortOrderSetting(setting)
+    {
+        console.assert(setting instanceof WebInspector.Setting);
+
+        this._sortOrderSetting = setting;
+        if (this._sortOrderSetting.value)
+            this.sortOrder = this._sortOrderSetting.value;
     }
 
     get sortColumnIdentifier()

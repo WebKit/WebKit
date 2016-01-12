@@ -1,3 +1,50 @@
+2016-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Make Timelines view also remember sort order
+        https://bugs.webkit.org/show_bug.cgi?id=152811
+
+        Reviewed by Timothy Hatcher.
+
+        Changeset r194574 introduced the ability for WebInspector.Setting objects to
+        be passed to DataGrid instances to save the sort column for that grid. These
+        changes also add the ability for the sort order to be save as well.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView.prototype._createDataGrid):
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView):
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.set sortOrder):
+        If a WebInspector.Setting object has been given, save the new sort order.
+
+        (WebInspector.DataGrid.prototype.set sortOrderSetting):
+        Saves the given WebInspector.Setting object for modification whenever the user
+        changes the sort order.
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildDataGridSection):
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView):
+
 2016-01-11  Johan K. Jensen  <jj@johanjensen.dk>
 
         Web Inspector: Copying JS object output from console shouldn't include trailing '= $n'

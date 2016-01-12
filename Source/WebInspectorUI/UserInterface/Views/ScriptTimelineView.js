@@ -65,7 +65,7 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
         this._dataGrid.addEventListener(WebInspector.TimelineDataGrid.Event.FiltersDidChange, this._dataGridFiltersDidChange, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("script-timeline-view-sort", "startTime");
-        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.sortOrderSetting = new WebInspector.Setting("script-timeline-view-sort-order", WebInspector.DataGrid.SortOrder.Ascending);
 
         this.element.classList.add("script");
         this.addSubview(this._dataGrid);

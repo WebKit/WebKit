@@ -143,6 +143,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
         }
 
         this._dataGrid.sortColumnIdentifierSetting = new WebInspector.Setting("cookie-storage-content-view-sort", "name");
+        this._dataGrid.sortOrderSetting = new WebInspector.Setting("cookie-storage-content-view-sort-order", WebInspector.DataGrid.SortOrder.Indeterminate);
     }
 
     _filterCookies(cookies)
