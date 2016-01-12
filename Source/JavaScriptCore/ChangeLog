@@ -1,5 +1,26 @@
 2016-01-12  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Remove some invalid immediate instruction forms from ARM64 Air
+        https://bugs.webkit.org/show_bug.cgi?id=153024
+
+        Reviewed by Michael Saboff.
+
+        * b3/B3BasicBlock.h:
+        Export the symbols for testb3.
+
+        * b3/air/AirOpcode.opcodes:
+        We had 2 invalid opcodes:
+        -Compare with immediate just does not exist.
+        -Test64 with immediate exists but Air does not recognize
+         the valid form of bit-immediates.
+
+        * b3/testb3.cpp:
+        (JSC::B3::genericTestCompare):
+        (JSC::B3::testCompareImpl):
+        Extend the tests to cover what was invalid.
+
+2016-01-12  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] JSC does not build with FTL_USES_B3 on ARM64
         https://bugs.webkit.org/show_bug.cgi?id=153011
 

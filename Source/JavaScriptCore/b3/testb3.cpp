@@ -7436,10 +7436,10 @@ void testCheckMulFoldFail(int a, int b)
     CHECK(invoke<int>(*code) == 42);
 }
 
-template<typename LeftFunctor, typename RightFunctor>
+template<typename LeftFunctor, typename RightFunctor, typename InputType>
 void genericTestCompare(
     B3::Opcode opcode, const LeftFunctor& leftFunctor, const RightFunctor& rightFunctor,
-    int left, int right, int result)
+    InputType left, InputType right, int result)
 {
     // Using a compare.
     {
@@ -7448,13 +7448,14 @@ void genericTestCompare(
 
         Value* leftValue = leftFunctor(root, proc);
         Value* rightValue = rightFunctor(root, proc);
+        Value* comparisonResult = root->appendNew<Value>(proc, opcode, Origin(), leftValue, rightValue);
         
         root->appendNew<ControlValue>(
             proc, Return, Origin(),
             root->appendNew<Value>(
                 proc, NotEqual, Origin(),
-                root->appendNew<Value>(proc, opcode, Origin(), leftValue, rightValue),
-                root->appendNew<Const32Value>(proc, Origin(), 0)));
+                comparisonResult,
+                root->appendIntConstant(proc, Origin(), comparisonResult->type(), 0)));
 
         CHECK(compileAndRun<int>(proc, left, right) == result);
     }
@@ -7608,11 +7609,20 @@ void testCompareLoad(B3::Opcode opcode, B3::Opcode loadOpcode, int left, int rig
         left, left, modelCompare(opcode, modelLoad<T>(left), modelLoad<T>(left)));
 }
 
-void testCompareImpl(B3::Opcode opcode, int left, int right)
+void testCompareImpl(B3::Opcode opcode, int64_t left, int64_t right)
 {
     int result = modelCompare(opcode, left, right);
     
     // Test tmp-to-tmp.
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        },
+        left, right, result);
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {
@@ -7631,6 +7641,15 @@ void testCompareImpl(B3::Opcode opcode, int left, int right)
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const64Value>(proc, Origin(), left);
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        },
+        left, right, result);
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
             return block->appendNew<Const32Value>(proc, Origin(), left);
         },
         [&] (BasicBlock* block, Procedure& proc) {
@@ -7644,6 +7663,15 @@ void testCompareImpl(B3::Opcode opcode, int left, int right)
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const64Value>(proc, Origin(), right);
+        },
+        left, right, result);
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
             return block->appendNew<Value>(
                 proc, Trunc, Origin(),
                 block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
@@ -7654,6 +7682,15 @@ void testCompareImpl(B3::Opcode opcode, int left, int right)
         left, right, result);
 
     // Test imm-to-imm.
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const64Value>(proc, Origin(), left);
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const64Value>(proc, Origin(), right);
+        },
+        left, right, result);
     genericTestCompare(
         opcode,
         [&] (BasicBlock* block, Procedure& proc) {

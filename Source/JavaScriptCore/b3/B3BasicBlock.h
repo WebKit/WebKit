@@ -76,7 +76,7 @@ public:
     template<typename ValueType, typename... Arguments>
     ValueType* appendNew(Procedure&, Arguments...);
 
-    Value* appendIntConstant(Procedure&, Origin, Type, int64_t value);
+    JS_EXPORT_PRIVATE Value* appendIntConstant(Procedure&, Origin, Type, int64_t value);
     Value* appendIntConstant(Procedure&, Value* likeValue, int64_t value);
 
     void removeLast(Procedure&);

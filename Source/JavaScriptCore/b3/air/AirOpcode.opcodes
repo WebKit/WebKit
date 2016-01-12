@@ -517,15 +517,15 @@ Compare32 U:G:32, U:G:32, U:G:32, ZD:G:32
     x86: RelCond, Tmp, Imm, Tmp
 
 64: Compare64 U:G:32, U:G:64, U:G:64, ZD:G:32
-    RelCond, Tmp, Imm, Tmp
     RelCond, Tmp, Tmp, Tmp
+    x86: RelCond, Tmp, Imm, Tmp
 
 Test32 U:G:32, U:G:32, U:G:32, ZD:G:32
     x86: ResCond, Addr, Imm, Tmp
     ResCond, Tmp, Tmp, Tmp
 
 64: Test64 U:G:32, U:G:64, U:G:64, ZD:G:32
-    ResCond, Tmp, Imm, Tmp
+    x86: ResCond, Tmp, Imm, Tmp
     ResCond, Tmp, Tmp, Tmp
 
 CompareDouble U:G:32, U:F:64, U:F:64, ZD:G:32
