@@ -146,6 +146,7 @@ def usage
 end
 
 jscArg = nil
+ifJSCArgIsntProvidedAreWeReleaseBuild = true
 
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
@@ -167,6 +168,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--filter', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
                ['--env-vars', GetoptLong::REQUIRED_ARGUMENT],
+               ['--debug', GetoptLong::NO_ARGUMENT],
+               ['--release', GetoptLong::NO_ARGUMENT],
                ['--quick', '-q', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -218,6 +221,10 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $envVars = arg.gsub(/\s+/, ' ').split(' ')
     when '--quick'
         $quickMode = true
+    when '--debug'
+        ifJSCArgIsntProvidedAreWeReleaseBuild = false
+    when '--release'
+        ifJSCArgIsntProvidedAreWeReleaseBuild = true
     end
 }
 
@@ -239,8 +246,27 @@ if $remoteConfigFile
 end
 
 unless jscArg
-    $stderr.puts "Error: must specify --jsc <path>"
-    exit 1
+    # If we're not provided a JSC path, try to come up with a sensible JSC path automagically.
+    command = SCRIPTS_PATH.join("webkit-build-directory").to_s
+    command += ifJSCArgIsntProvidedAreWeReleaseBuild ? " --release" : " --debug"
+    command += " --executablePath"
+
+    output = `#{command}`.split("\n")
+    if !output.length
+        $stderr.puts "Error: must specify --jsc <path>"
+        exit 1
+    end
+
+    output = output[0]
+    jscArg = Pathname.new(output).join("jsc")
+    jscArg = Pathname.new(output).join("JavaScriptCore.framework", "Resources", "jsc") if !File.file?(jscArg)
+    jscArg = Pathname.new(output).join("bin", "jsc") if !File.file?(jscArg) # Support CMake build.
+    if !File.file?(jscArg)
+        $stderr.puts "Error: must specify --jsc <path>"
+        exit 1
+    end
+
+    puts "Using the following jsc path: #{jscArg}"
 end
 
 if $enableFTL and !$jitTests

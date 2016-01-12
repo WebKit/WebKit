@@ -1,3 +1,30 @@
+2016-01-11  Saam barati  <sbarati@apple.com>
+
+        run-jsc-stress-tests should try to figure out a JSC path
+        https://bugs.webkit.org/show_bug.cgi?id=152971
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch now allows run-jsc-stress-tests to be run
+        without a "--jsc <jsc-path>" argument. It tries
+        to take its best guess at a <jsc-path> automagically.
+        
+        This makes it much easier to just run run-jsc-stress-tests
+        with a directory or a yaml file as an argument.
+        You now just do this:
+        `run-jsc-stress-tests <path-to-yaml>`
+        or
+        `run-jsc-stress-tests <path-to-directory-of-js-files>`
+        
+        I wrote this patch because I'd often find myself hacking the 
+        run-javascriptcore-tests file just to run a particular subset of tests.
+        Because I always forget the arguments to run-jsc-stress-tests (which means
+        I always forgot to provide a --jsc argument), I always found it easier to 
+        just hack on that file instead of calling run-jsc-stress-tests directly.
+        No longer is this true!
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-01-09  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add SPI to opt out a URL scheme from the memory cache
