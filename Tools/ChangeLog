@@ -1,3 +1,15 @@
+2016-01-12  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix the Sunpider converage in slow device.
+        https://bugs.webkit.org/show_bug.cgi?id=152938
+        <rdar://problem/22511411>
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated the patch for RunBenchmark to resume sunspider coverage by removing unused subresources in sub-tests.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/SunSpider.patch:
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for custom element
