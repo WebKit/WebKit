@@ -1952,6 +1952,8 @@
 		511EF2D117F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		512BDB4A1C456FF5006494DF /* SQLiteIDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512BDB481C456FAB006494DF /* SQLiteIDBBackingStore.cpp */; };
+		512BDB4B1C456FFA006494DF /* SQLiteIDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 512BDB491C456FAB006494DF /* SQLiteIDBBackingStore.h */; };
 		512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */; };
 		512DD8F40D91E6AF000F89EE /* LegacyWebArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8EA0D91E6AF000F89EE /* LegacyWebArchive.cpp */; };
 		512DD8F50D91E6AF000F89EE /* LegacyWebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8EB0D91E6AF000F89EE /* LegacyWebArchive.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9386,6 +9388,8 @@
 		5123AF1C18918AE40031CDC9 /* IDBGetResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBGetResult.h; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
+		512BDB481C456FAB006494DF /* SQLiteIDBBackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteIDBBackingStore.cpp; sourceTree = "<group>"; };
+		512BDB491C456FAB006494DF /* SQLiteIDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteIDBBackingStore.h; sourceTree = "<group>"; };
 		512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferCF.cpp; sourceTree = "<group>"; };
 		512DD8EA0D91E6AF000F89EE /* LegacyWebArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyWebArchive.cpp; sourceTree = "<group>"; };
 		512DD8EB0D91E6AF000F89EE /* LegacyWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyWebArchive.h; sourceTree = "<group>"; };
@@ -16969,6 +16973,8 @@
 				51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */,
 				517139031BF64DE3000D5F01 /* MemoryObjectStoreCursor.cpp */,
 				517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */,
+				512BDB481C456FAB006494DF /* SQLiteIDBBackingStore.cpp */,
+				512BDB491C456FAB006494DF /* SQLiteIDBBackingStore.h */,
 				516F7F6B1C31C79D00F111DC /* ServerOpenDBRequest.cpp */,
 				516F7F6C1C31C79D00F111DC /* ServerOpenDBRequest.h */,
 				518864DE1BBAF30F00E540C9 /* UniqueIDBDatabase.cpp */,
@@ -26443,6 +26449,7 @@
 				A83B78FC0CCAFF15000B0825 /* JSSVGFontFaceUriElement.h in Headers */,
 				B2FA3D990AB75A6F000E5AC4 /* JSSVGForeignObjectElement.h in Headers */,
 				B2FA3D9B0AB75A6F000E5AC4 /* JSSVGGElement.h in Headers */,
+				512BDB4B1C456FFA006494DF /* SQLiteIDBBackingStore.h in Headers */,
 				B27B28280CEF0C0700D39D54 /* JSSVGGlyphElement.h in Headers */,
 				24D9129A13CA971400D21915 /* JSSVGGlyphRefElement.h in Headers */,
 				B2FA3D9D0AB75A6F000E5AC4 /* JSSVGGradientElement.h in Headers */,
@@ -31045,6 +31052,7 @@
 				4476531B133170990006B789 /* SSLKeyGeneratorIOS.cpp in Sources */,
 				93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.cpp in Sources */,
 				BC7FA62E0D1F0EFF00DB22A9 /* StaticNodeList.cpp in Sources */,
+				512BDB4A1C456FF5006494DF /* SQLiteIDBBackingStore.cpp in Sources */,
 				A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */,
 				51E3F9C70DA059DC00250911 /* Storage.cpp in Sources */,
 				51E0BABC0DA5547100A9E417 /* StorageEvent.cpp in Sources */,

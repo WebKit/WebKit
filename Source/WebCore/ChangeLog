@@ -1,5 +1,46 @@
 2016-01-12  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Check in empty SQLite backing store implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=153022
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior).
+
+        Just to get the implementation files in the tree, this backing store currently does nothing
+        other than return errors for every operation.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp: Added.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::~SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getCount):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::revertGeneratedKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::openCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h: Added.
+
+2016-01-12  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/dont-wedge.html is flaky.
         https://bugs.webkit.org/show_bug.cgi?id=152892
 

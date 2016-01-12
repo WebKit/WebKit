@@ -884,6 +884,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/server/MemoryIndexCursor.cpp
     Modules/indexeddb/server/MemoryObjectStore.cpp
     Modules/indexeddb/server/MemoryObjectStoreCursor.cpp
+    Modules/indexeddb/server/SQLiteIDBBackingStore.cpp
     Modules/indexeddb/server/ServerOpenDBRequest.cpp
     Modules/indexeddb/server/UniqueIDBDatabase.cpp
     Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp
