@@ -1616,6 +1616,12 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         var content = this.createCellContent(columnIdentifier, cellElement);
         div.append(content);
 
+        if (column["icon"]) {
+            let iconElement = document.createElement("div");
+            iconElement.classList.add("icon");
+            div.insertBefore(iconElement, div.firstChild);
+        }
+
         if (columnIdentifier === this.dataGrid.disclosureColumnIdentifier) {
             cellElement.classList.add("disclosure");
             if (this.leftPadding)
@@ -1854,11 +1860,12 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
     {
         if (!this.hasChildren)
             return false;
-        var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
+        let cell = event.target.enclosingNodeOrSelfWithNodeName("td");
         if (!cell.classList.contains("disclosure"))
             return false;
 
-        var left = cell.totalOffsetLeft + this.leftPadding;
+        let computedLeftPadding = window.getComputedStyle(cell).getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
+        let left = cell.totalOffsetLeft + computedLeftPadding;
         return event.pageX >= left && event.pageX <= left + this.disclosureToggleWidth;
     }
 

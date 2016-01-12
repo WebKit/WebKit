@@ -225,11 +225,12 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
     content: "";
 
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-position-y: center;
     background-size: 13px 13px;
     background-repeat: no-repeat;
 
     width: 13px;
-    height: 13px;
+    height: 100%;
 }
 
 .data-grid tr.parent.expanded td.disclosure::before {
@@ -255,7 +256,7 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 }
 
 .data-grid tr:not(.parent) td.disclosure {
-    text-indent: 10px;
+    text-indent: 13px;
 }
 
 .data-grid td .subtitle {
