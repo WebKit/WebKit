@@ -1,3 +1,14 @@
+2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a build flag for custom element
+        https://bugs.webkit.org/show_bug.cgi?id=153005
+
+        Reviewed by Alex Christensen.
+
+        Added --custom-elements option to enable custom elements support.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2016-01-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add a help message when run-jsc-stress-tests fails

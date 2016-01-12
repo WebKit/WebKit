@@ -1,3 +1,14 @@
+2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a build flag for custom element
+        https://bugs.webkit.org/show_bug.cgi?id=153005
+
+        Reviewed by Alex Christensen.
+
+        Added a build flag for enabling custom elements.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-01-12  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Update RTCPeerConnection.add/removeTrack() and add test

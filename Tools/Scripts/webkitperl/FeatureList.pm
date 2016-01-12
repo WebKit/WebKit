@@ -67,6 +67,7 @@ my (
     $cssRegionsSupport,
     $cssShapesSupport,
     $cssCompositingSupport,
+    $customElementsSupport,
     $customSchemeHandlerSupport,
     $dataTransferItemsSupport,
     $datalistElementSupport,
@@ -232,6 +233,9 @@ my @features = (
 
     { option => "currentsrc", desc => "Toggle currentSrc attribute support",
       define => "ENABLE_CURRENTSRC", default => 1, value => \$currentsrcSupport },
+
+    { option => "custom-elements", desc => "Toggle custom elements support",
+      define => "ENABLE_CUSTOM_ELEMENTS", default => (isAppleMacWebKit() || isIOSWebKit()), value => \$customElementsSupport },
 
     { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => isEfl(), value => \$customSchemeHandlerSupport },
