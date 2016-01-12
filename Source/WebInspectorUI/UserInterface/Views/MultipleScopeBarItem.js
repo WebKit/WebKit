@@ -145,7 +145,7 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
 
     displaySelectedItem()
     {
-        this._titleElement.textContent = this._selectedScopeBarItem.label;
+        this._titleElement.textContent = (this._selectedScopeBarItem || this._scopeBarItems[0]).label;
     }
 
     displayWidestItem()

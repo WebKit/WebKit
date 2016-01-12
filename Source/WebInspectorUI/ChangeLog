@@ -1,5 +1,16 @@
 2016-01-12  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: REGRESSION (r194879) - Opening views without being previously opened causes an Uncaught Exception
+        https://bugs.webkit.org/show_bug.cgi?id=153006
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WebInspector.MultipleScopeBarItem.prototype.displaySelectedItem):
+        If there is no selected item, default to the first item in the list.
+
+2016-01-12  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: creating a gradient in the Visual sidebar causes a crash
         https://bugs.webkit.org/show_bug.cgi?id=153003
 
