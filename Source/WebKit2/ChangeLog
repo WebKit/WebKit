@@ -1,3 +1,29 @@
+2016-01-12  Geoffrey Garen  <ggaren@apple.com>
+
+        WebPageProxy should reattach to the web process before navigating
+        https://bugs.webkit.org/show_bug.cgi?id=153026
+
+        Reviewed by Anders Carlsson.
+
+        This fixes a crash (and lots of other corruption) when force-quitting
+        the web process during navigation.
+
+        Some objects (like ViewGestureController) use one-time initialization
+        to point to a ChildProcessProxy -- and, by design, we destroy them when
+        the ChildProcessProxy becomes invalid (i.e., crashes or quits).
+
+        If we navigate *before* creating a new, valid ChildProcessProxy, then
+        we accidentally re-create these objects pointing to the old, invalid
+        ChildProcessProxy.
+
+        We need to wait until we have a valid ChildProcessProxy before we
+        initialize these objects.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem): Navigate after
+        reattaching to the web process so that lazily allocated helper objects
+        point to the right ChildProcessProxy.
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for custom element

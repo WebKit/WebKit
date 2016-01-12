@@ -738,14 +738,14 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
     if (m_isClosed)
         return nullptr;
 
-    if (item && item != m_backForwardList->currentItem())
-        m_backForwardList->goToItem(item);
-
     ASSERT(!isValid());
     reattachToWebProcess();
 
     if (!item)
         return nullptr;
+
+    if (item != m_backForwardList->currentItem())
+        m_backForwardList->goToItem(item);
 
     auto navigation = m_navigationState->createBackForwardNavigation();
 
