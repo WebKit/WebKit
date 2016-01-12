@@ -1,3 +1,19 @@
+2016-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Inconsistencies in main resource load delegates when loading from history
+        https://bugs.webkit.org/show_bug.cgi?id=150927
+
+        Reviewed by Michael Catanzaro.
+
+        Add test to check that main resource load delegates are emitted in
+        the same order before the load is committed when loading a page
+        from history with the page cache enabled and disabled.
+
+        * http/tests/loading/main-resource-delegates-on-back-navigation-expected.txt: Added.
+        * http/tests/loading/main-resource-delegates-on-back-navigation.html: Added.
+        * http/tests/loading/resources/page-go-back-onload.html: Added.
+        * loader/go-back-cached-main-resource-expected.txt:
+
 2016-01-11  Johan K. Jensen  <jj@johanjensen.dk>
 
         Web Inspector: console.count() shouldn't show a colon in front of a number
