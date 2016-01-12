@@ -1,3 +1,13 @@
+2016-01-11  Johan K. Jensen  <jj@johanjensen.dk>
+
+        Web Inspector: Copying JS object output from console shouldn't include trailing '= $n'
+        https://bugs.webkit.org/show_bug.cgi?id=119347
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype.toClipboardString):
+
 2016-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add basic Content section to Visual Sidebar

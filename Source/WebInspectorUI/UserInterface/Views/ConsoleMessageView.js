@@ -188,7 +188,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
     {
         let clipboardString = this._messageTextElement.innerText.removeWordBreakCharacters();
         if (this._message.savedResultIndex)
-            clipboardString = clipboardString.replace(/\s*=\s*(\$\d+)$/, " = $1");
+            clipboardString = clipboardString.replace(/\s*=\s*(\$\d+)$/, "");
 
         let hasStackTrace = this._shouldShowStackTrace();
         if (!hasStackTrace) {
