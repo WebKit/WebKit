@@ -73,7 +73,9 @@
 #include "VirtualRegister.h"
 #include "Watchdog.h"
 #include <atomic>
+#if !OS(WINDOWS)
 #include <dlfcn.h>
+#endif
 #include <llvm/InitializeLLVM.h>
 #include <unordered_set>
 #include <wtf/Box.h>

@@ -1,3 +1,14 @@
+2016-01-12  Per Arne Vollan  <peavo@outlook.com>
+
+        [FTL][Win64] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=153031
+
+        Reviewed by Brent Fulgham.
+
+        The header file dlfcn.h does not exist on Windows.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for custom element
