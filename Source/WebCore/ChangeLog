@@ -1,3 +1,50 @@
+2016-01-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Use a pointer instead of PassRefPtr in AbstractView argument of UIEvent class
+        https://bugs.webkit.org/show_bug.cgi?id=152829
+
+        Reviewed by Darin Adler.
+
+        As a step to reduce uses of PassRefPtr, UIEvent class doesn't need to use PassRefPtr for AbstractView argument.
+        Nobody hands us ownership when making one of these objects.
+
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEvent::FocusEvent):
+        * dom/FocusEvent.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        (WebCore::SimulatedMouseEvent::create):
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent):
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/MouseRelatedEvent.h:
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::create):
+        (WebCore::TextEvent::createForPlainTextPaste):
+        (WebCore::TextEvent::createForFragmentPaste):
+        (WebCore::TextEvent::createForDrop):
+        (WebCore::TextEvent::createForDictation):
+        (WebCore::TextEvent::TextEvent):
+        (WebCore::TextEvent::initTextEvent):
+        * dom/TextEvent.h:
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::TouchEvent):
+        (WebCore::TouchEvent::initTouchEvent):
+        * dom/TouchEvent.h:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::UIEvent):
+        (WebCore::UIEvent::initUIEvent):
+        * dom/UIEvent.h:
+        (WebCore::UIEvent::create):
+        (WebCore::UIEvent::view):
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+
 2016-01-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix unused-private-field warnings in DisplayListItems.h

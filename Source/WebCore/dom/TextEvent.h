@@ -41,15 +41,15 @@ namespace WebCore {
     public:
 
         static Ref<TextEvent> create();
-        static Ref<TextEvent> create(PassRefPtr<AbstractView>, const String& data, TextEventInputType = TextEventInputKeyboard);
-        static Ref<TextEvent> createForPlainTextPaste(PassRefPtr<AbstractView>, const String& data, bool shouldSmartReplace);
-        static Ref<TextEvent> createForFragmentPaste(PassRefPtr<AbstractView>, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
-        static Ref<TextEvent> createForDrop(PassRefPtr<AbstractView>, const String& data);
-        static Ref<TextEvent> createForDictation(PassRefPtr<AbstractView>, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
+        static Ref<TextEvent> create(AbstractView*, const String& data, TextEventInputType = TextEventInputKeyboard);
+        static Ref<TextEvent> createForPlainTextPaste(AbstractView*, const String& data, bool shouldSmartReplace);
+        static Ref<TextEvent> createForFragmentPaste(AbstractView*, PassRefPtr<DocumentFragment> data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        static Ref<TextEvent> createForDrop(AbstractView*, const String& data);
+        static Ref<TextEvent> createForDictation(AbstractView*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         virtual ~TextEvent();
     
-        void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, const String& data);
+        void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, const String& data);
     
         String data() const { return m_data; }
 
@@ -71,9 +71,9 @@ namespace WebCore {
     private:
         TextEvent();
 
-        TextEvent(PassRefPtr<AbstractView>, const String& data, TextEventInputType = TextEventInputKeyboard);
-        TextEvent(PassRefPtr<AbstractView>, const String& data, PassRefPtr<DocumentFragment>, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
-        TextEvent(PassRefPtr<AbstractView>, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
+        TextEvent(AbstractView*, const String& data, TextEventInputType = TextEventInputKeyboard);
+        TextEvent(AbstractView*, const String& data, PassRefPtr<DocumentFragment>, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        TextEvent(AbstractView*, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         virtual bool isTextEvent() const override;
 

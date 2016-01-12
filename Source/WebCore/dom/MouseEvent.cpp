@@ -51,7 +51,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, const MouseEventIni
     return adoptRef(*new MouseEvent(type, initializer));
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, const PlatformMouseEvent& event, int detail, PassRefPtr<Node> relatedTarget)
+Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, AbstractView* view, const PlatformMouseEvent& event, int detail, PassRefPtr<Node> relatedTarget)
 {
     bool isMouseEnterOrLeave = eventType == eventNames().mouseenterEvent || eventType == eventNames().mouseleaveEvent;
     bool isCancelable = eventType != eventNames().mousemoveEvent && !isMouseEnterOrLeave;
@@ -66,7 +66,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRefPtr<Abs
         relatedTarget, event.force());
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
+Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView* view,
     int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
     int movementX, int movementY,
@@ -83,7 +83,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, boo
         ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, force, 0, false);
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
+Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView* view,
     int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
     int movementX, int movementY,
@@ -105,7 +105,7 @@ MouseEvent::MouseEvent()
 {
 }
 
-MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
+MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, double timestamp, AbstractView* view,
                        int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
                        int movementX, int movementY,
@@ -128,7 +128,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 }
 
 MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& initializer)
-    : MouseRelatedEvent(eventType, initializer.bubbles, initializer.cancelable, currentTime(), initializer.view, initializer.detail, IntPoint(initializer.screenX, initializer.screenY),
+    : MouseRelatedEvent(eventType, initializer.bubbles, initializer.cancelable, currentTime(), initializer.view.get(), initializer.detail, IntPoint(initializer.screenX, initializer.screenY),
         IntPoint(0 /* pageX */, 0 /* pageY */),
 #if ENABLE(POINTER_LOCK)
         IntPoint(0 /* movementX */, 0 /* movementY */),
@@ -146,7 +146,7 @@ MouseEvent::~MouseEvent()
 {
 }
 
-void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view,
                                 int detail, int screenX, int screenY, int clientX, int clientY,
                                 bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
                                 unsigned short button, PassRefPtr<EventTarget> relatedTarget)
@@ -256,7 +256,7 @@ PassRefPtr<Event> MouseEvent::cloneFor(HTMLIFrameElement* iframe) const
     return clonedMouseEvent.release();
 }
 
-Ref<SimulatedMouseEvent> SimulatedMouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, PassRefPtr<Event> underlyingEvent, Element* target)
+Ref<SimulatedMouseEvent> SimulatedMouseEvent::create(const AtomicString& eventType, AbstractView* view, PassRefPtr<Event> underlyingEvent, Element* target)
 {
     return adoptRef(*new SimulatedMouseEvent(eventType, view, underlyingEvent, target));
 }
@@ -265,7 +265,7 @@ SimulatedMouseEvent::~SimulatedMouseEvent()
 {
 }
 
-SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<AbstractView> view, PassRefPtr<Event> underlyingEvent, Element* target)
+SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, AbstractView* view, PassRefPtr<Event> underlyingEvent, Element* target)
     : MouseEvent(eventType, true, true, underlyingEvent ? underlyingEvent->timeStamp() : currentTime(), view, 0, 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
                  0, 0,

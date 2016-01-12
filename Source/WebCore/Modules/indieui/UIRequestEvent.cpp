@@ -46,18 +46,18 @@ Ref<UIRequestEvent> UIRequestEvent::create(const AtomicString& type, const UIReq
     return adoptRef(*new UIRequestEvent(type, initializer));
 }
 
-Ref<UIRequestEvent> UIRequestEvent::create(const AtomicString& type, bool bubbles, bool cancelable, PassRefPtr<AbstractView> view, int detail, PassRefPtr<EventTarget> receiver)
+Ref<UIRequestEvent> UIRequestEvent::create(const AtomicString& type, bool bubbles, bool cancelable, AbstractView* view, int detail, PassRefPtr<EventTarget> receiver)
 {
     return adoptRef(*new UIRequestEvent(type, bubbles, cancelable, view, detail, receiver));
 }
 
 UIRequestEvent::UIRequestEvent(const AtomicString& type, const UIRequestEventInit& initializer)
-    : UIEvent(type, initializer.bubbles, initializer.cancelable, initializer.view, initializer.detail)
+    : UIEvent(type, initializer.bubbles, initializer.cancelable, initializer.view.get(), initializer.detail)
     , m_receiver(initializer.receiver)
 {
 }
     
-UIRequestEvent::UIRequestEvent(const AtomicString& type, bool bubbles, bool cancelable, PassRefPtr<AbstractView> view, int detail, PassRefPtr<EventTarget> receiver)
+UIRequestEvent::UIRequestEvent(const AtomicString& type, bool bubbles, bool cancelable, AbstractView* view, int detail, PassRefPtr<EventTarget> receiver)
     : UIEvent(type, bubbles, cancelable, view, detail)
     , m_receiver(receiver)
 {

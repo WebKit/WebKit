@@ -127,7 +127,7 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, AbstractView* vie
 }
 
 KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const KeyboardEventInit& initializer)
-    : UIEventWithKeyState(eventType, initializer.bubbles, initializer.cancelable, initializer.view, initializer.detail, initializer.ctrlKey, initializer.altKey, initializer.shiftKey, initializer.metaKey)
+    : UIEventWithKeyState(eventType, initializer.bubbles, initializer.cancelable, initializer.view.get(), initializer.detail, initializer.ctrlKey, initializer.altKey, initializer.shiftKey, initializer.metaKey)
     , m_keyIdentifier(initializer.keyIdentifier)
     , m_location(initializer.location)
     , m_altGraphKey(false)

@@ -46,9 +46,9 @@ public:
         return adoptRef(*new FocusEvent);
     }
 
-    static Ref<FocusEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<AbstractView>&& view, int detail, RefPtr<EventTarget>&& relatedTarget)
+    static Ref<FocusEvent> create(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, int detail, RefPtr<EventTarget>&& relatedTarget)
     {
-        return adoptRef(*new FocusEvent(type, canBubble, cancelable, WTFMove(view), detail, WTFMove(relatedTarget)));
+        return adoptRef(*new FocusEvent(type, canBubble, cancelable, view, detail, WTFMove(relatedTarget)));
     }
 
     static Ref<FocusEvent> create(const AtomicString& type, const FocusEventInit& initializer)
@@ -63,7 +63,7 @@ public:
 
 private:
     FocusEvent();
-    FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<AbstractView>&&, int, RefPtr<EventTarget>&&);
+    FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, int, RefPtr<EventTarget>&&);
     FocusEvent(const AtomicString& type, const FocusEventInit&);
 
     virtual bool isFocusEvent() const override;

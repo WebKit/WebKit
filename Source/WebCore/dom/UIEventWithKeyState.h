@@ -44,7 +44,7 @@ namespace WebCore {
         {
         }
 
-        UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+        UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view,
                             int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
             : UIEvent(type, canBubble, cancelable, view, detail)
             , m_ctrlKey(ctrlKey)
@@ -54,7 +54,7 @@ namespace WebCore {
         {
         }
 
-        UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
+        UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView* view,
                             int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
             : UIEvent(type, canBubble, cancelable, timestamp, view, detail)
             , m_ctrlKey(ctrlKey)

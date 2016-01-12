@@ -45,7 +45,7 @@ public:
     {
         return adoptRef(*new UIEvent);
     }
-    static Ref<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view, int detail)
+    static Ref<UIEvent> create(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, int detail)
     {
         return adoptRef(*new UIEvent(type, canBubble, cancelable, view, detail));
     }
@@ -55,7 +55,7 @@ public:
     }
     virtual ~UIEvent();
 
-    void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int detail);
+    void initUIEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, int detail);
 
     AbstractView* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
@@ -75,8 +75,8 @@ public:
 
 protected:
     UIEvent();
-    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int detail);
-    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView>, int detail);
+    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, int detail);
+    UIEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*, int detail);
     UIEvent(const AtomicString&, const UIEventInit&);
 
 private:
