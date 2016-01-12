@@ -1,3 +1,14 @@
+2016-01-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test editing/apply-inline-style-to-element-with-no-renderer-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=149287
+        <rdar://problem/22746217>
+
+        Reviewed by Brent Fulgham.
+
+        * imported/blink/editing/apply-inline-style-to-element-with-no-renderer-crash-expected.txt: Added.
+        * imported/blink/editing/apply-inline-style-to-element-with-no-renderer-crash.html: Added.
+
 2016-01-12  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/dont-wedge.html is flaky.
