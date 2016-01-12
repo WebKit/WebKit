@@ -155,7 +155,7 @@ class AnalysisResultsViewer extends ResultsTable {
             var rootSetInPoint = point.rootSet();
             var matchingRootSets = [];
             for (var entry of rootSetsInTestGroups) {
-                if (rootSetInPoint.equals(entry.rootSet())) {
+                if (rootSetInPoint.equals(entry.rootSet()) && !rootSetsWithPoints.has(entry)) {
                     matchingRootSets.push(entry);
                     rootSetsWithPoints.add(entry);
                 }

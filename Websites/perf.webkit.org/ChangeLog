@@ -1,3 +1,19 @@
+2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Analysis results viewer sometimes doesn't show the correct relative difference
+        https://bugs.webkit.org/show_bug.cgi?id=152930
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by single A/B testing result associated with multiple rows when there are multiple data
+        points with the same root set which matches that of an A/B testing.
+
+        Fixed the bug by detecting such a case, and only associating each A/B testing result with the row created
+        for the first matching point.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.prototype._buildRowsForPointsAndTestGroups):
+
 2016-01-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make v3 UI analysis task page is hard to understand
