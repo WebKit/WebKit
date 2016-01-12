@@ -73,6 +73,7 @@ public:
     void startDownload(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&);
 #if USE(NETWORK_SESSION)
     std::unique_ptr<PendingDownload> dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
+    void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
 #else
     void convertHandleToDownload(DownloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 #endif

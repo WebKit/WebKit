@@ -1,3 +1,48 @@
+2016-01-12  Alex Christensen  <achristensen@webkit.org>
+
+        Ask for UI Process approval of ProtectionSpace when authenticating downloads with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=152999
+
+        Reviewed by Brady Eidson.
+
+        * DerivedSources.make:
+        I mistakenly added PendingDownload.messages.in in r194810, but this will not be needed because
+        the PendingDownload is not a MessageReceiver.  Rather, the NetworkProcess receives the messages
+        and forwards their contents to the PendingDownload through its DownloadManager.
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::dataTaskBecameDownloadTask):
+        (WebKit::DownloadManager::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadManager::convertHandleToDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::continueWillSendRequest):
+        (WebKit::PendingDownload::canAuthenticateAgainstProtectionSpaceAsync):
+        Instead of taking a shortcut I added in r194810, send a message to the UI process and wait for its
+        asynchronous reply to determine if we can authenticate against this protection space.
+        (WebKit::PendingDownload::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::PendingDownload::didConvertToDownload):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/Downloads/PendingDownload.messages.in: Removed.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::cancelDownload):
+        (WebKit::NetworkProcess::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/Authentication/AuthenticationManager.h:
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::didFail):
+        (API::DownloadClient::didCancel):
+        (API::DownloadClient::processDidCrash):
+        (API::DownloadClient::canAuthenticateAgainstProtectionSpace):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        (WebKit::DownloadProxy::canAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadProxy::didReceiveResponse):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move ChildProcessProxy from Shared to UIProcess

@@ -446,6 +446,13 @@ void NetworkProcess::cancelDownload(DownloadID downloadID)
 {
     downloadManager().cancelDownload(downloadID);
 }
+    
+#if USE(NETWORK_SESSION)
+void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(DownloadID downloadID, bool canAuthenticate)
+{
+    downloadManager().continueCanAuthenticateAgainstProtectionSpace(downloadID, canAuthenticate);
+}
+#endif
 
 void NetworkProcess::setCacheModel(uint32_t cm)
 {

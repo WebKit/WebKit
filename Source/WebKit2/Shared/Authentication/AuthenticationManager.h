@@ -44,6 +44,7 @@ namespace WebKit {
 
 class ChildProcess;
 class Download;
+class DownloadID;
 class PendingDownload;
 class WebFrame;
 
@@ -58,6 +59,7 @@ public:
     typedef NetworkSessionTaskClient::ChallengeCompletionHandler ChallengeCompletionHandler;
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
     void didReceiveAuthenticationChallenge(PendingDownload&, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
+    void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
 #endif
     // Called for resources in the WebProcess (NetworkProcess disabled)
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);

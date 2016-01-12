@@ -27,7 +27,6 @@ VPATH = \
     $(WebKit2)/DatabaseProcess/mac \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/CustomProtocols \
-    $(WebKit2)/NetworkProcess/Downloads \
     $(WebKit2)/NetworkProcess/mac \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/PluginProcess/mac \
@@ -87,7 +86,6 @@ MESSAGE_RECEIVERS = \
     NetworkProcessConnection \
     NetworkProcessProxy \
     NetworkResourceLoader \
-    PendingDownload \
     PluginControllerProxy \
     PluginProcess \
     PluginProcessConnection \

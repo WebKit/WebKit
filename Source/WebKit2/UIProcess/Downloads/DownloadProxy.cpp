@@ -35,6 +35,7 @@
 #include "NetworkProcessProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
+#include "WebProtectionSpace.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -108,6 +109,22 @@ void DownloadProxy::didReceiveAuthenticationChallenge(const AuthenticationChalle
 
     m_processPool->downloadClient().didReceiveAuthenticationChallenge(m_processPool.get(), this, authenticationChallengeProxy.get());
 }
+
+#if USE(NETWORK_SESSION)
+void DownloadProxy::canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace& protectionSpace)
+{
+    if (!m_processPool)
+        return;
+    
+    auto* networkProcessProxy = m_processPool->networkProcess();
+    if (!networkProcessProxy)
+        return;
+
+    bool result = m_processPool->downloadClient().canAuthenticateAgainstProtectionSpace(getPtr(WebProtectionSpace::create(protectionSpace)));
+    
+    networkProcessProxy->connection()->send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(m_downloadID, result), 0);
+}
+#endif
 
 void DownloadProxy::didReceiveResponse(const ResourceResponse& response)
 {

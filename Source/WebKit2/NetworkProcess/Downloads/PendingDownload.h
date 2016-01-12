@@ -45,6 +45,9 @@ class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
 public:
     PendingDownload(const NetworkLoadParameters&, DownloadID);
 
+    void continueWillSendRequest(const WebCore::ResourceRequest&);
+    void continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate);
+
 private:    
     // NetworkLoadClient.
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override { }
@@ -60,9 +63,6 @@ private:
     virtual void willCacheResponseAsync(CFCachedURLResponseRef) override { }
 #endif
     
-    void continueWillSendRequest(const WebCore::ResourceRequest&);
-    void continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate);
-
     // MessageSender.
     virtual IPC::Connection* messageSenderConnection() override;
     virtual uint64_t messageSenderDestinationID() override;

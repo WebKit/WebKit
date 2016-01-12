@@ -23,6 +23,9 @@
 messages -> DownloadProxy {
     DidStart(WebCore::ResourceRequest request)
     DidReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
+#if USE(NETWORK_SESSION)
+    CanAuthenticateAgainstProtectionSpace(WebCore::ProtectionSpace protectionSpace)
+#endif
 
     DidReceiveResponse(WebCore::ResourceResponse response)
     DidReceiveData(uint64_t length)

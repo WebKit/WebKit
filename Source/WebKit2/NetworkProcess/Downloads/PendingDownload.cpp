@@ -28,8 +28,10 @@
 
 #if USE(NETWORK_SESSION)
 
+#include "DownloadProxyMessages.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
+#include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;
 
@@ -53,17 +55,16 @@ void PendingDownload::continueWillSendRequest(const WebCore::ResourceRequest& ne
     m_networkLoad->continueWillSendRequest(newRequest);
 }
 
-void PendingDownload::canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&)
+void PendingDownload::canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace& protectionSpace)
 {
-    // FIXME: This should ask the UI process.
-    continueCanAuthenticateAgainstProtectionSpace(true);
+    send(Messages::DownloadProxy::CanAuthenticateAgainstProtectionSpace(protectionSpace));
 }
-    
+
 void PendingDownload::continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate)
 {
     m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
 }
-    
+
 void PendingDownload::didConvertToDownload()
 {
     m_networkLoad = nullptr;

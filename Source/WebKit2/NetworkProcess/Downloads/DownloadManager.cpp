@@ -73,6 +73,14 @@ std::unique_ptr<PendingDownload> DownloadManager::dataTaskBecameDownloadTask(Dow
     m_downloads.add(downloadID, WTFMove(download));
     return pendingDownload;
 }
+    
+void DownloadManager::continueCanAuthenticateAgainstProtectionSpace(DownloadID downloadID, bool canAuthenticate)
+{
+    auto* pendingDownload = m_pendingDownloads.get(downloadID);
+    ASSERT(pendingDownload);
+    if (pendingDownload)
+        pendingDownload->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
+}
 #else
 void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
 {

@@ -39,9 +39,10 @@ class Data;
 }
 
 namespace WebCore {
-    class AuthenticationChallenge;
-    class ResourceError;
-    class ResourceResponse;
+class AuthenticationChallenge;
+class ProtectionSpace;
+class ResourceError;
+class ResourceResponse;
 }
 
 namespace WebKit {
@@ -85,6 +86,9 @@ private:
     void didFinish();
     void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
     void didCancel(const IPC::DataReference& resumeData);
+#if USE(NETWORK_SESSION)
+    void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&);
+#endif
 
     DownloadProxyMap& m_downloadProxyMap;
     RefPtr<WebProcessPool> m_processPool;

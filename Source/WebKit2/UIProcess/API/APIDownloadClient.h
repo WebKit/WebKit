@@ -37,6 +37,7 @@ namespace WebKit {
 class AuthenticationChallengeProxy;
 class DownloadProxy;
 class WebProcessPool;
+class WebProtectionSpace;
 }
 
 namespace API {
@@ -56,6 +57,7 @@ public:
     virtual void didFail(WebKit::WebProcessPool*, WebKit::DownloadProxy*, const WebCore::ResourceError&) { }
     virtual void didCancel(WebKit::WebProcessPool*, WebKit::DownloadProxy*) { }
     virtual void processDidCrash(WebKit::WebProcessPool*, WebKit::DownloadProxy*) { }
+    virtual bool canAuthenticateAgainstProtectionSpace(WebKit::WebProtectionSpace*) { return true; }
 };
 
 } // namespace API

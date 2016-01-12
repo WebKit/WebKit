@@ -42,6 +42,9 @@ messages -> NetworkProcess LegacyReceiver {
     DownloadRequest(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
     ResumeDownload(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     CancelDownload(WebKit::DownloadID downloadID)
+#if USE(NETWORK_SESSION)
+    ContinueCanAuthenticateAgainstProtectionSpace(WebKit::DownloadID downloadID, bool canAuthenticate)
+#endif
 
     SetProcessSuppressionEnabled(bool flag)
 #if PLATFORM(COCOA)
