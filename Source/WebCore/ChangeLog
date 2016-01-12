@@ -1,3 +1,23 @@
+2016-01-12  Antti Koivisto  <antti@apple.com>
+
+        Don't reuse memory cache entries with different charset
+        https://bugs.webkit.org/show_bug.cgi?id=110031
+        rdar://problem/13666418
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/loader/cache-encoding.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::logResourceRevalidationDecision):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+
+            Pass full CachedResourceRequest to the function.
+            If charset differs don't reuse the cache entry.
+
+        * loader/cache/CachedResourceLoader.h:
+
 2016-01-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Use a pointer instead of PassRefPtr in AbstractView argument of UIEvent class

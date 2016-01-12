@@ -1,3 +1,14 @@
+2016-01-12  Antti Koivisto  <antti@apple.com>
+
+        Don't reuse memory cache entries with different charset
+        https://bugs.webkit.org/show_bug.cgi?id=110031
+
+        Reviewed by Andreas Kling.
+
+        * fast/loader/cache-encoding-expected.txt: Added.
+        * fast/loader/cache-encoding.html: Added.
+        * fast/loader/resources/success.js: Added.
+
 2016-01-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/model/scope-chain-node.html as flaky on Mac debug

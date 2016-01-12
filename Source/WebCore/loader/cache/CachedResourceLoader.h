@@ -148,7 +148,7 @@ private:
     void requestPreload(CachedResource::Type, CachedResourceRequest&, const String& charset);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
-    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, ResourceRequest&, bool forPreload, CachedResource* existingResource, CachedResourceRequest::DeferOption) const;
+    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, CachedResourceRequest&, CachedResource* existingResource) const;
     
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const URL&) const;
