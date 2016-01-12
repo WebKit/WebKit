@@ -83,6 +83,10 @@
     opacity: 0.4;
 }
 
+.visual-style-property-container > *:first-child:matches(.visual-style-property-value-container) {
+    margin-left: 11px;
+}
+
 .visual-style-property-container > .visual-style-property-value-container select {
     width: 100%;
     margin: 1px 0;

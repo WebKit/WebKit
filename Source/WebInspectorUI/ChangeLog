@@ -1,5 +1,32 @@
 2016-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Add basic Content section to Visual Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=152972
+
+        Reviewed by Timothy Hatcher.
+
+        Since the "content" property has so many different types of values, a
+        simple text input editor should be added to provide some support for
+        the CSS property until a better, more specialized editor is created.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor):
+        Moved margin-left to new rule in VisualStylePropertyEditor.css.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateContentSection):
+        Adds the basic editor under the Text section in a new subsection
+        called Content.
+
+        * UserInterface/Views/VisualStylePropertyEditor.css:
+        (.visual-style-property-container > *:first-child:matches(.visual-style-property-value-container)):
+        Adds a left margin to property editors without a title.
+
+2016-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Visual sidebar minor bug fixes
         https://bugs.webkit.org/show_bug.cgi?id=152967
 
