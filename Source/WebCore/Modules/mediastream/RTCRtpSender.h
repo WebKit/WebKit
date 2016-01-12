@@ -40,17 +40,17 @@ namespace WebCore {
 
 class RTCRtpSender : public RTCRtpSenderReceiverBase {
 public:
-    static Ref<RTCRtpSender> create(RefPtr<MediaStreamTrack>&& track, const String& mediaStreamId)
+    static Ref<RTCRtpSender> create(RefPtr<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds)
     {
-        return adoptRef(*new RTCRtpSender(WTFMove(track), mediaStreamId));
+        return adoptRef(*new RTCRtpSender(WTFMove(track), WTFMove(mediaStreamIds)));
     }
 
-    const String& mediaStreamId() const { return m_mediaStreamId; }
+    const Vector<String>& mediaStreamIds() const { return m_mediaStreamIds; }
 
 private:
-    RTCRtpSender(RefPtr<MediaStreamTrack>&&, const String& mediaStreamId);
+    RTCRtpSender(RefPtr<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds);
 
-    String m_mediaStreamId;
+    Vector<String> m_mediaStreamIds;
 };
 
 } // namespace WebCore

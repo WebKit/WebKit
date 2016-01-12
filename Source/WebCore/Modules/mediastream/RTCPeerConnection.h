@@ -41,6 +41,8 @@
 // FIXME: Workaround for bindings bug http://webkit.org/b/150121
 #include "JSMediaStream.h"
 #include "PeerConnectionBackend.h"
+#include "RTCRtpReceiver.h"
+#include "RTCRtpSender.h"
 #include "ScriptWrappable.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -54,8 +56,6 @@ class RTCConfiguration;
 class RTCDataChannel;
 class RTCIceCandidate;
 class RTCPeerConnectionErrorCallback;
-class RTCRtpReceiver;
-class RTCRtpSender;
 class RTCSessionDescription;
 class RTCStatsCallback;
 
@@ -64,8 +64,8 @@ public:
     static RefPtr<RTCPeerConnection> create(ScriptExecutionContext&, const Dictionary& rtcConfiguration, ExceptionCode&);
     ~RTCPeerConnection();
 
-    Vector<RefPtr<RTCRtpSender>> getSenders() const override;
-    Vector<RefPtr<RTCRtpReceiver>> getReceivers() const;
+    Vector<RefPtr<RTCRtpSender>> getSenders() const override { return m_senderSet; }
+    Vector<RefPtr<RTCRtpReceiver>> getReceivers() const { return m_receiverSet; }
 
     RefPtr<RTCRtpSender> addTrack(RefPtr<MediaStreamTrack>&&, Vector<MediaStream*>, ExceptionCode&);
     void removeTrack(RTCRtpSender*, ExceptionCode&);
@@ -135,8 +135,8 @@ private:
     PeerConnectionStates::IceGatheringState m_iceGatheringState;
     PeerConnectionStates::IceConnectionState m_iceConnectionState;
 
-    HashMap<String, RefPtr<RTCRtpSender>> m_senderSet;
-    HashMap<String, RefPtr<RTCRtpReceiver>> m_receiverSet;
+    Vector<RefPtr<RTCRtpSender>> m_senderSet;
+    Vector<RefPtr<RTCRtpReceiver>> m_receiverSet;
 
     Vector<RefPtr<RTCDataChannel>> m_dataChannels;
 

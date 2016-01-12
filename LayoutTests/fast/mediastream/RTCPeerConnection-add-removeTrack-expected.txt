@@ -1,0 +1,27 @@
+Test basic behavior of RTCPeerConnection.add/removeTrack()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.getSenders().length is 0
+PASS sender = pc.addTrack(track, stream) did not throw exception.
+PASS sender is an instance of RTCRtpSender
+PASS sender.track is track
+PASS pc.getSenders().length is 1
+PASS pc.getSenders()[0] is sender
+Try to add same track again
+PASS sender = pc.addTrack(track, stream) threw exception Error: InvalidModificationError: DOM Exception 13.
+PASS sender2 = pc.addTrack(track2, stream, stream2) did not throw exception.
+PASS pc.getSenders().length is 2
+PASS pc.getSenders()[0] is sender
+PASS pc.getSenders()[1] is sender2
+PASS pc.removeTrack(sender) did not throw exception.
+Sender is still in getSenders() list
+PASS pc.getSenders().length is 2
+PASS senderFromPc2 = pc2.addTrack(track, stream) did not throw exception.
+removeTrack() with 'foreign' sender must be ignored (not throw)
+PASS pc.removeTrack(senderFromPc2) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

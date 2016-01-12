@@ -1,3 +1,16 @@
+2016-01-12  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update RTCPeerConnection.add/removeTrack() and add test
+        https://bugs.webkit.org/show_bug.cgi?id=153010
+
+        Reviewed by Eric Carlson.
+
+        Add test for RTCPeerConnection.add/removeTrack() (currently not covered by other tests).
+        This test also covers some of the functionality of RTCRtpSender.
+
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-add-removeTrack.html: Added.
+
 2016-01-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test editing/selection/selectstart-event-crash.html

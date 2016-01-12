@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            var stream;
+            var stream2;
+            var track;
+            var track2;
+            var sender;
+            var sender2;
+            var senderFromPc2
+
+            description("Test basic behavior of RTCPeerConnection.add/removeTrack()");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            var pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            var pc2 = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            navigator.mediaDevices.getUserMedia({ "video": true })
+            .then(function (s) {
+                stream = s;
+                track = stream.getTracks()[0];
+
+                shouldBe("pc.getSenders().length", "0");
+
+                shouldNotThrow("sender = pc.addTrack(track, stream)");
+                shouldBeType("sender", "RTCRtpSender");
+                shouldBe("sender.track", "track");
+                shouldBe("pc.getSenders().length", "1");
+                shouldBe("pc.getSenders()[0]", "sender");
+
+                debug("Try to add same track again");
+                shouldThrow("sender = pc.addTrack(track, stream)");
+
+                track2 = track.clone();
+                stream2 = stream.clone();
+
+                shouldNotThrow("sender2 = pc.addTrack(track2, stream, stream2)");
+                shouldBe("pc.getSenders().length", "2");
+
+                // Order in list returned by getSenders() is unspecified.
+                if (pc.getSenders()[0] == sender) {
+                    shouldBe("pc.getSenders()[0]", "sender");
+                    shouldBe("pc.getSenders()[1]", "sender2");
+                } else {
+                    shouldBe("pc.getSenders()[0]", "sender2");
+                    shouldBe("pc.getSenders()[1]", "sender1");
+                }
+
+                shouldNotThrow("pc.removeTrack(sender)");
+                debug("Sender is still in getSenders() list")
+                shouldBe("pc.getSenders().length", "2");
+
+                shouldNotThrow("senderFromPc2 = pc2.addTrack(track, stream)");
+                debug("removeTrack() with 'foreign' sender must be ignored (not throw)");
+                shouldNotThrow("pc.removeTrack(senderFromPc2)");
+
+                finishJSTest();
+            })
+            .catch(function (error) {
+                testFailed("Error caught in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
