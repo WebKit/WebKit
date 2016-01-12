@@ -62,9 +62,9 @@ namespace Inspector {
 
 const ClassInfo JSInjectedScriptHost::s_info = { "InjectedScriptHost", &Base::s_info, 0, CREATE_METHOD_TABLE(JSInjectedScriptHost) };
 
-JSInjectedScriptHost::JSInjectedScriptHost(VM& vm, Structure* structure, PassRefPtr<InjectedScriptHost> impl)
+JSInjectedScriptHost::JSInjectedScriptHost(VM& vm, Structure* structure, Ref<InjectedScriptHost>&& impl)
     : JSDestructibleObject(vm, structure)
-    , m_impl(impl.leakRef())
+    , m_wrapped(WTF::move(impl))
 {
 }
 
@@ -83,17 +83,6 @@ void JSInjectedScriptHost::destroy(JSC::JSCell* cell)
 {
     JSInjectedScriptHost* thisObject = static_cast<JSInjectedScriptHost*>(cell);
     thisObject->JSInjectedScriptHost::~JSInjectedScriptHost();
-}
-
-void JSInjectedScriptHost::releaseImpl()
-{
-    if (auto impl = std::exchange(m_impl, nullptr))
-        impl->deref();
-}
-
-JSInjectedScriptHost::~JSInjectedScriptHost()
-{
-    releaseImpl();
 }
 
 JSValue JSInjectedScriptHost::evaluate(ExecState* exec) const
@@ -476,23 +465,6 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
     iteratorClose(exec, iterator);
 
     return array;
-}
-
-JSValue toJS(ExecState* exec, JSGlobalObject* globalObject, InjectedScriptHost* impl)
-{
-    if (!impl)
-        return jsNull();
-
-    JSObject* prototype = JSInjectedScriptHost::createPrototype(exec->vm(), globalObject);
-    Structure* structure = JSInjectedScriptHost::createStructure(exec->vm(), globalObject, prototype);
-    JSInjectedScriptHost* injectedScriptHost = JSInjectedScriptHost::create(exec->vm(), structure, impl);
-
-    return injectedScriptHost;
-}
-
-JSInjectedScriptHost* toJSInjectedScriptHost(JSValue value)
-{
-    return value.inherits(JSInjectedScriptHost::info()) ? jsCast<JSInjectedScriptHost*>(value) : nullptr;
 }
 
 } // namespace Inspector

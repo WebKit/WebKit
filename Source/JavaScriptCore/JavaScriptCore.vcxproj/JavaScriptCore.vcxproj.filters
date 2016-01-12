@@ -1622,6 +1622,8 @@
     </ClCompile>
     <ClCompile Include="..\bytecode\PolymorphicGetByIdList.cpp">
       <Filter>bytecode</Filter>
+    <ClCompile Include="..\inspector\PerGlobalObjectWrapperWorld.cpp">
+      <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\profiler\ProfilerJettisonReason.cpp">
       <Filter>profiler</Filter>
@@ -4092,6 +4094,9 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\JSJavaScriptCallFrame.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\PerGlobalObjectWrapperWorld.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSCInlines.h">

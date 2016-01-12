@@ -60,6 +60,13 @@ void InjectedScriptManager::disconnect()
     discardInjectedScripts();
 }
 
+void InjectedScriptManager::discardInjectedScripts()
+{
+    m_injectedScriptHost->clearAllWrappers();
+    m_idToInjectedScript.clear();
+    m_scriptStateToId.clear();
+}
+
 InjectedScriptHost* InjectedScriptManager::injectedScriptHost()
 {
     return m_injectedScriptHost.get();
@@ -107,13 +114,6 @@ InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& ob
     return m_idToInjectedScript.get(injectedScriptId);
 }
 
-void InjectedScriptManager::discardInjectedScripts()
-{
-    m_injectedScriptHost->clearAllWrappers();
-    m_idToInjectedScript.clear();
-    m_scriptStateToId.clear();
-}
-
 void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
 {
     for (auto& injectedScript : m_idToInjectedScript.values())
@@ -151,7 +151,7 @@ Deprecated::ScriptObject InjectedScriptManager::createInjectedScript(const Strin
         return Deprecated::ScriptObject();
 
     MarkedArgumentBuffer args;
-    args.append(m_injectedScriptHost->jsWrapper(scriptState, globalObject));
+    args.append(m_injectedScriptHost->wrapper(scriptState, globalObject));
     args.append(globalThisValue);
     args.append(jsNumber(id));
 

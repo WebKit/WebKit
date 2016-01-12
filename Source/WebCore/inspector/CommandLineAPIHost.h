@@ -31,13 +31,17 @@
 #define CommandLineAPIHost_h
 
 #include "ScriptState.h"
-#include <runtime/ConsoleTypes.h>
+#include <inspector/PerGlobalObjectWrapperWorld.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Deprecated {
 class ScriptValue;
+}
+
+namespace JSC {
+class JSValue;
 }
 
 namespace Inspector {
@@ -53,6 +57,7 @@ class Database;
 class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
+class JSDOMGlobalObject;
 class Node;
 class Storage;
 
@@ -97,16 +102,20 @@ public:
     String databaseIdImpl(Database*);
     String storageIdImpl(Storage*);
 
+    JSC::JSValue wrapper(JSC::ExecState*, JSDOMGlobalObject*);
+    void clearAllWrappers();
+
 private:
     CommandLineAPIHost();
 
-    Inspector::InspectorAgent* m_inspectorAgent;
-    Inspector::InspectorConsoleAgent* m_consoleAgent;
-    InspectorDOMAgent* m_domAgent;
-    InspectorDOMStorageAgent* m_domStorageAgent;
-    InspectorDatabaseAgent* m_databaseAgent;
+    Inspector::InspectorAgent* m_inspectorAgent {nullptr};
+    Inspector::InspectorConsoleAgent* m_consoleAgent {nullptr};
+    InspectorDOMAgent* m_domAgent {nullptr};
+    InspectorDOMStorageAgent* m_domStorageAgent {nullptr};
+    InspectorDatabaseAgent* m_databaseAgent {nullptr};
 
     std::unique_ptr<InspectableObject> m_inspectedObject; // $0
+    Inspector::PerGlobalObjectWrapperWorld m_wrappers;
 };
 
 } // namespace WebCore

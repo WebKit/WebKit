@@ -590,6 +590,7 @@
     <ClCompile Include="..\inspector\JSJavaScriptCallFrame.cpp" />
     <ClCompile Include="..\inspector\JSJavaScriptCallFramePrototype.cpp" />
     <ClCompile Include="..\inspector\JavaScriptCallFrame.cpp" />
+    <ClCompile Include="..\inspector\PerGlobalObjectWrapperWorld.cpp" />
     <ClCompile Include="..\inspector\ScriptArguments.cpp" />
     <ClCompile Include="..\inspector\ScriptCallFrame.cpp" />
     <ClCompile Include="..\inspector\ScriptCallStack.cpp" />
@@ -1346,6 +1347,7 @@
     <ClInclude Include="..\inspector\JSJavaScriptCallFrame.h" />
     <ClInclude Include="..\inspector\JSJavaScriptCallFramePrototype.h" />
     <ClInclude Include="..\inspector\JavaScriptCallFrame.h" />
+    <ClInclude Include="..\inspector\PerGlobalObjectWrapperWorld.h" />
     <ClInclude Include="..\inspector\ScriptArguments.h" />
     <ClInclude Include="..\inspector\ScriptBreakpoint.h" />
     <ClInclude Include="..\inspector\ScriptCallFrame.h" />

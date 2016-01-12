@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScriptHost_h
-#define InjectedScriptHost_h
+#ifndef PerGlobalObjectWrapperWorld_h
+#define PerGlobalObjectWrapperWorld_h
 
 #include "JSCJSValueInlines.h"
-#include "inspector/PerGlobalObjectWrapperWorld.h"
+#include "Strong.h"
+#include "StrongInlines.h"
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 
 namespace Inspector {
 
-class JS_EXPORT_PRIVATE InjectedScriptHost : public RefCounted<InjectedScriptHost> {
+class JS_EXPORT_PRIVATE PerGlobalObjectWrapperWorld {
 public:
-    static Ref<InjectedScriptHost> create() { return adoptRef(*new InjectedScriptHost); }
-    virtual ~InjectedScriptHost();
-
-    virtual JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) { return JSC::jsUndefined(); }
-    virtual bool isHTMLAllCollection(JSC::JSValue) { return false; }
-
-    JSC::JSValue wrapper(JSC::ExecState*, JSC::JSGlobalObject*);
+    JSC::JSValue getWrapper(JSC::JSGlobalObject*);
+    void addWrapper(JSC::JSGlobalObject*, JSC::JSObject*);
     void clearAllWrappers();
 
 private:
-    PerGlobalObjectWrapperWorld m_wrappers;
+    HashMap<JSC::JSGlobalObject*, JSC::Strong<JSC::JSObject>> m_wrappers;
 };
 
 } // namespace Inspector
 
-#endif // !defined(InjectedScriptHost_h)
+#endif // !defined(PerGlobalObjectWrapperWorld_h)
