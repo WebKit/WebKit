@@ -103,8 +103,10 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
     refresh(significantChange)
     {
-        this._selectorSection.update(this._nodeStyles);
-        this._updateSections();
+        if (significantChange)
+            this._selectorSection.update(this._nodeStyles);
+        else
+            this._updateSections();
 
         super.refresh();
     }
@@ -172,7 +174,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         if (!group.section)
             return;
 
-        if (group.links) {
+        if (forceStyleUpdate && group.links) {
             for (let key in group.links)
                 group.links[key].linked = false;
         }

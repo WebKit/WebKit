@@ -89,12 +89,10 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
 
         this.contentElement.appendChild(this._numberUnitsContainer);
 
-        this._numberInputIsEditable = true;
-        this.contentElement.classList.add("number-input-editable");
+        this._setNumberInputIsEditable(true);
         this._valueNumberInputElement.value = null;
         this._valueNumberInputElement.setAttribute("placeholder", 0);
-        if (this._hasUnits)
-            this._unitsElementTextContent = this._keywordSelectElement.value = this.valueIsSupportedUnit("px") ? "px" : this._possibleUnits.basic[0];
+        this._unitsElementTextContent = this._keywordSelectElement.value = this.valueIsSupportedUnit("px") ? "px" : this._possibleUnits.basic[0];
     }
 
     // Public
@@ -103,11 +101,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
     {
         if (this._numberInputIsEditable)
             return parseFloat(this._valueNumberInputElement.value);
-
-        if (!this._numberInputIsEditable)
-            return this._keywordSelectElement.value;
-
-        return null;
+        return this._keywordSelectElement.value || null;
     }
 
     set value(value)
@@ -115,7 +109,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         if (value && value === this.value)
             return;
 
-        if (this._updatedValues.propertyMissing) {
+        if (this._propertyMissing) {
             if (value || this._updatedValues.placeholder)
                 this.specialPropertyPlaceholderElement.textContent = (value || this._updatedValues.placeholder) + (this._updatedValues.units || "");
 
@@ -280,7 +274,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
             if (!this._allowNegativeValues && newValue < 0)
                 newValue = 0;
 
-            this._updatedValues.propertyMissing = false;
+            this._propertyMissing = false;
             this.value = Math.round(newValue * 100) / 100;
             this._valueDidChange();
         }
