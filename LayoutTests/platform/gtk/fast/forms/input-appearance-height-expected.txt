@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x17
         RenderText {#text} at (0,0) size 762x17
           text run at (0,0) width 762: "This tests the height attribute of form elements. The only element that should honour this value is the Image type of input."
-      RenderBlock {FORM} at (0,17) size 784x305
+      RenderBlock {FORM} at (0,17) size 784x308
         RenderText {#text} at (0,5) size 36x17
           text run at (0,5) width 36: "input "
         RenderTextControl {INPUT} at (38,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -83,16 +83,18 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,256) size 64x17
           text run at (0,256) width 64: "password "
         RenderTextControl {INPUT} at (66,253) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 185x17
+            RenderBlock {DIV} at (0,0) size 185x17
         RenderText {#text} at (259,256) size 4x17
           text run at (259,256) width 4: " "
         RenderBR {BR} at (263,270) size 0x0
-        RenderText {#text} at (0,283) size 44x17
-          text run at (0,283) width 44: "search "
-        RenderTextControl {INPUT} at (46,280) size 207x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,3) size 201x17
-            RenderBlock {DIV} at (0,8) size 0x0
-            RenderBlock {DIV} at (0,0) size 185x17
-            RenderBlock {DIV} at (185,0) size 16x17
+        RenderText {#text} at (0,284) size 44x17
+          text run at (0,284) width 44: "search "
+        RenderTextControl {INPUT} at (46,280) size 211x26 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 205x20
+            RenderBlock {DIV} at (0,10) size 0x0
+            RenderBlock {DIV} at (0,1) size 185x18
+            RenderBlock {DIV} at (185,0) size 20x20
         RenderText {#text} at (0,0) size 0x0
 layer at (49,30) size 185x17
   RenderBlock {DIV} at (3,3) size 185x17
@@ -101,6 +103,6 @@ layer at (40,57) size 185x17
 layer at (62,254) size 185x17
   RenderBlock {DIV} at (3,3) size 185x17
 layer at (77,281) size 185x17
-  RenderBlock {DIV} at (3,3) size 185x17
-layer at (57,308) size 185x17
+  RenderBlock {DIV} at (0,0) size 185x17
+layer at (57,310) size 185x17
   RenderBlock {DIV} at (0,0) size 185x17

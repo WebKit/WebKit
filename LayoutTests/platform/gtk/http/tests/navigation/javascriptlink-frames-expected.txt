@@ -56,11 +56,11 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (20,242) size 130x36
                   text run at (20,242) width 130: " option #2"
                 RenderBR {BR} at (150,271) size 0x0
-                RenderMenuList {SELECT} at (2,280) size 326x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderBlock (anonymous) at (1,1) size 324x25
+                RenderMenuList {SELECT} at (2,280) size 324x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+                  RenderBlock (anonymous) at (1,1) size 322x25
                     RenderText at (4,4) size 84x17
                       text run at (4,4) width 84: "Initial Value"
-                RenderBR {BR} at (330,299) size 0x0
+                RenderBR {BR} at (328,299) size 0x0
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {HR} at (0,807) size 769x2 [border: (1px inset #000000)]
               RenderBlock {P} at (0,841) size 769x36

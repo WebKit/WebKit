@@ -9,12 +9,12 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,57) size 784x87 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 780x82
           RenderTableRow {TR} at (0,0) size 780x82
-            RenderTableCell {TD} at (0,0) size 140x82 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderMenuList {SELECT} at (3,1) size 133x80 [bgcolor=#FFFFFF] [border: (40px solid #FF0000)]
-                RenderBlock (anonymous) at (40,40) size 53x25
+            RenderTableCell {TD} at (0,0) size 138x82 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (3,1) size 131x80 [bgcolor=#FFFFFF] [border: (40px solid #FF0000)]
+                RenderBlock (anonymous) at (40,40) size 51x25
                   RenderText at (4,4) size 28x17
                     text run at (4,4) width 28: "Foo"
-            RenderTableCell {TD} at (139,40) size 641x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (137,40) size 643x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
       RenderBlock {P} at (0,159) size 784x25
         RenderTable {TABLE} at (0,0) size 784x24 [border: (2px outset #808080)]
           RenderTableSection {TBODY} at (2,2) size 780x20

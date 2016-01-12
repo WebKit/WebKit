@@ -5,6 +5,8 @@ layer at (0,0) size 800x46
     RenderBody {BODY} at (8,8) size 784x30
       RenderBlock {FORM} at (0,0) size 784x30
         RenderTextControl {INPUT} at (2,3) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 185x17
+            RenderBlock {DIV} at (0,0) size 185x17
         RenderText {#text} at (195,6) size 4x17
           text run at (195,6) width 4: " "
         RenderButton {INPUT} at (201,2) size 66x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -13,7 +15,7 @@ layer at (0,0) size 800x46
               text run at (0,0) width 50: "Submit"
         RenderText {#text} at (0,0) size 0x0
 layer at (13,14) size 185x17
-  RenderBlock {DIV} at (3,3) size 185x17
+  RenderBlock {DIV} at (0,0) size 185x17
 layer at (10,34) size 220x104
   RenderBlock (positioned) zI: 2147483647 {DIV} at (10,34) size 220x104
 layer at (10,34) size 220x16 scrollHeight 25
@@ -34,4 +36,4 @@ layer at (10,46) size 220x88
           text run at (0,34) width 152: "the current password."
 layer at (42,34) size 18x18 backgroundClip at (10,34) size 220x16 clip at (10,34) size 220x16 outlineClip at (10,34) size 220x16
   RenderBlock (relative positioned) zI: 2147483645 {DIV} at (0,0) size 18x18 [bgcolor=#F8ECEC] [border: (2px solid #440000) none (2px solid #440000)]
-caret: position 0 of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 0 {FORM} of body
+caret: position 0 of child 0 {DIV} of child 0 {DIV} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 0 {FORM} of body

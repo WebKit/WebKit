@@ -1,3 +1,83 @@
+2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline test results after r194847.
+
+        Before r194847 we were always taking the separator of combo boxes
+        into account when calculating the size of menu list buttons, even
+        when we didn't render the separator. In r194847 we removed all the
+        code to deal with separators in combo boxes. Also, since r194847
+        we are correctly adding the padding between the icon and the text
+        in search fileds.
+
+        * platform/gtk/css3/selectors3/html/css3-modsel-161-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-161-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-161-expected.txt:
+        * platform/gtk/editing/pasteboard/4641033-expected.txt:
+        * platform/gtk/editing/pasteboard/4944770-1-expected.txt:
+        * platform/gtk/editing/pasteboard/4944770-2-expected.txt:
+        * platform/gtk/editing/selection/caret-before-select-expected.txt:
+        * platform/gtk/editing/selection/replaced-boundaries-3-expected.txt:
+        * platform/gtk/editing/selection/select-box-expected.txt:
+        * platform/gtk/editing/selection/select-element-paragraph-boundary-expected.txt:
+        * platform/gtk/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/gtk/fast/css/input-search-padding-expected.txt:
+        * platform/gtk/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/gtk/fast/css/text-overflow-input-expected.txt:
+        * platform/gtk/fast/css/text-transform-select-expected.txt:
+        * platform/gtk/fast/forms/001-expected.txt:
+        * platform/gtk/fast/forms/003-expected.txt:
+        * platform/gtk/fast/forms/004-expected.txt:
+        * platform/gtk/fast/forms/basic-inputs-expected.txt:
+        * platform/gtk/fast/forms/basic-selects-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/gtk/fast/forms/form-element-geometry-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/input-value-expected.txt:
+        * platform/gtk/fast/forms/menulist-deselect-update-expected.txt:
+        * platform/gtk/fast/forms/menulist-narrow-width-expected.txt:
+        * platform/gtk/fast/forms/menulist-no-overflow-expected.txt:
+        * platform/gtk/fast/forms/menulist-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/gtk/fast/forms/menulist-style-color-expected.txt:
+        * platform/gtk/fast/forms/menulist-width-change-expected.txt:
+        * platform/gtk/fast/forms/option-script-expected.txt:
+        * platform/gtk/fast/forms/option-strip-whitespace-expected.txt:
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+        * platform/gtk/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/gtk/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/gtk/fast/forms/search-rtl-expected.txt:
+        * platform/gtk/fast/forms/search-styled-expected.txt:
+        * platform/gtk/fast/forms/search/search-size-with-decorations-expected.txt:
+        * platform/gtk/fast/forms/searchfield-heights-expected.txt:
+        * platform/gtk/fast/forms/select-background-none-expected.txt:
+        * platform/gtk/fast/forms/select-baseline-expected.txt:
+        * platform/gtk/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/gtk/fast/forms/select-dirty-parent-pref-widths-expected.txt:
+        * platform/gtk/fast/forms/select-disabled-appearance-expected.txt:
+        * platform/gtk/fast/forms/select-element-focus-ring-expected.txt:
+        * platform/gtk/fast/forms/select-initial-position-expected.txt:
+        * platform/gtk/fast/forms/select-selected-expected.txt:
+        * platform/gtk/fast/forms/select-size-expected.txt:
+        * platform/gtk/fast/forms/select-style-expected.txt:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/gtk/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/gtk/fast/forms/selectlist-minsize-expected.txt:
+        * platform/gtk/fast/forms/stuff-on-my-optgroup-expected.txt:
+        * platform/gtk/fast/forms/validation-message-appearance-expected.txt:
+        * platform/gtk/fast/html/keygen-expected.txt:
+        * platform/gtk/fast/invalid/014-expected.txt:
+        * platform/gtk/fast/parser/document-write-option-expected.txt:
+        * platform/gtk/fast/repaint/search-field-cancel-expected.txt:
+        * platform/gtk/fast/replaced/replaced-breaking-expected.txt:
+        * platform/gtk/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/gtk/fast/replaced/three-selects-break-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-menulist-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/gtk/http/tests/navigation/javascriptlink-frames-expected.txt:
+
 2016-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Inconsistencies in main resource load delegates when loading from history

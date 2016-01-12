@@ -9,17 +9,17 @@ layer at (0,0) size 800x600
           text run at (282,0) width 317: "H2 should allow a form inside it, but p should not."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {FORM} at (0,17) size 784x31
-        RenderMenuList {SELECT} at (2,2) size 38x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 36x25
+        RenderMenuList {SELECT} at (2,2) size 36x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 34x25
             RenderText at (4,4) size 11x17
               text run at (4,4) width 11: "A"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,64) size 784x0
-layer at (470,45) size 46x59
-  RenderBlock (positioned) {H2} at (470,44) size 46x60 [border: (2px solid #008000)]
-    RenderBlock {FORM} at (2,2) size 42x31
-      RenderMenuList {SELECT} at (2,2) size 38x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-        RenderBlock (anonymous) at (1,1) size 36x25
+layer at (470,45) size 44x59
+  RenderBlock (positioned) {H2} at (470,44) size 44x60 [border: (2px solid #008000)]
+    RenderBlock {FORM} at (2,2) size 40x31
+      RenderMenuList {SELECT} at (2,2) size 36x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 34x25
           RenderText at (4,4) size 11x17
             text run at (4,4) width 11: "A"
       RenderText {#text} at (0,0) size 0x0

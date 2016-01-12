@@ -9,8 +9,8 @@ layer at (0,0) size 800x144
       RenderBlock {p} at (0,33) size 784x48 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 692x17
           text run at (0,0) width 692: "UAs may render the following element as a pop up menu. If so, please ensure the menu is unstyled (or green)."
-        RenderMenuList {select} at (2,19) size 120x27 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 118x25
+        RenderMenuList {select} at (2,19) size 118x27 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 116x25
             RenderText at (4,4) size 83x17
               text run at (4,4) width 83: "This should"
         RenderText {#text} at (0,0) size 0x0

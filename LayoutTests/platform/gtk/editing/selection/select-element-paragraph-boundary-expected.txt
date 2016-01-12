@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
           text run at (326,0) width 424: "The caret should be at the end of the paragraph below, just after the"
           text run at (0,17) width 67: "select box."
       RenderBlock {DIV} at (0,50) size 784x31
-        RenderMenuList {SELECT} at (2,2) size 36x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 34x25
+        RenderMenuList {SELECT} at (2,2) size 34x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 32x25
             RenderText at (4,4) size 9x17
               text run at (4,4) width 9: "1"
 caret: position 1 of child 0 {SELECT} of child 2 {DIV} of body
