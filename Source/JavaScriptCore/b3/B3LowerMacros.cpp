@@ -84,6 +84,7 @@ private:
                         m_value->child(0),
                         m_value->child(1));
                     m_value->replaceWithIdentity(result);
+                    m_changed = true;
                 } else if (m_value->type() == Float) {
                     Value* numeratorAsDouble = m_insertionSet.insert<Value>(m_index, FloatToDouble, m_origin, m_value->child(0));
                     Value* denominatorAsDouble = m_insertionSet.insert<Value>(m_index, FloatToDouble, m_origin, m_value->child(1));
@@ -95,6 +96,13 @@ private:
                         denominatorAsDouble);
                     Value* result = m_insertionSet.insert<Value>(m_index, DoubleToFloat, m_origin, doubleMod);
                     m_value->replaceWithIdentity(result);
+                    m_changed = true;
+                } else if (isARM64()) {
+                    Value* divResult = m_insertionSet.insert<Value>(m_index, ChillDiv, m_origin, m_value->child(0), m_value->child(1));
+                    Value* multipliedBack = m_insertionSet.insert<Value>(m_index, Mul, m_origin, divResult, m_value->child(1));
+                    Value* result = m_insertionSet.insert<Value>(m_index, Sub, m_origin, m_value->child(0), multipliedBack);
+                    m_value->replaceWithIdentity(result);
+                    m_changed = true;
                 }
                 break;
             }
@@ -104,7 +112,34 @@ private:
             }
 
             case ChillMod: {
-                makeDivisionChill(Mod);
+                if (isARM64()) {
+                    BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+                    BasicBlock* zeroDenCase = m_blockInsertionSet.insertBefore(m_block);
+                    BasicBlock* normalModCase = m_blockInsertionSet.insertBefore(m_block);
+
+                    before->replaceLastWithNew<ControlValue>(
+                        m_proc, Branch, m_origin, m_value->child(1),
+                        FrequentedBlock(normalModCase, FrequencyClass::Normal),
+                        FrequentedBlock(zeroDenCase, FrequencyClass::Rare));
+
+                    Value* divResult = normalModCase->appendNew<Value>(m_proc, ChillDiv, m_origin, m_value->child(0), m_value->child(1));
+                    Value* multipliedBack = normalModCase->appendNew<Value>(m_proc, Mul, m_origin, divResult, m_value->child(1));
+                    Value* result = normalModCase->appendNew<Value>(m_proc, Sub, m_origin, m_value->child(0), multipliedBack);
+                    UpsilonValue* normalResult = normalModCase->appendNew<UpsilonValue>(m_proc, m_origin, result);
+                    normalModCase->appendNew<ControlValue>(m_proc, Jump, m_origin, FrequentedBlock(m_block));
+
+                    UpsilonValue* zeroResult = zeroDenCase->appendNew<UpsilonValue>(
+                        m_proc, m_origin,
+                        zeroDenCase->appendIntConstant(m_proc, m_value, 0));
+                    zeroDenCase->appendNew<ControlValue>(m_proc, Jump, m_origin, FrequentedBlock(m_block));
+
+                    Value* phi = m_insertionSet.insert<Value>(m_index, Phi, m_value->type(), m_origin);
+                    normalResult->setPhi(phi);
+                    zeroResult->setPhi(phi);
+                    m_value->replaceWithIdentity(phi);
+                    m_changed = true;
+                } else
+                    makeDivisionChill(Mod);
                 break;
             }
 

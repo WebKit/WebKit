@@ -472,21 +472,41 @@ public:
     {
         lshift64(dest, imm, dest);
     }
+
+    void mul32(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        m_assembler.mul<32>(dest, left, right);
+    }
     
     void mul32(RegisterID src, RegisterID dest)
     {
         m_assembler.mul<32>(dest, dest, src);
-    }
-    
-    void mul64(RegisterID src, RegisterID dest)
-    {
-        m_assembler.mul<64>(dest, dest, src);
     }
 
     void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(imm, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.mul<32>(dest, src, dataTempRegister);
+    }
+
+    void mul64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.mul<64>(dest, dest, src);
+    }
+
+    void mul64(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        m_assembler.mul<64>(dest, left, right);
+    }
+
+    void div32(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.sdiv<32>(dest, dividend, divisor);
+    }
+
+    void div64(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.sdiv<64>(dest, dividend, divisor);
     }
 
     void neg32(RegisterID dest)

@@ -1,3 +1,28 @@
+2016-01-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add Div/Mod and fix Mul for B3 ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=152978
+
+        Reviewed by Filip Pizlo.
+
+        Add the 3 operands forms of Mul.
+        Remove the form taking immediate on ARM64, there are no such instruction.
+
+        Add Div with sdiv.
+
+        Unfortunately, I discovered ChillMod's division by zero
+        makes it non-trivial on ARM64. I just made it into a macro like on x86.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::mul32):
+        (JSC::MacroAssemblerARM64::mul64):
+        (JSC::MacroAssemblerARM64::div32):
+        (JSC::MacroAssemblerARM64::div64):
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+
 2016-01-11  Keith Miller  <keith_miller@apple.com>
 
         Arrays should use the InternalFunctionAllocationProfile when constructing new Arrays

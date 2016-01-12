@@ -186,10 +186,20 @@ Mul32 U:G:32, UZD:G:32
     x86: Addr, Tmp
 
 Mul32 U:G:32, U:G:32, ZD:G:32
-    Imm, Tmp, Tmp
+    arm64: Tmp, Tmp, Tmp
+    x86: Imm, Tmp, Tmp
 
 64: Mul64 U:G:64, UD:G:64
     Tmp, Tmp
+
+arm64: Mul64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
+
+arm64: Div32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+
+arm64: Div64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
 
 arm64: MulDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp

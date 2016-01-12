@@ -1641,21 +1641,25 @@ private:
             return;
         }
 
+        case ChillDiv:
+            RELEASE_ASSERT(isARM64());
+            FALLTHROUGH;
         case Div: {
-            if (isInt(m_value->type())) {
 #if CPU(X86) || CPU(X86_64)
+            if (isInt(m_value->type())) {
                 lowerX86Div();
                 append(Move, Tmp(X86Registers::eax), tmp(m_value));
-#endif
                 return;
             }
-            ASSERT(isFloat(m_value->type()));
+#endif
+            ASSERT(!isX86() || isFloat(m_value->type()));
 
-            appendBinOp<Air::Oops, Air::Oops, DivDouble, DivFloat>(m_value->child(0), m_value->child(1));
+            appendBinOp<Div32, Div64, DivDouble, DivFloat>(m_value->child(0), m_value->child(1));
             return;
         }
 
         case Mod: {
+            RELEASE_ASSERT(isX86());
 #if CPU(X86) || CPU(X86_64)
             lowerX86Div();
             append(Move, Tmp(X86Registers::edx), tmp(m_value));
