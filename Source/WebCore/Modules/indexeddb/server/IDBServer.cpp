@@ -339,6 +339,21 @@ void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
     databaseConnection->connectionClosedFromClient();
 }
 
+void IDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+{
+    LOG(IndexedDB, "IDBServer::abortOpenAndUpgradeNeeded");
+
+    auto transaction = m_transactions.get(transactionIdentifier);
+    if (transaction)
+        transaction->abortWithoutCallback();
+
+    auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
+    if (!databaseConnection)
+        return;
+
+    databaseConnection->connectionClosedFromClient();
+}
+
 void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
 {
     LOG(IndexedDB, "IDBServer::didFireVersionChangeEvent");

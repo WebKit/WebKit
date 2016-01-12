@@ -112,6 +112,11 @@ public:
     void establishTransaction(IDBTransaction&);
 
     void databaseConnectionClosed(IDBDatabase&);
+
+    // To be used when an IDBOpenDBRequest gets a new database connection, optionally with a
+    // versionchange transaction, but the page is already torn down.
+    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier);
+    
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);
 

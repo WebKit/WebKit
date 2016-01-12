@@ -72,6 +72,7 @@ public:
     virtual void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count) override final;
     virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) override final;
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
+    virtual void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier) override final;
     virtual void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier) override final;
 
     // IDBConnectionToClient

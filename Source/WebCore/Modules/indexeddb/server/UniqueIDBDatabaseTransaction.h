@@ -64,6 +64,7 @@ public:
     IDBDatabaseInfo* originalDatabaseInfo() const;
 
     void abort();
+    void abortWithoutCallback();
     void commit();
 
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);

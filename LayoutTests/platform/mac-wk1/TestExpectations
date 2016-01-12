@@ -93,9 +93,6 @@ storage/indexeddb/cursor-request-cycle.html [ Failure ]
 storage/indexeddb/delete-closed-database-object.html [ Skip ]
 storage/indexeddb/request-leak.html [ Failure ]
 
-# Flaky timeout on the bots
-webkit.org/b/152892 storage/indexeddb/dont-wedge.html [ Pass Timeout ]
-
 # No workers support in Modern IDB yet
 http/tests/security/cross-origin-worker-indexeddb-allowed.html
 http/tests/security/cross-origin-worker-indexeddb.html

@@ -1,3 +1,34 @@
+2016-01-12  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/dont-wedge.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=152892
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Reenabled existing test).
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::abortOpenAndUpgradeNeeded):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::requestCompleted): If the database was opened
+          or an upgrade transaction was started, but the script execution context is already
+          stopped, immediately message back to the server so it doesn't wedge.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::abortOpenAndUpgradeNeeded):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::abortWithoutCallback):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::abortOpenAndUpgradeNeeded):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2016-01-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194826.

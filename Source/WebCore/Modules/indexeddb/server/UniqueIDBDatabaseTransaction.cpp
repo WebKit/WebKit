@@ -75,6 +75,13 @@ void UniqueIDBDatabaseTransaction::abort()
     });
 }
 
+void UniqueIDBDatabaseTransaction::abortWithoutCallback()
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abortWithoutCallback");
+
+    m_databaseConnection->database().abortTransaction(*this, [](const IDBError&) { });
+}
+
 bool UniqueIDBDatabaseTransaction::isVersionChange() const
 {
     return m_transactionInfo.mode() == IndexedDB::TransactionMode::VersionChange;

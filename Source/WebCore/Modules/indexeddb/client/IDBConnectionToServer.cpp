@@ -362,6 +362,13 @@ void IDBConnectionToServer::databaseConnectionClosed(IDBDatabase& database)
     m_delegate->databaseConnectionClosed(database.databaseConnectionIdentifier());
 }
 
+void IDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::abortOpenAndUpgradeNeeded");
+
+    m_delegate->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
+}
+
 void IDBConnectionToServer::registerDatabaseConnection(IDBDatabase& database)
 {
     ASSERT(!m_databaseConnectionMap.contains(database.databaseConnectionIdentifier()));

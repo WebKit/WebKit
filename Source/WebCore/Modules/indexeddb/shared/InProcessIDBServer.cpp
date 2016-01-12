@@ -369,6 +369,14 @@ void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIde
     });
 }
 
+void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier, transactionIdentifier] {
+        m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
+    });
+}
+
 void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);

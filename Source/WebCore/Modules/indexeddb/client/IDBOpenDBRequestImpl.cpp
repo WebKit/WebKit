@@ -165,8 +165,23 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
 
-    if (m_contextStopped)
+    // If an Open request was completed after the page has navigated, leaving this request
+    // with a stopped script execution context, we need to message back to the server so it
+    // doesn't hang waiting on a database connection or transaction that will never exist.
+    if (m_contextStopped) {
+        switch (data.type()) {
+        case IDBResultType::OpenDatabaseSuccess:
+            connection().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), IDBResourceIdentifier::emptyValue());
+            break;
+        case IDBResultType::OpenDatabaseUpgradeNeeded:
+            connection().abortOpenAndUpgradeNeeded(data.databaseConnectionIdentifier(), data.transactionInfo().identifier());
+            break;
+        default:
+            break;
+        }
+
         return;
+    }
 
     switch (data.type()) {
     case IDBResultType::Error:
