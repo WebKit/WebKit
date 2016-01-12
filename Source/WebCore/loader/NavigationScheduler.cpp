@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2010, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Adam Barth. All rights reserved.
@@ -298,6 +298,31 @@ private:
     bool m_haveToldClient;
 };
 
+class ScheduledPageBlock final : public ScheduledNavigation {
+public:
+    ScheduledPageBlock(Document& originDocument)
+        : ScheduledNavigation(0, LockHistory::Yes, LockBackForwardList::Yes, false, false)
+        , m_originDocument(originDocument)
+    {
+    }
+
+    void fire(Frame& frame) override
+    {
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
+
+        ResourceResponse replacementResponse(m_originDocument.url(), ASCIILiteral("text/plain"), 0, ASCIILiteral("UTF-8"));
+        SubstituteData replacementData(SharedBuffer::create(), m_originDocument.url(), replacementResponse, SubstituteData::SessionHistoryVisibility::Hidden);
+
+        ResourceRequest resourceRequest(m_originDocument.url(), emptyString(), ReloadIgnoringCacheData);
+        FrameLoadRequest frameRequest(m_originDocument.securityOrigin(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
+        frameRequest.setSubstituteData(replacementData);
+        frame.loader().load(frameRequest);
+    }
+
+private:
+    Document& m_originDocument;
+};
+
 class ScheduledSubstituteDataLoad : public ScheduledNavigation {
 public:
     ScheduledSubstituteDataLoad(const URL& baseURL, const SubstituteData& substituteData)
@@ -478,6 +503,12 @@ void NavigationScheduler::scheduleSubstituteDataLoad(const URL& baseURL, const S
 {
     if (shouldScheduleNavigation())
         schedule(std::make_unique<ScheduledSubstituteDataLoad>(baseURL, substituteData));
+}
+
+void NavigationScheduler::schedulePageBlock(Document& originDocument)
+{
+    if (shouldScheduleNavigation())
+        schedule(std::make_unique<ScheduledPageBlock>(originDocument));
 }
 
 void NavigationScheduler::timerFired()

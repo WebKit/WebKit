@@ -1,3 +1,24 @@
+2016-01-12  Daniel Bates  <dabates@apple.com>
+
+        XSS Auditor should navigate to empty substitute data on full page block
+        https://bugs.webkit.org/show_bug.cgi?id=152868
+        <rdar://problem/18658448>
+
+        Reviewed by David Kilzer and Andy Estes.
+
+        Derived from Blink patch (by Tom Sepez <tsepez@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?view=rev&revision=179240>
+
+        Test: http/tests/security/xssAuditor/block-does-not-leak-that-page-was-blocked-using-empty-data-url.html
+
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::didBlockScript): Modified to call NavigationScheduler::schedulePageBlock().
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledPageBlock::ScheduledPageBlock): Added.
+        (WebCore::NavigationScheduler::schedulePageBlock): Navigate to empty substitute data with
+        the same URL as the originating document.
+        * loader/NavigationScheduler.h:
+
 2016-01-12  Dave Hyatt  <hyatt@apple.com>
 
         Avoid downloading the wrong image for <picture> elements.

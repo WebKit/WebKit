@@ -76,6 +76,7 @@ public:
     void scheduleRefresh(Document* initiatingDocument);
     void scheduleHistoryNavigation(int steps);
     void scheduleSubstituteDataLoad(const URL& baseURL, const SubstituteData&);
+    void schedulePageBlock(Document& originDocument);
 
     void startTimer();
 
