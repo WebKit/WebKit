@@ -51,7 +51,7 @@ function connection2Blocked(evt)
 function deleteDatabaseBlockedCallback(evt)
 {
     preamble(evt);
-    shouldBe("event.oldVersion", "1");
+    shouldBe("event.oldVersion", "2");
     shouldBeNull("event.newVersion");
 }
 

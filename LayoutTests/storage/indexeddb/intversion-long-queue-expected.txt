@@ -35,10 +35,6 @@ request.onupgradeneeded = connection3UpgradeNeeded
 request.onsuccess = connection3Success
 connection1.close()
 
-deleteDatabaseBlockedCallback():
-PASS event.oldVersion is 1
-PASS event.newVersion is null
-
 connection2UpgradeNeeded():
 PASS event.oldVersion is 1
 PASS event.newVersion is 2
@@ -47,6 +43,10 @@ PASS db.objectStoreNames.length is 0
 db.createObjectStore('some object store')
 transaction = event.target.transaction
 transaction.oncomplete = connection2TransactionComplete
+
+deleteDatabaseBlockedCallback():
+PASS event.oldVersion is 2
+PASS event.newVersion is null
 
 connection2TransactionComplete():
 PASS db.version is 2

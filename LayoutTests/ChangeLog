@@ -1,5 +1,16 @@
 2016-01-11  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/intversion-long-queue.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152995
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/intversion-long-queue-expected.txt:
+        * storage/indexeddb/resources/intversion-long-queue.js:
+
+2016-01-11  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/index-multientry.html fails under GuardMalloc/ASAN.
         https://bugs.webkit.org/show_bug.cgi?id=152990
 

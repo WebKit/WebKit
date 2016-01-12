@@ -82,9 +82,6 @@ storage/indexeddb/database-quota.html [ Skip ]
 # Modern IDB page cache interaction not yet sorted out
 fast/history/page-cache-indexed-closed-db.html [ Failure ]
 
-# blocked event comes in different order with different parameters
-storage/indexeddb/intversion-long-queue.html [ Failure ]
-
 # IDB is currently disabled in private browsing.
 # With Modern IDB and the in-memory backing store, that should change.
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
