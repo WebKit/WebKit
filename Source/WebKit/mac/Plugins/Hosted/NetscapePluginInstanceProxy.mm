@@ -64,7 +64,6 @@
 #import <bindings/ScriptValue.h>
 #import <mach/mach.h>
 #import <utility>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/text/CString.h>
 
@@ -1664,7 +1663,7 @@ void NetscapePluginInstanceProxy::privateBrowsingModeDidChange(bool isPrivateBro
 
 static String& globalExceptionString()
 {
-    static NeverDestroyed<String> exceptionString;
+    DEPRECATED_DEFINE_STATIC_LOCAL(String, exceptionString, ());
     return exceptionString;
 }
 

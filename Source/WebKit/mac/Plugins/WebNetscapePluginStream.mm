@@ -54,7 +54,6 @@
 #import <WebKitSystemInterface.h>
 #import <runtime/JSLock.h>
 #import <wtf/HashMap.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 
 using namespace WebCore;
@@ -84,7 +83,7 @@ private:
 typedef HashMap<NPStream*, NPP> StreamMap;
 static StreamMap& streams()
 {
-    static NeverDestroyed<StreamMap> staticStreams;
+    DEPRECATED_DEFINE_STATIC_LOCAL(StreamMap, staticStreams, ());
     return staticStreams;
 }
 

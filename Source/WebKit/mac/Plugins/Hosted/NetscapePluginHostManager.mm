@@ -37,7 +37,6 @@
 #import <mach/mach_port.h>
 #import <spawn.h>
 #import <wtf/Assertions.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 
@@ -52,7 +51,8 @@ namespace WebKit {
 
 NetscapePluginHostManager& NetscapePluginHostManager::singleton()
 {
-    static NeverDestroyed<NetscapePluginHostManager> pluginHostManager;
+    DEPRECATED_DEFINE_STATIC_LOCAL(NetscapePluginHostManager, pluginHostManager, ());
+    
     return pluginHostManager;
 }
 

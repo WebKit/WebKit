@@ -82,7 +82,7 @@ typedef HashMap<RefPtr<UserMediaPermissionCheck>, RetainPtr<WebUserMediaPolicyCh
 
 static UserMediaCheckMap& userMediaCheckMap()
 {
-    static NeverDestroyed<UserMediaCheckMap> requests;
+    DEPRECATED_DEFINE_STATIC_LOCAL(UserMediaCheckMap, requests, ());
     return requests;
 }
 

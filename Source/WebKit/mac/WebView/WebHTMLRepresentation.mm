@@ -62,7 +62,6 @@
 #import <WebKitLegacy/DOMHTMLInputElement.h>
 #import <yarr/RegularExpression.h>
 #import <wtf/Assertions.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
 
@@ -364,15 +363,15 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     // that the app will use is equal to the number of locales is used in searching.
     static const unsigned int regExpCacheSize = 4;
     static NSMutableArray* regExpLabels = nil;
-    static NeverDestroyed<Vector<RegularExpression*>> regExps;
-    static NeverDestroyed<RegularExpression> wordRegExp("\\w", TextCaseSensitive);
+    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<RegularExpression*>, regExps, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(RegularExpression, wordRegExp, ("\\w", TextCaseSensitive));
 
     RegularExpression* result;
     if (!regExpLabels)
         regExpLabels = [[NSMutableArray alloc] initWithCapacity:regExpCacheSize];
     CFIndex cacheHit = [regExpLabels indexOfObject:labels];
     if (cacheHit != NSNotFound)
-        result = regExps.get().at(cacheHit);
+        result = regExps.at(cacheHit);
     else {
         StringBuilder pattern;
         pattern.append('(');
@@ -384,8 +383,8 @@ static RegularExpression* regExpForLabels(NSArray *labels)
             bool startsWithWordChar = false;
             bool endsWithWordChar = false;
             if (label.length() != 0) {
-                startsWithWordChar = wordRegExp.get().match(label.substring(0, 1)) >= 0;
-                endsWithWordChar = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
+                startsWithWordChar = wordRegExp.match(label.substring(0, 1)) >= 0;
+                endsWithWordChar = wordRegExp.match(label.substring(label.length() - 1, 1)) >= 0;
             }
             
             if (i != 0)
@@ -408,16 +407,16 @@ static RegularExpression* regExpForLabels(NSArray *labels)
         if (cacheHit != NSNotFound) {
             // remove from old spot
             [regExpLabels removeObjectAtIndex:cacheHit];
-            regExps.get().remove(cacheHit);
+            regExps.remove(cacheHit);
         }
         // add to start
         [regExpLabels insertObject:labels atIndex:0];
-        regExps.get().insert(0, result);
+        regExps.insert(0, result);
         // trim if too big
         if ([regExpLabels count] > regExpCacheSize) {
             [regExpLabels removeObjectAtIndex:regExpCacheSize];
-            RegularExpression* last = regExps.get().last();
-            regExps.get().removeLast();
+            RegularExpression* last = regExps.last();
+            regExps.removeLast();
             delete last;
         }
     }

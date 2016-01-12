@@ -27,14 +27,13 @@
 
 #include <wtf/AutodrainedPool.h>
 #include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 static HashSet<StorageThread*>& activeStorageThreads()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<HashSet<StorageThread*>> threads;
+    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<StorageThread*>, threads, ());
     return threads;
 }
 
