@@ -1,3 +1,26 @@
+2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] UI process crashes if webkit_web_view_get_tls_info is called before internal load-committed event
+        https://bugs.webkit.org/show_bug.cgi?id=142375
+
+        Reviewed by Michael Catanzaro.
+
+        Remove all the hacks to emit delayed load events now that the
+        page cache resource load delegates are consistent with all other
+        resource loads.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewLoadChanged):
+        (webkitWebViewResourceLoadStarted):
+        (webkit_web_view_get_tls_info): Add a g_return_val_if_fail to
+        prevent this function from being misused.
+        (webkitWebViewDisconnectMainResourceResponseChangedSignalHandler): Deleted.
+        (webkitWebViewDispose): Deleted.
+        (webkitWebViewEmitLoadChanged): Deleted.
+        (webkitWebViewEmitDelayedLoadEvents): Deleted.
+        (mainResourceResponseChangedCallback): Deleted.
+        (waitForMainResourceResponseIfWaitingForResource): Deleted.
+
 2016-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r190717): [GTK] Popup menus stop working after being dismissed without selecting an item

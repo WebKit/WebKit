@@ -179,9 +179,6 @@ struct _WebKitWebViewPrivate {
     bool isLoading;
 
     std::unique_ptr<PageLoadStateObserver> loadObserver;
-    bool waitingForMainResource;
-    unsigned long mainResourceResponseHandlerID;
-    WebKitLoadEvent lastDelayedEvent;
 
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
@@ -250,11 +247,6 @@ private:
     }
     virtual void didChangeIsLoading() override
     {
-        if (m_webView->priv->waitingForMainResource) {
-            // The actual load has finished but we haven't emitted the delayed load events yet, so we are still loading.
-            g_object_thaw_notify(G_OBJECT(m_webView));
-            return;
-        }
         webkitWebViewSetIsLoading(m_webView, getPage(m_webView)->pageLoadState().isLoading());
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
@@ -514,14 +506,6 @@ static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(userAgentChanged), webView);
 }
 
-static void webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(WebKitWebView* webView)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    if (priv->mainResourceResponseHandlerID)
-        g_signal_handler_disconnect(priv->mainResource.get(), priv->mainResourceResponseHandlerID);
-    priv->mainResourceResponseHandlerID = 0;
-}
-
 static void webkitWebViewWatchForChangesInFavicon(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = webView->priv;
@@ -772,7 +756,6 @@ static void webkitWebViewDispose(GObject* object)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     webkitWebViewCancelFaviconRequest(webView);
-    webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
     webkitWebViewDisconnectSettingsSignalHandlers(webView);
     webkitWebViewDisconnectFaviconDatabaseSignalHandlers(webView);
 
@@ -1792,73 +1775,31 @@ static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
     webView->priv->authenticationRequest.clear();
 }
 
-static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, bool isDelayedEvent)
-{
-    if (loadEvent == WEBKIT_LOAD_STARTED) {
-        webkitWebViewWatchForChangesInFavicon(webView);
-        webkitWebViewCancelAuthenticationRequest(webView);
-    } else if (loadEvent == WEBKIT_LOAD_FINISHED) {
-        if (isDelayedEvent) {
-            // In case of the delayed event, we need to manually set is-loading to false.
-            webkitWebViewSetIsLoading(webView, false);
-        }
-        webkitWebViewCancelAuthenticationRequest(webView);
-        webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
-    }
-
-    g_signal_emit(webView, signals[LOAD_CHANGED], 0, loadEvent);
-
-    if (isDelayedEvent) {
-        if (loadEvent == WEBKIT_LOAD_COMMITTED)
-            webView->priv->waitingForMainResource = false;
-        else if (loadEvent == WEBKIT_LOAD_FINISHED) {
-            // Manually set is-loading again in case a new load was started.
-            webkitWebViewSetIsLoading(webView, getPage(webView)->pageLoadState().isLoading());
-        }
-    }
-}
-
-static void webkitWebViewEmitDelayedLoadEvents(WebKitWebView* webView)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    if (!priv->waitingForMainResource)
-        return;
-    ASSERT(priv->lastDelayedEvent == WEBKIT_LOAD_COMMITTED || priv->lastDelayedEvent == WEBKIT_LOAD_FINISHED);
-
-    if (priv->lastDelayedEvent == WEBKIT_LOAD_FINISHED)
-        webkitWebViewEmitLoadChanged(webView, WEBKIT_LOAD_COMMITTED, true);
-    webkitWebViewEmitLoadChanged(webView, priv->lastDelayedEvent, true);
-}
-
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
     WebKitWebViewPrivate* priv = webView->priv;
-    if (loadEvent == WEBKIT_LOAD_STARTED) {
-        // Finish a possible previous load waiting for main resource.
-        webkitWebViewEmitDelayedLoadEvents(webView);
-
+    switch (loadEvent) {
+    case WEBKIT_LOAD_STARTED:
         webkitWebViewCancelFaviconRequest(webView);
+        webkitWebViewWatchForChangesInFavicon(webView);
+        webkitWebViewCancelAuthenticationRequest(webView);
         priv->loadingResourcesMap.clear();
-        priv->mainResource = 0;
-        priv->waitingForMainResource = false;
-    } else if (loadEvent == WEBKIT_LOAD_COMMITTED) {
+        priv->mainResource = nullptr;
+        break;
+    case WEBKIT_LOAD_COMMITTED: {
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context.get());
         GUniquePtr<char> faviconURI(webkit_favicon_database_get_favicon_uri(database, priv->activeURI.data()));
         webkitWebViewUpdateFaviconURI(webView, faviconURI.get());
-
-        if (!priv->mainResource) {
-            // When a page is loaded from the history cache, the main resource load callbacks
-            // are called when the main frame load is finished. We want to make sure there's a
-            // main resource available when load has been committed, so we delay the emission of
-            // load-changed signal until main resource object has been created.
-            priv->waitingForMainResource = true;
-        }
+        break;
+    }
+    case WEBKIT_LOAD_FINISHED:
+        webkitWebViewCancelAuthenticationRequest(webView);
+        break;
+    default:
+        break;
     }
 
-    if (priv->waitingForMainResource)
-        priv->lastDelayedEvent = loadEvent;
-    else
-        webkitWebViewEmitLoadChanged(webView, loadEvent, false);
+    g_signal_emit(webView, signals[LOAD_CHANGED], 0, loadEvent);
 }
 
 void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
@@ -1996,32 +1937,13 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
     g_signal_connect(printOperation.leakRef(), "finished", G_CALLBACK(g_object_unref), 0);
 }
 
-static void mainResourceResponseChangedCallback(WebKitWebResource*, GParamSpec*, WebKitWebView* webView)
-{
-    webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
-    webkitWebViewEmitDelayedLoadEvents(webView);
-}
-
-static void waitForMainResourceResponseIfWaitingForResource(WebKitWebView* webView)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    if (!priv->waitingForMainResource)
-        return;
-
-    webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
-    priv->mainResourceResponseHandlerID =
-        g_signal_connect(priv->mainResource.get(), "notify::response", G_CALLBACK(mainResourceResponseChangedCallback), webView);
-}
-
 void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy* frame, uint64_t resourceIdentifier, WebKitURIRequest* request)
 {
     WebKitWebViewPrivate* priv = webView->priv;
     bool isMainResource = frame->isMainFrame() && !priv->mainResource;
     WebKitWebResource* resource = webkitWebResourceCreate(frame, request, isMainResource);
-    if (isMainResource) {
+    if (isMainResource)
         priv->mainResource = resource;
-        waitForMainResourceResponseIfWaitingForResource(webView);
-    }
     priv->loadingResourcesMap.set(resourceIdentifier, adoptGRef(resource));
     g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, request);
 }
@@ -3469,7 +3391,10 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
     if (!mainFrame)
         return FALSE;
 
-    const WebCore::CertificateInfo& certificateInfo = mainFrame->certificateInfo()->certificateInfo();
+    auto* wkCertificateInfo = mainFrame->certificateInfo();
+    g_return_val_if_fail(wkCertificateInfo, FALSE);
+
+    const auto& certificateInfo = wkCertificateInfo->certificateInfo();
     if (certificate)
         *certificate = certificateInfo.certificate();
     if (errors)
