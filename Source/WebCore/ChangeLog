@@ -1,5 +1,29 @@
 2016-01-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r194666. rdar://problem/24101185
+
+    2016-01-06  Brent Fulgham  <bfulgham@apple.com>
+
+            Port blocking bypass issue using 307 redirect
+            https://bugs.webkit.org/show_bug.cgi?id=152801
+            <rdar://problem/24048554>
+
+            Reviewed by Anders Carlsson.
+
+            Tested by http/tests/security/blocked-on-redirect.html.
+
+            Make sure that 307 redirects check the requested URL via 'portAllowed'.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::willSendRequest): Confirm that the requested port
+            is valid, and block load if it is not.
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::reportBlockedPortFailed): Added.
+            (WebCore::FrameLoader::blockedError): Added.
+            * loader/FrameLoader.h:
+
+2016-01-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r194038. rdar://problem/24101170
 
     2015-12-14  Daniel Bates  <dabates@apple.com>
