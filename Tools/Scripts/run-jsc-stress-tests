@@ -62,6 +62,7 @@ begin
     $canRunDisplayProfilerOutput = true
 rescue Exception => e
     $stderr.puts "Warning: did not find json or highline; some features will be disabled."
+    $stderr.puts "Run \"sudo gem install json highline\" to fix the issue."
     $stderr.puts "Error: #{e.inspect}"
 end
 
