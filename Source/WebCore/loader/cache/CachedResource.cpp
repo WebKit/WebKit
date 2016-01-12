@@ -359,14 +359,26 @@ bool CachedResource::isExpired() const
     return computeCurrentAge(m_response, m_responseTimestamp) > freshnessLifetime(m_response);
 }
 
+static inline bool shouldCacheSchemeIndefinitely(const String& scheme)
+{
+#if PLATFORM(COCOA)
+    if (equalIgnoringCase(scheme, "applewebdata"))
+        return true;
+#endif
+    return equalIgnoringCase(scheme, "data");
+}
+
 std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceResponse& response) const
 {
     if (!response.url().protocolIsInHTTPFamily()) {
-        // Don't cache non-HTTP main resources since we can't check for freshness.
-        // FIXME: We should not cache subresources either, but when we tried this
-        // it caused performance and flakiness issues in our test infrastructure.
-        if (m_type == MainResource && !SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely(response.url().protocol()))
-            return std::chrono::microseconds::zero();
+        String protocol = response.url().protocol();
+        if (!shouldCacheSchemeIndefinitely(protocol)) {
+            // Don't cache non-HTTP main resources since we can't check for freshness.
+            // FIXME: We should not cache subresources either, but when we tried this
+            // it caused performance and flakiness issues in our test infrastructure.
+            if (m_type == MainResource || SchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol))
+                return std::chrono::microseconds::zero();
+        }
 
         return std::chrono::microseconds::max();
     }

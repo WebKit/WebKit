@@ -440,6 +440,7 @@ private:
     HashSet<String> m_schemesToRegisterAsNoAccess;
     HashSet<String> m_schemesToRegisterAsDisplayIsolated;
     HashSet<String> m_schemesToRegisterAsCORSEnabled;
+    HashSet<String> m_schemesToRegisterAsAlwaysRevalidated;
 #if ENABLE(CACHE_PARTITIONING)
     HashSet<String> m_schemesToRegisterAsCachePartitioned;
 #endif

@@ -1,3 +1,28 @@
+2016-01-09  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add SPI to opt out a URL scheme from the memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=152950
+        rdar://problem/24066652
+
+        Reviewed by Tim Horton.
+
+        Added a list of schemes to SchemeRegistry whose resources should always be revalidated. Taught CachedResource to
+        return a freshness lifetime of 0 for these resources, unless the scheme is one that should be cached indefinitely.
+
+        New API test: WebKit2.AlwaysRevalidatedURLSchemes
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::shouldCacheSchemeIndefinitely): Moved from SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely().
+        (WebCore::CachedResource::freshnessLifetime): For a scheme that should not be cached indefinitely, return 0 if
+        that scheme should always be revalidated according to SchemeRegistry.
+        * platform/SchemeRegistry.cpp:
+        (WebCore::alwaysRevalidatedSchemes):
+        (WebCore::SchemeRegistry::registerURLSchemeAsAlwaysRevalidated):
+        (WebCore::SchemeRegistry::shouldAlwaysRevalidateURLScheme):
+        (WebCore::SchemeRegistry::shouldCacheResponsesFromURLSchemeIndefinitely): Moved to WebCore::shouldCacheSchemeIndefinitely().
+        There was no reason for this to be in SchemeRegistry.
+        * platform/SchemeRegistry.h:
+
 2016-01-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/index-multientry.html fails under GuardMalloc/ASAN.
