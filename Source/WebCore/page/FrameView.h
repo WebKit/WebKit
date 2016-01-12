@@ -105,8 +105,6 @@ public:
     virtual void setContentsSize(const IntSize&) override;
     virtual void updateContentsSize() override;
 
-    WEBCORE_EXPORT IntSize contentsSizeRespectingOverflow() const;
-
     void layout(bool allowSubtree = true);
     WEBCORE_EXPORT bool didFirstLayout() const;
     void layoutTimerFired();
