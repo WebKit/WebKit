@@ -30,9 +30,11 @@
 
 namespace JSC {
 
-#if CPU(X86_64)
 // This is in the .cpp file to work around clang issues.
+#if CPU(X86_64)
 const GPRReg GPRInfo::patchpointScratchRegister = MacroAssembler::s_scratchRegister;
+#elif CPU(ARM64)
+const GPRReg GPRInfo::patchpointScratchRegister = ARM64Registers::ip0;
 #endif
 
 } // namespace JSC

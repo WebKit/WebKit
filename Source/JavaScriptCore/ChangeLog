@@ -1,3 +1,16 @@
+2016-01-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] JSC does not build with FTL_USES_B3 on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=153011
+
+        Reviewed by Saam Barati.
+
+        Apparently the static const member can only be used for constexpr.
+        C++ is weird.
+
+        * jit/GPRInfo.cpp:
+        * jit/GPRInfo.h:
+
 2016-01-11  Johan K. Jensen  <jj@johanjensen.dk>
 
         Web Inspector: console.count() shouldn't show a colon in front of a number
