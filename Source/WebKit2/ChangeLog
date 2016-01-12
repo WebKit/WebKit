@@ -1,3 +1,26 @@
+2016-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r190717): [GTK] Popup menus stop working after being dismissed without selecting an item
+        https://bugs.webkit.org/show_bug.cgi?id=152977
+
+        Reviewed by Michael Catanzaro.
+
+        This happens since r190717 when you open a popup menu and without
+        selecting any option it's dismissed (press ESC or click somewhere
+        else). This is because I removed the code to track when the menu
+        is unmapped, thinking that it was no longer necessary. But we need
+        to send the DidChangeSelectedIndexForActivePopupMenu to the
+        WebProcess with -1 as index to keep the web process in sync.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::WebPopupMenuProxyGtk):
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+        (WebKit::WebPopupMenuProxyGtk::cancelTracking):
+        (WebKit::WebPopupMenuProxyGtk::menuItemActivated):
+        (WebKit::WebPopupMenuProxyGtk::dismissMenuTimerFired):
+        (WebKit::WebPopupMenuProxyGtk::menuUnmappedCallback):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+
 2016-01-09  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add SPI to opt out a URL scheme from the memory cache

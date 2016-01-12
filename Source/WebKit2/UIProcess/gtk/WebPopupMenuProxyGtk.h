@@ -21,6 +21,7 @@
 #define WebPopupMenuProxyGtk_h
 
 #include "WebPopupMenuProxy.h"
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +54,7 @@ private:
     void setCurrentlySelectedMenuItem(GtkWidget* item) { m_currentlySelectedMenuItem = item; }
     GtkAction* createGtkActionForMenuItem(const WebPopupItem&, int itemIndex);
     void populatePopupMenu(const Vector<WebPopupItem>&);
+    void dismissMenuTimerFired();
 
     bool typeAheadFind(GdkEventKey*);
     void resetTypeAheadFindState();
@@ -60,14 +62,17 @@ private:
     static void menuItemActivated(GtkAction*, WebPopupMenuProxyGtk*);
     static void selectItemCallback(GtkWidget*, WebPopupMenuProxyGtk*);
     static gboolean keyPressEventCallback(GtkWidget*, GdkEventKey*, WebPopupMenuProxyGtk*);
+    static void menuUnmappedCallback(GtkWidget*, WebPopupMenuProxyGtk*);
 
-    GtkWidget* m_webView;
-    GtkWidget* m_popup;
+    GtkWidget* m_webView { nullptr };
+    GtkWidget* m_popup { nullptr };
+
+    RunLoop::Timer<WebPopupMenuProxyGtk> m_dismissMenuTimer;
 
     // Typeahead find.
-    unsigned m_previousKeyEventCharacter;
-    uint32_t m_previousKeyEventTimestamp;
-    GtkWidget* m_currentlySelectedMenuItem;
+    unsigned m_previousKeyEventCharacter { 0 };
+    uint32_t m_previousKeyEventTimestamp { 0 };
+    GtkWidget* m_currentlySelectedMenuItem { nullptr };
     String m_currentSearchString;
 };
 
