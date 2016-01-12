@@ -75,7 +75,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         this._encodedSizeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Encoded"));
         this._decodedSizeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Decoded"));
-        this._transferSizeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Transfered"));
+        this._transferSizeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Transferred"));
 
         this._compressedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Compressed"));
         this._compressionRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Compression"));

@@ -1,3 +1,23 @@
+2016-01-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: fix some common misspellings in localized strings
+        https://bugs.webkit.org/show_bug.cgi?id=153030
+        <rdar://problem/24153340>
+
+        Reviewed by Joseph Pecoraro.
+
+        Replace 'occured', 'transfered' with 'occurred' and 'transferred'.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView.prototype._queryError):
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+
 2016-01-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Fix DataGrid row disclosure appearance and behavior

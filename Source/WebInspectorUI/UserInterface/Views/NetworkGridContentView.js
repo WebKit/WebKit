@@ -61,7 +61,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         columns.size.width = "8%";
         columns.size.aligned = "right";
 
-        columns.transferSize.title = WebInspector.UIString("Transfered");
+        columns.transferSize.title = WebInspector.UIString("Transferred");
         columns.transferSize.width = "8%";
         columns.transferSize.aligned = "right";
 
