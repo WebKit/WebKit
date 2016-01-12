@@ -1,0 +1,13 @@
+image-set-2x.png - willSendRequest <NSURLRequest URL image-set-2x.png, main document URL image-picture-loads-1x.html, http method GET> redirectResponse (null)
+resources/image-set-4x.png - willSendRequest <NSURLRequest URL resources/image-set-4x.png, main document URL image-picture-loads-1x.html, http method GET> redirectResponse (null)
+data:,b - willSendRequest <NSURLRequest URL data:,b, main document URL image-picture-loads-1x.html, http method GET> redirectResponse (null)
+image-picture-loads-1x.html - didFinishLoading
+image-set-2x.png - didReceiveResponse <NSURLResponse image-set-2x.png, http status code 0>
+image-set-2x.png - didFinishLoading
+resources/image-set-4x.png - didReceiveResponse <NSURLResponse resources/image-set-4x.png, http status code 0>
+resources/image-set-4x.png - didFinishLoading
+data:,b - didReceiveResponse <NSURLResponse data:,b, http status code 0>
+data:,b - didFinishLoading
+   
+some text
+         

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+	<script>
+        if (window.testRunner) {
+	        testRunner.dumpAsText();
+            testRunner.dumpResourceLoadCallbacks();
+        }
+	</script>
+	<!-- simple picture construct -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" sizes="800px" srcset="../hidpi/resources/image-set-1x.png?10002 400w, ../hidpi/resources/image-set-2x.png?10002 800w,
+	        resources/image-set-4x.png?10002 1600w">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="simple" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- Multiple img elements -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" sizes="800px" srcset="../hidpi/resources/image-set-1x.png?10002 400w, ../hidpi/resources/image-set-2x.png?10002 800w,
+	        resources/image-set-4x.png?10002 1600w">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img src="resources/blue_rect.jpg?1">
+	    <img id="multiple" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- non-source children - should be ignored-->
+	<picture>
+	    <div>some text</div>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" sizes="800px" srcset="../hidpi/resources/image-set-1x.png?10002 400w, ../hidpi/resources/image-set-2x.png?10002 800w,
+	        resources/image-set-4x.png?10002 1600w">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="other_children" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- source with unknown type - should be ignored -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" type="image/nonsense" sizes="800px" srcset="../hidpi/resources/image-set-1x.png?10002 400w, ../hidpi/resources/image-set-2x.png?10002 800w,
+	        resources/image-set-4x.png?10002 1600w">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="unknown_type" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- SVG source - should not be ignored -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" type="image/svg+xml" sizes="800px" srcset="../hidpi/resources/image-set-1x.png?10002 400w, ../hidpi/resources/image-set-2x.png?10002 800w,
+	        resources/image-set-4x.png?10002 1600w">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="svg_type" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- Empty type - should not be ignored -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" type="" sizes="800px" srcset="../hidpi/resources/image-set-1x.png?10002 400w, ../hidpi/resources/image-set-2x.png?10002 800w,
+	        resources/image-set-4x.png?10002 1600w">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="empty_type" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- whitespace type - should not be ignored -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" type=" " sizes="800px" srcset="../hidpi/resources/image-set-1x.png?10002 400w, ../hidpi/resources/image-set-2x.png?10002 800w,
+	        resources/image-set-4x.png?10002 1600w">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="whitespace_type" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- parameter type - should not be ignored -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" type="image/png;bla=bla" sizes="800px" srcset="../hidpi/resources/image-set-1x.png?10002 400w, ../hidpi/resources/image-set-2x.png?10002 800w,
+	        resources/image-set-4x.png?10002 1600w">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="parameter_type" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- source with empty srcset - should be ignored -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" sizes="800px" srcset=", ,  ">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="empty_srcset" src="resources/blue_rect.jpg?1">
+	</picture>
+	<!-- source with no srcset - should be ignored -->
+	<picture>
+	    <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?10001 400w, ../hidpi/resources/image-set-2x.png?10001 800w,
+	        resources/image-set-4x.png?10001 1600w">
+	    <source media="(max-width: 800px)" sizes="800px">
+	    <source media="(max-width: 1600px)" sizes="1600px" srcset="../hidpi/resources/image-set-1x.png?10003 400w, ../hidpi/resources/image-set-2x.png?10003 800w,
+	        resources/image-set-4x.png?10003 1600w">
+	    <img id="no_srcset" src="resources/blue_rect.jpg?1">
+	</picture>
+    <picture><source srcset="data:,b"><img src="resources/blue_rect.jpg?1"></picture>
