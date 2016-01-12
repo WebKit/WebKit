@@ -1243,6 +1243,8 @@ webkit.org/b/152029 inspector/debugger/command-line-api-exception.html [ Pass Ti
 
 webkit.org/b/153016 inspector/script-profiler/event-type-Other.html [ Pass Failure ]
 
+webkit.org/b/153108 [ Debug ] inspector/model/scope-chain-node.html [ Pass Timeout ]
+
 # Colorspaces on CA OpenGL layers not available in Yosemite
 [ Yosemite ] fast/canvas/webgl/match-page-color-space.html [ Skip ]
 
