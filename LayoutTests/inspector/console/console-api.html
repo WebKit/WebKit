@@ -6,6 +6,8 @@
 <script>
 var string = "string";
 var object = {a:1};
+var otherObject = {b:2};
+var number = 42;
 
 function test()
 {
@@ -31,6 +33,19 @@ function test()
         "console.groupCollapsed('collapsedGroupName')",
         "console.groupEnd('collapsedGroupName')",
         "console.count()",
+        "console.count()",
+        "console.count('')",
+        "console.count('    ')",
+        "console.count('')",
+        "console.count('    ')",
+        "console.count(string)",
+        "console.count(string)",
+        "console.count(object)",
+        "console.count(object)",
+        "console.count(otherObject)",
+        "console.count(otherObject)",
+        "console.count(number)",
+        "console.count(number)",
     ];
 
     function remoteObjectJSONFilter(key, value)

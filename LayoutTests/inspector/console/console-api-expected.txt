@@ -585,7 +585,189 @@ STEP: console.count()
 {
   "_source": "console-api",
   "_level": "debug",
-  "_messageText": ": 1",
+  "_messageText": "<no label>: 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count()
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "<no label>: 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count('')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "<no label>: 3",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count('    ')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "    : 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count('')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "<no label>: 4",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count('    ')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "    : 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(string)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "string: 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(string)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "string: 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(object)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "[object Object]: 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(object)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "[object Object]: 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(otherObject)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "[object Object]: 3",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(otherObject)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "[object Object]: 4",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(number)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "42: 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 1,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(number)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "42: 2",
   "_type": "log",
   "_url": null,
   "_line": 1,

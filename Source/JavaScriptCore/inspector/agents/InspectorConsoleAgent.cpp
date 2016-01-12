@@ -174,7 +174,12 @@ void InspectorConsoleAgent::count(JSC::ExecState* state, PassRefPtr<ScriptArgume
 
     m_counts.add(identifier, count);
 
-    String message = title + ": " + String::number(count);
+    String message;
+    if (title.isEmpty())
+        message = "<no label>: " + String::number(count);
+    else
+        message = title + ": " + String::number(count);
+
     addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, callStack));
 }
 

@@ -1,3 +1,14 @@
+2016-01-11  Johan K. Jensen  <jj@johanjensen.dk>
+
+        Web Inspector: console.count() shouldn't show a colon in front of a number
+        https://bugs.webkit.org/show_bug.cgi?id=152038
+
+        Reviewed by Brian Burg.
+
+        * inspector/console/console-api-expected.txt:
+        * inspector/console/console-api.html:
+        Add testcases for console.count
+
 2016-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         keywords ("super", "delete", etc) should be valid method names
