@@ -744,7 +744,6 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         Shared/ActivityAssertion.cpp
         Shared/BlobDataFileReferenceWithSandboxExtension.cpp
         Shared/ChildProcess.cpp
-        Shared/ChildProcessProxy.cpp
         Shared/ShareableBitmap.cpp
         Shared/WebCoreArgumentCoders.cpp
         Shared/WebEvent.cpp

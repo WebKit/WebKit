@@ -1,5 +1,40 @@
 2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Move ChildProcessProxy from Shared to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=125570
+
+        Reviewed by Darin Adler.
+
+        ChildProcessProxy is only used by the UI process.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * UIProcess/ChildProcessProxy.cpp: Renamed from Source/WebKit2/Shared/ChildProcessProxy.cpp.
+        (WebKit::ChildProcessProxy::ChildProcessProxy):
+        (WebKit::ChildProcessProxy::~ChildProcessProxy):
+        (WebKit::ChildProcessProxy::fromConnection):
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        (WebKit::ChildProcessProxy::connect):
+        (WebKit::ChildProcessProxy::terminate):
+        (WebKit::ChildProcessProxy::state):
+        (WebKit::ChildProcessProxy::sendMessage):
+        (WebKit::ChildProcessProxy::addMessageReceiver):
+        (WebKit::ChildProcessProxy::removeMessageReceiver):
+        (WebKit::ChildProcessProxy::dispatchMessage):
+        (WebKit::ChildProcessProxy::dispatchSyncMessage):
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        (WebKit::ChildProcessProxy::shutDownProcess):
+        (WebKit::ChildProcessProxy::connectionWillOpen):
+        * UIProcess/ChildProcessProxy.h: Renamed from Source/WebKit2/Shared/ChildProcessProxy.h.
+        (WebKit::ChildProcessProxy::connection):
+        (WebKit::ChildProcessProxy::processIdentifier):
+        (WebKit::ChildProcessProxy::canSendMessage):
+        (WebKit::ChildProcessProxy::send):
+        (WebKit::ChildProcessProxy::sendSync):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] UI process crashes if webkit_web_view_get_tls_info is called before internal load-committed event
         https://bugs.webkit.org/show_bug.cgi?id=142375
 
