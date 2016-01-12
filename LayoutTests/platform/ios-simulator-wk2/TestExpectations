@@ -2038,6 +2038,7 @@ webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-she
 
 # eventSender.mouseDown is not implemented
 fast/loader/location-hash-user-gesture.html [ Skip ]
+imported/blink/editing/selection/selectstart-event-crash.html [ Skip ]
 
 # No touch events
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html [ Skip ]

@@ -1,5 +1,17 @@
 2016-01-12  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Null dereference loading Blink layout test editing/selection/selectstart-event-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=150210
+        <rdar://problem/23137259>
+
+        Reviewed by Brent Fulgham.
+
+        * imported/blink/editing/selection/selectstart-event-crash-expected.txt: Added.
+        * imported/blink/editing/selection/selectstart-event-crash.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2016-01-12  Jiewen Tan  <jiewen_tan@apple.com>
+
         Null dereference loading Blink layout test editing/apply-inline-style-to-element-with-no-renderer-crash.html
         https://bugs.webkit.org/show_bug.cgi?id=149287
         <rdar://problem/22746217>
