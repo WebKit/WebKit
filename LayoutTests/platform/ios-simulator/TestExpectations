@@ -2866,3 +2866,5 @@ webkit.org/b/152282 css3/filters/composited-during-transition-layertree.html [ F
 webkit.org/b/152448 js/intl-collator.html [ Failure ]
 
 webkit.org/b/152935 fast/scrolling/scroll-position-on-reload-rtl.html [ Failure ]
+
+webkit.org/b/153043 fast/picture/image-picture-loads-1x.html [ Skip ]
