@@ -1482,7 +1482,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     if (paintingDisabled())
         return rect;
 
-    if (!isRecording()) {
+    if (isRecording()) {
         WTFLogAlways("GraphicsContext::roundToDevicePixels() is not yet compatible with recording contexts.");
         return rect;
     }
