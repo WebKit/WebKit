@@ -1,3 +1,14 @@
+2016-01-11  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r194317.
+
+        Reviewed by Joseph Pecoraro.
+
+        r194317 did not contain a change log entry, did not explain the motivation, did not name a
+        reviewer, and does not seem necessary.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2016-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         keywords ("super", "delete", etc) should be valid method names
