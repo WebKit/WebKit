@@ -68,7 +68,6 @@ private:
     CSSSegmentedFontFace(CSSFontSelector*);
 
     void pruneTable();
-    bool isValid() const;
 #if ENABLE(FONT_LOAD_EVENTS)
     bool isLoading() const;
 #endif

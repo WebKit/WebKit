@@ -80,13 +80,6 @@ void CSSFontFaceSource::pruneTable()
     m_fontTable.clear();
 }
 
-bool CSSFontFaceSource::isLoaded() const
-{
-    if (m_font)
-        return m_font->isLoaded();
-    return true;
-}
-
 bool CSSFontFaceSource::isValid() const
 {
     if (m_font)
@@ -124,7 +117,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
     if (font)
         return font.release();
 
-    if (isLoaded()) {
+    if (!m_font || m_font->isLoaded()) {
         if (m_font) {
             bool hasExternalSVGFont = false;
 #if ENABLE(SVG_FONTS)

@@ -54,16 +54,6 @@ void CSSSegmentedFontFace::pruneTable()
     m_descriptionToRangesMap.clear();
 }
 
-bool CSSSegmentedFontFace::isValid() const
-{
-    // Valid if at least one font face is valid.
-    for (auto& face : m_fontFaces) {
-        if (face->isValid())
-            return true;
-    }
-    return false;
-}
-
 void CSSSegmentedFontFace::fontLoaded(CSSFontFace*)
 {
     pruneTable();
@@ -108,9 +98,6 @@ static void appendFontWithInvalidUnicodeRangeIfLoading(FontRanges& ranges, Ref<F
 
 FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescription)
 {
-    if (!isValid())
-        return FontRanges();
-
     FontTraitsMask desiredTraitsMask = fontDescription.traitsMask();
 
     auto addResult = m_descriptionToRangesMap.add(FontDescriptionKey(fontDescription), FontRanges());

@@ -59,10 +59,8 @@ public:
 
     virtual FontRanges fontRangesForFamily(const FontDescription&, const AtomicString&) override;
     virtual size_t fallbackFontCount() override;
-    virtual PassRefPtr<Font> fallbackFontAt(const FontDescription&, size_t) override;
+    virtual RefPtr<Font> fallbackFontAt(const FontDescription&, size_t) override;
     CSSSegmentedFontFace* getFontFace(const FontDescription&, const AtomicString& family);
-
-    virtual bool resolvesFamilyFor(const FontCascadeDescription&) const override;
 
     void clearDocument();
 

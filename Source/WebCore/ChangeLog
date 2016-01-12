@@ -1,3 +1,50 @@
+2016-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Cleanup in font loading code
+        https://bugs.webkit.org/show_bug.cgi?id=153023
+
+        Reviewed by Zalan Bujtas.
+
+        See detailed notes below.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::isLoaded): Deleted. Never called.
+        * css/CSSFontFace.h: Ditto.
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font): No need to use a helper
+        isLoaded() function.
+        (WebCore::CSSFontFaceSource::isLoaded): Deleted. Unnecessary.
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::cachedFont): Un-indent code.
+        * css/CSSFontSelector.cpp:
+        (WebCore::registerLocalFontFacesForFamily): constructFamilyFontFaces()
+        always returns an empty Vector. Therefore, the function of this function
+        is to perform the ancillary processing related to the case where the Faces
+        don't already exist. Renames the function and removes the empty vector
+        return.
+        (WebCore::CSSFontSelector::addFontFaceRule): Update for
+        registerLocalFontFacesForFamily().
+        (WebCore::FontFaceComparator::FontFaceComparator): Instead of using a static,
+        construct a wrapper class around the comparator.
+        (WebCore::FontFaceComparator::operator()): Ditto.
+        (WebCore::CSSFontSelector::getFontFace): Un-indent code and update to use
+        FontFaceComparator.
+        (WebCore::CSSFontSelector::fallbackFontAt): Migrate off PassRefPtr.
+        (WebCore::constructFamilyFontFaces): Deleted.
+        (WebCore::compareFontFaces): Deleted.
+        (WebCore::CSSFontSelector::resolvesFamilyFor): Deleted. Never called.
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::isValid): Deleted.
+        (WebCore::CSSSegmentedFontFace::fontRanges): Cache negative validity results.
+        * css/CSSSegmentedFontFace.h:
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::fontSelector): Use nullptr.
+        * platform/graphics/FontSelector.h:
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for custom element

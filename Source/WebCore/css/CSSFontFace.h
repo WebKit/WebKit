@@ -75,7 +75,6 @@ public:
     void addedToSegmentedFontFace(CSSSegmentedFontFace*);
     void removedFromSegmentedFontFace(CSSSegmentedFontFace*);
 
-    bool isLoaded() const;
     bool isValid() const;
 
     bool isLocalFallback() const { return m_isLocalFallback; }

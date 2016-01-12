@@ -367,7 +367,7 @@ inline bool FontCascade::isFixedPitch() const
 
 inline FontSelector* FontCascade::fontSelector() const
 {
-    return m_fonts ? m_fonts->fontSelector() : 0;
+    return m_fonts ? m_fonts->fontSelector() : nullptr;
 }
 
 inline float FontCascade::tabWidth(const Font& font, unsigned tabSize, float position) const

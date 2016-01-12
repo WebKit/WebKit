@@ -53,7 +53,6 @@ public:
     CSSFontFaceSource(const String&, CachedFont* = nullptr);
     virtual ~CSSFontFaceSource();
 
-    bool isLoaded() const;
     bool isValid() const;
 
     const AtomicString& string() const { return m_string; }
