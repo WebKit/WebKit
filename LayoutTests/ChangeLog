@@ -1,3 +1,14 @@
+2016-01-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test fast/frames/navigation-in-pagehide.html
+        https://bugs.webkit.org/show_bug.cgi?id=149303
+        <rdar://problem/22747634>
+
+        Reviewed by Brent Fulgham.
+
+        * imported/blink/fast/frames/navigation-in-pagehide-expected.txt: Added.
+        * imported/blink/fast/frames/navigation-in-pagehide.html: Added.
+
 2016-01-12  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Update RTCPeerConnection.add/removeTrack() and add test
