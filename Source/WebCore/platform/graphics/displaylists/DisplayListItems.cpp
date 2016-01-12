@@ -525,11 +525,17 @@ DrawNativeImage::DrawNativeImage(PassNativeImagePtr imagePtr, const FloatSize& i
     , m_imageSize(imageSize)
     , m_destination(destRect)
     , m_srcRect(srcRect)
+#if USE(CG)
     , m_op(op)
     , m_blendMode(blendMode)
+#endif
     , m_orientation(orientation)
 {
+#if !USE(CG)
     UNUSED_PARAM(imagePtr);
+    UNUSED_PARAM(op);
+    UNUSED_PARAM(blendMode);
+#endif
 }
 
 void DrawNativeImage::apply(GraphicsContext& context) const

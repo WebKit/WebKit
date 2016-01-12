@@ -681,8 +681,10 @@ private:
     FloatSize m_imageSize;
     FloatRect m_destination;
     FloatRect m_srcRect;
+#if USE(CG)
     CompositeOperator m_op;
     BlendMode m_blendMode;
+#endif
     ImageOrientation m_orientation;
 };
 #endif

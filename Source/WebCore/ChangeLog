@@ -1,3 +1,14 @@
+2016-01-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix unused-private-field warnings in DisplayListItems.h
+        https://bugs.webkit.org/show_bug.cgi?id=153012
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawNativeImage::DrawNativeImage):
+        * platform/graphics/displaylists/DisplayListItems.h:
+
 2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix isRecording condition logic in GraphicsContext::roundToDevicePixels after r194816.
