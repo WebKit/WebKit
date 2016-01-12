@@ -1,5 +1,66 @@
 2016-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Storage tab navigation bar should fit on a single line
+        https://bugs.webkit.org/show_bug.cgi?id=152473
+
+        Reviewed by Timothy Hatcher.
+
+        The wrapping of the navigation bar on the Storage tab was caused by the
+        fact that Sidebar.js used a minimum width of 200px, regardless of the
+        content within the sidebar (unless it had a NavigationBar). Logic has
+        been added that causes the sidebar to use the selected panel's own
+        minimum width calculation if it is greater than 200px.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.get minimumWidth):
+
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WebInspector.MultipleScopeBarItem.prototype.set selectedScopeBarItem):
+        (WebInspector.MultipleScopeBarItem.prototype.displaySelectedItem):
+        Sets the displayed text to the currently selected item.
+
+        (WebInspector.MultipleScopeBarItem.prototype.displayWidestItem):
+        Sets the displayed text to the widest (pixel wise) item in the select element.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar.prototype._calculateMinimumWidth):
+        Now uses NavigationItem.prototype.get minimumWidth.
+
+        * UserInterface/Views/NavitationItem.js:
+        (WebInspector.NavitationItem.prototype.get minimumWidth):
+        Returns the element's realOffsetWidth.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype.get minimumWidth):
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.get minimumWidth):
+
+        * UserInterface/Views/ScopeBar.js:
+        (WebInspector.ScopeBar):
+        (WebInspector.ScopeBar.prototype.get minimumWidth):
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.set selectedSidebarPanel):
+        (WebInspector.Sidebar.prototype.get minimumWidth):
+        (WebInspector.Sidebar.prototype.set width):
+        (WebInspector.Sidebar.prototype.set collapsed):
+        (WebInspector.Sidebar.prototype._recalculateWidth):
+        Whenever the sidebar changes (e.g. tab change, sidebar becomes
+        visible/hidden, etc.), a width recalculation is necessary to ensure
+        that the navigation bar never wraps.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel.prototype.get minimumWidth):
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel.prototype.get minimumWidth):
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.get minimumWidth):
+
+2016-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Make Timelines view also remember sort order
         https://bugs.webkit.org/show_bug.cgi?id=152811
 

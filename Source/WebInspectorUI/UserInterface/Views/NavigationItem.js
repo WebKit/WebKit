@@ -60,6 +60,11 @@ WebInspector.NavigationItem = class NavigationItem extends WebInspector.Object
         return this._parentNavigationBar;
     }
 
+    get minimumWidth()
+    {
+        return this._element.realOffsetWidth;
+    }
+
     updateLayout(expandOnly)
     {
         // Implemented by subclasses.

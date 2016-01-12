@@ -81,6 +81,12 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
         return this.parentView;
     }
 
+    get minimumWidth()
+    {
+        // Implemented by subclasses.
+        return 0;
+    }
+
     show()
     {
         if (!this.parentSidebar)

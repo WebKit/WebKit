@@ -35,10 +35,34 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
         this._defaultItem = defaultItem;
         this._shouldGroupNonExclusiveItems = shouldGroupNonExclusiveItems || false;
 
+        this._minimumWidth = 0;
+
         this._populate();
     }
 
     // Public
+
+    get minimumWidth()
+    {
+        if (!this._minimumWidth) {
+            // If a "display: flex;" element is too small for its contents and
+            // has "flex-wrap: wrap;" set as well, this will cause the contents
+            // to wrap (potentially overflowing), thus preventing a proper
+            // measurement of the width of the element. Removing the "flex-wrap"
+            // property will ensure that the contents are rendered on one line.
+            this.element.style.flexWrap = "initial !important";
+
+            if (this._multipleItem)
+                this._multipleItem.displayWidestItem();
+
+            this._minimumWidth = this.element.realOffsetWidth;
+            this.element.style.flexWrap = null;
+
+            if (this._multipleItem)
+                this._multipleItem.displaySelectedItem();
+        }
+        return this._minimumWidth;
+    }
 
     get defaultItem()
     {

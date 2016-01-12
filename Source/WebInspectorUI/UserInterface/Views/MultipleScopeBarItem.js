@@ -133,7 +133,7 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
         this._selectElement.selectedIndex = this._scopeBarItems.indexOf(this._selectedScopeBarItem);
 
         if (this._selectedScopeBarItem) {
-            this._titleElement.textContent = this._selectedScopeBarItem.label;
+            this.displaySelectedItem();
             this._selectedScopeBarItem.selected = true;
         }
 
@@ -141,6 +141,25 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
         this.dispatchEventToListeners(WebInspector.ScopeBarItem.Event.SelectionChanged, {withModifier});
 
         this._ignoreItemSelectedEvent = false;
+    }
+
+    displaySelectedItem()
+    {
+        this._titleElement.textContent = this._selectedScopeBarItem.label;
+    }
+
+    displayWidestItem()
+    {
+        let widestLabel = null;
+        let widestSize = 0;
+        for (let option of Array.from(this._selectElement.options)) {
+            this._titleElement.textContent = option.label;
+            if (this._titleElement.realOffsetWidth > widestSize) {
+                widestSize = this._titleElement.realOffsetWidth;
+                widestLabel = option.label;
+            }
+        }
+        this._titleElement.textContent = widestLabel;
     }
 
     // Private

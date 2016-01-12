@@ -71,6 +71,11 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
     // Public
 
+    get minimumWidth()
+    {
+        return this._navigationBar.minimumWidth;
+    }
+
     closed()
     {
         super.closed();

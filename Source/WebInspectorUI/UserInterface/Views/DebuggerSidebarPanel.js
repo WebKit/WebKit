@@ -164,6 +164,11 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     // Public
 
+    get minimumWidth()
+    {
+        return this._navigationBar.minimumWidth;
+    }
+
     closed()
     {
         super.closed();

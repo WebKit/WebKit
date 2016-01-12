@@ -106,6 +106,11 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
     // Public
 
+    get minimumWidth()
+    {
+        return this._navigationBar.minimumWidth;
+    }
+
     showDefaultContentView()
     {
         // Don't show anything by default. It doesn't make a whole lot of sense here.

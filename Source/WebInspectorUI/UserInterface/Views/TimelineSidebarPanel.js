@@ -218,6 +218,13 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     // Public
 
+    get minimumWidth()
+    {
+        if (this._viewModeNavigationBar)
+            return Math.max(this._replayNavigationBar.minimumWidth, this._viewModeNavigationBar.minimumWidth);
+        return this._replayNavigationBar.minimumWidth;
+    }
+
     shown()
     {
         super.shown();

@@ -361,12 +361,13 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.View
         if (!wasCollapsed)
             this.element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
 
-        var totalItemWidth = 0;
-        for (var i = 0; i < this._navigationItems.length; ++i) {
+        let totalItemWidth = 0;
+        for (let item of this._navigationItems) {
             // Skip flexible space items since they can take up no space at the minimum width.
-            if (this._navigationItems[i] instanceof WebInspector.FlexibleSpaceNavigationItem)
+            if (item instanceof WebInspector.FlexibleSpaceNavigationItem)
                 continue;
-            totalItemWidth += this._navigationItems[i].element.realOffsetWidth;
+
+            totalItemWidth += item.minimumWidth;
         }
 
         // Remove the collapsed style class if we were not collapsed before.

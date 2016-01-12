@@ -75,6 +75,11 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
     // Public
 
+    get minimumWidth()
+    {
+        return this._navigationBar.minimumWidth;
+    }
+
     closed()
     {
         super.closed();
