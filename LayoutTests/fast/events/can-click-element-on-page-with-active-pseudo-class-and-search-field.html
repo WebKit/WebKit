@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+body:active {
+    /* Must be non-empty. */
+    -webkit-tap-highlight-color: yellow;
+}
+</style>
+<script>
+window.jsTestIsAsync = true;
+
+function notifyPass()
+{
+    testPassed("clicked blue square");
+
+    var testContainer = document.getElementById("test-container");
+    testContainer.parentNode.removeChild(testContainer);
+    finishJSTest();
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+    var iframe = document.getElementById("iframe");
+    var square = iframe.contentDocument.getElementById("square");
+    var x = iframe.offsetLeft + square.offsetLeft + Math.floor(square.offsetWidth / 2);
+    var y = iframe.offsetTop + square.offsetTop + Math.floor(square.offsetHeight / 2);
+    if (testRunner.runUIScript && window.TouchEvent)
+        testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + "); })()");
+    else if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="test-container">
+    <p><input type="search" placeholder="Do not click me"></p>
+    <iframe id="iframe" width="128" height="128" onload="runTest()" srcdoc='
+        <style>
+            body {
+                margin: 0;
+                padding 0;
+            }
+            #square {
+                -webkit-box-align: center;
+                -webkit-box-pack: center;
+                -webkit-user-select: none;
+                background-color: blue;
+                color: white;
+                cursor: pointer;
+                display: -webkit-box;
+                height: 128px;
+                width: 128px;
+            }
+        </style>
+        <div id="square" ontouchstart="" onclick="window.parent.notifyPass()">Click me</div><!-- Intentionally empty attribute ontouchstart. -->
+    '></iframe>
+</div>
+<div id="console"></div>
+<script>
+description("Test that an element, with an onclick handler and an empty ontouchstart attribute, in an &lt;iframe&gt; on a page with a search field and specifies an <code>:active</code> pseudo-class for &lt;body&gt; receives a DOM click event when tapped. To run this test by hand, click the blue square below.");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
