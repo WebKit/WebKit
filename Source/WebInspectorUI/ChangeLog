@@ -1,3 +1,16 @@
+2016-01-12  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: creating a gradient in the Visual sidebar causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=153003
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/VisualStyleBackgroundPicker.js:
+        (WebInspector.VisualStyleBackgroundPicker.prototype._gradientSwatchClicked):
+        If a gradient does not already exist when the swatch is clicked, create a basic
+        gradient using the current type and two "transparent" color stops (a minimum of
+        two color stops are needed for a valid gradient).
+
 2016-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Storage tab navigation bar should fit on a single line
