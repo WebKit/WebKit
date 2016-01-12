@@ -1,3 +1,19 @@
+2016-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        keywords ("super", "delete", etc) should be valid method names
+        https://bugs.webkit.org/show_bug.cgi?id=144281
+
+        Reviewed by Ryosuke Niwa.
+
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-syntax-super.js:
+        Update the test for the correct expected result.
+
+        * js/keyword-method-names-expected.txt: Added.
+        * js/keyword-method-names.html: Added.
+        * js/script-tests/keyword-method-names.js: Added.
+        Add tests to cover parsing allows keywords in method name syntax.
+
 2016-01-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/intversion-long-queue.html fails.

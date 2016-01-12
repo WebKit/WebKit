@@ -86,7 +86,7 @@ shouldBe('(new Derived).baseMethodInGetterSetter', '(new Base).baseMethod');
 shouldBe('(new Derived).baseMethodInGetterSetter = 1; valueInSetter', '(new Base).baseMethod');
 shouldBe('Derived.staticMethod()', '"base3"');
 shouldBe('(new SecondDerived).chainMethod().toString()', '["base", "derived", "secondDerived"].toString()');
-shouldThrow('x = class extends Base { constructor() { super(); } super() {} }', '"SyntaxError: Unexpected keyword \'super\'"');
+shouldNotThrow('x = class extends Base { constructor() { super(); } super() {} }');
 shouldThrow('x = class extends Base { constructor() { super(); } method() { super() } }',
     '"SyntaxError: Cannot call super() outside of a class constructor."');
 shouldThrow('x = class extends Base { constructor() { super(); } method() { super } }', '"SyntaxError: Cannot reference super."');

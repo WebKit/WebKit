@@ -13,7 +13,7 @@ PASS (new Derived).baseMethodInGetterSetter:::(new Base).baseMethod
 PASS (new Derived).baseMethodInGetterSetter = 1; valueInSetter:::(new Base).baseMethod
 PASS Derived.staticMethod():::"base3"
 PASS (new SecondDerived).chainMethod().toString():::["base", "derived", "secondDerived"].toString()
-PASS x = class extends Base { constructor() { super(); } super() {} }:::SyntaxError: Unexpected keyword 'super'
+PASS x = class extends Base { constructor() { super(); } super() {} }
 PASS x = class extends Base { constructor() { super(); } method() { super() } }:::SyntaxError: Cannot call super() outside of a class constructor.
 PASS x = class extends Base { constructor() { super(); } method() { super } }:::SyntaxError: Cannot reference super.
 PASS x = class extends Base { constructor() { super(); } method() { return new super } }:::SyntaxError: Cannot use new with super.

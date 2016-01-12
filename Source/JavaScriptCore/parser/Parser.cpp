@@ -2148,9 +2148,16 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         unsigned methodStart = tokenStart();
 
         // For backwards compatibility, "static" is a non-reserved keyword in non-strict mode.
-        bool isStaticMethod = match(RESERVED_IF_STRICT) && *m_token.m_data.ident == m_vm->propertyNames->staticKeyword;
-        if (isStaticMethod)
+        bool isStaticMethod = false;
+        if (match(RESERVED_IF_STRICT) && *m_token.m_data.ident == m_vm->propertyNames->staticKeyword) {
+            auto savePoint = createSavePoint();
             next();
+            if (match(OPENPAREN)) {
+                // Reparse "static()" as a method named "static".
+                restoreSavePoint(savePoint);
+            } else
+                isStaticMethod = true;
+        }
 
         // FIXME: Figure out a way to share more code with parseProperty.
         const CommonIdentifiers& propertyNames = *m_vm->propertyNames;
@@ -2164,6 +2171,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
             isGenerator = true;
 #endif
         switch (m_token.m_type) {
+        namedKeyword:
         case STRING:
             ident = m_token.m_data.ident;
             ASSERT(ident);
@@ -2173,7 +2181,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
             ident = m_token.m_data.ident;
             ASSERT(ident);
             next();
-            if (!isGenerator && (match(IDENT) || match(STRING) || match(DOUBLE) || match(INTEGER) || match(OPENBRACKET))) {
+            if (!isGenerator && (matchIdentifierOrKeyword() || match(STRING) || match(DOUBLE) || match(INTEGER) || match(OPENBRACKET))) {
                 isGetter = *ident == propertyNames.get;
                 isSetter = *ident == propertyNames.set;
             }
@@ -2191,6 +2199,8 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
             handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
             break;
         default:
+            if (m_token.m_type & KeywordTokenFlag)
+                goto namedKeyword;
             failDueToUnexpectedToken();
         }
 
@@ -3200,7 +3210,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
 
     JSTokenLocation location(tokenLocation());
 
-    if (matchSpecIdentifier() || match(STRING)) {
+    if (matchSpecIdentifier() || match(STRING) || m_token.m_type & KeywordTokenFlag) {
         stringPropertyName = m_token.m_data.ident;
         semanticFailIfTrue(superBinding == SuperBinding::Needed && *stringPropertyName == m_vm->propertyNames->prototype,
             "Cannot declare a static method named 'prototype'");
