@@ -133,7 +133,24 @@ enum class DynamicViewportUpdateMode {
     ResizingWithDocumentHidden,
 };
 
+#if __has_include(<WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>)
+#import <WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>
+#else
+
+namespace WebKit {
+
+#if USE(IOSURFACE)
+static WebCore::IOSurface::Format bufferFormat(bool)
+{
+    return WebCore::IOSurface::Format::RGBA;
+}
+#endif // USE(IOSURFACE)
+
+} // namespace WebKit
+
 #endif
+
+#endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)
 #import "WKViewInternal.h"
@@ -1136,8 +1153,19 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
 
 #if USE(IOSURFACE)
-    auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::ColorSpaceSRGB);
+    WebCore::IOSurface::Format snapshotFormat = WebKit::bufferFormat(true /* is opaque */);
+    auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::ColorSpaceSRGB, snapshotFormat);
     CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
+
+    WebCore::IOSurface::Format compressedFormat = WebCore::IOSurface::Format::YUV422;
+    if (WebCore::IOSurface::allowConversionFromFormatToFormat(snapshotFormat, compressedFormat)) {
+        RefPtr<WebKit::ViewSnapshot> viewSnapshot = WebKit::ViewSnapshot::create(nullptr);
+        WebCore::IOSurface::convertToFormat(WTF::move(surface), WebCore::IOSurface::Format::YUV422, [viewSnapshot](std::unique_ptr<WebCore::IOSurface> convertedSurface) {
+            viewSnapshot->setSurface(WTF::move(convertedSurface));
+        });
+
+        return viewSnapshot;
+    }
 
     return WebKit::ViewSnapshot::create(WTF::move(surface));
 #else
