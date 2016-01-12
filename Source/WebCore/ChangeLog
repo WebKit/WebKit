@@ -1,3 +1,38 @@
+2016-01-12  Dave Hyatt  <hyatt@apple.com>
+
+        Avoid downloading the wrong image for <picture> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=153027
+
+        Reviewed by Dean Jackson.
+
+        I was unable to write a reliable test for this feature (I welcome suggestions regarding
+        how this could be tested).
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::~HTMLImageElement):
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        (WebCore::HTMLImageElement::insertedInto):
+        (WebCore::HTMLImageElement::removedFrom):
+        (WebCore::HTMLImageElement::pictureNode):
+        (WebCore::HTMLImageElement::setPictureNode):
+        * html/HTMLImageElement.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+
+        Images that are built underneath a <picture> element are now connected
+        to that picture element via a setPictureNode call from the parser. This
+        ensures that the correct <source> elements are examined before checking the image.
+
+        This connection between images and their picture owners is handled using a static
+        HashMap in HTMLImageElement. This connection is made both from the parser and from
+        DOM insertions, and the map is queried now instead of looking directly at the
+        image's parentNode().
+
+        Also note the change to pass the document element's computed style in for media
+        query evaluation. Just as with the preload scanner, the image's style can't be
+        used as it has not been determined yet.
+
 2016-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Cleanup in font loading code
