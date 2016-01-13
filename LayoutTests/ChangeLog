@@ -1,5 +1,18 @@
 2016-01-13  Daniel Bates  <dabates@apple.com>
 
+        [XSS Auditor] Do not include trailing comment characters in JavaScript snippets
+        https://bugs.webkit.org/show_bug.cgi?id=152873
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink (patch by Tom Sepez <tsepez@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?view=rev&revision=169967>
+
+        * http/tests/security/xssAuditor/script-tag-with-injected-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-injected-comment.html: Added.
+
+2016-01-13  Daniel Bates  <dabates@apple.com>
+
         [XSS Auditor] Add test when XSS payload is in the path portion of the URL
         https://bugs.webkit.org/show_bug.cgi?id=152871
 
