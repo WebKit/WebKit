@@ -1,5 +1,26 @@
 2016-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r194745. rdar://problem/24101258
+
+    2016-01-07  Jer Noble  <jer.noble@apple.com>
+
+            [EME] Secure stop information not written to disk
+            https://bugs.webkit.org/show_bug.cgi?id=152855
+
+            Reviewed by Eric Carlson.
+
+            Two separate bugs for the two APIs provided by AVFoundation. For the AVStreamSession path,
+            we were not calling the lazy-creation function which creates the AVStreamSession, and were
+            rather accessing the ivar directly. For the AVContentKeySession, we were not creating the
+            intermediate paths containing the secure stop database.
+
+            * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+            (WebCore::CDMSessionAVContentKeySession::contentKeySession):
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession):
+
+2016-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r194910. rdar://problem/24101255
 
     2016-01-11  Matthew Hanson  <matthew_hanson@apple.com>
