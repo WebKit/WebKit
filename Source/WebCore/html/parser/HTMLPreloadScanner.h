@@ -41,6 +41,8 @@ public:
     void scan(const HTMLToken&, PreloadRequestStream&, Document&);
 
     void setPredictedBaseElementURL(const URL& url) { m_predictedBaseElementURL = url; }
+    
+    bool inPicture() { return !m_pictureSourceState.isEmpty(); }
 
 private:
     enum class TagId {
@@ -51,12 +53,14 @@ private:
         Link,
         Script,
         Meta,
+        Source,
 
         // These tags are not scanned by the StartTagScanner.
         Unknown,
         Style,
         Base,
         Template,
+        Picture
     };
 
     class StartTagScanner;
@@ -73,6 +77,9 @@ private:
 
     URL m_predictedBaseElementURL;
     bool m_inStyle { false };
+    
+    Vector<bool> m_pictureSourceState;
+
 #if ENABLE(TEMPLATE_ELEMENT)
     unsigned m_templateCount { 0 };
 #endif
