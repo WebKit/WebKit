@@ -1152,6 +1152,8 @@
 		43422A631C158E6D00E2EB98 /* B3ConstFloatValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43422A611C15871B00E2EB98 /* B3ConstFloatValue.h */; };
 		43422A661C16267500E2EB98 /* B3ReduceDoubleToFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43422A641C16221E00E2EB98 /* B3ReduceDoubleToFloat.cpp */; };
 		43422A671C16267800E2EB98 /* B3ReduceDoubleToFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 43422A651C16221E00E2EB98 /* B3ReduceDoubleToFloat.h */; };
+		436E54531C468E7400B5AF73 /* B3LegalizeMemoryOffsets.h in Headers */ = {isa = PBXBuildFile; fileRef = 436E54521C468E5F00B5AF73 /* B3LegalizeMemoryOffsets.h */; };
+		436E54541C468E7700B5AF73 /* B3LegalizeMemoryOffsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436E54511C468E5F00B5AF73 /* B3LegalizeMemoryOffsets.cpp */; };
 		43AB26C61C1A535900D82AE6 /* B3MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 43AB26C51C1A52F700D82AE6 /* B3MathExtras.h */; };
 		43AB26C71C1A535C00D82AE6 /* B3MathExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43AB26C41C1A52F700D82AE6 /* B3MathExtras.cpp */; };
 		43C392AB1C3BEB0500241F53 /* AssemblerCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3260,6 +3262,8 @@
 		43422A611C15871B00E2EB98 /* B3ConstFloatValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ConstFloatValue.h; path = b3/B3ConstFloatValue.h; sourceTree = "<group>"; };
 		43422A641C16221E00E2EB98 /* B3ReduceDoubleToFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ReduceDoubleToFloat.cpp; path = b3/B3ReduceDoubleToFloat.cpp; sourceTree = "<group>"; };
 		43422A651C16221E00E2EB98 /* B3ReduceDoubleToFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ReduceDoubleToFloat.h; path = b3/B3ReduceDoubleToFloat.h; sourceTree = "<group>"; };
+		436E54511C468E5F00B5AF73 /* B3LegalizeMemoryOffsets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3LegalizeMemoryOffsets.cpp; path = b3/B3LegalizeMemoryOffsets.cpp; sourceTree = "<group>"; };
+		436E54521C468E5F00B5AF73 /* B3LegalizeMemoryOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3LegalizeMemoryOffsets.h; path = b3/B3LegalizeMemoryOffsets.h; sourceTree = "<group>"; };
 		43AB26C41C1A52F700D82AE6 /* B3MathExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3MathExtras.cpp; path = b3/B3MathExtras.cpp; sourceTree = "<group>"; };
 		43AB26C51C1A52F700D82AE6 /* B3MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3MathExtras.h; path = b3/B3MathExtras.h; sourceTree = "<group>"; };
 		43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerCommon.h; sourceTree = "<group>"; };
@@ -3372,8 +3376,8 @@
 		7013CA8A1B491A9400CAE613 /* JSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSJob.h; sourceTree = "<group>"; };
 		7035587C1C418419004BD7BF /* MapPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MapPrototype.js; sourceTree = "<group>"; };
 		7035587D1C418419004BD7BF /* SetPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SetPrototype.js; sourceTree = "<group>"; };
-		7035587E1C418458004BD7BF /* MapPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapPrototype.lut.h; path = MapPrototype.lut.h; sourceTree = "<group>"; };
-		7035587F1C418458004BD7BF /* SetPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetPrototype.lut.h; path = SetPrototype.lut.h; sourceTree = "<group>"; };
+		7035587E1C418458004BD7BF /* MapPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapPrototype.lut.h; sourceTree = "<group>"; };
+		7035587F1C418458004BD7BF /* SetPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetPrototype.lut.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		705B41A31A6E501E00716757 /* Symbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Symbol.cpp; sourceTree = "<group>"; };
 		705B41A41A6E501E00716757 /* Symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Symbol.h; sourceTree = "<group>"; };
@@ -4710,6 +4714,8 @@
 				0FEC85B41BE1462F0080FF74 /* B3InsertionSet.cpp */,
 				0FEC85B51BE1462F0080FF74 /* B3InsertionSet.h */,
 				0FEC85B61BE1462F0080FF74 /* B3InsertionSetInlines.h */,
+				436E54511C468E5F00B5AF73 /* B3LegalizeMemoryOffsets.cpp */,
+				436E54521C468E5F00B5AF73 /* B3LegalizeMemoryOffsets.h */,
 				0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */,
 				0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */,
 				4319DA011C1BE3C1001D260B /* B3LowerMacrosAfterOptimizations.cpp */,
@@ -7937,6 +7943,7 @@
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
+				436E54531C468E7400B5AF73 /* B3LegalizeMemoryOffsets.h in Headers */,
 				2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */,
 				0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */,
 				C2FE18A416BAEC4000AF3061 /* StructureRareData.h in Headers */,
@@ -8614,6 +8621,7 @@
 				0FEC85091BDACDAC0080FF74 /* B3Common.cpp in Sources */,
 				0FEC850B1BDACDAC0080FF74 /* B3Commutativity.cpp in Sources */,
 				0FEC850D1BDACDAC0080FF74 /* B3Const32Value.cpp in Sources */,
+				436E54541C468E7700B5AF73 /* B3LegalizeMemoryOffsets.cpp in Sources */,
 				0FEC850F1BDACDAC0080FF74 /* B3Const64Value.cpp in Sources */,
 				0FEC85111BDACDAC0080FF74 /* B3ConstDoubleValue.cpp in Sources */,
 				0FEC85131BDACDAC0080FF74 /* B3ControlValue.cpp in Sources */,
