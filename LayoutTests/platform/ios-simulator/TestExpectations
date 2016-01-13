@@ -2845,8 +2845,8 @@ webkit.org/b/152992 http/tests/loading/preload-picture-nested.html [ Skip ]
 webkit.org/b/152992 http/tests/loading/preload-picture-sizes.html [ Skip ]
 webkit.org/b/152140 fast/picture/viewport-resize.html [ Skip ]
 
-webkit.org/b/152279 http/tests/misc/large-js-program.php [ Pass Crash ]
-webkit.org/b/152279 js/dom/line-column-numbers.html [ Pass Crash ]
+webkit.org/b/152279 http/tests/misc/large-js-program.php [ Skip ]
+webkit.org/b/152279 js/dom/line-column-numbers.html [ Skip ]
 
 webkit.org/b/152137 fast/media/mq-any-hover-matchMedia.html [ Failure ]
 webkit.org/b/152137 fast/media/mq-any-hover-styling.html [ Failure ]
