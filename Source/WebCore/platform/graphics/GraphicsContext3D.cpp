@@ -62,6 +62,12 @@ GraphicsContext3D::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum
         case GraphicsContext3D::LUMINANCE_ALPHA:
             dstFormat = GraphicsContext3D::DataFormatRA8;
             break;
+        case GraphicsContext3D::SRGB:
+            dstFormat = GraphicsContext3D::DataFormatRGB8;
+            break;
+        case GraphicsContext3D::SRGB_ALPHA:
+            dstFormat = GraphicsContext3D::DataFormatRGBA8;
+            break;
         default:
             ASSERT_NOT_REACHED();
         }
@@ -92,6 +98,12 @@ GraphicsContext3D::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum
         case GraphicsContext3D::LUMINANCE_ALPHA:
             dstFormat = GraphicsContext3D::DataFormatRA16F;
             break;
+        case GraphicsContext3D::SRGB:
+            dstFormat = GraphicsContext3D::DataFormatRGB16F;
+            break;
+        case GraphicsContext3D::SRGB_ALPHA:
+            dstFormat = GraphicsContext3D::DataFormatRGBA16F;
+            break;
         default:
             ASSERT_NOT_REACHED();
         }
@@ -112,6 +124,12 @@ GraphicsContext3D::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum
             break;
         case GraphicsContext3D::LUMINANCE_ALPHA:
             dstFormat = GraphicsContext3D::DataFormatRA32F;
+            break;
+        case GraphicsContext3D::SRGB:
+            dstFormat = GraphicsContext3D::DataFormatRGB32F;
+            break;
+        case GraphicsContext3D::SRGB_ALPHA:
+            dstFormat = GraphicsContext3D::DataFormatRGBA32F;
             break;
         default:
             ASSERT_NOT_REACHED();
