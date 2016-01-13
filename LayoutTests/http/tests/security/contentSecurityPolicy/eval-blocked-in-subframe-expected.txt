@@ -34,4 +34,11 @@ CONSOLE MESSAGE: line 46: EvalError: Refused to evaluate a string as JavaScript 
 
 CONSOLE MESSAGE: line 47: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
 
+Tests that eval() is blocked in a subframe that disallows eval() when the parent frame allows eval().
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
 
