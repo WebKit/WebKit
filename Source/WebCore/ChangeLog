@@ -1,5 +1,33 @@
 2016-01-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191180. rdar://problem/24154421
+
+    2015-10-16  Chris Dumez  <cdumez@apple.com>
+
+            HTMLPreloadScanner should preload iframes
+            https://bugs.webkit.org/show_bug.cgi?id=150097
+            <rdar://problem/23094475>
+
+            Reviewed by Antti Koivisto.
+
+            HTMLPreloadScanner should preload iframes to decrease page load time.
+
+            Tests:
+            - fast/preloader/frame-src.html
+            - http/tests/loading/preload-no-store-frame-src.html
+
+            * html/parser/HTMLPreloadScanner.cpp:
+            (WebCore::TokenPreloadScanner::tagIdFor):
+            (WebCore::TokenPreloadScanner::initiatorFor):
+            (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest):
+            (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+            (WebCore::TokenPreloadScanner::StartTagScanner::resourceType):
+            (WebCore::TokenPreloadScanner::StartTagScanner::setUrlToLoad): Deleted.
+            (WebCore::TokenPreloadScanner::StartTagScanner::charset): Deleted.
+            * html/parser/HTMLPreloadScanner.h:
+
+2016-01-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190641. rdar://problem/24154421
 
     2015-10-06  Chris Dumez  <cdumez@apple.com>
