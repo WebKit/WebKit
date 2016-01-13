@@ -240,7 +240,7 @@ static CGSize dilationSizeForTextColor(const Color& color)
 }
 #endif
 
-void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint) const
+void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)
 {
     const FontPlatformData& platformData = font.platformData();
     if (!platformData.size())
@@ -252,7 +252,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     bool changeFontSmoothing;
     bool matchAntialiasedAndSmoothedFonts = context.antialiasedFontDilationEnabled();
     
-    switch (fontDescription().fontSmoothing()) {
+    switch (smoothingMode) {
     case Antialiased: {
         context.setShouldAntialias(true);
         shouldSmoothFonts = false;

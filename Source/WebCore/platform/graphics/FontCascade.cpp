@@ -28,6 +28,7 @@
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "GlyphBuffer.h"
+#include "GraphicsContext.h"
 #include "LayoutRect.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
@@ -1342,7 +1343,7 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const TextRun& run, 
                 renderingContext->drawSVGGlyphs(context, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
             else
 #endif
-                drawGlyphs(context, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+                context.drawGlyphs(*this, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 
             lastFrom = nextGlyph;
             fontData = nextFontData;
@@ -1361,7 +1362,7 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const TextRun& run, 
     else
 #endif
     {
-        drawGlyphs(context, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+        context.drawGlyphs(*this, *fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
         point.setX(nextX);
     }
 }

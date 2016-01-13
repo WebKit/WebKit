@@ -1,5 +1,25 @@
 2016-01-13  Zalan Bujtas  <zalan@apple.com>
 
+        Get text drawing working with display lists.
+        https://bugs.webkit.org/show_bug.cgi?id=152957
+
+        Reviewed by Simon Fraser.
+
+        This patch enables text drawing for display lists.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::drawGlyphBuffer):
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawGlyphs):
+        (WebCore::GraphicsContext::drawText): Deleted.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawGlyphs::apply):
+
+2016-01-13  Zalan Bujtas  <zalan@apple.com>
+
         Simple line layout: Add support for word-break property.
         https://bugs.webkit.org/show_bug.cgi?id=153054
 

@@ -682,11 +682,7 @@ float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, con
     if (paintingDisabled())
         return 0;
 
-    if (isRecording()) {
-        // FIXME: Text drawing with display lists TBD.
-        return 0;
-    }
-
+    // Display list recording for text content is done at glyphs level. See GraphicsContext::drawGlyphs.
     return font.drawText(*this, run, point, from, to);
 }
 
@@ -700,7 +696,7 @@ void GraphicsContext::drawGlyphs(const FontCascade& fontCascade, const Font& fon
         return;
     }
 
-    fontCascade.drawGlyphs(*this, font, buffer, from, numGlyphs, point);
+    fontCascade.drawGlyphs(*this, font, buffer, from, numGlyphs, point, fontCascade.fontDescription().fontSmoothing());
 }
 
 void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)

@@ -98,7 +98,7 @@ static void drawGlyphsShadow(GraphicsContext& graphicsContext, const FloatPoint&
 }
 
 void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const GlyphBuffer& glyphBuffer,
-    int from, int numGlyphs, const FloatPoint& point) const
+    int from, int numGlyphs, const FloatPoint& point, FontSmoothingMode)
 {
     if (!font.platformData().size())
         return;

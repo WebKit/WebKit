@@ -397,10 +397,9 @@ inline GlyphBuffer DrawGlyphs::generateGlyphBuffer() const
     return result;
 }
 
-void DrawGlyphs::apply(GraphicsContext&) const
+void DrawGlyphs::apply(GraphicsContext& context) const
 {
-    // FIXME: implement.
-    UNUSED_PARAM(m_smoothingMode);
+    FontCascade::drawGlyphs(context, m_font, generateGlyphBuffer(), 0, m_glyphs.size(), anchorPoint(), m_smoothingMode);
 }
 
 void DrawGlyphs::computeBounds()
