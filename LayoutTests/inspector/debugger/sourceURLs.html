@@ -191,9 +191,9 @@ function test()
     });
 
     addValidTestCase({
-        description: "Multiple SourceURLs will return the first.",
-        expression: "eval('//# sourceURL=test9.js\\n//# sourceURL=second.js')",
-        expected: "test9.js",
+        description: "Multiple SourceURLs will return the second.",
+        expression: "eval('//# sourceURL=first.js\\n//# sourceURL=second.js')",
+        expected: "second.js",
     });
 
     InspectorProtocol.sendCommand("Debugger.enable", {});

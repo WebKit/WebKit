@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 1: 
-CONSOLE MESSAGE: line 1: apple,orange,banana
-CONSOLE MESSAGE: line 1: [object Object]
-CONSOLE MESSAGE: line 1: John,Smith,Jane,Doe,Emily,Jones
-CONSOLE MESSAGE: line 1: [object Object],[object Object],[object Object]
-CONSOLE MESSAGE: line 1: [object Object],[object Object],[object Object]
+CONSOLE MESSAGE: line 3: 
+CONSOLE MESSAGE: line 3: apple,orange,banana
+CONSOLE MESSAGE: line 3: [object Object]
+CONSOLE MESSAGE: line 3: John,Smith,Jane,Doe,Emily,Jones
+CONSOLE MESSAGE: line 3: [object Object],[object Object],[object Object]
+CONSOLE MESSAGE: line 3: [object Object],[object Object],[object Object]
 
 STEP: console.table([])
 {
@@ -12,7 +12,7 @@ STEP: console.table([])
   "_messageText": "",
   "_type": "table",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -46,7 +46,7 @@ STEP: console.table(['apple', 'orange', 'banana'])
   "_messageText": "apple,orange,banana",
   "_type": "table",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -96,7 +96,7 @@ STEP: console.table({firstName: 'John', lastName: 'Smith'})
   "_messageText": "[object Object]",
   "_type": "table",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -137,7 +137,7 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
   "_messageText": "John,Smith,Jane,Doe,Emily,Jones",
   "_type": "table",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -250,7 +250,7 @@ STEP: console.table([john, jane, emily])
   "_messageText": "[object Object],[object Object],[object Object]",
   "_type": "table",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -354,7 +354,7 @@ STEP: console.table([john, jane, emily], ['firstName'])
   "_messageText": "[object Object],[object Object],[object Object]",
   "_type": "table",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [

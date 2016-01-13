@@ -1,3 +1,16 @@
+2016-01-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspector should use the last sourceURL / sourceMappingURL directive
+        https://bugs.webkit.org/show_bug.cgi?id=153072
+        <rdar://problem/24168312>
+
+        Reviewed by Timothy Hatcher.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseCommentDirective):
+        Just keep overwriting the member variable so we end up with
+        the last directive value.
+
 2016-01-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194969.

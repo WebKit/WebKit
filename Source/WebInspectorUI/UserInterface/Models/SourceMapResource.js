@@ -83,7 +83,7 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
             // Force inline content to be asynchronous to match the expected load pattern.
             // FIXME: We don't know the MIME-type for inline content. Guess by analyzing the content?
             // Returns a promise.
-            return sourceMapResourceLoaded.call(this, {content: inlineContent, mimeType: this.mimeType, status: 200});
+            return sourceMapResourceLoaded.call(this, {content: inlineContent, mimeType: this.mimeType, statusCode: 200});
         }
 
         function sourceMapResourceNotAvailable(error, content, mimeType, statusCode)

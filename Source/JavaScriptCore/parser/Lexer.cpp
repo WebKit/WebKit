@@ -1713,15 +1713,11 @@ ALWAYS_INLINE void Lexer<T>::parseCommentDirective()
         return;
 
     if (consume("URL=")) {
-        if (!m_sourceURLDirective.isEmpty())
-            return;
         m_sourceURLDirective = parseCommentDirectiveValue();
         return;
     }
 
     if (consume("MappingURL=")) {
-        if (!m_sourceMappingURLDirective.isEmpty())
-            return;
         m_sourceMappingURLDirective = parseCommentDirectiveValue();
         return;
     }

@@ -1,3 +1,22 @@
+2016-01-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspector should use the last sourceURL / sourceMappingURL directive
+        https://bugs.webkit.org/show_bug.cgi?id=153072
+        <rdar://problem/24168312>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/console-api-expected.txt:
+        * inspector/console/console-table-expected.txt:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        Updated line number in output now that code evaluated through the frontend
+        gets the __WebInspectorInternal__ sourceURL prepended to the start instead
+        of appended to the end.
+
+        * inspector/debugger/sourceURLs-expected.txt:
+        * inspector/debugger/sourceURLs.html:
+        Update the test to find the second sourceURL, not the first.
+
 2016-01-13  Daniel Bates  <dabates@apple.com>
 
         [XSS Auditor] Do not include trailing comment characters in JavaScript snippets

@@ -11,7 +11,7 @@ Found Script with sourceURL 'test5.js'
 Found Script with sourceURL 'test6.js'
 Found Script with sourceURL 'test7.js'
 Found Script with sourceURL 'test8.js'
-Found Script with sourceURL 'test9.js'
+Found Script with sourceURL 'second.js'
 
 -- Running test case: TestExpressionsForSourceMappingURL
 Found Script with sourceMappingURL 'test1.js'
@@ -22,5 +22,5 @@ Found Script with sourceMappingURL 'test5.js'
 Found Script with sourceMappingURL 'test6.js'
 Found Script with sourceMappingURL 'test7.js'
 Found Script with sourceMappingURL 'test8.js'
-Found Script with sourceMappingURL 'test9.js'
+Found Script with sourceMappingURL 'second.js'
 

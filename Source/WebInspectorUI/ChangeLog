@@ -1,3 +1,19 @@
+2016-01-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspector should use the last sourceURL / sourceMappingURL directive
+        https://bugs.webkit.org/show_bug.cgi?id=153072
+        <rdar://problem/24168312>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js:
+        Prepend instead of append the sourceURL so the provided string
+        can include a sourceURL and override it. Such as manually
+        evaluating a script through the quick console with a sourceURL.
+
+        * UserInterface/Models/SourceMapResource.js:
+        Fix an incorrectly named property.
+
 2016-01-13  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add support for the existing GradientEditor in the CSS Rules sidebar

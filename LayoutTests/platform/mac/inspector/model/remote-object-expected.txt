@@ -2099,7 +2099,7 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
       {
         "_name": "line",
         "_type": "number",
-        "_value": "1"
+        "_value": "3"
       },
       {
         "_name": "column",
@@ -2138,7 +2138,7 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
       {
         "_name": "line",
         "_type": "number",
-        "_value": "1"
+        "_value": "3"
       },
       {
         "_name": "column",
@@ -2187,7 +2187,7 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
       {
         "_name": "line",
         "_type": "number",
-        "_value": "1"
+        "_value": "3"
       },
       {
         "_name": "column",

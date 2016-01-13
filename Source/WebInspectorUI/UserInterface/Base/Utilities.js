@@ -1127,7 +1127,7 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 
 function appendWebInspectorSourceURL(string)
 {
-    return string + "\n//# sourceURL=__WebInspectorInternal__\n";
+    return "\n//# sourceURL=__WebInspectorInternal__\n" + string;
 }
 
 function isWebInspectorInternalScript(url)

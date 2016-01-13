@@ -1,20 +1,20 @@
-CONSOLE MESSAGE: line 1: console.log
-CONSOLE MESSAGE: line 1: console.warn
-CONSOLE MESSAGE: line 1: console.error
-CONSOLE MESSAGE: line 1: console.debug
-CONSOLE MESSAGE: line 1: console.info
-CONSOLE MESSAGE: line 1: assertion message
-CONSOLE MESSAGE: line 1: string message
-CONSOLE MESSAGE: line 1: message
-CONSOLE MESSAGE: line 1: message
-CONSOLE MESSAGE: line 1: message
-CONSOLE MESSAGE: line 1: message
-CONSOLE MESSAGE: line 1: message
-CONSOLE MESSAGE: line 1: [object Object]
-CONSOLE MESSAGE: line 1: [object Object]
-CONSOLE MESSAGE: line 1: groupName
+CONSOLE MESSAGE: line 3: console.log
+CONSOLE MESSAGE: line 3: console.warn
+CONSOLE MESSAGE: line 3: console.error
+CONSOLE MESSAGE: line 3: console.debug
+CONSOLE MESSAGE: line 3: console.info
+CONSOLE MESSAGE: line 3: assertion message
+CONSOLE MESSAGE: line 3: string message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: [object Object]
+CONSOLE MESSAGE: line 3: [object Object]
+CONSOLE MESSAGE: line 3: groupName
 CONSOLE MESSAGE: groupName
-CONSOLE MESSAGE: line 1: collapsedGroupName
+CONSOLE MESSAGE: line 3: collapsedGroupName
 CONSOLE MESSAGE: collapsedGroupName
 
 STEP: console.log('console.log')
@@ -24,7 +24,7 @@ STEP: console.log('console.log')
   "_messageText": "console.log",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 12,
   "_repeatCount": 1,
   "_parameters": [
@@ -46,7 +46,7 @@ STEP: console.warn('console.warn')
   "_messageText": "console.warn",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 13,
   "_repeatCount": 1,
   "_parameters": [
@@ -68,7 +68,7 @@ STEP: console.error('console.error')
   "_messageText": "console.error",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -90,7 +90,7 @@ STEP: console.debug('console.debug')
   "_messageText": "console.debug",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -112,7 +112,7 @@ STEP: console.info('console.info')
   "_messageText": "console.info",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 13,
   "_repeatCount": 1,
   "_parameters": [
@@ -134,7 +134,7 @@ STEP: console.assert(false, 'assertion message')
   "_messageText": "assertion message",
   "_type": "assert",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 15,
   "_repeatCount": 1,
   "_parameters": [
@@ -156,7 +156,7 @@ STEP: console.trace()
   "_messageText": "",
   "_type": "trace",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -170,7 +170,7 @@ STEP: console.log('string message', string)
   "_messageText": "string message",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 12,
   "_repeatCount": 1,
   "_parameters": [
@@ -198,7 +198,7 @@ STEP: console.log('message', object, object)
   "_messageText": "message",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 12,
   "_repeatCount": 1,
   "_parameters": [
@@ -260,7 +260,7 @@ STEP: console.error('message', object)
   "_messageText": "message",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -302,7 +302,7 @@ STEP: console.warn('message', object)
   "_messageText": "message",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 13,
   "_repeatCount": 1,
   "_parameters": [
@@ -344,7 +344,7 @@ STEP: console.debug('message', object)
   "_messageText": "message",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -386,7 +386,7 @@ STEP: console.info('message', object)
   "_messageText": "message",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 13,
   "_repeatCount": 1,
   "_parameters": [
@@ -428,7 +428,7 @@ STEP: console.dir(object)
   "_messageText": "[object Object]",
   "_type": "dir",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 12,
   "_repeatCount": 1,
   "_parameters": [
@@ -464,7 +464,7 @@ STEP: console.dirxml(object)
   "_messageText": "[object Object]",
   "_type": "dirxml",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 15,
   "_repeatCount": 1,
   "_parameters": [
@@ -500,7 +500,7 @@ STEP: console.group('groupName')
   "_messageText": "groupName",
   "_type": "startGroup",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_parameters": [
@@ -544,7 +544,7 @@ STEP: console.groupCollapsed('collapsedGroupName')
   "_messageText": "collapsedGroupName",
   "_type": "startGroupCollapsed",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 23,
   "_repeatCount": 1,
   "_parameters": [
@@ -588,7 +588,7 @@ STEP: console.count()
   "_messageText": "<no label>: 1",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -602,7 +602,7 @@ STEP: console.count()
   "_messageText": "<no label>: 2",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -616,7 +616,7 @@ STEP: console.count('')
   "_messageText": "<no label>: 3",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -630,7 +630,7 @@ STEP: console.count('    ')
   "_messageText": "    : 1",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -644,7 +644,7 @@ STEP: console.count('')
   "_messageText": "<no label>: 4",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -658,7 +658,7 @@ STEP: console.count('    ')
   "_messageText": "    : 2",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -672,7 +672,7 @@ STEP: console.count(string)
   "_messageText": "string: 1",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -686,7 +686,7 @@ STEP: console.count(string)
   "_messageText": "string: 2",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -700,7 +700,7 @@ STEP: console.count(object)
   "_messageText": "[object Object]: 1",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -714,7 +714,7 @@ STEP: console.count(object)
   "_messageText": "[object Object]: 2",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -728,7 +728,7 @@ STEP: console.count(otherObject)
   "_messageText": "[object Object]: 3",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -742,7 +742,7 @@ STEP: console.count(otherObject)
   "_messageText": "[object Object]: 4",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -756,7 +756,7 @@ STEP: console.count(number)
   "_messageText": "42: 1",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
@@ -770,7 +770,7 @@ STEP: console.count(number)
   "_messageText": "42: 2",
   "_type": "log",
   "_url": null,
-  "_line": 1,
+  "_line": 3,
   "_column": 14,
   "_repeatCount": 1,
   "_stackTrace": "<filtered>",
