@@ -1,3 +1,23 @@
+2016-01-13  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r190641. rdar://problem/24154291
+
+    2015-10-06  Chris Dumez  <cdumez@apple.com>
+
+            Refactor TokenPreloadScanner::StartTagScanner::processAttribute()
+            https://bugs.webkit.org/show_bug.cgi?id=149847
+
+            Reviewed by Antti Koivisto.
+
+            Refactor TokenPreloadScanner::StartTagScanner::processAttribute() to only
+            process attributes that make sense given the current tagId. In particular,
+            - We only process the charset parameter if the tag is a link or a script.
+            - We only process the sizes / srcset attributes if the tag is an img.
+
+            * html/parser/HTMLPreloadScanner.cpp:
+            (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+            (WebCore::TokenPreloadScanner::StartTagScanner::setUrlToLoad): Deleted.
+
 2016-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r194751. rdar://problem/24043054
