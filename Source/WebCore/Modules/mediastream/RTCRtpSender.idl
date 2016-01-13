@@ -32,4 +32,6 @@
     Conditional=MEDIA_STREAM
 ] interface RTCRtpSender {
     readonly attribute MediaStreamTrack track;
+
+    [StrictTypeChecking, RaisesException] Promise replaceTrack(MediaStreamTrack withTrack);
 };

@@ -153,6 +153,17 @@ void MediaEndpointPeerConnection::getStats(MediaStreamTrack*, PeerConnection::St
     promise.reject(DOMError::create("NotSupportedError"));
 }
 
+void MediaEndpointPeerConnection::replaceTrack(RTCRtpSender& sender, MediaStreamTrack& withTrack, PeerConnection::VoidPromise&& promise)
+{
+    UNUSED_PARAM(sender);
+    UNUSED_PARAM(withTrack);
+    UNUSED_PARAM(promise);
+
+    notImplemented();
+
+    promise.reject(DOMError::create("NotSupportedError"));
+}
+
 void MediaEndpointPeerConnection::stop()
 {
     notImplemented();

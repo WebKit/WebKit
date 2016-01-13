@@ -1,3 +1,35 @@
+2016-01-13  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add support for RTCRtpSender.replaceTrack()
+        https://bugs.webkit.org/show_bug.cgi?id=153063
+
+        Reviewed by Eric Carlson.
+
+        Add the API and infrastructure to support RTCRtpSender.replaceTrack(). The platform is
+        reached through the RTCPeerConnection object that created the RTCRtpSender via a client
+        interface.
+
+        Test: fast/mediastream/RTCRtpSender-replaceTrack.html
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::replaceTrack):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::removeTrack):
+        (WebCore::RTCPeerConnection::replaceTrack):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        (WebCore::RTCRtpSender::replaceTrack):
+        * Modules/mediastream/RTCRtpSender.h:
+        (WebCore::RTCRtpSenderClient::~RTCRtpSenderClient):
+        (WebCore::RTCRtpSender::create):
+        (WebCore::RTCRtpSender::trackId):
+        (WebCore::RTCRtpSender::stop):
+        * Modules/mediastream/RTCRtpSender.idl:
+
 2016-01-13  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: A few cursor tests are flaky because JS wrappers are GC'ed.

@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            var stream;
+            var audioTrack;
+            var audioTrack2;
+            var videoTrack;
+            var sender;
+
+            description("Test basic behavior of RTCRtpSender.replaceTrack()");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            var pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            navigator.mediaDevices.getUserMedia({ "audio": true, "video": true })
+            .then(function (s) {
+                stream = s;
+                audioTrack = stream.getAudioTracks()[0];
+                videoTrack = stream.getVideoTracks()[0];
+
+                audioTrack2 = audioTrack.clone();
+
+                shouldBe("pc.getSenders().length", "0");
+
+                shouldNotThrow("sender = pc.addTrack(audioTrack, stream)");
+                shouldBeType("sender", "RTCRtpSender");
+                shouldBe("sender.track", "audioTrack");
+
+                promiseShouldReject("sender.replaceTrack()")
+                .catch(function () {
+                    return promiseShouldReject("sender.replaceTrack(null)");
+                })
+                .catch(function () {
+                    return promiseShouldReject("sender.replaceTrack({})");
+                })
+                .catch(function () {
+                    debug("Test mismatching track kind");
+                    return promiseShouldReject("sender.replaceTrack(videoTrack)");
+                })
+                .catch(function () {
+                    debug("This is a valid call but will be rejected until the PeerConnectionBackend implementation has proper support");
+                    return promiseShouldReject("sender.replaceTrack(audioTrack2)");
+                })
+                .catch(function () {
+                    debug("Stop sender, and try replacing the track");
+                    pc.removeTrack(sender);
+                    return promiseShouldReject("sender.replaceTrack(audioTrack2)");
+                })
+                .catch(function () {
+                    debug("End of promise chain");
+                    finishJSTest();
+                });
+            })
+            .catch(function (error) {
+                testFailed("getUserMedia error: " + error);
+                finishJSTest();
+            });
+
+            function promiseShouldReject(expr) {
+                var p;
+                try {
+                    p = eval(expr);
+                } catch (e) {
+                    testFailed("evaluating " + expr + " threw exception " + e);
+                    return Promise.reject();
+                }
+
+                if (!(p instanceof Promise)) {
+                    testFailed(expr + " does not evaluate to a promise.");
+                    return Promise.reject();
+                }
+
+                p.then(function () {
+                    testFailed("promise " + expr + " fulfilled unexpectedly.");
+                });
+
+                p.catch(function (reason) {
+                    testPassed("promise " + expr + " rejected with " + reason);
+                });
+
+                return p;
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

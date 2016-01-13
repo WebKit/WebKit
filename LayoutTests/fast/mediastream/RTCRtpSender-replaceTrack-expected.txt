@@ -1,0 +1,23 @@
+Test basic behavior of RTCRtpSender.replaceTrack()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.getSenders().length is 0
+PASS sender = pc.addTrack(audioTrack, stream) did not throw exception.
+PASS sender is an instance of RTCRtpSender
+PASS sender.track is audioTrack
+PASS promise sender.replaceTrack() rejected with TypeError: Not enough arguments
+PASS promise sender.replaceTrack(null) rejected with TypeError: Type error
+PASS promise sender.replaceTrack({}) rejected with TypeError: Argument 1 ('withTrack') to RTCRtpSender.replaceTrack must be an instance of MediaStreamTrack
+Test mismatching track kind
+PASS promise sender.replaceTrack(videoTrack) rejected with TypeError: Type error
+This is a valid call but will be rejected until the PeerConnectionBackend implementation has proper support
+PASS promise sender.replaceTrack(audioTrack2) rejected with [object DOMError]
+Stop sender, and try replacing the track
+PASS promise sender.replaceTrack(audioTrack2) rejected with [object DOMError]
+End of promise chain
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

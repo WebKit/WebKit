@@ -121,7 +121,7 @@ RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(RefPtr<MediaStreamTrack>&& trac
     }
 
     for (auto& sender : m_senderSet) {
-        if (sender->track()->id() == track->id()) {
+        if (sender->trackId() == track->id()) {
             // FIXME: Spec says InvalidParameter
             ec = INVALID_MODIFICATION_ERR;
             return nullptr;
@@ -132,7 +132,7 @@ RefPtr<RTCRtpSender> RTCPeerConnection::addTrack(RefPtr<MediaStreamTrack>&& trac
     for (auto stream : streams)
         mediaStreamIds.append(stream->id());
 
-    RefPtr<RTCRtpSender> sender = RTCRtpSender::create(WTFMove(track), WTFMove(mediaStreamIds));
+    RefPtr<RTCRtpSender> sender = RTCRtpSender::create(WTFMove(track), WTFMove(mediaStreamIds), *this);
     m_senderSet.append(sender);
 
     m_backend->markAsNeedingNegotiation();
@@ -154,6 +154,8 @@ void RTCPeerConnection::removeTrack(RTCRtpSender* sender, ExceptionCode& ec)
 
     if (!m_senderSet.contains(sender))
         return;
+
+    sender->stop();
 
     m_backend->markAsNeedingNegotiation();
 }
@@ -425,6 +427,11 @@ void RTCPeerConnection::scheduleNegotiationNeededEvent()
 void RTCPeerConnection::fireEvent(Event& event)
 {
     dispatchEvent(event);
+}
+
+void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, MediaStreamTrack& withTrack, PeerConnection::VoidPromise&& promise)
+{
+    m_backend->replaceTrack(sender, withTrack, WTFMove(promise));
 }
 
 } // namespace WebCore

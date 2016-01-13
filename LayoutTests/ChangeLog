@@ -1,3 +1,16 @@
+2016-01-13  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add support for RTCRtpSender.replaceTrack()
+        https://bugs.webkit.org/show_bug.cgi?id=153063
+
+        Reviewed by Eric Carlson.
+
+        Add API test for RTCRtpSender.replaceTrack(). A successful call is still
+        rejected (promise) until proper support is available in the WebRTC backend.
+
+        * fast/mediastream/RTCRtpSender-replaceTrack-expected.txt: Added.
+        * fast/mediastream/RTCRtpSender-replaceTrack.html: Added.
+
 2016-01-13  Mario Sanchez Prada  <mario@webkit.org>
 
         [GTK] Unreviewed gardening.

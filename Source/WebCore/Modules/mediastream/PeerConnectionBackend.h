@@ -101,6 +101,8 @@ public:
 
     virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) = 0;
 
+    virtual void replaceTrack(RTCRtpSender&, MediaStreamTrack&, PeerConnection::VoidPromise&&) = 0;
+
     virtual void stop() = 0;
 
     virtual bool isNegotiationNeeded() const = 0;
