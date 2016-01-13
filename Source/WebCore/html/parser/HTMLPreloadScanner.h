@@ -45,6 +45,7 @@ public:
 private:
     enum class TagId {
         // These tags are scanned by the StartTagScanner.
+        Iframe,
         Img,
         Input,
         Link,
