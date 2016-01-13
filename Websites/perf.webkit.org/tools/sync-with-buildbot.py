@@ -79,6 +79,8 @@ def load_config(config_json_path, buildbot_url):
             else:
                 config[key] = value
 
+    scheduled_requests_by_builder = {}
+
     configurations = options['configurations']
     for config in configurations:
 
@@ -89,7 +91,9 @@ def load_config(config_json_path, buildbot_url):
         escaped_builder_name = urllib.quote(config['builder'])
         config['url'] = '%s/builders/%s/' % (buildbot_url, escaped_builder_name)
         config['jsonURL'] = '%s/json/builders/%s/' % (buildbot_url, escaped_builder_name)
-        config['scheduledRequests'] = set()
+
+        scheduled_requests_by_builder.setdefault(config['builder'], set())
+        config['scheduledRequests'] = scheduled_requests_by_builder[config['builder']]
 
     return configurations
 
@@ -98,12 +102,15 @@ def find_request_updates(configurations, lookback_count):
     request_updates = {}
 
     for config in configurations:
+        config['scheduledRequests'].clear()
+
+    for config in configurations:
         try:
             pending_builds = fetch_json(config['jsonURL'] + 'pendingBuilds')
             scheduled_requests = filter(None, [request_id_from_build(config, build) for build in pending_builds])
             for request_id in scheduled_requests:
                 request_updates[request_id] = {'status': 'scheduled', 'url': config['url']}
-            config['scheduledRequests'] = set(scheduled_requests)
+                config['scheduledRequests'].add(request_id)
         except (IOError, ValueError) as error:
             print >> sys.stderr, "Failed to fetch pending builds for %s: %s" % (config['builder'], str(error))
 

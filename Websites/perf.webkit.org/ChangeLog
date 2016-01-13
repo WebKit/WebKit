@@ -1,5 +1,24 @@
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        buildbot syncing scripts sometimes schedule more than one requests per builder
+        https://bugs.webkit.org/show_bug.cgi?id=153047
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by the check for singularity of scheduledRequests being conducted per configuration
+        instead of per builder. So if there were multiple test configurations (e.g. Speedometer and Octane) that
+        both used the same builder, then we may end up scheduling both at once.
+
+        Fixed the bug by sharing a single set to keep track of the scheduled requests for all configurations per
+        builder.
+
+        * tools/sync-with-buildbot.py:
+        (load_config): Share a set amongst test configurations for each builder.
+        (find_request_updates): Instead of creating a new set for each configuration, reuse the existing sets to
+        share a single set agmonst test configurations for each builder.
+
+2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Analysis results viewer sometimes doesn't show the correct relative difference
         https://bugs.webkit.org/show_bug.cgi?id=152930
 
