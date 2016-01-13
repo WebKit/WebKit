@@ -40,6 +40,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/IdentifierRep.h>
 #import <WebCore/ScriptController.h>
+#import <wtf/NeverDestroyed.h>
 
 extern "C" {
 #import "WebKitPluginHost.h"
@@ -84,8 +85,7 @@ private:
 typedef HashMap<mach_port_t, NetscapePluginHostProxy*> PluginProxyMap;
 static PluginProxyMap& pluginProxyMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(PluginProxyMap, pluginProxyMap, ());
-    
+    static NeverDestroyed<PluginProxyMap> pluginProxyMap;
     return pluginProxyMap;
 }
 

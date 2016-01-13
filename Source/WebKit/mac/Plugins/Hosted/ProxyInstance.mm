@@ -36,6 +36,7 @@
 #import <runtime/Error.h>
 #import <runtime/FunctionPrototype.h>
 #import <runtime/PropertyNameArray.h>
+#import <wtf/NeverDestroyed.h>
 
 extern "C" {
 #import "WebKitPluginHost.h"
@@ -65,8 +66,8 @@ Field* ProxyClass::fieldNamed(PropertyName propertyName, Instance* instance) con
 
 static ProxyClass* proxyClass()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ProxyClass, proxyClass, ());
-    return &proxyClass;
+    static NeverDestroyed<ProxyClass> proxyClass;
+    return &proxyClass.get();
 }
     
 class ProxyField : public JSC::Bindings::Field {

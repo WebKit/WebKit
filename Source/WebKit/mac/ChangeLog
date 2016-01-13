@@ -1,3 +1,15 @@
+2016-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r194900.
+
+        Roll back in as this did not actually regress PLT
+
+        Reverted changeset:
+
+        "Unreviewed, rolling out r194826."
+        https://bugs.webkit.org/show_bug.cgi?id=153020
+        http://trac.webkit.org/changeset/194900
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for custom element

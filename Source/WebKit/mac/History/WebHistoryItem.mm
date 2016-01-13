@@ -51,6 +51,7 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/WTFString.h>
@@ -102,7 +103,7 @@ static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* itemPrivate)
 
 static HistoryItemMap& historyItemWrappers()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HistoryItemMap, historyItemWrappers, ());
+    static NeverDestroyed<HistoryItemMap> historyItemWrappers;
     return historyItemWrappers;
 }
 

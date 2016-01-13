@@ -333,16 +333,14 @@ const AtomicString& VTTRegion::textTrackCueContainerScrollingClass()
 
 const AtomicString& VTTRegion::textTrackCueContainerShadowPseudoId()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, trackRegionCueContainerPseudoId,
-        ("-webkit-media-text-track-region-container", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> trackRegionCueContainerPseudoId("-webkit-media-text-track-region-container", AtomicString::ConstructFromLiteral);
 
     return trackRegionCueContainerPseudoId;
 }
 
 const AtomicString& VTTRegion::textTrackRegionShadowPseudoId()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, trackRegionShadowPseudoId,
-        ("-webkit-media-text-track-region", AtomicString::ConstructFromLiteral));
+    static NeverDestroyed<const AtomicString> trackRegionShadowPseudoId("-webkit-media-text-track-region", AtomicString::ConstructFromLiteral);
 
     return trackRegionShadowPseudoId;
 }

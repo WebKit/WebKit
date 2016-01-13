@@ -6806,9 +6806,9 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
             }
         }
         else if (object->inherits(JSArray::info())) {
-            DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<JSObject*>, visitedElems, ());
-            if (!visitedElems.contains(object)) {
-                visitedElems.add(object);
+            static NeverDestroyed<HashSet<JSObject*>> visitedElems;
+            if (!visitedElems.get().contains(object)) {
+                visitedElems.get().add(object);
                 
                 JSArray* array = static_cast<JSArray*>(object);
                 aeDesc = [NSAppleEventDescriptor listDescriptor];
@@ -6816,7 +6816,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
                 for (unsigned i = 0; i < numItems; ++i)
                     [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->get(exec, i)) atIndex:0];
                 
-                visitedElems.remove(object);
+                visitedElems.get().remove(object);
                 return aeDesc;
             }
         }
