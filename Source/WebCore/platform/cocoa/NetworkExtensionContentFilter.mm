@@ -73,7 +73,7 @@ void NetworkExtensionContentFilter::initialize(const URL* url)
     ASSERT(!m_queue);
     ASSERT(!m_semaphore);
     ASSERT(!m_neFilterSource);
-    m_queue = adoptOSObject(dispatch_queue_create("com.apple.WebCore.NEFilterSourceQueue", DISPATCH_QUEUE_SERIAL));
+    m_queue = adoptOSObject(dispatch_queue_create("WebKit NetworkExtension Filtering", DISPATCH_QUEUE_SERIAL));
     m_semaphore = adoptOSObject(dispatch_semaphore_create(0));
 #if HAVE(MODERN_NE_FILTER_SOURCE)
     ASSERT_UNUSED(url, !url);

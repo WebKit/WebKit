@@ -1,3 +1,10 @@
+2016-01-12  Andy Estes  <aestes@apple.com>
+
+        Address missed review feedback after r194950.
+
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::initialize): Renamed the NetworkExtension dispatch queue.
+
 2016-01-08  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Lazily load platform frameworks
