@@ -1,5 +1,23 @@
 2016-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r194009. rdar://problem/24101259
+
+    2015-12-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+            REGRESSION (r191613): Web Inspector: Can't type spaces when editing DOM nodes
+            https://bugs.webkit.org/show_bug.cgi?id=152173
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/TimelineSidebarPanel.js:
+            (WebInspector.TimelineSidebarPanel):
+            Disable the keyboard shortcuts when they are created. They will be
+            enabled when the panel is shown / hidden. It doesn't really make sense
+            that these are on the sidebar panel instead of the tab, but things
+            will be changing in Timelines soon anyways so just fix this now.
+
+2016-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r193858. rdar://problem/24101282
 
     2015-12-09  Brian Burg  <bburg@apple.com>
