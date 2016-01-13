@@ -1,3 +1,31 @@
+2016-01-13  Daniel Bates  <dabates@apple.com>
+
+        [XSS Auditor] Add test when XSS payload is in the path portion of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=152871
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink (patch by Tom Sepez <tsepez@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?revision=164746&view=revision>
+
+        Add infrastructure and a test for an XSS attack where the payload is
+        embedded in the path portion of the URL.
+
+        Many XSS Auditor tests pass the XSS payload to CGI scripts via the
+        query string portion of the URL. Now we also support calling these
+        same scripts with the payload embedded in the path portion of the
+        URL.
+
+        Loading <http://127.0.0.1:8000/security/xssAuditor/intercept/X/Y>
+        returns a response whose content is identical to <http://127.0.0.1:8000/security/xssAuditor/resoures/X?q=Y>,
+        where X is the filename of some CGI script in directory LayoutTests/http/tests/security/xssAuditor/resources
+        and Y is the XSS payload.
+
+        * http/tests/security/xssAuditor/intercept/.htaccess: Added.
+        * http/tests/security/xssAuditor/reflection-in-path-expected.txt: Added.
+        * http/tests/security/xssAuditor/reflection-in-path.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-form-action.pl: Added.
+
 2016-01-13  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add support for RTCRtpSender.replaceTrack()

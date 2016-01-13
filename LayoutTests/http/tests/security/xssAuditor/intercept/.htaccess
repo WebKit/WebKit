@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^(.*)/(.*) /security/xssAuditor/resources/$1?q=$2 [L,NS]
