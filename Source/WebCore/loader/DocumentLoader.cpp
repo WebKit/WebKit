@@ -370,6 +370,11 @@ bool DocumentLoader::isLoading() const
 
 void DocumentLoader::notifyFinished(CachedResource* resource)
 {
+#if ENABLE(CONTENT_FILTERING)
+    if (m_contentFilter && !m_contentFilter->continueAfterNotifyFinished(resource))
+        return;
+#endif
+
     ASSERT_UNUSED(resource, m_mainResource == resource);
     ASSERT(m_mainResource);
     if (!m_mainResource->errorOccurred() && !m_mainResource->wasCanceled()) {
@@ -540,11 +545,8 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     }
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && redirectResponse.isNull()) {
-        m_contentFilter->willSendRequest(newRequest, redirectResponse);
-        if (newRequest.isNull())
-            return;
-    }
+    if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(newRequest, redirectResponse))
+        return;
 #endif
 
     setRequest(newRequest);
@@ -606,6 +608,11 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool 
 
 void DocumentLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
+#if ENABLE(CONTENT_FILTERING)
+    if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(resource, response))
+        return;
+#endif
+
     ASSERT_UNUSED(resource, m_mainResource == resource);
     Ref<DocumentLoader> protect(*this);
     bool willLoadFallback = m_applicationCacheHost->maybeLoadFallbackForMainResponse(request(), response);
@@ -873,6 +880,11 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 
 void DocumentLoader::dataReceived(CachedResource* resource, const char* data, int length)
 {
+#if ENABLE(CONTENT_FILTERING)
+    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(resource, data, length))
+        return;
+#endif
+
     ASSERT(data);
     ASSERT(length);
     ASSERT_UNUSED(resource, resource == m_mainResource);
@@ -1418,7 +1430,7 @@ void DocumentLoader::startLoadingMainResource()
         return;
 
 #if ENABLE(CONTENT_FILTERING)
-    m_contentFilter = !m_originalSubstituteDataWasValid ? ContentFilter::createIfEnabled(*this) : nullptr;
+    m_contentFilter = !m_substituteData.isValid() ? ContentFilter::create(*this) : nullptr;
 #endif
 
     // FIXME: Is there any way the extra fields could have not been added by now?
@@ -1624,11 +1636,8 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
 void DocumentLoader::becomeMainResourceClient()
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && m_contentFilter->state() == ContentFilter::State::Initialized) {
-        // ContentFilter will synthesize CachedRawResourceClient callbacks.
+    if (m_contentFilter)
         m_contentFilter->startFilteringMainResource(*m_mainResource);
-        return;
-    }
 #endif
     m_mainResource->addClient(this);
 }
@@ -1666,13 +1675,9 @@ void DocumentLoader::installContentFilterUnblockHandler(ContentFilter& contentFi
     frameLoader()->client().contentFilterDidBlockLoad(WTFMove(unblockHandler));
 }
 
-void DocumentLoader::contentFilterDidDecide()
+void DocumentLoader::contentFilterDidBlock()
 {
-    using State = ContentFilter::State;
     ASSERT(m_contentFilter);
-    ASSERT(m_contentFilter->state() == State::Blocked || m_contentFilter->state() == State::Allowed);
-    if (m_contentFilter->state() == State::Allowed)
-        return;
 
     installContentFilterUnblockHandler(*m_contentFilter);
 

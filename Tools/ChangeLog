@@ -1,3 +1,47 @@
+2016-01-08  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Lazily load platform frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=152881
+        rdar://problem/23270886
+
+        Reviewed by Brady Eidson.
+
+        Added an API test that verifies that the Parental Controls and Network Extension frameworks are loaded at the
+        expected times. The test verifies that they are not loaded after creating a WKWebView, loading an HTML string,
+        loading NSData, loading a file, or loading from a custom protocol. It verifies that Network Extension on Mac/iOS
+        and Parental Controls on iOS are loaded after an HTTP request. It finally verifies that Parental Controls on Mac
+        is loaded after an HTTPS request.
+
+        To accomplish this, TestProtocol was generalized to allow tests to specify the scheme they wish to use.
+        Other tests that used TestProtocol were updated to account for this change. TestProtocol was removed from
+        WebKit2.PreventImageLoadWithAutoResizingTest, which didn't actually need to use it. ContentFiltering tests were
+        also re-enabled on iOS after mistakenly being disabled by r188892.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/CustomProtocolsSyncXHRTest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.h: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm:
+        (TEST):
+        (downloadTest):
+        (-[LazilyLoadPlatformFrameworksController init]):
+        (-[LazilyLoadPlatformFrameworksController webView]):
+        (-[LazilyLoadPlatformFrameworksController expectParentalControlsLoaded:networkExtensionLoaded:]):
+        (-[LazilyLoadPlatformFrameworksController webView:didFinishNavigation:]):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFilteringPlugIn.mm:
+        (-[ContentFilteringPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[ContentFilteringPlugIn observeValueForKeyPath:ofObject:change:context:]):
+        (-[ContentFilteringPlugIn checkIfPlatformFrameworksAreLoaded:]):
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing.mm:
+        (TestWebKitAPI::TEST): Deleted.
+        * TestWebKitAPI/cocoa/TestProtocol.h:
+        * TestWebKitAPI/cocoa/TestProtocol.mm:
+        (+[TestProtocol registerWithScheme:]):
+        (+[TestProtocol unregister]):
+
 2016-01-12  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix the Sunpider converage in slow device.

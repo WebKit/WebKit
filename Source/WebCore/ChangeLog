@@ -1,3 +1,96 @@
+2016-01-08  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Lazily load platform frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=152881
+        rdar://problem/23270886
+
+        Reviewed by Brady Eidson.
+
+        On Cocoa platforms, ContentFilter soft-links two frameworks that perform the underlying filtering operations.
+        There is a one-time cost associated with the soft-linking, and the current design requires all clients to pay
+        this cost whether or not they ever load a resource that is subject to filtering.
+
+        Addressed this by deferring the loading of frameworks until it is known that a resource will require filtering.
+        It is rather simple to defer the soft-linking at the PlatformContentFilter level, but doing this alone would
+        mean that every CachedRawResourceClient callback would be routed through ContentFilter, even in the very common
+        case where both platform content filters are disabled. This is because checking if a platform content filter is
+        enabled involves loading its framework, so creating a ContentFilter (which DocumentLoader will add as the
+        CachedRawResource client in place of itself) cannot be avoided by checking that all its platform content filters
+        are disabled.
+
+        Resolved this by inverting the relationship between ContentFilter and DocumentLoader. Instead of ContentFilter
+        being the CachedRawResource's client and forwarding callbacks to DocumentLoader when one or more platform
+        filters are enabled, DocumentLoader is now always the client and it forwards callbacks to ContentFilter.
+        ContentFilter then returns a boolean value indicating whether or not DocumentLoader should proceed with each
+        callback.
+
+        New API test: ContentFiltering.LazilyLoadPlatformFrameworks
+
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::create): Renamed from createIfEnabled(). Since the enabled check causes frameworks to
+        be loaded, the check is skipped here and all types are always created.
+        (WebCore::ContentFilter::continueAfterWillSendRequest): Renamed from willSendRequest(). Renamed requestCopy to
+        originalRequest, and only created it for logging purposes. Since the copy was only used for logging purposes,
+        request is now modified directly. Returned false if request is null.
+        (WebCore::ContentFilter::continueAfterResponseReceived): Renamed from responseReceived(). Stopped asserting that
+        resource is non-null, since it will be null in the case of substitute data loads. Stopped asserting that m_state
+        is not Initialized, since that state was removed and the function can now be called in all states. Only logged
+        if m_state is Filtering. Returned false if m_state is Blocked.
+        (WebCore::ContentFilter::continueAfterDataReceived): Renamed from dataReceived(). Stopped asserting that
+        resource is non-null and that m_state is Initialized, and moved the logging, for the same reasons as above.
+        Returned false if m_state is Filtering or Blocked.
+        (WebCore::ContentFilter::continueAfterNotifyFinished): Renamed from notifyFinished(). Stopped asserting that
+        resource is non-null and that m_state is not Initialized, and moved the logging, for the same reasons as above.
+        If m_state is not Blocked at this point, set m_state to Allowed in order for deliverResourceData() to not get
+        caught in continueAfterDataReceived(). Returned false if m_state is Blocked or Stopped after delivering data.
+        (WebCore::ContentFilter::createIfEnabled): Renamed to create().
+        (WebCore::ContentFilter::~ContentFilter): Stopped removing ourself as m_mainResource's client.
+        (WebCore::ContentFilter::willSendRequest): Renamed to continueAfterWillSendRequest().
+        (WebCore::ContentFilter::startFilteringMainResource): Stopped adding ourself as m_mainResource's client. Stopped
+        asserting that m_state is not Initialized and instead returned early if m_state is not Stopped.
+        (WebCore::ContentFilter::stopFilteringMainResource): Stopped removing ourself as m_mainResource's client.
+        (WebCore::ContentFilter::responseReceived): Renamed to continueAfterResponseReceived().
+        (WebCore::ContentFilter::dataReceived): Renamed to continueAfterDataReceived().
+        (WebCore::ContentFilter::redirectReceived): Removed. DocumentLoader now calls continueAfterWillSendRequest()
+        directly on redirects.
+        (WebCore::ContentFilter::notifyFinished): Renamed to continueAfterNotifyFinished().
+        (WebCore::ContentFilter::didDecide): Instead of calling DocumentLoader::contentFilterDidDecide(), called
+        DocumentLoader::contentFilterDidBlock() when m_state is Blocked.
+        (WebCore::ContentFilter::deliverResourceData): Asserted that m_state is Allowed.
+        * loader/ContentFilter.h: Stopped inheriting from CachedRawResourceClient. Redeclared the
+        CachedRawResourceClient virtual functions as the continue* functions mentioned above. Made State enum private
+        and removed Initialized. Initialized m_state to Stopped and removed its getter.
+        (WebCore::ContentFilter::type): Returned a ContentFilter::Type that does not include an enabled function.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::notifyFinished): Returned early if ContentFilter::continueAfterNotifyFinished()
+        returned false.
+        (WebCore::DocumentLoader::willSendRequest): Called ContentFilter::continueAfterWillSendRequest() even for
+        redirects, since ContentFilter is no longer a CachedRawResourceClient and so will no longer receive
+        redirectReceived(). Returned early if continueAfterWillSendRequest() returns false.
+        (WebCore::DocumentLoader::responseReceived): Returned early if ContentFilter::continueAfterResponseReceived()
+        returned false.
+        (WebCore::DocumentLoader::dataReceived): Ditto for ContentFilter::continueAfterDataReceived().
+        (WebCore::DocumentLoader::startLoadingMainResource): Called ContentFilter::create(), not createIfEnabled().
+        (WebCore::DocumentLoader::becomeMainResourceClient): Called ContentFilter::startFilteringMainResource() even if
+        m_state is not Initialized. Added ourself as a client of m_mainResource unconditionally.
+        (WebCore::DocumentLoader::contentFilterDidBlock): Renamed from contentFilterDidDecide. Removed assertions and
+        the early return when m_state is Allowed, since the state is guaranteed to be Blocked.
+        (WebCore::DocumentLoader::contentFilterDidDecide): Renamed to contentFilterDidBlock.
+        * platform/cocoa/NetworkExtensionContentFilter.h: Moved definition of HAVE_NETWORK_EXTENSION to Platform.h so
+        that this file doesn't need to become a Private header. Made enabled() private, and declared initialize().
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::initialize): Added a function to lazily initialize the object.
+        (WebCore::NetworkExtensionContentFilter::willSendRequest): For the modern NEFilterSource, checked if it is
+        enabled only after checking if the request is HTTP(S). If both checks pass, then called initialize().
+        (WebCore::NetworkExtensionContentFilter::responseReceived): Ditto for the legacy NEFilterSource.
+        * platform/cocoa/ParentalControlsContentFilter.h: Made enabled() private.
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::ParentalControlsContentFilter::responseReceived): Checked if WebFilterEvaluator is enabled only after
+        checking if the response is from a protocol that can be handled.
+        * testing/MockContentFilter.cpp:
+        (WebCore::MockContentFilter::willSendRequest): Immediately set m_status to Status::Allowed if !enabled().
+        * testing/MockContentFilter.h: Made enabled() private.
+
 2016-01-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194926 and r194928.

@@ -1,3 +1,13 @@
+2016-01-08  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Lazily load platform frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=152881
+        rdar://problem/23270886
+
+        Reviewed by Brady Eidson.
+
+        * wtf/Platform.h: Moved definition of HAVE_NETWORK_EXTENSION to here from WebCore/platform/cocoa/NetworkExtensionContentFilter.h.
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for custom element
