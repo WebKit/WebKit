@@ -40,20 +40,29 @@ class PlatformContentFilter {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PlatformContentFilter);
 
-protected:
-    PlatformContentFilter() = default;
-
 public:
+    enum class State {
+        Stopped,
+        Filtering,
+        Allowed,
+        Blocked,
+    };
+
+    bool needsMoreData() const { return m_state == State::Filtering; }
+    bool didBlockData() const { return m_state == State::Blocked; }
+
     virtual ~PlatformContentFilter() { }
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) = 0;
     virtual void responseReceived(const ResourceResponse&) = 0;
     virtual void addData(const char* data, int length) = 0;
     virtual void finishedAddingData() = 0;
-    virtual bool needsMoreData() const = 0;
-    virtual bool didBlockData() const = 0;
     virtual Ref<SharedBuffer> replacementData() const = 0;
     virtual ContentFilterUnblockHandler unblockHandler() const = 0;
     virtual String unblockRequestDeniedScript() const { return emptyString(); }
+
+protected:
+    PlatformContentFilter() = default;
+    State m_state { State::Filtering };
 };
 
 } // namespace WebCore

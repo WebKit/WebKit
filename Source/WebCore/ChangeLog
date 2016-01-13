@@ -1,5 +1,45 @@
 2016-01-12  Andy Estes  <aestes@apple.com>
 
+        [Content Filtering] De-virtualize PlatformContentFilter::{needsMoreData, didBlockData}()
+        https://bugs.webkit.org/show_bug.cgi?id=153052
+
+        Reviewed by Andreas Kling.
+
+        No new tests. No change in behavior.
+
+        Instead of having virtual functions that each platform content filter implement in terms of their own state,
+        store the state in the base class so that these functions can be non-virtual. Teach each subclass to update the
+        base class state appropriately.
+
+        * loader/ContentFilter.h:
+        * platform/PlatformContentFilter.h:
+        (WebCore::PlatformContentFilter::needsMoreData):
+        (WebCore::PlatformContentFilter::didBlockData):
+        * platform/cocoa/NetworkExtensionContentFilter.h:
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::willSendRequest):
+        (WebCore::NetworkExtensionContentFilter::responseReceived):
+        (WebCore::NetworkExtensionContentFilter::handleDecision):
+        (WebCore::NetworkExtensionContentFilter::NetworkExtensionContentFilter): Deleted.
+        (WebCore::NetworkExtensionContentFilter::needsMoreData): Deleted.
+        (WebCore::NetworkExtensionContentFilter::didBlockData): Deleted.
+        * platform/cocoa/ParentalControlsContentFilter.h:
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        (WebCore::ParentalControlsContentFilter::responseReceived):
+        (WebCore::ParentalControlsContentFilter::updateFilterState):
+        (WebCore::ParentalControlsContentFilter::ParentalControlsContentFilter): Deleted.
+        (WebCore::ParentalControlsContentFilter::needsMoreData): Deleted.
+        (WebCore::ParentalControlsContentFilter::didBlockData): Deleted.
+        * platform/spi/cocoa/NEFilterSourceSPI.h:
+        * testing/MockContentFilter.cpp:
+        (WebCore::MockContentFilter::willSendRequest):
+        (WebCore::MockContentFilter::maybeDetermineStatus):
+        (WebCore::MockContentFilter::needsMoreData): Deleted.
+        (WebCore::MockContentFilter::didBlockData): Deleted.
+        * testing/MockContentFilter.h:
+
+2016-01-12  Andy Estes  <aestes@apple.com>
+
         Address missed review feedback after r194950.
 
         * platform/cocoa/NetworkExtensionContentFilter.mm:

@@ -45,18 +45,15 @@ public:
     void responseReceived(const ResourceResponse&) override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
-    bool needsMoreData() const override;
-    bool didBlockData() const override;
     Ref<SharedBuffer> replacementData() const override;
     ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
     static bool enabled();
 
-    ParentalControlsContentFilter();
+    ParentalControlsContentFilter() = default;
     void updateFilterState();
 
-    OSStatus m_filterState;
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
     RetainPtr<NSData> m_replacementData;
 };

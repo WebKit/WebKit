@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_FILTERING)
 
 #include "CachedResourceHandle.h"
+#include "PlatformContentFilter.h"
 #include <functional>
 #include <wtf/Vector.h>
 
@@ -37,7 +38,6 @@ namespace WebCore {
 class CachedRawResource;
 class ContentFilterUnblockHandler;
 class DocumentLoader;
-class PlatformContentFilter;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
@@ -67,12 +67,7 @@ public:
     String unblockRequestDeniedScript() const;
 
 private:
-    enum class State {
-        Stopped,
-        Filtering,
-        Allowed,
-        Blocked,
-    };
+    using State = PlatformContentFilter::State;
 
     struct Type {
         const std::function<std::unique_ptr<PlatformContentFilter>()> create;

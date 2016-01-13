@@ -36,6 +36,8 @@ typedef NS_ENUM(NSInteger, NEFilterSourceStatus) {
     NEFilterSourceStatusBlock = 2,
     NEFilterSourceStatusNeedsMoreData = 3,
     NEFilterSourceStatusError = 4,
+    NEFilterSourceStatusWhitelisted = 5,
+    NEFilterSourceStatusBlacklisted = 6,
 };
 
 typedef NS_ENUM(NSInteger, NEFilterSourceDirection) {

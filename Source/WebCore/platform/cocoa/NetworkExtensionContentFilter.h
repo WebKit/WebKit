@@ -51,19 +51,16 @@ public:
     void responseReceived(const ResourceResponse&) override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
-    bool needsMoreData() const override;
-    bool didBlockData() const override;
     Ref<SharedBuffer> replacementData() const override;
     ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
     static bool enabled();
 
-    NetworkExtensionContentFilter();
+    NetworkExtensionContentFilter() = default;
     void initialize(const URL* = nullptr);
     void handleDecision(NEFilterSourceStatus, NSData *replacementData);
 
-    NEFilterSourceStatus m_status;
     OSObjectPtr<dispatch_queue_t> m_queue;
     OSObjectPtr<dispatch_semaphore_t> m_semaphore;
     RetainPtr<NSData> m_replacementData;

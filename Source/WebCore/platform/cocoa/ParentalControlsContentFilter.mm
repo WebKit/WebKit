@@ -53,11 +53,6 @@ std::unique_ptr<ParentalControlsContentFilter> ParentalControlsContentFilter::cr
     return std::make_unique<ParentalControlsContentFilter>();
 }
 
-ParentalControlsContentFilter::ParentalControlsContentFilter()
-    : m_filterState { kWFEStateBuffering }
-{
-}
-
 static inline bool canHandleResponse(const ResourceResponse& response)
 {
 #if PLATFORM(MAC)
@@ -72,7 +67,7 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
     ASSERT(!m_webFilterEvaluator);
 
     if (!canHandleResponse(response) || !enabled()) {
-        m_filterState = kWFEStateAllowed;
+        m_state = State::Allowed;
         return;
     }
 
@@ -95,16 +90,6 @@ void ParentalControlsContentFilter::finishedAddingData()
     updateFilterState();
 }
 
-bool ParentalControlsContentFilter::needsMoreData() const
-{
-    return m_filterState == kWFEStateBuffering;
-}
-
-bool ParentalControlsContentFilter::didBlockData() const
-{
-    return m_filterState == kWFEStateBlocked;
-}
-
 Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
 {
     ASSERT(didBlockData());
@@ -122,10 +107,22 @@ ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() cons
 
 void ParentalControlsContentFilter::updateFilterState()
 {
-    m_filterState = [m_webFilterEvaluator filterState];
+    switch ([m_webFilterEvaluator filterState]) {
+    case kWFEStateAllowed:
+    case kWFEStateEvaluating:
+        m_state = State::Allowed;
+        break;
+    case kWFEStateBlocked:
+        m_state = State::Blocked;
+        break;
+    case kWFEStateBuffering:
+        m_state = State::Filtering;
+        break;
+    }
+
 #if !LOG_DISABLED
     if (!needsMoreData())
-        LOG(ContentFiltering, "ParentalControlsContentFilter stopped buffering with state %d and replacement data length %zu.\n", m_filterState, [m_replacementData length]);
+        LOG(ContentFiltering, "ParentalControlsContentFilter stopped buffering with state %d and replacement data length %zu.\n", m_state, [m_replacementData length]);
 #endif
 }
 

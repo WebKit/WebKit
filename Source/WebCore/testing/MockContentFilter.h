@@ -42,26 +42,17 @@ public:
     void responseReceived(const ResourceResponse&) override;
     void addData(const char* data, int length) override;
     void finishedAddingData() override;
-    bool needsMoreData() const override;
-    bool didBlockData() const override;
     Ref<SharedBuffer> replacementData() const override;
     ContentFilterUnblockHandler unblockHandler() const override;
     String unblockRequestDeniedScript() const override;
 
 private:
-    enum class Status {
-        NeedsMoreData,
-        Allowed,
-        Blocked
-    };
-
     static bool enabled();
 
     MockContentFilter() = default;
     void maybeDetermineStatus(MockContentFilterSettings::DecisionPoint);
 
     Vector<char> m_replacementData;
-    Status m_status { Status::NeedsMoreData };
 };
 
 } // namespace WebCore

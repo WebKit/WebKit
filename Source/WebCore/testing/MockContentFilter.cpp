@@ -71,7 +71,7 @@ std::unique_ptr<MockContentFilter> MockContentFilter::create()
 void MockContentFilter::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (!enabled()) {
-        m_status = Status::Allowed;
+        m_state = State::Allowed;
         return;
     }
 
@@ -80,7 +80,7 @@ void MockContentFilter::willSendRequest(ResourceRequest& request, const Resource
     else
         maybeDetermineStatus(DecisionPoint::AfterRedirect);
 
-    if (m_status == Status::NeedsMoreData)
+    if (m_state == State::Filtering)
         return;
 
     String modifiedRequestURLString { settings().modifiedRequestURL() };
@@ -109,16 +109,6 @@ void MockContentFilter::addData(const char*, int)
 void MockContentFilter::finishedAddingData()
 {
     maybeDetermineStatus(DecisionPoint::AfterFinishedAddingData);
-}
-
-bool MockContentFilter::needsMoreData() const
-{
-    return m_status == Status::NeedsMoreData;
-}
-
-bool MockContentFilter::didBlockData() const
-{
-    return m_status == Status::Blocked;
 }
 
 Ref<SharedBuffer> MockContentFilter::replacementData() const
@@ -150,13 +140,13 @@ String MockContentFilter::unblockRequestDeniedScript() const
 
 void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
 {
-    if (m_status != Status::NeedsMoreData || decisionPoint != settings().decisionPoint())
+    if (m_state != State::Filtering || decisionPoint != settings().decisionPoint())
         return;
 
-    LOG(ContentFiltering, "MockContentFilter stopped buffering with status %u at decision point %u.\n", m_status, decisionPoint);
+    LOG(ContentFiltering, "MockContentFilter stopped buffering with state %u at decision point %u.\n", m_state, decisionPoint);
 
-    m_status = settings().decision() == Decision::Allow ? Status::Allowed : Status::Blocked;
-    if (m_status != Status::Blocked)
+    m_state = settings().decision() == Decision::Allow ? State::Allowed : State::Blocked;
+    if (m_state != State::Blocked)
         return;
 
     m_replacementData.clear();
