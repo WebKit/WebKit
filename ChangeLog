@@ -1,3 +1,9 @@
+2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.3 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for custom element

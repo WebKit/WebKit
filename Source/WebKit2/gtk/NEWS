@@ -1,4 +1,29 @@
 =================
+WebKitGTK+ 2.11.3
+=================
+
+What's new in WebKitGTK+ 2.11.3?
+
+  - NetworkProcess is now used unconditionally. The shared secondary process model is now
+    the same as using the multiple process model and setting a process limit of 1.
+  - Disable DNS prefetch when a proxy is configured.
+  - Reduce the maximum simultaneous network connections to match other browsers.
+  - Extend notifications API to notify WebKit when a notification is clicked by the user.
+  - Add new API to save and restore a WebView session.
+  - Add Web Extensions API to be notified about console messages.
+  - Add WebKitURIRequest API to get the HTTP method.
+  - Add API to handle beforeunload events.
+  - Make WebKitWebView always propagate motion-notify-event signal.
+  - Add a way to force accelerating compositing mode at runtime using an environment variable.
+  - Fix input elements and scrollbars rendering with GTK+ 3.19.
+  - Fix a crash in the UI process when the WebView is destroyed while the screensaver DBus proxy
+    is being created.
+  - Fix a WebProcess crash when loading large contents with custom URI schemes API.
+  - Fix UI process crashes related to not having a main resource response when the load is committed
+    for pages restored from the history cache.
+  - Translation updates: French, German, Turkish
+
+=================
 WebKitGTK+ 2.11.2
 =================
 
