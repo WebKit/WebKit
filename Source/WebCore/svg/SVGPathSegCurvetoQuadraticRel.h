@@ -28,13 +28,13 @@ namespace WebCore {
 
 class SVGPathSegCurvetoQuadraticRel : public SVGPathSegCurvetoQuadratic {
 public:
-    static Ref<SVGPathSegCurvetoQuadraticRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+    static Ref<SVGPathSegCurvetoQuadraticRel> create(const SVGPathElement& element, SVGPathSegRole role, float x, float y, float x1, float y1)
     {
         return adoptRef(*new SVGPathSegCurvetoQuadraticRel(element, role, x, y, x1, y1));
     }
 
 private:
-    SVGPathSegCurvetoQuadraticRel(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+    SVGPathSegCurvetoQuadraticRel(const SVGPathElement& element, SVGPathSegRole role, float x, float y, float x1, float y1)
         : SVGPathSegCurvetoQuadratic(element, role, x, y, x1, y1)
     {
     }

@@ -27,13 +27,13 @@ namespace WebCore {
 
 class SVGPathSegClosePath : public SVGPathSegWithContext {
 public:
-    static Ref<SVGPathSegClosePath> create(SVGPathElement* element, SVGPathSegRole role)
+    static Ref<SVGPathSegClosePath> create(const SVGPathElement& element, SVGPathSegRole role)
     {
         return adoptRef(*new SVGPathSegClosePath(element, role));
     }
 
 private:
-    SVGPathSegClosePath(SVGPathElement* element, SVGPathSegRole role)
+    SVGPathSegClosePath(const SVGPathElement& element, SVGPathSegRole role)
         : SVGPathSegWithContext(element, role)
     {
     }

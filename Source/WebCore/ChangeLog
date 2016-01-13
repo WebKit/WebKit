@@ -1,3 +1,124 @@
+2016-01-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Reference cycle between SVGPathElement and SVGPathSegWithContext leaks Document
+        https://bugs.webkit.org/show_bug.cgi?id=151810
+
+        Reviewed by Darin Adler.
+
+        Break the reference cycle between SVGPathElement and SVGPathSegWithContext
+        by changing the back-pointer to be a WeakPtr pointer instead of having it
+        RefPtr. Make sure the SVGPathSegWithContext derived classes handle correctly
+        the case when the SVGPathElement back-pointer is deleted.
+
+        Also change the SVGPathElement argument to the SVGPathSeg creation functions
+        and constructors to be a const reference instead of having it as a pointer
+        since SVGPathElement is the class factory for all these classes.
+
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::createSVGPathSegClosePath):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticRel):
+        (WebCore::SVGPathElement::createSVGPathSegArcAbs):
+        (WebCore::SVGPathElement::createSVGPathSegArcRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel):
+        (WebCore::SVGPathElement::isSupportedAttribute):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSegArc.h:
+        (WebCore::SVGPathSegArc::SVGPathSegArc):
+        * svg/SVGPathSegArcAbs.h:
+        (WebCore::SVGPathSegArcAbs::create):
+        (WebCore::SVGPathSegArcAbs::SVGPathSegArcAbs):
+        * svg/SVGPathSegArcRel.h:
+        (WebCore::SVGPathSegArcRel::create):
+        (WebCore::SVGPathSegArcRel::SVGPathSegArcRel):
+        * svg/SVGPathSegClosePath.h:
+        (WebCore::SVGPathSegClosePath::create):
+        (WebCore::SVGPathSegClosePath::SVGPathSegClosePath):
+        * svg/SVGPathSegCurvetoCubic.h:
+        (WebCore::SVGPathSegCurvetoCubic::SVGPathSegCurvetoCubic):
+        * svg/SVGPathSegCurvetoCubicAbs.h:
+        (WebCore::SVGPathSegCurvetoCubicAbs::create):
+        (WebCore::SVGPathSegCurvetoCubicAbs::SVGPathSegCurvetoCubicAbs):
+        * svg/SVGPathSegCurvetoCubicRel.h:
+        (WebCore::SVGPathSegCurvetoCubicRel::create):
+        (WebCore::SVGPathSegCurvetoCubicRel::SVGPathSegCurvetoCubicRel):
+        * svg/SVGPathSegCurvetoCubicSmooth.h:
+        (WebCore::SVGPathSegCurvetoCubicSmooth::SVGPathSegCurvetoCubicSmooth):
+        * svg/SVGPathSegCurvetoCubicSmoothAbs.h:
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::create):
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::SVGPathSegCurvetoCubicSmoothAbs):
+        * svg/SVGPathSegCurvetoCubicSmoothRel.h:
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::create):
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::SVGPathSegCurvetoCubicSmoothRel):
+        * svg/SVGPathSegCurvetoQuadratic.h:
+        (WebCore::SVGPathSegCurvetoQuadratic::SVGPathSegCurvetoQuadratic):
+        * svg/SVGPathSegCurvetoQuadraticAbs.h:
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::create):
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::SVGPathSegCurvetoQuadraticAbs):
+        * svg/SVGPathSegCurvetoQuadraticRel.h:
+        (WebCore::SVGPathSegCurvetoQuadraticRel::create):
+        (WebCore::SVGPathSegCurvetoQuadraticRel::SVGPathSegCurvetoQuadraticRel):
+        * svg/SVGPathSegCurvetoQuadraticSmoothAbs.h:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::create):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs):
+        * svg/SVGPathSegCurvetoQuadraticSmoothRel.h:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::create):
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel):
+        * svg/SVGPathSegLinetoAbs.h:
+        (WebCore::SVGPathSegLinetoAbs::create):
+        (WebCore::SVGPathSegLinetoAbs::SVGPathSegLinetoAbs):
+        * svg/SVGPathSegLinetoHorizontal.h:
+        (WebCore::SVGPathSegLinetoHorizontal::SVGPathSegLinetoHorizontal):
+        * svg/SVGPathSegLinetoHorizontalAbs.h:
+        (WebCore::SVGPathSegLinetoHorizontalAbs::create):
+        (WebCore::SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs):
+        * svg/SVGPathSegLinetoHorizontalRel.h:
+        (WebCore::SVGPathSegLinetoHorizontalRel::create):
+        (WebCore::SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel):
+        * svg/SVGPathSegLinetoRel.h:
+        (WebCore::SVGPathSegLinetoRel::create):
+        (WebCore::SVGPathSegLinetoRel::SVGPathSegLinetoRel):
+        * svg/SVGPathSegLinetoVertical.h:
+        (WebCore::SVGPathSegLinetoVertical::SVGPathSegLinetoVertical):
+        * svg/SVGPathSegLinetoVerticalAbs.h:
+        (WebCore::SVGPathSegLinetoVerticalAbs::create):
+        (WebCore::SVGPathSegLinetoVerticalAbs::SVGPathSegLinetoVerticalAbs):
+        * svg/SVGPathSegLinetoVerticalRel.h:
+        (WebCore::SVGPathSegLinetoVerticalRel::create):
+        (WebCore::SVGPathSegLinetoVerticalRel::SVGPathSegLinetoVerticalRel):
+        * svg/SVGPathSegMovetoAbs.h:
+        (WebCore::SVGPathSegMovetoAbs::create):
+        (WebCore::SVGPathSegMovetoAbs::SVGPathSegMovetoAbs):
+        * svg/SVGPathSegMovetoRel.h:
+        (WebCore::SVGPathSegMovetoRel::create):
+        (WebCore::SVGPathSegMovetoRel::SVGPathSegMovetoRel):
+        * svg/SVGPathSegWithContext.h:
+        (WebCore::SVGPathSegWithContext::SVGPathSegWithContext):
+        (WebCore::SVGPathSegWithContext::animatedProperty):
+        (WebCore::SVGPathSegWithContext::contextElement):
+        (WebCore::SVGPathSegWithContext::setContextAndRole):
+        (WebCore::SVGPathSegWithContext::commitChange):
+        (WebCore::SVGPathSegSingleCoordinate::setY):
+        (WebCore::SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate):
+        * svg/properties/SVGPathSegListPropertyTearOff.cpp:
+        (WebCore::SVGPathSegListPropertyTearOff::clearContextAndRoles):
+        (WebCore::SVGPathSegListPropertyTearOff::replaceItem):
+        (WebCore::SVGPathSegListPropertyTearOff::removeItem):
+
 2016-01-13  Andreas Kling  <akling@apple.com>
 
         Use BumpArena for style sheet object tree.

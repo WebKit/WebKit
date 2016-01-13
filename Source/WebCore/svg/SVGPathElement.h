@@ -97,6 +97,8 @@ public:
 
     bool isAnimValObserved() const { return m_isAnimValObserved; }
 
+    WeakPtr<SVGPathElement> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
+
 private:
     SVGPathElement(const QualifiedName&, Document&);
 
@@ -126,6 +128,7 @@ private:
 private:
     SVGPathByteStream m_pathByteStream;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegList> m_pathSegList;
+    WeakPtrFactory<SVGPathElement> m_weakPtrFactory;
     bool m_isAnimValObserved;
 };
 
