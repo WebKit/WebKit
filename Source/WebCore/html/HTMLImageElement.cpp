@@ -53,9 +53,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef HashMap<const Node*, Node*> PictureOwnerMap;
-static PictureOwnerMap* gPictureOwnerMap = nullptr;
-
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
     , m_imageLoader(*this)
@@ -85,7 +82,6 @@ HTMLImageElement::~HTMLImageElement()
 {
     if (m_form)
         m_form->removeImgElement(this);
-    setPictureNode(nullptr);
 }
 
 Ref<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document& document, const int* optionalWidth, const int* optionalHeight)
@@ -144,13 +140,13 @@ void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidat
 
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 {
-    auto* pictureOwner = pictureNode();
-    if (!pictureOwner)
+    auto* parent = parentNode();
+    if (!is<HTMLPictureElement>(parent))
         return { };
-    auto* picture = downcast<HTMLPictureElement>(pictureOwner);
+    auto* picture = downcast<HTMLPictureElement>(parent);
     picture->clearViewportDependentResults();
     document().removeViewportDependentPicture(*picture);
-    for (Node* child = picture->firstChild(); child && child != this; child = child->nextSibling()) {
+    for (Node* child = parent->firstChild(); child && child != this; child = child->nextSibling()) {
         if (!is<HTMLSourceElement>(*child))
             continue;
         auto& source = downcast<HTMLSourceElement>(*child);
@@ -167,7 +163,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
             if (!type.isEmpty() && !MIMETypeRegistry::isSupportedImageMIMEType(type) && type != "image/svg+xml")
                 continue;
         }
-        MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), document().documentElement()->computedStyle());
+        MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), computedStyle());
         bool evaluation = evaluator.evalCheckingViewportDependentResults(source.mediaQuerySet(), picture->viewportDependentResults());
         if (picture->hasViewportDependentResults())
             document().addViewportDependentPicture(*picture);
@@ -317,10 +313,8 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
     if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
         document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 
-    if (is<HTMLPictureElement>(parentNode())) {
-        setPictureNode(parentNode());
+    if (is<HTMLPictureElement>(parentNode()))
         selectImageSource();
-    }
 
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
@@ -337,34 +331,11 @@ void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)
 
     if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
         document().removeImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
-    
-    if (is<HTMLPictureElement>(parentNode()))
-        setPictureNode(nullptr);
-    
+
     m_form = nullptr;
     HTMLElement::removedFrom(insertionPoint);
 }
 
-Node* HTMLImageElement::pictureNode() const
-{
-    if (!gPictureOwnerMap)
-        return nullptr;
-    return gPictureOwnerMap->get(this);
-}
-    
-void HTMLImageElement::setPictureNode(Node* node)
-{
-    if (!node) {
-        if (gPictureOwnerMap)
-            gPictureOwnerMap->remove(this);
-        return;
-    }
-    
-    if (!gPictureOwnerMap)
-        gPictureOwnerMap = new PictureOwnerMap();
-    gPictureOwnerMap->add(this, node);
-}
-    
 int HTMLImageElement::width(bool ignorePendingStylesheets)
 {
     if (!renderer()) {
