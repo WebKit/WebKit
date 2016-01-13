@@ -1,3 +1,69 @@
+2016-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r194908. rdar://problem/24101253
+
+    2016-01-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Merge r192186. rdar://problem/24101174
+
+        2015-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+                Web Inspector: $0 stops working after navigating to a different domain
+                https://bugs.webkit.org/show_bug.cgi?id=147962
+
+                Reviewed by Brian Burg.
+
+                Test: http/tests/inspector/console/cross-domain-inspected-node-access.html
+
+                The inspector backend injects the CommandLineAPI Source with a
+                corresponding CommandLineAPIHost into each execution context
+                created by the page (main frame, sub frames, etc).
+
+                When creating the JSValue wrapper for the CommandLineAPIHost using
+                the generated toJS(...) DOM bindings, we were using the cached
+                CommandLineAPIHost wrapper values in the single DOMWrapperWorld shared
+                across all frames. This meant that the first time the wrapper was
+                needed it was created in context A. But when needed for context B
+                it was using the wrapper created in context A. Using this wrapper
+                in context B was producing unexpected cross-origin warnings.
+
+                The solution taken here, is to create a new JSValue wrapper for
+                the CommandLineAPIHost per execution context. This way each time
+                the CommandLineAPIHost wrapper is used in a frame, it is using
+                the one created for that frame.
+
+                The C++ host object being wrapped has a lifetime equivalent to
+                the Page. It does not change in this patch. The wrapper values
+                are cleared on page navigation or when the page is closed, and
+                will be garbage collected.
+
+                * WebCore.vcxproj/WebCore.vcxproj:
+                * WebCore.vcxproj/WebCore.vcxproj.filters:
+                * ForwardingHeaders/inspector/PerGlobalObjectWrapperWorld.h: Added.
+                New forwarding header.
+
+                * inspector/CommandLineAPIHost.h:
+                * inspector/CommandLineAPIHost.cpp:
+                (WebCore::CommandLineAPIHost::CommandLineAPIHost):
+                (WebCore::CommandLineAPIHost::wrapper):
+                Cached JSValue wrappers per GlobalObject.
+
+                (WebCore::CommandLineAPIHost::clearAllWrappers):
+                Clear any wrappers we have, including the $0 value itself
+                which we weren't explicitly clearing previously.
+
+                * inspector/CommandLineAPIModule.cpp:
+                (WebCore::CommandLineAPIModule::host):
+                Simplify creating the wrapper.
+
+                * inspector/WebInjectedScriptManager.h:
+                * inspector/WebInjectedScriptManager.cpp:
+                (WebCore::WebInjectedScriptManager::discardInjectedScripts):
+                When the main frame window object clears, also clear the
+                CommandLineAPI wrappers we may have created. Also take this
+                opportunity to clear any $0 value that may have pointed
+                to a value in the previous page.
+
 2016-01-08  Timothy Hatcher  <timothy@apple.com>
 
         <rdar://problem/24094651> REGRESSION (193350): CrashTracer: [USER] com.apple.WebKit.WebContent at …: Inspector::CSSFrontendDispatcher::styleSheetRemoved + 768

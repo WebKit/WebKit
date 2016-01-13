@@ -32,25 +32,23 @@
 #include "CommandLineAPIHost.h"
 
 #include "Database.h"
-#include "Element.h"
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "HTMLFrameOwnerElement.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
-#include <inspector/InspectorFrontendDispatchers.h>
+#include "JSCommandLineAPIHost.h"
+#include "JSDOMGlobalObject.h"
 #include "Pasteboard.h"
 #include "Storage.h"
-#include "markup.h"
 #include <bindings/ScriptValue.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/agents/InspectorAgent.h>
 #include <inspector/agents/InspectorConsoleAgent.h>
+#include <runtime/JSCInlines.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
+using namespace JSC;
 using namespace Inspector;
 
 namespace WebCore {
@@ -61,13 +59,8 @@ Ref<CommandLineAPIHost> CommandLineAPIHost::create()
 }
 
 CommandLineAPIHost::CommandLineAPIHost()
-    : m_inspectorAgent(nullptr)
-    , m_consoleAgent(nullptr)
-    , m_domAgent(nullptr)
-    , m_domStorageAgent(nullptr)
-    , m_databaseAgent(nullptr)
+    : m_inspectedObject(std::make_unique<InspectableObject>())
 {
-    m_inspectedObject = std::make_unique<InspectableObject>();
 }
 
 CommandLineAPIHost::~CommandLineAPIHost()
@@ -142,6 +135,26 @@ String CommandLineAPIHost::storageIdImpl(Storage* storage)
     if (m_domStorageAgent)
         return m_domStorageAgent->storageId(storage);
     return String();
+}
+
+JSValue CommandLineAPIHost::wrapper(ExecState* exec, JSDOMGlobalObject* globalObject)
+{
+    JSValue value = m_wrappers.getWrapper(globalObject);
+    if (value)
+        return value;
+
+    JSObject* prototype = JSCommandLineAPIHost::createPrototype(exec->vm(), globalObject);
+    Structure* structure = JSCommandLineAPIHost::createStructure(exec->vm(), globalObject, prototype);
+    JSCommandLineAPIHost* commandLineAPIHost = JSCommandLineAPIHost::create(structure, globalObject, Ref<CommandLineAPIHost>(*this));
+    m_wrappers.addWrapper(globalObject, commandLineAPIHost);
+
+    return commandLineAPIHost;
+}
+
+void CommandLineAPIHost::clearAllWrappers()
+{
+    m_wrappers.clearAllWrappers();
+    m_inspectedObject = std::make_unique<InspectableObject>();
 }
 
 } // namespace WebCore

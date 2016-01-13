@@ -23,31 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScriptHost_h
-#define InjectedScriptHost_h
+#include "config.h"
+#include "PerGlobalObjectWrapperWorld.h"
 
-#include "JSCJSValueInlines.h"
-#include "inspector/PerGlobalObjectWrapperWorld.h"
-#include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+using namespace JSC;
 
 namespace Inspector {
 
-class JS_EXPORT_PRIVATE InjectedScriptHost : public RefCounted<InjectedScriptHost> {
-public:
-    static Ref<InjectedScriptHost> create() { return adoptRef(*new InjectedScriptHost); }
-    virtual ~InjectedScriptHost();
+JSValue PerGlobalObjectWrapperWorld::getWrapper(JSGlobalObject* globalObject)
+{
+    auto it = m_wrappers.find(globalObject);
+    if (it != m_wrappers.end())
+        return it->value.get();
+    return JSValue();
+}
 
-    virtual JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) { return JSC::jsUndefined(); }
-    virtual bool isHTMLAllCollection(JSC::JSValue) { return false; }
+void PerGlobalObjectWrapperWorld::addWrapper(JSGlobalObject* globalObject, JSObject* object)
+{
+    Strong<JSObject> wrapper(globalObject->vm(), object);
+    m_wrappers.add(globalObject, wrapper);
+}
 
-    JSC::JSValue wrapper(JSC::ExecState*, JSC::JSGlobalObject*);
-    void clearAllWrappers();
-
-private:
-    PerGlobalObjectWrapperWorld m_wrappers;
-};
+void PerGlobalObjectWrapperWorld::clearAllWrappers()
+{
+    m_wrappers.clear();
+}
 
 } // namespace Inspector
-
-#endif // !defined(InjectedScriptHost_h)
