@@ -31,10 +31,18 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
 
         sourceCodeLocation = sourceCodeLocation || timelineRecord.sourceCodeLocation || null;
 
-        var title = "";
-        var subtitle = null;
-        var alternateSubtitle = null;
+        let alternateSubtitle = null;
+        if (includeDetailsInMainTitle && timelineRecord.type === WebInspector.TimelineRecord.Type.Script && timelineRecord.eventType === WebInspector.ScriptTimelineRecord.EventType.TimerInstalled) {
+            let timeoutString = Number.secondsToString(timelineRecord.details.timeout / 1000);
+            alternateSubtitle = document.createElement("span");
+            alternateSubtitle.classList.add("alternate-subtitle");
+            if (timelineRecord.details.repeating)
+                alternateSubtitle.textContent = WebInspector.UIString("%s interval").format(timeoutString);
+            else
+                alternateSubtitle.textContent = WebInspector.UIString("%s delay").format(timeoutString);
+        }
 
+        let subtitle = null;
         if (sourceCodeLocation) {
             subtitle = document.createElement("span");
 
@@ -44,93 +52,8 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
                 sourceCodeLocation.populateLiveDisplayLocationString(subtitle, "textContent", null, WebInspector.SourceCodeLocation.NameStyle.None, WebInspector.UIString("line "));
         }
 
-        var iconStyleClass = null;
-
-        switch (timelineRecord.type) {
-        case WebInspector.TimelineRecord.Type.Layout:
-            title = WebInspector.LayoutTimelineRecord.displayNameForEventType(timelineRecord.eventType);
-
-            switch (timelineRecord.eventType) {
-            case WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles:
-            case WebInspector.LayoutTimelineRecord.EventType.RecalculateStyles:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass;
-                break;
-            case WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout:
-            case WebInspector.LayoutTimelineRecord.EventType.ForcedLayout:
-            case WebInspector.LayoutTimelineRecord.EventType.Layout:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass;
-                break;
-            case WebInspector.LayoutTimelineRecord.EventType.Paint:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.PaintRecordIconStyleClass;
-                break;
-            case WebInspector.LayoutTimelineRecord.EventType.Composite:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.CompositeRecordIconStyleClass;
-                break;
-            default:
-                console.error("Unknown LayoutTimelineRecord eventType: " + timelineRecord.eventType, timelineRecord);
-            }
-
-            break;
-
-        case WebInspector.TimelineRecord.Type.Script:
-            title = WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeDetailsInMainTitle);
-
-            switch (timelineRecord.eventType) {
-            case WebInspector.ScriptTimelineRecord.EventType.APIScriptEvaluated:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.APIRecordIconStyleClass;
-                break;
-            case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
-                break;
-            case WebInspector.ScriptTimelineRecord.EventType.MicrotaskDispatched:
-            case WebInspector.ScriptTimelineRecord.EventType.EventDispatched:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass;
-                break;
-            case WebInspector.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.ProbeRecordIconStyleClass;
-                break;
-            case WebInspector.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.ConsoleProfileIconStyleClass;
-                break;
-            case WebInspector.ScriptTimelineRecord.EventType.GarbageCollected:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.GarbageCollectionIconStyleClass;
-                break;
-            case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
-                if (includeDetailsInMainTitle) {
-                    let timeoutString =  Number.secondsToString(timelineRecord.details.timeout / 1000);
-                    alternateSubtitle = document.createElement("span");
-                    alternateSubtitle.classList.add("alternate-subtitle");
-                    if (timelineRecord.details.repeating)
-                        alternateSubtitle.textContent = WebInspector.UIString("%s interval").format(timeoutString);
-                    else
-                        alternateSubtitle.textContent = WebInspector.UIString("%s delay").format(timeoutString);
-                }
-
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass;
-                break;
-            case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
-            case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass;
-                break;
-            case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired:
-            case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested:
-            case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
-                iconStyleClass = WebInspector.TimelineRecordTreeElement.AnimationRecordIconStyleClass;
-                break;
-            default:
-                console.error("Unknown ScriptTimelineRecord eventType: " + timelineRecord.eventType, timelineRecord);
-            }
-
-            break;
-
-        case WebInspector.TimelineRecord.Type.RenderingFrame:
-            title = WebInspector.UIString("Frame %d").format(timelineRecord.frameNumber);
-            iconStyleClass = WebInspector.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass;
-            break;
-
-        default:
-            console.error("Unknown TimelineRecord type: " + timelineRecord.type, timelineRecord);
-        }
+        let iconStyleClass = WebInspector.TimelineTabContentView.iconClassNameForRecord(timelineRecord);
+        let title = WebInspector.TimelineTabContentView.displayNameForRecord(timelineRecord);
 
         super([iconStyleClass], title, subtitle, representedObject || timelineRecord, false);
 

@@ -182,40 +182,6 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._toggleNewRecordingShortcut.disabled = true;
     }
 
-    // Static
-
-    static displayNameForTimeline(timeline)
-    {
-        switch (timeline.type) {
-        case WebInspector.TimelineRecord.Type.Network:
-            return WebInspector.UIString("Network Requests");
-        case WebInspector.TimelineRecord.Type.Layout:
-            return WebInspector.UIString("Layout & Rendering");
-        case WebInspector.TimelineRecord.Type.Script:
-            return WebInspector.UIString("JavaScript & Events");
-        case WebInspector.TimelineRecord.Type.RenderingFrame:
-            return WebInspector.UIString("Rendering Frames");
-        }
-
-        console.error("Unknown Timeline type:", timeline.type);
-    }
-
-    static iconClassNameForTimeline(timeline)
-    {
-        switch (timeline.type) {
-        case WebInspector.TimelineRecord.Type.Network:
-            return "network-icon";
-        case WebInspector.TimelineRecord.Type.Layout:
-            return "colors-icon";
-        case WebInspector.TimelineRecord.Type.Script:
-            return "script-icon";
-        case WebInspector.TimelineRecord.Type.RenderingFrame:
-            return "rendering-frame-icon";
-        }
-
-        console.error("Unknown Timeline type:", timeline.type);
-    }
-
     // Public
 
     get minimumWidth()
@@ -788,8 +754,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             return;
         }
 
-        let displayName = WebInspector.TimelineSidebarPanel.displayNameForTimeline(timeline);
-        let iconClassName = WebInspector.TimelineSidebarPanel.iconClassNameForTimeline(timeline);
+        let displayName = WebInspector.TimelineTabContentView.displayNameForTimeline(timeline);
+        let iconClassName = WebInspector.TimelineTabContentView.iconClassNameForTimeline(timeline);
         let timelineTreeElement = new WebInspector.GeneralTreeElement([iconClassName, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], displayName, null, timeline);
         let tooltip = WebInspector.UIString("Close %s timeline view").format(displayName);
         let button = new WebInspector.TreeElementStatusButton(useSVGSymbol("Images/CloseLarge.svg", "close-button", tooltip));

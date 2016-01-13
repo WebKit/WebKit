@@ -1,3 +1,38 @@
+2016-01-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Move helper methods for getting icons/text to TimelineTabContentView
+        https://bugs.webkit.org/show_bug.cgi?id=152996
+
+        Reviewed by Brian Burg.
+
+        In preparation for the Timelines UI redesign, helper methods which existed
+        in the sidebar panel and timeline tree elements need to be relocated,
+        since the sidebar won't exist in the new UI.
+
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        Removed icon/title code, replaced with calls to new helper methods.
+        Code to create the alternate subtitle was broken out form the rest
+        of the icon/title code, and kept in the constructor.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._instrumentAdded):
+        Updated calls to helper methods.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._instrumentAdded):
+        (WebInspector.TimelineSidebarPanel.displayNameForTimeline): Deleted.
+        (WebInspector.TimelineSidebarPanel.iconClassNameForTimeline): Deleted.
+        Moved to TimelineTabContentView.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.displayNameForTimeline):
+        (WebInspector.TimelineTabContentView.iconClassNameForTimeline):
+        Relocated from TimelineSidebarPanel.
+        (WebInspector.TimelineTabContentView.iconClassNameForRecord):
+        (WebInspector.TimelineTabContentView.displayNameForRecord):
+        New helper methods. Previously part of TimelineRecordTreeElement.
+
 2016-01-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: fix some common misspellings in localized strings
