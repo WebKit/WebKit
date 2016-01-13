@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.color-swatch {
+.inline-swatch {
     display: inline-block;
     position: relative;
     width: 1em;
@@ -42,29 +42,48 @@
     overflow: hidden;
 }
 
+.inline-swatch.bezier {
+    margin-right: 2px;
+    content: url(../Images/CubicBezier.svg);
+    background: none;
+}
+
+.inline-swatch.bezier:hover {
+    filter: brightness(0.9);
+}
+
+.inline-swatch.bezier:active {
+    filter: brightness(0.8);
+}
+
 @media (-webkit-max-device-pixel-ratio: 1) {
     /* Ensure the color swatch is even by even so that it looks okay checkered. */
-    .color-swatch {
+    .inline-swatch {
         vertical-align: -1px;
         width: 10px;
         height: 10px;
     }
 }
 
-.color-swatch > span {
+.inline-swatch > span {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     border: 1px solid hsla(0, 0%, 25%, 0.4);
+    pointer-events: none;
 }
 
-.color-swatch:hover > span {
+.inline-swatch:hover > span {
     border-color: hsla(0, 0%, 25%, 0.8);
 }
 
-.color-swatch:active > span {
+.inline-swatch:active > span {
     border-color: hsl(0, 0%, 25%);
+}
+
+.inline-swatch.bezier > span {
+    display: none;
 }
 

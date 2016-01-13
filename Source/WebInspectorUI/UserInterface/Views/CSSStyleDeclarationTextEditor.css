@@ -91,32 +91,6 @@
     filter: brightness(0.9);
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker {
-    width: 11px;
-    height: 11px;
-    margin-right: 2px;
-    vertical-align: -2px;
-    content: url(../Images/CubicBezier.svg);
-    cursor: default;
-}
-
-@media (-webkit-max-device-pixel-ratio: 1) {
-    /* Ensure the bezier marker is even by even so it looks a bit less blurry. */
-    .css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker {
-        vertical-align: -1px;
-        width: 10px;
-        height: 10px;
-    }
-}
-
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:hover {
-    filter: brightness(0.9);
-}
-
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:active {
-    filter: brightness(0.8);
-}
-
 .computed .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.implicit,
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.not-inherited {
     opacity: 0.5;

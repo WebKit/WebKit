@@ -31,7 +31,7 @@
     display: none;
 }
 
-.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch {
+.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color {
     width: 22px;
     height: 18px;
     margin-top: 1px;
@@ -40,15 +40,15 @@
     border-radius: 4px;
 }
 
-.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch:hover {
+.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color:hover {
     border-color: hsla(0, 0%, 25%, 0.8);
 }
 
-.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch:active {
+.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color:active {
     border-color: hsl(0, 0%, 25%);
 }
 
-.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch > span {
+.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color > span {
     border: none;
 }
 

@@ -29,15 +29,9 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
     {
         super(propertyNames, text, possibleValues, null, "background-picker", layoutReversed);
 
-        this._gradientSwatchElement = document.createElement("span");
-        this._gradientSwatchElement.classList.add("color-gradient-swatch");
-        this._gradientSwatchElement.title = WebInspector.UIString("Click to select a gradient");
-        this._gradientSwatchElement.addEventListener("click", this._gradientSwatchClicked.bind(this));
-
-        let gradientSwatchInnerElement = document.createElement("span");
-        this._gradientSwatchElement.appendChild(gradientSwatchInnerElement);
-
-        this.contentElement.appendChild(this._gradientSwatchElement);
+        this._gradientSwatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Gradient);
+        this._gradientSwatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._gradientSwatchColorChanged, this);
+        this.contentElement.appendChild(this._gradientSwatch.element);
 
         this._valueInputElement = document.createElement("input");
         this._valueInputElement.classList.add("value-input");
@@ -86,9 +80,6 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
         this.contentElement.appendChild(this._valueTypePickerElement);
 
         this._currentType = "url";
-        this._gradient = null;
-
-        this._updateGradientSwatch();
     }
 
     // Public
@@ -114,11 +105,7 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
         if (!this._currentType.includes("gradient"))
             return;
 
-        this._gradient = WebInspector.Gradient.fromString(value);
-        if (!this._gradient)
-            return;
-
-        this._updateGradientSwatch();
+        this._updateGradient();
     }
 
     get synthesizedValue()
@@ -159,49 +146,24 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
         }
     }
 
-    _updateGradientSwatch()
+    _updateGradient()
     {
-        this._gradientSwatchElement.firstChild.style.background = "";
         const value = this.synthesizedValue;
         if (!value || value === this._currentType)
             return;
 
-        this._gradient = WebInspector.Gradient.fromString(value);
-        this._gradientSwatchElement.firstChild.style.background = this._gradient ? value : null;
+        this._gradientSwatch.value = WebInspector.Gradient.fromString(value);
     }
 
-    _gradientSwatchClicked(event)
+    _gradientSwatchColorChanged(event)
     {
-        let bounds = WebInspector.Rect.rectFromClientRect(this._gradientSwatchElement.getBoundingClientRect());
-        let popover = new WebInspector.Popover(this);
-
-        function handleColorPickerToggled(event)
-        {
-            popover.update();
-        }
-
-        let gradientEditor = new WebInspector.GradientEditor;
-        gradientEditor.addEventListener(WebInspector.GradientEditor.Event.GradientChanged, this._gradientEditorGradientChanged, this);
-        gradientEditor.addEventListener(WebInspector.GradientEditor.Event.ColorPickerToggled, handleColorPickerToggled, this);
-
-        popover.content = gradientEditor.element;
-        popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_X]);
-
-        if (!this._gradient)
-            this._gradient = WebInspector.Gradient.fromString(`${this._currentType}(transparent, transparent)`);
-
-        gradientEditor.gradient = this._gradient;
-    }
-
-    _gradientEditorGradientChanged(event)
-    {
-        this.value = event.data.gradient.toString();
+        this.value = event.data.value.toString();
         this._valueDidChange();
     }
 
     _valueInputValueChanged(event)
     {
-        this._updateGradientSwatch();
+        this._updateGradient();
         this._valueDidChange();
     }
 
@@ -217,7 +179,7 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
     {
         this._currentType = this._valueTypePickerElement.value;
         this._updateValueInput();
-        this._updateGradientSwatch();
+        this._updateGradient();
         this._valueDidChange();
     }
 

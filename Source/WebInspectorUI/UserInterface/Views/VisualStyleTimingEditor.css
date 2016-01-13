@@ -31,24 +31,17 @@
     order: 1;
 }
 
-.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor {
+.visual-style-property-container.timing-editor > .visual-style-property-value-container > .inline-swatch.bezier {
     width: 23px;
     height: 20px;
-    margin-right: 2px;
-    content: url(../Images/CubicBezier.svg);
-    cursor: default;
+}
+
+.visual-style-property-container.timing-editor > .visual-style-property-value-container:not(.bezier-value) > .inline-swatch.bezier {
+    display: none;
 }
 
 @media (-webkit-min-device-pixel-ratio: 2) {
-    .visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor {
+    .visual-style-property-container.timing-editor > .visual-style-property-value-container > .inline-swatch.bezier {
         margin-left: 0.5px;
     }
-}
-
-.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor:hover {
-    filter: brightness(0.9);
-}
-
-.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor:active {
-    filter: brightness(0.8);
 }

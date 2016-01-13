@@ -29,8 +29,8 @@ WebInspector.VisualStyleColorPicker = class VisualStyleColorPicker extends WebIn
     {
         super(propertyNames, text, null, null, "input-color-picker", layoutReversed);
 
-        this._colorSwatch = new WebInspector.ColorSwatch;
-        this._colorSwatch.addEventListener(WebInspector.ColorSwatch.Event.ColorChanged, this._colorSwatchColorChanged, this);
+        this._colorSwatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Color);
+        this._colorSwatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._colorSwatchColorChanged, this);
         this.contentElement.appendChild(this._colorSwatch.element);
 
         this._textInputElement = document.createElement("input");
@@ -99,7 +99,7 @@ WebInspector.VisualStyleColorPicker = class VisualStyleColorPicker extends WebIn
 
     _colorSwatchColorChanged(event)
     {
-        let colorString = event && event.data && event.data.color && event.data.color.toString();
+        let colorString = event && event.data && event.data.value && event.data.value.toString();
         if (!colorString)
             return;
 
@@ -110,7 +110,7 @@ WebInspector.VisualStyleColorPicker = class VisualStyleColorPicker extends WebIn
     _updateColorSwatch()
     {
         let value = this._textInputElement.value;
-        this._colorSwatch.color = WebInspector.Color.fromString(value || "transparent");
+        this._colorSwatch.value = WebInspector.Color.fromString(value);
     }
 
     _completionClicked(event)

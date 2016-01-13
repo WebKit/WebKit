@@ -84,9 +84,36 @@ function createCodeMirrorTextMarkers(type, pattern, matchFunction, codeMirror, r
 
 function createCodeMirrorColorTextMarkers(codeMirror, range, callback)
 {
-    // Matches rgba(0, 0, 0, 0.5), rgb(0, 0, 0), hsl(), hsla(), #fff, #ffffff, white
-    var colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{8}|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3,4}|\b\w+\b(?![-.]))/g;
+    // Matches rgba(0, 0, 0, 0.5), rgb(0, 0, 0), hsl(), hsla(), #fff, #ffff, #ffffff, #ffffffff, white
+    let colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{8}|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3,4}|\b\w+\b(?![-.]))/g;
     function matchFunction(lineContent, match) {
+        if (!lineContent || !lineContent.length)
+            return false;
+
+        // In order determine if the matched color is inside a gradient, first
+        // look before the text to find the first unmatched open parenthesis.
+        // This parenthesis, if it exists, will be immediately after the CSS
+        // funciton whose name can be checked to see if it matches a gradient.
+        let openParenthesis = 0;
+        let index = match.index;
+        let c = null;
+        while (c = lineContent[index]) {
+            if (c === "(")
+                ++openParenthesis;
+            if (c === ")")
+                --openParenthesis;
+
+            if (openParenthesis > 0)
+                break;
+
+            --index;
+            if (index < 0)
+                break;
+        }
+
+        if (/(repeating-)?(linear|radial)-gradient$/.test(lineContent.substring(0, index)))
+            return false;
+
         // Act as a negative look-behind and disallow the color from being prefixing with certain characters.
         return !(match.index > 0 && /[-.\"\']/.test(lineContent[match.index - 1]));
     }

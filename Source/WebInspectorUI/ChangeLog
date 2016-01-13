@@ -1,3 +1,182 @@
+2016-01-13  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add support for the existing GradientEditor in the CSS Rules sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=153004
+
+        Reviewed by Timothy Hatcher.
+
+        Both the Visual sidebar and Resource view have editors for CSS gradient
+        values, but the Rules sidebar instead only adds editors for basic color
+        values. Instead of duplicating the code for gradient swatches, existing
+        code will be used to give this same functionality to the Rules sidebar.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Models/Gradient.js:
+        (WebInspector.Gradient):
+        (WebInspector.Gradient.fromString):
+        (WebInspector.Gradient.stopsWithComponents):
+        (WebInspector.Gradient.prototype.copy):
+        (WebInspector.Gradient.prototype.toString):
+        Refactored WebInspector.Gradient into its own class.
+
+        (WebInspector.LinearGradient):
+        (WebInspector.LinearGradient.prototype.toString):
+        Now uses WebInspector.Gradient inheritance and methods.
+
+        (WebInspector.RadialGradient):
+        (WebInspector.RadialGradient.prototype.toString):
+        Now uses WebInspector.Gradient inheritance and methods.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        Use InlineSwatch.css values instead.
+
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker): Deleted.
+        (@media (-webkit-max-device-pixel-ratio: 1)): Deleted.
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:hover): Deleted.
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:active): Deleted.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.didDismissPopover): Deleted.
+        Removed unused popover member variable.
+
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._contentChanged):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createInlineSwatches.createSwatch):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createInlineSwatches.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createInlineSwatches):
+        Renamed variables for more consistent naming and reimplemented the logic
+        to use the new WebInspector.InlineSwatch methods.  As a result, it was
+        possible to consolidate the 3 different type of swatch functions into a
+        single function.
+
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._commentProperty.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._uncommentRange.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._inlineSwatchValueChanged.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._inlineSwatchValueChanged):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches.createSwatch): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches.update): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createBezierEditors.update): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createBezierEditors): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchColorChanged.update): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchColorChanged): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._cubicBezierMarkerClicked.updateCodeMirror.update): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._cubicBezierMarkerClicked.updateCodeMirror): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._cubicBezierMarkerClicked): Deleted.
+
+        * UserInterface/Views/CodeMirrorTextMarkers.js:
+        (createCodeMirrorColorTextMarkers.matchFunction):
+        Added logic so that if the matched color string is found inside a gradient,
+        it will not have a marker created for it.
+
+        * UserInterface/Views/InlineSwatch.css: Renamed from Source/WebInspectorUI/UserInterface/Views/ColorSwatch.css.
+        Consolidated the various swatch CSS classes into one file.
+
+        (.inline-swatch):
+        (.inline-swatch.bezier):
+        (.inline-swatch.bezier:hover):
+        (.inline-swatch.bezier:active):
+        (@media (-webkit-max-device-pixel-ratio: 1)):
+        (.inline-swatch > span):
+        Ensured that the inner swatch element can not be selected so that the "click"
+        listener on its parent always fires.
+
+        (.inline-swatch:hover > span):
+        (.inline-swatch:active > span):
+        (.inline-swatch.bezier > span):
+
+        * UserInterface/Views/InlineSwatch.js: Renamed from Source/WebInspectorUI/UserInterface/Views/ColorSwatch.js.
+        (WebInspector.InlineSwatch):
+        Now accepts a new first argument to indicate what type of color swatch
+        to create and what functionality it will have.  Currently has options
+        for WebInspector.Color, WebInspector.Gradient, and WebInspector.CubicBezier.
+
+        (WebInspector.InlineSwatch.prototype.get element):
+        (WebInspector.InlineSwatch.prototype.get value):
+        (WebInspector.InlineSwatch.prototype.set value):
+        (WebInspector.InlineSwatch.prototype._fallbackValue):
+        (WebInspector.InlineSwatch.prototype._updateSwatch):
+        (WebInspector.InlineSwatch.prototype._swatchElementClicked):
+        (WebInspector.InlineSwatch.prototype._valueEditorValueDidChange):
+        (WebInspector.InlineSwatch.prototype._handleContextMenuEvent):
+        (WebInspector.InlineSwatch.prototype._getNextValidHEXFormat.hexMatchesCurrentColor):
+        (WebInspector.InlineSwatch.prototype._getNextValidHEXFormat):
+
+        * UserInterface/Views/VisualStyleBackgroundPicker.css:
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .inline-swatch.gradient):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container:not(.gradient-value) > .inline-swatch.gradient):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .inline-swatch.gradient:hover):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .inline-swatch.gradient:active):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .inline-swatch.gradient > span):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container.gradient-value > .inline-swatch.gradient + .value-input):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .color-swatch): Deleted.
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container:not(.gradient-value) > .color-swatch): Deleted.
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .color-swatch:hover): Deleted.
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .color-swatch:active): Deleted.
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .color-swatch > span): Deleted.
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container.gradient-value > .color-swatch + .value-input): Deleted.
+
+        * UserInterface/Views/VisualStyleBackgroundPicker.js:
+        Removed the specific code for the gradient swatch and moved to using a
+        gradient-type InlineSwatch for gradient values instead.
+
+        (WebInspector.VisualStyleBackgroundPicker):
+        (WebInspector.VisualStyleBackgroundPicker.prototype.set value):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._updateGradient):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._gradientSwatchColorChanged):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._valueInputValueChanged):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._handleKeywordChanged):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._updateGradientSwatch): Deleted.
+        (WebInspector.VisualStyleBackgroundPicker.prototype._gradientSwatchClicked.handleColorPickerToggled): Deleted.
+        (WebInspector.VisualStyleBackgroundPicker.prototype._gradientSwatchClicked): Deleted.
+        (WebInspector.VisualStyleBackgroundPicker.prototype._gradientEditorGradientChanged): Deleted.
+
+        * UserInterface/Views/VisualStyleColorPicker.css:
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color:hover):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color:active):
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .inline-swatch.color > span):
+        Add override CSS to ensure that the color-type InlineSwatch displays nicely
+        next to the flexbox style Visual sidebar.
+
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch): Deleted.
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch:hover): Deleted.
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch:active): Deleted.
+        (.visual-style-property-container.input-color-picker > .visual-style-property-value-container > .color-swatch > span): Deleted.
+        Refactored to only use overriding properties of the basic .inline-swatch values.
+
+        * UserInterface/Views/VisualStyleColorPicker.js:
+        (WebInspector.VisualStyleColorPicker):
+        (WebInspector.VisualStyleColorPicker.prototype._colorSwatchColorChanged):
+        (WebInspector.VisualStyleColorPicker.prototype._updateColorSwatch):
+
+        * UserInterface/Views/VisualStyleTimingEditor.css:
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .inline-swatch.bezier):
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container:not(.bezier-value) > .inline-swatch.bezier):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        Add override CSS to ensure that the color-type InlineSwatch displays nicely
+        next to the flexbox style Visual sidebar.
+
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor): Deleted.
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor:hover): Deleted.
+        (.visual-style-property-container.timing-editor > .visual-style-property-value-container > .bezier-editor:active): Deleted.
+        Refactored to only use overriding properties of the basic .inline-swatch values.
+
+        * UserInterface/Views/VisualStyleTimingEditor.js:
+        Removed the specific code for the cubic-bezier swatch and moved to using a
+        cubic-bezier-type InlineSwatch for gradient values instead.
+
+        (WebInspector.VisualStyleTimingEditor):
+        (WebInspector.VisualStyleTimingEditor.prototype.get bezierValue):
+        (WebInspector.VisualStyleTimingEditor.prototype.set bezierValue):
+        (WebInspector.VisualStyleTimingEditor.prototype._setValue):
+        (WebInspector.VisualStyleTimingEditor.prototype._handleKeywordChanged):
+        (WebInspector.VisualStyleTimingEditor.prototype._bezierSwatchValueChanged):
+        (WebInspector.VisualStyleTimingEditor.prototype._bezierMarkerClicked): Deleted.
+
 2016-01-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Timeline recording controls should use NavigationBar
