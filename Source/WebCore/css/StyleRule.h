@@ -25,6 +25,7 @@
 #include "CSSSelectorList.h"
 #include "MediaList.h"
 #include "StyleProperties.h"
+#include <wtf/BumpArena.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 
@@ -37,7 +38,7 @@ class MutableStyleProperties;
 class StyleProperties;
 
 class StyleRuleBase : public WTF::RefCountedBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_BUMPARENA_ALLOCATED;
 public:
     enum Type {
         Unknown, // Not used.
@@ -101,11 +102,10 @@ private:
 };
 
 class StyleRule : public StyleRuleBase {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<StyleRule> create(int sourceLine, Ref<StyleProperties>&& properties)
+    static Ref<StyleRule> create(BumpArena* arena, int sourceLine, Ref<StyleProperties>&& properties)
     {
-        return adoptRef(*new StyleRule(sourceLine, WTFMove(properties)));
+        return adoptRef(*new (arena) StyleRule(sourceLine, WTFMove(properties)));
     }
     
     ~StyleRule();
@@ -114,7 +114,7 @@ public:
     const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
     
-    void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void parserAdoptSelectorVector(BumpArena* arena, Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(arena, selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = WTFMove(selectors); }
     void parserAdoptSelectorArray(CSSSelector* selectors) { m_selectorList.adoptSelectorArray(selectors); }
 
@@ -128,7 +128,7 @@ private:
     StyleRule(int sourceLine, Ref<StyleProperties>&&);
     StyleRule(const StyleRule&);
 
-    static Ref<StyleRule> create(int sourceLine, const Vector<const CSSSelector*>&, Ref<StyleProperties>&&);
+    static Ref<StyleRule> create(BumpArena*, int sourceLine, const Vector<const CSSSelector*>&, Ref<StyleProperties>&&);
 
     Ref<StyleProperties> m_properties;
     CSSSelectorList m_selectorList;
@@ -136,7 +136,7 @@ private:
 
 class StyleRuleFontFace : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontFace> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleFontFace(WTFMove(properties))); }
+    static Ref<StyleRuleFontFace> create(BumpArena* arena, Ref<StyleProperties>&& properties) { return adoptRef(*new (arena) StyleRuleFontFace(WTFMove(properties))); }
     
     ~StyleRuleFontFace();
 
@@ -155,7 +155,7 @@ private:
 
 class StyleRulePage : public StyleRuleBase {
 public:
-    static Ref<StyleRulePage> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRulePage(WTFMove(properties))); }
+    static Ref<StyleRulePage> create(BumpArena* arena, Ref<StyleProperties>&& properties) { return adoptRef(*new (arena) StyleRulePage(WTFMove(properties))); }
 
     ~StyleRulePage();
 
@@ -163,7 +163,7 @@ public:
     const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 
-    void parserAdoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void parserAdoptSelectorVector(BumpArena* arena, Vector<std::unique_ptr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(arena, selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList = WTFMove(selectors); }
 
     Ref<StyleRulePage> copy() const { return adoptRef(*new StyleRulePage(*this)); }
@@ -193,9 +193,9 @@ private:
 
 class StyleRuleMedia : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleMedia> create(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase>>& adoptRules)
+    static Ref<StyleRuleMedia> create(BumpArena* arena, PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
-        return adoptRef(*new StyleRuleMedia(media, adoptRules));
+        return adoptRef(*new (arena) StyleRuleMedia(media, adoptRules));
     }
 
     MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
@@ -211,9 +211,9 @@ private:
 
 class StyleRuleSupports : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>& adoptRules)
+    static Ref<StyleRuleSupports> create(BumpArena* arena, const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
-        return adoptRef(*new StyleRuleSupports(conditionText, conditionIsSupported, adoptRules));
+        return adoptRef(*new (arena) StyleRuleSupports(conditionText, conditionIsSupported, adoptRules));
     }
 
     String conditionText() const { return m_conditionText; }
@@ -230,9 +230,9 @@ private:
 
 class StyleRuleRegion : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleRegion> create(Vector<std::unique_ptr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
+    static Ref<StyleRuleRegion> create(BumpArena* arena, Vector<std::unique_ptr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
-        return adoptRef(*new StyleRuleRegion(selectors, adoptRules));
+        return adoptRef(*new (arena) StyleRuleRegion(selectors, adoptRules));
     }
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
@@ -249,7 +249,7 @@ private:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 class StyleRuleViewport : public StyleRuleBase {
 public:
-    static Ref<StyleRuleViewport> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleViewport(WTFMove(properties))); }
+    static Ref<StyleRuleViewport> create(BumpArena* arena, Ref<StyleProperties>&& properties) { return adoptRef(*new (arena) StyleRuleViewport(WTFMove(properties))); }
 
     ~StyleRuleViewport();
 

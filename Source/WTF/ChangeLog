@@ -1,3 +1,79 @@
+2016-01-13  Andreas Kling  <akling@apple.com>
+
+        Fragmentation-free allocator for timeless and/or coupled allocations.
+        <https://webkit.org/b/152696>
+
+        Reviewed by Antti Koivisto.
+
+        Introduce BumpArena, a space-efficient memory allocator for situations where
+        you feel pretty confident betting on allocation lifetimes.
+
+        Basic design:
+
+            - Allocates 4kB-aligned blocks of 4kB from bmalloc at a time.
+            - Bump-pointer allocates out of a block until it reaches end.
+            - Each allocation increments the ref-count of its block.
+            - Each deallocation decrements the ref-count of its block.
+
+        Interface:
+
+            - BumpArena::create()
+
+                Create your very own BumpArena!
+
+            - BumpArena::allocate(BumpArena* arena, size_t size)
+
+                Allocates 'size' bytes of memory from 'arena'.
+                If 'arena' is null, allocation comes out of the shared global BumpArena.
+
+            - BumpArena::deallocate(void* ptr)
+
+                Deallocates 'ptr', decrementing the ref-count of its block.
+
+            - WTF_MAKE_BUMPARENA_ALLOCATED;
+
+                Macro that gives a class or struct custom operators new and delete
+                for allocation out of BumpArena. Just like WTF_MAKE_FAST_ALLOCATED;
+
+        Note that while the name of this patch says "fragmentation-free allocator"
+        it will only be fragmentation-free when used for appropriate things.
+        This is not meant to be a general-purpose allocator. Only use it for sets of
+        allocations that are known to die roughly at the same time.
+
+        BumpArena will never resume allocating from a block that has been filled,
+        so it's even more important than usual that everything gets deallocated.
+
+        As noted above, calling allocate() with a null BumpArena will allocate out
+        of a global shared arena. Ideally you're always allocating out of a specific,
+        controlled arena, but there are situations where you may not have one.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BumpArena.cpp: Added.
+        (WTF::BumpArena::Block::defaultCapacity):
+        (WTF::BumpArena::Block::arena):
+        (WTF::BumpArena::Block::payloadStart):
+        (WTF::globalArena):
+        (WTF::arenas):
+        (WTF::BumpArena::Block::Block):
+        (WTF::BumpArena::Block::~Block):
+        (WTF::BumpArena::Block::ref):
+        (WTF::BumpArena::Block::deref):
+        (WTF::BumpArena::Block::create):
+        (WTF::BumpArena::Block::dump):
+        (WTF::BumpArena::dump):
+        (WTF::BumpArena::create):
+        (WTF::BumpArena::BumpArena):
+        (WTF::BumpArena::~BumpArena):
+        (WTF::BumpArena::allocateSlow):
+        (WTF::BumpArena::allocate):
+        (WTF::BumpArena::deallocate):
+        (WTF::BumpArena::Block::blockFor):
+        (WTF::BumpArena::arenaFor):
+        * wtf/BumpArena.h: Added.
+        * wtf/CMakeLists.txt:
+
 2016-01-08  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Lazily load platform frameworks

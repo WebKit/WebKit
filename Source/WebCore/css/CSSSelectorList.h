@@ -28,6 +28,7 @@
 
 #include "CSSSelector.h"
 #include <memory>
+#include <wtf/BumpArena.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ public:
 
     ~CSSSelectorList() { deleteSelectors(); }
 
-    void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
+    void adoptSelectorVector(BumpArena*, Vector<std::unique_ptr<CSSParserSelector>>&);
     void adoptSelectorArray(CSSSelector* selectors) { ASSERT(!m_selectorArray); m_selectorArray = selectors; }
 
     bool isValid() const { return !!m_selectorArray; }
