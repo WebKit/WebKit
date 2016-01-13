@@ -13,9 +13,15 @@ if (window.testRunner) {
 function checkframe()
 {
     try {
-      var ref = document.getElementById("frame").contentDocument.referrer;
-      alert('Referrer is "' + ref + '"'); 
-    } catch (e) {}
+        var referrer = document.getElementById("frame").contentDocument.referrer;
+        if (referrer === "") {
+            console.log('PASS: Referrer is the empty string.');
+        } else {
+            console.log('FAIL: Referrer should be empty string. Was "' + referrer + '".');
+        }
+    } catch (e) {
+        console.log('FAIL: same-origin access threw: \'' + e.toString() + '\'.');
+    }
     checkIfFrameLocationMatchesSrcAndCallDone('frame');
 }
 </script>
