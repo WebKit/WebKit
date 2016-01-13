@@ -1,3 +1,19 @@
+2016-01-12  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] forEachContentFilterUntilBlocked should accept a lambda by rvalue reference
+        https://bugs.webkit.org/show_bug.cgi?id=153057
+
+        Reviewed by Dan Bernstein.
+
+        No new tests. No change in behavior.
+
+        Instead of having ContentFilter::forEachContentFilterUntilBlocked() take a std::function, just have it take an
+        rvalue reference to the lambda its passed.
+
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::forEachContentFilterUntilBlocked):
+        * loader/ContentFilter.h:
+
 2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix return value of some paint methods in RenderThemeGtk

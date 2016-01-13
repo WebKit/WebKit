@@ -204,7 +204,8 @@ bool ContentFilter::continueAfterNotifyFinished(CachedResource* resource)
     return m_state != State::Blocked;
 }
 
-void ContentFilter::forEachContentFilterUntilBlocked(std::function<void(PlatformContentFilter&)> function)
+template <typename Function>
+inline void ContentFilter::forEachContentFilterUntilBlocked(Function&& function)
 {
     bool allFiltersAllowedLoad { true };
     for (auto& contentFilter : m_contentFilters) {

@@ -79,7 +79,7 @@ private:
     friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&, DocumentLoader&);
     ContentFilter(Container, DocumentLoader&);
 
-    void forEachContentFilterUntilBlocked(std::function<void(PlatformContentFilter&)>);
+    template <typename Function> void forEachContentFilterUntilBlocked(Function&&);
     void didDecide(State);
     void deliverResourceData(CachedResource&);
 
