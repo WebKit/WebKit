@@ -2835,9 +2835,15 @@ webkit.org/b/152134 fast/events/ios/single-tap-generates-click.html [ Pass Timeo
 webkit.org/b/152134 fast/events/ios/unscalable-viewport-clicks-on-doubletap.html [ Pass Timeout ]
 webkit.org/b/152134 fast/events/ios/viewport-device-width-at-initial-scale-fast-clicks.html  [ Pass Timeout ]
 
-webkit.org/b/152141 fast/picture/image-picture-1x.html [ Failure ]
-webkit.org/b/152141 fast/picture/image-picture-invalid.html [ Failure ]
-webkit.org/b/152141 fast/picture/image-picture-nested.html [ Failure ]
+# Failing tests related to picture element
+webkit.org/b/152141 fast/picture/image-picture-1x.html [ Skip ]
+webkit.org/b/152141 fast/picture/image-picture-invalid.html [ Skip ]
+webkit.org/b/152141 fast/picture/image-picture-nested.html [ Skip ]
+webkit.org/b/153043 fast/picture/image-picture-loads-1x.html [ Skip ]
+webkit.org/b/152992 http/tests/loading/preload-picture-invalid.html [ Skip ]
+webkit.org/b/152992 http/tests/loading/preload-picture-nested.html [ Skip ]
+webkit.org/b/152992 http/tests/loading/preload-picture-sizes.html [ Skip ]
+webkit.org/b/152140 fast/picture/viewport-resize.html [ Skip ]
 
 webkit.org/b/152279 http/tests/misc/large-js-program.php [ Pass Crash ]
 webkit.org/b/152279 js/dom/line-column-numbers.html [ Pass Crash ]
@@ -2866,5 +2872,3 @@ webkit.org/b/152282 css3/filters/composited-during-transition-layertree.html [ F
 webkit.org/b/152448 js/intl-collator.html [ Failure ]
 
 webkit.org/b/152935 fast/scrolling/scroll-position-on-reload-rtl.html [ Failure ]
-
-webkit.org/b/153043 fast/picture/image-picture-loads-1x.html [ Skip ]
