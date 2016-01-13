@@ -80,39 +80,38 @@ enum AvoidanceReason_ : uint64_t {
     FlowHasLineBoxContainProperty         = 1LLU  << 15,
     FlowIsNotTopToBottom                  = 1LLU  << 16,
     FlowHasLineBreak                      = 1LLU  << 17,
-    FlowHasWordBreak                      = 1LLU  << 18,
-    FlowHasNonNormalUnicodeBiDi           = 1LLU  << 19,
-    FlowHasRTLOrdering                    = 1LLU  << 20,
-    FlowHasLineAlignEdges                 = 1LLU  << 21,
-    FlowHasLineSnap                       = 1LLU  << 22,
-    FlowHasHypensAuto                     = 1LLU  << 23,
-    FlowHasTextEmphasisFillOrMark         = 1LLU  << 24,
-    FlowHasTextShadow                     = 1LLU  << 25,
-    FlowHasPseudoFirstLine                = 1LLU  << 26,
-    FlowHasPseudoFirstLetter              = 1LLU  << 27,
-    FlowHasTextCombine                    = 1LLU  << 28,
-    FlowHasTextFillBox                    = 1LLU  << 29,
-    FlowHasBorderFitLines                 = 1LLU  << 30,
-    FlowHasNonAutoLineBreak               = 1LLU  << 31,
-    FlowHasNonAutoTrailingWord            = 1LLU  << 32,
-    FlowHasSVGFont                        = 1LLU  << 33,
-    FlowTextIsEmpty                       = 1LLU  << 34,
-    FlowTextHasNoBreakSpace               = 1LLU  << 35,
-    FlowTextHasSoftHyphen                 = 1LLU  << 36,
-    FlowTextHasDirectionCharacter         = 1LLU  << 37,
-    FlowIsMissingPrimaryFont              = 1LLU  << 38,
-    FlowFontIsMissingGlyph                = 1LLU  << 39,
-    FlowTextIsCombineText                 = 1LLU  << 40,
-    FlowTextIsRenderCounter               = 1LLU  << 41,
-    FlowTextIsRenderQuote                 = 1LLU  << 42,
-    FlowTextIsTextFragment                = 1LLU  << 43,
-    FlowTextIsSVGInlineText               = 1LLU  << 44,
-    FlowFontIsNotSimple                   = 1LLU  << 45,
-    FeatureIsDisabled                     = 1LLU  << 46,
-    FlowHasNoParent                       = 1LLU  << 47,
-    FlowHasNoChild                        = 1LLU  << 48,
-    FlowChildIsSelected                   = 1LLU  << 49,
-    EndOfReasons                          = 1LLU  << 50
+    FlowHasNonNormalUnicodeBiDi           = 1LLU  << 18,
+    FlowHasRTLOrdering                    = 1LLU  << 19,
+    FlowHasLineAlignEdges                 = 1LLU  << 20,
+    FlowHasLineSnap                       = 1LLU  << 21,
+    FlowHasHypensAuto                     = 1LLU  << 22,
+    FlowHasTextEmphasisFillOrMark         = 1LLU  << 23,
+    FlowHasTextShadow                     = 1LLU  << 24,
+    FlowHasPseudoFirstLine                = 1LLU  << 25,
+    FlowHasPseudoFirstLetter              = 1LLU  << 26,
+    FlowHasTextCombine                    = 1LLU  << 27,
+    FlowHasTextFillBox                    = 1LLU  << 28,
+    FlowHasBorderFitLines                 = 1LLU  << 29,
+    FlowHasNonAutoLineBreak               = 1LLU  << 30,
+    FlowHasNonAutoTrailingWord            = 1LLU  << 31,
+    FlowHasSVGFont                        = 1LLU  << 32,
+    FlowTextIsEmpty                       = 1LLU  << 33,
+    FlowTextHasNoBreakSpace               = 1LLU  << 34,
+    FlowTextHasSoftHyphen                 = 1LLU  << 35,
+    FlowTextHasDirectionCharacter         = 1LLU  << 36,
+    FlowIsMissingPrimaryFont              = 1LLU  << 37,
+    FlowFontIsMissingGlyph                = 1LLU  << 38,
+    FlowTextIsCombineText                 = 1LLU  << 39,
+    FlowTextIsRenderCounter               = 1LLU  << 40,
+    FlowTextIsRenderQuote                 = 1LLU  << 41,
+    FlowTextIsTextFragment                = 1LLU  << 42,
+    FlowTextIsSVGInlineText               = 1LLU  << 43,
+    FlowFontIsNotSimple                   = 1LLU  << 44,
+    FeatureIsDisabled                     = 1LLU  << 45,
+    FlowHasNoParent                       = 1LLU  << 46,
+    FlowHasNoChild                        = 1LLU  << 47,
+    FlowChildIsSelected                   = 1LLU  << 48,
+    EndOfReasons                          = 1LLU  << 49
 };
 const unsigned NoReason = 0;
 
@@ -226,8 +225,6 @@ static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReas
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
     if (style.lineBreak() != LineBreakAuto)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBreak, reasons, includeReasons);
-    if (style.wordBreak() != NormalWordBreak)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasWordBreak, reasons, includeReasons);
     if (style.unicodeBidi() != UBNormal)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonNormalUnicodeBiDi, reasons, includeReasons);
     if (style.rtlOrdering() != LogicalOrder)
@@ -660,7 +657,7 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
 {
     const auto& style = textFragmentIterator.style();
     line.setCollapedWhitespaceWidth(style.spaceWidth + style.wordSpacing);
-    bool lineCanBeWrapped = style.wrapLines || style.breakWordOnOverflow;
+    bool lineCanBeWrapped = style.wrapLines || style.breakFirstWordOnOverflow || style.breakAnyWordOnOverflow;
     auto fragment = firstFragment(textFragmentIterator, line, previousLine, runs);
     while (fragment.type() != TextFragmentIterator::TextFragment::ContentEnd) {
         // Hard linebreak.
@@ -678,7 +675,8 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
             // 1. Whitesapce collapse on: whitespace is skipped. Jump to next line.
             // 2. Whitespace collapse off: whitespace is wrapped.
             // 3. First, non-whitespace fragment is either wrapped or kept on the line. (depends on overflow-wrap)
-            // 4. Non-whitespace fragment when there's already another fragment on the line gets pushed to the next line.
+            // 5. Non-whitespace fragment when there's already another fragment on the line either gets wrapped (word-break: break-all)
+            // or gets pushed to the next line.
             bool emptyLine = line.isEmpty();
             // Whitespace fragment.
             if (fragment.type() == TextFragmentIterator::TextFragment::Whitespace) {
@@ -691,7 +689,7 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
                 break;
             }
             // Non-whitespace fragment. (!style.wrapLines: bug138102(preserve existing behavior)
-            if ((emptyLine && style.breakWordOnOverflow) || !style.wrapLines) {
+            if (((emptyLine && style.breakFirstWordOnOverflow) || style.breakAnyWordOnOverflow) || !style.wrapLines) {
                 // Split the fragment; (modified)fragment stays on this line, overflowedFragment is pushed to next line.
                 line.setOverflowedFragment(splitFragmentToFitLine(fragment, line.availableWidth() - line.width(), emptyLine, textFragmentIterator));
                 line.appendFragmentAndCreateRunIfNeeded(fragment, runs);
@@ -840,9 +838,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case FlowHasLineBreak:
         stream << "line-break property";
-        break;
-    case FlowHasWordBreak:
-        stream << "word-break property";
         break;
     case FlowHasNonNormalUnicodeBiDi:
         stream << "non-normal Unicode bidi";

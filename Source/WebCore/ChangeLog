@@ -1,3 +1,31 @@
+2016-01-13  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add support for word-break property.
+        https://bugs.webkit.org/show_bug.cgi?id=153054
+
+        Reviewed by Antti Koivisto.
+
+        This patch enables word-break property for simple line layout.
+        (https://drafts.csswg.org/css-text-3/#propdef-word-break)
+
+        word-break: normal and keep-all -> existing, non-(force)breaking behaviour.
+                    break-all -> breaks words when needed.
+
+        Covered by existing tests like fast/text/word-break.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::canUseForStyle): Deleted.
+        (WebCore::SimpleLineLayout::printReason): Deleted.
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::findNextTextFragment):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::operator==):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::isBreakable): Deleted.
+        (WebCore::SimpleLineLayout::TextFragmentIterator::TextFragment::split): Deleted.
+
 2016-01-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Reference cycle between SVGPathElement and SVGPathSegWithContext leaks Document

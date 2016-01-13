@@ -27,7 +27,6 @@ layer at (0,0) size 800x1028
       RenderBlock {PRE} at (0,171) size 110x24 [border: (5px solid #000000)]
         RenderText {#text} at (5,5) size 437x14
           text run at (5,5) width 437: "Thislongwordshouldnotgetbrokenbutshouldstickoutofthepre."
-          text run at (441,5) width 1: " "
       RenderBlock (anonymous) at (0,208) size 784x80
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 774x59
@@ -58,7 +57,6 @@ layer at (0,0) size 800x1028
           text run at (5,33) width 94: "brokenbutsho"
           text run at (5,47) width 94: "uldstickouto"
           text run at (5,61) width 63: "fthepre."
-          text run at (67,61) width 1: " "
       RenderBlock (anonymous) at (0,512) size 784x80
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,20) size 776x59

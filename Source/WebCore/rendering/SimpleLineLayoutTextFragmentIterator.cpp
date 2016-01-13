@@ -39,7 +39,8 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , collapseWhitespace(style.collapseWhiteSpace())
     , preserveNewline(style.preserveNewline())
     , wrapLines(style.autoWrap())
-    , breakWordOnOverflow(style.overflowWrap() == BreakOverflowWrap && (wrapLines || preserveNewline))
+    , breakAnyWordOnOverflow(style.wordBreak() == BreakAllWordBreak && wrapLines)
+    , breakFirstWordOnOverflow(breakAnyWordOnOverflow || (style.breakWords() && (wrapLines || preserveNewline)))
     , spaceWidth(font.width(TextRun(StringView(&space, 1))))
     , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
@@ -90,13 +91,12 @@ TextFragmentIterator::TextFragment TextFragmentIterator::findNextTextFragment(fl
     if (startPosition < endPosition) {
         bool multipleWhitespace = startPosition + 1 < endPosition;
         bool isCollapsed = multipleWhitespace && m_style.collapseWhitespace;
-        bool isBreakable = !isCollapsed && multipleWhitespace;
         m_position = endPosition;
-        return TextFragment(startPosition, endPosition, width, TextFragment::Whitespace, endPosition == segmentEndPosition, false, isCollapsed, m_style.collapseWhitespace, isBreakable);
+        return TextFragment(startPosition, endPosition, width, TextFragment::Whitespace, endPosition == segmentEndPosition, false, isCollapsed, m_style.collapseWhitespace);
     }
     endPosition = skipToNextPosition(PositionType::Breakable, startPosition, width, xPosition, overlappingFragment);
     m_position = endPosition;
-    return TextFragment(startPosition, endPosition, width, TextFragment::NonWhitespace, endPosition == segmentEndPosition, overlappingFragment, false, false, m_style.breakWordOnOverflow);
+    return TextFragment(startPosition, endPosition, width, TextFragment::NonWhitespace, endPosition == segmentEndPosition, overlappingFragment, false, false);
 }
 
 void TextFragmentIterator::revertToEndOfFragment(const TextFragment& fragment)

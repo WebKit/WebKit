@@ -44,7 +44,7 @@ public:
     public:
         enum Type { ContentEnd, SoftLineBreak, HardLineBreak, Whitespace, NonWhitespace };
         TextFragment() = default;
-        TextFragment(unsigned start, unsigned end, float width, Type type, bool isLastInRenderer = false, bool overlapsToNextRenderer = false, bool isCollapsed = false, bool isCollapsible = false, bool isBreakable = false)
+        TextFragment(unsigned start, unsigned end, float width, Type type, bool isLastInRenderer = false, bool overlapsToNextRenderer = false, bool isCollapsed = false, bool isCollapsible = false)
             : m_start(start)
             , m_end(end)
             , m_width(width)
@@ -53,7 +53,6 @@ public:
             , m_overlapsToNextRenderer(overlapsToNextRenderer)
             , m_isCollapsed(isCollapsed)
             , m_isCollapsible(isCollapsible)
-            , m_isBreakable(isBreakable)
         {
         }
 
@@ -66,7 +65,6 @@ public:
         bool isLineBreak() const { return m_type == SoftLineBreak || m_type == HardLineBreak; }
         bool isCollapsed() const { return m_isCollapsed; }
         bool isCollapsible() const { return m_isCollapsible; }
-        bool isBreakable() const { return m_isBreakable; }
 
         bool isEmpty() const { return start() == end() && !isLineBreak(); }
         TextFragment split(unsigned splitPosition, const TextFragmentIterator&);
@@ -79,8 +77,7 @@ public:
                 && m_isLastInRenderer == other.m_isLastInRenderer
                 && m_overlapsToNextRenderer == other.m_overlapsToNextRenderer
                 && m_isCollapsed == other.m_isCollapsed
-                && m_isCollapsible == other.m_isCollapsible
-                && m_isBreakable == other.m_isBreakable;
+                && m_isCollapsible == other.m_isCollapsible;
         }
 
     private:
@@ -92,7 +89,6 @@ public:
         bool m_overlapsToNextRenderer { false };
         bool m_isCollapsed { false };
         bool m_isCollapsible { false };
-        bool m_isBreakable { false };
     };
     TextFragment nextTextFragment(float xPosition = 0);
     void revertToEndOfFragment(const TextFragment&);
@@ -106,7 +102,8 @@ public:
         bool collapseWhitespace;
         bool preserveNewline;
         bool wrapLines;
-        bool breakWordOnOverflow;
+        bool breakAnyWordOnOverflow;
+        bool breakFirstWordOnOverflow;
         float spaceWidth;
         float wordSpacing;
         unsigned tabWidth;
@@ -142,7 +139,6 @@ inline TextFragmentIterator::TextFragment TextFragmentIterator::TextFragment::sp
         if (fragment.start() + 1 > fragment.end())
             return;
         fragment.m_isCollapsed = false;
-        fragment.m_isBreakable = false;
     };
 
     TextFragment newFragment(*this);
