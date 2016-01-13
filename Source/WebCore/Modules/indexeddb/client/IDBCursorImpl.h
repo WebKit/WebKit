@@ -72,6 +72,7 @@ public:
     void setGetResult(IDBRequest&, const IDBGetResult&);
 
     virtual bool isKeyCursor() const override { return true; }
+    virtual bool isModernCursor() const override final { return true; }
 
 protected:
     IDBCursor(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
@@ -88,7 +89,7 @@ private:
     IDBObjectStore& effectiveObjectStore() const;
     IDBTransaction& transaction() const;
 
-    void uncheckedIteratorCursor(const IDBKeyData&, unsigned long count);
+    void uncheckedIterateCursor(const IDBKeyData&, unsigned long count);
 
     bool m_gotValue { false };
 

@@ -1,3 +1,42 @@
+2016-01-13  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: A few cursor tests are flaky because JS wrappers are GC'ed.
+        https://bugs.webkit.org/show_bug.cgi?id=153038
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Couldn't write a test that was any more reliable than "flaky", so fixing the existing flaky tests will do).
+
+        And IDBCursor has an associated IDBRequest that is re-used each time the IDBCursor iterates.
+        
+        The normal ActiveDOMObject approach to prevent the IDBRequest's wrapper from being garbage collected was not good enough
+        because, while the IDBRequest may not currently be waiting on any activity, as long as its associated IDBCursor is still
+        reachable then the request might be reused in the future.
+        
+        Fortunately there's an IDL allowance for "one object keeping another alive during GC" and that's JSCustomMarkFunction
+        combined with GenerateIsReachable.
+        
+        Applying those to IDBCursor and IDBRequest fix this handily.
+        
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::isModernCursor):
+        * Modules/indexeddb/IDBCursor.idl:
+        
+        * Modules/indexeddb/IDBRequest.idl:
+        
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::advance):
+        (WebCore::IDBClient::IDBCursor::continueFunction):
+        (WebCore::IDBClient::IDBCursor::uncheckedIterateCursor):
+        (WebCore::IDBClient::IDBCursor::uncheckedIteratorCursor): Deleted. Fixed the typo of this name.
+        * Modules/indexeddb/client/IDBCursorImpl.h:
+        
+        * bindings/js/JSIDBCursorCustom.cpp: Added.
+        (WebCore::JSIDBCursor::visitAdditionalChildren):
+
 2016-01-13  Zalan Bujtas  <zalan@apple.com>
 
         Get text drawing working with display lists.

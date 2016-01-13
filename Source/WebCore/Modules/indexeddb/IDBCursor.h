@@ -74,6 +74,8 @@ public:
 
     virtual bool isKeyCursor() const = 0;
 
+    virtual bool isModernCursor() const { return false; }
+
 protected:
     IDBCursor();
 };

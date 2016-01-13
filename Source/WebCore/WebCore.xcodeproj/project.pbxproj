@@ -1955,6 +1955,7 @@
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512BDB4A1C456FF5006494DF /* SQLiteIDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512BDB481C456FAB006494DF /* SQLiteIDBBackingStore.cpp */; };
 		512BDB4B1C456FFA006494DF /* SQLiteIDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 512BDB491C456FAB006494DF /* SQLiteIDBBackingStore.h */; };
+		512BDB4D1C46B153006494DF /* JSIDBCursorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512BDB4C1C46B0FF006494DF /* JSIDBCursorCustom.cpp */; };
 		512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */; };
 		512DD8F40D91E6AF000F89EE /* LegacyWebArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8EA0D91E6AF000F89EE /* LegacyWebArchive.cpp */; };
 		512DD8F50D91E6AF000F89EE /* LegacyWebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DD8EB0D91E6AF000F89EE /* LegacyWebArchive.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9392,6 +9393,7 @@
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		512BDB481C456FAB006494DF /* SQLiteIDBBackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteIDBBackingStore.cpp; sourceTree = "<group>"; };
 		512BDB491C456FAB006494DF /* SQLiteIDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteIDBBackingStore.h; sourceTree = "<group>"; };
+		512BDB4C1C46B0FF006494DF /* JSIDBCursorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursorCustom.cpp; sourceTree = "<group>"; };
 		512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferCF.cpp; sourceTree = "<group>"; };
 		512DD8EA0D91E6AF000F89EE /* LegacyWebArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyWebArchive.cpp; sourceTree = "<group>"; };
 		512DD8EB0D91E6AF000F89EE /* LegacyWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyWebArchive.h; sourceTree = "<group>"; };
@@ -22147,6 +22149,7 @@
 				AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */,
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
 				511EF2CC17F0FDF100E4FA16 /* JSIDBAnyCustom.cpp */,
+				512BDB4C1C46B0FF006494DF /* JSIDBCursorCustom.cpp */,
 				511EF2CD17F0FDF100E4FA16 /* JSIDBDatabaseCustom.cpp */,
 				511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */,
 				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
@@ -30596,6 +30599,7 @@
 				CD5E5B611A15F156000C609E /* PageConfiguration.cpp in Sources */,
 				F3820892147D35F90010BC06 /* PageConsoleAgent.cpp in Sources */,
 				DAED203016F2442B0070EC0F /* PageConsoleClient.cpp in Sources */,
+				512BDB4D1C46B153006494DF /* JSIDBCursorCustom.cpp in Sources */,
 				A5A2AF0B1829734300DE1729 /* PageDebuggable.cpp in Sources */,
 				F34742DC134362F000531BC2 /* PageDebuggerAgent.cpp in Sources */,
 				9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */,
