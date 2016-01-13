@@ -30,7 +30,9 @@
 #include "Document.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
+#include "JSReadableStreamPrivateConstructors.h"
 #include "JSWorkerGlobalScope.h"
+#include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
 
 using namespace JSC;
@@ -44,6 +46,7 @@ JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, PassRefPtr<DO
     , m_currentEvent(0)
     , m_world(world)
     , m_worldIsNormal(m_world->isNormal())
+    , m_builtinInternalFunctions(vm)
 {
     ASSERT(m_world);
 }
@@ -53,16 +56,49 @@ void JSDOMGlobalObject::destroy(JSCell* cell)
     static_cast<JSDOMGlobalObject*>(cell)->JSDOMGlobalObject::~JSDOMGlobalObject();
 }
 
+void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
+{
+    m_builtinInternalFunctions.initialize(*this, vm);
+
+#if ENABLE(STREAMS_API)
+    JSObject* privateReadableStreamControllerConstructor = createReadableStreamControllerPrivateConstructor(vm, *this);
+    JSObject* privateReadableStreamReaderConstructor = createReadableStreamReaderPrivateConstructor(vm, *this);
+
+    ASSERT(!constructors().get(privateReadableStreamControllerConstructor->info()).get());
+    ASSERT(!constructors().get(privateReadableStreamReaderConstructor->info()).get());
+    JSC::WriteBarrier<JSC::JSObject> temp;
+    constructors().add(privateReadableStreamControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamControllerConstructor);
+    constructors().add(privateReadableStreamReaderConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamReaderConstructor);
+
+    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamErroredPrivateName(), jsNumber(3), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamReadablePrivateName(), jsNumber(4), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWaitingPrivateName(), jsNumber(5), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWritablePrivateName(), jsNumber(6), DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamControllerPrivateName(), privateReadableStreamControllerConstructor, DontDelete | ReadOnly),
+        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamReaderPrivateName(), privateReadableStreamReaderConstructor, DontDelete | ReadOnly),
+    };
+    addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
+#endif
+}
+
 void JSDOMGlobalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+
+    addBuiltinGlobals(vm);
 }
 
 void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
     Base::finishCreation(vm, thisValue);
     ASSERT(inherits(info()));
+
+    addBuiltinGlobals(vm);
 }
 
 ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
@@ -86,6 +122,8 @@ void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     for (auto& constructor : thisObject->constructors().values())
         visitor.append(&constructor);
+
+    thisObject->m_builtinInternalFunctions.visit(visitor);
 }
 
 void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)

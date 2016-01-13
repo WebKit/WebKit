@@ -83,12 +83,12 @@ template<> FunctionExecutable* JSBuiltinReadableStreamControllerPrivateConstruct
     return readableStreamInternalsPrivateInitializeReadableStreamControllerCodeGenerator(vm);
 }
 
-JSValue createReadableStreamReaderPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
+JSObject* createReadableStreamReaderPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return JSBuiltinReadableStreamReaderPrivateConstructor::create(vm, JSBuiltinReadableStreamReaderPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
 }
 
-JSValue createReadableStreamControllerPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
+JSObject* createReadableStreamControllerPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)
 {
     return JSBuiltinReadableStreamControllerPrivateConstructor::create(vm, JSBuiltinReadableStreamControllerPrivateConstructor::createStructure(vm, globalObject, globalObject.objectPrototype()), globalObject);
 }

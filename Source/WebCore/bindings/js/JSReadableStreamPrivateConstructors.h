@@ -21,14 +21,20 @@
 
 #if ENABLE(STREAMS_API)
 
-#include <runtime/JSCJSValue.h>
+namespace JSC {
+
+struct ClassInfo;
+class JSObject;
+class VM;
+
+}
 
 namespace WebCore {
 
 class JSDOMGlobalObject;
 
-JSC::JSValue createReadableStreamControllerPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
-JSC::JSValue createReadableStreamReaderPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
+JSC::JSObject* createReadableStreamControllerPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
+JSC::JSObject* createReadableStreamReaderPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
 
 } // namespace WebCore
 

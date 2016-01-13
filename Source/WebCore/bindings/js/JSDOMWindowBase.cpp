@@ -52,17 +52,6 @@
 #include "WebSafeIncrementalSweeperIOS.h"
 #endif
 
-#if ENABLE(STREAMS_API)
-#include "JSReadableStreamPrivateConstructors.h"
-#include "ReadableStreamInternalsBuiltins.h"
-#include "StreamInternalsBuiltins.h"
-#include "WritableStreamInternalsBuiltins.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-#include "RTCPeerConnectionInternalsBuiltins.h"
-#endif
-
 using namespace JSC;
 
 namespace WebCore {
@@ -81,7 +70,6 @@ JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, PassRefPtr<DOMWin
     , m_windowCloseWatchpoints((window && window->frame()) ? IsWatched : IsInvalidated)
     , m_wrapped(window)
     , m_shell(shell)
-    , m_privateFunctions(vm)
 {
 }
 
@@ -90,47 +78,9 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
     Base::finishCreation(vm, shell);
     ASSERT(inherits(info()));
 
-    m_privateFunctions.init(*this);
-
-#if ENABLE(STREAMS_API) || ENABLE(MEDIA_STREAM)
-    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-#endif
-
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->window, m_shell, DontDelete | ReadOnly),
-#if ENABLE(STREAMS_API)
-        GlobalPropertyInfo(clientData.builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
-        GlobalPropertyInfo(clientData.builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
-        GlobalPropertyInfo(clientData.builtinNames().streamErroredPrivateName(), jsNumber(3), DontDelete | ReadOnly),
-        GlobalPropertyInfo(clientData.builtinNames().streamReadablePrivateName(), jsNumber(4), DontDelete | ReadOnly),
-        GlobalPropertyInfo(clientData.builtinNames().streamWaitingPrivateName(), jsNumber(5), DontDelete | ReadOnly),
-        GlobalPropertyInfo(clientData.builtinNames().streamWritablePrivateName(), jsNumber(6), DontDelete | ReadOnly),
-        GlobalPropertyInfo(clientData.builtinNames().ReadableStreamControllerPrivateName(), createReadableStreamControllerPrivateConstructor(vm, *this), DontDelete | ReadOnly),
-        GlobalPropertyInfo(clientData.builtinNames().ReadableStreamReaderPrivateName(), createReadableStreamReaderPrivateConstructor(vm, *this), DontDelete | ReadOnly),
-#define DECLARE_GLOBAL_STATIC(name)\
-        GlobalPropertyInfo(\
-            clientData.builtinFunctions().readableStreamInternalsBuiltins().name##PrivateName(), m_privateFunctions.readableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
-        WEBCORE_FOREACH_READABLESTREAMINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
-#undef DECLARE_GLOBAL_STATIC
-#define DECLARE_GLOBAL_STATIC(name)\
-        GlobalPropertyInfo(\
-            clientData.builtinFunctions().streamInternalsBuiltins().name##PrivateName(), m_privateFunctions.streamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
-        WEBCORE_FOREACH_STREAMINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
-#undef DECLARE_GLOBAL_STATIC
-#define DECLARE_GLOBAL_STATIC(name)\
-        GlobalPropertyInfo(\
-            clientData.builtinFunctions().writableStreamInternalsBuiltins().name##PrivateName(), m_privateFunctions.writableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
-        WEBCORE_FOREACH_WRITABLESTREAMINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
-#undef DECLARE_GLOBAL_STATIC
-#endif
-#if ENABLE(MEDIA_STREAM)
-#define DECLARE_GLOBAL_STATIC(name)\
-        GlobalPropertyInfo(\
-            clientData.builtinFunctions().rtcPeerConnectionInternalsBuiltins().name##PrivateName(), m_privateFunctions.rtcPeerConnectionInternals().m_##name##Function.get() , DontDelete | ReadOnly),
-        WEBCORE_FOREACH_RTCPEERCONNECTIONINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
-#undef DECLARE_GLOBAL_STATIC
-#endif
     };
 
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
@@ -141,7 +91,6 @@ void JSDOMWindowBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSDOMWindowBase* thisObject = jsCast<JSDOMWindowBase*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    thisObject->m_privateFunctions.visit(visitor);
 }
 
 void JSDOMWindowBase::destroy(JSCell* cell)
