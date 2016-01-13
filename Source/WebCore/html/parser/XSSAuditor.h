@@ -114,7 +114,7 @@ private:
     std::unique_ptr<SuffixTree<ASCIICodebook>> m_decodedHTTPBodySuffixTree;
 
     State m_state;
-    String m_cachedDecodedSnippet;
+    bool m_wasScriptTagFoundInRequest { false };
     unsigned m_scriptTagNestingLevel;
     TextEncoding m_encoding;
 };

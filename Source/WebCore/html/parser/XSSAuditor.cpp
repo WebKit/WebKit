@@ -388,7 +388,7 @@ void XSSAuditor::filterEndToken(const FilterTokenRequest& request)
 bool XSSAuditor::filterCharacterToken(const FilterTokenRequest& request)
 {
     ASSERT(m_scriptTagNestingLevel);
-    if (isContainedInRequest(m_cachedDecodedSnippet) && isContainedInRequest(decodedSnippetForJavaScript(request))) {
+    if (m_wasScriptTagFoundInRequest && isContainedInRequest(decodedSnippetForJavaScript(request))) {
         request.token.clear();
         LChar space = ' ';
         request.token.appendToCharacter(space); // Technically, character tokens can't be empty.
@@ -402,10 +402,10 @@ bool XSSAuditor::filterScriptToken(const FilterTokenRequest& request)
     ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, scriptTag));
 
-    m_cachedDecodedSnippet = decodedSnippetForName(request);
+    m_wasScriptTagFoundInRequest = isContainedInRequest(decodedSnippetForName(request));
 
     bool didBlockScript = false;
-    if (isContainedInRequest(decodedSnippetForName(request))) {
+    if (m_wasScriptTagFoundInRequest) {
         didBlockScript |= eraseAttributeIfInjected(request, srcAttr, blankURL().string(), SrcLikeAttribute);
         didBlockScript |= eraseAttributeIfInjected(request, XLinkNames::hrefAttr, blankURL().string(), SrcLikeAttribute);
     }
