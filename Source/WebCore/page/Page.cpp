@@ -1187,7 +1187,8 @@ void Page::updateIsPlayingMedia()
 {
     MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        state |= frame->document()->mediaState();
+        if (Document* document = frame->document())
+            state |= document->mediaState();
     }
 
     if (state == m_mediaState)
