@@ -1,3 +1,15 @@
+2016-01-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed empty #if block from Font.h
+        https://bugs.webkit.org/show_bug.cgi?id=153067
+
+        Reviewed by Alex Christensen.
+
+        No new tests needed.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::scriptCache): Deleted.
+
 2016-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Consistently use virtual and override specifiers in ScrollbarThemeGtk
