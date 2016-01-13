@@ -1,5 +1,61 @@
 2016-01-12  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Timeline recording controls should use NavigationBar
+        https://bugs.webkit.org/show_bug.cgi?id=152997
+
+        Reviewed by Brian Burg.
+
+        NavigtaionBar should always be preferred over manually editing the DOM.
+        Reusing existing button types for the record button and status element lets us
+        eliminate a bunch of CSS, and will make future changes to the Timelines UI
+        (such as adding addition recording controls), easier to implement.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New tooltip strings.
+
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .navigation-bar > .item.record-start-stop):
+        (.sidebar > .panel.navigation.timeline > .navigation-bar > .item.record-start-stop:hover):
+        (.sidebar > .panel.navigation.timeline > .navigation-bar > .item.record-start-stop:active):
+        Replaced similar styles used for the record glyph.
+        (.sidebar > .panel.navigation.timeline > .navigation-bar > .item.record-start-stop *):
+        Prevent multiple mouseover/mouseout events while hovering the navigation item.
+        (.sidebar > .panel.navigation.timeline > .navigation-bar > .item.flexible-space):
+        Replaced similar styles used for the record status element.
+        (.sidebar > .panel.navigation.timeline > .status-bar): Deleted.
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .status-bar): Deleted.
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph): Deleted.
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover): Deleted.
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:active): Deleted.
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording): Deleted.
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-status): Deleted.
+        (.panel.timeline .navigation-bar.timelines-view): Deleted.
+        No longer used.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        Removed unused CSS static variables.
+        (WebInspector.TimelineSidebarPanel):
+        Create navigation bar, remove status bar DOM elements. Create keyboard shortcut
+        before the record button, so the shortcut's display name can be used in tooltips.
+        (WebInspector.TimelineSidebarPanel.prototype._capturingStartedOrStopped):
+        Update record button state and flexible space (status) text.
+        (WebInspector.TimelineSidebarPanel.prototype._recordButtonClicked):
+        Toggle recording state, and update record button state and flexible space (status) text.
+        (WebInspector.TimelineSidebarPanel.prototype._recordButtonMousedOver):
+        (WebInspector.TimelineSidebarPanel.prototype._recordButtonMousedOut):
+        Update flexible space (status) text.
+        (WebInspector.TimelineSidebarPanel.prototype._updateRecordButton):
+        (WebInspector.TimelineSidebarPanel.prototype._updateReplayInterfaceVisibility):
+        (WebInspector.TimelineSidebarPanel.prototype._toggleRecording): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._capturingStarted): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._capturingStopped): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphMousedOver): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphMousedOut): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._recordGlyphClicked): Deleted.
+        No longer used.
+
+2016-01-12  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Move helper methods for getting icons/text to TimelineTabContentView
         https://bugs.webkit.org/show_bug.cgi?id=152996
 

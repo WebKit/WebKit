@@ -115,21 +115,28 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._timelinesContentContainerElement.appendChild(this._frameSelectionChartSection.element);
         }
 
-        var statusBarElement = this._statusBarElement = document.createElement("div");
-        statusBarElement.classList.add(WebInspector.TimelineSidebarPanel.StatusBarStyleClass);
-        this.element.insertBefore(statusBarElement, this.element.firstChild);
+        this._toggleRecordingShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Space, this._toggleRecordingOnSpacebar.bind(this));
+        this._toggleRecordingShortcut.implicitlyPreventsDefault = false;
+        this._toggleRecordingShortcut.disabled = true;
 
-        this._recordGlyphElement = document.createElement("div");
-        this._recordGlyphElement.className = WebInspector.TimelineSidebarPanel.RecordGlyphStyleClass;
-        this._recordGlyphElement.title = WebInspector.UIString("Click or press the spacebar to record.")
-        this._recordGlyphElement.addEventListener("mouseover", this._recordGlyphMousedOver.bind(this));
-        this._recordGlyphElement.addEventListener("mouseout", this._recordGlyphMousedOut.bind(this));
-        this._recordGlyphElement.addEventListener("click", this._recordGlyphClicked.bind(this));
-        statusBarElement.appendChild(this._recordGlyphElement);
+        this._toggleNewRecordingShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Space, this._toggleNewRecordingOnSpacebar.bind(this));
+        this._toggleNewRecordingShortcut.implicitlyPreventsDefault = false;
+        this._toggleNewRecordingShortcut.disabled = true;
 
-        this._recordStatusElement = document.createElement("div");
-        this._recordStatusElement.className = WebInspector.TimelineSidebarPanel.RecordStatusStyleClass;
-        statusBarElement.appendChild(this._recordStatusElement);
+        this._recordingNavigationBar = new WebInspector.NavigationBar;
+        this.element.insertBefore(this._recordingNavigationBar.element, this.element.firstChild);
+
+        let toolTip = WebInspector.UIString("Start recording (%s)\nCreate new recording (%s)").format(this._toggleRecordingShortcut.displayName, this._toggleNewRecordingShortcut.displayName);
+        let altToolTip = WebInspector.UIString("Stop recording (%s)").format(this._toggleRecordingShortcut.displayName);
+
+        this._recordButton = new WebInspector.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
+        this._recordButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._recordButtonClicked, this);
+        this._recordButton.element.addEventListener("mouseover", this._recordButtonMousedOver.bind(this));
+        this._recordButton.element.addEventListener("mouseout", this._recordButtonMousedOut.bind(this));
+        this._recordingNavigationBar.addNavigationItem(this._recordButton);
+
+        this._recordingStatusItem = new WebInspector.FlexibleSpaceNavigationItem;
+        this._recordingNavigationBar.addNavigationItem(this._recordingStatusItem);
 
         WebInspector.showReplayInterfaceSetting.addEventListener(WebInspector.Setting.Event.Changed, this._updateReplayInterfaceVisibility, this);
 
@@ -137,8 +144,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._replayNavigationBar = new WebInspector.NavigationBar;
         this.element.appendChild(this._replayNavigationBar.element);
 
-        var toolTip = WebInspector.UIString("Begin Capturing");
-        var altToolTip = WebInspector.UIString("End Capturing");
+        toolTip = WebInspector.UIString("Begin Capturing");
+        altToolTip = WebInspector.UIString("End Capturing");
         this._replayCaptureButtonItem = new WebInspector.ActivateButtonNavigationItem("replay-capture", toolTip, altToolTip, "Images/Circle.svg", 16, 16);
         this._replayCaptureButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayCaptureButtonClicked, this);
         this._replayCaptureButtonItem.enabled = true;
@@ -154,7 +161,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStarted, this._captureStarted, this);
         WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStopped, this._captureStopped, this);
 
-        this._statusBarElement.oncontextmenu = this._contextMenuNavigationBarOrStatusBar.bind(this);
+        this._recordingNavigationBar.element.oncontextmenu = this._contextMenuNavigationBarOrStatusBar.bind(this);
         this._replayNavigationBar.element.oncontextmenu = this._contextMenuNavigationBarOrStatusBar.bind(this);
         this._updateReplayInterfaceVisibility();
 
@@ -162,8 +169,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingLoaded, this._recordingLoaded, this);
 
         this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
-        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
-        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStartedOrStopped, this);
+        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStartedOrStopped, this);
 
         for (var recording of WebInspector.timelineManager.recordings)
             this._addRecording(recording);
@@ -172,14 +179,6 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         if (WebInspector.timelineManager.activeRecording)
             this._recordingLoaded();
-
-        this._toggleRecordingShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Space, this._toggleRecordingOnSpacebar.bind(this));
-        this._toggleRecordingShortcut.implicitlyPreventsDefault = false;
-        this._toggleRecordingShortcut.disabled = true;
-
-        this._toggleNewRecordingShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Space, this._toggleNewRecordingOnSpacebar.bind(this));
-        this._toggleNewRecordingShortcut.implicitlyPreventsDefault = false;
-        this._toggleNewRecordingShortcut.disabled = true;
     }
 
     // Public
@@ -552,14 +551,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         if (WebInspector.timelineManager.isCapturing()) {
             WebInspector.timelineManager.stopCapturing();
-
-            this._recordGlyphElement.title = WebInspector.UIString("Click or press the spacebar to record.")
         } else {
             WebInspector.timelineManager.startCapturing(shouldCreateRecording);
             // Show the timeline to which events will be appended.
             this._recordingLoaded();
-
-            this._recordGlyphElement.title = WebInspector.UIString("Click or press the spacebar to stop recording.")
         }
     }
 
@@ -635,16 +630,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._refreshFrameSelectionChart();
     }
 
-    _capturingStarted(event)
+    _capturingStartedOrStopped(event)
     {
-        this._recordStatusElement.textContent = WebInspector.UIString("Recording");
-        this._recordGlyphElement.classList.add(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass);
-    }
-
-    _capturingStopped(event)
-    {
-        this._recordStatusElement.textContent = "";
-        this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass);
+        let isCapturing = WebInspector.timelineManager.isCapturing();
+        this._updateRecordButton(isCapturing);
     }
 
     _recordingCreated(event)
@@ -844,32 +833,34 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this.contentView.element.style.top = (overviewHeight + contentElementOffset) + "px";
     }
 
-    _recordGlyphMousedOver(event)
+    _recordButtonClicked(event)
     {
-        this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
+        let isCapturing = !WebInspector.timelineManager.isCapturing();
 
-        if (WebInspector.timelineManager.isCapturing())
-            this._recordStatusElement.textContent = WebInspector.UIString("Stop Recording");
-        else
-            this._recordStatusElement.textContent = WebInspector.UIString("Start Recording");
-    }
-
-    _recordGlyphMousedOut(event)
-    {
-        this._recordGlyphElement.classList.remove(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
-
-        if (WebInspector.timelineManager.isCapturing())
-            this._recordStatusElement.textContent = WebInspector.UIString("Recording");
-        else
-            this._recordStatusElement.textContent = "";
-    }
-
-    _recordGlyphClicked(event)
-    {
-        // Add forced class to prevent the glyph from showing a confusing status after click.
-        this._recordGlyphElement.classList.add(WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass);
-
+        this._updateRecordButton(isCapturing);
         this._toggleRecording(event.shiftKey);
+    }
+
+    _recordButtonMousedOver(event)
+    {
+        if (WebInspector.timelineManager.isCapturing())
+            this._recordingStatusItem.element.textContent = WebInspector.UIString("Stop Recording");
+        else
+            this._recordingStatusItem.element.textContent = WebInspector.UIString("Start Recording");
+    }
+
+    _recordButtonMousedOut(event)
+    {
+        if (WebInspector.timelineManager.isCapturing())
+            this._recordingStatusItem.element.textContent = WebInspector.UIString("Recording");
+        else
+            this._recordingStatusItem.element.textContent = "";
+    }
+
+    _updateRecordButton(isCapturing)
+    {
+        this._recordingStatusItem.element.textContent = isCapturing ? WebInspector.UIString("Recording") : "";
+        this._recordButton.toggled = isCapturing;
     }
 
     _viewModeSelected(event)
@@ -995,7 +986,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         var shouldShowReplayInterface = !!(window.ReplayAgent && WebInspector.showReplayInterfaceSetting.value);
 
-        this._statusBarElement.classList.toggle(WebInspector.TimelineSidebarPanel.HiddenStyleClassName, shouldShowReplayInterface);
+        this._recordingNavigationBar.element.classList.toggle(WebInspector.TimelineSidebarPanel.HiddenStyleClassName, shouldShowReplayInterface);
         this._replayNavigationBar.element.classList.toggle(WebInspector.TimelineSidebarPanel.HiddenStyleClassName, !shouldShowReplayInterface);
     }
 
@@ -1068,11 +1059,6 @@ WebInspector.TimelineSidebarPanel.ViewMode = {
 };
 
 WebInspector.TimelineSidebarPanel.HiddenStyleClassName = "hidden";
-WebInspector.TimelineSidebarPanel.StatusBarStyleClass = "status-bar";
-WebInspector.TimelineSidebarPanel.RecordGlyphStyleClass = "record-glyph";
-WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass = "recording";
-WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass = "forced";
-WebInspector.TimelineSidebarPanel.RecordStatusStyleClass = "record-status";
 WebInspector.TimelineSidebarPanel.TitleBarStyleClass = "title-bar";
 WebInspector.TimelineSidebarPanel.TitleBarTextStyleClass = "title-bar-text";
 WebInspector.TimelineSidebarPanel.TitleBarScopeBarStyleClass = "title-bar-scope-bar";

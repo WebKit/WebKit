@@ -23,74 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.navigation.timeline > .status-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 29px;
-    border-bottom: 1px solid hsl(0, 0%, 70%);
-}
-
-body.window-inactive .sidebar > .panel.navigation.timeline > .status-bar {
-    border-bottom-color: hsl(0, 0%, 85%);
-}
-
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
-    position: absolute;
-    top: 3px;
-    left: 5px;
-    width: 21px;
-    height: 21px;
-    padding: 0;
-    border: none;
-    outline: none;
-    color: transparent;
-    overflow: hidden;
-
-    -webkit-appearance: none;
-
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-image: url(../Images/Record.svg);
-    background-size: 13px 13px;
-    background-position: center;
-}
-
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
+.sidebar > .panel.navigation.timeline > .navigation-bar > .item.record-start-stop {
     /* Workaround for background image clipping issue on non-retina machines. See http://webkit.org/b/147346. */
     filter: brightness(100%);
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
+.sidebar > .panel.navigation.timeline > .navigation-bar > .item.record-start-stop:hover {
     filter: brightness(95%);
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:active {
+.sidebar > .panel.navigation.timeline > .navigation-bar > .item.record-start-stop:active {
     filter: brightness(80%);
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {
-    background-image: url(../Images/Stop.svg);
+.sidebar > .panel.navigation.timeline > .navigation-bar > .item.record-start-stop * {
+    pointer-events: none;
 }
 
-.sidebar > .panel.navigation.timeline > .status-bar > .record-status {
-    position: absolute;
-    top: 3px;
-    right: 21px;
-    left: 27px;
-
-    text-align: center;
+.sidebar > .panel.navigation.timeline > .navigation-bar > .item.flexible-space {
+    justify-content: center;
 
     line-height: 20px;
     font-weight: bold;
 
     color: hsl(0, 0%, 29%);
     text-shadow: hsla(0, 0%, 100%, 0.5) 0 1px 0;
-}
-
-.panel.timeline .navigation-bar.timelines-view {
-    justify-content: flex-end;
 }
 
 .sidebar > .panel.navigation.timeline > .title-bar {
