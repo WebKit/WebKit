@@ -1,3 +1,12 @@
+2016-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add comments above options declarations in OptionsGTK.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=153074
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.3 release.
