@@ -25,7 +25,7 @@
 
 WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 {
-    constructor(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode)
+    constructor(id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode)
     {
         super();
 
@@ -39,6 +39,7 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
         this._thisObject = thisObject || null;
         this._scopeChain = scopeChain || [];
         this._nativeCode = nativeCode || false;
+        this._programCode = programCode || false;
     }
 
     // Public
@@ -61,6 +62,11 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
     get nativeCode()
     {
         return this._nativeCode;
+    }
+
+    get programCode()
+    {
+        return this._programCode;
     }
 
     get thisObject()
@@ -108,6 +114,7 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 
         var url = payload.url;
         var nativeCode = false;
+        var programCode = false;
         var sourceCodeLocation = null;
 
         if (!url || url === "[native code]") {
@@ -125,10 +132,12 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
             }
         }
 
-        var functionName = null;
-        if (payload.functionName !== "global code" && payload.functionName !== "eval code")
-            functionName = payload.functionName;
+        var functionName = payload.functionName;
+        if (payload.functionName === "global code"
+            || payload.functionName === "eval code"
+            || payload.functionName === "module code")
+            programCode = true;
 
-        return new WebInspector.CallFrame(null, sourceCodeLocation, functionName, null, null, nativeCode);
+        return new WebInspector.CallFrame(null, sourceCodeLocation, functionName, null, null, nativeCode, programCode);
     }
 };
