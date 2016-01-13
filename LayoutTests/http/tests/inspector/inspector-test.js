@@ -143,6 +143,7 @@ InspectorTestProxy.clearResults = function()
     }
 }
 
+TestPage.allowUncaughtExceptions = false;
 InspectorTestProxy.needToSanitizeUncaughtExceptionURLs = false;
 
 InspectorTestProxy.reportUncaughtException = function(message, url, lineNumber)
@@ -159,7 +160,9 @@ InspectorTestProxy.reportUncaughtException = function(message, url, lineNumber)
 
     var result = "Uncaught exception in test page: " + message + " [" + url + ":" + lineNumber + "]";
     InspectorTestProxy.addResult(result);
-    InspectorTestProxy.completeTest();
+
+    if (!TestPage.allowUncaughtExceptions)
+        TestPage.completeTest();
 }
 
 // Catch syntax errors, type errors, and other exceptions. Run this before loading other files.

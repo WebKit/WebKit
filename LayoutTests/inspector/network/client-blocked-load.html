@@ -25,7 +25,7 @@ function test()
                 InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
                 InspectorTest.expectThat(resource.url === "", "Request url should be rewritten to the null string.");
                 resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFail, (event) => {
-                    InspectorTest.expectThat(true, "Resource load should fail.");
+                    InspectorTest.pass("Resource load should fail.");
                     resolve();
                 });
             });

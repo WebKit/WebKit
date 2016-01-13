@@ -585,10 +585,12 @@ void Debugger::breakProgram()
     if (m_isPaused)
         return;
 
+    if (!m_vm->topCallFrame)
+        return;
+
     m_pauseOnNextStatement = true;
     setSteppingMode(SteppingModeEnabled);
     m_currentCallFrame = m_vm->topCallFrame;
-    ASSERT(m_currentCallFrame);
     pauseIfNeeded(m_currentCallFrame);
 }
 
