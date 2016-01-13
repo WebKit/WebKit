@@ -602,6 +602,10 @@ private:
         }
 
         case StringFromCharCode:
+            if (node->child1()->shouldSpeculateUntypedForArithmetic()) {
+                fixEdge<UntypedUse>(node->child1());
+                break;
+            }
             fixEdge<Int32Use>(node->child1());
             break;
 

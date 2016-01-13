@@ -1,5 +1,32 @@
 2016-01-13  Mark Lam  <mark.lam@apple.com>
 
+        The StringFromCharCode DFG intrinsic should support untyped operands.
+        https://bugs.webkit.org/show_bug.cgi?id=153046
+
+        Reviewed by Geoffrey Garen.
+
+        The current StringFromCharCode DFG intrinsic assumes that its operand charCode
+        must be an Int32.  This results in 26000+ BadType OSR exits in the LongSpider
+        crypto-aes benchmark.  With support for Untyped operands, the number of OSR
+        exits drops to 202.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileFromCharCode):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toUInt32):
+
+2016-01-13  Mark Lam  <mark.lam@apple.com>
+
         Use DFG Graph::binary/unaryArithShouldSpeculateInt32/MachineInt() functions consistently.
         https://bugs.webkit.org/show_bug.cgi?id=153080
 

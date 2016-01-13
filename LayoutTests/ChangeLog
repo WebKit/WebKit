@@ -1,3 +1,16 @@
+2016-01-13  Mark Lam  <mark.lam@apple.com>
+
+        The StringFromCharCode DFG intrinsic should support untyped operands.
+        https://bugs.webkit.org/show_bug.cgi?id=153046
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/ftl-polymorphic-StringFromCharCode-expected.txt: Added.
+        * js/regress/ftl-polymorphic-StringFromCharCode.html: Added.
+        * js/regress/script-tests/ftl-polymorphic-StringFromCharCode.js: Added.
+        (o1.valueOf):
+        (foo):
+
 2016-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inspector should use the last sourceURL / sourceMappingURL directive

@@ -1313,6 +1313,15 @@ JSCell* JIT_OPERATION operationStringFromCharCode(ExecState* exec, int32_t op1)
     return JSC::stringFromCharCode(exec, op1);
 }
 
+EncodedJSValue JIT_OPERATION operationStringFromCharCodeUntyped(ExecState* exec, EncodedJSValue encodedValue)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    JSValue charValue = JSValue::decode(encodedValue);
+    int32_t chInt = charValue.toUInt32(exec);
+    return JSValue::encode(JSC::stringFromCharCode(exec, chInt));
+}
+
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);

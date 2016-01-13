@@ -1871,7 +1871,27 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
 
 void SpeculativeJIT::compileFromCharCode(Node* node)
 {
-    SpeculateStrictInt32Operand property(this, node->child1());
+    Edge& child = node->child1();
+    if (child.useKind() == UntypedUse) {
+        JSValueOperand opr(this, child);
+        JSValueRegs oprRegs = opr.jsValueRegs();
+#if USE(JSVALUE64)
+        GPRTemporary result(this);
+        JSValueRegs resultRegs = JSValueRegs(result.gpr());
+#else
+        GPRTemporary resultTag(this);
+        GPRTemporary resultPayload(this);
+        JSValueRegs resultRegs = JSValueRegs(resultPayload.gpr(), resultTag.gpr());
+#endif
+        flushRegisters();
+        callOperation(operationStringFromCharCodeUntyped, resultRegs, oprRegs);
+        m_jit.exceptionCheck();
+        
+        jsValueResult(resultRegs, node);
+        return;
+    }
+
+    SpeculateStrictInt32Operand property(this, child);
     GPRReg propertyReg = property.gpr();
     GPRTemporary smallStrings(this);
     GPRTemporary scratch(this);

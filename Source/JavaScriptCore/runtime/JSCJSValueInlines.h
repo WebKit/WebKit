@@ -46,7 +46,7 @@ ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const
 
 inline uint32_t JSValue::toUInt32(ExecState* exec) const
 {
-    // See comment on JSC::toUInt32, above.
+    // See comment on JSC::toUInt32, in JSCJSValue.h.
     return toInt32(exec);
 }
 

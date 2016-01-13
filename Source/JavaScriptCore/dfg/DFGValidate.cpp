@@ -264,6 +264,7 @@ public:
                     VALIDATE((node), !!node->child2());
                     break;
                 case CheckStructure:
+                case StringFromCharCode:
                     VALIDATE((node), !!node->child1());
                     break;
                 case PutStructure:

@@ -135,7 +135,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetScope:
     case SkipScope:
     case StringCharCodeAt:
-    case StringFromCharCode:
     case CompareStrictEq:
     case IsUndefined:
     case IsBoolean:
@@ -257,6 +256,20 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         RELEASE_ASSERT_NOT_REACHED();
         return;
     }
+
+    case StringFromCharCode:
+        switch (node->child1().useKind()) {
+        case Int32Use:
+            def(PureValue(node));
+            return;
+        case UntypedUse:
+            read(World);
+            write(Heap);
+            return;
+        default:
+            DFG_CRASH(graph, node, "Bad use kind");
+        }
+        return;
 
     case ArithAdd:
     case ArithNegate:
