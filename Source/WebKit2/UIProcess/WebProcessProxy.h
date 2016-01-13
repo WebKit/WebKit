@@ -151,7 +151,7 @@ public:
 
     void reinstateNetworkProcessAssertionState(NetworkProcessProxy&);
 
-    void sendMainThreadPing();
+    void isResponsive(std::function<void(bool isWebProcessResponsive)>);
     void didReceiveMainThreadPing();
 
 private:
@@ -254,6 +254,9 @@ private:
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;
+
+    enum class NoOrMaybe { No, Maybe } m_isResponsive;
+    Vector<std::function<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
 };
 
 } // namespace WebKit

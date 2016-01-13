@@ -106,6 +106,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
     , m_customProtocolManagerProxy(this, processPool)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(*this)
+    , m_isResponsive(NoOrMaybe::Maybe)
 {
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
 
@@ -549,14 +550,25 @@ void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC:
 
 void WebProcessProxy::didBecomeUnresponsive()
 {
+    m_isResponsive = NoOrMaybe::No;
+
     Vector<RefPtr<WebPageProxy>> pages;
     copyValuesToVector(m_pageMap, pages);
+
+    auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
+
     for (auto& page : pages)
         page->processDidBecomeUnresponsive();
+
+    bool isWebProcessResponsive = false;
+    for (auto& callback : isResponsiveCallbacks)
+        callback(isWebProcessResponsive);
 }
 
 void WebProcessProxy::didBecomeResponsive()
 {
+    m_isResponsive = NoOrMaybe::Maybe;
+
     Vector<RefPtr<WebPageProxy>> pages;
     copyValuesToVector(m_pageMap, pages);
     for (auto& page : pages)
@@ -984,8 +996,21 @@ void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
         m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
 }
 
-void WebProcessProxy::sendMainThreadPing()
+void WebProcessProxy::isResponsive(std::function<void(bool isWebProcessResponsive)> callback)
 {
+    if (m_isResponsive == NoOrMaybe::No) {
+        if (callback) {
+            RunLoop::main().dispatch([callback] {
+                bool isWebProcessResponsive = false;
+                callback(isWebProcessResponsive);
+            });
+        }
+        return;
+    }
+
+    if (callback)
+        m_isResponsiveCallbacks.append(callback);
+
     responsivenessTimer().start();
     send(Messages::WebProcess::MainThreadPing(), 0);
 }
@@ -993,6 +1018,11 @@ void WebProcessProxy::sendMainThreadPing()
 void WebProcessProxy::didReceiveMainThreadPing()
 {
     responsivenessTimer().stop();
+
+    auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
+    bool isWebProcessResponsive = true;
+    for (auto& callback : isResponsiveCallbacks)
+        callback(isWebProcessResponsive);
 }
 
 } // namespace WebKit

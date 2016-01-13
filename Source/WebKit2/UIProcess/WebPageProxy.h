@@ -743,6 +743,7 @@ public:
 
     void getContentsAsString(std::function<void (const String&, CallbackBase::Error)>);
     void getBytecodeProfile(std::function<void (const String&, CallbackBase::Error)>);
+    void isWebProcessResponsive(std::function<void (bool isWebProcessResponsive)>);
 
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(std::function<void (API::Data*, CallbackBase::Error)>);

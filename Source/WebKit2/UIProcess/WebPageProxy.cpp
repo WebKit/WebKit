@@ -1801,7 +1801,9 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
             rubberBandsAtBottom()
         ), 0);
 
-    m_process->sendMainThreadPing();
+    // Manually ping the web process to check for responsiveness since our wheel
+    // event will dispatch to a non-main thread, which always responds.
+    m_process->isResponsive(nullptr);
 }
 
 void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
@@ -2637,7 +2639,20 @@ void WebPageProxy::getBytecodeProfile(std::function<void (const String&, Callbac
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_process->send(Messages::WebPage::GetBytecodeProfile(callbackID), m_pageID);
 }
-    
+
+void WebPageProxy::isWebProcessResponsive(std::function<void (bool isWebProcessResponsive)> callbackFunction)
+{
+    if (!isValid()) {
+        RunLoop::main().dispatch([callbackFunction] {
+            bool isWebProcessResponsive = true;
+            callbackFunction(isWebProcessResponsive);
+        });
+        return;
+    }
+
+    m_process->isResponsive(callbackFunction);
+}
+
 #if ENABLE(MHTML)
 void WebPageProxy::getContentsAsMHTMLData(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {

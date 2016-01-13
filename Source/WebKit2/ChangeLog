@@ -1,3 +1,50 @@
+2016-01-12  Geoffrey Garen  <ggaren@apple.com>
+
+        WebKit2 should have an API for eagerly querying whether the web process is responsive
+        https://bugs.webkit.org/show_bug.cgi?id=153037
+
+        Reviewed by Tim Horton.
+
+        WebKit2 provides a delegate notification when the web process doesn't
+        respond to a message after a while. But there's no way to send a message
+        eagerly and check for reply.
+
+        We want this new mechanism so that navigation can terminate the web
+        process eagerly if it is hung.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetWebProcessIsResponsive):
+        * UIProcess/API/C/WKPagePrivate.h: This is the new API.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sendWheelEvent): Updated for interface change.
+
+        (WebKit::WebPageProxy::getWebProcessIsResponsive): Calls through to the
+        web process proxy. We claim that we are responsive when there is no
+        web process because we assume that a fresh web process will not hang.
+
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::didBecomeUnresponsive): Keep a flag indicating
+        whether the process is unresponsive so that we can fire unresponsiveness
+        callbacks immediately for a hung process instead of waiting another 3s.
+
+        (WebKit::WebProcessProxy::didBecomeResponsive): We don't fire responsiveness
+        callbacks inside didBecomeResponsive because we assume that a responsive
+        web process will invoke didReceiveMainThreadPing -- and we fire the
+        callbacks there.
+
+        (WebKit::WebProcessProxy::getIsResponsive): If the web process is already
+        known to be unresponsive, fire the callback right away. Otherwise, queue
+        it up to fire once we have an answer from a main thread ping.
+
+        (WebKit::WebProcessProxy::didReceiveMainThreadPing): Fire any pending
+        callbacks when we learn that the web process is responsive.
+
+        * UIProcess/WebProcessProxy.h:
+
 2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.3 release.
