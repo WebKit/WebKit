@@ -139,7 +139,11 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
             sampleCount = maxSampleCount;
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
+#if PLATFORM(IOS)
+        ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, GL_RGBA8_OES, width, height);
+#else
         ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, m_internalColorFormat, width, height);
+#endif
         ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
         if (m_attrs.stencil || m_attrs.depth) {
             ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
@@ -221,11 +225,17 @@ void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
     TemporaryOpenGLSetting scopedDepth(GL_DEPTH_TEST, GL_FALSE);
     TemporaryOpenGLSetting scopedStencil(GL_STENCIL_TEST, GL_FALSE);
 
+    GLint boundFrameBuffer;
+    ::glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFrameBuffer);
+
     ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
     ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
 #if PLATFORM(IOS)
     UNUSED_PARAM(rect);
     ::glResolveMultisampleFramebufferAPPLE();
+    const GLenum discards[] = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT };
+    ::glDiscardFramebufferEXT(GL_READ_FRAMEBUFFER_APPLE, 2, discards);
+    ::glBindFramebuffer(GL_FRAMEBUFFER, boundFrameBuffer);
 #else
     IntRect resolveRect = rect;
     if (rect.isEmpty())

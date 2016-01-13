@@ -1,3 +1,16 @@
+2016-01-12  Dean Jackson  <dino@apple.com>
+
+        [iOS] Antialiasing doesn't work in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=153000
+        <rdar://problem/9165531>
+
+        Reviewed by Alex Christensen.
+
+        New test to check if WebGL antialiasing happened on a rendered canvas.
+
+        * fast/canvas/webgl/antialiasing-enabled-expected.txt: Added.
+        * fast/canvas/webgl/antialiasing-enabled.html: Added.
+
 2016-01-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipped more tests related to picture element on ios-simulator and grouped them together in TestExpectations file.

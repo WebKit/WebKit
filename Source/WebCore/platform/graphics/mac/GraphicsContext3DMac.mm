@@ -314,7 +314,6 @@ GraphicsContext3D::~GraphicsContext3D()
         makeContextCurrent();
         [m_contextObj renderbufferStorage:GL_RENDERBUFFER fromDrawable:nil];
         ::glDeleteRenderbuffers(1, &m_texture);
-        ::glDeleteRenderbuffers(1, &m_compositorTexture);
 #else
         CGLSetCurrentContext(m_contextObj);
         ::glDeleteTextures(1, &m_texture);
@@ -401,6 +400,8 @@ void GraphicsContext3D::checkGPUStatusIfNecessary()
 void GraphicsContext3D::endPaint()
 {
     makeContextCurrent();
+    if (m_attrs.antialias)
+        resolveMultisamplingIfNecessary();
     ::glFlush();
     ::glBindRenderbuffer(GL_RENDERBUFFER, m_texture);
     [static_cast<EAGLContext*>(m_contextObj) presentRenderbuffer:GL_RENDERBUFFER];

@@ -1,3 +1,36 @@
+2016-01-11  Dean Jackson  <dino@apple.com>
+
+        [iOS] Antialiasing doesn't work in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=153000
+        <rdar://problem/9165531>
+
+        Reviewed by Alex Christensen.
+
+        WebGL has supported platform antialiasing since
+        the beginning, but we never hooked it up for iOS
+        because it used a slightly different extension.
+
+        Test: fast/canvas/webgl/antialiasing-enabled.html
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::endPaint): Resolve the multisampling
+        buffer once we're done painting.
+        (WebCore::GraphicsContext3D::~GraphicsContext3D): We never created
+        the m_compositorTexture RenderBuffer on iOS, so no point deleting
+        it.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension): The iOS extension
+        has a slightly different name.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs): Make sure to create the
+        multisample buffer with the correct format.
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary): We
+        need to remember what our bound frame buffer is when we
+        enter this call, and restore it afterwards. In the middle we can
+        discard our multisample read buffer once we have resolved it
+        into the normal framebuffer.
+
 2016-01-12  Daniel Bates  <dabates@apple.com>
 
         XSS Auditor should navigate to empty substitute data on full page block
