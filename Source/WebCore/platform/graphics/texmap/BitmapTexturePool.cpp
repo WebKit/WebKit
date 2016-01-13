@@ -62,7 +62,7 @@ RefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size)
 void BitmapTexturePool::scheduleReleaseUnusedTextures()
 {
     if (m_releaseUnusedTexturesTimer.isActive())
-        m_releaseUnusedTexturesTimer.stop();
+        return;
 
     m_releaseUnusedTexturesTimer.startOneShot(s_releaseUnusedTexturesTimerInterval);
 }
@@ -83,6 +83,9 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired()
             break;
         }
     }
+
+    if (!m_textures.isEmpty())
+        scheduleReleaseUnusedTextures();
 }
 
 RefPtr<BitmapTexture> BitmapTexturePool::createTexture()

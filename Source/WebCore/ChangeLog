@@ -1,3 +1,22 @@
+2016-01-13  YongGeol Jung  <yg48.jung@samsung.com>
+
+        [TexMap] BitmapTextureGL is not released while scene is updated continuously.
+        https://bugs.webkit.org/show_bug.cgi?id=152524
+
+        Reviewed by Žan Doberšek.
+
+        This patch fixes two issues.
+        First, m_releaseUnusedTexturesTimer is not fired if scene is updated within 0.5s continuously.
+        In this case, BitmapTexturePool will not remove texture even if texture is not used for long time.
+        Second, m_releaseUnusedTexturesTimer is triggered by acquireTexture function only.
+        So, if next scene does not need to use BitmapTexture, remained textures in pool will not removed.
+
+        No new tests needed.
+
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::scheduleReleaseUnusedTextures):
+        (WebCore::BitmapTexturePool::releaseUnusedTexturesTimerFired):
+
 2016-01-13  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Refactor builtin internals to prepare support for streams API in worker
