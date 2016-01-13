@@ -162,7 +162,6 @@ private:
     virtual bool paintMediaSeekForwardButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintMediaSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintMediaSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    virtual bool paintMediaVolumeSliderContainer(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintMediaVolumeSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintMediaVolumeSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) override;
     virtual bool paintMediaCurrentTime(const RenderObject&, const PaintInfo&, const IntRect&) override;

@@ -1007,9 +1007,9 @@ bool RenderThemeGtk::paintSearchFieldResultsDecorationPart(const RenderBox& rend
 {
     IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
     if (iconRect.isEmpty())
-        return false;
+        return true;
 
-    return paintEntryIcon(EntryIconLeft, "edit-find-symbolic", paintInfo.context(), iconRect, gtkTextDirection(renderObject.style().direction()),
+    return !paintEntryIcon(EntryIconLeft, "edit-find-symbolic", paintInfo.context(), iconRect, gtkTextDirection(renderObject.style().direction()),
         gtkIconStateFlags(this, renderObject));
 }
 
@@ -1022,9 +1022,9 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderBox& renderObject,
 {
     IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
     if (iconRect.isEmpty())
-        return false;
+        return true;
 
-    return paintEntryIcon(EntryIconRight, "edit-clear-symbolic", paintInfo.context(), iconRect, gtkTextDirection(renderObject.style().direction()),
+    return !paintEntryIcon(EntryIconRight, "edit-clear-symbolic", paintInfo.context(), iconRect, gtkTextDirection(renderObject.style().direction()),
         gtkIconStateFlags(this, renderObject));
 }
 
@@ -1382,7 +1382,7 @@ bool RenderThemeGtk::paintMediaButton(const RenderObject& renderObject, Graphics
     gtk_style_context_set_state(context.get(), gtkIconStateFlags(this, renderObject));
     static const unsigned mediaIconSize = 16;
     IntRect iconRect(rect.x() + (rect.width() - mediaIconSize) / 2, rect.y() + (rect.height() - mediaIconSize) / 2, mediaIconSize, mediaIconSize);
-    return paintIcon(context.get(), graphicsContext, iconRect, iconName);
+    return !paintIcon(context.get(), graphicsContext, iconRect, iconName);
 }
 
 bool RenderThemeGtk::hasOwnDisabledStateHandlingFor(ControlPart part) const
@@ -1399,10 +1399,10 @@ bool RenderThemeGtk::paintMediaMuteButton(const RenderObject& renderObject, cons
 {
     Node* node = renderObject.node();
     if (!node)
-        return false;
+        return true;
     Node* mediaNode = node->shadowHost();
     if (!is<HTMLMediaElement>(mediaNode))
-        return false;
+        return true;
 
     HTMLMediaElement* mediaElement = downcast<HTMLMediaElement>(mediaNode);
     return paintMediaButton(renderObject, paintInfo.context(), rect, mediaElement->muted() ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic");
@@ -1412,10 +1412,9 @@ bool RenderThemeGtk::paintMediaPlayButton(const RenderObject& renderObject, cons
 {
     Node* node = renderObject.node();
     if (!node)
-        return false;
-
+        return true;
     if (!nodeHasPseudo(node, "-webkit-media-controls-play-button"))
-        return false;
+        return true;
 
     return paintMediaButton(renderObject, paintInfo.context(), rect, nodeHasClass(node, "paused") ? "media-playback-start-symbolic" : "media-playback-pause-symbolic");
 }
@@ -1450,7 +1449,7 @@ bool RenderThemeGtk::paintMediaSliderTrack(const RenderObject& o, const PaintInf
 {
     HTMLMediaElement* mediaElement = parentMediaElement(o);
     if (!mediaElement)
-        return false;
+        return true;
 
     GraphicsContext& context = paintInfo.context();
     context.save();
@@ -1484,11 +1483,6 @@ bool RenderThemeGtk::paintMediaSliderThumb(const RenderObject& o, const PaintInf
     RenderStyle& style = o.style();
     paintInfo.context().fillRoundedRect(FloatRoundedRect(r, borderRadiiFromStyle(style)), style.visitedDependentColor(CSSPropertyColor));
     return false;
-}
-
-bool RenderThemeGtk::paintMediaVolumeSliderContainer(const RenderObject&, const PaintInfo&, const IntRect&)
-{
-    return true;
 }
 
 bool RenderThemeGtk::paintMediaVolumeSliderTrack(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)

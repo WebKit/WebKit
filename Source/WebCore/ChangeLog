@@ -1,3 +1,25 @@
+2016-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix return value of some paint methods in RenderThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=153015
+
+        Reviewed by Michael Catanzaro.
+
+        The bool value returned by paint methods in RenderTheme means
+        whether the appearance is supported or not, so we should return
+        true when not supported (so we didn't paint anything) and false
+        when supported (so we actually painted the theme part).
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+        (WebCore::RenderThemeGtk::paintMediaMuteButton):
+        (WebCore::RenderThemeGtk::paintMediaPlayButton):
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack):
+        (WebCore::RenderThemeGtk::paintMediaVolumeSliderContainer): Deleted.
+        * rendering/RenderThemeGtk.h:
+
 2016-01-12  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] De-virtualize PlatformContentFilter::{needsMoreData, didBlockData}()
