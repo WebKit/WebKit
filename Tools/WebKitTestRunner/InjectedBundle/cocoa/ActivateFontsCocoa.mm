@@ -151,7 +151,6 @@ static NSSet *allowedFontFamilySet()
         @"STKaiti",
         @"STSong",
         @"Symbol",
-        @"System Font",
         @"Tahoma",
         @"Thonburi",
         @"Times New Roman",

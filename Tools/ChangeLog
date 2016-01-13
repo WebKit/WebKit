@@ -1,3 +1,18 @@
+2016-01-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Testing with font family name "System Font" is unused
+        https://bugs.webkit.org/show_bug.cgi?id=153073
+        <rdar://problem/24091683>
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet): Deleted.
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::allowedFontFamilySet): Deleted.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet): Deleted.
+
 2016-01-13  Daniel Bates  <dabates@apple.com>
 
         [XSS Auditor] Add test when XSS payload is in the path portion of the URL
