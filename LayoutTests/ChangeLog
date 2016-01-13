@@ -1,3 +1,10 @@
+2016-01-13  Mario Sanchez Prada  <mario@webkit.org>
+
+        [GTK] Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Mark three tests failing in the
+        GTK bots as Crash, Timeout (release builds only) and Failure.
+
 2016-01-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Changing expectation from flaky to skip for two crashing tests.

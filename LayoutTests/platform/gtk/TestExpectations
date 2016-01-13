@@ -725,6 +725,8 @@ webkit.org/b/152043 [ Debug ] http/tests/media/hls/video-cookie.html [ Crash ]
 
 webkit.org/b/152642 http/tests/misc/detached-frame-console.html [ Crash Pass Timeout Failure ]
 
+webkit.org/b/153060 imported/blink/editing/selection/selectstart-event-crash.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1403,6 +1405,8 @@ webkit.org/b/145260 media/audio-playback-restriction-play.html  [ Timeout Pass ]
 webkit.org/b/146731 fast/events/touch/tap-highlight-color.html [ Timeout ]
 webkit.org/b/146731 fast/events/touch/touch-scaled-scrolled.html [ Timeout ]
 webkit.org/b/146731 fast/events/touch/touch-stale-node-crash.html [ Timeout ]
+
+webkit.org/b/153061 [ Release ] imported/w3c/indexeddb/idbindex-multientry-big.htm [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2523,6 +2527,8 @@ webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nes
 
 webkit.org/b/152823 imported/w3c/css/css-multicol-1/multicol-rule-inset-000.xht [ ImageOnlyFailure ]
 webkit.org/b/152823 imported/w3c/css/css-multicol-1/multicol-rule-outset-000.xht [ ImageOnlyFailure ]
+
+webkit.org/b/153062 accessibility/gtk/entry-and-password.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
