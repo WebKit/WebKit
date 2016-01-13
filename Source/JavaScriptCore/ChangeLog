@@ -1,3 +1,18 @@
+2016-01-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r194969.
+        https://bugs.webkit.org/show_bug.cgi?id=153075
+
+        This change broke the iOS build (Requested by ryanhaddad on
+        #webkit).
+
+        Reverted changeset:
+
+        "[JSC] Legalize Memory Offsets for ARM64 before lowering to
+        Air"
+        https://bugs.webkit.org/show_bug.cgi?id=153065
+        http://trac.webkit.org/changeset/194969
+
 2016-01-13  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Legalize Memory Offsets for ARM64 before lowering to Air

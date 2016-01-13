@@ -32,7 +32,6 @@
 #include "AirGenerate.h"
 #include "AirInstInlines.h"
 #include "B3Common.h"
-#include "B3LegalizeMemoryOffsets.h"
 #include "B3LowerMacros.h"
 #include "B3LowerMacrosAfterOptimizations.h"
 #include "B3LowerToAir.h"
@@ -85,8 +84,6 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
     }
 
     lowerMacrosAfterOptimizations(procedure);
-
-    legalizeMemoryOffsets(procedure);
 
     moveConstants(procedure);
 
