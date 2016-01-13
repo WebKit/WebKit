@@ -364,7 +364,7 @@ bool RenderThemeEfl::paintThemePart(const RenderObject& object, FormType type, c
 
     ThemePartCacheEntry* entry = getThemePartFromCache(type, rect.size());
     if (!entry)
-        return false;
+        return true;
 
     bool haveBackgroundColor = isControlStyled(object.style(), object.style().border(), *object.style().backgroundLayers(), Color::white);
     ControlStates states(extractControlStatesForRenderer(object));
