@@ -28,7 +28,6 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
-#include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include <functional>
 #include <wtf/Vector.h>
@@ -39,39 +38,43 @@ class CachedRawResource;
 class ContentFilterUnblockHandler;
 class DocumentLoader;
 class PlatformContentFilter;
+class ResourceRequest;
+class ResourceResponse;
 class SharedBuffer;
 
-class ContentFilter final : private CachedRawResourceClient {
+class ContentFilter {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ContentFilter);
 
 public:
     template <typename T> static void addType() { types().append(type<T>()); }
 
-    static std::unique_ptr<ContentFilter> createIfEnabled(DocumentLoader&);
-    ~ContentFilter() override;
+    static std::unique_ptr<ContentFilter> create(DocumentLoader&);
+    ~ContentFilter();
 
     static const char* urlScheme() { return "x-apple-content-filter"; }
 
-    void willSendRequest(ResourceRequest&, const ResourceResponse&);
     void startFilteringMainResource(CachedRawResource&);
     void stopFilteringMainResource();
 
-    enum class State {
-        Initialized,
-        Filtering,
-        Allowed,
-        Blocked,
-        Stopped
-    };
-    State state() const { return m_state; }
+    bool continueAfterWillSendRequest(ResourceRequest&, const ResourceResponse&);
+    bool continueAfterResponseReceived(CachedResource*, const ResourceResponse&);
+    bool continueAfterDataReceived(CachedResource*, const char* data, int length);
+    bool continueAfterNotifyFinished(CachedResource*);
+
     ContentFilterUnblockHandler unblockHandler() const;
     Ref<SharedBuffer> replacementData() const;
     String unblockRequestDeniedScript() const;
 
 private:
+    enum class State {
+        Stopped,
+        Filtering,
+        Allowed,
+        Blocked,
+    };
+
     struct Type {
-        const std::function<bool()> enabled;
         const std::function<std::unique_ptr<PlatformContentFilter>()> create;
     };
     template <typename T> static Type type();
@@ -81,14 +84,6 @@ private:
     friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&, DocumentLoader&);
     ContentFilter(Container, DocumentLoader&);
 
-    // CachedRawResourceClient
-    void responseReceived(CachedResource*, const ResourceResponse&) override;
-    void dataReceived(CachedResource*, const char* data, int length) override;
-    void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
-
-    // CachedResourceClient
-    void notifyFinished(CachedResource*) override;
-
     void forEachContentFilterUntilBlocked(std::function<void(PlatformContentFilter&)>);
     void didDecide(State);
     void deliverResourceData(CachedResource&);
@@ -97,14 +92,14 @@ private:
     DocumentLoader& m_documentLoader;
     CachedResourceHandle<CachedRawResource> m_mainResource;
     PlatformContentFilter* m_blockingContentFilter { nullptr };
-    State m_state { State::Initialized };
+    State m_state { State::Stopped };
 };
 
 template <typename T>
 ContentFilter::Type ContentFilter::type()
 {
     static_assert(std::is_base_of<PlatformContentFilter, T>::value, "Type must be a PlatformContentFilter.");
-    return { T::enabled, T::create };
+    return { T::create };
 }
 
 } // namespace WebCore

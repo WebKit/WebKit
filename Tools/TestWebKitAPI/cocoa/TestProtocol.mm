@@ -26,11 +26,10 @@
 #import "config.h"
 #import "TestProtocol.h"
 
+#import <WebKit/WKBrowsingContextController.h>
 #import <wtf/RetainPtr.h>
 
-// Even though NSURLProtocol is capable of generating redirect responses for any protocol, WebCore asserts if a redirect is not in the http family.
-// See http://webkit.org/b/147870 for details.
-static NSString *testScheme = @"http";
+static NSString *testScheme;
 
 @implementation TestProtocol
 
@@ -52,6 +51,25 @@ static NSString *testScheme = @"http";
 + (NSString *)scheme
 {
     return testScheme;
+}
+
++ (void)registerWithScheme:(NSString *)scheme
+{
+    testScheme = [scheme retain];
+    [NSURLProtocol registerClass:[self class]];
+#if WK_API_ENABLED
+    [WKBrowsingContextController registerSchemeForCustomProtocol:testScheme];
+#endif
+}
+
++ (void)unregister
+{
+#if WK_API_ENABLED
+    [WKBrowsingContextController unregisterSchemeForCustomProtocol:testScheme];
+#endif
+    [NSURLProtocol unregisterClass:[self class]];
+    [testScheme release];
+    testScheme = nil;
 }
 
 - (void)startLoading

@@ -344,7 +344,7 @@ namespace WebCore {
 #if ENABLE(CONTENT_FILTERING)
         friend class ContentFilter;
         void installContentFilterUnblockHandler(ContentFilter&);
-        void contentFilterDidDecide();
+        void contentFilterDidBlock();
 #endif
 
         Frame* m_frame;

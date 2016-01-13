@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestProtocol_h
-#define TestProtocol_h
-
-@interface TestProtocol : NSURLProtocol {
-}
-+ (void)registerWithScheme:(NSString *)scheme;
-+ (void)unregister;
-+ (NSString *)scheme;
+@protocol ContentFilteringProtocol <NSObject>
+- (void)checkIfPlatformFrameworksAreLoaded:(void (^)(BOOL parentalControlsLoaded, BOOL networkExtensionLoaded))completionHandler;
 @end
-
-#endif // TestProtocol_h

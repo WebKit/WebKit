@@ -269,6 +269,7 @@
 		A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5861B8991B600D107EB /* ContentFiltering.mm */; };
 		A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */; };
 		A14FC5901B8AE36F00D107EB /* TestProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC58E1B8AE36500D107EB /* TestProtocol.mm */; };
+		A16F66BA1C40EB4F00BD4D24 /* ContentFiltering.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */; };
 		A57A34F216AF6B2B00C2501F /* PageVisibilityStateWithWindowChanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A57A34F116AF69E200C2501F /* PageVisibilityStateWithWindowChanges.html */; };
 		A5E2027515B21F6E00C13E14 /* WindowlessWebViewWithMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */; };
 		B55AD1D5179F3B3000AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55AD1D3179F3ABF00AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp */; };
@@ -361,6 +362,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				A16F66BA1C40EB4F00BD4D24 /* ContentFiltering.html in Copy Resources */,
 				A1C4FB731BACD1CA003742D0 /* pages.pages in Copy Resources */,
 				51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */,
 				7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */,
@@ -638,6 +640,8 @@
 		A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFilteringPlugIn.mm; sourceTree = "<group>"; };
 		A14FC58D1B8AE36500D107EB /* TestProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestProtocol.h; path = cocoa/TestProtocol.h; sourceTree = "<group>"; };
 		A14FC58E1B8AE36500D107EB /* TestProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestProtocol.mm; path = cocoa/TestProtocol.mm; sourceTree = "<group>"; };
+		A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContentFiltering.html; sourceTree = "<group>"; };
+		A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFiltering.h; sourceTree = "<group>"; };
 		A1A4FE5D18DD3DB700B5EA8A /* Download.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Download.mm; sourceTree = "<group>"; };
 		A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
 		A1C4FB721BACD1B7003742D0 /* pages.pages */ = {isa = PBXFileReference; lastKnownFileType = file; name = pages.pages; path = ios/pages.pages; sourceTree = SOURCE_ROOT; };
@@ -889,9 +893,11 @@
 		1ABC3DEC1899BE55004F0626 /* WebKit2 Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				A16F66B81C40E9E100BD4D24 /* Resources */,
 				7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */,
 				A13EBBAC1B87436F00097110 /* BundleParameters.mm */,
 				A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */,
+				A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */,
 				A14FC5861B8991B600D107EB /* ContentFiltering.mm */,
 				A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */,
 				A1A4FE5D18DD3DB700B5EA8A /* Download.mm */,
@@ -980,6 +986,14 @@
 			);
 			name = WebProcessPlugIn;
 			path = cocoa/WebProcessPlugIn;
+			sourceTree = "<group>";
+		};
+		A16F66B81C40E9E100BD4D24 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		BC029B1A1486B23800817DA9 /* ns */ = {

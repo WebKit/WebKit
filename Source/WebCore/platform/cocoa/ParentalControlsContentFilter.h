@@ -39,7 +39,6 @@ class ParentalControlsContentFilter final : public PlatformContentFilter {
     friend std::unique_ptr<ParentalControlsContentFilter> std::make_unique<ParentalControlsContentFilter>();
 
 public:
-    static bool enabled();
     static std::unique_ptr<ParentalControlsContentFilter> create();
 
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override { }
@@ -52,6 +51,8 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 
 private:
+    static bool enabled();
+
     ParentalControlsContentFilter();
     void updateFilterState();
 

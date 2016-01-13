@@ -48,8 +48,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKit2CustomProtocolsTest, SyncXHR)
 {
-    [NSURLProtocol registerClass:[TestProtocol class]];
-    [WKBrowsingContextController registerSchemeForCustomProtocol:[TestProtocol scheme]];
+    [TestProtocol registerWithScheme:@"http"];
 
     RetainPtr<WKProcessGroup> processGroup = adoptNS([[WKProcessGroup alloc] init]);
     RetainPtr<WKBrowsingContextGroup> browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
@@ -69,8 +68,7 @@ TEST(WebKit2CustomProtocolsTest, SyncXHR)
     WKPageLoadURL(wkView.get().pageRef, Util::createURLForResource("custom-protocol-sync-xhr", "html"));
 
     TestWebKitAPI::Util::run(&testFinished);
-    [NSURLProtocol unregisterClass:[TestProtocol class]];
-    [WKBrowsingContextController unregisterSchemeForCustomProtocol:[TestProtocol scheme]];
+    [TestProtocol unregister];
 }
 
 } // namespace TestWebKitAPI
