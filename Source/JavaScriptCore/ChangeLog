@@ -1,3 +1,34 @@
+2016-01-13  Mark Lam  <mark.lam@apple.com>
+
+        Use DFG Graph::binary/unaryArithShouldSpeculateInt32/MachineInt() functions consistently.
+        https://bugs.webkit.org/show_bug.cgi?id=153080
+
+        Reviewed by Geoffrey Garen.
+
+        We currently have Graph::mulShouldSpeculateInt32/machineInt() and
+        Graph::negateShouldSpeculateInt32/MachineInt() functions which are only used by
+        the ArithMul and ArithNegate nodes.  However, the same tests need to be done for
+        many other arith nodes in the DFG.  This patch renames these functions as
+        Graph::binaryArithShouldSpeculateInt32/machineInt() and
+        Graph::unaryArithShouldSpeculateInt32/MachineInt(), and uses them consistently
+        in the DFG.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateMachineInt):
+        (JSC::DFG::Graph::binaryArithShouldSpeculateInt32):
+        (JSC::DFG::Graph::binaryArithShouldSpeculateMachineInt):
+        (JSC::DFG::Graph::unaryArithShouldSpeculateInt32):
+        (JSC::DFG::Graph::unaryArithShouldSpeculateMachineInt):
+        (JSC::DFG::Graph::mulShouldSpeculateInt32): Deleted.
+        (JSC::DFG::Graph::mulShouldSpeculateMachineInt): Deleted.
+        (JSC::DFG::Graph::negateShouldSpeculateInt32): Deleted.
+        (JSC::DFG::Graph::negateShouldSpeculateMachineInt): Deleted.
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting):
+
 2016-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inspector should use the last sourceURL / sourceMappingURL directive

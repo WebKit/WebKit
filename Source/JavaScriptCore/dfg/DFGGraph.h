@@ -275,47 +275,41 @@ public:
         return speculation && !hasExitSite(add, Int52Overflow);
     }
     
-    bool mulShouldSpeculateInt32(Node* mul, PredictionPass pass)
+    bool binaryArithShouldSpeculateInt32(Node* node, PredictionPass pass)
     {
-        ASSERT(mul->op() == ArithMul);
-        
-        Node* left = mul->child1().node();
-        Node* right = mul->child2().node();
+        Node* left = node->child1().node();
+        Node* right = node->child2().node();
         
         return Node::shouldSpeculateInt32OrBooleanForArithmetic(left, right)
-            && mul->canSpeculateInt32(mul->sourceFor(pass));
+            && node->canSpeculateInt32(node->sourceFor(pass));
     }
     
-    bool mulShouldSpeculateMachineInt(Node* mul, PredictionPass pass)
+    bool binaryArithShouldSpeculateMachineInt(Node* node, PredictionPass pass)
     {
-        ASSERT(mul->op() == ArithMul);
-        
         if (!enableInt52())
             return false;
         
-        Node* left = mul->child1().node();
-        Node* right = mul->child2().node();
+        Node* left = node->child1().node();
+        Node* right = node->child2().node();
 
         return Node::shouldSpeculateMachineInt(left, right)
-            && mul->canSpeculateInt52(pass)
-            && !hasExitSite(mul, Int52Overflow);
+            && node->canSpeculateInt52(pass)
+            && !hasExitSite(node, Int52Overflow);
     }
     
-    bool negateShouldSpeculateInt32(Node* negate, PredictionPass pass)
+    bool unaryArithShouldSpeculateInt32(Node* node, PredictionPass pass)
     {
-        ASSERT(negate->op() == ArithNegate);
-        return negate->child1()->shouldSpeculateInt32OrBooleanForArithmetic()
-            && negate->canSpeculateInt32(pass);
+        return node->child1()->shouldSpeculateInt32OrBooleanForArithmetic()
+            && node->canSpeculateInt32(pass);
     }
     
-    bool negateShouldSpeculateMachineInt(Node* negate, PredictionPass pass)
+    bool unaryArithShouldSpeculateMachineInt(Node* node, PredictionPass pass)
     {
-        ASSERT(negate->op() == ArithNegate);
         if (!enableInt52())
             return false;
-        return negate->child1()->shouldSpeculateMachineInt()
-            && !hasExitSite(negate, Int52Overflow)
-            && negate->canSpeculateInt52(pass);
+        return node->child1()->shouldSpeculateMachineInt()
+            && node->canSpeculateInt52(pass)
+            && !hasExitSite(node, Int52Overflow);
     }
 
     bool canOptimizeStringObjectAccess(const CodeOrigin&);

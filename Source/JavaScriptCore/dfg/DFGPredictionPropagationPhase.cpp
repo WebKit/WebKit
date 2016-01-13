@@ -306,9 +306,9 @@ private:
 
         case ArithNegate:
             if (node->child1()->prediction()) {
-                if (m_graph.negateShouldSpeculateInt32(node, m_pass))
+                if (m_graph.unaryArithShouldSpeculateInt32(node, m_pass))
                     changed |= mergePrediction(SpecInt32);
-                else if (m_graph.negateShouldSpeculateMachineInt(node, m_pass))
+                else if (m_graph.unaryArithShouldSpeculateMachineInt(node, m_pass))
                     changed |= mergePrediction(SpecInt52);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPrediction(node->child1()->prediction()));
@@ -337,9 +337,9 @@ private:
             if (left && right) {
                 if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
                     && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
-                    if (m_graph.mulShouldSpeculateInt32(node, m_pass))
+                    if (m_graph.binaryArithShouldSpeculateInt32(node, m_pass))
                         changed |= mergePrediction(SpecInt32);
-                    else if (m_graph.mulShouldSpeculateMachineInt(node, m_pass))
+                    else if (m_graph.binaryArithShouldSpeculateMachineInt(node, m_pass))
                         changed |= mergePrediction(SpecInt52);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
@@ -361,8 +361,7 @@ private:
             if (left && right) {
                 if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
                     && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
-                    if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
-                        && node->canSpeculateInt32(m_pass))
+                    if (m_graph.binaryArithShouldSpeculateInt32(node, m_pass))
                         changed |= mergePrediction(SpecInt32);
                     else
                         changed |= mergePrediction(SpecBytecodeDouble);
@@ -811,8 +810,8 @@ private:
                 
             if (isFullNumberSpeculation(left)
                 && isFullNumberSpeculation(right)
-                && !m_graph.mulShouldSpeculateInt32(node, m_pass)
-                && !m_graph.mulShouldSpeculateMachineInt(node, m_pass))
+                && !m_graph.binaryArithShouldSpeculateInt32(node, m_pass)
+                && !m_graph.binaryArithShouldSpeculateMachineInt(node, m_pass))
                 ballot = VoteDouble;
             else
                 ballot = VoteValue;
@@ -833,7 +832,7 @@ private:
                 
             if (isFullNumberSpeculation(left)
                 && isFullNumberSpeculation(right)
-                && !(Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node()) && node->canSpeculateInt32(m_pass)))
+                && !m_graph.binaryArithShouldSpeculateInt32(node, m_pass))
                 ballot = VoteDouble;
             else
                 ballot = VoteValue;
@@ -846,7 +845,7 @@ private:
         case ArithAbs:
             DoubleBallot ballot;
             if (node->child1()->shouldSpeculateNumber()
-                && !(node->child1()->shouldSpeculateInt32OrBooleanForArithmetic() && node->canSpeculateInt32(m_pass)))
+                && !m_graph.unaryArithShouldSpeculateInt32(node, m_pass))
                 ballot = VoteDouble;
             else
                 ballot = VoteValue;

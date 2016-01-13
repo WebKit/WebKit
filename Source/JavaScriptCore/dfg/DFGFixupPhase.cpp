@@ -208,7 +208,7 @@ private:
         }
             
         case ArithNegate: {
-            if (m_graph.negateShouldSpeculateInt32(node, FixupPass)) {
+            if (m_graph.unaryArithShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
                 if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
@@ -218,7 +218,7 @@ private:
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
-            if (m_graph.negateShouldSpeculateMachineInt(node, FixupPass)) {
+            if (m_graph.unaryArithShouldSpeculateMachineInt(node, FixupPass)) {
                 fixEdge<Int52RepUse>(node->child1());
                 if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                     node->setArithMode(Arith::CheckOverflow);
@@ -242,7 +242,7 @@ private:
                 node->setResult(NodeResultJS);
                 break;
             }
-            if (m_graph.mulShouldSpeculateInt32(node, FixupPass)) {
+            if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(leftChild);
                 fixIntOrBooleanEdge(rightChild);
                 if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
@@ -253,7 +253,7 @@ private:
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
-            if (m_graph.mulShouldSpeculateMachineInt(node, FixupPass)) {
+            if (m_graph.binaryArithShouldSpeculateMachineInt(node, FixupPass)) {
                 fixEdge<Int52RepUse>(leftChild);
                 fixEdge<Int52RepUse>(rightChild);
                 if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
@@ -281,8 +281,7 @@ private:
                 node->setResult(NodeResultJS);
                 break;
             }
-            if (Node::shouldSpeculateInt32OrBooleanForArithmetic(leftChild.node(), rightChild.node())
-                && node->canSpeculateInt32(FixupPass)) {
+            if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
                 if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7IDIVSupported()) {
                     fixIntOrBooleanEdge(leftChild);
                     fixIntOrBooleanEdge(rightChild);
@@ -321,8 +320,7 @@ private:
             
         case ArithMin:
         case ArithMax: {
-            if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
-                && node->canSpeculateInt32(FixupPass)) {
+            if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
                 fixIntOrBooleanEdge(node->child2());
                 break;
@@ -334,8 +332,7 @@ private:
         }
             
         case ArithAbs: {
-            if (node->child1()->shouldSpeculateInt32OrBooleanForArithmetic()
-                && node->canSpeculateInt32(FixupPass)) {
+            if (m_graph.unaryArithShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
                 break;
             }
@@ -363,7 +360,7 @@ private:
         }
 
         case ArithRound: {
-            if (node->child1()->shouldSpeculateInt32OrBooleanForArithmetic() && node->canSpeculateInt32(FixupPass)) {
+            if (m_graph.unaryArithShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
                 insertCheck<Int32Use>(m_indexInBlock, node->child1().node());
                 node->convertToIdentity();
