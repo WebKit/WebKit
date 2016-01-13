@@ -219,14 +219,14 @@ MutableStyleProperties& StyleRule::mutableProperties()
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
-Ref<StyleRule> StyleRule::create(BumpArena* arena, int sourceLine, const Vector<const CSSSelector*>& selectors, Ref<StyleProperties>&& properties)
+Ref<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelector*>& selectors, Ref<StyleProperties>&& properties)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectors.isEmpty());
-    CSSSelector* selectorListArray = reinterpret_cast<CSSSelector*>(BumpArena::allocate(arena, sizeof(CSSSelector) * selectors.size()));
+    CSSSelector* selectorListArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * selectors.size()));
     for (unsigned i = 0; i < selectors.size(); ++i)
         new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
     selectorListArray[selectors.size() - 1].setLastInSelectorList();
-    auto rule = StyleRule::create(arena, sourceLine, WTFMove(properties));
+    auto rule = StyleRule::create(sourceLine, WTFMove(properties));
     rule.get().parserAdoptSelectorArray(selectorListArray);
     return rule;
 }
@@ -244,7 +244,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
             componentsInThisSelector.append(component);
 
         if (componentsInThisSelector.size() + componentsSinceLastSplit.size() > maxCount && !componentsSinceLastSplit.isEmpty()) {
-            rules.append(create(&BumpArena::arenaFor(this), sourceLine(), componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
+            rules.append(create(sourceLine(), componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
             componentsSinceLastSplit.clear();
         }
 
@@ -252,7 +252,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
     }
 
     if (!componentsSinceLastSplit.isEmpty())
-        rules.append(create(&BumpArena::arenaFor(this), sourceLine(), componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
+        rules.append(create(sourceLine(), componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
 
     return rules;
 }
@@ -360,7 +360,7 @@ StyleRuleSupports::StyleRuleSupports(const StyleRuleSupports& o)
 StyleRuleRegion::StyleRuleRegion(Vector<std::unique_ptr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     : StyleRuleGroup(Region, adoptRules)
 {
-    m_selectorList.adoptSelectorVector(&BumpArena::arenaFor(this), *selectors);
+    m_selectorList.adoptSelectorVector(*selectors);
 }
 
 StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
@@ -368,6 +368,7 @@ StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
     , m_selectorList(o.m_selectorList)
 {
 }
+
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 StyleRuleViewport::StyleRuleViewport(Ref<StyleProperties>&& properties)

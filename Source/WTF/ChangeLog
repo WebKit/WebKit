@@ -1,3 +1,18 @@
+2016-01-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r194963.
+        https://bugs.webkit.org/show_bug.cgi?id=153079
+
+        This change causes ASan tests to crash and exit early
+        (Requested by ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "Fragmentation-free allocator for timeless and/or coupled
+        allocations."
+        https://bugs.webkit.org/show_bug.cgi?id=152696
+        http://trac.webkit.org/changeset/194963
+
 2016-01-13  Andreas Kling  <akling@apple.com>
 
         Fragmentation-free allocator for timeless and/or coupled allocations.

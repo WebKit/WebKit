@@ -24,7 +24,6 @@
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
-#include <wtf/BumpArena.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/WTFString.h>
@@ -212,7 +211,7 @@ class CSSParserSelector {
 public:
     static CSSParserSelector* parsePagePseudoSelector(const CSSParserString& pseudoTypeString);
     static CSSParserSelector* parsePseudoElementSelector(CSSParserString& pseudoTypeString);
-    static CSSParserSelector* parsePseudoElementCueFunctionSelector(BumpArena*, const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* selectorVector);
+    static CSSParserSelector* parsePseudoElementCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* selectorVector);
     static CSSParserSelector* parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString);
 
     CSSParserSelector();
@@ -229,7 +228,7 @@ public:
     void setRelation(CSSSelector::Relation value) { m_selector->setRelation(value); }
     void setForPage() { m_selector->setForPage(); }
 
-    void adoptSelectorVector(BumpArena*, Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
+    void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
     void setLangArgumentList(const Vector<CSSParserString>& stringVector);
 
     void setPseudoClassValue(const CSSParserString& pseudoClassString);

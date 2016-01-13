@@ -37,7 +37,7 @@ CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
     unsigned otherComponentCount = other.componentCount();
     ASSERT_WITH_SECURITY_IMPLICATION(otherComponentCount);
 
-    m_selectorArray = reinterpret_cast<CSSSelector*>(BumpArena::allocate(&BumpArena::arenaFor(other.m_selectorArray), sizeof(CSSSelector) * otherComponentCount));
+    m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * otherComponentCount));
     for (unsigned i = 0; i < otherComponentCount; ++i)
         new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
 }
@@ -49,7 +49,7 @@ CSSSelectorList::CSSSelectorList(CSSSelectorList&& other)
     other.m_selectorArray = nullptr;
 }
 
-void CSSSelectorList::adoptSelectorVector(BumpArena* arena, Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
+void CSSSelectorList::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectorVector.isEmpty());
 
@@ -60,7 +60,7 @@ void CSSSelectorList::adoptSelectorVector(BumpArena* arena, Vector<std::unique_p
             ++flattenedSize;
     }
     ASSERT(flattenedSize);
-    m_selectorArray = reinterpret_cast<CSSSelector*>(BumpArena::allocate(arena, sizeof(CSSSelector) * flattenedSize));
+    m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * flattenedSize));
     size_t arrayIndex = 0;
     for (size_t i = 0; i < selectorVector.size(); ++i) {
         CSSParserSelector* current = selectorVector[i].get();
@@ -119,7 +119,7 @@ void CSSSelectorList::deleteSelectors()
         isLastSelector = s->isLastInSelectorList();
         s->~CSSSelector();
     }
-    BumpArena::deallocate(selectorArray);
+    fastFree(selectorArray);
 }
 
 String CSSSelectorList::selectorsText() const
