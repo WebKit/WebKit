@@ -48,10 +48,10 @@ public:
 
     using ScrollbarThemeComposite::thumbRect;
     IntRect thumbRect(Scrollbar&, const IntRect& unconstrainedTrackRect);
-    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
-    void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
-    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
-    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    virtual void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
+    virtual void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    virtual void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
     virtual void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
     virtual bool shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&) override;
     virtual int scrollbarThickness(ScrollbarControlSize) override;
@@ -60,7 +60,7 @@ public:
     // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.
     virtual double initialAutoscrollTimerDelay() override { return 0.20; }
     virtual double autoscrollTimerDelay() override { return 0.02; }
-    void themeChanged();
+    virtual void themeChanged() override;
 
 private:
     void updateThemeProperties();

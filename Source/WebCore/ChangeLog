@@ -1,3 +1,14 @@
+2016-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Consistently use virtual and override specifiers in ScrollbarThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=153076
+
+        Reviewed by Alex Christensen.
+
+        No behavior change.
+
+        * platform/gtk/ScrollbarThemeGtk.h:
+
 2016-01-13  Daniel Bates  <dabates@apple.com>
 
         Cleanup: XSS Auditor should avoid re-evaluating the parsed script tag
