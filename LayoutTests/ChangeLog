@@ -1,3 +1,14 @@
+2015-11-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash loading Blink layout test fast/parser/strip-script-attrs-on-input.html
+        https://bugs.webkit.org/show_bug.cgi?id=150201
+        <rdar://problem/23136478>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/parser/strip-script-attrs-on-input-expected.txt: Added.
+        * fast/parser/strip-script-attrs-on-input.html: Added.
+
 2015-11-10  Brent Fulgham  <bfulgham@apple.com>
 
         Crash running webaudio/panner-loop.html
