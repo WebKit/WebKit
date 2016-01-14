@@ -104,6 +104,19 @@ bool HTMLFormControlElement::formNoValidate() const
     return fastHasAttribute(formnovalidateAttr);
 }
 
+String HTMLFormControlElement::formAction() const
+{
+    const AtomicString& value = fastGetAttribute(formactionAttr);
+    if (value.isEmpty())
+        return document().url();
+    return getURLAttribute(formactionAttr);
+}
+
+void HTMLFormControlElement::setFormAction(const AtomicString& value)
+{
+    setAttributeWithoutSynchronization(formactionAttr, value);
+}
+
 bool HTMLFormControlElement::computeIsDisabledByFieldsetAncestor() const
 {
     Element* previousAncestor = nullptr;

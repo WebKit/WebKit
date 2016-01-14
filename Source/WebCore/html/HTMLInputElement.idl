@@ -30,7 +30,7 @@ interface HTMLInputElement : HTMLElement {
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     attribute FileList files;
-    [Reflect, URL] attribute DOMString formAction;
+    attribute DOMString formAction;
     [TreatNullAs=NullString] attribute DOMString formEnctype;
     [TreatNullAs=NullString] attribute DOMString formMethod;
     [Reflect] attribute boolean formNoValidate;

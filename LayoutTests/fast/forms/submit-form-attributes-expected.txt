@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Ordinary values for input:
-PASS input.formAction is ""
+PASS input.formAction is location.href
 PASS input.formEnctype is ""
 PASS input.formMethod is ""
 PASS input.formTarget is ""
@@ -59,7 +59,7 @@ PASS input.getAttribute("formTarget") is "256"
 PASS input.formTarget is "256"
 
 Ordinary values for button:
-PASS button.formAction is ""
+PASS button.formAction is location.href
 PASS button.formEnctype is ""
 PASS button.formMethod is ""
 PASS button.formTarget is ""

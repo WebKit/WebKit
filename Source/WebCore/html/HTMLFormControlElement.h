@@ -53,6 +53,8 @@ public:
     String formMethod() const;
     void setFormMethod(const String&);
     bool formNoValidate() const;
+    String formAction() const;
+    void setFormAction(const AtomicString&);
 
     void setAncestorDisabled(bool isDisabled);
 

@@ -1,3 +1,15 @@
+2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        formaction must return document's address when formaction is missing
+        https://bugs.webkit.org/show_bug.cgi?id=148874
+
+        Reviewed by Chris Dumez.
+
+        Rebaselined the tests now that more test cases are passing.
+
+        * web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/formAction_document_address-expected.txt:
+        * web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/formaction-expected.txt:
+
 2016-01-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBBindingUtilities chokes on unicode strings for get/set.

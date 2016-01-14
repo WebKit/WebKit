@@ -1,3 +1,17 @@
+2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        formaction must return document's address when formaction is missing
+        https://bugs.webkit.org/show_bug.cgi?id=148874
+
+        Reviewed by Chris Dumez.
+
+        Added a regression test and rebaselined imported W3C tests.
+
+        * fast/forms/formaction-attribute-with-empty-value-expected.txt: Added.
+        * fast/forms/formaction-attribute-with-empty-value.html: Added.
+        * fast/forms/submit-form-attributes-expected.txt:
+        * fast/forms/submit-form-attributes.html:
+
 2016-01-13  Mark Lam  <mark.lam@apple.com>
 
         The StringFromCharCode DFG intrinsic should support untyped operands.
