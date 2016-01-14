@@ -1526,7 +1526,7 @@ WebInspector._dockedResizerMouseDown = function(event)
         if (delta < 0 && clientPosition > firstClientPosition)
             return;
 
-        let dimension = Math.max(0, window[windowProperty] - delta);
+        var dimension = Math.max(0, window[windowProperty] - delta);
         // If zoomed in/out, there be greater/fewer document pixels shown, but the inspector's
         // width or height should be the same in device pixels regardless of the document zoom.
         dimension *= InspectorFrontendHost.zoomFactor();
