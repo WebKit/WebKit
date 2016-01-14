@@ -39,13 +39,15 @@
 
 #if PLATFORM(EFL)
 #include <wtf/MainThread.h>
+#elif USE(GLIB)
+#include <glib.h>
 #endif
 
 namespace JSC {
 
 bool GCActivityCallback::s_shouldCreateGCTimer = true;
 
-#if USE(CF) || PLATFORM(EFL)
+#if USE(CF) || USE(GLIB)
 
 const double timerSlop = 2.0; // Fudge factor to avoid performance cost of resetting timer.
 
@@ -62,6 +64,11 @@ GCActivityCallback::GCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
 #elif PLATFORM(EFL)
 GCActivityCallback::GCActivityCallback(Heap* heap)
     : GCActivityCallback(heap->vm(), WTF::isMainThread())
+{
+}
+#elif USE(GLIB)
+GCActivityCallback::GCActivityCallback(Heap* heap)
+    : GCActivityCallback(heap->vm())
 {
 }
 #endif
@@ -113,6 +120,34 @@ void GCActivityCallback::cancelTimer()
 {
     m_delay = s_hour;
     stop();
+}
+#elif USE(GLIB)
+void GCActivityCallback::scheduleTimer(double newDelay)
+{
+    ASSERT(newDelay >= 0);
+    if (m_delay != -1 && newDelay * timerSlop > m_delay)
+        return;
+
+    m_delay = newDelay;
+    if (!m_delay) {
+        g_source_set_ready_time(m_timer.get(), 0);
+        return;
+    }
+
+    auto delayDuration = std::chrono::duration<double>(m_delay);
+    auto safeDelayDuration = std::chrono::microseconds::max();
+    if (delayDuration < safeDelayDuration)
+        safeDelayDuration = std::chrono::duration_cast<std::chrono::microseconds>(delayDuration);
+    gint64 currentTime = g_get_monotonic_time();
+    gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, safeDelayDuration.count());
+    ASSERT(targetTime >= currentTime);
+    g_source_set_ready_time(m_timer.get(), targetTime);
+}
+
+void GCActivityCallback::cancelTimer()
+{
+    m_delay = -1;
+    g_source_set_ready_time(m_timer.get(), -1);
 }
 #endif
 
