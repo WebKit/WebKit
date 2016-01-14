@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            var video1;
+            var video2;
+
+            function start()
+            {
+                video1 = document.getElementsByTagName('video')[0];
+                video2 = document.getElementsByTagName('video')[1];
+
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerEnabled(true);
+
+                video1.addEventListener('webkitplaybacktargetavailabilitychanged', targetAvailabilityChanged);
+                setTimeout(setSource, 200);
+            }
+            
+            function targetAvailabilityChanged(event)
+            {
+                consoleWrite(`<br>EVENT: '${event.type}', event.availability = '${event.availability}'<br>`);
+
+                if (event.availability != "available")
+                    return;
+
+                if (event.availability == "available" && video2.src == "") {
+                    failTest("Event sent before any video is a candidate for airplay");
+                    return;
+                }
+                
+                endTest();
+            }
+            
+            function setSource()
+            {
+                consoleWrite('** setting src on video that does not have event listener');
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState("Sleepy TV", "DeviceAvailable");
+                video2.src = findMediaFile('video', 'content/test');
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls></video>
+        <br>
+        <video controls></video>
+        <p>Test that 'webkitplaybacktargetavailabilitychanged' event is sent when at least one 
+        video element has playable media.</p>
+    </body>
+</html>
