@@ -1,3 +1,14 @@
+2015-11-12  Zalan Bujtas  <zalan@apple.com>
+
+        Ignore visited background color when deciding if the input renderer needs to be painted natively.
+        https://bugs.webkit.org/show_bug.cgi?id=151211
+        rdar://problem/21449823
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/pseudo-visited-background-color-on-input-expected.html: Added.
+        * fast/css/pseudo-visited-background-color-on-input.html: Added.
+
 2015-11-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         popstate event should be dispatched asynchronously
