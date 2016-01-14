@@ -23,44 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlaybackTarget_h
-#define MediaPlaybackTarget_h
+#ifndef MediaPlaybackTargetMock_h
+#define MediaPlaybackTargetMock_h
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
+#include "MediaPlaybackTarget.h"
 #include "MediaPlaybackTargetContext.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static const MediaPlaybackTargetContext& noMediaPlaybackTargetContext()
-{
-    static NeverDestroyed<MediaPlaybackTargetContext> context;
-    return context;
-}
-
-class MediaPlaybackTarget : public RefCounted<MediaPlaybackTarget> {
+class MediaPlaybackTargetMock : public MediaPlaybackTarget {
 public:
-    virtual ~MediaPlaybackTarget() { }
+    WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(const String&, MediaPlaybackTargetContext::State);
 
-    enum TargetType {
-        None,
-        AVFoundation,
-        Mock,
-    };
-    virtual TargetType targetType() const { return None; }
+    virtual ~MediaPlaybackTargetMock();
 
-    virtual const MediaPlaybackTargetContext& targetContext() const { return noMediaPlaybackTargetContext(); }
-    virtual bool hasActiveRoute() const { return false; }
-    virtual String deviceName() const { return emptyString(); }
+    TargetType targetType() const override { return Mock; }
+
+    const MediaPlaybackTargetContext& targetContext() const override;
+
+    bool hasActiveRoute() const override { return !m_name.isEmpty(); }
+
+    String deviceName() const override { return m_name; }
+
+    MediaPlaybackTargetContext::State state() const;
 
 protected:
-    MediaPlaybackTarget() { }
+    MediaPlaybackTargetMock(const String&, MediaPlaybackTargetContext::State);
+
+    String m_name;
+    MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unavailable };
+    mutable MediaPlaybackTargetContext m_context;
 };
+
+MediaPlaybackTargetMock* toMediaPlaybackTargetMock(MediaPlaybackTarget*);
+const MediaPlaybackTargetMock* toMediaPlaybackTargetMock(const MediaPlaybackTarget*);
 
 }
 
-#endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
 #endif

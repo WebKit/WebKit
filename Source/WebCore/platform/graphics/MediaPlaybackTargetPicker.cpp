@@ -28,16 +28,46 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include "Logging.h"
+#include "MediaPlaybackTarget.h"
+
 namespace WebCore {
+
+static const double pendingActionInterval = 1.0 / 10.0;
 
 MediaPlaybackTargetPicker::MediaPlaybackTargetPicker(Client& client)
     : m_client(&client)
+    , m_pendingActionTimer(RunLoop::main(), this, &MediaPlaybackTargetPicker::pendingActionTimerFired)
 {
 }
 
 MediaPlaybackTargetPicker::~MediaPlaybackTargetPicker()
 {
+    m_pendingActionTimer.stop();
     m_client = nullptr;
+}
+
+void MediaPlaybackTargetPicker::pendingActionTimerFired()
+{
+    LOG(Media, "MediaPlaybackTargetPicker::pendingActionTimerFired - flags = 0x%x", m_pendingActionFlags);
+
+    PendingActionFlags pendingActions = m_pendingActionFlags;
+    m_pendingActionFlags = 0;
+
+    if (pendingActions & CurrentDeviceDidChange)
+        m_client->setPlaybackTarget(playbackTarget());
+
+    if (pendingActions & OutputDeviceAvailabilityChanged)
+        m_client->externalOutputDeviceAvailableDidChange(externalOutputDeviceAvailable());
+}
+
+void MediaPlaybackTargetPicker::addPendingAction(PendingActionFlags action)
+{
+    if (!m_client)
+        return;
+
+    m_pendingActionFlags |= action;
+    m_pendingActionTimer.startOneShot(pendingActionInterval);
 }
 
 void MediaPlaybackTargetPicker::showPlaybackTargetPicker(const FloatRect&, bool)

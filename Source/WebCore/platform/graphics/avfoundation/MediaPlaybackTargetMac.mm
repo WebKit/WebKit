@@ -54,9 +54,7 @@ MediaPlaybackTargetMac::~MediaPlaybackTargetMac()
 
 const MediaPlaybackTargetContext& MediaPlaybackTargetMac::targetContext() const
 {
-    m_context.type = MediaPlaybackTargetContext::AVOutputContextType;
-    m_context.context.avOutputContext = m_outputContext.get();
-
+    m_context = MediaPlaybackTargetContext(m_outputContext.get());
     return m_context;
 }
 
@@ -65,6 +63,13 @@ bool MediaPlaybackTargetMac::hasActiveRoute() const
     return m_outputContext && m_outputContext.get().deviceName;
 }
 
+String MediaPlaybackTargetMac::deviceName() const
+{
+    if (m_outputContext)
+        return m_outputContext.get().deviceName;
+
+    return emptyString();
+}
 
 MediaPlaybackTargetMac* toMediaPlaybackTargetMac(MediaPlaybackTarget* rep)
 {

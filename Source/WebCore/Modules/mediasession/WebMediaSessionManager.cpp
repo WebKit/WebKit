@@ -30,7 +30,7 @@
 
 #include "FloatRect.h"
 #include "Logging.h"
-#include "MediaPlaybackTargetPickerMac.h"
+#include "MediaPlaybackTargetPickerMock.h"
 #include "WebMediaSessionManagerClient.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -89,23 +89,37 @@ static String mediaProducerStateString(MediaProducer::MediaStateFlags flags)
 }
 #endif
 
-static WebMediaSessionManager*& webMediaSessionManagerOverride()
+void WebMediaSessionManager::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
 {
-    static WebMediaSessionManager* override;
-    return override;
+    LOG(Media, "WebMediaSessionManager::setMockMediaPlaybackTargetPickerEnabled - enabled = %i", (int)enabled);
+
+    if (m_mockPickerEnabled == enabled)
+        return;
+
+    m_mockPickerEnabled = enabled;
 }
 
-WebMediaSessionManager& WebMediaSessionManager::shared()
+void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::State state)
 {
-    if (WebMediaSessionManager* override = webMediaSessionManagerOverride())
-        return *override;
+    LOG(Media, "WebMediaSessionManager::setMockMediaPlaybackTargetPickerState - name = %s, state = %i", name.utf8().data(), (int)state);
 
-    return WebMediaSessionManager::platformManager();
+    mockPicker().setState(name, state);
 }
 
-void WebMediaSessionManager::setWebMediaSessionManagerOverride(WebMediaSessionManager* manager)
+MediaPlaybackTargetPickerMock& WebMediaSessionManager::mockPicker()
 {
-    webMediaSessionManagerOverride() = manager;
+    if (!m_pickerOverride)
+        m_pickerOverride = MediaPlaybackTargetPickerMock::create(*this);
+
+    return *m_pickerOverride.get();
+}
+
+WebCore::MediaPlaybackTargetPicker& WebMediaSessionManager::targetPicker()
+{
+    if (m_mockPickerEnabled)
+        return mockPicker();
+
+    return platformPicker();
 }
 
 WebMediaSessionManager::WebMediaSessionManager()

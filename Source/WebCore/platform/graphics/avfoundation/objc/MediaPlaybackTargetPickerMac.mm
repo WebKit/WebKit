@@ -67,8 +67,6 @@ static NSString *externalOutputDevicePickedKeyName = @"externalOutputDevicePicke
 
 namespace WebCore {
 
-static const double pendingActionInterval = 1.0 / 10.0;
-
 std::unique_ptr<MediaPlaybackTargetPickerMac> MediaPlaybackTargetPickerMac::create(MediaPlaybackTargetPicker::Client& client)
 {
     return std::unique_ptr<MediaPlaybackTargetPickerMac>(new MediaPlaybackTargetPickerMac(client));
@@ -77,47 +75,25 @@ std::unique_ptr<MediaPlaybackTargetPickerMac> MediaPlaybackTargetPickerMac::crea
 MediaPlaybackTargetPickerMac::MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client& client)
     : MediaPlaybackTargetPicker(client)
     , m_outputDeviceMenuControllerDelegate(adoptNS([[WebAVOutputDeviceMenuControllerHelper alloc] initWithCallback:this]))
-    , m_pendingActionTimer(RunLoop::main(), this, &MediaPlaybackTargetPickerMac::pendingActionTimerFired)
 {
 }
 
 MediaPlaybackTargetPickerMac::~MediaPlaybackTargetPickerMac()
 {
-    m_client = nullptr;
-    m_pendingActionTimer.stop();
+    setClient(nullptr);
     [m_outputDeviceMenuControllerDelegate clearCallback];
-
-    stopMonitoringPlaybackTargets();
 }
 
-void MediaPlaybackTargetPickerMac::pendingActionTimerFired()
+bool MediaPlaybackTargetPickerMac::externalOutputDeviceAvailable()
 {
-    LOG(Media, "MediaPlaybackTargetPickerMac::pendingActionTimerFired - flags = 0x%x", m_pendingActionFlags);
-
-    if (!m_client)
-        return;
-
-    PendingActionFlags pendingActions = m_pendingActionFlags;
-    m_pendingActionFlags = 0;
-
-    if (pendingActions & CurrentDeviceDidChange) {
-        AVOutputContext* context = m_outputDeviceMenuController ? [m_outputDeviceMenuController.get() outputContext] : nullptr;
-        m_client->setPlaybackTarget(WebCore::MediaPlaybackTargetMac::create(context));
-    }
-
-    if (pendingActions & OutputDeviceAvailabilityChanged)
-        m_client->externalOutputDeviceAvailableDidChange(devicePicker().externalOutputDeviceAvailable);
-
+    return devicePicker().externalOutputDeviceAvailable;
 }
 
-void MediaPlaybackTargetPickerMac::availableDevicesDidChange()
+Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMac::playbackTarget()
 {
-    LOG(Media, "MediaPlaybackTargetPickerMac::availableDevicesDidChange - available = %i", (int)devicePicker().externalOutputDeviceAvailable);
+    AVOutputContext* context = m_outputDeviceMenuController ? [m_outputDeviceMenuController.get() outputContext] : nullptr;
 
-    if (!m_client)
-        return;
-
-    addPendingAction(OutputDeviceAvailabilityChanged);
+    return WebCore::MediaPlaybackTargetMac::create(context);
 }
 
 AVOutputDeviceMenuControllerType *MediaPlaybackTargetPickerMac::devicePicker()
@@ -145,7 +121,7 @@ AVOutputDeviceMenuControllerType *MediaPlaybackTargetPickerMac::devicePicker()
 
 void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& location, bool checkActiveRoute)
 {
-    if (!m_client || m_showingMenu)
+    if (!client() || m_showingMenu)
         return;
 
     LOG(Media, "MediaPlaybackTargetPickerMac::showPlaybackTargetPicker - checkActiveRoute = %i", (int)checkActiveRoute);
@@ -160,22 +136,6 @@ void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& loc
             currentDeviceDidChange();
     }
     m_showingMenu = false;
-}
-
-void MediaPlaybackTargetPickerMac::addPendingAction(PendingActionFlags action)
-{
-    m_pendingActionFlags |= action;
-    m_pendingActionTimer.startOneShot(pendingActionInterval);
-}
-
-void MediaPlaybackTargetPickerMac::currentDeviceDidChange()
-{
-    LOG(Media, "MediaPlaybackTargetPickerMac::currentDeviceDidChange");
-
-    if (!m_client)
-        return;
-
-    addPendingAction(CurrentDeviceDidChange);
 }
 
 void MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets()

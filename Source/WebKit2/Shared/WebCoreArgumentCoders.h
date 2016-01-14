@@ -118,7 +118,7 @@ class ContentFilterUnblockHandler;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 namespace WebCore {
-struct MediaPlaybackTargetContext;
+class MediaPlaybackTargetContext;
 }
 #endif
 

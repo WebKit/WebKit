@@ -61,6 +61,16 @@ void WebMediaPlaybackTargetPicker::playbackTargetPickerClientStateDidChange(uint
     WebCore::WebMediaSessionManager::shared().clientStateDidChange(*this, contextId, state);
 }
 
+void WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
+{
+    WebCore::WebMediaSessionManager::shared().setMockMediaPlaybackTargetPickerEnabled(enabled);
+}
+
+void WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetContext::State state)
+{
+    WebCore::WebMediaSessionManager::shared().setMockMediaPlaybackTargetPickerState(name, state);
+}
+
 void WebMediaPlaybackTargetPicker::setPlaybackTarget(uint64_t contextId, Ref<WebCore::MediaPlaybackTarget>&& target)
 {
     if (!m_page)

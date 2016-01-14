@@ -29,6 +29,7 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include <wtf/Ref.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -55,10 +56,30 @@ public:
     virtual void stopMonitoringPlaybackTargets();
     virtual void invalidatePlaybackTargets();
 
+    void availableDevicesDidChange() { addPendingAction(OutputDeviceAvailabilityChanged); }
+    void currentDeviceDidChange() { addPendingAction(CurrentDeviceDidChange); }
+
 protected:
     explicit MediaPlaybackTargetPicker(Client&);
 
+    enum ActionType {
+        OutputDeviceAvailabilityChanged = 1 << 0,
+        CurrentDeviceDidChange = 1 << 1,
+    };
+    typedef unsigned PendingActionFlags;
+
+    void addPendingAction(PendingActionFlags);
+    void pendingActionTimerFired();
+    Client* client() const { return m_client; }
+    void setClient(Client* client) { m_client = client; }
+
+private:
+    virtual bool externalOutputDeviceAvailable() = 0;
+    virtual Ref<MediaPlaybackTarget> playbackTarget() = 0;
+
+    PendingActionFlags m_pendingActionFlags { 0 };
     Client* m_client;
+    RunLoop::Timer<MediaPlaybackTargetPicker> m_pendingActionTimer;
 };
 
 } // namespace WebCore

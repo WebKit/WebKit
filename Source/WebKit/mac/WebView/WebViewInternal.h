@@ -65,6 +65,7 @@ class WebMediaPlaybackTargetPicker;
 class WebSelectionServiceController;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#import <WebCore/MediaPlaybackTargetContext.h>
 #import <WebCore/MediaProducer.h>
 #endif
 
@@ -284,6 +285,8 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_removePlaybackTargetPickerClient:(uint64_t)contextId;
 - (void)_showPlaybackTargetPicker:(uint64_t)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
 - (void)_playbackTargetPickerClientStateDidChange:(uint64_t)contextId state:(WebCore::MediaProducer::MediaStateFlags)state;
+- (void)_setMockMediaPlaybackTargetPickerEnabled:(bool)enabled;
+- (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::State)state;
 #endif
 
 @end

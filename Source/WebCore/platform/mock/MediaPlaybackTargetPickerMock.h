@@ -23,39 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebMediaSessionManagerMac.h"
+#ifndef MediaPlaybackTargetPickerMock_h
+#define MediaPlaybackTargetPickerMock_h
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
-#include "MediaPlaybackTargetPickerMac.h"
-#include <wtf/NeverDestroyed.h>
+#include "MediaPlaybackTargetContext.h"
+#include "MediaPlaybackTargetPicker.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-WebMediaSessionManager& WebMediaSessionManager::shared()
-{
-    static NeverDestroyed<WebMediaSessionManagerMac> sharedManager;
-    return sharedManager;
-}
+class MediaPlaybackTargetPickerMock final : public MediaPlaybackTargetPicker {
+    WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMock);
+public:
+    virtual ~MediaPlaybackTargetPickerMock();
 
-WebMediaSessionManagerMac::WebMediaSessionManagerMac()
-    : WebMediaSessionManager()
-{
-}
+    WEBCORE_EXPORT static std::unique_ptr<MediaPlaybackTargetPickerMock> create(MediaPlaybackTargetPicker::Client&);
 
-WebMediaSessionManagerMac::~WebMediaSessionManagerMac()
-{
-}
+    void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute) override;
+    void startingMonitoringPlaybackTargets() override;
+    void stopMonitoringPlaybackTargets() override;
+    void invalidatePlaybackTargets() override;
 
-WebCore::MediaPlaybackTargetPicker& WebMediaSessionManagerMac::platformPicker()
-{
-    if (!m_targetPicker)
-        m_targetPicker = MediaPlaybackTargetPickerMac::create(*this);
+    void setState(const String&, MediaPlaybackTargetContext::State);
 
-    return *m_targetPicker.get();
-}
+private:
+    explicit MediaPlaybackTargetPickerMock(MediaPlaybackTargetPicker::Client&);
+
+    bool externalOutputDeviceAvailable() override;
+    Ref<MediaPlaybackTarget> playbackTarget() override;
+
+    void timerFired();
+
+    String m_deviceName;
+    RunLoop::Timer<MediaPlaybackTargetPickerMock> m_timer;
+    MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unavailable };
+    bool m_showingMenu { false };
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+
+#endif // WebContextMenuProxyMac_h
