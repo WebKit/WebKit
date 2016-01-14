@@ -1,3 +1,15 @@
+2016-01-14  Brian Burg  <bburg@apple.com>
+
+        prepare-changelog does not read paths containing spaces properly
+        https://bugs.webkit.org/show_bug.cgi?id=137982
+
+        Reviewed by Joseph Pecoraro.
+
+        Escape whitespace in filenames before passing the file path to other functions.
+
+        * Scripts/prepare-ChangeLog:
+        (generateFunctionLists): Use the more explicit 3-argument form of 'open'.
+
 2016-01-14  Jason Marcell  <jmarcell@apple.com>
 
         Standardize the usage of "branch" vs. "branchName".

@@ -313,10 +313,14 @@ sub generateFunctionLists($$$$$)
     print STDERR "  Extracting affected function names from source files.\n";
     my %filesToExamine = map { $_ => 1 } (keys(%line_ranges_before_changed), keys(%line_ranges_after_changed));
     foreach my $file (keys %filesToExamine) {
+        # Escape whitespace in filenames rather than adding quotes, since many functions can open files
+        # and other code doesn't expect to see a trailing " character when sniffing a file extension.
+        chomp $file;
+        $file =~ s/ /\\ /g;
         my %saw_function;
         # Find all the functions in the file.
         if ($line_ranges_after_changed{$file}) {
-            open SOURCE, $file or next;
+            open(SOURCE, "<", $file) or next;
             my @function_ranges = get_function_line_ranges(\*SOURCE, $file);
             close SOURCE;
 
