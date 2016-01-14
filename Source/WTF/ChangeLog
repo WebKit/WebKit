@@ -1,3 +1,13 @@
+2016-01-14  David Kilzer  <ddkilzer@apple.com>
+
+        Part 2/2: Stop using USE(CFNETWORK) path on iOS
+        <https://webkit.org/b/142540>
+
+        Original patch by Antti Koivisto <antti@apple.com> on 2015-03-10
+        Reviewed by Chris Dumez.
+
+        * wtf/Platform.h: Turn off USE(CFNETWORK) for PLATFORM(IOS).
+
 2016-01-14  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Remove workarounds for fixed bugs in fmod and pow.
