@@ -1,5 +1,49 @@
 2016-01-14  Daniel Bates  <dabates@apple.com>
 
+        [XSS Auditor] Extract attribute truncation logic and formalize string canonicalization
+        https://bugs.webkit.org/show_bug.cgi?id=152874
+
+        Reviewed by Brent Fulgham.
+
+        Derived from Blink patch (by Tom Sepez <tsepez@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?revision=176339&view=revision>
+
+        Extract the src-like and script-like attribute truncation logic into independent functions
+        towards making it more straightforward to re-purpose this logic. Additionally, formalize the
+        concept of string canonicalization as a member function that consolidates the process of
+        decoding URL escape sequences, truncating the decoded string (if applicable), and removing
+        characters that are considered noise.
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::truncateForSrcLikeAttribute): Extracted from XSSAuditor::decodedSnippetForAttribute().
+        (WebCore::truncateForScriptLikeAttribute): Ditto.
+        (WebCore::XSSAuditor::init): Write in terms of XSSAuditor::canonicalize().
+        (WebCore::XSSAuditor::filterCharacterToken): Updated to make use of formalized canonicalization methods.
+        (WebCore::XSSAuditor::filterScriptToken): Ditto.
+        (WebCore::XSSAuditor::filterObjectToken): Ditto.
+        (WebCore::XSSAuditor::filterParamToken): Ditto.
+        (WebCore::XSSAuditor::filterEmbedToken): Ditto.
+        (WebCore::XSSAuditor::filterAppletToken): Ditto.
+        (WebCore::XSSAuditor::filterFrameToken): Ditto.
+        (WebCore::XSSAuditor::filterInputToken): Ditto.
+        (WebCore::XSSAuditor::filterButtonToken): Ditto.
+        (WebCore::XSSAuditor::eraseDangerousAttributesIfInjected): Ditto.
+        (WebCore::XSSAuditor::eraseAttributeIfInjected): Updated code to use early return style and avoid an unnecessary string
+        comparison when we know that a src attribute was injected.
+        (WebCore::XSSAuditor::canonicalizedSnippetForTagName): Renamed; formerly known as XSSAuditor::decodedSnippetForName(). Updated
+        to make use of XSSAuditor::canonicalize().
+        (WebCore::XSSAuditor::snippetFromAttribute): Renamed; formerly known as XSSAuditor::decodedSnippetForAttribute(). Moved
+        truncation logic from here to WebCore::truncateFor{Script, Src}LikeAttribute.
+        (WebCore::XSSAuditor::canonicalize): Added.
+        (WebCore::XSSAuditor::canonicalizedSnippetForJavaScript): Added.
+        (WebCore::canonicalize): Deleted.
+        (WebCore::XSSAuditor::decodedSnippetForName): Deleted.
+        (WebCore::XSSAuditor::decodedSnippetForAttribute): Deleted.
+        (WebCore::XSSAuditor::decodedSnippetForJavaScript): Deleted.
+        * html/parser/XSSAuditor.h: Define enum class for the various attribute truncation styles.
+
+2016-01-14  Daniel Bates  <dabates@apple.com>
+
         [XSS Auditor] Partial bypass when web server collapses path components
         https://bugs.webkit.org/show_bug.cgi?id=152872
 
