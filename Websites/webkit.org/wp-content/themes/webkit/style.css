@@ -1535,7 +1535,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     left: calc(-50% - 4.25rem);
     border-right: 1px solid #08c;
     border-left: 1px solid #08c;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
 .timeline h2, .timeline h3 {
