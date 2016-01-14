@@ -34,7 +34,6 @@ import time
 
 from webkitpy.port.server_process import ServerProcess
 from webkitpy.port.driver import Driver
-from webkitpy.common.system.file_lock import FileLock
 
 _log = logging.getLogger(__name__)
 
@@ -50,24 +49,45 @@ class XvfbDriver(Driver):
             _log.error("No Xvfb found. Cannot run layout tests.")
         return xvfb_found
 
-    def __init__(self, *args, **kwargs):
-        Driver.__init__(self, *args, **kwargs)
-        self._guard_lock = None
-        self._startup_delay_secs = 1.0
+    def _xvfb_pipe(self):
+        return os.pipe()
 
-    def _next_free_display(self):
-        running_pids = self._port.host.executive.run_command(['ps', '-eo', 'comm,command'])
-        reserved_screens = set()
-        for pid in running_pids.split('\n'):
-            match = re.match('(X|Xvfb|Xorg|Xorg\.bin)\s+.*\s:(?P<screen_number>\d+)', pid)
-            if match:
-                reserved_screens.add(int(match.group('screen_number')))
-        for i in range(1, 99):
-            if i not in reserved_screens:
-                _guard_lock_file = self._port.host.filesystem.join('/tmp', 'WebKitXvfb.lock.%i' % i)
-                self._guard_lock = self._port.host.make_file_lock(_guard_lock_file)
-                if self._guard_lock.acquire_lock():
-                    return i
+    def _xvfb_read_display_id(self, read_fd):
+        import errno
+        import select
+
+        fd_set = [read_fd]
+        while fd_set:
+            try:
+                fd_list = select.select(fd_set, [], [])[0]
+            except select.error, e:
+                if e.args[0] == errno.EINTR:
+                    continue
+                raise
+
+            if read_fd in fd_list:
+                # We only expect a number, so first read should be enough.
+                display_id = os.read(read_fd, 256).strip('\n')
+                fd_set = []
+
+        return int(display_id)
+
+    def _xvfb_close_pipe(self, pipe_fds):
+        os.close(pipe_fds[0])
+        os.close(pipe_fds[1])
+
+    def _xvfb_run(self, environment):
+        read_fd, write_fd = self._xvfb_pipe()
+        run_xvfb = ["Xvfb", "-displayfd", str(write_fd), "-screen",  "0", "1024x768x%s" % self._xvfb_screen_depth(), "-nolisten", "tcp"]
+        if self._port._should_use_jhbuild():
+            run_xvfb = self._port._jhbuild_wrapper + run_xvfb
+        with open(os.devnull, 'w') as devnull:
+            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull, env=environment)
+            display_id = self._xvfb_read_display_id(read_fd)
+
+        self._xvfb_close_pipe((read_fd, write_fd))
+
+        return display_id
 
     def _xvfb_screen_depth(self):
         return os.environ.get('XVFB_SCREEN_DEPTH', '24')
@@ -75,26 +95,9 @@ class XvfbDriver(Driver):
     def _start(self, pixel_tests, per_test_args):
         self.stop()
 
-        # Use even displays for pixel tests and odd ones otherwise. When pixel tests are disabled,
-        # DriverProxy creates two drivers, one for normal and the other for ref tests. Both have
-        # the same worker number, so this prevents them from using the same Xvfb instance.
-        display_id = self._next_free_display()
-        self._lock_file = "/tmp/.X%d-lock" % display_id
-
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
-
-        run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "1024x768x%s" % self._xvfb_screen_depth(), "-nolisten", "tcp"]
-
-        if self._port._should_use_jhbuild():
-                run_xvfb = self._port._jhbuild_wrapper + run_xvfb
-
-        with open(os.devnull, 'w') as devnull:
-            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull, env=environment)
-
-        # Crashes intend to occur occasionally in the first few tests that are run through each
-        # worker because the Xvfb display isn't ready yet. Halting execution a bit should avoid that.
-        time.sleep(self._startup_delay_secs)
+        display_id = self._xvfb_run(environment)
 
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % display_id
@@ -115,11 +118,6 @@ class XvfbDriver(Driver):
 
     def stop(self):
         super(XvfbDriver, self).stop()
-        if self._guard_lock:
-            self._guard_lock.release_lock()
-            self._guard_lock = None
         if getattr(self, '_xvfb_process', None):
             self._port.host.executive.kill_process(self._xvfb_process.pid)
             self._xvfb_process = None
-            if self._port.host.filesystem.exists(self._lock_file):
-                self._port.host.filesystem.remove(self._lock_file)

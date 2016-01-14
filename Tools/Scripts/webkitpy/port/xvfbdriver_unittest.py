@@ -52,6 +52,9 @@ class XvfbDriverTest(unittest.TestCase):
         driver = XvfbDriver(port, worker_number=worker_number, pixel_tests=True)
         driver._startup_delay_secs = 0
         driver._xvfb_screen_depth = lambda: '24'
+        driver._xvfb_pipe = lambda: (3, 4)
+        driver._xvfb_read_display_id = lambda x: 1
+        driver._xvfb_close_pipe = lambda p: None
         driver._environment = port.setup_environ_for_server(port.driver_name())
         return driver
 
@@ -66,71 +69,20 @@ class XvfbDriverTest(unittest.TestCase):
         self.assertTrue(driver._server_process.started)
         self.assertEqual(driver._server_process.env["DISPLAY"], expected_display)
 
-    def test_start_no_pixel_tests(self):
+    def test_start(self):
         driver = self.make_driver()
-        expected_logs = ("MOCK run_command: ['ps', '-eo', 'comm,command'], cwd=None\nMOCK popen: ['Xvfb', ':1', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
+        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
         self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":1")
-        self.cleanup_driver(driver)
-
-    def test_start_pixel_tests(self):
-        driver = self.make_driver()
-        expected_logs = ("MOCK run_command: ['ps', '-eo', 'comm,command'], cwd=None\nMOCK popen: ['Xvfb', ':1', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
-        self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":1", pixel_tests=True)
         self.cleanup_driver(driver)
 
     def test_start_arbitrary_worker_number(self):
         driver = self.make_driver(worker_number=17)
-        expected_logs = ("MOCK run_command: ['ps', '-eo', 'comm,command'], cwd=None\nMOCK popen: ['Xvfb', ':1', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
+        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
         self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":1", pixel_tests=True)
-        self.cleanup_driver(driver)
-
-    def test_next_free_display(self):
-        output = "Xorg            /usr/bin/X :1 -auth /var/run/lightdm/root/:1 -nolisten tcp vt7 -novtswitch -background none\nXvfb            Xvfb :2 -screen 0 800x600x24 -nolisten tcp"
-        executive = MockExecutive2(output)
-        driver = self.make_driver(executive=executive)
-        self.assertEqual(driver._next_free_display(), 3)
-        self.cleanup_driver(driver)
-        output = "X               /usr/bin/X :1 vt7 -nolisten tcp -auth /var/run/xauth/A:0-8p7Ybb"
-        executive = MockExecutive2(output)
-        driver = self.make_driver(executive=executive)
-        self.assertEqual(driver._next_free_display(), 2)
-        self.cleanup_driver(driver)
-        output = "Xvfb            Xvfb :1 -screen 0 800x600x24 -nolisten tcp"
-        executive = MockExecutive2(output)
-        driver = self.make_driver(executive=executive)
-        self.assertEqual(driver._next_free_display(), 2)
-        self.cleanup_driver(driver)
-        output = "Xvfb            Xvfb :2 -screen 0 800x600x24 -nolisten tcp\nXvfb            Xvfb :1 -screen 0 800x600x24 -nolisten tcp\nXvfb            Xvfb :3 -screen 0 800x600x24 -nolisten tcp"
-        executive = MockExecutive2(output)
-        driver = self.make_driver(executive=executive)
-        self.assertEqual(driver._next_free_display(), 4)
-        self.cleanup_driver(driver)
-        output = "Xorg.bin        /usr/libexec/Xorg.bin :1 -background none -noreset -verbose 3 -logfile /dev/null -auth /run/gdm/auth-for-gdm-Zt8Eq2/database -seat seat0 -nolisten tcp vt1"
-        executive = MockExecutive2(output)
-        driver = self.make_driver(executive=executive)
-        self.assertEqual(driver._next_free_display(), 2)
-        self.cleanup_driver(driver)
-        output = "/usr/libexec/Xorg            vt2 -displayfd 3 -auth /run/user/1000/gdm/Xauthority -nolisten tcp -background none -noreset -keeptty -verbose 3"
-        executive = MockExecutive2(output)
-        driver = self.make_driver(executive=executive)
-        self.assertEqual(driver._next_free_display(), 1)
-        self.cleanup_driver(driver)
-
-    def test_start_next_worker(self):
-        driver = self.make_driver()
-        driver._next_free_display = lambda: 1
-        expected_logs = ("MOCK popen: ['Xvfb', ':1', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
-        self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":1", pixel_tests=True)
-        self.cleanup_driver(driver)
-        driver = self.make_driver()
-        driver._next_free_display = lambda: 3
-        expected_logs = ("MOCK popen: ['Xvfb', ':3', '-screen', '0', '1024x768x24', '-nolisten', 'tcp'], env=%s\n" % driver._environment)
-        self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":3", pixel_tests=True)
         self.cleanup_driver(driver)
 
     def test_stop(self):
-        filesystem = MockFileSystem(files={'/tmp/.X42-lock': '1234\n'})
-        port = Port(MockSystemHost(log_executive=True, filesystem=filesystem), 'xvfbdrivertestport', options=MockOptions(configuration='Release'))
+        port = Port(MockSystemHost(log_executive=True), 'xvfbdrivertestport', options=MockOptions(configuration='Release'))
         port._executive.kill_process = lambda x: _log.info("MOCK kill_process pid: " + str(x))
         driver = XvfbDriver(port, worker_number=0, pixel_tests=True)
 
@@ -138,10 +90,8 @@ class XvfbDriverTest(unittest.TestCase):
             pid = 1234
 
         driver._xvfb_process = FakeXvfbProcess()
-        driver._lock_file = '/tmp/.X42-lock'
 
         expected_logs = "MOCK kill_process pid: 1234\n"
         OutputCapture().assert_outputs(self, driver.stop, [], expected_logs=expected_logs)
 
         self.assertIsNone(driver._xvfb_process)
-        self.assertFalse(port._filesystem.exists(driver._lock_file))
