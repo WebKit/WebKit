@@ -1,2 +1,0 @@
-This test verifies that the implementation of navigator.webkitGetUserMedia does not use public promise APIs. Test passes if no message about a shadowed public .then() is printed.
-
