@@ -257,11 +257,11 @@ public:
     typedef ExecutableBase Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static NativeExecutable* create(VM& vm, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic intrinsic)
+    static NativeExecutable* create(VM& vm, PassRefPtr<JITCode> callThunk, NativeFunction function, PassRefPtr<JITCode> constructThunk, NativeFunction constructor, Intrinsic intrinsic, const String& name)
     {
         NativeExecutable* executable;
         executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
-        executable->finishCreation(vm, callThunk, constructThunk, intrinsic);
+        executable->finishCreation(vm, callThunk, constructThunk, intrinsic, name);
         return executable;
     }
 
@@ -294,13 +294,16 @@ public:
 
     Intrinsic intrinsic() const;
 
+    const String& name() const { return m_name; }
+
 protected:
-    void finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, Intrinsic intrinsic)
+    void finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, Intrinsic intrinsic, const String& name)
     {
         Base::finishCreation(vm);
         m_jitCodeForCall = callThunk;
         m_jitCodeForConstruct = constructThunk;
         m_intrinsic = intrinsic;
+        m_name = name;
     }
 
 private:
@@ -317,6 +320,8 @@ private:
     NativeFunction m_constructor;
         
     Intrinsic m_intrinsic;
+
+    String m_name;
 };
 
 class ScriptExecutable : public ExecutableBase {

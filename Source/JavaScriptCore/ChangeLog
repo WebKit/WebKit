@@ -1,3 +1,34 @@
+2016-01-13  Saam barati  <sbarati@apple.com>
+
+        NativeExecutable should have a name field
+        https://bugs.webkit.org/show_bug.cgi?id=153083
+
+        Reviewed by Geoffrey Garen.
+
+        This is going to help the SamplingProfiler come up
+        with names for NativeExecutable objects it encounters.
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::finalize):
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITThunks.h:
+        * runtime/Executable.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::lookUpOrCreateNativeExecutable):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createImpl):
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::create):
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+        (JSC::VM::getHostFunction):
+        * runtime/VM.h:
+        (JSC::VM::getCTIStub):
+        (JSC::VM::exceptionOffset):
+
 2016-01-13  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Support subclassing the String builtin object

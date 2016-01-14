@@ -78,22 +78,22 @@ JSFunction* JSFunction::create(VM& vm, WebAssemblyExecutable* executable, JSScop
 }
 #endif
 
-NativeExecutable* JSFunction::lookUpOrCreateNativeExecutable(VM& vm, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
+NativeExecutable* JSFunction::lookUpOrCreateNativeExecutable(VM& vm, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor, const String& name)
 {
 #if !ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
 #else
     if (intrinsic != NoIntrinsic && vm.canUseJIT()) {
         ASSERT(nativeConstructor == callHostFunctionAsConstructor);
-        return vm.getHostFunction(nativeFunction, intrinsic);
+        return vm.getHostFunction(nativeFunction, intrinsic, name);
     }
 #endif
-    return vm.getHostFunction(nativeFunction, nativeConstructor);
+    return vm.getHostFunction(nativeFunction, nativeConstructor, name);
 }
 
 JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
-    NativeExecutable* executable = lookUpOrCreateNativeExecutable(vm, nativeFunction, intrinsic, nativeConstructor);
+    NativeExecutable* executable = lookUpOrCreateNativeExecutable(vm, nativeFunction, intrinsic, nativeConstructor, name);
     JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, globalObject, globalObject->functionStructure());
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(vm, executable, length, name);

@@ -57,8 +57,8 @@ public:
 
     MacroAssemblerCodeRef ctiStub(VM*, ThunkGenerator);
 
-    NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor);
-    NativeExecutable* hostFunctionStub(VM*, NativeFunction, ThunkGenerator, Intrinsic);
+    NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, const String& name);
+    NativeExecutable* hostFunctionStub(VM*, NativeFunction, ThunkGenerator, Intrinsic, const String& name);
 
     void clearHostFunctionStubs();
 

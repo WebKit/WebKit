@@ -390,7 +390,7 @@ public:
     {
         return jitStubs->ctiStub(this, generator);
     }
-    NativeExecutable* getHostFunction(NativeFunction, Intrinsic);
+    NativeExecutable* getHostFunction(NativeFunction, Intrinsic, const String& name);
     
     std::unique_ptr<RegisterAtOffsetList> allCalleeSaveRegisterOffsets;
     
@@ -401,7 +401,7 @@ public:
 #if ENABLE(FTL_JIT)
     std::unique_ptr<FTL::Thunks> ftlThunks;
 #endif
-    NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor);
+    NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor, const String& name);
 
     static ptrdiff_t exceptionOffset()
     {

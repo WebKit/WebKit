@@ -82,7 +82,7 @@ void JITThunks::finalize(Handle<Unknown> handle, void*)
     weakRemove(*m_hostFunctionStubMap, std::make_pair(nativeExecutable->function(), nativeExecutable->constructor()), nativeExecutable);
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor)
+NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor, const String& name)
 {
     ASSERT(!isCompilationThread());
 
@@ -94,12 +94,12 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, N
         adoptRef(new NativeJITCode(JIT::compileCTINativeCall(vm, function), JITCode::HostCallThunk)),
         function,
         adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), JITCode::HostCallThunk)),
-        constructor, NoIntrinsic);
+        constructor, NoIntrinsic, name);
     weakAdd(*m_hostFunctionStubMap, std::make_pair(function, constructor), Weak<NativeExecutable>(nativeExecutable, this));
     return nativeExecutable;
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic)
+NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic, const String& name)
 {
     ASSERT(!isCompilationThread());    
     ASSERT(vm->canUseJIT());
@@ -116,7 +116,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, T
     
     RefPtr<JITCode> forConstruct = adoptRef(new NativeJITCode(MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), JITCode::HostCallThunk));
     
-    NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, forCall, function, forConstruct, callHostFunctionAsConstructor, intrinsic);
+    NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, forCall, function, forConstruct, callHostFunctionAsConstructor, intrinsic, name);
     weakAdd(*m_hostFunctionStubMap, std::make_pair(function, &callHostFunctionAsConstructor), Weak<NativeExecutable>(nativeExecutable, this));
     return nativeExecutable;
 }

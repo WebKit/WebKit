@@ -93,7 +93,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
     ConstructData constructData;
     ConstructType constructType = JSC::getConstructData(targetFunction, constructData);
     bool canConstruct = constructType != ConstructTypeNone;
-    NativeExecutable* executable = vm.getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor);
+    NativeExecutable* executable = vm.getHostFunction(boundFunctionCall, canConstruct ? boundFunctionConstruct : callHostFunctionAsConstructor, name);
     JSBoundFunction* function = new (NotNull, allocateCell<JSBoundFunction>(vm.heap)) JSBoundFunction(vm, globalObject, globalObject->boundFunctionStructure(), targetFunction, boundThis, boundArgs);
 
     function->finishCreation(vm, executable, length, name);
