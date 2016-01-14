@@ -38,13 +38,12 @@ static inline RetainPtr<CFStringRef> textBreakLocalePreference()
 
 static RetainPtr<CFStringRef> topLanguagePreference()
 {
-    NSArray *languagesArray = [NSLocale preferredLanguages];
+    RetainPtr<CFArrayRef> languagesArray = adoptCF(CFLocaleCopyPreferredLanguages());
     if (!languagesArray)
         return nullptr;
-    if ([languagesArray count] < 1)
+    if (!CFArrayGetCount(languagesArray.get()))
         return nullptr;
-    NSString *value = [languagesArray objectAtIndex:0];
-    return reinterpret_cast<CFStringRef>(value);
+    return static_cast<CFStringRef>(CFArrayGetValueAtIndex(languagesArray.get(), 0));
 }
 
 static void getLocale(CFStringRef locale, char localeStringBuffer[maxLocaleStringLength])

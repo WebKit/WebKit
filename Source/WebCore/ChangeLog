@@ -1,3 +1,14 @@
+2016-01-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing more post-review comments after r194566
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * platform/text/mac/TextBreakIteratorInternalICUMac.mm:
+        (WebCore::topLanguagePreference):
+
 2016-01-13  Alex Christensen  <achristensen@webkit.org>
 
         Implement custom protocols when using NetworkSession
