@@ -43,7 +43,7 @@ void EditorState::encode(IPC::ArgumentEncoder& encoder) const
     encoder << hasComposition;
     encoder << isMissingPostLayoutData;
 
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
     if (!isMissingPostLayoutData)
         m_postLayoutData.encode(encoder);
 #endif
@@ -84,7 +84,7 @@ bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
     if (!decoder.decode(result.isMissingPostLayoutData))
         return false;
 
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
     if (!result.isMissingPostLayoutData) {
         if (!PostLayoutData::decode(decoder, result.postLayoutData()))
             return false;
@@ -103,41 +103,54 @@ bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
     return true;
 }
 
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 void EditorState::PostLayoutData::encode(IPC::ArgumentEncoder& encoder) const
 {
+#if PLATFORM(IOS) || PLATFORM(GTK)
     encoder << typingAttributes;
     encoder << caretRectAtStart;
+#endif
+#if PLATFORM(IOS) || PLATFORM(MAC)
+    encoder << selectionClipRect;
+    encoder << selectedTextLength;
+#endif
 #if PLATFORM(IOS)
     encoder << caretRectAtEnd;
-    encoder << selectionClipRect;
     encoder << selectionRects;
     encoder << wordAtSelection;
-    encoder << selectedTextLength;
     encoder << characterAfterSelection;
     encoder << characterBeforeSelection;
     encoder << twoCharacterBeforeSelection;
     encoder << isReplaceAllowed;
     encoder << hasContent;
 #endif
+#if PLATFORM(MAC)
+    encoder << candidateRequestStartPosition;
+    encoder << paragraphContextForCandidateRequest;
+    encoder << stringForCandidateRequest;
+#endif
 }
 
 bool EditorState::PostLayoutData::decode(IPC::ArgumentDecoder& decoder, PostLayoutData& result)
 {
+#if PLATFORM(IOS) || PLATFORM(GTK)
     if (!decoder.decode(result.typingAttributes))
         return false;
     if (!decoder.decode(result.caretRectAtStart))
         return false;
+#endif
+#if PLATFORM(IOS) || PLATFORM(MAC)
+    if (!decoder.decode(result.selectionClipRect))
+        return false;
+    if (!decoder.decode(result.selectedTextLength))
+        return false;
+#endif
 #if PLATFORM(IOS)
     if (!decoder.decode(result.caretRectAtEnd))
-        return false;
-    if (!decoder.decode(result.selectionClipRect))
         return false;
     if (!decoder.decode(result.selectionRects))
         return false;
     if (!decoder.decode(result.wordAtSelection))
-        return false;
-    if (!decoder.decode(result.selectedTextLength))
         return false;
     if (!decoder.decode(result.characterAfterSelection))
         return false;
@@ -150,9 +163,19 @@ bool EditorState::PostLayoutData::decode(IPC::ArgumentDecoder& decoder, PostLayo
     if (!decoder.decode(result.hasContent))
         return false;
 #endif
+#if PLATFORM(MAC)
+    if (!decoder.decode(result.candidateRequestStartPosition))
+        return false;
+
+    if (!decoder.decode(result.paragraphContextForCandidateRequest))
+        return false;
+
+    if (!decoder.decode(result.stringForCandidateRequest))
+        return false;
+#endif
 
     return true;
 }
-#endif
+#endif // PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 
 }

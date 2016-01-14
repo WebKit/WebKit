@@ -3533,6 +3533,43 @@ TextCheckingTypeMask Editor::resolveTextCheckingTypeMask(TextCheckingTypeMask te
     return checkingTypes;
 }
 
+static RefPtr<Range> candidateRangeForSelection(Frame& frame)
+{
+    const VisibleSelection& selection = frame.selection().selection();
+    return selection.isCaret() ? wordRangeFromPosition(selection.start()) : frame.selection().toNormalizedRange();
+}
+
+static bool candidateWouldReplaceText(const VisibleSelection& selection)
+{
+    // If the character behind the caret in the current selection is anything but a space or a newline then we should
+    // replace the whole current word with the candidate.
+    UChar32 characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection = 0;
+    charactersAroundPosition(selection.visibleStart(), characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection);
+    return !(characterBeforeSelection == '\0' || characterBeforeSelection == '\n' || characterBeforeSelection == ' ');
+}
+
+String Editor::stringForCandidateRequest() const
+{
+    const VisibleSelection& selection = m_frame.selection().selection();
+    RefPtr<Range> rangeForCurrentlyTypedString = candidateRangeForSelection(m_frame);
+    if (rangeForCurrentlyTypedString && candidateWouldReplaceText(selection))
+        return plainText(rangeForCurrentlyTypedString.get());
+
+    return String();
+}
+
+void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
+{
+    const VisibleSelection& selection = m_frame.selection().selection();
+    RefPtr<Range> candidateRange = candidateRangeForSelection(m_frame);
+
+    if (candidateWouldReplaceText(selection))
+        m_frame.selection().setSelectedRange(candidateRange.get(), UPSTREAM, true);
+
+    insertText(acceptedCandidate.replacement, 0);
+    insertText(String(" "), 0);
+}
+
 bool Editor::unifiedTextCheckerEnabled() const
 {
     return WebCore::unifiedTextCheckerEnabled(&m_frame);

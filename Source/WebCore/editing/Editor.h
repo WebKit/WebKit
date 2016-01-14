@@ -455,6 +455,9 @@ public:
     const Vector<RefPtr<Range>>& detectedTelephoneNumberRanges() const { return m_detectedTelephoneNumberRanges; }
 #endif
 
+    WEBCORE_EXPORT String stringForCandidateRequest() const;
+    WEBCORE_EXPORT void handleAcceptedCandidate(TextCheckingResult);
+
 private:
     class WebContentReader;
 
