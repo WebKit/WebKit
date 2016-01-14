@@ -50,7 +50,7 @@ public:
 
     enum Option {
         SelectInsertedText = 1 << 0,
-        KillRing = 1 << 1,
+        AddsToKillRing = 1 << 1,
         RetainAutocorrectionIndicator = 1 << 2,
         PreventSpellChecking = 1 << 3,
         SmartDelete = 1 << 4
@@ -75,8 +75,8 @@ public:
     void insertLineBreak();
     void insertParagraphSeparatorInQuotedContent();
     void insertParagraphSeparator();
-    void deleteKeyPressed(TextGranularity, bool killRing);
-    void forwardDeleteKeyPressed(TextGranularity, bool killRing);
+    void deleteKeyPressed(TextGranularity, bool shouldAddToKillRing);
+    void forwardDeleteKeyPressed(TextGranularity, bool shouldAddToKillRing);
     void deleteSelection(bool smartDelete);
     void setCompositionType(TextCompositionType type) { m_compositionType = type; }
 
@@ -131,7 +131,7 @@ private:
     bool m_smartDelete;
     TextGranularity m_granularity;
     TextCompositionType m_compositionType;
-    bool m_killRing;
+    bool m_shouldAddToKillRing;
     bool m_preservesTypingStyle;
     
     // Undoing a series of backward deletes will restore a selection around all of the
