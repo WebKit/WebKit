@@ -368,7 +368,7 @@ RefPtr<CSSValue> CSSParser::parseSVGPaint()
 {
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(*m_valueList->current(), c))
-        return SVGPaint::createUnknown();
+        return nullptr;
     return SVGPaint::createColor(Color(c));
 }
 

@@ -21,25 +21,25 @@ shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", 
 
 // Set following colors should be invalid.
 rect.setAttribute("fill", "f00");
-shouldBeNull("document.defaultView.getComputedStyle(rect, null).fill");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "rgb(0, 0, 0)");
 // Reset to green.
 rect.setAttribute("fill", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "#008000");
 
 rect.setAttribute("fill", "ff00");
-shouldBeNull("document.defaultView.getComputedStyle(rect, null).fill");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "rgb(0, 0, 0)");
 // Reset to green.
 rect.setAttribute("fill", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "#008000");
 
 rect.setAttribute("fill", "ff0000");
-shouldBeNull("document.defaultView.getComputedStyle(rect, null).fill");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "rgb(0, 0, 0)");
 // Reset to green.
 rect.setAttribute("fill", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "#008000");
 
 rect.setAttribute("fill", "ff00");
-shouldBeNull("document.defaultView.getComputedStyle(rect, null).fill");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "rgb(0, 0, 0)");
 // Reset to green.
 rect.setAttribute("fill", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "#008000");
@@ -73,25 +73,25 @@ shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke"
 
 // Set following colors should be invalid.
 rect.setAttribute("stroke", "f00");
-shouldBeNull("document.defaultView.getComputedStyle(rect, null).stroke");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "none");
 // Reset to green.
 rect.setAttribute("stroke", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "#008000");
 
 rect.setAttribute("stroke", "ff00");
-shouldBeNull("document.defaultView.getComputedStyle(rect, null).stroke");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "none");
 // Reset to green.
 rect.setAttribute("stroke", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "#008000");
 
 rect.setAttribute("stroke", "ff0000");
-shouldBeNull("document.defaultView.getComputedStyle(rect, null).stroke");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "none");
 // Reset to green.
 rect.setAttribute("stroke", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "#008000");
 
 rect.setAttribute("stroke", "ff00");
-shouldBeNull("document.defaultView.getComputedStyle(rect, null).stroke");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "none");
 // Reset to green.
 rect.setAttribute("stroke", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "#008000");
