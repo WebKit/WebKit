@@ -45,6 +45,9 @@ class WebMediaSessionManager : public MediaPlaybackTargetPicker::Client {
     WTF_MAKE_NONCOPYABLE(WebMediaSessionManager);
 public:
 
+    WEBCORE_EXPORT static WebMediaSessionManager& shared();
+    WEBCORE_EXPORT static void setWebMediaSessionManagerOverride(WebMediaSessionManager*);
+
     WEBCORE_EXPORT uint64_t addPlaybackTargetPickerClient(WebMediaSessionManagerClient&, uint64_t);
     WEBCORE_EXPORT void removePlaybackTargetPickerClient(WebMediaSessionManagerClient&, uint64_t);
     WEBCORE_EXPORT void removeAllPlaybackTargetPickerClients(WebMediaSessionManagerClient&);
@@ -56,6 +59,7 @@ protected:
     virtual ~WebMediaSessionManager();
 
     virtual WebCore::MediaPlaybackTargetPicker& targetPicker() = 0;
+    static WebMediaSessionManager& platformManager();
 
 private:
 

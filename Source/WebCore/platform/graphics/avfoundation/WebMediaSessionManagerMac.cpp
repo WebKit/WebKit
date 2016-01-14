@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WebMediaSessionManager& WebMediaSessionManagerMac::singleton()
+WebMediaSessionManager& WebMediaSessionManager::platformManager()
 {
     static NeverDestroyed<WebMediaSessionManagerMac> sharedManager;
     return sharedManager;
