@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,6 +72,7 @@ std::unique_ptr<ResourceResponse> ResourceResponseBase::adopt(std::unique_ptr<Cr
 
     response->setHTTPStatusCode(data->m_httpStatusCode);
     response->setHTTPStatusText(data->m_httpStatusText);
+    response->setHTTPVersion(data->m_httpVersion);
 
     response->lazyInit(AllFields);
     response->m_httpHeaderFields.adopt(WTFMove(data->m_httpHeaders));
@@ -89,6 +90,7 @@ std::unique_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData(
     data->m_textEncodingName = textEncodingName().isolatedCopy();
     data->m_httpStatusCode = httpStatusCode();
     data->m_httpStatusText = httpStatusText().isolatedCopy();
+    data->m_httpVersion = httpVersion().isolatedCopy();
     data->m_httpHeaders = httpHeaderFields().copyData();
     data->m_resourceLoadTiming = m_resourceLoadTiming;
     return asResourceResponse().doPlatformCopyData(WTFMove(data));
@@ -222,6 +224,29 @@ void ResourceResponseBase::setHTTPStatusText(const String& statusText)
     m_httpStatusText = statusText; 
 
     // FIXME: Should invalidate or update platform response if present.
+}
+
+const String& ResourceResponseBase::httpVersion() const
+{
+    lazyInit(AllFields);
+    
+    return m_httpVersion;
+}
+
+void ResourceResponseBase::setHTTPVersion(const String& versionText)
+{
+    lazyInit(AllFields);
+    
+    m_httpVersion = versionText;
+    
+    // FIXME: Should invalidate or update platform response if present.
+}
+
+bool ResourceResponseBase::isHttpVersion0_9() const
+{
+    lazyInit(AllFields);
+
+    return m_httpVersion.startsWith("HTTP/0.9");
 }
 
 String ResourceResponseBase::httpHeaderField(const String& name) const

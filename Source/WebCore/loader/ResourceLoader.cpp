@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2007, 2010-2011, 2016 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -438,6 +438,12 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
     logResourceResponseSource(m_frame.get(), r.source());
 
     m_response = r;
+
+    if (m_response.isHttpVersion0_9()) {
+        String message = "Sandboxing '" + m_response.url().string() + "' because it is using HTTP/0.9.";
+        m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, m_identifier);
+        frameLoader()->forceSandboxFlags(SandboxScripts | SandboxPlugins);
+    }
 
     if (FormData* data = m_request.httpBody())
         data->removeGeneratedFilesIfNeeded();

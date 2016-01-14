@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -71,6 +71,10 @@ public:
     
     WEBCORE_EXPORT const String& httpStatusText() const;
     WEBCORE_EXPORT void setHTTPStatusText(const String&);
+
+    WEBCORE_EXPORT const String& httpVersion() const;
+    WEBCORE_EXPORT void setHTTPVersion(const String&);
+    bool isHttpVersion0_9() const;
 
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
 
@@ -157,6 +161,7 @@ protected:
     long long m_expectedContentLength;
     AtomicString m_textEncodingName;
     AtomicString m_httpStatusText;
+    AtomicString m_httpVersion;
     HTTPHeaderMap m_httpHeaderFields;
     mutable ResourceLoadTiming m_resourceLoadTiming;
 
@@ -197,6 +202,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << static_cast<int64_t>(m_expectedContentLength);
     encoder << m_textEncodingName;
     encoder << m_httpStatusText;
+    encoder << m_httpVersion;
     encoder << m_httpHeaderFields;
     encoder << m_resourceLoadTiming;
     encoder << m_httpStatusCode;
@@ -230,6 +236,8 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         return false;
     if (!decoder.decode(response.m_httpStatusText))
         return false;
+    if (!decoder.decode(response.m_httpVersion))
+        return false;
     if (!decoder.decode(response.m_httpHeaderFields))
         return false;
     if (!decoder.decode(response.m_resourceLoadTiming))
@@ -259,6 +267,7 @@ public:
     String m_textEncodingName;
     int m_httpStatusCode;
     String m_httpStatusText;
+    String m_httpVersion;
     std::unique_ptr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
     ResourceLoadTiming m_resourceLoadTiming;
 };

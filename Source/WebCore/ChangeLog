@@ -1,3 +1,31 @@
+2016-01-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Cross-protocol, cross-site scripting (XPSS) using HTML forms
+        https://bugs.webkit.org/show_bug.cgi?id=153017
+        <rdar://problem/5873254>
+
+        Reviewed by David Kilzer.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): If response HTTP version is 0.9,
+        sandbox against script execution and plugins.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse): Ditto.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): Ditto.
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt): Update for HTTP version.
+        (WebCore::ResourceResponseBase::copyData): Ditto.
+        (WebCore::ResourceResponseBase::httpVersion): Added.
+        (WebCore::ResourceResponseBase::setHTTPVersion): Ditto.
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::encode): Update for HTTP version.
+        (WebCore::ResourceResponseBase::decode): Ditto.
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit): Capture HTTP version.
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformLazyInit): Ditto.
+
 2016-01-13  Beth Dakin  <bdakin@apple.com>
 
         WK2: Request completion candidates when needed
