@@ -1,3 +1,12 @@
+2016-01-14  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS Simulator] fast/table/003.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=152444
+
+        Unreviewed gardening.
+
+        * platform/ios-simulator/fast/table/003-expected.txt:
+
 2016-01-14  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Support subclassing Function.
