@@ -972,10 +972,6 @@ list(APPEND JavaScriptCore_SOURCES
 
 
 if (ENABLE_FTL_JIT)
-    if (NOT LLVM_STATIC_LIBRARIES)
-        message(FATAL_ERROR "No LLVM libs found, but FTL is enabled. Stopping build.")
-    endif ()
-
     # Configure llvmForJSC.so
     set(llvmForJSC_SOURCES
         llvm/library/LLVMAnchor.cpp
@@ -989,16 +985,8 @@ if (ENABLE_FTL_JIT)
 
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
-        DEPENDS ${LLVM_STATIC_LIBRARIES}
         COMMAND ${CMAKE_COMMAND} -E touch ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
         VERBATIM)
-
-    WEBKIT_WRAP_SOURCELIST(${llvmForJSC_SOURCES})
-    add_library(llvmForJSC SHARED ${llvmForJSC_SOURCES} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h)
-    target_link_libraries(llvmForJSC ${LLVM_STATIC_LIBRARIES} ${LLVM_SYSTEM_LIBRARIES})
-    if (NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
-        ADD_TARGET_PROPERTIES(llvmForJSC LINK_FLAGS "-Wl,--version-script=${JAVASCRIPTCORE_DIR}/llvm/library/libllvmForJSC.version")
-    endif ()
 
     # Added extra items for JavaScriptCore
     list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
@@ -1345,6 +1333,25 @@ endif ()
 
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+if (ENABLE_FTL_JIT)
+    if (NOT llvmForJSC_LIBRARIES)
+        set(llvmForJSC_LIBRARIES ${LLVM_STATIC_LIBRARIES})
+    endif ()
+    if (NOT llvmForJSC_LIBRARIES)
+        message(FATAL_ERROR "No LLVM libs found, but FTL is enabled. Stopping build.")
+    endif ()
+
+    WEBKIT_WRAP_SOURCELIST(${llvmForJSC_SOURCES})
+    add_library(llvmForJSC SHARED ${llvmForJSC_SOURCES} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h)
+    target_link_libraries(llvmForJSC ${llvmForJSC_LIBRARIES} ${LLVM_SYSTEM_LIBRARIES})
+    if (NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
+        ADD_TARGET_PROPERTIES(llvmForJSC LINK_FLAGS "-Wl,--version-script=${JAVASCRIPTCORE_DIR}/llvm/library/libllvmForJSC.version")
+    endif ()
+    if (llvmForJSC_INSTALL_DIR)
+        install(TARGETS llvmForJSC DESTINATION "${llvmForJSC_INSTALL_DIR}")
+    endif ()
+endif ()
 
 WEBKIT_CREATE_FORWARDING_HEADERS(JavaScriptCore DIRECTORIES ${JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${JavaScriptCore_FORWARDING_HEADERS_FILES})
 

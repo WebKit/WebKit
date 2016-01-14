@@ -1,3 +1,15 @@
+2016-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CMake] Do not use LLVM static libraries for FTL JIT
+        https://bugs.webkit.org/show_bug.cgi?id=151559
+
+        Reviewed by Michael Catanzaro.
+
+        Also export LLVM_LIBRARIES variable that can be used to prefer
+        linking to the llvm dynamic libraries.
+
+        * Source/cmake/FindLLVM.cmake:
+
 2016-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add comments above options declarations in OptionsGTK.cmake

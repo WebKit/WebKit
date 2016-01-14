@@ -1,3 +1,27 @@
+2016-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CMake] Do not use LLVM static libraries for FTL JIT
+        https://bugs.webkit.org/show_bug.cgi?id=151559
+
+        Reviewed by Michael Catanzaro.
+
+        Allow ports decide whether to prefer linking to llvm static or
+        dynamic libraries. This patch only changes the behavior of the GTK
+        port, other ports can change the default behavior by setting
+        llvmForJSC_LIBRARIES in their platform specific cmake files.
+
+        * CMakeLists.txt: Move llvmForJSC library definition after the
+        WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS, to allow platform specific
+        files to set their own llvmForJSC_LIBRARIES. When not set, it
+        defaults to LLVM_STATIC_LIBRARIES. The command to create
+        WebKitLLVMLibraryToken.h no longer depends on the static
+        libraries, since we are going to make the build fail anyway when
+        not found in case of linking to the static libraries. If platform
+        specific file defined llvmForJSC_INSTALL_DIR llvmForJSC is also
+        installed to the given destination.
+        * PlatformGTK.cmake: Set llvmForJSC_LIBRARIES and
+        llvmForJSC_INSTALL_DIR.
+
 2016-01-13  Saam barati  <sbarati@apple.com>
 
         NativeExecutable should have a name field

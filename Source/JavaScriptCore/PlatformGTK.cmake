@@ -39,9 +39,8 @@ if (ENABLE_INTROSPECTION)
 endif ()
 
 if (ENABLE_FTL_JIT)
-    install(TARGETS llvmForJSC
-            DESTINATION "${LIB_INSTALL_DIR}/javascriptcoregtk-${WEBKITGTK_API_VERSION}"
-    )
+    set(llvmForJSC_LIBRARIES ${LLVM_LIBRARIES})
+    set(llvmForJSC_INSTALL_DIR "${LIB_INSTALL_DIR}/javascriptcoregtk-${WEBKITGTK_API_VERSION}")
 endif ()
 
 add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
