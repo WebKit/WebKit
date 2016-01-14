@@ -1,3 +1,15 @@
+2016-01-13  Alex Christensen  <achristensen@webkit.org>
+
+        Implement custom protocols when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=153078
+
+        Reviewed by Andy Estes.
+
+        No new tests, but this makes the WebKit2CustomProtocolsTest api tests pass when using NetworkSession.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make NSURLConnectionSPI.h private so we can include it from within WebKit2.
+
 2016-01-13  Brent Fulgham  <bfulgham@apple.com>
 
         Cross-protocol, cross-site scripting (XPSS) using HTML forms

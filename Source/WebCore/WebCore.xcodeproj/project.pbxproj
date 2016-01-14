@@ -1336,7 +1336,7 @@
 		31A795C71888BCB200382F90 /* ANGLEInstancedArrays.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A795C21888B72400382F90 /* ANGLEInstancedArrays.h */; };
 		31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A795C11888B72400382F90 /* ANGLEInstancedArrays.cpp */; };
 		31AB5000122878A2001A7DB0 /* GraphicsContext3DIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31AB4FFF122878A2001A7DB0 /* GraphicsContext3DIOS.h */; };
-		31B313DB1B69871600F2AABC /* NSURLConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B313DA1B69871600F2AABC /* NSURLConnectionSPI.h */; };
+		31B313DB1B69871600F2AABC /* NSURLConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B313DA1B69871600F2AABC /* NSURLConnectionSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31B313DD1B6987DB00F2AABC /* NSURLRequestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B313DC1B6987DB00F2AABC /* NSURLRequestSPI.h */; };
 		31B313DF1B6988C500F2AABC /* NSButtonCellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B313DE1B6988C500F2AABC /* NSButtonCellSPI.h */; };
 		31BC742D1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31BC742B1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp */; };

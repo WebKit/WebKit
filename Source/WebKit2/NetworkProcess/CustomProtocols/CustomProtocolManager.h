@@ -36,6 +36,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
+OBJC_CLASS NSURLSessionConfiguration;
 OBJC_CLASS WKCustomProtocol;
 #else
 #include "CustomProtocolManagerImpl.h"
@@ -73,6 +74,9 @@ public:
 #if PLATFORM(COCOA)
     void addCustomProtocol(WKCustomProtocol *);
     void removeCustomProtocol(WKCustomProtocol *);
+#if USE(NETWORK_SESSION)
+    void registerProtocolClass(NSURLSessionConfiguration *);
+#endif
 #endif
 
 private:

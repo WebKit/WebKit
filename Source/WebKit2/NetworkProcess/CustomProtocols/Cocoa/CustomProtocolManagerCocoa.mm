@@ -30,29 +30,21 @@
 #import "CustomProtocolManagerMessages.h"
 #import "CustomProtocolManagerProxyMessages.h"
 #import "DataReference.h"
+#import "NetworkProcess.h"
 #import "NetworkProcessCreationParameters.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebProcessCreationParameters.h"
+#import <Foundation/NSURLSession.h>
+#import <WebCore/NSURLConnectionSPI.h>
 #import <WebCore/URL.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
-
-#ifdef __has_include
-#if __has_include(<Foundation/NSURLConnectionPrivate.h>)
-#import <Foundation/NSURLConnectionPrivate.h>
-#endif
-#endif
-
-@interface NSURLConnection ()
-+ (CFRunLoopRef)resourceLoaderRunLoop;
-@end
+#import <WebCore/TextEncoding.h>
 
 using namespace WebKit;
 
 namespace WebKit {
-
-static CustomProtocolManager* sharedCustomProtocolManager;
 
 static uint64_t generateCustomProtocolID()
 {
@@ -75,7 +67,9 @@ static uint64_t generateCustomProtocolID()
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    return sharedCustomProtocolManager->supportsScheme([[[request URL] scheme] lowercaseString]);
+    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>())
+        return customProtocolManager->supportsScheme([[[request URL] scheme] lowercaseString]);
+    return NO;
 }
 
 + (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
@@ -95,19 +89,23 @@ static uint64_t generateCustomProtocolID()
         return nil;
     
     _customProtocolID = generateCustomProtocolID();
-    sharedCustomProtocolManager->addCustomProtocol(self);
+    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>())
+        customProtocolManager->addCustomProtocol(self);
     return self;
 }
 
 - (void)startLoading
 {
-    sharedCustomProtocolManager->childProcess()->send(Messages::CustomProtocolManagerProxy::StartLoading(self.customProtocolID, [self request]), 0);
+    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>())
+        customProtocolManager->childProcess()->send(Messages::CustomProtocolManagerProxy::StartLoading(self.customProtocolID, [self request]), 0);
 }
 
 - (void)stopLoading
 {
-    sharedCustomProtocolManager->childProcess()->send(Messages::CustomProtocolManagerProxy::StopLoading(self.customProtocolID), 0);
-    sharedCustomProtocolManager->removeCustomProtocol(self);
+    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>()) {
+        customProtocolManager->childProcess()->send(Messages::CustomProtocolManagerProxy::StopLoading(self.customProtocolID), 0);
+        customProtocolManager->removeCustomProtocol(self);
+    }
 }
 
 @end
@@ -123,8 +121,7 @@ CustomProtocolManager::CustomProtocolManager(ChildProcess* childProcess)
     : m_childProcess(childProcess)
     , m_messageQueue(WorkQueue::create("com.apple.WebKit.CustomProtocolManager"))
 {
-    ASSERT(!sharedCustomProtocolManager);
-    sharedCustomProtocolManager = this;
+    WebCore::UTF8Encoding();
 }
 
 void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
@@ -134,7 +131,9 @@ void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
 
 void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
 {
+#if !USE(NETWORK_SESSION)
     [NSURLProtocol registerClass:[WKCustomProtocol class]];
+#endif
 
     for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
         registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
@@ -153,7 +152,14 @@ void CustomProtocolManager::removeCustomProtocol(WKCustomProtocol *customProtoco
     LockHolder locker(m_customProtocolMapMutex);
     m_customProtocolMap.remove(customProtocol.customProtocolID);
 }
-    
+
+#if USE(NETWORK_SESSION)
+void CustomProtocolManager::registerProtocolClass(NSURLSessionConfiguration *configuration)
+{
+    configuration.protocolClasses = @[[WKCustomProtocol class]];
+}
+#endif
+
 void CustomProtocolManager::registerScheme(const String& scheme)
 {
     ASSERT(!scheme.isNull());

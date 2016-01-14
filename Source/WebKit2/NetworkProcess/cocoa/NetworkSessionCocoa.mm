@@ -28,6 +28,7 @@
 
 #if USE(NETWORK_SESSION)
 
+#import "CustomProtocolManager.h"
 #import "Download.h"
 #import "NetworkLoad.h"
 #import "NetworkProcess.h"
@@ -207,6 +208,9 @@ NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID)
 
     NSURLSessionConfiguration *configuration = configurationForType(type);
 
+    if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>())
+        customProtocolManager->registerProtocolClass(configuration);
+    
 #if HAVE(TIMINGDATAOPTIONS)
     configuration._timingDataOptions = _TimingDataOptionsEnableW3CNavigationTiming;
 #else
