@@ -1,3 +1,18 @@
+2016-01-14  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [EFL] Hyphenation can never work in practice due to requirements on lang tags
+        https://bugs.webkit.org/show_bug.cgi?id=147310
+
+        Reviewed by Michael Catanzaro.
+
+        Update some baselines and add a GTK+ specific test for locale variations.
+
+        * platform/gtk/fast/text/hyphenate-flexible-locales-expected.html: Added.
+        * platform/gtk/fast/text/hyphenate-flexible-locales.html: Added.
+        * platform/gtk/fast/text/hyphenate-locale-expected.png: We now properly hyphenate
+        text with the 'en' locale.
+        * platform/gtk/fast/text/hyphenate-locale-expected.txt:
+
 2016-01-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Fix problems with cross-origin redirects

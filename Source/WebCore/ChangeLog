@@ -1,3 +1,27 @@
+2016-01-14  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [EFL] Hyphenation can never work in practice due to requirements on lang tags
+        https://bugs.webkit.org/show_bug.cgi?id=147310
+
+        Reviewed by Michael Catanzaro.
+
+        Test: platform/gtk/fast/text/hyphenate-flexible-locales.html
+
+        * platform/text/hyphen/HyphenationLibHyphen.cpp: Make locale matching for dictionary
+        selection a lot looser by matching case insensitively, matching multiple dictionaries
+        when only the language is specified, and ignoring the difference between '_' and '-' in
+        the locale name.
+        (WebCore::scanDirectoryForDicionaries): Now produce HashMap of Vectors instead of a single
+        path for each locale. Also add alternate entries to handle different ways of specifying
+        the locale.
+        (WebCore::scanTestDictionariesDirectoryIfNecessary): Update to handle the difference
+        in HashMap type.
+        (WebCore::availableLocales): Ditto.
+        (WebCore::canHyphenate): Also look for the lowercased version of the locale.
+        (WebCore::AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForKey):
+        Key on the dictionary path now so that we can load more than one dictionary per locale.
+        (WebCore::lastHyphenLocation): Iterate through each matched dictionary in turn.
+
 2016-01-14  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Remove workarounds for fixed bugs in fmod and pow.
