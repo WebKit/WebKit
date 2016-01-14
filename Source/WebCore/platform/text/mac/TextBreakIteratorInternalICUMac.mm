@@ -32,7 +32,7 @@ static inline RetainPtr<CFStringRef> textBreakLocalePreference()
     RetainPtr<CFPropertyListRef> locale = adoptCF(CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
         kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     if (!locale || CFGetTypeID(locale.get()) != CFStringGetTypeID())
-        return 0;
+        return nullptr;
     return static_cast<CFStringRef>(locale.get());
 }
 
@@ -40,23 +40,11 @@ static RetainPtr<CFStringRef> topLanguagePreference()
 {
     NSArray *languagesArray = [NSLocale preferredLanguages];
     if (!languagesArray)
-        return 0;
+        return nullptr;
     if ([languagesArray count] < 1)
-        return 0;
+        return nullptr;
     NSString *value = [languagesArray objectAtIndex:0];
-    if (![value isKindOfClass:[NSString class]])
-        return 0;
     return reinterpret_cast<CFStringRef>(value);
-}
-
-static RetainPtr<CFStringRef> canonicalLanguageIdentifier(CFStringRef locale)
-{
-    if (!locale)
-        return 0;
-    RetainPtr<CFStringRef> canonicalLocale = adoptCF(CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, locale));
-    if (!canonicalLocale)
-        return locale;
-    return canonicalLocale;
 }
 
 static void getLocale(CFStringRef locale, char localeStringBuffer[maxLocaleStringLength])
@@ -70,7 +58,7 @@ static void getLocale(CFStringRef locale, char localeStringBuffer[maxLocaleStrin
 
 static void getSearchLocale(char localeStringBuffer[maxLocaleStringLength])
 {
-    getLocale(canonicalLanguageIdentifier(topLanguagePreference().get()).get(), localeStringBuffer);
+    getLocale(topLanguagePreference().get(), localeStringBuffer);
 }
 
 const char* currentSearchLocaleID()
@@ -88,9 +76,12 @@ static void getTextBreakLocale(char localeStringBuffer[maxLocaleStringLength])
 {
     // If there is no text break locale, use the top language preference.
     RetainPtr<CFStringRef> locale = textBreakLocalePreference();
-    if (!locale)
+    if (locale) {
+        if (RetainPtr<CFStringRef> canonicalLocale = adoptCF(CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, locale.get())))
+            locale = canonicalLocale;
+    } else
         locale = topLanguagePreference();
-    getLocale(canonicalLanguageIdentifier(locale.get()).get(), localeStringBuffer);
+    getLocale(locale.get(), localeStringBuffer);
 }
 
 const char* currentTextBreakLocaleID()

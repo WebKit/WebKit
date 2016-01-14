@@ -1,3 +1,18 @@
+2016-01-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing post-review comments after r194566
+
+        Unreviewed.
+
+        No new tests because there is no behavior difference.
+
+        * platform/text/mac/TextBreakIteratorInternalICUMac.mm:
+        (WebCore::textBreakLocalePreference):
+        (WebCore::topLanguagePreference):
+        (WebCore::getSearchLocale):
+        (WebCore::getTextBreakLocale):
+        (WebCore::canonicalLanguageIdentifier): Deleted.
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         formaction must return document's address when formaction is missing
