@@ -1388,7 +1388,12 @@ RenderText* SimplifiedBackwardsTextIterator::handleFirstLetter(int& startOffset,
 
     m_shouldHandleFirstLetter = false;
     offsetInNode = 0;
-    return firstRenderTextInFirstLetter(fragment.firstLetter());
+    RenderText* firstLetterRenderer = firstRenderTextInFirstLetter(fragment.firstLetter());
+
+    m_offset = firstLetterRenderer->caretMaxOffset();
+    m_offset += collapsedSpaceLength(*firstLetterRenderer, m_offset);
+
+    return firstLetterRenderer;
 }
 
 bool SimplifiedBackwardsTextIterator::handleReplacedElement()
