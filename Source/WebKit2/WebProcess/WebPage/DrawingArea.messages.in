@@ -42,5 +42,6 @@ messages -> DrawingArea {
 
 #if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
     SetNativeSurfaceHandleForCompositing(uint64_t handle)
+    DestroyNativeSurfaceHandleForCompositing() -> (bool handled)
 #endif
 }

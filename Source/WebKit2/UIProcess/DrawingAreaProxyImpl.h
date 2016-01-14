@@ -50,6 +50,7 @@ public:
 
 #if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
     void setNativeSurfaceHandleForCompositing(uint64_t);
+    void destroyNativeSurfaceHandleForCompositing();
 #endif
 
 private:
