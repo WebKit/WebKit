@@ -1142,8 +1142,6 @@ private:
     void dataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID);
-
-    void handleAcceptedCandidate(WebCore::TextCheckingResult);
 #endif
 
     void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }

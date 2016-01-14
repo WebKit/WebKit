@@ -1,3 +1,16 @@
+2016-01-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r195002.
+        https://bugs.webkit.org/show_bug.cgi?id=153098
+
+        Crashes many/most editing tests (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "WK2: Request completion candidates when needed"
+        https://bugs.webkit.org/show_bug.cgi?id=153040
+        http://trac.webkit.org/changeset/195002
+
 2016-01-14  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [EFL] Hyphenation can never work in practice due to requirements on lang tags

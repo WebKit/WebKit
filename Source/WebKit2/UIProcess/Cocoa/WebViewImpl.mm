@@ -75,7 +75,6 @@
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSApplicationSPI.h>
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
-#import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/NSTextFinderSPI.h>
 #import <WebCore/NSWindowSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
@@ -1724,10 +1723,6 @@ void WebViewImpl::centerSelectionInVisibleArea()
 void WebViewImpl::selectionDidChange()
 {
     updateFontPanelIfNeeded();
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    if (!m_page->editorState().isMissingPostLayoutData)
-        requestCandidatesForSelectionIfNeeded();
-#endif
 }
 
 void WebViewImpl::startObservingFontPanel()
@@ -2092,90 +2087,6 @@ void WebViewImpl::capitalizeWord()
 {
     m_page->capitalizeWord();
 }
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-void WebViewImpl::requestCandidatesForSelectionIfNeeded()
-{
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
-        return;
-
-    auto& postLayoutData = editorState.postLayoutData();
-    m_lastStringForCandidateRequest = postLayoutData.stringForCandidateRequest;
-
-    NSRange rangeForCandidates = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
-    NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
-    auto weakThis = createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:rangeForCandidates inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (!weakThis)
-                return;
-            weakThis->handleRequestedCandidates(sequenceNumber, candidates);
-        });
-    }];
-}
-
-void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
-{
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
-        return;
-
-    auto& postLayoutData = editorState.postLayoutData();
-    if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
-        return;
-
-    auto weakEditor = m_weakPtrFactory.createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] showCandidates:candidates forString:postLayoutData.stringForCandidateRequest inRect:postLayoutData.selectionClipRect view:m_view completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (!weakEditor)
-                return;
-            weakEditor->handleAcceptedCandidate(acceptedCandidate);
-        });
-    }];
-}
-
-static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheckingResult *nsResult)
-{
-    WebCore::TextCheckingResult result;
-
-    // FIXME: Right now we only request candidates for spelling, replacement, and correction, but we plan to
-    // support more types, and we will have to update this at that time.
-    switch ([nsResult resultType]) {
-    case NSTextCheckingTypeSpelling:
-        result.type = WebCore::TextCheckingTypeSpelling;
-        break;
-    case NSTextCheckingTypeReplacement:
-        result.type = WebCore::TextCheckingTypeReplacement;
-        break;
-    case NSTextCheckingTypeCorrection:
-        result.type = WebCore::TextCheckingTypeCorrection;
-        break;
-    default:
-        result.type = WebCore::TextCheckingTypeNone;
-    }
-
-    NSRange resultRange = [nsResult range];
-    result.location = resultRange.location;
-    result.length = resultRange.length;
-    result.replacement = [nsResult replacementString];
-
-    return result;
-}
-
-void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidate)
-{
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
-        return;
-
-    auto& postLayoutData = editorState.postLayoutData();
-    if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
-        return;
-
-    m_page->handleAcceptedCandidate(textCheckingResultFromNSTextCheckingResult(acceptedCandidate));
-}
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 
 void WebViewImpl::preferencesDidChange()
 {

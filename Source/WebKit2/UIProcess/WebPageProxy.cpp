@@ -6010,11 +6010,6 @@ void WebPageProxy::installViewStateChangeCompletionHandler(void (^completionHand
     uint64_t callbackID = m_callbacks.put(voidCallback.release());
     m_nextViewStateChangeCallbacks.append(callbackID);
 }
-
-void WebPageProxy::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandidate)
-{
-    m_process->send(Messages::WebPage::HandleAcceptedCandidate(acceptedCandidate), m_pageID);
-}
 #endif
 
 void WebPageProxy::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSize)
