@@ -1909,9 +1909,18 @@ sub canUseNinja(@)
     return commandExists("ninja") || commandExists("ninja-build");
 }
 
-sub canUseEclipse(@)
+sub canUseNinjaGenerator(@)
 {
-    return commandExists("eclipse");
+    # Check that a Ninja generator is installed
+    my $devnull = File::Spec->devnull();
+    return exitStatus(system("cmake -N -G Ninja >$devnull 2>&1")) == 0;
+}
+
+sub canUseEclipseNinjaGenerator(@)
+{
+    # Check that eclipse and eclipse Ninja generator is installed
+    my $devnull = File::Spec->devnull();
+    return commandExists("eclipse") && exitStatus(system("cmake -N -G 'Eclipse CDT4 - Ninja' >$devnull 2>&1")) == 0;
 }
 
 sub cmakeGeneratedBuildfile(@)
@@ -1936,7 +1945,7 @@ sub generateBuildSystemFromCMakeProject
     chdir($buildPath) or die;
 
     # We try to be smart about when to rerun cmake, so that we can have faster incremental builds.
-    my $willUseNinja = canUseNinja();
+    my $willUseNinja = canUseNinja() && canUseNinjaGenerator();
     if (-e cmakeCachePath() && -e cmakeGeneratedBuildfile($willUseNinja)) {
         return 0;
     }
@@ -1953,7 +1962,7 @@ sub generateBuildSystemFromCMakeProject
 
     if ($willUseNinja) {
         push @args, "-G";
-        if (canUseEclipse()) {
+        if (canUseEclipseNinjaGenerator()) {
             push @args, "'Eclipse CDT4 - Ninja'";
         } else {
             push @args, "Ninja";

@@ -1,3 +1,18 @@
+2016-01-14  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [CMake][GTK] CMake Error: Could not create named generator Eclipse CDT4 - Ninja
+        https://bugs.webkit.org/show_bug.cgi?id=132599
+
+        Reviewed by Michael Catanzaro.
+
+        Check if cmake Ninja generators are installed.
+
+        * Scripts/webkitdirs.pm:
+        (canUseNinjaGenerator):
+        (canUseEclipseNinjaGenerator):
+        (generateBuildSystemFromCMakeProject):
+        (canUseEclipse): Deleted.
+
 2016-01-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Testing with font family name "System Font" is unused
