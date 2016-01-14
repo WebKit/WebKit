@@ -1507,8 +1507,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     color: #323232;
     background: white;
     border: 1px solid #e9eeef;
-    width: 100%;
-    margin-bottom: 4em;
+    margin-bottom: 6rem;
     padding: 0 3rem;
     text-align: center;
 }

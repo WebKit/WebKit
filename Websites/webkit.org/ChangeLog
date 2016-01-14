@@ -1,5 +1,12 @@
 2016-01-13  Timothy Hatcher  <timothy@apple.com>
 
+        Correct some history timeline styles.
+
+        * wp-content/themes/webkit/style.css:
+        (.timeline .content):
+
+2016-01-13  Timothy Hatcher  <timothy@apple.com>
+
         Add styles for a history timeline, needed by an upcoming blog post.
 
         * wp-content/themes/webkit/style.css:
