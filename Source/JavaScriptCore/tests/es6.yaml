@@ -777,17 +777,17 @@
 - path: es6/for..of_loops_with_instances_of_generic_iterables.js
   cmd: runES6 :fail
 - path: es6/Function_is_subclassable_can_be_called.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Function_is_subclassable_can_be_used_with_new.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Function_is_subclassable_correct_prototype_chain.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Function_is_subclassable_Function.prototype.apply.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Function_is_subclassable_Function.prototype.bind.js
   cmd: runES6 :fail
 - path: es6/Function_is_subclassable_Function.prototype.call.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/function_name_property_accessor_properties.js
   cmd: runES6 :fail
 - path: es6/function_name_property_bound_functions.js

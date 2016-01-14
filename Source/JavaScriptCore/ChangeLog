@@ -1,5 +1,11 @@
 2016-01-14  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed mark passing es6 tests as no longer failing.
+
+        * tests/es6.yaml:
+
+2016-01-14  Keith Miller  <keith_miller@apple.com>
+
         [ES6] Support subclassing Function.
         https://bugs.webkit.org/show_bug.cgi?id=153081
 
