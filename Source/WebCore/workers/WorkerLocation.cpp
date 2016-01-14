@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
-
 #include "WorkerLocation.h"
 
+#include "SecurityOrigin.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -72,5 +72,9 @@ String WorkerLocation::hash() const
     return m_url.fragmentIdentifier().isEmpty() ? emptyString() : "#" + m_url.fragmentIdentifier();
 }
 
+String WorkerLocation::origin() const
+{
+    return SecurityOrigin::create(m_url)->toString();
+}
 
 } // namespace WebCore

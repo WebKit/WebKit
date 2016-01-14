@@ -30,6 +30,7 @@ worker.postMessage("eval location.port");
 worker.postMessage("eval location.pathname");
 worker.postMessage("eval location.search");
 worker.postMessage("eval location.hash");
+worker.postMessage("eval location.origin");
 worker.postMessage("eval foo//bar");
 
 worker.onmessage = function(evt) {

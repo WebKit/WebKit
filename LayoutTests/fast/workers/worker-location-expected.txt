@@ -11,5 +11,6 @@ location.port:
 location.pathname: <...>/fast/workers/resources/worker-common.js
 location.search: 
 location.hash: 
+location.origin: file://
 DONE
 
