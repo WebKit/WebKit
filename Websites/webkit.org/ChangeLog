@@ -1,3 +1,11 @@
+2016-01-14  Timothy Hatcher  <timothy@apple.com>
+
+        Fix hairline crack on 1x devices between arrow and time label.
+
+        * wp-content/themes/webkit/style.css:
+        (.timeline .content):
+        (.timeline .time):
+
 2016-01-13  Timothy Hatcher  <timothy@apple.com>
 
         Correct some history timeline styles.
