@@ -1,0 +1,28 @@
+<style>
+    div {
+        width: 200px;
+        font-size: 20px;
+        text-decoration: underline;
+    }
+</style>
+<div id="webtest8" style="direction: rtl; text-align: justify;">
+This test passes if it doesn't crash. https://bugs.webkit.org/show_bug.cgi?id=151055.
+</div>
+<script>
+
+function webtest_fn_3() {
+   if (window.testRunner)
+       testRunner.dumpAsText();
+
+    var canvas = document.createElement("canvas");
+    gl = canvas.getContext("webgl");
+
+    try {
+        gl.isBuffer(document.getElementById("webtest8").appendChild(document.createElement("image")).createBuffer())
+    } 
+    catch(er) { };
+
+    gl.viewport(document.getElementById("webtest8").appendChild(document.createElement("textarea")).cols, 0, 0, 32769);
+}
+webtest_fn_3();
+</script>

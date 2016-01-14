@@ -1,3 +1,14 @@
+2015-11-16  Pranjal Jumde  <pjumde@apple.com>
+
+        Checks for buffer-overflows when reading characters from textRun
+        https://bugs.webkit.org/attachment.cgi?bugid=151055
+        <rdar://problem/23251789>
+
+        Reviewed by Brent Fulgham.
+
+        * webgl/1.0.3/151055_asan-expected.txt
+        * webgl/1.0.3/151055_asan.html
+
 2015-11-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null-pointer dereference in WebCore::firstEditablePositionAfterPositionInRoot
