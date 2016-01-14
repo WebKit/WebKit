@@ -235,6 +235,9 @@ inline T StyleBuilderConverter::convertLineWidth(StyleResolver& styleResolver, C
             if (originalLength >= 1.0)
                 return 1;
         }
+        float minimumLineWidth = 1 / styleResolver.document().deviceScaleFactor();
+        if (result > 0 && result < minimumLineWidth)
+            return minimumLineWidth;
         return result;
     }
     default:
