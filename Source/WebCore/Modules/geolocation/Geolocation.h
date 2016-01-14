@@ -48,6 +48,7 @@ class GeolocationError;
 class GeolocationPosition;
 class Page;
 class ScriptExecutionContext;
+class SecurityOrigin;
 
 class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject
 {
@@ -87,6 +88,7 @@ private:
     bool isDenied() const { return m_allowGeolocation == No; }
 
     Page* page() const;
+    SecurityOrigin* securityOrigin() const;
 
     typedef Vector<RefPtr<GeoNotifier>> GeoNotifierVector;
     typedef HashSet<RefPtr<GeoNotifier>> GeoNotifierSet;

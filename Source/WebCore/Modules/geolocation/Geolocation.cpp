@@ -40,6 +40,7 @@
 #include "Geoposition.h"
 #include "Page.h"
 #include "PositionError.h"
+#include "SecurityOrigin.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 
@@ -48,6 +49,7 @@ namespace WebCore {
 static const char permissionDeniedErrorMessage[] = "User denied Geolocation";
 static const char failedToStartServiceErrorMessage[] = "Failed to start Geolocation service";
 static const char framelessDocumentErrorMessage[] = "Geolocation cannot be used in frameless documents";
+static const char originCannotRequestGeolocationErrorMessage[] = "Origin does not have permission to use Geolocation service";
 
 static RefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
 {
@@ -149,6 +151,11 @@ Geolocation::~Geolocation()
 Document* Geolocation::document() const
 {
     return downcast<Document>(scriptExecutionContext());
+}
+
+SecurityOrigin* Geolocation::securityOrigin() const
+{
+    return scriptExecutionContext()->securityOrigin();
 }
 
 Frame* Geolocation::frame() const
@@ -332,6 +339,11 @@ int Geolocation::watchPosition(RefPtr<PositionCallback>&& successCallback, RefPt
 
 void Geolocation::startRequest(GeoNotifier* notifier)
 {
+    if (!securityOrigin()->canRequestGeolocation()) {
+        notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ASCIILiteral(originCannotRequestGeolocationErrorMessage)));
+        return;
+    }
+
     // Check whether permissions have already been denied. Note that if this is the case,
     // the permission state can not change again in the lifetime of this page.
     if (isDenied())
