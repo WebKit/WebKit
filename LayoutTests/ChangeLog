@@ -1,3 +1,21 @@
+2015-11-10  Zalan Bujtas  <zalan@apple.com>
+
+        Continuations with anonymous wrappers inside misplaces child renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=150908
+
+        When a child is appended to an inline container and the beforeChild is not a direct child, but 
+        it is inside a generated subtree, we need to special case the inline split to form continuation.
+
+        RenderInline::splitInlines() assumes that beforeChild is always a direct child of the current
+        inline container. However when beforeChild type requires wrapper content (such as table cells), the DOM and the
+        render tree get out of sync. In such cases, we need to ensure that both the beforeChild and its siblings end up
+        in the correct generated block.
+
+        Reviewed by Darin Adler and David Hyatt.
+
+        * fast/inline/continuation-with-anon-wrappers-expected.txt: Added.
+        * fast/inline/continuation-with-anon-wrappers.html: Added.
+
 2015-10-13  Zalan Bujtas  <zalan@apple.com>
 
         Anonymous table objects: inline parent box requires inline-table child.
