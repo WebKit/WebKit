@@ -63,7 +63,12 @@ bool JSFunction::isHostFunctionNonInline() const
 
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    JSFunction* result = createImpl(vm, executable, scope);
+    return create(vm, executable, scope, scope->globalObject()->functionStructure());
+}
+
+JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+{
+    JSFunction* result = createImpl(vm, executable, scope, structure);
     executable->singletonFunction()->notifyWrite(vm, result, "Allocating a function");
     return result;
 }

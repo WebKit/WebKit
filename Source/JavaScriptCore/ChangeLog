@@ -1,3 +1,30 @@
+2016-01-14  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Support subclassing Function.
+        https://bugs.webkit.org/show_bug.cgi?id=153081
+
+        Reviewed by Geoffrey Garen.
+
+        This patch enables subclassing the Function object. It also fixes an existing
+        bug that prevented users from subclassing functions that have a function in
+        the superclass's prototype property.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructWithFunctionConstructor):
+        (JSC::constructFunction):
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createImpl):
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::createWithInvalidatedReallocationWatchpoint):
+        (JSC::JSFunction::JSFunction): Deleted.
+        * tests/stress/class-subclassing-function.js: Added.
+
 2016-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [CMake] Do not use LLVM static libraries for FTL JIT

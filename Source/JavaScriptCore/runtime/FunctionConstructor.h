@@ -61,12 +61,13 @@ enum class FunctionConstructionMode {
     Generator,
 };
 
-JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const String& sourceURL, const WTF::TextPosition&, FunctionConstructionMode = FunctionConstructionMode::Function);
-JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, FunctionConstructionMode = FunctionConstructionMode::Function);
+JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const String& sourceURL, const WTF::TextPosition&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
+JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
 
 JS_EXPORT_PRIVATE JSObject* constructFunctionSkippingEvalEnabledCheck(
     ExecState*, JSGlobalObject*, const ArgList&, const Identifier&, 
-    const String&, const WTF::TextPosition&, int overrideLineNumber = -1, FunctionConstructionMode = FunctionConstructionMode::Function);
+    const String&, const WTF::TextPosition&, int overrideLineNumber = -1,
+    FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
 
 } // namespace JSC
 

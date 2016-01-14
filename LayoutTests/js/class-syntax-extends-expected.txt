@@ -26,9 +26,9 @@ PASS x.__proto__:::Function.prototype
 PASS x = class extends 3 { constructor() { } }; x.__proto__:::TypeError: The superclass is not an object.
 PASS x = class extends "abc" { constructor() { } }; x.__proto__:::TypeError: The superclass is not an object.
 PASS baseWithBadPrototype = function () {}; baseWithBadPrototype.prototype = 3; new baseWithBadPrototype
-PASS x = class extends baseWithBadPrototype { constructor() { } }:::TypeError: The superclass's prototype is not an object.
+PASS x = class extends baseWithBadPrototype { constructor() { } }:::TypeError: The value of the superclass's prototype property is not an object.
 PASS baseWithBadPrototype.prototype = "abc"
-PASS x = class extends baseWithBadPrototype { constructor() { } }:::TypeError: The superclass's prototype is not an object.
+PASS x = class extends baseWithBadPrototype { constructor() { } }:::TypeError: The value of the superclass's prototype property is not an object.
 PASS baseWithBadPrototype.prototype = null; x = class extends baseWithBadPrototype { constructor() { } }
 PASS x = 1; c = class extends ++x { constructor() { } };:::SyntaxError: Unexpected token '++'
 PASS x = 1; c = class extends x++ { constructor() { } };:::SyntaxError: Unexpected token '++'. Expected opening '{' at the start of a class body.
@@ -48,8 +48,8 @@ PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = cl
 PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends false||null||namespace.A { constructor() { } }:::SyntaxError: Unexpected token '||'. Expected opening '{' at the start of a class body.
 PASS x = 1; namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends (x++, namespace.A) { constructor() { } };
 PASS x = 1; namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends (namespace.A, x++) { constructor() { } };:::TypeError: The superclass is not an object.
-PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends new namespace.A { constructor() { } }:::TypeError: The superclass's prototype is not an object.
-PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends new namespace.A() { constructor() { } }:::TypeError: The superclass's prototype is not an object.
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends new namespace.A { constructor() { } }:::TypeError: The value of the superclass's prototype property is not an object.
+PASS namespace = {}; namespace.A = class { constructor() { } }; namespace.B = class extends new namespace.A() { constructor() { } }:::TypeError: The value of the superclass's prototype property is not an object.
 PASS x = 1; namespace = {}; namespace.A = class { constructor() { } }; try { namespace.B = class extends (x++, namespace.A) { constructor() { } } } catch (e) { } x:::2
 PASS x = 1; namespace = {}; namespace.A = class { constructor() { } }; try { namespace.B = class extends (namespace.A, x++) { constructor() { } } } catch (e) { } x:::2
 PASS Object.getPrototypeOf((class { constructor () { } }).prototype):::Object.prototype

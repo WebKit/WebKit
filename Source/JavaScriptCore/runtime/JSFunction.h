@@ -73,6 +73,7 @@ public:
     static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, FunctionExecutable*, JSScope*);
 
     static JSFunction* create(VM&, FunctionExecutable*, JSScope*);
+    static JSFunction* create(VM&, FunctionExecutable*, JSScope*, Structure*);
 #if ENABLE(WEBASSEMBLY)
     static JSFunction* create(VM&, WebAssemblyExecutable*, JSScope*);
 #endif
@@ -151,7 +152,6 @@ public:
 
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
-    JSFunction(VM&, FunctionExecutable*, JSScope*);
     JSFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
 
 #if ENABLE(WEBASSEMBLY)
@@ -179,9 +179,9 @@ protected:
     static NativeExecutable* lookUpOrCreateNativeExecutable(VM&, NativeFunction, Intrinsic, NativeFunction nativeConstructor, const String& name);
 
 private:
-    static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope)
+    static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     {
-        JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
+        JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope, structure);
         ASSERT(function->structure()->globalObject());
         function->finishCreation(vm);
         return function;
