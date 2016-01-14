@@ -1,3 +1,23 @@
+2016-01-14  Daniel Bates  <dabates@apple.com>
+
+        [XSS Auditor] Partial bypass when web server collapses path components
+        https://bugs.webkit.org/show_bug.cgi?id=152872
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink (patch by Tom Sepez <tsepez@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?revision=167610&view=revision>
+
+        Test: http/tests/security/xssAuditor/embed-tag-in-path-unterminated.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::isNonCanonicalCharacter):
+        (WebCore::XSSAuditor::init):
+        (WebCore::XSSAuditor::decodedSnippetForName):
+        (WebCore::XSSAuditor::decodedSnippetForAttribute):
+        (WebCore::XSSAuditor::decodedSnippetForJavaScript):
+        (WebCore::fullyDecodeString): Deleted.
+
 2016-01-14  Beth Dakin  <bdakin@apple.com>
 
         imported/blink/editing/text-iterator/read-past-cloned-first-letter.html 
