@@ -273,12 +273,19 @@ void RenderThemeGtk::initMediaColors()
     GdkRGBA color;
     GtkStyleContext* containerContext = getStyleContext(GTK_TYPE_CONTAINER);
 
-    gtk_style_context_get_background_color(containerContext, GTK_STATE_FLAG_NORMAL, &color);
+    gtk_style_context_save(containerContext);
+
+    gtk_style_context_set_state(containerContext, GTK_STATE_FLAG_NORMAL);
+    gtk_style_context_get_background_color(containerContext, gtk_style_context_get_state(containerContext), &color);
     m_panelColor = color;
-    gtk_style_context_get_background_color(containerContext, GTK_STATE_FLAG_ACTIVE, &color);
+    gtk_style_context_set_state(containerContext, GTK_STATE_FLAG_ACTIVE);
+    gtk_style_context_get_background_color(containerContext, gtk_style_context_get_state(containerContext), &color);
     m_sliderColor = color;
-    gtk_style_context_get_background_color(containerContext, GTK_STATE_FLAG_SELECTED, &color);
+    gtk_style_context_set_state(containerContext, GTK_STATE_FLAG_SELECTED);
+    gtk_style_context_get_background_color(containerContext, gtk_style_context_get_state(containerContext), &color);
     m_sliderThumbColor = color;
+
+    gtk_style_context_restore(containerContext);
 }
 
 void RenderThemeGtk::initMediaButtons()
@@ -610,7 +617,7 @@ static void renderButton(RenderTheme* theme, GtkStyleContext* context, const Ren
 
         if (interiorFocus) {
             GtkBorder borderWidth;
-            gtk_style_context_get_border(context, static_cast<GtkStateFlags>(flags), &borderWidth);
+            gtk_style_context_get_border(context, gtk_style_context_get_state(context), &borderWidth);
 
             buttonRect = IntRect(
                 buttonRect.x() + borderWidth.left + focusPad,
@@ -672,7 +679,8 @@ static void getComboBoxMetrics(RenderStyle& style, GtkBorder& border, int& focus
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
     gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(style.direction())));
 
-    gtk_style_context_get_border(context, static_cast<GtkStateFlags>(0), &border);
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(0));
+    gtk_style_context_get_border(context, gtk_style_context_get_state(context), &border);
 
     gboolean interiorFocus;
     gint focusWidth, focusPad;
@@ -838,9 +846,9 @@ bool RenderThemeGtk::paintMenuList(const RenderObject& renderObject, const Paint
         gtk_render_frame(separatorStyleContext, cairoContext, separatorPosition.x(), separatorPosition.y(), separatorWidth, innerRect.height());
     } else {
         GtkBorder padding;
-        gtk_style_context_get_padding(separatorStyleContext, state, &padding);
+        gtk_style_context_get_padding(separatorStyleContext, gtk_style_context_get_state(separatorStyleContext), &padding);
         GtkBorder border;
-        gtk_style_context_get_border(separatorStyleContext, state, &border);
+        gtk_style_context_get_border(separatorStyleContext, gtk_style_context_get_state(separatorStyleContext), &border);
 
         if (direction == GTK_TEXT_DIR_LTR)
             separatorPosition.move(-(padding.left + border.left), 0);
@@ -1184,10 +1192,10 @@ bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const Pa
 
     gtk_style_context_save(context);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_PROGRESSBAR);
-
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(0));
 
     GtkBorder padding;
-    gtk_style_context_get_padding(context, static_cast<GtkStateFlags>(0), &padding);
+    gtk_style_context_get_padding(context, gtk_style_context_get_state(context), &padding);
     IntRect progressRect(
         rect.x() + padding.left,
         rect.y() + padding.top,
@@ -1211,7 +1219,7 @@ bool RenderThemeGtk::paintProgressBar(const RenderObject& renderObject, const Pa
 static gint spinButtonArrowSize(GtkStyleContext* context)
 {
     PangoFontDescription* fontDescription;
-    gtk_style_context_get(context, static_cast<GtkStateFlags>(0), "font", &fontDescription, nullptr);
+    gtk_style_context_get(context, gtk_style_context_get_state(context), "font", &fontDescription, nullptr);
     gint fontSize = pango_font_description_get_size(fontDescription);
     gint arrowSize = std::max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
     pango_font_description_free(fontDescription);
@@ -1224,7 +1232,7 @@ void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle& sty
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SPIN_BUTTON);
 
     GtkBorder padding;
-    gtk_style_context_get_padding(context, static_cast<GtkStateFlags>(0), &padding);
+    gtk_style_context_get_padding(context, gtk_style_context_get_state(context), &padding);
 
     int width = spinButtonArrowSize(context) + padding.left + padding.right;
     style.setWidth(Length(width, Fixed));
@@ -1347,9 +1355,9 @@ static Color styleColor(GType widgetType, GtkStateFlags state, StyleColorType co
 
     GdkRGBA gdkRGBAColor;
     if (colorType == StyleColorBackground)
-        gtk_style_context_get_background_color(context, state, &gdkRGBAColor);
+        gtk_style_context_get_background_color(context, gtk_style_context_get_state(context), &gdkRGBAColor);
     else
-        gtk_style_context_get_color(context, state, &gdkRGBAColor);
+        gtk_style_context_get_color(context, gtk_style_context_get_state(context), &gdkRGBAColor);
     return gdkRGBAColor;
 }
 

@@ -281,7 +281,8 @@ static void applyScrollbarStyleContextClasses(GtkStyleContext* context, Scrollba
 static void adjustRectAccordingToMargin(GtkStyleContext* context, GtkStateFlags state, IntRect& rect)
 {
     GtkBorder margin;
-    gtk_style_context_get_margin(context, state, &margin);
+    gtk_style_context_set_state(context, state);
+    gtk_style_context_get_margin(context, gtk_style_context_get_state(context), &margin);
     rect.move(margin.left, margin.right);
     rect.contract(margin.left + margin.right, margin.top + margin.bottom);
 }
