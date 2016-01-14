@@ -43,7 +43,7 @@ static inline LayoutUnit adjustRadiusForMarginBoxShape(LayoutUnit radius, Layout
 
     LayoutUnit ratio = radius / margin;
     if (ratio < 1)
-        return radius + (margin * (1 + pow(ratio - 1, 3)));
+        return radius + (margin * (1 + pow(ratio - 1, 3.0)));
 
     return radius + margin;
 }

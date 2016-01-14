@@ -1,3 +1,15 @@
+2016-01-14  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Remove workarounds for fixed bugs in fmod and pow.
+        https://bugs.webkit.org/show_bug.cgi?id=153071
+
+        Reviewed by Brent Fulgham.
+
+        Compile fix, help MSVC pick correct pow overload.
+
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::adjustRadiusForMarginBoxShape):
+
 2016-01-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Fix problems with cross-origin redirects
