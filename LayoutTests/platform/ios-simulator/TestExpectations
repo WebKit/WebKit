@@ -2839,7 +2839,6 @@ webkit.org/b/152134 fast/events/ios/viewport-device-width-at-initial-scale-fast-
 webkit.org/b/152141 fast/picture/image-picture-1x.html [ Skip ]
 webkit.org/b/152141 fast/picture/image-picture-invalid.html [ Skip ]
 webkit.org/b/152141 fast/picture/image-picture-nested.html [ Skip ]
-webkit.org/b/153043 fast/picture/image-picture-loads-1x.html [ Skip ]
 webkit.org/b/152992 http/tests/loading/preload-picture-invalid.html [ Skip ]
 webkit.org/b/152992 http/tests/loading/preload-picture-nested.html [ Skip ]
 webkit.org/b/152992 http/tests/loading/preload-picture-sizes.html [ Skip ]

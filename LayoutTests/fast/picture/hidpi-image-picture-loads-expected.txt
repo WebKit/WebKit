@@ -1,0 +1,13 @@
+resources/image-set-4x.png - willSendRequest <NSURLRequest URL resources/image-set-4x.png, main document URL hidpi-image-picture-loads.html, http method GET> redirectResponse (null)
+resources/image-set-4x.png - willSendRequest <NSURLRequest URL resources/image-set-4x.png, main document URL hidpi-image-picture-loads.html, http method GET> redirectResponse (null)
+data:,b - willSendRequest <NSURLRequest URL data:,b, main document URL hidpi-image-picture-loads.html, http method GET> redirectResponse (null)
+hidpi-image-picture-loads.html - didFinishLoading
+resources/image-set-4x.png - didReceiveResponse <NSURLResponse resources/image-set-4x.png, http status code 0>
+resources/image-set-4x.png - didFinishLoading
+resources/image-set-4x.png - didReceiveResponse <NSURLResponse resources/image-set-4x.png, http status code 0>
+resources/image-set-4x.png - didFinishLoading
+data:,b - didReceiveResponse <NSURLResponse data:,b, http status code 0>
+data:,b - didFinishLoading
+   
+some text
+         

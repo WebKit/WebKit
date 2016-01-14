@@ -1,3 +1,13 @@
+2016-01-14  Dave Hyatt  <hyatt@apple.com>
+
+        Avoid downloading the wrong image for <picture> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=153027
+
+        Reviewed by Dean Jackson.
+
+        * fast/picture/image-picture-loads-1x-expected.txt: Added.
+        * fast/picture/image-picture-loads-1x.html: Added.
+
 2016-01-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Move streams/webkitGetUserMedia-shadowing-then.html to fast/mediastream
