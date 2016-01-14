@@ -1027,6 +1027,8 @@ public:
     void* immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>);
 
     void installViewStateChangeCompletionHandler(void(^completionHandler)());
+
+    void handleAcceptedCandidate(WebCore::TextCheckingResult);
 #endif
 
 #if PLATFORM(EFL) && HAVE(ACCESSIBILITY) && defined(HAVE_ECORE_X)

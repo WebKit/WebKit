@@ -118,8 +118,43 @@ void WebPage::platformDetach()
     [m_mockAccessibilityElement setWebPage:nullptr];
 }
 
-void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint) const
+void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
 {
+    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No) {
+        result.isMissingPostLayoutData = true;
+        return;
+    }
+
+    const VisibleSelection& selection = frame.selection().selection();
+    RefPtr<Range> selectedRange = selection.toNormalizedRange();
+    if (!selectedRange)
+        return;
+
+    auto& postLayoutData = result.postLayoutData();
+    VisiblePosition selectionStart = selection.visibleStart();
+    VisiblePosition selectionEnd = selection.visibleEnd();
+    VisiblePosition paragraphStart = startOfParagraph(selectionStart);
+    VisiblePosition paragraphEnd = endOfParagraph(selectionEnd);
+
+    postLayoutData.candidateRequestStartPosition = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
+    postLayoutData.selectedTextLength = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get()) - postLayoutData.candidateRequestStartPosition;
+    postLayoutData.paragraphContextForCandidateRequest = plainText(makeRange(paragraphStart, paragraphEnd).get());
+    postLayoutData.stringForCandidateRequest = frame.editor().stringForCandidateRequest();
+
+    IntRect rectForSelectionCandidates;
+    Vector<FloatQuad> quads;
+    selectedRange->absoluteTextQuads(quads);
+    if (!quads.isEmpty())
+        postLayoutData.selectionClipRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
+}
+
+void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandidate)
+{
+    Frame* frame = m_page->focusController().focusedFrame();
+    if (!frame)
+        return;
+
+    frame->editor().handleAcceptedCandidate(acceptedCandidate);
 }
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()

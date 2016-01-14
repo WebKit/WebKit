@@ -62,21 +62,30 @@ struct EditorState {
     String markedText;
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
     struct PostLayoutData {
+#if PLATFORM(IOS) || PLATFORM(GTK)
         uint32_t typingAttributes { AttributeNone };
         WebCore::IntRect caretRectAtStart;
+#endif
+#if PLATFORM(IOS) || PLATFORM(MAC)
+        WebCore::IntRect selectionClipRect;
+        uint64_t selectedTextLength { 0 };
+#endif
 #if PLATFORM(IOS)
         WebCore::IntRect caretRectAtEnd;
-        WebCore::IntRect selectionClipRect;
         Vector<WebCore::SelectionRect> selectionRects;
         String wordAtSelection;
-        uint64_t selectedTextLength { 0 };
         UChar32 characterAfterSelection { 0 };
         UChar32 characterBeforeSelection { 0 };
         UChar32 twoCharacterBeforeSelection { 0 };
         bool isReplaceAllowed { false };
         bool hasContent { false };
+#endif
+#if PLATFORM(MAC)
+        uint64_t candidateRequestStartPosition { 0 };
+        String paragraphContextForCandidateRequest;
+        String stringForCandidateRequest;
 #endif
 
         void encode(IPC::ArgumentEncoder&) const;
@@ -85,18 +94,18 @@ struct EditorState {
 
     const PostLayoutData& postLayoutData() const;
     PostLayoutData& postLayoutData();
-#endif // PLATFORM(IOS) || PLATFORM(GTK)
+#endif // PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, EditorState&);
 
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 private:
     PostLayoutData m_postLayoutData;
 #endif
 };
 
-#if PLATFORM(IOS) || PLATFORM(GTK)
+#if PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(MAC)
 inline auto EditorState::postLayoutData() -> PostLayoutData&
 {
     ASSERT_WITH_MESSAGE(!isMissingPostLayoutData, "Attempt to access post layout data before receiving it");

@@ -294,6 +294,10 @@ public:
     void lowercaseWord();
     void capitalizeWord();
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    void requestCandidatesForSelectionIfNeeded();
+#endif
+
     void preferencesDidChange();
 
     void setTextIndicator(WebCore::TextIndicator&, WebCore::TextIndicatorWindowLifetime = WebCore::TextIndicatorWindowLifetime::Permanent);
@@ -498,6 +502,11 @@ private:
 
     Vector<NSTouch *> touchesOrderedByAge();
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    void handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates);
+    void handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidate);
+#endif
+
     NSView <WebViewImplDelegate> *m_view;
     std::unique_ptr<PageClient> m_pageClient;
     Ref<WebPageProxy> m_page;
@@ -610,6 +619,10 @@ private:
 
     Vector<RetainPtr<id <NSObject, NSCopying>>> m_activeTouchIdentities;
     RetainPtr<NSArray> m_lastTouches;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    String m_lastStringForCandidateRequest;
+#endif
 };
     
 } // namespace WebKit
