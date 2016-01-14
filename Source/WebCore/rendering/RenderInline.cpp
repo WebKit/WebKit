@@ -298,6 +298,12 @@ RenderBoxModelObject* RenderInline::continuationBefore(RenderObject* beforeChild
     return last;
 }
 
+static bool newChildIsInline(const RenderObject& newChild, const RenderInline& parent)
+{
+    // inline parent generates inline-table.
+    return newChild.isInline() | (parent.childRequiresTable(newChild) && parent.style().display() == INLINE);
+}
+
 void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
@@ -305,9 +311,9 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         beforeChild = lastChild();
     
     bool useNewBlockInsideInlineModel = document().settings()->newBlockInsideInlineModelEnabled();
-    
+    bool childInline = newChildIsInline(*newChild, *this);
     // This code is for the old block-inside-inline model that uses continuations.
-    if (!useNewBlockInsideInlineModel && !newChild->isInline() && !newChild->isFloatingOrOutOfFlowPositioned()) {
+    if (!useNewBlockInsideInlineModel && !childInline && !newChild->isFloatingOrOutOfFlowPositioned()) {
         // We are placing a block inside an inline. We have to perform a split of this
         // inline into continuations.  This involves creating an anonymous block box to hold
         // |newChild|.  We then make that block box a continuation of this inline.  We take all of
@@ -345,14 +351,14 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         ASSERT(beforeChild->parent());
         ASSERT(beforeChild->parent()->isAnonymousInlineBlock() || beforeChild->parent()->isAnonymousBlock());
         if (beforeChild->parent()->isAnonymousInlineBlock()) {
-            if (!newChild->isInline() || (newChild->isInline() && beforeChild->parent()->firstChild() != beforeChild))
+            if (!childInline || (childInline && beforeChild->parent()->firstChild() != beforeChild))
                 beforeChild->parent()->addChild(newChild, beforeChild);
             else
                 addChild(newChild, beforeChild->parent());
         } else if (beforeChild->parent()->isAnonymousBlock()) {
             ASSERT(!beforeChild->parent()->parent() || beforeChild->parent()->parent()->isAnonymousInlineBlock());
-            ASSERT(beforeChild->isInline());
-            if (newChild->isInline() || (!newChild->isInline() && beforeChild->parent()->firstChild() != beforeChild))
+            ASSERT(childInline);
+            if (childInline || (!childInline && beforeChild->parent()->firstChild() != beforeChild))
                 beforeChild->parent()->addChild(newChild, beforeChild);
             else
                 addChild(newChild, beforeChild->parent());
@@ -360,7 +366,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         return;
     }
 
-    if (!newChild->isInline()) {
+    if (!childInline) {
         // We are placing a block inside an inline. We have to place the block inside an anonymous inline-block.
         // This inline-block can house a sequence of contiguous block-level children, and they will all sit on the
         // same "line" together. We try to reuse an existing inline-block if possible.
@@ -579,7 +585,7 @@ void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* 
 
     // A continuation always consists of two potential candidates: an inline or an anonymous
     // block box holding block children.
-    bool childInline = newChild->isInline();
+    bool childInline = newChildIsInline(*newChild, *this);
     bool bcpInline = beforeChildParent->isInline();
     bool flowInline = flow->isInline();
 

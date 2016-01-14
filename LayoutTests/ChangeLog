@@ -1,3 +1,51 @@
+2015-10-13  Zalan Bujtas  <zalan@apple.com>
+
+        Anonymous table objects: inline parent box requires inline-table child.
+        https://bugs.webkit.org/show_bug.cgi?id=150090
+
+        Reviewed by David Hyatt.
+
+        According to the CSS2.1 specification, if a child needs anonymous table wrapper
+        and the child's parent is an inline box, the generated table needs to be inline-table.
+        (inline-block and block parents generate non-inline table) 
+
+        Import W3C CSS2.1 anonymous table tests.
+
+        * css2.1/tables/table-anonymous-objects-177.xht: Added.
+        * css2.1/tables/table-anonymous-objects-178.xht: Added.
+        * css2.1/tables/table-anonymous-objects-179.xht: Added.
+        * css2.1/tables/table-anonymous-objects-180.xht: Added.
+        * css2.1/tables/table-anonymous-objects-181.xht: Added.
+        * css2.1/tables/table-anonymous-objects-189.xht: Added.
+        * css2.1/tables/table-anonymous-objects-190.xht: Added.
+        * css2.1/tables/table-anonymous-objects-191.xht: Added.
+        * css2.1/tables/table-anonymous-objects-192.xht: Added.
+        * css2.1/tables/table-anonymous-objects-193.xht: Added.
+        * css2.1/tables/table-anonymous-objects-194.xht: Added.
+        * css2.1/tables/table-anonymous-objects-195.xht: Added.
+        * css2.1/tables/table-anonymous-objects-196.xht: Added.
+        * css2.1/tables/table-anonymous-objects-205.xht: Added.
+        * css2.1/tables/table-anonymous-objects-206.xht: Added.
+        * css2.1/tables/table-anonymous-objects-207.xht: Added.
+        * css2.1/tables/table-anonymous-objects-208.xht: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-177-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-178-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-179-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-180-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-181-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-189-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-190-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-191-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-192-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-193-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-194-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-195-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-196-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-205-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-206-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-207-expected.txt: Added.
+        * platform/mac/css2.1/tables/table-anonymous-objects-208-expected.txt: Added.
+
 2015-11-10  Geoffrey Garen  <ggaren@apple.com>
 
         alert, confirm, prompt, showModalDialog should be forbidden during page close and navigation
