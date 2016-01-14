@@ -35,7 +35,7 @@ MockTrac = function()
             "date": "2015-11-15T17:05:44.000Z",
             "description": "description",
             "containsBranchLocation": true,
-            "branch": "trunk"
+            "branchName": "trunk"
         },
         {
             "revisionNumber": 33019,
@@ -45,7 +45,7 @@ MockTrac = function()
             "date": "2015-11-16T01:18:23.000Z",
             "description": "description",
             "containsBranchLocation": true,
-            "branch": "trunk"
+            "branchName": "trunk"
         },
         {
             "revisionNumber": 33020,
@@ -55,7 +55,7 @@ MockTrac = function()
             "date": "2015-11-16T01:19:27.000Z",
             "description": "description",
             "containsBranchLocation": true,
-            "branch": "trunk"
+            "branchName": "trunk"
         },
         {
             "revisionNumber": 33021,
@@ -65,7 +65,7 @@ MockTrac = function()
             "date": "2015-11-16T01:20:58.000Z",
             "description": "description",
             "containsBranchLocation": true,
-            "branch": "someOtherBranch"
+            "branchName": "someOtherBranch"
         },
         {
             "revisionNumber": 33022,
@@ -75,7 +75,7 @@ MockTrac = function()
             "date": "2015-11-16T01:22:01.000Z",
             "description": "description",
             "containsBranchLocation": true,
-            "branch": "trunk"
+            "branchName": "trunk"
         }
     ];
 };

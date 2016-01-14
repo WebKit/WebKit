@@ -1,5 +1,25 @@
 2016-01-14  Jason Marcell  <jmarcell@apple.com>
 
+        Standardize the usage of "branch" vs. "branchName".
+        https://bugs.webkit.org/show_bug.cgi?id=152982
+
+        Reviewed by Daniel Bates.
+
+        In an earlier patch we started using the name "branch" to indicate a branch object, whereas
+        "branchName" implies that the variable or property in question is simply a string.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._popoverLinesForCommitRange): Change branch to branchName.
+        (BuildbotQueueView.prototype._presentPopoverForRevisionRange): Change branch to branch.name.
+        (BuildbotQueueView.prototype._revisionContentWithPopoverForIteration): Change branch to branchName.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        (Trac.prototype.commitsOnBranch): Change branch to branchName.
+        (Trac.prototype._convertCommitInfoElementToObject): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockTrac.js:
+        (MockTrac): Ditto.
+
+2016-01-14  Jason Marcell  <jmarcell@apple.com>
+
         Add a unit test to test BuildbotQueueView._appendPendingRevisionCount.
         https://bugs.webkit.org/show_bug.cgi?id=152910
 

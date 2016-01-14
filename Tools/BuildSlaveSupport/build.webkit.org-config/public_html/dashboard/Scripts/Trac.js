@@ -63,10 +63,10 @@ Trac.prototype = {
         return this.recordedCommits[this.recordedCommits.length - 1].revisionNumber;
     },
 
-    commitsOnBranch: function(branch, filter)
+    commitsOnBranch: function(branchName, filter)
     {
         return this.recordedCommits.filter(function(commit) {
-            return (!commit.containsBranchLocation || commit.branch === branch) && filter(commit);
+            return (!commit.containsBranchLocation || commit.branchName === branchName) && filter(commit);
         });
     },
 
@@ -149,11 +149,11 @@ Trac.prototype = {
             if (location.startsWith("tags/"))
                 result.tag = location.substr(5, location.indexOf("/", 5) - 5);
             else if (location.startsWith("branches/"))
-                result.branch = location.substr(9, location.indexOf("/", 9) - 9);
+                result.branchName = location.substr(9, location.indexOf("/", 9) - 9);
             else if (location.startsWith("releases/"))
                 result.release = location.substr(9, location.indexOf("/", 9) - 9);
             else if (location.startsWith("trunk/"))
-                result.branch = "trunk";
+                result.branchName = "trunk";
             else if (location.startsWith("submissions/"))
                 ; // These changes are never relevant to the dashboard.
             else {

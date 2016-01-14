@@ -110,7 +110,7 @@ BuildbotQueueView.prototype = {
         new PopoverTracker(messageElement, this._presentPopoverForPendingCommits.bind(this), queue);
     },
 
-    _popoverLinesForCommitRange: function(trac, branch, firstRevisionNumber, lastRevisionNumber)
+    _popoverLinesForCommitRange: function(trac, branchName, firstRevisionNumber, lastRevisionNumber)
     {
         function lineForCommit(trac, commit)
         {
@@ -141,7 +141,7 @@ BuildbotQueueView.prototype = {
 
         // FIXME: To be 100% correct, we should also filter out changes that are ignored by
         // the queue, see _should_file_trigger_build in wkbuild.py.
-        var commits = trac.commitsOnBranch(branch, function(commit) { return commit.revisionNumber >= firstRevisionNumber && commit.revisionNumber <= lastRevisionNumber; });
+        var commits = trac.commitsOnBranch(branchName, function(commit) { return commit.revisionNumber >= firstRevisionNumber && commit.revisionNumber <= lastRevisionNumber; });
         return commits.map(function(commit) {
             return lineForCommit(trac, commit);
         }, this).reverse();
@@ -188,7 +188,7 @@ BuildbotQueueView.prototype = {
         content.className = "commit-history-popover";
 
         // FIXME: Nothing guarantees that Trac has historical data for these revisions.
-        var linesForCommits = this._popoverLinesForCommitRange(context.trac, context.branch, context.firstRevision, context.lastRevision);
+        var linesForCommits = this._popoverLinesForCommitRange(context.trac, context.branchName, context.firstRevision, context.lastRevision);
 
         var line = document.createElement("div");
         line.className = "title";
@@ -198,7 +198,7 @@ BuildbotQueueView.prototype = {
             content.appendChild(line);
             this._addDividerToPopover(content);
         } else {
-            line.textContent = "no commits to " + context.branch + " since previous result";
+            line.textContent = "no commits to " + context.branchName + " since previous result";
             content.appendChild(line);
         }
 
@@ -232,7 +232,7 @@ BuildbotQueueView.prototype = {
             console.assert(previousIteration.revision[repositoryName]);
             var context = {
                 trac: repository.trac,
-                branch: branch.name,
+                branchName: branch.name,
                 firstRevision: previousIteration.revision[repositoryName] + 1,
                 lastRevision: iteration.revision[repositoryName]
             };
