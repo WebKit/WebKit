@@ -985,4 +985,15 @@ void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
         m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
 }
 
+void WebProcessProxy::sendMainThreadPing()
+{
+    responsivenessTimer()->start();
+    send(Messages::WebProcess::MainThreadPing(), 0);
+}
+
+void WebProcessProxy::didReceiveMainThreadPing()
+{
+    responsivenessTimer()->stop();
+}
+
 } // namespace WebKit

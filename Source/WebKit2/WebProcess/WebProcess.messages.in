@@ -104,4 +104,6 @@ messages -> WebProcess LegacyReceiver {
     PrepareToSuspend()
     CancelPrepareToSuspend()
     ProcessDidResume()
+
+    MainThreadPing()
 }

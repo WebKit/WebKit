@@ -156,6 +156,9 @@ public:
     void reinstateNetworkProcessAssertionState(NetworkProcessProxy&);
 #endif
 
+    void sendMainThreadPing();
+    void didReceiveMainThreadPing();
+
 private:
     explicit WebProcessProxy(WebProcessPool&);
 
