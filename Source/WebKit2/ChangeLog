@@ -1,3 +1,19 @@
+2016-01-14  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL][GTK][SeccompFilter] Fix build break when enabling --seccomp-filters
+        https://bugs.webkit.org/show_bug.cgi?id=153094
+
+        Reviewed by Csaba Osztrogonác.
+
+        diskCacheDirectory and cookiePersistentStoragePath were removed by r192796.
+        But SyscallPolicy::addDefaultWebProcessPolicy has added directory permission
+        to the removed paths.
+
+        It looks two paths needs to be handled by network process.
+
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp:
+        (WebKit::SyscallPolicy::addDefaultWebProcessPolicy): Deleted.
+
 2016-01-13  Alex Christensen  <achristensen@webkit.org>
 
         Implement custom protocols when using NetworkSession

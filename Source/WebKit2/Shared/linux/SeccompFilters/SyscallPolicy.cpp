@@ -139,14 +139,8 @@ void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameter
         addDirectoryPermission(removeTrailingSlash(parameters.applicationCacheDirectory), ReadAndWrite);
     if (!parameters.webSQLDatabaseDirectory.isEmpty())
         addDirectoryPermission(removeTrailingSlash(parameters.webSQLDatabaseDirectory), ReadAndWrite);
-    if (!parameters.diskCacheDirectory.isEmpty())
-        addDirectoryPermission(removeTrailingSlash(parameters.diskCacheDirectory), ReadAndWrite);
     if (!parameters.cookieStorageDirectory.isEmpty())
         addDirectoryPermission(removeTrailingSlash(parameters.cookieStorageDirectory), ReadAndWrite);
-#if USE(SOUP)
-    if (!parameters.cookiePersistentStoragePath.isEmpty())
-        addDirectoryPermission(removeTrailingSlash(parameters.cookiePersistentStoragePath), ReadAndWrite);
-#endif
 
     // The root policy will block access to any directory or
     // file unless white listed bellow or by platform.
