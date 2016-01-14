@@ -409,9 +409,10 @@ public:
     void captionPreferencesChanged();
 #endif
 
-    void incrementFrameHandlingBeforeUnloadEventCount();
-    void decrementFrameHandlingBeforeUnloadEventCount();
-    bool isAnyFrameHandlingBeforeUnloadEvent();
+    void forbidPrompts();
+    void allowPrompts();
+    bool arePromptsAllowed();
+
     void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
     unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
@@ -606,7 +607,7 @@ private:
     HashSet<String> m_seenMediaEngines;
 
     unsigned m_lastSpatialNavigationCandidatesCount;
-    unsigned m_framesHandlingBeforeUnloadEvent;
+    unsigned m_forbidPromptsDepth;
 
     Ref<ApplicationCacheStorage> m_applicationCacheStorage;
     Ref<DatabaseProvider> m_databaseProvider;
