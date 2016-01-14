@@ -134,6 +134,11 @@ bool NetscapePlugin::platformPostInitializeWindowed(bool needsXEmbed, uint64_t w
     // I guess it uses gdk_window_lookup(), so we create a new socket here
     // containing a plug with the UI process socket embedded.
     m_platformPluginWidget = gtk_plug_new(static_cast<Window>(windowID));
+
+    // Hide the GtkPlug on delete-event since we assume the widget is valid while the plugin is active.
+    // platformDestroy() will be called anyway right after the delete-event.
+    g_signal_connect(m_platformPluginWidget, "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), nullptr);
+
     GtkWidget* socket = gtk_socket_new();
     // Do not show the plug widget until the socket is connected.
     g_signal_connect_swapped(socket, "plug-added", G_CALLBACK(gtk_widget_show), m_platformPluginWidget);
