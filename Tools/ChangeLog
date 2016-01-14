@@ -1,3 +1,28 @@
+2016-01-14  Jason Marcell  <jmarcell@apple.com>
+
+        Add a unit test to test BuildbotQueueView._appendPendingRevisionCount.
+        https://bugs.webkit.org/show_bug.cgi?id=152910
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockBuildbotQueue.js: Added.
+        (MockBuildbotQueue): Added. Mock BuildbotQueue object that doesn't need to talk to an actual Buildbot server.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockBuildbotQueueView.js: Added.
+        (MockBuildbotQueueView): Added. Mock BuildbotQueueView object that returns a pre-specified _latestProductiveIteration without
+        the need to talk to a real Buildbot server.
+        (MockBuildbotQueueView.prototype._latestProductiveIteration): Added. Returns a pre-specified _latestProductiveIteration
+        without the need to talk to a real Buildbot server.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/MockTrac.js: Added.
+        (MockTrac): Added. Mock Trac constructor that has pre-populated "recordedCommits" and does not need to talk to a real Trac
+        server.
+        (MockTrac.prototype.get oldestRecordedRevisionNumber): Added. Returns a pre-specified revision.
+        (MockTrac.prototype.get latestRecordedRevisionNumber): Ditto.
+        (MockTrac.prototype.loadMoreHistoricalData): Added. Overrides the real loadMoreHistoricalData so that we don't waste time
+        trying to talk to Trac.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/index.html: Added. Web page container for
+        QUnit unit tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/tests.js: Added. QUnit unit tests.
+
 2016-01-14  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [CMake][GTK] CMake Error: Could not create named generator Eclipse CDT4 - Ninja
