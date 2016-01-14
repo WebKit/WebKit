@@ -92,7 +92,12 @@ public:
     ~WebDataSourcePrivate()
     {
         if (loader) {
-            ASSERT(!loader->isLoading());
+            // We might run in to infinite recursion if we're stopping loading as the result of detaching from the frame.
+            // Therefore, DocumentLoader::detachFromFrame() did some smart things to stop the recursion.
+            // As a result of breaking the resursion, DocumentLoader::m_subresourceLoader
+            // and DocumentLoader::m_plugInStreamLoaders might not be empty at this time.
+            // See <rdar://problem/9673866> for more details.
+            ASSERT(!loader->isLoading() || loader->isStopping());
             loader->detachDataSource();
         }
     }
