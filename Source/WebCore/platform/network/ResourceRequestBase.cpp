@@ -379,6 +379,16 @@ void ResourceRequestBase::clearHTTPAccept()
         m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::clearHTTPAcceptEncoding()
+{
+    updateResourceRequest();
+
+    m_httpHeaderFields.remove(HTTPHeaderName::AcceptEncoding);
+
+    if (url().protocolIsInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
 void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(const String& encoding1, const String& encoding2, const String& encoding3)
 {
     updateResourceRequest(); 

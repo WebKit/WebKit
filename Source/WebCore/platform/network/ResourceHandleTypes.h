@@ -39,6 +39,15 @@ enum ClientCredentialPolicy {
     DoNotAskClientForAnyCredentials
 };
 
+// APIs like XMLHttpRequest and EventSource let the user decide
+// whether to send credentials, but they're always sent for
+// same-origin requests. Additional information is needed to handle
+// cross-origin redirects correctly.
+enum CredentialRequest {
+    ClientRequestedCredentials,
+    ClientDidNotRequestCredentials
+};
+
 } // namespace WebCore
 
 #endif // ResourceHandleTypes_h

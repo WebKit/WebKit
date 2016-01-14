@@ -1,6 +1,6 @@
 
-FAIL XMLHttpRequest: send() - Redirect to CORS-enabled resource (301) assert_equals: expected (string) "GET" but got (object) null
-FAIL XMLHttpRequest: send() - Redirect to CORS-enabled resource (302) assert_equals: expected (string) "GET" but got (object) null
-FAIL XMLHttpRequest: send() - Redirect to CORS-enabled resource (303) assert_equals: expected (string) "GET" but got (object) null
-FAIL XMLHttpRequest: send() - Redirect to CORS-enabled resource (307) assert_equals: expected (string) "GET" but got (object) null
+PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (301) 
+PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (302) 
+PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (303) 
+PASS XMLHttpRequest: send() - Redirect to CORS-enabled resource (307) 
 

@@ -182,7 +182,8 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
         return;
 
     // When using access control, only simple cross origin requests are allowed to redirect. The new request URL must have a supported
-    // scheme and not contain the userinfo production. In addition, the redirect response must pass the access control check.
+    // scheme and not contain the userinfo production. In addition, the redirect response must pass the access control check if the
+    // original request was not same-origin.
     if (m_options.crossOriginRequestPolicy == UseAccessControl) {
         bool allowRedirect = false;
         if (m_simpleRequest) {
@@ -190,7 +191,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
             allowRedirect = SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(request.url().protocol())
                             && request.url().user().isEmpty()
                             && request.url().pass().isEmpty()
-                            && passesAccessControlCheck(redirectResponse, m_options.allowCredentials(), securityOrigin(), accessControlErrorDescription);
+                            && (m_sameOriginRequest || passesAccessControlCheck(redirectResponse, m_options.allowCredentials(), securityOrigin(), accessControlErrorDescription));
         }
 
         if (allowRedirect) {
@@ -199,11 +200,18 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
 
             RefPtr<SecurityOrigin> originalOrigin = SecurityOrigin::createFromString(redirectResponse.url());
             RefPtr<SecurityOrigin> requestOrigin = SecurityOrigin::createFromString(request.url());
-            // If the request URL origin is not same origin with the original URL origin, set source origin to a globally unique identifier.
-            if (!originalOrigin->isSameSchemeHostPort(requestOrigin.get()))
+            // If the original request wasn't same-origin, then if the request URL origin is not same origin with the original URL origin,
+            // set the source origin to a globally unique identifier. (If the original request was same-origin, the origin of the new request
+            // should be the original URL origin.)
+            if (!m_sameOriginRequest && !originalOrigin->isSameSchemeHostPort(requestOrigin.get()))
                 m_options.securityOrigin = SecurityOrigin::createUnique();
-            // Force any subsequent requests to use these checks.
+            // Force any subsequent request to use these checks.
             m_sameOriginRequest = false;
+
+            // Since the request is no longer same-origin, if the user didn't request credentials in
+            // the first place, update our state so we neither request them nor expect they must be allowed.
+            if (m_options.credentialRequest() == ClientDidNotRequestCredentials)
+                m_options.setAllowCredentials(DoNotAllowStoredCredentials);
 
             // Remove any headers that may have been added by the network layer that cause access control to fail.
             request.clearHTTPContentType();
@@ -211,6 +219,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
             request.clearHTTPOrigin();
             request.clearHTTPUserAgent();
             request.clearHTTPAccept();
+            request.clearHTTPAcceptEncoding();
             makeCrossOriginAccessRequest(request);
             return;
         }

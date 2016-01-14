@@ -12,11 +12,12 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
 }
 
-function runTestAsync(url, addCustomHeader, expectSuccess) {
-    log("Testing " + url);
+function runTestAsync(url, credentials, addCustomHeader, expectSuccess) {
+    log("Testing " + url + (credentials ? " with " : " without ") + "credentials");
     log("Expecting success: " + expectSuccess);
 
     xhr = new XMLHttpRequest();
+    xhr.withCredentials = credentials;
     xhr.open("GET", url, true);
     if (addCustomHeader)
         xhr.setRequestHeader("x-webkit", "foo");
@@ -32,72 +33,57 @@ function runTestAsync(url, addCustomHeader, expectSuccess) {
     xhr.send(null);
 }
 
+var withoutCredentials = false;
+var withCredentials = true;
 var noCustomHeader = false;
 var addCustomHeader = true;
 var succeeds = true;
 var fails = false;
 
 var tests = [
-// 1) Test simple same origin requests that receive cross origin redirects.
-
-// Request receives a cross-origin redirect response without CORS headers. The redirect response fails the access check.
-["resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
-  noCustomHeader, fails],
-
-// Request receives a cross-origin redirect response with CORS headers. The redirect response passes the access check,
-// but  the resource response fails its access check because the security origin is a globally unique identifier after
-// the redirect and the same origin XHR has 'allowCredentials' true.
-["resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&\
-  access-control-allow-origin=http://localhost:8000&\
-  access-control-allow-credentials=true",
-  noCustomHeader, fails],
-
-// Same as above, but to a less permissive resource that only allows the requesting origin.
-["resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi&\
-  access-control-allow-origin=http://localhost:8000&\
-  access-control-allow-credentials=true",
-  noCustomHeader, fails],
-
-// 2) Test simple cross origin requests that receive redirects.
+// 1) Test simple cross origin requests that receive redirects.
 
 // Receives a redirect response without CORS headers. The redirect response fails the access check.
 ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
-  noCustomHeader, fails],
+  withoutCredentials, noCustomHeader, fails],
 
 // Receives a redirect response with CORS headers. The redirect response passes the access check and the resource response
 // passes the access check.
+// FIXME: this test fails because the redirect is vetoed. There are continued bugs with redirects when the original
+// request was cross-origin.
 ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&\
   access-control-allow-origin=http://localhost:8000",
-  noCustomHeader, succeeds],
+  withoutCredentials, noCustomHeader, succeeds],
 
 // Receives a redirect response with a URL containing the userinfo production.
 ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://username:password@localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&\
   access-control-allow-origin=http://localhost:8000",
-  noCustomHeader, fails],
+  withoutCredentials, noCustomHeader, fails],
 
 // Receives a redirect response with a URL with an unsupported scheme.
 ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=foo://bar.cgi&\
   access-control-allow-origin=http://localhost:8000",
-  noCustomHeader, fails],
+  withoutCredentials, noCustomHeader, fails],
 
-// 3) Test preflighted cross origin requests that receive redirects.
+// 2) Test preflighted cross origin requests that receive redirects.
 
 // Receives a redirect response to the preflight request and fails.
 ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&\
   url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&\
   access-control-allow-origin=*",
-  addCustomHeader, fails],
+  withoutCredentials, addCustomHeader, fails],
 
 // Successful preflight and receives a redirect response to the actual request and fails.
 ["http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=false&\
   url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&\
   access-control-allow-origin=*&\
   access-control-allow-headers=x-webkit",
-  addCustomHeader, fails],
+  withoutCredentials, addCustomHeader, fails],
 
-// 4) Test same origin requests with a custom header that receive a same origin redirect.
+// 3) Test same origin requests with a custom header that receive a same origin redirect.
 ["resources/redirect-cors.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/get.txt",
-  addCustomHeader, succeeds],
+  withoutCredentials, addCustomHeader, succeeds],
+
 ]
 
 var currentTest = 0;

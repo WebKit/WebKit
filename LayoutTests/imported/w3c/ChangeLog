@@ -1,3 +1,17 @@
+2016-01-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Fix problems with cross-origin redirects
+        https://bugs.webkit.org/show_bug.cgi?id=116075
+
+        Reviewed by Daniel Bates.
+
+        Rebasing test expectations.
+        These tests cannot work as expected as WTR/DRT block access to www2.localhost and example.not.
+
+        * web-platform-tests/XMLHttpRequest/send-redirect-bogus-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-redirect-to-cors-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors-expected.txt:
+
 2016-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         formaction must return document's address when formaction is missing

@@ -1,3 +1,49 @@
+2016-01-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Fix problems with cross-origin redirects
+        https://bugs.webkit.org/show_bug.cgi?id=116075
+
+        Reviewed by Daniel Bates.
+
+        Merging https://chromium.googlesource.com/chromium/blink/+/7ea774e478f84f355748108d2aaabca15355d512 by Ken Russell
+        Same origin redirect responses leading to cross-origin requests were checked as cross-origin redirect responses.
+        Introduced ClientRequestedCredentials to manage whether credentials are needed or not in the cross-origin request.
+
+        In addition to Blink patch, it was needed to update some loaders with the newly introduced ClientRequestedCredentials parameter.
+        Added the clearing of "Accept-Encoding" header from cross-origin requests as Mac HTTP network layer is adding it for same-origin requests.
+
+        Test: http/tests/xmlhttprequest/access-control-and-redirects-async-same-origin.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource): Added new security parameter (from Blink patch).
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived): Updated checks so that same origin redirections are not treated as cross origin redirections (from Blink patch).
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::start):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader): Added new security parameter.
+        * loader/ResourceLoaderOptions.h:
+        (WebCore::ResourceLoaderOptions::ResourceLoaderOptions): Added new security parameter (from Blink patch).
+        (WebCore::ResourceLoaderOptions::credentialRequest):
+        (WebCore::ResourceLoaderOptions::setCredentialRequest):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet): Ditto.
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions): Ditto.
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading): Added new security parameter.
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect): Added new security parameter (from Blink patch).
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::startLoading): Added new security parameter.
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading): Ditto.
+        * platform/network/ResourceHandleTypes.h: Added new security parameter constants (from Blink patch).
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::clearHTTPAcceptEncoding): Function to remove "Accept-Encoding" header.
+        * platform/network/ResourceRequestBase.h: Ditto.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest): Added new security parameter.
+
 2016-01-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing more post-review comments after r194566
