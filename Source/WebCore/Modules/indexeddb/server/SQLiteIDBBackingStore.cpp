@@ -28,25 +28,53 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "FileSystem.h"
 #include "IDBDatabaseException.h"
-#include "NotImplemented.h"
+#include "IDBKeyData.h"
+#include "Logging.h"
+#include "SQLiteDatabase.h"
+#include "SQLiteFileSystem.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 namespace IDBServer {
 
-SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier)
+SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory)
     : m_identifier(identifier)
 {
+    m_absoluteDatabaseDirectory = identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory);
 }
 
 SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
 {
+    if (m_sqliteDB)
+        m_sqliteDB->close();
 }
 
 const IDBDatabaseInfo& SQLiteIDBBackingStore::getOrEstablishDatabaseInfo()
 {
-    if (!m_databaseInfo)
-        m_databaseInfo = std::make_unique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
+    LOG(IndexedDB, "SQLiteIDBBackingStore::getOrEstablishDatabaseInfo - database %s", m_identifier.databaseName().utf8().data());
+
+    if (m_databaseInfo)
+        return *m_databaseInfo;
+
+    m_databaseInfo = std::make_unique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
+
+    makeAllDirectories(m_absoluteDatabaseDirectory);
+
+    String dbFilename = pathByAppendingComponent(m_absoluteDatabaseDirectory, "IndexedDB.sqlite3");
+
+    m_sqliteDB = std::make_unique<SQLiteDatabase>();
+    if (!m_sqliteDB->open(dbFilename)) {
+        LOG_ERROR("Failed to open SQLite database at path '%s'", dbFilename.utf8().data());
+        m_sqliteDB = nullptr;
+    }
+
+    if (!m_sqliteDB)
+        return *m_databaseInfo;
+
+    // FIXME: Support populating new SQLite files and pulling DatabaseInfo from existing SQLite files.
+    // Doing so will make a new m_databaseInfo which overrides the default one we created up above.
 
     return *m_databaseInfo;
 }
@@ -148,7 +176,17 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier&, cons
 
 void SQLiteIDBBackingStore::deleteBackingStore()
 {
-    notImplemented();
+    String dbFilename = pathByAppendingComponent(m_absoluteDatabaseDirectory, "IndexedDB.sqlite3");
+
+    LOG(IndexedDB, "SQLiteIDBBackingStore::deleteBackingStore deleting file '%s' on disk", dbFilename.utf8().data());
+
+    if (m_sqliteDB) {
+        m_sqliteDB->close();
+        m_sqliteDB = nullptr;
+    }
+
+    SQLiteFileSystem::deleteDatabaseFile(dbFilename);
+    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_absoluteDatabaseDirectory);
 }
 
 } // namespace IDBServer

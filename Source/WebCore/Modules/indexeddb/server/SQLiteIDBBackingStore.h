@@ -33,11 +33,14 @@
 #include "IDBDatabaseInfo.h"
 
 namespace WebCore {
+
+class SQLiteDatabase;
+
 namespace IDBServer {
 
 class SQLiteIDBBackingStore : public IDBBackingStore {
 public:
-    SQLiteIDBBackingStore(const IDBDatabaseIdentifier&);
+    SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseRootDirectory);
     
     virtual ~SQLiteIDBBackingStore() override final;
 
@@ -68,6 +71,10 @@ public:
 private:
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
+
+    std::unique_ptr<SQLiteDatabase> m_sqliteDB;
+
+    String m_absoluteDatabaseDirectory;
 };
 
 } // namespace IDBServer

@@ -51,6 +51,7 @@ namespace IDBServer {
 class IDBServer : public RefCounted<IDBServer> {
 public:
     static Ref<IDBServer> create();
+    static Ref<IDBServer> create(const String& databaseDirectoryPath);
 
     void registerConnection(IDBConnectionToClient&);
     void unregisterConnection(IDBConnectionToClient&);
@@ -92,6 +93,7 @@ public:
 
 private:
     IDBServer();
+    IDBServer(const String& databaseDirectoryPath);
 
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
 
@@ -112,6 +114,8 @@ private:
 
     HashMap<uint64_t, UniqueIDBDatabaseConnection*> m_databaseConnections;
     HashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;
+
+    String m_databaseDirectoryPath;
 };
 
 } // namespace IDBServer

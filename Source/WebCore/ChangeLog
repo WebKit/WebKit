@@ -1,3 +1,33 @@
+2016-01-14  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Support opening and deleting SQLite databases on disk.
+        https://bugs.webkit.org/show_bug.cgi?id=153084
+
+        Reviewed by Alex Christensen, Sam Weinig and Andy Estes (oh my!).
+
+        No new tests (Infrastructure, no testable change in behavior).
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::create):
+        (WebCore::IDBServer::IDBServer::IDBServer):
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::create):
+        (WebCore::InProcessIDBServer::InProcessIDBServer):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2016-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Mixing Content Blocking of fonts and display:none rules causes battery drain

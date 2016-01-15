@@ -53,8 +53,12 @@ RefPtr<WebCore::IDBFactoryBackendInterface> WebDatabaseProvider::createIDBFactor
 WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const WebCore::SessionID& sessionID)
 {
     auto result = m_idbServerMap.add(sessionID.sessionID(), nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = WebCore::InProcessIDBServer::create();
+    if (result.isNewEntry) {
+        if (sessionID.isEphemeral())
+            result.iterator->value = WebCore::InProcessIDBServer::create();
+        else
+            result.iterator->value = WebCore::InProcessIDBServer::create(indexedDatabaseDirectoryPath());
+    }
 
     return result.iterator->value->connectionToServer();
 }

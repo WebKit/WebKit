@@ -49,6 +49,7 @@ class IDBServer;
 class InProcessIDBServer final : public IDBClient::IDBConnectionToServerDelegate, public IDBServer::IDBConnectionToClientDelegate, public RefCounted<InProcessIDBServer> {
 public:
     WEBCORE_EXPORT static Ref<InProcessIDBServer> create();
+    WEBCORE_EXPORT static Ref<InProcessIDBServer> create(const String& databaseDirectoryPath);
 
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer& connectionToServer() const;
     IDBServer::IDBConnectionToClient& connectionToClient() const;
@@ -101,6 +102,7 @@ public:
 
 private:
     InProcessIDBServer();
+    InProcessIDBServer(const String& databaseDirectoryPath);
 
     Ref<IDBServer::IDBServer> m_server;
     RefPtr<IDBClient::IDBConnectionToServer> m_connectionToServer;

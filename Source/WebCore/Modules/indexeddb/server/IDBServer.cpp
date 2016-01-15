@@ -32,6 +32,7 @@
 #include "IDBResultData.h"
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
+#include "SQLiteIDBBackingStore.h"
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 
@@ -43,8 +44,22 @@ Ref<IDBServer> IDBServer::create()
     return adoptRef(*new IDBServer());
 }
 
+Ref<IDBServer> IDBServer::create(const String& databaseDirectoryPath)
+{
+    return adoptRef(*new IDBServer(databaseDirectoryPath));
+}
+
 IDBServer::IDBServer()
 {
+    Locker<Lock> locker(m_databaseThreadCreationLock);
+    m_threadID = createThread(IDBServer::databaseThreadEntry, this, "IndexedDatabase Server");
+}
+
+IDBServer::IDBServer(const String& databaseDirectoryPath)
+    : m_databaseDirectoryPath(databaseDirectoryPath)
+{
+    LOG(IndexedDB, "IDBServer created at path %s", databaseDirectoryPath.utf8().data());
+
     Locker<Lock> locker(m_databaseThreadCreationLock);
     m_threadID = createThread(IDBServer::databaseThreadEntry, this, "IndexedDatabase Server");
 }
@@ -102,9 +117,7 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
 {
     ASSERT(!isMainThread());
 
-    // FIXME: For now we only have the in-memory backing store, which we'll continue to use for private browsing.
-    // Once it's time for persistent backing stores this is where we'll calculate the correct path on disk
-    // and create it.
+    // FIXME: Once the SQLite backing store is functional, conditionally make either a Memory or SQLite backing store.
 
     return MemoryIDBBackingStore::create(identifier);
 }

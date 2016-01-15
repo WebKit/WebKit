@@ -92,6 +92,8 @@ public:
 
     const String& databaseName() const { return m_databaseName; }
 
+    String databaseDirectoryRelativeToRoot(const String& rootDirectory) const;
+
 #ifndef NDEBUG
     String debugString() const;
 #endif

@@ -1,3 +1,16 @@
+2016-01-14  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Support opening and deleting SQLite databases on disk.
+        https://bugs.webkit.org/show_bug.cgi?id=153084
+
+        Reviewed by Alex Christensen, Sam Weinig and Andy Estes (oh my!).
+
+        * Storage/WebDatabaseProvider.cpp:
+        (WebDatabaseProvider::idbConnectionToServerForSession):
+        * Storage/WebDatabaseProvider.h:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2016-01-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r194900.

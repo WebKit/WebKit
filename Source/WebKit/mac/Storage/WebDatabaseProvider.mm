@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDatabaseProvider_h
-#define WebDatabaseProvider_h
+#import "WebDatabaseProvider.h"
+#import "WebDatabaseManagerPrivate.h"
 
-#include <WebCore/DatabaseProvider.h>
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/RefPtr.h>
+#import <WebCore/FileSystem.h>
 
-#if ENABLE(INDEXED_DATABASE)
-#include <WebCore/InProcessIDBServer.h>
-#endif
-
-class WebDatabaseProvider final : public WebCore::DatabaseProvider {
-    friend class NeverDestroyed<WebDatabaseProvider>;
-public:
-    static WebDatabaseProvider& singleton();
-    virtual ~WebDatabaseProvider();
-
-#if ENABLE(INDEXED_DATABASE)
-    virtual bool supportsModernIDB() const override { return true; }
-    virtual WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&) override;
-#endif
-
-private:
-    explicit WebDatabaseProvider();
-
-    static String indexedDatabaseDirectoryPath();
-
-#if ENABLE(INDEXED_DATABASE)
-    virtual RefPtr<WebCore::IDBFactoryBackendInterface> createIDBFactoryBackend() override;
-    HashMap<uint64_t, RefPtr<WebCore::InProcessIDBServer>> m_idbServerMap;
-#endif
-};
-
-#endif // WebDatabaseProvider_h
+String WebDatabaseProvider::indexedDatabaseDirectoryPath()
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *databasesDirectory = [defaults objectForKey:WebDatabaseDirectoryDefaultsKey];
+    if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
+        databasesDirectory = WebCore::pathByAppendingComponent(ASCIILiteral("~/Library/WebKit/Databases/___IndexedDB"), [[NSBundle mainBundle] bundleIdentifier]);
+    else
+        databasesDirectory = WebCore::pathByAppendingComponent(databasesDirectory, ASCIILiteral("___IndexedDB"));
+    
+    return [databasesDirectory stringByStandardizingPath];
+}
