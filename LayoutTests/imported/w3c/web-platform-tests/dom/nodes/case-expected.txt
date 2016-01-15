@@ -19,7 +19,7 @@ PASS setAttribute ä
 PASS getAttribute ä 
 PASS getElementsByTagName a:ä 
 PASS getElementsByTagName ä 
-FAIL createElement Ä assert_equals: expected "Ä" but got "ä"
+PASS createElement Ä 
 PASS setAttribute Ä 
 PASS getAttribute Ä 
 PASS getElementsByTagName a:Ä 

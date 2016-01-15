@@ -888,6 +888,9 @@ RefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode&
         return nullptr;
     }
 
+    if (isHTMLDocument())
+        return HTMLElementFactory::createElement(QualifiedName(nullAtom, name.convertToASCIILowercase(), xhtmlNamespaceURI), *this);
+
     if (isXHTMLDocument())
         return HTMLElementFactory::createElement(QualifiedName(nullAtom, name, xhtmlNamespaceURI), *this);
 

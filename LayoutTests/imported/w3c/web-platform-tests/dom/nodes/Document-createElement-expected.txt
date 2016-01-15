@@ -19,8 +19,8 @@ PASS createElement("xmlfoo:bar")
 PASS createElement("svg") 
 PASS createElement("math") 
 PASS createElement("FOO") 
-FAIL createElement("marK") assert_equals: expected "marK" but got "mark"
-FAIL createElement("İnput") assert_equals: expected "İnput" but got "i̇nput"
+PASS createElement("marK") 
+PASS createElement("İnput") 
 FAIL createElement("ınput") assert_equals: expected "ıNPUT" but got "INPUT"
 PASS createElement("") 
 PASS createElement("1foo") 

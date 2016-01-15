@@ -226,15 +226,6 @@ Ref<DocumentParser> HTMLDocument::createParser()
 // not part of the DOM
 // --------------------------------------------------------------------------
 
-RefPtr<Element> HTMLDocument::createElement(const AtomicString& name, ExceptionCode& ec)
-{
-    if (!isValidName(name)) {
-        ec = INVALID_CHARACTER_ERR;
-        return 0;
-    }
-    return HTMLElementFactory::createElement(QualifiedName(nullAtom, name.lower(), xhtmlNamespaceURI), *this);
-}
-
 static void addLocalNameToSet(HashSet<AtomicStringImpl*>* set, const QualifiedName& qName)
 {
     set->add(qName.localName().impl());

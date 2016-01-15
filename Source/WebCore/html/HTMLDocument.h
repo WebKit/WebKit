@@ -86,8 +86,6 @@ protected:
     HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0, unsigned constructionFlags = 0);
 
 private:
-    virtual RefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&) override;
-
     virtual bool isFrameSet() const override;
     virtual Ref<DocumentParser> createParser() override;
     virtual Ref<Document> cloneDocumentWithoutChildren() const override final;

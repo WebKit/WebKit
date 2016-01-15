@@ -14,7 +14,7 @@ PASS Element in non-HTML namespace, no prefix, lowercase name
 PASS Element in non-HTML namespace, no prefix, uppercase name 
 PASS Element in non-HTML namespace, prefix, lowercase name 
 PASS Element in non-HTML namespace, prefix, uppercase name 
-FAIL Element in HTML namespace, no prefix, non-ascii characters in name assert_equals: expected "aÇ" but got "aç"
+PASS Element in HTML namespace, no prefix, non-ascii characters in name 
 PASS Element in non-HTML namespace, non-ascii characters in name 
 PASS Element in HTML namespace, prefix, non-ascii characters in name 
 PASS Element in non-HTML namespace, prefix, non-ascii characters in name 

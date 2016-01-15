@@ -385,7 +385,7 @@ public:
 
     bool hasManifest() const;
     
-    virtual RefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
+    WEBCORE_EXPORT RefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
     WEBCORE_EXPORT Ref<DocumentFragment> createDocumentFragment();
     WEBCORE_EXPORT Ref<Text> createTextNode(const String& data);
     Ref<Comment> createComment(const String& data);

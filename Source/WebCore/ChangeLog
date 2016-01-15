@@ -1,3 +1,27 @@
+2016-01-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createElement should not lowercase non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=153114
+
+        Reviewed by Alex Christensen.
+
+        According to step 2 in https://dom.spec.whatwg.org/#dom-document-createelement, document.createElement should not
+        lowercase non-ASCII letters, and this is also what Firefox does. Match that behavior by lowercasing the tag name
+        by convertToASCIILowercase() instead of lower() in createElement.
+
+        Also merged HTMLDocument::createElement into Document::createElement for simplicity and avoid duplicating
+        the call to isValidName and setting a DOM exception.
+
+        No new tests since the behavior change is covered by the existing W3C tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createElement): Create a HTML element with ASCII-lowercased tag name inside a HTML document.
+        * dom/Document.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::addLocalNameToSet):
+        (WebCore::HTMLDocument::createElement): Merged into Document::createElement.
+        * html/HTMLDocument.h:
+
 2016-01-14  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Support opening and deleting SQLite databases on disk.
