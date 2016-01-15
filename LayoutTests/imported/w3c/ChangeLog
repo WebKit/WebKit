@@ -1,3 +1,14 @@
+2016-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createElementNS and createAttributeNS should treat undefined namespaceURI as null string
+        https://bugs.webkit.org/show_bug.cgi?id=153119
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline a test now that more test cases are passing.
+
+        * web-platform-tests/dom/nodes/Document-createElementNS-expected.txt:
+
 2016-01-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Expose ReadableStream and relatives to Worker

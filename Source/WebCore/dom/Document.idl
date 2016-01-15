@@ -54,9 +54,9 @@
 
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Node importNode([Default=Undefined] optional Node importedNode,
                     optional boolean deep);
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Element createElementNS([TreatNullAs=NullString,TreatUndefinedAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                             [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
-    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, NewObject, RaisesException] Attr createAttributeNS([TreatNullAs=NullString,TreatUndefinedAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                                                           [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

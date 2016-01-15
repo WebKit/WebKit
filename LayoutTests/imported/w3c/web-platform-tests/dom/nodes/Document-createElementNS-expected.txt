@@ -32,20 +32,20 @@ PASS createElementNS test 28: null,"null:xml","NAMESPACE_ERR"
 PASS createElementNS test 29: "",":foo","NAMESPACE_ERR" 
 PASS createElementNS test 30: "","f:oo","NAMESPACE_ERR" 
 PASS createElementNS test 31: "","foo:","NAMESPACE_ERR" 
-FAIL createElementNS test 32: undefined,undefined,null assert_equals: expected (object) null but got (string) "undefined"
-FAIL createElementNS test 33: undefined,"foo",null assert_equals: expected (object) null but got (string) "undefined"
+PASS createElementNS test 32: undefined,undefined,null 
+PASS createElementNS test 33: undefined,"foo",null 
 PASS createElementNS test 34: undefined,"1foo","INVALID_CHARACTER_ERR" 
-FAIL createElementNS test 35: undefined,"f1oo",null assert_equals: expected (object) null but got (string) "undefined"
-FAIL createElementNS test 36: undefined,"foo1",null assert_equals: expected (object) null but got (string) "undefined"
+PASS createElementNS test 35: undefined,"f1oo",null 
+PASS createElementNS test 36: undefined,"foo1",null 
 PASS createElementNS test 37: undefined,":foo","NAMESPACE_ERR" 
-FAIL createElementNS test 38: undefined,"f:oo","NAMESPACE_ERR" assert_throws: function "function () { document.createElementNS(namespace, qualifi..." did not throw
+PASS createElementNS test 38: undefined,"f:oo","NAMESPACE_ERR" 
 PASS createElementNS test 39: undefined,"foo:","NAMESPACE_ERR" 
-FAIL createElementNS test 40: undefined,"xml",null assert_equals: expected (object) null but got (string) "undefined"
+PASS createElementNS test 40: undefined,"xml",null 
 PASS createElementNS test 41: undefined,"xmlns","NAMESPACE_ERR" 
-FAIL createElementNS test 42: undefined,"xmlfoo",null assert_equals: expected (object) null but got (string) "undefined"
+PASS createElementNS test 42: undefined,"xmlfoo",null 
 PASS createElementNS test 43: undefined,"xml:foo","NAMESPACE_ERR" 
 PASS createElementNS test 44: undefined,"xmlns:foo","NAMESPACE_ERR" 
-FAIL createElementNS test 45: undefined,"xmlfoo:bar","NAMESPACE_ERR" assert_throws: function "function () { document.createElementNS(namespace, qualifi..." did not throw
+PASS createElementNS test 45: undefined,"xmlfoo:bar","NAMESPACE_ERR" 
 PASS createElementNS test 46: "http://example.com/","foo",null 
 PASS createElementNS test 47: "http://example.com/","1foo","INVALID_CHARACTER_ERR" 
 PASS createElementNS test 48: "http://example.com/","f1oo",null 
@@ -159,7 +159,7 @@ PASS createElementNS test 155: "","","INVALID_CHARACTER_ERR"
 FAIL createElementNS test 156: null,null,null InvalidCharacterError: DOM Exception 5
 PASS createElementNS test 157: null,"","INVALID_CHARACTER_ERR" 
 FAIL createElementNS test 158: undefined,null,null InvalidCharacterError: DOM Exception 5
-FAIL createElementNS test 159: undefined,undefined,null assert_equals: expected (object) null but got (string) "undefined"
+PASS createElementNS test 159: undefined,undefined,null 
 PASS createElementNS test 160: undefined,"","INVALID_CHARACTER_ERR" 
 FAIL createElementNS test 161: "http://example.com/",null,null InvalidCharacterError: DOM Exception 5
 PASS createElementNS test 162: "http://example.com/","","INVALID_CHARACTER_ERR" 
@@ -180,6 +180,6 @@ PASS Upper-case HTML element with a prefix
 PASS Upper-case non-HTML element without a prefix 
 PASS Upper-case non-HTML element with a prefix 
 PASS null namespace 
-FAIL undefined namespace assert_equals: expected (object) null but got (string) "undefined"
+PASS undefined namespace 
 PASS empty string namespace 
 

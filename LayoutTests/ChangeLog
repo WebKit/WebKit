@@ -1,3 +1,15 @@
+2016-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createElementNS and createAttributeNS should treat undefined namespaceURI as null string
+        https://bugs.webkit.org/show_bug.cgi?id=153119
+
+        Reviewed by Chris Dumez.
+
+        Add a regression test for calling createAttributeNS with undefined namespaceURI.
+
+        * fast/dom/Document/createAttributeNS-undefined-namespace-expected.txt: Added.
+        * fast/dom/Document/createAttributeNS-undefined-namespace.html: Added.
+
 2016-01-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         Refine http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer*
