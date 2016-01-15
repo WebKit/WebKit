@@ -1,3 +1,23 @@
+2016-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Add kdebug_trace signposts for a few WebCore operations
+        https://bugs.webkit.org/show_bug.cgi?id=153136
+        rdar://problem/24208487
+
+        Reviewed by Sam Weinig.
+        
+        New header with the reserved WebKit component code, trace point codes, and
+        a stack-based helper that traces scope entry and exit.
+        
+        The available range of trace point codes is arbitrarily segmented into WTF, JSC,
+        WebCore, WebKit and WebKit2.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/SystemTracing.h: Added.
+        (WTF::TraceScope::TraceScope):
+        (WTF::TraceScope::~TraceScope):
+
 2016-01-15  Andreas Kling  <akling@apple.com>
 
         Fragmentation-free allocator for timeless and/or coupled allocations.

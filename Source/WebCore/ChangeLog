@@ -1,3 +1,21 @@
+2016-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Add kdebug_trace signposts for a few WebCore operations
+        https://bugs.webkit.org/show_bug.cgi?id=153136
+        rdar://problem/24208487
+
+        Reviewed by Sam Weinig.
+
+        Add trace points for style recalc, layout, view painting and layer painting.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::paintContents):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+
 2016-01-15  Andreas Kling  <akling@apple.com>
 
         Use BumpArena for style sheet object tree.

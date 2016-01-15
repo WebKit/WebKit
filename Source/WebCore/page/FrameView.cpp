@@ -93,6 +93,7 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/TemporaryChange.h>
 
 #if USE(COORDINATED_GRAPHICS)
@@ -1236,6 +1237,8 @@ void FrameView::layout(bool allowSubtree)
         if (!root || !root->needsLayout())
             return;
     }
+    
+    TraceScope tracingScope(LayoutStart, LayoutEnd);
 
 #if PLATFORM(IOS)
     if (updateFixedPositionLayoutRect())
@@ -4014,7 +4017,9 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
 
     if (m_layoutPhase == InViewSizeAdjust)
         return;
-    
+
+    TraceScope tracingScope(PaintViewStart, PaintViewEnd);
+
     ASSERT(m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout);
     
     RenderView* renderView = this->renderView();

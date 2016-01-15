@@ -41,6 +41,7 @@
 		0F9D3363165DBA73005AD387 /* PrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D335E165DBA73005AD387 /* PrintStream.h */; };
 		0FB14E19180FA218009B6B4D /* Bag.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB14E18180FA218009B6B4D /* Bag.h */; };
 		0FB14E1B1810E1DC009B6B4D /* BagToHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB14E1A1810E1DA009B6B4D /* BagToHashMap.h */; };
+		0FB317C41C488001007E395A /* SystemTracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB317C31C488001007E395A /* SystemTracing.h */; };
 		0FC4488316FE9FE100844BE9 /* ProcessID.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4488216FE9FE100844BE9 /* ProcessID.h */; };
 		0FC4EDE61696149600F65041 /* CommaPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4EDE51696149600F65041 /* CommaPrinter.h */; };
 		0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD81AC4154FB22E00983E72 /* FastBitVector.h */; settings = {ATTRIBUTES = (); }; };
@@ -346,6 +347,7 @@
 		0F9D335E165DBA73005AD387 /* PrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintStream.h; sourceTree = "<group>"; };
 		0FB14E18180FA218009B6B4D /* Bag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bag.h; sourceTree = "<group>"; };
 		0FB14E1A1810E1DA009B6B4D /* BagToHashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BagToHashMap.h; sourceTree = "<group>"; };
+		0FB317C31C488001007E395A /* SystemTracing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemTracing.h; sourceTree = "<group>"; };
 		0FC4488216FE9FE100844BE9 /* ProcessID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessID.h; sourceTree = "<group>"; };
 		0FC4EDE51696149600F65041 /* CommaPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommaPrinter.h; sourceTree = "<group>"; };
 		0FD81AC4154FB22E00983E72 /* FastBitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastBitVector.h; sourceTree = "<group>"; };
@@ -921,6 +923,7 @@
 				A748745117A0BDAE00FA04CB /* StringHashDumpContext.h */,
 				0FDDBFA51666DFA300C55FEF /* StringPrintStream.cpp */,
 				0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */,
+				0FB317C31C488001007E395A /* SystemTracing.h */,
 				A8A4731A151A825B004123FF /* TemporaryChange.h */,
 				A8A4732F151A825B004123FF /* ThreadFunctionInvocation.h */,
 				A8A47330151A825B004123FF /* ThreadIdentifierDataPthreads.cpp */,
@@ -1190,6 +1193,7 @@
 				A8A473DC151A825B004123FF /* InlineASM.h in Headers */,
 				A70DA0841799F04D00529A9B /* Insertion.h in Headers */,
 				26147B0A15DDCCDC00DDB907 /* IntegerToStringConversion.h in Headers */,
+				0FB317C41C488001007E395A /* SystemTracing.h in Headers */,
 				7CDD7FF8186D291E007433CD /* IteratorAdaptors.h in Headers */,
 				7CDD7FFA186D2A54007433CD /* IteratorRange.h in Headers */,
 				93AC91A818942FC400244939 /* LChar.h in Headers */,

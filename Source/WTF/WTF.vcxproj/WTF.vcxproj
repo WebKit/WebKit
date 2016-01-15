@@ -269,6 +269,7 @@
     <ClInclude Include="..\wtf\Stopwatch.h" />
     <ClInclude Include="..\wtf\StringExtras.h" />
     <ClInclude Include="..\wtf\StringPrintStream.h" />
+    <ClInclude Include="..\wtf\SystemTracing.h" />
     <ClInclude Include="..\wtf\TemporaryChange.h" />
     <ClInclude Include="..\wtf\text\ASCIIFastPath.h" />
     <ClInclude Include="..\wtf\text\AtomicString.h" />

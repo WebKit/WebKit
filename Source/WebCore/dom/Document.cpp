@@ -180,6 +180,7 @@
 #include <inspector/ScriptCallStack.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/StringBuffer.h>
 #include <yarr/RegularExpression.h>
@@ -1822,6 +1823,8 @@ void Document::recalcStyle(Style::Change change)
     
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
+
+    TraceScope tracingScope(StyleRecalcStart, StyleRecalcEnd);
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
     AnimationUpdateBlock animationUpdateBlock(&m_frame->animation());

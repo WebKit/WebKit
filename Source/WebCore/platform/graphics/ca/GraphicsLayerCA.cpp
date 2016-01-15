@@ -47,6 +47,7 @@
 #include <limits.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/WTFString.h>
 
@@ -1446,6 +1447,8 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
         replayer.replay(clip);
         return;
     }
+
+    TraceScope tracingScope(PaintLayerStart, PaintLayerEnd);
     paintGraphicsLayerContents(context, clip);
 }
 

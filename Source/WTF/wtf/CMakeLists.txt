@@ -99,6 +99,7 @@ set(WTF_HEADERS
     Stopwatch.h
     StringExtras.h
     StringPrintStream.h
+    SystemTracing.h
     ThreadIdentifierDataPthreads.h
     ThreadSafeRefCounted.h
     ThreadSpecific.h
