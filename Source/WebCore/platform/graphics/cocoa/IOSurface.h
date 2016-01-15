@@ -94,7 +94,6 @@ public:
     WEBCORE_EXPORT void releaseGraphicsContext();
 
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT void copyToSurface(IOSurface&);
     WEBCORE_EXPORT static bool allowConversionFromFormatToFormat(Format, Format);
     WEBCORE_EXPORT static void convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, std::function<void(std::unique_ptr<WebCore::IOSurface>)>);
 #endif

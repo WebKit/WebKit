@@ -286,13 +286,12 @@ CGContextRef IOSurface::ensurePlatformContext()
     case Format::RGBA:
         break;
     case Format::RGB10:
-        bitsPerComponent = 10;
-        bitsPerPixel = 32;
-        break;
     case Format::RGB10A8:
-        // FIXME: This doesn't take the two-plane format into account.
-        bitsPerComponent = 10;
-        bitsPerPixel = 32;
+        // A half-float format will be used if CG needs to read back the IOSurface contents,
+        // but for an IOSurface-to-IOSurface copy, there shoud be no conversion.
+        bitsPerComponent = 16;
+        bitsPerPixel = 64;
+        bitmapInfo = kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder16Host | kCGBitmapFloatComponents;
         break;
     case Format::YUV422:
         ASSERT_NOT_REACHED();
@@ -374,27 +373,6 @@ void IOSurface::releaseGraphicsContext()
 }
 
 #if PLATFORM(IOS)
-WEBCORE_EXPORT void IOSurface::copyToSurface(IOSurface& destSurface)
-{
-    if (destSurface.format() != format()) {
-        WTFLogAlways("Trying to copy IOSurface to another surface with a different format");
-        return;
-    }
-
-    if (destSurface.size() != size()) {
-        WTFLogAlways("Trying to copy IOSurface to another surface with a different size");
-        return;
-    }
-
-    static IOSurfaceAcceleratorRef accelerator;
-    if (!accelerator)
-        IOSurfaceAcceleratorCreate(nullptr, nullptr, &accelerator);
-
-    IOReturn ret = IOSurfaceAcceleratorTransformSurface(accelerator, m_surface.get(), destSurface.surface(), nullptr, nullptr, nullptr, nullptr, nullptr);
-    if (ret)
-        WTFLogAlways("IOSurfaceAcceleratorTransformSurface %p to %p failed with error %d", m_surface.get(), destSurface.surface(), ret);
-}
-
 bool IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, Format destFormat)
 {
     if ((sourceFormat == Format::RGB10 || sourceFormat == Format::RGB10A8) && destFormat == Format::YUV422)

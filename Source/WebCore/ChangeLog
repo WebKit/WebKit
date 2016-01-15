@@ -1,3 +1,19 @@
+2016-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove workaround for rdar://problem/23623670
+        https://bugs.webkit.org/show_bug.cgi?id=153107
+        rdar://problem/23633319
+
+        Reviewed by Tim Horton.
+
+        Remove the code that uses IOSurfaceAcceleratorTransformSurface() when copying from
+        back-to-front buffer, now that CGIOSurfaceContextCreate()-code path works correctly.
+
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::ensurePlatformContext):
+        (IOSurface::copyToSurface): Deleted.
+
 2016-01-14  Beth Dakin  <bdakin@apple.com>
 
         WK1 and WK2 should share more candidate request code

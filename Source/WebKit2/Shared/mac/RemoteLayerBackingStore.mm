@@ -265,15 +265,8 @@ bool RemoteLayerBackingStore::display()
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
         RetainPtr<CGImageRef> backImage;
-        if (m_backBuffer.surface && !willPaintEntireBackingStore) {
-#if PLATFORM(IOS)
-            if (m_backBuffer.surface->format() == WebCore::IOSurface::Format::RGB10A8) {
-                // FIXME: remove this when rdar://problem/23623670 is fixed.
-                m_backBuffer.surface->copyToSurface(*m_frontBuffer.surface);
-            } else
-#endif
-                backImage = m_backBuffer.surface->createImage();
-        }
+        if (m_backBuffer.surface && !willPaintEntireBackingStore)
+            backImage = m_backBuffer.surface->createImage();
 
         GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
 
