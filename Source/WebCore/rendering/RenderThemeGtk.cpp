@@ -1002,7 +1002,7 @@ void RenderThemeGtk::adjustSearchFieldResultsButtonStyle(StyleResolver& styleRes
     adjustSearchFieldCancelButtonStyle(styleResolver, style, e);
 }
 
-bool RenderThemeGtk::paintSearchFieldResultsButton(const RenderObject& o, const PaintInfo& i, const IntRect& rect)
+bool RenderThemeGtk::paintSearchFieldResultsButton(const RenderBox& o, const PaintInfo& i, const IntRect& rect)
 {
     return paintSearchFieldResultsDecorationPart(o, i, rect);
 }
@@ -1053,7 +1053,7 @@ static IntRect centerRectVerticallyInParentInputElement(const RenderObject& rend
     return scaledRect;
 }
 
-bool RenderThemeGtk::paintSearchFieldResultsDecorationPart(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintSearchFieldResultsDecorationPart(const RenderBox& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
     if (iconRect.isEmpty())
@@ -1072,7 +1072,7 @@ void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderSt
     adjustSearchFieldIconStyle(style);
 }
 
-bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeGtk::paintSearchFieldCancelButton(const RenderBox& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     IntRect iconRect = centerRectVerticallyInParentInputElement(renderObject, rect);
     if (iconRect.isEmpty())
