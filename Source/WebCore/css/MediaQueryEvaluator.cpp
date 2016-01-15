@@ -56,10 +56,6 @@
 #include "RenderLayerCompositor.h"
 #endif
 
-#if PLATFORM(IOS)
-#include "Device.h"
-#endif
-
 namespace WebCore {
 
 using namespace MediaFeatureNames;
@@ -661,20 +657,9 @@ static bool view_modeMediaFeatureEval(CSSValue* value, const CSSToLengthConversi
 }
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
-// FIXME: Find a better place for this function. Maybe ChromeClient?
-static inline bool isRunningOnIPhoneOrIPod()
-{
-#if PLATFORM(IOS)
-    static bool runningOnIPhoneOrIPod = deviceClass() == MGDeviceClassiPhone || deviceClass() == MGDeviceClassiPod;
-    return runningOnIPhoneOrIPod;
-#else
-    return false;
-#endif
-}
-
 static bool video_playable_inlineMediaFeatureEval(CSSValue*, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
 {
-    return !isRunningOnIPhoneOrIPod() || frame->settings().allowsInlineMediaPlayback();
+    return frame->settings().allowsInlineMediaPlayback();
 }
 
 static bool hoverMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)

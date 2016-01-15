@@ -1,3 +1,23 @@
+2016-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Media Query (-webkit-video-playable-inline) is failing as an invalid media query expression
+        https://bugs.webkit.org/show_bug.cgi?id=153111
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/media/video-playable-inline-media-query.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::video_playable_inlineMediaFeatureEval):
+        (WebCore::isRunningOnIPhoneOrIPod): Deleted.
+        Make the media query work regardless of the platform.
+        It should just check the web view's settings.
+
+        * css/MediaQueryExp.cpp:
+        (WebCore::featureWithoutValue):
+        This media query expects no value, include it in the list
+        so it is not treated as invalid.
+
 2016-01-15  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: canHaveChildren() || canHaveGeneratedChildren() in WebCore::RenderElement::insertChildInternal

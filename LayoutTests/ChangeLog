@@ -1,5 +1,17 @@
 2016-01-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Media Query (-webkit-video-playable-inline) is failing as an invalid media query expression
+        https://bugs.webkit.org/show_bug.cgi?id=153111
+
+        Reviewed by Dean Jackson.
+
+        * fast/media/video-playable-inline-media-query-expected.txt: Added.
+        * fast/media/video-playable-inline-media-query.html: Added.
+        * platform/ios-simulator/ios/fast/media/video-inline-expected.txt: Removed.
+        * platform/ios-simulator/ios/fast/media/video-inline.html: Removed.
+
+2016-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         LayoutTest inspector/script-profiler/event-type-Other.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=153016
         <rdar://problem/24192919>

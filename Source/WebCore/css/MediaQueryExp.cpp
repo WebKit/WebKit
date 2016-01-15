@@ -155,7 +155,8 @@ static inline bool featureWithoutValue(const AtomicString& mediaFeature)
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
         || mediaFeature == MediaFeatureNames::pointerMediaFeature
         || mediaFeature == MediaFeatureNames::device_pixel_ratioMediaFeature
-        || mediaFeature == MediaFeatureNames::resolutionMediaFeature;
+        || mediaFeature == MediaFeatureNames::resolutionMediaFeature
+        || mediaFeature == MediaFeatureNames::video_playable_inlineMediaFeature;
 }
 
 MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* valueList)
