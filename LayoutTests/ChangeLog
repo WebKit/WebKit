@@ -1,3 +1,26 @@
+2016-01-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        CORS: Fix the handling of redirected request containing Origin null.
+        https://bugs.webkit.org/show_bug.cgi?id=128816
+
+        Reviewed by Brent Fulgham.
+
+        Merging Blink patch from George Ancil (https://chromiumcodereview.appspot.com/20735002)
+
+        Added two tests to check CORS with Origin null in HTTP redirect and iframe cases.
+        Updated two test sandboxed iframes test expectations (requests are still denied but error messages are different).
+
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-allow-origin-null-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-allow-origin-null.html: Added.
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cors-origin-null-expected.txt: Added.
+        * http/tests/xmlhttprequest/redirect-cors-origin-null.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-allow-origin-null-iframe.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-allow-origin-null.cgi: Added.
+        * http/tests/xmlhttprequest/resources/redirect-cors-origin-null-pass.php: Added.
+        * http/tests/xmlhttprequest/resources/redirect-cors-origin-null.php: Added.
+
 2016-01-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r195064.
