@@ -88,7 +88,7 @@ public:
     void formAttributeTargetChanged();
 
 protected:
-    FormAssociatedElement();
+    FormAssociatedElement(HTMLFormElement*);
 
     void insertedInto(ContainerNode&);
     void removedFrom(ContainerNode&);
@@ -116,6 +116,7 @@ private:
 
     std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     HTMLFormElement* m_form;
+    HTMLFormElement* m_formSetByParser;
     String m_customValidationMessage;
 };
 

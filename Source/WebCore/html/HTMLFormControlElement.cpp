@@ -48,6 +48,7 @@ using namespace HTMLNames;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : LabelableElement(tagName, document)
+    , FormAssociatedElement(form)
     , m_disabled(false)
     , m_isReadOnly(false)
     , m_isRequired(false)
@@ -60,7 +61,6 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_wasChangedSinceLastFormControlChangeEvent(false)
     , m_hasAutofocused(false)
 {
-    setForm(form);
     setHasCustomStyleResolveCallbacks();
 }
 
