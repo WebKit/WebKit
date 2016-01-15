@@ -73,14 +73,9 @@ TextureMapperShaderProgram::TextureMapperShaderProgram(PassRefPtr<GraphicsContex
 
 void TextureMapperShaderProgram::setMatrix(GC3Duint location, const TransformationMatrix& matrix)
 {
-    GC3Dfloat matrixAsFloats[] = {
-        GC3Dfloat(matrix.m11()), GC3Dfloat(matrix.m12()), GC3Dfloat(matrix.m13()), GC3Dfloat(matrix.m14()),
-        GC3Dfloat(matrix.m21()), GC3Dfloat(matrix.m22()), GC3Dfloat(matrix.m23()), GC3Dfloat(matrix.m24()),
-        GC3Dfloat(matrix.m31()), GC3Dfloat(matrix.m32()), GC3Dfloat(matrix.m33()), GC3Dfloat(matrix.m34()),
-        GC3Dfloat(matrix.m41()), GC3Dfloat(matrix.m42()), GC3Dfloat(matrix.m43()), GC3Dfloat(matrix.m44())
-    };
-
-    m_context->uniformMatrix4fv(location, 1, false, matrixAsFloats);
+    TransformationMatrix::FloatMatrix4 floatMatrix;
+    matrix.toColumnMajorFloatArray(floatMatrix);
+    m_context->uniformMatrix4fv(location, 1, false, floatMatrix);
 }
 
 GC3Duint TextureMapperShaderProgram::getLocation(const AtomicString& name, VariableType type)
