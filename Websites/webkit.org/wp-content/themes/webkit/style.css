@@ -1451,6 +1451,7 @@ header .menu-item { /* add bottom dimension to main menu items */
 .timeline {
     position: relative;
     padding: 0 5rem;
+    margin: 0;
 }
 
 .timeline:after {

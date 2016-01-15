@@ -1,5 +1,12 @@
 2016-01-14  Timothy Hatcher  <timothy@apple.com>
 
+        Eliminate the margin on timeline elements so multiple timelines can touch.
+
+        * wp-content/themes/webkit/style.css:
+        (.timeline):
+
+2016-01-14  Timothy Hatcher  <timothy@apple.com>
+
         Use a 2px border radius instead to look good on 2x devices as well as 1x.
 
         * wp-content/themes/webkit/style.css:
