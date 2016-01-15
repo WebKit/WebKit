@@ -7775,6 +7775,65 @@ void testCallSimple(int a, int b)
     CHECK(compileAndRun<int>(proc, a, b) == a + b);
 }
 
+void testCallRare(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* common = proc.addBlock();
+    BasicBlock* rare = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        FrequentedBlock(rare, FrequencyClass::Rare),
+        FrequentedBlock(common));
+
+    common->appendNew<ControlValue>(
+        proc, Return, Origin(), common->appendNew<Const32Value>(proc, Origin(), 0));
+    
+    rare->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        rare->appendNew<CCallValue>(
+            proc, Int32, Origin(),
+            rare->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+            rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    CHECK(compileAndRun<int>(proc, true, a, b) == a + b);
+}
+
+void testCallRareLive(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* common = proc.addBlock();
+    BasicBlock* rare = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        FrequentedBlock(rare, FrequencyClass::Rare),
+        FrequentedBlock(common));
+
+    common->appendNew<ControlValue>(
+        proc, Return, Origin(), common->appendNew<Const32Value>(proc, Origin(), 0));
+    
+    rare->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        rare->appendNew<Value>(
+            proc, Add, Origin(),
+            rare->appendNew<CCallValue>(
+                proc, Int32, Origin(),
+                rare->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+                rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)),
+            rare->appendNew<Value>(
+                proc, Trunc, Origin(),
+                rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3))));
+
+    CHECK(compileAndRun<int>(proc, true, a, b, c) == a + b + c);
+}
+
 void testCallSimplePure(int a, int b)
 {
     Procedure proc;
@@ -10069,6 +10128,8 @@ void run(const char* filter)
     RUN(testInt32ToDoublePartialRegisterWithoutStall());
 
     RUN(testCallSimple(1, 2));
+    RUN(testCallRare(1, 2));
+    RUN(testCallRareLive(1, 2, 3));
     RUN(testCallSimplePure(1, 2));
     RUN(testCallFunctionWithHellaArguments());
 

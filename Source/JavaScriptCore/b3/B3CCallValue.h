@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ public:
 
     ~CCallValue();
 
-    Effects effects;
+    Effects effects { Effects::forCall() };
 
 private:
     friend class Procedure;
@@ -47,7 +47,6 @@ private:
     template<typename... Arguments>
     CCallValue(unsigned index, Type type, Origin origin, Arguments... arguments)
         : Value(index, CheckedOpcode, CCall, type, origin, arguments...)
-        , effects(Effects::forCall())
     {
         RELEASE_ASSERT(numChildren() >= 1);
     }

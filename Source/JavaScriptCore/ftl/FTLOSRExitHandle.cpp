@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,24 +29,30 @@
 #if ENABLE(FTL_JIT) && FTL_USES_B3
 
 #include "FTLOSRExit.h"
+#include "FTLState.h"
 #include "FTLThunks.h"
 #include "LinkBuffer.h"
+#include "ProfilerCompilation.h"
 
 namespace JSC { namespace FTL {
 
-void OSRExitHandle::emitExitThunk(CCallHelpers& jit)
+void OSRExitHandle::emitExitThunk(State& state, CCallHelpers& jit)
 {
-    label = jit.label();
+    Profiler::Compilation* compilation = state.graph.compilation();
+    CCallHelpers::Label myLabel = jit.label();
+    label = myLabel;
     jit.pushToSaveImmediateWithoutTouchingRegisters(CCallHelpers::TrustedImm32(index));
     CCallHelpers::PatchableJump jump = jit.patchableJump();
     RefPtr<OSRExitHandle> self = this;
     jit.addLinkTask(
-        [self, jump] (LinkBuffer& linkBuffer) {
+        [self, jump, myLabel, compilation] (LinkBuffer& linkBuffer) {
             self->exit.m_patchableJump = CodeLocationJump(linkBuffer.locationOf(jump));
 
             linkBuffer.link(
                 jump.m_jump,
                 CodeLocationLabel(linkBuffer.vm().getCTIStub(osrExitGenerationThunkGenerator).code()));
+            if (compilation)
+                compilation->addOSRExitSite({ linkBuffer.locationOf(myLabel).executableAddress() });
         });
 }
 

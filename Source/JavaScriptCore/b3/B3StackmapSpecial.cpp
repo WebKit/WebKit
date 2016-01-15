@@ -200,21 +200,14 @@ bool StackmapSpecial::isArgValidForValue(const Air::Arg& arg, Value* value)
     case Arg::Tmp:
     case Arg::Imm:
     case Arg::Imm64:
-    case Arg::Stack:
-    case Arg::CallArg:
-        break; // OK
-    case Arg::Addr:
-        if (arg.base() != Tmp(GPRInfo::callFrameRegister)
-            && arg.base() != Tmp(MacroAssembler::stackPointerRegister))
-            return false;
         break;
     default:
-        return false;
+        if (!arg.isStackMemory())
+            return false;
+        break;
     }
-    
-    Arg::Type type = Arg::typeForB3Type(value->type());
 
-    return arg.isType(type);
+    return arg.canRepresent(value);
 }
 
 bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, const ValueRep& rep)

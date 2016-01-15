@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLOSRExitHandle_h
-#define FTLOSRExitHandle_h
+#ifndef AirCCallingConvention_h
+#define AirCCallingConvention_h
 
-#include "DFGCommon.h"
+#if ENABLE(B3_JIT)
 
-#if ENABLE(FTL_JIT) && FTL_USES_B3
+#include "AirArg.h"
+#include "AirInst.h"
+#include "B3Type.h"
+#include <wtf/Vector.h>
 
-#include "CCallHelpers.h"
-#include <wtf/ThreadSafeRefCounted.h>
+namespace JSC { namespace B3 {
 
-namespace JSC { namespace FTL {
+class CCallValue;
 
-class State;
-struct OSRExit;
+namespace Air {
 
-// This is an object that stores some interesting data about an OSR exit. It's expected that you will
-// scrape this data from this object by the time compilation finishes.
-struct OSRExitHandle : public ThreadSafeRefCounted<OSRExitHandle> {
-    OSRExitHandle(unsigned index, OSRExit& exit)
-        : index(index)
-        , exit(exit)
-    {
-    }
+class Code;
 
-    unsigned index;
-    OSRExit& exit;
+Vector<Arg> computeCCallingConvention(Code&, CCallValue*);
 
-    // This is the label at which the OSR exit jump lives. This will get populated once the OSR exit
-    // emits its jump. This happens immediately when you call OSRExit::appendOSRExit(). It happens at
-    // some time during late path emission if you do OSRExit::appendOSRExitLater().
-    CCallHelpers::Label label;
+Tmp cCallResult(Type);
 
-    // This emits the exit thunk and populates 'label'.
-    void emitExitThunk(State&, CCallHelpers&);
-};
+Inst buildCCall(Code&, Value* origin, const Vector<Arg>&);
 
-} } // namespace JSC::FTL
+} } } // namespace JSC::B3::Air
 
-#endif // ENABLE(FTL_JIT) && FTL_USES_B3
+#endif // ENABLE(B3_JIT)
 
-#endif // FTLOSRExitHandle_h
+#endif // AirCCallingConvention_h
 
