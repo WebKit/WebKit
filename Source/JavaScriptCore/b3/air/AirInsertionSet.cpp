@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,18 +32,6 @@
 #include <wtf/BubbleSort.h>
 
 namespace JSC { namespace B3 { namespace Air {
-
-void InsertionSet::insertInsts(size_t index, const Vector<Inst>& insts)
-{
-    for (const Inst& inst : insts)
-        insertInst(index, inst);
-}
-
-void InsertionSet::insertInsts(size_t index, Vector<Inst>&& insts)
-{
-    for (Inst& inst : insts)
-        insertInst(index, WTFMove(inst));
-}
 
 void InsertionSet::execute(BasicBlock* block)
 {

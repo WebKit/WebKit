@@ -38,11 +38,7 @@
 #pragma GCC diagnostic ignored "-Wreturn-type"
 #endif // COMPILER(GCC) && ASSERT_DISABLED
 
-namespace JSC { namespace B3 {
-
-class Value;
-
-namespace Air {
+namespace JSC { namespace B3 { namespace Air {
 
 class Special;
 class StackSlot;
@@ -78,8 +74,7 @@ public:
         RelCond,
         ResCond,
         DoubleCond,
-        Special,
-        WidthArg
+        Special
     };
 
     enum Role : int8_t {
@@ -166,13 +161,6 @@ public:
 
     static const unsigned numTypes = 2;
 
-    template<typename Functor>
-    static void forEachType(const Functor& functor)
-    {
-        functor(GP);
-        functor(FP);
-    }
-
     enum Width : int8_t {
         Width8,
         Width16,
@@ -237,26 +225,6 @@ public:
     static bool isWarmUse(Role role)
     {
         return isAnyUse(role) && !isColdUse(role);
-    }
-
-    static Role cooled(Role role)
-    {
-        switch (role) {
-        case ColdUse:
-        case LateColdUse:
-        case UseDef:
-        case UseZDef:
-        case Def:
-        case ZDef:
-        case UseAddr:
-        case Scratch:
-        case EarlyDef:
-            return role;
-        case Use:
-            return ColdUse;
-        case LateUse:
-            return LateColdUse;
-        }
     }
 
     // Returns true if the Role implies that the Inst will Use the Arg before doing anything else.
@@ -481,11 +449,6 @@ public:
         return result;
     }
 
-    static Arg immPtr(const void* address)
-    {
-        return imm64(bitwise_cast<intptr_t>(address));
-    }
-
     static Arg addr(Air::Tmp base, int32_t offset = 0)
     {
         ASSERT(base.isGP());
@@ -600,14 +563,6 @@ public:
         return result;
     }
 
-    static Arg widthArg(Width width)
-    {
-        Arg result;
-        result.m_kind = WidthArg;
-        result.m_offset = width;
-        return result;
-    }
-
     bool operator==(const Arg& other) const
     {
         return m_offset == other.m_offset
@@ -644,11 +599,6 @@ public:
         return kind() == Imm64;
     }
 
-    bool isSomeImm() const
-    {
-        return isImm() || isImm64();
-    }
-
     bool isAddr() const
     {
         return kind() == Addr;
@@ -668,21 +618,6 @@ public:
     {
         return kind() == Index;
     }
-
-    bool isMemory() const
-    {
-        switch (kind()) {
-        case Addr:
-        case Stack:
-        case CallArg:
-        case Index:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    bool isStackMemory() const;
 
     bool isRelCond() const
     {
@@ -714,11 +649,6 @@ public:
     bool isSpecial() const
     {
         return kind() == Special;
-    }
-
-    bool isWidthArg() const
-    {
-        return kind() == WidthArg;
     }
 
     bool isAlive() const
@@ -764,7 +694,18 @@ public:
         return m_base;
     }
 
-    bool hasOffset() const { return isMemory(); }
+    bool hasOffset() const
+    {
+        switch (kind()) {
+        case Addr:
+        case Stack:
+        case CallArg:
+        case Index:
+            return true;
+        default:
+            return false;
+        }
+    }
     
     int32_t offset() const
     {
@@ -803,12 +744,6 @@ public:
         return bitwise_cast<Air::Special*>(m_offset);
     }
 
-    Width width() const
-    {
-        ASSERT(kind() == WidthArg);
-        return static_cast<Width>(m_offset);
-    }
-
     bool isGPTmp() const
     {
         return isTmp() && tmp().isGP();
@@ -833,7 +768,6 @@ public:
         case ResCond:
         case DoubleCond:
         case Special:
-        case WidthArg:
             return true;
         case Tmp:
             return isGPTmp();
@@ -852,7 +786,6 @@ public:
         case ResCond:
         case DoubleCond:
         case Special:
-        case WidthArg:
         case Invalid:
             return false;
         case Addr:
@@ -895,10 +828,6 @@ public:
         }
         ASSERT_NOT_REACHED();
     }
-
-    bool canRepresent(Value* value) const;
-
-    bool isCompatibleType(const Arg& other) const;
 
     bool isGPR() const
     {
@@ -1041,7 +970,6 @@ public:
         case ResCond:
         case DoubleCond:
         case Special:
-        case WidthArg:
             return true;
         }
         ASSERT_NOT_REACHED();
@@ -1063,8 +991,6 @@ public:
             break;
         }
     }
-
-    bool usesTmp(Air::Tmp tmp) const;
 
     // This is smart enough to know that an address arg in a Def or UseDef rule will use its
     // tmps and never def them. For example, this:

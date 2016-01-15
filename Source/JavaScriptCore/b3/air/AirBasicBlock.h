@@ -78,17 +78,15 @@ public:
     InstList& insts() { return m_insts; }
 
     template<typename Inst>
-    Inst& appendInst(Inst&& inst)
+    void appendInst(Inst&& inst)
     {
         m_insts.append(std::forward<Inst>(inst));
-        return m_insts.last();
     }
 
     template<typename... Arguments>
-    Inst& append(Arguments&&... arguments)
+    void append(Arguments&&... arguments)
     {
         m_insts.append(Inst(std::forward<Arguments>(arguments)...));
-        return m_insts.last();
     }
 
     // The "0" case is the case to which the branch jumps, so the "then" case. The "1" case is the

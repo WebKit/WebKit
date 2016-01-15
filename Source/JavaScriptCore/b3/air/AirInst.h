@@ -85,15 +85,6 @@ public:
 
     explicit operator bool() const { return origin || opcode != Nop || args.size(); }
 
-    void append() { }
-    
-    template<typename... Arguments>
-    void append(Arg arg, Arguments... arguments)
-    {
-        args.append(arg);
-        append(arguments...);
-    }
-
     // Note that these functors all avoid using "const" because we want to use them for things that
     // edit IR. IR is meant to be edited; if you're carrying around a "const Inst&" then you're
     // probably doing it wrong.

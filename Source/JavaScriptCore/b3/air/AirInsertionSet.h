@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,9 +59,6 @@ public:
     {
         appendInsertion(Insertion(index, std::forward<Inst>(inst)));
     }
-
-    void insertInsts(size_t index, const Vector<Inst>&);
-    void insertInsts(size_t index, Vector<Inst>&&);
     
     template<typename... Arguments>
     void insert(size_t index, Arguments&&... arguments)

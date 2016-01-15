@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ const Vector<typename Bank::RegisterType>& regsInPriorityOrder()
     return RegistersInPriorityOrder<Bank>::inPriorityOrder();
 }
 
-JS_EXPORT_PRIVATE const Vector<Reg>& regsInPriorityOrder(Arg::Type);
+const Vector<Reg>& regsInPriorityOrder(Arg::Type);
 
 } } } // namespace JSC::B3::Air
 

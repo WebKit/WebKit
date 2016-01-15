@@ -3540,7 +3540,7 @@ private:
             m_out.branch(
                 m_out.aboveOrEqual(
                     prevLength, m_out.load32(storage, m_heaps.Butterfly_vectorLength)),
-                unsure(slowPath), unsure(fastPath));
+                rarely(slowPath), usually(fastPath));
             
             LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
             m_out.store(
@@ -8225,7 +8225,7 @@ private:
                 LBasicBlock holeCase =
                     FTL_NEW_BLOCK(m_out, ("PutByVal hole case"));
                     
-                m_out.branch(isOutOfBounds, rarely(outOfBoundsCase), usually(holeCase));
+                m_out.branch(isOutOfBounds, unsure(outOfBoundsCase), unsure(holeCase));
                     
                 LBasicBlock innerLastNext = m_out.appendTo(outOfBoundsCase, holeCase);
                     

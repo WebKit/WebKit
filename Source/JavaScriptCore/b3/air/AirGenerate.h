@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,11 @@ class Code;
 
 // This takes an Air::Code that hasn't had any stack allocation and optionally hasn't had any
 // register allocation and does both of those things.
-JS_EXPORT_PRIVATE void prepareForGeneration(Code&);
+void prepareForGeneration(Code&);
 
 // This generates the code using the given CCallHelpers instance. Note that this may call callbacks
 // in the supplied code as it is generating.
-JS_EXPORT_PRIVATE void generate(Code&, CCallHelpers&);
+void generate(Code&, CCallHelpers&);
 
 } } } // namespace JSC::B3::Air
 

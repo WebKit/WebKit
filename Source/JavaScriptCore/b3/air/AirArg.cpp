@@ -30,9 +30,6 @@
 
 #include "AirSpecial.h"
 #include "AirStackSlot.h"
-#include "B3Value.h"
-#include "FPRInfo.h"
-#include "GPRInfo.h"
 
 #if COMPILER(GCC) && ASSERT_DISABLED
 #pragma GCC diagnostic push
@@ -40,20 +37,6 @@
 #endif // COMPILER(GCC) && ASSERT_DISABLED
 
 namespace JSC { namespace B3 { namespace Air {
-
-bool Arg::isStackMemory() const
-{
-    switch (kind()) {
-    case Addr:
-        return base() == Air::Tmp(GPRInfo::callFrameRegister)
-            || base() == Air::Tmp(MacroAssembler::stackPointerRegister);
-    case Stack:
-    case CallArg:
-        return true;
-    default:
-        return false;
-    }
-}
 
 bool Arg::isRepresentableAs(Width width, Signedness signedness) const
 {
@@ -82,31 +65,6 @@ bool Arg::isRepresentableAs(Width width, Signedness signedness) const
         }
     }
     ASSERT_NOT_REACHED();
-}
-
-bool Arg::usesTmp(Air::Tmp tmp) const
-{
-    bool uses = false;
-    const_cast<Arg*>(this)->forEachTmpFast(
-        [&] (Air::Tmp otherTmp) {
-            if (otherTmp == tmp)
-                uses = true;
-        });
-    return uses;
-}
-
-bool Arg::canRepresent(Value* value) const
-{
-    return isType(typeForB3Type(value->type()));
-}
-
-bool Arg::isCompatibleType(const Arg& other) const
-{
-    if (hasType())
-        return other.isType(type());
-    if (other.hasType())
-        return isType(other.type());
-    return true;
 }
 
 void Arg::dump(PrintStream& out) const
@@ -159,9 +117,6 @@ void Arg::dump(PrintStream& out) const
     case Special:
         out.print(pointerDump(special()));
         return;
-    case WidthArg:
-        out.print(width());
-        return;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -211,9 +166,6 @@ void printInternal(PrintStream& out, Arg::Kind kind)
         return;
     case Arg::Special:
         out.print("Special");
-        return;
-    case Arg::WidthArg:
-        out.print("WidthArg");
         return;
     }
 
@@ -279,16 +231,16 @@ void printInternal(PrintStream& out, Arg::Width width)
 {
     switch (width) {
     case Arg::Width8:
-        out.print("8");
+        out.print("Width8");
         return;
     case Arg::Width16:
-        out.print("16");
+        out.print("Width16");
         return;
     case Arg::Width32:
-        out.print("32");
+        out.print("Width32");
         return;
     case Arg::Width64:
-        out.print("64");
+        out.print("Width64");
         return;
     }
 

@@ -1411,16 +1411,6 @@ public:
     }
 #endif
 
-    void swap32(RegisterID src, RegisterID dest)
-    {
-        m_assembler.xchgl_rr(src, dest);
-    }
-
-    void swap32(RegisterID src, Address dest)
-    {
-        m_assembler.xchgl_rm(src, dest.offset, dest.base);
-    }
-
     void moveConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
     {
         m_assembler.cmpl_rr(right, left);

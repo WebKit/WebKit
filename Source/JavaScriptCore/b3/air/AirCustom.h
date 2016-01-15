@@ -30,7 +30,6 @@
 
 #include "AirInst.h"
 #include "AirSpecial.h"
-#include "B3Value.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -52,8 +51,6 @@ namespace JSC { namespace B3 { namespace Air {
 // you need to carry extra state around with the instruction. Also, Specials mean that you
 // always have access to Code& even in methods that don't take a GenerationContext.
 
-// Definition of Patch instruction. Patch is used to delegate the behavior of the instruction to the
-// Special object, which will be the first argument to the instruction.
 struct PatchCustom {
     template<typename Functor>
     static void forEachArg(Inst& inst, const Functor& functor)
@@ -97,114 +94,6 @@ struct PatchCustom {
     {
         return inst.args[0].special()->generate(inst, jit, context);
     }
-};
-
-// Definition of CCall instruction. CCall is used for hot path C function calls. It's lowered to a
-// Patch with an Air CCallSpecial along with code to marshal instructions. The lowering happens
-// before register allocation, so that the register allocator sees the clobbers.
-struct CCallCustom {
-    template<typename Functor>
-    static void forEachArg(Inst& inst, const Functor& functor)
-    {
-        Value* value = inst.origin;
-
-        unsigned index = 0;
-
-        functor(inst.args[index++], Arg::Use, Arg::GP, Arg::pointerWidth()); // callee
-        
-        if (value->type() != Void) {
-            functor(
-                inst.args[index++], Arg::Def,
-                Arg::typeForB3Type(value->type()),
-                Arg::widthForB3Type(value->type()));
-        }
-
-        for (unsigned i = 1; i < value->numChildren(); ++i) {
-            Value* child = value->child(i);
-            functor(
-                inst.args[index++], Arg::Use,
-                Arg::typeForB3Type(child->type()),
-                Arg::widthForB3Type(child->type()));
-        }
-    }
-
-    template<typename... Arguments>
-    static bool isValidFormStatic(Arguments...)
-    {
-        return false;
-    }
-
-    static bool isValidForm(Inst&);
-
-    static bool admitsStack(Inst&, unsigned)
-    {
-        return true;
-    }
-
-    static bool hasNonArgNonControlEffects(Inst&)
-    {
-        return true;
-    }
-
-    // This just crashes, since we expect C calls to be lowered before generation.
-    static CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&);
-};
-
-struct ColdCCallCustom : CCallCustom {
-    template<typename Functor>
-    static void forEachArg(Inst& inst, const Functor& functor)
-    {
-        // This is just like a call, but uses become cold.
-        CCallCustom::forEachArg(
-            inst,
-            [&] (Arg& arg, Arg::Role role, Arg::Type type, Arg::Width width) {
-                functor(arg, Arg::cooled(role), type, width);
-            });
-    }
-};
-
-struct ShuffleCustom {
-    template<typename Functor>
-    static void forEachArg(Inst& inst, const Functor& functor)
-    {
-        unsigned limit = inst.args.size() / 3 * 3;
-        for (unsigned i = 0; i < limit; i += 3) {
-            Arg& src = inst.args[i + 0];
-            Arg& dst = inst.args[i + 1];
-            Arg& widthArg = inst.args[i + 2];
-            Arg::Width width = widthArg.width();
-            Arg::Type type = src.isGP() && dst.isGP() ? Arg::GP : Arg::FP;
-            functor(src, Arg::Use, type, width);
-            functor(dst, Arg::Def, type, width);
-            functor(widthArg, Arg::Use, Arg::GP, Arg::Width8);
-        }
-    }
-
-    template<typename... Arguments>
-    static bool isValidFormStatic(Arguments...)
-    {
-        return false;
-    }
-
-    static bool isValidForm(Inst&);
-    
-    static bool admitsStack(Inst&, unsigned index)
-    {
-        switch (index % 3) {
-        case 0:
-        case 1:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    static bool hasNonArgNonControlEffects(Inst&)
-    {
-        return false;
-    }
-
-    static CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&);
 };
 
 } } } // namespace JSC::B3::Air
