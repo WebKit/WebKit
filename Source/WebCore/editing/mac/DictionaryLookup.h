@@ -58,10 +58,10 @@ public:
 
     // FIXME: Should move/unify dictionaryPopupInfoForRange here too.
 
-    WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, NSView *, std::function<void(TextIndicator&)> textIndicatorInstallationCallback);
+    WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, NSView *, std::function<void(TextIndicator&)> textIndicatorInstallationCallback, std::function<FloatRect(FloatRect)> rootViewToViewConversionCallback = nullptr);
     WEBCORE_EXPORT static void hidePopup();
 
-    WEBCORE_EXPORT static PlatformAnimationController animationControllerForPopup(const DictionaryPopupInfo&, NSView *, std::function<void(TextIndicator&)> textIndicatorInstallationCallback);
+    WEBCORE_EXPORT static PlatformAnimationController animationControllerForPopup(const DictionaryPopupInfo&, NSView *, std::function<void(TextIndicator&)> textIndicatorInstallationCallback, std::function<FloatRect(FloatRect)> rootViewToViewConversionCallback = nullptr);
 };
 
 } // namespace WebCore

@@ -1,3 +1,24 @@
+2016-01-15  Tim Horton  <timothy_horton@apple.com>
+
+        Data detector yellow highlight location is vertically mirrored in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=152216
+        <rdar://problem/23848003>
+
+        Reviewed by Beth Dakin.
+
+        No new tests, because we currently have no decent mechanism for testing
+        where TextIndicator/Lookup/DataDetectors actually make it to the screen,
+        nor for synthetic force-click in WebKit1.
+
+        * editing/mac/DictionaryLookup.h:
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::showPopupOrCreateAnimationController):
+        (WebCore::DictionaryLookup::showPopup):
+        (WebCore::DictionaryLookup::animationControllerForPopup):
+        Add an optional function for converting between root-FrameView and
+        handed-in-NSView coordinates, and use it to convert textBoundingRectInRootViewCoordinates
+        into the coordinates of the WebView.
+
 2016-01-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Media Query (-webkit-video-playable-inline) is failing as an invalid media query expression

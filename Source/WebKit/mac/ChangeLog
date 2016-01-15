@@ -1,3 +1,26 @@
+2016-01-15  Tim Horton  <timothy_horton@apple.com>
+
+        Data detector yellow highlight location is vertically mirrored in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=152216
+        <rdar://problem/23848003>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        These assignments have no effect because they're operating on a copy, because
+        TextIndicator::data() does not return a reference... so remove them.
+
+        * WebView/WebView.mm:
+        (-[WebView _setTextIndicator:withLifetime:]):
+        Convert textBoundingRectInRootViewCoordinates to WebView coordinates before
+        converting to Window coordinates from WebView coordinates so we get flipping right.
+
+        (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+        (-[WebView _showDictionaryLookupPopup:]):
+        Ditto for these, except in the aforementioned conversion callback.
+
 2016-01-14  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Support opening and deleting SQLite databases on disk.

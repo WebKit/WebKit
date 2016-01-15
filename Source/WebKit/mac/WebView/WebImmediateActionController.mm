@@ -430,7 +430,6 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     }
 
     auto indicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::FadeIn);
-    indicator->data().textBoundingRectInRootViewCoordinates = [_webView _convertRectFromRootView:indicator->textBoundingRectInRootViewCoordinates()];
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
@@ -463,7 +462,6 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!linkRange)
         return nullptr;
     auto indicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionDefault, TextIndicatorPresentationTransition::FadeIn);
-    indicator->data().textBoundingRectInRootViewCoordinates = [_webView _convertRectFromRootView:indicator->textBoundingRectInRootViewCoordinates()];
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
