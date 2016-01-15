@@ -29,11 +29,15 @@
 #include "AuthenticationManager.h"
 #include "Connection.h"
 #include "DataReference.h"
-#include "DownloadAuthenticationClient.h"
 #include "DownloadProxyMessages.h"
 #include "DownloadManager.h"
 #include "SandboxExtension.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/NotImplemented.h>
+
+#if !USE(NETWORK_SESSION)
+#include "DownloadAuthenticationClient.h"
+#endif
 
 using namespace WebCore;
 
@@ -63,7 +67,11 @@ void Download::didStart()
 
 void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& authenticationChallenge)
 {
+#if USE(NETWORK_SESSION)
+    notImplemented();
+#else
     m_downloadManager.downloadsAuthenticationManager().didReceiveAuthenticationChallenge(this, authenticationChallenge);
+#endif
 }
 
 void Download::didReceiveResponse(const ResourceResponse& response)
