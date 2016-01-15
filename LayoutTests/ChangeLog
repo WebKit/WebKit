@@ -1,5 +1,13 @@
 2016-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Test gardening after r195088
+
+        Unreviewed.
+
+        * http/tests/contentextensions/font-display-none-repeated-layout-expected.txt:
+
+2016-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Mixing Content Blocking of fonts and display:none rules causes battery drain
         https://bugs.webkit.org/show_bug.cgi?id=153051
         <rdar://problem/23187709>
