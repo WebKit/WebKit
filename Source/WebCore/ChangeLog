@@ -1,3 +1,20 @@
+2016-01-15  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: canHaveChildren() || canHaveGeneratedChildren() in WebCore::RenderElement::insertChildInternal
+        https://bugs.webkit.org/show_bug.cgi?id=123331
+
+        Reviewed by Darin Adler.
+
+        Do not set named flow fragment bit on the flow until after the renderer is attached. Setting/resetting it too early
+        could affect the attach/detach process itself (This is similar to attaching a multi column flow thread).
+
+        Test: fast/regions/input-box-with-region-assert.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded):
+        (WebCore::RenderBlockFlow::setRenderNamedFlowFragment):
+
 2016-01-15  Simon Fraser  <simon.fraser@apple.com>
 
         Add kdebug_trace signposts for a few WebCore operations

@@ -144,7 +144,7 @@ void RenderBlockFlow::insertedIntoTree()
 void RenderBlockFlow::willBeDestroyed()
 {
     if (renderNamedFlowFragment())
-        setRenderNamedFlowFragment(0);
+        setRenderNamedFlowFragment(nullptr);
 
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
@@ -3151,8 +3151,8 @@ void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
     if (style().isDisplayRegionType() && style().hasFlowFrom() && !style().specifiesColumns()) {
         RenderNamedFlowFragment* flowFragment = new RenderNamedFlowFragment(document(), RenderNamedFlowFragment::createStyle(style()));
         flowFragment->initializeStyle();
+        addChild(flowFragment);
         setRenderNamedFlowFragment(flowFragment);
-        addChild(renderNamedFlowFragment());
     }
 }
 
@@ -3198,8 +3198,8 @@ void RenderBlockFlow::updateLogicalHeight()
 void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFragment)
 {
     RenderBlockFlowRareData& rareData = ensureRareBlockFlowData();
-    if (rareData.m_renderNamedFlowFragment)
-        rareData.m_renderNamedFlowFragment->destroy();
+    if (auto* flowFragmentOnFlow = std::exchange(rareData.m_renderNamedFlowFragment, nullptr))
+        flowFragmentOnFlow->destroy();
     rareData.m_renderNamedFlowFragment = flowFragment;
 }
 
