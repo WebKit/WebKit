@@ -1,5 +1,21 @@
 2016-01-14  Beth Dakin  <bdakin@apple.com>
 
+        WK1 and WK2 should share more candidate request code
+        https://bugs.webkit.org/show_bug.cgi?id=153108
+
+        Reviewed by Simon Fraser.
+
+        requestCandidatesForSelection() does not need to be exposed as an 
+        EditorClient function. WK1 can just call invoke this code from the existing 
+        respondToChangedSelection EditorClient function, which is what WK2 does.
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection):
+        * loader/EmptyClients.h:
+        * page/EditorClient.h:
+        (WebCore::EditorClient::supportsGlobalSelection):
+
+2016-01-14  Beth Dakin  <bdakin@apple.com>
+
         WK2: Request completion candidates when needed
         https://bugs.webkit.org/show_bug.cgi?id=153040
         -and corresponding-

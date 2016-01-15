@@ -186,10 +186,6 @@ public:
     // Support for global selections, used on platforms like the X Window System that treat
     // selection as a type of clipboard.
     virtual bool supportsGlobalSelection() { return false; }
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    virtual void requestCandidatesForSelection(const VisibleSelection&) = 0;
-#endif
 };
 
 }

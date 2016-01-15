@@ -1,3 +1,25 @@
+2016-01-14  Beth Dakin  <bdakin@apple.com>
+
+        WK1 and WK2 should share more candidate request code
+        https://bugs.webkit.org/show_bug.cgi?id=153108
+
+        Reviewed by Simon Fraser.
+
+        requestCandidatesForSelection() does not need to be exposed as an 
+        EditorClient function. WK1 can just call invoke this code from the existing 
+        respondToChangedSelection EditorClient function, which is what WK2 does.
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::respondToChangedSelection):
+
+        Cleanup — use some code that was moved to WebCore::Editor.
+        (WebEditorClient::requestCandidatesForSelection):
+        (WebEditorClient::handleRequestedCandidates):
+        (textCheckingResultFromNSTextCheckingResult):
+        (WebEditorClient::handleAcceptedCandidate):
+        (candidateRangeForSelection): Deleted.
+        (candidateWouldReplaceText): Deleted.
+
 2016-01-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r194900.

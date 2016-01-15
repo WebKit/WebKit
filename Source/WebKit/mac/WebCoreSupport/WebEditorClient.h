@@ -170,7 +170,7 @@ private:
     virtual void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>) override;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    virtual void requestCandidatesForSelection(const WebCore::VisibleSelection&) override;
+    void requestCandidatesForSelection(const WebCore::VisibleSelection&);
     void handleRequestedCandidates(NSInteger, NSArray<NSTextCheckingResult *> *);
     void handleAcceptedCandidate(NSTextCheckingResult *);
 #endif

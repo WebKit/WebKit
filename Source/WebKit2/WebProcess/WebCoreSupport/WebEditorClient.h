@@ -150,10 +150,6 @@ private:
     virtual void setInputMethodState(bool enabled) override;
     virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) override;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    virtual void requestCandidatesForSelection(const WebCore::VisibleSelection&) override { }
-#endif
-
 #if PLATFORM(GTK)
     virtual bool shouldShowUnicodeMenu() override;
 #endif

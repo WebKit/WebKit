@@ -367,6 +367,11 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     if (![m_webView _isClosing])
         WebThreadPostNotification(WebViewDidChangeSelectionNotification, m_webView, nil);
 #endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if (frame->editor().canEdit())
+        requestCandidatesForSelection(frame->selection().selection());
+#endif
 }
 
 void WebEditorClient::discardedComposition(Frame*)
@@ -1124,15 +1129,12 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
 
     VisiblePosition selectionStart = selection.visibleStart();
     VisiblePosition selectionEnd = selection.visibleEnd();
-
-    // Use the surrounding paragraphs of text as context.
     VisiblePosition paragraphStart = startOfParagraph(selectionStart);
     VisiblePosition paragraphEnd = endOfParagraph(selectionEnd);
 
     int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
     int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
     NSRange rangeForCandidates = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
-
     String fullPlainTextStringOfParagraph = plainText(makeRange(paragraphStart, paragraphEnd).get());
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
@@ -1146,20 +1148,6 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
     }];
 }
 
-static RefPtr<Range> candidateRangeForSelection(const VisibleSelection& selection, Frame* frame)
-{
-    return selection.isCaret() ? wordRangeFromPosition(selection.start()) : frame->selection().toNormalizedRange();
-}
-
-static bool candidateWouldReplaceText(const VisibleSelection& selection)
-{
-    // If the character behind the caret in the current selection is anything but a space or a newline then we should
-    // replace the whole current word with the candidate.
-    UChar32 characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection = 0;
-    charactersAroundPosition(selection.visibleStart(), characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection);
-    return !(characterBeforeSelection == '\0' || characterBeforeSelection == '\n' || characterBeforeSelection == ' ');
-}
-
 void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
 {
     Frame* frame = core([m_webView _selectedOrMainFrame]);
@@ -1170,14 +1158,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
     if (selection != m_lastSelectionForRequestedCandidates)
         return;
 
-    RefPtr<Range> rangeForCurrentlyTypedString = candidateRangeForSelection(selection, frame);
-    NSString *currentlyTypedString;
-    if (rangeForCurrentlyTypedString && candidateWouldReplaceText(selection))
-        currentlyTypedString = plainText(rangeForCurrentlyTypedString.get());
-    else
-        currentlyTypedString = @"";
-
-    RefPtr<Range> selectedRange = frame->selection().selection().toNormalizedRange();
+    RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
         return;
 
@@ -1188,7 +1169,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
         rectForSelectionCandidates = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     auto weakEditor = m_weakPtrFactory.createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] showCandidates:candidates forString:currentlyTypedString inRect:rectForSelectionCandidates view:m_webView completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
+    [[NSSpellChecker sharedSpellChecker] showCandidates:candidates forString:frame->editor().stringForCandidateRequest() inRect:rectForSelectionCandidates view:m_webView completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakEditor)
                 return;
@@ -1196,6 +1177,32 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
         });
     }];
 
+}
+
+static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheckingResult *nsResult)
+{
+    WebCore::TextCheckingResult result;
+
+    switch ([nsResult resultType]) {
+    case NSTextCheckingTypeSpelling:
+        result.type = WebCore::TextCheckingTypeSpelling;
+        break;
+    case NSTextCheckingTypeReplacement:
+        result.type = WebCore::TextCheckingTypeReplacement;
+        break;
+    case NSTextCheckingTypeCorrection:
+        result.type = WebCore::TextCheckingTypeCorrection;
+        break;
+    default:
+        result.type = WebCore::TextCheckingTypeNone;
+    }
+
+    NSRange resultRange = [nsResult range];
+    result.location = resultRange.location;
+    result.length = resultRange.length;
+    result.replacement = [nsResult replacementString];
+
+    return result;
 }
 
 void WebEditorClient::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidate)
@@ -1208,16 +1215,7 @@ void WebEditorClient::handleAcceptedCandidate(NSTextCheckingResult *acceptedCand
     if (selection != m_lastSelectionForRequestedCandidates)
         return;
 
-    RefPtr<Range> candidateRange = candidateRangeForSelection(selection, frame);
-
-    frame->editor().setIgnoreCompositionSelectionChange(true);
-
-    if (candidateWouldReplaceText(selection))
-        frame->selection().setSelectedRange(candidateRange.get(), UPSTREAM, true);
-
-    frame->editor().insertText(acceptedCandidate.replacementString, 0);
-    frame->editor().insertText(String(" "), 0);
-    frame->editor().setIgnoreCompositionSelectionChange(false);
+    frame->editor().handleAcceptedCandidate(textCheckingResultFromNSTextCheckingResult(acceptedCandidate));
 }
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 

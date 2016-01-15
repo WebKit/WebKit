@@ -537,10 +537,6 @@ public:
     virtual void willSetInputMethodState() override { }
     virtual void setInputMethodState(bool) override { }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    virtual void requestCandidatesForSelection(const VisibleSelection&) override { }
-#endif
-
 private:
     EmptyTextCheckerClient m_textCheckerClient;
 };
