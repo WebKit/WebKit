@@ -104,6 +104,7 @@ public:
 protected:
     virtual void willBeDestroyed() override;
 
+    void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     virtual void updateFromStyle() override;
