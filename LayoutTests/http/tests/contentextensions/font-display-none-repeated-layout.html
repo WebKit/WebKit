@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("../resources/Ahem.woff") format("woff");
+}
+#contents {
+    font-family: "WebFont";
+}
+</style>
+</head>
+<body>
+<div id="hideme">Hello</div>
+<div id="contents">Hello</div>
+<div id="console"></div>
+<script>
+description("Make sure that a content-blocker rule which is triggered by a webfont and causes display:none on an element doesn't cause looping layouts.");
+
+window.jsTestIsAsync = true;
+
+var startLayoutCount = -1;
+var endLayoutCount = -1;
+
+if (window.internals)
+    startLayoutCount = window.internals.layoutCount;
+
+window.setTimeout(function() {
+    if (window.internals) {
+        endLayoutCount = window.internals.layoutCount;
+    }
+    shouldBeTrue("endLayoutCount - startLayoutCount < 5");
+    finishJSTest();
+}, 500);
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

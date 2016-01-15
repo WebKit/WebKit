@@ -179,8 +179,8 @@ void ExtensionStyleSheets::addDisplayNoneSelector(const String& identifier, cons
         m_userStyleSheets.append(&result.iterator->value->styleSheet());
     }
 
-    result.iterator->value->addDisplayNoneSelector(selector, selectorID);
-    m_styleResolverChangedTimer.startOneShot(0);
+    if (result.iterator->value->addDisplayNoneSelector(selector, selectorID))
+        m_styleResolverChangedTimer.startOneShot(0);
 }
 
 void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)

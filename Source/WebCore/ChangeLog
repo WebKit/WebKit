@@ -1,3 +1,22 @@
+2016-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Mixing Content Blocking of fonts and display:none rules causes battery drain
+        https://bugs.webkit.org/show_bug.cgi?id=153051
+        <rdar://problem/23187709>
+
+        Reviewed by Alex Christensen.
+
+        If we have applied a rule before and we are not applying it again, don't
+        resolve the style again.
+
+        Test: http/tests/contentextensions/font-display-none-repeated-layout.html
+
+        * contentextensions/ContentExtensionStyleSheet.cpp:
+        (WebCore::ContentExtensions::ContentExtensionStyleSheet::addDisplayNoneSelector):
+        * contentextensions/ContentExtensionStyleSheet.h:
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::addDisplayNoneSelector):
+
 2016-01-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add document.defineCustomElement
