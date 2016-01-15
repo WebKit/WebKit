@@ -1,3 +1,19 @@
+2016-01-15  Julien Brianceau  <jbriance@cisco.com>
+
+        [mips] Add countLeadingZeros32 implementation in macro assembler
+        https://bugs.webkit.org/show_bug.cgi?id=152886
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::lui):
+        (JSC::MIPSAssembler::clz):
+        (JSC::MIPSAssembler::addiu):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::and32):
+        (JSC::MacroAssemblerMIPS::countLeadingZeros32):
+        (JSC::MacroAssemblerMIPS::lshift32):
+
 2016-01-14  Filip Pizlo  <fpizlo@apple.com>
 
         Air needs a Shuffle instruction

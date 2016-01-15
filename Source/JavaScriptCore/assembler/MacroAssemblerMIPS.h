@@ -313,6 +313,15 @@ public:
         }
     }
 
+    void countLeadingZeros32(RegisterID src, RegisterID dest)
+    {
+#if WTF_MIPS_ISA_AT_LEAST(32)
+        m_assembler.clz(dest, src);
+#else
+        static_assert(false, "CLZ opcode is not available for this ISA");
+#endif
+    }
+
     void lshift32(RegisterID shiftAmount, RegisterID dest)
     {
         m_assembler.sllv(dest, dest, shiftAmount);
