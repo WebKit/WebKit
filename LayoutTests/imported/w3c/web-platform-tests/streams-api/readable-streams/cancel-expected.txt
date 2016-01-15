@@ -11,14 +11,14 @@ PASS ReadableStream cancellation: if the underlying source's cancel method retur
 PASS ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called 
 FAIL Load cancel.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-FAIL ReadableStream cancellation: integration test on an infinite stream derived from a random push source Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: cancel() on a locked stream should fail and not call the underlying source cancel Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: should fulfill promise when cancel callback went fine Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: returning a value from the underlying source's cancel should not affect the fulfillment value of the promise returned by the stream's cancel Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: should reject promise when cancel callback raises an exception Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (1) Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (2) Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should reject when that one does Can't find variable: ReadableStream
-FAIL ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called Can't find variable: ReadableStream
+PASS ReadableStream cancellation: integration test on an infinite stream derived from a random push source 
+PASS ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source 
+PASS ReadableStream cancellation: cancel() on a locked stream should fail and not call the underlying source cancel 
+PASS ReadableStream cancellation: should fulfill promise when cancel callback went fine 
+PASS ReadableStream cancellation: returning a value from the underlying source's cancel should not affect the fulfillment value of the promise returned by the stream's cancel 
+PASS ReadableStream cancellation: should reject promise when cancel callback raises an exception 
+PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (1) 
+PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (2) 
+PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should reject when that one does 
+PASS ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called 
 

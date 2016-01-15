@@ -30,6 +30,7 @@
 [
     Conditional=STREAMS_API,
     Constructor,
+    GlobalContext=DOMWindow&WorkerGlobalScope,
     JSBuiltin
 ] interface ReadableStream {
     Promise cancel(optional any reason);

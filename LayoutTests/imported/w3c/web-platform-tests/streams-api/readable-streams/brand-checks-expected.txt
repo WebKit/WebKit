@@ -16,19 +16,19 @@ PASS ReadableStreamController.prototype.enqueue enforces a brand check
 PASS ReadableStreamController.prototype.error enforces a brand check 
 FAIL Load brand-checks.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-FAIL Can get the ReadableStreamReader constructor indirectly Can't find variable: ReadableStream
-FAIL Can get the ReadableStreamController constructor indirectly Can't find variable: ReadableStream
-FAIL ReadableStream.prototype.cancel enforces a brand check Can't find variable: ReadableStream
-FAIL ReadableStream.prototype.getReader enforces a brand check Can't find variable: ReadableStream
-FAIL ReadableStream.prototype.tee enforces a brand check Can't find variable: ReadableStream
+PASS Can get the ReadableStreamReader constructor indirectly 
+PASS Can get the ReadableStreamController constructor indirectly 
+PASS ReadableStream.prototype.cancel enforces a brand check 
+PASS ReadableStream.prototype.getReader enforces a brand check 
+PASS ReadableStream.prototype.tee enforces a brand check 
 PASS ReadableStreamReader enforces a brand check on its argument 
-FAIL ReadableStreamReader.prototype.closed enforces a brand check undefined is not an object (evaluating 'ReadableStreamReader.prototype')
-FAIL ReadableStreamReader.prototype.cancel enforces a brand check undefined is not an object (evaluating 'ReadableStreamReader.prototype')
-FAIL ReadableStreamReader.prototype.read enforces a brand check undefined is not an object (evaluating 'ReadableStreamReader.prototype')
-FAIL ReadableStreamReader.prototype.releaseLock enforces a brand check undefined is not an object (evaluating 'ReadableStreamReader.prototype')
+PASS ReadableStreamReader.prototype.closed enforces a brand check 
+PASS ReadableStreamReader.prototype.cancel enforces a brand check 
+PASS ReadableStreamReader.prototype.read enforces a brand check 
+PASS ReadableStreamReader.prototype.releaseLock enforces a brand check 
 PASS ReadableStreamController enforces a brand check on its argument 
-FAIL ReadableStreamController can't be given a fully-constructed ReadableStream assert_throws: Constructing a ReadableStreamController should throw function "() => new ReadableStreamController(realReadableStream())" threw object "ReferenceError: Can't find variable: ReadableStream" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL ReadableStreamController.prototype.close enforces a brand check undefined is not an object (evaluating 'ReadableStreamController.prototype')
-FAIL ReadableStreamController.prototype.enqueue enforces a brand check undefined is not an object (evaluating 'ReadableStreamController.prototype')
-FAIL ReadableStreamController.prototype.error enforces a brand check undefined is not an object (evaluating 'ReadableStreamController.prototype')
+PASS ReadableStreamController can't be given a fully-constructed ReadableStream 
+PASS ReadableStreamController.prototype.close enforces a brand check 
+PASS ReadableStreamController.prototype.enqueue enforces a brand check 
+PASS ReadableStreamController.prototype.error enforces a brand check 
 

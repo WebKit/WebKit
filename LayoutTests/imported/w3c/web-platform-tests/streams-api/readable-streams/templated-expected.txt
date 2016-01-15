@@ -87,88 +87,88 @@ PASS reader's closed property always returns the same promise
 FAIL Load templated.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
 PASS Running templatedRSEmpty with ReadableStream (empty) 
-FAIL instances have the correct methods and properties Can't find variable: ReadableStream
+PASS instances have the correct methods and properties 
 PASS Running templatedRSEmptyReader with ReadableStream (empty) reader 
-FAIL instances have the correct methods and properties Can't find variable: ReadableStream
-FAIL locked should be true Can't find variable: ReadableStream
-FAIL read() should never settle Can't find variable: ReadableStream
-FAIL two read()s should both never settle Can't find variable: ReadableStream
-FAIL read() should return distinct promises each time Can't find variable: ReadableStream
-FAIL getReader() again on the stream should fail Can't find variable: ReadableStream
-FAIL releasing the lock with pending read requests should throw but the read requests should stay pending Can't find variable: ReadableStream
-FAIL releasing the lock should cause further read() calls to reject with a TypeError Can't find variable: ReadableStream
-FAIL releasing the lock should cause closed calls to reject with a TypeError Can't find variable: ReadableStream
-FAIL releasing the lock should cause locked to become false Can't find variable: ReadableStream
-FAIL canceling via the reader should cause the reader to act closed Can't find variable: ReadableStream
-FAIL canceling via the stream should fail Can't find variable: ReadableStream
+PASS instances have the correct methods and properties 
+PASS locked should be true 
+PASS read() should never settle 
+PASS two read()s should both never settle 
+PASS read() should return distinct promises each time 
+PASS getReader() again on the stream should fail 
+PASS releasing the lock with pending read requests should throw but the read requests should stay pending 
+PASS releasing the lock should cause further read() calls to reject with a TypeError 
+PASS releasing the lock should cause closed calls to reject with a TypeError 
+PASS releasing the lock should cause locked to become false 
+PASS canceling via the reader should cause the reader to act closed 
+PASS canceling via the stream should fail 
 PASS Running templatedRSClosed with ReadableStream (closed via call in start) 
-FAIL cancel() should return a distinct fulfilled promise each time Can't find variable: ReadableStream
-FAIL locked should be false Can't find variable: ReadableStream
-FAIL getReader() should be OK Can't find variable: ReadableStream
-FAIL should be able to acquire multiple readers if they are released in succession Can't find variable: ReadableStream
-FAIL should not be able to acquire a second reader if we don't release the first one Can't find variable: ReadableStream
+PASS cancel() should return a distinct fulfilled promise each time 
+PASS locked should be false 
+PASS getReader() should be OK 
+PASS should be able to acquire multiple readers if they are released in succession 
+PASS should not be able to acquire a second reader if we don't release the first one 
 PASS Running templatedRSClosedReader with ReadableStream reader (closed before getting reader) 
-FAIL read() should fulfill with { value: undefined, done: true } Can't find variable: ReadableStream
-FAIL read() multiple times should fulfill with { value: undefined, done: true } Can't find variable: ReadableStream
-FAIL read() should work when used within another read() fulfill callback Can't find variable: ReadableStream
-FAIL closed should fulfill with undefined Can't find variable: ReadableStream
-FAIL releasing the lock should cause closed to reject and change identity Can't find variable: ReadableStream
-FAIL cancel() should return a distinct fulfilled promise each time Can't find variable: ReadableStream
+PASS read() should fulfill with { value: undefined, done: true } 
+PASS read() multiple times should fulfill with { value: undefined, done: true } 
+PASS read() should work when used within another read() fulfill callback 
+PASS closed should fulfill with undefined 
+PASS releasing the lock should cause closed to reject and change identity 
+PASS cancel() should return a distinct fulfilled promise each time 
 PASS Running templatedRSClosedReader with ReadableStream reader (closed after getting reader) 
-FAIL read() should fulfill with { value: undefined, done: true } Can't find variable: ReadableStream
-FAIL read() multiple times should fulfill with { value: undefined, done: true } Can't find variable: ReadableStream
-FAIL read() should work when used within another read() fulfill callback Can't find variable: ReadableStream
-FAIL closed should fulfill with undefined Can't find variable: ReadableStream
-FAIL releasing the lock should cause closed to reject and change identity Can't find variable: ReadableStream
-FAIL cancel() should return a distinct fulfilled promise each time Can't find variable: ReadableStream
+PASS read() should fulfill with { value: undefined, done: true } 
+PASS read() multiple times should fulfill with { value: undefined, done: true } 
+PASS read() should work when used within another read() fulfill callback 
+PASS closed should fulfill with undefined 
+PASS releasing the lock should cause closed to reject and change identity 
+PASS cancel() should return a distinct fulfilled promise each time 
 PASS Running templatedRSClosed with ReadableStream (closed via cancel) 
-FAIL cancel() should return a distinct fulfilled promise each time Can't find variable: ReadableStream
-FAIL locked should be false Can't find variable: ReadableStream
-FAIL getReader() should be OK Can't find variable: ReadableStream
-FAIL should be able to acquire multiple readers if they are released in succession Can't find variable: ReadableStream
-FAIL should not be able to acquire a second reader if we don't release the first one Can't find variable: ReadableStream
+PASS cancel() should return a distinct fulfilled promise each time 
+PASS locked should be false 
+PASS getReader() should be OK 
+PASS should be able to acquire multiple readers if they are released in succession 
+PASS should not be able to acquire a second reader if we don't release the first one 
 PASS Running templatedRSClosedReader with ReadableStream reader (closed via cancel after getting reader) 
-FAIL read() should fulfill with { value: undefined, done: true } Can't find variable: ReadableStream
-FAIL read() multiple times should fulfill with { value: undefined, done: true } Can't find variable: ReadableStream
-FAIL read() should work when used within another read() fulfill callback Can't find variable: ReadableStream
-FAIL closed should fulfill with undefined Can't find variable: ReadableStream
-FAIL releasing the lock should cause closed to reject and change identity Can't find variable: ReadableStream
-FAIL cancel() should return a distinct fulfilled promise each time Can't find variable: ReadableStream
+PASS read() should fulfill with { value: undefined, done: true } 
+PASS read() multiple times should fulfill with { value: undefined, done: true } 
+PASS read() should work when used within another read() fulfill callback 
+PASS closed should fulfill with undefined 
+PASS releasing the lock should cause closed to reject and change identity 
+PASS cancel() should return a distinct fulfilled promise each time 
 PASS Running templatedRSErrored with ReadableStream (errored via call in start) 
-FAIL getReader() should return a reader that acts errored Can't find variable: ReadableStream
-FAIL read() twice should give the error each time Can't find variable: ReadableStream
-FAIL locked should be false Can't find variable: ReadableStream
+PASS getReader() should return a reader that acts errored 
+PASS read() twice should give the error each time 
+PASS locked should be false 
 PASS Running templatedRSErroredSyncOnly with ReadableStream (errored via call in start) 
-FAIL should be able to obtain a second reader, with the correct closed promise Can't find variable: ReadableStream
-FAIL should not be able to obtain additional readers if we don't release the first lock Can't find variable: ReadableStream
-FAIL cancel() should return a distinct rejected promise each time Can't find variable: ReadableStream
-FAIL reader cancel() should return a distinct rejected promise each time Can't find variable: ReadableStream
+PASS should be able to obtain a second reader, with the correct closed promise 
+PASS should not be able to obtain additional readers if we don't release the first lock 
+PASS cancel() should return a distinct rejected promise each time 
+PASS reader cancel() should return a distinct rejected promise each time 
 PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
-FAIL getReader() should return a reader that acts errored Can't find variable: ReadableStream
-FAIL read() twice should give the error each time Can't find variable: ReadableStream
-FAIL locked should be false Can't find variable: ReadableStream
+PASS getReader() should return a reader that acts errored 
+PASS read() twice should give the error each time 
+PASS locked should be false 
 PASS Running templatedRSErroredReader with ReadableStream (errored via returning a rejected promise in start) reader 
-FAIL closed should reject with the error Can't find variable: ReadableStream
-FAIL releasing the lock should cause closed to reject and change identity Can't find variable: ReadableStream
-FAIL read() should reject with the error Can't find variable: ReadableStream
+PASS closed should reject with the error 
+PASS releasing the lock should cause closed to reject and change identity 
+PASS read() should reject with the error 
 PASS Running templatedRSErroredReader with ReadableStream reader (errored before getting reader) 
-FAIL closed should reject with the error Can't find variable: ReadableStream
-FAIL releasing the lock should cause closed to reject and change identity Can't find variable: ReadableStream
-FAIL read() should reject with the error Can't find variable: ReadableStream
+PASS closed should reject with the error 
+PASS releasing the lock should cause closed to reject and change identity 
+PASS read() should reject with the error 
 PASS Running templatedRSErroredReader with ReadableStream reader (errored after getting reader) 
-FAIL closed should reject with the error Can't find variable: ReadableStream
-FAIL releasing the lock should cause closed to reject and change identity Can't find variable: ReadableStream
-FAIL read() should reject with the error Can't find variable: ReadableStream
+PASS closed should reject with the error 
+PASS releasing the lock should cause closed to reject and change identity 
+PASS read() should reject with the error 
 PASS Running templatedRSTwoChunksOpenReader with ReadableStream (two chunks enqueued, still open) reader 
-FAIL calling read() twice without waiting will eventually give both chunks (sequential) Can't find variable: ReadableStream
-FAIL calling read() twice without waiting will eventually give both chunks (nested) Can't find variable: ReadableStream
-FAIL read() should return distinct promises each time Can't find variable: ReadableStream
-FAIL cancel() after a read() should still give that single read result Can't find variable: ReadableStream
+PASS calling read() twice without waiting will eventually give both chunks (sequential) 
+PASS calling read() twice without waiting will eventually give both chunks (nested) 
+PASS read() should return distinct promises each time 
+PASS cancel() after a read() should still give that single read result 
 PASS Running templatedRSTwoChunksClosedReader with ReadableStream (two chunks enqueued, then closed) reader 
-FAIL third read(), without waiting, should give { value: undefined, done: true } (sequential) Can't find variable: ReadableStream
-FAIL third read(), without waiting, should give { value: undefined, done: true } (nested) Can't find variable: ReadableStream
-FAIL draining the stream via read() should cause the reader closed promise to fulfill, but locked stays true Can't find variable: ReadableStream
-FAIL releasing the lock after the stream is closed should cause locked to become false Can't find variable: ReadableStream
-FAIL releasing the lock should cause further read() calls to reject with a TypeError Can't find variable: ReadableStream
-FAIL reader's closed property always returns the same promise Can't find variable: ReadableStream
+PASS third read(), without waiting, should give { value: undefined, done: true } (sequential) 
+PASS third read(), without waiting, should give { value: undefined, done: true } (nested) 
+PASS draining the stream via read() should cause the reader closed promise to fulfill, but locked stays true 
+PASS releasing the lock after the stream is closed should cause locked to become false 
+PASS releasing the lock should cause further read() calls to reject with a TypeError 
+PASS reader's closed property always returns the same promise 
 

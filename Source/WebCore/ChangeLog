@@ -1,5 +1,20 @@
 2016-01-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Streams API] Expose ReadableStream and relatives to Worker
+        https://bugs.webkit.org/show_bug.cgi?id=152066
+
+        Reviewed by Darin Adler.
+
+        Covered by rebased tests.
+
+        * Modules/streams/ByteLengthQueuingStrategy.idl:
+        * Modules/streams/CountQueuingStrategy.idl:
+        * Modules/streams/ReadableStream.idl:
+        * Modules/streams/ReadableStreamController.idl:
+        * Modules/streams/ReadableStreamReader.idl:
+
+2016-01-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         CORS: Fix the handling of redirected request containing Origin null.
         https://bugs.webkit.org/show_bug.cgi?id=128816
 
