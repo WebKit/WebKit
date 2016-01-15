@@ -1,5 +1,17 @@
 2015-12-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Clipping along compositing borders in svg-edit
+        https://bugs.webkit.org/show_bug.cgi?id=151791
+
+        Reviewed by Zalan Bujtas.
+        
+        Ref test that triggers recomputation of overflow.
+
+        * svg/overflow/visual-overflow-change-expected.html: Added.
+        * svg/overflow/visual-overflow-change.html: Added.
+
+2015-12-06  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r187121): Can't get to the main content of the page at https://theintercept.com/drone-papers/
         https://bugs.webkit.org/show_bug.cgi?id=151849
         rdar://problem/23132828

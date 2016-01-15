@@ -196,6 +196,7 @@ void RenderSVGRoot::layout()
         m_needsBoundariesOrTransformUpdate = false;
     }
 
+    clearOverflow();
     if (!shouldApplyViewportClip()) {
         FloatRect contentRepaintRect = repaintRectInLocalCoordinates();
         contentRepaintRect = m_localToBorderBoxTransform.mapRect(contentRepaintRect);
