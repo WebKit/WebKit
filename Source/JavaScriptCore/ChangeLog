@@ -1,3 +1,29 @@
+2016-01-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=153142
+
+        Reviewed by Brent Fulgham.
+
+        The internal Windows build builds JavaScriptCore from a directory that is not called JavaScriptCore.
+        Searching for JavaScriptCore/API/APICast.h fails because it is in SomethingElse/API/APICast.h.
+        Since we are including the JavaScriptCore directory, it is not necessary to have JavaScriptCore in
+        the forwarding headers, but removing it allows builds form directories that are not named JavaScriptCore.
+
+        * ForwardingHeaders/JavaScriptCore/APICast.h:
+        * ForwardingHeaders/JavaScriptCore/JSBase.h:
+        * ForwardingHeaders/JavaScriptCore/JSCTestRunnerUtils.h:
+        * ForwardingHeaders/JavaScriptCore/JSContextRef.h:
+        * ForwardingHeaders/JavaScriptCore/JSObjectRef.h:
+        * ForwardingHeaders/JavaScriptCore/JSRetainPtr.h:
+        * ForwardingHeaders/JavaScriptCore/JSStringRef.h:
+        * ForwardingHeaders/JavaScriptCore/JSStringRefCF.h:
+        * ForwardingHeaders/JavaScriptCore/JSValueRef.h:
+        * ForwardingHeaders/JavaScriptCore/JavaScript.h:
+        * ForwardingHeaders/JavaScriptCore/JavaScriptCore.h:
+        * ForwardingHeaders/JavaScriptCore/OpaqueJSString.h:
+        * ForwardingHeaders/JavaScriptCore/WebKitAvailability.h:
+
 2016-01-15  Per Arne Vollan  <peavo@outlook.com>
 
         [B3][Win64] Compile fixes.

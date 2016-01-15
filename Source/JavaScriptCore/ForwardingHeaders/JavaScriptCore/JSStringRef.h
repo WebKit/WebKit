@@ -1,1 +1,1 @@
-#include <JavaScriptCore/API/JSStringRef.h>
+#include <API/JSStringRef.h>

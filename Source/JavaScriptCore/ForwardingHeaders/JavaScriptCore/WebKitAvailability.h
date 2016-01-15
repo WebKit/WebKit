@@ -1,1 +1,1 @@
-#include <JavaScriptCore/API/WebKitAvailability.h>
+#include <API/WebKitAvailability.h>

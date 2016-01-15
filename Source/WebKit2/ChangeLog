@@ -1,3 +1,13 @@
+2016-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=153142
+
+        Unreviewed addition to Alex's JSC patch, which was reviewed by Brent Fulgham. Pass
+        -I${JAVASCRIPTCORE_DIR} to g-ir-scanner.
+
+        * PlatformGTK.cmake:
+
 2016-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         Remove workaround for rdar://problem/23623670
