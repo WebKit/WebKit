@@ -1,3 +1,39 @@
+2016-01-15  Dave Hyatt  <hyatt@apple.com>
+
+        Avoid downloading the wrong image for <picture> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=153027
+
+        Reviewed by Dean Jackson.
+
+        No tests, since they are always flaky.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::~HTMLImageElement):
+        (WebCore::HTMLImageElement::createForJSConstructor):
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        (WebCore::HTMLImageElement::insertedInto):
+        (WebCore::HTMLImageElement::removedFrom):
+        (WebCore::HTMLImageElement::pictureElement):
+        (WebCore::HTMLImageElement::setPictureElement):
+        (WebCore::HTMLImageElement::width):
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::hasShadowControls):
+        * html/HTMLPictureElement.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+
+        Images that are built underneath a <picture> element are now connected
+        to that picture element via a setPictureNode call from the parser. This
+        ensures that the correct <source> elements are examined before checking the image.
+
+        This connection between images and their picture owners is handled using a static
+        HashMap in HTMLImageElement. This connection is made both from the parser and from
+        DOM insertions, and the map is queried now instead of looking directly at the
+        image's parentNode().
+
 2016-01-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Expose ReadableStream and relatives to Worker

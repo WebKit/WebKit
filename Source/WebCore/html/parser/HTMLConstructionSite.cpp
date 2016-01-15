@@ -36,9 +36,11 @@
 #include "HTMLElementFactory.h"
 #include "HTMLFormElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLPictureElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLTemplateElement.h"
 #include "NotImplemented.h"
@@ -640,6 +642,13 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* tok
     Document& ownerDocument = ownerDocumentForCurrentNode();
     bool insideTemplateElement = !ownerDocument.frame();
     RefPtr<Element> element = HTMLElementFactory::createElement(tagName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
+    
+    // FIXME: This is a hack to connect images to pictures before the image has
+    // been inserted into the document. It can be removed once asynchronous image
+    // loading is working.
+    if (is<HTMLPictureElement>(currentNode()) && is<HTMLImageElement>(*element.get()))
+        downcast<HTMLImageElement>(*element.get()).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
+
     setAttributes(element.get(), token, m_parserContentPolicy);
     ASSERT(element->isHTMLElement());
     return element.release();
