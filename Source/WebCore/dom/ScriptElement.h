@@ -110,7 +110,6 @@ private:
     bool m_requestUsesAccessControl : 1;
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
-    Timer m_errorEventTimer;
 };
 
 ScriptElement* toScriptElementIfPossible(Element*);
