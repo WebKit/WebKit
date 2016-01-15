@@ -80,7 +80,7 @@ static inline Color blendFunc(const AnimationBase*, const Color& from, const Col
 
 static inline Length blendFunc(const AnimationBase*, const Length& from, const Length& to, double progress)
 {
-    return to.blend(from, narrowPrecisionToFloat(progress));
+    return to.blend(from, progress);
 }
 
 static inline LengthSize blendFunc(const AnimationBase* anim, const LengthSize& from, const LengthSize& to, double progress)
@@ -255,6 +255,7 @@ static inline SVGLength blendFunc(const AnimationBase*, const SVGLength& from, c
 {
     return to.blend(from, narrowPrecisionToFloat(progress));
 }
+
 static inline Vector<SVGLength> blendFunc(const AnimationBase*, const Vector<SVGLength>& from, const Vector<SVGLength>& to, double progress)
 {
     size_t fromLength = from.size();
@@ -1453,7 +1454,6 @@ bool CSSPropertyAnimation::blendProperties(const AnimationBase* anim, CSSPropert
         wrapper->blend(anim, dst, a, b, progress);
         return !wrapper->animationIsAccelerated() || !anim->isAccelerated();
     }
-
     return false;
 }
 
