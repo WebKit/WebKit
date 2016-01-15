@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformMediaSession.h"
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
@@ -205,6 +205,7 @@ PlatformMediaSession::MediaType PlatformMediaSession::presentationType() const
     return m_client.presentationType();
 }
 
+#if ENABLE(VIDEO)
 String PlatformMediaSession::title() const
 {
     return m_client.mediaSessionTitle();
@@ -219,6 +220,7 @@ double PlatformMediaSession::currentTime() const
 {
     return m_client.mediaSessionCurrentTime();
 }
+#endif
     
 bool PlatformMediaSession::canReceiveRemoteControlCommands() const
 {
@@ -299,6 +301,7 @@ void PlatformMediaSession::setCanProduceAudio(bool canProduceAudio)
     PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged(*this);
 }
 
+#if ENABLE(VIDEO)
 String PlatformMediaSessionClient::mediaSessionTitle() const
 {
     return String();
@@ -313,6 +316,7 @@ double PlatformMediaSessionClient::mediaSessionCurrentTime() const
 {
     return MediaPlayer::invalidTime();
 }
+#endif
 
 }
 #endif

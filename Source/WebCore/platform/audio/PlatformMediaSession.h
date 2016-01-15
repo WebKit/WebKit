@@ -97,9 +97,11 @@ public:
     
     void visibilityChanged();
 
+#if ENABLE(VIDEO)
     String title() const;
     double duration() const;
     double currentTime() const;
+#endif
 
     enum RemoteControlCommandType {
         NoCommand,
@@ -176,9 +178,11 @@ public:
     virtual void mayResumePlayback(bool shouldResume) = 0;
     virtual void suspendPlayback() = 0;
 
+#if ENABLE(VIDEO)
     virtual String mediaSessionTitle() const;
     virtual double mediaSessionDuration() const;
     virtual double mediaSessionCurrentTime() const;
+#endif
     
     virtual bool canReceiveRemoteControlCommands() const = 0;
     virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) = 0;

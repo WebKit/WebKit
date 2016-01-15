@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformMediaSessionManager.h"
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
 #include "AudioSession.h"
 #include "Document.h"

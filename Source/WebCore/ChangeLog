@@ -1,5 +1,22 @@
 2016-01-15  Olivier Blin  <olivier.blin@softathome.com>
 
+        Fix audio build with video disabled
+        https://bugs.webkit.org/show_bug.cgi?id=153134
+
+        Reviewed by Michael Catanzaro.
+
+        Build fails when WebAudio is enabled but VIDEO disabled.
+
+        No new tests since this is a build fix only.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        * platform/audio/PlatformMediaSession.h:
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAudioContextRestrictions):
+
+2016-01-15  Olivier Blin  <olivier.blin@softathome.com>
+
         [GTK] Fix build of RenderThemeGtk without VIDEO by including HTMLInputElement
         https://bugs.webkit.org/show_bug.cgi?id=153133
 

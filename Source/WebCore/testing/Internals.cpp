@@ -2949,7 +2949,7 @@ void Internals::setAudioContextRestrictions(AudioContext* context, const String 
     AudioContext::BehaviorRestrictions restrictions = context->behaviorRestrictions();
     context->removeBehaviorRestriction(restrictions);
 
-    restrictions = MediaElementSession::NoRestrictions;
+    restrictions = AudioContext::NoRestrictions;
 
     Vector<String> restrictionsArray;
     restrictionsString.split(',', false, restrictionsArray);
