@@ -1,3 +1,9 @@
+2016-01-15  Antti Koivisto  <antti@apple.com>
+
+        Switch out from ES6 arrow function syntax to allow the test to work with an older WebKit.
+
+        * fast/loader/cache-encoding.html:
+
 2016-01-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Expose ReadableStream and relatives to Worker
