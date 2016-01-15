@@ -80,8 +80,10 @@ void RenderMathMLUnderOver::layout()
         if (child->needsLayout()) {
             if (is<RenderMathMLBlock>(child)) {
                 if (auto renderOperator = downcast<RenderMathMLBlock>(*child).unembellishedOperator()) {
-                    renderOperator->resetStretchSize();
-                    renderOperators.append(renderOperator);
+                    if (!renderOperator->isVertical()) {
+                        renderOperator->resetStretchSize();
+                        renderOperators.append(renderOperator);
+                    }
                 }
             }
 
