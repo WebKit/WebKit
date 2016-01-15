@@ -676,15 +676,15 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSym
 {
     if (family.isEmpty())
         return nullptr;
-    if (auto specialCase = platformFontWithFamilySpecialCase(family, weight, desiredTraits, size))
-        return specialCase;
+
+    RetainPtr<CTFontRef> foundFont = platformFontWithFamilySpecialCase(family, weight, desiredTraits, size);
+    if (!foundFont) {
 #if ENABLE(PLATFORM_FONT_LOOKUP)
-    RetainPtr<CTFontRef> foundFont = platformFontLookupWithFamily(family, desiredTraits, weight, size);
+        foundFont = platformFontLookupWithFamily(family, desiredTraits, weight, size);
 #else
-    UNUSED_PARAM(featureSettings);
-    UNUSED_PARAM(variantSettings);
-    RetainPtr<CTFontRef> foundFont = platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
+        foundFont = platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
 #endif
+    }
     return preparePlatformFont(foundFont.get(), textRenderingMode, nullptr, nullptr, featureSettings, variantSettings);
 }
 
