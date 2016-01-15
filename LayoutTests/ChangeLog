@@ -1,3 +1,12 @@
+2016-01-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline tables/mozilla_expected_failures/bugs/bug89315.html for ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152130
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+
 2016-01-15  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Date.prototype.toLocaleString in ECMA-402
