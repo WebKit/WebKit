@@ -87,9 +87,6 @@ public:
     virtual const AtomicString& imageSourceURL() const override;
 
     bool hasShadowControls() const { return m_experimentalImageMenuEnabled; }
-    
-    HTMLPictureElement* pictureElement() const;
-    void setPictureElement(HTMLPictureElement*);
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
@@ -130,7 +127,6 @@ private:
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;
     HTMLFormElement* m_formSetByParser;
-
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;
     AtomicString m_currentSrc;
