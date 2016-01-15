@@ -166,6 +166,11 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
         return;
     }
 
+    // Need to check the stream before proceeding as it can be cancelled if finish_error
+    // was previously call, which won't be detected by g_input_stream_read_finish().
+    if (!request->priv->stream)
+        return;
+
     WebKitURISchemeRequestPrivate* priv = request->priv;
     Ref<API::Data> webData = API::Data::create(reinterpret_cast<const unsigned char*>(priv->readBuffer), bytesRead);
     if (!priv->bytesRead) {
@@ -230,7 +235,10 @@ void webkit_uri_scheme_request_finish_error(WebKitURISchemeRequest* request, GEr
     g_return_if_fail(error);
 
     WebKitURISchemeRequestPrivate* priv = request->priv;
+    if (!webkitWebContextIsLoadingCustomProtocol(priv->webContext, priv->requestID))
+        return;
 
+    priv->stream = nullptr;
     WebCore::ResourceError resourceError(g_quark_to_string(error->domain), toWebCoreError(error->code), priv->uri.data(), String::fromUTF8(error->message));
     priv->webRequestManager->didFailWithError(priv->requestID, resourceError);
     webkitWebContextDidFinishLoadingCustomProtocol(priv->webContext, priv->requestID);

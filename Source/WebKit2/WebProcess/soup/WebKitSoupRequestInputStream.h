@@ -20,6 +20,7 @@
 #ifndef WebKitSoupRequestInputStream_h
 #define WebKitSoupRequestInputStream_h
 
+#include <WebCore/ResourceError.h>
 #include <gio/gio.h>
 
 G_BEGIN_DECLS
@@ -48,6 +49,7 @@ struct _WebKitSoupRequestInputStreamClass {
 GType webkit_soup_request_input_stream_get_type();
 GInputStream* webkitSoupRequestInputStreamNew(uint64_t contentLength);
 void webkitSoupRequestInputStreamAddData(WebKitSoupRequestInputStream*, const void* data, size_t dataLength);
+void webkitSoupRequestInputStreamDidFailWithError(WebKitSoupRequestInputStream*, const WebCore::ResourceError&);
 bool webkitSoupRequestInputStreamFinished(WebKitSoupRequestInputStream*);
 
 G_END_DECLS

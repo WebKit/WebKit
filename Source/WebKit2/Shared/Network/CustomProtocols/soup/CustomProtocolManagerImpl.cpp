@@ -116,10 +116,17 @@ void CustomProtocolManagerImpl::didFailWithError(uint64_t customProtocolID, cons
     WebSoupRequestAsyncData* data = m_customProtocolMap.get(customProtocolID);
     ASSERT(data);
 
-    GRefPtr<GTask> task = data->releaseTask();
-    ASSERT(task.get());
-    g_task_return_new_error(task.get(), g_quark_from_string(error.domain().utf8().data()),
-        error.errorCode(), "%s", error.localizedDescription().utf8().data());
+    // Either we haven't started reading the stream yet, in which case we need to complete the
+    // task first, or we failed reading it and the task was already completed by didLoadData().
+    ASSERT(!data->stream || !data->task);
+
+    if (!data->stream) {
+        GRefPtr<GTask> task = data->releaseTask();
+        ASSERT(task.get());
+        g_task_return_new_error(task.get(), g_quark_from_string(error.domain().utf8().data()),
+            error.errorCode(), "%s", error.localizedDescription().utf8().data());
+    } else
+        webkitSoupRequestInputStreamDidFailWithError(WEBKIT_SOUP_REQUEST_INPUT_STREAM(data->stream.get()), error);
 
     m_customProtocolMap.remove(customProtocolID);
 }
@@ -170,7 +177,10 @@ void CustomProtocolManagerImpl::didLoadData(uint64_t customProtocolID, const IPC
 void CustomProtocolManagerImpl::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response)
 {
     WebSoupRequestAsyncData* data = m_customProtocolMap.get(customProtocolID);
-    ASSERT(data);
+    // The data might have been removed from the request map if an error happened even before this point.
+    if (!data)
+        return;
+
     ASSERT(data->task);
 
     WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(data->task));

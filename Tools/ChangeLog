@@ -1,3 +1,39 @@
+2015-12-09  Mario Sanchez Prada  <mario@endlessm.com>
+
+        Refactored initialization code in LoadTrackingTest.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        Small refactoring to make sure that the state of a LoadTrackingTest
+        gets properly reset before loading new web content.
+
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp:
+        (LoadTrackingTest::reset): New, refactored code from *load*() and go*()
+        functions and reset the remaining local variables.
+        (LoadTrackingTest::loadURI): Call reset();
+        (LoadTrackingTest::loadHtml): Ditto.
+        (LoadTrackingTest::loadPlainText): Ditto.
+        (LoadTrackingTest::loadBytes): Ditto.
+        (LoadTrackingTest::loadRequest): Ditto.
+        (LoadTrackingTest::reload): Ditto.
+        (LoadTrackingTest::goBack): Ditto.
+        (LoadTrackingTest::goForward): Ditto.
+
+2015-12-09  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] Crash in WebProcess when loading large content with custom URI schemes
+        https://bugs.webkit.org/show_bug.cgi?id=144262
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added new unit test to check the additional scenarios we now
+        handle for custom URI schemes.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (generateHTMLContent): New helper function to generate big enough content.
+        (testWebContextURIScheme): New unit test.
+
 2015-11-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix crash in ~WebProcessPool when using Geolocation with useNetworkProcess=true
