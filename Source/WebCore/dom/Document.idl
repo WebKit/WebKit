@@ -281,6 +281,11 @@
     [NewObject, Custom, RaisesException] TouchList createTouchList();
 #endif
 
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    [Custom, RaisesException, Conditional=CUSTOM_ELEMENTS]
+    void defineCustomElement(DOMString tagName, CustomElementInterface elementInterface);
+#endif
+
     // Page visibility API.
     readonly attribute DOMString visibilityState;
     readonly attribute boolean hidden;

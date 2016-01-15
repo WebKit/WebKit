@@ -44,6 +44,7 @@
 #include "CompositionEvent.h"
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
+#include "CustomElementDefinitions.h"
 #include "CustomEvent.h"
 #include "DOMImplementation.h"
 #include "DOMNamedFlowCollection.h"
@@ -6351,6 +6352,15 @@ unsigned Document::touchEventHandlerCount() const
     return 0;
 #endif
 }
+
+#if ENABLE(CUSTOM_ELEMENTS)
+CustomElementDefinitions& Document::ensureCustomElementDefinitions()
+{
+    if (!m_customElementDefinitions)
+        m_customElementDefinitions = std::make_unique<CustomElementDefinitions>();
+    return *m_customElementDefinitions;
+}
+#endif
 
 LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionElements)
 {

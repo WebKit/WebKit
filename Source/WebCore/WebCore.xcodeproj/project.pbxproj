@@ -3998,6 +3998,10 @@
 		9BC6C21C13CCC97B008E0337 /* HTMLTextFormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */; };
 		9BD0BF9312A42BF50072FD43 /* ScopedEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */; };
 		9BD0BF9412A42BF50072FD43 /* ScopedEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */; };
+		9BD4E9161C462872005065BC /* JSCustomElementInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */; };
+		9BD4E9171C462872005065BC /* JSCustomElementInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD4E9151C462872005065BC /* JSCustomElementInterface.h */; };
+		9BD4E91A1C462CFC005065BC /* CustomElementDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD4E9181C462CFC005065BC /* CustomElementDefinitions.cpp */; };
+		9BD4E91B1C462CFC005065BC /* CustomElementDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD4E9191C462CFC005065BC /* CustomElementDefinitions.h */; };
 		9BD8A95A18BEFC7600987E9A /* CollectionIndexCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8A95918BEFC7600987E9A /* CollectionIndexCache.cpp */; };
 		9BDA64D71B975CE5009C4387 /* JSShadowRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B6BC9601B975966005AE1F0 /* JSShadowRoot.cpp */; };
 		9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6BC9611B975966005AE1F0 /* JSShadowRoot.h */; };
@@ -11572,6 +11576,10 @@
 		9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFormControlElement.cpp; sourceTree = "<group>"; };
 		9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedEventQueue.h; sourceTree = "<group>"; };
 		9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedEventQueue.cpp; sourceTree = "<group>"; };
+		9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementInterface.cpp; sourceTree = "<group>"; };
+		9BD4E9151C462872005065BC /* JSCustomElementInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomElementInterface.h; sourceTree = "<group>"; };
+		9BD4E9181C462CFC005065BC /* CustomElementDefinitions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomElementDefinitions.cpp; sourceTree = "<group>"; };
+		9BD4E9191C462CFC005065BC /* CustomElementDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomElementDefinitions.h; sourceTree = "<group>"; };
 		9BD8A95918BEFC7600987E9A /* CollectionIndexCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectionIndexCache.cpp; sourceTree = "<group>"; };
 		9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollection.cpp; sourceTree = "<group>"; };
 		9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLFormControlsCollection.h; sourceTree = "<group>"; };
@@ -21956,6 +21964,8 @@
 				1432E8460C51493800B1500F /* GCController.h */,
 				C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */,
 				C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */,
+				9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */,
+				9BD4E9151C462872005065BC /* JSCustomElementInterface.h */,
 				E157A8EE18185425009F821D /* JSCryptoAlgorithmBuilder.cpp */,
 				E157A8EF18185425009F821D /* JSCryptoAlgorithmBuilder.h */,
 				E1C657101815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp */,
@@ -23830,6 +23840,8 @@
 				E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */,
 				97627B8B14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp */,
 				97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */,
+				9BD4E9181C462CFC005065BC /* CustomElementDefinitions.cpp */,
+				9BD4E9191C462CFC005065BC /* CustomElementDefinitions.h */,
 				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
 				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
 				62CD32581157E57C0063B0A7 /* CustomEvent.idl */,
@@ -25251,6 +25263,7 @@
 				85ECBEEB0AA7626900544F0B /* DOMHTMLAreaElement.h in Headers */,
 				85E7119C0AC5D5350053270F /* DOMHTMLAreaElementInternal.h in Headers */,
 				859A9C470AA5E3BD00B694B2 /* DOMHTMLBaseElement.h in Headers */,
+				9BD4E9171C462872005065BC /* JSCustomElementInterface.h in Headers */,
 				85E7119D0AC5D5350053270F /* DOMHTMLBaseElementInternal.h in Headers */,
 				85ECBEED0AA7626900544F0B /* DOMHTMLBaseFontElement.h in Headers */,
 				85E7119E0AC5D5350053270F /* DOMHTMLBaseFontElementInternal.h in Headers */,
@@ -26426,6 +26439,7 @@
 				B2FA3D6F0AB75A6F000E5AC4 /* JSSVGFEComponentTransferElement.h in Headers */,
 				B2FA3D710AB75A6F000E5AC4 /* JSSVGFECompositeElement.h in Headers */,
 				19BFF64F11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h in Headers */,
+				9BD4E91B1C462CFC005065BC /* CustomElementDefinitions.h in Headers */,
 				B2FA3D730AB75A6F000E5AC4 /* JSSVGFEDiffuseLightingElement.h in Headers */,
 				B2FA3D750AB75A6F000E5AC4 /* JSSVGFEDisplacementMapElement.h in Headers */,
 				B2FA3D770AB75A6F000E5AC4 /* JSSVGFEDistantLightElement.h in Headers */,
@@ -30076,6 +30090,7 @@
 				51DCE8020CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp in Sources */,
 				B59DD6A611902A62007E9684 /* JSSQLStatementCallback.cpp in Sources */,
 				B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */,
+				9BD4E9161C462872005065BC /* JSCustomElementInterface.cpp in Sources */,
 				514C76380CE9225E007EF3CD /* JSSQLTransaction.cpp in Sources */,
 				B59DD69E11902A42007E9684 /* JSSQLTransactionCallback.cpp in Sources */,
 				1AD2316E0CD269E700C1F194 /* JSSQLTransactionCustom.cpp in Sources */,
@@ -30807,6 +30822,7 @@
 				A8DF4AE80980C42C0052981B /* RenderTableCol.cpp in Sources */,
 				A8DF4AF00980C42C0052981B /* RenderTableRow.cpp in Sources */,
 				A8DF4AED0980C42C0052981B /* RenderTableSection.cpp in Sources */,
+				9BD4E91A1C462CFC005065BC /* CustomElementDefinitions.cpp in Sources */,
 				BCEA488B097D93020094C9E4 /* RenderText.cpp in Sources */,
 				AB67D1A8097F3AE300F9392E /* RenderTextControl.cpp in Sources */,
 				083DAEA60F01A7FB00342754 /* RenderTextControlMultiLine.cpp in Sources */,

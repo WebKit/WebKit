@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: HTMLElement must allow subclassing</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="HTMLElement must allow subclassing">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+test(function () {
+    class SomeDefinedElement extends HTMLElement {};
+    document.defineCustomElement('defined-element', SomeDefinedElement);
+    assert_throws({'name': 'TypeError'}, function () { new HTMLElement('defined-element'); });
+}, 'HTMLElement constructor must throw a TypeError when there is no derived class');
+
+test(function () {
+    class SomeCustomElement extends HTMLElement {};
+    assert_throws({'name': 'TypeError'}, function () { new SomeCustomElement; },
+        'Instantiating a custom element without calling defineCustomElement must throw TypeError');
+
+    class AnotherCustomElement extends HTMLElement {
+        constructor() { super('some-element'); }
+    };
+    document.defineCustomElement('another-element', AnotherCustomElement);
+    assert_throws({'name': 'TypeError'}, function () { new AnotherCustomElement; },
+        'Calling HTMLElement constructor with a mismatching tag name throw TypeError');
+
+    class YetAnotherCustomElement extends HTMLElement {
+        constructor() { super(1); }
+    };
+    document.defineCustomElement('yet-another-element', YetAnotherCustomElement);
+    assert_throws({'name': 'TypeError'}, function () { new YetAnotherCustomElement; },
+        'Calling HTMLElement constructor with a bad tag name throw TypeError');
+
+}, 'HTMLElement constructor must throw TypeError when custom element is not well defined');
+
+test(function () {
+    class CustomElementWithInferredTagName extends HTMLElement {};
+    document.defineCustomElement('inferred-name', CustomElementWithInferredTagName);
+
+    var instance = new CustomElementWithInferredTagName;
+    assert_true(instance instanceof Element, 'A custom element must inherit from Element');
+    assert_true(instance instanceof Node, 'A custom element must inherit from Node');
+    assert_equals(instance.localName, 'inferred-name');
+    assert_equals(instance.nodeName, 'INFERRED-NAME');
+    assert_equals(instance.namespaceURI, 'http://www.w3.org/1999/xhtml', 'A custom HTML element must use HTML namespace');
+
+    document.body.appendChild(instance);
+    assert_equals(document.body.lastChild, instance,
+        'document.body.appendChild must be able to insert a custom element');
+    assert_equals(document.querySelector('inferred-name'), instance,
+        'document.querySelector must be able to find a custom element by its tag name');
+
+}, 'HTMLElement constructor must infer the tag name from the element interface');
+
+test(function () {
+    class ElementWithMultipleTagNames extends HTMLElement { };
+    document.defineCustomElement('custom-element-1', ElementWithMultipleTagNames);
+    document.defineCustomElement('custom-element-2', ElementWithMultipleTagNames);
+
+    var instance1 = new ElementWithMultipleTagNames('custom-element-1');
+    assert_true(instance1 instanceof ElementWithMultipleTagNames);
+    assert_equals(instance1.localName, 'custom-element-1');
+    assert_equals(instance1.nodeName, 'CUSTOM-ELEMENT-1');
+
+    var instance2 = new ElementWithMultipleTagNames('custom-element-2');
+    assert_true(instance2 instanceof ElementWithMultipleTagNames);
+    assert_equals(instance2.localName, 'custom-element-2');
+    assert_equals(instance2.nodeName, 'CUSTOM-ELEMENT-2');
+
+    assert_throws({'name': 'TypeError'}, function () { new ElementWithMultipleTagNames; },
+        'Instantiating an element interface associated with multiple tag names without specifying the tag name must throw TypeError');
+
+}, 'HTMLElement constructor must allow associating an element interface with multiple tag names');
+
+test(function () {
+    class ConcreteCustomElement extends HTMLElement { };
+    class SubCustomElement extends ConcreteCustomElement { };
+    document.defineCustomElement('concrete-custom-element', ConcreteCustomElement);
+    document.defineCustomElement('sub-custom-element', SubCustomElement);
+
+    var instance = new SubCustomElement();
+    assert_true(instance instanceof SubCustomElement);
+    assert_equals(instance.localName, 'sub-custom-element');
+    assert_equals(instance.nodeName, 'SUB-CUSTOM-ELEMENT');
+
+}, 'HTMLElement constructor must allow subclassing a custom element');
+
+test(function () {
+    class AbstractCustomElement extends HTMLElement { };
+    class ConcreteSubCustomElement extends AbstractCustomElement { };
+    document.defineCustomElement('concrete-sub-custom-element', ConcreteSubCustomElement);
+
+    var instance = new ConcreteSubCustomElement();
+    assert_true(instance instanceof ConcreteSubCustomElement);
+    assert_equals(instance.localName, 'concrete-sub-custom-element');
+    assert_equals(instance.nodeName, 'CONCRETE-SUB-CUSTOM-ELEMENT');
+
+}, 'HTMLElement constructor must allow subclassing an user-defined subclass of HTMLElement');
+
+</script>
+</body>
+</html>

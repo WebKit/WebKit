@@ -1258,6 +1258,8 @@ webkit.org/b/149440 fast/shadow-dom/css-scoping-shadow-host-functional-rule.html
 webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slotted-rule.html [ ImageOnlyFailure ]
 webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.html [ ImageOnlyFailure ]
 
+webkit.org/b/150225 fast/custom-elements [ Pass ]
+
 # Times out in debug.
 [ Debug ] js/regress/getter-richards-try-catch.html [ Skip ]
 

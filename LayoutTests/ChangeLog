@@ -1,3 +1,20 @@
+2016-01-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add document.defineCustomElement
+        https://bugs.webkit.org/show_bug.cgi?id=153092
+
+        Reviewed by Chris Dumez.
+
+        Added tests for document.defineCustomElement and instantiating custom elements.
+
+        * TestExpectations: Skipped the tests on non-Mac ports.
+        * fast/custom-elements: Added.
+        * fast/custom-elements/Document-defineCustomElement-expected.txt: Added.
+        * fast/custom-elements/Document-defineCustomElement.html: Added.
+        * fast/custom-elements/HTMLElement-constructor-expected.txt: Added.
+        * fast/custom-elements/HTMLElement-constructor.html: Added.
+        * platform/mac/TestExpectations:
+
 2016-01-14  Beth Dakin  <bdakin@apple.com>
 
         WK2: Request completion candidates when needed

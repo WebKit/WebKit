@@ -740,6 +740,7 @@ webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/148925 svg/dom/svg-root-lengths.html [ Pass Failure ]
 
+webkit.org/b/150225 fast/custom-elements [ Failure ]
 webkit.org/b/148695 fast/shadow-dom [ Failure ImageOnlyFailure ]
 
 # Known failures on CSS Variables Test Suite

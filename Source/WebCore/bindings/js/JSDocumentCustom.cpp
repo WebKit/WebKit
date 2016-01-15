@@ -20,6 +20,7 @@
 #include "config.h"
 #include "JSDocument.h"
 
+#include "CustomElementDefinitions.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -127,6 +128,47 @@ JSValue JSDocument::createTouchList(ExecState& state)
         touchList->append(JSTouch::toWrapped(state.argument(i)));
 
     return toJS(&state, globalObject(), touchList.release());
+}
+#endif
+
+#if ENABLE(CUSTOM_ELEMENTS)
+JSValue JSDocument::defineCustomElement(ExecState& state)
+{
+    AtomicString tagName(state.argument(0).toString(&state)->toAtomicString(&state));
+    if (UNLIKELY(state.hadException()))
+        return jsUndefined();
+
+    JSObject* object = state.argument(1).getObject();
+    ConstructData callData;
+    if (!object || object->methodTable()->getConstructData(object, callData) == ConstructTypeNone)
+        return throwTypeError(&state, "The second argument must be a constructor");
+
+    Document& document = wrapped();
+    switch (CustomElementDefinitions::checkName(tagName)) {
+    case CustomElementDefinitions::NameStatus::Valid:
+        break;
+    case CustomElementDefinitions::NameStatus::ConflictsWithBuiltinNames:
+        return throwSyntaxError(&state, "Custom element name cannot be same as one of the builtin elements");
+    case CustomElementDefinitions::NameStatus::NoHyphen:
+        return throwSyntaxError(&state, "Custom element name must contain a hyphen");
+    case CustomElementDefinitions::NameStatus::ContainsUpperCase:
+        return throwSyntaxError(&state, "Custom element name cannot contain an upper case letter");
+    }
+
+    QualifiedName name(nullAtom, tagName, HTMLNames::xhtmlNamespaceURI);
+    auto& definitions = document.ensureCustomElementDefinitions();
+    if (definitions.findInterface(tagName)) {
+        ExceptionCodeWithMessage ec;
+        ec.code = NOT_SUPPORTED_ERR;
+        ec.message = "Cannot define multiple custom elements with the same tag name";
+        setDOMException(&state, ec);
+        return jsUndefined();
+    }
+    definitions.defineElement(name, JSCustomElementInterface::create(object, globalObject()));
+    PrivateName uniquePrivateName;
+    globalObject()->putDirect(globalObject()->vm(), uniquePrivateName, object);
+
+    return jsUndefined();
 }
 #endif
 

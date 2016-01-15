@@ -1114,6 +1114,7 @@ set(WebCore_SOURCES
     bindings/js/JSCryptoKeyPairCustom.cpp
     bindings/js/JSCryptoKeySerializationJWK.cpp
     bindings/js/JSCryptoOperationData.cpp
+    bindings/js/JSCustomElementInterface.cpp
     bindings/js/JSCustomEventCustom.cpp
     bindings/js/JSCustomSQLStatementErrorCallback.cpp
     bindings/js/JSCustomXPathNSResolver.cpp
@@ -1407,6 +1408,7 @@ set(WebCore_SOURCES
     dom/ContainerNode.cpp
     dom/ContainerNodeAlgorithms.cpp
     dom/ContextDestructionObserver.cpp
+    dom/CustomElementDefinitions.cpp
     dom/CustomEvent.cpp
     dom/DOMCoreException.cpp
     dom/DOMError.cpp

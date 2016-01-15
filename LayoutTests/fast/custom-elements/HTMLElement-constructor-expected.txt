@@ -1,0 +1,8 @@
+
+PASS HTMLElement constructor must throw a TypeError when there is no derived class 
+PASS HTMLElement constructor must throw TypeError when custom element is not well defined 
+PASS HTMLElement constructor must infer the tag name from the element interface 
+PASS HTMLElement constructor must allow associating an element interface with multiple tag names 
+PASS HTMLElement constructor must allow subclassing a custom element 
+PASS HTMLElement constructor must allow subclassing an user-defined subclass of HTMLElement 
+

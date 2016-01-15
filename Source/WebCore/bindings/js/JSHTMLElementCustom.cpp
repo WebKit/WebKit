@@ -26,13 +26,66 @@
 #include "config.h"
 #include "JSHTMLElement.h"
 
+#include "CustomElementDefinitions.h"
 #include "Document.h"
 #include "HTMLFormElement.h"
+#include <runtime/InternalFunction.h>
 #include <runtime/JSWithScope.h>
 
 namespace WebCore {
 
 using namespace JSC;
+
+#if ENABLE(CUSTOM_ELEMENTS)
+EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState* state)
+{
+    auto* jsConstructor = jsCast<DOMConstructorObject*>(state->callee());
+
+    auto* context = jsConstructor->scriptExecutionContext();
+    if (!is<Document>(context))
+        return throwConstructorDocumentUnavailableError(*state, "HTMLElement");
+    auto& document = downcast<Document>(*context);
+
+    auto* definitions = document.customElementDefinitions();
+    if (!definitions)
+        return throwVMTypeError(state, "new.target is not a valid custom element constructor");
+
+    VM& vm = state->vm();
+    JSValue newTargetValue = state->thisValue();
+    JSObject* newTarget = newTargetValue.getObject();
+    QualifiedName fullName = definitions->findName(newTarget);
+    if (fullName == nullQName()) {
+        if (UNLIKELY(state->argumentCount() < 1))
+            return throwVMError(state, createNotEnoughArgumentsError(state));
+    }
+
+    if (state->argumentCount()) {
+        String name;
+        if (!state->argument(0).getString(state, name))
+            return throwVMTypeError(state, "The first argument is not a valid custom element name");
+        
+        auto* interface = definitions->findInterface(name);
+        if (!interface)
+            return throwVMTypeError(state, "The first argument is not a valid custom element name");
+        
+        if (newTarget != interface->constructor())
+            return throwVMTypeError(state, "Attempt to construct a custom element with a wrong interface");
+        
+        fullName = QualifiedName(nullAtom, name, HTMLNames::xhtmlNamespaceURI);
+    }
+
+    auto* globalObject = jsConstructor->globalObject();
+    Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *globalObject);
+    auto* newElementStructure = InternalFunction::createSubclassStructure(state, newTargetValue, baseStructure);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+
+    Ref<HTMLElement> element = HTMLElement::create(fullName, document);
+    auto* jsElement = JSHTMLElement::create(newElementStructure, globalObject, element.get());
+    cacheWrapper(globalObject->world(), element.ptr(), jsElement);
+    return JSValue::encode(jsElement);
+}
+#endif
 
 JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) const
 {

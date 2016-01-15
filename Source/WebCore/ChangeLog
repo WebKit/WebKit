@@ -1,3 +1,70 @@
+2016-01-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add document.defineCustomElement
+        https://bugs.webkit.org/show_bug.cgi?id=153092
+
+        Reviewed by Chris Dumez.
+
+        Added document.defineCustomElement and added a constructor to HTMLElement which can be called
+        as "super" in a subclass of HTMLElement. This is a prototype of new custom elements API and
+        willfully violates the current specification at http://w3c.github.io/webcomponents/spec/custom/
+
+        Each author defined class can define multiple elements using distinct tag names. In such cases,
+        the super call must specify the tag name. e.g.
+
+        class SomeCustomElement extends HTMLElement { constructor(name) { super(name); } }
+        document.defineCustomElement('some-custom-element', SomeCustomElement);
+        document.defineCustomElement('other-custom-element', SomeCustomElement);
+        new SomeCustomElement('some-custom-element');
+
+        When a class is associated with exactly one tag name, the argument can be omitted. e.g.
+
+        class AnotherCustomElement extends HTMLElement {}
+        document.defineCustomElement('another-custom-element', AnotherCustomElement);
+        new AnotherCustomElement();
+
+        We allow only subclassing of HTMLElement and only in (X)HTML namespace.
+
+        Tests: fast/custom-elements/Document-defineCustomElement.html
+               fast/custom-elements/HTMLElement-constructor.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * bindings/js/JSCustomElementInterface.cpp: Added. Abstracts an author-defined class associated
+        with a custom element. It's a Active DOM object and lives until the associated document dies.
+        (WebCore::JSCustomElementInterface::JSCustomElementInterface):
+        (WebCore::JSCustomElementInterface::~JSCustomElementInterface):
+        * bindings/js/JSCustomElementInterface.h: Added.
+        (WebCore::JSCustomElementInterface::create):
+        (WebCore::JSCustomElementInterface::scriptExecutionContext):
+        (WebCore::JSCustomElementInterface::constructor):
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::defineCustomElement): Added. Define a custom element by associating a tag
+        name with an author defined JS class after validating arguments.
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement): Added. Look up the tag name based on new.target if one is not
+        specified. If a tag name is specified, check that new.target is associated with the tag name.
+
+        * dom/CustomElementDefinitions.cpp: Added.
+        (WebCore::CustomElementDefinitions::checkName): Added. Restricts tag names similarly to
+        http://w3c.github.io/webcomponents/spec/custom/#dfn-custom-element-type
+        (WebCore::CustomElementDefinitions::defineElement): Added. Associates a JS class with a tag name.
+        (WebCore::CustomElementDefinitions::findInterface): Added. Finds a JS class by a tag name.
+        (WebCore::CustomElementDefinitions::findName): Added. Finds a tag name by a JS class.
+        * dom/CustomElementDefinitions.h: Added.
+        (WebCore::CustomElementDefinitions::CustomElementInfo): Added.
+
+        * dom/Document.cpp:
+        (WebCore::Document::ensureCustomElementDefinitions): Added.
+        * dom/Document.h:
+        (WebCore::Document::customElementDefinitions): Added.
+
+        * dom/Document.idl:
+        * html/HTMLElement.idl:
+
 2016-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         Remove workaround for rdar://problem/23623670

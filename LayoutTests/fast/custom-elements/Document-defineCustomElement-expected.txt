@@ -1,0 +1,7 @@
+
+PASS Check the existence of defineCustomElement on Document interface 
+PASS document.defineCustomElement should throw with an invalid name 
+PASS document.defineCustomElement should throw with a duplicate name 
+PASS document.defineCustomElement should throw when the element interface is not a constructor 
+PASS document.defineCustomElement should define an instantiatable custom element 
+
