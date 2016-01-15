@@ -7,7 +7,7 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-function navigation() {
+onload = function() {
     // Due to the sandbox, it's not possible to run script in the iframe or even access its contentDocument.
     var element = document.getElementsByTagName("iframe")[0];
     var x = element.offsetLeft + 10;

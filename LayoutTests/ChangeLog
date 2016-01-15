@@ -1,3 +1,26 @@
+2016-01-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Refine http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer*
+        https://bugs.webkit.org/show_bug.cgi?id=153140
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-never.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-when-downgrade.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html:
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html:
+        * http/tests/contentdispositionattachmentsandbox/resources/referer-header-stripped.js:
+        (onload):
+        (navigation): Deleted.
+        The reason why the tests are not completed after calling testRunner.notifyDone() is that the original navigation()
+        is bound as the onload of the iframe which will dispatch two load events. Therefore, navigation() will be called
+        twice. Here, change the navigation() to be bound with the main frame's onload function, which will restrict it to
+        be called only once.
+
 2016-01-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Font features are not applied to the system font
