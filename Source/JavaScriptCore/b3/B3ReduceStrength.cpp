@@ -948,18 +948,19 @@ private:
             break;
         }
 
-        case CCall:
+        case CCall: {
             // Turn this: Call(fmod, constant1, constant2)
             // Into this: fcall-constant(constant1, constant2)
+            double(*fmodDouble)(double, double) = fmod;
             if (m_value->type() == Double
                 && m_value->numChildren() == 3
-                && m_value->child(0)->isIntPtr(reinterpret_cast<intptr_t>(fmod))
+                && m_value->child(0)->isIntPtr(reinterpret_cast<intptr_t>(fmodDouble))
                 && m_value->child(1)->type() == Double
                 && m_value->child(2)->type() == Double) {
                 replaceWithNewValue(m_value->child(1)->modConstant(m_proc, m_value->child(2)));
             }
             break;
-
+        }
         case Equal:
             handleCommutativity();
 

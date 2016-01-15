@@ -92,8 +92,9 @@ private:
                     break;
 
                 Value* functionAddress = nullptr;
+                double (*ceilDouble)(double) = ceil;
                 if (m_value->type() == Double)
-                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceil);
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceilDouble);
                 else if (m_value->type() == Float)
                     functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceilf);
                 else
