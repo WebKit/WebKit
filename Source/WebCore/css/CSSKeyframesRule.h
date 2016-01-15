@@ -40,7 +40,7 @@ class CSSKeyframeRule;
 
 class StyleRuleKeyframes : public StyleRuleBase {
 public:
-    static Ref<StyleRuleKeyframes> create() { return adoptRef(*new StyleRuleKeyframes()); }
+    static Ref<StyleRuleKeyframes> create(BumpArena* arena) { return adoptRef(*new (arena) StyleRuleKeyframes); }
     
     ~StyleRuleKeyframes();
     

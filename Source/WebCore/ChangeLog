@@ -1,3 +1,83 @@
+2016-01-15  Andreas Kling  <akling@apple.com>
+
+        Use BumpArena for style sheet object tree.
+        <https://webkit.org/b/152696>
+
+        Reviewed by Antti Koivisto.
+
+        Give each StyleSheetContents its own BumpArena, and plumb it down through CSSParser
+        to allocate StyleRule, StyleProperties and CSSSelectorList's selector arrays there.
+
+        This basically means that most objects that make up a given style sheet will end up
+        in one (or a few) contiguous region(s) of memory, instead of being scattered all
+        over the malloc heap.
+
+        In the common case (no CSSOM manipulation), the lifetimes of these objects are very
+        predictable: everything tends to die when the StyleSheetContents dies.
+        This dramatically improves space-efficiency in those cases, and allows us to return
+        contiguous chunks of memory to the system once a style sheet is no longer needed.
+
+        One-off CSS parses that don't work within a StyleSheetContents context will have
+        their StyleRules & co allocated through FastMalloc just like before.
+
+        Bonus: give SelectorQueryCache a dedicated BumpArena as well, since it has very
+        predictable lifetime.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSKeyframesRule.h:
+        (WebCore::StyleRuleKeyframes::create):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createStyleProperties):
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::createSupportsRule):
+        (WebCore::CSSParser::createKeyframesRule):
+        (WebCore::CSSParser::setArena):
+        (WebCore::CSSParser::arena):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createRegionRule):
+        (WebCore::CSSParser::createViewportRule):
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePseudoElementCueFunctionSelector):
+        (WebCore::CSSParserSelector::adoptSelectorVector):
+        * css/CSSParserValues.h:
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        (WebCore::CSSSelectorList::deleteSelectors):
+        * css/CSSSelectorList.h:
+        * css/StyleProperties.cpp:
+        (WebCore::ImmutableStyleProperties::create):
+        (WebCore::StyleProperties::immutableCopyIfNeeded):
+        * css/StyleProperties.h:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount):
+        (WebCore::StyleRuleRegion::StyleRuleRegion):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRule::parserAdoptSelectorVector):
+        (WebCore::StyleRuleFontFace::create):
+        (WebCore::StyleRulePage::create):
+        (WebCore::StyleRulePage::parserAdoptSelectorVector):
+        (WebCore::StyleRuleMedia::create):
+        (WebCore::StyleRuleSupports::create):
+        (WebCore::StyleRuleRegion::create):
+        (WebCore::StyleRuleViewport::create):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::StyleSheetContents):
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        (WebCore::StyleSheetContents::parseStringAtPosition):
+        * css/StyleSheetContents.h:
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQueryCache::SelectorQueryCache):
+        (WebCore::SelectorQueryCache::add):
+        * dom/SelectorQuery.h:
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+
 2016-01-15  Dave Hyatt  <hyatt@apple.com>
 
         Avoid downloading the wrong image for <picture> elements.

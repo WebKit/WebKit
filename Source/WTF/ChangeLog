@@ -1,3 +1,91 @@
+2016-01-15  Andreas Kling  <akling@apple.com>
+
+        Fragmentation-free allocator for timeless and/or coupled allocations.
+        <https://webkit.org/b/152696>
+
+        Reviewed by Antti Koivisto.
+
+        Introduce BumpArena, a space-efficient memory allocator for situations where
+        you feel pretty confident betting on allocation lifetimes.
+
+        Basic design:
+
+            - Reserves 128MB range of memory at startup.
+            - Allocates 4kB-aligned blocks of 4kB from VM at a time.
+            - Bump-pointer allocates out of a block until it reaches end.
+            - Each allocation increments the ref-count of its block.
+            - Each deallocation decrements the ref-count of its block.
+            - Transparently falls back to fastMalloc()/fastFree() when needed.
+
+        Interface:
+
+            - BumpArena::create()
+
+                Create your very own BumpArena!
+
+            - BumpArena::allocate(BumpArena* arena, size_t size)
+
+                Allocates 'size' bytes of memory from 'arena'.
+                If 'arena' is null, falls back to fastMalloc().
+
+            - BumpArena::deallocate(void* ptr)
+
+                If 'ptr' is BumpArena allocation, decrements block ref-count.
+                If 'ptr' is FastMalloc allocation, calls fastFree() on it.
+
+            - WTF_MAKE_BUMPARENA_ALLOCATED;
+
+                Macro that gives a class or struct custom operators new and delete
+                for allocation out of BumpArena. Just like WTF_MAKE_FAST_ALLOCATED;
+
+        Note that while the name of this patch says "fragmentation-free allocator"
+        it will only be fragmentation-free when used for appropriate things.
+        This is not meant to be a general-purpose allocator. Only use it for sets of
+        allocations that are known to die roughly at the same time.
+
+        BumpArena will never resume allocating from a block that has been filled,
+        so it's even more important than usual that everything gets deallocated.
+
+        BumpArena redirects allocations to FastMalloc in three cases:
+
+            - When invoked with a null BumpArena*
+            - When allocation request is larger than BumpArena's block size (4kB)
+            - When BumpArena has exhausted all of its pre-reserved VM. (128MB)
+
+        The VM allocator will eagerly return blocks of VM to the kernel by calling
+        madvise(). Average time spent in madvise is around 0.007ms on my box.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BumpArena.cpp: Added.
+        (WTF::BumpArena::Block::capacity):
+        (WTF::BumpArena::Block::arena):
+        (WTF::BumpArena::Block::payloadStart):
+        (WTF::arenas):
+        (WTF::BumpArena::Block::Block):
+        (WTF::BumpArena::Block::~Block):
+        (WTF::BumpArena::Block::ref):
+        (WTF::BlockAllocator::BlockAllocator):
+        (WTF::BlockAllocator::isAllocation):
+        (WTF::blockAllocator):
+        (WTF::BlockAllocator::allocateBlock):
+        (WTF::BlockAllocator::deallocateBlock):
+        (WTF::BumpArena::Block::deref):
+        (WTF::BumpArena::Block::create):
+        (WTF::BumpArena::Block::dump):
+        (WTF::BumpArena::dump):
+        (WTF::BumpArena::create):
+        (WTF::BumpArena::BumpArena):
+        (WTF::BumpArena::~BumpArena):
+        (WTF::BumpArena::allocateSlow):
+        (WTF::BumpArena::allocate):
+        (WTF::BumpArena::deallocate):
+        (WTF::BumpArena::Block::blockFor):
+        (WTF::BumpArena::arenaFor):
+        * wtf/BumpArena.h: Added.
+        * wtf/CMakeLists.txt:
+
 2016-01-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         [EFL] WorkQueue methods should be defined inside WTF namespace.

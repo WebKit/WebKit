@@ -24,6 +24,7 @@
 #include "CSSParserMode.h"
 #include "CachePolicy.h"
 #include "URL.h"
+#include <wtf/BumpArena.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
@@ -173,6 +174,8 @@ private:
     CSSParserContext m_parserContext;
 
     Vector<CSSStyleSheet*> m_clients;
+
+    Ref<BumpArena> m_arena;
 };
 
 } // namespace

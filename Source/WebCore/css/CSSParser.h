@@ -36,6 +36,7 @@
 #include "SourceSizeList.h"
 #include "WebKitCSSFilterValue.h"
 #include <memory>
+#include <wtf/BumpArena.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -113,6 +114,8 @@ public:
 
     WEBCORE_EXPORT CSSParser(const CSSParserContext&);
     WEBCORE_EXPORT ~CSSParser();
+
+    void setArena(BumpArena&);
 
     void parseSheet(StyleSheetContents*, const String&, const TextPosition&, RuleSourceDataList*, bool logErrors);
     RefPtr<StyleRuleBase> parseRule(StyleSheetContents*, const String&);
@@ -397,6 +400,8 @@ public:
 
     CSSParserContext m_context;
 
+    BumpArena* arena();
+    RefPtr<BumpArena> m_arena;
     bool m_important;
     CSSPropertyID m_id;
     AtomicString m_customPropertyName;

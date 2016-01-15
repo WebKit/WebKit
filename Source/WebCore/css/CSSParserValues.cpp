@@ -214,7 +214,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementSelector(CSSParserString
 }
 
 #if ENABLE(VIDEO_TRACK)
-CSSParserSelector* CSSParserSelector::parsePseudoElementCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* parsedSelectorVector)
+CSSParserSelector* CSSParserSelector::parsePseudoElementCueFunctionSelector(BumpArena* arena, const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>* parsedSelectorVector)
 {
     ASSERT_UNUSED(functionIdentifier, String(functionIdentifier) == "cue(");
 
@@ -226,7 +226,7 @@ CSSParserSelector* CSSParserSelector::parsePseudoElementCueFunctionSelector(cons
     auto selector = std::make_unique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::PseudoElement);
     selector->m_selector->setPseudoElementType(CSSSelector::PseudoElementCue);
-    selector->adoptSelectorVector(*selectorVector);
+    selector->adoptSelectorVector(arena, *selectorVector);
     return selector.release();
 }
 #endif
@@ -279,10 +279,10 @@ CSSParserSelector::~CSSParserSelector()
     }
 }
 
-void CSSParserSelector::adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
+void CSSParserSelector::adoptSelectorVector(BumpArena* arena, Vector<std::unique_ptr<CSSParserSelector>>& selectorVector)
 {
     auto selectorList = std::make_unique<CSSSelectorList>();
-    selectorList->adoptSelectorVector(selectorVector);
+    selectorList->adoptSelectorVector(arena, selectorVector);
     m_selector->setSelectorList(WTFMove(selectorList));
 }
 
