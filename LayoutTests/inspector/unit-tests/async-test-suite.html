@@ -327,7 +327,7 @@ function test()
         return Promise.resolve(); // Continue this test.
     });
 
-    let teardownExceptionTestSuite = ProtocolTest.createAsyncSuite("SyncTestSuite.TeardownException");
+    let teardownExceptionTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.TeardownException");
     teardownExceptionTestSuite.addTestCase({
         name: "TestWithExceptionDuringTeardown",
         description: "Check execution order for teardown action that throws an exception.",
@@ -357,7 +357,7 @@ function test()
         return Promise.resolve(); // Continue this test.
     });
 
-    let teardownFailureTestSuite = ProtocolTest.createAsyncSuite("SyncTestSuite.TeardownFailure");
+    let teardownFailureTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.TeardownFailure");
     teardownFailureTestSuite.addTestCase({
         name: "TestWithExceptionDuringTeardown",
         description: "Check execution order for teardown action that has failed.",

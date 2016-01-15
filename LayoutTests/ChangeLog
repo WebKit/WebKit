@@ -1,3 +1,16 @@
+2016-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix some typos in unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=153141
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/async-test-suite-expected.txt:
+        * inspector/unit-tests/async-test-suite.html:
+        * inspector/unit-tests/sync-test-suite-expected.txt:
+        * inspector/unit-tests/sync-test-suite.html:
+        Fix some typos.
+
 2016-01-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline tables/mozilla_expected_failures/bugs/bug89315.html for ios-simulator

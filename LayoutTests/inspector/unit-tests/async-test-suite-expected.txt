@@ -65,13 +65,13 @@ PASS: Promise from setupExceptionTestSuite.runTestCases() should reject.
 !! EXCEPTION: undefined
 PASS: Promise from setupFailureTestSuite.runTestCases() should reject.
 
-== Running test suite: SyncTestSuite.TeardownException
+== Running test suite: AsyncTestSuite.TeardownException
 -- Running test case: TestWithExceptionDuringTeardown
 -- Running test teardown.
 !! EXCEPTION: 
 PASS: Promise from teardownExceptionTestSuite.runTestCases() should reject.
 
-== Running test suite: SyncTestSuite.TeardownFailure
+== Running test suite: AsyncTestSuite.TeardownFailure
 -- Running test case: TestWithExceptionDuringTeardown
 -- Running test teardown.
 !! EXCEPTION: undefined

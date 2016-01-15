@@ -20,10 +20,10 @@ function test()
     }
 
     try {
-        let result = new syncTestSuite(this, "      ");
-        ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires non-whitespace name argument.");
+        let result = new SyncTestSuite(this, "      ");
+        ProtocolTest.log("FAIL: instantiating SyncTestSuite requires non-whitespace name argument.");
     } catch (e) {
-        ProtocolTest.log("PASS: instantiating AsyncTestSuite requires non-whitespace name argument.");
+        ProtocolTest.log("PASS: instantiating SyncTestSuite requires non-whitespace name argument.");
     }
 
     try {
