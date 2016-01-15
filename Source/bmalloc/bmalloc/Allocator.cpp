@@ -162,6 +162,11 @@ void* Allocator::reallocate(void* object, size_t newSize)
         Range& range = PerProcess<Heap>::getFastCase()->findXLarge(lock, object);
         oldSize = range.size();
 
+        newSize = roundUpToMultipleOf<xLargeAlignment>(newSize);
+
+        if (newSize == oldSize)
+            return object;
+
         if (newSize < oldSize && newSize > largeMax) {
             newSize = roundUpToMultipleOf<xLargeAlignment>(newSize);
             if (oldSize - newSize >= xLargeAlignment) {
@@ -172,6 +177,17 @@ void* Allocator::reallocate(void* object, size_t newSize)
                 range = Range(object, newSize);
             }
             return object;
+        }
+
+        if (newSize > oldSize) {
+            lock.unlock();
+            bool wasExtended = tryVMExtend(object, oldSize, newSize);
+            lock.lock();
+
+            if (wasExtended) {
+                range = Range(object, newSize);
+                return object;
+            }
         }
         break;
     }

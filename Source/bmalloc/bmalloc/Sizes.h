@@ -53,7 +53,7 @@ namespace Sizes {
 #endif
     static const size_t vmPageMask = ~(vmPageSize - 1);
     
-    static const size_t superChunkSize = 4 * MB;
+    static const size_t superChunkSize = 2 * MB;
 
     static const size_t smallMax = 256;
     static const size_t smallLineSize = 256;
