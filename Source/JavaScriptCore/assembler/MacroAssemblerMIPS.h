@@ -1253,6 +1253,13 @@ public:
         m_assembler.addiu(MIPSRegisters::sp, MIPSRegisters::sp, 4);
     }
 
+    void popPair(RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.lw(dest1, MIPSRegisters::sp, 0);
+        m_assembler.lw(dest2, MIPSRegisters::sp, 4);
+        m_assembler.addiu(MIPSRegisters::sp, MIPSRegisters::sp, 8);
+    }
+
     void push(RegisterID src)
     {
         m_assembler.addiu(MIPSRegisters::sp, MIPSRegisters::sp, -4);
@@ -1269,6 +1276,13 @@ public:
     {
         move(imm, immTempRegister);
         push(immTempRegister);
+    }
+
+    void pushPair(RegisterID src1, RegisterID src2)
+    {
+        m_assembler.addiu(MIPSRegisters::sp, MIPSRegisters::sp, -8);
+        m_assembler.sw(src2, MIPSRegisters::sp, 4);
+        m_assembler.sw(src1, MIPSRegisters::sp, 0);
     }
 
     // Register move operations:

@@ -1,3 +1,18 @@
+2016-01-15  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [mips] Implemented emitFunctionPrologue/Epilogue
+        https://bugs.webkit.org/show_bug.cgi?id=152947
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::popPair):
+        (JSC::MacroAssemblerMIPS::pushPair):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitFunctionPrologue):
+        (JSC::AssemblyHelpers::emitFunctionEpilogueWithEmptyFrame):
+        (JSC::AssemblyHelpers::emitFunctionEpilogue):
+
 2016-01-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r195084.
