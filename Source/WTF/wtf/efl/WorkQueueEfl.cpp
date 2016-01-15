@@ -23,6 +23,8 @@
 #include <DispatchQueueEfl.h>
 #include <DispatchQueueWorkItemEfl.h>
 
+namespace WTF {
+
 void WorkQueue::platformInitialize(const char* name, Type, QOS)
 {
     m_dispatchQueue = DispatchQueue::create(name);
@@ -66,4 +68,6 @@ void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<v
         return;
 
     m_dispatchQueue->dispatch(TimerWorkItem::create(this, WTFMove(function), duration));
+}
+
 }
