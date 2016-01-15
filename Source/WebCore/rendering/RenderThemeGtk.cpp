@@ -35,6 +35,7 @@
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
+#include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
 #include "MediaControlElements.h"

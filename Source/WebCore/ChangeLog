@@ -1,3 +1,20 @@
+2016-01-15  Olivier Blin  <olivier.blin@softathome.com>
+
+        [GTK] Fix build of RenderThemeGtk without VIDEO by including HTMLInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=153133
+
+        Reviewed by Michael Catanzaro.
+
+        Build was fine with VIDEO enabled, since HTMLInputElement.h was
+        included by transitivity through MediaControlElements.h and
+        MediaControlElementTypes.h.
+
+        This seems to be broken since r194847.
+
+        No new tests since this is just a build fix.
+
+        * rendering/RenderThemeGtk.cpp:
+
 2016-01-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         createElementNS and createAttributeNS should treat undefined namespaceURI as null string
