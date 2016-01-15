@@ -73,7 +73,7 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExit(
 {
     RefPtr<OSRExitHandle> handle =
         prepareOSRExitHandle(state, exitKind, nodeOrigin, params, offset, isExceptionHandler);
-    handle->emitExitThunk(jit);
+    handle->emitExitThunk(state, jit);
     return handle;
 }
 
@@ -84,8 +84,8 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
     RefPtr<OSRExitHandle> handle =
         prepareOSRExitHandle(state, exitKind, nodeOrigin, params, offset, isExceptionHandler);
     params.addLatePath(
-        [handle] (CCallHelpers& jit) {
-            handle->emitExitThunk(jit);
+        [handle, &state] (CCallHelpers& jit) {
+            handle->emitExitThunk(state, jit);
         });
     return handle;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -653,6 +653,16 @@ public:
         padBeforePatch();
         m_assembler.movq_rm_disp32(src, address.offset, address.base);
         return DataLabel32(this);
+    }
+
+    void swap64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.xchgq_rr(src, dest);
+    }
+
+    void swap64(RegisterID src, Address dest)
+    {
+        m_assembler.xchgq_rm(src, dest.offset, dest.base);
     }
 
     void move64ToDouble(RegisterID src, FPRegisterID dest)

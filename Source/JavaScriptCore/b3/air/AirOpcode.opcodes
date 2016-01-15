@@ -417,6 +417,14 @@ Move U:G:Ptr, D:G:Ptr
     Tmp, Index as storePtr
     x86: Imm, Addr as storePtr
 
+x86: Swap32 UD:G:32, UD:G:32
+    Tmp, Tmp
+    Tmp, Addr
+
+x86_64: Swap64 UD:G:64, UD:G:64
+    Tmp, Tmp
+    Tmp, Addr
+
 Move32 U:G:32, ZD:G:32
     Tmp, Tmp as zeroExtend32ToPtr
     Addr, Tmp as load32
@@ -682,7 +690,19 @@ RetDouble U:F:64 /return
 
 Oops /terminal
 
+# A Shuffle is a multi-source, multi-destination move. It simultaneously does multiple moves at once.
+# The moves are specified as triplets of src, dst, and width. For example you can request a swap this
+# way:
+#     Shuffle %tmp1, %tmp2, 64, %tmp2, %tmp1, 64
+custom Shuffle
+
 # Air allows for exotic behavior. A Patch's behavior is determined entirely by the Special operand,
 # which must be the first operand.
 custom Patch
+
+# Instructions used for lowering C calls. These don't make it to Air generation. They get lowered to
+# something else first. The origin Value must be a CCallValue.
+custom CCall
+custom ColdCCall
+
 

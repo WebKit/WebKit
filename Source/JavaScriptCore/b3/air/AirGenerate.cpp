@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirIteratedRegisterCoalescing.h"
+#include "AirLowerAfterRegAlloc.h"
+#include "AirLowerMacros.h"
 #include "AirOpcodeUtils.h"
 #include "AirOptimizeBlockOrder.h"
 #include "AirReportUsedRegisters.h"
@@ -65,6 +67,8 @@ void prepareForGeneration(Code& code)
         dataLog(code);
     }
 
+    lowerMacros(code);
+
     // This is where we run our optimizations and transformations.
     // FIXME: Add Air optimizations.
     // https://bugs.webkit.org/show_bug.cgi?id=150456
@@ -79,6 +83,8 @@ void prepareForGeneration(Code& code)
         spillEverything(code);
     else
         iteratedRegisterCoalescing(code);
+
+    lowerAfterRegAlloc(code);
 
     // Prior to this point the prologue and epilogue is implicit. This makes it explicit. It also
     // does things like identify which callee-saves we're using and saves them.

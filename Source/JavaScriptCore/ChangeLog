@@ -1,3 +1,236 @@
+2016-01-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Air needs a Shuffle instruction
+        https://bugs.webkit.org/show_bug.cgi?id=152952
+
+        Reviewed by Saam Barati.
+
+        This adds an instruction called Shuffle. Shuffle allows you to simultaneously perform
+        multiple moves to perform arbitrary permutations over registers and memory. We call these
+        rotations. It also allows you to perform "shifts", like (a => b, b => c): after the shift,
+        c will have b's old value, b will have a's old value, and a will be unchanged. Shifts can
+        use immediates as their source.
+
+        Shuffle is added as a custom instruction, since it has a variable number of arguments. It
+        takes any number of triplets of arguments, where each triplet describes one mapping of the
+        shuffle. For example, to represent (a => b, b => c), we might say:
+
+            Shuffle %a, %b, 64, %b, %c, 64
+
+        Note the "64"s, those are width arguments that describe how many bits of the register are
+        being moved. Each triplet is referred to as a "shuffle pair". We call it a pair because the
+        most relevant part of it is the pair of registers or memroy locations (i.e. %a, %b form one
+        of the pairs in the example). For GP arguments, the width follows ZDef semantics.
+
+        In the future, we will be able to use Shuffle for a lot of things. This patch is modest about
+        how to use it:
+
+        - C calling convention argument marshalling. Previously we used move instructions. But that's
+          problematic since it introduces artificial interference between the argument registers and
+          the inputs. Using Shuffle removes that interference. This helps a bit.
+
+        - Cold C calls. This is what really motivated me to write this patch. If we have a C call on
+          a cold path, then we want it to appear to the register allocator like it doesn't clobber
+          any registers. Only after register allocation should we handle the clobbering by simply
+          saving all of the live volatile registers to the stack. If you imagine the saving and the
+          argument marshalling, you can see how before the call, we want to have a Shuffle that does
+          both of those things. This is important. If argument marshalling was separate from the
+          saving, then we'd still appear to clobber argument registers. Doing them together as one
+          Shuffle means that the cold call doesn't appear to even clobber the argument registers.
+
+        Unfortunately, I was wrong about cold C calls being the dominant problem with our register
+        allocator right now. Fixing this revealed other problems in my current tuning benchmark,
+        Octane/encrypt. Nonetheless, this is a small speed-up across the board, and gives us some
+        functionality we will need to implement other optimizations.
+
+        Relanding after fixing production build.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::isX86_64):
+        (JSC::isIOS):
+        (JSC::optimizeForARMv7IDIVSupported):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::zeroExtend32ToPtr):
+        (JSC::MacroAssemblerX86Common::swap32):
+        (JSC::MacroAssemblerX86Common::moveConditionally32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::store64WithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::swap64):
+        (JSC::MacroAssemblerX86_64::move64ToDouble):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::xchgl_rr):
+        (JSC::X86Assembler::xchgl_rm):
+        (JSC::X86Assembler::xchgq_rr):
+        (JSC::X86Assembler::xchgq_rm):
+        (JSC::X86Assembler::movl_rr):
+        * b3/B3CCallValue.h:
+        * b3/B3Compilation.cpp:
+        (JSC::B3::Compilation::Compilation):
+        (JSC::B3::Compilation::~Compilation):
+        * b3/B3Compilation.h:
+        (JSC::B3::Compilation::code):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::createSelect):
+        (JSC::B3::Air::LowerToAir::lower):
+        (JSC::B3::Air::LowerToAir::marshallCCallArgument): Deleted.
+        * b3/B3OpaqueByproducts.h:
+        (JSC::B3::OpaqueByproducts::count):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::isArgValidForValue):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::isStackMemory):
+        (JSC::B3::Air::Arg::isRepresentableAs):
+        (JSC::B3::Air::Arg::usesTmp):
+        (JSC::B3::Air::Arg::canRepresent):
+        (JSC::B3::Air::Arg::isCompatibleType):
+        (JSC::B3::Air::Arg::dump):
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::forEachType):
+        (JSC::B3::Air::Arg::isWarmUse):
+        (JSC::B3::Air::Arg::cooled):
+        (JSC::B3::Air::Arg::isEarlyUse):
+        (JSC::B3::Air::Arg::imm64):
+        (JSC::B3::Air::Arg::immPtr):
+        (JSC::B3::Air::Arg::addr):
+        (JSC::B3::Air::Arg::special):
+        (JSC::B3::Air::Arg::widthArg):
+        (JSC::B3::Air::Arg::operator==):
+        (JSC::B3::Air::Arg::isImm64):
+        (JSC::B3::Air::Arg::isSomeImm):
+        (JSC::B3::Air::Arg::isAddr):
+        (JSC::B3::Air::Arg::isIndex):
+        (JSC::B3::Air::Arg::isMemory):
+        (JSC::B3::Air::Arg::isRelCond):
+        (JSC::B3::Air::Arg::isSpecial):
+        (JSC::B3::Air::Arg::isWidthArg):
+        (JSC::B3::Air::Arg::isAlive):
+        (JSC::B3::Air::Arg::base):
+        (JSC::B3::Air::Arg::hasOffset):
+        (JSC::B3::Air::Arg::offset):
+        (JSC::B3::Air::Arg::width):
+        (JSC::B3::Air::Arg::isGPTmp):
+        (JSC::B3::Air::Arg::isGP):
+        (JSC::B3::Air::Arg::isFP):
+        (JSC::B3::Air::Arg::isType):
+        (JSC::B3::Air::Arg::isGPR):
+        (JSC::B3::Air::Arg::isValidForm):
+        (JSC::B3::Air::Arg::forEachTmpFast):
+        * b3/air/AirBasicBlock.h:
+        (JSC::B3::Air::BasicBlock::insts):
+        (JSC::B3::Air::BasicBlock::appendInst):
+        (JSC::B3::Air::BasicBlock::append):
+        * b3/air/AirCCallingConvention.cpp: Added.
+        (JSC::B3::Air::computeCCallingConvention):
+        (JSC::B3::Air::cCallResult):
+        (JSC::B3::Air::buildCCall):
+        * b3/air/AirCCallingConvention.h: Added.
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::proc):
+        * b3/air/AirCustom.cpp: Added.
+        (JSC::B3::Air::CCallCustom::isValidForm):
+        (JSC::B3::Air::CCallCustom::generate):
+        (JSC::B3::Air::ShuffleCustom::isValidForm):
+        (JSC::B3::Air::ShuffleCustom::generate):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::forEachArg):
+        (JSC::B3::Air::PatchCustom::generate):
+        (JSC::B3::Air::CCallCustom::forEachArg):
+        (JSC::B3::Air::CCallCustom::isValidFormStatic):
+        (JSC::B3::Air::CCallCustom::admitsStack):
+        (JSC::B3::Air::CCallCustom::hasNonArgNonControlEffects):
+        (JSC::B3::Air::ColdCCallCustom::forEachArg):
+        (JSC::B3::Air::ShuffleCustom::forEachArg):
+        (JSC::B3::Air::ShuffleCustom::isValidFormStatic):
+        (JSC::B3::Air::ShuffleCustom::admitsStack):
+        (JSC::B3::Air::ShuffleCustom::hasNonArgNonControlEffects):
+        * b3/air/AirEmitShuffle.cpp: Added.
+        (JSC::B3::Air::ShufflePair::dump):
+        (JSC::B3::Air::emitShuffle):
+        * b3/air/AirEmitShuffle.h: Added.
+        (JSC::B3::Air::ShufflePair::ShufflePair):
+        (JSC::B3::Air::ShufflePair::src):
+        (JSC::B3::Air::ShufflePair::dst):
+        (JSC::B3::Air::ShufflePair::width):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/air/AirGenerate.h:
+        * b3/air/AirInsertionSet.cpp:
+        (JSC::B3::Air::InsertionSet::insertInsts):
+        (JSC::B3::Air::InsertionSet::execute):
+        * b3/air/AirInsertionSet.h:
+        (JSC::B3::Air::InsertionSet::insertInst):
+        (JSC::B3::Air::InsertionSet::insert):
+        * b3/air/AirInst.h:
+        (JSC::B3::Air::Inst::operator bool):
+        (JSC::B3::Air::Inst::append):
+        * b3/air/AirLowerAfterRegAlloc.cpp: Added.
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirLowerAfterRegAlloc.h: Added.
+        * b3/air/AirLowerMacros.cpp: Added.
+        (JSC::B3::Air::lowerMacros):
+        * b3/air/AirLowerMacros.h: Added.
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirRegisterPriority.h:
+        (JSC::B3::Air::regsInPriorityOrder):
+        * b3/air/testair.cpp: Added.
+        (hiddenTruthBecauseNoReturnIsStupid):
+        (usage):
+        (JSC::B3::Air::compile):
+        (JSC::B3::Air::invoke):
+        (JSC::B3::Air::compileAndRun):
+        (JSC::B3::Air::testSimple):
+        (JSC::B3::Air::loadConstantImpl):
+        (JSC::B3::Air::loadConstant):
+        (JSC::B3::Air::loadDoubleConstant):
+        (JSC::B3::Air::testShuffleSimpleSwap):
+        (JSC::B3::Air::testShuffleSimpleShift):
+        (JSC::B3::Air::testShuffleLongShift):
+        (JSC::B3::Air::testShuffleLongShiftBackwards):
+        (JSC::B3::Air::testShuffleSimpleRotate):
+        (JSC::B3::Air::testShuffleSimpleBroadcast):
+        (JSC::B3::Air::testShuffleBroadcastAllRegs):
+        (JSC::B3::Air::testShuffleTreeShift):
+        (JSC::B3::Air::testShuffleTreeShiftBackward):
+        (JSC::B3::Air::testShuffleTreeShiftOtherBackward):
+        (JSC::B3::Air::testShuffleMultipleShifts):
+        (JSC::B3::Air::testShuffleRotateWithFringe):
+        (JSC::B3::Air::testShuffleRotateWithLongFringe):
+        (JSC::B3::Air::testShuffleMultipleRotates):
+        (JSC::B3::Air::testShuffleShiftAndRotate):
+        (JSC::B3::Air::testShuffleShiftAllRegs):
+        (JSC::B3::Air::testShuffleRotateAllRegs):
+        (JSC::B3::Air::testShuffleSimpleSwap64):
+        (JSC::B3::Air::testShuffleSimpleShift64):
+        (JSC::B3::Air::testShuffleSwapMixedWidth):
+        (JSC::B3::Air::testShuffleShiftMixedWidth):
+        (JSC::B3::Air::testShuffleShiftMemory):
+        (JSC::B3::Air::testShuffleShiftMemoryLong):
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegs):
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegs64):
+        (JSC::B3::Air::combineHiLo):
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegsMixedWidth):
+        (JSC::B3::Air::testShuffleRotateMemory):
+        (JSC::B3::Air::testShuffleRotateMemory64):
+        (JSC::B3::Air::testShuffleRotateMemoryMixedWidth):
+        (JSC::B3::Air::testShuffleRotateMemoryAllRegs64):
+        (JSC::B3::Air::testShuffleRotateMemoryAllRegsMixedWidth):
+        (JSC::B3::Air::testShuffleSwapDouble):
+        (JSC::B3::Air::testShuffleShiftDouble):
+        (JSC::B3::Air::run):
+        (run):
+        (main):
+        * b3/testb3.cpp:
+        (JSC::B3::testCallSimple):
+        (JSC::B3::testCallRare):
+        (JSC::B3::testCallRareLive):
+        (JSC::B3::testCallSimplePure):
+        (JSC::B3::run):
+
 2016-01-15  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Date.prototype.toLocaleString in ECMA-402

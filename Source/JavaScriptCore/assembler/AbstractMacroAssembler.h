@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,15 @@ inline bool isX86()
 inline bool isX86_64()
 {
 #if CPU(X86_64)
+    return true;
+#else
+    return false;
+#endif
+}
+
+inline bool isIOS()
+{
+#if PLATFORM(IOS)
     return true;
 #else
     return false;

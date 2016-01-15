@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLOSRExitHandle_h
-#define FTLOSRExitHandle_h
+#ifndef AirLowerMacros_h
+#define AirLowerMacros_h
 
-#include "DFGCommon.h"
+#if ENABLE(B3_JIT)
 
-#if ENABLE(FTL_JIT) && FTL_USES_B3
+namespace JSC { namespace B3 { namespace Air {
 
-#include "CCallHelpers.h"
-#include <wtf/ThreadSafeRefCounted.h>
+class Code;
 
-namespace JSC { namespace FTL {
+// Air has some opcodes that are very high-level and are meant to reduce the amount of low-level
+// knowledge in the B3->Air lowering. The current example is CCall.
 
-class State;
-struct OSRExit;
+void lowerMacros(Code&);
 
-// This is an object that stores some interesting data about an OSR exit. It's expected that you will
-// scrape this data from this object by the time compilation finishes.
-struct OSRExitHandle : public ThreadSafeRefCounted<OSRExitHandle> {
-    OSRExitHandle(unsigned index, OSRExit& exit)
-        : index(index)
-        , exit(exit)
-    {
-    }
+} } } // namespace JSC::B3::Air
 
-    unsigned index;
-    OSRExit& exit;
+#endif // ENABLE(B3_JIT)
 
-    // This is the label at which the OSR exit jump lives. This will get populated once the OSR exit
-    // emits its jump. This happens immediately when you call OSRExit::appendOSRExit(). It happens at
-    // some time during late path emission if you do OSRExit::appendOSRExitLater().
-    CCallHelpers::Label label;
-
-    // This emits the exit thunk and populates 'label'.
-    void emitExitThunk(State&, CCallHelpers&);
-};
-
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT) && FTL_USES_B3
-
-#endif // FTLOSRExitHandle_h
+#endif // AirLowerMacros_h
 

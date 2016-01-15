@@ -25,6 +25,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				0F6183471C45F67A0072450B /* PBXTargetDependency */,
 				0F93275D1C20BF3A00CF6564 /* PBXTargetDependency */,
 				0FEC85B11BDB5D8F0080FF74 /* PBXTargetDependency */,
 				5D6B2A4F152B9E23005231DE /* PBXTargetDependency */,
@@ -342,6 +343,9 @@
 		0F3C1F1B1B868E7900ABB08B /* DFGClobbersExitState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3C1F191B868E7900ABB08B /* DFGClobbersExitState.h */; };
 		0F3E01AA19D353A500F61B7F /* DFGPrePostNumbering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3E01A819D353A500F61B7F /* DFGPrePostNumbering.cpp */; };
 		0F3E01AB19D353A500F61B7F /* DFGPrePostNumbering.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3E01A919D353A500F61B7F /* DFGPrePostNumbering.h */; };
+		0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183321C45F35C0072450B /* AirOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183341C45F3B60072450B /* AirOpcodeGenerated.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F40E4A91C497F7400A577FA /* AirOpcodeUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183351C45F3B60072450B /* AirOpcodeUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A451460CBAB00131F8F /* ValueRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A461460CBAB00131F8F /* VirtualRegister.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A4A1460CD6B00131F8F /* DataFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -400,6 +404,18 @@
 		0F5EF91E16878F7A003E5C25 /* JITThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5EF91B16878F78003E5C25 /* JITThunks.cpp */; };
 		0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5EF91C16878F78003E5C25 /* JITThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F6183291C45BF070072450B /* AirCCallingConvention.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183201C45BF070072450B /* AirCCallingConvention.cpp */; };
+		0F61832A1C45BF070072450B /* AirCCallingConvention.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183211C45BF070072450B /* AirCCallingConvention.h */; };
+		0F61832B1C45BF070072450B /* AirCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183221C45BF070072450B /* AirCustom.cpp */; };
+		0F61832C1C45BF070072450B /* AirEmitShuffle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183231C45BF070072450B /* AirEmitShuffle.cpp */; };
+		0F61832D1C45BF070072450B /* AirEmitShuffle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183241C45BF070072450B /* AirEmitShuffle.h */; };
+		0F61832E1C45BF070072450B /* AirLowerAfterRegAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183251C45BF070072450B /* AirLowerAfterRegAlloc.cpp */; };
+		0F61832F1C45BF070072450B /* AirLowerAfterRegAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183261C45BF070072450B /* AirLowerAfterRegAlloc.h */; };
+		0F6183301C45BF070072450B /* AirLowerMacros.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183271C45BF070072450B /* AirLowerMacros.cpp */; };
+		0F6183311C45BF070072450B /* AirLowerMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183281C45BF070072450B /* AirLowerMacros.h */; };
+		0F61833C1C45F62A0072450B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
+		0F61833D1C45F62A0072450B /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
+		0F6183451C45F6600072450B /* testair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183441C45F6600072450B /* testair.cpp */; };
 		0F620174143FCD330068B77C /* DFGVariableAccessData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */; };
 		0F620176143FCD3B0068B77C /* DFGBasicBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620170143FCD2F0068B77C /* DFGBasicBlock.h */; };
 		0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */; };
@@ -2079,6 +2095,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0F6183461C45F67A0072450B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0F6183381C45F62A0072450B;
+			remoteInfo = testair;
+		};
 		0F93275C1C20BF3A00CF6564 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2542,6 +2565,20 @@
 		0F5EF91B16878F78003E5C25 /* JITThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITThunks.cpp; sourceTree = "<group>"; };
 		0F5EF91C16878F78003E5C25 /* JITThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITThunks.h; sourceTree = "<group>"; };
 		0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnconditionalFinalizer.h; sourceTree = "<group>"; };
+		0F6183201C45BF070072450B /* AirCCallingConvention.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirCCallingConvention.cpp; path = b3/air/AirCCallingConvention.cpp; sourceTree = "<group>"; };
+		0F6183211C45BF070072450B /* AirCCallingConvention.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirCCallingConvention.h; path = b3/air/AirCCallingConvention.h; sourceTree = "<group>"; };
+		0F6183221C45BF070072450B /* AirCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirCustom.cpp; path = b3/air/AirCustom.cpp; sourceTree = "<group>"; };
+		0F6183231C45BF070072450B /* AirEmitShuffle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirEmitShuffle.cpp; path = b3/air/AirEmitShuffle.cpp; sourceTree = "<group>"; };
+		0F6183241C45BF070072450B /* AirEmitShuffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirEmitShuffle.h; path = b3/air/AirEmitShuffle.h; sourceTree = "<group>"; };
+		0F6183251C45BF070072450B /* AirLowerAfterRegAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLowerAfterRegAlloc.cpp; path = b3/air/AirLowerAfterRegAlloc.cpp; sourceTree = "<group>"; };
+		0F6183261C45BF070072450B /* AirLowerAfterRegAlloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLowerAfterRegAlloc.h; path = b3/air/AirLowerAfterRegAlloc.h; sourceTree = "<group>"; };
+		0F6183271C45BF070072450B /* AirLowerMacros.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLowerMacros.cpp; path = b3/air/AirLowerMacros.cpp; sourceTree = "<group>"; };
+		0F6183281C45BF070072450B /* AirLowerMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLowerMacros.h; path = b3/air/AirLowerMacros.h; sourceTree = "<group>"; };
+		0F6183321C45F35C0072450B /* AirOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirOpcode.h; sourceTree = "<group>"; };
+		0F6183341C45F3B60072450B /* AirOpcodeGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirOpcodeGenerated.h; sourceTree = "<group>"; };
+		0F6183351C45F3B60072450B /* AirOpcodeUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirOpcodeUtils.h; sourceTree = "<group>"; };
+		0F6183431C45F62A0072450B /* testair */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testair; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F6183441C45F6600072450B /* testair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = testair.cpp; path = b3/air/testair.cpp; sourceTree = "<group>"; };
 		0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractValue.h; path = dfg/DFGAbstractValue.h; sourceTree = "<group>"; };
 		0F620170143FCD2F0068B77C /* DFGBasicBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBasicBlock.h; path = dfg/DFGBasicBlock.h; sourceTree = "<group>"; };
 		0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessData.h; path = dfg/DFGVariableAccessData.h; sourceTree = "<group>"; };
@@ -3372,8 +3409,8 @@
 		7013CA8A1B491A9400CAE613 /* JSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSJob.h; sourceTree = "<group>"; };
 		7035587C1C418419004BD7BF /* MapPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MapPrototype.js; sourceTree = "<group>"; };
 		7035587D1C418419004BD7BF /* SetPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SetPrototype.js; sourceTree = "<group>"; };
-		7035587E1C418458004BD7BF /* MapPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapPrototype.lut.h; path = MapPrototype.lut.h; sourceTree = "<group>"; };
-		7035587F1C418458004BD7BF /* SetPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetPrototype.lut.h; path = SetPrototype.lut.h; sourceTree = "<group>"; };
+		7035587E1C418458004BD7BF /* MapPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapPrototype.lut.h; sourceTree = "<group>"; };
+		7035587F1C418458004BD7BF /* SetPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetPrototype.lut.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		705B41A31A6E501E00716757 /* Symbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Symbol.cpp; sourceTree = "<group>"; };
 		705B41A41A6E501E00716757 /* Symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Symbol.h; sourceTree = "<group>"; };
@@ -4307,6 +4344,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0F61833B1C45F62A0072450B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F61833C1C45F62A0072450B /* Foundation.framework in Frameworks */,
+				0F61833D1C45F62A0072450B /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0F9327511C20BCBA00CF6564 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4404,6 +4450,7 @@
 				0FEC85AD1BDB5CF10080FF74 /* testb3 */,
 				6511230514046A4C002B101D /* testRegExp */,
 				0F9327591C20BCBA00CF6564 /* dynbench */,
+				0F6183431C45F62A0072450B /* testair */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4794,13 +4841,18 @@
 				0FEC854C1BDACDC70080FF74 /* AirBasicBlock.cpp */,
 				0FEC854D1BDACDC70080FF74 /* AirBasicBlock.h */,
 				0FB3878B1BFBC44D00E3AB1E /* AirBlockWorklist.h */,
+				0F6183201C45BF070072450B /* AirCCallingConvention.cpp */,
+				0F6183211C45BF070072450B /* AirCCallingConvention.h */,
 				0FEC854E1BDACDC70080FF74 /* AirCCallSpecial.cpp */,
 				0FEC854F1BDACDC70080FF74 /* AirCCallSpecial.h */,
 				0FEC85501BDACDC70080FF74 /* AirCode.cpp */,
 				0FEC85511BDACDC70080FF74 /* AirCode.h */,
+				0F6183221C45BF070072450B /* AirCustom.cpp */,
 				0F10F1A21C420BF0001C07D2 /* AirCustom.h */,
 				0F4570361BE44C910062A629 /* AirEliminateDeadCode.cpp */,
 				0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */,
+				0F6183231C45BF070072450B /* AirEmitShuffle.cpp */,
+				0F6183241C45BF070072450B /* AirEmitShuffle.h */,
 				262D85B41C0D650F006ACB61 /* AirFixPartialRegisterStalls.cpp */,
 				262D85B51C0D650F006ACB61 /* AirFixPartialRegisterStalls.h */,
 				0F4C91671C2B3D68004341A6 /* AirFixSpillSlotZDef.h */,
@@ -4819,6 +4871,10 @@
 				26718BA21BE99F780052017B /* AirIteratedRegisterCoalescing.cpp */,
 				26718BA31BE99F780052017B /* AirIteratedRegisterCoalescing.h */,
 				2684D4371C00161C0081D663 /* AirLiveness.h */,
+				0F6183251C45BF070072450B /* AirLowerAfterRegAlloc.cpp */,
+				0F6183261C45BF070072450B /* AirLowerAfterRegAlloc.h */,
+				0F6183271C45BF070072450B /* AirLowerMacros.cpp */,
+				0F6183281C45BF070072450B /* AirLowerMacros.h */,
 				264091FA1BE2FD4100684DB2 /* AirOpcode.opcodes */,
 				0FB3878C1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.cpp */,
 				0FB3878D1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h */,
@@ -4844,6 +4900,7 @@
 				0F3730921C0D67EE00052BFA /* AirUseCounts.h */,
 				0FEC856B1BDACDC70080FF74 /* AirValidate.cpp */,
 				0FEC856C1BDACDC70080FF74 /* AirValidate.h */,
+				0F6183441C45F6600072450B /* testair.cpp */,
 			);
 			name = air;
 			sourceTree = "<group>";
@@ -5301,6 +5358,9 @@
 		650FDF8D09D0FCA700769E54 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				0F6183321C45F35C0072450B /* AirOpcode.h */,
+				0F6183341C45F3B60072450B /* AirOpcodeGenerated.h */,
+				0F6183351C45F3B60072450B /* AirOpcodeUtils.h */,
 				996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */,
 				996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */,
 				996B73071BD9FA2C00331B84 /* BooleanPrototype.lut.h */,
@@ -6901,6 +6961,7 @@
 				0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */,
 				79CFC6F01C33B10000C768EA /* LLIntPCRanges.h in Headers */,
 				79D5CD5B1C1106A900CECA07 /* SamplingProfiler.h in Headers */,
+				0F6183311C45BF070072450B /* AirLowerMacros.h in Headers */,
 				0FEC85771BDACDC70080FF74 /* AirFrequentedBlock.h in Headers */,
 				0FEC85791BDACDC70080FF74 /* AirGenerate.h in Headers */,
 				79DF66B11BF26A570001CF11 /* FTLExceptionHandlerManager.h in Headers */,
@@ -6963,6 +7024,7 @@
 				0FEC85141BDACDAC0080FF74 /* B3ControlValue.h in Headers */,
 				0FEC85C11BE167A00080FF74 /* B3Effects.h in Headers */,
 				0FEC85161BDACDAC0080FF74 /* B3FrequencyClass.h in Headers */,
+				0F61832F1C45BF070072450B /* AirLowerAfterRegAlloc.h in Headers */,
 				0FEC85171BDACDAC0080FF74 /* B3FrequentedBlock.h in Headers */,
 				0FEC85191BDACDAC0080FF74 /* B3Generate.h in Headers */,
 				0FEC851A1BDACDAC0080FF74 /* B3GenericFrequentedBlock.h in Headers */,
@@ -7156,6 +7218,7 @@
 				A77A424017A0BBFD00A8DB81 /* DFGClobberize.h in Headers */,
 				0F37308D1C0BD29100052BFA /* B3PhiChildren.h in Headers */,
 				A77A424217A0BBFD00A8DB81 /* DFGClobberSet.h in Headers */,
+				0F61832D1C45BF070072450B /* AirEmitShuffle.h in Headers */,
 				0F3C1F1B1B868E7900ABB08B /* DFGClobbersExitState.h in Headers */,
 				0F04396E1B03DC0B009598B7 /* DFGCombinedLiveness.h in Headers */,
 				0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */,
@@ -7239,6 +7302,7 @@
 				86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */,
 				A7D89CFE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
+				0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
@@ -7247,6 +7311,7 @@
 				0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */,
 				0F392C8A1B46188400844728 /* DFGOSRExitFuzz.h in Headers */,
 				0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */,
+				0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */,
 				0F235BEE17178E7300690C7F /* DFGOSRExitPreparation.h in Headers */,
 				0F6237981AE45CA700D402EA /* DFGPhantomInsertionPhase.h in Headers */,
 				0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */,
@@ -7630,6 +7695,7 @@
 				0F2B66F717B6B5AB00A7AE3F /* JSInt8Array.h in Headers */,
 				A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */,
 				E33F50811B8429A400413856 /* JSInternalPromise.h in Headers */,
+				0F61832A1C45BF070072450B /* AirCCallingConvention.h in Headers */,
 				E33F50791B84225700413856 /* JSInternalPromiseConstructor.h in Headers */,
 				E33F50871B8449EF00413856 /* JSInternalPromiseConstructor.lut.h in Headers */,
 				E33F50851B8437A000413856 /* JSInternalPromiseDeferred.h in Headers */,
@@ -7660,6 +7726,7 @@
 				7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */,
 				996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */,
 				2A05ABD61961DF2400341750 /* JSPropertyNameEnumerator.h in Headers */,
+				0F40E4A91C497F7400A577FA /* AirOpcodeUtils.h in Headers */,
 				E3EF88751B66DF23003F26CB /* JSPropertyNameIterator.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */,
@@ -8052,6 +8119,22 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0F6183381C45F62A0072450B /* testair */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0F61833E1C45F62A0072450B /* Build configuration list for PBXNativeTarget "testair" */;
+			buildPhases = (
+				0F6183391C45F62A0072450B /* Sources */,
+				0F61833B1C45F62A0072450B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = testair;
+			productName = testapi;
+			productReference = 0F6183431C45F62A0072450B /* testair */;
+			productType = "com.apple.product-type.tool";
+		};
 		0F93274E1C20BCBA00CF6564 /* dynbench */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0F9327541C20BCBA00CF6564 /* Build configuration list for PBXNativeTarget "dynbench" */;
@@ -8259,6 +8342,7 @@
 				0FEC85941BDB5CF10080FF74 /* testb3 */,
 				5D6B2A47152B9E17005231DE /* Test Tools */,
 				0F93274E1C20BCBA00CF6564 /* dynbench */,
+				0F6183381C45F62A0072450B /* testair */,
 			);
 		};
 /* End PBXProject section */
@@ -8495,6 +8579,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0F6183391C45F62A0072450B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F6183451C45F6600072450B /* testair.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0F93274F1C20BCBA00CF6564 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -8699,6 +8791,7 @@
 				52B717B51A0597E1007AF4F3 /* ControlFlowProfiler.cpp in Sources */,
 				0FBADF541BD1F4B800E073C1 /* CopiedBlock.cpp in Sources */,
 				C240305514B404E60079EB64 /* CopiedSpace.cpp in Sources */,
+				0F6183301C45BF070072450B /* AirLowerMacros.cpp in Sources */,
 				C2239D1716262BDD005AC5FD /* CopyVisitor.cpp in Sources */,
 				2A111245192FCE79005EE18D /* CustomGetterSetter.cpp in Sources */,
 				62E3D5F01B8D0B7300B868BB /* DataFormat.cpp in Sources */,
@@ -8747,6 +8840,7 @@
 				0F0981F71BC5E565004814F8 /* DFGCopyBarrierOptimizationPhase.cpp in Sources */,
 				0FBE0F7216C1DB030082C5E8 /* DFGCPSRethreadingPhase.cpp in Sources */,
 				A7D89CF517A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.cpp in Sources */,
+				0F6183291C45BF070072450B /* AirCCallingConvention.cpp in Sources */,
 				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,
 				0F2FC77216E12F710038D976 /* DFGDCEPhase.cpp in Sources */,
 				0F338E121BF0276C0013C88F /* B3OpaqueByproducts.cpp in Sources */,
@@ -8763,6 +8857,7 @@
 				A78A9774179738B8009DF744 /* DFGFailedFinalizer.cpp in Sources */,
 				A78A9776179738B8009DF744 /* DFGFinalizer.cpp in Sources */,
 				0F2BDC15151C5D4D00CD8910 /* DFGFixupPhase.cpp in Sources */,
+				0F61832C1C45BF070072450B /* AirEmitShuffle.cpp in Sources */,
 				0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */,
 				A7D89CF717A0B8CC00773AD8 /* DFGFlushFormat.cpp in Sources */,
 				0F69CC88193AC60A0045759E /* DFGFrozenValue.cpp in Sources */,
@@ -9074,6 +9169,7 @@
 				E33F50841B8437A000413856 /* JSInternalPromiseDeferred.cpp in Sources */,
 				E33F50741B8421C000413856 /* JSInternalPromisePrototype.cpp in Sources */,
 				A503FA1B188E0FB000110F14 /* JSJavaScriptCallFrame.cpp in Sources */,
+				0F61832E1C45BF070072450B /* AirLowerAfterRegAlloc.cpp in Sources */,
 				A503FA1D188E0FB000110F14 /* JSJavaScriptCallFramePrototype.cpp in Sources */,
 				7013CA8B1B491A9400CAE613 /* JSJob.cpp in Sources */,
 				140B7D1D0DC69AF7009C42B8 /* JSLexicalEnvironment.cpp in Sources */,
@@ -9216,6 +9312,7 @@
 				0F9D4C0C1C3E1C11006CD984 /* FTLExceptionTarget.cpp in Sources */,
 				0FB1058B1675483100F8AB6E /* ProfilerOSRExit.cpp in Sources */,
 				0FB1058D1675483700F8AB6E /* ProfilerOSRExitSite.cpp in Sources */,
+				0F61832B1C45BF070072450B /* AirCustom.cpp in Sources */,
 				0F13912B16771C3A009CCB07 /* ProfilerProfiledBytecodes.cpp in Sources */,
 				0FD3E40D1B618B6600C80E1E /* PropertyCondition.cpp in Sources */,
 				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
@@ -9368,6 +9465,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0F6183471C45F67A0072450B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0F6183381C45F62A0072450B /* testair */;
+			targetProxy = 0F6183461C45F67A0072450B /* PBXContainerItemProxy */;
+		};
 		0F93275D1C20BF3A00CF6564 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0F93274E1C20BCBA00CF6564 /* dynbench */;
@@ -9476,6 +9578,42 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Production;
+		};
+		0F61833F1C45F62A0072450B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
+				PRODUCT_NAME = testair;
+			};
+			name = Debug;
+		};
+		0F6183401C45F62A0072450B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
+				PRODUCT_NAME = testair;
+			};
+			name = Release;
+		};
+		0F6183411C45F62A0072450B /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
+				PRODUCT_NAME = testair;
+			};
+			name = Profiling;
+		};
+		0F6183421C45F62A0072450B /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
+				PRODUCT_NAME = testair;
 			};
 			name = Production;
 		};
@@ -9904,6 +10042,17 @@
 				0F4680AE14BA7FD900BFE272 /* Release */,
 				0F4680AF14BA7FD900BFE272 /* Profiling */,
 				0F4680B014BA7FD900BFE272 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		0F61833E1C45F62A0072450B /* Build configuration list for PBXNativeTarget "testair" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F61833F1C45F62A0072450B /* Debug */,
+				0F6183401C45F62A0072450B /* Release */,
+				0F6183411C45F62A0072450B /* Profiling */,
+				0F6183421C45F62A0072450B /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,12 +60,13 @@ public:
 
     Procedure& proc() { return m_proc; }
 
-    BasicBlock* addBlock(double frequency = 1);
+    JS_EXPORT_PRIVATE BasicBlock* addBlock(double frequency = 1);
 
     // Note that you can rely on stack slots always getting indices that are larger than the index
     // of any prior stack slot. In fact, all stack slots you create in the future will have an index
     // that is >= stackSlots().size().
-    StackSlot* addStackSlot(unsigned byteSize, StackSlotKind, StackSlotValue* = nullptr);
+    JS_EXPORT_PRIVATE StackSlot* addStackSlot(
+        unsigned byteSize, StackSlotKind, StackSlotValue* = nullptr);
     StackSlot* addStackSlot(StackSlotValue*);
 
     Special* addSpecial(std::unique_ptr<Special>);
