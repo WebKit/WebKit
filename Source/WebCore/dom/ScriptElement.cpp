@@ -69,6 +69,7 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     , m_forceAsync(!parserInserted)
     , m_willExecuteInOrder(false)
     , m_requestUsesAccessControl(false)
+    , m_errorEventTimer(*this, &ScriptElement::dispatchErrorEvent)
 {
     if (parserInserted && m_element.document().scriptableDocumentParser() && !m_element.document().isInDocumentWrite())
         m_startLineNumber = m_element.document().scriptableDocumentParser()->textPosition().m_line;
@@ -273,11 +274,10 @@ bool ScriptElement::requestScript(const String& sourceUrl)
         m_isExternalScript = true;
     }
 
-    if (m_cachedScript) {
+    if (m_cachedScript)
         return true;
-    }
 
-    dispatchErrorEvent();
+    m_errorEventTimer.startOneShot(0);
     return false;
 }
 

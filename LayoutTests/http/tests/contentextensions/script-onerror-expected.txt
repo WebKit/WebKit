@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 16: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/script-onerror.html from loading a resource from http://127.0.0.1:8000/contentextensions/should-be-blocked.js
+CONSOLE MESSAGE: line 17: Done executing script.  Waiting for onerror callback.
+CONSOLE MESSAGE: line 11: onerror was correctly called on the next runloop cycle.
+

@@ -4,8 +4,10 @@
         var secretness = 0;
 
         function test() {
-            if (window.testRunner)
+            if (window.testRunner) {
                 testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
 
             var localScriptLocation = "file:///tmp/LayoutTests/http/tests/security/resources/localScript.js";
             if (window.testRunner)
@@ -24,6 +26,8 @@
             localScriptElement.addEventListener("error", function() {
                 var tag = document.getElementById("result");
                 tag.innerHTML = "Test Passed: Local script not loaded.";
+                if (window.testRunner)
+                    testRunner.notifyDone();
             });
 
             document.body.appendChild(localScriptElement)
