@@ -5753,6 +5753,8 @@ void HTMLMediaElement::createMediaPlayer()
         enqueuePlaybackTargetAvailabilityChangedEvent(); // Ensure the event listener gets at least one event.
     }
 #endif
+
+    updateSleepDisabling();
 }
 
 #if ENABLE(WEB_AUDIO)
