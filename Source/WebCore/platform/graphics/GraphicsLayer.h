@@ -54,6 +54,10 @@ class TiledBacking;
 class TimingFunction;
 class TransformationMatrix;
 
+namespace DisplayList {
+typedef unsigned AsTextFlags;
+}
+
 // Base class for animation values (also used for transitions). Here to
 // represent values for properties being animated via the GraphicsLayer,
 // without pulling in style-related data from outside of the platform directory.
@@ -516,6 +520,9 @@ public:
     // Return a string with a human readable form of the layer tree, If debug is true
     // pointers for the layers and timing data will be included in the returned string.
     WEBCORE_EXPORT String layerTreeAsText(LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
+
+    // For testing.
+    WEBCORE_EXPORT virtual String displayListAsText(DisplayList::AsTextFlags) const { return String(); }
 
     // Return an estimate of the backing store memory cost (in bytes). May be incorrect for tiled layers.
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const;

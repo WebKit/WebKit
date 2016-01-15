@@ -43,6 +43,7 @@
 #include "DOMPath.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
+#include "DisplayList.h"
 #include "Document.h"
 #include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
@@ -94,6 +95,7 @@
 #include "PseudoElement.h"
 #include "Range.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderMenuList.h"
 #include "RenderTreeAsText.h"
@@ -1971,6 +1973,59 @@ RefPtr<ClientRectList> Internals::nonFastScrollableRects(ExceptionCode& ec) cons
         return nullptr;
 
     return page->nonFastScrollableRects();
+}
+
+void Internals::setElementUsesDisplayListDrawing(Element* element, bool usesDisplayListDrawing, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!element || !element->renderer() || !element->renderer()->hasLayer()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
+    if (!layer->isComposited()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    
+    layer->backing()->setUsesDisplayListDrawing(usesDisplayListDrawing);
+}
+
+String Internals::displayListForElement(Element* element, ExceptionCode& ec)
+{
+    return displayListForElement(element, 0, ec);
+}
+
+String Internals::displayListForElement(Element* element, unsigned flags, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    if (!element || !element->renderer() || !element->renderer()->hasLayer()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+    
+    RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
+    if (!layer->isComposited()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    DisplayList::AsTextFlags displayListFlags = 0;
+    if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
+        displayListFlags |= DisplayList::AsTextFlag::IncludesPlatformOperations;
+    
+    return layer->backing()->displayListAsText(displayListFlags);
 }
 
 void Internals::garbageCollectDocumentResources(ExceptionCode& ec) const

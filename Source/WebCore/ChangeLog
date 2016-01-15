@@ -1,3 +1,37 @@
+2016-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Make a way to test display-list drawing
+        https://bugs.webkit.org/show_bug.cgi?id=152956
+
+        Reviewed by Ryosuke Niwa.
+
+        Make it possible to toggle display-list drawing for a given compositing
+        layer via internals, as well as getting a textual representation of the display
+        list, optionally including items with platform-specific behavior.
+        
+        Add one test that uses this.
+
+        Test: displaylists/layer-dispay-list.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::displayListAsText):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::displayListAsText):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::shouldDumpForFlags):
+        (WebCore::DisplayList::DisplayList::asText):
+        * platform/graphics/displaylists/DisplayList.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setUsesDisplayListDrawing):
+        (WebCore::RenderLayerBacking::displayListAsText):
+        * rendering/RenderLayerBacking.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setElementUsesDisplayListDrawing):
+        (WebCore::Internals::displayListForElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-01-15  Olivier Blin  <olivier.blin@softathome.com>
 
         Fix audio build with video disabled

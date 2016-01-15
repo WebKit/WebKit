@@ -1,0 +1,36 @@
+
+(
+  (translate
+    (x 0.00)
+    (y 0.00)))
+(
+  (fill-rect-with-color
+    (extent at (0,0) size 104x104)
+    (rect at (0,0) size 104x104)
+    (color #008000)))
+(
+  (set-state
+    (change-flags 131456)
+    (fill-color #0000FF)
+    (stroke-style 0)
+    (should-antialias 0)))
+(
+  (draw-rect
+    (extent at (0,0) size 104x2)
+    (rect at (0,0) size 104x2)
+    (border-thickness 1.00)))
+(
+  (draw-rect
+    (extent at (0,102) size 104x2)
+    (rect at (0,102) size 104x2)
+    (border-thickness 1.00)))
+(
+  (draw-rect
+    (extent at (0,0) size 2x104)
+    (rect at (0,0) size 2x104)
+    (border-thickness 1.00)))
+(
+  (draw-rect
+    (extent at (102,0) size 2x104)
+    (rect at (102,0) size 2x104)
+    (border-thickness 1.00)))

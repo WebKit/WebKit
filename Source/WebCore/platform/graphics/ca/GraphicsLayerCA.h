@@ -208,6 +208,8 @@ private:
     WEBCORE_EXPORT virtual void setIsViewportConstrained(bool) override;
     virtual bool isViewportConstrained() const override { return m_isViewportConstrained; }
 
+    WEBCORE_EXPORT virtual String displayListAsText(DisplayList::AsTextFlags) const override;
+
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const override;
 
     WEBCORE_EXPORT virtual bool shouldRepaintOnSizeChange() const override;

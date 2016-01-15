@@ -240,6 +240,10 @@ public:
 
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
     WEBCORE_EXPORT double backingStoreMemoryEstimate() const;
+    
+    // For testing only.
+    WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
+    WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const;
 
     LayoutSize devicePixelFractionFromRenderer() const { return m_devicePixelFractionFromRenderer; }
 

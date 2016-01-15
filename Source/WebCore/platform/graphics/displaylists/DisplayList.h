@@ -41,6 +41,13 @@ namespace DisplayList {
 
 class Item;
 
+enum AsTextFlag {
+    None                            = 0,
+    IncludesPlatformOperations      = 1 << 0,
+};
+
+typedef unsigned AsTextFlags;
+
 class DisplayList {
     WTF_MAKE_NONCOPYABLE(DisplayList);
     friend class Recorder;
@@ -64,6 +71,8 @@ public:
 
     size_t itemCount() const { return m_list.size(); }
     size_t sizeInBytes() const;
+    
+    String asText(AsTextFlags) const;
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     WTF::CString description() const;
@@ -76,6 +85,8 @@ private:
         m_list.append(WTFMove(item));
         return m_list.last().get();
     }
+
+    static bool shouldDumpForFlags(AsTextFlags, const Item&);
 
     Vector<Ref<Item>>& list() { return m_list; }
 

@@ -182,6 +182,22 @@ std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const Str
     return graphicsLayer;
 }
 
+void RenderLayerBacking::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
+{
+    // Note that this only affects the primary layer.
+    if (usesDisplayListDrawing == m_graphicsLayer->usesDisplayListDrawing())
+        return;
+
+    m_graphicsLayer->setUsesDisplayListDrawing(usesDisplayListDrawing);
+    if (m_graphicsLayer->drawsContent())
+        m_graphicsLayer->setNeedsDisplay();
+}
+
+String RenderLayerBacking::displayListAsText(DisplayList::AsTextFlags flags) const
+{
+    return m_graphicsLayer->displayListAsText(flags);
+}
+
 void RenderLayerBacking::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
 {
     compositor().layerTiledBackingUsageChanged(layer, usingTiledBacking);

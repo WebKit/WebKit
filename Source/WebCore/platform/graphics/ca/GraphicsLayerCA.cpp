@@ -3270,6 +3270,14 @@ void GraphicsLayerCA::setShowRepaintCounter(bool showCounter)
     noteLayerPropertyChanged(DebugIndicatorsChanged);
 }
 
+String GraphicsLayerCA::displayListAsText(DisplayList::AsTextFlags flags) const
+{
+    if (!m_displayList)
+        return String();
+
+    return m_displayList->asText(flags);
+}
+
 void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
 {    
     if (color.isValid())

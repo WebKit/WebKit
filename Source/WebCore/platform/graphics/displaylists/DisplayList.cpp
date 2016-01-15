@@ -58,6 +58,51 @@ void DisplayList::removeItemsFromIndex(size_t index)
     m_list.resize(index);
 }
 
+bool DisplayList::shouldDumpForFlags(AsTextFlags flags, const Item& item)
+{
+    switch (item.type()) {
+    case ItemType::SetState:
+        if (!(flags & AsTextFlag::IncludesPlatformOperations)) {
+            const auto& stateItem = downcast<SetState>(item);
+            // FIXME: for now, only drop the item if the only state-change flags are platform-specific.
+            if (stateItem.state().m_changeFlags == GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
+                return false;
+
+            if (stateItem.state().m_changeFlags == GraphicsContextState::AntialiasedFontDilationEnabledChange)
+                return false;
+
+            if (stateItem.state().m_changeFlags == GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
+                return false;
+        }
+        break;
+#if USE(CG)
+    case ItemType::ApplyFillPattern:
+    case ItemType::ApplyStrokePattern:
+        if (!(flags & AsTextFlag::IncludesPlatformOperations))
+            return false;
+        break;
+#endif
+    default:
+        break;
+    }
+    return true;
+}
+
+String DisplayList::asText(AsTextFlags flags) const
+{
+    TextStream stream;
+    size_t numItems = m_list.size();
+    for (size_t i = 0; i < numItems; ++i) {
+        const auto& item = m_list[i].get();
+        if (!shouldDumpForFlags(flags, item))
+            continue;
+
+        TextStream::GroupScope scope(stream);
+        stream << item;
+    }
+    return stream.release();
+}
+
 void DisplayList::dump(TextStream& ts) const
 {
     TextStream::GroupScope group(ts);

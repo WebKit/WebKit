@@ -7,6 +7,7 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 accessibility/ios-simulator [ Pass ]
+displaylists [ Pass ]
 quicklook [ Pass ]
 http/tests/quicklook [ Pass ]
 
