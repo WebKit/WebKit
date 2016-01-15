@@ -1,3 +1,13 @@
+2016-01-14  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [webkitdirs] Replaced grep invocation with perl code
+        https://bugs.webkit.org/show_bug.cgi?id=153106
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+
 2016-01-14  Brian Burg  <bburg@apple.com>
 
         prepare-changelog does not read paths containing spaces properly

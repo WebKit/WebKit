@@ -339,11 +339,16 @@ sub determineArchitecture
         }
     } elsif (isCMakeBuild()) {
         my $host_processor = "";
-        $host_processor = `cmake --system-information | grep CMAKE_SYSTEM_PROCESSOR`;
-        if ($host_processor =~ m/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {
-            # We have a configured build tree; use it.
-            $architecture = $1;
-            $architecture = 'x86_64' if $architecture eq 'amd64';
+        if (open my $cmake_sysinfo, "-|", "cmake", "--system-information") {
+            while (<$cmake_sysinfo>) {
+                next unless index($_, 'CMAKE_SYSTEM_PROCESSOR') == 0;
+                if (/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {
+                    $architecture = $1;
+                    $architecture = 'x86_64' if $architecture eq 'amd64';
+                    last;
+                }
+            }
+            close $cmake_sysinfo;
         }
     }
 
