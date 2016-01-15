@@ -162,7 +162,7 @@ shouldBeFalse("Intl.DateTimeFormat.prototype.resolvedOptions() === Intl.DateTime
 shouldThrow("Intl.DateTimeFormat.prototype.resolvedOptions.call(5)", "'TypeError: Intl.DateTimeFormat.prototype.resolvedOptions called on value that\\'s not an object initialized as a DateTimeFormat'");
 
 shouldThrow("Intl.DateTimeFormat('$')", "'RangeError: invalid language tag: $'");
-shouldNotThrow("Intl.DateTimeFormat('en', null)");
+shouldThrow("Intl.DateTimeFormat('en', null)", '"TypeError: null is not an object (evaluating \'Intl.DateTimeFormat(\'en\', null)\')"');
 
 // Defaults to month, day, year.
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().weekday", "undefined");

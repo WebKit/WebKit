@@ -54,6 +54,8 @@ protected:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
+EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTime(ExecState*);
+
 } // namespace JSC
 
 #endif // DatePrototype_h

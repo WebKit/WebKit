@@ -27,8 +27,10 @@
 #include "DateConversion.h"
 #include "DateInstance.h"
 #include "Error.h"
+#include "JSCBuiltins.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
+#include "JSObject.h"
 #include "JSString.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
@@ -78,7 +80,6 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMilliSeconds(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMinutes(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMonth(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetSeconds(ExecState*);
-EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTime(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTimezoneOffset(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDate(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDay(ExecState*);
@@ -485,10 +486,16 @@ DatePrototype::DatePrototype(VM& vm, Structure* structure)
 {
 }
 
-void DatePrototype::finishCreation(VM& vm, JSGlobalObject*)
+void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+
+#if ENABLE(INTL)
+    JSC_BUILTIN_FUNCTION("toLocaleString", datePrototypeToLocaleStringCodeGenerator, DontEnum);
+#else
+    UNUSED_PARAM(globalObject);
+#endif // ENABLE(INTL)
 
     // The constructor will be added later, after DateConstructor has been built.
 }

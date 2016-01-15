@@ -51,9 +51,6 @@ static const char* const relevantExtensionKeys[2] = { "ca", "nu" };
 static const size_t indexOfExtensionKeyCa = 0;
 static const size_t indexOfExtensionKeyNu = 1;
 
-enum class DateTimeOptionRequired { Date, Time, Any };
-enum class DateTimeOptionDefaults { Date, Time, All };
-
 IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, IntlDateTimeFormatConstructor* constructor)
 {
     IntlDateTimeFormat* format = new (NotNull, allocateCell<IntlDateTimeFormat>(vm.heap)) IntlDateTimeFormat(vm, constructor->dateTimeFormatStructure());
@@ -221,7 +218,7 @@ static Vector<String> localeData(const String& locale, size_t keyIndex)
     return keyLocaleData;
 }
 
-static JSObject* toDateTimeOptions(ExecState& exec, JSValue originalOptions, const DateTimeOptionRequired required, const DateTimeOptionDefaults defaults)
+static JSObject* toDateTimeOptionsAnyDate(ExecState& exec, JSValue originalOptions)
 {
     // 12.1.1 ToDateTimeOptions abstract operation (ECMA-402 2.0)
     VM& vm = exec.vm();
@@ -230,7 +227,7 @@ static JSObject* toDateTimeOptions(ExecState& exec, JSValue originalOptions, con
     // 2. ReturnIfAbrupt(options).
     // 3. Let options be ObjectCreate(options).
     JSObject* options;
-    if (originalOptions.isUndefinedOrNull())
+    if (originalOptions.isUndefined())
         options = constructEmptyObject(&exec, exec.lexicalGlobalObject()->nullPrototypeObjectStructure());
     else {
         JSObject* originalToObject = originalOptions.toObject(&exec);
@@ -243,98 +240,84 @@ static JSObject* toDateTimeOptions(ExecState& exec, JSValue originalOptions, con
     bool needDefaults = true;
 
     // 5. If required is "date" or "any",
-    if (required == DateTimeOptionRequired::Date || required == DateTimeOptionRequired::Any) {
-        // a. For each of the property names "weekday", "year", "month", "day":
-        // i. Let prop be the property name.
-        // ii. Let value be Get(options, prop).
-        // iii. ReturnIfAbrupt(value).
-        // iv. If value is not undefined, then let needDefaults be false.
-        JSValue weekday = options->get(&exec, vm.propertyNames->weekday);
-        if (exec.hadException())
-            return nullptr;
-        if (!weekday.isUndefined())
-            needDefaults = false;
+    // Always "any".
 
-        JSValue year = options->get(&exec, vm.propertyNames->year);
-        if (exec.hadException())
-            return nullptr;
-        if (!year.isUndefined())
-            needDefaults = false;
+    // a. For each of the property names "weekday", "year", "month", "day":
+    // i. Let prop be the property name.
+    // ii. Let value be Get(options, prop).
+    // iii. ReturnIfAbrupt(value).
+    // iv. If value is not undefined, then let needDefaults be false.
+    JSValue weekday = options->get(&exec, vm.propertyNames->weekday);
+    if (exec.hadException())
+        return nullptr;
+    if (!weekday.isUndefined())
+        needDefaults = false;
 
-        JSValue month = options->get(&exec, vm.propertyNames->month);
-        if (exec.hadException())
-            return nullptr;
-        if (!month.isUndefined())
-            needDefaults = false;
+    JSValue year = options->get(&exec, vm.propertyNames->year);
+    if (exec.hadException())
+        return nullptr;
+    if (!year.isUndefined())
+        needDefaults = false;
 
-        JSValue day = options->get(&exec, vm.propertyNames->day);
-        if (exec.hadException())
-            return nullptr;
-        if (!day.isUndefined())
-            needDefaults = false;
-    }
+    JSValue month = options->get(&exec, vm.propertyNames->month);
+    if (exec.hadException())
+        return nullptr;
+    if (!month.isUndefined())
+        needDefaults = false;
+
+    JSValue day = options->get(&exec, vm.propertyNames->day);
+    if (exec.hadException())
+        return nullptr;
+    if (!day.isUndefined())
+        needDefaults = false;
 
     // 6. If required is "time" or "any",
-    if (required == DateTimeOptionRequired::Time || required == DateTimeOptionRequired::Any) {
-        // a. For each of the property names "hour", "minute", "second":
-        // i. Let prop be the property name.
-        // ii. Let value be Get(options, prop).
-        // iii. ReturnIfAbrupt(value).
-        // iv. If value is not undefined, then let needDefaults be false.
-        JSValue hour = options->get(&exec, vm.propertyNames->hour);
-        if (exec.hadException())
-            return nullptr;
-        if (!hour.isUndefined())
-            needDefaults = false;
+    // Always "any".
 
-        JSValue minute = options->get(&exec, vm.propertyNames->minute);
-        if (exec.hadException())
-            return nullptr;
-        if (!minute.isUndefined())
-            needDefaults = false;
+    // a. For each of the property names "hour", "minute", "second":
+    // i. Let prop be the property name.
+    // ii. Let value be Get(options, prop).
+    // iii. ReturnIfAbrupt(value).
+    // iv. If value is not undefined, then let needDefaults be false.
+    JSValue hour = options->get(&exec, vm.propertyNames->hour);
+    if (exec.hadException())
+        return nullptr;
+    if (!hour.isUndefined())
+        needDefaults = false;
 
-        JSValue second = options->get(&exec, vm.propertyNames->second);
-        if (exec.hadException())
-            return nullptr;
-        if (!second.isUndefined())
-            needDefaults = false;
-    }
+    JSValue minute = options->get(&exec, vm.propertyNames->minute);
+    if (exec.hadException())
+        return nullptr;
+    if (!minute.isUndefined())
+        needDefaults = false;
+
+    JSValue second = options->get(&exec, vm.propertyNames->second);
+    if (exec.hadException())
+        return nullptr;
+    if (!second.isUndefined())
+        needDefaults = false;
 
     // 7. If needDefaults is true and defaults is either "date" or "all", then
-    if (needDefaults && (defaults == DateTimeOptionDefaults::Date || defaults == DateTimeOptionDefaults::All)) {
+    // Defaults is always "date".
+    if (needDefaults) {
         // a. For each of the property names "year", "month", "day":
         // i. Let status be CreateDatePropertyOrThrow(options, prop, "numeric").
         // ii. ReturnIfAbrupt(status).
-        options->putDirect(vm, vm.propertyNames->year, jsString(&exec, "numeric"));
+        options->putDirect(vm, vm.propertyNames->year, jsNontrivialString(&exec, ASCIILiteral("numeric")));
         if (exec.hadException())
             return nullptr;
 
-        options->putDirect(vm, vm.propertyNames->month, jsString(&exec, "numeric"));
+        options->putDirect(vm, vm.propertyNames->month, jsNontrivialString(&exec, ASCIILiteral("numeric")));
         if (exec.hadException())
             return nullptr;
 
-        options->putDirect(vm, vm.propertyNames->day, jsString(&exec, "numeric"));
+        options->putDirect(vm, vm.propertyNames->day, jsNontrivialString(&exec, ASCIILiteral("numeric")));
         if (exec.hadException())
             return nullptr;
     }
 
     // 8. If needDefaults is true and defaults is either "time" or "all", then
-    if (needDefaults && (defaults == DateTimeOptionDefaults::Time || defaults == DateTimeOptionDefaults::All)) {
-        // a. For each of the property names "hour", "minute", "second":
-        // i. Let status be CreateDatePropertyOrThrow(options, prop, "numeric").
-        // ii. ReturnIfAbrupt(status).
-        options->putDirect(vm, vm.propertyNames->hour, jsString(&exec, "numeric"));
-        if (exec.hadException())
-            return nullptr;
-
-        options->putDirect(vm, vm.propertyNames->minute, jsString(&exec, "numeric"));
-        if (exec.hadException())
-            return nullptr;
-
-        options->putDirect(vm, vm.propertyNames->second, jsString(&exec, "numeric"));
-        if (exec.hadException())
-            return nullptr;
-    }
+    // Defaults is always "date". Ignore this branch.
 
     // 9. Return options.
     return options;
@@ -451,7 +434,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
         return;
 
     // 5. Let options be ToDateTimeOptions(options, "any", "date").
-    JSObject* options = toDateTimeOptions(exec, originalOptions, DateTimeOptionRequired::Any, DateTimeOptionDefaults::Date);
+    JSObject* options = toDateTimeOptionsAnyDate(exec, originalOptions);
     // 6. ReturnIfAbrupt(options).
     if (exec.hadException())
         return;
