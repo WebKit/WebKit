@@ -27,53 +27,58 @@
 #define ScrollbarThemeGtk_h
 
 #include "ScrollbarThemeComposite.h"
+#include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 
 class Scrollbar;
 
-class ScrollbarThemeGtk : public ScrollbarThemeComposite {
+class ScrollbarThemeGtk final : public ScrollbarThemeComposite {
 public:
     virtual ~ScrollbarThemeGtk();
 
-    virtual bool hasButtons(Scrollbar&) { return true; }
-    virtual bool hasThumb(Scrollbar&);
-    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool);
-    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool);
-    virtual IntRect trackRect(Scrollbar&, bool);
+    virtual bool hasButtons(Scrollbar&) override { return true; }
+    virtual bool hasThumb(Scrollbar&) override;
+    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool) override;
+    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool) override;
+    virtual IntRect trackRect(Scrollbar&, bool) override;
 
 #ifndef GTK_API_VERSION_2
     ScrollbarThemeGtk();
 
     using ScrollbarThemeComposite::thumbRect;
     IntRect thumbRect(Scrollbar&, const IntRect& unconstrainedTrackRect);
-    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect);
-    void paintScrollbarBackground(GraphicsContext&, Scrollbar&);
-    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&);
-    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&);
-    virtual void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart);
-    virtual bool shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&);
-    virtual int scrollbarThickness(ScrollbarControlSize);
-    virtual IntSize buttonSize(Scrollbar&);
-    virtual int minimumThumbLength(Scrollbar&);
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
+    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    virtual void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
+    virtual bool shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&) override;
+    virtual int scrollbarThickness(ScrollbarControlSize) override;
+    virtual int minimumThumbLength(Scrollbar&) override;
 
     // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.
-    virtual double initialAutoscrollTimerDelay() { return 0.20; }
-    virtual double autoscrollTimerDelay() { return 0.02; }
+    virtual double initialAutoscrollTimerDelay() override { return 0.20; }
+    virtual double autoscrollTimerDelay() override { return 0.02; }
     void themeChanged();
-    void updateScrollbarsFrameThickness();
-    void registerScrollbar(Scrollbar&);
-    void unregisterScrollbar(Scrollbar&);
 
-protected:
+private:
     void updateThemeProperties();
+    GRefPtr<GtkStyleContext> getOrCreateStyleContext(ScrollbarOrientation = VerticalScrollbar);
 
-    int m_thumbFatness;
-    int m_troughBorderWidth;
-    int m_stepperSize;
-    int m_stepperSpacing;
+    IntSize buttonSize(Scrollbar&);
+
+    struct Properties {
+        int thumbFatness;
+        int troughBorderWidth;
+        int stepperSize;
+        int stepperSpacing;
+        gboolean troughUnderSteppers;
+    };
+
+    GRefPtr<GtkStyleContext> m_cachedStyleContext;
+    Properties m_cachedProperties;
     int m_minThumbLength;
-    gboolean m_troughUnderSteppers;
     gboolean m_hasForwardButtonStartPart;
     gboolean m_hasForwardButtonEndPart;
     gboolean m_hasBackButtonStartPart;
