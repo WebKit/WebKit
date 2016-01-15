@@ -117,12 +117,18 @@ TestPage.runTest = window.runTest = function()
         }
     }
 
-    let inspectorFrontend = window.internals.openDummyInspectorFrontend(url);
-    inspectorFrontend.addEventListener("load", (event) => {
+    TestPage.inspectorFrontend = window.internals.openDummyInspectorFrontend(url);
+    TestPage.inspectorFrontend.addEventListener("load", (event) => {
         let initializationCodeString = `(${runInitializationMethodsInFrontend.toString()})([${TestPage._initializers}]);`;
         let testFunctionCodeString = `(${runTestMethodInFrontend.toString()})(${testFunction.toString()});`;
 
-        inspectorFrontend.postMessage(initializationCodeString, "*");
-        inspectorFrontend.postMessage(testFunctionCodeString, "*");
+        TestPage.inspectorFrontend.postMessage(initializationCodeString, "*");
+        TestPage.inspectorFrontend.postMessage(testFunctionCodeString, "*");
     });
+};
+
+TestPage.dispatchEventToFrontend = function(eventName, data)
+{
+    let dispatchEventCodeString = `ProtocolTest.dispatchEventToListeners(${JSON.stringify(eventName)}, ${JSON.stringify(data)});`;
+    TestPage.inspectorFrontend.postMessage(dispatchEventCodeString, "*");
 };

@@ -18,6 +18,7 @@ function triggerEventDispatchEvaluation() {
 function triggerTimerEvaluation() {
     setTimeout(() => {
         console.log("timer fired");
+        TestPage.dispatchEventToFrontend("TestPageTimerEvaluated");
     }, 0);
 }
 
@@ -49,7 +50,9 @@ function test()
             ProtocolTest.evaluateInPage("triggerScriptEvaluation()");
             ProtocolTest.evaluateInPage("triggerEventDispatchEvaluation()");
             ProtocolTest.evaluateInPage("triggerTimerEvaluation()");
-            setTimeout(() => { InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {}); }, 50);
+            ProtocolTest.singleFireEventListener("TestPageTimerEvaluated", (event) => {
+                InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
+            });
         }
     });
 

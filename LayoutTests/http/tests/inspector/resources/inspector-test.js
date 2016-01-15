@@ -139,6 +139,12 @@ TestPage.addResult = function(text)
     this._resultElement.append(text, document.createElement("br"));
 }
 
+TestPage.dispatchEventToFrontend = function(eventName, data)
+{
+    let dispatchEventCodeString = `InspectorTest.dispatchEventToListeners(${JSON.stringify(eventName)}, ${JSON.stringify(data)});`;
+    testRunner.evaluateInWebInspector(dispatchEventCodeString);
+};
+
 TestPage.allowUncaughtExceptions = false;
 TestPage.needToSanitizeUncaughtExceptionURLs = false;
 

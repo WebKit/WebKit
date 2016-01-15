@@ -1,3 +1,27 @@
+2016-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        LayoutTest inspector/script-profiler/event-type-Other.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=153016
+        <rdar://problem/24192919>
+
+        Reviewed by Brian Burg.
+
+        Introduce a better way for the inspected page to signal to
+        the inspector page by dispatching an event with JSON data.
+        Use it in this test to try to eliminate flakyness.
+
+        * http/tests/inspector/resources/inspector-test.js:
+        (TestPage.dispatchEventToFrontend):
+        * http/tests/inspector/resources/protocol-test.js:
+        (TestPage.runTest.window.runTest):
+        (TestPage.dispatchEventToFrontend):
+        * inspector/script-profiler/event-type-Other.html:
+        * inspector/unit-tests/inspector-test-dispatch-event-to-frontend-expected.txt: Added.
+        * inspector/unit-tests/inspector-test-dispatch-event-to-frontend.html: Added.
+        * inspector/unit-tests/protocol-test-dispatch-event-to-frontend-expected.txt: Added.
+        * inspector/unit-tests/protocol-test-dispatch-event-to-frontend.html: Added.
+        * platform/mac/TestExpectations:
+
 2016-01-15  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: canHaveChildren() || canHaveGeneratedChildren() in WebCore::RenderElement::insertChildInternal

@@ -1241,8 +1241,6 @@ webkit.org/b/148636 inspector/model/remote-object-weak-collection.html [ Pass Fa
 
 webkit.org/b/152029 inspector/debugger/command-line-api-exception.html [ Pass Timeout ]
 
-webkit.org/b/153016 inspector/script-profiler/event-type-Other.html [ Pass Failure ]
-
 webkit.org/b/153108 [ Debug ] inspector/model/scope-chain-node.html [ Pass Timeout ]
 
 # Colorspaces on CA OpenGL layers not available in Yosemite

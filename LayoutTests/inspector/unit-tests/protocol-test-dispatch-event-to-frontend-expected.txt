@@ -1,0 +1,7 @@
+
+== Running test suite: ProtocolTest.TestPage.dispatchEventToFrontend
+-- Running test case: ProtocolTest.TestPage.dispatchEventToFrontend
+PASS: Received Event
+PASS: Event name should be the event dispatched.
+PASS: Event data should be included.
+

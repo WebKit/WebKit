@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("InspectorTest.TestPage.dispatchEventToFrontend");
+
+    suite.addTestCase({
+        name: "InspectorTest.TestPage.dispatchEventToFrontend",
+        description: "Ensure TestPage.dispatchEventToFrontend works with an InspectorTest.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("TestPage.dispatchEventToFrontend('MyEvent', {count: 1})");
+            InspectorTest.singleFireEventListener("MyEvent", (event) => {
+                InspectorTest.pass("Received Event");
+                InspectorTest.expectThat(event.type === "MyEvent", "Event name should be the event dispatched.");
+                InspectorTest.expectThat(event.data.count === 1, "Event data should be included.");
+                resolve();
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>
