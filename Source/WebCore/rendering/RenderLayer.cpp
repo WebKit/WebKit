@@ -4400,7 +4400,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
     // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
     transform.translateRight(devicePixelSnappedOffsetForThisLayer.width(), devicePixelSnappedOffsetForThisLayer.height());
     // Apply the transform.
-    GraphicsContextStateSaver stateSaver(*context);
+    AffineTransform oldTransfrom = context->getCTM();
     context->concatCTM(transform.toAffineTransform());
 
     // Now do a paint with the root layer shifted to be us.
@@ -4408,6 +4408,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const 
     LayerPaintingInfo transformedPaintingInfo(this, LayoutRect(encloseRectToDevicePixels(transform.inverse().mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor)),
         paintingInfo.paintBehavior, adjustedSubpixelAccumulation, paintingInfo.subtreePaintRoot, paintingInfo.overlapTestRequests);
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
+    context->setCTM(oldTransfrom);
 }
 
 void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
