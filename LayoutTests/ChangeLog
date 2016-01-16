@@ -1,3 +1,13 @@
+2016-01-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add tests for Array Utilities like lowerBound/upperBound
+        https://bugs.webkit.org/show_bug.cgi?id=153177
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/unit-tests/array-utilities-expected.txt: Added.
+        * inspector/unit-tests/array-utilities.html: Added.
+
 2016-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         This test needs to force layout before calling setElementUsesDisplayListDrawing(),

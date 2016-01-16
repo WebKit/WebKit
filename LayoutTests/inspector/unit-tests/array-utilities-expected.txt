@@ -1,0 +1,35 @@
+
+== Running test suite: ArrayUtilities
+-- Running test case: Array.prototype.lowerBound
+PASS: lowerBound of a value before the first value should produce the first index.
+PASS: lowerBound of a value in the list should return the value's index.
+PASS: lowerBound of a value in the list should return the value's index.
+PASS: lowerBound of a value in the list should return the value's index.
+PASS: lowerBound of a duplicate value in the list should return the value's first index.
+PASS: lowerBound of a value in a gap in the list should return the index where the value would be.
+PASS: lowerBound of a value after the last value should produce the index after the last index (length).
+PASS: lowerBound with a comparator should invoke the comparator with the search value and a value in the list.
+
+-- Running test case: Array.prototype.upperBound
+PASS: upperBound of a value before the first value should produce the first index.
+PASS: upperBound of a value in the list should return the next index after the value.
+PASS: upperBound of a value in the list should return the next index after the value.
+PASS: upperBound of a value in the list should return the next index after the value.
+PASS: upperBound of a duplicate value in the list should return the next index after the value's last index.
+PASS: upperBound of a value in a gap in the list should return the index where the value would be.
+PASS: upperBound of a value after the last value should produce the index after the last index (length).
+PASS: upperBound with a comparator should invoke the comparator with the search value and a value in the list.
+
+-- Running test case: Array.prototype.binaryIndexOf
+PASS: binaryIndexOf of a value not in the list should be -1.
+PASS: binaryIndexOf of a value not in the list should be -1.
+PASS: binaryIndexOf of a value in the list should return the index of the value.
+PASS: binaryIndexOf of a duplicate value in the list should return the first index of the value.
+
+-- Running test case: Array.prototype.partition
+PASS: partition should not lose any elements.
+PASS: partition should keep the order of elements in the sublists.
+PASS: partition should handle duplicates.
+PASS: partition should produce an empty list for the negative side.
+PASS: partition should produce an empty list for the positive side.
+
