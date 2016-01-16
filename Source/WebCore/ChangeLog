@@ -1,3 +1,20 @@
+2016-01-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        FrameLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame() is never called when loading a main resource from the memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=152520
+        <rdar://problem/23305737>
+
+        Reviewed by Andy Estes.
+
+        Test: http/tests/loading/server-redirect-for-provisional-load-caching.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        Dispatch message to notify client that a cached resource was redirected. So,
+        client can make proper actions to treat server side redirection.
+        * loader/cache/CachedRawResource.h:
+        Add a method to tell whether the cached resource was redirected.
+
 2016-01-15  Chris Dumez  <cdumez@apple.com>
 
         Drop obsolete HTMLDocument.width / height attributes
