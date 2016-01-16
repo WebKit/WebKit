@@ -1,3 +1,15 @@
+2016-01-16  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        Add Platform.cpp to ANGLESupport
+
+        https://bugs.webkit.org/show_bug.cgi?id=153120
+
+        Reviewed by Darin Adler.
+
+        No new tests, only addresses a build failure.
+
+        * CMakeLists.txt:
+
 2016-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] List box selections stopped working again with GTK+ from current git master
