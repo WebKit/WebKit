@@ -1,3 +1,9 @@
+2016-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed. Fix a typo in an API comment.
+
+        * UIProcess/API/gtk/WebKitWebViewSessionState.cpp:
+
 2016-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GVariant runtime critical errors when encoding session data

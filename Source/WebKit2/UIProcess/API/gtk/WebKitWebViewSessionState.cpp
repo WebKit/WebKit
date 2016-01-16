@@ -386,7 +386,7 @@ const SessionState& webkitWebViewSessionStateGetSessionState(WebKitWebViewSessio
  * webkit_web_view_session_state_new:
  * @data: a #GBytes
  *
- * Creates a new #WebKitWebViewSessionState from seralized data.
+ * Creates a new #WebKitWebViewSessionState from serialized data.
  *
  * Returns: (transfer full): a new #WebKitWebViewSessionState, or %NULL if @data doesn't contain a
  *     valid serialized #WebKitWebViewSessionState.
