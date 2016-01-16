@@ -471,10 +471,11 @@ endmacro()
 # CMake does not automatically add --whole-archive when building shared objects from
 # a list of convenience libraries. This can lead to missing symbols in the final output.
 # We add --whole-archive to all libraries manually to prevent the linker from trimming
-# symbols that we actually need later. (--whole-archive isn't an option on XCode's
-# linker, though.)
+# symbols that we actually need later. With ld64 on darwin, we use -all_load instead.
 macro(ADD_WHOLE_ARCHIVE_TO_LIBRARIES _list_name)
-    if (NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+        list(APPEND ${_list_name} -Wl,-all_load)
+    else ()
         foreach (library IN LISTS ${_list_name})
           list(APPEND ${_list_name}_TMP -Wl,--whole-archive ${library} -Wl,--no-whole-archive)
         endforeach ()

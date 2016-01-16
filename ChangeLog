@@ -1,3 +1,13 @@
+2016-01-16  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        [GTK] Use -Wl,-all_load on darwin to include contents of all static archives
+
+        https://bugs.webkit.org/show_bug.cgi?id=153117
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [CMake] Do not use LLVM static libraries for FTL JIT

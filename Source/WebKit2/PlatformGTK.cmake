@@ -938,12 +938,6 @@ add_custom_command(
         ${WEBKIT2_DIR}/UIProcess/API/gtk/*.cpp
 )
 
-# Manually add some libraries on OSX because we don't have the --whole-archive flag
-if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    set(INTROSPECTION_ADDITIONAL_LIBRARIES --library=c++)
-    set(INTROSPECTION_ADDITIONAL_LDFLAGS -lGObjectDOMBindings)
-endif ()
-
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
     DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir

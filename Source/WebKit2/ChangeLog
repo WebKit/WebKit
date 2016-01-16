@@ -1,3 +1,12 @@
+2016-01-16  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        Remove a now-irrelevant darwin build hack
+        https://bugs.webkit.org/show_bug.cgi?id=153117
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformGTK.cmake:
+
 2016-01-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] Replace deprecated -[UIDocumentMenuViewController
