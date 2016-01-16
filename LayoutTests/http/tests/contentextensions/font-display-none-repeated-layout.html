@@ -2,14 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
-<style>
-@font-face {
-    font-family: "WebFont";
-    src: url("../resources/Ahem.woff") format("woff");
-}
-#contents {
-    font-family: "WebFont";
-}
+<style id="style">
 </style>
 </head>
 <body>
@@ -17,6 +10,11 @@
 <div id="contents">Hello</div>
 <div id="console"></div>
 <script>
+var style = document.getElementById("style");
+style.sheet.insertRule("@font-face { font-family: 'WebFont'; src: url('../resources/Ahem.woff') format('woff'); }", 0);
+style.sheet.insertRule("#contents { font-family: 'WebFont'; }", 1);
+document.body.offsetRight;
+
 description("Make sure that a content-blocker rule which is triggered by a webfont and causes display:none on an element doesn't cause looping layouts.");
 
 window.jsTestIsAsync = true;
