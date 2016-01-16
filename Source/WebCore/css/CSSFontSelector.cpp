@@ -396,6 +396,7 @@ public:
     FontFaceComparator(FontTraitsMask desiredTraitsMaskForComparison)
         : m_desiredTraitsMaskForComparison(desiredTraitsMaskForComparison)
     {
+        ASSERT_WITH_SECURITY_IMPLICATION(m_desiredTraitsMaskForComparison & FontWeightMask);
     }
 
     bool operator()(const CSSFontFace& first, const CSSFontFace& second)
@@ -444,13 +445,8 @@ public:
         };
 
         unsigned ruleSetIndex = 0;
-        unsigned w = FontWeight100Bit;
-        while (!(m_desiredTraitsMaskForComparison & (1 << w))) {
-            w++;
-            ruleSetIndex++;
-        }
+        for (; !(m_desiredTraitsMaskForComparison & (1 << (FontWeight100Bit + ruleSetIndex))); ruleSetIndex++) { }
 
-        ASSERT_WITH_SECURITY_IMPLICATION(ruleSetIndex < fallbackRuleSets);
         const FontTraitsMask* weightFallbackRule = weightFallbackRuleSets[ruleSetIndex];
         for (unsigned i = 0; i < rulesPerSet; ++i) {
             if (secondTraitsMask & weightFallbackRule[i])
