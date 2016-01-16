@@ -1,3 +1,38 @@
+2016-01-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Legalize Memory Offsets for ARM64 before lowering to Air
+        https://bugs.webkit.org/show_bug.cgi?id=153065
+
+        Reviewed by Mark Lam.
+        Reviewed by Filip Pizlo.
+
+        On ARM64, we cannot use signed 32bits offset for memory addressing.
+        There are two available addressing: signed 9bits and unsigned scaled 12bits.
+        Air already knows about it.
+
+        In this patch, the offsets are changed to something valid for ARM64
+        prior to lowering. When an offset is invalid, it is just computed
+        before the instruction and used as the base for addressing.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3LegalizeMemoryOffsets.cpp: Added.
+        (JSC::B3::legalizeMemoryOffsets):
+        * b3/B3LegalizeMemoryOffsets.h: Added.
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::effectiveAddr): Deleted.
+        * b3/testb3.cpp:
+        (JSC::B3::testLoadWithOffsetImpl):
+        (JSC::B3::testLoadOffsetImm9Max):
+        (JSC::B3::testLoadOffsetImm9MaxPlusOne):
+        (JSC::B3::testLoadOffsetImm9MaxPlusTwo):
+        (JSC::B3::testLoadOffsetImm9Min):
+        (JSC::B3::testLoadOffsetImm9MinMinusOne):
+        (JSC::B3::testLoadOffsetScaledUnsignedImm12Max):
+        (JSC::B3::testLoadOffsetScaledUnsignedOverImm12Max):
+        (JSC::B3::run):
+
 2016-01-15  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal Windows build

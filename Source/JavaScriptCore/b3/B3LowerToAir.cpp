@@ -369,10 +369,6 @@ private:
     // This turns the given operand into an address.
     Arg effectiveAddr(Value* address, int32_t offset, Arg::Width width)
     {
-        // B3 allows any memory operation to have a 32-bit offset. That's not how some architectures
-        // work. We solve this by requiring a just-before-lowering phase that legalizes offsets.
-        // FIXME: Implement such a legalization phase.
-        // https://bugs.webkit.org/show_bug.cgi?id=152530
         ASSERT(Arg::isValidAddrForm(offset, width));
 
         auto fallback = [&] () -> Arg {
