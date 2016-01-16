@@ -62,6 +62,14 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
 {
     m_url = URL(soup_message_get_uri(soupMessage));
 
+    switch (soup_message_get_http_version(soupMessage)) {
+    case SOUP_HTTP_1_0:
+        m_httpVersion = AtomicString("HTTP/1.0", AtomicString::ConstructFromLiteral);
+        break;
+    case SOUP_HTTP_1_1:
+        m_httpVersion = AtomicString("HTTP/1.1", AtomicString::ConstructFromLiteral);
+        break;
+    }
     m_httpStatusCode = soupMessage->status_code;
     setHTTPStatusText(soupMessage->reason_phrase);
 
