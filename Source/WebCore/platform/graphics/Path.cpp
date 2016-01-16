@@ -34,6 +34,7 @@
 #include "FloatRoundedRect.h"
 #include "PathTraversalState.h"
 #include "RoundedRect.h"
+#include "TextStream.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 
@@ -162,10 +163,61 @@ void Path::addBeziersForRoundedRect(const FloatRect& rect, const FloatSize& topL
 }
 
 #if !USE(CG)
+Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
+{
+    Path path;
+    if (points.size() < 2)
+        return path;
+
+    path.moveTo(points[0]);
+    for (size_t i = 1; i < points.size(); ++i)
+        path.addLineTo(points[i]);
+
+    path.closeSubpath();
+    return path;
+}
+
 FloatRect Path::fastBoundingRect() const
 {
     return boundingRect();
 }
 #endif
+
+#ifndef NDEBUG
+void Path::dump() const
+{
+    TextStream stream;
+    stream << *this;
+    WTFLogAlways("%s", stream.release().utf8().data());
+}
+#endif
+
+TextStream& operator<<(TextStream& stream, const Path& path)
+{
+    TextStream::GroupScope group(stream);
+    stream << "path " << &path;
+
+    path.apply([&stream](const PathElement& element) {
+        switch (element.type) {
+        case PathElementMoveToPoint: // The points member will contain 1 value.
+            stream << " move to " << element.points[0];
+            break;
+        case PathElementAddLineToPoint: // The points member will contain 1 value.
+            stream << " add line to " << element.points[0];
+            break;
+        case PathElementAddQuadCurveToPoint: // The points member will contain 2 values.
+            stream << " add quad curve to " << element.points[0] << " " << element.points[1];
+            break;
+        case PathElementAddCurveToPoint: // The points member will contain 3 values.
+            stream << " add curve to " << element.points[0] << " " << element.points[1] << " " << element.points[2];
+            break;
+        case PathElementCloseSubpath: // The points member will contain no values.
+            stream << " close subpath";
+            break;
+        }
+    });
+    
+    return stream;
+}
 
 }

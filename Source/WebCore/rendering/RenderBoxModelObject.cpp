@@ -1905,8 +1905,6 @@ static void findInnerVertex(const FloatPoint& outerCorner, const FloatPoint& inn
 void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContext, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
                                                  BoxSide side, bool firstEdgeMatches, bool secondEdgeMatches)
 {
-    FloatPoint quad[4];
-
     float deviceScaleFactor = document().deviceScaleFactor();
     const FloatRect& outerRect = snapRectToDevicePixels(outerBorder.rect(), deviceScaleFactor);
     const FloatRect& innerRect = snapRectToDevicePixels(innerBorder.rect(), deviceScaleFactor);
@@ -1927,12 +1925,14 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
     //       3  /              \  3   
     //         0----------------3
     //
+    Vector<FloatPoint> quad;
+    quad.reserveInitialCapacity(4);
     switch (side) {
     case BSTop:
-        quad[0] = outerRect.minXMinYCorner();
-        quad[1] = innerRect.minXMinYCorner();
-        quad[2] = innerRect.maxXMinYCorner();
-        quad[3] = outerRect.maxXMinYCorner();
+        quad.uncheckedAppend(outerRect.minXMinYCorner());
+        quad.uncheckedAppend(innerRect.minXMinYCorner());
+        quad.uncheckedAppend(innerRect.maxXMinYCorner());
+        quad.uncheckedAppend(outerRect.maxXMinYCorner());
 
         if (!innerBorder.radii().topLeft().isZero())
             findInnerVertex(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), centerPoint, quad[1]);
@@ -1942,10 +1942,10 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BSLeft:
-        quad[0] = outerRect.minXMinYCorner();
-        quad[1] = innerRect.minXMinYCorner();
-        quad[2] = innerRect.minXMaxYCorner();
-        quad[3] = outerRect.minXMaxYCorner();
+        quad.uncheckedAppend(outerRect.minXMinYCorner());
+        quad.uncheckedAppend(innerRect.minXMinYCorner());
+        quad.uncheckedAppend(innerRect.minXMaxYCorner());
+        quad.uncheckedAppend(outerRect.minXMaxYCorner());
 
         if (!innerBorder.radii().topLeft().isZero())
             findInnerVertex(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), centerPoint, quad[1]);
@@ -1955,10 +1955,10 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BSBottom:
-        quad[0] = outerRect.minXMaxYCorner();
-        quad[1] = innerRect.minXMaxYCorner();
-        quad[2] = innerRect.maxXMaxYCorner();
-        quad[3] = outerRect.maxXMaxYCorner();
+        quad.uncheckedAppend(outerRect.minXMaxYCorner());
+        quad.uncheckedAppend(innerRect.minXMaxYCorner());
+        quad.uncheckedAppend(innerRect.maxXMaxYCorner());
+        quad.uncheckedAppend(outerRect.maxXMaxYCorner());
 
         if (!innerBorder.radii().bottomLeft().isZero())
             findInnerVertex(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), centerPoint, quad[1]);
@@ -1968,10 +1968,10 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BSRight:
-        quad[0] = outerRect.maxXMinYCorner();
-        quad[1] = innerRect.maxXMinYCorner();
-        quad[2] = innerRect.maxXMaxYCorner();
-        quad[3] = outerRect.maxXMaxYCorner();
+        quad.uncheckedAppend(outerRect.maxXMinYCorner());
+        quad.uncheckedAppend(innerRect.maxXMinYCorner());
+        quad.uncheckedAppend(innerRect.maxXMaxYCorner());
+        quad.uncheckedAppend(outerRect.maxXMaxYCorner());
 
         if (!innerBorder.radii().topRight().isZero())
             findInnerVertex(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), centerPoint, quad[1]);
@@ -1984,25 +1984,35 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
     // If the border matches both of its adjacent sides, don't anti-alias the clip, and
     // if neither side matches, anti-alias the clip.
     if (firstEdgeMatches == secondEdgeMatches) {
-        graphicsContext.clipConvexPolygon(4, quad, !firstEdgeMatches);
+        bool wasAntialiased = graphicsContext.shouldAntialias();
+        graphicsContext.setShouldAntialias(!firstEdgeMatches);
+        graphicsContext.clipPath(Path::polygonPathFromPoints(quad), RULE_NONZERO);
+        graphicsContext.setShouldAntialias(wasAntialiased);
         return;
     }
 
     // Square off the end which shouldn't be affected by antialiasing, and clip.
-    FloatPoint firstQuad[4];
-    firstQuad[0] = quad[0];
-    firstQuad[1] = quad[1];
-    firstQuad[2] = side == BSTop || side == BSBottom ? FloatPoint(quad[3].x(), quad[2].y()) : FloatPoint(quad[2].x(), quad[3].y());
-    firstQuad[3] = quad[3];
-    graphicsContext.clipConvexPolygon(4, firstQuad, !firstEdgeMatches);
+    Vector<FloatPoint> firstQuad = {
+        quad[0],
+        quad[1],
+        side == BSTop || side == BSBottom ? FloatPoint(quad[3].x(), quad[2].y()) : FloatPoint(quad[2].x(), quad[3].y()),
+        quad[3]
+    };
+    bool wasAntialiased = graphicsContext.shouldAntialias();
+    graphicsContext.setShouldAntialias(!firstEdgeMatches);
+    graphicsContext.clipPath(Path::polygonPathFromPoints(firstQuad), RULE_NONZERO);
 
-    FloatPoint secondQuad[4];
-    secondQuad[0] = quad[0];
-    secondQuad[1] = side == BSTop || side == BSBottom ? FloatPoint(quad[0].x(), quad[1].y()) : FloatPoint(quad[1].x(), quad[0].y());
-    secondQuad[2] = quad[2];
-    secondQuad[3] = quad[3];
+    Vector<FloatPoint> secondQuad = {
+        quad[0],
+        side == BSTop || side == BSBottom ? FloatPoint(quad[0].x(), quad[1].y()) : FloatPoint(quad[1].x(), quad[0].y()),
+        quad[2],
+        quad[3]
+    };
     // Antialiasing affects the second side.
-    graphicsContext.clipConvexPolygon(4, secondQuad, !secondEdgeMatches);
+    graphicsContext.setShouldAntialias(!secondEdgeMatches);
+    graphicsContext.clipPath(Path::polygonPathFromPoints(secondQuad), RULE_NONZERO);
+
+    graphicsContext.setShouldAntialias(wasAntialiased);
 }
 
 static LayoutRect calculateSideRectIncludingInner(const RoundedRect& outerBorder, const BorderEdge edges[], BoxSide side)

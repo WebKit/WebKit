@@ -73,6 +73,22 @@ static inline CGContextRef scratchContext()
     return context;
 }
 
+Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
+{
+    Path path;
+    if (points.size() < 2)
+        return path;
+
+    Vector<CGPoint, 32> cgPoints;
+    cgPoints.reserveInitialCapacity(points.size() - 1);
+    for (size_t i = 0; i < points.size(); ++i)
+        cgPoints.uncheckedAppend(points[i]);
+
+    CGPathAddLines(path.ensurePlatformPath(), nullptr, cgPoints.data(), cgPoints.size());
+    path.closeSubpath();
+    return path;
+}
+
 Path::Path()
     : m_path(nullptr)
 {
@@ -245,27 +261,27 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 
 void Path::moveTo(const FloatPoint& point)
 {
-    CGPathMoveToPoint(ensurePlatformPath(), 0, point.x(), point.y());
+    CGPathMoveToPoint(ensurePlatformPath(), nullptr, point.x(), point.y());
 }
 
 void Path::addLineTo(const FloatPoint& p)
 {
-    CGPathAddLineToPoint(ensurePlatformPath(), 0, p.x(), p.y());
+    CGPathAddLineToPoint(ensurePlatformPath(), nullptr, p.x(), p.y());
 }
 
 void Path::addQuadCurveTo(const FloatPoint& cp, const FloatPoint& p)
 {
-    CGPathAddQuadCurveToPoint(ensurePlatformPath(), 0, cp.x(), cp.y(), p.x(), p.y());
+    CGPathAddQuadCurveToPoint(ensurePlatformPath(), nullptr, cp.x(), cp.y(), p.x(), p.y());
 }
 
 void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const FloatPoint& p)
 {
-    CGPathAddCurveToPoint(ensurePlatformPath(), 0, cp1.x(), cp1.y(), cp2.x(), cp2.y(), p.x(), p.y());
+    CGPathAddCurveToPoint(ensurePlatformPath(), nullptr, cp1.x(), cp1.y(), cp2.x(), cp2.y(), p.x(), p.y());
 }
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
-    CGPathAddArcToPoint(ensurePlatformPath(), 0, p1.x(), p1.y(), p2.x(), p2.y(), radius);
+    CGPathAddArcToPoint(ensurePlatformPath(), nullptr, p1.x(), p1.y(), p2.x(), p2.y(), radius);
 }
 
 void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius)

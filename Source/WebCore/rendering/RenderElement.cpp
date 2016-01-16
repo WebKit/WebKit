@@ -2037,8 +2037,6 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
         ASSERT(x2 >= x1);
         ASSERT(y2 >= y1);
         if (!adjacentWidth1 && !adjacentWidth2) {
-            // Turn off antialiasing to match the behavior of drawConvexPolygon();
-            // this matters for rects in transformed contexts.
             graphicsContext.setStrokeStyle(NoStroke);
             graphicsContext.setFillColor(color);
             bool wasAntialiased = graphicsContext.shouldAntialias();
@@ -2055,37 +2053,42 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
         x2 = roundToDevicePixel(x2, deviceScaleFactor);
         y2 = roundToDevicePixel(y2, deviceScaleFactor);
 
-        FloatPoint quad[4];
+        Vector<FloatPoint> quad;
+        quad.reserveInitialCapacity(4);
         switch (side) {
         case BSTop:
-            quad[0] = FloatPoint(x1 + std::max<float>(-adjacentWidth1, 0), y1);
-            quad[1] = FloatPoint(x1 + std::max<float>(adjacentWidth1, 0), y2);
-            quad[2] = FloatPoint(x2 - std::max<float>(adjacentWidth2, 0), y2);
-            quad[3] = FloatPoint(x2 - std::max<float>(-adjacentWidth2, 0), y1);
+            quad.uncheckedAppend({ x1 + std::max<float>(-adjacentWidth1, 0), y1 });
+            quad.uncheckedAppend({ x1 + std::max<float>( adjacentWidth1, 0), y2 });
+            quad.uncheckedAppend({ x2 - std::max<float>( adjacentWidth2, 0), y2 });
+            quad.uncheckedAppend({ x2 - std::max<float>(-adjacentWidth2, 0), y1 });
             break;
         case BSBottom:
-            quad[0] = FloatPoint(x1 + std::max<float>(adjacentWidth1, 0), y1);
-            quad[1] = FloatPoint(x1 + std::max<float>(-adjacentWidth1, 0), y2);
-            quad[2] = FloatPoint(x2 - std::max<float>(-adjacentWidth2, 0), y2);
-            quad[3] = FloatPoint(x2 - std::max<float>(adjacentWidth2, 0), y1);
+            quad.uncheckedAppend({ x1 + std::max<float>( adjacentWidth1, 0), y1 });
+            quad.uncheckedAppend({ x1 + std::max<float>(-adjacentWidth1, 0), y2 });
+            quad.uncheckedAppend({ x2 - std::max<float>(-adjacentWidth2, 0), y2 });
+            quad.uncheckedAppend({ x2 - std::max<float>( adjacentWidth2, 0), y1 });
             break;
         case BSLeft:
-            quad[0] = FloatPoint(x1, y1 + std::max<float>(-adjacentWidth1, 0));
-            quad[1] = FloatPoint(x1, y2 - std::max<float>(-adjacentWidth2, 0));
-            quad[2] = FloatPoint(x2, y2 - std::max<float>(adjacentWidth2, 0));
-            quad[3] = FloatPoint(x2, y1 + std::max<float>(adjacentWidth1, 0));
+            quad.uncheckedAppend({ x1, y1 + std::max<float>(-adjacentWidth1, 0) });
+            quad.uncheckedAppend({ x1, y2 - std::max<float>(-adjacentWidth2, 0) });
+            quad.uncheckedAppend({ x2, y2 - std::max<float>( adjacentWidth2, 0) });
+            quad.uncheckedAppend({ x2, y1 + std::max<float>( adjacentWidth1, 0) });
             break;
         case BSRight:
-            quad[0] = FloatPoint(x1, y1 + std::max<float>(adjacentWidth1, 0));
-            quad[1] = FloatPoint(x1, y2 - std::max<float>(adjacentWidth2, 0));
-            quad[2] = FloatPoint(x2, y2 - std::max<float>(-adjacentWidth2, 0));
-            quad[3] = FloatPoint(x2, y1 + std::max<float>(-adjacentWidth1, 0));
+            quad.uncheckedAppend({ x1, y1 + std::max<float>( adjacentWidth1, 0) });
+            quad.uncheckedAppend({ x1, y2 - std::max<float>( adjacentWidth2, 0) });
+            quad.uncheckedAppend({ x2, y2 - std::max<float>(-adjacentWidth2, 0) });
+            quad.uncheckedAppend({ x2, y1 + std::max<float>(-adjacentWidth1, 0) });
             break;
         }
 
         graphicsContext.setStrokeStyle(NoStroke);
         graphicsContext.setFillColor(color);
-        graphicsContext.drawConvexPolygon(4, quad, antialias);
+        bool wasAntialiased = graphicsContext.shouldAntialias();
+        graphicsContext.setShouldAntialias(antialias);
+        graphicsContext.fillPath(Path::polygonPathFromPoints(quad));
+        graphicsContext.setShouldAntialias(wasAntialiased);
+
         graphicsContext.setStrokeStyle(oldStrokeStyle);
         break;
     }

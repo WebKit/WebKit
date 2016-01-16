@@ -33,6 +33,7 @@
 #include <functional>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 #if USE(CG)
 
@@ -50,7 +51,7 @@ typedef WebCore::CairoPath PlatformPath;
 #elif USE(WINGDI)
 
 namespace WebCore {
-    class PlatformPath;
+class PlatformPath;
 }
 typedef WebCore::PlatformPath PlatformPath;
 
@@ -72,6 +73,7 @@ namespace WebCore {
     class PathTraversalState;
     class RoundedRect;
     class StrokeStyleApplier;
+    class TextStream;
 
     enum PathElementType {
         PathElementMoveToPoint, // The points member will contain 1 value.
@@ -102,6 +104,8 @@ namespace WebCore {
 
         WEBCORE_EXPORT Path(const Path&);
         WEBCORE_EXPORT Path& operator=(const Path&);
+        
+        static Path polygonPathFromPoints(const Vector<FloatPoint>&);
 
         bool contains(const FloatPoint&, WindRule rule = RULE_NONZERO) const;
         bool strokeContains(StrokeStyleApplier*, const FloatPoint&) const;
@@ -164,9 +168,15 @@ namespace WebCore {
         void platformAddPathForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
 #endif
 
+#ifndef NDEBUG
+        void dump() const;
+#endif
+
     private:
         PlatformPathPtr m_path;
     };
+
+TextStream& operator<<(TextStream&, const Path&);
 
 }
 

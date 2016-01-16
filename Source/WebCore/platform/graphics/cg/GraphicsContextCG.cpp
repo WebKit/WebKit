@@ -532,68 +532,6 @@ void GraphicsContext::drawEllipse(const FloatRect& rect)
     drawPath(path);
 }
 
-static void addConvexPolygonToPath(Path& path, size_t numberOfPoints, const FloatPoint* points)
-{
-    ASSERT(numberOfPoints > 0);
-
-    path.moveTo(points[0]);
-    for (size_t i = 1; i < numberOfPoints; ++i)
-        path.addLineTo(points[i]);
-    path.closeSubpath();
-}
-
-void GraphicsContext::drawConvexPolygon(size_t numberOfPoints, const FloatPoint* points, bool antialiased)
-{
-    if (paintingDisabled())
-        return;
-
-    if (numberOfPoints <= 1)
-        return;
-
-    if (isRecording()) {
-        m_displayListRecorder->drawConvexPolygon(numberOfPoints, points, antialiased);
-        return;
-    }
-
-    CGContextRef context = platformContext();
-
-    if (antialiased != shouldAntialias())
-        CGContextSetShouldAntialias(context, antialiased);
-
-    Path path;
-    addConvexPolygonToPath(path, numberOfPoints, points);
-    drawPath(path);
-
-    if (antialiased != shouldAntialias())
-        CGContextSetShouldAntialias(context, shouldAntialias());
-}
-
-void GraphicsContext::clipConvexPolygon(size_t numberOfPoints, const FloatPoint* points, bool antialias)
-{
-    if (paintingDisabled())
-        return;
-
-    if (numberOfPoints <= 1)
-        return;
-
-    if (isRecording()) {
-        m_displayListRecorder->clipConvexPolygon(numberOfPoints, points, antialias);
-        return;
-    }
-
-    CGContextRef context = platformContext();
-
-    if (antialias != shouldAntialias())
-        CGContextSetShouldAntialias(context, antialias);
-
-    Path path;
-    addConvexPolygonToPath(path, numberOfPoints, points);
-    clipPath(path, RULE_NONZERO);
-
-    if (antialias != shouldAntialias())
-        CGContextSetShouldAntialias(context, shouldAntialias());
-}
-
 void GraphicsContext::applyStrokePattern()
 {
     if (paintingDisabled())
@@ -703,14 +641,6 @@ void GraphicsContext::drawPath(const Path& path)
         CGContextDrawPath(context, drawingMode);
 }
 
-static inline void fillPathWithFillRule(CGContextRef context, WindRule fillRule)
-{
-    if (fillRule == RULE_EVENODD)
-        CGContextEOFillPath(context);
-    else
-        CGContextFillPath(context);
-}
-
 void GraphicsContext::fillPath(const Path& path)
 {
     if (paintingDisabled() || path.isEmpty())
@@ -767,7 +697,11 @@ void GraphicsContext::fillPath(const Path& path)
 
     if (m_state.fillPattern)
         applyFillPattern();
-    fillPathWithFillRule(context, fillRule());
+
+    if (fillRule() == RULE_EVENODD)
+        CGContextEOFillPath(context);
+    else
+        CGContextFillPath(context);
 }
 
 void GraphicsContext::strokePath(const Path& path)

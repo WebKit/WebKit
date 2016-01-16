@@ -683,25 +683,26 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         float centerX = floorf(buttonClip.x() + buttonClip.width() / 2.0) - 0.5;
         float centerY = floorf(buttonClip.y() + buttonClip.height() * 3.0 / 8.0);
 
-        FloatPoint arrow[3];
-        FloatPoint shadow[3];
+        Vector<FloatPoint> arrow = {
+            { centerX - MenuListArrowWidth / 2, centerY },
+            { centerX + MenuListArrowWidth / 2, centerY },
+            { centerX, centerY + MenuListArrowHeight }
+        };
 
-        arrow[0] = FloatPoint(centerX - MenuListArrowWidth / 2.0, centerY);
-        arrow[1] = FloatPoint(centerX + MenuListArrowWidth / 2.0, centerY);
-        arrow[2] = FloatPoint(centerX, centerY + MenuListArrowHeight);
-
-        shadow[0] = FloatPoint(arrow[0].x(), arrow[0].y() + 1.0f);
-        shadow[1] = FloatPoint(arrow[1].x(), arrow[1].y() + 1.0f);
-        shadow[2] = FloatPoint(arrow[2].x(), arrow[2].y() + 1.0f);
+        Vector<FloatPoint> shadow = {
+            { arrow[0].x(), arrow[0].y() + 1 },
+            { arrow[1].x(), arrow[1].y() + 1 },
+            { arrow[2].x(), arrow[2].y() + 1 }
+        };
 
         float opacity = isReadOnlyControl(box) ? 0.2 : 0.5;
         paintInfo.context().setStrokeColor(Color(0.0f, 0.0f, 0.0f, opacity));
         paintInfo.context().setFillColor(Color(0.0f, 0.0f, 0.0f, opacity));
-        paintInfo.context().drawConvexPolygon(3, shadow, true);
+        paintInfo.context().drawPath(Path::polygonPathFromPoints(shadow));
 
         paintInfo.context().setStrokeColor(Color::white);
         paintInfo.context().setFillColor(Color::white);
-        paintInfo.context().drawConvexPolygon(3, arrow, true);
+        paintInfo.context().drawPath(Path::polygonPathFromPoints(arrow));
     }
 
     return false;

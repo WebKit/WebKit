@@ -95,7 +95,6 @@ public:
     void drawLinesForText(const FloatPoint&, const DashArray& widths, bool printing, bool doubleLines, float strokeThickness);
     void drawLineForDocumentMarker(const FloatPoint&, float width, GraphicsContext::DocumentMarkerLineStyle);
     void drawEllipse(const FloatRect&);
-    void drawConvexPolygon(size_t numberOfPoints, const FloatPoint*, bool antialiased);
     void drawPath(const Path&);
 
     void drawFocusRing(const Path&, int width, int offset, const Color&);
@@ -116,7 +115,6 @@ public:
     void clipOut(const FloatRect&);
     void clipOut(const Path&);
     void clipPath(const Path&, WindRule);
-    void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias);
     
     void applyDeviceScaleFactor(float);
 

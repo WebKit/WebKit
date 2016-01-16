@@ -237,12 +237,6 @@ void Recorder::drawEllipse(const FloatRect& rect)
     updateItemExtent(newItem);
 }
 
-void Recorder::drawConvexPolygon(size_t numberOfPoints, const FloatPoint* points, bool antialiased)
-{
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawConvexPolygon::create(numberOfPoints, points, antialiased)));
-    updateItemExtent(newItem);
-}
-
 void Recorder::drawPath(const Path& path)
 {
     DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawPath::create(path)));
@@ -365,15 +359,6 @@ void Recorder::clipPath(const Path& path, WindRule windRule)
 {
     currentState().clipBounds.intersect(path.fastBoundingRect());
     appendItem(ClipPath::create(path, windRule));
-}
-
-void Recorder::clipConvexPolygon(size_t numPoints, const FloatPoint* points, bool antialias)
-{
-    Path polygonPath;
-    addConvexPolygonToPath(polygonPath, numPoints, points);
-    currentState().clipBounds.intersect(polygonPath.fastBoundingRect());
-
-    appendItem(ClipConvexPolygon::create(numPoints, points, antialias));
 }
 
 void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)

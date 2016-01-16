@@ -64,7 +64,6 @@ enum class ItemType {
     ClipOut,
     ClipOutToPath,
     ClipPath,
-    ClipConvexPolygon,
     DrawGlyphs,
     DrawImage,
     DrawTiledImage,
@@ -78,7 +77,6 @@ enum class ItemType {
     DrawLinesForText,
     DrawLineForDocumentMarker,
     DrawEllipse,
-    DrawConvexPolygon,
     DrawPath,
     DrawFocusRingPath,
     DrawFocusRingRects,
@@ -522,25 +520,6 @@ private:
     WindRule m_windRule;
 };
 
-class ClipConvexPolygon : public Item {
-public:
-    static Ref<ClipConvexPolygon> create(size_t numberOfPoints, const FloatPoint* points, bool antialiased)
-    {
-        return adoptRef(*new ClipConvexPolygon(numberOfPoints, points, antialiased));
-    }
-
-    const Vector<FloatPoint>& points() const { return m_points; }
-    bool antialias() const { return m_antialias; }
-
-private:
-    ClipConvexPolygon(size_t numberOfPoints, const FloatPoint*, bool antialiased);
-
-    virtual void apply(GraphicsContext&) const override;
-
-    Vector<FloatPoint> m_points;
-    bool m_antialias;
-};
-
 class DrawGlyphs : public DrawingItem {
 public:
     static Ref<DrawGlyphs> create(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& blockLocation, const FloatSize& localAnchor, FontSmoothingMode smoothingMode)
@@ -895,26 +874,6 @@ private:
     virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_rect; }
 
     FloatRect m_rect;
-};
-
-class DrawConvexPolygon : public DrawingItem {
-public:
-    static Ref<DrawConvexPolygon> create(size_t numberOfPoints, const FloatPoint* points, bool antialiased)
-    {
-        return adoptRef(*new DrawConvexPolygon(numberOfPoints, points, antialiased));
-    }
-
-    const Vector<FloatPoint>& points() const { return m_points; }
-    bool antialiased() const { return m_antialiased; }
-
-private:
-    DrawConvexPolygon(size_t numberOfPoints, const FloatPoint*, bool antialiased);
-
-    virtual void apply(GraphicsContext&) const override;
-    virtual Optional<FloatRect> localBounds(const GraphicsContext&) const override;
-
-    Vector<FloatPoint> m_points;
-    bool m_antialiased;
 };
 
 class DrawPath : public DrawingItem {
@@ -1355,9 +1314,6 @@ private:
     float m_scaleFactor;
 };
 
-// FIXME: this needs to move.
-void addConvexPolygonToPath(Path&, size_t numPoints, const FloatPoint*);
-
 TextStream& operator<<(TextStream&, const Item&);
 
 } // namespace DisplayList
@@ -1391,7 +1347,6 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Clip)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ClipOut)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ClipOutToPath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ClipPath)
-SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ClipConvexPolygon)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawGlyphs)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawImage)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawTiledImage)
@@ -1405,7 +1360,6 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawLine)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawLinesForText)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawLineForDocumentMarker)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawEllipse)
-SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawConvexPolygon)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawPath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawFocusRingPath)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(DrawFocusRingRects)

@@ -77,14 +77,6 @@ static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const C
     cairo_fill(cr);
 }
 
-static void addConvexPolygonToContext(cairo_t* context, size_t numPoints, const FloatPoint* points)
-{
-    cairo_move_to(context, points[0].x(), points[0].y());
-    for (size_t i = 1; i < numPoints; i++)
-        cairo_line_to(context, points[i].x(), points[i].y());
-    cairo_close_path(context);
-}
-
 enum PathDrawingStyle { 
     Fill = 1,
     Stroke = 2,
@@ -433,69 +425,6 @@ void GraphicsContext::drawEllipse(const FloatRect& rect)
         cairo_stroke(cr);
     } else
         cairo_new_path(cr);
-}
-
-void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points, bool shouldAntialias)
-{
-    if (paintingDisabled())
-        return;
-
-    if (npoints <= 1)
-        return;
-
-    if (isRecording()) {
-        m_displayListRecorder->drawConvexPolygon(npoints, points, shouldAntialias);
-        return;
-    }
-
-    cairo_t* cr = platformContext()->cr();
-
-    cairo_save(cr);
-    cairo_set_antialias(cr, shouldAntialias ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
-    addConvexPolygonToContext(cr, npoints, points);
-
-    if (fillColor().alpha()) {
-        setSourceRGBAFromColor(cr, fillColor());
-        cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
-        cairo_fill_preserve(cr);
-    }
-
-    if (strokeStyle() != NoStroke) {
-        setSourceRGBAFromColor(cr, strokeColor());
-        cairo_set_line_width(cr, strokeThickness());
-        cairo_stroke(cr);
-    } else
-        cairo_new_path(cr);
-
-    cairo_restore(cr);
-}
-
-void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points, bool antialiased)
-{
-    if (paintingDisabled())
-        return;
-
-    if (numPoints <= 1)
-        return;
-
-    if (isRecording()) {
-        m_displayListRecorder->clipConvexPolygon(numPoints, points, antialiased);
-        return;
-    }
-
-    cairo_t* cr = platformContext()->cr();
-
-    cairo_new_path(cr);
-    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
-    cairo_antialias_t savedAntialiasRule = cairo_get_antialias(cr);
-
-    cairo_set_antialias(cr, antialiased ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
-    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
-    addConvexPolygonToContext(cr, numPoints, points);
-    cairo_clip(cr);
-
-    cairo_set_antialias(cr, savedAntialiasRule);
-    cairo_set_fill_rule(cr, savedFillRule);
 }
 
 void GraphicsContext::fillPath(const Path& path)
@@ -1294,7 +1223,7 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
 
     // When true, use the default Cairo backend antialias mode (usually this
     // enables standard 'grayscale' antialiasing); false to explicitly disable
-    // antialiasing. This is the same strategy as used in drawConvexPolygon().
+    // antialiasing.
     cairo_set_antialias(platformContext()->cr(), enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
 }
 

@@ -1,3 +1,70 @@
+2016-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove GraphicsContext::drawConvexPolygon() and GraphicsContext::clipConvexPolygon()
+        https://bugs.webkit.org/show_bug.cgi?id=153174
+
+        Reviewed by Zalan Bujtas.
+
+        GraphicsContext::drawConvexPolygon() and GraphicsContext::clipConvexPolygon() were
+        poorly named (non-convex polygons are allowed), and just syntactic sugar over
+        clipPath() and drawPath().
+        
+        Remove them, but add a convenience function to create a Path from a Vector of 
+        points. For CG, we can use the more efficient CGPathAddLines().
+        
+        Add TextStream dumping for Path.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::polygonPathFromPoints):
+        (WebCore::Path::dump):
+        (WebCore::operator<<):
+        * platform/graphics/Path.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformShouldAntialias):
+        (WebCore::addConvexPolygonToContext): Deleted.
+        (WebCore::GraphicsContext::drawConvexPolygon): Deleted.
+        (WebCore::GraphicsContext::clipConvexPolygon): Deleted.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::addConvexPolygonToPath): Deleted.
+        (WebCore::GraphicsContext::drawConvexPolygon): Deleted.
+        (WebCore::GraphicsContext::clipConvexPolygon): Deleted.
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::polygonPathFromPoints):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::Item::sizeInBytes): Deleted.
+        (WebCore::DisplayList::ClipConvexPolygon::ClipConvexPolygon): Deleted.
+        (WebCore::DisplayList::ClipConvexPolygon::apply): Deleted.
+        (WebCore::DisplayList::operator<<): Deleted.
+        (WebCore::DisplayList::addConvexPolygonToPath): Deleted.
+        (WebCore::DisplayList::DrawConvexPolygon::DrawConvexPolygon): Deleted.
+        (WebCore::DisplayList::DrawConvexPolygon::localBounds): Deleted.
+        (WebCore::DisplayList::DrawConvexPolygon::apply): Deleted.
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::ClipConvexPolygon::create): Deleted.
+        (WebCore::DisplayList::ClipConvexPolygon::points): Deleted.
+        (WebCore::DisplayList::ClipConvexPolygon::antialias): Deleted.
+        (WebCore::DisplayList::DrawConvexPolygon::create): Deleted.
+        (WebCore::DisplayList::DrawConvexPolygon::points): Deleted.
+        (WebCore::DisplayList::DrawConvexPolygon::antialiased): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawConvexPolygon): Deleted.
+        (WebCore::DisplayList::Recorder::clipConvexPolygon): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::drawLineForBoxSide):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonDecorations):
+
 2016-01-16  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         Add Platform.cpp to ANGLESupport

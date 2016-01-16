@@ -1,3 +1,20 @@
+2016-01-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove GraphicsContext::drawConvexPolygon() and GraphicsContext::clipConvexPolygon()
+        https://bugs.webkit.org/show_bug.cgi?id=153174
+
+        Reviewed by Zalan Bujtas.
+
+        GraphicsContext::drawConvexPolygon() and GraphicsContext::clipConvexPolygon() were
+        poorly named (non-convex polygons are allowed), and just syntactic sugar over
+        clipPath() and drawPath().
+        
+        Remove them, but add a convenience function to create a Path from a Vector of 
+        points. For CG, we can use the more efficient CGPathAddLines().
+
+        * FullscreenVideoController.cpp:
+        (HUDSlider::draw):
+
 2016-01-05  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Download should use header values from provided request object.

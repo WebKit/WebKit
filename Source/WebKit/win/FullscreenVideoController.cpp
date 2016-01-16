@@ -146,17 +146,15 @@ void HUDSlider::draw(GraphicsContext& context)
     }
 
     // Draw a diamond
-    FloatPoint points[4];
     float half = static_cast<float>(m_buttonSize) / 2;
-    points[0].setX(m_rect.location().x() + m_buttonPosition + half);
-    points[0].setY(m_rect.location().y());
-    points[1].setX(m_rect.location().x() + m_buttonPosition + m_buttonSize);
-    points[1].setY(m_rect.location().y() + half);
-    points[2].setX(m_rect.location().x() + m_buttonPosition + half);
-    points[2].setY(m_rect.location().y() + m_buttonSize);
-    points[3].setX(m_rect.location().x() + m_buttonPosition);
-    points[3].setY(m_rect.location().y() + half);
-    context.drawConvexPolygon(4, points, true);
+
+    Vector<FloatPoint> points = {
+        FloatPoint(m_rect.location().x() + m_buttonPosition + half, m_rect.location().y()),
+        FloatPoint(m_rect.location().x() + m_buttonPosition + m_buttonSize, m_rect.location().y() + half),
+        FloatPoint(m_rect.location().x() + m_buttonPosition + half, m_rect.location().y() + m_buttonSize),
+        FloatPoint(m_rect.location().x() + m_buttonPosition, m_rect.location().y() + half)
+    };
+    context.drawPath(Path::polygonPathFromPoints(points));
 }
 
 void HUDSlider::drag(const IntPoint& point, bool start)

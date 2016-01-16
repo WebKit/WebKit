@@ -79,8 +79,6 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<ClipOutToPath>(item));
     case ItemType::ClipPath:
         return sizeof(downcast<ClipPath>(item));
-    case ItemType::ClipConvexPolygon:
-        return sizeof(downcast<ClipConvexPolygon>(item));
     case ItemType::DrawGlyphs:
         return sizeof(downcast<DrawGlyphs>(item));
     case ItemType::DrawImage:
@@ -105,8 +103,6 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<DrawLineForDocumentMarker>(item));
     case ItemType::DrawEllipse:
         return sizeof(downcast<DrawEllipse>(item));
-    case ItemType::DrawConvexPolygon:
-        return sizeof(downcast<DrawConvexPolygon>(item));
     case ItemType::DrawPath:
         return sizeof(downcast<DrawPath>(item));
     case ItemType::DrawFocusRingPath:
@@ -345,26 +341,6 @@ static TextStream& operator<<(TextStream& ts, const ClipPath& item)
 {
 //    ts.dumpProperty("path", item.path()); // FIXME: path logging.
     ts.dumpProperty("wind-rule", item.windRule());
-    return ts;
-}
-
-ClipConvexPolygon::ClipConvexPolygon(size_t numberOfPoints, const FloatPoint* points, bool antialiased)
-    : Item(ItemType::ClipConvexPolygon)
-    , m_antialias(antialiased)
-{
-    for (size_t i = 0; i < numberOfPoints; ++i)
-        m_points.append(points[i]);
-}
-
-void ClipConvexPolygon::apply(GraphicsContext& context) const
-{
-    context.clipConvexPolygon(m_points.size(), m_points.data(), m_antialias);
-}
-
-static TextStream& operator<<(TextStream& ts, const ClipConvexPolygon& item)
-{
-    ts.dumpProperty("points", item.points());
-    ts.dumpProperty("antialias", item.antialias());
     return ts;
 }
 
@@ -682,47 +658,6 @@ static TextStream& operator<<(TextStream& ts, const DrawEllipse& item)
     return ts;
 }
 
-// FIXME: Share this code.
-void addConvexPolygonToPath(Path& path, size_t numberOfPoints, const FloatPoint* points)
-{
-    ASSERT(numberOfPoints > 0);
-
-    path.moveTo(points[0]);
-    for (size_t i = 1; i < numberOfPoints; ++i)
-        path.addLineTo(points[i]);
-    path.closeSubpath();
-}
-
-DrawConvexPolygon::DrawConvexPolygon(size_t numberOfPoints, const FloatPoint* points, bool antialiased)
-    : DrawingItem(ItemType::DrawConvexPolygon)
-    , m_antialiased(antialiased)
-{
-    for (size_t i = 0; i < numberOfPoints; ++i)
-        m_points.append(points[i]);
-}
-
-Optional<FloatRect> DrawConvexPolygon::localBounds(const GraphicsContext&) const
-{
-    FloatRect result;
-    for (auto& point : m_points)
-        result.extend(point);
-    result.inflate(m_antialiased ? 1 : 0); // Account for antialiasing
-    return result;
-}
-
-void DrawConvexPolygon::apply(GraphicsContext& context) const
-{
-    context.drawConvexPolygon(m_points.size(), m_points.data(), m_antialiased);
-}
-
-static TextStream& operator<<(TextStream& ts, const DrawConvexPolygon& item)
-{
-    ts << static_cast<const DrawingItem&>(item);
-    ts.dumpProperty("points", item.points());
-    ts.dumpProperty("antialiased", item.antialiased());
-    return ts;
-}
-
 void DrawPath::apply(GraphicsContext& context) const
 {
 #if USE(CG)
@@ -1023,7 +958,6 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::ClipOut: ts << "clip-out"; break;
     case ItemType::ClipOutToPath: ts << "clip-out-to-path"; break;
     case ItemType::ClipPath: ts << "clip-path"; break;
-    case ItemType::ClipConvexPolygon: ts << "clip-convex-polygon"; break;
     case ItemType::DrawGlyphs: ts << "draw-glyphs"; break;
     case ItemType::DrawImage: ts << "draw-image"; break;
     case ItemType::DrawTiledImage: ts << "draw-tiled-image"; break;
@@ -1037,7 +971,6 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::DrawLinesForText: ts << "draw-lines-for-text"; break;
     case ItemType::DrawLineForDocumentMarker: ts << "draw-lines-for-document-marker"; break;
     case ItemType::DrawEllipse: ts << "draw-ellipse"; break;
-    case ItemType::DrawConvexPolygon: ts << "draw-convex-polgon"; break;
     case ItemType::DrawPath: ts << "draw-path"; break;
     case ItemType::DrawFocusRingPath: ts << "draw-focus-ring-path"; break;
     case ItemType::DrawFocusRingRects: ts << "draw-focus-ring-rects"; break;
@@ -1114,9 +1047,6 @@ TextStream& operator<<(TextStream& ts, const Item& item)
     case ItemType::ClipPath:
         ts << downcast<ClipPath>(item);
         break;
-    case ItemType::ClipConvexPolygon:
-        ts << downcast<ClipConvexPolygon>(item);
-        break;
     case ItemType::DrawGlyphs:
         ts << downcast<DrawGlyphs>(item);
         break;
@@ -1151,9 +1081,6 @@ TextStream& operator<<(TextStream& ts, const Item& item)
         break;
     case ItemType::DrawEllipse:
         ts << downcast<DrawEllipse>(item);
-        break;
-    case ItemType::DrawConvexPolygon:
-        ts << downcast<DrawConvexPolygon>(item);
         break;
     case ItemType::DrawPath:
         ts << downcast<DrawPath>(item);

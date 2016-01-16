@@ -342,7 +342,6 @@ public:
 
     void drawEllipse(const FloatRect&);
     void drawRaisedEllipse(const FloatRect&, const Color& ellipseColor, const Color& shadowColor);
-    void drawConvexPolygon(size_t numPoints, const FloatPoint*, bool shouldAntialias = false);
 
     WEBCORE_EXPORT void fillPath(const Path&);
     void strokePath(const Path&);
@@ -388,7 +387,6 @@ public:
     void clipOut(const FloatRect&);
     void clipOutRoundedRect(const FloatRoundedRect&);
     void clipPath(const Path&, WindRule = RULE_EVENODD);
-    void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias = true);
     void clipToImageBuffer(ImageBuffer&, const FloatRect&);
     
     IntRect clipBounds() const;
