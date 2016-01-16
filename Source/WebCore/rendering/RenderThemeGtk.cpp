@@ -158,7 +158,6 @@ enum RenderThemePart {
     ProgressBarTrough,
     ProgressBarProgress,
     ListBox,
-    ListBoxSelection,
     SpinButton,
     SpinButtonUpButton,
     SpinButtonDownButton,
@@ -333,14 +332,6 @@ static GRefPtr<GtkStyleContext> createStyleContext(RenderThemePart themePart, Gt
         gtk_widget_path_iter_set_object_name(path.get(), -1, "treeview");
 #endif
         gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_VIEW);
-        break;
-    case ListBoxSelection:
-        gtk_widget_path_append_type(path.get(), GTK_TYPE_TREE_VIEW);
-#if GTK_CHECK_VERSION(3, 19, 2)
-        gtk_widget_path_iter_set_object_name(path.get(), -1, "selection");
-#else
-        gtk_widget_path_iter_add_class(path.get(), -1, GTK_STYLE_CLASS_VIEW);
-#endif
         break;
     case SpinButton:
         gtk_widget_path_append_type(path.get(), GTK_TYPE_SPIN_BUTTON);
@@ -1289,10 +1280,9 @@ static Color styleColor(RenderThemePart themePart, GtkStateFlags state, StyleCol
 {
     GRefPtr<GtkStyleContext> parentContext;
     RenderThemePart part = themePart;
-    if (state & GTK_STATE_FLAG_SELECTED) {
-        parentContext = createStyleContext(themePart);
-        ASSERT(themePart == Entry || themePart == ListBox);
-        part = themePart == Entry ? EntrySelection : ListBoxSelection;
+    if (themePart == Entry && (state & GTK_STATE_FLAG_SELECTED)) {
+        parentContext = createStyleContext(Entry);
+        part = EntrySelection;
     }
 
     GRefPtr<GtkStyleContext> context = createStyleContext(part, parentContext.get());
