@@ -675,6 +675,7 @@ void GraphicsLayerCA::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
     if (usesDisplayListDrawing == m_usesDisplayListDrawing)
         return;
 
+    setNeedsDisplay();
     GraphicsLayer::setUsesDisplayListDrawing(usesDisplayListDrawing);
 }
 

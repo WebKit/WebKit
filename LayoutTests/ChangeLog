@@ -1,3 +1,10 @@
+2016-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        This test needs to force layout before calling setElementUsesDisplayListDrawing(),
+        so that the layer already has its "drawsContents" property updated.
+
+        * displaylists/layer-dispay-list.html:
+
 2016-01-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         FrameLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame() is never called when loading a main resource from the memory cache

@@ -1,3 +1,13 @@
+2016-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix flakiness of displaylists/layer-dispay-list.html
+        
+        When toggling "uses display list drawing" on a GraphicsLayerCA, do
+        a repaint.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setUsesDisplayListDrawing):
+
 2016-01-15  Simon Fraser  <simon.fraser@apple.com>
 
         Remove GraphicsContext::drawConvexPolygon() and GraphicsContext::clipConvexPolygon()
