@@ -25,6 +25,7 @@
 #include "RuleFeature.h"
 #include "SelectorCompiler.h"
 #include "StyleRule.h"
+#include <wtf/BumpArena.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -158,7 +159,19 @@ public:
 
     RuleSet();
 
-    typedef Vector<RuleData, 1> RuleDataVector;
+    class RuleDataVector : public Vector<RuleData, 1> {
+        WTF_MAKE_BUMPARENA_ALLOCATED;
+    public:
+        static std::unique_ptr<RuleDataVector> create(BumpArena& arena)
+        {
+            return std::unique_ptr<RuleDataVector>(new (&arena) RuleDataVector);
+        }
+        static std::unique_ptr<RuleDataVector> create(BumpArena& arena, const RuleDataVector& other)
+        {
+            return std::unique_ptr<RuleDataVector>(new (&arena) RuleDataVector(other));
+        }
+    };
+
     typedef HashMap<AtomicStringImpl*, std::unique_ptr<RuleDataVector>> AtomRuleMap;
 
     void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&, StyleResolver* = 0);
@@ -213,17 +226,12 @@ private:
     RuleDataVector m_focusPseudoClassRules;
     RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
-    unsigned m_ruleCount;
-    bool m_autoShrinkToFitEnabled;
+    unsigned m_ruleCount { 0 };
+    bool m_autoShrinkToFitEnabled { true };
     RuleFeatureSet m_features;
     Vector<RuleSetSelectorPair> m_regionSelectorsAndRuleSets;
+    Ref<BumpArena> m_arena;
 };
-
-inline RuleSet::RuleSet()
-    : m_ruleCount(0)
-    , m_autoShrinkToFitEnabled(true)
-{
-}
 
 inline const RuleSet::RuleDataVector* RuleSet::tagRules(AtomicStringImpl* key, bool isHTMLName) const
 {

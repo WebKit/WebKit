@@ -1,3 +1,27 @@
+2016-01-16  Andreas Kling  <akling@apple.com>
+
+        Give RuleSet a BumpArena and start using it for RuleDataVectors.
+        <https://webkit.org/b/153169>
+
+        Reviewed by Antti Koivisto.
+
+        Since RuleSet only supports appending rules and doesn't need to worry about removing them,
+        it's a great candidate for BumpArena optimizations.
+
+        Give each RuleSet its own BumpArena and teach them how to allocate RuleDataVector objects
+        out of them.
+
+        There are more things that can be done here, ideally all the sub-allocations inside RuleSet
+        that happen via e.g Vector and HashMap would also come out of the BumpArena.
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::RuleSet):
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::RuleSet::copyShadowPseudoElementRulesFrom):
+        * css/RuleSet.h:
+        (WebCore::RuleSet::RuleDataVector::create):
+        (WebCore::RuleSet::RuleSet): Deleted.
+
 2016-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix flakiness of displaylists/layer-dispay-list.html

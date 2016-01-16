@@ -183,13 +183,18 @@ static void collectFeaturesFromRuleData(RuleFeatureSet& features, const RuleData
         features.uncommonAttributeRules.append(RuleFeature(ruleData.rule(), ruleData.selectorIndex(), ruleData.hasDocumentSecurityOrigin()));
 }
 
+RuleSet::RuleSet()
+    : m_arena(WTF::BumpArena::create())
+{
+}
+
 void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleData& ruleData)
 {
     if (!key)
         return;
     auto& rules = map.add(key, nullptr).iterator->value;
     if (!rules)
-        rules = std::make_unique<RuleDataVector>();
+        rules = RuleDataVector::create(m_arena.get());
     rules->append(ruleData);
 }
 
@@ -399,7 +404,7 @@ bool RuleSet::hasShadowPseudoElementRules() const
 void RuleSet::copyShadowPseudoElementRulesFrom(const RuleSet& other)
 {
     for (auto& keyValuePair : other.m_shadowPseudoElementRules)
-        m_shadowPseudoElementRules.add(keyValuePair.key, std::make_unique<RuleDataVector>(*keyValuePair.value));
+        m_shadowPseudoElementRules.add(keyValuePair.key, RuleDataVector::create(m_arena.get(), *keyValuePair.value));
 
 #if ENABLE(VIDEO_TRACK)
     // FIXME: We probably shouldn't treat WebVTT as author stylable user agent shadow tree.
