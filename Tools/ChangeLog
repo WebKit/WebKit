@@ -1,3 +1,13 @@
+2016-01-15  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [webkitdirs] Avoid list form of open because it broke WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=153106
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+
 2016-01-15  Simon Fraser  <simon.fraser@apple.com>
 
         Add kdebug_trace signposts for a few WebCore operations

@@ -339,7 +339,7 @@ sub determineArchitecture
         }
     } elsif (isCMakeBuild()) {
         my $host_processor = "";
-        if (open my $cmake_sysinfo, "-|", "cmake", "--system-information") {
+        if (open my $cmake_sysinfo, "cmake --system-information |") {
             while (<$cmake_sysinfo>) {
                 next unless index($_, 'CMAKE_SYSTEM_PROCESSOR') == 0;
                 if (/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {
