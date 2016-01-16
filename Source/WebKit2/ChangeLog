@@ -1,3 +1,21 @@
+2016-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GVariant runtime critical errors when encoding session data
+        https://bugs.webkit.org/show_bug.cgi?id=153130
+
+        Reviewed by Michael Catanzaro.
+
+        It happens when the FrameState has children, because the recursive
+        serialization is wrong. Also fix serialization of
+        documentSequenceNumber and itemSequenceNumber that are gint64, not
+        guint64.
+
+        * UIProcess/API/gtk/WebKitWebViewSessionState.cpp:
+        (encodeFrameState): Let the caller open/init the given
+        builder. Use a new builder to encode child states recursively.
+        (encodePageState): Do the builder open/close for the FrameState encoding.
+        (decodeFrameState): Get the variant of every child.
+
 2016-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix internal Windows build

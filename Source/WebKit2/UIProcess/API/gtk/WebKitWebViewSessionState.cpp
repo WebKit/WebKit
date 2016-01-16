@@ -44,8 +44,8 @@ static const guint16 g_sessionStateVersion = 1;
 #define HTTP_BODY_ELEMENT_FORMAT_STRING_V1 "(uay&sxmxmd&s)"
 #define HTTP_BODY_TYPE_STRING_V1 "m(sa" HTTP_BODY_ELEMENT_TYPE_STRING_V1 ")"
 #define HTTP_BODY_FORMAT_STRING_V1 "m(&sa" HTTP_BODY_ELEMENT_TYPE_STRING_V1 ")"
-#define FRAME_STATE_TYPE_STRING_V1  "(ssssasmaytt(ii)d" HTTP_BODY_TYPE_STRING_V1 "av)"
-#define FRAME_STATE_FORMAT_STRING_V1  "(&s&s&s&sasmaytt(ii)d@" HTTP_BODY_TYPE_STRING_V1 "av)"
+#define FRAME_STATE_TYPE_STRING_V1  "(ssssasmayxx(ii)d" HTTP_BODY_TYPE_STRING_V1 "av)"
+#define FRAME_STATE_FORMAT_STRING_V1  "(&s&s&s&sasmayxx(ii)d@" HTTP_BODY_TYPE_STRING_V1 "av)"
 #define BACK_FORWARD_LIST_ITEM_TYPE_STRING_V1  "(ts" FRAME_STATE_TYPE_STRING_V1 "u)"
 #define BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V1  "(t&s@" FRAME_STATE_TYPE_STRING_V1 "u)"
 #define SESSION_STATE_TYPE_STRING_V1  "(qa" BACK_FORWARD_LIST_ITEM_TYPE_STRING_V1 "mu)"
@@ -150,7 +150,6 @@ static inline void encodeHTTPBody(GVariantBuilder* sessionBuilder, const HTTPBod
 
 static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const FrameState& frameState)
 {
-    g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(FRAME_STATE_TYPE_STRING_V1));
     g_variant_builder_add(sessionBuilder, "s", frameState.urlString.utf8().data());
     g_variant_builder_add(sessionBuilder, "s", frameState.originalURLString.utf8().data());
     g_variant_builder_add(sessionBuilder, "s", frameState.referrer.utf8().data());
@@ -169,8 +168,8 @@ static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const Frame
         g_variant_builder_close(sessionBuilder);
         g_variant_builder_close(sessionBuilder);
     }
-    g_variant_builder_add(sessionBuilder, "t", frameState.documentSequenceNumber);
-    g_variant_builder_add(sessionBuilder, "t", frameState.itemSequenceNumber);
+    g_variant_builder_add(sessionBuilder, "x", frameState.documentSequenceNumber);
+    g_variant_builder_add(sessionBuilder, "x", frameState.itemSequenceNumber);
     g_variant_builder_add(sessionBuilder, "(ii)", frameState.scrollPosition.x(), frameState.scrollPosition.y());
     g_variant_builder_add(sessionBuilder, "d", frameState.pageScaleFactor);
     if (!frameState.httpBody)
@@ -181,16 +180,21 @@ static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const Frame
         g_variant_builder_close(sessionBuilder);
     }
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("av"));
-    for (const auto& child : frameState.children)
-        encodeFrameState(sessionBuilder, child);
-    g_variant_builder_close(sessionBuilder);
+    for (const auto& child : frameState.children) {
+        GVariantBuilder frameStateBuilder;
+        g_variant_builder_init(&frameStateBuilder, G_VARIANT_TYPE(FRAME_STATE_TYPE_STRING_V1));
+        encodeFrameState(&frameStateBuilder, child);
+        g_variant_builder_add(sessionBuilder, "v", g_variant_builder_end(&frameStateBuilder));
+    }
     g_variant_builder_close(sessionBuilder);
 }
 
 static inline void encodePageState(GVariantBuilder* sessionBuilder, const PageState& pageState)
 {
     g_variant_builder_add(sessionBuilder, "s", pageState.title.utf8().data());
+    g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(FRAME_STATE_TYPE_STRING_V1));
     encodeFrameState(sessionBuilder, pageState.mainFrameState);
+    g_variant_builder_close(sessionBuilder);
     g_variant_builder_add(sessionBuilder, "u", toExternalURLsPolicy(pageState.shouldOpenExternalURLsPolicy));
 }
 
@@ -278,8 +282,8 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     const char* target;
     GUniqueOutPtr<GVariantIter> documentStateIter;
     GUniqueOutPtr<GVariantIter> stateObjectDataIter;
-    guint64 documentSequenceNumber;
-    guint64 itemSequenceNumber;
+    gint64 documentSequenceNumber;
+    gint64 itemSequenceNumber;
     gint32 scrollPositionX, scrollPositionY;
     gdouble pageScaleFactor;
     GVariant* httpBodyVariant;
@@ -318,7 +322,8 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     g_variant_unref(httpBodyVariant);
     while (GRefPtr<GVariant> child = adoptGRef(g_variant_iter_next_value(childrenIter.get()))) {
         FrameState childFrameState;
-        decodeFrameState(child.get(), childFrameState);
+        GRefPtr<GVariant> childVariant = adoptGRef(g_variant_get_variant(child.get()));
+        decodeFrameState(childVariant.get(), childFrameState);
         frameState.children.append(WTFMove(childFrameState));
     }
 }
