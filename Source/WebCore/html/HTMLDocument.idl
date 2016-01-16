@@ -45,8 +45,11 @@
     void captureEvents();
     void releaseEvents();
 
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     readonly attribute long width;
     readonly attribute long height;
+#endif
+
              [TreatNullAs=NullString] attribute DOMString dir;
              [TreatNullAs=NullString] attribute DOMString designMode;
     readonly attribute DOMString compatMode;

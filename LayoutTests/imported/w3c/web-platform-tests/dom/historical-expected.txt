@@ -28,8 +28,8 @@ PASS Historical DOM features must be removed: domConfig
 PASS Historical DOM features must be removed: normalizeDocument 
 PASS Historical DOM features must be removed: renameNode 
 FAIL Historical DOM features must be removed: defaultCharset assert_equals: expected (undefined) undefined but got (string) "ISO-8859-1"
-FAIL Historical DOM features must be removed: height assert_equals: expected (undefined) undefined but got (number) 600
-FAIL Historical DOM features must be removed: width assert_equals: expected (undefined) undefined but got (number) 800
+PASS Historical DOM features must be removed: height 
+PASS Historical DOM features must be removed: width 
 PASS DOMImplementation.getFeature() must be nuked. 
 PASS Historical DOM features must be removed: schemaTypeInfo 
 PASS Historical DOM features must be removed: setIdAttribute 

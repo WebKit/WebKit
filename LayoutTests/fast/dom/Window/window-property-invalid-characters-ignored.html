@@ -16,8 +16,8 @@ var w = window.open("resources/window-property-invalid-characters-ignored.html",
 
 function finishTest()
 {
-    shouldBe("w.document.width", "123");
-    shouldBe("w.document.height", "123");
+    shouldBe("w.innerWidth", "123");
+    shouldBe("w.innerHeight", "123");
     shouldBeTrue("w !== window");
     w.close();
 

@@ -1,3 +1,18 @@
+2016-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Drop obsolete HTMLDocument.width / height attributes
+        https://bugs.webkit.org/show_bug.cgi?id=153144
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/HTMLDocument/width-and-height-expected.txt: Removed.
+        * fast/dom/HTMLDocument/width-and-height.html: Removed.
+        Drop outdated test.
+
+        * fast/dom/Window/window-property-invalid-characters-ignored-expected.txt:
+        * fast/dom/Window/window-property-invalid-characters-ignored.html:
+        Stop relying on Document.width / height as these are obsolete.
+
 2016-01-15  Beth Dakin  <bdakin@apple.com>
 
         Add a test for touch events in scaled documents

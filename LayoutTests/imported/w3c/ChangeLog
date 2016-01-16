@@ -1,5 +1,16 @@
 2016-01-15  Chris Dumez  <cdumez@apple.com>
 
+        Drop obsolete HTMLDocument.width / height attributes
+        https://bugs.webkit.org/show_bug.cgi?id=153144
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/historical-expected.txt:
+
+2016-01-15  Chris Dumez  <cdumez@apple.com>
+
         Drop obsolete DocumentType.entities / notations
         https://bugs.webkit.org/show_bug.cgi?id=153147
 
