@@ -37,9 +37,9 @@ public:
         return adoptRef(*new DocumentType(document, name, publicId, systemId));
     }
 
-    // FIXME: We return null entities and notations. Current implementation of NamedNodeMap doesn't work without an associated Element yet.
-    NamedNodeMap* entities() const { return nullptr; }
-    NamedNodeMap* notations() const { return nullptr; }
+    // These is needed by native bindings for backward compatibility.
+    NamedNodeMap* entitiesForBindings() const { return nullptr; }
+    NamedNodeMap* notationsForBindings() const { return nullptr; }
 
     const String& name() const { return m_name; }
     const String& publicId() const { return m_publicId; }

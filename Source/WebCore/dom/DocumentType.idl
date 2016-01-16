@@ -25,8 +25,11 @@
     // DOM Level 1
 
     readonly attribute DOMString name;
-    readonly attribute NamedNodeMap entities;
-    readonly attribute NamedNodeMap notations;
+
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+    [ImplementedAs=entitiesForBindings] readonly attribute NamedNodeMap entities;
+    [ImplementedAs=notationsForBindings] readonly attribute NamedNodeMap notations;
+#endif
 
     // DOM Level 2
 
