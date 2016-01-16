@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -375,7 +375,7 @@ static UIImage* iconForFile(NSURL *file)
     _mimeTypes = adoptNS([mimeTypes copy]);
 
     // FIXME: Remove this check and the fallback code when a new SDK is available. <rdar://problem/20150072>
-    if ([UIDocumentMenuViewController instancesRespondToSelector:@selector(_setIgnoreApplicationEntitlementForImport:)]) {
+    if ([UIDocumentMenuViewController instancesRespondToSelector:@selector(_initIgnoringApplicationEntitlementForImportOfTypes:)]) {
         [self _showDocumentPickerMenu];
         return;
     }
@@ -515,14 +515,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 - (void)_showDocumentPickerMenu
 {
     // FIXME: Support multiple file selection when implemented. <rdar://17177981>
-    // FIXME: We call -_setIgnoreApplicationEntitlementForImport: before initialization, because the assertion we're trying
-    // to suppress is in the initializer. <rdar://problem/20137692> tracks doing this with a private initializer.
-    _documentMenuController = adoptNS([UIDocumentMenuViewController alloc]);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [_documentMenuController _setIgnoreApplicationEntitlementForImport:YES];
-#pragma clang diagnostic pop
-    [_documentMenuController initWithDocumentTypes:[self _documentPickerMenuMediaTypes] inMode:UIDocumentPickerModeImport];
+    _documentMenuController = adoptNS([[UIDocumentMenuViewController alloc] _initIgnoringApplicationEntitlementForImportOfTypes:[self _documentPickerMenuMediaTypes]]);
     [_documentMenuController setDelegate:self];
 
     [_documentMenuController addOptionWithTitle:[self _photoLibraryButtonLabel] image:photoLibraryIcon() order:UIDocumentMenuOrderFirst handler:^{

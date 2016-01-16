@@ -1,3 +1,21 @@
+2016-01-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        [iOS] Replace deprecated -[UIDocumentMenuViewController
+        _setIgnoreApplicationEntitlementForImport:]
+
+        <https://bugs.webkit.org/show_bug.cgi?id=145690>
+        <rdar://problem/20636577>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Replace deprecated SPI with newer SPI.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        Ditto.
+
 2016-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed. Fix a typo in an API comment.

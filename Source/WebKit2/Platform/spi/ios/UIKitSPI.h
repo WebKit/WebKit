@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@
 #import <UIKit/UIDocumentMenuViewController_Private.h>
 #else
 @interface UIDocumentMenuViewController ()
-@property (nonatomic, assign, setter = _setIgnoreApplicationEntitlementForImport:, getter = _ignoreApplicationEntitlementForImport) BOOL _ignoreApplicationEntitlementForImport;
+- (instancetype)_initIgnoringApplicationEntitlementForImportOfTypes:(NSArray *)types;
 @end
 #endif
 
@@ -763,7 +763,7 @@ typedef enum {
 @end
 
 @interface UIDocumentMenuViewController ()
-@property (nonatomic, assign, setter = _setIgnoreApplicationEntitlementForImport:, getter = _ignoreApplicationEntitlementForImport) BOOL _ignoreApplicationEntitlementForImport;
+- (instancetype)_initIgnoringApplicationEntitlementForImportOfTypes:(NSArray *)types;
 @end
 
 @protocol UIDocumentPasswordViewDelegate;
