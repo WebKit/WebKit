@@ -1,3 +1,16 @@
+2016-01-16  Timothy Hatcher  <timothy@apple.com>
+
+        Fix some responsive issues on smaller screens.
+
+        * wp-content/themes/webkit/style.css:
+        (.timeline .time):
+        (@media (max-width: 900px)):
+        (.timeline:before):
+        (.timeline > li):
+        (.timeline > li:before):
+        (.timeline .content):
+        (.timeline li .time::before):
+
 2016-01-14  Timothy Hatcher  <timothy@apple.com>
 
         Eliminate the margin on timeline elements so multiple timelines can touch.

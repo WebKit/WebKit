@@ -1537,6 +1537,8 @@ header .menu-item { /* add bottom dimension to main menu items */
     border-right: 1px solid #08c;
     border-left: 1px solid #08c;
     border-radius: 2px;
+    white-space: nowrap;
+    min-width: 300px;
 }
 
 .timeline h2, .timeline h3 {
@@ -1613,6 +1615,56 @@ header .menu-item { /* add bottom dimension to main menu items */
         left: -o-calc(50% - 1.5rem);
         left: -webkit-calc(50% - 1.5rem);
         left: calc(50% - 1.5rem);
+    }
+}
+
+@media (max-width: 900px) {
+    .timeline {
+        padding: 0 3rem;
+    }
+
+    .timeline:before {
+        left: -moz-calc(15% - 0.25rem);
+        left: -o-calc(15% - 0.25rem);
+        left: -webkit-calc(15% - 0.25rem);
+        left: calc(15% - 0.25rem);
+    }
+
+    .timeline > li {
+        text-align: left;
+    }
+
+    .timeline > li:before {
+        right: -moz-calc(85% - 1.5rem);
+        right: -o-calc(85% - 1.5rem);
+        right: -webkit-calc(85% - 1.5rem);
+        right: calc(85% - 1.5rem);
+    }
+
+    .timeline .content {
+        padding: 0 2rem;
+    }
+
+    .timeline .time {
+        left: -moz-calc(15% + 2.25rem);
+        left: -o-calc(15% + 2.25rem);
+        left: -webkit-calc(15% + 2.25rem);
+        left: calc(15% + 2.25rem);
+
+        text-align: left;
+
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+
+        min-width: 200px;
+    }
+
+    .timeline li .time::before {
+        border-left-color: transparent;
+        border-right-color: #08c;
+
+        right: auto;
+        left: -2em;
     }
 }
 
