@@ -517,9 +517,6 @@ Could be worth adding to the API.
 
 + (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f;
 
-+ (void)_setAllowsRoundingHacks:(BOOL)allowsRoundingHacks;
-+ (BOOL)_allowsRoundingHacks;
-
 #if !TARGET_OS_IPHONE
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
 #endif

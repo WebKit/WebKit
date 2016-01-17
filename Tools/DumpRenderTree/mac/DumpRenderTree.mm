@@ -1866,7 +1866,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [WebView _setUsesTestModeFocusRingColor:YES];
 #endif
     [WebView _resetOriginAccessWhitelists];
-    [WebView _setAllowsRoundingHacks:NO];
 
     [[MockGeolocationProvider shared] stopTimer];
     [[MockWebNotificationProvider shared] reset];

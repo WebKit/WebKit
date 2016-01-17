@@ -1,3 +1,19 @@
+2016-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove TextRun::allowsRoundingHacks()
+        https://bugs.webkit.org/show_bug.cgi?id=153185
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/fast/text/rounding-hacks-expansion.html: Removed.
+        * platform/mac/fast/text/rounding-hacks.html: Removed.
+        * platform/mac/platform/mac/fast/text/rounding-hacks-expansion-expected.png: Removed.
+        * platform/mac/platform/mac/fast/text/rounding-hacks-expansion-expected.txt: Removed.
+        * platform/mac/platform/mac/fast/text/rounding-hacks-expected.png: Removed.
+        * platform/mac/platform/mac/fast/text/rounding-hacks-expected.txt: Removed.
+        * svg/text/svg-font-word-rounding-hacks-spaces-expected.html: Removed.
+        * svg/text/svg-font-word-rounding-hacks-spaces.html: Removed.
+
 2016-01-16  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Arrow function should support the destructuring parameters.

@@ -45,15 +45,7 @@ struct WidthIterator;
 class TextRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum RoundingHackFlags {
-        NoRounding = 0,
-        RunRounding = 1 << 0,
-        WordRounding = 1 << 1,
-    };
-
-    typedef unsigned RoundingHacks;
-
-    explicit TextRun(StringView text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
+    explicit TextRun(StringView text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : m_text(text)
         , m_charactersLength(text.length())
         , m_tabSize(0)
@@ -65,8 +57,6 @@ public:
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
         , m_characterScanForCodePath(characterScanForCodePath)
-        , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
-        , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
     {
     }
@@ -118,12 +108,9 @@ public:
     bool ltr() const { return m_direction == LTR; }
     bool directionalOverride() const { return m_directionalOverride; }
     bool characterScanForCodePath() const { return m_characterScanForCodePath; }
-    bool applyRunRounding() const { return m_applyRunRounding; }
-    bool applyWordRounding() const { return m_applyWordRounding; }
     bool spacingDisabled() const { return m_disableSpacing; }
 
     void disableSpacing() { m_disableSpacing = true; }
-    void disableRoundingHacks() { m_applyRunRounding = m_applyWordRounding = false; }
     void setDirection(TextDirection direction) { m_direction = direction; }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
     void setCharacterScanForCodePath(bool scan) { m_characterScanForCodePath = scan; }
@@ -145,12 +132,7 @@ public:
     RenderingContext* renderingContext() const { return m_renderingContext.get(); }
     void setRenderingContext(PassRefPtr<RenderingContext> context) { m_renderingContext = context; }
 
-    WEBCORE_EXPORT static void setAllowsRoundingHacks(bool);
-    WEBCORE_EXPORT static bool allowsRoundingHacks();
-
 private:
-    WEBCORE_EXPORT static bool s_allowsRoundingHacks;
-    
     RefPtr<RenderingContext> m_renderingContext;
 
     StringView m_text;
@@ -171,8 +153,6 @@ private:
     unsigned m_direction : 1;
     unsigned m_directionalOverride : 1; // Was this direction set by an override character.
     unsigned m_characterScanForCodePath : 1;
-    unsigned m_applyRunRounding : 1;
-    unsigned m_applyWordRounding : 1;
     unsigned m_disableSpacing : 1;
 };
 

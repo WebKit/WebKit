@@ -264,8 +264,6 @@ public:
 
     void garbageCollectDocumentResources(ExceptionCode&) const;
 
-    void allowRoundingHacks() const;
-
     void insertAuthorCSS(const String&, ExceptionCode&) const;
     void insertUserCSS(const String&, ExceptionCode&) const;
 

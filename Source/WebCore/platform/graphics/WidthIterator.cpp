@@ -237,13 +237,6 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
 
             // SVG uses horizontalGlyphStretch(), when textLength is used to stretch/squeeze text.
             width *= m_run.horizontalGlyphStretch();
-
-            // We special case spaces in two ways when applying word rounding.
-            // First, we round spaces to an adjusted width in all fonts.
-            // Second, in fixed-pitch fonts we ensure that all characters that
-            // match the width of the space character have the same width as the space character.
-            if (m_run.applyWordRounding() && width == font->spaceWidth() && (font->pitch() == FixedPitch || glyph == font->spaceGlyph()))
-                width = font->adjustedSpaceWidth();
         }
 
         if (font != lastFontData && width) {
@@ -297,34 +290,29 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
                 if (m_expansion) {
                     bool expandLeft, expandRight;
                     std::tie(expandLeft, expandRight) = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), m_isAfterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
-                    float previousExpansion = m_expansion;
                     if (expandLeft) {
                         if (m_run.ltr()) {
                             // Increase previous width
                             m_expansion -= m_expansionPerOpportunity;
-                            float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
-                            m_runWidthSoFar += expansionAtThisOpportunity;
+                            m_runWidthSoFar += m_expansionPerOpportunity;
                             if (glyphBuffer) {
                                 if (glyphBuffer->isEmpty()) {
                                     if (m_forTextEmphasis)
                                         glyphBuffer->add(font->zeroWidthSpaceGlyph(), font, m_expansionPerOpportunity, currentCharacter);
                                     else
-                                        glyphBuffer->add(font->spaceGlyph(), font, expansionAtThisOpportunity, currentCharacter);
+                                        glyphBuffer->add(font->spaceGlyph(), font, m_expansionPerOpportunity, currentCharacter);
                                 } else
-                                    glyphBuffer->expandLastAdvance(expansionAtThisOpportunity);
+                                    glyphBuffer->expandLastAdvance(m_expansionPerOpportunity);
                             }
                         } else {
                             // Increase next width
-                            float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion - m_expansionPerOpportunity);
-                            leftoverJustificationWidth += expansionAtThisOpportunity;
+                            leftoverJustificationWidth += m_expansionPerOpportunity;
                             m_isAfterExpansion = true;
                         }
-                        previousExpansion = m_expansion;
                     }
                     if (expandRight) {
                         m_expansion -= m_expansionPerOpportunity;
-                        float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
-                        width += expansionAtThisOpportunity;
+                        width += m_expansionPerOpportunity;
                         if (m_run.ltr())
                             m_isAfterExpansion = true;
                     }
@@ -359,31 +347,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
 
         float oldWidth = width;
 
-        // Force characters that are used to determine word boundaries for the rounding hack
-        // to be integer width, so following words will start on an integer boundary.
-        if (m_run.applyWordRounding() && FontCascade::isRoundingHackCharacter(character)) {
-            width = ceilf(width);
-
-            // Since widthSinceLastRounding can lose precision if we include measurements for
-            // preceding whitespace, we bypass it here.
-            m_runWidthSoFar += width;
-
-            // Since this is a rounding hack character, we should have reset this sum on the previous
-            // iteration.
-            ASSERT(!widthSinceLastRounding);
-        } else {
-            // Check to see if the next character is a "rounding hack character", if so, adjust
-            // width so that the total run width will be on an integer boundary.
-            if ((m_run.applyWordRounding() && static_cast<unsigned>(textIterator.currentCharacter()) < m_run.length() && FontCascade::isRoundingHackCharacter(*(textIterator.characters())))
-                || (m_run.applyRunRounding() && static_cast<unsigned>(textIterator.currentCharacter()) >= m_run.length())) {
-                float totalWidth = widthSinceLastRounding + width;
-                widthSinceLastRounding = ceilf(totalWidth);
-                width += widthSinceLastRounding - totalWidth;
-                m_runWidthSoFar += widthSinceLastRounding;
-                widthSinceLastRounding = 0;
-            } else
-                widthSinceLastRounding += width;
-        }
+        widthSinceLastRounding += width;
 
         if (glyphBuffer)
             glyphBuffer->add(glyph, font, (rtl ? oldWidth + lastRoundingWidth : width), currentCharacter);

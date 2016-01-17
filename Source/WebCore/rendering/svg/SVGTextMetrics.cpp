@@ -73,8 +73,6 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned pos
     if (style.fontCascade().primaryFont().isSVGFont())
         run.setRenderingContext(SVGTextRunRenderingContext::create(text));
 
-    run.disableRoundingHacks();
-
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
 

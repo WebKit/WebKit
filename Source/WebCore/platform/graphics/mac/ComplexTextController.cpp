@@ -668,7 +668,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
         bool lastRun = r + 1 == runCount;
         float spaceWidth = font.spaceWidth() - font.syntheticBoldOffset();
-        CGFloat roundedSpaceWidth = std::round(spaceWidth);
         const UChar* cp = complexTextRun.characters();
         CGPoint glyphOrigin = CGPointZero;
         CFIndex lastCharacterIndex = m_run.ltr() ? std::numeric_limits<CFIndex>::min() : std::numeric_limits<CFIndex>::max();
@@ -704,16 +703,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 glyph = font.spaceGlyph();
             }
 
-            float roundedAdvanceWidth = roundf(advance.width);
             advance.width += font.syntheticBoldOffset();
-
- 
-            // We special case spaces in two ways when applying word rounding. 
-            // First, we round spaces to an adjusted width in all fonts. 
-            // Second, in fixed-pitch fonts we ensure that all glyphs that 
-            // match the width of the space glyph have the same width as the space glyph. 
-            if (m_run.applyWordRounding() && roundedAdvanceWidth == roundedSpaceWidth && (font.pitch() == FixedPitch || glyph == font.spaceGlyph()))
-                advance.width = font.adjustedSpaceWidth();
 
             if (hasExtraSpacing) {
                 // If we're a glyph with an advance, add in letter-spacing.
@@ -744,22 +734,18 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     if (m_expansion) {
                         bool expandLeft, expandRight;
                         std::tie(expandLeft, expandRight) = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), afterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
-                        float previousExpansion = m_expansion;
                         if (expandLeft) {
                             // Increase previous width
                             m_expansion -= m_expansionPerOpportunity;
-                            float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
-                            m_totalWidth += expansionAtThisOpportunity;
+                            m_totalWidth += m_expansionPerOpportunity;
                             if (m_adjustedAdvances.isEmpty())
-                                m_leadingExpansion = expansionAtThisOpportunity;
+                                m_leadingExpansion = m_expansionPerOpportunity;
                             else
-                                m_adjustedAdvances.last().width += expansionAtThisOpportunity;
-                            previousExpansion = m_expansion;
+                                m_adjustedAdvances.last().width += m_expansionPerOpportunity;
                         }
                         if (expandRight) {
                             m_expansion -= m_expansionPerOpportunity;
-                            float expansionAtThisOpportunity = !m_run.applyWordRounding() ? m_expansionPerOpportunity : roundf(previousExpansion) - roundf(m_expansion);
-                            advance.width += expansionAtThisOpportunity;
+                            advance.width += m_expansionPerOpportunity;
                             afterExpansion = true;
                         }
                     } else
@@ -772,33 +758,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     afterExpansion = false;
             }
 
-            // Apply rounding hacks if needed.
-            // We adjust the width of the last character of a "word" to ensure an integer width. 
-            // Force characters that are used to determine word boundaries for the rounding hack 
-            // to be integer width, so the following words will start on an integer boundary. 
-            if (m_run.applyWordRounding() && FontCascade::isRoundingHackCharacter(ch)) 
-                advance.width = std::ceil(advance.width);
-
-            // Check to see if the next character is a "rounding hack character", if so, adjust the 
-            // width so that the total run width will be on an integer boundary.
-            bool needsRoundingForCharacter = m_run.applyWordRounding() && !lastGlyph && FontCascade::isRoundingHackCharacter(nextCh);
-            if (needsRoundingForCharacter || (m_run.applyRunRounding() && lastGlyph)) {
-                CGFloat totalWidth = widthSinceLastCommit + advance.width; 
-                widthSinceLastCommit = std::ceil(totalWidth);
-                CGFloat extraWidth = widthSinceLastCommit - totalWidth; 
-                if (m_run.ltr()) 
-                    advance.width += extraWidth; 
-                else { 
-                    if (m_lastRoundingGlyph) 
-                        m_adjustedAdvances[m_lastRoundingGlyph - 1].width += extraWidth; 
-                    else 
-                        m_finalRoundingWidth = extraWidth; 
-                    m_lastRoundingGlyph = m_adjustedAdvances.size() + 1; 
-                } 
-                m_totalWidth += widthSinceLastCommit; 
-                widthSinceLastCommit = 0; 
-            } else 
-                widthSinceLastCommit += advance.width; 
+            widthSinceLastCommit += advance.width; 
 
             // FIXME: Combining marks should receive a text emphasis mark if they are combine with a space.
             if (m_forTextEmphasis && (!FontCascade::canReceiveTextEmphasis(ch) || (U_GET_GC_MASK(ch) & U_GC_M_MASK)))

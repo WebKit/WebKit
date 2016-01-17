@@ -369,7 +369,6 @@ void Internals::resetToConsistentState(Page* page)
         mainFrameView->setFixedLayoutSize(IntSize());
     }
 
-    TextRun::setAllowsRoundingHacks(false);
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
     page->inspectorController().setProfilerEnabled(false);
@@ -2036,11 +2035,6 @@ void Internals::garbageCollectDocumentResources(ExceptionCode& ec) const
         return;
     }
     document->cachedResourceLoader().garbageCollectDocumentResources();
-}
-
-void Internals::allowRoundingHacks() const
-{
-    TextRun::setAllowsRoundingHacks(true);
 }
 
 void Internals::insertAuthorCSS(const String& css, ExceptionCode& ec) const

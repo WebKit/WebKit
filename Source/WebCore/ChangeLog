@@ -1,3 +1,68 @@
+2016-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove TextRun::allowsRoundingHacks()
+        https://bugs.webkit.org/show_bug.cgi?id=153185
+
+        Reviewed by Simon Fraser.
+
+        Rounding hacks are disallowed by default, and are only re-enabled on iOS 4 and
+        earlier, which are not supported OSes. Because they are disallowed on all
+        supported configurations, remove support for them wholesale.
+
+        No new tests.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * platform/graphics/FontCascade.cpp:
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::isRoundingHackCharacter): Deleted.
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::stringWidth):
+        (WebCore::truncateString):
+        (WebCore::StringTruncator::centerTruncate):
+        (WebCore::StringTruncator::rightTruncate):
+        (WebCore::StringTruncator::width):
+        (WebCore::StringTruncator::leftTruncate):
+        (WebCore::StringTruncator::rightClipToCharacter):
+        (WebCore::StringTruncator::rightClipToWord):
+        * platform/graphics/StringTruncator.h:
+        * platform/graphics/TextRun.cpp:
+        (WebCore::TextRun::setAllowsRoundingHacks): Deleted.
+        (WebCore::TextRun::allowsRoundingHacks): Deleted.
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::applyRunRounding): Deleted.
+        (WebCore::TextRun::applyWordRounding): Deleted.
+        (WebCore::TextRun::disableRoundingHacks): Deleted.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::widthWithFont): Deleted.
+        (WebCore::drawAtPoint): Deleted.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::fileTextValue):
+        (WebCore::RenderFileUploadControl::paintObject): Deleted.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::updateFromElement): Deleted.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAverageCharWidth): Deleted.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::fileListNameForWidth):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::fileListNameForWidth):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun): Deleted.
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::constructTextRun): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Deleted.
+        (WebCore::Internals::allowRoundingHacks): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-01-16  Andreas Kling  <akling@apple.com>
 
         Allocate style sheet media queries in BumpArena.

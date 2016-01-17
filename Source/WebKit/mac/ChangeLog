@@ -1,3 +1,18 @@
+2016-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove TextRun::allowsRoundingHacks()
+        https://bugs.webkit.org/show_bug.cgi?id=153185
+
+        Reviewed by Simon Fraser.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]): Deleted.
+        (-[NSString _web_widthWithFont:]): Deleted.
+        * WebView/WebView.mm:
+        (+[WebView _setAllowsRoundingHacks:]): Deleted.
+        (+[WebView _allowsRoundingHacks]): Deleted.
+        * WebView/WebViewPrivate.h:
+
 2016-01-15  Tim Horton  <timothy_horton@apple.com>
 
         Data detector yellow highlight location is vertically mirrored in WebKit1

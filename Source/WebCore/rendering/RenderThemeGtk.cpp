@@ -1574,7 +1574,7 @@ String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font
         return String();
 
     if (fileList->length() > 1)
-        return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font, StringTruncator::EnableRoundingHacks);
+        return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font);
 
     String string;
     if (fileList->length())
@@ -1584,7 +1584,7 @@ String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font
     else
         string = fileButtonNoFileSelectedLabel();
 
-    return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
+    return StringTruncator::centerTruncate(string, width, font);
 }
 
 #if ENABLE(VIDEO)

@@ -420,8 +420,6 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
     if (style->fontCascade().primaryFont().isSVGFont())
         run.setRenderingContext(SVGTextRunRenderingContext::create(renderer()));
 
-    run.disableRoundingHacks();
-
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
 

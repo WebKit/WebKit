@@ -93,7 +93,6 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
         FontCascade webCoreFont(FontPlatformData(reinterpret_cast<CTFontRef>(font), [font pointSize]), fontSmoothingIsAllowed ? AutoSmoothing : Antialiased);
         TextRun run(StringView(buffer.data(), length));
-        run.disableRoundingHacks();
 
         CGFloat red;
         CGFloat green;
@@ -139,7 +138,6 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     if (canUseFastRenderer(buffer.data(), length)) {
         FontCascade webCoreFont(FontPlatformData(reinterpret_cast<CTFontRef>(font), [font pointSize]));
         TextRun run(StringView(buffer.data(), length));
-        run.disableRoundingHacks();
         return webCoreFont.width(run);
     }
 

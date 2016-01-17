@@ -70,7 +70,6 @@ void WebKitInitialize(void)
     // We'd rather eat this cost at startup than slow down situations that need to be responsive.
     // See <rdar://problem/6776301>.
     LoadWebLocalizedStrings();
-    [WebView _setAllowsRoundingHacks:!linkedOnOrAfterIOS5()];
     [WebView registerForMemoryNotifications];
     
     // This needs to be called before any requests are made in the process, <rdar://problem/9691871>

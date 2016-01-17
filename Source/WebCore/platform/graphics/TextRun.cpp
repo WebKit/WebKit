@@ -41,16 +41,4 @@ struct ExpectedTextRunSize {
 
 COMPILE_ASSERT(sizeof(TextRun) == sizeof(ExpectedTextRunSize), TextRun_is_not_of_expected_size);
 
-bool TextRun::s_allowsRoundingHacks = false;
-
-void TextRun::setAllowsRoundingHacks(bool allowsRoundingHacks)
-{
-    s_allowsRoundingHacks = allowsRoundingHacks;
-}
-
-bool TextRun::allowsRoundingHacks()
-{
-    return s_allowsRoundingHacks;
-}
-
 }

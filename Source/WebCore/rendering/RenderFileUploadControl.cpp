@@ -134,7 +134,6 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
         const String& displayedFilename = fileTextValue();
         const FontCascade& font = style().fontCascade();
         TextRun textRun = constructTextRun(this, font, displayedFilename, style(), AllowTrailingExpansion, RespectDirection | RespectDirectionOverride);
-        textRun.disableRoundingHacks();
 
 #if PLATFORM(IOS)
         int iconHeight = nodeHeight(uploadButton());
@@ -271,7 +270,7 @@ String RenderFileUploadControl::fileTextValue() const
     ASSERT(inputElement().files());
 #if PLATFORM(IOS)
     if (inputElement().files()->length())
-        return StringTruncator::rightTruncate(inputElement().displayString(), maxFilenameWidth(), style().fontCascade(), StringTruncator::EnableRoundingHacks);
+        return StringTruncator::rightTruncate(inputElement().displayString(), maxFilenameWidth(), style().fontCascade());
 #endif
     return theme().fileListNameForWidth(inputElement().files(), style().fontCascade(), maxFilenameWidth(), inputElement().multiple());
 }

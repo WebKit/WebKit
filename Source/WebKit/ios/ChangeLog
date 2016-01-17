@@ -1,3 +1,13 @@
+2016-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove TextRun::allowsRoundingHacks()
+        https://bugs.webkit.org/show_bug.cgi?id=153185
+
+        Reviewed by Simon Fraser.
+
+        * Misc/WebUIKitSupport.mm:
+        (WebKitInitialize): Deleted.
+
 2016-01-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r194900.
