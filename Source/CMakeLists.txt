@@ -1,8 +1,7 @@
 # -----------------------------------------------------------------------------
 # Add module directories
 # -----------------------------------------------------------------------------
-# FIXME: Port bmalloc to Windows. https://bugs.webkit.org/show_bug.cgi?id=143310
-if (NOT WIN32)
+if (NOT USE_SYSTEM_MALLOC)
     add_subdirectory(bmalloc)
 endif ()
 
@@ -33,8 +32,7 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 # -----------------------------------------------------------------------------
 # Set compiler flags for all targets
 # -----------------------------------------------------------------------------
-# FIXME: Port bmalloc to Windows. https://bugs.webkit.org/show_bug.cgi?id=143310
-if (NOT WIN32)
+if (NOT USE_SYSTEM_MALLOC)
     WEBKIT_SET_EXTRA_COMPILER_FLAGS(bmalloc ${ADDITIONAL_COMPILER_FLAGS})
 endif ()
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(WTF ${ADDITIONAL_COMPILER_FLAGS})

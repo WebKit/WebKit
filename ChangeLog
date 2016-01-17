@@ -1,3 +1,15 @@
+2016-01-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Do not build bmalloc when USE_SYSTEM_MALLOC is ON
+        https://bugs.webkit.org/show_bug.cgi?id=153190
+
+        Reviewed by Csaba Osztrogonác.
+
+        Build bmalloc when NOT USE_SYSTEM_MALLOC rather than when NOT WIN32.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/OptionsWin.cmake:
+
 2016-01-16  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         [GTK] Use -Wl,-all_load on darwin to include contents of all static archives

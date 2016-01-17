@@ -1,3 +1,14 @@
+2016-01-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Do not build bmalloc when USE_SYSTEM_MALLOC is ON
+        https://bugs.webkit.org/show_bug.cgi?id=153190
+
+        Reviewed by Csaba Osztrogonác.
+
+        Build bmalloc when NOT USE_SYSTEM_MALLOC rather than when NOT WIN32.
+
+        * wtf/CMakeLists.txt:
+
 2016-01-15  Simon Fraser  <simon.fraser@apple.com>
 
         Add kdebug_trace signposts for a few WebCore operations
