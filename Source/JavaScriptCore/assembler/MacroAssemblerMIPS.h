@@ -55,9 +55,9 @@ public:
     // For storing data loaded from the memory
     static const RegisterID dataTempRegister = MIPSRegisters::t1;
     // For storing address base
-    static const RegisterID addrTempRegister = MIPSRegisters::t2;
+    static const RegisterID addrTempRegister = MIPSRegisters::t7;
     // For storing compare result
-    static const RegisterID cmpTempRegister = MIPSRegisters::t3;
+    static const RegisterID cmpTempRegister = MIPSRegisters::t8;
 
     // FP temp register
     static const FPRegisterID fpTempRegister = MIPSRegisters::f16;

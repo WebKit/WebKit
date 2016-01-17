@@ -32,11 +32,13 @@ require 'risc'
 # $a3 => a3
 # $v0 => t0, r0
 # $v1 => t1, r1
+# $t0 =>            (scratch)
+# $t1 =>            (scratch)
 # $t2 =>         t2
 # $t3 =>         t3
 # $t4 =>         t4
 # $t5 =>         t5
-# $t6 =>            (scratch)
+# $t6 =>         t6
 # $t7 =>            (scratch)
 # $t8 =>            (scratch)
 # $t9 =>            (stores the callee of a call opcode)
@@ -92,7 +94,7 @@ class SpecialRegister < NoChildren
     end
 end
 
-MIPS_TEMP_GPRS = [SpecialRegister.new("$t6"), SpecialRegister.new("$t7"), SpecialRegister.new("$t8")]
+MIPS_TEMP_GPRS = [SpecialRegister.new("$t0"), SpecialRegister.new("$t1"), SpecialRegister.new("$t7"), SpecialRegister.new("$t8")]
 MIPS_ZERO_REG = SpecialRegister.new("$zero")
 MIPS_GP_REG = SpecialRegister.new("$gp")
 MIPS_GPSAVE_REG = SpecialRegister.new("$s4")

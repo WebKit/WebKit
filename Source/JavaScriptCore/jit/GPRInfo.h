@@ -736,7 +736,7 @@ public:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 8;
+    static const unsigned numberOfRegisters = 7;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // regT0 must be v0 for returning a 32-bit value.
@@ -749,8 +749,7 @@ public:
     static const GPRReg regT3 = MIPSRegisters::t3;
     static const GPRReg regT4 = MIPSRegisters::t4;
     static const GPRReg regT5 = MIPSRegisters::t5;
-    static const GPRReg regT6 = MIPSRegisters::t0;
-    static const GPRReg regT7 = MIPSRegisters::t1;
+    static const GPRReg regT6 = MIPSRegisters::t6;
     // These registers match the baseline JIT.
     static const GPRReg callFrameRegister = MIPSRegisters::fp;
     // These constants provide the names for the general purpose argument & return value registers.
@@ -766,7 +765,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6 };
         return registerForIndex[index];
     }
 
@@ -780,10 +779,11 @@ public:
     static unsigned toIndex(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 24);
-        static const unsigned indexForRegister[24] = {
+        ASSERT(reg < 32);
+        static const unsigned indexForRegister[32] = {
             InvalidIndex, InvalidIndex, 0, 1, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
-            6, 7, 2, 3, 4, 5, InvalidIndex, InvalidIndex,
+            InvalidIndex, InvalidIndex, 2, 3, 4, 5, 6, InvalidIndex,
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
             InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex
         };
         unsigned result = indexForRegister[reg];

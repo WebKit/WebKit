@@ -1,3 +1,30 @@
+2016-01-17  Julien Brianceau  <jbriance@cisco.com>
+
+        [mips] Fix regT2 and regT3 trampling in MacroAssembler
+        https://bugs.webkit.org/show_bug.cgi?id=153131
+
+        Mips $t2 and $t3 registers were used as temporary registers
+        in MacroAssemblerMIPS.h, whereas they are mapped to regT2
+        and regT3 in LLInt and GPRInfo.
+
+        This patch rearranges register mapping for the mips architecture:
+        - use $t0 and $t1 as temp registers in LLInt (as in MacroAssembler)
+        - use $t7 and $t8 as temp registers in MacroAssembler (as in LLInt)
+        - remove $t6 from temp registers list in LLInt
+        - update GPRInfo.h accordingly
+        - add mips macroScratchRegisters() list in RegisterSet.cpp
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerMIPS.h:
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::macroScratchRegisters):
+        (JSC::RegisterSet::calleeSaveRegisters):
+        * offlineasm/mips.rb:
+
 2016-01-16  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Arrow function should support the destructuring parameters.
