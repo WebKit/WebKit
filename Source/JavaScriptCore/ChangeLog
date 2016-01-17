@@ -1,3 +1,19 @@
+2016-01-16  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Arrow function should support the destructuring parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=146934
+
+        Reviewed by Saam Barati.
+        
+        Added support of destructuring parameters, before arrow function expect only simple parameters,
+        e.g. (), (x), (x, y) or x in assigment expressio. To support destructuring parameters added
+        additional check that check for destructuring paramters if check does not pass for simple parameters.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        * parser/Parser.h:
+
 2016-01-15  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Legalize Memory Offsets for ARM64 before lowering to Air

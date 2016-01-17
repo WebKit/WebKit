@@ -1027,41 +1027,7 @@ private:
     {
         return match(SEMICOLON) || match(COMMA) || match(CLOSEPAREN) || match(CLOSEBRACE) || match(CLOSEBRACKET) || match(EOFTOK) || m_lexer->prevTerminator();
     }
-    
-    ALWAYS_INLINE bool isArrowFunctionParamters()
-    {
-        bool isArrowFunction = false;
-        
-        if (match(EOFTOK))
-            return isArrowFunction;
-        
-        SavePoint saveArrowFunctionPoint = createSavePoint();
-        
-        if (consume(OPENPAREN)) {
-            bool isArrowFunctionParamters = true;
-            
-            while (consume(IDENT)) {
-                if (consume(COMMA)) {
-                    if (!match(IDENT)) {
-                        isArrowFunctionParamters = false;
-                        break;
-                    }
-                } else
-                    break;
-            }
-            
-            if (isArrowFunctionParamters) {
-                if (consume(CLOSEPAREN) && match(ARROWFUNCTION))
-                    isArrowFunction = true;
-            }
-        } else if (consume(IDENT) && match(ARROWFUNCTION))
-            isArrowFunction = true;
 
-        restoreSavePoint(saveArrowFunctionPoint);
-        
-        return isArrowFunction;
-    }
-    
     ALWAYS_INLINE unsigned tokenStart()
     {
         return m_token.m_location.startOffset;
@@ -1257,6 +1223,8 @@ private:
 
     enum class FunctionDefinitionType { Expression, Declaration, Method };
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, SourceParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType);
+    
+    ALWAYS_INLINE bool isArrowFunctionParameters();
     
     template <class TreeBuilder> NEVER_INLINE int parseFunctionParameters(TreeBuilder&, SourceParseMode, ParserFunctionInfo<TreeBuilder>&);
     template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::FormalParameterList createGeneratorParameters(TreeBuilder&);

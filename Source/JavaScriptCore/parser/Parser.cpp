@@ -374,6 +374,49 @@ void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, Declara
 }
 
 template <typename LexerType>
+bool Parser<LexerType>::isArrowFunctionParameters()
+{
+    bool isArrowFunction = false;
+
+    if (match(EOFTOK))
+        return false;
+    
+    bool isOpenParen = match(OPENPAREN);
+    bool isIdent = match(IDENT);
+    
+    if (!isOpenParen && !isIdent)
+        return false;
+
+    SavePoint saveArrowFunctionPoint = createSavePoint();
+        
+    if (isIdent) {
+        next();
+        isArrowFunction = match(ARROWFUNCTION);
+    } else {
+        RELEASE_ASSERT(isOpenParen);
+        next();
+        if (match(CLOSEPAREN)) {
+            next();
+            isArrowFunction = match(ARROWFUNCTION);
+        } else {
+            SyntaxChecker syntaxChecker(const_cast<VM*>(m_vm), m_lexer.get());
+            // We make fake scope, otherwise parseFormalParameters will add variable to current scope that lead to errors
+            AutoPopScopeRef fakeScope(this, pushScope());
+            fakeScope->setSourceParseMode(SourceParseMode::ArrowFunctionMode);
+                
+            unsigned parametersCount = 0;
+            isArrowFunction = parseFormalParameters(syntaxChecker, syntaxChecker.createFormalParameterList(), parametersCount) && consume(CLOSEPAREN) && match(ARROWFUNCTION);
+                
+            popScope(fakeScope, syntaxChecker.NeedsFreeVariableInfo);
+        }
+    }
+        
+    restoreSavePoint(saveArrowFunctionPoint);
+        
+    return isArrowFunction;
+}
+
+template <typename LexerType>
 bool Parser<LexerType>::allowAutomaticSemicolon()
 {
     return match(CLOSEBRACE) || match(EOFTOK) || m_lexer->prevTerminator();
@@ -2887,7 +2930,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
 #endif
 
 #if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
-    if (isArrowFunctionParamters())
+    if (isArrowFunctionParameters())
         return parseArrowFunctionExpression(context);
 #endif
     

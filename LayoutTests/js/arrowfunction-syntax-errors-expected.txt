@@ -123,6 +123,14 @@ PASS var af2=(y)
 =>y+1 threw exception SyntaxError: Unexpected token '=>'.
 PASS var af3=(x, y)
 =>y+1 threw exception SyntaxError: Unexpected token '=>'.
+PASS ([a, b] => a + b)(["a_", "b_"]) threw exception SyntaxError: Unexpected token '=>'. Expected ')' to end a compound expression..
+PASS ({a, b} => a + b)({a:"a_", b:"b_"}) threw exception SyntaxError: Unexpected token '=>'. Expected ')' to end a compound expression..
+PASS ({c:a,d:b} => a + b)({c:"a_", d:"b_"}) threw exception SyntaxError: Unexpected token '=>'. Expected ')' to end a compound expression..
+PASS ({c:b,d:a} => a + b)({c:"a_", d:"b_"}) threw exception SyntaxError: Unexpected token '=>'. Expected ')' to end a compound expression..
+PASS var arr1 = [a, b] => a + b; threw exception SyntaxError: Unexpected token '=>'. Expected ';' after variable declaration..
+PASS var arr2 = {a, b} => a + b; threw exception SyntaxError: Unexpected token '=>'. Expected ';' after variable declaration..
+PASS var arr3 = {c:a,d:b} => a + b; threw exception SyntaxError: Unexpected token '=>'. Expected ';' after variable declaration..
+PASS var arr3 = {c:b,d:a} => a + b; threw exception SyntaxError: Unexpected token '=>'. Expected ';' after variable declaration..
 PASS successfullyParsed is true
 
 TEST COMPLETE

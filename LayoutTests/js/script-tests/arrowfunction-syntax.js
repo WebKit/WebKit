@@ -79,4 +79,37 @@ shouldBe('(function funcSelfExecAE3(value) { var f = (x) => { x++; return x + 1;
 
 shouldBe('(function funcSelfExecAE4(value) { var f = (x, y) => { x++; return x + y; }; return f(value, value * 2);})(123);', '370');
 
+shouldBe('(([a, b]) => a + b)(["a_", "b_"])', '"a_b_"');
+shouldBe('(({a, b}) => a + b)({a:"a_", b:"b_"})', '"a_b_"');
+shouldBe('(({c:a, d:b}) => a + b)({c:"a_", d:"b_"})', '"a_b_"');
+shouldBe('(({c:b, d:a}) => a + b)({c:"a_", d:"b_"})', '"b_a_"');
+shouldBe('((x, y, {c:b, d:a}) => x + y + a + b)("x_", "y_", {c:"a_", d:"b_"})', '"x_y_b_a_"');
+shouldBe('(({c:b, d:a}, x, y) => x + y + a + b)({c:"a_", d:"b_"}, "x_", "y_")', '"x_y_b_a_"');
+shouldBe('((x, y, {c:b, d:a}, [e, f]) => x + y + a + b + e + f)("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"])', '"x_y_b_a_e_f_"');
+shouldBe('((x, y, {c:b, d:a}, [e, f], ...theArgs) => x + y + a + b + e + f + theArgs[0] + theArgs[1])("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"], "g_", "h_")', '"x_y_b_a_e_f_g_h_"');
+
+var arr1 = ([a, b]) => a + b;
+shouldBe('arr1(["a_", "b_"])', '"a_b_"');
+
+var arr2 = ({a, b}) => a + b;
+shouldBe('arr2({a:"a_", b:"b_"})', '"a_b_"');
+
+var arr3 = ({c:a, d:b}) => a + b;
+shouldBe('arr3({c:"a_", d:"b_"})', '"a_b_"');
+
+var arr4 = ({c:b, d:a}) => a + b;
+shouldBe('arr4({c:"a_", d:"b_"})', '"b_a_"');
+
+var arr5 = (x, y, {c:b, d:a}) => x + y + a + b;
+shouldBe('arr5("x_", "y_", {c:"a_", d:"b_"})', '"x_y_b_a_"');
+
+var arr6 = ({c:b, d:a}, x, y) => x + y + a + b;
+shouldBe('arr6({c:"a_", d:"b_"}, "x_", "y_")', '"x_y_b_a_"');
+
+var arr7 = (x, y, {c:b, d:a}, [e, f]) => x + y + a + b + e + f;
+shouldBe('arr7("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"])', '"x_y_b_a_e_f_"');
+
+var arr8 = (x, y, {c:b, d:a}, [e, f], ...theArgs) => x + y + a + b + e + f + theArgs[0] + theArgs[1];
+shouldBe('arr8("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"], "g_", "h_")', '"x_y_b_a_e_f_g_h_"');
+
 var successfullyParsed = true;

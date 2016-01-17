@@ -38,4 +38,14 @@ shouldThrow("var af1=y\n=>y+1");
 shouldThrow("var af2=(y)\n=>y+1");
 shouldThrow("var af3=(x, y)\n=>y+1");
 
+shouldThrow('([a, b] => a + b)(["a_", "b_"])' );
+shouldThrow('({a, b} => a + b)({a:"a_", b:"b_"})');
+shouldThrow('({c:a,d:b} => a + b)({c:"a_", d:"b_"})');
+shouldThrow('({c:b,d:a} => a + b)({c:"a_", d:"b_"})');
+
+shouldThrow('var arr1 = [a, b] => a + b;');
+shouldThrow('var arr2 = {a, b} => a + b;');
+shouldThrow('var arr3 = {c:a,d:b} => a + b;');
+shouldThrow('var arr3 = {c:b,d:a} => a + b;');
+
 var successfullyParsed = true;
