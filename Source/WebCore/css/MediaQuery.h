@@ -30,6 +30,7 @@
 #define MediaQuery_h
 
 #include <memory>
+#include <wtf/BumpArena.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -38,7 +39,7 @@ namespace WebCore {
 class MediaQueryExp;
 
 class MediaQuery {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_BUMPARENA_ALLOCATED;
 public:
     enum Restrictor {
         Only, Not, None

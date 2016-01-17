@@ -1,3 +1,16 @@
+2016-01-16  Andreas Kling  <akling@apple.com>
+
+        Allocate style sheet media queries in BumpArena.
+        <https://webkit.org/b/153188>
+
+        Reviewed by Antti Koivisto.
+
+        Teach the CSS parser to allocate MediaQuery and MediaQueryExp from BumpArena as well.
+
+        * css/CSSGrammar.y.in:
+        * css/MediaQuery.h:
+        * css/MediaQueryExp.h:
+
 2016-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add a couple comments to ScrollbarThemeGtk

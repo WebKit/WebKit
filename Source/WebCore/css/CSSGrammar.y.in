@@ -581,7 +581,7 @@ source_size_list:
 
 maybe_source_media_query_exp:
     /* empty */ {
-        $$ = new MediaQueryExp;
+        $$ = new (parser->arena()) MediaQueryExp;
     }
     | base_media_query_exp maybe_space;
 
@@ -590,7 +590,7 @@ source_size_length: unary_term | calc_function;
 base_media_query_exp: '(' maybe_space IDENT maybe_space maybe_media_value ')' {
         std::unique_ptr<CSSParserValueList> mediaValue($5);
         $3.lower();
-        $$ = new MediaQueryExp($3, mediaValue.get());
+        $$ = new (parser->arena()) MediaQueryExp($3, mediaValue.get());
     }
     ;
 
@@ -600,7 +600,7 @@ media_query_exp:
             // If restrictor is specified, media query expression is invalid.
             // Create empty media query expression and continue parsing media query.
             delete $3;
-            $$ = new MediaQueryExp;
+            $$ = new (parser->arena()) MediaQueryExp;
         } else
             $$ = $3;
     }
@@ -640,12 +640,12 @@ maybe_media_restrictor:
 
 media_query:
     media_query_exp_list {
-        $$ = new MediaQuery(MediaQuery::None, "all", std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($1));
+        $$ = new (parser->arena()) MediaQuery(MediaQuery::None, "all", std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($1));
     }
     |
     maybe_media_restrictor maybe_space IDENT maybe_space maybe_and_media_query_exp_list {
         $3.lower();
-        $$ = new MediaQuery($1, $3, std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($5));
+        $$ = new (parser->arena()) MediaQuery($1, $3, std::unique_ptr<Vector<std::unique_ptr<MediaQueryExp>>>($5));
     }
     ;
 
