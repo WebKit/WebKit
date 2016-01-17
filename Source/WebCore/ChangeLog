@@ -1,3 +1,13 @@
+2016-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add a couple comments to ScrollbarThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=153184
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::paint):
+
 2016-01-16  Andreas Kling  <akling@apple.com>
 
         Give RuleSet a BumpArena and start using it for RuleDataVectors.

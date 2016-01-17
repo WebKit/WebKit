@@ -172,6 +172,9 @@ static inline const char* orientationStyleClass(ScrollbarOrientation orientation
     return orientation == VerticalScrollbar ? "vertical" : "horizontal";
 }
 
+// The GtkStyleContext returned by this function is cached by ScrollbarThemeGtk::paint for the
+// duration of its scope, so a different GtkStyleContext with updated theme properties will be
+// used for each call to paint.
 GRefPtr<GtkStyleContext> ScrollbarThemeGtk::getOrCreateStyleContext(ScrollbarOrientation orientation)
 {
     if (m_cachedStyleContext)
@@ -352,6 +355,7 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     if (graphicsContext.paintingDisabled())
         return false;
 
+    // Cache a new GtkStyleContext for the duration of this scope.
     TemporaryChange<GRefPtr<GtkStyleContext>> tempStyleContext(m_cachedStyleContext, getOrCreateStyleContext(scrollbar.orientation()));
 
     // Create the ScrollbarControlPartMask based on the damageRect
