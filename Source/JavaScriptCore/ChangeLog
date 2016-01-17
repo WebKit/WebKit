@@ -1,3 +1,18 @@
+2016-01-17  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        Ensure that CF_AVAILABLE is undefined when building webkit-gtk
+
+        https://bugs.webkit.org/show_bug.cgi?id=152720
+
+        This change ensures that CF_AVAILABLE is correctly a no-op to
+        address build failure that was observed when building on older
+        versions of OSX.  Previously, CF_AVAILABLE may have been unexpectedly
+        re-defined to the system header value based on include-order.
+
+        Reviewed by Michael Catanzaro.
+
+        * API/WebKitAvailability.h:
+
 2016-01-17  Julien Brianceau  <jbriance@cisco.com>
 
         [mips] Fix regT2 and regT3 trampling in MacroAssembler

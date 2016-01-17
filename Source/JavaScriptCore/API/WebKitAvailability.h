@@ -26,7 +26,7 @@
 #ifndef __WebKitAvailability__
 #define __WebKitAvailability__
 
-#if defined(__APPLE__) && !defined(BUILDING_GTK__)
+#if defined(__APPLE__)
 
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CoreFoundation.h>
@@ -63,6 +63,11 @@
 #endif
 
 #endif /* __MAC_OS_X_VERSION_MIN_REQUIRED <= 101100 */
+
+#if defined(BUILDING_GTK__)
+#undef CF_AVAILABLE
+#define CF_AVAILABLE(_mac, _ios)
+#endif
 
 #else
 #define CF_AVAILABLE(_mac, _ios)
