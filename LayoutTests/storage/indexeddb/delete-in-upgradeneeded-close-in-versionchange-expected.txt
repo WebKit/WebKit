@@ -5,7 +5,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "delete-in-upgradeneeded-close-in-versionchange.html"
 indexedDB.deleteDatabase(dbname)
 
 initiallyDeleted():

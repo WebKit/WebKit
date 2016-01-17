@@ -9,7 +9,6 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 Verify that each object store has an independent key generator.
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "key-generator.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 store1 = db.createObjectStore('store1', { autoIncrement: true })
@@ -31,7 +30,6 @@ db.close()
 Verify that the key generator is not updated if insertion fails
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "key-generator.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 store = db.createObjectStore('store1', { autoIncrement: true })
@@ -48,7 +46,6 @@ db.close()
 Verify that the key generator is not affected by item removal (delete or clear).
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "key-generator.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 store = db.createObjectStore('store1', { autoIncrement: true })
@@ -72,7 +69,6 @@ db.close()
 Verify that the key generator is only set if and only if a numeric key greater than the last generated key is used.
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "key-generator.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 store = db.createObjectStore('store1', { autoIncrement: true })
@@ -120,7 +116,6 @@ db.close()
 Verify that aborting a transaction resets the key generator state.
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "key-generator.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 trans1 = db.transaction(['store'], 'readwrite')
@@ -147,7 +142,6 @@ db.close()
 Verify that keys above 2^53 result in errors.
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "key-generator.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 trans1 = db.transaction(['store'], 'readwrite')
@@ -170,7 +164,6 @@ db.close()
 Ensure key generator state is maintained across connections:
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "key-generator.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 db.createObjectStore('store', {autoIncrement: true})

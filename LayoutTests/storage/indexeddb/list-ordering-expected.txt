@@ -5,7 +5,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "list-ordering.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 check that the expected order is the canonical JS sort order:

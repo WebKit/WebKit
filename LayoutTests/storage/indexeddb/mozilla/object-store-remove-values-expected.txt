@@ -33,7 +33,6 @@ i = 0;
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "object-store-remove-values.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 objectStore = db.createObjectStore(test.name, { keyPath: test.keyName, autoIncrement: test.autoIncrement });
@@ -46,7 +45,6 @@ request = objectStore.get(id);
 PASS event.target.result === undefined is true
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "object-store-remove-values.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 objectStore = db.createObjectStore(test.name, { keyPath: test.keyName, autoIncrement: test.autoIncrement });
@@ -59,7 +57,6 @@ request = objectStore.get(id);
 PASS event.target.result === undefined is true
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "object-store-remove-values.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 objectStore = db.createObjectStore(test.name, { autoIncrement: test.autoIncrement });
@@ -72,7 +69,6 @@ request = objectStore.get(id);
 PASS event.target.result === undefined is true
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "object-store-remove-values.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 objectStore = db.createObjectStore(test.name, { autoIncrement: test.autoIncrement });

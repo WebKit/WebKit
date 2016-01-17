@@ -3,7 +3,6 @@ Ensure DataCloneError is consistently thrown by IndexedDB methods
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-dbname = "clone-exception.html"
 
 doFirstOpen():
 indexedDB.open(dbname + '1')

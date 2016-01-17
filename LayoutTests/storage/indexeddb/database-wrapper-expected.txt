@@ -3,7 +3,6 @@ Ensure IDBDatabase wrapper isn't prematurely collected.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-dbname = "database-wrapper.html"
 indexedDB.deleteDatabase(dbname)
 
 openDB():

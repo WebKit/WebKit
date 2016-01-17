@@ -19,7 +19,6 @@ i = 0;
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "cursor-update-updates-indexes.html"
 indexedDB.deleteDatabase(dbname)
 info = objectStoreInfo[i];
 indexedDB.open(dbname)
@@ -47,7 +46,6 @@ i++;
 db.close()
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "cursor-update-updates-indexes.html"
 indexedDB.deleteDatabase(dbname)
 info = objectStoreInfo[i];
 indexedDB.open(dbname)
@@ -75,7 +73,6 @@ i++;
 db.close()
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "cursor-update-updates-indexes.html"
 indexedDB.deleteDatabase(dbname)
 info = objectStoreInfo[i];
 indexedDB.open(dbname)
@@ -103,7 +100,6 @@ i++;
 db.close()
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "cursor-update-updates-indexes.html"
 indexedDB.deleteDatabase(dbname)
 info = objectStoreInfo[i];
 indexedDB.open(dbname)

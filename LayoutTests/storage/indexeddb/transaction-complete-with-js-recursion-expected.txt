@@ -5,7 +5,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = "transaction-complete-with-js-recursion.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
 pendingTransaction = db.transaction(['objectStore'], 'readwrite')
