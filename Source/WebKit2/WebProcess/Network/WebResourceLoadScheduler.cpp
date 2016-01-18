@@ -155,6 +155,16 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     }
 #endif
 
+#if USE(SOUP)
+    // For apps that call g_resource_load in a web extension.
+    // https://blogs.gnome.org/alexl/2012/01/26/resources-in-glib/
+    if (resourceLoader->request().url().protocolIs("resource")) {
+        LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be handled as a GResource.", resourceLoader->url().string().utf8().data());
+        startLocalLoad(*resourceLoader);
+        return;
+    }
+#endif
+
     LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %u", resourceLoader->url().string().utf8().data(), resourceLoader->request().priority());
 
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent;
