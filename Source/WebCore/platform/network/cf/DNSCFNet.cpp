@@ -48,16 +48,13 @@
 
 namespace WebCore {
 
-bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
+void DNSResolveQueue::updateIsUsingProxy()
 {
-    // Don't do DNS prefetch if proxies are involved. For many proxy types, the user agent is never exposed
-    // to the IP address during normal operation. Querying an internal DNS server may not help performance,
-    // as it doesn't necessarily look up the actual external IP. Also, if DNS returns a fake internal address,
-    // local caches may keep it even after re-connecting to another network.
-
     RetainPtr<CFDictionaryRef> proxySettings = adoptCF(CFNetworkCopySystemProxySettings());
-    if (!proxySettings)
-        return false;
+    if (!proxySettings) {
+        m_isUsingProxy = false;
+        return;
+    }
 
     RetainPtr<CFURLRef> httpCFURL = URL(ParsedURLString, "http://example.com/").createCFURL();
     RetainPtr<CFURLRef> httpsCFURL = URL(ParsedURLString, "https://example.com/").createCFURL();
@@ -72,7 +69,7 @@ bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
     if (httpsProxyCount == 1 && CFEqual(CFDictionaryGetValue(static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(httpsProxyArray.get(), 0)), kCFProxyTypeKey), kCFProxyTypeNone))
         httpsProxyCount = 0;
 
-    return httpProxyCount || httpsProxyCount;
+    m_isUsingProxy = httpProxyCount || httpsProxyCount;
 }
 
 static void clientCallback(CFHostRef theHost, CFHostInfoType, const CFStreamError*, void*)

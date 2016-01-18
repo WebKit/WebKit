@@ -52,7 +52,7 @@ private:
 
     bool isUsingProxy();
 
-    bool platformProxyIsEnabledInSystemPreferences();
+    void updateIsUsingProxy();
     void platformResolve(const String&);
 
     void timerFired();
@@ -61,7 +61,7 @@ private:
 
     HashSet<String> m_names;
     std::atomic<int> m_requestsInFlight;
-    bool m_cachedProxyEnabledStatus;
+    bool m_isUsingProxy;
     double m_lastProxyEnabledStatusCheckTime;
 };
 
