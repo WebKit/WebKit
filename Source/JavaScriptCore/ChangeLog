@@ -1,3 +1,15 @@
+2016-01-07  Julien Brianceau  <jbriance@cisco.com>
+
+        [mips] Add two missing abortWithReason implementations
+        https://bugs.webkit.org/show_bug.cgi?id=136753
+
+        Reviewed by Benjamin Poulain.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::memoryFence):
+        (JSC::MacroAssemblerMIPS::abortWithReason):
+        (JSC::MacroAssemblerMIPS::readCallTarget):
+
 2016-01-06  Julien Brianceau  <jbriance@cisco.com>
 
         [mips] Fix branchTruncateDoubleToUint32 implementation in macro assembler
