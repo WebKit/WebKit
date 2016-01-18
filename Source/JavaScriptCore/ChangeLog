@@ -1,5 +1,15 @@
 2016-01-08  Konstantin Tokarev  <annulen@yandex.ru>
 
+        [mips] Fixed unused parameter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=152885
+
+        Reviewed by Mark Lam.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
+2016-01-08  Konstantin Tokarev  <annulen@yandex.ru>
+
         [mips] Max value of immediate arg of logical ops is 0xffff
         https://bugs.webkit.org/show_bug.cgi?id=152884
 
