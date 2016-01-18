@@ -61,7 +61,7 @@ void JSBuiltinInternalFunctions::visit(JSC::SlotVisitor& visitor)
     m_streamInternalsFunctions.visit(visitor);
     m_writableStreamInternalsFunctions.visit(visitor);
 #endif
-#ifndef SKIP_UNUSED_PARAM
+#if !ENABLE(STREAMS_API) && !ENABLE(MEDIA_STREAM)
     UNUSED_PARAM(visitor);
 #endif
 }
@@ -109,7 +109,7 @@ void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject, VM&
 
     globalObject.addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
 #endif
-#ifndef SKIP_UNUSED_PARAM
+#if !ENABLE(STREAMS_API) && !ENABLE(MEDIA_STREAM)
     UNUSED_PARAM(globalObject);
     UNUSED_PARAM(vm);
 #endif

@@ -1,3 +1,15 @@
+2016-01-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove the SKIP_UNUSED_PARAM define
+        https://bugs.webkit.org/show_bug.cgi?id=153129
+
+        Reviewed by Michael Catanzaro.
+
+        * bindings/js/WebCoreJSBuiltinInternals.cpp:
+        (WebCore::JSBuiltinInternalFunctions::visit):
+        (WebCore::JSBuiltinInternalFunctions::initialize):
+        * bindings/js/WebCoreJSBuiltinInternals.h:
+
 2016-01-17  Simon Fraser  <simon.fraser@apple.com>
 
         More displaylist tests, and minor cleanup

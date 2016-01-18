@@ -37,10 +37,6 @@
 #include "WritableStreamInternalsBuiltins.h"
 #endif
 
-#if ENABLE(STREAMS_API) || ENABLE(MEDIA_STREAM)
-#define SKIP_UNUSED_PARAM
-#endif
-
 namespace WebCore {
 
 class JSDOMGlobalObject;
