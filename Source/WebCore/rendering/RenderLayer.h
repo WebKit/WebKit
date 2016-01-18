@@ -404,7 +404,7 @@ public:
     RenderLayer* enclosingAncestorForPosition(EPosition) const;
 
     // Returns the nearest enclosing layer that is scrollable.
-    RenderLayer* enclosingScrollableLayer(LayoutRect* = nullptr) const;
+    RenderLayer* enclosingScrollableLayer() const;
 
     // The layer relative to which clipping rects for this layer are computed.
     RenderLayer* clippingRootForPainting() const;
@@ -897,6 +897,8 @@ private:
     IntSize scrollbarOffset(const Scrollbar*) const;
     
     void updateScrollableAreaSet(bool hasOverflow);
+    
+    bool allowsCurrentScroll() const;
 
     void dirtyAncestorChainVisibleDescendantStatus();
     void setAncestorChainHasVisibleDescendant();

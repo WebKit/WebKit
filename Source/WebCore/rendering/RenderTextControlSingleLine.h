@@ -105,6 +105,7 @@ public:
 private:
     virtual bool hasLineIfEmpty() const override { return true; }
     virtual bool isTextControlInnerBlock() const override { return true; }
+    virtual bool canBeProgramaticallyScrolled() const override { return true; }
 };
 
 } // namespace WebCore

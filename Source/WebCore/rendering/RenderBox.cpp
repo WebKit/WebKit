@@ -915,6 +915,7 @@ bool RenderBox::isScrollableOrRubberbandableBox() const
     return canBeScrolledAndHasScrollableArea();
 }
 
+// FIXME: This is badly named. overflow:hidden can be programmatically scrolled, yet this returns false in that case.
 bool RenderBox::canBeProgramaticallyScrolled() const
 {
     if (isRenderView())
