@@ -1,5 +1,17 @@
 2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
 
+        [mips] Replaced subi with addi in getHostCallReturnValue
+        https://bugs.webkit.org/show_bug.cgi?id=152841
+
+        Reviewed by Michael Saboff.
+
+        MIPS architecture does not have subi instruction, addi with negative
+        number should be used instead.
+
+        * jit/JITOperations.cpp:
+
+2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
+
         [mips] GPRInfo::toArgumentRegister missing
         https://bugs.webkit.org/show_bug.cgi?id=152838
 
