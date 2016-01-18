@@ -160,7 +160,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.hasPseudoStyle(FIRST_LINE) || style.hasPseudoStyle(FIRST_LETTER))
         return false;
-    else if (flow.isAnonymous() && flow.firstLineBlock())
+    else if (flow.firstLineBlock())
         return false;
     if (style.hasTextCombine())
         return false;
