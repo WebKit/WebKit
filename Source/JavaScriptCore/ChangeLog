@@ -1,3 +1,38 @@
+2016-01-18  Saam barati  <sbarati@apple.com>
+
+        FTL doesn't do proper spilling for exception handling when GetById/Snippets go to slow path
+        https://bugs.webkit.org/show_bug.cgi?id=153186
+
+        Reviewed by Michael Saboff.
+
+        Michael was investigating a bug he found while doing the new JSC calling 
+        convention work and it turns out to be a latent bug in FTL try/catch machinery.
+        After I looked at the code again, I realized that what I had previously
+        written is wrong in a subtle way. The FTL callOperation machinery will remove
+        its result register from the set of registers it needs to spill. This is not
+        correct when we have try/catch. We may want to do value recovery on
+        the value that the result register is prior to the call after the call
+        throws an exception. The case that we were solving before was when the 
+        resultRegister == baseRegister in a GetById, or left/rightRegister == resultRegister in a Snippet.
+        This code is correct in wanting to spill in that case, even though it might spill
+        when we don't need it to (i.e the result is not needed for value recovery). Once I
+        investigated this bug further, I realized that the previous rule is just a
+        partial subset of the rule that says we should spill anytime the result is
+        a register we might do value recovery on. This patch implements the rule that
+        says we always want to spill the result when we will do value recovery on it 
+        if an exception is thrown.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * tests/stress/ftl-try-catch-getter-throw-interesting-value-recovery.js: Added.
+        (assert):
+        (random):
+        (identity):
+        (let.o2.get f):
+        (let.o3.get f):
+        (foo):
+        (i.else):
+
 2016-01-18  Konstantin Tokarev  <annulen@yandex.ru>
 
         [MIPS] LLInt: fix calculation of Global Offset Table
