@@ -1,3 +1,13 @@
+2016-01-07  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [mips] GPRInfo::toArgumentRegister missing
+        https://bugs.webkit.org/show_bug.cgi?id=152838
+
+        Reviewed by Michael Saboff.
+
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toArgumentRegister):
+
 2016-01-07  Julien Brianceau  <jbriance@cisco.com>
 
         [mips] Add two missing abortWithReason implementations
