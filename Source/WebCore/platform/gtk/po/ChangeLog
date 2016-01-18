@@ -1,3 +1,12 @@
+2016-01-09  Muhammet Kara  <muhammetk@gmail.com>
+
+        [l10n] Updated Turkish translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=152948
+
+        "Reviewed" by Michael Catanzaro.
+
+        * tr.po:
+
 2015-12-20  Bernd Homuth  <dev@hmt.im>
 
         German translation update

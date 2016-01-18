@@ -6,14 +6,14 @@
 # Sabri Ünal <yakushabb@gmail.com>, 2014.
 # Furkan Usta <furkan.usta@ug.bilkent.edu.tr>, 2015.
 # Gökhan Gurbetoğlu <ggurbet@gmail.com>, 2014, 2015.
-# Muhammet Kara <muhammetk@gmail.com>, 2014, 2015.
+# Muhammet Kara <muhammetk@gmail.com>, 2014, 2015, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org\n"
-"POT-Creation-Date: 2015-08-23 00:17+0000\n"
-"PO-Revision-Date: 2015-08-23 03:32+0300\n"
+"POT-Creation-Date: 2015-12-09 15:06+0000\n"
+"PO-Revision-Date: 2016-01-09 22:26+0200\n"
 "Last-Translator: Muhammet Kara <muhammetk@gmail.com>\n"
 "Language-Team: Türkçe <gnome-turk@gnome.org>\n"
 "Language: tr\n"
@@ -31,35 +31,39 @@ msgstr "Yükleme isteği iptal edildi"
 msgid "Not allowed to use restricted network port"
 msgstr "Sınırlı ağ bağlantı noktası kullanmaya izin verilmiyor"
 
-#: ../ErrorsGtk.cpp:45
+#: ../ErrorsGtk.cpp:44
+msgid "Blocked by content blocker"
+msgstr "İçerik engelleyici tarafından engellendi"
+
+#: ../ErrorsGtk.cpp:50
 msgid "URL cannot be shown"
 msgstr "URL gösterilemiyor"
 
-#: ../ErrorsGtk.cpp:51
+#: ../ErrorsGtk.cpp:56
 msgid "Frame load was interrupted"
 msgstr "Çerçeve yükleme kesintiye uğradı"
 
-#: ../ErrorsGtk.cpp:57
+#: ../ErrorsGtk.cpp:62
 msgid "Content with the specified MIME type cannot be shown"
 msgstr "Belirtilen MIME türündeki içerik gösterilemiyor"
 
-#: ../ErrorsGtk.cpp:63
+#: ../ErrorsGtk.cpp:68
 msgid "File does not exist"
 msgstr "Dosya mevcut değil"
 
-#: ../ErrorsGtk.cpp:69
+#: ../ErrorsGtk.cpp:74
 msgid "Plugin will handle load"
 msgstr "Yükleme işini eklenti halledecek"
 
-#: ../ErrorsGtk.cpp:81
+#: ../ErrorsGtk.cpp:86
 msgid "User cancelled the download"
 msgstr "Kullanıcı indirmeyi iptal etti"
 
-#: ../ErrorsGtk.cpp:97
+#: ../ErrorsGtk.cpp:102
 msgid "Printer not found"
 msgstr "Yazıcı bulunamadı"
 
-#: ../ErrorsGtk.cpp:102
+#: ../ErrorsGtk.cpp:107
 msgid "Invalid page range"
 msgstr "Geçersiz sayfa aralığı"
 
@@ -363,8 +367,7 @@ msgstr "Eksik Eklenti"
 msgid "Plug-in Failure"
 msgstr "Eklenti Hatası"
 
-#. FIXME: If this file gets localized, this should really be localized as one
-#. string with a wildcard for the number.
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
 #: ../LocalizedStringsGtk.cpp:530
 msgid " files"
 msgstr "dosya"
@@ -615,7 +618,7 @@ msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "Görüntüsü alınan bir eklenti üzerinde gösterilecek etiket alt başlığı"
 
-#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:99
+#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:100
 #, c-format
 msgid ""
 "Cannot determine destination URI for download with suggested filename %s"
@@ -640,8 +643,7 @@ msgstr "_Kimlik Doğrulama"
 msgid "Authentication required by %s:%i"
 msgstr "%s:%i tarafından kaynak doğrulama isteniyor"
 
-#. Label on the HTTP authentication dialog. %s is a (probably English) message
-#. from the website.
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:131
 #, c-format
 msgid "The site says: “%s”"
@@ -1337,14 +1339,14 @@ msgstr "Dosya adreslerinden (URL) dosya erişimine izin ver"
 msgid "Whether file access is allowed from file URLs."
 msgstr "Dosya adreslerinden (URL) dosya erişimine izin verilip verilmeyeceği."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:913
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:933
 msgid "URI"
 msgstr "URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:97
 msgid "The URI to which the request will be made."
 msgstr "İsteğin yapılacağı URI."
 
@@ -1428,31 +1430,47 @@ msgstr "Kaynağın geçerli etkin adresi (URI)"
 msgid "The response of the resource"
 msgstr "Kaynak yanıtı"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1141
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1167
 msgid "Website running in fullscreen mode"
 msgstr "Tam ekran kipinde çalışan web sitesi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:560
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:369
+msgid "Are you sure you want to leave this page?"
+msgstr "Bu sayfadan ayrılmak istediğinizden emin misiniz?"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:370
+msgid "Stay on Page"
+msgstr "Sayfada Kal"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:370
+msgid "Leave Page"
+msgstr "Sayfadan Ayrıl"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:573
 msgid "Select Files"
 msgstr "Dosyaları Seç"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:560
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:573
 msgid "Select File"
 msgstr "Dosya Seç"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:803
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:635
+msgid "Acknowledge"
+msgstr "Onayla"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:823
 msgid "Web Context"
 msgstr "Web Bağlamı"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:804
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:824
 msgid "The web context for the view"
 msgstr "Görünüme ait web bağlamı"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:821
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:841
 msgid "Related WebView"
 msgstr "İlişkili WebView"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:822
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:842
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -1460,83 +1478,83 @@ msgstr ""
 "Aynı web sürecini paylaşmak için görüntü oluşturulurken kullanılan, ilişkili "
 "WebKitWebView"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:838
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:858
 msgid "WebView settings"
 msgstr "WebView ayarları"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:839
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:859
 msgid "The WebKitSettings of the view"
 msgstr "Görünüme ait WebKitSettings"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:855
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:875
 msgid "WebView user content manager"
 msgstr "WebView kullanıcı içerik yöneticisi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:856
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:876
 msgid "The WebKitUserContentManager of the view"
 msgstr "Görünüme ait WebKitUserContentManager"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:869
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:889
 msgid "Title"
 msgstr "Başlık"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:870
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:890
 msgid "Main frame document title"
 msgstr "Ana çerçeve belge başlığı"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:888
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:908
 msgid "Estimated Load Progress"
 msgstr "Tahmini Yükleme İlerlemesi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:889
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:909
 msgid "An estimate of the percent completion for a document load"
 msgstr "Bir belge yüklemesinin tahmini tamamlanma yüzdesi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:901
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:921
 msgid "Favicon"
 msgstr "Site Simgesi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:902
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:922
 msgid "The favicon associated to the view, if any"
 msgstr "Eğer varsa, görünümle ilişkilendirilmiş site simgesi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:914
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:934
 msgid "The current active URI of the view"
 msgstr "Görünümün geçerli aktif URI adresi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:929
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:949
 msgid "Zoom level"
 msgstr "Yakınlaştırma düzeyi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:930
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:950
 msgid "The zoom level of the view content"
 msgstr "Görünüm içeriğinin yakınlaştırma düzeyi"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:949
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:969
 msgid "Is Loading"
 msgstr "Yükleniyor"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:950
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:970
 msgid "Whether the view is loading a page"
 msgstr "Görünümün bir sayfa yüklemekte olması"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:970
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:990
 msgid "Whether the view is playing audio"
 msgstr "Görünümün bir ses dosyasını yürütmekte olması"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:987
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:1007
 msgid "Editable"
 msgstr "Düzenlenebilir"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:988
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:1008
 msgid "Whether the content can be modified by the user."
 msgstr "İçeriğin kullanıcı tarafından değiştirilip değiştirilemeyeceği."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3026
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3031
 msgid "An exception was raised in JavaScript"
 msgstr "JavaScript'te bir istisna oluştu"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3483
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3488
 msgid "There was an error creating the snapshot"
 msgstr "Anlık görüntü oluşturulurken bir hata oluştu"
 
@@ -1604,8 +1622,8 @@ msgstr "Tam Ekran"
 msgid "Whether window will be displayed fullscreen."
 msgstr "Pencerenin tam ekran görüntülenip görüntülenmeyeceği."
 
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:173
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:178
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:181
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:179
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:184
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:187
 msgid "Web Inspector"
 msgstr "Web Denetçisi"
