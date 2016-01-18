@@ -1,5 +1,15 @@
 2016-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
+        REGRESSION(r194601): Fix the jsc timeout option of jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=153204
+
+        Reviewed by Michael Catanzaro.
+
+        * jsc.cpp:
+        (main):
+
+2016-01-18  Csaba Osztrogonác  <ossy@webkit.org>
+
         [cmake] Add testair to the build system
         https://bugs.webkit.org/show_bug.cgi?id=153126
 
