@@ -27,6 +27,8 @@
 #ifndef WebCoreJSBuiltinInternals_h
 #define WebCoreJSBuiltinInternals_h
 
+#include <runtime/VM.h>
+
 #if ENABLE(MEDIA_STREAM)
 #include "RTCPeerConnectionInternalsBuiltins.h"
 #endif
