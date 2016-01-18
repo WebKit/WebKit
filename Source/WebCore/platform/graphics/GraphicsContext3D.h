@@ -504,6 +504,7 @@ public:
         FLOAT_MAT4x3 = 0x8B6A,
         SRGB = 0x8C40,
         SRGB8 = 0x8C41,
+        SRGB_ALPHA = 0x8C42,
         SRGB8_ALPHA8 = 0x8C43,
         COMPARE_REF_TO_TEXTURE = 0x884E,
         RGBA32F = 0x8814,
