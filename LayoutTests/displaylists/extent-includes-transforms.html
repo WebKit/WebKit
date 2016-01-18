@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #target {
+            height: 200px;
+            width: 200px;
+            -webkit-transform: translateZ(0);
+        }
+        
+        .transformed {
+            transform: rotate(30deg);
+            margin: 50px;
+        }
+        
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            box-shadow: 10px 20px 12px black;
+        }
+    </style>
+    <script src="resources/dump-target-display-list.js"></script>
+</head>
+<body>
+<div id="target">
+    <div class="transformed">
+        <div class="box"></div>
+    </div>
+</div>
+<pre id="output"></pre>
+</body>
+</html>

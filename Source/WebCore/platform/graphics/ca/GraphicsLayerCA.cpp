@@ -1416,8 +1416,8 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 
         GraphicsContext context;
         DisplayList::Recorder recorder(context, *m_displayList, initialClip, AffineTransform());
-        context.setDisplayListRecorder(&recorder);
         paintGraphicsLayerContents(context, FloatRect(FloatPoint(), size()));
+
 #ifdef LOG_RECORDING_TIME
         double duration = currentTime() - startTime;
         WTFLogAlways("Recording took %.5fms", duration * 1000.0);

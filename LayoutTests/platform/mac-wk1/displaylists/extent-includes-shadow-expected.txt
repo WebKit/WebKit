@@ -1,0 +1,22 @@
+
+(
+  (translate
+    (x 0.00)
+    (y 0.00)))
+(
+  (save
+    (restore-index 4)))
+(
+  (set-state
+    (change-flags 1049600)
+    (shadow-blur 12.00)
+    (shadow-offset width=10 height=20)
+    (shadows-use-legacy-radius 0)
+    (should-subpixel-quantize-fonts 0)))
+(
+  (fill-rect-with-color
+    (extent at (43,50) size 134x137)
+    (rect at (50,50) size 100x100)
+    (color #0000FF)))
+(
+  (restore))

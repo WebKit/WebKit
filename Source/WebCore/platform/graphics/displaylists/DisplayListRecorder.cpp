@@ -41,9 +41,7 @@ Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const Flo
     , m_displayList(displayList)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
-
-    // FIXME: Hook up recorder in the GraphicsContext.
-    // m_graphicsContext.setDisplayListRecorder(this);
+    m_graphicsContext.setDisplayListRecorder(this);
     m_stateStack.append(ContextState(baseCTM, initialClip));
 }
 
