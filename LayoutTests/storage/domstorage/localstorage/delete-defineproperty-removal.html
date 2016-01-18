@@ -1,0 +1,41 @@
+<script>
+function runTest() {
+    if (window.testRunner)
+       testRunner.dumpAsText();
+
+    if (!window.localStorage) {
+        console.log("window.localStorage DOES NOT exist");
+        return;
+    }
+
+    localStorage.clear();
+    console.log(Object.getOwnPropertyNames(localStorage));
+    
+    Object.defineProperty(localStorage, "1", {value: "present"});
+    console.log(Object.getOwnPropertyNames(localStorage));
+    
+    delete localStorage[1];
+    console.log(Object.getOwnPropertyNames(localStorage));
+    
+    Object.defineProperty(localStorage, "2", {value: "present",  configurable: true});
+    console.log(Object.getOwnPropertyNames(localStorage));
+    
+    delete localStorage[2];
+    console.log(Object.getOwnPropertyNames(localStorage));
+
+    Object.defineProperty(localStorage, "Test", {value: "present",  configurable: true});
+    console.log(Object.getOwnPropertyNames(localStorage));
+  
+    delete localStorage["Test"];
+    console.log(Object.getOwnPropertyNames(localStorage));
+
+    Object.defineProperty(localStorage, "Test1", {value: "present"});
+    console.log(Object.getOwnPropertyNames(localStorage));
+  
+    delete localStorage["Test1"];
+    console.log(Object.getOwnPropertyNames(localStorage));
+
+}
+</script>
+<body onload="runTest();">
+</body>

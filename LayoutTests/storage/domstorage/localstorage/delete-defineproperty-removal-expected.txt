@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 12: constructor,length
+CONSOLE MESSAGE: line 15: 1,constructor,length
+CONSOLE MESSAGE: line 18: 1,constructor,length
+CONSOLE MESSAGE: line 21: 1,2,constructor,length
+CONSOLE MESSAGE: line 24: 1,constructor,length
+CONSOLE MESSAGE: line 27: 1,constructor,length,Test
+CONSOLE MESSAGE: line 30: 1,constructor,length
+CONSOLE MESSAGE: line 33: 1,constructor,length,Test1
+CONSOLE MESSAGE: line 36: 1,constructor,length,Test1
