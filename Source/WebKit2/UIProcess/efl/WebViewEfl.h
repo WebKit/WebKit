@@ -95,8 +95,8 @@ private:
 
     virtual void didRestoreScrollPosition() override final { }
 
-#if USE(GSTREAMER)
-    virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override final { return false; };
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    virtual bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override final { return false; };
 #endif
 
 private:

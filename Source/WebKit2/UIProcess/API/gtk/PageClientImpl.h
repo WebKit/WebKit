@@ -141,8 +141,8 @@ private:
 
     virtual void didRestoreScrollPosition() override { }
 
-#if ENABLE(VIDEO)
-    virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    virtual bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
 #endif
 
     // Members of PageClientImpl class

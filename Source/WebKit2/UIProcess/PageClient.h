@@ -352,8 +352,8 @@ public:
     virtual void refView() = 0;
     virtual void derefView() = 0;
 
-#if USE(GSTREAMER)
-    virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) = 0;
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    virtual bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) = 0;
 #endif
 
     virtual void didRestoreScrollPosition() = 0;

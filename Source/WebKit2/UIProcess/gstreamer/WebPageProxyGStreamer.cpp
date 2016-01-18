@@ -35,7 +35,7 @@ namespace WebKit {
 void WebPageProxy::requestInstallMissingMediaPlugins(const String& details, const String& description)
 {
     RefPtr<InstallMissingMediaPluginsPermissionRequest> request = InstallMissingMediaPluginsPermissionRequest::create(*this, details, description);
-    if (m_pageClient.decicePolicyForInstallMissingMediaPluginsPermissionRequest(*request))
+    if (m_pageClient.decidePolicyForInstallMissingMediaPluginsPermissionRequest(*request))
         return;
 
     request->deny();

@@ -439,8 +439,8 @@ void PageClientImpl::derefView()
     g_object_unref(m_viewWidget);
 }
 
-#if ENABLE(VIDEO)
-bool PageClientImpl::decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest& request)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+bool PageClientImpl::decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest& request)
 {
     if (!WEBKIT_IS_WEB_VIEW(m_viewWidget))
         return false;
