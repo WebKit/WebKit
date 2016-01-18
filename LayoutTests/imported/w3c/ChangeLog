@@ -1,3 +1,15 @@
+2016-01-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Import tests updated to Jan 13 2016
+        https://bugs.webkit.org/show_bug.cgi?id=153059
+
+        Reviewed by Youenn Fablet.
+
+        Update tests after merge of https://github.com/whatwg/streams/pull/420.
+
+        * web-platform-tests/streams-api/README.txt: Updated last version.
+        * web-platform-tests/streams-api/readable-streams/bad-strategies.js: Updated.
+
 2016-01-15  Chris Dumez  <cdumez@apple.com>
 
         Drop obsolete HTMLDocument.width / height attributes

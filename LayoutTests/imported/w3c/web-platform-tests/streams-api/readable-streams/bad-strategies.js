@@ -19,9 +19,10 @@ test(() => {
 
 }, 'Readable stream: throwing strategy.size getter');
 
-test(() => {
+promise_test(t => {
 
-  const theError = new Error('a unique string');
+  const controllerError = { name: 'controller error' };
+  const thrownError = { name: 'thrown error' };
 
   let controller;
   const rs = new ReadableStream(
@@ -32,22 +33,22 @@ test(() => {
     },
     {
       size() {
-        controller.error(theError);
-        throw theError;
+        controller.error(controllerError);
+        throw thrownError;
       },
       highWaterMark: 5
     }
   );
 
-  assert_throws(theError, () => {
-    controller.enqueue('a');
-  }, 'enqueue should re-throw the error');
+  assert_throws(thrownError, () => controller.enqueue('a'), 'enqueue should re-throw the error');
+
+  return promise_rejects(t, controllerError, rs.getReader().closed);
 
 }, 'Readable stream: strategy.size errors the stream and then throws');
 
-test(() => {
+promise_test(t => {
 
-  const theError = new Error('a unique string');
+  const theError = { name: 'my error' };
 
   let controller;
   const rs = new ReadableStream(
@@ -65,11 +66,9 @@ test(() => {
     }
   );
 
-  try {
-    controller.enqueue('a');
-  } catch (error) {
-    assert_equals(error.name, 'RangeError', 'enqueue should throw a RangeError');
-  }
+  assert_throws(new RangeError(), () => controller.enqueue('a'), 'enqueue should throw a RangeError');
+
+  return promise_rejects(t, theError, rs.getReader().closed, 'closed should reject with the error');
 
 }, 'Readable stream: strategy.size errors the stream and then returns Infinity');
 
