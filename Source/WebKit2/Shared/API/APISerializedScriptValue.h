@@ -49,9 +49,9 @@ public:
         return adoptRef(*new SerializedScriptValue(serializedValue.get()));
     }
     
-    static Ref<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
+    static Ref<SerializedScriptValue> adopt(Vector<uint8_t>&& buffer)
     {
-        return adoptRef(*new SerializedScriptValue(WebCore::SerializedScriptValue::adopt(buffer)));
+        return adoptRef(*new SerializedScriptValue(WebCore::SerializedScriptValue::adopt(WTFMove(buffer))));
     }
     
     JSValueRef deserialize(JSContextRef context, JSValueRef* exception)

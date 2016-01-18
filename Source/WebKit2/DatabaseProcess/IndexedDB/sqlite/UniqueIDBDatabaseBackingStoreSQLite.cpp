@@ -776,7 +776,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& trans
         if (!locker)
             locker = std::make_unique<JSLockHolder>(m_vm.get());
 
-        Deprecated::ScriptValue value = deserializeIDBValueBuffer(m_globalObject->globalExec(), valueBuffer, true);
+        Deprecated::ScriptValue value = deserializeIDBValueBuffer(m_globalObject->globalExec(), Vector<uint8_t>(valueBuffer), true);
         Vector<IDBKeyData> indexKeys;
         generateIndexKeysForValue(m_globalObject->globalExec(), metadata, value, indexKeys);
 

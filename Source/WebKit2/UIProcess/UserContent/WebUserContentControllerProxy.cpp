@@ -177,10 +177,8 @@ void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, 
     if (!handler)
         return;
 
-    auto buffer = dataReference.vector();
-    RefPtr<WebCore::SerializedScriptValue> value = WebCore::SerializedScriptValue::adopt(buffer);
-
-    handler->client().didPostMessage(*page, *frame, securityOrigin, *value);
+    handler->client().didPostMessage(*page, *frame, securityOrigin,
+        WebCore::SerializedScriptValue::adopt(dataReference.vector()));
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

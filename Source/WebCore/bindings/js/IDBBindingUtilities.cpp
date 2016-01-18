@@ -448,7 +448,7 @@ JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState& exec, const Thread
     const Vector<uint8_t>& data = *valueData.data();
     JSValue result;
     if (data.size()) {
-        RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(data);
+        RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
         exec.vm().apiLock().lock();
         result = serializedValue->deserialize(&exec, exec.lexicalGlobalObject(), 0, NonThrowing);
@@ -464,22 +464,22 @@ Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState,
     if (prpBuffer) {
         Vector<uint8_t> value;
         value.append(prpBuffer->data(), prpBuffer->size());
-        return deserializeIDBValueBuffer(requestState->exec(), value, keyIsDefined);
+        return deserializeIDBValueBuffer(requestState->exec(), WTFMove(value), keyIsDefined);
     }
 
     return Deprecated::ScriptValue(requestState->exec()->vm(), jsNull());
 }
 
-static JSValue idbValueDataToJSValue(JSC::ExecState& exec, const Vector<uint8_t>& buffer)
+static JSValue idbValueDataToJSValue(JSC::ExecState& exec, Vector<uint8_t>&& buffer)
 {
     if (buffer.isEmpty())
         return jsNull();
 
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(buffer);
+    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(WTFMove(buffer));
     return serializedValue->deserialize(&exec, exec.lexicalGlobalObject(), 0, NonThrowing);
 }
 
-Deprecated::ScriptValue deserializeIDBValueBuffer(JSC::ExecState* exec, const Vector<uint8_t>& buffer, bool keyIsDefined)
+Deprecated::ScriptValue deserializeIDBValueBuffer(JSC::ExecState* exec, Vector<uint8_t>&& buffer, bool keyIsDefined)
 {
     ASSERT(exec);
 
@@ -490,7 +490,7 @@ Deprecated::ScriptValue deserializeIDBValueBuffer(JSC::ExecState* exec, const Ve
         return Deprecated::ScriptValue(exec->vm(), jsUndefined());
     }
 
-    JSValue result = idbValueDataToJSValue(*exec, buffer);
+    JSValue result = idbValueDataToJSValue(*exec, WTFMove(buffer));
     return Deprecated::ScriptValue(exec->vm(), result);
 }
 
@@ -499,7 +499,7 @@ JSValue idbValueDataToJSValue(JSC::ExecState& exec, const ThreadSafeDataBuffer& 
     if (!valueData.data())
         return jsUndefined();
 
-    return idbValueDataToJSValue(exec, *valueData.data());
+    return idbValueDataToJSValue(exec, Vector<uint8_t>(*valueData.data()));
 }
 
 Deprecated::ScriptValue idbKeyToScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKey> key)

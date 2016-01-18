@@ -4703,11 +4703,16 @@ void WebPageProxy::scriptValueCallback(const IPC::DataReference& dataReference, 
         return;
     }
 
+    if (dataReference.isEmpty()) {
+        callback->performCallbackWithReturnValue(nullptr, hadException, details);
+        return;
+    }
+
     Vector<uint8_t> data;
     data.reserveInitialCapacity(dataReference.size());
     data.append(dataReference.data(), dataReference.size());
 
-    callback->performCallbackWithReturnValue(data.size() ? API::SerializedScriptValue::adopt(data).ptr() : nullptr, hadException, details);
+    callback->performCallbackWithReturnValue(API::SerializedScriptValue::adopt(WTFMove(data)).ptr(), hadException, details);
 }
 
 void WebPageProxy::computedPagesCallback(const Vector<IntRect>& pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)

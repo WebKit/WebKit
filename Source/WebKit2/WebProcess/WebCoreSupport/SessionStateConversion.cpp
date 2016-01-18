@@ -154,7 +154,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
 
     if (frameState.stateObjectData) {
         Vector<uint8_t> stateObjectData = frameState.stateObjectData.value();
-        historyItem.setStateObject(SerializedScriptValue::adopt(stateObjectData));
+        historyItem.setStateObject(SerializedScriptValue::adopt(WTFMove(stateObjectData)));
     }
 
     historyItem.setDocumentSequenceNumber(frameState.documentSequenceNumber);

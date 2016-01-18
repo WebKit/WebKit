@@ -1,3 +1,36 @@
+2016-01-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Sink the Vector<uint8_t> buffer into the SerializedScriptValue constructor
+        https://bugs.webkit.org/show_bug.cgi?id=142634
+
+        Reviewed by Darin Adler.
+
+        Have the SerializedScriptValue constructor take in the Vector<uint8_t> buffer
+        through an rvalue reference, avoiding the copying into the m_data member. The
+        three-parameter constructor now takes in the Vector<String> blob URL object
+        via const reference, and the std::unique_ptr<> object via a rvalue reference.
+
+        Adjust all the call sites and affected code to now either move or copy a
+        non-movable object into the SerializedScriptValue constructor or the helper
+        methods.
+
+        No new tests -- no change in behavior.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValueDataToJSValue):
+        (WebCore::deserializeIDBValueBuffer):
+        (WebCore::idbValueDataToJSValue):
+        * bindings/js/IDBBindingUtilities.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::numberValue):
+        (WebCore::SerializedScriptValue::undefinedValue):
+        (WebCore::SerializedScriptValue::nullValue):
+        * bindings/js/SerializedScriptValue.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::deserializeBuffer):
+
 2016-01-18  Olivier Blin  <olivier.blin@softathome.com>
 
         [GStreamer] Remove unused m_endTime

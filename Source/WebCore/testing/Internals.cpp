@@ -2502,7 +2502,7 @@ RefPtr<SerializedScriptValue> Internals::deserializeBuffer(PassRefPtr<ArrayBuffe
 {
     Vector<uint8_t> bytes;
     bytes.append(static_cast<const uint8_t*>(buffer->data()), buffer->byteLength());
-    return SerializedScriptValue::adopt(bytes);
+    return SerializedScriptValue::adopt(WTFMove(bytes));
 }
 
 bool Internals::isFromCurrentWorld(Deprecated::ScriptValue value) const

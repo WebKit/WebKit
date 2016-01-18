@@ -530,8 +530,7 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
         if (!decoder.decode(dataReference))
             return false;
 
-        auto vector = dataReference.vector();
-        result = API::SerializedScriptValue::adopt(vector);
+        result = API::SerializedScriptValue::adopt(dataReference.vector());
         break;
     }
 

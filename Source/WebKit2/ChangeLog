@@ -1,3 +1,28 @@
+2016-01-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Sink the Vector<uint8_t> buffer into the SerializedScriptValue constructor
+        https://bugs.webkit.org/show_bug.cgi?id=142634
+
+        Reviewed by Darin Adler.
+
+        Update API::SerializedScriptValue::adopt() to take in a Vector<uint8_t>
+        rvalue, moving it into the WebCore::SerializedScriptValue::adopt() call.
+
+        Update other places that are affected by the SerializedScriptValue changes.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createIndex):
+        * Shared/API/APISerializedScriptValue.h:
+        (API::SerializedScriptValue::adopt):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::decode):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scriptValueCallback):
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::applyFrameState):
+
 2016-01-18  Olivier Blin  <olivier.blin@softathome.com>
 
         [EFL][GTK][WK2] Fix UIProcess build with GStreamer and without VIDEO
