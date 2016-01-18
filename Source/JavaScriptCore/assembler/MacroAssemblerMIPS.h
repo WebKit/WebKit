@@ -2809,6 +2809,15 @@ public:
         UNREACHABLE_FOR_PLATFORM();
     }
 
+    static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
+    {
+        MIPSAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
+    }
+
+    static void repatchCall(CodeLocationCall call, FunctionPtr destination)
+    {
+        MIPSAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
+    }
 
 private:
     // If m_fixedWidth is true, we will generate a fixed number of instructions.
@@ -2821,16 +2830,6 @@ private:
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
         MIPSAssembler::linkCall(code, call.m_label, function.value());
-    }
-
-    static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
-    {
-        MIPSAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
-    }
-
-    static void repatchCall(CodeLocationCall call, FunctionPtr destination)
-    {
-        MIPSAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
     }
 
 };
