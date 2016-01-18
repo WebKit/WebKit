@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that float is positioned properly when it is next to an anonymous block.</title>
+</head>
+<body>
+<span>foo</span>
+<div id="float">bar</div>
+<div></div>
+<script>
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+  setTimeout(function() {
+	document.getElementById("float").style.float = "right";
+	if (window.testRunner)
+	  testRunner.notifyDone();
+  }, 0);
+</script>	
+</body>
+</html>
