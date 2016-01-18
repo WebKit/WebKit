@@ -134,7 +134,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (!style.textIndent().isZero())
         return false;
-    if (!style.wordSpacing().isZero() || style.letterSpacing())
+    if (!style.wordSpacing().isZero())
         return false;
     if (!style.isLeftToRightDirection())
         return false;

@@ -1,3 +1,16 @@
+2015-11-17  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Add letter-spacing support.
+        https://bugs.webkit.org/show_bug.cgi?id=151362
+
+        Reviewed by Antti Koivisto.
+
+        This enables us to use simple line layout on letter-spacing content.
+        (fixme: webkit.org/b/151368 -> Repaint rect is not computed correctly when negative letter-spacing applied)
+
+        * fast/text/simple-line-letterspacing-expected.html: Added.
+        * fast/text/simple-line-letterspacing.html: Added.
+
 2015-12-31  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Nested block with pseudo first-line parent should bail out of simple line layout.
