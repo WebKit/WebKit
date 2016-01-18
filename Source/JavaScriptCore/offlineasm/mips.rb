@@ -1033,6 +1033,8 @@ class Instruction
             $asm.puts "movz #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].mipsOperand}"
         when "movn"
             $asm.puts "movn #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].mipsOperand}"
+        when "setcallreg"
+            $asm.puts "move #{MIPS_CALL_REG.mipsOperand}, #{operands[0].mipsOperand}"
         when "slt", "sltb"
             $asm.puts "slt #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].mipsOperand}"
         when "sltu", "sltub"

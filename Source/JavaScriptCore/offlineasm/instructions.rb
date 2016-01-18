@@ -284,6 +284,7 @@ MIPS_INSTRUCTIONS =
     "la",
     "movz",
     "movn",
+    "setcallreg",
     "slt",
     "sltu",
     "pichdr"

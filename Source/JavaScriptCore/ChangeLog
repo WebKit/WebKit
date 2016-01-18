@@ -1,3 +1,22 @@
+2016-01-18  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [MIPS] LLInt: fix calculation of Global Offset Table
+        https://bugs.webkit.org/show_bug.cgi?id=150381
+
+        Offlineasm adds a .cpload $t9 when we create a label in MIPS, which
+        computes address of GOT. However, this instruction requires $t9 to
+        contain address of current function. So we need to set $t9 to pcBase,
+        otherwise GOT-related calculations will be invalid.
+
+        Since offlineasm does not allow direct move to $t9 on MIPS, added new
+        instruction setcallreg which does exactly that.
+
+        Reviewed by Michael Saboff.
+
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/instructions.rb:
+        * offlineasm/mips.rb:
+
 2016-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r194601): Fix the jsc timeout option of jsc.cpp
