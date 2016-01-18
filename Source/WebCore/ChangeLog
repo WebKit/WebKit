@@ -1,3 +1,18 @@
+2016-01-18  Olivier Blin  <olivier.blin@softathome.com>
+
+        [GStreamer] Remove unused m_endTime
+        https://bugs.webkit.org/show_bug.cgi?id=153209
+
+        Reviewed by Michael Catanzaro.
+
+        m_endTime has been unused since r47710 in MediaPlayerPrivateGStreamer.
+
+        No new tests since this is just a member cleanup.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2016-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the --minimal build due to missing VM.h include
