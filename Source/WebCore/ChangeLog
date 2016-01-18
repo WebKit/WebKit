@@ -1,3 +1,19 @@
+2016-01-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Add TextStream-based logging for Position and VisiblePosition
+        https://bugs.webkit.org/show_bug.cgi?id=153195
+
+        Reviewed by Ryosuke Niwa.
+
+        Make it easy to dump Positions and VisiblePositions with a TextStream.
+
+        * dom/Position.cpp:
+        (WebCore::operator<<):
+        * dom/Position.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::operator<<):
+        * editing/VisiblePosition.h:
+
 2016-01-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Sink the Vector<uint8_t> buffer into the SerializedScriptValue constructor

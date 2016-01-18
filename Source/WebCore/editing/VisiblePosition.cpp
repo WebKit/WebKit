@@ -37,6 +37,7 @@
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
 #include "Text.h"
+#include "TextStream.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 #include <stdio.h>
@@ -746,6 +747,30 @@ bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const N
 bool VisiblePosition::equals(const VisiblePosition& other) const
 {
     return m_affinity == other.m_affinity && m_deepPosition.equals(other.m_deepPosition);
+}
+
+TextStream& operator<<(TextStream& stream, EAffinity affinity)
+{
+    switch (affinity) {
+    case UPSTREAM:
+        stream << "upstream";
+        break;
+    case DOWNSTREAM:
+        stream << "downstream";
+        break;
+    }
+    return stream;
+}
+
+TextStream& operator<<(TextStream& stream, const VisiblePosition& visiblePosition)
+{
+    TextStream::GroupScope scope(stream);
+    stream << "VisiblePosition " << &visiblePosition;
+
+    stream.dumpProperty("position", visiblePosition.deepEquivalent());
+    stream.dumpProperty("affinity", visiblePosition.affinity());
+
+    return stream;
 }
 
 }  // namespace WebCore

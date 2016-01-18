@@ -44,6 +44,7 @@ class Range;
 class RenderElement;
 class RenderObject;
 class Text;
+class TextStream;
 
 enum PositionMoveType {
     CodePoint,       // Move by a single code point.
@@ -342,6 +343,8 @@ inline bool offsetIsBeforeLastNodeOffset(int offset, Node* anchorNode)
     
     return offset < currentOffset;
 }
+
+TextStream& operator<<(TextStream&, const Position&);
 
 } // namespace WebCore
 

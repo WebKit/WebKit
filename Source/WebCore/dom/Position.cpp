@@ -44,6 +44,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "TextStream.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
@@ -1547,6 +1548,40 @@ bool Position::equals(const Position& other) const
 
     ASSERT_NOT_REACHED();
     return false;
+}
+
+static TextStream& operator<<(TextStream& stream, Position::AnchorType anchorType)
+{
+    switch (anchorType) {
+    case Position::PositionIsOffsetInAnchor:
+        stream << "offset in anchor";
+        break;
+    case Position::PositionIsBeforeAnchor:
+        stream << "before anchor";
+        break;
+    case Position::PositionIsAfterAnchor:
+        stream << "after anchor";
+        break;
+    case Position::PositionIsBeforeChildren:
+        stream << "before children";
+        break;
+    case Position::PositionIsAfterChildren:
+        stream << "after children";
+        break;
+    }
+    return stream;
+}
+
+TextStream& operator<<(TextStream& stream, const Position& position)
+{
+    TextStream::GroupScope scope(stream);
+    stream << "Position " << &position;
+
+    stream.dumpProperty("anchor node", position.anchorNode());
+    stream.dumpProperty("offset", position.offsetInContainerNode());
+    stream.dumpProperty("anchor type", position.anchorType());
+
+    return stream;
 }
 
 } // namespace WebCore

@@ -47,6 +47,7 @@ namespace WebCore {
 
 class InlineBox;
 class Node;
+class TextStream;
 
 class VisiblePosition {
 public:
@@ -162,6 +163,9 @@ WEBCORE_EXPORT Element* enclosingBlockFlowElement(const VisiblePosition&);
 
 bool isFirstVisiblePositionInNode(const VisiblePosition&, const Node*);
 bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);
+
+TextStream& operator<<(TextStream&, EAffinity);
+TextStream& operator<<(TextStream&, const VisiblePosition&);
 
 } // namespace WebCore
 
