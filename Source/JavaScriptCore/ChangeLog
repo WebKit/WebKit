@@ -1,5 +1,15 @@
 2016-01-06  Julien Brianceau  <jbriance@cisco.com>
 
+        [mips] Fix or32 implementation in macro assembler
+        https://bugs.webkit.org/show_bug.cgi?id=152781
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::or32):
+
+2016-01-06  Julien Brianceau  <jbriance@cisco.com>
+
         [mips] Add missing branchAdd32 implementation in macro assembler
         https://bugs.webkit.org/show_bug.cgi?id=152785
 
