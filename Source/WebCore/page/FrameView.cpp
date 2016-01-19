@@ -2644,7 +2644,7 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
         return;
 
     if (!m_layoutRoot) {
-        // Just relayout the subtree.
+        // We already have a pending (full) layout. Just mark the subtree for layout.
         newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
         InspectorInstrumentation::didInvalidateLayout(frame());
         return;
@@ -2665,10 +2665,9 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
         InspectorInstrumentation::didInvalidateLayout(frame());
         return;
     }
-
-    // Just do a full relayout.
-    m_layoutRoot = &newRelayoutRoot;
+    // Two disjoint subtrees need layout. Mark both of them and issue a full layout instead.
     convertSubtreeLayoutToFullLayout();
+    newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
     InspectorInstrumentation::didInvalidateLayout(frame());
 }
 
