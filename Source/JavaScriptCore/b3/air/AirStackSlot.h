@@ -48,6 +48,12 @@ public:
     bool isLocked() const { return m_kind == StackSlotKind::Locked; }
     unsigned index() const { return m_index; }
 
+    void ensureSize(unsigned requestedSize)
+    {
+        ASSERT(!m_offsetFromFP);
+        m_byteSize = std::max(m_byteSize, requestedSize);
+    }
+
     unsigned alignment() const
     {
         if (byteSize() <= 1)

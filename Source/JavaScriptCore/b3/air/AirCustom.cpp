@@ -28,10 +28,34 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirInstInlines.h"
 #include "B3CCallValue.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 { namespace Air {
+
+bool PatchCustom::isValidForm(Inst& inst)
+{
+    if (inst.args.size() < 1)
+        return false;
+    if (!inst.args[0].isSpecial())
+        return false;
+    if (!inst.args[0].special()->isValid(inst))
+        return false;
+    RegisterSet clobberedEarly = inst.extraEarlyClobberedRegs();
+    RegisterSet clobberedLate = inst.extraClobberedRegs();
+    bool ok = true;
+    inst.forEachTmp(
+        [&] (Tmp& tmp, Arg::Role role, Arg::Type, Arg::Width) {
+            if (!tmp.isReg())
+                return;
+            if (Arg::isLateDef(role) || Arg::isLateUse(role))
+                ok &= !clobberedLate.get(tmp.reg());
+            else
+                ok &= !clobberedEarly.get(tmp.reg());
+        });
+    return ok;
+}
 
 bool CCallCustom::isValidForm(Inst& inst)
 {

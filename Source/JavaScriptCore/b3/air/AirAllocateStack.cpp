@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirCode.h"
+#include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
 #include "AirPhaseScope.h"
@@ -166,10 +167,49 @@ void allocateStack(Code& code)
         for (unsigned instIndex = block->size(); instIndex--;) {
             if (verbose)
                 dataLog("Analyzing: ", block->at(instIndex), "\n");
+
+            // Kill dead stores. For simplicity we say that a store is killable if it has only late
+            // defs and those late defs are to things that are dead right now. We only do that
+            // because that's the only kind of dead stack store we will see here.
+            Inst& inst = block->at(instIndex);
+            if (!inst.hasNonArgEffects()) {
+                bool ok = true;
+                inst.forEachArg(
+                    [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
+                        if (Arg::isEarlyDef(role)) {
+                            ok = false;
+                            return;
+                        }
+                        if (!Arg::isLateDef(role))
+                            return;
+                        if (!arg.isStack()) {
+                            ok = false;
+                            return;
+                        }
+                        StackSlot* slot = arg.stackSlot();
+                        if (slot->kind() != StackSlotKind::Anonymous) {
+                            ok = false;
+                            return;
+                        }
+
+                        if (localCalc.isLive(slot)) {
+                            ok = false;
+                            return;
+                        }
+                    });
+                if (ok)
+                    inst = Inst();
+            }
+            
             interfere(instIndex);
             localCalc.execute(instIndex);
         }
         interfere(-1);
+        
+        block->insts().removeAllMatching(
+            [&] (const Inst& inst) -> bool {
+                return !inst;
+            });
     }
 
     if (verbose) {
@@ -232,33 +272,43 @@ void allocateStack(Code& code)
     // We would have to scavenge for temporaries if this happened. Fortunately, this case will be
     // extremely rare so we can do crazy things when it arises.
     // https://bugs.webkit.org/show_bug.cgi?id=152530
-    
+
+    InsertionSet insertionSet(code);
     for (BasicBlock* block : code) {
-        for (Inst& inst : *block) {
+        for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
+            Inst& inst = block->at(instIndex);
             inst.forEachArg(
-                [&] (Arg& arg, Arg::Role, Arg::Type, Arg::Width width)
-                {
+                [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width width) {
+                    auto stackAddr = [&] (int32_t offset) -> Arg {
+                        return Arg::stackAddr(offset, code.frameSize(), width);
+                    };
+                    
                     switch (arg.kind()) {
                     case Arg::Stack: {
-                        arg = Arg::addr(
-                            Tmp(GPRInfo::callFrameRegister),
-                            arg.offset() + arg.stackSlot()->offsetFromFP());
-                        if (!arg.isValidForm(width)) {
-                            arg = Arg::addr(
-                                Tmp(MacroAssembler::stackPointerRegister),
-                                arg.offset() + code.frameSize());
+                        StackSlot* slot = arg.stackSlot();
+                        if (Arg::isZDef(role)
+                            && slot->kind() == StackSlotKind::Anonymous
+                            && slot->byteSize() > Arg::bytes(width)) {
+                            // Currently we only handle this simple case because it's the only one
+                            // that arises: ZDef's are only 32-bit right now. So, when we hit these
+                            // assertions it means that we need to implement those other kinds of
+                            // zero fills.
+                            RELEASE_ASSERT(slot->byteSize() == 8);
+                            RELEASE_ASSERT(width == Arg::Width32);
+
+                            // We rely on the fact that there must be some way to move zero to a
+                            // memory location without first burning a register. On ARM, we would do
+                            // this using zr.
+                            RELEASE_ASSERT(isValidForm(Move32, Arg::Imm, Arg::Addr));
+                            insertionSet.insert(
+                                instIndex + 1, Move32, inst.origin, Arg::imm(0),
+                                stackAddr(arg.offset() + 4 + slot->offsetFromFP()));
                         }
+                        arg = stackAddr(arg.offset() + slot->offsetFromFP());
                         break;
                     }
                     case Arg::CallArg:
-                        arg = Arg::addr(
-                            Tmp(GPRInfo::callFrameRegister),
-                            arg.offset() - code.frameSize());
-                        if (!arg.isValidForm(width)) {
-                            arg = Arg::addr(
-                                Tmp(MacroAssembler::stackPointerRegister),
-                                arg.offset() + code.frameSize());
-                        }
+                        arg = stackAddr(arg.offset() - code.frameSize());
                         break;
                     default:
                         break;
@@ -266,6 +316,7 @@ void allocateStack(Code& code)
                 }
             );
         }
+        insertionSet.execute(block);
     }
 }
 

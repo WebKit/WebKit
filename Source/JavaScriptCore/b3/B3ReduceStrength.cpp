@@ -84,6 +84,175 @@ namespace {
 
 bool verbose = false;
 
+class IntRange {
+public:
+    IntRange()
+    {
+    }
+
+    IntRange(int64_t min, int64_t max)
+        : m_min(min)
+        , m_max(max)
+    {
+    }
+
+    template<typename T>
+    static IntRange top()
+    {
+        return IntRange(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+    }
+
+    static IntRange top(Type type)
+    {
+        switch (type) {
+        case Int32:
+            return top<int32_t>();
+        case Int64:
+            return top<int64_t>();
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    template<typename T>
+    static IntRange rangeForMask(T mask)
+    {
+        if (!(mask + 1))
+            return top<T>();
+        return IntRange(0, mask);
+    }
+
+    static IntRange rangeForMask(int64_t mask, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return rangeForMask<int32_t>(static_cast<int32_t>(mask));
+        case Int64:
+            return rangeForMask<int64_t>(mask);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    template<typename T>
+    static IntRange rangeForZShr(int32_t shiftAmount)
+    {
+        typename std::make_unsigned<T>::type mask = 0;
+        mask--;
+        mask >>= shiftAmount;
+        return rangeForMask<T>(static_cast<T>(mask));
+    }
+
+    static IntRange rangeForZShr(int32_t shiftAmount, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return rangeForZShr<int32_t>(shiftAmount);
+        case Int64:
+            return rangeForZShr<int64_t>(shiftAmount);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    template<typename T>
+    static IntRange rangeForSShr(int32_t shiftAmount)
+    {
+        return IntRange(top<T>().min() >> shiftAmount, top<T>().max() >> shiftAmount);
+    }
+
+    static IntRange rangeForSShr(int32_t shiftAmount, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return rangeForSShr<int32_t>(shiftAmount);
+        case Int64:
+            return rangeForSShr<int64_t>(shiftAmount);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    int64_t min() const { return m_min; }
+    int64_t max() const { return m_max; }
+
+    void dump(PrintStream& out) const
+    {
+        out.print("[", m_min, ",", m_max, "]");
+    }
+
+    template<typename T>
+    bool couldOverflowAdd(const IntRange& other)
+    {
+        return sumOverflows<T>(m_min, other.m_min)
+            || sumOverflows<T>(m_min, other.m_max)
+            || sumOverflows<T>(m_max, other.m_min)
+            || sumOverflows<T>(m_max, other.m_max);
+    }
+
+    bool couldOverflowAdd(const IntRange& other, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return couldOverflowAdd<int32_t>(other);
+        case Int64:
+            return couldOverflowAdd<int64_t>(other);
+        default:
+            return true;
+        }
+    }
+
+    template<typename T>
+    bool couldOverflowSub(const IntRange& other)
+    {
+        return differenceOverflows<T>(m_min, other.m_min)
+            || differenceOverflows<T>(m_min, other.m_max)
+            || differenceOverflows<T>(m_max, other.m_min)
+            || differenceOverflows<T>(m_max, other.m_max);
+    }
+
+    bool couldOverflowSub(const IntRange& other, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return couldOverflowSub<int32_t>(other);
+        case Int64:
+            return couldOverflowSub<int64_t>(other);
+        default:
+            return true;
+        }
+    }
+
+    template<typename T>
+    bool couldOverflowMul(const IntRange& other)
+    {
+        return productOverflows<T>(m_min, other.m_min)
+            || productOverflows<T>(m_min, other.m_max)
+            || productOverflows<T>(m_max, other.m_min)
+            || productOverflows<T>(m_max, other.m_max);
+    }
+
+    bool couldOverflowMul(const IntRange& other, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return couldOverflowMul<int32_t>(other);
+        case Int64:
+            return couldOverflowMul<int64_t>(other);
+        default:
+            return true;
+        }
+    }
+
+private:
+    int64_t m_min { 0 };
+    int64_t m_max { 0 };
+};
+
 class ReduceStrength {
 public:
     ReduceStrength(Procedure& proc)
@@ -1091,7 +1260,7 @@ private:
                     m_value->child(1)->equalOrUnorderedConstant(m_value->child(0))));
             break;
 
-        case CheckAdd:
+        case CheckAdd: {
             if (replaceWithNewValue(m_value->child(0)->checkAddConstant(m_proc, m_value->child(1))))
                 break;
 
@@ -1102,9 +1271,18 @@ private:
                 m_changed = true;
                 break;
             }
-            break;
 
-        case CheckSub:
+            IntRange leftRange = rangeFor(m_value->child(0));
+            IntRange rightRange = rangeFor(m_value->child(1));
+            if (!leftRange.couldOverflowAdd(rightRange, m_value->type())) {
+                replaceWithNewValue(
+                    m_proc.add<Value>(Add, m_value->origin(), m_value->child(0), m_value->child(1)));
+                break;
+            }
+            break;
+        }
+
+        case CheckSub: {
             if (replaceWithNewValue(m_value->child(0)->checkSubConstant(m_proc, m_value->child(1))))
                 break;
 
@@ -1121,9 +1299,18 @@ private:
                 m_changed = true;
                 break;
             }
-            break;
 
-        case CheckMul:
+            IntRange leftRange = rangeFor(m_value->child(0));
+            IntRange rightRange = rangeFor(m_value->child(1));
+            if (!leftRange.couldOverflowSub(rightRange, m_value->type())) {
+                replaceWithNewValue(
+                    m_proc.add<Value>(Sub, m_value->origin(), m_value->child(0), m_value->child(1)));
+                break;
+            }
+            break;
+        }
+
+        case CheckMul: {
             if (replaceWithNewValue(m_value->child(0)->checkMulConstant(m_proc, m_value->child(1))))
                 break;
 
@@ -1151,7 +1338,16 @@ private:
                 if (modified)
                     break;
             }
+
+            IntRange leftRange = rangeFor(m_value->child(0));
+            IntRange rightRange = rangeFor(m_value->child(1));
+            if (!leftRange.couldOverflowMul(rightRange, m_value->type())) {
+                replaceWithNewValue(
+                    m_proc.add<Value>(Mul, m_value->origin(), m_value->child(0), m_value->child(1)));
+                break;
+            }
             break;
+        }
 
         case Check: {
             CheckValue* checkValue = m_value->as<CheckValue>();
@@ -1292,6 +1488,37 @@ private:
             m_changed = true;
             return;
         }
+    }
+
+    IntRange rangeFor(Value* value)
+    {
+        switch (value->opcode()) {
+        case Const32:
+        case Const64: {
+            int64_t intValue = value->asInt();
+            return IntRange(intValue, intValue);
+        }
+
+        case BitAnd:
+            if (value->child(1)->hasInt())
+                return IntRange::rangeForMask(value->child(1)->asInt(), value->type());
+            break;
+
+        case SShr:
+            if (value->child(1)->hasInt32())
+                return IntRange::rangeForSShr(value->child(1)->asInt32(), value->type());
+            break;
+
+        case ZShr:
+            if (value->child(1)->hasInt32())
+                return IntRange::rangeForZShr(value->child(1)->asInt32(), value->type());
+            break;
+
+        default:
+            break;
+        }
+
+        return IntRange::top(value->type());
     }
 
     template<typename ValueType, typename... Arguments>

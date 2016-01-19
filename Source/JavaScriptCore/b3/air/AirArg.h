@@ -126,6 +126,7 @@ public:
         // depending on the kind of the argument:
         //
         // For register: the upper bits are zero-filled.
+        // For anonymous stack slot: the upper bits are zero-filled.
         // For address: the upper bits are not touched (i.e. we do a 32-bit store in our example).
         // For tmp: either the upper bits are not touched or they are zero-filled, and we won't know
         // which until we lower the tmp to either a StackSlot or a Reg.
@@ -510,6 +511,17 @@ public:
         Arg result;
         result.m_kind = CallArg;
         result.m_offset = offset;
+        return result;
+    }
+
+    static Arg stackAddr(int32_t offsetFromFP, unsigned frameSize, Width width)
+    {
+        Arg result = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
+        if (!result.isValidForm(width)) {
+            result = Arg::addr(
+                Air::Tmp(MacroAssembler::stackPointerRegister),
+                offsetFromFP + frameSize);
+        }
         return result;
     }
 

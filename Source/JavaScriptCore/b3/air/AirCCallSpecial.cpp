@@ -36,6 +36,9 @@ CCallSpecial::CCallSpecial()
     m_clobberedRegs.exclude(RegisterSet::stackRegisters());
     m_clobberedRegs.exclude(RegisterSet::reservedHardwareRegisters());
     m_clobberedRegs.exclude(RegisterSet::calleeSaveRegisters());
+    m_clobberedRegs.clear(GPRInfo::returnValueGPR);
+    m_clobberedRegs.clear(GPRInfo::returnValueGPR2);
+    m_clobberedRegs.clear(FPRInfo::returnValueFPR);
 }
 
 CCallSpecial::~CCallSpecial()

@@ -29,7 +29,6 @@
 #if ENABLE(B3_JIT)
 
 #include "AirCode.h"
-#include "AirFixSpillSlotZDef.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
@@ -1124,11 +1123,11 @@ private:
                 // complete register allocation. So, we record this before starting.
                 bool mayBeCoalescable = allocator.mayBeCoalescable(inst);
 
-                // On X86_64, Move32 is cheaper if we know that it's equivalent to a Move. It's
+                // Move32 is cheaper if we know that it's equivalent to a Move. It's
                 // equivalent if the destination's high bits are not observable or if the source's high
                 // bits are all zero. Note that we don't have the opposite optimization for other
                 // architectures, which may prefer Move over Move32, because Move is canonical already.
-                if (type == Arg::GP && optimizeForX86_64() && inst.opcode == Move
+                if (type == Arg::GP && inst.opcode == Move
                     && inst.args[0].isTmp() && inst.args[1].isTmp()) {
                     if (m_tmpWidth.useWidth(inst.args[1].tmp()) <= Arg::Width32
                         || m_tmpWidth.defWidth(inst.args[0].tmp()) <= Arg::Width32)
@@ -1168,7 +1167,6 @@ private:
     void addSpillAndFill(const ColoringAllocator<type>& allocator, HashSet<unsigned>& unspillableTmps)
     {
         HashMap<Tmp, StackSlot*> stackSlots;
-        unsigned newStackSlotThreshold = m_code.stackSlots().size();
         for (Tmp tmp : allocator.spilledTmps()) {
             // All the spilled values become unspillable.
             unspillableTmps.add(AbsoluteTmpMapper<type>::absoluteIndex(tmp));
@@ -1202,16 +1200,19 @@ private:
                 }
 
                 // Try to replace the register use by memory use when possible.
-                for (unsigned i = 0; i < inst.args.size(); ++i) {
-                    Arg& arg = inst.args[i];
-                    if (arg.isTmp() && arg.type() == type && !arg.isReg()) {
-                        auto stackSlotEntry = stackSlots.find(arg.tmp());
-                        if (stackSlotEntry != stackSlots.end() && inst.admitsStack(i)) {
-                            arg = Arg::stack(stackSlotEntry->value);
-                            didSpill = true;
+                inst.forEachArg(
+                    [&] (Arg& arg, Arg::Role, Arg::Type argType, Arg::Width width) {
+                        if (arg.isTmp() && argType == type && !arg.isReg()) {
+                            auto stackSlotEntry = stackSlots.find(arg.tmp());
+                            if (stackSlotEntry != stackSlots.end()
+                                && inst.admitsStack(arg)) {
+                                stackSlotEntry->value->ensureSize(
+                                    forceMove32IfDidSpill ? 4 : Arg::bytes(width));
+                                arg = Arg::stack(stackSlotEntry->value);
+                                didSpill = true;
+                            }
                         }
-                    }
-                }
+                    });
 
                 if (didSpill && forceMove32IfDidSpill)
                     inst.opcode = Move32;
@@ -1262,12 +1263,6 @@ private:
                 });
             }
         }
-
-        fixSpillSlotZDef(
-            m_code,
-            [&] (StackSlot* stackSlot) -> bool {
-                return stackSlot->index() >= newStackSlotThreshold;
-            });
     }
 
     Code& m_code;

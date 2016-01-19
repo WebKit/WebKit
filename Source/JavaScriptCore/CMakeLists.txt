@@ -78,6 +78,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirCustom.cpp
     b3/air/AirEliminateDeadCode.cpp
     b3/air/AirEmitShuffle.cpp
+    b3/air/AirFixObviousSpills.cpp
     b3/air/AirFixPartialRegisterStalls.cpp
     b3/air/AirGenerate.cpp
     b3/air/AirGenerated.cpp
@@ -85,6 +86,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirInsertionSet.cpp
     b3/air/AirInst.cpp
     b3/air/AirIteratedRegisterCoalescing.cpp
+    b3/air/AirLogRegisterPressure.cpp
     b3/air/AirLowerAfterRegAlloc.cpp
     b3/air/AirLowerMacros.cpp
     b3/air/AirOptimizeBlockOrder.cpp

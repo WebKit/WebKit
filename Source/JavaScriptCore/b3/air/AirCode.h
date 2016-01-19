@@ -46,6 +46,7 @@ class Procedure;
 
 namespace Air {
 
+class BlockInsertionSet;
 class CCallSpecial;
 
 // This is an IR that is very close to the bare metal. It requires about 40x more bytes than the
@@ -324,6 +325,7 @@ public:
 
 private:
     friend class ::JSC::B3::Procedure;
+    friend class BlockInsertionSet;
     
     Code(Procedure&);
 

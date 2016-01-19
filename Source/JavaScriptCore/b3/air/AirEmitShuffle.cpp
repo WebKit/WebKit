@@ -70,6 +70,14 @@ void ShufflePair::dump(PrintStream& out) const
     out.print(width(), ":", src(), "=>", dst());
 }
 
+Inst createShuffle(Value* origin, const Vector<ShufflePair>& pairs)
+{
+    Inst result(Shuffle, origin);
+    for (const ShufflePair& pair : pairs)
+        result.append(pair.src(), pair.dst(), Arg::widthArg(pair.width()));
+    return result;
+}
+
 Vector<Inst> emitShuffle(
     Vector<ShufflePair> pairs, std::array<Arg, 2> scratches, Arg::Type type, Value* origin)
 {

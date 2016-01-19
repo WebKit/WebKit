@@ -123,9 +123,6 @@ protected:
     // Constructs and returns the Inst representing the branch that this will use.
     Air::Inst hiddenBranch(const Air::Inst&) const;
 
-    // If we edited the hidden branch, this installs the edits into the given inst.
-    void commitHiddenBranch(Air::Inst& original, Air::Inst& hiddenBranch);
-
     void forEachArg(Air::Inst&, const ScopedLambda<Air::Inst::EachArgCallback>&) override;
     bool isValid(Air::Inst&) override;
     bool admitsStack(Air::Inst&, unsigned argIndex) override;

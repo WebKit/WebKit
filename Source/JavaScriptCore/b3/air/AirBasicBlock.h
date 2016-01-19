@@ -36,6 +36,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
+class BlockInsertionSet;
 class Code;
 class InsertionSet;
 
@@ -126,7 +127,11 @@ public:
     void dump(PrintStream&) const;
     void deepDump(PrintStream&) const;
 
+    void dumpHeader(PrintStream&) const;
+    void dumpFooter(PrintStream&) const;
+
 private:
+    friend class BlockInsertionSet;
     friend class Code;
     friend class InsertionSet;
     

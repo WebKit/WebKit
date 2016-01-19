@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,10 +73,8 @@ private:
 
 } // anonymous namespace
 
-void optimizeBlockOrder(Code& code)
+Vector<BasicBlock*> blocksInOptimizedOrder(Code& code)
 {
-    PhaseScope phaseScope(code, "optimizeBlockOrder");
-
     Vector<BasicBlock*> blocksInOrder;
 
     BlockWorklist fastWorklist;
@@ -113,6 +111,15 @@ void optimizeBlockOrder(Code& code)
     ASSERT(fastWorklist.isEmpty());
     ASSERT(slowWorklist.isEmpty());
 
+    return blocksInOrder;
+}
+
+void optimizeBlockOrder(Code& code)
+{
+    PhaseScope phaseScope(code, "optimizeBlockOrder");
+
+    Vector<BasicBlock*> blocksInOrder = blocksInOptimizedOrder(code);
+    
     // Place blocks into Code's block list according to the ordering in blocksInOrder. We do this by leaking
     // all of the blocks and then readopting them.
     for (auto& entry : code.blockList())

@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT) && FTL_USES_B3
 
+#include "AirCode.h"
 #include "B3Generate.h"
 #include "B3ProcedureInlines.h"
 #include "B3StackSlotValue.h"
@@ -57,7 +58,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     Graph& graph = state.graph;
     CodeBlock* codeBlock = graph.m_codeBlock;
     VM& vm = graph.m_vm;
-    
+
     {
         GraphSafepoint safepoint(state.graph, safepointResult);
 

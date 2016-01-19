@@ -31,10 +31,12 @@
 #include "AirAllocateStack.h"
 #include "AirCode.h"
 #include "AirEliminateDeadCode.h"
+#include "AirFixObviousSpills.h"
 #include "AirFixPartialRegisterStalls.h"
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirIteratedRegisterCoalescing.h"
+#include "AirLogRegisterPressure.h"
 #include "AirLowerAfterRegAlloc.h"
 #include "AirLowerMacros.h"
 #include "AirOpcodeUtils.h"
@@ -84,6 +86,16 @@ void prepareForGeneration(Code& code)
     else
         iteratedRegisterCoalescing(code);
 
+    if (Options::logAirRegisterPressure()) {
+        dataLog("Register pressure after register allocation:\n");
+        logRegisterPressure(code);
+    }
+
+    // This replaces uses of spill slots with registers or constants if possible. It does this by
+    // minimizing the amount that we perturb the already-chosen register allocation. It may extend
+    // the live ranges of registers though.
+    fixObviousSpills(code);
+
     lowerAfterRegAlloc(code);
 
     // Prior to this point the prologue and epilogue is implicit. This makes it explicit. It also
@@ -103,12 +115,14 @@ void prepareForGeneration(Code& code)
     // frequency successor is also the fall-through target.
     optimizeBlockOrder(code);
 
-    // Attempt to remove false dependencies between instructions created by partial register changes.
-    // This must be executed as late as possible as it depends on the instructions order and register use.
-    fixPartialRegisterStalls(code);
-
     // This is needed to satisfy a requirement of B3::StackmapValue.
     reportUsedRegisters(code);
+
+    // Attempt to remove false dependencies between instructions created by partial register changes.
+    // This must be executed as late as possible as it depends on the instructions order and register
+    // use. We _must_ run this after reportUsedRegisters(), since that kills variable assignments
+    // that seem dead. Luckily, this phase does not change register liveness, so that's OK.
+    fixPartialRegisterStalls(code);
 
     if (shouldValidateIR())
         validate(code);
@@ -131,6 +145,17 @@ void generate(Code& code, CCallHelpers& jit)
     jit.emitFunctionPrologue();
     if (code.frameSize())
         jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
+
+    auto argFor = [&] (const RegisterAtOffset& entry) -> CCallHelpers::Address {
+        return CCallHelpers::Address(GPRInfo::callFrameRegister, entry.offset());
+    };
+    
+    for (const RegisterAtOffset& entry : code.calleeSaveRegisters()) {
+        if (entry.reg().isGPR())
+            jit.storePtr(entry.reg().gpr(), argFor(entry));
+        else
+            jit.storeDouble(entry.reg().fpr(), argFor(entry));
+    }
 
     GenerationContext context;
     context.code = &code;
@@ -162,9 +187,15 @@ void generate(Code& code, CCallHelpers& jit)
         if (isReturn(block->last().opcode)) {
             // We currently don't represent the full prologue/epilogue in Air, so we need to
             // have this override.
-            if (code.frameSize())
+            if (code.frameSize()) {
+                for (const RegisterAtOffset& entry : code.calleeSaveRegisters()) {
+                    if (entry.reg().isGPR())
+                        jit.loadPtr(argFor(entry), entry.reg().gpr());
+                    else
+                        jit.loadDouble(argFor(entry), entry.reg().fpr());
+                }
                 jit.emitFunctionEpilogue();
-            else
+            } else
                 jit.emitFunctionEpilogueWithEmptyFrame();
             jit.ret();
             continue;

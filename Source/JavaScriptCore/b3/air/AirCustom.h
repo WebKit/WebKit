@@ -71,14 +71,7 @@ struct PatchCustom {
         return false;
     }
 
-    static bool isValidForm(Inst& inst)
-    {
-        if (inst.args.size() < 1)
-            return false;
-        if (!inst.args[0].isSpecial())
-            return false;
-        return inst.args[0].special()->isValid(inst);
-    }
+    static bool isValidForm(Inst& inst);
 
     static bool admitsStack(Inst& inst, unsigned argIndex)
     {

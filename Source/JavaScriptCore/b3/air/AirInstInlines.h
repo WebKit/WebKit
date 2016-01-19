@@ -158,6 +158,11 @@ inline void Inst::reportUsedRegisters(const RegisterSet& usedRegisters)
     args[0].special()->reportUsedRegisters(*this, usedRegisters);
 }
 
+inline bool Inst::admitsStack(Arg& arg)
+{
+    return admitsStack(&arg - &args[0]);
+}
+
 inline bool isShiftValid(const Inst& inst)
 {
 #if CPU(X86) || CPU(X86_64)

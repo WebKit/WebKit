@@ -806,6 +806,30 @@ template<typename T, typename... Args> bool sumOverflows(Args... args)
     return checkedSum<T>(args...).hasOverflowed();
 }
 
+template<typename T, typename U> bool differenceOverflows(U left, U right)
+{
+    return (Checked<T, RecordOverflow>(left) - Checked<T, RecordOverflow>(right)).hasOverflowed();
+}
+
+template<typename T, typename U>
+Checked<T, RecordOverflow> checkedProduct(U value)
+{
+    return Checked<T, RecordOverflow>(value);
+}
+template<typename T, typename U, typename... Args>
+Checked<T, RecordOverflow> checkedProduct(U value, Args... args)
+{
+    return Checked<T, RecordOverflow>(value) * checkedProduct<T>(args...);
+}
+
+// Sometimes, you just want to check if some math would overflow - the code to do the math is
+// already in place, and you want to guard it.
+
+template<typename T, typename... Args> bool productOverflows(Args... args)
+{
+    return checkedProduct<T>(args...).hasOverflowed();
+}
+
 }
 
 using WTF::Checked;
@@ -821,6 +845,8 @@ using WTF::CheckedInt64;
 using WTF::CheckedUint64;
 using WTF::CheckedSize;
 using WTF::checkedSum;
+using WTF::differenceOverflows;
+using WTF::productOverflows;
 using WTF::sumOverflows;
 
 #endif

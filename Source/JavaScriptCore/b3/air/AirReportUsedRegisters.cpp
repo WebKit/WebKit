@@ -46,6 +46,32 @@ void reportUsedRegisters(Code& code)
 
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
+
+            // Kill dead assignments to registers. For simplicity we say that a store is killable if
+            // it has only late defs and those late defs are to registers that are dead right now.
+            if (!inst.hasNonArgEffects()) {
+                bool canDelete = true;
+                inst.forEachArg(
+                    [&] (Arg& arg, Arg::Role role, Arg::Type, Arg::Width) {
+                        if (Arg::isEarlyDef(role)) {
+                            canDelete = false;
+                            return;
+                        }
+                        if (!Arg::isLateDef(role))
+                            return;
+                        if (!arg.isReg()) {
+                            canDelete = false;
+                            return;
+                        }
+                        if (localCalc.isLive(arg.reg())) {
+                            canDelete = false;
+                            return;
+                        }
+                    });
+                if (canDelete)
+                    inst = Inst();
+            }
+            
             if (inst.opcode == Patch) {
                 RegisterSet registerSet;
                 for (Reg reg : localCalc.live())
@@ -54,6 +80,11 @@ void reportUsedRegisters(Code& code)
             }
             localCalc.execute(instIndex);
         }
+        
+        block->insts().removeAllMatching(
+            [&] (const Inst& inst) -> bool {
+                return !inst;
+            });
     }
 }
 

@@ -379,7 +379,8 @@
 		0F493AFA16D0CAD30084508B /* SourceProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F493AF816D0CAD10084508B /* SourceProvider.cpp */; };
 		0F4B94DC17B9F07500DD03A4 /* TypedArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4B94DB17B9F07500DD03A4 /* TypedArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4C91661C29F4F2004341A6 /* B3OriginDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4C91651C29F4F2004341A6 /* B3OriginDump.h */; };
-		0F4C91681C2B3D68004341A6 /* AirFixSpillSlotZDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4C91671C2B3D68004341A6 /* AirFixSpillSlotZDef.h */; };
+		0F4DE1CE1C4C1B54004D6C11 /* AirFixObviousSpills.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4DE1CC1C4C1B54004D6C11 /* AirFixObviousSpills.cpp */; };
+		0F4DE1CF1C4C1B54004D6C11 /* AirFixObviousSpills.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4DE1CD1C4C1B54004D6C11 /* AirFixObviousSpills.h */; };
 		0F4F29DF18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4F29DD18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp */; };
 		0F4F29E018B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */; };
 		0F50AF3C193E8B3900674EE8 /* DFGStructureClobberState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F50AF3B193E8B3900674EE8 /* DFGStructureClobberState.h */; };
@@ -724,6 +725,8 @@
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
 		0FE254F61ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE254F41ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.cpp */; };
 		0FE254F71ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE254F51ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.h */; };
+		0FE34C191C4B39AE0003A512 /* AirLogRegisterPressure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE34C171C4B39AE0003A512 /* AirLogRegisterPressure.cpp */; };
+		0FE34C1A1C4B39AE0003A512 /* AirLogRegisterPressure.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE34C181C4B39AE0003A512 /* AirLogRegisterPressure.h */; };
 		0FE7211D193B9C590031F6ED /* DFGTransition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE7211B193B9C590031F6ED /* DFGTransition.cpp */; };
 		0FE7211E193B9C590031F6ED /* DFGTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE7211C193B9C590031F6ED /* DFGTransition.h */; };
 		0FE834171A6EF97B00D04847 /* PolymorphicCallStubRoutine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE834151A6EF97B00D04847 /* PolymorphicCallStubRoutine.cpp */; };
@@ -2542,7 +2545,8 @@
 		0F493AF816D0CAD10084508B /* SourceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProvider.cpp; sourceTree = "<group>"; };
 		0F4B94DB17B9F07500DD03A4 /* TypedArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayInlines.h; sourceTree = "<group>"; };
 		0F4C91651C29F4F2004341A6 /* B3OriginDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3OriginDump.h; path = b3/B3OriginDump.h; sourceTree = "<group>"; };
-		0F4C91671C2B3D68004341A6 /* AirFixSpillSlotZDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirFixSpillSlotZDef.h; path = b3/air/AirFixSpillSlotZDef.h; sourceTree = "<group>"; };
+		0F4DE1CC1C4C1B54004D6C11 /* AirFixObviousSpills.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirFixObviousSpills.cpp; path = b3/air/AirFixObviousSpills.cpp; sourceTree = "<group>"; };
+		0F4DE1CD1C4C1B54004D6C11 /* AirFixObviousSpills.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirFixObviousSpills.h; path = b3/air/AirFixObviousSpills.h; sourceTree = "<group>"; };
 		0F4F29DD18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStaticExecutionCountEstimationPhase.cpp; path = dfg/DFGStaticExecutionCountEstimationPhase.cpp; sourceTree = "<group>"; };
 		0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStaticExecutionCountEstimationPhase.h; path = dfg/DFGStaticExecutionCountEstimationPhase.h; sourceTree = "<group>"; };
 		0F50AF3B193E8B3900674EE8 /* DFGStructureClobberState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureClobberState.h; path = dfg/DFGStructureClobberState.h; sourceTree = "<group>"; };
@@ -2900,6 +2904,8 @@
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
 		0FE254F41ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVarargsForwardingPhase.cpp; path = dfg/DFGVarargsForwardingPhase.cpp; sourceTree = "<group>"; };
 		0FE254F51ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVarargsForwardingPhase.h; path = dfg/DFGVarargsForwardingPhase.h; sourceTree = "<group>"; };
+		0FE34C171C4B39AE0003A512 /* AirLogRegisterPressure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLogRegisterPressure.cpp; path = b3/air/AirLogRegisterPressure.cpp; sourceTree = "<group>"; };
+		0FE34C181C4B39AE0003A512 /* AirLogRegisterPressure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLogRegisterPressure.h; path = b3/air/AirLogRegisterPressure.h; sourceTree = "<group>"; };
 		0FE7211B193B9C590031F6ED /* DFGTransition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGTransition.cpp; path = dfg/DFGTransition.cpp; sourceTree = "<group>"; };
 		0FE7211C193B9C590031F6ED /* DFGTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGTransition.h; path = dfg/DFGTransition.h; sourceTree = "<group>"; };
 		0FE834151A6EF97B00D04847 /* PolymorphicCallStubRoutine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolymorphicCallStubRoutine.cpp; sourceTree = "<group>"; };
@@ -4859,9 +4865,10 @@
 				0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */,
 				0F6183231C45BF070072450B /* AirEmitShuffle.cpp */,
 				0F6183241C45BF070072450B /* AirEmitShuffle.h */,
+				0F4DE1CC1C4C1B54004D6C11 /* AirFixObviousSpills.cpp */,
+				0F4DE1CD1C4C1B54004D6C11 /* AirFixObviousSpills.h */,
 				262D85B41C0D650F006ACB61 /* AirFixPartialRegisterStalls.cpp */,
 				262D85B51C0D650F006ACB61 /* AirFixPartialRegisterStalls.h */,
-				0F4C91671C2B3D68004341A6 /* AirFixSpillSlotZDef.h */,
 				0FEC85521BDACDC70080FF74 /* AirFrequentedBlock.h */,
 				0FEC85531BDACDC70080FF74 /* AirGenerate.cpp */,
 				0FEC85541BDACDC70080FF74 /* AirGenerate.h */,
@@ -4877,6 +4884,8 @@
 				26718BA21BE99F780052017B /* AirIteratedRegisterCoalescing.cpp */,
 				26718BA31BE99F780052017B /* AirIteratedRegisterCoalescing.h */,
 				2684D4371C00161C0081D663 /* AirLiveness.h */,
+				0FE34C171C4B39AE0003A512 /* AirLogRegisterPressure.cpp */,
+				0FE34C181C4B39AE0003A512 /* AirLogRegisterPressure.h */,
 				0F6183251C45BF070072450B /* AirLowerAfterRegAlloc.cpp */,
 				0F6183261C45BF070072450B /* AirLowerAfterRegAlloc.h */,
 				0F6183271C45BF070072450B /* AirLowerMacros.cpp */,
@@ -7326,7 +7335,6 @@
 				DC00039319D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h in Headers */,
 				0FBE0F7516C1DB0B0082C5E8 /* DFGPredictionInjectionPhase.h in Headers */,
 				0FFFC95E14EF90B700C72532 /* DFGPredictionPropagationPhase.h in Headers */,
-				0F4C91681C2B3D68004341A6 /* AirFixSpillSlotZDef.h in Headers */,
 				0F3E01AB19D353A500F61B7F /* DFGPrePostNumbering.h in Headers */,
 				0F2B9CED19D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.h in Headers */,
 				0FFC92161B94FB3E0071DD66 /* DFGPropertyTypeKey.h in Headers */,
@@ -7357,6 +7365,7 @@
 				70B791991C024A29002481E2 /* GeneratorPrototype.h in Headers */,
 				0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */,
 				0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */,
+				0FE34C1A1C4B39AE0003A512 /* AirLogRegisterPressure.h in Headers */,
 				0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */,
 				0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */,
 				FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */,
@@ -7402,6 +7411,7 @@
 				0F3AC754188E5EC80032029F /* ExitingJITType.h in Headers */,
 				0FB105861675481200F8AB6E /* ExitKind.h in Headers */,
 				0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */,
+				0F4DE1CF1C4C1B54004D6C11 /* AirFixObviousSpills.h in Headers */,
 				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
 				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
 				0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */,
@@ -8676,6 +8686,7 @@
 				0FEC856D1BDACDC70080FF74 /* AirAllocateStack.cpp in Sources */,
 				43422A661C16267500E2EB98 /* B3ReduceDoubleToFloat.cpp in Sources */,
 				0FEC856F1BDACDC70080FF74 /* AirArg.cpp in Sources */,
+				0F4DE1CE1C4C1B54004D6C11 /* AirFixObviousSpills.cpp in Sources */,
 				0FEC85711BDACDC70080FF74 /* AirBasicBlock.cpp in Sources */,
 				0FEC85731BDACDC70080FF74 /* AirCCallSpecial.cpp in Sources */,
 				0FEC85751BDACDC70080FF74 /* AirCode.cpp in Sources */,
@@ -9091,6 +9102,7 @@
 				A593CF821840377100BFCE27 /* InspectorValues.cpp in Sources */,
 				147F39CF107EC37600427A48 /* InternalFunction.cpp in Sources */,
 				1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */,
+				0FE34C191C4B39AE0003A512 /* AirLogRegisterPressure.cpp in Sources */,
 				A1B9E2391B4E0D6700BC7FED /* IntlCollator.cpp in Sources */,
 				A1B9E23B1B4E0D6700BC7FED /* IntlCollatorConstructor.cpp in Sources */,
 				A1B9E23D1B4E0D6700BC7FED /* IntlCollatorPrototype.cpp in Sources */,

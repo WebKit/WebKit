@@ -66,6 +66,9 @@ private:
     Arg::Width m_width { Arg::Width8 };
 };
 
+// Create a Shuffle instruction.
+Inst createShuffle(Value* origin, const Vector<ShufflePair>&);
+
 // Perform a shuffle of a given type. The scratch argument is mandatory. You should pass it as
 // follows: If you know that you have scratch registers or temporaries available - that is, they're
 // registers that are not mentioned in the shuffle, have the same type as the shuffle, and are not

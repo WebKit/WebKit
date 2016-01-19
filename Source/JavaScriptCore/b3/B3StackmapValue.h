@@ -187,6 +187,8 @@ public:
         clobberLate(set);
     }
 
+    RegisterSet& earlyClobbered() { return m_earlyClobbered; }
+    RegisterSet& lateClobbered() { return m_lateClobbered; }
     const RegisterSet& earlyClobbered() const { return m_earlyClobbered; }
     const RegisterSet& lateClobbered() const { return m_lateClobbered; }
 

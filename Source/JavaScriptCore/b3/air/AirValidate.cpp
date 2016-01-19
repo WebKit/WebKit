@@ -82,6 +82,13 @@ public:
                     VALIDATE(isTerminal(inst.opcode), ("At ", inst, " in ", *block));
                 else
                     VALIDATE(!isTerminal(inst.opcode), ("At ", inst, " in ", *block));
+
+                // forEachArg must return Arg&'s that point into the args array.
+                inst.forEachArg(
+                    [&] (Arg& arg, Arg::Role, Arg::Type, Arg::Width) {
+                        VALIDATE(&arg >= &inst.args[0], ("At ", arg, " in ", inst, " in ", *block));
+                        VALIDATE(&arg <= &inst.args.last(), ("At ", arg, " in ", inst, " in ", *block));
+                    });
             }
             for (BasicBlock* successor : block->successorBlocks())
                 VALIDATE(validBlocks.contains(successor), ("In ", *block));

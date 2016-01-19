@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,8 @@ public:
     WTF_EXPORT_PRIVATE virtual ~StringPrintStream();
     
     WTF_EXPORT_PRIVATE virtual void vprintf(const char* format, va_list) override WTF_ATTRIBUTE_PRINTF(2, 0);
+
+    size_t length() const { return m_next; }
     
     WTF_EXPORT_PRIVATE CString toCString();
     WTF_EXPORT_PRIVATE String toString();

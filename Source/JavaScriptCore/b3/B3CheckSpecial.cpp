@@ -105,19 +105,14 @@ Inst CheckSpecial::hiddenBranch(const Inst& inst) const
     return hiddenBranch;
 }
 
-void CheckSpecial::commitHiddenBranch(Inst& original, Inst& hiddenBranch)
-{
-    ASSERT(hiddenBranch.args.size() == m_numCheckArgs);
-    ASSERT(hiddenBranch.opcode = m_checkOpcode);
-    for (unsigned i = 0; i < m_numCheckArgs; ++i)
-        original.args[i + 1] = hiddenBranch.args[i];
-}
-
 void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     Inst hidden = hiddenBranch(inst);
-    hidden.forEachArg(callback);
-    commitHiddenBranch(inst, hidden);
+    hidden.forEachArg(
+        [&] (Arg& arg, Arg::Role role, Arg::Type type, Arg::Width width) {
+            unsigned index = &arg - &hidden.args[0];
+            callback(inst.args[1 + index], role, type, width);
+        });
     forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, m_stackmapRole, callback);
 }
 

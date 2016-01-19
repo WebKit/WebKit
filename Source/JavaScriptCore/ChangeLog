@@ -1,3 +1,166 @@
+2016-01-17  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should be just as fast as FTL LLVM on Octane/crypto
+        https://bugs.webkit.org/show_bug.cgi?id=153113
+
+        Reviewed by Saam Barati.
+
+        This is the result of a hacking rampage to close the gap between FTL B3 and FTL LLVM on
+        Octane/crypto. It was a very successful rampage.
+
+        The biggest change in this patch is the introduction of a phase called fixObviousSpills()
+        that fixes patterns like:
+
+        Store register to stack slot and then use stack slot:
+            Move %rcx, (stack42)
+            Foo use:(stack42) // replace (stack42) with %rcx here.
+
+        Load stack slot into register and then use stack slot:
+            Move (stack42), %rcx
+            Foo use:(stack42) // replace (stack42) with %rcx here.
+
+        Store constant into stack slot and then use stack slot:
+            Move $42, %rcx
+            Move %rcx, (stack42)
+            Bar def:%rcx // %rcx isn't available anymore, but we still know that (stack42) is $42
+            Foo use:(stack42) // replace (stack42) with $42 here.
+
+        This phases does these fixups by doing a global forward flow that propagates sets of
+        must-aliases.
+
+        Also added a phase to report register pressure. It pretty-prints code alongside the set of
+        in-use registers above each instruction. Using this phase, I found that our register
+        allocator is actually doing a pretty awesome job. I had previously feared that we'd have to
+        make substantial changes to register allocation. I don't have such a fear anymore, at least
+        for Octane/crypto. In the future, we can check how the regalloc is performing just by
+        enabling logAirRegisterPressure.
+
+        Also fixed some FTL codegen pathologies. We were using bitOr where we meant to use a
+        conditional or. LLVM likes to canonicalize boolean expressions this way. B3, on the other
+        hand, doesn't do this canonicalization and doesn't have logic to decompose it into sequences
+        of branches.
+
+        Also added strength reductions for checked arithmetic. It turns out that LLVM learned how to
+        reduce checked multiply to unchecked multiply in some obvious cases that our existing DFG
+        optimizations lacked. Ideally, our DFG integer range optimization phase would cover this. But
+        the cases of interest were dead simple - the incoming values to the CheckMul were obviously
+        too small to cause overflow. I added such reasoning to B3's strength reduction.
+
+        Finally, this fixes some bugs with how we were handling subwidth spill slots. The register
+        allocator was making two mistakes. First, it might cause a Width64 def or use of a 4-byte
+        spill slot. In that case, it would extend the size of the spill slot to ensure that the use
+        or def is safe. Second, it emulates ZDef on Tmp behavior by emitting a Move32 to initialize
+        the high bits of a spill slot. But this is unsound because of the liveness semantics of spill
+        slots. They cannot have more than one def to initialize their value. I fixed that by making
+        allocateStack() be the thing that fixes ZDefs. That's a change to ZDef semantics: now, ZDef
+        on an anonymous stack slot means that the high bits are zero-filled. I wasn't able to
+        construct a test for this. It might be a hypothetical bug, but still, I like how this
+        simplifies the register allocator.
+
+        This is a ~0.7% speed-up on Octane.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::hiddenBranch):
+        (JSC::B3::CheckSpecial::forEachArg):
+        (JSC::B3::CheckSpecial::commitHiddenBranch): Deleted.
+        * b3/B3CheckSpecial.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3StackmapValue.h:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirAllocateStack.h:
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::callArg):
+        (JSC::B3::Air::Arg::stackAddr):
+        (JSC::B3::Air::Arg::isValidScale):
+        * b3/air/AirBasicBlock.cpp:
+        (JSC::B3::Air::BasicBlock::deepDump):
+        (JSC::B3::Air::BasicBlock::dumpHeader):
+        (JSC::B3::Air::BasicBlock::dumpFooter):
+        * b3/air/AirBasicBlock.h:
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::CCallSpecial):
+        (JSC::B3::Air::CCallSpecial::~CCallSpecial):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::lastPhaseName):
+        (JSC::B3::Air::Code::setEnableRCRS):
+        (JSC::B3::Air::Code::enableRCRS):
+        * b3/air/AirCustom.cpp:
+        (JSC::B3::Air::PatchCustom::isValidForm):
+        (JSC::B3::Air::CCallCustom::isValidForm):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::PatchCustom::isValidFormStatic):
+        (JSC::B3::Air::PatchCustom::admitsStack):
+        (JSC::B3::Air::PatchCustom::isValidForm): Deleted.
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::ShufflePair::dump):
+        (JSC::B3::Air::createShuffle):
+        (JSC::B3::Air::emitShuffle):
+        * b3/air/AirEmitShuffle.h:
+        * b3/air/AirFixObviousSpills.cpp: Added.
+        (JSC::B3::Air::fixObviousSpills):
+        * b3/air/AirFixObviousSpills.h: Added.
+        * b3/air/AirFixSpillSlotZDef.h: Removed.
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        (JSC::B3::Air::generate):
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::reportUsedRegisters):
+        (JSC::B3::Air::Inst::admitsStack):
+        (JSC::B3::Air::isShiftValid):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::AbstractLiveness::AbstractLiveness):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterable::begin):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterable::end):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::Iterable::contains):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::live):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::isLive):
+        (JSC::B3::Air::AbstractLiveness::LocalCalc::execute):
+        (JSC::B3::Air::AbstractLiveness::rawLiveAtHead):
+        (JSC::B3::Air::AbstractLiveness::Iterable::begin):
+        (JSC::B3::Air::AbstractLiveness::Iterable::end):
+        (JSC::B3::Air::AbstractLiveness::Iterable::contains):
+        (JSC::B3::Air::AbstractLiveness::liveAtTail):
+        (JSC::B3::Air::AbstractLiveness::workset):
+        * b3/air/AirLogRegisterPressure.cpp: Added.
+        (JSC::B3::Air::logRegisterPressure):
+        * b3/air/AirLogRegisterPressure.h: Added.
+        * b3/air/AirOptimizeBlockOrder.cpp:
+        (JSC::B3::Air::blocksInOptimizedOrder):
+        (JSC::B3::Air::optimizeBlockOrder):
+        * b3/air/AirOptimizeBlockOrder.h:
+        * b3/air/AirReportUsedRegisters.cpp:
+        (JSC::B3::Air::reportUsedRegisters):
+        * b3/air/AirReportUsedRegisters.h:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirStackSlot.h:
+        (JSC::B3::Air::StackSlot::isLocked):
+        (JSC::B3::Air::StackSlot::index):
+        (JSC::B3::Air::StackSlot::ensureSize):
+        (JSC::B3::Air::StackSlot::alignment):
+        * b3/air/AirValidate.cpp:
+        * ftl/FTLB3Compile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithDiv):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMod):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::get):
+        (JSC::RegisterSet::setAll):
+        (JSC::RegisterSet::merge):
+        (JSC::RegisterSet::filter):
+        * runtime/Options.h:
+
 2016-01-19  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, undo unintended commit.

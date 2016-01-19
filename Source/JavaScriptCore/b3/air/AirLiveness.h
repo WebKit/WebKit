@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBasicBlock.h"
+#include "AirCode.h"
 #include "AirInstInlines.h"
 #include "AirTmpInlines.h"
 #include "B3IndexMap.h"
@@ -93,9 +94,11 @@ struct RegLivenessAdapter {
 };
 
 template<typename Adapter>
-class AbstractLiveness : private Adapter {
+class AbstractLiveness : public Adapter {
     struct Workset;
 public:
+    typedef typename Adapter::Thing Thing;
+    
     AbstractLiveness(Code& code)
         : Adapter(code)
         , m_workset(Adapter::maxIndex(code))
@@ -222,6 +225,11 @@ public:
 
             Iterator begin() const { return Iterator(m_liveness, m_liveness.m_workset.begin()); }
             Iterator end() const { return Iterator(m_liveness, m_liveness.m_workset.end()); }
+            
+            bool contains(const typename Adapter::Thing& thing) const
+            {
+                return m_liveness.m_workset.contains(Adapter::valueToIndex(thing));
+            }
 
         private:
             AbstractLiveness& m_liveness;
@@ -230,6 +238,11 @@ public:
         Iterable live() const
         {
             return Iterable(m_liveness);
+        }
+
+        bool isLive(const typename Adapter::Thing& thing) const
+        {
+            return live().contains(thing);
         }
 
         void execute(unsigned instIndex)
@@ -276,6 +289,11 @@ public:
         AbstractLiveness& m_liveness;
         BasicBlock* m_block;
     };
+
+    const Vector<unsigned>& rawLiveAtHead(BasicBlock* block)
+    {
+        return m_liveAtHead[block];
+    }
 
     template<typename UnderlyingIterable>
     class Iterable {
@@ -330,6 +348,11 @@ public:
         iterator begin() const { return iterator(m_liveness, m_iterable.begin()); }
         iterator end() const { return iterator(m_liveness, m_iterable.end()); }
 
+        bool contains(const typename Adapter::Thing& thing) const
+        {
+            return m_liveness.m_workset.contains(Adapter::valueToIndex(thing));
+        }
+
     private:
         AbstractLiveness& m_liveness;
         const UnderlyingIterable& m_iterable;
@@ -344,6 +367,8 @@ public:
     {
         return Iterable<typename Adapter::IndexSet>(*this, m_liveAtTail[block]);
     }
+
+    IndexSparseSet<UnsafeVectorOverflow>& workset() { return m_workset; }
 
 private:
     friend class LocalCalc;

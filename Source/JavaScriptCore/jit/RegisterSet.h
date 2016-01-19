@@ -91,6 +91,13 @@ public:
         ASSERT(!!reg);
         return m_vector.get(reg.index());
     }
+
+    template<typename Iterable>
+    void setAll(const Iterable& iterable)
+    {
+        for (Reg reg : iterable)
+            set(reg);
+    }
     
     void merge(const RegisterSet& other) { m_vector.merge(other.m_vector); }
     void filter(const RegisterSet& other) { m_vector.filter(other.m_vector); }

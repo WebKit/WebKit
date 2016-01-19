@@ -57,11 +57,21 @@ void BasicBlock::dump(PrintStream& out) const
 
 void BasicBlock::deepDump(PrintStream& out) const
 {
+    dumpHeader(out);
+    for (const Inst& inst : *this)
+        out.print("    ", inst, "\n");
+    dumpFooter(out);
+}
+
+void BasicBlock::dumpHeader(PrintStream& out) const
+{
     out.print("BB", *this, ": ; frequency = ", m_frequency, "\n");
     if (predecessors().size())
         out.print("  Predecessors: ", pointerListDump(predecessors()), "\n");
-    for (const Inst& inst : *this)
-        out.print("    ", inst, "\n");
+}
+
+void BasicBlock::dumpFooter(PrintStream& out) const
+{
     if (successors().size())
         out.print("  Successors: ", listDump(successors()), "\n");
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,11 +20,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AirReportUsedRegisters_h
-#define AirReportUsedRegisters_h
+#ifndef AirFixObviousSpills_h
+#define AirFixObviousSpills_h
 
 #if ENABLE(B3_JIT)
 
@@ -32,14 +32,14 @@ namespace JSC { namespace B3 { namespace Air {
 
 class Code;
 
-// Performs a liveness analysis over registers and reports the live registers to every Special. Takes
-// the opportunity to kill dead assignments to registers, since it has access to register liveness.
-
-void reportUsedRegisters(Code&);
+// This is a forward flow phase that tracks equivalence between spills slots and registers. It
+// removes loads from spill slots in cases when the contents of the spill slot can be found in (or
+// computed from) a register.
+void fixObviousSpills(Code&);
 
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
 
-#endif // AirReportUsedRegisters_h
+#endif // AirFixObviousSpills_h
 

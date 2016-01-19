@@ -871,6 +871,7 @@ private:
                 arg = tmp(value.value());
                 break;
             case ValueRep::Register:
+                stackmap->earlyClobbered().clear(value.rep().reg());
                 arg = Tmp(value.rep().reg());
                 append(Move, immOrTmp(value.value()), arg);
                 break;
@@ -1973,6 +1974,9 @@ private:
             }
             
             fillStackmap(inst, patchpointValue, 0);
+            
+            if (patchpointValue->resultConstraint.isReg())
+                patchpointValue->lateClobbered().clear(patchpointValue->resultConstraint.reg());
 
             for (unsigned i = patchpointValue->numGPScratchRegisters; i--;)
                 inst.args.append(m_code.newTmp(Arg::GP));

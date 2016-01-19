@@ -47,8 +47,8 @@ class IndexSparseSet {
 public:
     explicit IndexSparseSet(unsigned maxValue);
 
-    void add(unsigned);
-    void remove(unsigned);
+    bool add(unsigned);
+    bool remove(unsigned);
     void clear();
 
     unsigned size() const;
@@ -71,29 +71,33 @@ inline IndexSparseSet<OverflowHandler>::IndexSparseSet(unsigned maxValue)
 }
 
 template<typename OverflowHandler>
-inline void IndexSparseSet<OverflowHandler>::add(unsigned value)
+inline bool IndexSparseSet<OverflowHandler>::add(unsigned value)
 {
     if (contains(value))
-        return;
+        return false;
 
     unsigned newPosition = m_values.size();
     m_values.append(value);
     m_map[value] = newPosition;
+    return true;
 }
 
 template<typename OverflowHandler>
-inline void IndexSparseSet<OverflowHandler>::remove(unsigned value)
+inline bool IndexSparseSet<OverflowHandler>::remove(unsigned value)
 {
     unsigned position = m_map[value];
     if (position >= m_values.size())
-        return;
+        return false;
 
     if (m_values[position] == value) {
         unsigned lastValue = m_values.last();
         m_values[position] = lastValue;
         m_map[lastValue] = position;
         m_values.removeLast();
+        return true;
     }
+
+    return false;
 }
 
 template<typename OverflowHandler>

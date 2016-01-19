@@ -343,6 +343,7 @@ typedef const char* optionString;
     v(bool, logB3PhaseTimes, false, nullptr) \
     v(double, rareBlockPenalty, 0.001, nullptr) \
     v(bool, airSpillsEverything, false, nullptr) \
+    v(bool, logAirRegisterPressure, false, nullptr) \
     \
     v(bool, useDollarVM, false, "installs the $vm debugging tool in global objects") \
     v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \
