@@ -31,7 +31,6 @@
 #include "CSSValue.h"
 #include "MediaFeatureNames.h"
 #include <memory>
-#include <wtf/BumpArena.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -39,7 +38,7 @@ namespace WebCore {
 class CSSParserValueList;
 
 class MediaQueryExp {
-    WTF_MAKE_BUMPARENA_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MediaQueryExp(const AtomicString& mediaFeature = emptyAtom, CSSParserValueList* values = nullptr);
 

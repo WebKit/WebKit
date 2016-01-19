@@ -1,5 +1,17 @@
 2016-01-19  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r195179.
+
+        It relies on r195141 which was rolled out
+
+        Reverted changeset:
+
+        "Allocate style sheet media queries in BumpArena."
+        https://bugs.webkit.org/show_bug.cgi?id=153188
+        http://trac.webkit.org/changeset/195179
+
+2016-01-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r195173.
 
         It relies on r195141 which was rolled out
