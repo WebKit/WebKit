@@ -98,7 +98,7 @@ WebInspector.linkifyNodeReference = function(node)
     link.title = displayName;
 
     link.addEventListener("click", WebInspector.domTreeManager.inspectElement.bind(WebInspector.domTreeManager, node.id));
-    link.addEventListener("mouseover", WebInspector.domTreeManager.highlightDOMNode.bind(WebInspector.domTreeManager, node.id, ""));
+    link.addEventListener("mouseover", WebInspector.domTreeManager.highlightDOMNode.bind(WebInspector.domTreeManager, node.id, "all"));
     link.addEventListener("mouseout", WebInspector.domTreeManager.hideDOMNodeHighlight.bind(WebInspector.domTreeManager));
 
     return link;

@@ -1,3 +1,14 @@
+2016-01-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Hovering linkified node references should show node highlight
+        https://bugs.webkit.org/show_bug.cgi?id=153248
+        <rdar://problem/24245518>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/DOMUtilities.js:
+        Show the complete node highlight details (colors and node info).
+
 2016-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebInspector.Object.addEventListener is O(n), make it O(1)
