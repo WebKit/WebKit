@@ -1,3 +1,13 @@
+2016-01-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][EFL] Layout tests abort with PulseAudioSanitizer instance has no attribute '_pa_module_index' when the build is not ready.
+        https://bugs.webkit.org/show_bug.cgi?id=153216
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/port/pulseaudio_sanitizer.py:
+        (PulseAudioSanitizer.__init__): initialize _pa_module_index in the constructor.
+
 2016-01-18  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] Implement next/previous text marker functions using TextIterator
