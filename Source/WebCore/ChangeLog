@@ -1,3 +1,40 @@
+2016-01-19  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        SVG 2 requires a mechanism for restricting enum values exposed through the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=152814
+
+        Reviewed by Darin Adler.
+
+        No new tests (No change in functionality, blocked bugs add new tests).
+ 
+        This patch adds a mechanism to restrict the values returned through the
+        SVGAnimatedEnumeration interface.
+        This is required for SVG 2, which does not expose new enumeration
+        values through the IDL.
+        See http://www.w3.org/TR/SVG2/types.html#InterfaceSVGAnimatedEnumeration
+        Getters:
+        SVG 2 does not add numeric type values for new options, new options
+        should return UNKNOWN.
+        E.g. See the table defining numeric type values for orient at
+        http://www.w3.org/TR/SVG2/painting.html#InterfaceSVGMarkerElement
+        Setters:
+        On setting baseVal, the following steps are run:
+        1. ...
+        2. If value is 0 or is not the numeric type value for any value of the reflected attribute, then set the reflected attribute to the empty string.
+
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h:
+        Override baseVal() and animVal() to perform range checks against
+        the highest exposed enum value.
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::baseVal): Mark function as virtual as it's over-ridden for enumerations.
+        (WebCore::SVGAnimatedStaticPropertyTearOff::animVal): Mark function as virtual as it's over-ridden for enumerations.
+        * svg/properties/SVGPropertyTraits.h:
+        Add SVGIDLEnumLimits struct that contains function for querying the
+        highest exposed enum value.
+        (WebCore::SVGIDLEnumLimits::highestExposedEnumValue): New function that returns the highest enum value that should
+        be exposed through the DOM. This function should be specialized for enum types that need to restrict the exposed
+        values.
+
 2016-01-19  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation of AXObjectCache in case of !HAVE(ACCESSIBILITY).
