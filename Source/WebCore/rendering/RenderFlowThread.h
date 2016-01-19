@@ -85,7 +85,7 @@ public:
     virtual void regionChangedWritingMode(RenderRegion*) { }
 
     void validateRegions();
-    void invalidateRegions();
+    void invalidateRegions(MarkingBehavior = MarkContainingBlockChain);
     bool hasValidRegionInfo() const { return !m_regionsInvalidated && !m_regionList.isEmpty(); }
 
     // Some renderers (column spanners) are moved out of the flow thread to live among column

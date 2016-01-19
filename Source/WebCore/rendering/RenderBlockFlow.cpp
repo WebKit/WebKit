@@ -3755,7 +3755,7 @@ RenderObject* RenderBlockFlow::layoutSpecialExcludedChild(bool relayoutChildren)
         for (RenderMultiColumnSet* columnSet = flowThread->firstMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet())
             columnSet->prepareForLayout(!flowThread->inBalancingPass());
 
-        flowThread->invalidateRegions();
+        flowThread->invalidateRegions(MarkOnlyThis);
         flowThread->setNeedsHeightsRecalculation(true);
         flowThread->layout();
     } else {

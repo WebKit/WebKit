@@ -362,7 +362,7 @@ void RenderMultiColumnSet::prepareForLayout(bool initial)
     // Start with "infinite" flow thread portion height until height is known.
     setLogicalBottomInFlowThread(RenderFlowThread::maxLogicalHeight());
 
-    setNeedsLayout();
+    setNeedsLayout(MarkOnlyThis);
 }
 
 void RenderMultiColumnSet::beginFlow(RenderBlock* container)
