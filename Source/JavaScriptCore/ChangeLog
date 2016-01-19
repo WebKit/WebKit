@@ -1,3 +1,9 @@
+2016-01-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, undo unintended commit.
+
+        * dfg/DFGCommon.h:
+
 2016-01-18  Filip Pizlo  <fpizlo@apple.com>
 
         Fix Air shuffling assertions
