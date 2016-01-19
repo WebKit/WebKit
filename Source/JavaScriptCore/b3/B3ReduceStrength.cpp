@@ -766,7 +766,7 @@ private:
             if (m_value->child(0)->opcode() == BitwiseCast) {
                 Value* mask;
                 if (m_value->type() == Double)
-                    mask = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), ~(1l << 63));
+                    mask = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), ~(1ll << 63));
                 else
                     mask = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), ~(1l << 31));
 
