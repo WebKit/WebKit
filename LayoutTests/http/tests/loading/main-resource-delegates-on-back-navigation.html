@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+Test that main resource load delegates are the same when page cache is enabled and disabled
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener('pageshow', function() {
+    if (!sessionStorage.testLoadCount)
+        sessionStorage.testLoadCount = 1;
+    else
+        sessionStorage.testLoadCount = parseInt(sessionStorage.testLoadCount, 10) + 1
+    var pageCacheEnabled;
+    switch(parseInt(sessionStorage.testLoadCount, 10)) {
+    case 1:
+        pageCacheEnabled = 0;
+        break;
+    case 2:
+        pageCacheEnabled = 1;
+        break;
+    case 3:
+        setTimeout(function() {
+            delete sessionStorage.testLoadCount;
+            testRunner.notifyDone();
+        }, 0);
+        break;
+    }
+
+    if (window.testRunner)
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", pageCacheEnabled);
+
+    setTimeout(function() {
+        window.location.href = "resources/page-go-back-onload.html";
+    }, 0);
+}, false);
+</script>
+</body>
+</html>

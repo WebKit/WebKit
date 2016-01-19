@@ -1799,6 +1799,14 @@ void FrameLoader::commitProvisionalLoad()
 #endif
         prepareForCachedPageRestore();
 
+        // Start request for the main resource and dispatch didReceiveResponse before the load is committed for
+        // consistency with all other loads. See https://bugs.webkit.org/show_bug.cgi?id=150927.
+        ResourceError mainResouceError;
+        unsigned long mainResourceIdentifier;
+        ResourceRequest mainResourceRequest(cachedPage->documentLoader()->request());
+        requestFromDelegate(mainResourceRequest, mainResourceIdentifier, mainResouceError);
+        notifier().dispatchDidReceiveResponse(cachedPage->documentLoader(), mainResourceIdentifier, cachedPage->documentLoader()->response());
+
         // FIXME: This API should be turned around so that we ground CachedPage into the Page.
         cachedPage->restore(*m_frame.page());
 
@@ -1811,6 +1819,10 @@ void FrameLoader::commitProvisionalLoad()
         StringWithDirection title = m_documentLoader->title();
         if (!title.isNull())
             m_client.dispatchDidReceiveTitle(title);
+
+        // Send remaining notifications for the main resource.
+        notifier().sendRemainingDelegateMessages(m_documentLoader.get(), mainResourceIdentifier, mainResourceRequest, ResourceResponse(),
+            nullptr, static_cast<int>(m_documentLoader->response().expectedContentLength()), 0, mainResouceError);
 
         checkCompleted();
     } else
@@ -1838,10 +1850,9 @@ void FrameLoader::commitProvisionalLoad()
         m_frame.view()->forceLayout();
 #endif
 
-        const ResponseVector& responses = m_documentLoader->responses();
-        size_t count = responses.size();
-        for (size_t i = 0; i < count; i++) {
-            const ResourceResponse& response = responses[i];
+        // Main resource delegates were already sent, so we skip the first response here.
+        for (unsigned i = 1; i < m_documentLoader->responses().size(); ++i) {
+            const auto& response = m_documentLoader->responses()[i];
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
             ResourceError error;
             unsigned long identifier;
