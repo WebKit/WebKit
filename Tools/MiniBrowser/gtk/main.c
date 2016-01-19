@@ -39,6 +39,7 @@ static const gchar **uriArguments = NULL;
 static const char *miniBrowserAboutScheme = "minibrowser-about";
 static GdkRGBA *backgroundColor;
 static gboolean editorMode;
+static const char *sessionFile;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -58,7 +59,7 @@ static gchar *argumentToURL(const char *filename)
     return fileURL;
 }
 
-static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings)
+static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings, gboolean shouldLoadSession)
 {
     GtkWidget *webView = webkit_web_view_new();
     if (editorMode)
@@ -71,9 +72,13 @@ static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings
         webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);
 
     if (!editorMode) {
-        gchar *url = argumentToURL(uri);
-        browser_window_load_uri(BROWSER_WINDOW(mainWindow), url);
-        g_free(url);
+        if (shouldLoadSession && sessionFile)
+            browser_window_load_session(BROWSER_WINDOW(mainWindow), sessionFile);
+        else {
+            gchar *url = argumentToURL(uri);
+            browser_window_load_uri(BROWSER_WINDOW(mainWindow), url);
+            g_free(url);
+        }
     }
 
     gtk_widget_grab_focus(webView);
@@ -96,6 +101,7 @@ static const GOptionEntry commandLineOptions[] =
 {
     { "bg-color", 0, 0, G_OPTION_ARG_CALLBACK, parseBackgroundColor, "Background color", NULL },
     { "editor-mode", 'e', 0, G_OPTION_ARG_NONE, &editorMode, "Run in editor mode", NULL },
+    { "session-file", 's', 0, G_OPTION_ARG_FILENAME, &sessionFile, "Session file", "FILE" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -299,9 +305,9 @@ int main(int argc, char *argv[])
         int i;
 
         for (i = 0; uriArguments[i]; i++)
-            createBrowserWindow(uriArguments[i], webkitSettings);
+            createBrowserWindow(uriArguments[i], webkitSettings, FALSE);
     } else
-        createBrowserWindow(BROWSER_DEFAULT_URL, webkitSettings);
+        createBrowserWindow(BROWSER_DEFAULT_URL, webkitSettings, TRUE);
 
     g_clear_object(&webkitSettings);
 

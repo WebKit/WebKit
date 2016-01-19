@@ -71,6 +71,7 @@ struct _BrowserWindow {
     GtkWindow *parentWindow;
     guint fullScreenMessageLabelId;
     guint resetEntryProgressTimeoutId;
+    gchar *sessionFile;
 };
 
 struct _BrowserWindowClass {
@@ -779,6 +780,8 @@ static void browserWindowFinalize(GObject *gObject)
     if (window->resetEntryProgressTimeoutId)
         g_source_remove(window->resetEntryProgressTimeoutId);
 
+    g_free(window->sessionFile);
+
     G_OBJECT_CLASS(browser_window_parent_class)->finalize(gObject);
 
     if (g_atomic_int_dec_and_test(&windowCount))
@@ -1151,9 +1154,22 @@ static void browserWindowConstructed(GObject *gObject)
         webkit_web_view_load_html(window->webView, "<html></html>", "file:///");
 }
 
+static void browserWindowSaveSession(BrowserWindow *window)
+{
+    if (!window->sessionFile)
+        return;
+
+    WebKitWebViewSessionState *state = webkit_web_view_get_session_state(window->webView);
+    GBytes *bytes = webkit_web_view_session_state_serialize(state);
+    webkit_web_view_session_state_unref(state);
+    g_file_set_contents(window->sessionFile, g_bytes_get_data(bytes, NULL), g_bytes_get_size(bytes), NULL);
+    g_bytes_unref(bytes);
+}
+
 static gboolean browserWindowDeleteEvent(GtkWidget *widget, GdkEventAny* event)
 {
     BrowserWindow *window = BROWSER_WINDOW(widget);
+    browserWindowSaveSession(window);
     webkit_web_view_try_close(window->webView);
     return TRUE;
 }
@@ -1215,6 +1231,34 @@ void browser_window_load_uri(BrowserWindow *window, const char *uri)
     }
 
     webkit_web_view_run_javascript(window->webView, strstr(uri, "javascript:"), NULL, NULL, NULL);
+}
+
+void browser_window_load_session(BrowserWindow *window, const char *sessionFile)
+{
+    g_return_if_fail(BROWSER_IS_WINDOW(window));
+    g_return_if_fail(sessionFile);
+
+    window->sessionFile = g_strdup(sessionFile);
+    gchar *data = NULL;
+    gsize dataLength;
+    if (g_file_get_contents(sessionFile, &data, &dataLength, NULL)) {
+        GBytes *bytes = g_bytes_new_take(data, dataLength);
+        WebKitWebViewSessionState *state = webkit_web_view_session_state_new(bytes);
+        g_bytes_unref(bytes);
+
+        if (state) {
+            webkit_web_view_restore_session_state(window->webView, state);
+            webkit_web_view_session_state_unref(state);
+        }
+    }
+
+    WebKitBackForwardList *bfList = webkit_web_view_get_back_forward_list(window->webView);
+    WebKitBackForwardListItem *item = webkit_back_forward_list_get_current_item(bfList);
+    if (item)
+        webkit_web_view_go_to_back_forward_list_item(window->webView, item);
+    else
+        webkit_web_view_load_uri(window->webView, BROWSER_DEFAULT_URL);
+
 }
 
 void browser_window_set_background_color(BrowserWindow *window, GdkRGBA *rgba)

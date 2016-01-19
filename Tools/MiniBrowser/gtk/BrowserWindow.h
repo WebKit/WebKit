@@ -47,6 +47,7 @@ GType browser_window_get_type(void);
 GtkWidget* browser_window_new(WebKitWebView*, GtkWindow*);
 WebKitWebView* browser_window_get_view(BrowserWindow*);
 void browser_window_load_uri(BrowserWindow *, const char *uri);
+void browser_window_load_session(BrowserWindow *, const char *sessionFile);
 void browser_window_set_background_color(BrowserWindow*, GdkRGBA*);
 
 G_END_DECLS

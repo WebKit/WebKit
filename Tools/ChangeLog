@@ -1,5 +1,29 @@
 2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add support to load/save session in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=153201
+
+        Reviewed by Michael Catanzaro.
+
+        It makes it easier to test the new WebView session API.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowFinalize): Free the session file path.
+        (browserWindowSaveSession): Save the current WebView session if
+        there's a session file path.
+        (browserWindowDeleteEvent): Call browserWindowSaveSession().
+        (browser_window_load_session): Try to load the session from the
+        given file path, otherwise fall back to homepage and keep the
+        session file to save the session on window close.
+        * MiniBrowser/gtk/BrowserWindow.h:
+        * MiniBrowser/gtk/main.c:
+        (createBrowserWindow): Pass the given session file path when
+        shouldLoadSession is TRUE.
+        (main): Only allow to restore/save session when MiniBrowser is
+        launched without URL arguments.
+
+2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/geolocation-permission-requests after r195075.
 
         Geolocation is no longer allowed for unique origins after r195075.
