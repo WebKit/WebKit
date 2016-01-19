@@ -1,3 +1,13 @@
+2016-01-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Remove jhbuild-optional.modules
+        https://bugs.webkit.org/show_bug.cgi?id=152964
+
+        Reviewed by Alex Christensen.
+
+        * gtk/jhbuild-optional.modules: Removed.
+        * gtk/jhbuild.modules:
+
 2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support to load/save session in MiniBrowser
