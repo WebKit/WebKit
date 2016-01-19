@@ -26,6 +26,7 @@
 #ifndef JITExceptions_h
 #define JITExceptions_h
 
+#include "Interpreter.h"
 #include "JSCJSValue.h"
 
 namespace JSC {
@@ -33,7 +34,7 @@ namespace JSC {
 class ExecState;
 class VM;
 
-void genericUnwind(VM*, ExecState*);
+void genericUnwind(VM*, ExecState*, UnwindStart = UnwindFromCurrentFrame);
 
 } // namespace JSC
 
