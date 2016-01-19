@@ -731,6 +731,16 @@ public:
         m_assembler.movl_i32m(imm.m_value, address.offset, address.base, address.index, address.scale);
     }
 
+    void storeZero32(ImplicitAddress address)
+    {
+        store32(TrustedImm32(0), address);
+    }
+
+    void storeZero32(BaseIndex address)
+    {
+        store32(TrustedImm32(0), address);
+    }
+
     void store8(TrustedImm32 imm, Address address)
     {
         m_assembler.movb_i8m(static_cast<int8_t>(imm.m_value), address.offset, address.base);

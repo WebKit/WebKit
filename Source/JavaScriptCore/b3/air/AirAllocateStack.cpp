@@ -296,12 +296,9 @@ void allocateStack(Code& code)
                             RELEASE_ASSERT(slot->byteSize() == 8);
                             RELEASE_ASSERT(width == Arg::Width32);
 
-                            // We rely on the fact that there must be some way to move zero to a
-                            // memory location without first burning a register. On ARM, we would do
-                            // this using zr.
-                            RELEASE_ASSERT(isValidForm(Move32, Arg::Imm, Arg::Addr));
+                            RELEASE_ASSERT(isValidForm(StoreZero32, Arg::Stack));
                             insertionSet.insert(
-                                instIndex + 1, Move32, inst.origin, Arg::imm(0),
+                                instIndex + 1, StoreZero32, inst.origin,
                                 stackAddr(arg.offset() + 4 + slot->offsetFromFP()));
                         }
                         arg = stackAddr(arg.offset() + slot->offsetFromFP());

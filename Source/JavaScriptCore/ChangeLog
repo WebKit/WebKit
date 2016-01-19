@@ -1,3 +1,22 @@
+2016-01-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] fixSpillSlotZDef() crashes on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=153246
+
+        Reviewed by Geoffrey Garen.
+
+        Moving an immediate to memory is not a valid instruction on ARM64.
+        This patch adds a small workaround for this specific case: an instruction
+        to zero a chunk of memory.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::storeZero32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::storeZero32):
+        * b3/air/AirFixSpillSlotZDef.h:
+        (JSC::B3::Air::fixSpillSlotZDef):
+        * b3/air/AirOpcode.opcodes:
+
 2016-01-19  Enrica Casucci  <enrica@apple.com>
 
         Add support for DataDetectors in WK (iOS).

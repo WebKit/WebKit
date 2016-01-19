@@ -1231,6 +1231,16 @@ public:
         store32(dataTempRegister, address);
     }
 
+    void storeZero32(ImplicitAddress address)
+    {
+        store32(ARM64Registers::zr, address);
+    }
+
+    void storeZero32(BaseIndex address)
+    {
+        store32(ARM64Registers::zr, address);
+    }
+
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);

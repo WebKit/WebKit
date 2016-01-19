@@ -434,6 +434,10 @@ Move32 U:G:32, ZD:G:32
     x86: Imm, Addr as store32
     x86: Imm, Index as store32
 
+StoreZero32 U:G:32
+    Addr
+    Index
+
 SignExtend32ToPtr U:G:32, D:G:Ptr
     Tmp, Tmp
 
