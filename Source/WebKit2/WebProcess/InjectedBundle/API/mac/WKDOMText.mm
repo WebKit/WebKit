@@ -40,9 +40,7 @@
 
 - (void)setData:(NSString *)data
 {
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec;
-    downcast<WebCore::Text>(*_impl).setData(data, ec);
+    downcast<WebCore::Text>(*_impl).setData(data);
 }
 
 @end

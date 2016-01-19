@@ -152,7 +152,7 @@ RefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
         return nullptr;
     }
 
-    setData(newText, IGNORE_EXCEPTION);
+    setData(newText);
     return protectedThis;
 }
 

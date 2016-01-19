@@ -33,7 +33,7 @@ public:
     const String& data() const { return m_data; }
     static ptrdiff_t dataMemoryOffset() { return OBJECT_OFFSETOF(CharacterData, m_data); }
 
-    WEBCORE_EXPORT void setData(const String&, ExceptionCode&);
+    WEBCORE_EXPORT void setData(const String&);
     unsigned length() const { return m_data.length(); }
     String substringData(unsigned offset, unsigned count, ExceptionCode&);
     void appendData(const String&);

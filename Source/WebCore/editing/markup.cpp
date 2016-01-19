@@ -1019,7 +1019,7 @@ void replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>
     if (containerChild && !containerChild->nextSibling()) {
         if (is<Text>(*containerChild) && hasOneTextChild(fragment) && canUseSetDataOptimization(downcast<Text>(*containerChild), mutation)) {
             ASSERT(!fragment->firstChild()->refCount());
-            downcast<Text>(*containerChild).setData(downcast<Text>(*fragment->firstChild()).data(), ec);
+            downcast<Text>(*containerChild).setData(downcast<Text>(*fragment->firstChild()).data());
             return;
         }
 
@@ -1037,7 +1037,7 @@ void replaceChildrenWithText(ContainerNode& container, const String& text, Excep
     ChildListMutationScope mutation(containerNode);
 
     if (hasOneTextChild(containerNode)) {
-        downcast<Text>(*containerNode->firstChild()).setData(text, ec);
+        downcast<Text>(*containerNode->firstChild()).setData(text);
         return;
     }
 

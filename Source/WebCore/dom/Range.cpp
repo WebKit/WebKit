@@ -707,7 +707,7 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
         startOffset = std::min(startOffset, endOffset);
         if (action == Extract || action == Clone) {
             RefPtr<ProcessingInstruction> c = static_cast<ProcessingInstruction*>(container->cloneNode(true).ptr());
-            c->setData(c->data().substring(startOffset, endOffset - startOffset), ec);
+            c->setData(c->data().substring(startOffset, endOffset - startOffset));
             if (fragment) {
                 result = fragment;
                 result->appendChild(c.release(), ec);
@@ -718,7 +718,7 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
             ProcessingInstruction& pi = downcast<ProcessingInstruction>(*container);
             String data(pi.data());
             data.remove(startOffset, endOffset - startOffset);
-            pi.setData(data, ec);
+            pi.setData(data);
         }
         break;
     case Node::ELEMENT_NODE:

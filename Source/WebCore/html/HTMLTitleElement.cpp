@@ -93,7 +93,7 @@ void HTMLTitleElement::setText(const String& value)
     Ref<HTMLTitleElement> protectFromMutationEvents(*this);
     
     if (!value.isEmpty() && hasOneChild() && is<Text>(*firstChild())) {
-        downcast<Text>(*firstChild()).setData(value, IGNORE_EXCEPTION);
+        downcast<Text>(*firstChild()).setData(value);
         return;
     }
 

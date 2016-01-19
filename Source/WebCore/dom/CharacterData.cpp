@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-void CharacterData::setData(const String& data, ExceptionCode&)
+void CharacterData::setData(const String& data)
 {
     const String& nonNullData = !data.isNull() ? data : emptyString();
     if (m_data == nonNullData)
@@ -177,9 +177,9 @@ bool CharacterData::containsOnlyWhitespace() const
     return m_data.containsOnlyWhitespace();
 }
 
-void CharacterData::setNodeValue(const String& nodeValue, ExceptionCode& ec)
+void CharacterData::setNodeValue(const String& nodeValue, ExceptionCode&)
 {
-    setData(nodeValue, ec);
+    setData(nodeValue);
 }
 
 void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength)
