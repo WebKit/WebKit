@@ -1,3 +1,15 @@
+2016-01-18  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Add private-browsing variant for many IDB tests, and enable private browsing in Modern IDB.
+        https://bugs.webkit.org/show_bug.cgi?id=153179
+
+        Reviewed by Darin Adler.
+
+        Tests: Many private-browsing copies of existing IDB tests.
+
+        * Modules/indexeddb/client/IDBFactoryImpl.cpp:
+        (WebCore::IDBClient::shouldThrowSecurityException): Allow IDB access in private browsing.
+
 2016-01-18  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS Simulator WK1] ASSERT loading Blink layout test imported/web-platform-tests/mediacapture-streams/stream-api/mediastream/mediastream-idl.html

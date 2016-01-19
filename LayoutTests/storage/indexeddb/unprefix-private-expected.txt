@@ -1,0 +1,19 @@
+Check that IDBFactory is available through the prefixed or unprefixed entry point.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String(self.indexedDB) is "[object IDBFactory]"
+PASS String(self.webkitIndexedDB) is "[object IDBFactory]"
+PASS IDBCursor is non-null.
+PASS IDBDatabase is non-null.
+PASS IDBFactory is non-null.
+PASS IDBIndex is non-null.
+PASS IDBKeyRange is non-null.
+PASS IDBObjectStore is non-null.
+PASS IDBRequest is non-null.
+PASS IDBTransaction is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

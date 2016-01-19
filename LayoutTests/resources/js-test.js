@@ -1,9 +1,13 @@
-// svg/dynamic-updates tests set enablePixelTesting=true, as we want to dump text + pixel results
 if (self.testRunner) {
+	// svg/dynamic-updates tests set enablePixelTesting=true, as we want to dump text + pixel results
     if (self.enablePixelTesting)
         testRunner.dumpAsTextWithPixelResults();
     else
         testRunner.dumpAsText();
+
+    // If the test file URL ends in "-private.html", enable private browsing.
+    if (window.location.href.endsWith("-private.html"))
+        testRunner.setPrivateBrowsingEnabled(true);
 }
 
 var description, debug, successfullyParsed;

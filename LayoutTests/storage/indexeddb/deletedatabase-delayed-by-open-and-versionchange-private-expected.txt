@@ -1,0 +1,35 @@
+Test that deleteDatabase is delayed if a VERSION_CHANGE transaction is running
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+versionChangeComplete = false
+h = event.target.result
+indexedDB.deleteDatabase(dbname)
+
+onVersionChange():
+PASS event.target.version is 1
+PASS event.oldVersion is 1
+PASS event.newVersion is null
+
+deleteDatabaseOnBlocked():
+
+transactionOnComplete():
+versionChangeComplete = true
+
+onOpenSuccess():
+h = event.target.result
+h.close()
+
+deleteDatabaseOnSuccess():
+PASS versionChangeComplete is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

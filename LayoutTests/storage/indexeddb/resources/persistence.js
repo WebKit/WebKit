@@ -23,7 +23,6 @@ function first()
     openAndChangeVersion(1, function (connection) {
         db = connection;
         shouldBe("db.version", "1");
-        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "0");
         evalAndLog("db.createObjectStore('store1')");
         shouldBe("db.objectStoreNames.length", "1");
@@ -35,7 +34,6 @@ function second()
     openAndChangeVersion(2, function (connection) {
         db = connection;
         shouldBe("db.version", "2");
-        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "1");
         shouldBeTrue("db.objectStoreNames.contains('store1')");
         evalAndLog("db.createObjectStore('store2')");
@@ -50,7 +48,6 @@ function third()
     openAndChangeVersion(3, function (connection) {
         db = connection;
         shouldBe("db.version", "3");
-        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "2");
         shouldBeTrue("db.objectStoreNames.contains('store1')");
         shouldBeTrue("db.objectStoreNames.contains('store2')");
@@ -66,7 +63,6 @@ function fourth()
     openAndChangeVersion(4, function (connection) {
         db = connection;
         shouldBe("db.version", "4");
-        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "1");
         shouldBeFalse("db.objectStoreNames.contains('store1')");
         shouldBeTrue("db.objectStoreNames.contains('store2')");
@@ -82,7 +78,6 @@ function fifth()
     openAndChangeVersion(5, function (connection) {
         db = connection;
         shouldBe("db.version", "5");
-        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "0");
         shouldBeFalse("db.objectStoreNames.contains('store1')");
         shouldBeFalse("db.objectStoreNames.contains('store2')");

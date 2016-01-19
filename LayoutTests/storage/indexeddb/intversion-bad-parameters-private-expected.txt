@@ -1,0 +1,44 @@
+Test that bad version parameters cause TypeError
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+
+deleteSuccess():
+Expecting TypeError exception from indexedDB.open(dbname, 'stringversion')
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, 'stringversion') threw TypeError: Value NaN is outside the range [0, 9007199254740991]
+Expecting TypeError exception from indexedDB.open(dbname, 0)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, 0) threw TypeError: Type error
+Expecting TypeError exception from indexedDB.open(dbname, -5)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, -5) threw TypeError: Value -5 is outside the range [0, 9007199254740991]
+Expecting TypeError exception from indexedDB.open(dbname, Infinity)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, Infinity) threw TypeError: Value Infinity is outside the range [0, 9007199254740991]
+Expecting TypeError exception from indexedDB.open(dbname, -Infinity)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, -Infinity) threw TypeError: Value -Infinity is outside the range [0, 9007199254740991]
+Expecting TypeError exception from indexedDB.open(dbname, NaN)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, NaN) threw TypeError: Value NaN is outside the range [0, 9007199254740991]
+Expecting TypeError exception from indexedDB.open(dbname, -1)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, -1) threw TypeError: Value -1 is outside the range [0, 9007199254740991]
+Expecting TypeError exception from indexedDB.open(dbname, 0x20000000000000)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, 0x20000000000000) threw TypeError: Value 9007199254740992 is outside the range [0, 9007199254740991]
+Expecting TypeError exception from indexedDB.open(dbname, null)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, null) threw TypeError: Type error
+Expecting TypeError exception from indexedDB.open(dbname, undefined)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, undefined) threw TypeError: Value NaN is outside the range [0, 9007199254740991]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

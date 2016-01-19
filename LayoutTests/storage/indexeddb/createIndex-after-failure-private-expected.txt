@@ -1,0 +1,24 @@
+Test createIndex failing due to a ConstraintError
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+objectStore.createIndex('index', 'key', {unique: true})
+objectStore.deleteIndex('index')
+Expecting exception from objectStore.deleteIndex('index')
+PASS Exception was thrown.
+PASS code is DOMException.NOT_FOUND_ERR
+PASS ename is 'NotFoundError'
+Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The specified index was not found.
+Now requesting object2
+now we wait.
+Error function called: (AbortError) undefined
+PASS Abort function called: (ConstraintError) undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

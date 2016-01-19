@@ -667,7 +667,9 @@ webkit.org/b/144258 [ Debug ] js/class-syntax-semicolon.html [ Skip ]
 # IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,
 # after we implement the IDBVersionChangeEvent constructor.
 webkit.org/b/145390 storage/indexeddb/events.html [ Failure ]
+webkit.org/b/145390 storage/indexeddb/events-private.html [ Failure ]
 webkit.org/b/145390 storage/indexeddb/removed.html [ Failure ]
+webkit.org/b/145390 storage/indexeddb/removed-private.html [ Failure ]
 
 webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792.html [ Pass Failure ]
 

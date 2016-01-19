@@ -78,6 +78,7 @@ imported/w3c/indexeddb/idbindex_openKeyCursor3.htm [ Failure ]
 
 # Times out for unexplored reasons                                                             
 storage/indexeddb/database-quota.html [ Skip ]
+storage/indexeddb/database-quota-private.html [ Skip ]
 
 # Modern IDB page cache interaction not yet sorted out
 fast/history/page-cache-indexed-closed-db.html [ Failure ]
@@ -91,6 +92,7 @@ storage/indexeddb/connection-leak.html [ Skip ]
 storage/indexeddb/cursor-leak.html [ Failure ]
 storage/indexeddb/cursor-request-cycle.html [ Failure ]
 storage/indexeddb/delete-closed-database-object.html [ Skip ]
+storage/indexeddb/delete-closed-database-object-private.html [ Skip ]
 storage/indexeddb/request-leak.html [ Failure ]
 
 # No workers support in Modern IDB yet
@@ -106,9 +108,12 @@ storage/indexeddb/objectstore-basics-workers.html
 storage/indexeddb/open-twice-workers.html
 storage/indexeddb/pending-activity-workers.html
 storage/indexeddb/pending-version-change-on-exit.html
+storage/indexeddb/pending-version-change-on-exit-private.html
 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html
 storage/indexeddb/pending-version-change-stuck.html
+storage/indexeddb/pending-version-change-stuck-private.html
 storage/indexeddb/transaction-complete-workers.html
+storage/indexeddb/transaction-complete-workers-private.html
 storage/indexeddb/unprefix-workers.html
 
 # Need a different way to get database names to the web inspector

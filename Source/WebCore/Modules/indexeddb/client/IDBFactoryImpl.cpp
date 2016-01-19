@@ -52,8 +52,6 @@ static bool shouldThrowSecurityException(ScriptExecutionContext* context)
             return true;
         if (!document.page())
             return true;
-        if (document.page()->usesEphemeralSession() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document.securityOrigin()->protocol()))
-            return true;
     }
 
     if (!context->securityOrigin()->canAccessDatabase(context->topOrigin()))
