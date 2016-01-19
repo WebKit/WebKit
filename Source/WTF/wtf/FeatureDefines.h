@@ -272,6 +272,14 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #endif /* PLATFORM(MAC) */
 
+#if PLATFORM(COCOA)
+
+#if !defined(ENABLE_DATA_DETECTION)
+#define ENABLE_DATA_DETECTION 1
+#endif
+
+#endif /* PLATFORM(COCOA) */
+
 /* --------- Apple Windows port --------- */
 #if PLATFORM(WIN) && !PLATFORM(WIN_CAIRO)
 

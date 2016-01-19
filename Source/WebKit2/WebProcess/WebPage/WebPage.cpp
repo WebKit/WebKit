@@ -219,6 +219,10 @@
 #include "CoordinatedLayerTreeHostMessages.h"
 #endif
 
+#if ENABLE(DATA_DETECTION)
+#include <WebCore/DataDetection.h>
+#endif
+
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 #include <WebCore/MediaPlayerRequestInstallMissingPluginsCallback.h>
 #endif
@@ -2935,6 +2939,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setUseImageDocumentForSubframePDF(true);
 #endif
 
+#if ENABLE(DATA_DETECTION)
+    settings.setDataDetectorTypes(fromWKDataDetectorTypes(store.getUInt32ValueForKey(WebPreferencesKey::dataDetectorTypesKey())));
+#endif
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled(store.getBoolValueForKey(WebPreferencesKey::gamepadsEnabledKey()));
 #endif

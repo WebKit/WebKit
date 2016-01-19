@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataDetection_h
-#define DataDetection_h
+#import "config.h"
+#import "WebPage.h"
 
-#if PLATFORM(MAC)
+#import "WKWebViewConfiguration.h"
 
-#import <wtf/RefPtr.h>
-#import <wtf/RetainPtr.h>
+using namespace WebCore;
 
-OBJC_CLASS DDActionContext;
+namespace WebKit {
 
-namespace WebCore {
+#if ENABLE(DATA_DETECTION)
+DataDetectorTypes WebPage::fromWKDataDetectorTypes(uint32_t types)
+{
+    if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeNone)
+        return DataDetectorTypeNone;
+    if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeAll)
+        return DataDetectorTypeAll;
+    
+    uint32_t value = DataDetectorTypeNone;
+    if (types & WKDataDetectorTypePhoneNumber)
+        value |= DataDetectorTypePhoneNumber;
+    if (types & WKDataDetectorTypeLink)
+        value |= DataDetectorTypeLink;
+    if (types & WKDataDetectorTypeAddress)
+        value |= DataDetectorTypeAddress;
+    if (types & WKDataDetectorTypeCalendarEvent)
+        value |= DataDetectorTypeCalendarEvent;
+    
+    return static_cast<DataDetectorTypes>(value);
+}
+#endif
 
-class FloatRect;
-class HitTestResult;
-class Range;
-
-class DataDetection {
-public:
-    WEBCORE_EXPORT static RetainPtr<DDActionContext> detectItemAroundHitTestResult(const HitTestResult&, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange);
-};
-
-} // namespace WebCore
-
-#endif // PLATFORM(MAC)
-
-#endif // DataDetection_h
+} // namespace WebKit

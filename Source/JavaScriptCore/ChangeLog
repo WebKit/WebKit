@@ -1,3 +1,15 @@
+2016-01-19  Enrica Casucci  <enrica@apple.com>
+
+        Add support for DataDetectors in WK (iOS).
+        https://bugs.webkit.org/show_bug.cgi?id=152989
+        rdar://problem/22855960
+
+        Reviewed by Tim Horton.
+
+        Adding feature definition.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-01-17  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should be just as fast as FTL LLVM on Octane/crypto

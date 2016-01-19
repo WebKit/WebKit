@@ -51,6 +51,25 @@ typedef NS_ENUM(NSInteger, WKSelectionGranularity) {
 } WK_ENUM_AVAILABLE_IOS(8_0);
 #endif
 
+/*! @enum WKDataDetectorTypes
+ @abstract The type of detection desired.
+ @constant WKDataDetectorTypeNone No detection is performed.
+ @constant WKDataDetectorTypePhoneNumber Phone numbers are detected and turned into links.
+ @constant WKDataDetectorTypeLink URLs in text are detected and turned into links.
+ @constant WKDataDetectorTypeAddress Addresses are detected and turned into links.
+ @constant WKDataDetectorTypeCalendarEvent Dates and times that are in the future are detected and turned into links.
+ @constant WKDataDetectorTypeAll All of the above data types are turned into links when detected. Choosing this value will
+ automatically include any new detection type that is added.
+ */
+typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
+    WKDataDetectorTypeNone = 0,
+    WKDataDetectorTypePhoneNumber = 1 << 0,
+    WKDataDetectorTypeLink = 1 << 1,
+    WKDataDetectorTypeAddress = 1 << 2,
+    WKDataDetectorTypeCalendarEvent = 1 << 3,
+    WKDataDetectorTypeAll = NSUIntegerMax
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 /*! A WKWebViewConfiguration object is a collection of properties with
  which to initialize a web view.
  @helps Contains properties used to configure a @link WKWebView @/link.
@@ -92,6 +111,15 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  @discussion The default value is YES.
  */
 @property (nonatomic) BOOL allowsAirPlayForMediaPlayback WK_AVAILABLE(10_11, 9_0);
+
+/*! @abstract An enum value indicating the type of data detection desired.
+ @discussion The default value is WKDataDetectorTypeNone.
+ An example of how this property may affect the content loaded in the WKWebView is that content like
+ 'Visit apple.com on July 4th or call 1 800 555-5545' will be transformed to add links around 'apple.com', 'July 4th' and '1 800 555-5545'
+ if the dataDetectorTypes property is set to WKDataDetectorTypePhoneNumber | WKDataDetectorTypeLink | WKDataDetectorTypeCalendarEvent.
+
+ */
+@property (nonatomic) WKDataDetectorTypes dataDetectorTypes WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline

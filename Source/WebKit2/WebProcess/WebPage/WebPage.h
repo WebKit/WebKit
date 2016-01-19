@@ -91,6 +91,10 @@
 #import "WebPageMessages.h"
 #endif
 
+#if ENABLE(DATA_DETECTION)
+#include <WebCore/DataDetection.h>
+#endif
+
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/PlatformTouchEventIOS.h>
 #elif ENABLE(TOUCH_EVENTS)
@@ -1061,6 +1065,9 @@ private:
     void computePagesForPrintingPDFDocument(uint64_t frameID, const PrintInfo&, Vector<WebCore::IntRect>& resultPageRects);
     void drawPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, const WebCore::IntRect&);
     void drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t first, uint32_t count);
+#endif
+#if ENABLE(DATA_DETECTION)
+    WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint32_t types);
 #endif
 
     void setMainFrameIsScrollable(bool);
