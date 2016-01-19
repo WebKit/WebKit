@@ -3,8 +3,8 @@ Test adapted from Mozilla Bug 1075702
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.documentElement.hasAttributeNS("", "aa") is false
-PASS document.documentElement.getAttributeNS("", "aa") is null
+PASS document.documentElement.hasAttributeNS("", "aa") is true
+PASS document.documentElement.getAttributeNS("", "aa") is "lowercase"
 PASS document.documentElement.hasAttributeNS("", "AA") is true
 PASS document.documentElement.getAttributeNS("", "AA") is "UPPERCASE"
 PASS successfullyParsed is true

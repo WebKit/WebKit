@@ -4919,7 +4919,7 @@ Document& Document::topDocument() const
 
 RefPtr<Attr> Document::createAttribute(const String& name, ExceptionCode& ec)
 {
-    return createAttributeNS(String(), name, ec, true);
+    return createAttributeNS(String(), isHTMLDocument() ? name.convertToASCIILowercase() : name, ec, true);
 }
 
 RefPtr<Attr> Document::createAttributeNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec, bool shouldIgnoreNamespaceChecks)

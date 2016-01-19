@@ -9,14 +9,17 @@ PASS testGetAttributeCaseInsensitive() is "x"
 PASS testGetAttributeNodeMixedCase() is "x"
 PASS testGetAttributeNodeLowerCase() is "x"
 PASS testSetAttributeNodeKeepsRef() is "1"
-PASS testAttribNodeNamePreservesCase() is "A,A"
-PASS testAttribNodeNamePreservesCaseGetNode() is "A,A"
+PASS testAttribNodeNamePreservesCase() is "a,a"
+PASS testAttribNodeNamePreservesCaseGetNode() is "a,a"
 PASS testAttribNodeNamePreservesCaseGetNode2() is "B,B"
 PASS testAttribNodeNameGetMutate() is "1"
-PASS (new XMLSerializer).serializeToString(node) is "<div xmlns=\"http://www.w3.org/1999/xhtml\" myAttrib=\"XXX\"></div>"
-PASS node.getAttributeNodeNS('', 'myAttrib').name is "myAttrib"
-PASS node.getAttributeNodeNS('', 'myattrib') is null
-PASS attrib.name is "myAttrib"
+PASS (new XMLSerializer).serializeToString(node) is "<div xmlns=\"http://www.w3.org/1999/xhtml\" myattrib=\"XXX\" myAttrib2=\"XXX\"></div>"
+PASS node.getAttributeNodeNS('', 'myattrib') is attrib
+PASS node.getAttributeNodeNS('', 'myAttrib') is null
+PASS attrib.name is "myattrib"
+PASS node.getAttributeNodeNS('', 'myAttrib2') is attrib2
+PASS node.getAttributeNodeNS('', 'myattrib2') is null
+PASS attrib2.name is "myAttrib2"
 PASS successfullyParsed is true
 
 TEST COMPLETE

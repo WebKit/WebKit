@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS test.getAttribute('style') is test.getAttribute('STYLE')
-PASS test.getAttributeNode('style') is null
+PASS test.getAttributeNode('style') is test.getAttributeNode('STYLE')
 Verifying that attributes with the same name but different namespaces are treated as unique entities. For the following test two different attribute values should be returned.
 PASS test.getAttributeNodeNS('ns1', 'newattr').value is 'newattr1'
 PASS test.getAttributeNodeNS('ns2', 'newattr').value is 'newattr2'

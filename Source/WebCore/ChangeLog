@@ -1,3 +1,25 @@
+2016-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createAttribute should lowercase the attribute name in a HTML document
+        https://bugs.webkit.org/show_bug.cgi?id=153112
+
+        Reviewed by Darin Adler.
+
+        In a HTML document, we should always lowercase localName in document.createAttribute as specified in
+        https://dom.spec.whatwg.org/#dom-document-createattribute:
+
+        1. If localName does not match the Name production in XML, throw an InvalidCharacterError exception.
+        2. If the context object is an HTML document, let localName be converted to ASCII lowercase.
+        3. Return a new attribute whose local name is localName.
+
+        Change WebKit's behavior to match the spec as well as Firefox. document.createAttributeNS will
+        continue to preserve the case as spec'ed.
+
+        No new tests are added since the behavior change is covered by existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createAttribute):
+
 2016-01-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add private-browsing variant for many IDB tests, and enable private browsing in Modern IDB.

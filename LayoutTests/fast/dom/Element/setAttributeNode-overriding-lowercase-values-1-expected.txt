@@ -13,23 +13,23 @@ PASS document.documentElement.getAttributeNS("", "FooBar") is null
 PASS document.documentElement.hasAttributeNS("", "FooBar") is false
 PASS document.documentElement.attributes.length is 1
 PASS camelCaseFoobar is not oldAttributeNode
-PASS document.documentElement.getAttribute("foobar") is null
-PASS document.documentElement.hasAttribute("foobar") is false
-PASS document.documentElement.getAttribute("FooBar") is null
-PASS document.documentElement.hasAttribute("FooBar") is false
-PASS document.documentElement.getAttributeNS("", "foobar") is null
-PASS document.documentElement.hasAttributeNS("", "foobar") is false
-PASS document.documentElement.getAttributeNS("", "FooBar") is "Rocks!"
-PASS document.documentElement.hasAttributeNS("", "FooBar") is true
-PASS oldAttributeNode2 is null
+PASS document.documentElement.getAttribute("foobar") is "Rocks!"
+PASS document.documentElement.hasAttribute("foobar") is true
+PASS document.documentElement.getAttribute("FooBar") is "Rocks!"
+PASS document.documentElement.hasAttribute("FooBar") is true
+PASS document.documentElement.getAttributeNS("", "foobar") is "Rocks!"
+PASS document.documentElement.hasAttributeNS("", "foobar") is true
+PASS document.documentElement.getAttributeNS("", "FooBar") is null
+PASS document.documentElement.hasAttributeNS("", "FooBar") is false
+PASS oldAttributeNode2 is camelCaseFoobar
 PASS document.documentElement.getAttribute("foobar") is "WebKit2"
 PASS document.documentElement.hasAttribute("foobar") is true
 PASS document.documentElement.getAttribute("FooBar") is "WebKit2"
 PASS document.documentElement.hasAttribute("FooBar") is true
 PASS document.documentElement.getAttributeNS("", "foobar") is "WebKit2"
 PASS document.documentElement.hasAttributeNS("", "foobar") is true
-PASS document.documentElement.getAttributeNS("", "FooBar") is "Rocks!"
-PASS document.documentElement.hasAttributeNS("", "FooBar") is true
+PASS document.documentElement.getAttributeNS("", "FooBar") is null
+PASS document.documentElement.hasAttributeNS("", "FooBar") is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

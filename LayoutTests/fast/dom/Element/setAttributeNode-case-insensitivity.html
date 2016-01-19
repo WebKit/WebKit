@@ -16,7 +16,7 @@
         newStyleAttr.value = "background-color: green";
         test.setAttributeNode(newStyleAttr);
         shouldBe("test.getAttribute('style')", "test.getAttribute('STYLE')");
-        shouldBe("test.getAttributeNode('style')", "null");
+        shouldBe("test.getAttributeNode('style')", "test.getAttributeNode('STYLE')");
 
 
         debug("Verifying that attributes with the same name but different namespaces are treated as unique entities. For the following test two different attribute values should be returned.");

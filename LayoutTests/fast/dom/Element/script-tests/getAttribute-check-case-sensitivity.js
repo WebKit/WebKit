@@ -19,7 +19,7 @@ function testGetAttributeNodeMixedCase()
     var a = div.ownerDocument.createAttribute("mixedCaseAttrib");
     a.nodeValue = "x";
     div.setAttributeNode(a);
-    return div.getAttributeNS("", "mixedCaseAttrib");
+    return div.getAttributeNS("", "mixedcaseattrib");
 }
 
 shouldBe("testGetAttributeNodeMixedCase()", '"x"');
@@ -61,7 +61,7 @@ function testAttribNodeNamePreservesCase()
     return result.join(",");
 }
 
-shouldBe("testAttribNodeNamePreservesCase()", '"A,A"');
+shouldBe("testAttribNodeNamePreservesCase()", '"a,a"');
 
     
 function testAttribNodeNamePreservesCaseGetNode()
@@ -74,7 +74,7 @@ function testAttribNodeNamePreservesCaseGetNode()
 
     body.setAttributeNode(a);
 
-    a = document.body.getAttributeNodeNS("", "A");
+    a = document.body.getAttributeNode("A");
     if (!a)
         return "FAIL";
 
@@ -82,7 +82,7 @@ function testAttribNodeNamePreservesCaseGetNode()
     return result.join(",");
 }
 
-shouldBe("testAttribNodeNamePreservesCaseGetNode()", '"A,A"');
+shouldBe("testAttribNodeNamePreservesCaseGetNode()", '"a,a"');
 
 function testAttribNodeNamePreservesCaseGetNode2()
 {
@@ -94,12 +94,11 @@ function testAttribNodeNamePreservesCaseGetNode2()
 
     body.setAttributeNode(a);
 
-    a = document.body.getAttributeNodeNS("", "B");
+    a = document.body.getAttributeNodeNS("", "b");
     if (!a)
         return "FAIL";
 
-    // Now create node second time -- this time case is preserved in FF!
-    a = body.ownerDocument.createAttribute("B");
+    a = body.ownerDocument.createAttributeNS("", "B");
     a.nodeValue = "x";
     body.setAttributeNode(a);
 
@@ -135,7 +134,15 @@ var attrib = document.createAttribute("myAttrib");
 attrib.nodeValue = "XXX";
 node.setAttributeNode(attrib);
 
-shouldBe("(new XMLSerializer).serializeToString(node)", '"<div xmlns=\\"http://www.w3.org/1999/xhtml\\" myAttrib=\\"XXX\\"></div>"');
-shouldBe("node.getAttributeNodeNS('', 'myAttrib').name", '"myAttrib"');
-shouldBe("node.getAttributeNodeNS('', 'myattrib')", 'null');
-shouldBe("attrib.name", '"myAttrib"');
+var attrib2 = document.createAttributeNS("", "myAttrib2");
+attrib2.nodeValue = "XXX";
+node.setAttributeNode(attrib2);
+
+shouldBe("(new XMLSerializer).serializeToString(node)", '"<div xmlns=\\"http://www.w3.org/1999/xhtml\\" myattrib=\\"XXX\\" myAttrib2=\\"XXX\\"></div>"');
+shouldBe("node.getAttributeNodeNS('', 'myattrib')", 'attrib');
+shouldBeNull("node.getAttributeNodeNS('', 'myAttrib')");
+shouldBe("attrib.name", '"myattrib"');
+
+shouldBe("node.getAttributeNodeNS('', 'myAttrib2')", 'attrib2');
+shouldBeNull("node.getAttributeNodeNS('', 'myattrib2')");
+shouldBe("attrib2.name", '"myAttrib2"');

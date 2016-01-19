@@ -15,7 +15,7 @@ PASS HTML document.createAttribute("0:a")
 PASS XML document.createAttribute("0:a") 
 PASS HTML document.createAttribute("title") 
 PASS XML document.createAttribute("title") 
-FAIL HTML document.createAttribute("TITLE") assert_equals: expected "title" but got "TITLE"
+PASS HTML document.createAttribute("TITLE") 
 PASS XML document.createAttribute("TITLE") 
 PASS HTML document.createAttribute(null) 
 PASS XML document.createAttribute(null) 

@@ -1,3 +1,43 @@
+2016-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createAttribute should lowercase the attribute name in a HTML document
+        https://bugs.webkit.org/show_bug.cgi?id=153112
+
+        Reviewed by Darin Adler.
+
+        Update tests, rebaseline tests, and add more test cases as needed.
+
+        createAttribute lowercases localName and getAttributeNode finds attribute ignoring cases
+        whereas createAttributeNS preserves localName's case and getAttributeNodeNS finds attribute preserving cases
+
+        * fast/dom/Element/mozilla-dom-base-tests/test_bug1075702-expected.txt: Since the test is adding "aa" as well
+        as "AA" as Attr nodes, we should be able to get both.
+        * fast/dom/Element/mozilla-dom-base-tests/test_bug1075702.xhtml: Renamed from .html file since test cases here
+        are more relevant for XHTML documents.
+
+        * fast/dom/Element/getAttribute-check-case-sensitivity-expected.txt:
+        * fast/dom/Element/script-tests/getAttribute-check-case-sensitivity.js:
+        (testGetAttributeNodeMixedCase): Change the test case to retrieve the attribute name with lowercase name
+        since createAttribute always lowercases the name in a HTML document.
+        (testAttribNodeNamePreservesCase): Use getAttributeNode instead of getAttributeNodeNS since the former does
+        case insensitive lookup as needed here.
+        (testAttribNodeNamePreservesCaseGetNode): Ditto.
+        (testAttribNodeNamePreservesCaseGetNode2): Ditto. Use createAttributeNS to create a case-preserving Attr node.
+
+        * fast/dom/Element/setAttributeNode-case-insensitivity-expected.txt:
+        * fast/dom/Element/setAttributeNode-case-insensitivity.html: Since getAttributeNode does a case-insensitive
+        lookup, we should be getting the same Attr node for both 'style' and 'STYLE'.
+
+        * fast/dom/Element/setAttributeNode-for-existing-attribute-expected.txt: Rebaselined. This is a progression
+        since we're now getting "green" when querying style.backgroundColor as expected.
+
+        * fast/dom/Element/setAttributeNode-overriding-lowercase-values-1-expected.txt:
+        * fast/dom/Element/setAttributeNode-overriding-lowercase-values-1.html: Updated test cases for new behavior.
+
+        * fast/dom/Element/setAttributeNode-overriding-lowercase-values-1-xml-expected.txt: Added.
+        * fast/dom/Element/setAttributeNode-overriding-lowercase-values-1-xml.xhtml: Added. Test behaviors in a XML
+        document.
+
 2016-01-18  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add private-browsing variant for many IDB tests, and enable private browsing in Modern IDB.

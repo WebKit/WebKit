@@ -1,3 +1,14 @@
+2016-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createAttribute should lowercase the attribute name in a HTML document
+        https://bugs.webkit.org/show_bug.cgi?id=153112
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a test now that it's passing all test cases.
+
+        * web-platform-tests/dom/nodes/Document-createAttribute-expected.txt:
+
 2016-01-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Import tests updated to Jan 13 2016
