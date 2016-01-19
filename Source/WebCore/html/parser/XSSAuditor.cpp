@@ -55,9 +55,11 @@ static bool isNonCanonicalCharacter(UChar c)
     // Note, we don't remove backslashes like PHP stripslashes(), which among other things converts "\\0" to the \0 character.
     // Instead, we remove backslashes and zeros (since the string "\\0" =(remove backslashes)=> "0"). However, this has the
     // adverse effect that we remove any legitimate zeros from a string.
+    // We also remove forward-slash, because it is common for some servers to collapse successive path components, eg,
+    // a//b becomes a/b.
     //
-    // For instance: new String("http://localhost:8000") => new String("http://localhost:8").
-    return (c == '\\' || c == '0' || c == '\0' || c >= 127);
+    // For instance: new String("http://localhost:8000") => new String("http:localhost:8").
+    return (c == '\\' || c == '0' || c == '\0' || c == '/' || c >= 127);
 }
 
 static String canonicalize(const String& string)
@@ -174,7 +176,6 @@ static String fullyDecodeString(const String& string, const TextEncoding& encodi
         workingString = decode16BitUnicodeEscapeSequences(decodeStandardURLEscapeSequences(workingString, encoding));
     } while (workingString.length() < oldWorkingStringLength);
     workingString.replace('+', ' ');
-    workingString = canonicalize(workingString);
     return workingString;
 }
 
@@ -267,7 +268,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
     if (document->decoder())
         m_encoding = document->decoder()->encoding();
 
-    m_decodedURL = fullyDecodeString(m_documentURL.string(), m_encoding);
+    m_decodedURL = canonicalize(fullyDecodeString(m_documentURL.string(), m_encoding));
     if (m_decodedURL.find(isRequiredForInjection) == notFound)
         m_decodedURL = String();
 
@@ -305,7 +306,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
         if (httpBody && !httpBody->isEmpty()) {
             httpBodyAsString = httpBody->flattenToString();
             if (!httpBodyAsString.isEmpty()) {
-                m_decodedHTTPBody = fullyDecodeString(httpBodyAsString, m_encoding);
+                m_decodedHTTPBody = canonicalize(fullyDecodeString(httpBodyAsString, m_encoding));
                 if (m_decodedHTTPBody.find(isRequiredForInjection) == notFound)
                     m_decodedHTTPBody = String();
                 if (m_decodedHTTPBody.length() >= minimumLengthForSuffixTree)
@@ -566,7 +567,7 @@ bool XSSAuditor::eraseAttributeIfInjected(const FilterTokenRequest& request, con
 String XSSAuditor::decodedSnippetForName(const FilterTokenRequest& request)
 {
     // Grab a fixed number of characters equal to the length of the token's name plus one (to account for the "<").
-    return fullyDecodeString(request.sourceTracker.source(request.token), m_encoding).substring(0, request.token.name().size() + 1);
+    return canonicalize(fullyDecodeString(request.sourceTracker.source(request.token), m_encoding).substring(0, request.token.name().size() + 1));
 }
 
 String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request, const HTMLToken::Attribute& attribute, AttributeKind treatment)
@@ -577,6 +578,9 @@ String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request,
     // FIXME: We should grab one character before the name also.
     unsigned start = attribute.startOffset;
     unsigned end = attribute.endOffset;
+
+    // We defer canonicalizing the decoded string here to preserve embedded slashes (if any) that
+    // may lead us to truncate the string.
     String decodedSnippet = fullyDecodeString(request.sourceTracker.source(request.token, start, end), m_encoding);
     decodedSnippet.truncate(kMaximumFragmentLengthTarget);
     if (treatment == SrcLikeAttribute) {
@@ -625,7 +629,7 @@ String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request,
             decodedSnippet.truncate(position);
         }
     }
-    return decodedSnippet;
+    return canonicalize(decodedSnippet);
 }
 
 String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request)
@@ -696,7 +700,7 @@ String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request
                 lastNonSpacePosition = foundPosition;
         }
 
-        result = fullyDecodeString(string.substring(startPosition, foundPosition - startPosition), m_encoding);
+        result = canonicalize(fullyDecodeString(string.substring(startPosition, foundPosition - startPosition), m_encoding));
         startPosition = foundPosition + 1;
     }
     return result;
