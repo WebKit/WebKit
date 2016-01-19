@@ -1,0 +1,25 @@
+Testing all methods of LinkedList.
+
+
+== Running test suite: LinkedList
+-- Running test case: Adding items
+0
+[]
+2
+["one","two"]
+3
+["one","two","three"]
+
+-- Running test case: Removing items
+3
+["one","two","three"]
+2
+["one","three"]
+
+-- Running test case: Removing all items
+0
+[]
+
+-- Running test case: Iterating using forEach method
+["one","two","three"]
+

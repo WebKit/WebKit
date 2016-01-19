@@ -1,0 +1,56 @@
+Testing all methods of ListMultimap.
+
+
+== Running test suite: ListMultimap
+-- Running test case: Instantiating Multimap
+0
+[]
+
+-- Running test case: Adding unique keys and values
+2
+[["zero","one"],["two","three"]]
+
+-- Running test case: Adding repeating keys and unique values
+2
+[["zero","one"],["zero","two"]]
+
+-- Running test case: Adding unique keys and repeating values
+3
+[["zero","one"],["two","one"],["three","one"]]
+
+-- Running test case: Adding repeating keys and values
+3
+[["zero","one"],["two","one"],["zero","three"]]
+
+-- Running test case: Deleting existing keys and values
+PASS: The key and the value were successfully deleted.
+1
+[[2,3]]
+PASS: The key and the value were successfully deleted.
+0
+[]
+
+-- Running test case: Deleting non-existing keys and non-existing values
+PASS: Nothing was removed.
+PASS: Nothing was removed.
+PASS: Nothing was removed.
+PASS: Nothing was removed.
+PASS: Nothing was removed.
+3
+[[0,1],[2,3],[4,4]]
+
+-- Running test case: Deleting values for given key
+PASS: Nothing was removed.
+3
+[["opossum","badger"],["opossum","raccoon"],["raccoon","opossum"]]
+PASS: Values were removed.
+1
+[["raccoon","opossum"]]
+
+-- Running test case: Deleting all keys and values
+0
+[]
+
+-- Running test case: Iterating using forEach method
+[["Platypus","Sugar glider"],["Quoll","Wallaby"]]
+

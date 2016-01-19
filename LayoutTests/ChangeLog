@@ -1,3 +1,21 @@
+2016-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebInspector.Object.addEventListener is O(n), make it O(1)
+        https://bugs.webkit.org/show_bug.cgi?id=152422
+        <rdar://problem/24038047>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/console-api-expected.txt:
+        * inspector/console/console-table-expected.txt:
+        * inspector/model/remote-object-expected.txt:
+        Rebaseline tests, add "_listeners: null" to all WebInspector.Object instances.
+
+        * inspector/unit-tests/linked-list-expected.txt: Added.
+        * inspector/unit-tests/linked-list.html: Added.
+        * inspector/unit-tests/list-multimap-expected.txt: Added.
+        * inspector/unit-tests/list-multimap.html: Added.
+
 2016-01-19  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Split all storage/indexeddb/mozilla tests into separate HTML + JS format.

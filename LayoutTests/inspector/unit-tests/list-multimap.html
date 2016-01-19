@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("ListMultimap");
+
+    suite.addTestCase({
+        name: "Instantiating Multimap",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Adding unique keys and values",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+
+            multimap.add("zero", "one");
+            multimap.add("two", "three");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Adding repeating keys and unique values",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+
+            multimap.add("zero", "one");
+            multimap.add("zero", "two");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Adding unique keys and repeating values",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+
+            multimap.add("zero", "one");
+            multimap.add("two", "one");
+            multimap.add("three", "one");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Adding repeating keys and values",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+
+            multimap.add("zero", "one");
+            multimap.add("two", "one");
+            multimap.add("zero", "one");
+            multimap.add("zero", "three");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Deleting existing keys and values",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+
+            multimap.add(0, 1);
+            multimap.add(2, 3);
+            multimap.add(2, 3);
+
+            InspectorTest.expectThat(multimap.delete(0, 1), "The key and the value were successfully deleted.");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectThat(multimap.delete(2, 3), "The key and the value were successfully deleted.");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Deleting non-existing keys and non-existing values",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+
+            multimap.add(0, 1);
+            multimap.add(2, 3);
+            multimap.add(4, 4);
+
+            InspectorTest.expectThat(!multimap.delete(0, 3), "Nothing was removed.");
+            InspectorTest.expectThat(!multimap.delete(2, 1), "Nothing was removed.");
+            InspectorTest.expectThat(!multimap.delete(3, 0), "Nothing was removed.");
+            InspectorTest.expectThat(!multimap.delete(4, 3), "Nothing was removed.");
+            InspectorTest.expectThat(!multimap.delete(0, 4), "Nothing was removed.");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Deleting values for given key",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+
+            multimap.add("opossum", "badger");
+            multimap.add("opossum", "raccoon");
+            multimap.add("raccoon", "opossum");
+
+            InspectorTest.expectThat(!multimap.deleteAll("badger"), "Nothing was removed.");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectThat(multimap.deleteAll("opossum"), "Values were removed.");
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Deleting all keys and values",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+            multimap.add("badger", "raccoon");
+            multimap.clear();
+
+            InspectorTest.log(multimap.size);
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Iterating using forEach method",
+        test: function(resolve, reject) {
+            let multimap = new ListMultimap;
+            multimap.add("Platypus", "Sugar glider");
+            multimap.add("Quoll", "Wallaby");
+
+            let list = [];
+            multimap.forEach(function(pair) {
+                list.push(pair);
+            });
+            InspectorTest.log(multimap);
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of ListMultimap.</p>
+</body>
+</html>

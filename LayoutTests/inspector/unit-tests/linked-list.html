@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("LinkedList");
+
+    suite.addTestCase({
+        name: "Adding items",
+        test: function(resolve, reject) {
+            let list = new LinkedList;
+
+            InspectorTest.log(list.length);
+            InspectorTest.log(list);
+
+            list.push("one");
+            list.push("two");
+            InspectorTest.log(list.length);
+            InspectorTest.log(list);
+
+            list.push("three");
+            InspectorTest.log(list.length);
+            InspectorTest.log(list);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Removing items",
+        test: function(resolve, reject) {
+            let list = new LinkedList;
+
+            list.push("one");
+            let nodeTwo = list.push("two");
+            list.push("three");
+            InspectorTest.log(list.length);
+            InspectorTest.log(list);
+
+            list.remove(nodeTwo);
+            InspectorTest.log(list.length);
+            InspectorTest.log(list);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Removing all items",
+        test: function(resolve, reject) {
+            let list = new LinkedList;
+
+            list.push("one");
+            list.push("two");
+            list.push("three");
+            list.clear();
+            InspectorTest.log(list.length);
+            InspectorTest.log(list);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Iterating using forEach method",
+        test: function(resolve, reject) {
+            let list = new LinkedList;
+
+            list.push("one");
+            list.push("two");
+            list.push("three");
+
+            let values = [];
+            list.forEach(function(value) {
+                values.push(value);
+            });
+            InspectorTest.log(values);
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of LinkedList.</p>
+</body>
+</html>

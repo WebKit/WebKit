@@ -25,6 +25,11 @@
 
 WebInspector.Object = class WebInspectorObject
 {
+    constructor()
+    {
+        this._listeners = null;
+    }
+
     // Static
 
     static addEventListener(eventType, listener, thisObject)
@@ -40,19 +45,15 @@ WebInspector.Object = class WebInspectorObject
             return;
 
         if (!this._listeners)
-            this._listeners = {};
+            this._listeners = new Map();
 
-        var listeners = this._listeners[eventType];
-        if (!listeners)
-            listeners = this._listeners[eventType] = [];
-
-        // Prevent registering multiple times.
-        for (var i = 0; i < listeners.length; ++i) {
-            if (listeners[i].listener === listener && listeners[i].thisObject === thisObject)
-                return;
+        let listenersTable = this._listeners.get(eventType);
+        if (!listenersTable) {
+            listenersTable = new ListMultimap();
+            this._listeners.set(eventType, listenersTable);
         }
 
-        listeners.push({thisObject, listener});
+        listenersTable.add(thisObject, listener);
     }
 
     static singleFireEventListener(eventType, listener, thisObject)
@@ -75,48 +76,52 @@ WebInspector.Object = class WebInspectorObject
         if (!this._listeners)
             return;
 
-        if (!eventType) {
-            for (eventType in this._listeners)
-                this.removeEventListener(eventType, listener, thisObject);
+        if (thisObject && !eventType) {
+            this._listeners.forEach(function(listenersTable) {
+                let listenerPairs = listenersTable.toArray();
+                for (let i = 0, length = listenerPairs.length; i < length; ++i) {
+                    let existingThisObject = listenerPairs[i][0];
+                    if (existingThisObject === thisObject)
+                        listenersTable.deleteAll(existingThisObject);
+                }
+            });
+
             return;
         }
 
-        var listeners = this._listeners[eventType];
-        if (!listeners)
+        let listenersTable = this._listeners.get(eventType);
+        if (!listenersTable || listenersTable.size === 0)
             return;
 
-        for (var i = listeners.length - 1; i >= 0; --i) {
-            if (listener && listeners[i].listener === listener && listeners[i].thisObject === thisObject)
-                listeners.splice(i, 1);
-            else if (!listener && thisObject && listeners[i].thisObject === thisObject)
-                listeners.splice(i, 1);
-        }
-
-        if (!listeners.length)
-            delete this._listeners[eventType];
-
-        if (!Object.keys(this._listeners).length)
-            delete this._listeners;
+        let didDelete = listenersTable.delete(thisObject, listener);
+        console.assert(didDelete, "removeEventListener cannot remove " + eventType.toString() + " because it doesn't exist.");
     }
 
+    // Only used by tests.
     static hasEventListeners(eventType)
     {
-        if (!this._listeners || !this._listeners[eventType])
+        if (!this._listeners)
             return false;
-        return true;
+
+        let listenersTable = this._listeners.get(eventType);
+        return listenersTable && listenersTable.size > 0;
     }
 
     // This should only be used within regression tests to detect leaks.
     static retainedObjectsWithPrototype(proto)
     {
         let results = new Set;
-        for (let eventType in this._listeners) {
-            let recordsForEvent = this._listeners[eventType];
-            for (let listener of recordsForEvent) {
-                if (listener.thisObject instanceof proto)
-                    results.add(listener.thisObject);
-            }
+
+        if (this._listeners) {
+            this._listeners.forEach(function(listenersTable, eventType) {
+                listenersTable.forEach(function(pair) {
+                    let thisObject = pair[0];
+                    if (thisObject instanceof proto)
+                        results.add(thisObject);
+                });
+            });
         }
+
         return results;
     }
 
@@ -130,23 +135,29 @@ WebInspector.Object = class WebInspectorObject
 
     dispatchEventToListeners(eventType, eventData)
     {
-        var event = new WebInspector.Event(this, eventType, eventData);
+        let event = new WebInspector.Event(this, eventType, eventData);
 
         function dispatch(object)
         {
-            if (!object || !object.hasOwnProperty("_listeners") || event._stoppedPropagation)
+            if (!object || !object._listeners || event._stoppedPropagation)
                 return;
 
-            let listenersForThisEvent = object._listeners[eventType];
-            if (!listenersForThisEvent)
+            if (!(object._listeners instanceof Map)) {
+                console.error("object._listeners should be a Map but it isn't.\n`object` is most likely a WebInspector.EventListenerSet.");
+                return;
+            }
+
+            let listenersTable = object._listeners.get(eventType);
+            if (!listenersTable)
                 return;
 
             // Make a copy with slice so mutations during the loop doesn't affect us.
-            listenersForThisEvent = listenersForThisEvent.slice(0);
+            let listeners = listenersTable.toArray();
 
             // Iterate over the listeners and call them. Stop if stopPropagation is called.
-            for (var i = 0; i < listenersForThisEvent.length; ++i) {
-                listenersForThisEvent[i].listener.call(listenersForThisEvent[i].thisObject, event);
+            for (let i = 0, length = listeners.length; i < length; ++i) {
+                let [thisObject, listener] = listeners[i];
+                listener.call(thisObject, event);
                 if (event._stoppedPropagation)
                     break;
             }
@@ -159,7 +170,7 @@ WebInspector.Object = class WebInspectorObject
         event._stoppedPropagation = false;
 
         // Dispatch to listeners on all constructors up the prototype chain, including the immediate constructor.
-        var constructor = this.constructor;
+        let constructor = this.constructor;
         while (constructor) {
             dispatch(constructor);
 

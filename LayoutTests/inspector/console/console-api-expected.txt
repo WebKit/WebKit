@@ -19,6 +19,7 @@ CONSOLE MESSAGE: collapsedGroupName
 
 STEP: console.log('console.log')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "console.log",
@@ -41,6 +42,7 @@ STEP: console.log('console.log')
 
 STEP: console.warn('console.warn')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "warning",
   "_messageText": "console.warn",
@@ -63,6 +65,7 @@ STEP: console.warn('console.warn')
 
 STEP: console.error('console.error')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "error",
   "_messageText": "console.error",
@@ -85,6 +88,7 @@ STEP: console.error('console.error')
 
 STEP: console.debug('console.debug')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "console.debug",
@@ -107,6 +111,7 @@ STEP: console.debug('console.debug')
 
 STEP: console.info('console.info')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "info",
   "_messageText": "console.info",
@@ -129,6 +134,7 @@ STEP: console.info('console.info')
 
 STEP: console.assert(false, 'assertion message')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "error",
   "_messageText": "assertion message",
@@ -151,6 +157,7 @@ STEP: console.assert(false, 'assertion message')
 
 STEP: console.trace()
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "",
@@ -165,6 +172,7 @@ STEP: console.trace()
 
 STEP: console.log('string message', string)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "string message",
@@ -193,6 +201,7 @@ STEP: console.log('string message', string)
 
 STEP: console.log('message', object, object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "message",
@@ -214,12 +223,14 @@ STEP: console.log('message', object, object)
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
+        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
+            "_listeners": null,
             "_name": "a",
             "_type": "number",
             "_value": "1"
@@ -234,12 +245,14 @@ STEP: console.log('message', object, object)
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
+        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
+            "_listeners": null,
             "_name": "a",
             "_type": "number",
             "_value": "1"
@@ -255,6 +268,7 @@ STEP: console.log('message', object, object)
 
 STEP: console.error('message', object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "error",
   "_messageText": "message",
@@ -276,12 +290,14 @@ STEP: console.error('message', object)
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
+        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
+            "_listeners": null,
             "_name": "a",
             "_type": "number",
             "_value": "1"
@@ -297,6 +313,7 @@ STEP: console.error('message', object)
 
 STEP: console.warn('message', object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "warning",
   "_messageText": "message",
@@ -318,12 +335,14 @@ STEP: console.warn('message', object)
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
+        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
+            "_listeners": null,
             "_name": "a",
             "_type": "number",
             "_value": "1"
@@ -339,6 +358,7 @@ STEP: console.warn('message', object)
 
 STEP: console.debug('message', object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "message",
@@ -360,12 +380,14 @@ STEP: console.debug('message', object)
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
+        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
+            "_listeners": null,
             "_name": "a",
             "_type": "number",
             "_value": "1"
@@ -381,6 +403,7 @@ STEP: console.debug('message', object)
 
 STEP: console.info('message', object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "info",
   "_messageText": "message",
@@ -402,12 +425,14 @@ STEP: console.info('message', object)
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
+        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
+            "_listeners": null,
             "_name": "a",
             "_type": "number",
             "_value": "1"
@@ -423,6 +448,7 @@ STEP: console.info('message', object)
 
 STEP: console.dir(object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "[object Object]",
@@ -438,12 +464,14 @@ STEP: console.dir(object)
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
+        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
+            "_listeners": null,
             "_name": "a",
             "_type": "number",
             "_value": "1"
@@ -459,6 +487,7 @@ STEP: console.dir(object)
 
 STEP: console.dirxml(object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "[object Object]",
@@ -474,12 +503,14 @@ STEP: console.dirxml(object)
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
+        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
+            "_listeners": null,
             "_name": "a",
             "_type": "number",
             "_value": "1"
@@ -495,6 +526,7 @@ STEP: console.dirxml(object)
 
 STEP: console.group('groupName')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "groupName",
@@ -517,6 +549,7 @@ STEP: console.group('groupName')
 
 STEP: console.groupEnd('groupName')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "groupName",
@@ -539,6 +572,7 @@ STEP: console.groupEnd('groupName')
 
 STEP: console.groupCollapsed('collapsedGroupName')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "collapsedGroupName",
@@ -561,6 +595,7 @@ STEP: console.groupCollapsed('collapsedGroupName')
 
 STEP: console.groupEnd('collapsedGroupName')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "collapsedGroupName",
@@ -583,6 +618,7 @@ STEP: console.groupEnd('collapsedGroupName')
 
 STEP: console.count()
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "<no label>: 1",
@@ -597,6 +633,7 @@ STEP: console.count()
 
 STEP: console.count()
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "<no label>: 2",
@@ -611,6 +648,7 @@ STEP: console.count()
 
 STEP: console.count('')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "<no label>: 3",
@@ -625,6 +663,7 @@ STEP: console.count('')
 
 STEP: console.count('    ')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "    : 1",
@@ -639,6 +678,7 @@ STEP: console.count('    ')
 
 STEP: console.count('')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "<no label>: 4",
@@ -653,6 +693,7 @@ STEP: console.count('')
 
 STEP: console.count('    ')
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "    : 2",
@@ -667,6 +708,7 @@ STEP: console.count('    ')
 
 STEP: console.count(string)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "string: 1",
@@ -681,6 +723,7 @@ STEP: console.count(string)
 
 STEP: console.count(string)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "string: 2",
@@ -695,6 +738,7 @@ STEP: console.count(string)
 
 STEP: console.count(object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "[object Object]: 1",
@@ -709,6 +753,7 @@ STEP: console.count(object)
 
 STEP: console.count(object)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "[object Object]: 2",
@@ -723,6 +768,7 @@ STEP: console.count(object)
 
 STEP: console.count(otherObject)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "[object Object]: 3",
@@ -737,6 +783,7 @@ STEP: console.count(otherObject)
 
 STEP: console.count(otherObject)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "[object Object]: 4",
@@ -751,6 +798,7 @@ STEP: console.count(otherObject)
 
 STEP: console.count(number)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "42: 1",
@@ -765,6 +813,7 @@ STEP: console.count(number)
 
 STEP: console.count(number)
 {
+  "_listeners": null,
   "_source": "console-api",
   "_level": "debug",
   "_messageText": "42: 2",

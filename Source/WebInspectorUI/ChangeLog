@@ -1,3 +1,62 @@
+2016-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: WebInspector.Object.addEventListener is O(n), make it O(1)
+        https://bugs.webkit.org/show_bug.cgi?id=152422
+        <rdar://problem/24038047>
+
+        Reviewed by Timothy Hatcher.
+
+        Slow addEventListener was the main cause of Console sluggishness[1].
+
+        This patch changes:
+        addEventListener from O(n) to O(1)
+        removeEventListener from O(n) to O(1)
+
+        Now, addEventListener and removeEventListener take <1ms regardless of the
+        number of listeners attached.
+
+        removeEventListener(null, null, thisObject), a special case when all events
+        for thisObject are removed, was improved from O(n^2) to O(n).
+
+        * UserInterface/Base/LinkedList.js: Added.
+        (LinkedList):
+        (LinkedList.prototype.clear):
+        (LinkedList.prototype.get last):
+        (LinkedList.prototype.push):
+        (LinkedList.prototype.remove):
+        (LinkedList.prototype.forEach):
+        (LinkedList.prototype.toArray):
+        (LinkedList.prototype.toJSON):
+        (LinkedListNode):
+        LinkedList ensures O(1) time complexity for push and remove operations.
+
+        * UserInterface/Base/ListMultimap.js: Added.
+        (ListMultimap):
+        (ListMultimap.prototype.get size):
+        (ListMultimap.prototype.add):
+        (ListMultimap.prototype.delete):
+        (ListMultimap.prototype.deleteAll):
+        (ListMultimap.prototype.has):
+        (ListMultimap.prototype.clear):
+        (ListMultimap.prototype.forEach):
+        (ListMultimap.prototype.toArray):
+        (ListMultimap.prototype.toJSON):
+        ListMultimap unsures O(1) time complexity for add, has and delete operations.
+        ListMultimap preserves insertion order by using a LinkedList.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object):
+        (WebInspector.Object.addEventListener):
+        (WebInspector.Object.removeEventListener):
+        (WebInspector.Object.hasEventListeners):
+        (WebInspector.Object.retainedObjectsWithPrototype):
+        (WebInspector.Object.prototype.dispatchEventToListeners):
+        Replace this._listeners[eventType] from array of objects to ListMultimap.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/TestStub.html:
+
 2016-01-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: cleanup TreeOutline class and separate styles from NavigationSidebarPanel
