@@ -29,7 +29,6 @@
 #include "CSSSelectorList.h"
 #include "NodeList.h"
 #include "SelectorCompiler.h"
-#include <wtf/BumpArena.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -133,12 +132,10 @@ class SelectorQueryCache {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    SelectorQueryCache();
     SelectorQuery* add(const String&, Document&, ExceptionCode&);
 
 private:
     HashMap<String, std::unique_ptr<SelectorQuery>> m_entries;
-    Ref<BumpArena> m_arena;
 };
 
 inline bool SelectorQuery::matches(Element& element) const

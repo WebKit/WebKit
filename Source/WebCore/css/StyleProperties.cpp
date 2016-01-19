@@ -55,9 +55,9 @@ static bool isInitialOrInherit(const String& value)
     return value.length() == 7 && (value == "initial" || value == "inherit");
 }
 
-Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(BumpArena* arena, const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
+Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
-    void* slot = BumpArena::allocate(arena, sizeForImmutableStylePropertiesWithPropertyCount(count));
+    void* slot = WTF::fastMalloc(sizeForImmutableStylePropertiesWithPropertyCount(count));
     return adoptRef(*new (NotNull, slot) ImmutableStyleProperties(properties, count, cssParserMode));
 }
 
@@ -66,7 +66,7 @@ Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
     if (is<ImmutableStyleProperties>(*this))
         return downcast<ImmutableStyleProperties>(const_cast<StyleProperties&>(*this));
     const MutableStyleProperties& mutableThis = downcast<MutableStyleProperties>(*this);
-    return ImmutableStyleProperties::create(BumpArena::arenaFor(this), mutableThis.m_propertyVector.data(), mutableThis.m_propertyVector.size(), cssParserMode());
+    return ImmutableStyleProperties::create(mutableThis.m_propertyVector.data(), mutableThis.m_propertyVector.size(), cssParserMode());
 }
 
 MutableStyleProperties::MutableStyleProperties(CSSParserMode cssParserMode)

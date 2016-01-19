@@ -71,7 +71,6 @@ StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String&
     , m_isMutable(false)
     , m_isInMemoryCache(false)
     , m_parserContext(context)
-    , m_arena(BumpArena::create())
 {
 }
 
@@ -92,7 +91,6 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     , m_isMutable(false)
     , m_isInMemoryCache(false)
     , m_parserContext(o.m_parserContext)
-    , m_arena(BumpArena::create())
 {
     ASSERT(o.isCacheable());
 
@@ -315,7 +313,6 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     }
 
     CSSParser p(parserContext());
-    p.setArena(m_arena.get());
     p.parseSheet(this, sheetText, TextPosition(), nullptr, true);
 
     if (m_parserContext.needsSiteSpecificQuirks && isStrictParserMode(m_parserContext.mode)) {
@@ -337,7 +334,6 @@ bool StyleSheetContents::parseString(const String& sheetText)
 bool StyleSheetContents::parseStringAtPosition(const String& sheetText, const TextPosition& textPosition, bool createdByParser)
 {
     CSSParser p(parserContext());
-    p.setArena(m_arena.get());
     p.parseSheet(this, sheetText, textPosition, nullptr, createdByParser);
     return true;
 }

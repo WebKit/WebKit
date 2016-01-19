@@ -608,11 +608,6 @@ SelectorQuery::SelectorQuery(CSSSelectorList&& selectorList)
 {
 }
 
-SelectorQueryCache::SelectorQueryCache()
-    : m_arena(BumpArena::create())
-{
-}
-
 SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& document, ExceptionCode& ec)
 {
     auto it = m_entries.find(selectors);
@@ -620,7 +615,6 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, Document& docume
         return it->value.get();
 
     CSSParser parser(document);
-    parser.setArena(m_arena.get());
     CSSSelectorList selectorList;
     parser.parseSelector(selectors, selectorList);
 

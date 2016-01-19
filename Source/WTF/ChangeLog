@@ -1,3 +1,16 @@
+2016-01-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r195141.
+
+        Seems to cause crashes on iOS9 64bit
+
+        Reverted changeset:
+
+        "Fragmentation-free allocator for timeless and/or coupled
+        allocations."
+        https://bugs.webkit.org/show_bug.cgi?id=152696
+        http://trac.webkit.org/changeset/195141
+
 2016-01-19  Enrica Casucci  <enrica@apple.com>
 
         Add support for DataDetectors in WK (iOS).

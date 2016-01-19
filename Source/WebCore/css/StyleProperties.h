@@ -29,7 +29,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include <memory>
-#include <wtf/BumpArena.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
@@ -47,8 +46,7 @@ class StyledElement;
 class StylePropertyShorthand;
 class StyleSheetContents;
 
-class StyleProperties : public WTF::RefCountedBase {
-    WTF_MAKE_BUMPARENA_ALLOCATED;
+class StyleProperties : public RefCounted<StyleProperties> {
     friend class PropertyReference;
 public:
     // Override RefCounted's deref() to ensure operator delete is called on
@@ -163,7 +161,7 @@ private:
 class ImmutableStyleProperties : public StyleProperties {
 public:
     WEBCORE_EXPORT ~ImmutableStyleProperties();
-    static Ref<ImmutableStyleProperties> create(BumpArena*, const CSSProperty* properties, unsigned count, CSSParserMode);
+    static Ref<ImmutableStyleProperties> create(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     unsigned propertyCount() const { return m_arraySize; }
     bool isEmpty() const { return !propertyCount(); }

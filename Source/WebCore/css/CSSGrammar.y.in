@@ -403,7 +403,7 @@ webkit_selector:
     WEBKIT_SELECTOR_SYM '{' maybe_space selector_list '}' {
         if ($4) {
             if (parser->m_selectorListForParseSelector)
-                parser->m_selectorListForParseSelector->adoptSelectorVector(parser->arena(), *$4);
+                parser->m_selectorListForParseSelector->adoptSelectorVector(*$4);
             parser->recycleSelectorVector(std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
         }
     }
@@ -1353,7 +1353,7 @@ pseudo:
 #if ENABLE_VIDEO_TRACK
     // used by ::cue(:past/:future)
     | ':' ':' CUEFUNCTION maybe_space simple_selector_list maybe_space ')' {
-        $$ = CSSParserSelector::parsePseudoElementCueFunctionSelector(parser->arena(), $3, $5);
+        $$ = CSSParserSelector::parsePseudoElementCueFunctionSelector($3, $5);
     }
 #endif
     // use by :-webkit-any.
@@ -1366,7 +1366,7 @@ pseudo:
         if ($4) {
             auto selector = std::make_unique<CSSParserSelector>();
             selector->setMatch(CSSSelector::PseudoClass);
-            selector->adoptSelectorVector(parser->arena(), *std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
+            selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
             selector->setPseudoClassValue($2);
             if (selector->pseudoClassType() == CSSSelector::PseudoClassAny)
                 $$ = selector.release();
@@ -1377,7 +1377,7 @@ pseudo:
         if ($4) {
             auto selector = std::make_unique<CSSParserSelector>();
             selector->setMatch(CSSSelector::PseudoClass);
-            selector->adoptSelectorVector(parser->arena(), *std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
+            selector->adoptSelectorVector(*std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>($4));
             selector->setPseudoClassValue($2);
             if (selector->pseudoClassType() == CSSSelector::PseudoClassMatches)
                 $$ = selector.release();
@@ -1427,7 +1427,7 @@ pseudo:
             selector->setArgument($4);
             selector->setPseudoClassValue($2);
             if (ending)
-                selector->adoptSelectorVector(parser->arena(), *ending);
+                selector->adoptSelectorVector(*ending);
             CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
             if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
                 $$ = selector.release();
@@ -1442,7 +1442,7 @@ pseudo:
             selector->setArgument(AtomicString::number($4 * $5));
             selector->setPseudoClassValue($2);
             if (ending)
-                selector->adoptSelectorVector(parser->arena(), *ending);
+                selector->adoptSelectorVector(*ending);
             CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
             if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
                 $$ = selector.release();
@@ -1457,7 +1457,7 @@ pseudo:
             selector->setArgument($4);
             selector->setPseudoClassValue($2);
             if (ending)
-               selector->adoptSelectorVector(parser->arena(), *ending);
+               selector->adoptSelectorVector(*ending);
             CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
             if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild)
                 $$ = selector.release();
@@ -1511,7 +1511,7 @@ pseudo:
                 auto selector = std::make_unique<CSSParserSelector>();
                 selector->setMatch(CSSSelector::PseudoClass);
                 selector->setPseudoClassValue($2);
-                selector->adoptSelectorVector(parser->arena(), *list);
+                selector->adoptSelectorVector(*list);
                 if (selector->pseudoClassType() == CSSSelector::PseudoClassNot)
                     $$ = selector.release();
             }

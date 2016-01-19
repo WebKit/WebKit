@@ -7,7 +7,6 @@ set(WTF_HEADERS
     BitVector.h
     Bitmap.h
     BubbleSort.h
-    BumpArena.h
     BumpPointerAllocator.h
     ByteOrder.h
     CompilationThread.h
@@ -155,7 +154,6 @@ set(WTF_SOURCES
     Assertions.cpp
     Atomics.cpp
     BitVector.cpp
-    BumpArena.cpp
     CompilationThread.cpp
     CryptographicUtilities.cpp
     CryptographicallyRandomNumber.cpp

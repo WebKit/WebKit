@@ -1644,7 +1644,7 @@ Ref<ImmutableStyleProperties> CSSParser::createStyleProperties()
     if (unusedEntries)
         results.remove(0, unusedEntries);
 
-    return ImmutableStyleProperties::create(arena(), results.data(), results.size(), m_context.mode);
+    return ImmutableStyleProperties::create(results.data(), results.size(), m_context.mode);
 }
 
 void CSSParser::addPropertyWithPrefixingVariant(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
@@ -12701,9 +12701,9 @@ RefPtr<StyleRuleBase> CSSParser::createMediaRule(PassRefPtr<MediaQuerySet> media
     if (!media) {
         // To comply with w3c test suite expectation, create an empty media query
         // even when it is syntactically incorrect.
-        rule = StyleRuleMedia::create(arena(), MediaQuerySet::create(), emptyRules);
+        rule = StyleRuleMedia::create(MediaQuerySet::create(), emptyRules);
     } else
-        rule = StyleRuleMedia::create(arena(), media, rules ? *rules : emptyRules);
+        rule = StyleRuleMedia::create(media, rules ? *rules : emptyRules);
     processAndAddNewRuleToSourceTreeIfNeeded();
     return rule;
 }
@@ -12729,10 +12729,10 @@ RefPtr<StyleRuleBase> CSSParser::createSupportsRule(bool conditionIsSupported, R
         conditionText = String(m_dataStart16.get() + conditionOffset, conditionLength).stripWhiteSpace();
 
     if (rules)
-        rule = StyleRuleSupports::create(arena(), conditionText, conditionIsSupported, *rules);
+        rule = StyleRuleSupports::create(conditionText, conditionIsSupported, *rules);
     else {
         RuleList emptyRules;
-        rule = StyleRuleSupports::create(arena(), conditionText, conditionIsSupported, emptyRules);
+        rule = StyleRuleSupports::create(conditionText, conditionIsSupported, emptyRules);
     }
 
     processAndAddNewRuleToSourceTreeIfNeeded();
@@ -12841,22 +12841,12 @@ RefPtr<StyleRuleKeyframes> CSSParser::createKeyframesRule(const String& name, st
 {
     std::unique_ptr<Vector<RefPtr<StyleKeyframe>>> keyframes = WTFMove(popKeyframes);
     m_allowImportRules = m_allowNamespaceDeclarations = false;
-    RefPtr<StyleRuleKeyframes> rule = StyleRuleKeyframes::create(arena());
+    RefPtr<StyleRuleKeyframes> rule = StyleRuleKeyframes::create();
     for (size_t i = 0; i < keyframes->size(); ++i)
         rule->parserAppendKeyframe(keyframes->at(i));
     rule->setName(name);
     processAndAddNewRuleToSourceTreeIfNeeded();
     return rule;
-}
-
-void CSSParser::setArena(BumpArena& arena)
-{
-    m_arena = &arena;
-}
-
-BumpArena* CSSParser::arena()
-{
-    return m_arena.get();
 }
 
 RefPtr<StyleRuleBase> CSSParser::createStyleRule(Vector<std::unique_ptr<CSSParserSelector>>* selectors)
@@ -12865,8 +12855,8 @@ RefPtr<StyleRuleBase> CSSParser::createStyleRule(Vector<std::unique_ptr<CSSParse
     if (selectors) {
         m_allowImportRules = false;
         m_allowNamespaceDeclarations = false;
-        rule = StyleRule::create(arena(), m_lastSelectorLineNumber, createStyleProperties());
-        rule->parserAdoptSelectorVector(arena(), *selectors);
+        rule = StyleRule::create(m_lastSelectorLineNumber, createStyleProperties());
+        rule->parserAdoptSelectorVector(*selectors);
         processAndAddNewRuleToSourceTreeIfNeeded();
     } else
         popRuleData();
@@ -12889,7 +12879,7 @@ RefPtr<StyleRuleBase> CSSParser::createFontFaceRule()
             return nullptr;
         }
     }
-    RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create(arena(), createStyleProperties());
+    RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create(createStyleProperties());
     clearProperties();
     processAndAddNewRuleToSourceTreeIfNeeded();
     return rule;
@@ -12973,10 +12963,10 @@ RefPtr<StyleRuleBase> CSSParser::createPageRule(std::unique_ptr<CSSParserSelecto
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRulePage> rule;
     if (pageSelector) {
-        rule = StyleRulePage::create(arena(), createStyleProperties());
+        rule = StyleRulePage::create(createStyleProperties());
         Vector<std::unique_ptr<CSSParserSelector>> selectorVector;
         selectorVector.append(WTFMove(pageSelector));
-        rule->parserAdoptSelectorVector(arena(), selectorVector);
+        rule->parserAdoptSelectorVector(selectorVector);
         processAndAddNewRuleToSourceTreeIfNeeded();
     } else
         popRuleData();
@@ -13008,7 +12998,7 @@ RefPtr<StyleRuleBase> CSSParser::createRegionRule(Vector<std::unique_ptr<CSSPars
 
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    RefPtr<StyleRuleRegion> regionRule = StyleRuleRegion::create(arena(), regionSelector, *rules);
+    RefPtr<StyleRuleRegion> regionRule = StyleRuleRegion::create(regionSelector, *rules);
 
     if (isExtractingSourceData())
         addNewRuleToSourceTree(CSSRuleSourceData::createUnknown());
@@ -13282,7 +13272,7 @@ PassRefPtr<StyleRuleBase> CSSParser::createViewportRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    RefPtr<StyleRuleViewport> rule = StyleRuleViewport::create(arena(), createStyleProperties());
+    RefPtr<StyleRuleViewport> rule = StyleRuleViewport::create(createStyleProperties());
     clearProperties();
 
     processAndAddNewRuleToSourceTreeIfNeeded();
