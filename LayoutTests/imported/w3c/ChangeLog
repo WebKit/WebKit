@@ -1,3 +1,15 @@
+2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        innerHTML should always add a mutation record for removing all children
+        https://bugs.webkit.org/show_bug.cgi?id=148782
+        <rdar://problem/22571962>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline a test now that all test test cases are passing.
+
+        * web-platform-tests/dom/nodes/MutationObserver-inner-outer-expected.txt:
+
 2016-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         createAttribute should lowercase the attribute name in a HTML document

@@ -1,3 +1,17 @@
+2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        innerHTML should always add a mutation record for removing all children
+        https://bugs.webkit.org/show_bug.cgi?id=148782
+        <rdar://problem/22571962>
+
+        Reviewed by Antti Koivisto.
+
+        Add a more comprehensive test for replacing a single text node with innerHTML's setter to ensure
+        WebKit's optimization to avoid replacing the node should not be observable by scripts in any way.
+
+        * fast/dom/innerHTML-single-text-node-expected.txt: Added.
+        * fast/dom/innerHTML-single-text-node.html: Added.
+
 2016-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         createAttribute should lowercase the attribute name in a HTML document

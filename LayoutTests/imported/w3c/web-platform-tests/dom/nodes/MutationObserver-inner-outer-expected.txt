@@ -1,7 +1,7 @@
 MutationObservers: innerHTML, outerHTML mutations
 
 
-FAIL innerHTML mutation assert_equals: mutation records must match expected 2 but got 1
+PASS innerHTML mutation 
 PASS innerHTML with 2 children mutation 
 PASS outerHTML mutation 
 

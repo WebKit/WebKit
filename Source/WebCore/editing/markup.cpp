@@ -989,6 +989,22 @@ static inline bool hasOneTextChild(ContainerNode& node)
     return hasOneChild(node) && node.firstChild()->isTextNode();
 }
 
+static inline bool hasMutationEventListeners(const Document& document)
+{
+    return document.hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER)
+        || document.hasListenerType(Document::DOMNODEINSERTED_LISTENER)
+        || document.hasListenerType(Document::DOMNODEREMOVED_LISTENER)
+        || document.hasListenerType(Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER)
+        || document.hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER);
+}
+
+// We can use setData instead of replacing Text node as long as script can't observe the difference.
+static inline bool canUseSetDataOptimization(const Text& containerChild, const ChildListMutationScope& mutationScope)
+{
+    bool authorScriptMayHaveReference = containerChild.refCount();
+    return !authorScriptMayHaveReference && !mutationScope.canObserve() && !hasMutationEventListeners(containerChild.document());
+}
+
 void replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>&& fragment, ExceptionCode& ec)
 {
     Ref<ContainerNode> containerNode(container);
@@ -999,13 +1015,15 @@ void replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>
         return;
     }
 
-    if (hasOneTextChild(containerNode) && hasOneTextChild(fragment)) {
-        downcast<Text>(*containerNode->firstChild()).setData(downcast<Text>(*fragment->firstChild()).data(), ec);
-        return;
-    }
+    auto* containerChild = containerNode->firstChild();
+    if (containerChild && !containerChild->nextSibling()) {
+        if (is<Text>(*containerChild) && hasOneTextChild(fragment) && canUseSetDataOptimization(downcast<Text>(*containerChild), mutation)) {
+            ASSERT(!fragment->firstChild()->refCount());
+            downcast<Text>(*containerChild).setData(downcast<Text>(*fragment->firstChild()).data(), ec);
+            return;
+        }
 
-    if (hasOneChild(containerNode)) {
-        containerNode->replaceChild(WTFMove(fragment), *containerNode->firstChild(), ec);
+        containerNode->replaceChild(WTFMove(fragment), *containerChild, ec);
         return;
     }
 

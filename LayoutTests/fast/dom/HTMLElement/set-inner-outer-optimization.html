@@ -74,8 +74,8 @@ function test()
     runTest('', 'innerHTML', '<a></a><b></b>', 'modified');
 
     runTest('text', 'innerHTML', '', 'modified');
-    runTest('text', 'innerHTML', 'different text', 'modified, with same first child');
-    runTest('text', 'innerHTML', 'text', 'not modified');
+    runTest('text', 'innerHTML', 'different text', 'modified');
+    runTest('text', 'innerHTML', 'text', 'modified');
     runTest('text', 'innerHTML', '<a></a>', 'modified');
     runTest('text', 'innerHTML', '<a></a><b></b>', 'modified');
 

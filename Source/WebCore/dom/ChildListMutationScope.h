@@ -82,6 +82,8 @@ public:
             m_accumulator = ChildListMutationAccumulator::getOrCreate(target);
     }
 
+    bool canObserve() const { return m_accumulator; }
+
     void childAdded(Node& child)
     {
         if (m_accumulator && m_accumulator->hasObservers())

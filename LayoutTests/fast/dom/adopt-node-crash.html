@@ -10,8 +10,8 @@ if (window.testRunner)
 var nodeToAdopt = document.getElementById('node-to-adopt');
 
 var mutationHandler = function() {
-    document.getElementById('result').innerHTML = "DOMSubtreeModified fired";
     document.body.removeEventListener('DOMSubtreeModified', mutationHandler, true);
+    document.getElementById('result').innerHTML = "DOMSubtreeModified fired";
     document.body.appendChild(nodeToAdopt);
 };
 document.body.addEventListener('DOMSubtreeModified', mutationHandler, true);

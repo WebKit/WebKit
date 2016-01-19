@@ -14,5 +14,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (13,6) size 50x18
           text run at (13,6) width 50: " Project"
         RenderText {#text} at (0,0) size 0x0
-selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 3 {DIV} of body
+selection start: position 0 of child 1 {SPAN} of child 3 {DIV} of body
 selection end:   position 0 of child 1 {#text} of child 3 {DIV} of child 3 {DIV} of body
