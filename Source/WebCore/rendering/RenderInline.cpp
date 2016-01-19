@@ -1609,11 +1609,10 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (graphicsContext.paintingDisabled())
         return;
 
-    if (styleToUse.outlineStyleIsAuto() || styleToUse.outlineStyle() == BNONE)
+    if (styleToUse.outlineStyleIsAuto() || !styleToUse.hasOutline())
         return;
 
     Vector<LayoutRect> rects;
-
     rects.append(LayoutRect());
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         const RootInlineBox& rootBox = curr->root();
@@ -1643,14 +1642,14 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
 {
     const RenderStyle& styleToUse = style();
     float outlineWidth = styleToUse.outlineWidth();
+    float outlineOffset = style().outlineOffset();
     EBorderStyle outlineStyle = styleToUse.outlineStyle();
 
     bool antialias = shouldAntialiasLines(graphicsContext);
 
-    float offset = style().outlineOffset();
 
-    LayoutRect box(LayoutPoint(paintOffset.x() + thisline.x() - offset, paintOffset.y() + thisline.y() - offset),
-        LayoutSize(thisline.width() + offset, thisline.height() + offset));
+    LayoutRect box(LayoutPoint(paintOffset.x() + thisline.x() - outlineOffset, paintOffset.y() + thisline.y() - outlineOffset),
+        LayoutSize(thisline.width() + 2 * outlineOffset, thisline.height() + 2 * outlineOffset));
 
     IntRect pixelSnappedBox = snappedIntRect(box);
     if (pixelSnappedBox.isEmpty())

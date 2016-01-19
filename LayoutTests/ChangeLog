@@ -1,3 +1,17 @@
+2016-01-19  Zalan Bujtas  <zalan@apple.com>
+
+        outline-offset does not work for inlines.
+        https://bugs.webkit.org/show_bug.cgi?id=153238
+
+        Reviewed by Simon Fraser.
+
+        Adjust outline box width/height with outline-offset.
+
+        Test: fast/inline/inlines-with-outline-offset.html
+
+        * fast/inline/inlines-with-outline-offset-expected.html: Added.
+        * fast/inline/inlines-with-outline-offset.html: Added.
+
 2016-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: WebInspector.Object.addEventListener is O(n), make it O(1)
