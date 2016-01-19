@@ -26,8 +26,6 @@
 #ifndef DataDetection_h
 #define DataDetection_h
 
-#if PLATFORM(MAC)
-
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -39,13 +37,25 @@ class FloatRect;
 class HitTestResult;
 class Range;
 
+enum DataDetectorTypes {
+    DataDetectorTypeNone = 0,
+    DataDetectorTypePhoneNumber = 1 << 0,
+    DataDetectorTypeLink = 1 << 1,
+    DataDetectorTypeAddress = 1 << 2,
+    DataDetectorTypeCalendarEvent = 1 << 3,
+    DataDetectorTypeTrackingNumber = 1 << 4, // Not individually selectable with the API
+    DataDetectorTypeFlight = 1 << 5, // Not individually selectable with the API
+    DataDetectorTypeAll = ULONG_MAX
+};
+
 class DataDetection {
 public:
+#if PLATFORM(MAC)
     WEBCORE_EXPORT static RetainPtr<DDActionContext> detectItemAroundHitTestResult(const HitTestResult&, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange);
+#endif
+    WEBCORE_EXPORT static void detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes);
 };
 
 } // namespace WebCore
-
-#endif // PLATFORM(MAC)
 
 #endif // DataDetection_h

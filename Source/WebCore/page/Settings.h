@@ -42,6 +42,10 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
+#if ENABLE(DATA_DETECTION)
+#include "DataDetection.h"
+#endif
+
 namespace WebCore {
 
 class FontGenericFamilies;

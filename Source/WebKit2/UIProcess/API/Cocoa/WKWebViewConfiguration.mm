@@ -198,6 +198,9 @@ private:
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
     configuration->_imageControlsEnabled = self->_imageControlsEnabled;
 #endif
+#if ENABLE(DATA_DETECTION)
+    configuration->_dataDetectorTypes = self->_dataDetectorTypes;
+#endif
 #if ENABLE(WIRELESS_TARGET_PLAYBACK)
     configuration->_allowsAirPlayForMediaPlayback = self->_allowsAirPlayForMediaPlayback;
 #endif

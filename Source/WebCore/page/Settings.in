@@ -228,6 +228,7 @@ aggressiveTileRetentionEnabled initial=false
 temporaryTileCohortRetentionEnabled initial=true
 
 useImageDocumentForSubframePDF initial=false
+dataDetectorTypes type=DataDetectorTypes, initial=DataDetectorTypeNone, conditional=DATA_DETECTION
 
 # Allow SourceBuffers to store up to 304MB each, enough for approximately five minutes
 # of 1080p video and stereo audio.

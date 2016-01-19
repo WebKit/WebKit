@@ -314,6 +314,28 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 #endif
 
+#if ENABLE(DATA_DETECTION)
+static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint32_t types)
+{
+    if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeNone)
+        return WebCore::DataDetectorTypeNone;
+    if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeAll)
+        return WebCore::DataDetectorTypeAll;
+    
+    uint32_t value = WebCore::DataDetectorTypeNone;
+    if (types & WKDataDetectorTypePhoneNumber)
+        value |= WebCore::DataDetectorTypePhoneNumber;
+    if (types & WKDataDetectorTypeLink)
+        value |= WebCore::DataDetectorTypeLink;
+    if (types & WKDataDetectorTypeAddress)
+        value |= WebCore::DataDetectorTypeAddress;
+    if (types & WKDataDetectorTypeCalendarEvent)
+        value |= WebCore::DataDetectorTypeCalendarEvent;
+    
+    return static_cast<WebCore::DataDetectorTypes>(value);
+}
+#endif
+
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
     if (!(self = [super initWithFrame:frame]))
@@ -382,6 +404,9 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::requiresUserGestureForAudioPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration _requiresUserActionForAudioPlayback]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::invisibleAutoplayNotPermittedKey(), WebKit::WebPreferencesStore::Value(!![_configuration _invisibleAutoplayNotPermitted]));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::mediaDataLoadsAutomaticallyKey(), WebKit::WebPreferencesStore::Value(!![_configuration _mediaDataLoadsAutomatically]));
+#endif
+#if ENABLE(DATA_DETECTION)
+    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::dataDetectorTypesKey(), WebKit::WebPreferencesStore::Value(static_cast<uint32_t>(fromWKDataDetectorTypes([_configuration dataDetectorTypes]))));
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::allowsAirPlayForMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsAirPlayForMediaPlayback]));

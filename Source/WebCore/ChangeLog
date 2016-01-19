@@ -1,3 +1,32 @@
+2016-01-19  Enrica Casucci  <enrica@apple.com>
+
+        Add support for DataDetectors in WK (iOS).
+        https://bugs.webkit.org/show_bug.cgi?id=152989
+        rdar://problem/22855960
+
+        Reviewed by Tim Horton.
+
+        This is the first step toward implementing Data Detectors support
+        in WK2. The patch adds a new memeber to the Settings object
+        to retrieve the type of detection desired. The DataDetection files
+        have been moved under cocoa, since they are no longer OS X specific.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa/DataDetection.h: Copied from Source/WebCore/editing/mac/DataDetection.h.
+        * editing/cocoa/DataDetection.mm: Copied from Source/WebCore/editing/mac/DataDetection.mm.
+        (WebCore::detectItemAtPositionWithRange):
+        (WebCore::DataDetection::detectItemAroundHitTestResult):
+        (WebCore::DataDetection::detectContentInRange):
+        * editing/mac/DataDetection.h: Removed.
+        * editing/mac/DataDetection.mm: Removed.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * page/Settings.h:
+        * page/Settings.in:
+        * platform/spi/mac/DataDetectorsSPI.h:
+
 2016-01-19  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         SVG 2 requires a mechanism for restricting enum values exposed through the DOM
@@ -99,6 +128,7 @@
         (WebCore::matchesFutureCuePseudoClass):
         (WebCore::matchesPastCuePseudoClass):
 
+>>>>>>> .r195316
 2016-01-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r195179.
