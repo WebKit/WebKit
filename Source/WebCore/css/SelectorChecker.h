@@ -118,8 +118,7 @@ public:
     bool match(const CSSSelector&, const Element&, CheckingContext&, unsigned& specificity) const;
 
     static bool isCommonPseudoClassSelector(const CSSSelector*);
-    static bool matchesFocusPseudoClass(const Element*);
-    static bool checkExactAttribute(const Element*, const CSSSelector*, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value);
+    static bool matchesFocusPseudoClass(const Element&);
 
     enum LinkMatchMask { MatchDefault = 0, MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
     static unsigned determineLinkMatchType(const CSSSelector*);
@@ -131,7 +130,7 @@ private:
     bool checkOne(CheckingContext&, const LocalContext&, PseudoIdSet&, MatchType&, unsigned& specificity) const;
     bool matchSelectorList(CheckingContext&, const LocalContext&, const Element&, const CSSSelectorList&, unsigned& specificity) const;
 
-    bool checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector*) const;
+    bool checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
 
     bool m_strictParsing;
     bool m_documentIsHTML;
@@ -147,18 +146,6 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
         || pseudoType == CSSSelector::PseudoClassAnyLinkDeprecated
         || pseudoType == CSSSelector::PseudoClassVisited
         || pseudoType == CSSSelector::PseudoClassFocus;
-}
-
-inline bool SelectorChecker::checkExactAttribute(const Element* element, const CSSSelector* selector, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value)
-{
-    if (!element->hasAttributesWithoutUpdate())
-        return false;
-    const AtomicString& localName = element->isHTMLElement() ? selector->attributeCanonicalLocalName() : selectorAttributeName.localName();
-    for (const Attribute& attribute : element->attributesIterator()) {
-        if (attribute.matches(selectorAttributeName.prefix(), localName, selectorAttributeName.namespaceURI()) && (!value || attribute.value().impl() == value))
-            return true;
-    }
-    return false;
 }
 
 }

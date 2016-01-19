@@ -46,26 +46,26 @@ ALWAYS_INLINE bool isAutofilled(const Element& element)
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilled();
 }
 
-ALWAYS_INLINE bool isDefaultButtonForForm(const Element* element)
+ALWAYS_INLINE bool isDefaultButtonForForm(const Element& element)
 {
-    return element->isDefaultButtonForForm();
+    return element.isDefaultButtonForForm();
 }
 
-ALWAYS_INLINE bool isDisabled(const Element* element)
+ALWAYS_INLINE bool isDisabled(const Element& element)
 {
-    return (is<HTMLFormControlElement>(*element) || is<HTMLOptionElement>(*element) || is<HTMLOptGroupElement>(*element))
-        && element->isDisabledFormControl();
+    return (is<HTMLFormControlElement>(element) || is<HTMLOptionElement>(element) || is<HTMLOptGroupElement>(element))
+        && element.isDisabledFormControl();
 }
 
-ALWAYS_INLINE bool isEnabled(const Element* element)
+ALWAYS_INLINE bool isEnabled(const Element& element)
 {
-    return (is<HTMLFormControlElement>(*element) || is<HTMLOptionElement>(*element) || is<HTMLOptGroupElement>(*element))
-        && !element->isDisabledFormControl();
+    return (is<HTMLFormControlElement>(element) || is<HTMLOptionElement>(element) || is<HTMLOptGroupElement>(element))
+        && !element.isDisabledFormControl();
 }
 
-ALWAYS_INLINE bool isMediaDocument(const Element* element)
+ALWAYS_INLINE bool isMediaDocument(const Element& element)
 {
-    return element->document().isMediaDocument();
+    return element.document().isMediaDocument();
 }
 
 ALWAYS_INLINE bool isChecked(const Element& element)
@@ -83,39 +83,39 @@ ALWAYS_INLINE bool isChecked(const Element& element)
     return false;
 }
 
-ALWAYS_INLINE bool isInRange(const Element* element)
+ALWAYS_INLINE bool isInRange(const Element& element)
 {
-    return element->isInRange();
+    return element.isInRange();
 }
 
-ALWAYS_INLINE bool isOutOfRange(const Element* element)
+ALWAYS_INLINE bool isOutOfRange(const Element& element)
 {
-    return element->isOutOfRange();
+    return element.isOutOfRange();
 }
 
-ALWAYS_INLINE bool isInvalid(const Element* element)
+ALWAYS_INLINE bool isInvalid(const Element& element)
 {
-    return element->matchesInvalidPseudoClass();
+    return element.matchesInvalidPseudoClass();
 }
 
-ALWAYS_INLINE bool isOptionalFormControl(const Element* element)
+ALWAYS_INLINE bool isOptionalFormControl(const Element& element)
 {
-    return element->isOptionalFormControl();
+    return element.isOptionalFormControl();
 }
 
-ALWAYS_INLINE bool isRequiredFormControl(const Element* element)
+ALWAYS_INLINE bool isRequiredFormControl(const Element& element)
 {
-    return element->isRequiredFormControl();
+    return element.isRequiredFormControl();
 }
 
-ALWAYS_INLINE bool isValid(const Element* element)
+ALWAYS_INLINE bool isValid(const Element& element)
 {
-    return element->matchesValidPseudoClass();
+    return element.matchesValidPseudoClass();
 }
 
-ALWAYS_INLINE bool isWindowInactive(const Element* element)
+ALWAYS_INLINE bool isWindowInactive(const Element& element)
 {
-    auto* page = element->document().page();
+    auto* page = element.document().page();
     if (!page)
         return false;
     return !page->focusController().isActive();
@@ -151,17 +151,15 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
     return false;
 }
 
-ALWAYS_INLINE bool matchesLangPseudoClass(const Element* element, const Vector<AtomicString>& argumentList)
+ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<AtomicString>& argumentList)
 {
-    ASSERT(element);
-
     AtomicString language;
 #if ENABLE(VIDEO_TRACK)
-    if (is<WebVTTElement>(*element))
-        language = downcast<WebVTTElement>(*element).language();
+    if (is<WebVTTElement>(element))
+        language = downcast<WebVTTElement>(element).language();
     else
 #endif
-        language = element->computeInheritedLanguage();
+        language = element.computeInheritedLanguage();
 
     if (language.isEmpty())
         return false;
@@ -206,19 +204,19 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element* element, const Vector<A
     return false;
 }
 
-ALWAYS_INLINE bool matchesReadOnlyPseudoClass(const Element* element)
+ALWAYS_INLINE bool matchesReadOnlyPseudoClass(const Element& element)
 {
-    return !element->matchesReadWritePseudoClass();
+    return !element.matchesReadWritePseudoClass();
 }
 
-ALWAYS_INLINE bool matchesReadWritePseudoClass(const Element* element)
+ALWAYS_INLINE bool matchesReadWritePseudoClass(const Element& element)
 {
-    return element->matchesReadWritePseudoClass();
+    return element.matchesReadWritePseudoClass();
 }
 
-ALWAYS_INLINE bool shouldAppearIndeterminate(const Element* element)
+ALWAYS_INLINE bool shouldAppearIndeterminate(const Element& element)
 {
-    return element->shouldAppearIndeterminate();
+    return element.shouldAppearIndeterminate();
 }
 
 ALWAYS_INLINE bool scrollbarMatchesEnabledPseudoClass(const SelectorChecker::CheckingContext& context)
@@ -325,50 +323,50 @@ ALWAYS_INLINE bool scrollbarMatchesCornerPresentPseudoClass(const SelectorChecke
 }
 
 #if ENABLE(FULLSCREEN_API)
-ALWAYS_INLINE bool matchesFullScreenPseudoClass(const Element* element)
+ALWAYS_INLINE bool matchesFullScreenPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, and the document's current fullscreen
     // element is an element in the document, the 'full-screen' pseudoclass applies to
     // that element. Also, an <iframe>, <object> or <embed> element whose child browsing
     // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
-    if (element->isFrameElementBase() && element->containsFullScreenElement())
+    if (element.isFrameElementBase() && element.containsFullScreenElement())
         return true;
-    if (!element->document().webkitIsFullScreen())
+    if (!element.document().webkitIsFullScreen())
         return false;
-    return element == element->document().webkitCurrentFullScreenElement();
+    return &element == element.document().webkitCurrentFullScreenElement();
 }
 
-ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element* element)
+ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element& element)
 {
-    if (element != element->document().webkitCurrentFullScreenElement())
+    if (&element != element.document().webkitCurrentFullScreenElement())
         return false;
-    return element->document().isAnimatingFullScreen();
+    return element.document().isAnimatingFullScreen();
 }
 
-ALWAYS_INLINE bool matchesFullScreenAncestorPseudoClass(const Element* element)
+ALWAYS_INLINE bool matchesFullScreenAncestorPseudoClass(const Element& element)
 {
-    return element->containsFullScreenElement();
+    return element.containsFullScreenElement();
 }
 
-ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element* element)
+ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
     // to all elements of that Document.
-    if (!element->document().webkitIsFullScreen())
+    if (!element.document().webkitIsFullScreen())
         return false;
     return true;
 }
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element* element)
+ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element& element)
 {
-    return is<WebVTTElement>(*element) && !downcast<WebVTTElement>(*element).isPastNode();
+    return is<WebVTTElement>(element) && !downcast<WebVTTElement>(element).isPastNode();
 }
 
-ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element* element)
+ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element& element)
 {
-    return is<WebVTTElement>(*element) && downcast<WebVTTElement>(*element).isPastNode();
+    return is<WebVTTElement>(element) && downcast<WebVTTElement>(element).isPastNode();
 }
 #endif
 

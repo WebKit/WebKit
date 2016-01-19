@@ -149,7 +149,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
 
     if (m_element.isLink())
         collectMatchingRulesForList(matchRequest.ruleSet->linkPseudoClassRules(), matchRequest, ruleRange);
-    if (SelectorChecker::matchesFocusPseudoClass(&m_element))
+    if (SelectorChecker::matchesFocusPseudoClass(m_element))
         collectMatchingRulesForList(matchRequest.ruleSet->focusPseudoClassRules(), matchRequest, ruleRange);
     collectMatchingRulesForList(matchRequest.ruleSet->tagRules(m_element.localName().impl(), m_element.isHTMLElement() && m_element.document().isHTMLDocument()), matchRequest, ruleRange);
     collectMatchingRulesForList(matchRequest.ruleSet->universalRules(), matchRequest, ruleRange);
