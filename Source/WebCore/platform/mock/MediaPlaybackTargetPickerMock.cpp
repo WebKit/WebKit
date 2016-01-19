@@ -77,6 +77,10 @@ void MediaPlaybackTargetPickerMock::timerFired()
 
 void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(checkActiveRoute);
+#endif
+
     if (!client() || m_showingMenu)
         return;
 
