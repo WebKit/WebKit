@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8080/xmlhttprequest/resources/forbidden.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 This tests that unsafe redirects won't be allowed when making an XMLHttpRequest.
 Sync XHR started.
 readyState change 1

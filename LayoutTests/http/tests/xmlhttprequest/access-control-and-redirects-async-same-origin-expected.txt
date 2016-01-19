@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi. Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi. Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+Tests that asynchronous XMLHttpRequests handle redirects according to the CORS standard.
+
+Testing ../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi without credentials
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing ../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi with credentials
+Expecting success: false
+PASS: 0
+Testing ../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi without credentials
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing ../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi with credentials
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing ../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi without credentials
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing ../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi with credentials
+Expecting success: false
+PASS: 0
+

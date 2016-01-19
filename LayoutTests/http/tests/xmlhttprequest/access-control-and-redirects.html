@@ -45,7 +45,7 @@ function runTest(url, expectSyncSuccess, expectAsyncSuccess)
 }
 
 var tests = [
-    ["/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false],
+    ["/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, true],
     ["http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false],
     ["http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false]
 ]
