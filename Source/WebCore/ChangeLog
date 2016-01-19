@@ -1,3 +1,122 @@
+2016-01-18  Antti Koivisto  <antti@apple.com>
+
+        Selector checker should not mutate document and style
+        https://bugs.webkit.org/show_bug.cgi?id=153205
+
+        Reviewed by Darin Adler.
+
+        Selector checker currently writes affected-by bits and similar directly to the document and style during selector
+        matching. This is confusing, complicated and wrong.
+
+        This patch changes SelectorChecker and SelectorCompiler to collect style relatationship metadata to a separate
+        data structure (currently part of SelectorChecker::CheckingContext) instead of changing the document and style
+        directly. The mutations are performed later outside selector checker.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        (WebCore::ElementRuleCollector::commitStyleRelations):
+
+            Apply the relationship bit to elements and style.
+
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        * css/ElementRuleCollector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::LocalContext::LocalContext):
+
+            LocalContext is now a separate data structure.
+
+        (WebCore::addStyleRelation):
+
+            Helper for recording new style relations. This is used where code mutated elements or style directly before.
+
+        (WebCore::isFirstChildElement):
+        (WebCore::isLastChildElement):
+        (WebCore::isFirstOfType):
+        (WebCore::isLastOfType):
+        (WebCore::countElementsBefore):
+        (WebCore::countElementsOfTypeBefore):
+        (WebCore::SelectorChecker::SelectorChecker):
+        (WebCore::SelectorChecker::match):
+        (WebCore::hasScrollbarPseudoElement):
+        (WebCore::localContextForParent):
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::attributeValueMatches):
+        (WebCore::anyAttributeMatches):
+        (WebCore::canMatchHoverOrActiveInQuirksMode):
+        (WebCore::tagMatches):
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::matchSelectorList):
+        (WebCore::SelectorChecker::checkScrollbarPseudoClass):
+        (WebCore::SelectorChecker::CheckingContextWithStatus::CheckingContextWithStatus): Deleted.
+        (WebCore::checkingContextForParent): Deleted.
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::CheckingContext::CheckingContext):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::isEnabled):
+        (WebCore::isMediaDocument):
+        (WebCore::isChecked):
+        (WebCore::isInRange):
+        (WebCore::isOutOfRange):
+        * css/StyleResolver.h:
+        (WebCore::checkRegionSelector):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelationIfResolvingStyle):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelation):
+
+            Helpers for generating code for recording new style relations. This is used where code mutated elements or style directly before.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateIndirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::addStyleRelationElementFunction):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::jumpIfNoPreviousAdjacentElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::moduloIsZero):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::linkFailures):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateContextFunctionCallTest):
+        (WebCore::SelectorCompiler::elementIsActive):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsActive):
+        (WebCore::SelectorCompiler::jumpIfElementIsNotEmpty):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsEmpty):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFirstChild):
+        (WebCore::SelectorCompiler::elementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsHovered):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsInLanguage):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsOnlyChild):
+        (WebCore::SelectorCompiler::makeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown):
+        (WebCore::SelectorCompiler::isPlaceholderShown):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasPlaceholderShown):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsLink):
+        (WebCore::SelectorCompiler::nthFilterIsAlwaysSatisified):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthChildOf):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChild):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChildOf):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::addFlagsToElementStyleFromContext): Deleted.
+        (WebCore::SelectorCompiler::setNodeFlag): Deleted.
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::markElementIfResolvingStyle): Deleted.
+        (WebCore::SelectorCompiler::setFirstChildState): Deleted.
+        (WebCore::SelectorCompiler::elementIsActiveForStyleResolution): Deleted.
+        (WebCore::SelectorCompiler::setElementStyleIsAffectedByEmpty): Deleted.
+        (WebCore::SelectorCompiler::setElementStyleFromContextIsAffectedByEmptyAndUpdateRenderStyleIfNecessary): Deleted.
+        (WebCore::SelectorCompiler::elementIsHoveredForStyleResolution): Deleted.
+        (WebCore::SelectorCompiler::setLastChildState): Deleted.
+        (WebCore::SelectorCompiler::setOnlyChildState): Deleted.
+        (WebCore::SelectorCompiler::makeElementStyleUniqueIfNecessaryAndTestIsPlaceholderShown): Deleted.
+        (WebCore::SelectorCompiler::setElementChildIndex): Deleted.
+        (WebCore::SelectorCompiler::setChildrenAffectedByBackwardPositionalRules): Deleted.
+        (WebCore::SelectorCompiler::setParentAffectedByLastChildOf): Deleted.
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::selectorMatches):
+        (WebCore::SelectorDataList::selectorClosest):
+        (WebCore::SelectorDataList::matches):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildObjectForSelectorHelper):
+
 2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with GTK+ < 3.14.

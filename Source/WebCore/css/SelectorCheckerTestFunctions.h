@@ -63,12 +63,12 @@ ALWAYS_INLINE bool isEnabled(const Element* element)
         && !element->isDisabledFormControl();
 }
 
-ALWAYS_INLINE bool isMediaDocument(Element* element)
+ALWAYS_INLINE bool isMediaDocument(const Element* element)
 {
     return element->document().isMediaDocument();
 }
 
-ALWAYS_INLINE bool isChecked(Element& element)
+ALWAYS_INLINE bool isChecked(const Element& element)
 {
     // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
     // you can't be both checked and indeterminate. We will behave like WinIE behind the scenes and just
@@ -78,17 +78,17 @@ ALWAYS_INLINE bool isChecked(Element& element)
         return inputElement.shouldAppearChecked() && !inputElement.shouldAppearIndeterminate();
     }
     if (is<HTMLOptionElement>(element))
-        return downcast<HTMLOptionElement>(element).selected();
+        return const_cast<HTMLOptionElement&>(downcast<HTMLOptionElement>(element)).selected();
 
     return false;
 }
 
-ALWAYS_INLINE bool isInRange(Element* element)
+ALWAYS_INLINE bool isInRange(const Element* element)
 {
     return element->isInRange();
 }
 
-ALWAYS_INLINE bool isOutOfRange(Element* element)
+ALWAYS_INLINE bool isOutOfRange(const Element* element)
 {
     return element->isOutOfRange();
 }

@@ -84,6 +84,8 @@ private:
 
     void addMatchedRule(const MatchedRule&);
 
+    void commitStyleRelations(const SelectorChecker::StyleRelations&);
+
     Element& m_element;
     RenderStyle* m_style;
     const DocumentRuleSets& m_ruleSets;

@@ -37,6 +37,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLElement.h"
 #include "InspectorInstrumentation.h"
+#include "NodeRenderStyle.h"
 #include "RenderRegion.h"
 #include "SVGElement.h"
 #include "SelectorCompiler.h"
@@ -328,11 +329,11 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     SelectorChecker::CheckingContext context(m_mode);
-    context.elementStyle = m_style;
     context.pseudoId = m_pseudoStyleRequest.pseudoId;
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
     context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
 
+    bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)
     if (compiledSelectorChecker) {
         ASSERT(ruleData.compilationStatus() == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
@@ -342,13 +343,93 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 #if CSS_SELECTOR_JIT_PROFILING
         ruleData.compiledSelectorUsed();
 #endif
-        return selectorChecker(&m_element, &context, &specificity);
-    }
+        selectorMatches = selectorChecker(&m_element, &context, &specificity);
+    } else
 #endif // ENABLE(CSS_SELECTOR_JIT)
+    {
+        // Slow path.
+        SelectorChecker selectorChecker(m_element.document());
+        selectorMatches = selectorChecker.match(*ruleData.selector(), m_element, context, specificity);
+    }
 
-    // Slow path.
-    SelectorChecker selectorChecker(m_element.document());
-    return selectorChecker.match(ruleData.selector(), &m_element, context, specificity);
+    commitStyleRelations(context.styleRelations);
+
+    if (context.pseudoIDSet)
+        m_style->setHasPseudoStyles(context.pseudoIDSet);
+
+    return selectorMatches;
+}
+
+// FIXME: Rule collector should not be doing mutations. Move this somewhere else.
+void ElementRuleCollector::commitStyleRelations(const SelectorChecker::StyleRelations& styleRelations)
+{
+    for (auto& relation : styleRelations) {
+        switch (relation.type) {
+        case SelectorChecker::StyleRelation::AffectedByActive:
+            if (&relation.element == &m_element)
+                m_style->setAffectedByActive();
+            else
+                relation.element.setChildrenAffectedByActive();
+            break;
+        case SelectorChecker::StyleRelation::AffectedByDrag:
+            if (&relation.element == &m_element)
+                m_style->setAffectedByDrag();
+            else
+                relation.element.setChildrenAffectedByDrag();
+            break;
+        case SelectorChecker::StyleRelation::AffectedByEmpty:
+            relation.element.setStyleAffectedByEmpty();
+            if (&relation.element == &m_element)
+                m_style->setEmptyState(relation.value);
+            break;
+        case SelectorChecker::StyleRelation::AffectedByHover:
+            if (&relation.element == &m_element)
+                m_style->setAffectedByHover();
+            else
+                relation.element.setChildrenAffectedByHover();
+            break;
+        case SelectorChecker::StyleRelation::AffectedByPreviousSibling:
+            relation.element.setStyleIsAffectedByPreviousSibling();
+            break;
+        case SelectorChecker::StyleRelation::AffectsNextSibling:
+            relation.element.setAffectsNextSiblingElementStyle();
+            break;
+        case SelectorChecker::StyleRelation::ChildrenAffectedByBackwardPositionalRules:
+            relation.element.setChildrenAffectedByBackwardPositionalRules();
+            break;
+        case SelectorChecker::StyleRelation::ChildrenAffectedByFirstChildRules:
+            relation.element.setChildrenAffectedByFirstChildRules();
+            break;
+        case SelectorChecker::StyleRelation::ChildrenAffectedByPropertyBasedBackwardPositionalRules:
+            relation.element.setChildrenAffectedByBackwardPositionalRules();
+            relation.element.setChildrenAffectedByPropertyBasedBackwardPositionalRules();
+            break;
+        case SelectorChecker::StyleRelation::ChildrenAffectedByLastChildRules:
+            relation.element.setChildrenAffectedByLastChildRules();
+            break;
+        case SelectorChecker::StyleRelation::FirstChild:
+            if (&relation.element == &m_element)
+                m_style->setFirstChildState();
+            else if (auto* style = relation.element.renderStyle())
+                style->setFirstChildState();
+            break;
+        case SelectorChecker::StyleRelation::LastChild:
+            if (&relation.element == &m_element)
+                m_style->setLastChildState();
+            else if (auto* style = relation.element.renderStyle())
+                style->setLastChildState();
+            break;
+        case SelectorChecker::StyleRelation::NthChildIndex:
+            relation.element.setChildIndex(relation.value);
+            break;
+        case SelectorChecker::StyleRelation::Unique:
+            if (&relation.element == &m_element)
+                m_style->setUnique();
+            else if (auto* style = relation.element.renderStyle())
+                style->setUnique();
+            break;
+        }
+    }
 }
 
 void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)

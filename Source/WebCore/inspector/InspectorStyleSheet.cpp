@@ -862,7 +862,7 @@ static Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(c
         SelectorChecker selectorChecker(element->document());
 
         unsigned specificity;
-        bool okay = selectorChecker.match(&selector, element, context, specificity);
+        bool okay = selectorChecker.match(selector, *element, context, specificity);
         if (!okay)
             specificity = selector.staticSpecificity(okay);
 

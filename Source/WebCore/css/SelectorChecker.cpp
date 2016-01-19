@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -46,10 +46,8 @@
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
-#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderElement.h"
-#include "RenderStyle.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "ShadowRoot.h"
 #include "StyledElement.h"
@@ -63,28 +61,35 @@ enum class VisitedMatchType : unsigned char {
     Disabled, Enabled
 };
 
-struct SelectorChecker::CheckingContextWithStatus : public SelectorChecker::CheckingContext {
-    CheckingContextWithStatus(const SelectorChecker::CheckingContext& checkingContext, const CSSSelector* selector, Element* element)
-        : SelectorChecker::CheckingContext(checkingContext)
-        , selector(selector)
-        , element(element)
-        , visitedMatchType(resolvingMode == SelectorChecker::Mode::QueryingRules ? VisitedMatchType::Disabled : VisitedMatchType::Enabled)
-        , firstSelectorOfTheFragment(selector)
-        , inFunctionalPseudoClass(false)
-        , pseudoElementEffective(true)
-        , hasScrollbarPseudo(false)
-        , hasSelectionPseudo(false)
+struct SelectorChecker::LocalContext {
+    LocalContext(const CSSSelector& selector, const Element& element, VisitedMatchType visitedMatchType, PseudoId pseudoId)
+        : selector(&selector)
+        , element(&element)
+        , visitedMatchType(visitedMatchType)
+        , firstSelectorOfTheFragment(&selector)
+        , pseudoId(pseudoId)
     { }
 
     const CSSSelector* selector;
-    Element* element;
+    const Element* element;
     VisitedMatchType visitedMatchType;
     const CSSSelector* firstSelectorOfTheFragment;
-    bool inFunctionalPseudoClass;
-    bool pseudoElementEffective;
-    bool hasScrollbarPseudo;
-    bool hasSelectionPseudo;
+    PseudoId pseudoId;
+    bool isMatchElement { true };
+    bool inFunctionalPseudoClass { false };
+    bool pseudoElementEffective { true };
+    bool hasScrollbarPseudo { false };
+    bool hasSelectionPseudo { false };
+
 };
+
+static inline void addStyleRelation(SelectorChecker::CheckingContext& checkingContext, const Element& element, SelectorChecker::StyleRelation::Type type, unsigned value = 1)
+{
+    ASSERT(value == 1 || type == SelectorChecker::StyleRelation::NthChildIndex || type == SelectorChecker::StyleRelation::AffectedByEmpty);
+    if (checkingContext.resolvingMode != SelectorChecker::Mode::ResolvingStyle)
+        return;
+    checkingContext.styleRelations.append({ const_cast<Element&>(element), type, value });
+}
 
 static inline bool isFirstChildElement(const Element& element)
 {
@@ -96,11 +101,11 @@ static inline bool isLastChildElement(const Element& element)
     return !ElementTraversal::nextSibling(element);
 }
 
-static inline bool isFirstOfType(Element& element, const QualifiedName& type, bool isResolvingStyle)
+static inline bool isFirstOfType(SelectorChecker::CheckingContext& checkingContext, const Element& element, const QualifiedName& type)
 {
-    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-        if (isResolvingStyle)
-            sibling->setAffectsNextSiblingElementStyle();
+    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
+        addStyleRelation(checkingContext, *sibling, SelectorChecker::StyleRelation::AffectsNextSibling);
+
         if (sibling->hasTagName(type))
             return false;
     }
@@ -116,12 +121,12 @@ static inline bool isLastOfType(const Element& element, const QualifiedName& typ
     return true;
 }
 
-static inline int countElementsBefore(Element& element, bool isResolvingStyle)
+static inline int countElementsBefore(SelectorChecker::CheckingContext& checkingContext, const Element& element)
 {
     int count = 0;
-    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-        if (isResolvingStyle)
-            sibling->setAffectsNextSiblingElementStyle();
+    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
+
+        addStyleRelation(checkingContext, *sibling, SelectorChecker::StyleRelation::AffectsNextSibling);
 
         unsigned index = sibling->childIndex();
         if (index) {
@@ -133,12 +138,11 @@ static inline int countElementsBefore(Element& element, bool isResolvingStyle)
     return count;
 }
 
-static inline int countElementsOfTypeBefore(Element& element, const QualifiedName& type, bool isResolvingStyle)
+static inline int countElementsOfTypeBefore(SelectorChecker::CheckingContext& checkingContext, const Element& element, const QualifiedName& type)
 {
     int count = 0;
-    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-        if (isResolvingStyle)
-            sibling->setAffectsNextSiblingElementStyle();
+    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
+        addStyleRelation(checkingContext, *sibling, SelectorChecker::StyleRelation::AffectsNextSibling);
 
         if (sibling->hasTagName(type))
             ++count;
@@ -170,26 +174,26 @@ SelectorChecker::SelectorChecker(Document& document)
 {
 }
 
-bool SelectorChecker::match(const CSSSelector* selector, Element* element, const CheckingContext& providedContext, unsigned& specificity) const
+bool SelectorChecker::match(const CSSSelector& selector, const Element& element, CheckingContext& checkingContext, unsigned& specificity) const
 {
     specificity = 0;
 
-    CheckingContextWithStatus context(providedContext, selector, element);
+    LocalContext context(selector, element, checkingContext.resolvingMode == SelectorChecker::Mode::QueryingRules ? VisitedMatchType::Disabled : VisitedMatchType::Enabled, checkingContext.pseudoId);
     PseudoIdSet pseudoIdSet;
-    MatchResult result = matchRecursively(context, pseudoIdSet, specificity);
+    MatchResult result = matchRecursively(checkingContext, context, pseudoIdSet, specificity);
     if (result.match != Match::SelectorMatches)
         return false;
-    if (context.pseudoId != NOPSEUDO && !pseudoIdSet.has(context.pseudoId))
+    if (checkingContext.pseudoId != NOPSEUDO && !pseudoIdSet.has(checkingContext.pseudoId))
         return false;
 
-    if (context.pseudoId == NOPSEUDO && pseudoIdSet) {
+    if (checkingContext.pseudoId == NOPSEUDO && pseudoIdSet) {
         PseudoIdSet publicPseudoIdSet = pseudoIdSet & PseudoIdSet::fromMask(PUBLIC_PSEUDOID_MASK);
-        if (context.resolvingMode == Mode::ResolvingStyle && publicPseudoIdSet)
-            context.elementStyle->setHasPseudoStyles(publicPseudoIdSet);
+        if (checkingContext.resolvingMode == Mode::ResolvingStyle && publicPseudoIdSet)
+            checkingContext.pseudoIDSet = publicPseudoIdSet;
 
         // When ignoring virtual pseudo elements, the context's pseudo should also be NOPSEUDO but that does
         // not cause a failure.
-        return context.resolvingMode == Mode::CollectingRulesIgnoringVirtualPseudoElements || result.matchType == MatchType::Element;
+        return checkingContext.resolvingMode == Mode::CollectingRulesIgnoringVirtualPseudoElements || result.matchType == MatchType::Element;
     }
     return true;
 }
@@ -205,13 +209,14 @@ inline static bool hasScrollbarPseudoElement(const PseudoIdSet& dynamicPseudoIdS
     return dynamicPseudoIdSet.has(RESIZER);
 }
 
-static SelectorChecker::CheckingContextWithStatus checkingContextForParent(const SelectorChecker::CheckingContextWithStatus& context)
+static SelectorChecker::LocalContext localContextForParent(const SelectorChecker::LocalContext& context)
 {
-    SelectorChecker::CheckingContextWithStatus updatedContext(context);
+    SelectorChecker::LocalContext updatedContext(context);
     // Disable :visited matching when we see the first link.
     if (context.element->isLink())
         updatedContext.visitedMatchType = VisitedMatchType::Disabled;
     updatedContext.element = context.element->parentElement();
+    updatedContext.isMatchElement = false;
     return updatedContext;
 }
 
@@ -221,12 +226,12 @@ static SelectorChecker::CheckingContextWithStatus checkingContextForParent(const
 // * SelectorFailsLocally     - the selector fails for the element e
 // * SelectorFailsAllSiblings - the selector fails for e and any sibling of e
 // * SelectorFailsCompletely  - the selector fails for e and any sibling or ancestor of e
-SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingContextWithStatus& context, PseudoIdSet& dynamicPseudoIdSet, unsigned& specificity) const
+SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& checkingContext, const LocalContext& context, PseudoIdSet& dynamicPseudoIdSet, unsigned& specificity) const
 {
     MatchType matchType = MatchType::Element;
 
     // The first selector has to match.
-    if (!checkOne(context, dynamicPseudoIdSet, matchType, specificity))
+    if (!checkOne(checkingContext, context, dynamicPseudoIdSet, matchType, specificity))
         return MatchResult::fails(Match::SelectorFailsLocally);
 
     if (context.selector->match() == CSSSelector::PseudoElement) {
@@ -247,7 +252,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingCon
             if (!context.pseudoElementEffective)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
 
-            if (context.resolvingMode == Mode::QueryingRules)
+            if (checkingContext.resolvingMode == Mode::QueryingRules)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
 
             PseudoId pseudoId = CSSSelector::pseudoId(context.selector->pseudoElementType());
@@ -265,7 +270,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingCon
     if (!historySelector)
         return MatchResult::matches(matchType);
 
-    CheckingContextWithStatus nextContext(context);
+    LocalContext nextContext(context);
     nextContext.selector = historySelector;
 
     if (relation != CSSSelector::SubSelector) {
@@ -280,17 +285,17 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingCon
         nextContext.pseudoId = NOPSEUDO;
         // Virtual pseudo element is only effective in the rightmost fragment.
         nextContext.pseudoElementEffective = false;
+        nextContext.isMatchElement = false;
     }
 
     switch (relation) {
     case CSSSelector::Descendant:
-        nextContext = checkingContextForParent(nextContext);
+        nextContext = localContextForParent(nextContext);
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
-        nextContext.elementStyle = nullptr;
-        for (; nextContext.element; nextContext = checkingContextForParent(nextContext)) {
+        for (; nextContext.element; nextContext = localContextForParent(nextContext)) {
             PseudoIdSet ignoreDynamicPseudo;
             unsigned descendantsSpecificity = 0;
-            MatchResult result = matchRecursively(nextContext, ignoreDynamicPseudo, descendantsSpecificity);
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, descendantsSpecificity);
             ASSERT(!nextContext.pseudoElementEffective && !ignoreDynamicPseudo);
 
             if (result.match == Match::SelectorMatches)
@@ -303,14 +308,13 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingCon
 
     case CSSSelector::Child:
         {
-            nextContext = checkingContextForParent(nextContext);
+            nextContext = localContextForParent(nextContext);
             if (!nextContext.element)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
             nextContext.firstSelectorOfTheFragment = nextContext.selector;
-            nextContext.elementStyle = nullptr;
             PseudoIdSet ignoreDynamicPseudo;
             unsigned childSpecificity = 0;
-            MatchResult result = matchRecursively(nextContext, ignoreDynamicPseudo, childSpecificity);
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, childSpecificity);
             ASSERT(!nextContext.pseudoElementEffective && !ignoreDynamicPseudo);
 
             if (result.match == Match::SelectorMatches)
@@ -323,20 +327,19 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingCon
 
     case CSSSelector::DirectAdjacent:
         {
-            if (context.resolvingMode == Mode::ResolvingStyle)
-                context.element->setStyleIsAffectedByPreviousSibling();
+            addStyleRelation(checkingContext, *context.element, StyleRelation::AffectedByPreviousSibling);
 
             Element* previousElement = context.element->previousElementSibling();
             if (!previousElement)
                 return MatchResult::fails(Match::SelectorFailsAllSiblings);
-            if (context.resolvingMode == Mode::ResolvingStyle)
-                previousElement->setAffectsNextSiblingElementStyle();
+
+            addStyleRelation(checkingContext, *previousElement, StyleRelation::AffectsNextSibling);
+
             nextContext.element = previousElement;
             nextContext.firstSelectorOfTheFragment = nextContext.selector;
-            nextContext.elementStyle = nullptr;
             PseudoIdSet ignoreDynamicPseudo;
             unsigned adjacentSpecificity = 0;
-            MatchResult result = matchRecursively(nextContext, ignoreDynamicPseudo, adjacentSpecificity);
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, adjacentSpecificity);
             ASSERT(!nextContext.pseudoElementEffective && !ignoreDynamicPseudo);
 
             if (result.match == Match::SelectorMatches)
@@ -345,18 +348,16 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingCon
             return MatchResult::updateWithMatchType(result, matchType);
         }
     case CSSSelector::IndirectAdjacent:
-        if (context.resolvingMode == Mode::ResolvingStyle)
-            context.element->setStyleIsAffectedByPreviousSibling();
+        addStyleRelation(checkingContext, *context.element, StyleRelation::AffectedByPreviousSibling);
+
         nextContext.element = context.element->previousElementSibling();
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
-        nextContext.elementStyle = nullptr;
         for (; nextContext.element; nextContext.element = nextContext.element->previousElementSibling()) {
-            if (context.resolvingMode == Mode::ResolvingStyle)
-                nextContext.element->setAffectsNextSiblingElementStyle();
+            addStyleRelation(checkingContext, *nextContext.element, StyleRelation::AffectsNextSibling);
 
             PseudoIdSet ignoreDynamicPseudo;
             unsigned indirectAdjacentSpecificity = 0;
-            MatchResult result = matchRecursively(nextContext, ignoreDynamicPseudo, indirectAdjacentSpecificity);
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, indirectAdjacentSpecificity);
             ASSERT(!nextContext.pseudoElementEffective && !ignoreDynamicPseudo);
 
             if (result.match == Match::SelectorMatches)
@@ -374,13 +375,13 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingCon
             // to follow the pseudo elements.
             nextContext.hasScrollbarPseudo = hasScrollbarPseudoElement(dynamicPseudoIdSet);
             nextContext.hasSelectionPseudo = dynamicPseudoIdSet.has(SELECTION);
-            if ((context.elementStyle || context.resolvingMode == Mode::CollectingRules) && dynamicPseudoIdSet
+            if ((context.isMatchElement || checkingContext.resolvingMode == Mode::CollectingRules) && dynamicPseudoIdSet
                 && !nextContext.hasSelectionPseudo
                 && !(nextContext.hasScrollbarPseudo && nextContext.selector->match() == CSSSelector::PseudoClass))
                 return MatchResult::fails(Match::SelectorFailsCompletely);
 
             unsigned subselectorSpecificity = 0;
-            MatchResult result = matchRecursively(nextContext, dynamicPseudoIdSet, subselectorSpecificity);
+            MatchResult result = matchRecursively(checkingContext, nextContext, dynamicPseudoIdSet, subselectorSpecificity);
 
             if (result.match == Match::SelectorMatches)
                 specificity = CSSSelector::addSpecificities(specificity, subselectorSpecificity);
@@ -394,10 +395,9 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(const CheckingCon
                 return MatchResult::fails(Match::SelectorFailsCompletely);
             nextContext.element = shadowHostNode;
             nextContext.firstSelectorOfTheFragment = nextContext.selector;
-            nextContext.elementStyle = nullptr;
             PseudoIdSet ignoreDynamicPseudo;
             unsigned shadowDescendantSpecificity = 0;
-            MatchResult result = matchRecursively(nextContext, ignoreDynamicPseudo, shadowDescendantSpecificity);
+            MatchResult result = matchRecursively(checkingContext, nextContext, ignoreDynamicPseudo, shadowDescendantSpecificity);
 
             if (result.match == Match::SelectorMatches)
                 specificity = CSSSelector::addSpecificities(specificity, shadowDescendantSpecificity);
@@ -504,7 +504,7 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
     return true;
 }
 
-static bool anyAttributeMatches(Element* element, const CSSSelector* selector, const QualifiedName& selectorAttr, bool caseSensitive)
+static bool anyAttributeMatches(const Element* element, const CSSSelector* selector, const QualifiedName& selectorAttr, bool caseSensitive)
 {
     ASSERT(element->hasAttributesWithoutUpdate());
     for (const Attribute& attribute : element->attributesIterator()) {
@@ -518,7 +518,7 @@ static bool anyAttributeMatches(Element* element, const CSSSelector* selector, c
     return false;
 }
 
-static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::CheckingContextWithStatus& context)
+static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContext& context)
 {
     // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
     // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
@@ -588,9 +588,9 @@ static inline bool tagMatches(const Element& element, const CSSSelector& simpleS
     return namespaceURI == starAtom || namespaceURI == element.namespaceURI();
 }
 
-bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoIdSet& dynamicPseudoIdSet, MatchType& matchType, unsigned& specificity) const
+bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalContext& context, PseudoIdSet& dynamicPseudoIdSet, MatchType& matchType, unsigned& specificity) const
 {
-    Element* const & element = context.element;
+    const Element* element = context.element;
     const CSSSelector* const & selector = context.selector;
     ASSERT(element);
     ASSERT(selector);
@@ -626,7 +626,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             const CSSSelectorList* selectorList = selector->selectorList();
 
             for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
-                CheckingContextWithStatus subcontext(context);
+                LocalContext subcontext(context);
                 subcontext.inFunctionalPseudoClass = true;
                 subcontext.pseudoElementEffective = false;
                 subcontext.selector = subselector;
@@ -634,7 +634,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 PseudoIdSet ignoreDynamicPseudo;
 
                 unsigned ignoredSpecificity;
-                if (matchRecursively(subcontext, ignoreDynamicPseudo, ignoredSpecificity).match == Match::SelectorMatches) {
+                if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo, ignoredSpecificity).match == Match::SelectorMatches) {
                     ASSERT(!ignoreDynamicPseudo);
                     return false;
                 }
@@ -643,7 +643,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
         } else if (context.hasScrollbarPseudo) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved except with window-inactive).
-            return checkScrollbarPseudoClass(context, selector);
+            return checkScrollbarPseudoClass(checkingContext, *context.element, selector);
         }
 
         // Normal element pseudo class checking.
@@ -667,53 +667,41 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                         }
                     }
                 }
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    element->setStyleAffectedByEmpty();
-                    if (context.elementStyle)
-                        context.elementStyle->setEmptyState(result);
-                }
+                addStyleRelation(checkingContext, *context.element, StyleRelation::AffectedByEmpty, result);
+
                 return result;
             }
         case CSSSelector::PseudoClassFirstChild:
             // first-child matches the first child that is an element
-            if (Element* parentElement = element->parentElement()) {
-                bool result = isFirstChildElement(*element);
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
-                    parentElement->setChildrenAffectedByFirstChildRules();
-                    if (result && childStyle)
-                        childStyle->setFirstChildState();
-                }
-                return result;
+            if (const Element* parentElement = element->parentElement()) {
+                bool isFirstChild = isFirstChildElement(*element);
+                if (isFirstChild)
+                    addStyleRelation(checkingContext, *element, StyleRelation::FirstChild);
+                addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByFirstChildRules);
+                return isFirstChild;
             }
             break;
         case CSSSelector::PseudoClassFirstOfType:
             // first-of-type matches the first element of its type
             if (element->parentElement()) {
-                if (context.resolvingMode == Mode::ResolvingStyle)
-                    element->setStyleIsAffectedByPreviousSibling();
-
-                return isFirstOfType(*element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle);
+                addStyleRelation(checkingContext, *element, StyleRelation::AffectedByPreviousSibling);
+                return isFirstOfType(checkingContext, *element, element->tagQName());
             }
             break;
         case CSSSelector::PseudoClassLastChild:
             // last-child matches the last child that is an element
-            if (Element* parentElement = element->parentElement()) {
-                bool result = parentElement->isFinishedParsingChildren() && isLastChildElement(*element);
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
-                    parentElement->setChildrenAffectedByLastChildRules();
-                    if (result && childStyle)
-                        childStyle->setLastChildState();
-                }
-                return result;
+            if (const Element* parentElement = element->parentElement()) {
+                bool isLastChild = parentElement->isFinishedParsingChildren() && isLastChildElement(*element);
+                if (isLastChild)
+                    addStyleRelation(checkingContext, *element, StyleRelation::LastChild);
+                addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByLastChildRules);
+                return isLastChild;
             }
             break;
         case CSSSelector::PseudoClassLastOfType:
             // last-of-type matches the last element of its type
             if (Element* parentElement = element->parentElement()) {
-                if (context.resolvingMode == Mode::ResolvingStyle)
-                    parentElement->setChildrenAffectedByBackwardPositionalRules();
+                addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByBackwardPositionalRules);
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
                 return isLastOfType(*element, element->tagQName());
@@ -723,28 +711,23 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             if (Element* parentElement = element->parentElement()) {
                 bool firstChild = isFirstChildElement(*element);
                 bool onlyChild = firstChild && parentElement->isFinishedParsingChildren() && isLastChildElement(*element);
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
-                    parentElement->setChildrenAffectedByFirstChildRules();
-                    parentElement->setChildrenAffectedByLastChildRules();
-                    if (firstChild && childStyle)
-                        childStyle->setFirstChildState();
-                    if (onlyChild && childStyle)
-                        childStyle->setLastChildState();
-                }
+                addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByFirstChildRules);
+                addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByLastChildRules);
+                if (firstChild)
+                    addStyleRelation(checkingContext, *element, StyleRelation::FirstChild);
+                if (onlyChild)
+                    addStyleRelation(checkingContext, *element, StyleRelation::LastChild);
                 return onlyChild;
             }
             break;
         case CSSSelector::PseudoClassOnlyOfType:
             // FIXME: This selector is very slow.
             if (Element* parentElement = element->parentElement()) {
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    element->setStyleIsAffectedByPreviousSibling();
-                    parentElement->setChildrenAffectedByBackwardPositionalRules();
-                }
+                addStyleRelation(checkingContext, *element, StyleRelation::AffectedByPreviousSibling);
+                addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByBackwardPositionalRules);
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                return isFirstOfType(*element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle) && isLastOfType(*element, element->tagQName());
+                return isFirstOfType(checkingContext, *element, element->tagQName()) && isLastOfType(*element, element->tagQName());
             }
             break;
         case CSSSelector::PseudoClassMatches:
@@ -754,14 +737,14 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
 
                 MatchType localMatchType = MatchType::VirtualPseudoElementOnly;
                 for (const CSSSelector* subselector = selector->selectorList()->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
-                    CheckingContextWithStatus subcontext(context);
+                    LocalContext subcontext(context);
                     subcontext.inFunctionalPseudoClass = true;
                     subcontext.pseudoElementEffective = context.pseudoElementEffective;
                     subcontext.selector = subselector;
                     subcontext.firstSelectorOfTheFragment = subselector;
                     PseudoIdSet localDynamicPseudoIdSet;
                     unsigned localSpecificity = 0;
-                    MatchResult result = matchRecursively(subcontext, localDynamicPseudoIdSet, localSpecificity);
+                    MatchResult result = matchRecursively(checkingContext, subcontext, localDynamicPseudoIdSet, localSpecificity);
                     if (result.match == Match::SelectorMatches) {
                         maxSpecificity = std::max(maxSpecificity, localSpecificity);
 
@@ -780,10 +763,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             }
         case CSSSelector::PseudoClassPlaceholderShown:
             if (is<HTMLTextFormControlElement>(*element)) {
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    if (RenderStyle* style = context.elementStyle ? context.elementStyle : element->renderStyle())
-                        style->setUnique();
-                }
+                addStyleRelation(checkingContext, *element, StyleRelation::Unique);
                 return downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
             }
             return false;
@@ -793,29 +773,26 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             if (element->parentElement()) {
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     unsigned selectorListSpecificity;
-                    if (matchSelectorList(context, *element, *selectorList, selectorListSpecificity))
+                    if (matchSelectorList(checkingContext, context, *element, *selectorList, selectorListSpecificity))
                         specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
                     else
                         return false;
                 }
 
-                if (context.resolvingMode == Mode::ResolvingStyle)
-                    element->setStyleIsAffectedByPreviousSibling();
+                addStyleRelation(checkingContext, *element, StyleRelation::AffectedByPreviousSibling);
 
                 int count = 1;
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     for (Element* sibling = ElementTraversal::previousSibling(*element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
-                        if (context.resolvingMode == Mode::ResolvingStyle)
-                            sibling->setAffectsNextSiblingElementStyle();
+                        addStyleRelation(checkingContext, *sibling, StyleRelation::AffectsNextSibling);
 
                         unsigned ignoredSpecificity;
-                        if (matchSelectorList(context, *sibling, *selectorList, ignoredSpecificity))
+                        if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
                             ++count;
                     }
                 } else {
-                    count += countElementsBefore(*element, context.resolvingMode == Mode::ResolvingStyle);
-                    if (context.resolvingMode == Mode::ResolvingStyle)
-                        element->setChildIndex(count);
+                    count += countElementsBefore(checkingContext, *element);
+                    addStyleRelation(checkingContext, *element, StyleRelation::NthChildIndex, count);
                 }
 
                 if (selector->matchNth(count))
@@ -827,10 +804,9 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 break;
 
             if (element->parentElement()) {
-                if (context.resolvingMode == Mode::ResolvingStyle)
-                    element->setStyleIsAffectedByPreviousSibling();
+                addStyleRelation(checkingContext, *element, StyleRelation::AffectedByPreviousSibling);
 
-                int count = 1 + countElementsOfTypeBefore(*element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle);
+                int count = 1 + countElementsOfTypeBefore(checkingContext, *element, element->tagQName());
                 if (selector->matchNth(count))
                     return true;
             }
@@ -841,17 +817,14 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             if (Element* parentElement = element->parentElement()) {
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     unsigned selectorListSpecificity;
-                    if (matchSelectorList(context, *element, *selectorList, selectorListSpecificity))
+                    if (matchSelectorList(checkingContext, context, *element, *selectorList, selectorListSpecificity))
                         specificity = CSSSelector::addSpecificities(specificity, selectorListSpecificity);
                     else
                         return false;
 
-                    if (context.resolvingMode == Mode::ResolvingStyle) {
-                        parentElement->setChildrenAffectedByPropertyBasedBackwardPositionalRules();
-                        parentElement->setChildrenAffectedByBackwardPositionalRules();
-                    }
-                } else if (context.resolvingMode == Mode::ResolvingStyle)
-                    parentElement->setChildrenAffectedByBackwardPositionalRules();
+                    addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByPropertyBasedBackwardPositionalRules);
+                } else
+                    addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByBackwardPositionalRules);
 
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
@@ -860,7 +833,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
                     for (Element* sibling = ElementTraversal::nextSibling(*element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
                         unsigned ignoredSpecificity;
-                        if (matchSelectorList(context, *sibling, *selectorList, ignoredSpecificity))
+                        if (matchSelectorList(checkingContext, context, *sibling, *selectorList, ignoredSpecificity))
                             ++count;
                     }
                 } else
@@ -874,8 +847,8 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             if (!selector->parseNth())
                 break;
             if (Element* parentElement = element->parentElement()) {
-                if (context.resolvingMode == Mode::ResolvingStyle)
-                    parentElement->setChildrenAffectedByBackwardPositionalRules();
+                addStyleRelation(checkingContext, *parentElement, StyleRelation::ChildrenAffectedByBackwardPositionalRules);
+
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
 
@@ -890,14 +863,14 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             break;
         case CSSSelector::PseudoClassAny:
             {
-                CheckingContextWithStatus subContext(context);
-                subContext.inFunctionalPseudoClass = true;
-                subContext.pseudoElementEffective = false;
-                for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = CSSSelectorList::next(subContext.selector)) {
-                    subContext.firstSelectorOfTheFragment = subContext.selector;
+                LocalContext subcontext(context);
+                subcontext.inFunctionalPseudoClass = true;
+                subcontext.pseudoElementEffective = false;
+                for (subcontext.selector = selector->selectorList()->first(); subcontext.selector; subcontext.selector = CSSSelectorList::next(subcontext.selector)) {
+                    subcontext.firstSelectorOfTheFragment = subcontext.selector;
                     PseudoIdSet ignoreDynamicPseudo;
                     unsigned ingoredSpecificity = 0;
-                    if (matchRecursively(subContext, ignoreDynamicPseudo, ingoredSpecificity).match == Match::SelectorMatches)
+                    if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo, ingoredSpecificity).match == Match::SelectorMatches)
                         return true;
                 }
             }
@@ -916,12 +889,8 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 return false;
             return element->isLink() && context.visitedMatchType == VisitedMatchType::Enabled;
         case CSSSelector::PseudoClassDrag:
-            if (context.resolvingMode == Mode::ResolvingStyle) {
-                if (context.elementStyle)
-                    context.elementStyle->setAffectedByDrag();
-                else
-                    element->setChildrenAffectedByDrag();
-            }
+            addStyleRelation(checkingContext, *element, StyleRelation::AffectedByDrag);
+
             if (element->renderer() && element->renderer()->isDragging())
                 return true;
             break;
@@ -929,25 +898,17 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             return matchesFocusPseudoClass(element);
         case CSSSelector::PseudoClassHover:
             if (m_strictParsing || element->isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    if (context.elementStyle)
-                        context.elementStyle->setAffectedByHover();
-                    else
-                        element->setChildrenAffectedByHover();
-                }
-                if (element->hovered() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassHover))
+                addStyleRelation(checkingContext, *element, StyleRelation::AffectedByHover);
+
+                if (element->hovered() || InspectorInstrumentation::forcePseudoState(const_cast<Element&>(*element), CSSSelector::PseudoClassHover))
                     return true;
             }
             break;
         case CSSSelector::PseudoClassActive:
             if (m_strictParsing || element->isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
-                if (context.resolvingMode == Mode::ResolvingStyle) {
-                    if (context.elementStyle)
-                        context.elementStyle->setAffectedByActive();
-                    else
-                        element->setChildrenAffectedByActive();
-                }
-                if (element->active() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassActive))
+                addStyleRelation(checkingContext, *element, StyleRelation::AffectedByActive);
+
+                if (element->active() || InspectorInstrumentation::forcePseudoState(const_cast<Element&>(*element), CSSSelector::PseudoClassActive))
                     return true;
             }
             break;
@@ -1007,7 +968,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
 
         case CSSSelector::PseudoClassScope:
             {
-                const Node* contextualReferenceNode = !context.scope ? element->document().documentElement() : context.scope;
+                const Node* contextualReferenceNode = !checkingContext.scope ? element->document().documentElement() : checkingContext.scope;
                 if (element == contextualReferenceNode)
                     return true;
                 break;
@@ -1050,16 +1011,16 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
     }
 #if ENABLE(VIDEO_TRACK)
     if (selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue) {
-        CheckingContextWithStatus subContext(context);
+        LocalContext subcontext(context);
 
         const CSSSelector* const & selector = context.selector;
-        for (subContext.selector = selector->selectorList()->first(); subContext.selector; subContext.selector = CSSSelectorList::next(subContext.selector)) {
-            subContext.firstSelectorOfTheFragment = subContext.selector;
-            subContext.inFunctionalPseudoClass = true;
-            subContext.pseudoElementEffective = false;
+        for (subcontext.selector = selector->selectorList()->first(); subcontext.selector; subcontext.selector = CSSSelectorList::next(subcontext.selector)) {
+            subcontext.firstSelectorOfTheFragment = subcontext.selector;
+            subcontext.inFunctionalPseudoClass = true;
+            subcontext.pseudoElementEffective = false;
             PseudoIdSet ignoredDynamicPseudo;
             unsigned ignoredSpecificity = 0;
-            if (matchRecursively(subContext, ignoredDynamicPseudo, ignoredSpecificity).match == Match::SelectorMatches)
+            if (matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo, ignoredSpecificity).match == Match::SelectorMatches)
                 return true;
         }
         return false;
@@ -1069,13 +1030,13 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
     return true;
 }
 
-bool SelectorChecker::matchSelectorList(const CheckingContextWithStatus& baseContext, Element& element, const CSSSelectorList& selectorList, unsigned& specificity) const
+bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const LocalContext& context, const Element& element, const CSSSelectorList& selectorList, unsigned& specificity) const
 {
     specificity = 0;
     bool hasMatchedAnything = false;
 
     for (const CSSSelector* subselector = selectorList.first(); subselector; subselector = CSSSelectorList::next(subselector)) {
-        CheckingContextWithStatus subcontext(baseContext);
+        LocalContext subcontext(context);
         subcontext.element = &element;
         subcontext.selector = subselector;
         subcontext.inFunctionalPseudoClass = true;
@@ -1083,7 +1044,7 @@ bool SelectorChecker::matchSelectorList(const CheckingContextWithStatus& baseCon
         subcontext.firstSelectorOfTheFragment = subselector;
         PseudoIdSet ignoreDynamicPseudo;
         unsigned localSpecificity = 0;
-        if (matchRecursively(subcontext, ignoreDynamicPseudo, localSpecificity).match == Match::SelectorMatches) {
+        if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo, localSpecificity).match == Match::SelectorMatches) {
             ASSERT(!ignoreDynamicPseudo);
 
             hasMatchedAnything = true;
@@ -1093,41 +1054,41 @@ bool SelectorChecker::matchSelectorList(const CheckingContextWithStatus& baseCon
     return hasMatchedAnything;
 }
 
-bool SelectorChecker::checkScrollbarPseudoClass(const CheckingContextWithStatus& context, const CSSSelector* selector) const
+bool SelectorChecker::checkScrollbarPseudoClass(const CheckingContext& checkingContext, const Element& element, const CSSSelector* selector) const
 {
     ASSERT(selector->match() == CSSSelector::PseudoClass);
 
     switch (selector->pseudoClassType()) {
     case CSSSelector::PseudoClassWindowInactive:
-        return isWindowInactive(context.element);
+        return isWindowInactive(&element);
     case CSSSelector::PseudoClassEnabled:
-        return scrollbarMatchesEnabledPseudoClass(context);
+        return scrollbarMatchesEnabledPseudoClass(checkingContext);
     case CSSSelector::PseudoClassDisabled:
-        return scrollbarMatchesDisabledPseudoClass(context);
+        return scrollbarMatchesDisabledPseudoClass(checkingContext);
     case CSSSelector::PseudoClassHover:
-        return scrollbarMatchesHoverPseudoClass(context);
+        return scrollbarMatchesHoverPseudoClass(checkingContext);
     case CSSSelector::PseudoClassActive:
-        return scrollbarMatchesActivePseudoClass(context);
+        return scrollbarMatchesActivePseudoClass(checkingContext);
     case CSSSelector::PseudoClassHorizontal:
-        return scrollbarMatchesHorizontalPseudoClass(context);
+        return scrollbarMatchesHorizontalPseudoClass(checkingContext);
     case CSSSelector::PseudoClassVertical:
-        return scrollbarMatchesVerticalPseudoClass(context);
+        return scrollbarMatchesVerticalPseudoClass(checkingContext);
     case CSSSelector::PseudoClassDecrement:
-        return scrollbarMatchesDecrementPseudoClass(context);
+        return scrollbarMatchesDecrementPseudoClass(checkingContext);
     case CSSSelector::PseudoClassIncrement:
-        return scrollbarMatchesIncrementPseudoClass(context);
+        return scrollbarMatchesIncrementPseudoClass(checkingContext);
     case CSSSelector::PseudoClassStart:
-        return scrollbarMatchesStartPseudoClass(context);
+        return scrollbarMatchesStartPseudoClass(checkingContext);
     case CSSSelector::PseudoClassEnd:
-        return scrollbarMatchesEndPseudoClass(context);
+        return scrollbarMatchesEndPseudoClass(checkingContext);
     case CSSSelector::PseudoClassDoubleButton:
-        return scrollbarMatchesDoubleButtonPseudoClass(context);
+        return scrollbarMatchesDoubleButtonPseudoClass(checkingContext);
     case CSSSelector::PseudoClassSingleButton:
-        return scrollbarMatchesSingleButtonPseudoClass(context);
+        return scrollbarMatchesSingleButtonPseudoClass(checkingContext);
     case CSSSelector::PseudoClassNoButton:
-        return scrollbarMatchesNoButtonPseudoClass(context);
+        return scrollbarMatchesNoButtonPseudoClass(checkingContext);
     case CSSSelector::PseudoClassCornerPresent:
-        return scrollbarMatchesCornerPresentPseudoClass(context);
+        return scrollbarMatchesCornerPresentPseudoClass(checkingContext);
     default:
         return false;
     }

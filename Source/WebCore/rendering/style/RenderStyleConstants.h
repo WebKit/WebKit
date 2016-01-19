@@ -139,6 +139,9 @@ public:
     }
 
     unsigned data() const { return m_data; }
+
+    static ptrdiff_t dataMemoryOffset() { return OBJECT_OFFSETOF(PseudoIdSet, m_data); }
+
 private:
     explicit PseudoIdSet(unsigned rawPseudoIdSet)
         : m_data(rawPseudoIdSet)
