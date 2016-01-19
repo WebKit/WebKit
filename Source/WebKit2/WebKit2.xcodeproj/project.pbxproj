@@ -1689,7 +1689,6 @@
 		C54256B818BEC18C00DE4179 /* WKFormPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B218BEC18B00DE4179 /* WKFormPopover.h */; };
 		C54256B918BEC18C00DE4179 /* WKFormPopover.mm in Sources */ = {isa = PBXBuildFile; fileRef = C54256B318BEC18B00DE4179 /* WKFormPopover.mm */; };
 		C54256BA18BEC18C00DE4179 /* WKFormSelectControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */; };
-		C554A3131C49C36400A388FE /* WebPageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = C554A3111C49BCCB00A388FE /* WebPageCocoa.mm */; };
 		C55CB5B718C269CF00CA81E1 /* WKFormSelectPopover.mm in Sources */ = {isa = PBXBuildFile; fileRef = C57193BA18C149D0002D0F12 /* WKFormSelectPopover.mm */; };
 		C55CB5B818C2A5D600CA81E1 /* WKFormSelectPicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = C57193B918C149D0002D0F12 /* WKFormSelectPicker.mm */; };
 		C57193BE18C14A44002D0F12 /* WKFormSelectControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = C57193BD18C14A43002D0F12 /* WKFormSelectControl.mm */; };
@@ -3933,7 +3932,6 @@
 		C54256B218BEC18B00DE4179 /* WKFormPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormPopover.h; path = ios/forms/WKFormPopover.h; sourceTree = "<group>"; };
 		C54256B318BEC18B00DE4179 /* WKFormPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormPopover.mm; path = ios/forms/WKFormPopover.mm; sourceTree = "<group>"; };
 		C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormSelectControl.h; path = ios/forms/WKFormSelectControl.h; sourceTree = "<group>"; };
-		C554A3111C49BCCB00A388FE /* WebPageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageCocoa.mm; sourceTree = "<group>"; };
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
 		C57193B918C149D0002D0F12 /* WKFormSelectPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormSelectPicker.mm; path = ios/forms/WKFormSelectPicker.mm; sourceTree = "<group>"; };
 		C57193BA18C149D0002D0F12 /* WKFormSelectPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormSelectPopover.mm; path = ios/forms/WKFormSelectPopover.mm; sourceTree = "<group>"; };
@@ -5090,7 +5088,6 @@
 			children = (
 				2D29ECCE192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h */,
 				2D29ECCF192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm */,
-				C554A3111C49BCCB00A388FE /* WebPageCocoa.mm */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -9395,7 +9392,6 @@
 				2D8786231BDB58FF00D02ABB /* APIUserStyleSheet.cpp in Sources */,
 				C5E1AFEC16B21012006CC1F2 /* APIWebArchive.mm in Sources */,
 				C5E1AFEE16B21025006CC1F2 /* APIWebArchiveResource.mm in Sources */,
-				C554A3131C49C36400A388FE /* WebPageCocoa.mm in Sources */,
 				1A4832C71A9BC13C008B4DFE /* APIWebsiteDataRecord.cpp in Sources */,
 				1A3635A91A3144A300ED6197 /* APIWebsiteDataStore.cpp in Sources */,
 				1A3635AD1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm in Sources */,

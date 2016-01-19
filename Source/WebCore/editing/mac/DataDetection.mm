@@ -26,27 +26,21 @@
 #import "config.h"
 #import "DataDetection.h"
 
-#import "Attr.h"
-#import "CSSStyleDeclaration.h"
+#if PLATFORM(MAC)
+
 #import "DataDetectorsSPI.h"
 #import "FrameView.h"
-#import "HTMLAnchorElement.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
 #import "Node.h"
-#import "NodeList.h"
-#import "NodeTraversal.h"
 #import "Range.h"
 #import "RenderObject.h"
-#import "Text.h"
 #import "TextIterator.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import "htmlediting.h"
 
 namespace WebCore {
-
-#if PLATFORM(MAC)
 
 static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition position, RefPtr<Range> contextRange, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
 {
@@ -137,10 +131,7 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
 
     return detectItemAtPositionWithRange(position, contextRange, detectedDataBoundingBox, detectedDataRange);
 }
-#endif // PLATFORM(MAC)
-
-void DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes)
-{
-}
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC)

@@ -25,11 +25,10 @@
 
 #import <wtf/Platform.h>
 
+#if PLATFORM(MAC)
 
 #import <WebCore/DataDetectorsCoreSPI.h>
 #import <WebCore/SoftLinking.h>
-
-#if PLATFORM(MAC)
 
 #if USE(APPLE_INTERNAL_SDK)
 

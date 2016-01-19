@@ -125,10 +125,6 @@
 #include "Archive.h"
 #endif
 
-#if ENABLE(DATA_DETECTION)
-#include "DataDetection.h"
-#endif
-
 #if PLATFORM(IOS)
 #include "DocumentType.h"
 #include "MemoryPressureHandler.h"
@@ -2281,12 +2277,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             } else {
                 m_client.dispatchDidFinishLoad();
                 loadingEvent = AXObjectCache::AXLoadingFinished;
-#if ENABLE(DATA_DETECTION)
-                if (m_frame.settings().dataDetectorTypes() != DataDetectorTypeNone) {
-                    RefPtr<Range> documentRange = makeRange(firstPositionInNode(m_frame.document()->documentElement()), lastPositionInNode(m_frame.document()->documentElement()));
-                    DataDetection::detectContentInRange(documentRange, m_frame.settings().dataDetectorTypes());
-                }
-#endif
             }
 
             // Notify accessibility.

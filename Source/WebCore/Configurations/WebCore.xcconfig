@@ -50,7 +50,7 @@ PRODUCT_NAME = WebCore;
 UNEXPORTED_SYMBOLS_FILE = Configurations/WebCore.unexp;
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE;
-OTHER_LDFLAGS_BASE_ios = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -lMobileGestalt -framework DataDetectorsCore;
+OTHER_LDFLAGS_BASE_ios = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -lMobileGestalt;
 OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = $(OTHER_LDFLAGS_BASE_ios) -framework IOSurface;
 OTHER_LDFLAGS_PLATFORM[sdk=iphonesimulator*] = $(OTHER_LDFLAGS_BASE_ios);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy -framework ApplicationServices -framework AudioUnit -framework Carbon -framework Cocoa -framework DataDetectorsCore -framework IOSurface -framework OpenGL;
