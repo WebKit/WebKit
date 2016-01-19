@@ -732,7 +732,7 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
 
     // Test denying a permission request.
     test->m_allowPermissionRequests = false;
-    test->loadHtml(geolocationRequestHTML, 0);
+    test->loadHtml(geolocationRequestHTML, "http://foo.com/bar");
     test->waitUntilTitleChanged();
 
     // According to the Geolocation API specification, '1' is the

@@ -1,3 +1,12 @@
+2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ test /webkit2/WebKitWebView/geolocation-permission-requests after r195075.
+
+        Geolocation is no longer allowed for unique origins after r195075.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        (testWebViewGeolocationPermissionRequests):
+
 2016-01-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][EFL] Layout tests abort with PulseAudioSanitizer instance has no attribute '_pa_module_index' when the build is not ready.
