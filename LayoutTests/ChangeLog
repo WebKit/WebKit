@@ -1,3 +1,66 @@
+2016-01-19  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Split all storage/indexeddb tests into separate HTML + JS format.
+        https://bugs.webkit.org/show_bug.cgi?id=153178
+
+        Reviewed by Sam Weinig.
+
+        * storage/indexeddb/clone-exception.html:
+        * storage/indexeddb/closed-cursor.html:
+        * storage/indexeddb/connection-leak.html:
+        * storage/indexeddb/cursor-cast.html:
+        * storage/indexeddb/cursor-leak.html:
+        * storage/indexeddb/cursor-overloads.html:
+        * storage/indexeddb/cursor-request-cycle.html:
+        * storage/indexeddb/deleteIndex-bug110792.html:
+        * storage/indexeddb/deletedatabase-transaction.html:
+        * storage/indexeddb/metadata-race.html:
+        * storage/indexeddb/noblobs.html:
+        * storage/indexeddb/object-lookups-in-versionchange.html:
+        * storage/indexeddb/open-bad-versions.html:
+        * storage/indexeddb/optional-arguments.html:
+        * storage/indexeddb/prefetch-invalidation.html:
+        * storage/indexeddb/prefetch-race.html:
+        * storage/indexeddb/primary-key-unique-to-objectstore.html:
+        * storage/indexeddb/request-leak.html:
+        * storage/indexeddb/request-result-cache.html:
+        * storage/indexeddb/resources/clone-exception.js: Copied from LayoutTests/storage/indexeddb/clone-exception.html.
+        * storage/indexeddb/resources/closed-cursor.js: Copied from LayoutTests/storage/indexeddb/closed-cursor.html.
+        * storage/indexeddb/resources/connection-leak.js: Copied from LayoutTests/storage/indexeddb/connection-leak.html.
+        * storage/indexeddb/resources/cursor-cast.js: Copied from LayoutTests/storage/indexeddb/cursor-cast.html.
+        * storage/indexeddb/resources/cursor-leak.js: Copied from LayoutTests/storage/indexeddb/cursor-leak.html.
+        * storage/indexeddb/resources/cursor-overloads.js: Copied from LayoutTests/storage/indexeddb/cursor-overloads.html.
+        * storage/indexeddb/resources/cursor-request-cycle.js: Copied from LayoutTests/storage/indexeddb/cursor-request-cycle.html.
+        * storage/indexeddb/resources/deleteIndex-bug110792.js: Copied from LayoutTests/storage/indexeddb/deleteIndex-bug110792.html.
+        * storage/indexeddb/resources/deletedatabase-transaction.js: Copied from LayoutTests/storage/indexeddb/deletedatabase-transaction.html.
+        * storage/indexeddb/resources/metadata-race.js: Copied from LayoutTests/storage/indexeddb/metadata-race.html.
+        * storage/indexeddb/resources/noblobs.js: Copied from LayoutTests/storage/indexeddb/noblobs.html.
+        * storage/indexeddb/resources/object-lookups-in-versionchange.js: Copied from LayoutTests/storage/indexeddb/object-lookups-in-versionchange.html.
+        * storage/indexeddb/resources/open-bad-versions.js: Copied from LayoutTests/storage/indexeddb/open-bad-versions.html.
+        * storage/indexeddb/resources/optional-arguments.js: Copied from LayoutTests/storage/indexeddb/optional-arguments.html.
+        * storage/indexeddb/resources/prefetch-invalidation.js: Copied from LayoutTests/storage/indexeddb/prefetch-invalidation.html.
+        * storage/indexeddb/resources/prefetch-race.js: Copied from LayoutTests/storage/indexeddb/prefetch-race.html.
+        * storage/indexeddb/resources/primary-key-unique-to-objectstore.js: Copied from LayoutTests/storage/indexeddb/primary-key-unique-to-objectstore.html.
+        * storage/indexeddb/resources/request-leak.js: Copied from LayoutTests/storage/indexeddb/request-leak.html.
+        * storage/indexeddb/resources/request-result-cache.js: Copied from LayoutTests/storage/indexeddb/request-result-cache.html.
+        * storage/indexeddb/resources/structured-clone.js: Copied from LayoutTests/storage/indexeddb/structured-clone.html.
+        * storage/indexeddb/resources/transaction-complete-with-js-recursion-cross-frame.js: Copied from LayoutTests/storage/indexeddb/transaction-complete-with-js-recursion-cross-frame.html.
+        * storage/indexeddb/resources/transaction-complete-with-js-recursion.js: Copied from LayoutTests/storage/indexeddb/transaction-complete-with-js-recursion.html.
+        * storage/indexeddb/resources/transaction-crash-in-tasks.js: Copied from LayoutTests/storage/indexeddb/transaction-crash-in-tasks.html.
+        * storage/indexeddb/resources/transaction-ordering.js: Copied from LayoutTests/storage/indexeddb/transaction-ordering.html.
+        * storage/indexeddb/resources/transaction-overlapping.js: Copied from LayoutTests/storage/indexeddb/transaction-overlapping.html.
+        * storage/indexeddb/resources/version-change-event-basic.js: Copied from LayoutTests/storage/indexeddb/version-change-event-basic.html.
+        * storage/indexeddb/resources/version-change-event.js: Copied from LayoutTests/storage/indexeddb/version-change-event.html.
+        * storage/indexeddb/structured-clone.html:
+        * storage/indexeddb/transaction-complete-with-js-recursion-cross-frame.html:
+        * storage/indexeddb/transaction-complete-with-js-recursion.html:
+        * storage/indexeddb/transaction-crash-in-tasks.html:
+        * storage/indexeddb/transaction-ordering.html:
+        * storage/indexeddb/transaction-overlapping.html:
+        * storage/indexeddb/transaction-starvation.html:
+        * storage/indexeddb/version-change-event-basic.html:
+        * storage/indexeddb/version-change-event.html:
+
 2016-01-19  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid][css-align] justify-self stretch is not applied for img elements

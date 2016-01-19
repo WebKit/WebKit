@@ -1,18 +1,9 @@
-<!DOCTYPE html>
+<html>
+<head>
 <script src="../../resources/js-test.js"></script>
 <script src="resources/shared.js"></script>
-<script>
-
-description("Regression test for http://webkit.org/b/102283");
-
-test();
-function test() {
-    removeVendorPrefixes();
-    setDBNameFromPath();
-
-    evalAndLog("indexedDB.open(dbname, 2)");
-    evalAndLog("indexedDB.open(dbname, 3)");
-
-    finishJSTest();
-}
-</script>
+</head>
+<body>
+<script src="resources/transaction-crash-in-tasks.js"></script>
+</body>
+</html>
