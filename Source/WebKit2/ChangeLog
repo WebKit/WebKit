@@ -1,3 +1,18 @@
+2016-01-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r187471.
+        https://bugs.webkit.org/show_bug.cgi?id=153236
+
+        purportedly caused a significant memory regression and want to
+        see if that is true (Requested by thorton on #webkit).
+
+        Reverted changeset:
+
+        "First in-window viewStateChange synchronously blocks despite
+        not previously being in-window"
+        https://bugs.webkit.org/show_bug.cgi?id=147344
+        http://trac.webkit.org/changeset/187471
+
 2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Runtime critical warnings when loading a URL after a session restore
