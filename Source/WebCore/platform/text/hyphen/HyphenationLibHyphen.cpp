@@ -60,14 +60,27 @@ static String extractLocaleFromDictionaryFilePath(const String& filePath)
     return fileName.substring(prefixLength, fileName.length() - prefixLength - suffixLength);
 }
 
-static void scanDirectoryForDicionaries(const char* directoryPath, HashMap<AtomicString, String>& availableLocales)
+static void scanDirectoryForDicionaries(const char* directoryPath, HashMap<AtomicString, Vector<String>>& availableLocales)
 {
-    for (const auto& filePath : listDirectory(directoryPath, "hyph_*.dic"))
-        availableLocales.set(AtomicString(extractLocaleFromDictionaryFilePath(filePath)), filePath);
+    for (const auto& filePath : listDirectory(directoryPath, "hyph_*.dic")) {
+        String locale = extractLocaleFromDictionaryFilePath(filePath).convertToASCIILowercase();
+        availableLocales.add(locale, Vector<String>()).iterator->value.append(filePath);
+
+        String localeReplacingUnderscores = String(locale);
+        localeReplacingUnderscores.replace('_', '-');
+        if (locale != localeReplacingUnderscores)
+            availableLocales.add(localeReplacingUnderscores, Vector<String>()).iterator->value.append(filePath);
+
+        size_t dividerPosition = localeReplacingUnderscores.find('-');
+        if (dividerPosition != notFound) {
+            localeReplacingUnderscores.truncate(dividerPosition);
+            availableLocales.add(localeReplacingUnderscores, Vector<String>()).iterator->value.append(filePath);
+        }
+    }
 }
 
 #if ENABLE(DEVELOPER_MODE)
-static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, String>& availableLocales)
+static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, Vector<String>>& availableLocales)
 {
     // It's unfortunate that we need to look for the dictionaries this way, but
     // libhyphen doesn't have the concept of installed dictionaries. Instead,
@@ -89,10 +102,10 @@ static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, Strin
 }
 #endif
 
-static HashMap<AtomicString, String>& availableLocales()
+static HashMap<AtomicString, Vector<String>>& availableLocales()
 {
     static bool scannedLocales = false;
-    static HashMap<AtomicString, String> availableLocales;
+    static HashMap<AtomicString, Vector<String>> availableLocales;
 
     if (!scannedLocales) {
         for (size_t i = 0; i < WTF_ARRAY_LENGTH(gDictionaryDirectories); i++)
@@ -112,7 +125,9 @@ bool canHyphenate(const AtomicString& localeIdentifier)
 {
     if (localeIdentifier.isNull())
         return false;
-    return availableLocales().contains(localeIdentifier);
+    if (availableLocales().contains(localeIdentifier))
+        return true;
+    return availableLocales().contains(AtomicString(localeIdentifier.string().convertToASCIILowercase()));
 }
 
 class HyphenationDictionary : public RefCounted<HyphenationDictionary> {
@@ -158,10 +173,9 @@ RefPtr<HyphenationDictionary> AtomicStringKeyedMRUCache<RefPtr<HyphenationDictio
 }
 
 template<>
-RefPtr<HyphenationDictionary> AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForKey(const AtomicString& localeIdentifier)
+RefPtr<HyphenationDictionary> AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForKey(const AtomicString& dictionaryPath)
 {
-    ASSERT(availableLocales().get(localeIdentifier));
-    return HyphenationDictionary::create(fileSystemRepresentation(availableLocales().get(localeIdentifier)));
+    return HyphenationDictionary::create(fileSystemRepresentation(dictionaryPath.string()));
 }
 
 static AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>& hyphenDictionaryCache()
@@ -190,9 +204,6 @@ static void countLeadingSpaces(const CString& utf8String, int32_t& pointerOffset
 
 size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
-    ASSERT(availableLocales().contains(localeIdentifier));
-    RefPtr<HyphenationDictionary> dictionary = hyphenDictionaryCache().get(localeIdentifier);
-
     // libhyphen accepts strings in UTF-8 format, but WebCore can only provide StringView
     // which stores either UTF-16 or Latin1 data. This is unfortunate for performance
     // reasons and we should consider switching to a more flexible hyphenation library
@@ -211,32 +222,38 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomicStr
     Vector<char> hyphenArray(utf8StringCopy.length() - leadingSpaceBytes + 5);
     char* hyphenArrayData = hyphenArray.data();
 
-    char** replacements = nullptr;
-    int* positions = nullptr;
-    int* removedCharacterCounts = nullptr;
-    hnj_hyphen_hyphenate2(dictionary->libhyphenDictionary(),
-        utf8StringCopy.data() + leadingSpaceBytes,
-        utf8StringCopy.length() - leadingSpaceBytes,
-        hyphenArrayData,
-        nullptr, /* output parameter for hyphenated word */
-        &replacements,
-        &positions,
-        &removedCharacterCounts);
+    String lowercaseLocaleIdentifier = AtomicString(localeIdentifier.string().convertToASCIILowercase());
+    ASSERT(availableLocales().contains(lowercaseLocaleIdentifier));
+    for (const auto& dictionaryPath : availableLocales().get(lowercaseLocaleIdentifier)) {
+        RefPtr<HyphenationDictionary> dictionary = hyphenDictionaryCache().get(AtomicString(dictionaryPath));
 
-    if (replacements) {
-        for (unsigned i = 0; i < utf8StringCopy.length() - leadingSpaceBytes - 1; i++)
-            free(replacements[i]);
-        free(replacements);
-    }
+        char** replacements = nullptr;
+        int* positions = nullptr;
+        int* removedCharacterCounts = nullptr;
+        hnj_hyphen_hyphenate2(dictionary->libhyphenDictionary(),
+            utf8StringCopy.data() + leadingSpaceBytes,
+            utf8StringCopy.length() - leadingSpaceBytes,
+            hyphenArrayData,
+            nullptr, /* output parameter for hyphenated word */
+            &replacements,
+            &positions,
+            &removedCharacterCounts);
 
-    free(positions);
-    free(removedCharacterCounts);
+        if (replacements) {
+            for (unsigned i = 0; i < utf8StringCopy.length() - leadingSpaceBytes - 1; i++)
+                free(replacements[i]);
+            free(replacements);
+        }
 
-    for (int i = beforeIndex - leadingSpaceCharacters - 1; i >= 0; i--) {
-        // libhyphen will put an odd number in hyphenArrayData at all
-        // hyphenation points. A number & 1 will be true for odd numbers.
-        if (hyphenArrayData[i] & 1)
-            return i + leadingSpaceCharacters;
+        free(positions);
+        free(removedCharacterCounts);
+
+        for (int i = beforeIndex - leadingSpaceCharacters - 1; i >= 0; i--) {
+            // libhyphen will put an odd number in hyphenArrayData at all
+            // hyphenation points. A number & 1 will be true for odd numbers.
+            if (hyphenArrayData[i] & 1)
+                return i + leadingSpaceCharacters;
+        }
     }
 
     return 0;
