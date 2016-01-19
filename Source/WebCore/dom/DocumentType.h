@@ -37,7 +37,7 @@ public:
         return adoptRef(*new DocumentType(document, name, publicId, systemId));
     }
 
-    // These is needed by native bindings for backward compatibility.
+    // These are needed by ObjC / GObject bindings for backward compatibility.
     NamedNodeMap* entitiesForBindings() const { return nullptr; }
     NamedNodeMap* notationsForBindings() const { return nullptr; }
 

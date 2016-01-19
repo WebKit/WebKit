@@ -1,3 +1,9 @@
+2016-01-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix typo in comment added in r195157.
+
+        * dom/DocumentType.h:
+
 2016-01-18  Antti Koivisto  <antti@apple.com>
 
         Selector checker should not mutate document and style
