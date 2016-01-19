@@ -1,3 +1,17 @@
+2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Runtime critical warnings when loading a URL after a session restore
+        https://bugs.webkit.org/show_bug.cgi?id=153233
+
+        Reviewed by Michael Catanzaro.
+
+        Add new test case.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestBackForwardList.cpp:
+        (viewLoadChanged):
+        (testWebKitWebViewNavigationAfterSessionRestore):
+        (beforeAll):
+
 2016-01-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Remove jhbuild-optional.modules

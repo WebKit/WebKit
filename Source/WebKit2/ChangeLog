@@ -1,3 +1,25 @@
+2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Runtime critical warnings when loading a URL after a session restore
+        https://bugs.webkit.org/show_bug.cgi?id=153233
+
+        Reviewed by Michael Catanzaro.
+
+        This happens when doing a normal load after restoring the back
+        forward list from session state and the list contained forward
+        items. In that case the forward items are removed from the list
+        and we try to reference a WebBackForwardListItem wrapper that
+        hasn't been created. We create the wrappers on demand, and when
+        the back forward list is populated from session state, items are
+        added to the list without creating their wrappers. That was not
+        possible before, and that's why we assumed that any item that is
+        removed from the list should have a wrapper already created.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        (webkitBackForwardListChanged): If we don't have a wrapper for the
+        removed item, create a new one to be passed to the signal, but
+        without adding it to the map.
+
 2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         CharacterData::setData doesn't need ExceptionCode as an out argument

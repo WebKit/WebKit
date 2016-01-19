@@ -366,6 +366,38 @@ static void testWebKitWebViewSessionStateWithFormData(BackForwardListTest* test,
     webkit_web_view_session_state_unref(state);
 }
 
+static void viewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, GMainLoop* mainLoop)
+{
+    if (loadEvent == WEBKIT_LOAD_FINISHED)
+        g_main_loop_quit(mainLoop);
+}
+
+static void testWebKitWebViewNavigationAfterSessionRestore(BackForwardListTest* test, gconstpointer)
+{
+    // This test checks that a normal load after a session restore with a BackForard list having
+    // forward items doesn't produce any runtime critical warning. See https://bugs.webkit.org/show_bug.cgi?id=153233.
+    GRefPtr<WebKitWebView> view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_signal_connect(view.get(), "load-changed", G_CALLBACK(viewLoadChanged), test->m_mainLoop);
+
+    webkit_web_view_load_uri(view.get(), kServer->getURIForPath("/Page1").data());
+    g_main_loop_run(test->m_mainLoop);
+    webkit_web_view_load_uri(view.get(), kServer->getURIForPath("/Page2").data());
+    g_main_loop_run(test->m_mainLoop);
+    webkit_web_view_load_uri(view.get(), kServer->getURIForPath("/Page3").data());
+    g_main_loop_run(test->m_mainLoop);
+    webkit_web_view_go_back(view.get());
+    g_main_loop_run(test->m_mainLoop);
+
+    WebKitWebViewSessionState* state = webkit_web_view_get_session_state(view.get());
+    webkit_web_view_restore_session_state(test->m_webView, state);
+    webkit_web_view_session_state_unref(state);
+
+    // A normal load after a session restore should remove the forward list, add the new item and update the current one.
+    test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem | BackForwardListTest::RemovedItems;
+    test->loadURI(kServer->getURIForPath("/Page4").data());
+    test->waitUntilLoadFinished();
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -375,6 +407,7 @@ void beforeAll()
     BackForwardListTest::add("BackForwardList", "list-limit-and-cache", testBackForwardListLimitAndCache);
     BackForwardListTest::add("WebKitWebView", "session-state", testWebKitWebViewSessionState);
     BackForwardListTest::add("WebKitWebView", "session-state-with-form-data", testWebKitWebViewSessionStateWithFormData);
+    BackForwardListTest::add("WebKitWebView", "navigation-after-session-restore", testWebKitWebViewNavigationAfterSessionRestore);
 }
 
 void afterAll()

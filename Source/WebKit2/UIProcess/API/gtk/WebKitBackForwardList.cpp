@@ -135,8 +135,15 @@ void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBac
 
     WebKitBackForwardListPrivate* priv = backForwardList->priv;
     for (auto& webItem : webRemovedItems) {
-        removedItems = g_list_prepend(removedItems, g_object_ref(priv->itemsMap.get(webItem.get()).get()));
-        priv->itemsMap.remove(webItem.get());
+        // After a session restore, we still don't have wrappers for the newly added items, so it would be possible that
+        // the removed items are not in the map. In that case we create a wrapper now to pass it the changed signal, but
+        // without adding it to the item map. See https://bugs.webkit.org/show_bug.cgi?id=153233.
+        GRefPtr<WebKitBackForwardListItem> removedItem = priv->itemsMap.get(webItem.get());
+        if (removedItem) {
+            removedItems = g_list_prepend(removedItems, g_object_ref(removedItem.get()));
+            priv->itemsMap.remove(webItem.get());
+        } else
+            removedItems = g_list_prepend(removedItems, webkitBackForwardListItemGetOrCreate(webItem.get()));
     }
 
     g_signal_emit(backForwardList, signals[CHANGED], 0, addedItem, removedItems, nullptr);
