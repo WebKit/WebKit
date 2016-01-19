@@ -1,3 +1,13 @@
+2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GObject DOM bindings API break after r195264.
+
+        Add webkit_dom_character_data_set_data to the list of functions
+        that used to raise exceptions.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (FunctionUsedToRaiseException):
+
 2016-01-19  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid][css-align] justify-self stretch is not applied for img elements

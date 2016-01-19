@@ -1024,6 +1024,7 @@ sub FunctionUsedToRaiseException {
     my $functionName = shift;
 
     return $functionName eq "webkit_dom_character_data_append_data"
+        || $functionName eq "webkit_dom_character_data_set_data"
         || $functionName eq "webkit_dom_document_create_node_iterator"
         || $functionName eq "webkit_dom_document_create_tree_walker"
         || $functionName eq "webkit_dom_node_iterator_next_node"
