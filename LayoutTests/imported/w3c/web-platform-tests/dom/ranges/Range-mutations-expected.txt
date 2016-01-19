@@ -99,18 +99,18 @@ PASS detachedXmlTextNode.splitText(3), with unselected range on detachedXmlTextN
 FAIL detachedXmlTextNode.splitText(3), with selected range on detachedXmlTextNode from 1 to 3 assert_equals: Sanity check: selection must have exactly one range after adding the range expected 1 but got 0
 PASS paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0], 0) 
 FAIL paras[0].firstChild.splitText(1), with selected range collapsed at (paras[0], 0) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL paras[0].firstChild.splitText(1), with unselected range on paras[0] from 0 to 1 assert_equals: Wrong end offset expected 2 but got 1
+PASS paras[0].firstChild.splitText(1), with unselected range on paras[0] from 0 to 1 
 FAIL paras[0].firstChild.splitText(1), with selected range on paras[0] from 0 to 1 assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "Äb̈c̈d̈ëf̈g̈ḧ
 " but got object "Äb̈c̈d̈ëf̈g̈ḧ"
-FAIL paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0], 1) assert_equals: Wrong start offset expected 2 but got 1
+PASS paras[0].firstChild.splitText(1), with unselected range collapsed at (paras[0], 1) 
 FAIL paras[0].firstChild.splitText(1), with selected range collapsed at (paras[0], 1) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "" but got object ""
-FAIL paras[0].firstChild.splitText(1), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) assert_equals: Wrong end offset expected 2 but got 1
+PASS paras[0].firstChild.splitText(1), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) 
 FAIL paras[0].firstChild.splitText(1), with selected range from (paras[0].firstChild, 1) to (paras[0], 1) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "̈b̈c̈d̈ëf̈g̈ḧ
 " but got object "b̈c̈d̈ëf̈g̈ḧ"
-FAIL paras[0].firstChild.splitText(2), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) assert_equals: Wrong end offset expected 2 but got 1
+PASS paras[0].firstChild.splitText(2), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) 
 FAIL paras[0].firstChild.splitText(2), with selected range from (paras[0].firstChild, 1) to (paras[0], 1) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "̈b̈c̈d̈ëf̈g̈ḧ
 " but got object "b̈c̈d̈ëf̈g̈ḧ"
-FAIL paras[0].firstChild.splitText(3), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) assert_equals: Wrong end offset expected 2 but got 1
+PASS paras[0].firstChild.splitText(3), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1) 
 FAIL paras[0].firstChild.splitText(3), with selected range from (paras[0].firstChild, 1) to (paras[0], 1) assert_equals: Sanity check: selection's range must initially be the same as the range we added expected object "̈b̈c̈d̈ëf̈g̈ḧ
 " but got object "b̈c̈d̈ëf̈g̈ḧ"
 PASS paras[0].firstChild.splitText(1), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3) 

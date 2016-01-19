@@ -1,5 +1,36 @@
 2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Text::splitText doesn't update Range end points anchored on parent nodes
+        https://bugs.webkit.org/show_bug.cgi?id=153227
+
+        Reviewed by Antti Koivisto.
+
+        When a Text node is split into two and there is a Range whose boundary points' container node
+        is its parent and offset appears after the Text node, we must update the boundary points as specified
+        in step 7 of the concept "split" a Text node at https://dom.spec.whatwg.org/#concept-text-split
+
+        1. Insert new node into parent before node’s next sibling.
+        2. For each range whose start node is node and start offset is greater than offset, set its start node
+           to new node and decrease its start offset by offset.
+        3. For each range whose end node is node and end offset is greater than offset, set its end node to
+           new node and decrease its end offset by offset.
+        4. For each range whose start node is parent and start offset is equal to the index of node + 1,
+           increase its start offset by one.
+        5. For each range whose end node is parent and end offset is equal to the index of node + 1, increase
+           its end offset by one.
+
+        Fixed the bug by implementing steps 4 and 5 in boundaryTextNodesSplit. New behavior matches the DOM spec
+        as well as the behavior of Firefox.
+
+        Test: fast/dom/Range/update-range-in-split-text.html
+
+        * dom/Range.cpp:
+        (WebCore::boundaryTextNodesSplit): See above.
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::setToAfterChild): Added.
+
+2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         CharacterData::setData doesn't need ExceptionCode as an out argument
         https://bugs.webkit.org/show_bug.cgi?id=153225
 

@@ -49,6 +49,7 @@ public:
     void setOffset(int offset);
 
     void setToBeforeChild(Node&);
+    void setToAfterChild(Node&);
     void setToStartOfNode(PassRefPtr<Node>);
     void setToEndOfNode(PassRefPtr<Node>);
 
@@ -138,6 +139,14 @@ inline void RangeBoundaryPoint::setToBeforeChild(Node& child)
 {
     ASSERT(child.parentNode());
     m_childBeforeBoundary = child.previousSibling();
+    m_containerNode = child.parentNode();
+    m_offsetInContainer = m_childBeforeBoundary ? invalidOffset : 0;
+}
+
+inline void RangeBoundaryPoint::setToAfterChild(Node& child)
+{
+    ASSERT(child.parentNode());
+    m_childBeforeBoundary = &child;
     m_containerNode = child.parentNode();
     m_offsetInContainer = m_childBeforeBoundary ? invalidOffset : 0;
 }

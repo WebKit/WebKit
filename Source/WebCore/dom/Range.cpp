@@ -1712,12 +1712,19 @@ void Range::textNodesMerged(NodeWithIndex& oldNode, unsigned offset)
 
 static inline void boundaryTextNodesSplit(RangeBoundaryPoint& boundary, Text* oldNode)
 {
-    if (boundary.container() != oldNode)
+    if (boundary.container() == oldNode) {
+        unsigned splitOffset = oldNode->length();
+        unsigned boundaryOffset = boundary.offset();
+        if (boundaryOffset > splitOffset)
+            boundary.set(oldNode->nextSibling(), boundaryOffset - splitOffset, 0);
         return;
-    unsigned boundaryOffset = boundary.offset();
-    if (boundaryOffset <= oldNode->length())
-        return;
-    boundary.set(oldNode->nextSibling(), boundaryOffset - oldNode->length(), 0);
+    }
+    auto* parent = oldNode->parentNode();
+    if (boundary.container() == parent && boundary.childBefore() == oldNode) {
+        auto* newChild = oldNode->nextSibling();
+        ASSERT(newChild);
+        boundary.setToAfterChild(*newChild);
+    }
 }
 
 void Range::textNodeSplit(Text* oldNode)

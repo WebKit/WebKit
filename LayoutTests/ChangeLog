@@ -1,5 +1,17 @@
 2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Text::splitText doesn't update Range end points anchored on parent nodes
+        https://bugs.webkit.org/show_bug.cgi?id=153227
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test since the rebaselined W3C test is incomprehensible.
+
+        * fast/dom/Range/update-range-in-split-text-expected.txt: Added.
+        * fast/dom/Range/update-range-in-split-text.html: Added.
+
+2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         innerHTML should always add a mutation record for removing all children
         https://bugs.webkit.org/show_bug.cgi?id=148782
         <rdar://problem/22571962>
