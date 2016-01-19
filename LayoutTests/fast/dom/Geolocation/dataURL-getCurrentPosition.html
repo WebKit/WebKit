@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Tests that navigator.geolocation.getCurrentPosition() returns error POSITION_UNAVAILABLE when called from a document with a data URL. -->
+<script src="../../../http/tests/security/resources/checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod.js"></script>
+<script>
+var PositionUnavailableMockMessage = "Origin does not have permission to use Geolocation service";
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPositionUnavailableError(PositionUnavailableMockMessage);
+    testRunner.setMockGeolocationPosition(37.3317115, -122.0323722, 100.0);
+}
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.location = dataURLToCheckThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod("getCurrentPosition", PositionUnavailableMockMessage, done);
+</script>
+</head>
+</html>

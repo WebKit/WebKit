@@ -1,5 +1,36 @@
 2016-01-14  Daniel Bates  <dabates@apple.com>
 
+        Disallow use of Geolocation service from unique origins
+        https://bugs.webkit.org/show_bug.cgi?id=153102
+        <rdar://problem/23055645>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/Geolocation/dataURL-getCurrentPosition-expected.txt: Added.
+        * fast/dom/Geolocation/dataURL-getCurrentPosition.html: Added.
+        * fast/dom/Geolocation/dataURL-watchPosition-expected.txt: Added.
+        * fast/dom/Geolocation/dataURL-watchPosition.html: Added.
+        * fast/dom/Geolocation/srcdoc-getCurrentPosition-expected.txt: Added.
+        * fast/dom/Geolocation/srcdoc-getCurrentPosition.html: Added.
+        * fast/dom/Geolocation/srcdoc-watchPosition-expected.txt: Added.
+        * fast/dom/Geolocation/srcdoc-watchPosition.html: Added.
+        * http/tests/security/resources/checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod.js: Added.
+        (done):
+        (logMessage):
+        (didReceivePosition):
+        (didReceiveError):
+        (checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod):
+        (markupToCheckThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod):
+        (dataURLToCheckThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod):
+        * http/tests/security/resources/sandboxed-iframe-geolocation-getCurrentPosition.html: Added.
+        * http/tests/security/resources/sandboxed-iframe-geolocation-watchPosition.html: Added.
+        * http/tests/security/sandboxed-iframe-geolocation-getCurrentPosition-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-geolocation-getCurrentPosition.html: Added.
+        * http/tests/security/sandboxed-iframe-geolocation-watchPosition-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-geolocation-watchPosition.html: Added.
+
+2016-01-14  Daniel Bates  <dabates@apple.com>
+
         [XSS Auditor] Partial bypass when web server collapses path components
         https://bugs.webkit.org/show_bug.cgi?id=152872
 
