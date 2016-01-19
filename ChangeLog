@@ -1,3 +1,13 @@
+2016-01-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Duplicate attempts to find software during cmake stage
+        https://bugs.webkit.org/show_bug.cgi?id=153211
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt: Remove duplication of commands in WebKitCommon.cmake.
+        * Source/cmake/WebKitCommon.cmake: Guard the entire file so it runs only once.
+
 2016-01-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Do not build bmalloc when USE_SYSTEM_MALLOC is ON
