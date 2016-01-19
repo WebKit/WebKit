@@ -70,7 +70,8 @@ private:
         Initialized
     };
 
-    enum AttributeKind {
+    enum class TruncationStyle {
+        None,
         NormalAttribute,
         SrcLikeAttribute,
         ScriptLikeAttribute
@@ -92,12 +93,12 @@ private:
     bool filterButtonToken(const FilterTokenRequest&);
 
     bool eraseDangerousAttributesIfInjected(const FilterTokenRequest&);
-    bool eraseAttributeIfInjected(const FilterTokenRequest&, const QualifiedName&, const String& replacementValue = String(), AttributeKind treatment = NormalAttribute);
+    bool eraseAttributeIfInjected(const FilterTokenRequest&, const QualifiedName&, const String& replacementValue = String(), TruncationStyle = TruncationStyle::NormalAttribute);
 
-    String decodedSnippetForToken(const HTMLToken&);
-    String decodedSnippetForName(const FilterTokenRequest&);
-    String decodedSnippetForAttribute(const FilterTokenRequest&, const HTMLToken::Attribute&, AttributeKind treatment = NormalAttribute);
-    String decodedSnippetForJavaScript(const FilterTokenRequest&);
+    String canonicalizedSnippetForTagName(const FilterTokenRequest&);
+    String canonicalizedSnippetForJavaScript(const FilterTokenRequest&);
+    String snippetFromAttribute(const FilterTokenRequest&, const HTMLToken::Attribute&);
+    String canonicalize(const String&, TruncationStyle);
 
     bool isContainedInRequest(const String&);
     bool isLikelySafeResource(const String& url);
