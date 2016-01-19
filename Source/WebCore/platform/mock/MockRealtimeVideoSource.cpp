@@ -57,7 +57,7 @@ RefPtr<MockRealtimeVideoSource> MockRealtimeVideoSource::create()
 
 MockRealtimeVideoSource::MockRealtimeVideoSource()
     : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Video, mockVideoSourceName())
-    , m_timer(RunLoop::main(), this, &MockRealtimeVideoSource::generateFrame)
+    , m_timer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
 {
     m_dashWidths.reserveInitialCapacity(2);
     m_dashWidths.uncheckedAppend(6);
