@@ -55,7 +55,7 @@ class CDM {
 public:
     explicit CDM(const String& keySystem);
 
-    enum CDMErrorCode { UnknownError = 1, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
+    enum CDMErrorCode { NoError, UnknownError, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
     static bool supportsKeySystem(const String&);
     static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
     static std::unique_ptr<CDM> create(const String& keySystem);

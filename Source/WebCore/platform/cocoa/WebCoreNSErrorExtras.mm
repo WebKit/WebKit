@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
- *
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -23,41 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionAVFoundationObjC_h
-#define CDMSessionAVFoundationObjC_h
+#import "config.h"
+#import "WebCoreNSErrorExtras.h"
 
-#include "CDMSession.h"
-#include <wtf/RetainPtr.h>
-
-#if ENABLE(ENCRYPTED_MEDIA_V2)
-
-OBJC_CLASS AVAssetResourceLoadingRequest;
+#import <AVFoundation/AVError.h>
 
 namespace WebCore {
 
-class MediaPlayerPrivateAVFoundationObjC;
+long mediaKeyErrorSystemCode(NSError *error)
+{
+    NSInteger code = [error code];
 
-class CDMSessionAVFoundationObjC : public CDMSession {
-public:
-    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, CDMSessionClient*);
-    virtual ~CDMSessionAVFoundationObjC() { }
+    if (code == AVErrorUnknown) {
+        NSError* underlyingError = [error.userInfo valueForKey:NSUnderlyingErrorKey];
+        if (underlyingError && [underlyingError isKindOfClass:[NSError class]])
+            return [underlyingError code];
+    }
 
-    virtual CDMSessionType type() override { return CDMSessionTypeAVFoundationObjC; }
-    virtual void setClient(CDMSessionClient* client) override { m_client = client; }
-    virtual const String& sessionId() const override { return m_sessionId; }
-    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
-    virtual void releaseKeys() override;
-    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
-
-protected:
-    MediaPlayerPrivateAVFoundationObjC* m_parent;
-    CDMSessionClient* m_client;
-    String m_sessionId;
-    RetainPtr<AVAssetResourceLoadingRequest> m_request;
-};
-
+    return code;
 }
 
-#endif
-
-#endif // CDMSessionAVFoundationObjC_h
+}

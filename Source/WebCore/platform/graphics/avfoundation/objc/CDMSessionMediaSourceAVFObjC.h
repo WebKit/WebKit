@@ -63,7 +63,6 @@ public:
     void invalidateCDM() { m_cdm = nullptr; }
 
 protected:
-    static long systemCodeForError(NSError *);
     String storagePath() const;
 
     CDMPrivateMediaSourceAVFObjC* m_cdm;

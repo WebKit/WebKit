@@ -1,3 +1,61 @@
+2015-12-07  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Correctly report errors when generating key requests from AVContentKeySession.
+        https://bugs.webkit.org/show_bug.cgi?id=151963
+
+        Reviewed by Eric Carlson.
+
+        WebIDL's "unsigned long" is a 32-bit unsigned integer, and C++'s "unsigned long" is (or, can
+        be) a 64-bit integer on 64-bit platforms. Casting a negative integer to a 64-bit integer
+        results in a number which cannot be accurately stored in a double-length floating point
+        number. Previously, the mac CDM code would work around this issue by returning the absolute
+        value of NSError code returned by media frameworks. Instead, fix the underlying problem by
+        storing the MediaKeyError's systemCode as a uint32_t (which more accurately represents the
+        size of a WebIDL "unsigned long" on all platforms.)
+
+        Check the error code issued by -contentKeyRequestDataForApp:contentIdentifier:options:error:.
+
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::generateKeyRequest):
+        (WebCore::CDMSessionClearKey::update):
+        * Modules/encryptedmedia/CDMSessionClearKey.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::keyRequestTimerFired):
+        (WebCore::MediaKeySession::addKeyTimerFired):
+        (WebCore::MediaKeySession::sendError):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handleReadyStateChange):
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/MediaKeyError.h:
+        (WebCore::MediaKeyError::create):
+        (WebCore::MediaKeyError::systemCode):
+        * html/MediaKeyEvent.h:
+        * platform/graphics/CDMSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::generateKeyRequest):
+        (WebCore::CDMSessionAVContentKeySession::update):
+        (WebCore::CDMSessionAVContentKeySession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::generateKeyRequest):
+        (WebCore::CDMSessionAVFoundationObjC::update):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::generateKeyRequest):
+        (WebCore::CDMSessionAVStreamSession::update):
+        (WebCore::CDMSessionAVStreamSession::generateKeyReleaseMessage):
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::layerDidReceiveError):
+        (WebCore::CDMSessionMediaSourceAVFObjC::rendererDidReceiveError):
+        (WebCore::CDMSessionMediaSourceAVFObjC::systemCodeForError): Deleted.
+        * testing/MockCDM.cpp:
+        (WebCore::MockCDMSession::generateKeyRequest):
+        (WebCore::MockCDMSession::update):2016-01-15  Simon Fraser  <simon.fraser@apple.com>
+
 2016-01-19  Enrica Casucci  <enrica@apple.com>
 
         Add support for DataDetectors in WK (iOS).

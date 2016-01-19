@@ -30,8 +30,8 @@
 
 #import "CDMPrivateMediaSourceAVFObjC.h"
 #import "FileSystem.h"
+#import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVError.h>
-#import <cstdlib>
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLay
     if (!m_client)
         return;
 
-    unsigned long code = std::abs(systemCodeForError(error));
+    unsigned long code = mediaKeyErrorSystemCode(error);
 
     // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
     shouldIgnore = m_stopped && code == 12785;
@@ -65,7 +65,7 @@ void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRe
     if (!m_client)
         return;
 
-    unsigned long code = std::abs(systemCodeForError(error));
+    unsigned long code = mediaKeyErrorSystemCode(error);
 
     // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
     shouldIgnore = m_stopped && code == 12785;
@@ -94,19 +94,6 @@ void CDMSessionMediaSourceAVFObjC::removeSourceBuffer(SourceBufferPrivateAVFObjC
 
     sourceBuffer->unregisterForErrorNotifications(this);
     m_sourceBuffers.remove(m_sourceBuffers.find(sourceBuffer));
-}
-
-long CDMSessionMediaSourceAVFObjC::systemCodeForError(NSError *error)
-{
-    NSInteger code = [error code];
-    if (code != AVErrorUnknown)
-        return code;
-
-    NSError* underlyingError = [error.userInfo valueForKey:NSUnderlyingErrorKey];
-    if (!underlyingError || ![underlyingError isKindOfClass:[NSError class]])
-        return code;
-
-    return [underlyingError code];
 }
 
 String CDMSessionMediaSourceAVFObjC::storagePath() const
