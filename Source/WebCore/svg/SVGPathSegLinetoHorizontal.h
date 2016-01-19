@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SVGPathSegLinetoHorizontal : public SVGPathSegWithContext {
 public:
-    SVGPathSegLinetoHorizontal(SVGPathElement* element, SVGPathSegRole role, float x)
+    SVGPathSegLinetoHorizontal(const SVGPathElement& element, SVGPathSegRole role, float x)
         : SVGPathSegWithContext(element, role)
         , m_x(x)
     {

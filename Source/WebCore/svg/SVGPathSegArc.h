@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SVGPathSegArc : public SVGPathSegWithContext {
 public:
-    SVGPathSegArc(SVGPathElement* element, SVGPathSegRole role, float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
+    SVGPathSegArc(const SVGPathElement& element, SVGPathSegRole role, float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
         : SVGPathSegWithContext(element, role)
         , m_x(x)
         , m_y(y)

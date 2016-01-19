@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SVGPathSegCurvetoQuadratic : public SVGPathSegWithContext { 
 public:
-    SVGPathSegCurvetoQuadratic(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+    SVGPathSegCurvetoQuadratic(const SVGPathElement& element, SVGPathSegRole role, float x, float y, float x1, float y1)
         : SVGPathSegWithContext(element, role)
         , m_x(x)
         , m_y(y)

@@ -28,13 +28,13 @@ namespace WebCore {
 
 class SVGPathSegLinetoAbs : public SVGPathSegSingleCoordinate {
 public:
-    static Ref<SVGPathSegLinetoAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    static Ref<SVGPathSegLinetoAbs> create(const SVGPathElement& element, SVGPathSegRole role, float x, float y)
     {
         return adoptRef(*new SVGPathSegLinetoAbs(element, role, x, y));
     }
 
 private:
-    SVGPathSegLinetoAbs(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    SVGPathSegLinetoAbs(const SVGPathElement& element, SVGPathSegRole role, float x, float y)
         : SVGPathSegSingleCoordinate(element, role, x, y)
     {
     }

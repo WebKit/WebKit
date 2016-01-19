@@ -28,13 +28,13 @@ namespace WebCore {
 
 class SVGPathSegMovetoRel : public SVGPathSegSingleCoordinate {
 public:
-    static Ref<SVGPathSegMovetoRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    static Ref<SVGPathSegMovetoRel> create(const SVGPathElement& element, SVGPathSegRole role, float x, float y)
     {
         return adoptRef(*new SVGPathSegMovetoRel(element, role, x, y));
     }
 
 private:
-    SVGPathSegMovetoRel(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    SVGPathSegMovetoRel(const SVGPathElement& element, SVGPathSegRole role, float x, float y)
         : SVGPathSegSingleCoordinate(element, role, x, y)
     {
     }
