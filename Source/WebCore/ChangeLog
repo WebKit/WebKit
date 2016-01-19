@@ -1,3 +1,19 @@
+2016-01-18  Olivier Blin  <olivier.blin@softathome.com>
+
+        [Mac] Remove unused playerToPrivateMap()
+        https://bugs.webkit.org/show_bug.cgi?id=153203
+
+        Reviewed by Darin Adler.
+
+        This was used in previous EME implementations, but is unnecessary
+        since r163907.
+
+        No new tests since this removes dead code only.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::globalLoaderDelegateQueue): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC): Deleted.
+
 2016-01-18  Simon Fraser  <simon.fraser@apple.com>
 
         Add TextStream-based logging for Position and VisiblePosition
