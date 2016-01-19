@@ -1,3 +1,44 @@
+2016-01-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce PassRefPtr uses in dom - 3
+        https://bugs.webkit.org/show_bug.cgi?id=153055
+
+        Reviewed by Darin Adler.
+
+        Third patch to reduce uses of PassRefPtr in WebCore/dom.
+
+        * dom/MutationObserverInterestGroup.cpp:
+        (WebCore::MutationObserverInterestGroup::enqueueMutationRecord):
+        * dom/MutationRecord.cpp:
+        (WebCore::MutationRecord::createChildList):
+        (WebCore::MutationRecord::createAttributes):
+        (WebCore::MutationRecord::createCharacterData):
+        (WebCore::MutationRecord::createWithNullOldValue):
+        * dom/MutationRecord.h:
+        * dom/NamedFlowCollection.cpp:
+        (WebCore::NamedFlowCollection::createCSSOMSnapshot):
+        * dom/NamedFlowCollection.h:
+        * dom/PendingScript.cpp:
+        (WebCore::PendingScript::releaseElementAndClear):
+        * dom/PendingScript.h:
+        * dom/ScriptRunner.h:
+        * dom/SecurityContext.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::cloneNode):
+        * dom/ShadowRoot.h:
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitStringData::create):
+        * dom/SpaceSplitString.h:
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::setCurrent):
+        (WebCore::TreeWalker::parentNode):
+        (WebCore::TreeWalker::previousNode):
+        (WebCore::TreeWalker::nextNode):
+        * dom/TreeWalker.h:
+        * dom/default/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::entangledChannel):
+        * dom/default/PlatformMessagePortChannel.h:
+
 2016-01-18  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] Implement next/previous text marker functions using TextIterator

@@ -173,7 +173,7 @@ private:
     AtomicString* m_memoryBucket;
 };
 
-inline PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString& keyString, unsigned tokenCount)
+inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString& keyString, unsigned tokenCount)
 {
     ASSERT(tokenCount);
 
@@ -188,10 +188,10 @@ inline PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const Atomi
     ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArrayStart) == tokenCount);
     ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) == reinterpret_cast<const char*>(spaceSplitStringData) + sizeToAllocate);
 
-    return adoptRef(spaceSplitStringData);
+    return adoptRef(*spaceSplitStringData);
 }
 
-PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString& keyString)
+RefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString& keyString)
 {
     ASSERT(isMainThread());
     ASSERT(!keyString.isNull());
@@ -211,7 +211,7 @@ PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString
 
     RefPtr<SpaceSplitStringData> spaceSplitStringData = create(keyString, tokenCount);
     addResult.iterator->value = spaceSplitStringData.get();
-    return spaceSplitStringData.release();
+    return spaceSplitStringData;
 }
 
 

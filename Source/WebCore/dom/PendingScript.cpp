@@ -37,12 +37,12 @@ PendingScript::~PendingScript()
         m_cachedScript->removeClient(this);
 }
 
-PassRefPtr<Element> PendingScript::releaseElementAndClear()
+RefPtr<Element> PendingScript::releaseElementAndClear()
 {
     setCachedScript(nullptr);
     m_watchingForLoad = false;
     m_startingPosition = TextPosition::belowRangePosition();
-    return m_element.release();
+    return WTFMove(m_element);
 }
 
 void PendingScript::setCachedScript(CachedScript* cachedScript)

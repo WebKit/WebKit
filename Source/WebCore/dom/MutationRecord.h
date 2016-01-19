@@ -47,11 +47,11 @@ class QualifiedName;
 
 class MutationRecord : public RefCounted<MutationRecord> {
 public:
-    static PassRefPtr<MutationRecord> createChildList(ContainerNode& target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling);
-    static PassRefPtr<MutationRecord> createAttributes(Element& target, const QualifiedName&, const AtomicString& oldValue);
-    static PassRefPtr<MutationRecord> createCharacterData(CharacterData& target, const String& oldValue);
+    static Ref<MutationRecord> createChildList(ContainerNode& target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling);
+    static Ref<MutationRecord> createAttributes(Element& target, const QualifiedName&, const AtomicString& oldValue);
+    static Ref<MutationRecord> createCharacterData(CharacterData& target, const String& oldValue);
 
-    static PassRefPtr<MutationRecord> createWithNullOldValue(PassRefPtr<MutationRecord>);
+    static Ref<MutationRecord> createWithNullOldValue(MutationRecord&);
 
     virtual ~MutationRecord();
 

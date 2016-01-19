@@ -169,7 +169,7 @@ void PlatformMessagePortChannel::setRemotePort(MessagePort* port)
     m_remotePort = port;
 }
 
-PassRefPtr<PlatformMessagePortChannel> PlatformMessagePortChannel::entangledChannel()
+RefPtr<PlatformMessagePortChannel> PlatformMessagePortChannel::entangledChannel()
 {
     // FIXME: What guarantees that the result remains the same after we release the lock?
     // This lock only guarantees that the returned pointer will not be pointing to released memory,

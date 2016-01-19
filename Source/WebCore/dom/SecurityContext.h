@@ -28,7 +28,6 @@
 #define SecurityContext_h
 
 #include <memory>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

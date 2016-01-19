@@ -90,7 +90,7 @@ namespace WebCore {
         static Ref<PlatformMessagePortChannel> create(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
         PlatformMessagePortChannel(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
 
-        PassRefPtr<PlatformMessagePortChannel> entangledChannel();
+        RefPtr<PlatformMessagePortChannel> entangledChannel();
 
         void setRemotePort(MessagePort*);
         void closeInternal();

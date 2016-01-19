@@ -34,7 +34,6 @@
 #include "WebKitNamedFlow.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -57,7 +56,7 @@ public:
 
     virtual ~NamedFlowCollection() { }
 
-    PassRefPtr<DOMNamedFlowCollection> createCSSOMSnapshot();
+    Ref<DOMNamedFlowCollection> createCSSOMSnapshot();
 
 private:
     struct NamedFlowHashFunctions;

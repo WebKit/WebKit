@@ -78,7 +78,7 @@ void MutationObserverInterestGroup::enqueueMutationRecord(PassRefPtr<MutationRec
             if (mutation->oldValue().isNull())
                 mutationWithNullOldValue = mutation;
             else
-                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(mutation).get();
+                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(*mutation).ptr();
         }
         observer->enqueueMutationRecord(mutationWithNullOldValue);
     }

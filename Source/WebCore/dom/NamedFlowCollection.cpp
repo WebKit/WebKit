@@ -104,7 +104,7 @@ Document* NamedFlowCollection::document() const
     return downcast<Document>(context);
 }
 
-PassRefPtr<DOMNamedFlowCollection> NamedFlowCollection::createCSSOMSnapshot()
+Ref<DOMNamedFlowCollection> NamedFlowCollection::createCSSOMSnapshot()
 {
     Vector<WebKitNamedFlow*> createdFlows;
     for (auto& namedFlow : m_namedFlows) {

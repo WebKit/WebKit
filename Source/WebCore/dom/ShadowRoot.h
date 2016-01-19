@@ -81,8 +81,6 @@ public:
 
     Type type() const { return m_type; }
 
-    PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
-
     virtual void removeAllEventListeners() override;
 
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)

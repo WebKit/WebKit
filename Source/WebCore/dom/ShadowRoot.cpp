@@ -123,12 +123,6 @@ void ShadowRoot::updateStyle()
         setNeedsStyleRecalc();
 }
 
-PassRefPtr<Node> ShadowRoot::cloneNode(bool, ExceptionCode& ec)
-{
-    ec = DATA_CLONE_ERR;
-    return 0;
-}
-
 String ShadowRoot::innerHTML() const
 {
     return createMarkup(*this, ChildrenOnly);

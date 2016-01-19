@@ -89,7 +89,7 @@ public:
 
     Element* element() const { return m_element.get(); }
     void setElement(Element* element) { m_element = element; }
-    PassRefPtr<Element> releaseElementAndClear();
+    RefPtr<Element> releaseElementAndClear();
 
     CachedScript* cachedScript() const;
     void setCachedScript(CachedScript*);
