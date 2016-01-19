@@ -109,7 +109,7 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
         if (this._messageTextViewElement)
             this._messageTextViewElement.remove();
 
-        this._messageTextViewElement = WebInspector.createMessageTextView(WebInspector.UIString("An error occured trying to\nread the “%s” table.").format(this.representedObject.name), true);
+        this._messageTextViewElement = WebInspector.createMessageTextView(WebInspector.UIString("An error occurred trying to read the “%s” table.").format(this.representedObject.name), true);
         this.element.appendChild(this._messageTextViewElement);
     }
 
