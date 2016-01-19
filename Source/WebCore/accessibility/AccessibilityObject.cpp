@@ -715,6 +715,11 @@ RefPtr<Range> AccessibilityObject::selectionRange() const
     return Range::create(*frame->document());
 }
 
+RefPtr<Range> AccessibilityObject::elementRange() const
+{    
+    return AXObjectCache::rangeForNodeContents(node());
+}
+
 String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria)
 {
     ASSERT(criteria);
@@ -1203,7 +1208,7 @@ VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosi
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-static bool replacedNodeNeedsCharacter(Node* replacedNode)
+bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
 {
     // we should always be given a rendered node and a replaced node, but be safe
     // replaced nodes are either attachments (widgets) or images
@@ -1228,7 +1233,19 @@ static RenderListItem* renderListItemContainerForNode(Node* node)
     }
     return nullptr;
 }
+
+static String listMarkerTextForNode(Node* node)
+{
+    RenderListItem* listItem = renderListItemContainerForNode(node);
+    if (!listItem)
+        return String();
     
+    // If this is in a list item, we need to manually add the text for the list marker
+    // because a RenderListMarker does not have a Node equivalent and thus does not appear
+    // when iterating text.
+    return listItem->markerTextWithSuffix();
+}
+
 // Returns the text associated with a list marker if this node is contained within a list item.
 String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& visiblePositionStart) const
 {
@@ -1236,14 +1253,36 @@ String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const V
     if (!isStartOfLine(visiblePositionStart))
         return String();
 
-    RenderListItem* listItem = renderListItemContainerForNode(node);
-    if (!listItem)
+    return listMarkerTextForNode(node);
+}
+
+String AccessibilityObject::stringForRange(RefPtr<Range> range) const
+{
+    if (!range)
         return String();
-        
-    // If this is in a list item, we need to manually add the text for the list marker 
-    // because a RenderListMarker does not have a Node equivalent and thus does not appear
-    // when iterating text.
-    return listItem->markerTextWithSuffix();
+    
+    TextIterator it(range.get());
+    if (it.atEnd())
+        return String();
+    
+    StringBuilder builder;
+    for (; !it.atEnd(); it.advance()) {
+        // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
+        if (it.text().length()) {
+            // Add a textual representation for list marker text.
+            builder.append(listMarkerTextForNode(it.node()));
+            it.appendTextToStringBuilder(builder);
+        } else {
+            // locate the node and starting offset for this replaced range
+            Node& node = it.range()->startContainer();
+            ASSERT(&node == &it.range()->endContainer());
+            int offset = it.range()->startOffset();
+            if (replacedNodeNeedsCharacter(node.traverseToChildAt(offset)))
+                builder.append(objectReplacementCharacter);
+        }
+    }
+    
+    return builder.toString();
 }
 
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const

@@ -1,3 +1,13 @@
+2016-01-18  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] Implement next/previous text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=152728
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker):
+
 2016-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Add testair to the build system

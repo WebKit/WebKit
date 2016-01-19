@@ -1,3 +1,77 @@
+2016-01-18  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] Implement next/previous text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=152728
+
+        Reviewed by Chris Fleizach.
+
+        The existing AXTextMarker based calls are implemented using visible position, and that introduced
+        some bugs which make VoiceOver working incorrectly on Mac sometimes. Since TextIterator uses rendering
+        position, we tried to use it to refactor those AXTextMarker based calls.
+        In this patch, I implemented functions to navigate to previous/next text marker using Range and TextIterator.
+        Also added a conversion between visible position and character offset to make sure unconverted text marker
+        related functions are still working correctly.
+
+        Tests: accessibility/mac/previous-next-text-marker.html
+               accessibility/mac/text-marker-with-user-select-none.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::lengthForRange):
+        (WebCore::AXObjectCache::rangeForNodeContents):
+        (WebCore::characterOffsetsInOrder):
+        (WebCore::AXObjectCache::rangeForUnorderedCharacterOffsets):
+        (WebCore::AXObjectCache::setTextMarkerDataWithCharacterOffset):
+        (WebCore::AXObjectCache::startOrEndTextMarkerDataForRange):
+        (WebCore::AXObjectCache::textMarkerDataForCharacterOffset):
+        (WebCore::AXObjectCache::nextNode):
+        (WebCore::AXObjectCache::previousNode):
+        (WebCore::AXObjectCache::visiblePositionFromCharacterOffset):
+        (WebCore::AXObjectCache::characterOffsetFromVisiblePosition):
+        (WebCore::AXObjectCache::accessibilityObjectForTextMarkerData):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        * accessibility/AXObjectCache.h:
+        (WebCore::CharacterOffset::CharacterOffset):
+        (WebCore::CharacterOffset::remaining):
+        (WebCore::CharacterOffset::isNull):
+        (WebCore::AXObjectCache::setNodeInUse):
+        (WebCore::AXObjectCache::removeNodeForUse):
+        (WebCore::AXObjectCache::isNodeInUse):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectionRange):
+        (WebCore::AccessibilityObject::elementRange):
+        (WebCore::AccessibilityObject::selectText):
+        (WebCore::AccessibilityObject::lineRangeForPosition):
+        (WebCore::AccessibilityObject::replacedNodeNeedsCharacter):
+        (WebCore::renderListItemContainerForNode):
+        (WebCore::listMarkerTextForNode):
+        (WebCore::AccessibilityObject::listMarkerTextForNodeAndPosition):
+        (WebCore::AccessibilityObject::stringForRange):
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange):
+        (WebCore::replacedNodeNeedsCharacter): Deleted.
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::visiblePositionRange):
+        (WebCore::AccessibilityObject::visiblePositionRangeForLine):
+        (WebCore::AccessibilityObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityObject::setSelectedVisiblePositionRange):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (isTextMarkerIgnored):
+        (-[WebAccessibilityObjectWrapper accessibilityObjectForTextMarker:]):
+        (accessibilityObjectForTextMarker):
+        (-[WebAccessibilityObjectWrapper textMarkerRangeFromRange:]):
+        (textMarkerRangeFromRange):
+        (-[WebAccessibilityObjectWrapper startOrEndTextMarkerForRange:isStart:]):
+        (startOrEndTextmarkerForRange):
+        (-[WebAccessibilityObjectWrapper nextTextMarkerForNode:offset:]):
+        (-[WebAccessibilityObjectWrapper previousTextMarkerForNode:offset:]):
+        (-[WebAccessibilityObjectWrapper textMarkerForNode:offset:]):
+        (textMarkerForCharacterOffset):
+        (-[WebAccessibilityObjectWrapper rangeForTextMarkerRange:]):
+        (-[WebAccessibilityObjectWrapper characterOffsetForTextMarker:]):
+        (textMarkerForVisiblePosition):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2016-01-18  Olivier Blin  <olivier.blin@softathome.com>
 
         [Mac] Remove unused playerToPrivateMap()

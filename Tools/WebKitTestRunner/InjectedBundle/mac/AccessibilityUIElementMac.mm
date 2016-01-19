@@ -1801,7 +1801,8 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementF
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     id uiElement = [m_element accessibilityAttributeValue:@"AXUIElementForTextMarker" forParameter:(id)marker->platformTextMarker()];
-    return AccessibilityUIElement::create(uiElement);
+    if (uiElement)
+        return AccessibilityUIElement::create(uiElement);
     END_AX_OBJC_EXCEPTIONS
     
     return nullptr;

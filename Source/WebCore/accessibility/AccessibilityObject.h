@@ -817,6 +817,9 @@ public:
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }
     
+    RefPtr<Range> elementRange() const;
+    static bool replacedNodeNeedsCharacter(Node* replacedNode);
+    
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const;
     VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const;
     VisiblePositionRange positionOfRightWord(const VisiblePosition&) const;
@@ -829,6 +832,7 @@ public:
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const;
 
     String stringForVisiblePositionRange(const VisiblePositionRange&) const;
+    String stringForRange(RefPtr<Range>) const;
     virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const { return IntRect(); }
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const { }

@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<style>
+.userselect { user-select: none; -webkit-user-select: none; }
+</style>
+<body id="body">
+
+<div id="text" tabindex="0">text</div>
+<br>
+text1
+
+<div id="text2">
+c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px; height: 100px;"> d
+</div>
+
+<input type="password" id="psw">
+
+<div class="userselect" id="text3">can't select</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the next/previous text marker functions are implemented correctly.");
+    
+    if (window.accessibilityController) {
+        
+        var text = accessibilityController.accessibleElementById("text");
+        // Get the actual text node.
+        text = text.childAtIndex(0);
+        
+        // Check that we can get the start/end marker for this range.
+        var textMarkerRange = text.textMarkerRangeForElement(text);
+        shouldBe("text.textMarkerRangeLength(textMarkerRange)", "4");
+        
+        var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        var endMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange);
+        shouldBeTrue("text.accessibilityElementForTextMarker(startMarker).isEqual(text)");
+        shouldBeTrue("text.accessibilityElementForTextMarker(endMarker).isEqual(text)");
+        
+        // Check next text marker. (Advance 5 characters, it will land at <br>.)
+        var currentMarker = startMarker;
+        for (var i = 0; i < 5; i++) {
+            currentMarker = text.nextTextMarker(currentMarker);
+        }
+        var element = text.accessibilityElementForTextMarker(currentMarker);
+        shouldBe("element.stringValue", "'AXValue: '");
+        
+        // Advance one more character, it will lande at "t" in "text1".
+        currentMarker = text.nextTextMarker(currentMarker);
+        element = text.accessibilityElementForTextMarker(currentMarker);
+        shouldBe("element.stringValue", "'AXValue: text1'");
+        
+        // Check previous text marker. (Traverse backwards one character, it will land at <br>.)
+        currentMarker = text.previousTextMarker(currentMarker);
+        element = text.accessibilityElementForTextMarker(currentMarker);
+        shouldBe("element.stringValue", "'AXValue: '");
+        
+        // Traverse backwards one more character, it will land at the last character of "text".
+        currentMarker = text.previousTextMarker(currentMarker);
+        element = text.accessibilityElementForTextMarker(currentMarker);
+        shouldBe("element.stringValue", "'AXValue: text'");
+        
+        // Check the case with replaced node
+        var text2 = accessibilityController.accessibleElementById("text2");
+        var textMarkerRange2 = text2.textMarkerRangeForElement(text2);
+        shouldBe("text2.textMarkerRangeLength(textMarkerRange2)", "5");
+        var str = text2.stringForTextMarkerRange(textMarkerRange2).replace(String.fromCharCode(65532), "[ATTACHMENT]");
+        debug("Object string for range: " + str);
+        
+        currentMarker = text2.startTextMarkerForTextMarkerRange(textMarkerRange2);
+        // Advance 4 characters, it will land at first character of " d".
+        for (var i = 0; i < 4; i++) {
+            currentMarker = text2.nextTextMarker(currentMarker);
+            element = text2.accessibilityElementForTextMarker(currentMarker);
+            debug(element.stringValue);
+        }
+        
+        // Traverse backwards 4 characters, it will land at the last character of "text1".
+        for (var i = 0; i < 4; i++) {
+            currentMarker = text2.previousTextMarker(currentMarker);
+            element = text2.accessibilityElementForTextMarker(currentMarker);
+            debug(element.stringValue);
+        }
+        
+        // Check the case with user-select:none, nextTextMarker/previousTextMarker should still work.
+        var text3 = accessibilityController.accessibleElementById("text3");
+        text3 = text3.childAtIndex(0);
+        // Advance to land at user-select:none node.
+        var marker1, marker2;
+        for (var i = 0; i < 17; i++) {
+            currentMarker = text3.nextTextMarker(currentMarker);
+            // i == 13, it should land on "e", and i == 16, it should land on "t"
+            if (i == 13) {
+                marker1 = currentMarker;
+            }
+        }
+        marker2 = currentMarker;
+        var markerRange = text3.textMarkerRangeForMarkers(marker1, marker2);
+        shouldBe("text3.stringForTextMarkerRange(markerRange)", "'ect'");
+        // Iterate backwards the second marker for 6 characters, the range should be "sel"
+        for (var i = 0; i < 6; i++) {
+            currentMarker = text3.previousTextMarker(currentMarker);
+        }
+        marker2 = currentMarker;
+        markerRange = text3.textMarkerRangeForMarkers(marker1, marker2);
+        shouldBe("text3.stringForTextMarkerRange(markerRange)", "'sel'");
+
+        // Check the case with password field.
+        var psw = accessibilityController.accessibleElementById("psw");
+        var textMarkerRange3 = psw.textMarkerRangeForElement(psw);
+        var start = psw.startTextMarkerForTextMarkerRange(textMarkerRange3);
+        shouldBeTrue("!psw.accessibilityElementForTextMarker(start)");
+        
+        // Check next/previous text marker call will skip password field
+        // We start from text2 and advance 6 characters, it should skip the password field and land on text3.
+        currentMarker = text2.startTextMarkerForTextMarkerRange(textMarkerRange2);
+        for (var i = 0; i < 6; i++) {
+            currentMarker = text2.nextTextMarker(currentMarker);
+        }
+        shouldBeTrue("text2.accessibilityElementForTextMarker(currentMarker).isEqual(text3)");
+        // Check previous text marker, it should land on " d" node.
+        currentMarker = text2.previousTextMarker(currentMarker);
+        shouldBeTrue("text2.accessibilityElementForTextMarker(currentMarker).isEqual(text2.childAtIndex(2))");
+        
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
