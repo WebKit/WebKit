@@ -73,6 +73,12 @@ void ShufflePair::dump(PrintStream& out) const
 Vector<Inst> emitShuffle(
     Vector<ShufflePair> pairs, std::array<Arg, 2> scratches, Arg::Type type, Value* origin)
 {
+    if (verbose) {
+        dataLog(
+            "Dealing with pairs: ", listDump(pairs), " and scratches ", scratches[0], ", ",
+            scratches[1], "\n");
+    }
+    
     pairs.removeAllMatching(
         [&] (const ShufflePair& pair) -> bool {
             return pair.src() == pair.dst();
@@ -170,10 +176,18 @@ Vector<Inst> emitShuffle(
                 if (verbose)
                     dataLog("It's a rotate.\n");
                 Rotate rotate;
+
+                // The common case is that the rotate does not have fringe. The only way to
+                // check for this is to examine the whole rotate.
+                bool ok;
+                if (currentPairs.last().dst() == originalSrc) {
+                    ok = true;
+                    for (unsigned i = currentPairs.size() - 1; i--;)
+                        ok &= currentPairs[i].dst() == currentPairs[i + 1].src();
+                } else
+                    ok = false;
                 
-                // The common case is that the rotate does not have fringe. When this happens, the
-                // last destination is the first source.
-                if (currentPairs.last().dst() == originalSrc)
+                if (ok)
                     rotate.loop = WTFMove(currentPairs);
                 else {
                     // This is the slow path. The rotate has fringe.

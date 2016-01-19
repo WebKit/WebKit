@@ -1,3 +1,25 @@
+2016-01-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix Air shuffling assertions
+        https://bugs.webkit.org/show_bug.cgi?id=153213
+
+        Reviewed by Saam Barati.
+
+        Fixes some assertions that I was seeing running JSC tests. Adds a new Air test.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::store8):
+        (JSC::MacroAssemblerX86Common::getUnusedRegister):
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::emitShuffle):
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/testair.cpp:
+        (JSC::B3::Air::testShuffleRotateWithFringe):
+        (JSC::B3::Air::testShuffleRotateWithFringeInWeirdOrder):
+        (JSC::B3::Air::testShuffleRotateWithLongFringe):
+        (JSC::B3::Air::run):
+
 2016-01-19  Konstantin Tokarev  <annulen@yandex.ru>
 
         [mips] Logical instructions allow immediates in range 0..0xffff, not 0x7fff

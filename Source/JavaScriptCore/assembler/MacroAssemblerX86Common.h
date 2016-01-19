@@ -733,14 +733,12 @@ public:
 
     void store8(TrustedImm32 imm, Address address)
     {
-        ASSERT(-128 <= imm.m_value && imm.m_value < 128);
-        m_assembler.movb_i8m(imm.m_value, address.offset, address.base);
+        m_assembler.movb_i8m(static_cast<int8_t>(imm.m_value), address.offset, address.base);
     }
 
     void store8(TrustedImm32 imm, BaseIndex address)
     {
-        ASSERT(-128 <= imm.m_value && imm.m_value < 128);
-        m_assembler.movb_i8m(imm.m_value, address.offset, address.base, address.index, address.scale);
+        m_assembler.movb_i8m(static_cast<int8_t>(imm.m_value), address.offset, address.base, address.index, address.scale);
     }
 
     static ALWAYS_INLINE RegisterID getUnusedRegister(BaseIndex address)

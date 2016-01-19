@@ -211,6 +211,11 @@ void lowerAfterRegAlloc(Code& code)
                     pairs.append(pair);
                 }
 
+                // For finding scratch registers, we need to account for the possibility that
+                // the result is dead.
+                if (originalResult.isReg())
+                    liveRegs.set(originalResult.reg());
+
                 gpScratch = getScratches(liveRegs, Arg::GP);
                 fpScratch = getScratches(liveRegs, Arg::FP);
                 

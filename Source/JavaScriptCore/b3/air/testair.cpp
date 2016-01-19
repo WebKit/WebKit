@@ -676,6 +676,51 @@ void testShuffleRotateWithFringe()
     CHECK(things[5] == 3);
 }
 
+void testShuffleRotateWithFringeInWeirdOrder()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    loadConstant(root, 1, Tmp(GPRInfo::regT0));
+    loadConstant(root, 2, Tmp(GPRInfo::regT1));
+    loadConstant(root, 3, Tmp(GPRInfo::regT2));
+    loadConstant(root, 4, Tmp(GPRInfo::regT3));
+    loadConstant(root, 5, Tmp(GPRInfo::regT4));
+    loadConstant(root, 6, Tmp(GPRInfo::regT5));
+    root->append(
+        Shuffle, nullptr,
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT3), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT0), Tmp(GPRInfo::regT1), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT4), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT0), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT2), Tmp(GPRInfo::regT5), Arg::widthArg(Arg::Width32),
+        Tmp(GPRInfo::regT1), Tmp(GPRInfo::regT2), Arg::widthArg(Arg::Width32));
+
+    int32_t things[6];
+    Tmp base = code.newTmp(Arg::GP);
+    root->append(Move, nullptr, Arg::imm64(bitwise_cast<intptr_t>(&things)), base);
+    root->append(Move32, nullptr, Tmp(GPRInfo::regT0), Arg::addr(base, 0 * sizeof(int32_t)));
+    root->append(Move32, nullptr, Tmp(GPRInfo::regT1), Arg::addr(base, 1 * sizeof(int32_t)));
+    root->append(Move32, nullptr, Tmp(GPRInfo::regT2), Arg::addr(base, 2 * sizeof(int32_t)));
+    root->append(Move32, nullptr, Tmp(GPRInfo::regT3), Arg::addr(base, 3 * sizeof(int32_t)));
+    root->append(Move32, nullptr, Tmp(GPRInfo::regT4), Arg::addr(base, 4 * sizeof(int32_t)));
+    root->append(Move32, nullptr, Tmp(GPRInfo::regT5), Arg::addr(base, 5 * sizeof(int32_t)));
+    root->append(Move, nullptr, Arg::imm(0), Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    memset(things, 0, sizeof(things));
+    
+    CHECK(!compileAndRun<int>(proc));
+
+    CHECK(things[0] == 3);
+    CHECK(things[1] == 1);
+    CHECK(things[2] == 2);
+    CHECK(things[3] == 1);
+    CHECK(things[4] == 2);
+    CHECK(things[5] == 3);
+}
+
 void testShuffleRotateWithLongFringe()
 {
     B3::Procedure proc;
@@ -1625,6 +1670,7 @@ void run(const char* filter)
     RUN(testShuffleTreeShiftOtherBackward());
     RUN(testShuffleMultipleShifts());
     RUN(testShuffleRotateWithFringe());
+    RUN(testShuffleRotateWithFringeInWeirdOrder());
     RUN(testShuffleRotateWithLongFringe());
     RUN(testShuffleMultipleRotates());
     RUN(testShuffleShiftAndRotate());
