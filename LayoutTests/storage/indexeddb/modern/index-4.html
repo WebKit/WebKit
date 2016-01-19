@@ -1,97 +1,10 @@
-This tests that indexes added to an object store with existing records are populated upon their creation.<br>
-<div id="logger"></div>
-<script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function done()
-{
-    log("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-function log(message)
-{
-    document.getElementById("logger").innerHTML += message + "<br>";
-}
-
-var index;
-var objectStore;
-
-function checkIndexValues()
-{
-    var countRequest = index.count();
-    countRequest.onsuccess = function() {
-        log("Count is: " + countRequest.result);
-    }
-
-    var cursorRequest = index.openCursor();
-    cursorRequest.onsuccess = function() {
-        var cursor = cursorRequest.result;
-        if (!cursor) {
-            done();
-            return;
-        }
-        log("Cursor at record: " + cursor.key + " / " + cursor.primaryKey);
-        cursor.continue();
-
-    }
-    cursorRequest.onerror = function(e) {
-        log("Unexpected error opening or iterating cursor");
-        logCursor(cursorRequest.result);
-        done();
-    } 
-}
-
-var createRequest = window.indexedDB.open("Index4Database", 1);
-createRequest.onupgradeneeded = function(event) {
-    log("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-
-    var versionTransaction = createRequest.transaction;
-    var database = event.target.result;
-    objectStore = database.createObjectStore("TestObjectStore");
-    objectStore.put({ bar: "A" }, 1);
-    objectStore.put({ bar: "A" }, 2);
-    objectStore.put({ bar: "B" }, 3);
-    objectStore.put({ bar: "B" }, 4);
-    objectStore.put({ bar: "C" }, 5);
-    objectStore.put({ bar: "C" }, 6);
-    objectStore.put({ bar: "D" }, 7);
-    objectStore.put({ bar: "D" }, 8);
-    objectStore.put({ bar: "E" }, 9);
-    objectStore.put({ bar: "E" }, 10);
-    objectStore.put({ bar: "F" }, 11);
-    objectStore.put({ bar: "F" }, 12);
-    objectStore.put({ bar: "G" }, 13);
-    objectStore.put({ bar: "G" }, 14);    
-    objectStore.put({ bar: "H" }, 15);
-    objectStore.put({ bar: "H" }, 16);  
-    objectStore.put({ bar: "I" }, 17);
-    objectStore.put({ bar: "I" }, 18);  
-
-    // This index should be populated with the above values upon its creation.
-    index = objectStore.createIndex("TestIndex1", "bar");
-    
-    checkIndexValues();
-    
-    versionTransaction.onabort = function(event) {
-        log("Initial upgrade versionchange transaction unexpected aborted");
-        done();
-    }
-
-    versionTransaction.oncomplete = function(event) {
-        log("Initial upgrade versionchange transaction complete");
-        done();
-    }
-
-    versionTransaction.onerror = function(event) {
-        log("Initial upgrade versionchange transaction unexpected error" + event);
-        done();
-    }
-}
-
-</script>
+<script src="resources/index-4.js"></script>
+</body>
+</html>

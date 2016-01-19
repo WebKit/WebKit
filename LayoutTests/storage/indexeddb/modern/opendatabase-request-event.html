@@ -1,47 +1,9 @@
-This test calls open on window.indexedDB in various ways, verifying that IDBOpenDBRequest objects are returned when expected and exceptions are thrown when expected.
-<script>
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function done()
-{
-    alert("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-try {
-    window.indexedDB.open("TestDatabase", 0);
-} catch (e) {
-    alert("Caught exception " + e);
-}
-
-try {
-    window.indexedDB.open("TestDatabase", -1);
-} catch (e) {
-    alert("Caught exception " + e);
-}
-
-var request = window.indexedDB.open("TestDatabase");
-alert(request);
-
-request.onsuccess = function()
-{
-	alert("success");
-	done();
-}
-request.onerror = function(e)
-{
-	alert("error " + e);
-	done();
-}
-
-request.onupgradeneeded = function(e)
-{
-    alert("upgradeneeded: old version - " + e.oldVersion + " new version - " + e.newVersion);
-	done();
-}
-</script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<script src="resources/opendatabase-request-event.js"></script>
+</body>
+</html>

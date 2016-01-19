@@ -1,20 +1,9 @@
-This test calls deleteDatabase on window.indexedDB and verifies that an IDBOpenDBRequest object is returned.
-<script>
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function done()
-{
-    alert("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-var request = window.indexedDB.deleteDatabase("TestDatabase");
-alert(request);
-
-done();
-</script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<script src="resources/deletedatabase-request.js"></script>
+</body>
+</html>

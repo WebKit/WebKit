@@ -1,85 +1,10 @@
-This tests creating an index on an object store that already has records, and those records would violate the unique constraint of the index.<br>
-(The index creation should fail).<br>
-<div id="logger"></div>
-<script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function done()
-{
-    log("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-function log(message)
-{
-    document.getElementById("logger").innerHTML += message + "<br>";
-}
-
-var index;
-var objectStore;
-
-function checkIndexValues()
-{
-    var countRequest = index.count();
-    countRequest.onsuccess = function() {
-        log("Count is: " + countRequest.result);
-    }
-    countRequest.onerror = function(e) {
-        log("Error getting cursor count");
-        e.stopPropagation();
-    }
-
-    var cursorRequest = index.openCursor();
-    cursorRequest.onsuccess = function() {
-        var cursor = cursorRequest.result;
-        log("Cursor at record: " + cursor.key + " / " + cursor.primaryKey);
-        
-        if (cursor.key != undefined)
-            cursor.continue();
-        else
-            done();
-    }
-    cursorRequest.onerror = function(e) {
-        log("Error opening or iterating cursor");
-        e.stopPropagation();
-    } 
-}
-
-var createRequest = window.indexedDB.open("Index5Database", 1);
-createRequest.onupgradeneeded = function(event) {
-    log("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-
-    var versionTransaction = createRequest.transaction;
-    var database = event.target.result;
-    objectStore = database.createObjectStore("TestObjectStore");
-    objectStore.put({ bar: "A" }, 1);
-    objectStore.put({ bar: "A" }, 2);
-
-    // This index should be populated with the above values upon its creation, but that should fail because
-    // of constraint violations.
-    index = objectStore.createIndex("TestIndex1", "bar", { unique: true });
-    
-    checkIndexValues();
-    
-    versionTransaction.onabort = function(event) {
-        log("Initial upgrade versionchange transaction aborted (expected because index creation failed, and that should've caused transaction abort)");
-        done();
-    }
-
-    versionTransaction.oncomplete = function(event) {
-        log("Initial upgrade versionchange transaction unexpected complete");
-        done();
-    }
-
-    versionTransaction.onerror = function(event) {
-        log("Initial upgrade versionchange transaction unexpected error" + event);
-        done();
-    }
-}
-
-</script>
+<script src="resources/index-5.js"></script>
+</body>
+</html>

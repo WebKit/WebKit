@@ -1,4 +1,8 @@
 This test exercises the readonly attributes on an IDBObjectStore.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 First upgrade needed: Old version - 0 New version - 1
 [object IDBTransaction] - versionchange
 [object IDBDatabase]
@@ -26,5 +30,7 @@ Bar index
 Baz index
 Foo index
 readonly transaction complete
-Done
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

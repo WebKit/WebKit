@@ -1,3 +1,8 @@
+This test creates some object stores, putting some values in them, committing the transaction. In a new transaction, it then overwrites those values, but then aborts the transaction. Finally it verifies everything is set up from the first transaction, and nothing from the aborted one committed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 ALERT: First upgrade needed: Old version - 0 New version - 1
 ALERT: [object IDBTransaction] - versionchange
 ALERT: [object IDBDatabase]
@@ -17,8 +22,7 @@ ALERT: [object IDBDatabase]
 ALERT: get1 'foo' succeeded - value was 'bar'
 ALERT: get2 'far' succeeded - value was 'undefined'
 ALERT: Third version change transaction complete
-ALERT: Done
-This test creates some object stores, putting some values in them, committing the transaction.
-In a new transaction, it then overwrites those values, but then aborts the transaction.
-Finally it verifies everything is set up from the first transaction, and nothing from the aborted one committed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

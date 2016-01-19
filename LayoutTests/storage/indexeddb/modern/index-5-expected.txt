@@ -1,8 +1,13 @@
-This tests creating an index on an object store that already has records, and those records would violate the unique constraint of the index.
-(The index creation should fail).
+This tests creating an index on an object store that already has records, and those records would violate the unique constraint of the index. (The index creation should fail).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 Initial upgrade needed: Old version - 0 New version - 1
 Error getting cursor count
 Error opening or iterating cursor
 Initial upgrade versionchange transaction aborted (expected because index creation failed, and that should've caused transaction abort)
-Done
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

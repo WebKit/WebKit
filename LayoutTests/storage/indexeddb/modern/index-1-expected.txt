@@ -1,4 +1,8 @@
 This tests the expected values from some more complex index situations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 Initial upgrade needed: Old version - 0 New version - 1
 get "good" result is: [object Object]
 bar is good
@@ -132,5 +136,7 @@ getKey "This is to test,multiEntry indexes" result is: undefined
 count result is: 11
 
 Initial upgrade versionchange transaction complete
-Done
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

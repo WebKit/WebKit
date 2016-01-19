@@ -1,65 +1,10 @@
-This test makes sure that IDBRequest.readyState returns expected values.<br>
-<div id="logger"></div>
-<script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function done()
-{
-    log("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-function log(message)
-{
-    document.getElementById("logger").innerHTML += message + "<br>";
-}
-
-var createRequest = window.indexedDB.open("RequestReadyStateDatabase", 1);
-log("After calling indexedDB.open(), create request readyState is: " + createRequest.readyState);
-
-createRequest.onupgradeneeded = function(event) {
-    log("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-    log("Create request readyState is: " + createRequest.readyState);
-
-    var versionTransaction = createRequest.transaction;
-    var database = event.target.result;
-    var objectStore = database.createObjectStore("TestObjectStore");
-
-    for (var i = 0; i < 2; ++i)
-        objectStore.put("Record " + i, i);
-    
-    var request = objectStore.openCursor();
-    log("After calling openCursor, request readyState is: " + request.readyState);
-    request.onsuccess = function() {
-        log("After successful opening of the cursor, request readyState is: " + request.readyState);
-
-        request.onsuccess = function() {
-            log("After continue() completed, request readyState is: " + request.readyState);
-        }
-
-        request.result.continue();
-        log("After calling continue(), request readyState is: " + request.readyState);
-    }
-          
-    versionTransaction.onabort = function(event) {
-        log("Initial upgrade versionchange transaction unexpected aborted");
-        done();
-    }
-
-    versionTransaction.oncomplete = function(event) {
-        log("Initial upgrade versionchange transaction complete");
-        done();
-    }
-
-    versionTransaction.onerror = function(event) {
-        log("Initial upgrade versionchange transaction unexpected error" + event);
-        done();
-    }
-}
-
-</script>
+<script src="resources/request-readystate.js"></script>
+</body>
+</html>

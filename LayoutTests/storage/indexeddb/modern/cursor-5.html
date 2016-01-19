@@ -1,77 +1,10 @@
-This tests iterating a "next" cursor in a read-write transaction while changing records.<br>
-<div id="logger"></div>
-<script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function done()
-{
-    log("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-function log(message)
-{
-    document.getElementById("logger").innerHTML += message + "<br>";
-}
-
-var createRequest = window.indexedDB.open("Cursor5Database", 1);
-
-createRequest.onupgradeneeded = function(event) {
-    log("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-
-    var versionTransaction = createRequest.transaction;
-    var database = event.target.result;
-    var objectStore = database.createObjectStore("TestObjectStore");
-
-    for (var i = 0; i < 3; ++i)
-        objectStore.put("Record " + i, i);
-    
-    var request = objectStore.openCursor();
-    request.onsuccess = function() {
-        log("Cursor open at key " + request.result.key);
-
-        // This tests deleting the current record out of underneath the cursor.
-        // Its current key should be 0, after an iteration its next key should be 1.
-        objectStore.delete(0).onsuccess = function() {
-            log("Record 0 deleted, even though that's where the cursor currently points.");
-        }
-        
-        // Now that cursor iteration has begun, manually delete and then replace a record 
-        // that will eventually be iterated to, making sure the new value is picked up. 
-        objectStore.delete(2);
-        objectStore.put("Scary new actual record!", 2);
-    
-        request.onsuccess = function() {
-            log("Cursor iterated to key " + request.result.key);
-            
-            request.onsuccess = function() {
-                log("Cursor iterated to key " + request.result.key + " with value '" + request.result.value + "'");
-            }
-            
-            request.result.continue();
-        }
-        request.result.continue();
-    }
-          
-    versionTransaction.onabort = function(event) {
-        log("Initial upgrade versionchange transaction unexpected aborted");
-        done();
-    }
-
-    versionTransaction.oncomplete = function(event) {
-        log("Initial upgrade versionchange transaction complete");
-        done();
-    }
-
-    versionTransaction.onerror = function(event) {
-        log("Initial upgrade versionchange transaction unexpected error" + event);
-        done();
-    }
-}
-
-</script>
+<script src="resources/cursor-5.js"></script>
+</body>
+</html>

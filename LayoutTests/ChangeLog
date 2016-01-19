@@ -1,3 +1,220 @@
+2016-01-19  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Split all storage/indexeddb/modern tests into separate HTML + JS format.
+        https://bugs.webkit.org/show_bug.cgi?id=153251
+
+        Reviewed by Sam Weinig.
+
+        * storage/indexeddb/modern/abort-requests-cancelled-expected.txt:
+        * storage/indexeddb/modern/abort-requests-cancelled.html:
+        * storage/indexeddb/modern/aborted-put-expected.txt:
+        * storage/indexeddb/modern/aborted-put.html:
+        * storage/indexeddb/modern/autoincrement-abort-expected.txt:
+        * storage/indexeddb/modern/autoincrement-abort.html:
+        * storage/indexeddb/modern/basic-add-expected.txt:
+        * storage/indexeddb/modern/basic-add.html:
+        * storage/indexeddb/modern/basic-put-expected.txt:
+        * storage/indexeddb/modern/basic-put.html:
+        * storage/indexeddb/modern/create-index-failures-expected.txt:
+        * storage/indexeddb/modern/create-index-failures.html:
+        * storage/indexeddb/modern/createobjectstore-basic-expected.txt:
+        * storage/indexeddb/modern/createobjectstore-basic.html:
+        * storage/indexeddb/modern/createobjectstore-failures-expected.txt:
+        * storage/indexeddb/modern/createobjectstore-failures.html:
+        * storage/indexeddb/modern/cursor-1-expected.txt:
+        * storage/indexeddb/modern/cursor-1.html:
+        * storage/indexeddb/modern/cursor-2-expected.txt:
+        * storage/indexeddb/modern/cursor-2.html:
+        * storage/indexeddb/modern/cursor-3-expected.txt:
+        * storage/indexeddb/modern/cursor-3.html:
+        * storage/indexeddb/modern/cursor-4-expected.txt:
+        * storage/indexeddb/modern/cursor-4.html:
+        * storage/indexeddb/modern/cursor-5-expected.txt:
+        * storage/indexeddb/modern/cursor-5.html:
+        * storage/indexeddb/modern/cursor-6-expected.txt:
+        * storage/indexeddb/modern/cursor-6.html:
+        * storage/indexeddb/modern/cursor-7-expected.txt:
+        * storage/indexeddb/modern/cursor-7.html:
+        * storage/indexeddb/modern/cursor-8-expected.txt:
+        * storage/indexeddb/modern/cursor-8.html:
+        * storage/indexeddb/modern/date-basic-expected.txt:
+        * storage/indexeddb/modern/date-basic.html:
+        * storage/indexeddb/modern/deletedatabase-1-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-1.html:
+        * storage/indexeddb/modern/deletedatabase-2-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-2.html:
+        * storage/indexeddb/modern/deletedatabase-null-name-exception-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-null-name-exception.html:
+        * storage/indexeddb/modern/deletedatabase-request-event-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-request-event.html:
+        * storage/indexeddb/modern/deletedatabase-request-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-request.html:
+        * storage/indexeddb/modern/deleteindex-1-expected.txt:
+        * storage/indexeddb/modern/deleteindex-1.html:
+        * storage/indexeddb/modern/deleteindex-2-expected.txt:
+        * storage/indexeddb/modern/deleteindex-2.html:
+        * storage/indexeddb/modern/deleteobjectstore-1-expected.txt:
+        * storage/indexeddb/modern/deleteobjectstore-1.html:
+        * storage/indexeddb/modern/double-abort-expected.txt:
+        * storage/indexeddb/modern/double-abort.html:
+        * storage/indexeddb/modern/double-open-expected.txt:
+        * storage/indexeddb/modern/double-open.html:
+        * storage/indexeddb/modern/get-index-failures-expected.txt:
+        * storage/indexeddb/modern/get-index-failures.html:
+        * storage/indexeddb/modern/get-keyrange-expected.txt:
+        * storage/indexeddb/modern/get-keyrange.html:
+        * storage/indexeddb/modern/idbdatabase-deleteobjectstore-failures-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-deleteobjectstore-failures.html:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures.html:
+        * storage/indexeddb/modern/idbindex-properties-basic-expected.txt:
+        * storage/indexeddb/modern/idbindex-properties-basic.html:
+        * storage/indexeddb/modern/idbobjectstore-clear-1-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-clear-1.html:
+        * storage/indexeddb/modern/idbobjectstore-clear-2-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-clear-2.html:
+        * storage/indexeddb/modern/idbobjectstore-count-1-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-count-1.html:
+        * storage/indexeddb/modern/idbobjectstore-count-failures-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-count-failures.html:
+        * storage/indexeddb/modern/idbobjectstore-delete-1-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-delete-1.html:
+        * storage/indexeddb/modern/idbobjectstore-delete-2-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-delete-2.html:
+        * storage/indexeddb/modern/idbobjectstore-delete-failures-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-delete-failures.html:
+        * storage/indexeddb/modern/idbobjectstore-get-failures-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-get-failures.html:
+        * storage/indexeddb/modern/idbobjectstore-put-and-clear-failures-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-put-and-clear-failures.html:
+        * storage/indexeddb/modern/idbtransaction-objectstore-failures-expected.txt:
+        * storage/indexeddb/modern/idbtransaction-objectstore-failures.html:
+        * storage/indexeddb/modern/index-1-expected.txt:
+        * storage/indexeddb/modern/index-1.html:
+        * storage/indexeddb/modern/index-2-expected.txt:
+        * storage/indexeddb/modern/index-2.html:
+        * storage/indexeddb/modern/index-3-expected.txt:
+        * storage/indexeddb/modern/index-3.html:
+        * storage/indexeddb/modern/index-4-expected.txt:
+        * storage/indexeddb/modern/index-4.html:
+        * storage/indexeddb/modern/index-5-expected.txt:
+        * storage/indexeddb/modern/index-5.html:
+        * storage/indexeddb/modern/index-cursor-1-expected.txt:
+        * storage/indexeddb/modern/index-cursor-1.html:
+        * storage/indexeddb/modern/index-cursor-2-expected.txt:
+        * storage/indexeddb/modern/index-cursor-2.html:
+        * storage/indexeddb/modern/index-cursor-3-expected.txt:
+        * storage/indexeddb/modern/index-cursor-3.html:
+        * storage/indexeddb/modern/index-get-count-basic-expected.txt:
+        * storage/indexeddb/modern/index-get-count-basic.html:
+        * storage/indexeddb/modern/index-get-count-failures-expected.txt:
+        * storage/indexeddb/modern/index-get-count-failures.html:
+        * storage/indexeddb/modern/keypath-basic-expected.txt:
+        * storage/indexeddb/modern/keypath-basic.html:
+        * storage/indexeddb/modern/objectstore-attributes-expected.txt:
+        * storage/indexeddb/modern/objectstore-attributes.html:
+        * storage/indexeddb/modern/objectstore-cursor-advance-failures-expected.txt:
+        * storage/indexeddb/modern/objectstore-cursor-advance-failures.html:
+        * storage/indexeddb/modern/objectstore-cursor-continue-failures-expected.txt:
+        * storage/indexeddb/modern/objectstore-cursor-continue-failures.html:
+        * storage/indexeddb/modern/opencursor-failures-expected.txt:
+        * storage/indexeddb/modern/opencursor-failures.html:
+        * storage/indexeddb/modern/opendatabase-request-event-expected.txt:
+        * storage/indexeddb/modern/opendatabase-request-event.html:
+        * storage/indexeddb/modern/opendatabase-request-expected.txt:
+        * storage/indexeddb/modern/opendatabase-request.html:
+        * storage/indexeddb/modern/opendatabase-success-after-versionchange-expected.txt:
+        * storage/indexeddb/modern/opendatabase-success-after-versionchange.html:
+        * storage/indexeddb/modern/opendatabase-versions-expected.txt:
+        * storage/indexeddb/modern/opendatabase-versions.html:
+        * storage/indexeddb/modern/request-readystate-expected.txt:
+        * storage/indexeddb/modern/request-readystate.html:
+        * storage/indexeddb/modern/resources/abort-requests-cancelled.js: Copied from LayoutTests/storage/indexeddb/modern/abort-requests-cancelled.html.
+        * storage/indexeddb/modern/resources/aborted-put.js: Copied from LayoutTests/storage/indexeddb/modern/aborted-put.html.
+        * storage/indexeddb/modern/resources/autoincrement-abort.js: Copied from LayoutTests/storage/indexeddb/modern/autoincrement-abort.html.
+        * storage/indexeddb/modern/resources/basic-add.js: Copied from LayoutTests/storage/indexeddb/modern/basic-add.html.
+        * storage/indexeddb/modern/resources/basic-put.js: Copied from LayoutTests/storage/indexeddb/modern/basic-put.html.
+        * storage/indexeddb/modern/resources/create-index-failures.js: Copied from LayoutTests/storage/indexeddb/modern/create-index-failures.html.
+        * storage/indexeddb/modern/resources/createobjectstore-basic.js: Copied from LayoutTests/storage/indexeddb/modern/createobjectstore-basic.html.
+        * storage/indexeddb/modern/resources/createobjectstore-failures.js: Copied from LayoutTests/storage/indexeddb/modern/createobjectstore-failures.html.
+        * storage/indexeddb/modern/resources/cursor-1.js: Copied from LayoutTests/storage/indexeddb/modern/cursor-1.html.
+        * storage/indexeddb/modern/resources/cursor-2.js: Copied from LayoutTests/storage/indexeddb/modern/cursor-2.html.
+        * storage/indexeddb/modern/resources/cursor-3.js: Copied from LayoutTests/storage/indexeddb/modern/cursor-3.html.
+        * storage/indexeddb/modern/resources/cursor-4.js: Copied from LayoutTests/storage/indexeddb/modern/cursor-4.html.
+        * storage/indexeddb/modern/resources/cursor-5.js: Copied from LayoutTests/storage/indexeddb/modern/cursor-5.html.
+        * storage/indexeddb/modern/resources/cursor-6.js: Copied from LayoutTests/storage/indexeddb/modern/cursor-6.html.
+        * storage/indexeddb/modern/resources/cursor-7.js: Copied from LayoutTests/storage/indexeddb/modern/cursor-7.html.
+        * storage/indexeddb/modern/resources/cursor-8.js: Copied from LayoutTests/storage/indexeddb/modern/cursor-8.html.
+        * storage/indexeddb/modern/resources/date-basic.js: Copied from LayoutTests/storage/indexeddb/modern/date-basic.html.
+        * storage/indexeddb/modern/resources/deletedatabase-1.js: Copied from LayoutTests/storage/indexeddb/modern/deletedatabase-1.html.
+        * storage/indexeddb/modern/resources/deletedatabase-2.js: Copied from LayoutTests/storage/indexeddb/modern/deletedatabase-2.html.
+        * storage/indexeddb/modern/resources/deletedatabase-null-name-exception.js: Added.
+        * storage/indexeddb/modern/resources/deletedatabase-request-event.js: Copied from LayoutTests/storage/indexeddb/modern/deletedatabase-request-event.html.
+        * storage/indexeddb/modern/resources/deletedatabase-request.js: Added.
+        * storage/indexeddb/modern/resources/deleteindex-1.js: Copied from LayoutTests/storage/indexeddb/modern/deleteindex-1.html.
+        * storage/indexeddb/modern/resources/deleteindex-2.js: Copied from LayoutTests/storage/indexeddb/modern/deleteindex-2.html.
+        * storage/indexeddb/modern/resources/deleteobjectstore-1.js: Copied from LayoutTests/storage/indexeddb/modern/deleteobjectstore-1.html.
+        * storage/indexeddb/modern/resources/double-abort.js: Copied from LayoutTests/storage/indexeddb/modern/double-abort.html.
+        * storage/indexeddb/modern/resources/double-open.js: Added.
+        * storage/indexeddb/modern/resources/get-index-failures.js: Copied from LayoutTests/storage/indexeddb/modern/get-index-failures.html.
+        * storage/indexeddb/modern/resources/get-keyrange.js: Copied from LayoutTests/storage/indexeddb/modern/get-keyrange.html.
+        * storage/indexeddb/modern/resources/idbdatabase-deleteobjectstore-failures.js: Copied from LayoutTests/storage/indexeddb/modern/idbdatabase-deleteobjectstore-failures.html.
+        * storage/indexeddb/modern/resources/idbdatabase-transaction-failures.js: Copied from LayoutTests/storage/indexeddb/modern/idbdatabase-transaction-failures.html.
+        * storage/indexeddb/modern/resources/idbindex-properties-basic.js: Copied from LayoutTests/storage/indexeddb/modern/idbindex-properties-basic.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-clear-1.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-clear-1.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-clear-2.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-clear-2.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-count-1.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-count-1.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-count-failures.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-count-failures.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-delete-1.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-delete-1.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-delete-2.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-delete-2.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-delete-failures.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-delete-failures.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-get-failures.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-get-failures.html.
+        * storage/indexeddb/modern/resources/idbobjectstore-put-and-clear-failures.js: Copied from LayoutTests/storage/indexeddb/modern/idbobjectstore-put-and-clear-failures.html.
+        * storage/indexeddb/modern/resources/idbtransaction-objectstore-failures.js: Added.
+        * storage/indexeddb/modern/resources/index-1.js: Copied from LayoutTests/storage/indexeddb/modern/index-1.html.
+        * storage/indexeddb/modern/resources/index-2.js: Copied from LayoutTests/storage/indexeddb/modern/index-2.html.
+        * storage/indexeddb/modern/resources/index-3.js: Copied from LayoutTests/storage/indexeddb/modern/index-3.html.
+        * storage/indexeddb/modern/resources/index-4.js: Copied from LayoutTests/storage/indexeddb/modern/index-4.html.
+        * storage/indexeddb/modern/resources/index-5.js: Copied from LayoutTests/storage/indexeddb/modern/index-5.html.
+        * storage/indexeddb/modern/resources/index-cursor-1.js: Copied from LayoutTests/storage/indexeddb/modern/index-cursor-1.html.
+        * storage/indexeddb/modern/resources/index-cursor-2.js: Copied from LayoutTests/storage/indexeddb/modern/index-cursor-2.html.
+        * storage/indexeddb/modern/resources/index-cursor-3.js: Copied from LayoutTests/storage/indexeddb/modern/index-cursor-3.html.
+        * storage/indexeddb/modern/resources/index-get-count-basic.js: Copied from LayoutTests/storage/indexeddb/modern/index-get-count-basic.html.
+        * storage/indexeddb/modern/resources/index-get-count-failures.js: Copied from LayoutTests/storage/indexeddb/modern/index-get-count-failures.html.
+        * storage/indexeddb/modern/resources/keypath-basic.js: Copied from LayoutTests/storage/indexeddb/modern/keypath-basic.html.
+        * storage/indexeddb/modern/resources/objectstore-attributes.js: Copied from LayoutTests/storage/indexeddb/modern/objectstore-attributes.html.
+        * storage/indexeddb/modern/resources/objectstore-cursor-advance-failures.js: Copied from LayoutTests/storage/indexeddb/modern/objectstore-cursor-advance-failures.html.
+        * storage/indexeddb/modern/resources/objectstore-cursor-continue-failures.js: Copied from LayoutTests/storage/indexeddb/modern/objectstore-cursor-continue-failures.html.
+        * storage/indexeddb/modern/resources/opencursor-failures.js: Copied from LayoutTests/storage/indexeddb/modern/opencursor-failures.html.
+        * storage/indexeddb/modern/resources/opendatabase-request-event.js: Added.
+        * storage/indexeddb/modern/resources/opendatabase-request.js: Copied from LayoutTests/storage/indexeddb/modern/opendatabase-request.html.
+        * storage/indexeddb/modern/resources/opendatabase-success-after-versionchange.js: Copied from LayoutTests/storage/indexeddb/modern/opendatabase-success-after-versionchange.html.
+        * storage/indexeddb/modern/resources/opendatabase-versions.js: Copied from LayoutTests/storage/indexeddb/modern/opendatabase-versions.html.
+        * storage/indexeddb/modern/resources/request-readystate.js: Added.
+        * storage/indexeddb/modern/resources/transaction-scheduler-1.js: Copied from LayoutTests/storage/indexeddb/modern/transaction-scheduler-1.html.
+        * storage/indexeddb/modern/resources/transaction-scheduler-2.js: Copied from LayoutTests/storage/indexeddb/modern/transaction-scheduler-2.html.
+        * storage/indexeddb/modern/resources/transaction-scheduler-3.js: Copied from LayoutTests/storage/indexeddb/modern/transaction-scheduler-3.html.
+        * storage/indexeddb/modern/resources/transaction-scheduler-5.js: Copied from LayoutTests/storage/indexeddb/modern/transaction-scheduler-5.html.
+        * storage/indexeddb/modern/resources/transaction-scheduler-6.js: Copied from LayoutTests/storage/indexeddb/modern/transaction-scheduler-6.html.
+        * storage/indexeddb/modern/resources/transactions-stop-on-navigation-2.html:
+        * storage/indexeddb/modern/resources/versionchange-abort-then-reopen.js: Copied from LayoutTests/storage/indexeddb/modern/versionchange-abort-then-reopen.html.
+        * storage/indexeddb/modern/resources/versionchange-event.js: Copied from LayoutTests/storage/indexeddb/modern/versionchange-event.html.
+        * storage/indexeddb/modern/transaction-scheduler-1-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-1.html:
+        * storage/indexeddb/modern/transaction-scheduler-2-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-2.html:
+        * storage/indexeddb/modern/transaction-scheduler-3-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-3.html:
+        * storage/indexeddb/modern/transaction-scheduler-5-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-5.html:
+        * storage/indexeddb/modern/transaction-scheduler-6-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-6.html:
+        * storage/indexeddb/modern/transactions-stop-on-navigation-expected.txt:
+        * storage/indexeddb/modern/versionchange-abort-then-reopen-expected.txt:
+        * storage/indexeddb/modern/versionchange-abort-then-reopen.html:
+        * storage/indexeddb/modern/versionchange-event-expected.txt:
+        * storage/indexeddb/modern/versionchange-event.html:
+
 2016-01-19  Zalan Bujtas  <zalan@apple.com>
 
         outline-offset does not work for inlines.

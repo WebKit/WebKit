@@ -1,64 +1,9 @@
-<script>
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-var request = window.indexedDB.open("NewDatabasePutTestDatabase");
-
-function done()
-{
-    alert("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-request.onupgradeneeded = function(event) {
-    alert("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-    
-    var tx = request.transaction;
-    var db = event.target.result;
-
-    alert(tx + " - " + tx.mode);
-    alert(db);
-
-    var os = db.createObjectStore("TestObjectStore");
-    var putRequest = os.put("bar", "foo");
-    
-    putRequest.onsuccess = function(event) {
-        alert("put succeeded - key was '" + putRequest.result + "'");
-        
-        var getRequest = os.get("foo");
-        getRequest.onsuccess = function(event) {
-            alert("get succeeded - value was '" + getRequest.result + "'");
-        }
-
-        getRequest.onerror = function(event) {
-            alert("get unexpectedly failed - " + event);
-            done();
-        }
-    }
-
-    putRequest.onerror = function(event) {
-        alert("put unexpectedly failed - " + event);
-        done();
-    }
-    
-    tx.onabort = function(event) {
-        alert("version change transaction unexpected abort");
-        done();
-    }
-
-    tx.oncomplete = function(event) {
-        alert("version change transaction completed");
-        done();
-    }
-
-    tx.onerror = function(event) {
-        alert("version change transaction unexpected error - " + event);
-        done();
-    }
-}
-
-</script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<script src="resources/basic-put.js"></script>
+</body>
+</html>

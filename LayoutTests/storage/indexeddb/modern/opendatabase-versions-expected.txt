@@ -1,4 +1,8 @@
 This test creates a new database with the default version, commits that versionchange transaction, and then reopens it at different versions to make sure the IDBOpenDBRequests behave appropriately.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 [object IDBOpenDBRequest] (firstPhase)
 upgradeneeded (firstPhase): old version - 0 new version - 1
 [object IDBTransaction]
@@ -13,6 +17,7 @@ Version change complete (thirdPhase). Database version is now - 2
 [object IDBOpenDBRequest] (fourthPhase)
 Open request error (thirdPhase) AbortError
 Expected error (fourthPhase) - VersionError
-Done
+PASS successfullyParsed is true
 
+TEST COMPLETE
 

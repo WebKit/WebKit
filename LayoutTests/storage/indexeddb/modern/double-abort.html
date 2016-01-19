@@ -1,47 +1,9 @@
-This test aborts the same transaction twice, making the appropriate exception is thrown.
-<script>
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function done()
-{
-    alert("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-var createRequest = window.indexedDB.open("DoubleAbortTestDatabase", 1);
-
-createRequest.onupgradeneeded = function(event) {
-    alert("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-
-    var versionTransaction = createRequest.transaction;
-    var database = event.target.result;
-
-    versionTransaction.abort();
-    try {
-        versionTransaction.abort();
-    } catch (e) {
-        alert("Second abort failed: " + e);
-    }
-
-    versionTransaction.onabort = function(event) {
-        alert("Initial upgrade versionchange transaction aborted");
-        done();
-    }
-
-    versionTransaction.oncomplete = function(event) {
-        alert("Initial upgrade versionchange transaction unexpected complete");
-        done();
-    }
-
-    versionTransaction.onerror = function(event) {
-        alert("Initial upgrade versionchange transaction unexpected error" + event);
-        done();
-    }
-}
-
-</script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<script src="resources/double-abort.js"></script>
+</body>
+</html>

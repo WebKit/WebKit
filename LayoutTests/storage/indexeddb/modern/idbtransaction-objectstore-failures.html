@@ -1,78 +1,9 @@
-This tests some obvious failures that can happen while calling transaction.objectStore()<br>
-<script>
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-var request = window.indexedDB.open("TransactionObjectStoreFailuresTestDatabase");
-
-function done()
-{
-    alert("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-request.onupgradeneeded = function(event)
-{
-    alert("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-    
-    var tx = request.transaction;
-    var db = event.target.result;
-
-    alert(tx + " - " + tx.mode);
-    alert(db);
-
-    var os1 = db.createObjectStore("TestObjectStore1");
-    var os2 = db.createObjectStore("TestObjectStore2");
-
-    var putRequest = os1.put("bar", "foo");
-    
-    putRequest.onerror = function() {
-        alert("put failed (because transaction was aborted)");
-    }
-    
-    try {
-        tx.objectStore("");
-    } catch(e) {
-        alert("Caught attempt to access empty-named object store on the transaction");
-    }
-    
-    try {
-        tx.objectStore();
-    } catch(e) {
-        alert("Caught attempt to access null-named object store on the transaction");
-    }
-     
-    try {
-        tx.objectStore("ThisObjectStoreDoesNotExist");
-    } catch(e) {
-        alert("Caught attempt to access non-existant object store on the transaction");
-    }
-    
-    tx.abort();
-    
-    try {
-        tx.objectStore("TestObjectStore1");
-    } catch(e) {
-        alert("Caught attempt to access valid object store on a transaction that is already finishing");
-    }
-      
-    tx.onabort = function(event) {
-        alert("First version change transaction abort");
-        done();
-    }
-
-    tx.oncomplete = function(event) {
-        alert("First version change transaction unexpected complete");
-        done();
-    }
-
-    tx.onerror = function(event) {
-        alert("First version change transaction unexpected error - " + event);
-        done();
-    }
-}
-</script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<script src="resources/idbtransaction-objectstore-failures.js"></script>
+</body>
+</html>

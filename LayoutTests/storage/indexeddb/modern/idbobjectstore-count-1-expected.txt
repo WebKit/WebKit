@@ -1,3 +1,8 @@
+This test exercises various uses of IDBObjectStore.count()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 ALERT: Initial upgrade needed: Old version - 0 New version - 1
 ALERT: Count is: 1
 ALERT: Count is: 0
@@ -50,5 +55,7 @@ ALERT: Count is: 3
 ALERT: Count is: 3
 ALERT: Count is: 1
 ALERT: Initial upgrade versionchange transaction complete
-ALERT: Done
-This test exercises various uses of IDBObjectStore.count()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

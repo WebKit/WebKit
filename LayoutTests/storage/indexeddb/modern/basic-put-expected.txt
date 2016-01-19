@@ -4,5 +4,7 @@ ALERT: [object IDBDatabase]
 ALERT: put succeeded - key was 'foo'
 ALERT: get succeeded - value was 'bar'
 ALERT: version change transaction completed
-ALERT: Done
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

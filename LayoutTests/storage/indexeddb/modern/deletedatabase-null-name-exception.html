@@ -1,23 +1,9 @@
-This test calls deleteDatabase on window.indexedDB with a null database name, making sure there is an exception.
-<script>
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-function done()
-{
-    alert("Done");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-try {
-	var request = window.indexedDB.deleteDatabase();
-} catch (e) {
-	alert(e);
-}
-
-done();
-</script>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<script src="resources/deletedatabase-null-name-exception.js"></script>
+</body>
+</html>

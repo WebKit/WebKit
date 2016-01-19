@@ -1,3 +1,8 @@
+This tests some obvious failures that can happen while calling IDBDatabase.deleteObjectStore()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 ALERT: Initial upgrade needed: Old version - 0 New version - 1
 ALERT: Initial upgrade versionchange transaction complete
 ALERT: readwrite put success - about to try to delete an objectstore
@@ -7,5 +12,7 @@ ALERT: Second upgrade needed: Old version - 1 New version - 2
 ALERT: Failed to deleteObjectStore with a non-existent objectstore - Error: Failed to execute 'deleteObjectStore' on 'IDBDatabase': The specified object store was not found.
 ALERT: Failed to deleteObjectStore with an in-progress versionchange transaction that is inactive - Error: A request was placed against a transaction which is either currently not active, or which is finished.
 ALERT: Second version change transaction complete
-ALERT: Done
-This tests some obvious failures that can happen while calling IDBDatabase.deleteObjectStore()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

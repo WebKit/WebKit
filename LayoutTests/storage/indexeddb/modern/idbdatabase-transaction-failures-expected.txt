@@ -1,3 +1,8 @@
+This tests some obvious failures that can happen while calling IDBDatabase.transaction()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 ALERT: Upgrade needed: Old version - 0 New version - 1
 ALERT: Failed to start a transaction while a versionChange transaction was in progress - Error: Failed to execute 'transaction' on 'IDBDatabase': A version change transaction is running.
 ALERT: versionchange transaction completed
@@ -6,5 +11,7 @@ ALERT: Failed to start a transaction to a nonexistent object store - Error: Fail
 ALERT: Failed to start a transaction with an invalid mode - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('blahblah') is not one of 'readonly' or 'readwrite'.
 ALERT: Failed to explicitly start a versionchange transaction - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('versionchange') is not one of 'readonly' or 'readwrite'.
 ALERT: Failed to explicitly start a transaction with the close pending flag set - Error: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
-ALERT: Done
-This tests some obvious failures that can happen while calling IDBDatabase.transaction()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,10 +1,11 @@
 This tests that index cursors properly handle changing indexes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 Initial upgrade needed: Old version - 0 New version - 1
-
 Starting a new cursor: testCursorDirection(index, 'next')
-
 TestIndex1 count is: 18
-
 Success opening or iterating cursor
 Cursor direction is: next
 Cursor source is: TestIndex1
@@ -83,11 +84,8 @@ Cursor primary key is: 18
 Cursor value is: [object Object]
 Deleted key 18 from object store
 Success opening or iterating cursor
-
 Starting a new cursor: testCursorDirection(index, 'prev')
-
 TestIndex1 count is: 18
-
 Success opening or iterating cursor
 Cursor direction is: prev
 Cursor source is: TestIndex1
@@ -166,11 +164,8 @@ Cursor primary key is: 1
 Cursor value is: [object Object]
 Deleted key 1 from object store
 Success opening or iterating cursor
-
 Starting a new cursor: testCursorDirection(index, 'nextunique')
-
 TestIndex1 count is: 18
-
 Success opening or iterating cursor
 Cursor direction is: nextunique
 Cursor source is: TestIndex1
@@ -231,11 +226,8 @@ Cursor value is: [object Object]
 Deleted key 18 from object store
 Deleted key 1 from object store
 Success opening or iterating cursor
-
 Starting a new cursor: testCursorDirection(index, 'prevunique')
-
 TestIndex1 count is: 18
-
 Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
@@ -279,5 +271,7 @@ Deleted key 3 from object store
 Deleted key 2 from object store
 Deleted key 1 from object store
 Success opening or iterating cursor
-Done
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

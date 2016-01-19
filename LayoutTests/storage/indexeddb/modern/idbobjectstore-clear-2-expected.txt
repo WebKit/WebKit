@@ -1,3 +1,8 @@
+This test creates an object store then populates it, then commits that transaction. It then clears it, but aborts that transaction. Finally it checks to make sure everything from step 1 is still in there.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 ALERT: Initial upgrade needed: Old version - 0 New version - 1
 ALERT: Initial upgrade versionchange transaction complete
 ALERT: Success opening database connection - Starting readwrite transaction
@@ -32,8 +37,7 @@ ALERT: Value gotten was bar7
 ALERT: Value gotten was bar8
 ALERT: Value gotten was bar9
 ALERT: Readwrite transaction complete
-ALERT: Done
-This test creates an object store then populates it, then commits that transaction.
-It then clears it, but aborts that transaction.
-Finally it checks to make sure everything from step 1 is still in there.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

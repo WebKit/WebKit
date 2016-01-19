@@ -1,4 +1,8 @@
-This test various uses of advance() and continue() on a "prev" cursor".
+This test various uses of advance() and continue() on a "prev" cursor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
 Initial upgrade needed: Old version - 0 New version - 1
 Success iterating cursor
 Cursor is: [object IDBCursorWithValue]
@@ -64,5 +68,7 @@ Cursor key is: 0
 Cursor value is: Record 0
 Cursor primary key is: 0
 Initial upgrade versionchange transaction complete
-Done
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
