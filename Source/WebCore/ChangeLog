@@ -1,5 +1,15 @@
 2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ build with GTK+ < 3.14.
+
+        Flags GTK_ICON_LOOKUP_DIR_LTR and GTK_ICON_LOOKUP_DIR_RTL were
+        added in GTK+ 3.14.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::loadThemedIcon):
+
+2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GObject DOM bindings API break after r195264.
 
         Add webkit_dom_character_data_set_data to the list of functions
