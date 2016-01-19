@@ -1,5 +1,15 @@
 2016-01-18  Saam barati  <sbarati@apple.com>
 
+        assertions in BytecodeUseDef.h about opcode length are off by one
+        https://bugs.webkit.org/show_bug.cgi?id=153215
+
+        Reviewed by Dan Bernstein.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+
+2016-01-18  Saam barati  <sbarati@apple.com>
+
         FTL doesn't do proper spilling for exception handling when GetById/Snippets go to slow path
         https://bugs.webkit.org/show_bug.cgi?id=153186
 
