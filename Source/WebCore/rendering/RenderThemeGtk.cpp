@@ -376,10 +376,12 @@ static GRefPtr<GdkPixbuf> loadThemedIcon(GtkStyleContext* context, const char* i
     GRefPtr<GIcon> icon = adoptGRef(g_themed_icon_new(iconName));
     unsigned lookupFlags = GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_FORCE_SIZE | GTK_ICON_LOOKUP_FORCE_SVG;
     GtkTextDirection direction = gtk_style_context_get_direction(context);
+#if GTK_CHECK_VERSION(3, 14, 0)
     if (direction & GTK_TEXT_DIR_LTR)
         lookupFlags |= GTK_ICON_LOOKUP_DIR_LTR;
     else if (direction & GTK_TEXT_DIR_RTL)
         lookupFlags |= GTK_ICON_LOOKUP_DIR_RTL;
+#endif
     int width, height;
     gtk_icon_size_lookup(iconSize, &width, &height);
     GRefPtr<GtkIconInfo> iconInfo = adoptGRef(gtk_icon_theme_lookup_by_gicon(gtk_icon_theme_get_default(), icon.get(), std::min(width, height), static_cast<GtkIconLookupFlags>(lookupFlags)));
