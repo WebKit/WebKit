@@ -1,3 +1,16 @@
+2016-01-19  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid][css-align] justify-self stretch is not applied for img elements
+        https://bugs.webkit.org/show_bug.cgi?id=153206
+
+        Reviewed by Darin Adler.
+
+        Test to verify Replaced Elements, like images, are stretched in the inline
+        axis, when fulfilling the Box Alignment restrictions on this regard.
+
+        * fast/css-grid-layout/grid-align-stretching-replaced-items-expected.txt: Added.
+        * fast/css-grid-layout/grid-align-stretching-replaced-items.html: Added.
+
 2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Text::splitText doesn't update Range end points anchored on parent nodes

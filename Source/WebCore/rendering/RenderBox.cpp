@@ -2369,7 +2369,12 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     // https://bugs.webkit.org/show_bug.cgi?id=46418
     bool inVerticalBox = parent()->isDeprecatedFlexibleBox() && (parent()->style().boxOrient() == VERTICAL);
     bool stretching = (parent()->style().boxAlign() == BSTRETCH);
+    // FIXME: Stretching is the only reason why we don't want the box to be treated as a replaced element, so we could perhaps
+    // refactor all this logic, not only for flex and grid since alignment is intended to be applied to any block.
     bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inVerticalBox || !stretching);
+#if ENABLE(CSS_GRID_LAYOUT)
+    treatAsReplaced = treatAsReplaced && (!isGridItem() || !hasStretchedLogicalWidth());
+#endif
 
     const RenderStyle& styleToUse = style();
     Length logicalWidthLength = treatAsReplaced ? Length(computeReplacedLogicalWidth(), Fixed) : styleToUse.logicalWidth();
@@ -2517,6 +2522,23 @@ static bool isStretchingColumnFlexItem(const RenderBox& flexitem)
     return false;
 }
 
+// FIXME: Can/Should we move this inside specific layout classes (flex. grid)? Can we refactor columnFlexItemHasStretchAlignment logic?
+bool RenderBox::hasStretchedLogicalWidth() const
+{
+    auto& style = this->style();
+    if (!style.logicalWidth().isAuto() || style.marginStart().isAuto() || style.marginEnd().isAuto())
+        return false;
+    RenderBlock* containingBlock = this->containingBlock();
+    if (!containingBlock) {
+        // We are evaluating align-self/justify-self, which default to 'normal' for the root element.
+        // The 'normal' value behaves like 'start' except for Flexbox Items, which obviously should have a container.
+        return false;
+    }
+    if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
+        return RenderStyle::resolveAlignment(containingBlock->style(), style, ItemPositionStretch) == ItemPositionStretch;
+    return RenderStyle::resolveJustification(containingBlock->style(), style, ItemPositionStretch) == ItemPositionStretch;
+}
+
 bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
 {
     // Anonymous inline blocks always fill the width of their containing block.
@@ -2529,10 +2551,8 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
         return true;
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    if (parent()->isRenderGrid()) {
-        bool allowedToStretchChildAlongRowAxis = style().logicalWidth().isAuto() && !style().marginStartUsing(&parent()->style()).isAuto() && !style().marginEndUsing(&parent()->style()).isAuto();
-        return !allowedToStretchChildAlongRowAxis || RenderStyle::resolveJustification(parent()->style(), style(), ItemPositionStretch) != ItemPositionStretch;
-    }
+    if (isGridItem())
+        return !hasStretchedLogicalWidth();
 #endif
 
     // This code may look a bit strange.  Basically width:intrinsic should clamp the size when testing both

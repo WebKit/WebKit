@@ -1,3 +1,34 @@
+2016-01-19  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid][css-align] justify-self stretch is not applied for img elements
+        https://bugs.webkit.org/show_bug.cgi?id=153206
+
+        Reviewed by Darin Adler.
+
+        When computing the logical height, we check first if there is an override
+        height value set as a consequence of the stretching logic, so we use it
+        directly for any kind of element. However, in the case of the width
+        computation, we don't use such override value because it's the default
+        behavior of block-level boxes.
+
+        However, we consider some special cases which have to be treated as
+        replaced elements. Theses cases are evaluated first, so we don't let the
+        regular width computation logic to be executed, which is what we want
+        to implement the stretch behavior.
+
+        In order to let replaced elements, such images, to be stretched as a
+        consequence of the CSS alignment properties, we need to exclude grid
+        items from the cases to be treated as replaced elements during the width
+        computation.
+
+        Test: fast/css-grid-layout/grid-align-stretching-replaced-items.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::hasStretchedLogicalWidth):
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent):
+        * rendering/RenderBox.h:
+
 2016-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Text::splitText doesn't update Range end points anchored on parent nodes

@@ -1,0 +1,18 @@
+This test checks that the alignment properties align-self and justify-self apply the 'stretch' value correctly on replaced elements.
+
+The blue image's original size is 100px x 100px, but it should be stretched to fill the 500px x 500px grid area it's placed into
+
+
+PASS
+The blue image's original size is 100px x 100px, non-stretch values prevent stretching to be applied.
+
+
+PASS
+The blue image's original size is 100px x 100px, non-auto sizes prevent stretching to be applied.
+
+
+PASS
+The blue image's original size is 100px x 100px, auto-margins prevent stretching to be applied.
+
+
+PASS
