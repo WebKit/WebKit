@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,27 +53,22 @@ public:
 
     void run()
     {
-        // This phase uses super simple heuristics to ensure that constants are in profitable places
-        // and also lowers constant materialization code. Constants marked "fast" by the client are
-        // hoisted to the lowest common dominator. A table is created for constants that need to be
-        // loaded to be materialized, and all of their Values are turned into loads from that table.
-        // Non-fast constants get materialized in the block that uses them. Constants that are
-        // materialized by loading get special treatment when they get used in some kind of Any in a
-        // StackmapValue. In that case, the Constants are sunk to the point of use, since that allows
-        // the instruction selector to sink the constants into an Arg::imm64.
-
-        // FIXME: Implement a better story for constants. For example, the table used to hold double
-        // constants should have a pointer to it that is hoisted. If we wanted to be more aggressive,
-        // we could make constant materialization be a feature of Air: we could label some Tmps as
-        // being unmaterialized constants and have a late Air phase - post register allocation - that
-        // creates materializations of those constant Tmps by scavenging leftover registers.
-
-        hoistFastConstants();
-        sinkSlowConstants();
+        hoistConstants(
+            [&] (const ValueKey& key) -> bool {
+                return key.opcode() == ConstFloat || key.opcode() == ConstDouble;
+            });
+        
+        lowerFPConstants();
+        
+        hoistConstants(
+            [&] (const ValueKey& key) -> bool {
+                return key.opcode() == Const32 || key.opcode() == Const64;
+            });
     }
 
 private:
-    void hoistFastConstants()
+    template<typename Filter>
+    void hoistConstants(const Filter& filter)
     {
         Dominators& dominators = m_proc.dominators();
         HashMap<ValueKey, Value*> valueForConstant;
@@ -84,7 +79,7 @@ private:
             for (Value* value : *block) {
                 for (Value*& child : value->children()) {
                     ValueKey key = child->key();
-                    if (!m_proc.isFastConstant(key))
+                    if (!filter(key))
                         continue;
 
                     auto result = valueForConstant.add(key, child);
@@ -116,7 +111,7 @@ private:
                 if (block->frequency() < value->owner->frequency())
                     value->owner = block;
             }
-            materializations[entry.value->owner].append(entry.value);
+            materializations[value->owner].append(value);
         }
 
         // Get rid of Value's that are fast constants but aren't canonical. Also remove the canonical
@@ -124,7 +119,7 @@ private:
         for (BasicBlock* block : m_proc) {
             for (Value*& value : *block) {
                 ValueKey key = value->key();
-                if (!m_proc.isFastConstant(key))
+                if (!filter(key))
                     continue;
 
                 if (valueForConstant.get(key) == value)
@@ -141,7 +136,7 @@ private:
                 Value* value = block->at(valueIndex);
                 for (Value* child : value->children()) {
                     ValueKey key = child->key();
-                    if (!m_proc.isFastConstant(key))
+                    if (!filter(key))
                         continue;
 
                     // If we encounter a fast constant, then it must be canonical, since we already
@@ -174,16 +169,11 @@ private:
             m_insertionSet.execute(block);
         }
     }
-    
-    void sinkSlowConstants()
+
+    void lowerFPConstants()
     {
-        // First we need to figure out which constants go into the data section. These are non-zero
-        // double constants.
         for (Value* value : m_proc.values()) {
             ValueKey key = value->key();
-            if (!needsMotion(key))
-                continue;
-            m_toRemove.append(value);
             if (goesInTable(key))
                 m_constTable.add(key, m_constTable.size());
         }
@@ -191,78 +181,58 @@ private:
         m_dataSection = static_cast<int64_t*>(m_proc.addDataSection(m_constTable.size() * sizeof(int64_t)));
         for (auto& entry : m_constTable)
             m_dataSection[entry.value] = entry.key.value();
-        
+
+        IndexSet<Value> offLimits;
         for (BasicBlock* block : m_proc) {
-            m_constants.clear();
-            
             for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
-                Value* value = block->at(valueIndex);
-                StackmapValue* stackmap = value->as<StackmapValue>();
+                StackmapValue* value = block->at(valueIndex)->as<StackmapValue>();
+                if (!value)
+                    continue;
+
                 for (unsigned childIndex = 0; childIndex < value->numChildren(); ++childIndex) {
+                    if (!value->constrainedChild(childIndex).rep().isAny())
+                        continue;
+                    
                     Value*& child = value->child(childIndex);
                     ValueKey key = child->key();
-                    if (!needsMotion(key))
+                    if (!goesInTable(key))
                         continue;
 
-                    if (stackmap
-                        && goesInTable(key)
-                        && stackmap->constrainedChild(childIndex).rep().isAny()) {
-                        // This is a weird special case. When we constant-fold an argument to a
-                        // stackmap, and that argument has the Any constraint, we want to just
-                        // tell the stackmap's generator that the argument is a constant rather
-                        // than materializing it in a register. For this to work, we need
-                        // lowerToAir to see this argument as a constant rather than as a load
-                        // from a table.
-                        child = m_insertionSet.insertValue(
-                            valueIndex, key.materialize(m_proc, value->origin()));
-                        continue;
-                    }
-                    
-                    child = materialize(valueIndex, key, value->origin());
+                    child = m_insertionSet.insertValue(
+                        valueIndex, key.materialize(m_proc, value->origin()));
+                    offLimits.add(child);
                 }
             }
-            
+
             m_insertionSet.execute(block);
         }
 
-        for (Value* toRemove : m_toRemove)
-            toRemove->replaceWithNop();
-    }
-    
-    Value* materialize(unsigned valueIndex, const ValueKey& key, const Origin& origin)
-    {
-        if (Value* result = m_constants.get(key))
-            return result;
+        for (BasicBlock* block : m_proc) {
+            for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
+                Value* value = block->at(valueIndex);
+                ValueKey key = value->key();
+                if (!goesInTable(key))
+                    continue;
+                if (offLimits.contains(value))
+                    continue;
 
-        // Note that we deliberately don't do this in one add() because this is a recursive function
-        // that may rehash the map.
+                Value* tableBase = m_insertionSet.insertIntConstant(
+                    valueIndex, value->origin(), pointerType(),
+                    bitwise_cast<intptr_t>(m_dataSection));
+                Value* result = m_insertionSet.insert<MemoryValue>(
+                    valueIndex, Load, value->type(), value->origin(), tableBase,
+                    sizeof(int64_t) * m_constTable.get(key));
+                value->replaceWithIdentity(result);
+            }
 
-        Value* result;
-        if (goesInTable(key)) {
-            Value* tableBase = materialize(
-                valueIndex,
-                ValueKey(
-                    constPtrOpcode(), pointerType(),
-                    static_cast<int64_t>(bitwise_cast<intptr_t>(m_dataSection))),
-                origin);
-            result = m_insertionSet.insert<MemoryValue>(
-                valueIndex, Load, key.type(), origin, tableBase,
-                sizeof(int64_t) * m_constTable.get(key));
-        } else
-            result = m_insertionSet.insertValue(valueIndex, key.materialize(m_proc, origin));
-        m_constants.add(key, result);
-        return result;
+            m_insertionSet.execute(block);
+        }
     }
 
     bool goesInTable(const ValueKey& key)
     {
         return (key.opcode() == ConstDouble && key != doubleZero())
             || (key.opcode() == ConstFloat && key != floatZero());
-    }
-
-    bool needsMotion(const ValueKey& key)
-    {
-        return key.isConstant() && !m_proc.isFastConstant(key);
     }
 
     static ValueKey doubleZero()

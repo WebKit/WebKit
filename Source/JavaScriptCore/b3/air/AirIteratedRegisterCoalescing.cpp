@@ -948,6 +948,11 @@ private:
             const UseCounts<Tmp>::Counts& counts = m_useCounts[tmp];
             double uses = counts.numWarmUses + counts.numDefs;
 
+            // If it's a constant, then it's not as bad to spill. We can rematerialize it in many
+            // cases.
+            if (counts.numConstDefs == counts.numDefs)
+                uses /= 2;
+
             return degree / uses;
         };
 

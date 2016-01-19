@@ -433,6 +433,7 @@
 		0F64B2721A784BAF006E4E66 /* BinarySwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64B2701A784BAF006E4E66 /* BinarySwitch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F64B2791A7957B2006E4E66 /* CallEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F64B2771A7957B2006E4E66 /* CallEdge.cpp */; };
 		0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64B2781A7957B2006E4E66 /* CallEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */; };
 		0F666EC0183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F666EC1183566F900D017F1 /* FullBytecodeLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F666EC61835672B00D017F1 /* DFGAvailability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F666EC21835672B00D017F1 /* DFGAvailability.cpp */; };
@@ -2601,6 +2602,7 @@
 		0F64B2701A784BAF006E4E66 /* BinarySwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySwitch.h; sourceTree = "<group>"; };
 		0F64B2771A7957B2006E4E66 /* CallEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallEdge.cpp; sourceTree = "<group>"; };
 		0F64B2781A7957B2006E4E66 /* CallEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallEdge.h; sourceTree = "<group>"; };
+		0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirArgInlines.h; path = b3/air/AirArgInlines.h; sourceTree = "<group>"; };
 		0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeLivenessAnalysisInlines.h; sourceTree = "<group>"; };
 		0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullBytecodeLiveness.h; sourceTree = "<group>"; };
 		0F666EC21835672B00D017F1 /* DFGAvailability.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAvailability.cpp; path = dfg/DFGAvailability.cpp; sourceTree = "<group>"; };
@@ -4850,6 +4852,7 @@
 				0FEC85491BDACDC70080FF74 /* AirAllocateStack.h */,
 				0FEC854A1BDACDC70080FF74 /* AirArg.cpp */,
 				0FEC854B1BDACDC70080FF74 /* AirArg.h */,
+				0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */,
 				0FEC854C1BDACDC70080FF74 /* AirBasicBlock.cpp */,
 				0FEC854D1BDACDC70080FF74 /* AirBasicBlock.h */,
 				0FB3878B1BFBC44D00E3AB1E /* AirBlockWorklist.h */,
@@ -7506,6 +7509,7 @@
 				C4703CCE192844CC0013FBEA /* generate_js_backend_commands.py in Headers */,
 				A5EA710319F6DE6F0098F5EC /* generate_objc_backend_dispatcher_header.py in Headers */,
 				A5EA710419F6DE720098F5EC /* generate_objc_backend_dispatcher_implementation.py in Headers */,
+				0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */,
 				A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */,
 				A5EA710619F6DE760098F5EC /* generate_objc_configuration_implementation.py in Headers */,
 				A5EA710719F6DE780098F5EC /* generate_objc_conversion_helpers.py in Headers */,

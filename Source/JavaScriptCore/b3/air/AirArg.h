@@ -1078,6 +1078,18 @@ public:
 
     bool usesTmp(Air::Tmp tmp) const;
 
+    template<typename Thing>
+    bool is() const;
+
+    template<typename Thing>
+    Thing as() const;
+
+    template<typename Thing, typename Functor>
+    void forEachFast(const Functor&);
+
+    template<typename Thing, typename Functor>
+    void forEach(Role, Type, Width, const Functor&);
+
     // This is smart enough to know that an address arg in a Def or UseDef rule will use its
     // tmps and never def them. For example, this:
     //

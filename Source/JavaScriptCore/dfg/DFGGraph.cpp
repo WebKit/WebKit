@@ -271,11 +271,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     if (node->hasMultiGetByOffsetData()) {
         MultiGetByOffsetData& data = node->multiGetByOffsetData();
         out.print(comma, "id", data.identifierNumber, "{", identifiers()[data.identifierNumber], "}");
-        for (unsigned i = 0; i < data.cases.size(); ++i) {
+        for (unsigned i = 0; i < data.cases.size(); ++i)
             out.print(comma, inContext(data.cases[i], context));
-            if (data.cases[i].method().kind() == GetByOffsetMethod::Load)
-                out.print(" (inferred value = ", inContext(inferredValueForProperty(data.cases[i].set(), identifiers()[data.identifierNumber]), context), ")");
-        }
     }
     if (node->hasMultiPutByOffsetData()) {
         MultiPutByOffsetData& data = node->multiPutByOffsetData();

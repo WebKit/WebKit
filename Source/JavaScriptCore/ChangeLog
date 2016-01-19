@@ -1,3 +1,44 @@
+2016-01-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Reconsider B3's constant motion policy
+        https://bugs.webkit.org/show_bug.cgi?id=152202
+
+        Reviewed by Geoffrey Garen.
+
+        This changes moveConstants() to hoist constants. This is a speed-up on things like mandreel.
+        It has a generally positive impact on the Octane score, but it's within margin of error.
+
+        This also changes IRC to make it a bit more likely to spill constants. We don't want it to
+        spill them too much, because we can't rely on fixObviousSpills() to always replace a load of
+        a constant from the stack with the constant itself, especially in case of instructions that
+        need an extra register to materialize the immediate.
+
+        Also fixed DFG graph dumping to print a bit less things. It was trying to print the results of
+        constant property inference, and this sometimes caused crashes when you dumped the graph at an
+        inopportune time.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3MoveConstants.cpp:
+        * b3/air/AirArg.h:
+        * b3/air/AirArgInlines.h: Added.
+        (JSC::B3::Air::ArgThingHelper<Tmp>::is):
+        (JSC::B3::Air::ArgThingHelper<Tmp>::as):
+        (JSC::B3::Air::ArgThingHelper<Tmp>::forEachFast):
+        (JSC::B3::Air::ArgThingHelper<Tmp>::forEach):
+        (JSC::B3::Air::ArgThingHelper<Arg>::is):
+        (JSC::B3::Air::ArgThingHelper<Arg>::as):
+        (JSC::B3::Air::ArgThingHelper<Arg>::forEachFast):
+        (JSC::B3::Air::ArgThingHelper<Arg>::forEach):
+        (JSC::B3::Air::Arg::is):
+        (JSC::B3::Air::Arg::as):
+        (JSC::B3::Air::Arg::forEachFast):
+        (JSC::B3::Air::Arg::forEach):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+
 2016-01-19  Enrica Casucci  <enrica@apple.com>
 
         Add support for DataDetectors in WK (iOS).
