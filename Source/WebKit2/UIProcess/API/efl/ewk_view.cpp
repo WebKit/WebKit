@@ -87,7 +87,7 @@ Evas_Object* EWKViewCreate(WKContextRef context, WKPageConfigurationRef pageConf
     }
 
     WKRetainPtr<WKViewRef> wkView = adoptWK(WKViewCreate(context, pageConfiguration));
-    if (EwkView* ewkView = EwkView::create(wkView.get(), canvas, smart))
+    if (EwkView* ewkView = EwkView::create(toImpl(wkView.get()), canvas, smart))
         return ewkView->evasObject();
 
     return nullptr;
@@ -97,7 +97,7 @@ WKViewRef EWKViewGetWKView(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, nullptr);
 
-    return impl->wkView();
+    return toAPI(impl->webView());
 }
 
 Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context, Ewk_Page_Group* pageGroup)
@@ -618,7 +618,7 @@ Eina_Bool ewk_view_fullscreen_exit(Evas_Object* ewkView)
 #if ENABLE(FULLSCREEN_API)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    return WKViewExitFullScreen(impl->wkView());
+    return impl->requestExitFullScreen();
 #else
     UNUSED_PARAM(ewkView);
     return false;
@@ -743,7 +743,7 @@ Eina_Bool ewk_view_layout_fixed_set(Evas_Object* ewkView, Eina_Bool enabled)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    WKPageSetUseFixedLayout(WKViewGetPage(impl->wkView()), enabled);
+    WKPageSetUseFixedLayout(impl->wkPage(), enabled);
 
     return true;
 }
@@ -752,21 +752,21 @@ Eina_Bool ewk_view_layout_fixed_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    return WKPageUseFixedLayout(WKViewGetPage(impl->wkView()));
+    return WKPageUseFixedLayout(impl->wkPage());
 }
 
 void ewk_view_layout_fixed_size_set(const Evas_Object* ewkView, Evas_Coord width, Evas_Coord height)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
 
-    WKPageSetFixedLayoutSize(WKViewGetPage(impl->wkView()), WKSizeMake(width, height));
+    WKPageSetFixedLayoutSize(impl->wkPage(), WKSizeMake(width, height));
 }
 
 void ewk_view_layout_fixed_size_get(const Evas_Object* ewkView, Evas_Coord* width, Evas_Coord* height)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
 
-    WKSize size = WKPageFixedLayoutSize(WKViewGetPage(impl->wkView()));
+    WKSize size = WKPageFixedLayoutSize(impl->wkPage());
 
     if (width)
         *width = size.width;
@@ -790,7 +790,16 @@ void ewk_view_bg_color_get(const Evas_Object* ewkView, int* red, int* green, int
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
 
-    WKViewGetBackgroundColor(impl->wkView(), red, green, blue, alpha);
+    WebCore::Color backgroundColor = impl->backgroundColor();
+
+    if (red)
+        *red = backgroundColor.red();
+    if (green)
+        *green = backgroundColor.green();
+    if (blue)
+        *blue = backgroundColor.blue();
+    if (alpha)
+        *alpha = backgroundColor.alpha();
 }
 
 Eina_Bool ewk_view_contents_size_get(const Evas_Object* ewkView, Evas_Coord* width, Evas_Coord* height)
@@ -806,11 +815,11 @@ Eina_Bool ewk_view_contents_size_get(const Evas_Object* ewkView, Evas_Coord* wid
         return false;
     }
 
-    WKSize contentsSize = WKViewGetContentsSize(impl->wkView());
+    WebCore::IntSize size = impl->contentsSize();
     if (width)
-        *width = contentsSize.width;
+        *width = size.width();
     if (height)
-        *height = contentsSize.height;
+        *height = size.height();
 
     return true;
 }

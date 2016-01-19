@@ -135,7 +135,7 @@ void GestureHandler::handleSingleTap(const IntPoint& position)
     mouseMove.timestamp = ecore_loop_time_get();
     mouseMove.event_flags = EVAS_EVENT_FLAG_NONE;
     mouseMove.dev = 0;
-    WKViewSendMouseMoveEvent(m_ewkView->wkView(), &mouseMove);
+    static_cast<WebViewEfl*>(m_ewkView->webView())->sendMouseEvent(&mouseMove);
 
     Evas_Event_Mouse_Down mouseDown;
     mouseDown.button = 1;
@@ -148,7 +148,7 @@ void GestureHandler::handleSingleTap(const IntPoint& position)
     mouseDown.timestamp = ecore_loop_time_get();
     mouseDown.event_flags = EVAS_EVENT_FLAG_NONE;
     mouseDown.dev = 0;
-    WKViewSendMouseDownEvent(m_ewkView->wkView(), &mouseDown);
+    static_cast<WebViewEfl*>(m_ewkView->webView())->sendMouseEvent(&mouseDown);
 
     Evas_Event_Mouse_Up mouseUp;
     mouseUp.button = 1;
@@ -161,7 +161,7 @@ void GestureHandler::handleSingleTap(const IntPoint& position)
     mouseUp.timestamp = ecore_loop_time_get();
     mouseUp.event_flags = EVAS_EVENT_FLAG_NONE;
     mouseUp.dev = 0;
-    WKViewSendMouseUpEvent(m_ewkView->wkView(), &mouseUp);
+    static_cast<WebViewEfl*>(m_ewkView->webView())->sendMouseEvent(&mouseUp);
 }
 
 void GestureHandler::handleDoubleTap(const IntPoint&)

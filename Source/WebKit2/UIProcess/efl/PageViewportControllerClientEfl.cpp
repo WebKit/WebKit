@@ -52,7 +52,7 @@ void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPo
 
 void PageViewportControllerClientEfl::setPageScaleFactor(float newScale)
 {
-    WKViewSetContentScaleFactor(m_view->wkView(), newScale);
+    m_view->webView()->setContentScaleFactor(newScale);
 }
 
 void PageViewportControllerClientEfl::didChangeVisibleContents()

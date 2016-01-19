@@ -1,3 +1,60 @@
+2016-01-18  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Remove wkView() from EwkView
+        https://bugs.webkit.org/show_bug.cgi?id=152604
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkViewEventHandler<EVAS_CALLBACK_SHOW>::handleEvent):
+        (EwkViewEventHandler<EVAS_CALLBACK_HIDE>::handleEvent):
+        (EwkView::EwkView):
+        (EwkView::create):
+        (EwkView::wkPage):
+        (EwkView::isVisible):
+        (EwkView::setVisible):
+        (EwkView::setDeviceScaleFactor):
+        (EwkView::deviceSize):
+        (EwkView::displayTimerFired):
+        (EwkView::setViewportPosition):
+        (EwkView::requestExitFullScreen):
+        (EwkView::contentsSize):
+        (EwkView::setThemePath):
+        (EwkView::feedTouchEvent):
+        (EwkView::createGLSurface):
+        (EwkView::showContextMenu):
+        (EwkView::requestPopupMenu):
+        (EwkView::webView):
+        (EwkView::handleEvasObjectCalculate):
+        (EwkView::handleEvasObjectColorSet):
+        (EwkView::handleEwkViewFocusIn):
+        (EwkView::handleEwkViewFocusOut):
+        (EwkView::feedTouchEvents):
+        (EwkView::takeSnapshot):
+        (EwkView::scrollBy):
+        (EwkView::setBackgroundColor):
+        (EwkView::backgroundColor):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::wkView): Deleted.
+        * UIProcess/API/efl/GestureRecognizer.cpp:
+        (WebKit::GestureHandler::handleSingleTap):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (EWKViewCreate):
+        (EWKViewGetWKView):
+        (ewk_view_fullscreen_exit):
+        (ewk_view_layout_fixed_set):
+        (ewk_view_layout_fixed_get):
+        (ewk_view_layout_fixed_size_set):
+        (ewk_view_layout_fixed_size_get):
+        (ewk_view_bg_color_get):
+        (ewk_view_contents_size_get):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::setPageScaleFactor):
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::webProcessDidRelaunch):
+        (WebKit::ViewClientEfl::ViewClientEfl):
+        (WebKit::ViewClientEfl::~ViewClientEfl):
+
 2016-01-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Sink the Vector<uint8_t> buffer into the SerializedScriptValue constructor

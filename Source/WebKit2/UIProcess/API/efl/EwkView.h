@@ -93,7 +93,7 @@ typedef struct Ewk_View_Smart_Class Ewk_View_Smart_Class;
 
 class EwkView {
 public:
-    static EwkView* create(WKViewRef, Evas* canvas, Evas_Smart* smart = 0);
+    static EwkView* create(WebKit::WebView*, Evas* canvas, Evas_Smart* smart = 0);
 
     static bool initSmartClassInterface(Ewk_View_Smart_Class&);
 
@@ -101,7 +101,6 @@ public:
 
     Evas_Object* evasObject() { return m_evasObject; }
 
-    WKViewRef wkView() const { return m_webView.get(); }
     WKPageRef wkPage() const;
 
     WebKit::WebPageProxy* page() { return webView()->page(); }
@@ -112,10 +111,15 @@ public:
 
     WebKit::PageViewportController& pageViewportController() { return m_pageViewportController; }
 
+    bool isVisible() const;
+    void setVisible(bool);
+
     void setDeviceScaleFactor(float scale);
     float deviceScaleFactor() const;
 
     WebCore::AffineTransform transformToScreen() const;
+
+    WebCore::IntSize contentsSize() const;
 
     const char* url() const { return m_url; }
     const char* title() const;
@@ -150,6 +154,7 @@ public:
 #if ENABLE(FULLSCREEN_API)
     void enterFullScreen();
     void exitFullScreen();
+    bool requestExitFullScreen();
 #endif
 
     WKRect windowGeometry() const;
@@ -200,6 +205,7 @@ public:
     bool scrollBy(const WebCore::IntSize&);
 
     void setBackgroundColor(int red, int green, int blue, int alpha);
+    WebCore::Color backgroundColor();
 
     void didFindZoomableArea(const WKPoint&, const WKRect&);
 
@@ -210,7 +216,7 @@ public:
 #endif
 
 private:
-    EwkView(WKViewRef, Evas_Object*);
+    EwkView(WebKit::WebView*, Evas_Object*);
     ~EwkView();
 
     void setDeviceSize(const WebCore::IntSize&);
@@ -254,7 +260,7 @@ private:
 
 private:
     // Note, initialization order matters.
-    WKRetainPtr<WKViewRef> m_webView;
+    RefPtr<WebKit::WebView> m_webView;
     Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
     RefPtr<EwkPageGroup> m_pageGroup;

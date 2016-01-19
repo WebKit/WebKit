@@ -86,14 +86,15 @@ void ViewClientEfl::webProcessCrashed(WKViewRef, WKURLRef url, const void* clien
     }
 }
 
-void ViewClientEfl::webProcessDidRelaunch(WKViewRef viewRef, const void* clientInfo)
+void ViewClientEfl::webProcessDidRelaunch(WKViewRef, const void* clientInfo)
 {
     // WebProcess just relaunched and the underlying scene from the view is not set to active by default, which
     // means from that point on we would only get a blank screen, hence we set it to active here to avoid that.
-    WKViewSetIsActive(viewRef, true);
+    EwkView* ewkView = toEwkView(clientInfo);
+    ewkView->setVisible(true);
 
-    if (const char* themePath = toEwkView(clientInfo)->themePath())
-        WKViewSetThemePath(viewRef, adoptWK(WKStringCreateWithUTF8CString(themePath)).get());
+    if (const char* themePath = ewkView->themePath())
+        ewkView->setThemePath(themePath);
 }
 
 void ViewClientEfl::didChangeContentsPosition(WKViewRef, WKPoint position, const void* clientInfo)
@@ -188,7 +189,7 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     viewClient.doneWithTouchEvent = doneWithTouchEvent;
 #endif
 
-    WKViewSetViewClient(m_view->wkView(), &viewClient.base);
+    m_view->webView()->initializeClient(&viewClient.base);
 
 #if ENABLE(INPUT_TYPE_COLOR)
     WKColorPickerClientV0 colorPickerClient;
@@ -197,16 +198,16 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     colorPickerClient.base.clientInfo = this;
     colorPickerClient.showColorPicker = showColorPicker;
     colorPickerClient.endColorPicker = endColorPicker;
-    WKViewSetColorPickerClient(m_view->wkView(), &colorPickerClient.base);
+    static_cast<WebViewEfl*>(m_view->webView())->initializeColorPickerClient(&colorPickerClient.base);
 #endif
 }
 
 ViewClientEfl::~ViewClientEfl()
 {
-    WKViewSetViewClient(m_view->wkView(), 0);
+    m_view->webView()->initializeClient(nullptr);
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    WKViewSetColorPickerClient(m_view->wkView(), 0);
+    static_cast<WebViewEfl*>(m_view->webView())->initializeColorPickerClient(nullptr);
 #endif
 }
 
