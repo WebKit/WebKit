@@ -58,7 +58,6 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
         this._updateStatus();
 
         this.status = this._statusImageElement;
-        this.small = true;
 
         this._iconAnimationLayerElement = document.createElement("span");
         this.iconElement.appendChild(this._iconAnimationLayerElement);

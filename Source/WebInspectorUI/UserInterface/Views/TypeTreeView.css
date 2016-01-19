@@ -32,7 +32,7 @@
     font-size: 12px;
 }
 
-.type-tree-outline {
+.tree-outline.type {
     margin: 0;
     padding: 0 6px 2px;
     list-style: none;
@@ -40,7 +40,7 @@
     outline: none;
 }
 
-.type-tree-outline li {
+.tree-outline.type li {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -48,18 +48,18 @@
     cursor: default;
 }
 
-.type-tree-outline ol {
+.tree-outline.type ol {
     display: none;
     margin: 0;
     -webkit-padding-start: 16px;
     list-style: none;
 }
 
-.type-tree-outline ol.expanded {
+.tree-outline.type ol.expanded {
     display: block;
 }
 
-.type-tree-outline li .empty-message {
+.tree-outline.type li .empty-message {
     color: hsl(0, 0%, 60%);
     margin-left: 13px;
 }

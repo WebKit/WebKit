@@ -35,7 +35,5 @@ WebInspector.ContentFlowTreeElement = class ContentFlowTreeElement extends WebIn
         console.assert(representedObject instanceof WebInspector.ContentFlow);
 
         super("content-flow-icon", representedObject.name, null, representedObject, false);
-
-        this.small = true;
     }
 };

@@ -31,7 +31,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
         console.assert(timeline.type === WebInspector.TimelineRecord.Type.Network);
 
-        this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
+        this.navigationSidebarTreeOutline.disclosureButtons = false;
         this.navigationSidebarTreeOutline.element.classList.add("network");
 
         var columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}};

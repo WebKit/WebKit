@@ -31,22 +31,22 @@
     bottom: 0;
 }
 
-.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.script .item .subtitle {
+.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.script .item .subtitle {
     display: none;
 }
 
-.sidebar > .panel.navigation.timeline:not(.timeline-recording-content-view-showing) .navigation-sidebar-panel-content-tree-outline.script .item .alternate-subtitle {
+.sidebar > .panel.navigation.timeline:not(.timeline-recording-content-view-showing) .tree-outline.script .item .alternate-subtitle {
     display: none;
 }
 
-.navigation-sidebar-panel-content-tree-outline .item .alternate-subtitle {
+.tree-outline .item .alternate-subtitle {
     color: hsla(0, 0%, 0%, 0.7);
 }
 
-.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .alternate-subtitle {
+.tree-outline:matches(:focus, .force-focus) .item.selected .alternate-subtitle {
     color: hsla(0, 0%, 100%, 0.9);
 }
 
-.navigation-sidebar-panel-content-tree-outline .item.small:not(.two-line) .alternate-subtitle::before {
+.tree-outline .item.small:not(.two-line) .alternate-subtitle::before {
     content: " — ";
 }

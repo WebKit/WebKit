@@ -1,3 +1,446 @@
+2016-01-19  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: cleanup TreeOutline class and separate styles from NavigationSidebarPanel
+        https://bugs.webkit.org/show_bug.cgi?id=153146
+        <rdar://problem/24213071>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch consolidates and simplifies the tree outline styles that were previously
+        defined across various classes. A new stylesheet, TreeOutline.css, includes all
+        the styles needed to create a basic TreeOutline.
+
+        In addition, certain tree features which were previously controlled by manually
+        toggling class names have been promoted to properties of TreeOutline:
+         - compact: tree elements have reduced vertical spacing. Used by object trees.
+           The compact and large settings are mutually exclusive.
+         - large: tree elements (and their icons) are large. Used by TimelinesSidebarPanel.
+           Previously there existed a `small` class name which was enabled in every
+           case except TimelineSidebarPanel's Timelines tree. Since it was the rule rather
+           than the exception the class has been removed and is now the default style.
+         - disclosureButtons: control the appearance of disclosure buttons.
+         - customIndent: control use of generated style rules.
+
+        * UserInterface/Main.html:
+        New CSS file.
+
+        * UserInterface/Views/ApplicationCacheFrameTreeElement.js:
+        (WebInspector.ApplicationCacheFrameTreeElement): Deleted.
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement): Deleted.
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WebInspector.CallFrameTreeElement): Deleted.
+        * UserInterface/Views/ContentFlowTreeElement.js:
+        (WebInspector.ContentFlowTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom):
+        (.tree-outline.dom li.hovered:not(.selected) .selection):
+        (.tree-outline.dom li .selection):
+        (.tree-outline.dom li.selected .selection):
+        (.tree-outline.dom li.elements-drag-over .selection):
+        (.tree-outline.dom:focus li.selected .selection):
+        (.tree-outline.dom li.selected > span::after):
+        (.tree-outline.dom:focus li.selected > span::after):
+        (.tree-outline.dom ol):
+        (.tree-outline.dom ol.children):
+        (.tree-outline.dom ol.children.expanded):
+        (.tree-outline.dom li):
+        (.tree-outline.dom li.pseudo-class-enabled > .selection::before):
+        (.tree-outline.dom.single-node li):
+        (.tree-outline.dom:focus li.selected):
+        (.tree-outline.dom:focus li.selected.pseudo-class-enabled > .selection::before):
+        (.tree-outline.dom:focus li.selected *):
+        (.tree-outline.dom li.parent):
+        (.tree-outline.dom li .html-tag.close):
+        (.tree-outline.dom li.parent::before):
+        (.tree-outline.dom:focus li.parent.selected::before):
+        (.tree-outline.dom li.parent.expanded::before):
+        (.tree-outline.dom:focus li.parent.expanded.selected::before):
+        (.tree-outline.dom .html-text-node.large):
+        (.tree-outline.dom .html-pseudo-element):
+        (.tree-outline.dom .html-fragment.shadow):
+        (.showing-find-banner .tree-outline.dom .search-highlight):
+        (.dom-tree-outline): Deleted.
+        (.dom-tree-outline li.hovered:not(.selected) .selection): Deleted.
+        (.dom-tree-outline li .selection): Deleted.
+        (.dom-tree-outline li.selected .selection): Deleted.
+        (.dom-tree-outline li.elements-drag-over .selection): Deleted.
+        (.dom-tree-outline:focus li.selected .selection): Deleted.
+        (.dom-tree-outline li.selected > span::after): Deleted.
+        (.dom-tree-outline:focus li.selected > span::after): Deleted.
+        (.dom-tree-outline ol): Deleted.
+        (.dom-tree-outline ol.children): Deleted.
+        (.dom-tree-outline ol.children.expanded): Deleted.
+        (.dom-tree-outline li): Deleted.
+        (.dom-tree-outline li.pseudo-class-enabled > .selection::before): Deleted.
+        (.dom-tree-outline.single-node li): Deleted.
+        (.dom-tree-outline:focus li.selected): Deleted.
+        (.dom-tree-outline:focus li.selected.pseudo-class-enabled > .selection::before): Deleted.
+        (.dom-tree-outline:focus li.selected *): Deleted.
+        (.dom-tree-outline li.parent): Deleted.
+        (.dom-tree-outline li .html-tag.close): Deleted.
+        (.dom-tree-outline li.parent::before): Deleted.
+        (.dom-tree-outline:focus li.parent.selected::before): Deleted.
+        (.dom-tree-outline li.parent.expanded::before): Deleted.
+        (.dom-tree-outline:focus li.parent.expanded.selected::before): Deleted.
+        (.dom-tree-outline .html-text-node.large): Deleted.
+        (.dom-tree-outline .html-pseudo-element): Deleted.
+        (.dom-tree-outline .html-fragment.shadow): Deleted.
+        (.showing-find-banner .dom-tree-outline .search-highlight): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline):
+        Use default TreeOutline DOM element, and simplify element class name.
+
+        * UserInterface/Views/DatabaseTableTreeElement.js:
+        (WebInspector.DatabaseTableTreeElement): Deleted.
+        * UserInterface/Views/DatabaseTreeElement.js:
+        (WebInspector.DatabaseTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/ErrorObjectView.css:
+        (.error-object:not(.expanded) .tree-outline):
+        (.error-object .tree-outline):
+        (.error-object:not(.expanded) .error-object-outline): Deleted.
+        (.error-object-outline): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/ErrorObjectView.js:
+        (WebInspector.ErrorObjectView): Deleted.
+        Removed unused tree outline class name.
+
+        * UserInterface/Views/FolderTreeElement.js:
+        (WebInspector.FolderTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-node > .tree-outline.dom):
+        (.formatted-node > .tree-outline.dom ol):
+        (.formatted-node > .tree-outline.dom li):
+        (.formatted-node > .tree-outline.dom li.hovered:not(.selected) .selection):
+        (.formatted-node > .dom-tree-outline): Deleted.
+        (.formatted-node > .dom-tree-outline ol): Deleted.
+        (.formatted-node > .dom-tree-outline li): Deleted.
+        (.formatted-node > .dom-tree-outline li.hovered:not(.selected) .selection): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype._updateTitleTooltip):
+        (WebInspector.GeneralTreeElement.prototype.get small): Deleted.
+        (WebInspector.GeneralTreeElement.prototype.set small): Deleted.
+        (WebInspector.GeneralTreeElement.prototype.get twoLine): Deleted.
+        (WebInspector.GeneralTreeElement.prototype.set twoLine): Deleted.
+        Removed properties `small` and `twoLine`. The first is no longer needed as
+        it is now the default tree element style. The second was not being used.
+
+        * UserInterface/Views/IndexedDatabaseObjectStoreIndexTreeElement.js:
+        (WebInspector.IndexedDatabaseObjectStoreIndexTreeElement): Deleted.
+        * UserInterface/Views/IndexedDatabaseObjectStoreTreeElement.js:
+        (WebInspector.IndexedDatabaseObjectStoreTreeElement): Deleted.
+        * UserInterface/Views/IndexedDatabaseTreeElement.js:
+        (WebInspector.IndexedDatabaseTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/IssueTreeElement.css:
+        (.navigation-sidebar-panel-content-tree-outline .item.small.issue .icon): Deleted.
+        No longer needed.
+
+        * UserInterface/Views/IssueTreeElement.js:
+        (WebInspector.IssueTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/LayoutTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.layout .item .subtitle):
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.layout .item .subtitle): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/LogTreeElement.js:
+        (WebInspector.LogTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.navigation-sidebar-panel-content-tree-outline .children): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .children.expanded): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline.hide-disclosure-buttons > .children): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline > .children.hide-disclosure-buttons > .children): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) .icon): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline.hide-disclosure-buttons .item.small): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .disclosure-button): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline.hide-disclosure-buttons .item .disclosure-button): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.parent .disclosure-button): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .disclosure-button): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.expanded .disclosure-button): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected.expanded .disclosure-button): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .icon): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .status): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .status:empty): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.selected): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected): Deleted.
+        (body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .titles): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .highlighted): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .titles.no-subtitle): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .title::after): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .subtitle): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .subtitle): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .subtitle:empty): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small.two-line): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small .icon): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small .status): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small .status .indeterminate-progress-spinner): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small .titles): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small.two-line .status): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small.two-line .titles): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small.two-line .titles.no-subtitle): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small .subtitle): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small.two-line .icon): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small:not(.two-line) .title::after): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small:not(.two-line) .subtitle::before): Deleted.
+        Generic tree outline styles removed, cleaned up, and relocated to TreeOutline.css.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        Removed static property HideDisclosureButtonsStyleClassName, which is now
+        encapsulated by TreeOutline.
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        Use default TreeOutline DOM element instead of creating it.
+        (WebInspector.NavigationSidebarPanel): Deleted.
+        Remove call to generate style rules.
+        (WebInspector.NavigationSidebarPanel.prototype._generateStyleRulesIfNeeded): Deleted.
+        Moved to TreeOutline.js.
+
+        * UserInterface/Views/NetworkSidebarPanel.css:
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing .tree-outline.network-grid .item .subtitle):
+        (.sidebar > .panel.navigation.network > .content > .tree-outline):
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .tree-outline):
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing .navigation-sidebar-panel-content-tree-outline.network-grid .item .subtitle): Deleted.
+        (.sidebar > .panel.navigation.network > .content > .navigation-sidebar-panel-content-tree-outline): Deleted.
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel):
+        Disable tree outline disclosure buttons.
+
+        * UserInterface/Views/NetworkTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.network .item .subtitle):
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.network .item .subtitle): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        Disable tree outline disclosure buttons.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index .index-value .object-tree .tree-outline.object):
+        (.object-tree-array-index .index-value .formatted-node .tree-outline.dom):
+        (.object-tree-array-index .index-value .object-tree .object-tree-outline): Deleted.
+        (.object-tree-array-index .index-value .formatted-node .dom-tree-outline): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.tree-outline .item.object-tree-property):
+        (.item.object-tree-property.prototype-property):
+        (.item.object-tree-property.prototype-property + ol):
+        (.object-tree-property): Deleted.
+        (.object-tree-property > .titles): Deleted.
+        (.object-tree-property > .disclosure-button): Deleted.
+        (.object-tree-property.parent > .disclosure-button): Deleted.
+        (.object-tree-property.parent.expanded > .disclosure-button): Deleted.
+        (.object-tree-property > .icon): Deleted.
+        (.object-tree-property.prototype-property): Deleted.
+        (.object-tree-property.prototype-property + ol): Deleted.
+        Updated selectors with new tree outline class names, removed styles which
+        are now provided by TreeOutline.css.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree .tree-outline.object):
+        (.object-tree.expanded > .tree-outline.object):
+        (.tree-outline.object):
+        (.object-tree.properties-only .tree-outline.object):
+        (.tree-outline.object li):
+        (.tree-outline.object ol):
+        (.tree-outline.object ol.expanded):
+        (.tree-outline.object li .empty-message):
+        (.object-tree .object-tree-outline): Deleted.
+        (.object-tree.expanded > .object-tree-outline): Deleted.
+        (.object-tree-outline): Deleted.
+        (.object-tree.properties-only .object-tree-outline): Deleted.
+        (.object-tree-outline li): Deleted.
+        (.object-tree-outline ol): Deleted.
+        (.object-tree-outline ol.expanded): Deleted.
+        (.object-tree-outline li .empty-message): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView):
+        Use default TreeOutline DOM element, and simplify element class name.
+        Enable custom indent (disables generated style rules).
+
+        * UserInterface/Views/ProfileNodeTreeElement.js:
+        (WebInspector.ProfileNodeTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/RenderingFrameTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.rendering-frame .item:not(.paint-record):not(.layout-record) .subtitle):
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.rendering-frame .item:not(.paint-record):not(.layout-record) .subtitle): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        Disable tree outline disclosure buttons.
+        (WebInspector.ResourceSidebarPanel.prototype._extraDomainsActivated):
+        Enable tree outline disclosure buttons.
+
+        * UserInterface/Views/ScriptTimelineView.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.script .item .subtitle):
+        (.sidebar > .panel.navigation.timeline:not(.timeline-recording-content-view-showing) .tree-outline.script .item .alternate-subtitle):
+        (.tree-outline .item .alternate-subtitle):
+        (.tree-outline:matches(:focus, .force-focus) .item.selected .alternate-subtitle):
+        (.tree-outline .item.small:not(.two-line) .alternate-subtitle::before):
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.script .item .subtitle): Deleted.
+        (.sidebar > .panel.navigation.timeline:not(.timeline-recording-content-view-showing) .navigation-sidebar-panel-content-tree-outline.script .item .alternate-subtitle): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item .alternate-subtitle): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .alternate-subtitle): Deleted.
+        (.navigation-sidebar-panel-content-tree-outline .item.small:not(.two-line) .alternate-subtitle::before): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WebInspector.SearchResultTreeElement): Deleted.
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WebInspector.SourceCodeTreeElement): Deleted.
+        * UserInterface/Views/StorageTreeElement.js:
+        (WebInspector.StorageTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.tree-outline.timeline-data-grid .item:hover):
+        (.tree-outline.timeline-data-grid .item:hover .subtitle):
+        (.timeline-data-grid-tree-outline): Deleted.
+        (.timeline-data-grid-tree-outline .item): Deleted.
+        (.timeline-data-grid-tree-outline .item .status): Deleted.
+        (.timeline-data-grid-tree-outline .item .icon): Deleted.
+        (.timeline-data-grid-tree-outline .item:hover): Deleted.
+        (.timeline-data-grid-tree-outline .item .titles): Deleted.
+        (.timeline-data-grid-tree-outline .item .title::after): Deleted.
+        (.timeline-data-grid-tree-outline .item .subtitle): Deleted.
+        (.timeline-data-grid-tree-outline .item:hover .subtitle): Deleted.
+        (.timeline-data-grid-tree-outline .item .subtitle:empty): Deleted.
+        (.timeline-data-grid-tree-outline .item.small): Deleted.
+        (.timeline-data-grid-tree-outline .item.small .icon): Deleted.
+        (.timeline-data-grid-tree-outline .item.small .status): Deleted.
+        (.timeline-data-grid-tree-outline .item.small .titles): Deleted.
+        (.timeline-data-grid-tree-outline .item.small .subtitle): Deleted.
+        (.timeline-data-grid-tree-outline .item.small:not(.two-line) .title::after): Deleted.
+        (.timeline-data-grid-tree-outline .item.small:not(.two-line) .subtitle::before): Deleted.
+        Updated selectors with new tree outline class names, removed styles which
+        are now provided by TreeOutline.css.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._createPopoverContent):
+        Use default TreeOutline DOM element, and simplify element class name.
+
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .timelines-content .close-button): Deleted.
+        Removed styles which are now provided by TreeOutline.css.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        Disable tree outline disclosure buttons, enable large tree style.
+
+        * UserInterface/Views/TimelineView.css:
+        (.panel.navigation.timeline > .content > .tree-outline):
+        (.panel.navigation.timeline.timeline-recording-content-view-showing > .content > .tree-outline):
+        (.panel.navigation.timeline > .content > .navigation-sidebar-panel-content-tree-outline): Deleted.
+        (.panel.navigation.timeline.timeline-recording-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/TreeOutline.css: Added.
+        (.tree-outline .children):
+        (.tree-outline .children.expanded):
+        (.tree-outline .item):
+        (.tree-outline.compact .item):
+        (.tree-outline.large .item):
+        (.tree-outline.hide-disclosure-buttons > .children):
+        (.tree-outline > .children.hide-disclosure-buttons > .children):
+        (.tree-outline:not(.hide-disclosure-buttons) .item:not(.parent) .icon):
+        (.tree-outline .item .disclosure-button):
+        (.tree-outline.hide-disclosure-buttons .item .disclosure-button):
+        (.tree-outline .item.parent .disclosure-button):
+        (.tree-outline:matches(:focus, .force-focus) .item.selected .disclosure-button):
+        (.tree-outline .item.expanded .disclosure-button):
+        (.tree-outline:matches(:focus, .force-focus) .item.selected.expanded .disclosure-button):
+        (.tree-outline .item .icon):
+        (.tree-outline.compact .item .icon):
+        (.tree-outline.large .item .icon):
+        (.tree-outline .item .status):
+        (.tree-outline.large .item .status):
+        (.tree-outline .item .status:empty):
+        (.tree-outline .item.selected):
+        (.tree-outline:matches(:focus, .force-focus) .item.selected):
+        (body.window-inactive .tree-outline .item.selected):
+        (.tree-outline .item .titles):
+        (.tree-outline.compact .item .titles):
+        (.tree-outline.large .item .titles):
+        (.tree-outline .item .highlighted):
+        (.tree-outline.large .item .titles.no-subtitle):
+        (.tree-outline .item .title::after):
+        (.tree-outline .item .subtitle):
+        (.tree-outline.large .item .subtitle):
+        (.tree-outline:matches(:focus, .force-focus) .item.selected .subtitle):
+        (.tree-outline .item .subtitle:empty):
+        (.tree-outline:not(.large) .item .status .indeterminate-progress-spinner):
+        (.tree-outline .item .subtitle::before):
+        Relocated tree outlines styles from NavigationSidebarPanel.css.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline):
+        (WebInspector.TreeOutline.prototype.get compact):
+        (WebInspector.TreeOutline.prototype.set compact):
+        (WebInspector.TreeOutline.prototype.get large):
+        (WebInspector.TreeOutline.prototype.set large):
+        (WebInspector.TreeOutline.prototype.get disclosureButtons):
+        (WebInspector.TreeOutline.prototype.set disclosureButtons):
+        (WebInspector.TreeOutline.prototype.get customIndent):
+        (WebInspector.TreeOutline.prototype.set customIndent):
+        Added properties for tree element appearance and indentation
+        behavior, so clients don't need to manually toggle style classes.
+        (WebInspector.TreeOutline._generateStyleRulesIfNeeded):
+        Relocated from NavigationSidebarPanel.js.
+
+        * UserInterface/Views/TypeTreeElement.js:
+        (WebInspector.TypeTreeElement): Deleted.
+        Removed call to obsolete TreeOutline.prototype.small setter.
+
+        * UserInterface/Views/TypeTreeView.css:
+        (.tree-outline.type):
+        (.tree-outline.type li):
+        (.tree-outline.type ol):
+        (.tree-outline.type ol.expanded):
+        (.tree-outline.type li .empty-message):
+        (.type-tree-outline): Deleted.
+        (.type-tree-outline li): Deleted.
+        (.type-tree-outline ol): Deleted.
+        (.type-tree-outline ol.expanded): Deleted.
+        (.type-tree-outline li .empty-message): Deleted.
+        Updated selectors with new tree outline class names.
+
+        * UserInterface/Views/TypeTreeView.js:
+        (WebInspector.TypeTreeView):
+        Use default TreeOutline DOM element, and simplify element class name.
+
 2016-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Inspector should use the last sourceURL / sourceMappingURL directive

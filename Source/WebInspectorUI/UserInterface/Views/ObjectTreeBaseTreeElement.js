@@ -36,7 +36,6 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         this._property = property;
         this._propertyPath = propertyPath;
 
-        this.small = true;
         this.toggleOnClick = true;
         this.selectable = false;
         this.tooltipHandledSeparately = true;

@@ -31,8 +31,6 @@ WebInspector.ApplicationCacheFrameTreeElement = class ApplicationCacheFrameTreeE
 
         super("application-cache-frame", "", "", representedObject, false);
 
-        this.small = true;
-
         this.updateTitles();
     }
 

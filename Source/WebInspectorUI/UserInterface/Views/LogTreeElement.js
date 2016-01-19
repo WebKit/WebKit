@@ -32,8 +32,6 @@ WebInspector.LogTreeElement = class LogTreeElement extends WebInspector.GeneralT
         super("log-icon", WebInspector.UIString("Console"), representedObject.startDate.toLocaleTimeString(), representedObject, false);
 
         this._logObject = representedObject;
-
-        this.small = true;
     }
 
     // Public

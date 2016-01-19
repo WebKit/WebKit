@@ -72,15 +72,15 @@
     width: 0px;
 }
 
-.object-tree .object-tree-outline {
+.object-tree .tree-outline.object {
     display: none;
 }
 
-.object-tree.expanded > .object-tree-outline {
+.object-tree.expanded > .tree-outline.object {
     display: block;
 }
 
-.object-tree-outline {
+.tree-outline.object {
     margin: 0;
     padding: 0 6px 2px;
     list-style: none;
@@ -88,7 +88,8 @@
     outline: none;
 }
 
-.object-tree.properties-only .object-tree-outline {
+.tree-outline.object .item,
+.object-tree.properties-only .tree-outline.object {
     padding-left: 0;
 }
 
@@ -96,7 +97,7 @@
     opacity: 1;
 }
 
-.object-tree-outline li {
+.tree-outline.object li {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -104,18 +105,18 @@
     cursor: default;
 }
 
-.object-tree-outline ol {
+.tree-outline.object ol {
     display: none;
     margin: 0;
     -webkit-padding-start: 16px;
     list-style: none;
 }
 
-.object-tree-outline ol.expanded {
+.tree-outline.object ol.expanded {
     display: block;
 }
 
-.object-tree-outline li .empty-message {
+.tree-outline.object li .empty-message {
     color: hsl(0, 0%, 60%);
     margin-left: 15px;
     font-family: -apple-system, sans-serif;

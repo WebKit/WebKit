@@ -40,7 +40,6 @@ WebInspector.ErrorObjectView = class ErrorObjectView extends WebInspector.Object
         previewElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
 
         this._outlineElement = this._element.appendChild(document.createElement("div"));
-        this._outlineElement.classList.add("error-object-outline");
         this._outline = new WebInspector.TreeOutline(this._outlineElement);
     }
 

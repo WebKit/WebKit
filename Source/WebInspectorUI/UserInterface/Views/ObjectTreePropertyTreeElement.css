@@ -23,55 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.object-tree-property {
-    margin-top: 1px;
-}
-
-.object-tree-property > .titles {
-    position: relative;
-    line-height: normal;
-    padding-bottom: 1px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    display: inline-block;
-    vertical-align: top;
-}
-
-.object-tree-property > .disclosure-button {
-    display: inline-block;
-    vertical-align: top;
-
-    width: 15px;
-    height: 16px;
-
-    margin-left: -1px;
-    border: 0;
-    background: none;
-    -webkit-appearance: none;
-}
-
-.object-tree-property.parent > .disclosure-button {
-    background-color: transparent;
-    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 13px 13px;
-}
-
-.object-tree-property.parent.expanded > .disclosure-button {
-    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
-}
-
-.object-tree-property > .icon {
-    display: inline-block;
-    vertical-align: top;
-    position: relative;
-
-    width: 16px;
-    height: 16px;
-
-    margin-right: 3px;
+.tree-outline .item.object-tree-property {
+    margin-top: 0;
+    border-top: 0;
 }
 
 .object-tree-property.boolean > .icon {
@@ -130,7 +84,7 @@
     opacity: 0.6;
 }
 
-.object-tree-property.prototype-property {
+.item.object-tree-property.prototype-property {
     display: inline-block;
 
     border: 1px solid hsla(0, 0%, 0%, 0.06);
@@ -149,7 +103,7 @@
     display: none;
 }
 
-.object-tree-property.prototype-property + ol {
+.item.object-tree-property.prototype-property + ol {
     -webkit-padding-start: 0px;
 }
 

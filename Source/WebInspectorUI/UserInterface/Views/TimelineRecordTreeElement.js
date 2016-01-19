@@ -60,8 +60,6 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
         this._record = timelineRecord;
         this._sourceCodeLocation = sourceCodeLocation;
 
-        this.small = true;
-
         if (this._sourceCodeLocation)
             this.tooltipHandledSeparately = true;
 

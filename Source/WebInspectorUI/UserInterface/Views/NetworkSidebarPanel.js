@@ -59,7 +59,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
         this._navigationBar.addNavigationItem(this._scopeBar);
 
         this.contentTreeOutline.element.classList.add("network-grid");
-        this.contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
+        this.contentTreeOutline.disclosureButtons = false;
 
         this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
 

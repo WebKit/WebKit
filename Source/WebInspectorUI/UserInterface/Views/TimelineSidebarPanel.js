@@ -60,14 +60,15 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         // The visible recording's tree element is selected when the content view changes.
         this._recordingTreeElementMap = new Map;
         this._recordingsTreeOutline = this.createContentTreeOutline(true, true);
-        this._recordingsTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
+        this._recordingsTreeOutline.disclosureButtons = false;
         this._recordingsTreeOutline.hidden = true;
         this._recordingsTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._recordingsTreeSelectionDidChange, this);
         this._timelinesContentContainerElement.appendChild(this._recordingsTreeOutline.element);
 
         // Maintain a tree outline with tree elements for each timeline of the selected recording.
         this._timelinesTreeOutline = this.createContentTreeOutline(true, true);
-        this._timelinesTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
+        this._timelinesTreeOutline.disclosureButtons = false;
+        this._timelinesTreeOutline.large = true;
         this._timelinesTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._timelinesTreeSelectionDidChange, this);
         this._timelinesContentContainerElement.appendChild(this._timelinesTreeOutline.element);
 

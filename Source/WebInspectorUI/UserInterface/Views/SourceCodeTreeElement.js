@@ -31,8 +31,6 @@ WebInspector.SourceCodeTreeElement = class SourceCodeTreeElement extends WebInsp
 
         super(classNames, title, subtitle, representedObject || sourceCode, hasChildren);
 
-        this.small = true;
-
         this._updateSourceCode(sourceCode);
     }
 

@@ -31,7 +31,6 @@ WebInspector.DatabaseTreeElement = class DatabaseTreeElement extends WebInspecto
 
         super("database-icon", representedObject.name, null, representedObject, true);
 
-        this.small = true;
         this.hasChildren = false;
 
         // Since we are initially telling the tree element we don't have any children, make sure that we try to populate

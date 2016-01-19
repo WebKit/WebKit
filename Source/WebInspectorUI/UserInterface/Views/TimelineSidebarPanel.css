@@ -133,9 +133,7 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar.timeline
 }
 
 .sidebar > .panel.navigation.timeline > .timelines-content .close-button {
-    margin-top: 1px;
     width: 14px;
-    height: 14px;
 
     visibility: hidden;
 }

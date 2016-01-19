@@ -31,11 +31,3 @@
 .issue.error .icon {
     background-image: url(../Images/Error.svg);
 }
-
-.navigation-sidebar-panel-content-tree-outline.small .item.issue .icon,
-.navigation-sidebar-panel-content-tree-outline .children.small .item.issue .icon,
-.navigation-sidebar-panel-content-tree-outline .item.small.issue .icon {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 14px;
-}

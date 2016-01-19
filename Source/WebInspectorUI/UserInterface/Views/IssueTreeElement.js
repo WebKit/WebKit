@@ -39,7 +39,6 @@ WebInspector.IssueTreeElement = class IssueTreeElement extends WebInspector.Debu
 
         super([WebInspector.IssueTreeElement.StyleClassName, levelStyleClassName], null, null, issueMessage, false);
 
-        this.small = true;
         this._issueMessage = issueMessage;
         this._updateTitles();
 

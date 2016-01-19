@@ -35,6 +35,6 @@
     border-right: none;
 }
 
-.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.layout .item .subtitle {
+.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.layout .item .subtitle {
     display: none;
 }

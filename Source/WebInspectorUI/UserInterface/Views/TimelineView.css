@@ -31,12 +31,12 @@
     bottom: 0;
 }
 
-.panel.navigation.timeline > .content > .navigation-sidebar-panel-content-tree-outline {
+.panel.navigation.timeline > .content > .tree-outline {
     min-height: 100%;
     background-image: none;
 }
 
-.panel.navigation.timeline.timeline-recording-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline {
+.panel.navigation.timeline.timeline-recording-content-view-showing > .content > .tree-outline {
     background-image: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03));
     background-size: 100% 40px;
 }

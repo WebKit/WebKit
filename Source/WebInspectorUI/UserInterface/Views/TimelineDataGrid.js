@@ -450,9 +450,9 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
     _createPopoverContent()
     {
         if (!this._popoverCallStackTreeOutline) {
-            var contentElement = document.createElement("ol");
-            contentElement.classList.add("timeline-data-grid-tree-outline");
-            this._popoverCallStackTreeOutline = new WebInspector.TreeOutline(contentElement);
+            this._popoverCallStackTreeOutline = new WebInspector.TreeOutline;
+            this._popoverCallStackTreeOutline.disclosureButtons = false;
+            this._popoverCallStackTreeOutline.element.classList.add("timeline-data-grid");
             this._popoverCallStackTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._popoverCallStackTreeSelectionDidChange, this);
         } else
             this._popoverCallStackTreeOutline.removeChildren();

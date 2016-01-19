@@ -38,8 +38,6 @@ WebInspector.FolderTreeElement = class FolderTreeElement extends WebInspector.Ge
         classNames.unshift(WebInspector.FolderTreeElement.FolderIconStyleClassName);
 
         super(classNames, title, subtitle, representedObject, true);
-
-        this.small = true;
     }
 
     // No Methods or Properties

@@ -31,6 +31,6 @@
     bottom: 0;
 }
 
-.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .navigation-sidebar-panel-content-tree-outline.rendering-frame .item:not(.paint-record):not(.layout-record) .subtitle {
+.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .tree-outline.rendering-frame .item:not(.paint-record):not(.layout-record) .subtitle {
     display: none;
 }

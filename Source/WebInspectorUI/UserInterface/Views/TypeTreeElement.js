@@ -38,7 +38,6 @@ WebInspector.TypeTreeElement = class TypeTreeElement extends WebInspector.Genera
         this._populated = false;
         this._autoExpandedChildren = false;
 
-        this.small = true;
         this.toggleOnClick = true;
         this.selectable = false;
         this.tooltipHandledSeparately = true;

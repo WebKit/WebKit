@@ -62,8 +62,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this._emptyContentPlaceholderElements = new Map;
         this._emptyFilterResults = new Map;
 
-        this._generateStyleRulesIfNeeded();
-
         this._shouldAutoPruneStaleTopLevelResourceTreeElements = shouldAutoPruneStaleTopLevelResourceTreeElements || false;
 
         if (this._shouldAutoPruneStaleTopLevelResourceTreeElements) {
@@ -150,7 +148,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     createContentTreeOutline(dontHideByDefault, suppressFiltering)
     {
-        let contentTreeOutline = new WebInspector.TreeOutline(document.createElement("ol"));
+        let contentTreeOutline = new WebInspector.TreeOutline;
         contentTreeOutline.allowsRepeatSelection = true;
         contentTreeOutline.hidden = !dontHideByDefault;
         contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName);
@@ -661,31 +659,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this._selectedContentTreeOutline = selectedElement ? selectedElement.treeOutline : null;
     }
 
-    _generateStyleRulesIfNeeded()
-    {
-        if (WebInspector.NavigationSidebarPanel._styleElement)
-            return;
-
-        WebInspector.NavigationSidebarPanel._styleElement = document.createElement("style");
-
-        var maximumSidebarTreeDepth = 32;
-        var baseLeftPadding = 5; // Matches the padding in NavigationSidebarPanel.css for the item class. Keep in sync.
-        var depthPadding = 10;
-
-        var styleText = "";
-        var childrenSubstring = "";
-        for (var i = 1; i <= maximumSidebarTreeDepth; ++i) {
-            // Keep all the elements at the same depth once the maximum is reached.
-            childrenSubstring += i === maximumSidebarTreeDepth ? " .children" : " > .children";
-            styleText += "." + WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName + childrenSubstring + " > .item { ";
-            styleText += "padding-left: " + (baseLeftPadding + (depthPadding * i)) + "px; }\n";
-        }
-
-        WebInspector.NavigationSidebarPanel._styleElement.textContent = styleText;
-
-        document.head.appendChild(WebInspector.NavigationSidebarPanel._styleElement);
-    }
-
     _checkForStaleResourcesIfNeeded()
     {
         if (!this._checkForStaleResourcesTimeoutIdentifier || !this._shouldAutoPruneStaleTopLevelResourceTreeElements)
@@ -815,6 +788,5 @@ WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol = Symbol("w
 WebInspector.NavigationSidebarPanel.OverflowShadowElementStyleClassName = "overflow-shadow";
 WebInspector.NavigationSidebarPanel.TopOverflowShadowElementStyleClassName = "top";
 WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName = "navigation-sidebar-panel-content-tree-outline";
-WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName = "hide-disclosure-buttons";
 WebInspector.NavigationSidebarPanel.EmptyContentPlaceholderElementStyleClassName = "empty-content-placeholder";
 WebInspector.NavigationSidebarPanel.EmptyContentPlaceholderMessageElementStyleClassName = "message";

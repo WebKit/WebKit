@@ -79,7 +79,6 @@ WebInspector.ProfileNodeTreeElement = class ProfileNodeTreeElement extends WebIn
         this._profileNode = profileNode;
         this._delegate = delegate || null;
 
-        this.small = true;
         this.shouldRefreshChildren = true;
 
         if (sourceCodeLocation)

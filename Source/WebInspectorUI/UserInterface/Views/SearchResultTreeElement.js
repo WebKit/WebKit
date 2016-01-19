@@ -32,8 +32,6 @@ WebInspector.SearchResultTreeElement = class SearchResultTreeElement extends Web
         var title = WebInspector.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.sourceCodeTextRange);
 
         super(representedObject.className, title, null, representedObject, false);
-
-        this.small = true;
     }
 
     // Static

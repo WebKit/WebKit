@@ -32,8 +32,6 @@ WebInspector.IndexedDatabaseTreeElement = class IndexedDatabaseTreeElement exten
         super("database-icon", indexedDatabase.name, null, indexedDatabase, !!indexedDatabase.objectStores.length);
 
         this._indexedDatabase = indexedDatabase;
-
-        this.small = true;
     }
 
     // Public

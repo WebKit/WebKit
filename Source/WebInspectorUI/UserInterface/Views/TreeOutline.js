@@ -28,15 +28,16 @@
 
 WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 {
-    constructor(listNode)
+    constructor(element)
     {
         super();
 
-        this.element = listNode;
+        this.element = element || document.createElement("ol");
+        this.element.classList.add(WebInspector.TreeOutline.ElementStyleClassName);
 
         this.children = [];
         this.selectedTreeElement = null;
-        this._childrenListNode = listNode;
+        this._childrenListNode = this.element;
         this._childrenListNode.removeChildren();
         this._knownTreeElements = [];
         this._treeElementsExpandedState = [];
@@ -47,9 +48,15 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         this.selected = false;
         this.treeOutline = this;
         this._hidden = false;
+        this._compact = false;
+        this._large = false;
+        this._disclosureButtons = true;
+        this._customIndent = false;
 
         this._childrenListNode.tabIndex = 0;
         this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
+
+        WebInspector.TreeOutline._generateStyleRulesIfNeeded();
     }
 
     // Public
@@ -66,6 +73,68 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
         this._hidden = x;
         this.element.hidden = this._hidden;
+    }
+
+    get compact()
+    {
+        return this._compact;
+    }
+
+    set compact(x)
+    {
+        if (this._compact === x)
+            return;
+
+        this._compact = x;
+        if (this._compact)
+            this.large = false;
+
+        this.element.classList.toggle("compact", this._compact);
+    }
+
+    get large()
+    {
+        return this._large;
+    }
+
+    set large(x)
+    {
+        if (this._large === x)
+            return;
+
+        this._large = x;
+        if (this._large)
+            this.compact = false;
+
+        this.element.classList.toggle("large", this._large);
+    }
+
+    get disclosureButtons()
+    {
+        return this._disclosureButtons;
+    }
+
+    set disclosureButtons(x)
+    {
+        if (this._disclosureButtons === x)
+            return;
+
+        this._disclosureButtons = x;
+        this.element.classList.toggle("hide-disclosure-buttons", !this._disclosureButtons);
+    }
+
+    get customIndent()
+    {
+        return this._customIndent;
+    }
+
+    set customIndent(x)
+    {
+        if (this._customIndent === x)
+            return;
+
+        this._customIndent = x;
+        this.element.classList.toggle(WebInspector.TreeOutline.CustomIndentStyleClassName, this._customIndent);
     }
 
     appendChild(child)
@@ -528,7 +597,39 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
         return false;
     }
+
+    // Private
+
+    static _generateStyleRulesIfNeeded()
+    {
+        if (WebInspector.TreeOutline._styleElement)
+           return;
+
+        WebInspector.TreeOutline._styleElement = document.createElement("style");
+
+        let maximumTreeDepth = 32;
+        let baseLeftPadding = 5; // Matches the padding in TreeOutline.css for the item class. Keep in sync.
+        let depthPadding = 10;
+
+        let styleText = "";
+        let childrenSubstring = "";
+        for (let i = 1; i <= maximumTreeDepth; ++i) {
+            // Keep all the elements at the same depth once the maximum is reached.
+            childrenSubstring += i === maximumTreeDepth ? " .children" : " > .children";
+            styleText += `.${WebInspector.TreeOutline.ElementStyleClassName}:not(.${WebInspector.TreeOutline.CustomIndentStyleClassName})${childrenSubstring} > .item { `;
+            styleText += "padding-left: " + (baseLeftPadding + (depthPadding * i)) + "px; }\n";
+        }
+
+        WebInspector.TreeOutline._styleElement.textContent = styleText;
+
+        document.head.appendChild(WebInspector.TreeOutline._styleElement);
+    }
 };
+
+WebInspector.TreeOutline._styleElement = null;
+
+WebInspector.TreeOutline.ElementStyleClassName = "tree-outline";
+WebInspector.TreeOutline.CustomIndentStyleClassName = "custom-indent";
 
 WebInspector.TreeOutline.Event = {
     ElementAdded: Symbol("element-added"),

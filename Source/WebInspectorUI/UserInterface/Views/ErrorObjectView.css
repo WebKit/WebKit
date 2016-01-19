@@ -53,10 +53,10 @@
     display: none;
 }
 
-.error-object:not(.expanded) .error-object-outline {
+.error-object:not(.expanded) .tree-outline {
     display: none;
 }
 
-.error-object-outline {
+.error-object .tree-outline {
     padding-left: 16px
 }

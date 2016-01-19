@@ -45,8 +45,6 @@ WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspec
         }
 
         this._callFrame = callFrame;
-
-        this.small = true;
     }
 
     // Public

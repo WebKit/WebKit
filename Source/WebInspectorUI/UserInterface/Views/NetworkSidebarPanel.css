@@ -81,16 +81,16 @@ body.window-inactive .sidebar > .panel.navigation.network > .title-bar {
     display: none;
 }
 
-.sidebar > .panel.navigation.network.network-grid-content-view-showing .navigation-sidebar-panel-content-tree-outline.network-grid .item .subtitle {
+.sidebar > .panel.navigation.network.network-grid-content-view-showing .tree-outline.network-grid .item .subtitle {
     display: none;
 }
 
-.sidebar > .panel.navigation.network > .content > .navigation-sidebar-panel-content-tree-outline {
+.sidebar > .panel.navigation.network > .content > .tree-outline {
     min-height: 100%;
     background-image: none;
 }
 
-.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline {
+.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .tree-outline {
     background-image: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03));
     background-size: 100% 40px;
 }

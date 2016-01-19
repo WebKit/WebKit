@@ -29,7 +29,6 @@ WebInspector.StorageTreeElement = class StorageTreeElement extends WebInspector.
     {
         super(classNames, title, null, representedObject, false);
 
-        this.small = true;
         this.flattened = false;
     }
 
