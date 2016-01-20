@@ -1373,11 +1373,6 @@ webkit.org/b/149774 css3/font-variant-all.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/149774 css3/font-variant-font-face-all.html [ Pass Failure ImageOnlyFailure ] 
 webkit.org/b/149774 css3/font-variant-font-face-override.html [ Pass Failure ImageOnlyFailure ] 
 
-# AppleTV not supported on Mavericks or Yosemite
-[ Mavericks Yosemite ] media/controls/airplay-picker.html
-
-webkit.org/b/150956 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata.html [ Pass Timeout ]
-
 # Yosemite and El Capitan do not support font feature coverage queries.
 [ Yosemite ElCapitan ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 [ Yosemite ElCapitan ] css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]

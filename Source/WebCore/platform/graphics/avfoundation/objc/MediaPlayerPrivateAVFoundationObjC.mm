@@ -48,7 +48,6 @@
 #import "URL.h"
 #import "Logging.h"
 #import "MediaPlaybackTargetMac.h"
-#import "MediaPlaybackTargetMock.h"
 #import "MediaSelectionGroupAVFObjC.h"
 #import "MediaTimeAVFoundation.h"
 #import "PlatformTimeRanges.h"
@@ -2740,19 +2739,10 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 {
-    bool wirelessTarget = false;
+    if (!m_avPlayer)
+        return false;
 
-#if !PLATFORM(IOS)
-    if (m_playbackTarget) {
-        if (m_playbackTarget->targetType() == MediaPlaybackTarget::AVFoundation)
-            wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
-        else
-            wirelessTarget = m_shouldPlayToPlaybackTarget && m_playbackTarget->hasActiveRoute();
-    }
-#else
-    wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
-#endif
-
+    bool wirelessTarget = m_avPlayer.get().externalPlaybackActive;
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless(%p) - returning %s", this, boolString(wirelessTarget));
 
     return wirelessTarget;
@@ -2788,8 +2778,8 @@ String MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName() const
 
     String wirelessTargetName;
 #if !PLATFORM(IOS)
-    if (m_playbackTarget)
-        wirelessTargetName = m_playbackTarget->deviceName();
+    if (m_outputContext)
+        wirelessTargetName = m_outputContext.get().deviceName;
 #else
     wirelessTargetName = wkExernalDeviceDisplayNameForPlayer(m_avPlayer.get());
 #endif
@@ -2824,56 +2814,31 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
 #if !PLATFORM(IOS)
 void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
-    m_playbackTarget = WTF::move(target);
+    MediaPlaybackTargetMac* macTarget = toMediaPlaybackTargetMac(&target.get());
 
-    m_outputContext = m_playbackTarget->targetType() == MediaPlaybackTarget::AVFoundation ? toMediaPlaybackTargetMac(m_playbackTarget.get())->outputContext() : nullptr;
+    m_outputContext = macTarget->outputContext();
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(%p) - target = %p, device name = %s", this, m_outputContext.get(), [m_outputContext.get().deviceName UTF8String]);
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(%p) - target = %p, device name = %s", this, m_outputContext.get(), m_playbackTarget->deviceName().utf8().data());
-
-    if (!m_playbackTarget->hasActiveRoute())
+    if (!m_outputContext || !m_outputContext.get().deviceName)
         setShouldPlayToPlaybackTarget(false);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
-    if (m_shouldPlayToPlaybackTarget == shouldPlay)
-        return;
-
     m_shouldPlayToPlaybackTarget = shouldPlay;
 
-    if (!m_playbackTarget)
+    AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(%p) - target = %p, shouldPlay = %s", this, newContext, boolString(shouldPlay));
+
+    if (!m_avPlayer)
         return;
 
-    if (m_playbackTarget->targetType() == MediaPlaybackTarget::AVFoundation) {
-        AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
-
-        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(%p) - target = %p, shouldPlay = %s", this, newContext, boolString(shouldPlay));
-
-        if (!m_avPlayer)
-            return;
-
-        RetainPtr<AVOutputContext> currentContext = m_avPlayer.get().outputContext;
-        if ((!newContext && !currentContext.get()) || [currentContext.get() isEqual:newContext])
-            return;
-
-        setDelayCallbacks(true);
-        m_avPlayer.get().outputContext = newContext;
-        setDelayCallbacks(false);
-
+    RetainPtr<AVOutputContext> currentContext = m_avPlayer.get().outputContext;
+    if ((!newContext && !currentContext.get()) || [currentContext.get() isEqual:newContext])
         return;
-    }
-
-    ASSERT(m_playbackTarget->targetType() == MediaPlaybackTarget::Mock);
-
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(%p) - target = {Mock}, shouldPlay = %s", this, boolString(shouldPlay));
 
     setDelayCallbacks(true);
-    auto weakThis = createWeakPtr();
-    scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification([weakThis] {
-        if (!weakThis)
-            return;
-        weakThis->playbackTargetIsWirelessDidChange();
-    }));
+    m_avPlayer.get().outputContext = newContext;
     setDelayCallbacks(false);
 }
 #endif // !PLATFORM(IOS)

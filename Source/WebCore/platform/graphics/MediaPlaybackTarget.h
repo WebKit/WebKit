@@ -29,16 +29,9 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include "MediaPlaybackTargetContext.h"
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-static const MediaPlaybackTargetContext& noMediaPlaybackTargetContext()
-{
-    static NeverDestroyed<MediaPlaybackTargetContext> context;
-    return context;
-}
 
 class MediaPlaybackTarget : public RefCounted<MediaPlaybackTarget> {
 public:
@@ -47,13 +40,11 @@ public:
     enum TargetType {
         None,
         AVFoundation,
-        Mock,
     };
     virtual TargetType targetType() const { return None; }
 
-    virtual const MediaPlaybackTargetContext& targetContext() const { return noMediaPlaybackTargetContext(); }
+    virtual const MediaPlaybackTargetContext& targetContext() const { return NoMediaPlaybackTargetContext; }
     virtual bool hasActiveRoute() const { return false; }
-    virtual String deviceName() const { return emptyString(); }
 
 protected:
     MediaPlaybackTarget() { }

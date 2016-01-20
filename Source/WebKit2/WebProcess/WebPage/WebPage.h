@@ -129,7 +129,6 @@ class HTMLPlugInElement;
 class HTMLPlugInImageElement;
 class IntPoint;
 class KeyboardEvent;
-class MediaPlaybackTargetContext;
 class Page;
 class PrintContext;
 class Range;
@@ -142,6 +141,7 @@ class URL;
 class VisibleSelection;
 struct Highlight;
 struct KeypressCommand;
+struct MediaPlaybackTargetContext;
 struct TextCheckingResult;
 }
 

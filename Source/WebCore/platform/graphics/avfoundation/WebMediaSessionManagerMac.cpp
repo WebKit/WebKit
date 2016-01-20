@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WebMediaSessionManager& WebMediaSessionManager::shared()
+WebMediaSessionManager& WebMediaSessionManager::platformManager()
 {
     static NeverDestroyed<WebMediaSessionManagerMac> sharedManager;
     return sharedManager;
@@ -48,7 +48,7 @@ WebMediaSessionManagerMac::~WebMediaSessionManagerMac()
 {
 }
 
-WebCore::MediaPlaybackTargetPicker& WebMediaSessionManagerMac::platformPicker()
+WebCore::MediaPlaybackTargetPicker& WebMediaSessionManagerMac::targetPicker()
 {
     if (!m_targetPicker)
         m_targetPicker = MediaPlaybackTargetPickerMac::create(*this);

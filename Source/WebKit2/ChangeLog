@@ -1,58 +1,25 @@
-2016-01-14  Matthew Hanson  <matthew_hanson@apple.com>
+2016-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
-        Merge r192200. rdar://problem/24154288
+        Roll out r192200 via r195067. rdar://problem/24154288
 
-    2015-11-09  Eric Carlson  <eric.carlson@apple.com>
+2016-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
-            [Mac] Add a mock AppleTV device for testing
-            https://bugs.webkit.org/show_bug.cgi?id=148912
-            <rdar://problem/22596272>
+        Merge r195067. rdar://problem/24154288
 
-            Reviewed by Tim Horton.
+    2016-01-14  Matthew Hanson  <matthew_hanson@apple.com>
 
-            * Shared/WebCoreArgumentCoders.cpp:
-            (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encode): Update for MediaPlaybackTargetContext changes.
-            (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decode): Ditto.
-            * Shared/WebCoreArgumentCoders.h:
+            Merge r189135. rdar://problem/24154288
 
-            * Shared/mac/WebCoreArgumentCodersMac.mm:
-            (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData): Ditto.
-            (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData): Ditto.
+        2015-08-28  Eric Carlson  <eric.carlson@apple.com>
 
-            * UIProcess/WebPageProxy.cpp:
-            (WebKit::WebPageProxy::setMockMediaPlaybackTargetPickerEnabled): New.
-            (WebKit::WebPageProxy::setMockMediaPlaybackTargetPickerState): Ditto.
-            * UIProcess/WebPageProxy.h:
+                [Mac] Restructure WebMediaSessionManager for testing
+                https://bugs.webkit.org/show_bug.cgi?id=148593
 
-            * UIProcess/WebPageProxy.messages.in: Add SetMockMediaPlaybackTargetPickerEnabled and
-              SetMockMediaPlaybackTargetPickerState.
+                Reviewed by Jer Noble.
 
-            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
-            (WebKit::WebChromeClient::setMockMediaPlaybackTargetPickerEnabled): New.
-            (WebKit::WebChromeClient::setMockMediaPlaybackTargetPickerState): Ditto.
-            * WebProcess/WebCoreSupport/WebChromeClient.h:
-
-            * WebProcess/WebPage/WebPage.h: MediaPlaybackTargetContext is a class, not a struct.
-
-            * WebProcess/WebPage/WebPage.messages.in: Ditto.
-
-            * WebProcess/WebPage/mac/WebPageMac.mm:
-            (WebKit::WebPage::playbackTargetSelected): Support mock target.
-
-2016-01-14  Matthew Hanson  <matthew_hanson@apple.com>
-
-        Merge r189135. rdar://problem/24154288
-
-    2015-08-28  Eric Carlson  <eric.carlson@apple.com>
-
-            [Mac] Restructure WebMediaSessionManager for testing
-            https://bugs.webkit.org/show_bug.cgi?id=148593
-
-            Reviewed by Jer Noble.
-
-            * UIProcess/mac/PageClientImpl.mm:
-            (WebKit::PageClientImpl::mediaSessionManager): Call WebMediaSessionManager::singleton, not
-              WebMediaSessionManagerMac::singleton.
+                * UIProcess/mac/PageClientImpl.mm:
+                (WebKit::PageClientImpl::mediaSessionManager): Call WebMediaSessionManager::singleton, not
+                  WebMediaSessionManagerMac::singleton.
 
 2015-12-18  Matthew Hanson  <matthew_hanson@apple.com>
 

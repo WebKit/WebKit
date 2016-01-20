@@ -40,7 +40,7 @@ private:
     WebMediaSessionManagerMac();
     virtual ~WebMediaSessionManagerMac();
 
-    virtual WebCore::MediaPlaybackTargetPicker& platformPicker();
+    virtual WebCore::MediaPlaybackTargetPicker& targetPicker();
 
     std::unique_ptr<WebCore::MediaPlaybackTargetPicker> m_targetPicker;
 };

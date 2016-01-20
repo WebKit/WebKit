@@ -39,12 +39,10 @@ public:
 
     virtual ~MediaPlaybackTargetMac();
 
-    TargetType targetType() const override { return AVFoundation; }
+    virtual TargetType targetType() const { return AVFoundation; }
 
-    const MediaPlaybackTargetContext& targetContext() const override;
-    bool hasActiveRoute() const override;
-
-    String deviceName() const override;
+    virtual const MediaPlaybackTargetContext& targetContext() const;
+    virtual bool hasActiveRoute() const;
 
     AVOutputContext *outputContext() const { return m_outputContext.get(); }
 
@@ -53,7 +51,6 @@ protected:
 
     RetainPtr<AVOutputContext> m_outputContext;
     mutable MediaPlaybackTargetContext m_context;
-    String m_deviceName;
 };
 
 MediaPlaybackTargetMac* toMediaPlaybackTargetMac(MediaPlaybackTarget*);

@@ -190,10 +190,6 @@
 #include "AudioContext.h"
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include "MediaPlaybackTargetContext.h"
-#endif
-
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
 using JSC::JSFunction;
@@ -354,11 +350,6 @@ Internals::Internals(Document* document)
     MockRealtimeMediaSourceCenter::registerMockRealtimeMediaSourceCenter();
     enableMockRTCPeerConnectionHandler();
     WebCore::provideUserMediaTo(document->page(), new UserMediaClientMock());
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (document && document->page())
-        document->page()->setMockMediaPlaybackTargetPickerEnabled(true);
 #endif
 }
 
@@ -2803,33 +2794,6 @@ void Internals::simulateSystemWake() const
     PlatformMediaSessionManager::sharedManager().systemDidWake();
 #endif
 }
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void Internals::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
-{
-    Page* page = contextDocument()->frame()->page();
-    ASSERT(page);
-
-    page->setMockMediaPlaybackTargetPickerEnabled(enabled);
-}
-
-void Internals::setMockMediaPlaybackTargetPickerState(const String& deviceName, const String& deviceState, ExceptionCode& ec)
-{
-    Page* page = contextDocument()->frame()->page();
-    ASSERT(page);
-
-    MediaPlaybackTargetContext::State state = MediaPlaybackTargetContext::Unavailable;
-
-    if (equalIgnoringCase(deviceState, "DeviceAvailable"))
-        state = MediaPlaybackTargetContext::OutputDeviceAvailable;
-    else {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    page->setMockMediaPlaybackTargetPickerState(deviceName, state);
-}
-#endif
 
 
 void Internals::installMockPageOverlay(const String& overlayType, ExceptionCode& ec)

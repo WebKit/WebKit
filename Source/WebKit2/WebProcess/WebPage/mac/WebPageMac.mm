@@ -90,7 +90,6 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include <WebCore/MediaPlaybackTargetMac.h>
-#include <WebCore/MediaPlaybackTargetMock.h>
 #endif
 
 using namespace WebCore;
@@ -1266,17 +1265,9 @@ void WebPage::setFont(const String& fontFamily, double fontSize, uint64_t fontTr
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 void WebPage::playbackTargetSelected(uint64_t contextId, const WebCore::MediaPlaybackTargetContext& targetContext) const
 {
-    switch (targetContext.type()) {
-    case MediaPlaybackTargetContext::AVOutputContextType:
-        m_page->setPlaybackTarget(contextId, WebCore::MediaPlaybackTargetMac::create(targetContext.avOutputContext()));
-        break;
-    case MediaPlaybackTargetContext::MockType:
-        m_page->setPlaybackTarget(contextId, WebCore::MediaPlaybackTargetMock::create(targetContext.mockDeviceName(), targetContext.mockState()));
-        break;
-    case MediaPlaybackTargetContext::None:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    ASSERT(targetContext.type == MediaPlaybackTargetContext::AVOutputContextType);
+
+    m_page->setPlaybackTarget(contextId, WebCore::MediaPlaybackTargetMac::create(targetContext.context.avOutputContext));
 }
 
 void WebPage::playbackTargetAvailabilityDidChange(uint64_t contextId, bool changed)
