@@ -69,13 +69,10 @@ function test() {
     for (var i = 0; i < features.length; ++i)
     {
         var item = features[i];
-        if (item[1] == "omitted") {
+        if (item[1] == "omitted")
             var hasFeature = document.implementation.hasFeature(item[0]);
-            var isSupported = document.body.isSupported(item[0]);
-        } else {
+        else
             var hasFeature = document.implementation.hasFeature(item[0], item[1]);
-            var isSupported = document.body.isSupported(item[0], item[1]);
-        }
 
         var item0String = item[0];
         if (typeof item0String == "string")
@@ -83,7 +80,7 @@ function test() {
         var item1String = item[1];
         if (typeof item1String == "string" && item[1] != "omitted")
             item1String = '"' + item1String + '"';
-        var message = item0String + ', ' + item1String + ': ' + hasFeature + ', ' + isSupported;
+        var message = item0String + ', ' + item1String + ': ' + hasFeature;
 
         var div = document.createElement('div');
         div.innerHTML = message;

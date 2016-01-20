@@ -83,7 +83,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool Node::isSupported(const String& feature, const String& version)
+bool Node::isSupportedForBindings(const String& feature, const String& version)
 {
     return DOMImplementation::hasFeature(feature, version);
 }

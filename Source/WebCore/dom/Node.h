@@ -146,7 +146,8 @@ public:
         DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20,
     };
 
-    static bool isSupported(const String& feature, const String& version);
+    // Only used by ObjC / GObject bindings.
+    static bool isSupportedForBindings(const String& feature, const String& version);
 
     WEBCORE_EXPORT static void startIgnoringLeaks();
     WEBCORE_EXPORT static void stopIgnoringLeaks();

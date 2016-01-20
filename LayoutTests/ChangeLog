@@ -1,3 +1,96 @@
+2016-01-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop support for obsolete Node.isSupported()
+        https://bugs.webkit.org/show_bug.cgi?id=153164
+
+        Reviewed by Darin Adler.
+
+        Drop obsolete DOM tests.
+
+        * dom/html/level2/html/HTMLBodyElement07-expected.txt: Removed.
+        * dom/html/level2/html/HTMLBodyElement07.html: Removed.
+        * dom/html/level2/html/HTMLBodyElement07.js: Removed.
+        * dom/html/level2/html/HTMLBodyElement08-expected.txt: Removed.
+        * dom/html/level2/html/HTMLBodyElement08.html: Removed.
+        * dom/html/level2/html/HTMLBodyElement08.js: Removed.
+        * dom/html/level2/html/HTMLBodyElement09-expected.txt: Removed.
+        * dom/html/level2/html/HTMLBodyElement09.html: Removed.
+        * dom/html/level2/html/HTMLBodyElement09.js: Removed.
+        * dom/html/level2/html/HTMLBodyElement10-expected.txt: Removed.
+        * dom/html/level2/html/HTMLBodyElement10.html: Removed.
+        * dom/html/level2/html/HTMLBodyElement10.js: Removed.
+        * dom/html/level2/html/HTMLBodyElement11-expected.txt: Removed.
+        * dom/html/level2/html/HTMLBodyElement11.html: Removed.
+        * dom/html/level2/html/HTMLBodyElement11.js: Removed.
+        * dom/html/level2/html/HTMLBodyElement12-expected.txt: Removed.
+        * dom/html/level2/html/HTMLBodyElement12.html: Removed.
+        * dom/html/level2/html/HTMLBodyElement12.js: Removed.
+        * dom/html/level2/html/HTMLDocument22-expected.txt: Removed.
+        * dom/html/level2/html/HTMLDocument22.html: Removed.
+        * dom/html/level2/html/HTMLDocument22.js: Removed.
+        * dom/html/level2/html/HTMLDocument23-expected.txt: Removed.
+        * dom/html/level2/html/HTMLDocument23.html: Removed.
+        * dom/html/level2/html/HTMLDocument23.js: Removed.
+        * dom/html/level2/html/HTMLDocument24-expected.txt: Removed.
+        * dom/html/level2/html/HTMLDocument24.html: Removed.
+        * dom/html/level2/html/HTMLDocument24.js: Removed.
+        * dom/html/level2/html/HTMLDocument25-expected.txt: Removed.
+        * dom/html/level2/html/HTMLDocument25.html: Removed.
+        * dom/html/level2/html/HTMLDocument25.js: Removed.
+        * dom/html/level2/html/HTMLDocument26-expected.txt: Removed.
+        * dom/html/level2/html/HTMLDocument26.html: Removed.
+        * dom/html/level2/html/HTMLDocument26.js: Removed.
+        * dom/html/level2/html/HTMLDocument27-expected.txt: Removed.
+        * dom/html/level2/html/HTMLDocument27.html: Removed.
+        * dom/html/level2/html/HTMLDocument27.js: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_3-expected.txt: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_3.js: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_3.svg: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_empty-expected.txt: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_empty.js: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_empty.svg: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_null-expected.txt: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_null.js: Removed.
+        * dom/svg/level3/xpath/Conformance_isSupported_null.svg: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement07-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement07.js: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement07.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement08-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement08.js: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement08.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement09-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement09.js: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement09.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement10-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement10.js: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement10.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement11-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement11.js: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement11.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement12-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement12.js: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement12.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLDocument22-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLDocument22.js: Removed.
+        * dom/xhtml/level2/html/HTMLDocument22.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLDocument23-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLDocument23.js: Removed.
+        * dom/xhtml/level2/html/HTMLDocument23.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLDocument24-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLDocument24.js: Removed.
+        * dom/xhtml/level2/html/HTMLDocument24.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLDocument25-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLDocument25.js: Removed.
+        * dom/xhtml/level2/html/HTMLDocument25.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLDocument26-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLDocument26.js: Removed.
+        * dom/xhtml/level2/html/HTMLDocument26.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLDocument27-expected.txt: Removed.
+        * dom/xhtml/level2/html/HTMLDocument27.js: Removed.
+        * dom/xhtml/level2/html/HTMLDocument27.xhtml: Removed.
+        * fast/dom/features-expected.txt:
+        * fast/dom/features.html:
+
 2016-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Fix inspector/model/remote-object.html test

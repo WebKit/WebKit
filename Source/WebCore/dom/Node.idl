@@ -73,8 +73,10 @@
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters] boolean isSupported([Default=Undefined] optional DOMString feature, 
+#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+    [ObjCLegacyUnnamedParameters, ImplementedAs=isSupportedForBindings] boolean isSupported([Default=Undefined] optional DOMString feature,
                                        [TreatNullAs=NullString,Default=Undefined] optional DOMString version);
+#endif
 
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString        namespaceURI;
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString prefix;

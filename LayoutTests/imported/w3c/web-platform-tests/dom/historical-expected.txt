@@ -47,9 +47,7 @@ PASS Node member must be nuked: attributes
 FAIL Node member must be nuked: namespaceURI assert_equals: expected (undefined) undefined but got (object) null
 FAIL Node member must be nuked: prefix assert_equals: expected (undefined) undefined but got (object) null
 FAIL Node member must be nuked: localName assert_equals: expected (undefined) undefined but got (object) null
-FAIL Node member must be nuked: isSupported assert_equals: expected (undefined) undefined but got (function) function "function isSupported() {
-    [native code]
-}"
+PASS Node member must be nuked: isSupported 
 PASS Node member must be nuked: getFeature 
 PASS Node member must be nuked: getUserData 
 PASS Node member must be nuked: setUserData 
