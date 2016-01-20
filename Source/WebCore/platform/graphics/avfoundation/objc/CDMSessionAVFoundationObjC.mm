@@ -35,7 +35,6 @@
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 #import "SoftLinking.h"
 #import "UUID.h"
-#import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/objc-runtime.h>
 
@@ -54,7 +53,7 @@ CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFound
 {
 }
 
-RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
 {
     UNUSED_PARAM(mimeType);
 
@@ -62,13 +61,13 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     String keyID;
     RefPtr<Uint8Array> certificate;
     if (!MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromInitData(initData, keyURI, keyID, certificate)) {
-        errorCode = CDM::UnknownError;
+        errorCode = MediaPlayer::InvalidPlayerState;
         return nullptr;
     }
 
     m_request = m_parent->takeRequestForKeyURI(keyURI);
     if (!m_request) {
-        errorCode = CDM::UnknownError;
+        errorCode = MediaPlayer::InvalidPlayerState;
         return nullptr;
     }
 
@@ -79,8 +78,8 @@ RefPtr<Uint8Array> CDMSessionAVFoundationObjC::generateKeyRequest(const String& 
     RetainPtr<NSData> keyRequest = [m_request streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:assetID.get() options:nil error:&nsError];
 
     if (!keyRequest) {
-        errorCode = CDM::DomainError;
-        systemCode = mediaKeyErrorSystemCode(nsError);
+        NSError* underlyingError = [[nsError userInfo] objectForKey:NSUnderlyingErrorKey];
+        systemCode = [underlyingError code];
         return nullptr;
     }
 
@@ -96,7 +95,7 @@ void CDMSessionAVFoundationObjC::releaseKeys()
 {
 }
 
-bool CDMSessionAVFoundationObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
+bool CDMSessionAVFoundationObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
     RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->baseAddress() length:key->byteLength()]);
     [[m_request dataRequest] respondWithData:keyData.get()];

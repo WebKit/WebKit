@@ -69,7 +69,7 @@ CDMSessionClearKey::~CDMSessionClearKey()
 {
 }
 
-RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
 {
     UNUSED_PARAM(mimeType);
     UNUSED_PARAM(destinationURL);
@@ -96,7 +96,7 @@ void CDMSessionClearKey::releaseKeys()
     m_cachedKeys.clear();
 }
 
-bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
+bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
     UNUSED_PARAM(nextMessage);
     UNUSED_PARAM(systemCode);

@@ -37,9 +37,9 @@
 #import "SoftLinking.h"
 #import "SourceBufferPrivateAVFObjC.h"
 #import "UUID.h"
-#import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVError.h>
 #import <CoreMedia/CMBase.h>
+#import <cstdlib>
 #import <objc/objc-runtime.h>
 #import <runtime/TypedArrayInlines.h>
 #import <wtf/NeverDestroyed.h>
@@ -144,7 +144,7 @@ bool CDMSessionAVContentKeySession::isAvailable()
     return getAVContentKeySessionClass();
 }
 
-RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
 {
     UNUSED_PARAM(mimeType);
     UNUSED_PARAM(destinationURL);
@@ -228,7 +228,7 @@ static bool isEqual(Uint8Array* data, const char* literal)
     return !literal[length];
 }
 
-bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
+bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
     UNUSED_PARAM(nextMessage);
 
@@ -281,15 +281,9 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
 
         errorCode = MediaPlayer::NoError;
         systemCode = 0;
-        NSError* error = nil;
-        NSData* requestData = [m_keyRequest contentKeyRequestDataForApp:certificateData.get() contentIdentifier:nil options:options.get() error:&error];
-        if (error) {
-            errorCode = MediaPlayerClient::DomainError;
-            systemCode = mediaKeyErrorSystemCode(error);
-            return false;
-        }
-
+        NSData* requestData = [m_keyRequest contentKeyRequestDataForApp:certificateData.get() contentIdentifier:nil options:options.get() error:nil];
         nextMessage = Uint8Array::create(static_cast<const uint8_t*>([requestData bytes]), [requestData length]);
+
         return false;
     }
 
@@ -312,7 +306,7 @@ void CDMSessionAVContentKeySession::removeParser(AVStreamDataParser* parser)
     [contentKeySession() removeStreamDataParser:parser];
 }
 
-PassRefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode)
+PassRefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode)
 {
     ASSERT(m_mode == KeyRelease);
     m_certificate = m_initData;

@@ -42,7 +42,7 @@ struct MediaKeyEventInit : public EventInit {
     RefPtr<Uint8Array> message;
     String defaultURL;
     RefPtr<MediaKeyError> errorCode;
-    uint32_t systemCode;
+    unsigned short systemCode;
 };
 
 class MediaKeyEvent final : public Event {

@@ -46,10 +46,10 @@ public:
     };
     typedef unsigned short Code;
 
-    static Ref<MediaKeyError> create(Code code, uint32_t systemCode = 0) { return adoptRef(*new MediaKeyError(code, systemCode)); }
+    static Ref<MediaKeyError> create(Code code, unsigned long systemCode = 0) { return adoptRef(*new MediaKeyError(code, systemCode)); }
 
     Code code() const { return m_code; }
-    uint32_t systemCode() { return m_systemCode; }
+    unsigned long systemCode() { return m_systemCode; }
 
 private:
     explicit MediaKeyError(Code code, unsigned long systemCode) : m_code(code), m_systemCode(systemCode) { }

@@ -37,9 +37,9 @@
 #import "SoftLinking.h"
 #import "SourceBufferPrivateAVFObjC.h"
 #import "UUID.h"
-#import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVError.h>
 #import <CoreMedia/CMBase.h>
+#import <cstdlib>
 #import <objc/objc-runtime.h>
 #import <runtime/TypedArrayInlines.h>
 #import <wtf/NeverDestroyed.h>
@@ -112,7 +112,7 @@ CDMSessionAVStreamSession::~CDMSessionAVStreamSession()
         removeParser(sourceBuffer->parser());
 }
 
-RefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
 {
     UNUSED_PARAM(mimeType);
     UNUSED_PARAM(destinationURL);
@@ -187,7 +187,7 @@ static bool isEqual(Uint8Array* data, const char* literal)
     return !literal[length];
 }
 
-bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
+bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
     bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
     if (!m_certificate) {
@@ -255,7 +255,7 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
         if (error) {
             LOG(Media, "CDMSessionAVStreamSession::update(%p) - error:%@", this, [error description]);
             errorCode = MediaPlayer::InvalidPlayerState;
-            systemCode = mediaKeyErrorSystemCode(error);
+            systemCode = std::abs(systemCodeForError(error));
             return false;
         }
 
@@ -304,7 +304,7 @@ void CDMSessionAVStreamSession::removeParser(AVStreamDataParser* parser)
         [m_streamSession removeStreamDataParser:parser];
 }
 
-PassRefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyReleaseMessage(unsigned short& errorCode, uint32_t systemCode)
+PassRefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode)
 {
     ASSERT(m_mode == KeyRelease);
     m_certificate = m_initData;

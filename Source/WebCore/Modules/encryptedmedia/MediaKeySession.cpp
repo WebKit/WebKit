@@ -111,7 +111,7 @@ void MediaKeySession::keyRequestTimerFired()
         // 2. Let destinationURL be null.
         String destinationURL;
         MediaKeyError::Code errorCode = 0;
-        uint32_t systemCode = 0;
+        unsigned long systemCode = 0;
 
         // 3. Use cdm to generate a key request and follow the steps for the first matching condition from the following list:
 
@@ -163,7 +163,7 @@ void MediaKeySession::addKeyTimerFired()
     while (!m_pendingKeys.isEmpty()) {
         RefPtr<Uint8Array> pendingKey = m_pendingKeys.takeFirst();
         unsigned short errorCode = 0;
-        uint32_t systemCode = 0;
+        unsigned long systemCode = 0;
 
         // NOTE: Continued from step 2. of MediaKeySession::update()
         // 2.1. Let cdm be the cdm loaded in the MediaKeys constructor.
@@ -219,7 +219,7 @@ void MediaKeySession::sendMessage(Uint8Array* message, String destinationURL)
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-void MediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
+void MediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, unsigned long systemCode)
 {
     Ref<MediaKeyError> error = MediaKeyError::create(errorCode, systemCode).get();
     setError(error.ptr());
