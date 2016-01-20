@@ -1,3 +1,37 @@
+2016-01-20  Alex Christensen  <achristensen@webkit.org>
+
+        Ask UI Process before sending redirect requests when downloading
+        https://bugs.webkit.org/show_bug.cgi?id=153041
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadManager::continueWillSendRequest):
+        (WebKit::DownloadManager::convertHandleToDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::willSendRedirectedRequest):
+        (WebKit::PendingDownload::continueWillSendRequest):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkProcess::continueWillSendRequest):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::didCancel):
+        (API::DownloadClient::processDidCrash):
+        (API::DownloadClient::canAuthenticateAgainstProtectionSpace):
+        (API::DownloadClient::willSendRequest):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        (WebKit::DownloadProxy::canAuthenticateAgainstProtectionSpace):
+        (WebKit::DownloadProxy::willSendRequest):
+        (WebKit::DownloadProxy::didReceiveResponse):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+
 2016-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.4 release.

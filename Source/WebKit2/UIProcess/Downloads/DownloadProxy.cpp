@@ -111,7 +111,7 @@ void DownloadProxy::didReceiveAuthenticationChallenge(const AuthenticationChalle
 }
 
 #if USE(NETWORK_SESSION)
-void DownloadProxy::canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace& protectionSpace)
+void DownloadProxy::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     if (!m_processPool)
         return;
@@ -123,6 +123,24 @@ void DownloadProxy::canAuthenticateAgainstProtectionSpace(const WebCore::Protect
     bool result = m_processPool->downloadClient().canAuthenticateAgainstProtectionSpace(getPtr(WebProtectionSpace::create(protectionSpace)));
     
     networkProcessProxy->connection()->send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(m_downloadID, result), 0);
+}
+
+void DownloadProxy::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)
+{
+    if (!m_processPool)
+        return;
+
+    RefPtr<DownloadProxy> protectedThis(this);
+    m_processPool->downloadClient().willSendRequest(proposedRequest, redirectResponse, [protectedThis](const ResourceRequest& newRequest) {
+        if (!protectedThis->m_processPool)
+            return;
+        
+        auto* networkProcessProxy = protectedThis->m_processPool->networkProcess();
+        if (!networkProcessProxy)
+            return;
+        
+        networkProcessProxy->connection()->send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
+    });
 }
 #endif
 

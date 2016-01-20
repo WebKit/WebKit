@@ -74,6 +74,7 @@ public:
 #if USE(NETWORK_SESSION)
     std::unique_ptr<PendingDownload> dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
+    void continueWillSendRequest(DownloadID, const WebCore::ResourceRequest&);
 #else
     void convertHandleToDownload(DownloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 #endif

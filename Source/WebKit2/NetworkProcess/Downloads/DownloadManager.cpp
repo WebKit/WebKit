@@ -81,6 +81,14 @@ void DownloadManager::continueCanAuthenticateAgainstProtectionSpace(DownloadID d
     if (pendingDownload)
         pendingDownload->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
 }
+
+void DownloadManager::continueWillSendRequest(DownloadID downloadID, const WebCore::ResourceRequest& request)
+{
+    auto* pendingDownload = m_pendingDownloads.get(downloadID);
+    ASSERT(pendingDownload);
+    if (pendingDownload)
+        pendingDownload->continueWillSendRequest(request);
+}
 #else
 void DownloadManager::convertHandleToDownload(DownloadID downloadID, ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response)
 {

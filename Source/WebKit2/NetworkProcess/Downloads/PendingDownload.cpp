@@ -46,8 +46,7 @@ PendingDownload::PendingDownload(const NetworkLoadParameters& parameters, Downlo
 
 void PendingDownload::willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse)
 {
-    // FIXME: We should ask the UI process directly if we actually want to continue this request.
-    continueWillSendRequest(redirectRequest);
+    send(Messages::DownloadProxy::WillSendRequest(redirectRequest, redirectResponse));
 };
     
 void PendingDownload::continueWillSendRequest(const WebCore::ResourceRequest& newRequest)

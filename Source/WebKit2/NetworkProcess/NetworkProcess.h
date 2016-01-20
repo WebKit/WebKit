@@ -154,6 +154,7 @@ private:
     void cancelDownload(DownloadID);
 #if USE(NETWORK_SESSION)
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
+    void continueWillSendRequest(DownloadID, const WebCore::ResourceRequest&);
 #endif
     void setCacheModel(uint32_t);
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);

@@ -88,6 +88,7 @@ private:
     void didCancel(const IPC::DataReference& resumeData);
 #if USE(NETWORK_SESSION)
     void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&);
+    void willSendRequest(const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse& redirectResponse);
 #endif
 
     DownloadProxyMap& m_downloadProxyMap;

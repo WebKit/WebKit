@@ -452,6 +452,11 @@ void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(DownloadID do
 {
     downloadManager().continueCanAuthenticateAgainstProtectionSpace(downloadID, canAuthenticate);
 }
+
+void NetworkProcess::continueWillSendRequest(DownloadID downloadID, const WebCore::ResourceRequest& request)
+{
+    downloadManager().continueWillSendRequest(downloadID, request);
+}
 #endif
 
 void NetworkProcess::setCacheModel(uint32_t cm)
