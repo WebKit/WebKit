@@ -1,3 +1,14 @@
+2016-01-19  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add protocol version for iOS 9.3
+        https://bugs.webkit.org/show_bug.cgi?id=153256
+        rdar://problem/24247951
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-9.3.json: Added.
+
 2016-01-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: Hovering linkified node references should show node highlight
