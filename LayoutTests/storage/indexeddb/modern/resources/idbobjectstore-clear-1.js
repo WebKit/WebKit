@@ -14,7 +14,7 @@ function done()
 var createRequest = window.indexedDB.open("IDBObjectStoreClearDatabase", 1);
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
@@ -30,24 +30,24 @@ createRequest.onupgradeneeded = function(event) {
     var request = objectStore.put("bar9");
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         continueTest1();
         database.close();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
 
 function getChecker(event) {
-    debug("ALERT: " + "Value gotten was " + event.target.result);
+    debug("Value gotten was " + event.target.result);
 }
 
 function continueTest1()
@@ -55,20 +55,20 @@ function continueTest1()
     var openRequest = window.indexedDB.open("IDBObjectStoreClearDatabase", 1);
 
     openRequest.onerror = function(event) {
-        debug("ALERT: " + "Request unexpected error - " + event);
+        debug("Request unexpected error - " + event);
         done();
     }
     openRequest.onblocked = function(event) {
-        debug("ALERT: " + "Request unexpected blocked - " + event);
+        debug("Request unexpected blocked - " + event);
         done();
     }
     openRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Request unexpected upgradeneeded - " + event);
+        debug("Request unexpected upgradeneeded - " + event);
         done();
     }
 
     openRequest.onsuccess = function(event) {
-        debug("ALERT: " + "Success opening database connection - Starting readwrite transaction");
+        debug("Success opening database connection - Starting readwrite transaction");
         var database = event.target.result;
         var transaction = database.transaction("TestObjectStore", "readwrite");
         var objectStore = transaction.objectStore("TestObjectStore");
@@ -81,7 +81,7 @@ function continueTest1()
         
         request = objectStore.clear();
         request.onsuccess = function() {
-            debug("ALERT: " + "Object store cleared");
+            debug("Object store cleared");
             var newRequests;
             for (var i = 1; i <= 9; ++i) {
                 newRequests = objectStore.get(i);
@@ -90,17 +90,17 @@ function continueTest1()
         }
 
         transaction.onabort = function(event) {
-            debug("ALERT: " + "Readwrite transaction unexpected abort");
+            debug("Readwrite transaction unexpected abort");
             done();
         }
 
         transaction.oncomplete = function(event) {
-            debug("ALERT: " + "Readwrite transaction complete");
+            debug("Readwrite transaction complete");
             done();
         }
 
         transaction.onerror = function(event) {
-            debug("ALERT: " + "Readwrite transaction unexpected error - " + event);
+            debug("Readwrite transaction unexpected error - " + event);
             done();
         }
     }

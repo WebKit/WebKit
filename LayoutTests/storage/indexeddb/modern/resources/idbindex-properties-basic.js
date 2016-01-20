@@ -12,17 +12,17 @@ function done()
 
 function gol(message)
 {
-    debug("ALERT: " + message);
+    debug(message);
 }
 
 function logIndex(index)
 {
-    debug("ALERT: " + index.name);
-    debug("ALERT: " + index.objectStore);
-    debug("ALERT: " + index.objectStore.name);
-    debug("ALERT: " + index.keyPath);
-    debug("ALERT: " + index.multiEntry);
-    debug("ALERT: " + index.unique);
+    debug(index.name);
+    debug(index.objectStore);
+    debug(index.objectStore.name);
+    debug(index.keyPath);
+    debug(index.multiEntry);
+    debug(index.unique);
 }
 
 var createRequest = window.indexedDB.open("IDBIndexPropertiesBasicDatabase", 1);
@@ -31,7 +31,7 @@ var database;
 var indexes = new Array();
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -49,17 +49,17 @@ createRequest.onupgradeneeded = function(event) {
         logIndex(indexes[index]);
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         continueTest1();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
@@ -78,17 +78,17 @@ function continueTest1()
     logIndex(objectStore.index("TestIndex7"));
 
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readonly transaction unexpected abort" + event);
+        debug("readonly transaction unexpected abort" + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readonly transaction complete");
+        debug("readonly transaction complete");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readonly transaction unexpected error" + event);
+        debug("readonly transaction unexpected error" + event);
         done();
     }
 }

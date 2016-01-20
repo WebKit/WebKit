@@ -11,6 +11,6 @@ function done()
 }
 
 var request = window.indexedDB.deleteDatabase("TestDatabase");
-debug("ALERT: " + request);
+debug(request);
 
 done();

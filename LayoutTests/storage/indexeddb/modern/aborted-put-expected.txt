@@ -3,25 +3,25 @@ This test creates some object stores, putting some values in them, committing th
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-ALERT: First upgrade needed: Old version - 0 New version - 1
-ALERT: [object IDBTransaction] - versionchange
-ALERT: [object IDBDatabase]
-ALERT: put succeeded - key was 'foo'
-ALERT: get 'foo' succeeded - value was 'bar'
-ALERT: get 'far' succeeded - value was 'undefined'
-ALERT: First version change transaction completed
-ALERT: Second upgrade needed: Old version - 1 New version - 2
-ALERT: [object IDBTransaction] - versionchange
-ALERT: [object IDBDatabase]
-ALERT: get1 'foo' succeeded - value was 'baz'
-ALERT: get2 'far' succeeded - value was 'boo'
-ALERT: Second version change transaction abort
-ALERT: Third upgrade needed: Old version - 1 New version - 2
-ALERT: [object IDBTransaction] - versionchange
-ALERT: [object IDBDatabase]
-ALERT: get1 'foo' succeeded - value was 'bar'
-ALERT: get2 'far' succeeded - value was 'undefined'
-ALERT: Third version change transaction complete
+First upgrade needed: Old version - 0 New version - 1
+[object IDBTransaction] - versionchange
+[object IDBDatabase]
+put succeeded - key was 'foo'
+get 'foo' succeeded - value was 'bar'
+get 'far' succeeded - value was 'undefined'
+First version change transaction completed
+Second upgrade needed: Old version - 1 New version - 2
+[object IDBTransaction] - versionchange
+[object IDBDatabase]
+get1 'foo' succeeded - value was 'baz'
+get2 'far' succeeded - value was 'boo'
+Second version change transaction abort
+Third upgrade needed: Old version - 1 New version - 2
+[object IDBTransaction] - versionchange
+[object IDBDatabase]
+get1 'foo' succeeded - value was 'bar'
+get2 'far' succeeded - value was 'undefined'
+Third version change transaction complete
 PASS successfullyParsed is true
 
 TEST COMPLETE

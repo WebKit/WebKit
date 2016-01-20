@@ -15,7 +15,7 @@ function done()
 var createRequest = window.indexedDB.open("DeleteObjectStore1Database", 1);
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
@@ -24,24 +24,24 @@ createRequest.onupgradeneeded = function(event) {
         objectStore.put("AH AH AH AH AH", i + " puts");
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         database.close();
         continueTest1();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
 
 function getChecker(event) {
-    debug("ALERT: " + "Value gotten was " + event.target.result);
+    debug("Value gotten was " + event.target.result);
 }
 
 function continueTest1()
@@ -49,41 +49,41 @@ function continueTest1()
     var openRequest = window.indexedDB.open("DeleteObjectStore1Database", 2);
 
     openRequest.onerror = function(event) {
-        debug("ALERT: " + "Request error - " + event);
+        debug("Request error - " + event);
     }
     openRequest.onblocked = function(event) {
-        debug("ALERT: " + "Request unexpected blocked - " + event);
+        debug("Request unexpected blocked - " + event);
         done();
     }
     openRequest.onsuccess = function(event) {
-        debug("ALERT: " + "Request unexpected success - " + event);
+        debug("Request unexpected success - " + event);
         done();
     }
 
     openRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
         var versionTransaction = openRequest.transaction;
         var database = event.target.result;
         var objectStore = versionTransaction.objectStore("TestObjectStore");
         
-        debug("ALERT: " + "Deleting object store");        
+        debug("Deleting object store");        
         database.deleteObjectStore("TestObjectStore");
 
         versionTransaction.abort();
 
         versionTransaction.onabort = function(event) {
-            debug("ALERT: " + "Second version change transaction abort");
+            debug("Second version change transaction abort");
             continueTest2();
             database.close();
         }
 
         versionTransaction.oncomplete = function(event) {
-            debug("ALERT: " + "Second version change transaction unexpected complete");
+            debug("Second version change transaction unexpected complete");
             done();
         }
 
         versionTransaction.onerror = function(event) {
-            debug("ALERT: " + "Second version change transaction error - " + event);
+            debug("Second version change transaction error - " + event);
         }
     }
 }
@@ -93,20 +93,20 @@ function continueTest2()
     var openRequest = window.indexedDB.open("DeleteObjectStore1Database", 1);
 
     openRequest.onerror = function(event) {
-        debug("ALERT: " + "Request unexpected error - " + event);
+        debug("Request unexpected error - " + event);
         done();
     }
     openRequest.onblocked = function(event) {
-        debug("ALERT: " + "Request unexpected blocked - " + event);
+        debug("Request unexpected blocked - " + event);
         done();
     }
     openRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Request unexpected upgradeneeded - " + event);
+        debug("Request unexpected upgradeneeded - " + event);
         done();
     }
 
     openRequest.onsuccess = function(event) {
-        debug("ALERT: " + "Success opening database connection - Starting final transaction");
+        debug("Success opening database connection - Starting final transaction");
         var database = event.target.result;
         var transaction = database.transaction("TestObjectStore", "readwrite");
         var objectStore = transaction.objectStore("TestObjectStore");
@@ -118,17 +118,17 @@ function continueTest2()
         }
 
         transaction.onabort = function(event) {
-            debug("ALERT: " + "Final transaction unexpected abort");
+            debug("Final transaction unexpected abort");
             done();
         }
 
         transaction.oncomplete = function(event) {
-            debug("ALERT: " + "Final transaction complete");
+            debug("Final transaction complete");
             done();
         }
 
         transaction.onerror = function(event) {
-            debug("ALERT: " + "Final transaction unexpected error - " + event);
+            debug("Final transaction unexpected error - " + event);
             done();
         }
     }

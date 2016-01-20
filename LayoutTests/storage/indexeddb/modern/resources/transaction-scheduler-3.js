@@ -14,7 +14,7 @@ function done()
 var createRequest = window.indexedDB.open("TransactionScheduler3Database");
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
@@ -22,23 +22,23 @@ createRequest.onupgradeneeded = function(event) {
     var request = objectStore.put("bar", "foo");
 
     request.onerror = function(event) {
-        debug("ALERT: " + "put FAILED - " + event);
+        debug("put FAILED - " + event);
         done();
     }
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "versionchange transaction aborted");
+        debug("versionchange transaction aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "versionchange transaction completed");
+        debug("versionchange transaction completed");
         continueTest();
         database.close();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "versionchange transaction error'ed - " + event);
+        debug("versionchange transaction error'ed - " + event);
         done();
     }
 }
@@ -48,20 +48,20 @@ function continueTest()
 {
     var longRunningReadRequest = window.indexedDB.open("TransactionScheduler3Database", 1);
     longRunningReadRequest.onsuccess = function(event) {
-        debug("ALERT: " + "Success opening database connection - Starting readonly transaction");
+        debug("Success opening database connection - Starting readonly transaction");
         secondDatabaseConnection = event.target.result;
         readTransactionLoop(secondDatabaseConnection.transaction("OS", "readonly"), true);
     }
     longRunningReadRequest.onerror = function(event) {
-        debug("ALERT: " + "Long running read request unexpected error - " + event);
+        debug("Long running read request unexpected error - " + event);
         done();
     }
     longRunningReadRequest.onblocked = function(event) {
-        debug("ALERT: " + "Long running read request unexpected blocked - " + event);
+        debug("Long running read request unexpected blocked - " + event);
         done();
     }
     longRunningReadRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Long running read request unexpected upgradeneeded - " + event);
+        debug("Long running read request unexpected upgradeneeded - " + event);
         done();
     } 
 }
@@ -83,28 +83,28 @@ function readTransactionLoop(transaction, isFirstTime)
     }
 
     request.onerror = function(event) {
-        debug("ALERT: " + "Unexpected request error - " + event);
+        debug("Unexpected request error - " + event);
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "Unexpected transaction error - " + event);
+        debug("Unexpected transaction error - " + event);
         done();
     }
 
     transaction.onabort = function(event) {
-        debug("ALERT: " + "Unexpected transaction abort - " + event);
+        debug("Unexpected transaction abort - " + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "Read transaction complete - " + event);
+        debug("Read transaction complete - " + event);
     }
 }
 
 function startWriteTransaction()
 {
-    debug("ALERT: " + "Creating write transaction");
+    debug("Creating write transaction");
     var transaction = secondDatabaseConnection.transaction("OS", "readwrite");
     var objectStore = transaction.objectStore("OS");
     var request = objectStore.put("baz", "foo");
@@ -112,26 +112,26 @@ function startWriteTransaction()
     setTimeout("shouldEndReadTransaction = true;", 0);
 
     request.onsuccess = function(event) {
-        debug("ALERT: " + "Write transaction put success");
+        debug("Write transaction put success");
     }
 
     request.onerror = function(event) {
-        debug("ALERT: " + "Write transaction put unexpected error - " + event);
+        debug("Write transaction put unexpected error - " + event);
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "Write transaction unexpected error - " + event);
+        debug("Write transaction unexpected error - " + event);
         done();
     }
 
     transaction.onabort = function(event) {
-        debug("ALERT: " + "Write transaction unexpected abort - " + event);
+        debug("Write transaction unexpected abort - " + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "Write transaction complete - " + event);
+        debug("Write transaction complete - " + event);
         done();
     }
 }

@@ -1,9 +1,9 @@
-ALERT: Upgrade needed: Old version - 0 New version - 1
-ALERT: [object IDBTransaction] - versionchange
-ALERT: [object IDBDatabase]
-ALERT: put succeeded - key was 'foo'
-ALERT: get succeeded - value was 'bar'
-ALERT: version change transaction completed
+Upgrade needed: Old version - 0 New version - 1
+[object IDBTransaction] - versionchange
+[object IDBDatabase]
+put succeeded - key was 'foo'
+get succeeded - value was 'bar'
+version change transaction completed
 PASS successfullyParsed is true
 
 TEST COMPLETE

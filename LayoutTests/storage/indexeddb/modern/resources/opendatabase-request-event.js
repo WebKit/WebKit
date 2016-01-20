@@ -14,32 +14,32 @@ function done()
 try {
     window.indexedDB.open("TestDatabase", 0);
 } catch (e) {
-    debug("ALERT: " + "Caught exception " + e);
+    debug("Caught exception " + e);
 }
 
 try {
     window.indexedDB.open("TestDatabase", -1);
 } catch (e) {
-    debug("ALERT: " + "Caught exception " + e);
+    debug("Caught exception " + e);
 }
 
 var request = window.indexedDB.open("TestDatabase");
-debug("ALERT: " + request);
+debug(request);
 
 request.onsuccess = function()
 {
-	debug("ALERT: " + "success");
+	debug("success");
 	done();
 }
 request.onerror = function(e)
 {
-	debug("ALERT: " + "error " + e);
+	debug("error " + e);
 	done();
 }
 
 request.onupgradeneeded = function(e)
 {
-    debug("ALERT: " + "upgradeneeded: old version - " + e.oldVersion + " new version - " + e.newVersion);
+    debug("upgradeneeded: old version - " + e.oldVersion + " new version - " + e.newVersion);
 	done();
 }
 

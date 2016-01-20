@@ -19,35 +19,35 @@ var createRequest = window.indexedDB.open("AutoincrementAbortDatabase", 1);
 var database;
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
     var objectStore = database.createObjectStore('TestObjectStore', { autoIncrement: true });
     
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected abort");
+        debug("Initial upgrade versionchange transaction unexpected abort");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         continueTest1();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
 
 function putChecker(event) {
-    debug("ALERT: " + "Key used for put was " + event.target.result);
+    debug("Key used for put was " + event.target.result);
 }
 
 function continueTest1()
 {
-    debug("ALERT: " + "Opening readwrite transaction to bump the key generator, but it will be aborted");
+    debug("Opening readwrite transaction to bump the key generator, but it will be aborted");
     var transaction = database.transaction('TestObjectStore', "readwrite");
     var objectStore = transaction.objectStore('TestObjectStore');
     
@@ -68,24 +68,24 @@ function continueTest1()
     }
     
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readwrite transaction abort");
+        debug("readwrite transaction abort");
         continueTest2();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected complete");
+        debug("readwrite transaction unexpected complete");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected error");
+        debug("readwrite transaction unexpected error");
         done();
     }
 }
 
 function continueTest2()
 {
-    debug("ALERT: " + "Opening readwrite transaction to make sure the key generator had successfully reverted");
+    debug("Opening readwrite transaction to make sure the key generator had successfully reverted");
     
     var transaction = database.transaction('TestObjectStore', "readwrite");
     var objectStore = transaction.objectStore('TestObjectStore');
@@ -104,24 +104,24 @@ function continueTest2()
     request.onsuccess = putChecker;
 
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected abort");
+        debug("readwrite transaction unexpected abort");
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readwrite transaction complete");
+        debug("readwrite transaction complete");
         continueTest3();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected error");
+        debug("readwrite transaction unexpected error");
         done();
     }
 }
 
 function continueTest3()
 {
-    debug("ALERT: " + "Opening readwrite transaction to make sure the key generator picks up where it should've left off");
+    debug("Opening readwrite transaction to make sure the key generator picks up where it should've left off");
     
     var transaction = database.transaction('TestObjectStore', "readwrite");
     var objectStore = transaction.objectStore('TestObjectStore');
@@ -140,17 +140,17 @@ function continueTest3()
     request.onsuccess = putChecker;
 
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected abort");
+        debug("readwrite transaction unexpected abort");
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readwrite transaction complete");
+        debug("readwrite transaction complete");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected error");
+        debug("readwrite transaction unexpected error");
         done();
     }
 }

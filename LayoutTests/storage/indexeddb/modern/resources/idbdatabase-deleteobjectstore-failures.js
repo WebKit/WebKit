@@ -14,7 +14,7 @@ var createRequest = window.indexedDB.open("IDBDatabaseDeleteObjectStoreFailuresD
 var database;
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -22,17 +22,17 @@ createRequest.onupgradeneeded = function(event) {
     var request = objectStore.put("bar", "foo");
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         continueTest1();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
@@ -44,27 +44,27 @@ function continueTest1()
     var request = objectStore.put("baz", "foo");
 
     request.onsuccess = function() {
-        debug("ALERT: " + "readwrite put success - about to try to delete an objectstore");
+        debug("readwrite put success - about to try to delete an objectstore");
         try {
             database.deleteObjectStore("TestObjectStore");
         } catch(e) {
-            debug("ALERT: " + "Failed to deleteObjectStore without a versionchange transaction - " + e);
+            debug("Failed to deleteObjectStore without a versionchange transaction - " + e);
         }
     }
     
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected aborted");
+        debug("readwrite transaction unexpected aborted");
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readwrite transaction complete");
+        debug("readwrite transaction complete");
         database.close();
         continueTest2();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected error" + event);
+        debug("readwrite transaction unexpected error" + event);
         done();
     }
 }
@@ -74,20 +74,20 @@ function continueTest2()
     var openRequest = window.indexedDB.open("IDBDatabaseDeleteObjectStoreFailuresDatabase", 2);
 
     openRequest.onerror = function(event) {
-        debug("ALERT: " + "Request unexpected error - " + event);
+        debug("Request unexpected error - " + event);
         done();
     }
     openRequest.onblocked = function(event) {
-        debug("ALERT: " + "Request unexpected blocked - " + event);
+        debug("Request unexpected blocked - " + event);
         done();
     }
     openRequest.onsuccess = function(event) {
-        debug("ALERT: " + "Request unexpected success - " + event);
+        debug("Request unexpected success - " + event);
         done();
     }
 
     openRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
         var versionTransaction = openRequest.transaction;
         database = event.target.result;
@@ -95,7 +95,7 @@ function continueTest2()
         try {
             database.deleteObjectStore("NonexistentObjectStore");
         } catch(e) {
-            debug("ALERT: " + "Failed to deleteObjectStore with a non-existent objectstore - " + e);
+            debug("Failed to deleteObjectStore with a non-existent objectstore - " + e);
         }
 
         // Spin the transaction with get requests to keep it alive long enough for the setTimeout to fire.
@@ -115,7 +115,7 @@ function continueTest2()
             try {
                 database.deleteObjectStore("TestObjectStore");
             } catch(e) {
-                debug("ALERT: " + "Failed to deleteObjectStore with an in-progress versionchange transaction that is inactive - " + e);
+                debug("Failed to deleteObjectStore with an in-progress versionchange transaction that is inactive - " + e);
             }
             canFinish = true;
         }
@@ -123,17 +123,17 @@ function continueTest2()
         setTimeout(tryInactiveDelete, 0);
 
         versionTransaction.onabort = function(event) {
-            debug("ALERT: " + "Second version change transaction unexpected abort");
+            debug("Second version change transaction unexpected abort");
             done();
         }
 
         versionTransaction.oncomplete = function(event) {
-            debug("ALERT: " + "Second version change transaction complete");
+            debug("Second version change transaction complete");
             done();
         }
 
         versionTransaction.onerror = function(event) {
-            debug("ALERT: " + "Second version change transaction unexpected error - " + event);
+            debug("Second version change transaction unexpected error - " + event);
             done();
         }
     }

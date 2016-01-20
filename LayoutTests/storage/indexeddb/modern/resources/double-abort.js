@@ -13,7 +13,7 @@ function done()
 var createRequest = window.indexedDB.open("DoubleAbortTestDatabase", 1);
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
@@ -22,21 +22,21 @@ createRequest.onupgradeneeded = function(event) {
     try {
         versionTransaction.abort();
     } catch (e) {
-        debug("ALERT: " + "Second abort failed: " + e);
+        debug("Second abort failed: " + e);
     }
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction aborted");
+        debug("Initial upgrade versionchange transaction aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected complete");
+        debug("Initial upgrade versionchange transaction unexpected complete");
         done();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }

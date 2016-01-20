@@ -14,7 +14,7 @@ var createRequest = window.indexedDB.open("IDBObjectStorePutAndClearFailuresData
 var database;
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -25,7 +25,7 @@ createRequest.onupgradeneeded = function(event) {
         try {
             objectStore.put("bar", NaN);
         } catch(e) {
-            debug("ALERT: " + "Failed to put record into object store with an invalid key");
+            debug("Failed to put record into object store with an invalid key");
         }
         
         database.deleteObjectStore("TestObjectStore");
@@ -33,13 +33,13 @@ createRequest.onupgradeneeded = function(event) {
         try {
             objectStore.put("bar", "foo");
         } catch(e) {
-            debug("ALERT: " + "Failed to put record into object store that has been deleted");
+            debug("Failed to put record into object store that has been deleted");
         } 
 
         try {
             objectStore.clear();
         } catch(e) {
-            debug("ALERT: " + "Failed to clear object store that has been deleted");
+            debug("Failed to clear object store that has been deleted");
         } 
 
         // Recreate the objectstore because we'll need it in phase 2.
@@ -48,17 +48,17 @@ createRequest.onupgradeneeded = function(event) {
     }
     
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         continueTest1();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
@@ -71,7 +71,7 @@ function continueTest1()
     try {
         objectStore.clear();
     } catch(e) {
-        debug("ALERT: " + "Failed to clear object store in read-only transaction");
+        debug("Failed to clear object store in read-only transaction");
     }
     
     var transaction = database.transaction("TestObjectStore", "readwrite");
@@ -91,13 +91,13 @@ function continueTest1()
         try {
             objectStore.put("bar", "foo");
         } catch(e) {
-            debug("ALERT: " + "Failed to put record into object store with inactive transaction");
+            debug("Failed to put record into object store with inactive transaction");
         }
         
         try {
             objectStore.clear();
         } catch(e) {
-            debug("ALERT: " + "Failed to clear object store with inactive transaction");
+            debug("Failed to clear object store with inactive transaction");
         }
         
         canFinish = true;
@@ -106,17 +106,17 @@ function continueTest1()
     setTimeout(testWhileInactive, 0);
     
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected abort" + event);
+        debug("readwrite transaction unexpected abort" + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readwrite transaction complete");
+        debug("readwrite transaction complete");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readwrite transaction unexpected error" + event);
+        debug("readwrite transaction unexpected error" + event);
         done();
     }
 }

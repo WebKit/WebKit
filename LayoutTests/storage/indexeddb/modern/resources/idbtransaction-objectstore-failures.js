@@ -15,13 +15,13 @@ function done()
 
 request.onupgradeneeded = function(event)
 {
-    debug("ALERT: " + "Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
     var tx = request.transaction;
     var db = event.target.result;
 
-    debug("ALERT: " + tx + " - " + tx.mode);
-    debug("ALERT: " + db);
+    debug(tx + " - " + tx.mode);
+    debug(db);
 
     var os1 = db.createObjectStore("TestObjectStore1");
     var os2 = db.createObjectStore("TestObjectStore2");
@@ -29,25 +29,25 @@ request.onupgradeneeded = function(event)
     var putRequest = os1.put("bar", "foo");
     
     putRequest.onerror = function() {
-        debug("ALERT: " + "put failed (because transaction was aborted)");
+        debug("put failed (because transaction was aborted)");
     }
     
     try {
         tx.objectStore("");
     } catch(e) {
-        debug("ALERT: " + "Caught attempt to access empty-named object store on the transaction");
+        debug("Caught attempt to access empty-named object store on the transaction");
     }
     
     try {
         tx.objectStore();
     } catch(e) {
-        debug("ALERT: " + "Caught attempt to access null-named object store on the transaction");
+        debug("Caught attempt to access null-named object store on the transaction");
     }
      
     try {
         tx.objectStore("ThisObjectStoreDoesNotExist");
     } catch(e) {
-        debug("ALERT: " + "Caught attempt to access non-existant object store on the transaction");
+        debug("Caught attempt to access non-existant object store on the transaction");
     }
     
     tx.abort();
@@ -55,21 +55,21 @@ request.onupgradeneeded = function(event)
     try {
         tx.objectStore("TestObjectStore1");
     } catch(e) {
-        debug("ALERT: " + "Caught attempt to access valid object store on a transaction that is already finishing");
+        debug("Caught attempt to access valid object store on a transaction that is already finishing");
     }
       
     tx.onabort = function(event) {
-        debug("ALERT: " + "First version change transaction abort");
+        debug("First version change transaction abort");
         done();
     }
 
     tx.oncomplete = function(event) {
-        debug("ALERT: " + "First version change transaction unexpected complete");
+        debug("First version change transaction unexpected complete");
         done();
     }
 
     tx.onerror = function(event) {
-        debug("ALERT: " + "First version change transaction unexpected error - " + event);
+        debug("First version change transaction unexpected error - " + event);
         done();
     }
 }

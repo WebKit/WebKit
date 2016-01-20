@@ -3,40 +3,40 @@ This test creates an object store then populates it, then commits that transacti
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-ALERT: Initial upgrade needed: Old version - 0 New version - 1
-ALERT: Initial upgrade versionchange transaction complete
-ALERT: Success opening database connection - Starting readwrite transaction
-ALERT: Value gotten was bar1
-ALERT: Value gotten was bar2
-ALERT: Value gotten was bar3
-ALERT: Value gotten was bar4
-ALERT: Value gotten was bar5
-ALERT: Value gotten was bar6
-ALERT: Value gotten was bar7
-ALERT: Value gotten was bar8
-ALERT: Value gotten was bar9
-ALERT: Object store cleared, making sure its all gone.
-ALERT: Value gotten was undefined
-ALERT: Value gotten was undefined
-ALERT: Value gotten was undefined
-ALERT: Value gotten was undefined
-ALERT: Value gotten was undefined
-ALERT: Value gotten was undefined
-ALERT: Value gotten was undefined
-ALERT: Value gotten was undefined
-ALERT: Value gotten was undefined
-ALERT: Readwrite transaction abort
-ALERT: Success opening database connection - Starting final transaction
-ALERT: Value gotten was bar1
-ALERT: Value gotten was bar2
-ALERT: Value gotten was bar3
-ALERT: Value gotten was bar4
-ALERT: Value gotten was bar5
-ALERT: Value gotten was bar6
-ALERT: Value gotten was bar7
-ALERT: Value gotten was bar8
-ALERT: Value gotten was bar9
-ALERT: Readwrite transaction complete
+Initial upgrade needed: Old version - 0 New version - 1
+Initial upgrade versionchange transaction complete
+Success opening database connection - Starting readwrite transaction
+Value gotten was bar1
+Value gotten was bar2
+Value gotten was bar3
+Value gotten was bar4
+Value gotten was bar5
+Value gotten was bar6
+Value gotten was bar7
+Value gotten was bar8
+Value gotten was bar9
+Object store cleared, making sure its all gone.
+Value gotten was undefined
+Value gotten was undefined
+Value gotten was undefined
+Value gotten was undefined
+Value gotten was undefined
+Value gotten was undefined
+Value gotten was undefined
+Value gotten was undefined
+Value gotten was undefined
+Readwrite transaction abort
+Success opening database connection - Starting final transaction
+Value gotten was bar1
+Value gotten was bar2
+Value gotten was bar3
+Value gotten was bar4
+Value gotten was bar5
+Value gotten was bar6
+Value gotten was bar7
+Value gotten was bar8
+Value gotten was bar9
+Readwrite transaction complete
 PASS successfullyParsed is true
 
 TEST COMPLETE

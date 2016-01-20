@@ -14,7 +14,7 @@ function done()
 var createRequest = window.indexedDB.open("TransactionScheduler2Database");
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
@@ -22,7 +22,7 @@ createRequest.onupgradeneeded = function(event) {
     var request = objectStore.put("foo1", "bar1");
 
     request.onerror = function(event) {
-        debug("ALERT: " + "put1 FAILED - " + event);
+        debug("put1 FAILED - " + event);
         done();
     }
     
@@ -30,23 +30,23 @@ createRequest.onupgradeneeded = function(event) {
     request = objectStore.put("foo2", "bar2");
 
     request.onerror = function(event) {
-        debug("ALERT: " + "put2 FAILED - " + event);
+        debug("put2 FAILED - " + event);
         done();
     }
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "versionchange transaction aborted");
+        debug("versionchange transaction aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "versionchange transaction completed");
+        debug("versionchange transaction completed");
         continueTest();
         database.close();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "versionchange transaction error'ed - " + event);
+        debug("versionchange transaction error'ed - " + event);
         done();
     }
 }
@@ -63,19 +63,19 @@ function continueTest()
 function setupRequest(request, osname)
 {
     request.onsuccess = function(event) {
-        debug("ALERT: " + "Success opening database connection - Starting transaction to ObjectStore " + osname);
+        debug("Success opening database connection - Starting transaction to ObjectStore " + osname);
         startTransactionLoop(event.target.result.transaction(osname, "readonly"), osname, true);
     }
     request.onerror = function(event) {
-        debug("ALERT: " + "Unexpected error - " + osname + " - " + event);
+        debug("Unexpected error - " + osname + " - " + event);
         done();
     }
     request.onblocked = function(event) {
-        debug("ALERT: " + "Unexpected blocked - " + osname + " - " + event);
+        debug("Unexpected blocked - " + osname + " - " + event);
         done();
     }
     request.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Unexpected upgradeneeded - " + osname + " - " + event);
+        debug("Unexpected upgradeneeded - " + osname + " - " + event);
         done();
     } 
 }
@@ -92,31 +92,31 @@ function startTransactionLoop(transaction, osname, isFirstTime)
             numberOfOpenTransactions++;
         
         if (numberOfOpenTransactions == 2) {
-            debug("ALERT: " + "Two transactions open at once. Yay.");
+            debug("Two transactions open at once. Yay.");
             done();
         }
         startTransactionLoop(event.target.transaction, osname, false);
     }
 
     request.onerror = function(event) {
-        debug("ALERT: " + "Unexpected request error - " + event);
+        debug("Unexpected request error - " + event);
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "Unexpected transaction error - " + event);
+        debug("Unexpected transaction error - " + event);
         done();
     }
 
     transaction.onabort = function(event) {
         --numberOfOpenTransactions;
-        debug("ALERT: " + "Unexpected transaction abort - " + event);
+        debug("Unexpected transaction abort - " + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
         --numberOfOpenTransactions;
-        debug("ALERT: " + "Unexpected transaction complete - " + event);
+        debug("Unexpected transaction complete - " + event);
         done();
     }
 }

@@ -3,58 +3,58 @@ This test exercises various uses of IDBObjectStore.count()
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-ALERT: Initial upgrade needed: Old version - 0 New version - 1
-ALERT: Count is: 1
-ALERT: Count is: 0
-ALERT: Count is: 0
-ALERT: Count is: 0
-ALERT: Count is: 0
-ALERT: Count is: 2
-ALERT: Count is: 0
-ALERT: Count is: 0
-ALERT: Count is: 0
-ALERT: Count is: 0
-ALERT: Count is: 3
-ALERT: Count is: 1
-ALERT: Count is: 0
-ALERT: Count is: 1
-ALERT: Count is: 0
-ALERT: Count is: 4
-ALERT: Count is: 2
-ALERT: Count is: 1
-ALERT: Count is: 2
-ALERT: Count is: 0
-ALERT: Count is: 5
-ALERT: Count is: 3
-ALERT: Count is: 2
-ALERT: Count is: 3
-ALERT: Count is: 0
-ALERT: Count is: 6
-ALERT: Count is: 4
-ALERT: Count is: 3
-ALERT: Count is: 3
-ALERT: Count is: 0
-ALERT: Count is: 7
-ALERT: Count is: 4
-ALERT: Count is: 3
-ALERT: Count is: 3
-ALERT: Count is: 1
-ALERT: Count is: 8
-ALERT: Count is: 4
-ALERT: Count is: 3
-ALERT: Count is: 3
-ALERT: Count is: 1
-ALERT: Count is: 9
-ALERT: Count is: 4
-ALERT: Count is: 3
-ALERT: Count is: 3
-ALERT: Count is: 1
-ALERT: Count is: 10
-ALERT: Count is: 4
-ALERT: Count is: 3
-ALERT: Count is: 3
-ALERT: Count is: 1
-ALERT: Initial upgrade versionchange transaction complete
+Initial upgrade needed: Old version - 0 New version - 1
+Count is: 1
+Count is: 0
+Count is: 0
+Count is: 0
+Count is: 0
+Count is: 2
+Count is: 0
+Count is: 0
+Count is: 0
+Count is: 0
+Count is: 3
+Count is: 1
+Count is: 0
+Count is: 1
+Count is: 0
+Count is: 4
+Count is: 2
+Count is: 1
+Count is: 2
+Count is: 0
+Count is: 5
+Count is: 3
+Count is: 2
+Count is: 3
+Count is: 0
+Count is: 6
+Count is: 4
+Count is: 3
+Count is: 3
+Count is: 0
+Count is: 7
+Count is: 4
+Count is: 3
+Count is: 3
+Count is: 1
+Count is: 8
+Count is: 4
+Count is: 3
+Count is: 3
+Count is: 1
+Count is: 9
+Count is: 4
+Count is: 3
+Count is: 3
+Count is: 1
+Count is: 10
+Count is: 4
+Count is: 3
+Count is: 3
+Count is: 1
+Initial upgrade versionchange transaction complete
 PASS successfullyParsed is true
 
 TEST COMPLETE

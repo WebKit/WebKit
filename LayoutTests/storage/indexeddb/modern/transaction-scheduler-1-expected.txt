@@ -3,11 +3,11 @@ This test makes sure that two read-only transactions to an object store are acti
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-ALERT: Upgrade needed: Old version - 0 New version - 1
-ALERT: versionchange transaction completed
-ALERT: Success opening database connection - request 1
-ALERT: Success opening database connection - request 2
-ALERT: Two transactions open at once. Yay.
+Upgrade needed: Old version - 0 New version - 1
+versionchange transaction completed
+Success opening database connection - request 1
+Success opening database connection - request 2
+Two transactions open at once. Yay.
 PASS successfullyParsed is true
 
 TEST COMPLETE

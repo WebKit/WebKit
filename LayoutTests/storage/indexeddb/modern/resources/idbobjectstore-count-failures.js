@@ -14,7 +14,7 @@ var createRequest = window.indexedDB.open("IDBObjectStoreCountFailuresDatabase",
 var database;
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -25,7 +25,7 @@ createRequest.onupgradeneeded = function(event) {
         try {
             objectStore.count(NaN);
         } catch(e) {
-            debug("ALERT: " + "Failed to count records in object store with an invalid key");
+            debug("Failed to count records in object store with an invalid key");
         }
         
         database.deleteObjectStore("TestObjectStore");
@@ -33,7 +33,7 @@ createRequest.onupgradeneeded = function(event) {
         try {
             objectStore.count();
         } catch(e) {
-            debug("ALERT: " + "Failed to count records in object store that's been deleted");
+            debug("Failed to count records in object store that's been deleted");
         } 
 
         // Recreate the objectstore because we'll need it in phase 2.
@@ -42,17 +42,17 @@ createRequest.onupgradeneeded = function(event) {
     }
     
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         continueTest1();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
@@ -76,7 +76,7 @@ function continueTest1()
         try {
             objectStore.count();
         } catch(e) {
-            debug("ALERT: " + "Failed to count records in object store while transaction is inactive");
+            debug("Failed to count records in object store while transaction is inactive");
         }
         canFinish = true;
     }
@@ -84,17 +84,17 @@ function continueTest1()
     setTimeout(getWhileInactive, 0);
     
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readonly transaction unexpected abort" + event);
+        debug("readonly transaction unexpected abort" + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readonly transaction complete");
+        debug("readonly transaction complete");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readonly transaction unexpected error" + event);
+        debug("readonly transaction unexpected error" + event);
         done();
     }
 }

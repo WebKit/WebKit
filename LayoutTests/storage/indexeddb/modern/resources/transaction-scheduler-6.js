@@ -16,7 +16,7 @@ var createRequest = window.indexedDB.open("TransactionScheduler6Database");
 var database;
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -24,22 +24,22 @@ createRequest.onupgradeneeded = function(event) {
     var request = objectStore.put("foo", "bar");
 
     request.onerror = function(event) {
-        debug("ALERT: " + "put FAILED - " + event);
+        debug("put FAILED - " + event);
         done();
     }
     
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "versionchange transaction aborted");
+        debug("versionchange transaction aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "versionchange transaction completed");
+        debug("versionchange transaction completed");
         continueTest();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "versionchange transaction error'ed - " + event);
+        debug("versionchange transaction error'ed - " + event);
         done();
     }
 }
@@ -54,26 +54,26 @@ function continueTest()
     var request = objectStore.put("baz", "foo");
 
     request.onsuccess = function(event) {
-        debug("ALERT: " + "Write in readwrite transaction succeeded");
+        debug("Write in readwrite transaction succeeded");
     }
     
     request.onerror = function(event) {
-        debug("ALERT: " + "Write in readwrite transaction unexpectedly failed");
+        debug("Write in readwrite transaction unexpectedly failed");
         done();
     }
     
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readwrite transaction expectedly aborted");
+        debug("readwrite transaction expectedly aborted");
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readwrite transaction completed");
+        debug("readwrite transaction completed");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readwrite transaction error'ed - " + event);
+        debug("readwrite transaction error'ed - " + event);
         done();
     }
 }
@@ -87,7 +87,7 @@ function startTransactionLoop(transaction, isFirstTime)
     
     request.onsuccess = function(event) {
         if (isFirstTime) {
-            debug("ALERT: " + "Starting a readonly transaction");
+            debug("Starting a readonly transaction");
             numberOfOpenTransactions++;
         }
         
@@ -98,24 +98,24 @@ function startTransactionLoop(transaction, isFirstTime)
     }
 
     request.onerror = function(event) {
-        debug("ALERT: " + "Unexpected request error - " + event);
+        debug("Unexpected request error - " + event);
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "Unexpected transaction error - " + event);
+        debug("Unexpected transaction error - " + event);
         done();
     }
 
     transaction.onabort = function(event) {
         --numberOfOpenTransactions;
-        debug("ALERT: " + "Unexpected transaction abort - " + event);
+        debug("Unexpected transaction abort - " + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
         --numberOfOpenTransactions;
-        debug("ALERT: " + "readonly transaction completed");
+        debug("readonly transaction completed");
     }
 }
 

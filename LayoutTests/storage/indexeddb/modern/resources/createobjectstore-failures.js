@@ -12,9 +12,9 @@ function done()
 
 function dumpObjectStores(database) {
     var list = database.objectStoreNames;
-    debug("ALERT: " + "Object store names:");
+    debug("Object store names:");
     for (var i = 0; i < list.length; ++i) { 
-        debug("ALERT: " + list[i]);
+        debug(list[i]);
     }
 }
 
@@ -23,7 +23,7 @@ var database;
 var versionTransaction;
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -31,48 +31,48 @@ createRequest.onupgradeneeded = function(event) {
     try {
         var objectStore = database.createObjectStore('TestObjectStore', { autoIncrement: true , keyPath: "" });
     } catch (e) {
-        debug("ALERT: " + "Failed to create object store with both autoincrement and an empty keypath: " + e);
+        debug("Failed to create object store with both autoincrement and an empty keypath: " + e);
         dumpObjectStores(database);
     }
 
     try {
         var objectStore = database.createObjectStore('TestObjectStore', { autoIncrement: true , keyPath: ['foo'] });
     } catch (e) {
-        debug("ALERT: " + "Failed to create object store with both autoincrement and a sequence keypath: " + e);
+        debug("Failed to create object store with both autoincrement and a sequence keypath: " + e);
         dumpObjectStores(database);
     }
     
     try {
         var objectStore = database.createObjectStore('TestObjectStore', { keyPath: "'foo bar'"});
     } catch (e) {
-        debug("ALERT: " + "Failed to create object store with invalid keyPath: " + e);
+        debug("Failed to create object store with invalid keyPath: " + e);
         dumpObjectStores(database);
     }
 
     database.createObjectStore("TestObjectStore1");
-    debug("ALERT: " + "Actually created an object store");
+    debug("Actually created an object store");
     dumpObjectStores(database);
     
     try {
         database.createObjectStore("TestObjectStore1");
     } catch(e) {
-        debug("ALERT: " + "Failed to create TestObjectStore a second time: " + e);
+        debug("Failed to create TestObjectStore a second time: " + e);
         dumpObjectStores(database);
     }
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange unexpected abort");
+        debug("Initial upgrade versionchange unexpected abort");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         dumpObjectStores(database);
 
         try {
             database.createObjectStore("TestObjectStore2");
         } catch(e) {
-            debug("ALERT: " + "Failed to create object store while there is no version change transaction: " + e);
+            debug("Failed to create object store while there is no version change transaction: " + e);
             dumpObjectStores(database);
         }
     
@@ -80,7 +80,7 @@ createRequest.onupgradeneeded = function(event) {
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
@@ -90,7 +90,7 @@ function finishUp()
     try {
         database.createObjectStore("TestObjectStore99");
     } catch(e) {
-        debug("ALERT: " + "Failed to create object store outside of onupgradeneeded: " + e);
+        debug("Failed to create object store outside of onupgradeneeded: " + e);
         dumpObjectStores(database);
     }
     

@@ -1,3 +1,82 @@
+2016-01-19  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Remove unneeded "Alert: " string from storage/indexeddb/modern tests.
+        https://bugs.webkit.org/show_bug.cgi?id=153257
+
+        Reviewed by Sam Weinig.
+        
+        These were put in to minimize the diff for https://trac.webkit.org/changeset/195321 and
+        make it easier to review.
+        
+        Now they can be removed.
+
+        * storage/indexeddb/modern/aborted-put-expected.txt:
+        * storage/indexeddb/modern/autoincrement-abort-expected.txt:
+        * storage/indexeddb/modern/basic-add-expected.txt:
+        * storage/indexeddb/modern/basic-put-expected.txt:
+        * storage/indexeddb/modern/createobjectstore-basic-expected.txt:
+        * storage/indexeddb/modern/createobjectstore-failures-expected.txt:
+        * storage/indexeddb/modern/date-basic-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-null-name-exception-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-request-event-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-request-expected.txt:
+        * storage/indexeddb/modern/deleteobjectstore-1-expected.txt:
+        * storage/indexeddb/modern/double-abort-expected.txt:
+        * storage/indexeddb/modern/get-keyrange-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-deleteobjectstore-failures-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-expected.txt:
+        * storage/indexeddb/modern/idbindex-properties-basic-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-clear-1-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-clear-2-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-count-1-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-count-failures-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-get-failures-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-put-and-clear-failures-expected.txt:
+        * storage/indexeddb/modern/idbtransaction-objectstore-failures-expected.txt:
+        * storage/indexeddb/modern/keypath-basic-expected.txt:
+        * storage/indexeddb/modern/opendatabase-request-event-expected.txt:
+        * storage/indexeddb/modern/opendatabase-request-expected.txt:
+        * storage/indexeddb/modern/resources/aborted-put.js:
+        * storage/indexeddb/modern/resources/autoincrement-abort.js:
+        * storage/indexeddb/modern/resources/basic-add.js:
+        * storage/indexeddb/modern/resources/basic-put.js:
+        * storage/indexeddb/modern/resources/createobjectstore-basic.js:
+        * storage/indexeddb/modern/resources/createobjectstore-failures.js:
+        * storage/indexeddb/modern/resources/date-basic.js:
+        * storage/indexeddb/modern/resources/deletedatabase-null-name-exception.js:
+        * storage/indexeddb/modern/resources/deletedatabase-request-event.js:
+        * storage/indexeddb/modern/resources/deletedatabase-request.js:
+        * storage/indexeddb/modern/resources/deleteobjectstore-1.js:
+        * storage/indexeddb/modern/resources/double-abort.js:
+        * storage/indexeddb/modern/resources/get-keyrange.js:
+        * storage/indexeddb/modern/resources/idbdatabase-deleteobjectstore-failures.js:
+        * storage/indexeddb/modern/resources/idbdatabase-transaction-failures.js:
+        * storage/indexeddb/modern/resources/idbindex-properties-basic.js:
+        * storage/indexeddb/modern/resources/idbobjectstore-clear-1.js:
+        * storage/indexeddb/modern/resources/idbobjectstore-clear-2.js:
+        * storage/indexeddb/modern/resources/idbobjectstore-count-1.js:
+        * storage/indexeddb/modern/resources/idbobjectstore-count-failures.js:
+        * storage/indexeddb/modern/resources/idbobjectstore-get-failures.js:
+        * storage/indexeddb/modern/resources/idbobjectstore-put-and-clear-failures.js:
+        * storage/indexeddb/modern/resources/idbtransaction-objectstore-failures.js:
+        * storage/indexeddb/modern/resources/keypath-basic.js:
+        * storage/indexeddb/modern/resources/opendatabase-request-event.js:
+        * storage/indexeddb/modern/resources/opendatabase-request.js:
+        * storage/indexeddb/modern/resources/transaction-scheduler-1.js:
+        * storage/indexeddb/modern/resources/transaction-scheduler-2.js:
+        * storage/indexeddb/modern/resources/transaction-scheduler-3.js:
+        * storage/indexeddb/modern/resources/transaction-scheduler-5.js:
+        * storage/indexeddb/modern/resources/transaction-scheduler-6.js:
+        * storage/indexeddb/modern/resources/versionchange-abort-then-reopen.js:
+        * storage/indexeddb/modern/resources/versionchange-event.js:
+        * storage/indexeddb/modern/transaction-scheduler-1-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-2-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-3-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-5-expected.txt:
+        * storage/indexeddb/modern/transaction-scheduler-6-expected.txt:
+        * storage/indexeddb/modern/versionchange-abort-then-reopen-expected.txt:
+        * storage/indexeddb/modern/versionchange-event-expected.txt:
+
 2016-01-19  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Date.prototype.toLocaleDateString in ECMA-402

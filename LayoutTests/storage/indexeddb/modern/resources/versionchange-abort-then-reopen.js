@@ -17,7 +17,7 @@ function done()
 var createRequest = window.indexedDB.open("VersionChangeAbortTestDatabase", 1);
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
@@ -25,18 +25,18 @@ createRequest.onupgradeneeded = function(event) {
     versionTransaction.abort();
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction aborted");
+        debug("Initial upgrade versionchange transaction aborted");
         continueTest1();
         database.close();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected complete");
+        debug("Initial upgrade versionchange transaction unexpected complete");
         done();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction error " + event);
+        debug("Initial upgrade versionchange transaction error " + event);
     }
 }
 
@@ -45,24 +45,24 @@ function continueTest1()
     createRequest = window.indexedDB.open("VersionChangeAbortTestDatabase", 1);
 
     createRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
         var versionTransaction = createRequest.transaction;
         var database = event.target.result;
 
         versionTransaction.onabort = function(event) {
-            debug("ALERT: " + "Second upgrade versionchange transaction unexpected abort");
+            debug("Second upgrade versionchange transaction unexpected abort");
             done();
         }
 
         versionTransaction.oncomplete = function(event) {
-            debug("ALERT: " + "Second upgrade versionchange transaction complete");
+            debug("Second upgrade versionchange transaction complete");
             continueTest2();
             database.close();
         }
 
         versionTransaction.onerror = function(event) {
-            debug("ALERT: " + "Second upgrade versionchange transaction unexpected error" + event);
+            debug("Second upgrade versionchange transaction unexpected error" + event);
             done();
         }
     }
@@ -73,7 +73,7 @@ function continueTest2()
     createRequest = window.indexedDB.open("VersionChangeAbortTestDatabase", 2);
 
     createRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
         var versionTransaction = createRequest.transaction;
         var database = event.target.result;
@@ -81,18 +81,18 @@ function continueTest2()
         versionTransaction.abort();
     
         versionTransaction.onabort = function(event) {
-            debug("ALERT: " + "Third upgrade versionchange transaction aborted");
+            debug("Third upgrade versionchange transaction aborted");
             continueTest3();
             database.close();
         }
 
         versionTransaction.oncomplete = function(event) {
-            debug("ALERT: " + "Third upgrade versionchange transaction unexpected complete");
+            debug("Third upgrade versionchange transaction unexpected complete");
             done();
         }
 
         versionTransaction.onerror = function(event) {
-            debug("ALERT: " + "Third upgrade versionchange transaction error" + event);
+            debug("Third upgrade versionchange transaction error" + event);
         }
     }
 }
@@ -102,7 +102,7 @@ function continueTest3()
     createRequest = window.indexedDB.open("VersionChangeAbortTestDatabase", 2);
 
     createRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Fourth upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Fourth upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
         var database = event.target.result;
         done();
     }

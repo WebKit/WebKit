@@ -23,10 +23,10 @@ function getCount(arg)
         request = objectStore.count(arg);
     
     request.onsuccess = function() {
-        debug("ALERT: " + "Count is: " + request.result);
+        debug("Count is: " + request.result);
     }
     request.onerror = function(error) {
-        debug("ALERT: " + "Unexpected error getting count: " + error);
+        debug("Unexpected error getting count: " + error);
         done();
     }
 }
@@ -41,7 +41,7 @@ function getCounts()
 }
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -71,17 +71,17 @@ createRequest.onupgradeneeded = function(event) {
     // FIXME: Once objectStore.delete() is implemented, also test counts after deleting previous records.
     
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected abort");
+        debug("Initial upgrade versionchange transaction unexpected abort");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         done();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }

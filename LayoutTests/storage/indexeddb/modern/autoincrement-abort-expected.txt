@@ -3,32 +3,32 @@ This test creates a new database with an objectstore that autoincrements. It the
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-ALERT: Initial upgrade needed: Old version - 0 New version - 1
-ALERT: Initial upgrade versionchange transaction complete
-ALERT: Opening readwrite transaction to bump the key generator, but it will be aborted
-ALERT: Key used for put was 1
-ALERT: Key used for put was 2
-ALERT: Key used for put was 3
-ALERT: Key used for put was 4
-ALERT: Key used for put was 5
-ALERT: Key used for put was 6
-ALERT: readwrite transaction abort
-ALERT: Opening readwrite transaction to make sure the key generator had successfully reverted
-ALERT: Key used for put was 1
-ALERT: Key used for put was 2
-ALERT: Key used for put was 3
-ALERT: Key used for put was 4
-ALERT: Key used for put was 5
-ALERT: Key used for put was 6
-ALERT: readwrite transaction complete
-ALERT: Opening readwrite transaction to make sure the key generator picks up where it should've left off
-ALERT: Key used for put was 7
-ALERT: Key used for put was 8
-ALERT: Key used for put was 9
-ALERT: Key used for put was 10
-ALERT: Key used for put was 11
-ALERT: Key used for put was 12
-ALERT: readwrite transaction complete
+Initial upgrade needed: Old version - 0 New version - 1
+Initial upgrade versionchange transaction complete
+Opening readwrite transaction to bump the key generator, but it will be aborted
+Key used for put was 1
+Key used for put was 2
+Key used for put was 3
+Key used for put was 4
+Key used for put was 5
+Key used for put was 6
+readwrite transaction abort
+Opening readwrite transaction to make sure the key generator had successfully reverted
+Key used for put was 1
+Key used for put was 2
+Key used for put was 3
+Key used for put was 4
+Key used for put was 5
+Key used for put was 6
+readwrite transaction complete
+Opening readwrite transaction to make sure the key generator picks up where it should've left off
+Key used for put was 7
+Key used for put was 8
+Key used for put was 9
+Key used for put was 10
+Key used for put was 11
+Key used for put was 12
+readwrite transaction complete
 PASS successfullyParsed is true
 
 TEST COMPLETE

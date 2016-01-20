@@ -13,16 +13,16 @@ function done()
 
 function dumpObjectStores(database) {
     var list = database.objectStoreNames;
-    debug("ALERT: " + "Object store names:");
+    debug("Object store names:");
     for (var i = 0; i < list.length; ++i) { 
-        debug("ALERT: " + list[i]);
+        debug(list[i]);
     }
 }
 
 var createRequest = window.indexedDB.open("CreateObjectStoreTestDatabase", 1);
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
@@ -30,30 +30,30 @@ createRequest.onupgradeneeded = function(event) {
     var request = objectStore.put("foo", "bar");
 
     request.onsuccess = function(event) {
-        debug("ALERT: " + "Put succeeded");
+        debug("Put succeeded");
         versionTransaction.abort();
     }
     request.onerror = function(event) {
-        debug("ALERT: " + "Put failed - " + event);
+        debug("Put failed - " + event);
         done();
     }
     
     dumpObjectStores(database);    
     
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction aborted");
+        debug("Initial upgrade versionchange transaction aborted");
         dumpObjectStores(database);
         continueTest1();
         database.close();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected complete");
+        debug("Initial upgrade versionchange transaction unexpected complete");
         done();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction error " + event);
+        debug("Initial upgrade versionchange transaction error " + event);
     }
 }
 
@@ -62,7 +62,7 @@ function continueTest1()
     createRequest = window.indexedDB.open("CreateObjectStoreTestDatabase", 1);
 
     createRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
         var versionTransaction = createRequest.transaction;
         var database = event.target.result;
@@ -70,19 +70,19 @@ function continueTest1()
         var objectStore = database.createObjectStore("FirstCommittedObjectStore");
 
         versionTransaction.onabort = function(event) {
-            debug("ALERT: " + "Second upgrade versionchange transaction unexpected abort");
+            debug("Second upgrade versionchange transaction unexpected abort");
             done();
         }
 
         versionTransaction.oncomplete = function(event) {
-            debug("ALERT: " + "Second upgrade versionchange transaction complete");
+            debug("Second upgrade versionchange transaction complete");
             dumpObjectStores(database);
             continueTest2();
             database.close();
         }
 
         versionTransaction.onerror = function(event) {
-            debug("ALERT: " + "Second upgrade versionchange transaction unexpected error" + event);
+            debug("Second upgrade versionchange transaction unexpected error" + event);
             done();
         }
     }
@@ -93,7 +93,7 @@ function continueTest2()
     createRequest = window.indexedDB.open("CreateObjectStoreTestDatabase", 2);
 
     createRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
         var versionTransaction = createRequest.transaction;
         var database = event.target.result;
@@ -102,19 +102,19 @@ function continueTest2()
         dumpObjectStores(database);    
     
         versionTransaction.onabort = function(event) {
-            debug("ALERT: " + "Third upgrade versionchange transaction unexpected abort");
+            debug("Third upgrade versionchange transaction unexpected abort");
             done();
         }
 
         versionTransaction.oncomplete = function(event) {
-            debug("ALERT: " + "Third upgrade versionchange transaction complete");
+            debug("Third upgrade versionchange transaction complete");
             dumpObjectStores(database);
             database.close(); 
             continueTest3();
         }
 
         versionTransaction.onerror = function(event) {
-            debug("ALERT: " + "Third upgrade versionchange transaction unexpected error" + event);
+            debug("Third upgrade versionchange transaction unexpected error" + event);
             done();
         }
     }
@@ -125,7 +125,7 @@ function continueTest3()
     createRequest = window.indexedDB.open("CreateObjectStoreTestDatabase", 3);
 
     createRequest.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Fourth upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Fourth upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
         var database = event.target.result;
         dumpObjectStores(database);
         done();

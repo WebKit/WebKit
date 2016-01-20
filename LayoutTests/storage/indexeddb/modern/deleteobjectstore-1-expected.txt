@@ -3,24 +3,24 @@ This test creates an object store then populates it, then commits that transacti
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-ALERT: Initial upgrade needed: Old version - 0 New version - 1
-ALERT: Initial upgrade versionchange transaction complete
-ALERT: Second upgrade needed: Old version - 1 New version - 2
-ALERT: Deleting object store
-ALERT: Second version change transaction abort
-ALERT: Request error - [object Event]
-ALERT: Success opening database connection - Starting final transaction
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Value gotten was AH AH AH AH AH
-ALERT: Final transaction complete
+Initial upgrade needed: Old version - 0 New version - 1
+Initial upgrade versionchange transaction complete
+Second upgrade needed: Old version - 1 New version - 2
+Deleting object store
+Second version change transaction abort
+Request error - [object Event]
+Success opening database connection - Starting final transaction
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Value gotten was AH AH AH AH AH
+Final transaction complete
 PASS successfullyParsed is true
 
 TEST COMPLETE

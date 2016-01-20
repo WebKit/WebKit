@@ -14,7 +14,7 @@ function done()
 var createRequest = window.indexedDB.open("KeypathBasicTestDatabase", 1);
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;    
@@ -27,42 +27,42 @@ createRequest.onupgradeneeded = function(event) {
         
     var request1 = objectStore1.put(object);
     request1.onsuccess = function(event) {
-        debug("ALERT: " + "object put SUCCESS - " + request1.result);
+        debug("object put SUCCESS - " + request1.result);
     }
 
     var array = { foo: "foo2", stuff: "bar2" };
 
     var request2 = objectStore1.put(array);
     request2.onsuccess = function(event) {
-        debug("ALERT: " + "array put SUCCESS - " + request2.result);
+        debug("array put SUCCESS - " + request2.result);
     }
     
     object.foo = new Object;
     object.foo.bar = "baz1";
     var request3 = objectStore2.put(object);
     request3.onsuccess = function(event) {
-        debug("ALERT: " + "Second object put SUCCESS - " + request3.result);
+        debug("Second object put SUCCESS - " + request3.result);
     }
 
     array.foo = { bar: "baz2" };
 
     var request4 = objectStore2.put(array);
     request4.onsuccess = function(event) {
-        debug("ALERT: " + "Second array put SUCCESS - " + request4.result);
+        debug("Second array put SUCCESS - " + request4.result);
     }
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         done();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }

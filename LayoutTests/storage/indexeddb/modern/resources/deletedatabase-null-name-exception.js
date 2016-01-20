@@ -13,7 +13,7 @@ function done()
 try {
 	var request = window.indexedDB.deleteDatabase();
 } catch (e) {
-	debug("ALERT: " + e);
+	debug(e);
 }
 
 done();

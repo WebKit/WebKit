@@ -18,7 +18,7 @@ var date2 = new Date("1955-11-12T18:00:00");
 var date3 = new Date("2015-10-21T16:00:00");
     
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -44,17 +44,17 @@ createRequest.onupgradeneeded = function(event) {
     objectStore.put("array 3", []);
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         continueTest1();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
@@ -65,12 +65,12 @@ function testGet(keyRange) {
     var request = objectStore.get(keyRange);
     request.onsuccess = function()
     {
-        debug("ALERT: " + "Success getting keyRange [" + keyRange.lower + " (" + (keyRange.lowerOpen ? "Open" : "Closed") + "), " + keyRange.upper + " (" + (keyRange.upperOpen ? "Open" : "Closed") + ")]");
-        debug("ALERT: " + "Result is " + request.result);
+        debug("Success getting keyRange [" + keyRange.lower + " (" + (keyRange.lowerOpen ? "Open" : "Closed") + "), " + keyRange.upper + " (" + (keyRange.upperOpen ? "Open" : "Closed") + ")]");
+        debug("Result is " + request.result);
     }
     request.onerror = function()
     {
-        debug("ALERT: " + "Unexpected error getting keyRange [" + keyRange.lower + " (" + keyRange.lowerOpen + "), " + keyRange.upper + " (" + keyRange.upperOpen + ")]");
+        debug("Unexpected error getting keyRange [" + keyRange.lower + " (" + keyRange.lowerOpen + "), " + keyRange.upper + " (" + keyRange.upperOpen + ")]");
     }
 }
 
@@ -150,17 +150,17 @@ function continueTest1()
     testGet(IDBKeyRange.bound(date1, date3, true, true));
     
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readonly transaction unexpected abort" + event);
+        debug("readonly transaction unexpected abort" + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readonly transaction complete");
+        debug("readonly transaction complete");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readonly transaction unexpected error" + event);
+        debug("readonly transaction unexpected error" + event);
         done();
     }
 }

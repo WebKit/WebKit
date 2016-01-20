@@ -12,21 +12,21 @@ function done()
 }
 
 var request = window.indexedDB.open("TestDatabase");
-debug("ALERT: " + request);
+debug(request);
 
 request = window.indexedDB.open("");
-debug("ALERT: " + request);
+debug(request);
 
 try {
 	var request = window.indexedDB.open();
 } catch (e) {
-	debug("ALERT: " + e);
+	debug(e);
 }
 
 try {
 	var request = window.indexedDB.open("name", 0);
 } catch (e) {
-	debug("ALERT: " + e);
+	debug(e);
 }
 
 done();

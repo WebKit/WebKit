@@ -12,48 +12,48 @@ function done()
 }
 
 request.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
     var tx = request.transaction;
     var db = event.target.result;
 
-    debug("ALERT: " + tx + " - " + tx.mode);
-    debug("ALERT: " + db);
+    debug(tx + " - " + tx.mode);
+    debug(db);
 
     var os = db.createObjectStore("TestObjectStore");
     var putRequest = os.put("bar", "foo");
     
     putRequest.onsuccess = function(event) {
-        debug("ALERT: " + "put succeeded - key was '" + putRequest.result + "'");
+        debug("put succeeded - key was '" + putRequest.result + "'");
         
         var getRequest = os.get("foo");
         getRequest.onsuccess = function(event) {
-            debug("ALERT: " + "get succeeded - value was '" + getRequest.result + "'");
+            debug("get succeeded - value was '" + getRequest.result + "'");
         }
 
         getRequest.onerror = function(event) {
-            debug("ALERT: " + "get unexpectedly failed - " + event);
+            debug("get unexpectedly failed - " + event);
             done();
         }
     }
 
     putRequest.onerror = function(event) {
-        debug("ALERT: " + "put unexpectedly failed - " + event);
+        debug("put unexpectedly failed - " + event);
         done();
     }
     
     tx.onabort = function(event) {
-        debug("ALERT: " + "version change transaction unexpected abort");
+        debug("version change transaction unexpected abort");
         done();
     }
 
     tx.oncomplete = function(event) {
-        debug("ALERT: " + "version change transaction completed");
+        debug("version change transaction completed");
         done();
     }
 
     tx.onerror = function(event) {
-        debug("ALERT: " + "version change transaction unexpected error - " + event);
+        debug("version change transaction unexpected error - " + event);
         done();
     }
 }

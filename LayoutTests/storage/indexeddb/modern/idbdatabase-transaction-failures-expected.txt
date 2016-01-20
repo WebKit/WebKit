@@ -3,14 +3,14 @@ This tests some obvious failures that can happen while calling IDBDatabase.trans
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-ALERT: Upgrade needed: Old version - 0 New version - 1
-ALERT: Failed to start a transaction while a versionChange transaction was in progress - Error: Failed to execute 'transaction' on 'IDBDatabase': A version change transaction is running.
-ALERT: versionchange transaction completed
-ALERT: Failed to start a transaction with an empty set of object stores - Error: Failed to execute 'transaction' on 'IDBDatabase': The storeNames parameter was empty.
-ALERT: Failed to start a transaction to a nonexistent object store - Error: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
-ALERT: Failed to start a transaction with an invalid mode - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('blahblah') is not one of 'readonly' or 'readwrite'.
-ALERT: Failed to explicitly start a versionchange transaction - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('versionchange') is not one of 'readonly' or 'readwrite'.
-ALERT: Failed to explicitly start a transaction with the close pending flag set - Error: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
+Upgrade needed: Old version - 0 New version - 1
+Failed to start a transaction while a versionChange transaction was in progress - Error: Failed to execute 'transaction' on 'IDBDatabase': A version change transaction is running.
+versionchange transaction completed
+Failed to start a transaction with an empty set of object stores - Error: Failed to execute 'transaction' on 'IDBDatabase': The storeNames parameter was empty.
+Failed to start a transaction to a nonexistent object store - Error: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
+Failed to start a transaction with an invalid mode - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('blahblah') is not one of 'readonly' or 'readwrite'.
+Failed to explicitly start a versionchange transaction - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('versionchange') is not one of 'readonly' or 'readwrite'.
+Failed to explicitly start a transaction with the close pending flag set - Error: Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
 PASS successfullyParsed is true
 
 TEST COMPLETE

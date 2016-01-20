@@ -14,7 +14,7 @@ var createRequest = window.indexedDB.open("IDBDatabaseTransactionFailuresDatabas
 var database;
 
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -22,28 +22,28 @@ createRequest.onupgradeneeded = function(event) {
     var request = objectStore.put("foo", "bar");
 
     request.onerror = function(event) {
-        debug("ALERT: " + "put FAILED - " + event);
+        debug("put FAILED - " + event);
         done();
     }
     
     try {
         database.transaction("TestObjectStore", "readonly");
     } catch(e) {
-        debug("ALERT: " + "Failed to start a transaction while a versionChange transaction was in progress - " + e);
+        debug("Failed to start a transaction while a versionChange transaction was in progress - " + e);
     }
 
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "versionchange transaction aborted");
+        debug("versionchange transaction aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "versionchange transaction completed");
+        debug("versionchange transaction completed");
         continueTest();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "versionchange transaction error'ed - " + event);
+        debug("versionchange transaction error'ed - " + event);
         done();
     }
 }
@@ -53,32 +53,32 @@ function continueTest()
     try {
         database.transaction([], "readonly");
     } catch(e) {
-        debug("ALERT: " + "Failed to start a transaction with an empty set of object stores - " + e);
+        debug("Failed to start a transaction with an empty set of object stores - " + e);
     }
 
     try {
         database.transaction("NonexistentObjectStore", "readonly");
     } catch(e) {
-        debug("ALERT: " + "Failed to start a transaction to a nonexistent object store - " + e);
+        debug("Failed to start a transaction to a nonexistent object store - " + e);
     }
 
     try {
         database.transaction("TestObjectStore", "blahblah");
     } catch(e) {
-        debug("ALERT: " + "Failed to start a transaction with an invalid mode - " + e);
+        debug("Failed to start a transaction with an invalid mode - " + e);
     }
 
     try {
         database.transaction("TestObjectStore", "versionchange");
     } catch(e) {
-        debug("ALERT: " + "Failed to explicitly start a versionchange transaction - " + e);
+        debug("Failed to explicitly start a versionchange transaction - " + e);
     }
     
     try {
         database.close();
         database.transaction("TestObjectStore", "readonly");
     } catch(e) {
-        debug("ALERT: " + "Failed to explicitly start a transaction with the close pending flag set - " + e);
+        debug("Failed to explicitly start a transaction with the close pending flag set - " + e);
     }
     
     done();

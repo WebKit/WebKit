@@ -24,11 +24,11 @@ var connection2;
 
 request.onsuccess = function()
 {
-    debug("ALERT: " + "First version change successful");
+    debug("First version change successful");
 }
 request.onerror = function(e)
 {
-    debug("ALERT: " + "Unexpected error (firstPhase)");
+    debug("Unexpected error (firstPhase)");
 	done();
 }
 
@@ -36,10 +36,10 @@ request.onupgradeneeded = function(e)
 {
     var database = event.target.result;
 
-    debug("ALERT: " + "upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
+    debug("upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
     request.transaction.oncomplete = function()
     {
-        debug("ALERT: " + "Version change complete (firstPhase). Database version is now - " + database.version);
+        debug("Version change complete (firstPhase). Database version is now - " + database.version);
 
         connection1 = database;
         connection1.onversionchange = function(e)
@@ -52,12 +52,12 @@ request.onupgradeneeded = function(e)
     }
     request.transaction.onabort = function()
     {
-        debug("ALERT: " + "Version change transaction unexpected abort (firstPhase)");
+        debug("Version change transaction unexpected abort (firstPhase)");
         done();
     }
     request.transaction.onerror = function()
     {
-        debug("ALERT: " + "Version change transaction unexpected error (firstPhase)");
+        debug("Version change transaction unexpected error (firstPhase)");
         done();
     }
 }
@@ -67,7 +67,7 @@ function secondPhase()
     var request = window.indexedDB.open("VersionChangeTestDatabase", 1);
     request.onsuccess = function()
     {
-        debug("ALERT: " + "Open success (secondPhase)");
+        debug("Open success (secondPhase)");
         connection2 = request.result;
         connection2.onversionchange = function(e)
         {
@@ -79,12 +79,12 @@ function secondPhase()
     }
     request.onerror = function(e)
     {
-        debug("ALERT: " + "Unexpected open error (secondPhase)" + e);
+        debug("Unexpected open error (secondPhase)" + e);
         done();
     }
     request.onupgradeneeded = function(e)
     {
-    	debug("ALERT: " + "Unexpected upgrade needed (secondPhase)");
+    	debug("Unexpected upgrade needed (secondPhase)");
     	done();
     }
 }
@@ -92,21 +92,21 @@ function secondPhase()
 function thirdPhase()
 {
     var request = window.indexedDB.open("VersionChangeTestDatabase", 2);
-    debug("ALERT: " + "thirdPhase - Requested database connection with version 2");
+    debug("thirdPhase - Requested database connection with version 2");
     request.onsuccess = function()
     {
-        debug("ALERT: " + "Version change to version 2 successful");
+        debug("Version change to version 2 successful");
     }
     request.onerror = function(e)
     {
-        debug("ALERT: " + "Unexpected open error (thirdPhase)" + e);
+        debug("Unexpected open error (thirdPhase)" + e);
         done();
     }
     request.onupgradeneeded = function(e)
     {
-    	debug("ALERT: " + "Expected upgrade needed (thirdPhase)");
-    	debug("ALERT: " + "firstPhase connection had received oldVersion: " + connection1.oldVersion + ", newVersion: " + connection1.newVersion);
-    	debug("ALERT: " + "secondPhase connection had received oldVersion: " + connection2.oldVersion + ", newVersion: " + connection2.newVersion);
+    	debug("Expected upgrade needed (thirdPhase)");
+    	debug("firstPhase connection had received oldVersion: " + connection1.oldVersion + ", newVersion: " + connection1.newVersion);
+    	debug("secondPhase connection had received oldVersion: " + connection2.oldVersion + ", newVersion: " + connection2.newVersion);
 
     	done();
     }

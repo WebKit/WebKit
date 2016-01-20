@@ -14,13 +14,13 @@ var request = window.indexedDB.deleteDatabase("TestDatabase");
 
 request.onsuccess = function()
 {
-	debug("ALERT: " + "success");
+	debug("success");
 	done();
 }
 request.onerror = function(e)
 {
-	debug("ALERT: " + "error " + e);
+	debug("error " + e);
 	done();
 }
 
-debug("ALERT: " + request);
+debug(request);

@@ -3,13 +3,13 @@ This test does basic testing of IDBObjectStore.add(), making sure that an attemp
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-ALERT: Upgrade needed: Old version - 0 New version - 1
-ALERT: [object IDBTransaction] - versionchange
-ALERT: [object IDBDatabase]
-ALERT: put 1 succeeded - key was 'foo'
-ALERT: put 2 failed - error
-ALERT: get succeeded - key was 'bar'
-ALERT: version change transaction completed
+Upgrade needed: Old version - 0 New version - 1
+[object IDBTransaction] - versionchange
+[object IDBDatabase]
+put 1 succeeded - key was 'foo'
+put 2 failed - error
+get succeeded - key was 'bar'
+version change transaction completed
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -18,7 +18,7 @@ var date2 = new Date("1955-11-12T18:00:00");
 var date3 = new Date("2015-10-21T16:00:00");
     
 createRequest.onupgradeneeded = function(event) {
-    debug("ALERT: " + "Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     database = event.target.result;
@@ -33,17 +33,17 @@ createRequest.onupgradeneeded = function(event) {
     objectStore.put(date3, "c");
     
     versionTransaction.onabort = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected aborted");
+        debug("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction complete");
+        debug("Initial upgrade versionchange transaction complete");
         continueTest1();
     }
 
     versionTransaction.onerror = function(event) {
-        debug("ALERT: " + "Initial upgrade versionchange transaction unexpected error" + event);
+        debug("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }
@@ -54,15 +54,15 @@ function testGet(key) {
     var request = objectStore.get(key);
     request.onsuccess = function()
     {
-        debug("ALERT: " + "Success getting key '" + key + "' of type " + typeof(key) + ", result is '" + request.result + "' of type " + typeof(request.result));
+        debug("Success getting key '" + key + "' of type " + typeof(key) + ", result is '" + request.result + "' of type " + typeof(request.result));
         if (key instanceof Date)
-            debug("ALERT: " + "Key is a Date object, btw");
+            debug("Key is a Date object, btw");
         if (request.result instanceof Date)
-            debug("ALERT: " + "Result is a Date object, btw");
+            debug("Result is a Date object, btw");
     }
     request.onerror = function()
     {
-        debug("ALERT: " + "Expected error getting key '" + key + "'");
+        debug("Expected error getting key '" + key + "'");
     }
 }
 
@@ -79,17 +79,17 @@ function continueTest1()
     testGet("c");
     
     transaction.onabort = function(event) {
-        debug("ALERT: " + "readonly transaction unexpected abort" + event);
+        debug("readonly transaction unexpected abort" + event);
         done();
     }
 
     transaction.oncomplete = function(event) {
-        debug("ALERT: " + "readonly transaction complete");
+        debug("readonly transaction complete");
         done();
     }
 
     transaction.onerror = function(event) {
-        debug("ALERT: " + "readonly transaction unexpected error" + event);
+        debug("readonly transaction unexpected error" + event);
         done();
     }
 }

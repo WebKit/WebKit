@@ -16,13 +16,13 @@ function done()
 
 request.onupgradeneeded = function(event)
 {
-    debug("ALERT: " + "First upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    debug("First upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
     var tx = request.transaction;
     var db = event.target.result;
 
-    debug("ALERT: " + tx + " - " + tx.mode);
-    debug("ALERT: " + db);
+    debug(tx + " - " + tx.mode);
+    debug(db);
 
     var os1 = db.createObjectStore("TestObjectStore1");
     var os2 = db.createObjectStore("TestObjectStore2");
@@ -30,47 +30,47 @@ request.onupgradeneeded = function(event)
     var putRequest = os1.put("bar", "foo");
     
     putRequest.onsuccess = function(event) {
-        debug("ALERT: " + "put succeeded - key was '" + putRequest.result + "'");
+        debug("put succeeded - key was '" + putRequest.result + "'");
         
         var getRequest1 = os1.get("foo");
         getRequest1.onsuccess = function(event) {
-            debug("ALERT: " + "get 'foo' succeeded - value was '" + getRequest1.result + "'");
+            debug("get 'foo' succeeded - value was '" + getRequest1.result + "'");
         }
 
         getRequest1.onerror = function(event) {
-            debug("ALERT: " + "get 'foo' unexpectedly failed - " + event);
+            debug("get 'foo' unexpectedly failed - " + event);
             done();
         }
         
         var getRequest2 = os2.get("far");
         getRequest2.onsuccess = function(event) {
-            debug("ALERT: " + "get 'far' succeeded - value was '" + getRequest2.result + "'");
+            debug("get 'far' succeeded - value was '" + getRequest2.result + "'");
         }
 
         getRequest2.onerror = function(event) {
-            debug("ALERT: " + "get 'far' unexpectedly failed - " + event);
+            debug("get 'far' unexpectedly failed - " + event);
             done();
         }
     }
 
     putRequest.onerror = function(event) {
-        debug("ALERT: " + "put unexpectedly failed - " + event);
+        debug("put unexpectedly failed - " + event);
         done();
     }
     
     tx.onabort = function(event) {
-        debug("ALERT: " + "First version change transaction unexpected abort");
+        debug("First version change transaction unexpected abort");
         done();
     }
 
     tx.oncomplete = function(event) {
-        debug("ALERT: " + "First version change transaction completed");
+        debug("First version change transaction completed");
         db.close();
         continueTest1();
     }
 
     tx.onerror = function(event) {
-        debug("ALERT: " + "First version change transaction unexpected error - " + event);
+        debug("First version change transaction unexpected error - " + event);
         done();
     }
 }
@@ -80,13 +80,13 @@ function continueTest1()
     var request = window.indexedDB.open("AbortedPutTestDatabase", 2);
 
     request.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
         var tx = request.transaction;
         var db = event.target.result;
 
-        debug("ALERT: " + tx + " - " + tx.mode);
-        debug("ALERT: " + db);
+        debug(tx + " - " + tx.mode);
+        debug(db);
 
         var os1 = tx.objectStore("TestObjectStore1");
         var os2 = tx.objectStore("TestObjectStore2");
@@ -94,12 +94,12 @@ function continueTest1()
         var putRequest2 = os2.put("boo", "far");
     
         putRequest1.onerror = function(e) {
-            debug("ALERT: " + "Unexpected error overwriting bar with baz - " + e);
+            debug("Unexpected error overwriting bar with baz - " + e);
             done();
         }
 
         putRequest2.onerror = function(e) {
-            debug("ALERT: " + "Writing into second object store unexpectedly failed - " + e);
+            debug("Writing into second object store unexpectedly failed - " + e);
             done();
         }
         
@@ -108,38 +108,38 @@ function continueTest1()
             var getRequest2 = os2.get("far");
             
             getRequest1.onsuccess = function(event) {
-                debug("ALERT: " + "get1 'foo' succeeded - value was '" + getRequest1.result + "'");
+                debug("get1 'foo' succeeded - value was '" + getRequest1.result + "'");
             }
 
             getRequest1.onerror = function(event) {
-                debug("ALERT: " + "get1 unexpectedly failed - " + event);
+                debug("get1 unexpectedly failed - " + event);
                 done();
             }
 
             getRequest2.onsuccess = function(event) {
-                debug("ALERT: " + "get2 'far' succeeded - value was '" + getRequest2.result + "'");
+                debug("get2 'far' succeeded - value was '" + getRequest2.result + "'");
                 tx.abort();
             }
 
             getRequest2.onerror = function(event) {
-                debug("ALERT: " + "get2 unexpectedly failed - " + event);
+                debug("get2 unexpectedly failed - " + event);
                 done();
             }
         }
         
         tx.onabort = function(event) {
-            debug("ALERT: " + "Second version change transaction abort");
+            debug("Second version change transaction abort");
             db.close();
             continueTest2();
         }
 
         tx.oncomplete = function(event) {
-            debug("ALERT: " + "Second version change transaction unexpected complete");
+            debug("Second version change transaction unexpected complete");
             done();
         }
 
         tx.onerror = function(event) {
-            debug("ALERT: " + "Second version change transaction error - " + event);
+            debug("Second version change transaction error - " + event);
         }
     }
 }
@@ -149,13 +149,13 @@ function continueTest2()
     var request = window.indexedDB.open("AbortedPutTestDatabase", 2);
 
     request.onupgradeneeded = function(event) {
-        debug("ALERT: " + "Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        debug("Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
         var tx = request.transaction;
         var db = event.target.result;
 
-        debug("ALERT: " + tx + " - " + tx.mode);
-        debug("ALERT: " + db);
+        debug(tx + " - " + tx.mode);
+        debug(db);
 
         var os1 = tx.objectStore("TestObjectStore1");
         var os2 = tx.objectStore("TestObjectStore2");
@@ -163,35 +163,35 @@ function continueTest2()
         var getRequest2 = os2.get("far");
     
         getRequest1.onsuccess = function(event) {
-            debug("ALERT: " + "get1 'foo' succeeded - value was '" + getRequest1.result + "'");
+            debug("get1 'foo' succeeded - value was '" + getRequest1.result + "'");
         }
 
         getRequest1.onerror = function(event) {
-            debug("ALERT: " + "get1 'foo' unexpectedly failed - " + event);
+            debug("get1 'foo' unexpectedly failed - " + event);
             done();
         }
 
         getRequest2.onsuccess = function(event) {
-            debug("ALERT: " + "get2 'far' succeeded - value was '" + getRequest2.result + "'");
+            debug("get2 'far' succeeded - value was '" + getRequest2.result + "'");
         }
 
         getRequest2.onerror = function(event) {
-            debug("ALERT: " + "get2 'far' unexpectedly failed - " + event);
+            debug("get2 'far' unexpectedly failed - " + event);
             done();
         }
         
         tx.onabort = function(event) {
-            debug("ALERT: " + "Third version change transaction unexpected abort");
+            debug("Third version change transaction unexpected abort");
             done();
         }
 
         tx.oncomplete = function(event) {
-            debug("ALERT: " + "Third version change transaction complete");
+            debug("Third version change transaction complete");
             done();
         }
 
         tx.onerror = function(event) {
-            debug("ALERT: " + "Third version change transaction unexpected error - " + event);
+            debug("Third version change transaction unexpected error - " + event);
             done();
         }
     }
