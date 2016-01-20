@@ -44,32 +44,32 @@ PASS createDocument test 28: null,"null:xml",null,"NAMESPACE_ERR"
 PASS createDocument test 29: "",":foo",null,"NAMESPACE_ERR" 
 PASS createDocument test 30: "","f:oo",null,"NAMESPACE_ERR" 
 PASS createDocument test 31: "","foo:",null,"NAMESPACE_ERR" 
-FAIL createDocument test 32: undefined,undefined,null,null assert_equals: expected (object) null but got (string) "undefined"
+PASS createDocument test 32: undefined,undefined,null,null 
 FAIL createDocument test 32: metadata for undefined,undefined,null assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 32: characterSet aliases for undefined,undefined,null assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
-FAIL createDocument test 33: undefined,"foo",null,null assert_equals: expected (object) null but got (string) "undefined"
+PASS createDocument test 33: undefined,"foo",null,null 
 FAIL createDocument test 33: metadata for undefined,"foo",null assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 33: characterSet aliases for undefined,"foo",null assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
 PASS createDocument test 34: undefined,"1foo",null,"INVALID_CHARACTER_ERR" 
-FAIL createDocument test 35: undefined,"f1oo",null,null assert_equals: expected (object) null but got (string) "undefined"
+PASS createDocument test 35: undefined,"f1oo",null,null 
 FAIL createDocument test 35: metadata for undefined,"f1oo",null assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 35: characterSet aliases for undefined,"f1oo",null assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
-FAIL createDocument test 36: undefined,"foo1",null,null assert_equals: expected (object) null but got (string) "undefined"
+PASS createDocument test 36: undefined,"foo1",null,null 
 FAIL createDocument test 36: metadata for undefined,"foo1",null assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 36: characterSet aliases for undefined,"foo1",null assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
 PASS createDocument test 37: undefined,":foo",null,"NAMESPACE_ERR" 
-FAIL createDocument test 38: undefined,"f:oo",null,"NAMESPACE_ERR" assert_throws: function "function () { document.implementation.createDocument(name..." did not throw
+PASS createDocument test 38: undefined,"f:oo",null,"NAMESPACE_ERR" 
 PASS createDocument test 39: undefined,"foo:",null,"NAMESPACE_ERR" 
-FAIL createDocument test 40: undefined,"xml",null,null assert_equals: expected (object) null but got (string) "undefined"
+PASS createDocument test 40: undefined,"xml",null,null 
 FAIL createDocument test 40: metadata for undefined,"xml",null assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 40: characterSet aliases for undefined,"xml",null assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
 PASS createDocument test 41: undefined,"xmlns",null,"NAMESPACE_ERR" 
-FAIL createDocument test 42: undefined,"xmlfoo",null,null assert_equals: expected (object) null but got (string) "undefined"
+PASS createDocument test 42: undefined,"xmlfoo",null,null 
 FAIL createDocument test 42: metadata for undefined,"xmlfoo",null assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 42: characterSet aliases for undefined,"xmlfoo",null assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
 PASS createDocument test 43: undefined,"xml:foo",null,"NAMESPACE_ERR" 
 PASS createDocument test 44: undefined,"xmlns:foo",null,"NAMESPACE_ERR" 
-FAIL createDocument test 45: undefined,"xmlfoo:bar",null,"NAMESPACE_ERR" assert_throws: function "function () { document.implementation.createDocument(name..." did not throw
+PASS createDocument test 45: undefined,"xmlfoo:bar",null,"NAMESPACE_ERR" 
 PASS createDocument test 46: "http://example.com/","foo",null,null 
 FAIL createDocument test 46: metadata for "http://example.com/","foo",null assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 46: characterSet aliases for "http://example.com/","foo",null assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
@@ -277,7 +277,7 @@ FAIL createDocument test 157: characterSet aliases for null,"",null assert_equal
 PASS createDocument test 158: undefined,null,undefined,null 
 FAIL createDocument test 158: metadata for undefined,null,undefined assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 158: characterSet aliases for undefined,null,undefined assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
-FAIL createDocument test 159: undefined,undefined,undefined,null assert_equals: expected (object) null but got (string) "undefined"
+PASS createDocument test 159: undefined,undefined,undefined,null 
 FAIL createDocument test 159: metadata for undefined,undefined,undefined assert_equals: expected "about:blank" but got ""
 FAIL createDocument test 159: characterSet aliases for undefined,undefined,undefined assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
 PASS createDocument test 160: undefined,"",undefined,null 
