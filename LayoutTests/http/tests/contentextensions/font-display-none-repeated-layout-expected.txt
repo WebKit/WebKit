@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 13: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/font-display-none-repeated-layout.html from loading a resource from http://127.0.0.1:8000/resources/Ahem.woff
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/font-display-none-repeated-layout.html from loading a resource from http://127.0.0.1:8000/resources/Ahem.woff
+Hello
+Make sure that a content-blocker rule which is triggered by a webfont and causes display:none on an element doesn't cause looping layouts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS endLayoutCount - startLayoutCount < 5 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

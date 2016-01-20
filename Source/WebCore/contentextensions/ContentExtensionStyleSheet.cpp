@@ -42,12 +42,12 @@ ContentExtensionStyleSheet::ContentExtensionStyleSheet(Document& document)
     m_styleSheet->contents().setIsUserStyleSheet(true);
 }
 
-void ContentExtensionStyleSheet::addDisplayNoneSelector(const String& selector, uint32_t selectorID)
+bool ContentExtensionStyleSheet::addDisplayNoneSelector(const String& selector, uint32_t selectorID)
 {
     ASSERT(selectorID != std::numeric_limits<uint32_t>::max());
 
     if (!m_addedSelectorIDs.add(selectorID).isNewEntry)
-        return;
+        return false;
 
     StringBuilder css;
     css.append(selector);
@@ -55,6 +55,7 @@ void ContentExtensionStyleSheet::addDisplayNoneSelector(const String& selector, 
     css.append(ContentExtensionsBackend::displayNoneCSSRule());
     css.append('}');
     m_styleSheet->contents().parseString(css.toString());
+    return true;
 }
 
 } // namespace ContentExtensions

@@ -203,8 +203,8 @@ void DocumentStyleSheetCollection::addDisplayNoneSelector(const String& identifi
         m_userStyleSheets.append(&result.iterator->value->styleSheet());
     }
 
-    result.iterator->value->addDisplayNoneSelector(selector, selectorID);
-    m_styleResolverChangedTimer.startOneShot(0);
+    if (result.iterator->value->addDisplayNoneSelector(selector, selectorID))
+        m_styleResolverChangedTimer.startOneShot(0);
 }
 
 void DocumentStyleSheetCollection::maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)

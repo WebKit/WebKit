@@ -46,7 +46,7 @@ public:
         return adoptRef(*new ContentExtensionStyleSheet(document));
     }
 
-    void addDisplayNoneSelector(const String& selector, uint32_t selectorID);
+    bool addDisplayNoneSelector(const String& selector, uint32_t selectorID);
 
     CSSStyleSheet& styleSheet() { return m_styleSheet.get(); }
 
