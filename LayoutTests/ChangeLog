@@ -1,5 +1,20 @@
 2016-01-20  Daniel Bates  <dabates@apple.com>
 
+        CSP: Add tests to ensure that alternative text of an image is rendered when CSP blocks its load
+        https://bugs.webkit.org/show_bug.cgi?id=153280
+
+        Reviewed by Alexey Proskuryakov.
+
+        These tests were inspired by the Blink test
+        <https://src.chromium.org/viewvc/blink/trunk/LayoutTests/http/tests/security/contentSecurityPolicy/image-blocked-alt-content.html?revision=186800>.
+
+        * http/tests/security/contentSecurityPolicy/image-blocked-alt-text-expected.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-blocked-alt-text.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-data-URL-blocked-alt-text-expected.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-data-URL-blocked-alt-text.html: Added.
+
+2016-01-20  Daniel Bates  <dabates@apple.com>
+
         CSP: Merge from Blink many new tests and changes to existing tests
         https://bugs.webkit.org/show_bug.cgi?id=153277
         <rdar://problem/24260782>
