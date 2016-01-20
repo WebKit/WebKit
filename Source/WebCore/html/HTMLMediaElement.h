@@ -745,7 +745,6 @@ private:
         Synchronously,
     };
     void updateMediaState(UpdateMediaState updateState = UpdateMediaState::Synchronously);
-    bool hasPlaybackTargetAvailabilityListeners() const { return m_hasPlaybackTargetAvailabilityListeners; }
 #endif
 
     Timer m_pendingActionTimer;

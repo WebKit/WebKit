@@ -3140,6 +3140,3 @@ http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ 
 
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
-
-# WIRELESS_PLAYBACK_TARGET not enabled.
-media/airplay-target-availability.html

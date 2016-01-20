@@ -1381,6 +1381,3 @@ webkit.org/b/150956 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 # Yosemite and El Capitan do not support font feature coverage queries.
 [ Yosemite ElCapitan ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 [ Yosemite ElCapitan ] css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
-
-# WIRELESS_PLAYBACK_TARGET not enabled on Yosemite.
-[ Yosemite ] media/airplay-target-availability.html
