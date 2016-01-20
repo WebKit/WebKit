@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/security/contentSecurityPolicy/resources/child-src-test.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="child-src 'none';">
+</head>
+<body>
+    <script>
+        description("'about:blank' should not be blocked by CSP.");
+        injectFrame("about:blank", EXPECT_LOAD);
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
+CONSOLE MESSAGE: line 2: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'". Either the 'unsafe-inline' keyword, a hash ('sha256-2jEXxWe/uIoRJGbfoW7Bd11qhRclP9IuS5ZXCbhCUnM='), or a nonce ('nonce-...') is required to enable inline execution.
 
 
 
@@ -6,8 +6,8 @@ CONSOLE MESSAGE: line 2: Refused to execute inline script because it violates th
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
 CSP report received:
-CONTENT_TYPE: application/json
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.php?test=/security/contentSecurityPolicy/report-uri-from-child-frame.html
+CONTENT_TYPE: application/csp-report
+HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.html
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.php?test=/security/contentSecurityPolicy/report-uri-from-child-frame.html","referrer":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri-from-child-frame.html","violated-directive":"script-src 'self'","original-policy":"script-src 'self'; report-uri save-report.php?test=/security/contentSecurityPolicy/report-uri-from-child-frame.html","blocked-uri":""}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/resources/generate-csp-report.html","referrer":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri-from-child-frame.html","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri save-report.php?test=generate-csp-report.html","blocked-uri":"","status-code":200}}

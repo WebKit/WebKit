@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Script to generate a 304 HTTP status with (illegal) X-WebKit-CSP headers.
+# Script to generate a 304 HTTP status with (illegal) Content-Security-Policy headers.
 # Relies on its nph- filename to invoke the CGI non-parsed-header facility.
 
 $protocol = $ENV{'SERVER_PROTOCOL'};

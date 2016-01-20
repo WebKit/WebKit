@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="object-src 'none'">
+  <script src="resources/dump-as-text.js"></script>
+</head>
+<body>
+  <p>
+    This tests that an object-src directive on a top-level page is not
+    inherited by a PluginDocument embedded in an iframe on the
+    page. This test passes if an alert pops up saying that the plugin
+    loaded.
+  </p>
+  <iframe src="data:application/x-webkit-test-netscape,alertwhenloaded"></iframe>
+</body>
+</html>

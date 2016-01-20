@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../resources/referrer-test.js"></script>
+</head>
+<body>
+    <script>
+        description("Test that 'unsafe-url' works correctly from HTTP to HTTP.");
+        expectFullReferrer(ReferrerTest.UNSAFE_URL, ReferrerTest.HTTP, ReferrerTest.HTTP);
+    </script>
+</body>
+</html>

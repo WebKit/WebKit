@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 4: The report-only Content Security Policy 'this-should-be-ignored' was delivered via a <meta> element, which is disallowed. The policy has been ignored.
+This tests that report-only Content Security Policy headers are ignored if contained in meta elements.

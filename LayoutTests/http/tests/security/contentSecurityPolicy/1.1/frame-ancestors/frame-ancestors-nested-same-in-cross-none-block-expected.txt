@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: Refused to display 'http://localhost:8080/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy=%27none%27' in a frame because an ancestor violates the following Content Security Policy directive: "frame-ancestors 'none'".
+A 'frame-ancestors' CSP directive with a value 'none' should block rendering in nested frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The inner IFrame passed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Testing a same-origin child with a policy of "'none'" nested in a cross-origin parent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+IFrame load event fired: the IFrame is cross-origin (or was blocked).
+PASS The IFrame should have been blocked (or cross-origin). It was.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+--------
+

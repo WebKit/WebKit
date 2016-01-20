@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../../resources/frame-ancestors-test.js"></script>
+</head>
+<body>
+    <script>
+        description("A 'frame-ancestors' CSP directive with a value 'same' should block render in same-origin nested frames.");
+
+        testNestedIFrame("'self'", CROSS_ORIGIN, CROSS_ORIGIN, EXPECT_BLOCK); 
+    </script>
+</body>
+</html>

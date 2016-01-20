@@ -1,0 +1,10 @@
+Test that 'default' works correctly from HTTPS to HTTPS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ReferrerTest.referrerResult is "https://127.0.0.1:8443/security/contentSecurityPolicy/resources/referrer-test.php?policy=no-referrer-when-downgrade&to=https"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

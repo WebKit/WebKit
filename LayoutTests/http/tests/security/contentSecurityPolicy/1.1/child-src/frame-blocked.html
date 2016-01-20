@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/security/contentSecurityPolicy/resources/child-src-test.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="child-src 'none';">
+</head>
+<body>
+    <script>
+        description("Frames should be governed by 'child-src'.");
+        injectFrame("/security/contentSecurityPolicy/resources/alert-fail.html", EXPECT_BLOCK);
+    </script>
+</body>
+</html>

@@ -16,7 +16,9 @@
                 'effectiveDirective': 'effectiveDirectiveValue',
                 'originalPolicy': 'originalPolicyValue',
                 'sourceFile': 'sourceFileValue',
-                'lineNumber': 1
+                'lineNumber': 1,
+                'columnNumber': 1,
+                'statusCode': 200,
             };
             window.e = new SecurityPolicyViolationEvent('SecurityPolicyViolation', data);
             shouldBeEqualToString('typeof window.e', 'object');

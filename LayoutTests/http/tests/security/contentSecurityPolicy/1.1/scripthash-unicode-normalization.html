@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="Content-Security-Policy" content="script-src 'sha1-zv73epHrGLk/k/onuSBPoZAxzaA=' 'sha1-gbGNUiHncUNJ+diPbIoc+x6KrLo='">
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+        </script>
+        <!-- The following two scripts contain two separate code points (U+00C5
+        and U+212B, respectively) which, depending on your text editor, might be
+        rendered the same. However, their difference is important as they should
+        be NFC normalized to the same code point, thus they should hash to the
+        same value.-->
+        <script>
+            'Å';
+            alert('PASS');
+        </script>
+        <script>
+            'Å';
+            alert('PASS');
+        </script>
+    </head>
+    <body>
+        <p>
+            This tests Unicode normalization. While appearing the same, the
+            strings in the scripts are different Unicode points, but through
+            normalization, should be the same when the hash is taken.
+        </p>
+    </body>
+</html>

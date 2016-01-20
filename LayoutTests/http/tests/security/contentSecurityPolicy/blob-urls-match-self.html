@@ -2,29 +2,29 @@
 <html>
     <head>
         <meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline' 'self'">
+        <script src="/js-test-resources/testharness.js"></script>
+        <script src="/js-test-resources/testharnessreport.js"></script>
+        <script>
+            var t = async_test("blob: does not match 'self' (see step 2 of http://www.w3.org/TR/CSP2/#match-source-expression)");
+
+            t.step(function () {
+                var b = new Blob(['assert_unreached();'], { type: 'application/javascript' });
+
+                var script = document.createElement('script');
+                
+                script.addEventListener('load', t.step_func(function () {
+                    assert_unreached();
+                }));
+
+                script.addEventListener('error', t.step_func(function () {
+                    t.done();
+                }));
+
+                script.src = URL.createObjectURL(b);
+                document.head.appendChild(script);
+            });
+        </script>
     </head>
     <body>
-        <p>
-            blob: URLs are same-origin with the page in which they were created,
-            and should therefore match the 'self' source in CSP directives.
-        </p>
-
-        <script>
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                testRunner.waitUntilDone();
-            }
-            function pass() {
-                alert("PASS (1/1)!");
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }
-
-            var b = new Blob(['pass();'], { type: 'application/javascript' });
-
-            var script = document.createElement('script');
-            script.src = URL.createObjectURL(b);
-            document.body.appendChild(script);
-        </script>
     </body>
 </html>

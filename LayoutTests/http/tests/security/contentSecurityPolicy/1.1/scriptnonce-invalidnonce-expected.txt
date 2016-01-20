@@ -1,0 +1,84 @@
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'n".
+
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce'. It will be ignored.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce".
+
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-''. It will be ignored.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-'".
+
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-'. It will be ignored.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-".
+
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src nonce-abcd".
+
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: '''. It will be ignored.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce- '".
+
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: '''. It will be ignored.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-     '".
+
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: 'spaces''. It will be ignored.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce- nonces have no spaces'".
+
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-{}''. It will be ignored.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-{}'".
+
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: ''nonce-/\''. It will be ignored.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'nonce-/\'".
+
+None of these scripts should execute, as all the nonces are invalid.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame3-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame4-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame5-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame6-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame7-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame8-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame9-->-->'
+--------
+PASS

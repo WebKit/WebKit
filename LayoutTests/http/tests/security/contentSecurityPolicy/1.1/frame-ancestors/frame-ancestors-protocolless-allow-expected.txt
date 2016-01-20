@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: line 60: IFrame load event fired: the IFrame's location is 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy=*.0.0.1:8000'.
+A 'frame-ancestors' CSP directive with a value '*.0.0.1' should allow render in same-origin nested frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The inner IFrame passed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Testing a same-origin child with a policy of "*.0.0.1:8000" nested in a same-origin parent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The IFrame should not have been blocked. It wasn't.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+--------
+This is an IFrame sending a Content Security Policy header containing "frame-ancestors *.0.0.1:8000".

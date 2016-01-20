@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-eval' 'unsafe-inline' 127.0.0.1:8000"/>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    window.jsTestIsAsync = true;
+    window.wasPostTestScriptParsed = true;
+
+    var result = '';
+    try {
+        var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.php?type=importscripts&csp=' +
+                                 encodeURIComponent("script-src 'unsafe-eval' 'unsafe-inline' 127.0.0.1:8000"));
+        worker.onmessage = function (event) {
+            result = event.data;
+            shouldBeEqualToString('result', 'importScripts blocked: NetworkError: Failed to execute \'importScripts\' on \'WorkerGlobalScope\': The script at \'http://localhost:8000/security/contentSecurityPolicy/resources/post-message.js\' failed to load.');
+            finishJSTest();
+        };
+    } catch (e) {
+        result = e;
+        shouldBeEqualToString('result', 'importScripts blocked');
+        finishJSTest();
+    }
+</script>
+</body>
+</html>

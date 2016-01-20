@@ -1,3 +1,388 @@
+2016-01-20  Daniel Bates  <dabates@apple.com>
+
+        CSP: Merge from Blink many new tests and changes to existing tests
+        https://bugs.webkit.org/show_bug.cgi?id=153277
+        <rdar://problem/24260782>
+
+        Reviewed by Brent Fulgham.
+
+        Merge new Content Security Policy tests from Blink as well as changes made to existing tests
+        as of Blink r202656: <https://src.chromium.org/viewvc/blink/trunk/LayoutTests/http/tests/security/contentSecurityPolicy/?pathrev=202656>.
+        Many of these new tests fail and have been marked accordingly with associated WebKit bugs in
+        TestExpectations. We also do not run CSP 1.1 tests as we do not compile with ENABLE(CSP_NEXT)
+        enabled (see <https://bugs.webkit.org/show_bug.cgi?id=85558>). We will look to enable CSP 1.1
+        and make all these merged tests pass in subsequent commits.
+
+        One non-mechanical change I made is that I removed the sub-test for shared workers when
+        merging http/tests/security/contentSecurityPolicy/worker-without-own-csp.html as WebKit does
+        not support shared workers. I also swapped the argument order in the call to assert_equals()
+        in the remaining sub-test so that the expected result, "xhr allowed", is the second argument (as
+        expected by assert_equals()) and hence the failure message would read well.
+
+        The tests http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html,
+        http/tests/security/contentSecurityPolicy/1.1/{script, style}hash-default-src.html do not have
+        expected results and are skipped for now. These tests do not have expected results because no
+        expected results were committed to Blink and it is not straightforward to generate the expected
+        result without reasoning about the test or compiling Blink. When it comes time to enable CSP 1.1
+        support we can generate the expected results and verify correctness.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-about-blank-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-about-blank-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/frame-redirect-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-shared-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-shared-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-shared-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/child-src/worker-shared-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-none-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-none-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-self-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-self-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-star-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-star-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-url-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-url-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-url-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-cross-url-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-none-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-none-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-self-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-self-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-star-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-star-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-url-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-url-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-url-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-same-url-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-none-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-none-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-self-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-self-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-star-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-star-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-url-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-url-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-url-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-cross-url-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-none-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-none-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-self-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-self-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-star-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-star-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-url-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-url-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-url-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-same-in-same-url-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-none-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-none-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-protocolless-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-protocolless-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-self-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-star-allow-crossorigin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-star-allow-crossorigin.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-star-allow-sameorigin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-star-allow-sameorigin.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-url-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-url-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-url-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-url-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/meta-outside-head-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/meta-outside-head.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html:
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-http-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-http-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-http-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-http-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-https-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-https-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-https-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-always-https-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-http-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-http-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-http-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-http-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-https-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-https-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-https-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-default-https-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-http-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-http-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-http-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-http-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-https-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-https-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-https-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-empty-https-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-http-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-http-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-http-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-http-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-https-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-https-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-https-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-invalid-https-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-http-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-http-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-http-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-http-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-https-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-https-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-https-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-never-https-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-http-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-http-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-http-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-http-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-https-http-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-https-http.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-https-https-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/referrer-origin-https-https.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/reportonly-in-meta-ignored.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-error-event-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-error-event.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-ignore-unsafeinline-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-ignore-unsafeinline.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-malformed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-malformed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-unicode-normalization-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-unicode-normalization.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-and-scripthash-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-and-scripthash.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-basic-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-basic-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-expected.txt: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/source-list-parsing-03-expected.txt.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-ignore-unsafeinline-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-ignore-unsafeinline.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce-expected.txt: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/source-list-parsing-07-expected.txt.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-redirect-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-redirect.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-from-script-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-from-script.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-from-script-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-from-script.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html:
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-error-event-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-error-event.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-default-src.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-svg-style-basic-blocked-error-event-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylehash-svg-style-basic-blocked-error-event.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-basic-blocked-error-event-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-basic-blocked-error-event.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-svg-style-basic-blocked-error-event-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-svg-style-basic-blocked-error-event.html: Added.
+        * http/tests/security/contentSecurityPolicy/blob-urls-match-self.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/csp-header-is-sent-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/csp-header-is-sent.html: Added.
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.html: Added.
+        * http/tests/security/contentSecurityPolicy/eval-blocked-and-sends-report-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/eval-blocked-and-sends-report.html: Added.
+        * http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html: Added.
+        * http/tests/security/contentSecurityPolicy/icon-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/icon-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/icon-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/icon-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-document-default-src-none-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-document-default-src-none.html: Added.
+        * http/tests/security/contentSecurityPolicy/inline-event-handler-blocked-after-injecting-meta-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-event-handler-blocked-after-injecting-meta.html: Added.
+        * http/tests/security/contentSecurityPolicy/manifest-src-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/manifest-src-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/manifest-src-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/manifest-src-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/manifest.test/manifest.json: Added.
+        * http/tests/security/contentSecurityPolicy/object-in-svg-foreignobject-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-in-svg-foreignobject.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-applet-archive-codebase-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-applet-archive-codebase.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-applet-archive-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-applet-archive.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-applet-code-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-applet-code.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-does-not-affect-child-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-does-not-affect-child.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-code-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-code-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-movie-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-movie-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-src-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-src-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-url-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-param-url-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/plugin-in-iframe-with-csp-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/plugin-in-iframe-with-csp.html: Added.
+        * http/tests/security/contentSecurityPolicy/redirect-does-not-match-paths-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/redirect-does-not-match-paths.html: Added.
+        * http/tests/security/contentSecurityPolicy/register-bypassing-scheme-partial-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/register-bypassing-scheme-partial.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce.html:
+        * http/tests/security/contentSecurityPolicy/report-blocked-data-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-multiple-violations-01-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-multiple-violations-01.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-multiple-violations-02-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-multiple-violations-02.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass.js: Added.
+        * http/tests/security/contentSecurityPolicy/resources/child-src-test.js: Added.
+        (window.onload):
+        (injectFrame):
+        (iframeLoaded):
+        (injectFrameRedirectingTo):
+        (injectWorker):
+        (injectSharedWorker):
+        * http/tests/security/contentSecurityPolicy/resources/csp-header-is-sent.js: Added.
+        (async_test.xhr.onload):
+        (async_test):
+        (test):
+        * http/tests/security/contentSecurityPolicy/resources/fail-to-inject-script.js: Added.
+        (s.onerror):
+        (s.onload):
+        * http/tests/security/contentSecurityPolicy/resources/frame-ancestors-and-x-frame-options.pl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/frame-ancestors-test.js: Added.
+        (injectNestedIframe):
+        (injectIFrame):
+        (iframeLoaded):
+        (crossOriginFrameShouldBeBlocked.window.onload):
+        (crossOriginFrameShouldBeBlocked):
+        (crossOriginFrameShouldBeAllowed.window.onload):
+        (crossOriginFrameShouldBeAllowed):
+        (sameOriginFrameShouldBeBlocked.window.onload):
+        (sameOriginFrameShouldBeBlocked):
+        (sameOriginFrameShouldBeAllowed.window.onload):
+        (sameOriginFrameShouldBeAllowed):
+        (window.onload):
+        (testNestedIFrame):
+        * http/tests/security/contentSecurityPolicy/resources/frame-ancestors.pl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/frame-in-frame.pl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/generate-csp-report.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/iframe-redirect-not-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/image-document-default-src-none-iframe.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-test.js:
+        * http/tests/security/contentSecurityPolicy/resources/nph-cached-csp.pl:
+        * http/tests/security/contentSecurityPolicy/resources/object-src-param.js: Added.
+        (appendObjectElement.window.onload):
+        (appendObjectElement):
+        * http/tests/security/contentSecurityPolicy/resources/post-message.js: Added.
+        * http/tests/security/contentSecurityPolicy/resources/redir.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/redirect-does-not-match-paths.js: Added.
+        (test):
+        (async_test.img.onload):
+        (async_test):
+        (async_test.xhr.onload):
+        * http/tests/security/contentSecurityPolicy/resources/redirect.pl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/referrer-test-endpoint.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/referrer-test.js: Added.
+        (ReferrerTest.bindHandler):
+        (ReferrerTest.base):
+        (ReferrerTest.generateFrameURL):
+        (ReferrerTest.injectFrame):
+        (expectFullReferrer):
+        (expectNoReferrer):
+        (expectOriginReferrer):
+        * http/tests/security/contentSecurityPolicy/resources/referrer-test.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/sandbox.php:
+        * http/tests/security/contentSecurityPolicy/resources/script-redirect-not-allowed.js: Added.
+        * http/tests/security/contentSecurityPolicy/resources/script-set-value.js: Added.
+        * http/tests/security/contentSecurityPolicy/resources/style-set-red.css: Added.
+        (p):
+        * http/tests/security/contentSecurityPolicy/resources/stylesheet-redirect-not-allowed.css: Added.
+        (body):
+        * http/tests/security/contentSecurityPolicy/resources/test-csp-header.pl: Added.
+        * http/tests/security/contentSecurityPolicy/resources/worker.php: Added.
+        * http/tests/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-report-only-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-report-only.html: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-appended-script-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-appended-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-blocked-error-event-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-redirect.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-03-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-03.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-07-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-07.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-03-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-03.html: Added.
+        * http/tests/security/contentSecurityPolicy/style-src-blocked-error-event-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/style-src-blocked-error-event.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-connect-src-allowed.html:
+        * http/tests/security/contentSecurityPolicy/worker-connect-src-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-eval-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-function-function-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-importscripts-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-importscripts-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-multiple-csp-headers-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-multiple-csp-headers.html: Added.
+        * http/tests/security/contentSecurityPolicy/worker-script-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-script-src.html:
+        * http/tests/security/contentSecurityPolicy/worker-set-timeout-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-without-own-csp-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-without-own-csp.html: Added.
+        * platform/wk2/TestExpectations:
+
 2016-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking three fast/viewport/ios/width-is-device-width-overflowing* tests as flaky on ios-simulator.

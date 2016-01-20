@@ -7,12 +7,11 @@ var tests = [
     ['yes', 'script-src http:', 'resources/script.js'],
     ['no',  'script-src https:', 'resources/script.js'],
     ['no',  'script-src    https:  ', 'resources/script.js'],
-    ['no',  'script-src    https://', 'resources/script.js']
 ];
 </script>
 </head>
 <body onload="test()">
   <p>
-    None of these scripts should execute even though there are parse errors in the policy.
+    None of these scripts should execute.
   </p>
 

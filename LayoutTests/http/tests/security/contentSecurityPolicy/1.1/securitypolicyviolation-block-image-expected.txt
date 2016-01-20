@@ -14,6 +14,8 @@ PASS window.e.effectiveDirective is "img-src"
 PASS window.e.originalPolicy is "img-src 'none'"
 PASS window.e.sourceFile is "http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html"
 PASS window.e.lineNumber is 23
+PASS window.e.columnNumber is 21
+PASS window.e.statusCode is 200
 PASS successfullyParsed is true
 
 TEST COMPLETE

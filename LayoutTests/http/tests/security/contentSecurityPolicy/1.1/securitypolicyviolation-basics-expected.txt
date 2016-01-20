@@ -14,6 +14,8 @@ PASS window.e.effectiveDirective is "effectiveDirectiveValue"
 PASS window.e.originalPolicy is "originalPolicyValue"
 PASS window.e.sourceFile is "sourceFileValue"
 PASS window.e.lineNumber is 1
+PASS window.e.columnNumber is 1
+PASS window.e.statusCode is 200
 PASS successfullyParsed is true
 
 TEST COMPLETE

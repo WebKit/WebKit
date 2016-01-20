@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 60: IFrame load event fired: the IFrame's location is 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy=http://127.0.0.1:8000'.
+A 'frame-ancestors' CSP directive with a URL matching this origin should allow rendering.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The IFrame should not have been blocked. It wasn't.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+This is an IFrame sending a Content Security Policy header containing "frame-ancestors http://127.0.0.1:8000".

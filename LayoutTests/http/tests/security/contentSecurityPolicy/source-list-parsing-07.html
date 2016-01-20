@@ -5,6 +5,7 @@
 <script>
 var tests = [
     ['no', 'script-src http:/', 'resources/script.js'],
+    ['no', 'script-src http://', 'resources/script.js'],
     ['no', 'script-src http:/127.0.0.1', 'resources/script.js'],
     ['no', 'script-src http:///127.0.0.1', 'resources/script.js'],
     ['no', 'script-src http://127.0.0.1:/', 'resources/script.js'],

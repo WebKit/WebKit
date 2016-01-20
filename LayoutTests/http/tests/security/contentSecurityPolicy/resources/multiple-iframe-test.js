@@ -28,8 +28,7 @@ function testImpl(experimental, preescapedPolicy) {
     if (!preescapedPolicy)
         policy = encodeURIComponent(policy);
 
-    var scriptURLIsAbsolute = current[2][0] == '/';
-    var scriptToLoad = scriptURLIsAbsolute ? encodeURIComponent(current[2]) : (baseURL + encodeURIComponent(current[2]));
+    var scriptToLoad = baseURL + encodeURIComponent(current[2]);
     if (current[2].match(/^data:/) || current[2].match(/^https?:/))
         scriptToLoad = encodeURIComponent(current[2]);
 
@@ -37,7 +36,7 @@ function testImpl(experimental, preescapedPolicy) {
                  "experimental=" + (experimental ? "true" : "false") +
                  "&should_run=" + encodeURIComponent(current[0]) +
                  "&csp=" + policy + "&q=" + scriptToLoad;
-    if (current[3])
+    if (current[3] !== undefined)
       iframe.src += "&nonce=" + encodeURIComponent(current[3]);
 
     iframe.onload = function() { testImpl(experimental, preescapedPolicy); };

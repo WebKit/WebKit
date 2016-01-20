@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/security/contentSecurityPolicy/resources/child-src-test.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="child-src 'self';">
+</head>
+<body>
+    <script>
+        description("Workers should be governed by 'child-src'.");
+        injectWorker("/security/contentSecurityPolicy/resources/alert-pass.js", EXPECT_LOAD);
+    </script>
+</body>
+</html>

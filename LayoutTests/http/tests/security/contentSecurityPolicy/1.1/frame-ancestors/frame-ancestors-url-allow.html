@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../../resources/frame-ancestors-test.js"></script>
+</head>
+<body>
+    <script>
+        description("A 'frame-ancestors' CSP directive with a URL matching this origin should allow rendering.");
+
+        sameOriginFrameShouldBeAllowed(window.location.origin);
+    </script>
+</body>
+</html>

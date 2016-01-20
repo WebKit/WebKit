@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Refused to load the script 'http://localhost:8000/security/contentSecurityPolicy/resources/post-message.js' because it violates the following Content Security Policy directive: "script-src 'unsafe-inline' http://127.0.0.1:8000".
+
+This is a testharness.js-based test.
+PASS Blob worker inherits CSP 
+Harness: the test ran to completion.
+

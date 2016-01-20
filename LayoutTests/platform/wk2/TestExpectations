@@ -42,6 +42,10 @@
 ########################################
 ### START OF (1) Classified failures with bug reports
 
+# WebKitTestRunner needs to implement testRunner.dumpIconChanges().
+webkit.org/b/44046 http/tests/security/contentSecurityPolicy/icon-allowed.html
+webkit.org/b/44046 http/tests/security/contentSecurityPolicy/icon-blocked.html
+
 # AX tests that require hit testing do not work in WK2.
 webkit.org/b/71298 accessibility/loading-iframe-updates-axtree.html
 webkit.org/b/71298 accessibility/mac/html-slider-indicator.html

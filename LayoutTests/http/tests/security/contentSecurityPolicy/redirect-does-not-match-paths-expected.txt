@@ -1,0 +1,4 @@
+
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl. Request header field Accept-Encoding is not allowed by Access-Control-Allow-Headers.
+FAIL: Timed out waiting for notifyDone to be called
+

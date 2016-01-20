@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../resources/referrer-test.js"></script>
+</head>
+<body>
+    <script>
+        description("Test that invalid is ignored from HTTPS to HTTP.");
+        expectNoReferrer(ReferrerTest.INVALID, ReferrerTest.HTTPS, ReferrerTest.HTTP);
+    </script>
+</body>
+</html>

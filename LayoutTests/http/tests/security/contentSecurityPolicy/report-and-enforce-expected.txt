@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: line 3: [Report Only] Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
+CONSOLE MESSAGE: line 14: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+CONSOLE MESSAGE: line 11: [Report Only] Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'". Either the 'unsafe-inline' keyword, a hash ('sha256-YQwmkO9U3gKLwAFFj9h7BeOrJNIo50emf5tmL1p32RY='), or a nonce ('nonce-...') is required to enable inline execution.
 
 ALERT: PASS
-CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
-
 CSP report received:
-CONTENT_TYPE: application/json
+CONTENT_TYPE: application/csp-report
 HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-and-enforce.html
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-and-enforce.html","referrer":"","violated-directive":"script-src 'self'","original-policy":"script-src 'self'; report-uri resources/save-report.php","blocked-uri":""}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-and-enforce.html","referrer":"","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri resources/save-report.php","blocked-uri":"","status-code":200}}

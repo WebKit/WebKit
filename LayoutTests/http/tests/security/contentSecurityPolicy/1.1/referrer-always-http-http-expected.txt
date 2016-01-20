@@ -1,0 +1,10 @@
+Test that 'unsafe-url' works correctly from HTTP to HTTP.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ReferrerTest.referrerResult is "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/referrer-test.php?policy=unsafe-url&to=http"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -11,7 +11,9 @@ if (window.testRunner) {
 <body>
 <script>
 try {
-    var foo = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.js');
+    var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.php?type=alert-pass&csp=' +
+                             encodeURIComponent("script-src 'self' 'unsafe-inline'"));
+    alert("PASS");
 } catch (e) {
    alert(e);
 }
