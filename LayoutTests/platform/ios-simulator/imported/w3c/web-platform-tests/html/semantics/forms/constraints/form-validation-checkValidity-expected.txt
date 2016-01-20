@@ -2,40 +2,40 @@
 
 PASS [INPUT in TEXT status] no constraint 
 PASS [INPUT in TEXT status] no constraint (in a form) 
-PASS [INPUT in TEXT status] suffering from being too long 
-PASS [INPUT in TEXT status] suffering from being too long (in a form) 
+FAIL [INPUT in TEXT status] suffering from being too long assert_false: The checkValidity method should be false. expected false got true
+FAIL [INPUT in TEXT status] suffering from being too long (in a form) assert_false: The checkValidity method of the element's form owner should return false. expected false got true
 PASS [INPUT in TEXT status] suffering from a pattern mismatch 
 PASS [INPUT in TEXT status] suffering from a pattern mismatch (in a form) 
 PASS [INPUT in TEXT status] suffering from being missing 
 PASS [INPUT in TEXT status] suffering from being missing (in a form) 
 PASS [INPUT in SEARCH status] no constraint 
 PASS [INPUT in SEARCH status] no constraint (in a form) 
-PASS [INPUT in SEARCH status] suffering from being too long 
-PASS [INPUT in SEARCH status] suffering from being too long (in a form) 
+FAIL [INPUT in SEARCH status] suffering from being too long assert_false: The checkValidity method should be false. expected false got true
+FAIL [INPUT in SEARCH status] suffering from being too long (in a form) assert_false: The checkValidity method of the element's form owner should return false. expected false got true
 PASS [INPUT in SEARCH status] suffering from a pattern mismatch 
 PASS [INPUT in SEARCH status] suffering from a pattern mismatch (in a form) 
 PASS [INPUT in SEARCH status] suffering from being missing 
 PASS [INPUT in SEARCH status] suffering from being missing (in a form) 
 PASS [INPUT in TEL status] no constraint 
 PASS [INPUT in TEL status] no constraint (in a form) 
-PASS [INPUT in TEL status] suffering from being too long 
-PASS [INPUT in TEL status] suffering from being too long (in a form) 
+FAIL [INPUT in TEL status] suffering from being too long assert_false: The checkValidity method should be false. expected false got true
+FAIL [INPUT in TEL status] suffering from being too long (in a form) assert_false: The checkValidity method of the element's form owner should return false. expected false got true
 PASS [INPUT in TEL status] suffering from a pattern mismatch 
 PASS [INPUT in TEL status] suffering from a pattern mismatch (in a form) 
 PASS [INPUT in TEL status] suffering from being missing 
 PASS [INPUT in TEL status] suffering from being missing (in a form) 
 PASS [INPUT in PASSWORD status] no constraint 
 PASS [INPUT in PASSWORD status] no constraint (in a form) 
-PASS [INPUT in PASSWORD status] suffering from being too long 
-PASS [INPUT in PASSWORD status] suffering from being too long (in a form) 
+FAIL [INPUT in PASSWORD status] suffering from being too long assert_false: The checkValidity method should be false. expected false got true
+FAIL [INPUT in PASSWORD status] suffering from being too long (in a form) assert_false: The checkValidity method of the element's form owner should return false. expected false got true
 PASS [INPUT in PASSWORD status] suffering from a pattern mismatch 
 PASS [INPUT in PASSWORD status] suffering from a pattern mismatch (in a form) 
 PASS [INPUT in PASSWORD status] suffering from being missing 
 PASS [INPUT in PASSWORD status] suffering from being missing (in a form) 
 PASS [INPUT in URL status] no constraint 
 PASS [INPUT in URL status] no constraint (in a form) 
-PASS [INPUT in URL status] suffering from being too long 
-PASS [INPUT in URL status] suffering from being too long (in a form) 
+FAIL [INPUT in URL status] suffering from being too long assert_false: The checkValidity method should be false. expected false got true
+FAIL [INPUT in URL status] suffering from being too long (in a form) assert_false: The checkValidity method of the element's form owner should return false. expected false got true
 PASS [INPUT in URL status] suffering from a pattern mismatch 
 PASS [INPUT in URL status] suffering from a pattern mismatch (in a form) 
 PASS [INPUT in URL status] suffering from a type mismatch 
@@ -44,8 +44,8 @@ PASS [INPUT in URL status] suffering from being missing
 PASS [INPUT in URL status] suffering from being missing (in a form) 
 PASS [INPUT in EMAIL status] no constraint 
 PASS [INPUT in EMAIL status] no constraint (in a form) 
-PASS [INPUT in EMAIL status] suffering from being too long 
-PASS [INPUT in EMAIL status] suffering from being too long (in a form) 
+FAIL [INPUT in EMAIL status] suffering from being too long assert_false: The checkValidity method should be false. expected false got true
+FAIL [INPUT in EMAIL status] suffering from being too long (in a form) assert_false: The checkValidity method of the element's form owner should return false. expected false got true
 PASS [INPUT in EMAIL status] suffering from a pattern mismatch 
 PASS [INPUT in EMAIL status] suffering from a pattern mismatch (in a form) 
 PASS [INPUT in EMAIL status] suffering from a type mismatch 

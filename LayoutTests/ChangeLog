@@ -1,5 +1,18 @@
 2016-01-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update ios-simulator specific -expected.txt files after most recent WPT revision in r194580
+        https://bugs.webkit.org/show_bug.cgi?id=152139
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements-expected.txt:
+
+2016-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Follow up to r195361. Removing ios-simulator-wk2 fast/viewport/ios directory pass expectation, explicitly re-enabling passing tests
         https://bugs.webkit.org/show_bug.cgi?id=153110
 

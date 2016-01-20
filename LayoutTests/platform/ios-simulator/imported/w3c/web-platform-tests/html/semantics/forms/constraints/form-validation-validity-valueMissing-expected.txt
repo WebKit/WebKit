@@ -68,14 +68,14 @@ PASS [INPUT in NUMBER status] Value is -0
 PASS [INPUT in NUMBER status] Value is a number with some white spaces 
 PASS [INPUT in NUMBER status] Value is Math.pow(2, 1024) 
 PASS [INPUT in NUMBER status] Value is Math.pow(-2, 1024) 
-PASS [INPUT in NUMBER status] Value is a string that can not be coverted to a number 
+PASS [INPUT in NUMBER status] Value is a string that cannot be converted to a number 
 PASS [INPUT in NUMBER status] The value attribute is empty string 
 PASS [INPUT in CHECKBOX status] The required attribute is not set 
 PASS [INPUT in CHECKBOX status] The checked attribute is true 
-FAIL [INPUT in CHECKBOX status] The checked attribute is false assert_true: The validity.valueMissing should be true. expected true got false
+PASS [INPUT in CHECKBOX status] The checked attribute is false 
 PASS [INPUT in RADIO status] The required attribute is not set 
 PASS [INPUT in RADIO status] The checked attribute is true 
-FAIL [INPUT in RADIO status] The checked attribute is false assert_true: The validity.valueMissing should be true. expected true got false
+PASS [INPUT in RADIO status] The checked attribute is false 
 PASS [INPUT in FILE status] The required attribute is not set 
 PASS [INPUT in FILE status] The Files attribute is null 
 PASS [select]  The required attribute is not set 

@@ -4,7 +4,6 @@ PASS Selection attributes should apply to type text
 PASS Selection attributes should apply to type search 
 PASS Selection attributes should apply to type url 
 PASS Selection attributes should apply to type tel 
-PASS Selection attributes should apply to type email 
 PASS Selection attributes should apply to type password 
 FAIL Selection attributes should not apply to type hidden assert_throws: Should throw with type hidden function "function () { input.select(); }" did not throw
 FAIL Selection attributes should not apply to type datetime assert_equals: Input type unsupported expected "datetime" but got "text"
@@ -19,6 +18,7 @@ FAIL Selection attributes should not apply to type checkbox assert_throws: Shoul
 FAIL Selection attributes should not apply to type radio assert_throws: Should throw with type radio function "function () { input.select(); }" did not throw
 FAIL Selection attributes should not apply to type button assert_throws: Should throw with type button function "function () { input.select(); }" did not throw
 FAIL Selection attributes should not apply to type file assert_throws: Should throw with type file function "function () { input.select(); }" did not throw
+FAIL Selection attributes should not apply to type email assert_throws: Should throw with type email function "function () { input.select(); }" did not throw
 FAIL Selection attributes should not apply to type submit assert_throws: Should throw with type submit function "function () { input.select(); }" did not throw
 FAIL Selection attributes should not apply to type image assert_throws: Should throw with type image function "function () { input.select(); }" did not throw
 FAIL Selection attributes should not apply to type reset assert_throws: Should throw with type reset function "function () { input.select(); }" did not throw
