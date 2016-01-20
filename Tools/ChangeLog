@@ -1,3 +1,14 @@
+2016-01-20  Dana Burkart  <dburkart@apple.com>
+
+        Botwatcher's dashboard should show an 'X' when the build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=152507
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotStaticAnalyzerQueueView.js:
+        (BuildbotStaticAnalyzerQueueView.prototype.appendStaticAnalyzerQueueStatus):
+        (BuildbotStaticAnalyzerQueueView.prototype.update):
+
 2016-01-19  Jason Marcell  <jmarcell@apple.com>
 
         Remove assertion from revisionContentForIteration that is causing errors on the dashboard.

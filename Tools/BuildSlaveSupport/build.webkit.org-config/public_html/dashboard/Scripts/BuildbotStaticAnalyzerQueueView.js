@@ -61,6 +61,7 @@ BuildbotStaticAnalyzerQueueView.prototype = {
                 var text;
 
                 var failedStep = new BuildbotTestResults(iteration._firstFailedStep);
+                var issueCount = failedStep.issueCount;
 
                 if (iteration.successful) {
                     statusLineViewColor = StatusLineView.Status.Good;
@@ -73,9 +74,10 @@ BuildbotStaticAnalyzerQueueView.prototype = {
                     url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     statusLineViewColor = StatusLineView.Status.Bad;
                     text = "build failed";
+                    issueCount = null;
                 }
 
-                var status = new StatusLineView(messageElement, statusLineViewColor, (text) ? text : "found " + failedStep.issueCount + " issues", failedStep.issueCount, url);
+                var status = new StatusLineView(messageElement, statusLineViewColor, (text) ? text : "found " + failedStep.issueCount + " issues", issueCount, url);
 
                 this.element.appendChild(status.element);
                 appendedStatus = true;
