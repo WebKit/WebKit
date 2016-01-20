@@ -131,3 +131,52 @@ function toLocaleDateString(/* locales, options */)
     var dateFormat = new @DateTimeFormat(locales, options);
     return dateFormat.format(value);
 }
+
+function toLocaleTimeString(/* locales, options */)
+{
+    "use strict";
+
+    function toDateTimeOptionsTimeTime(opts)
+    {
+        // ToDateTimeOptions(options, "time", "time")
+        // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
+
+        var options;
+        if (opts === undefined)
+            options = null;
+        else if (opts === null)
+            throw new @TypeError("null is not an object");
+        else
+            options = @Object(opts);
+
+        // Check original instead of descendant to reduce lookups up the prototype chain.
+        var needsDefaults = !options || (
+            options.hour === undefined &&
+            options.minute === undefined &&
+            options.second === undefined
+        );
+
+        // Only create descendant if it will have own properties.
+        if (needsDefaults) {
+            options = @Object.create(options)
+            options.hour = "numeric";
+            options.minute = "numeric";
+            options.second = "numeric";
+        }
+
+        return options;
+    }
+
+    // 13.3.3 Date.prototype.toLocaleTimeString ([locales [, options ]]) (ECMA-402 2.0)
+    // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleTimeString
+
+    var value = @thisTimeValue.@call(this);
+    if (@isNaN(value))
+        return "Invalid Date";
+
+    var options = toDateTimeOptionsTimeTime(arguments[1]);
+    var locales = arguments[0];
+
+    var dateFormat = new @DateTimeFormat(locales, options);
+    return dateFormat.format(value);
+}

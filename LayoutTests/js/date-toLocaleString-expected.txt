@@ -49,6 +49,29 @@ PASS new Date(0).toLocaleDateString('en', { timeZone: 'UTC' }) is "1/1/1970"
 PASS new Date(0).toLocaleDateString('en', null) threw exception TypeError: null is not an object.
 PASS new Date(0).toLocaleDateString('en', { timeZone: 'UTC', hour:'numeric', minute:'2-digit' }) is "1/1/1970, 12:00 AM"
 PASS new Date(0).toLocaleDateString('en', { timeZone: 'UTC', year:'numeric', month:'long' }) is "January 1970"
+PASS Date.prototype.toLocaleTimeString.length is 0
+PASS Object.getOwnPropertyDescriptor(Date.prototype, 'toLocaleTimeString').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Date.prototype, 'toLocaleTimeString').configurable is true
+PASS Object.getOwnPropertyDescriptor(Date.prototype, 'toLocaleTimeString').writable is true
+PASS Date.prototype.toLocaleTimeString.call(new Date) did not throw exception.
+PASS Date.prototype.toLocaleTimeString.call() threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call(undefined) threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call(null) threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call(0) threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call(NaN) threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call(Infinity) threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call('1') threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call({}) threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call([]) threw exception TypeError: Type error.
+PASS Date.prototype.toLocaleTimeString.call(Symbol()) threw exception TypeError: Type error.
+PASS typeof new Date().toLocaleTimeString() === 'string' is true
+PASS new Date(NaN).toLocaleTimeString() is "Invalid Date"
+PASS new Date().toLocaleTimeString('i') threw exception RangeError: invalid language tag: i.
+PASS new Date(0).toLocaleTimeString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }) is "上午一二:〇〇:〇〇"
+PASS new Date(0).toLocaleTimeString('en', { timeZone: 'UTC' }) is "12:00:00 AM"
+PASS new Date(0).toLocaleTimeString('en', null) threw exception TypeError: null is not an object.
+PASS new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', hour:'numeric', minute:'2-digit' }) is "12:00 AM"
+PASS new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', year:'numeric', month:'long' }) is "January 1970, 12:00:00 AM"
 PASS successfullyParsed is true
 
 TEST COMPLETE
