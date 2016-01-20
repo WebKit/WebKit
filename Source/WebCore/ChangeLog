@@ -1,3 +1,13 @@
+2016-01-20  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/24242600> CrashTracer: com.apple.WebKit.WebContent at …pector::CSSFrontendDispatcher::mediaQueryResultChanged + 316
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::willDestroyFrontendAndBackend): Call disable().
+        (WebCore::InspectorCSSAgent::mediaQueryResultChanged): Add null check.
+
 2016-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r195088. rdar://problem/24101168

@@ -366,6 +366,9 @@ void InspectorCSSAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     m_backendDispatcher = nullptr;
 
     resetNonPersistentData();
+
+    String unused;
+    disable(unused);
 }
 
 void InspectorCSSAgent::discardAgent()
@@ -416,7 +419,8 @@ void InspectorCSSAgent::documentDetached(Document& document)
 
 void InspectorCSSAgent::mediaQueryResultChanged()
 {
-    m_frontendDispatcher->mediaQueryResultChanged();
+    if (m_frontendDispatcher)
+        m_frontendDispatcher->mediaQueryResultChanged();
 }
 
 void InspectorCSSAgent::activeStyleSheetsUpdated(Document& document)
