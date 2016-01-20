@@ -1,3 +1,12 @@
+2016-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking three fast/viewport/ios/width-is-device-width-overflowing* tests as flaky on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=153110
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-01-20  Chris Dumez  <cdumez@apple.com>
 
         Drop support for obsolete Node.isSupported()
