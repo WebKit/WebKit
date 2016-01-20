@@ -1,3 +1,32 @@
+2016-01-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] The register allocator can use a dangling pointer when selecting a spill candidate
+        https://bugs.webkit.org/show_bug.cgi?id=153287
+
+        Reviewed by Mark Lam.
+
+        A tricky bug I discovered while experimenting with live range breaking.
+
+        We have the following initial conditions:
+        -UseCounts is slow, so we only compute it once for all the iterations
+         of the allocator.
+        -The only new Tmps we create are for spills and refills. They are unspillable
+         by definition so it is fine to not update UseCounts accordingly.
+
+        But, in selectSpill(), we go over all the spill candidates and select the best
+        one based on its score. The score() lambda uses useCounts, it cannot be used
+        with a new Tmps created for something we already spilled.
+
+        The first time we use score is correct, we started by skipping all the unspillable
+        Tmps from the candidate. The next use was incorrect: we were checking unspillableTmps
+        *after* calling score().
+
+        The existing tests did not catch this due to back luck. I added an assertion
+        to find similar problems in the future.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirUseCounts.h:
+
 2016-01-20  Saam barati  <sbarati@apple.com>
 
         Fix CLoop build after bug https://bugs.webkit.org/show_bug.cgi?id=152766

@@ -97,7 +97,12 @@ public:
         }
     }
 
-    const Counts& operator[](const Thing& arg) const { return m_counts.find(arg)->value; }
+    const Counts& operator[](const Thing& arg) const
+    {
+        auto iterator = m_counts.find(arg);
+        ASSERT(iterator != m_counts.end());
+        return iterator->value;
+    }
 
     void dump(PrintStream& out) const
     {

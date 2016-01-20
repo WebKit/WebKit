@@ -961,11 +961,11 @@ private:
 
         ++iterator;
         for (;iterator != m_spillWorklist.end(); ++iterator) {
+            if (m_unspillableTmps.contains(*iterator))
+                continue;
+
             double tmpScore = score(AbsoluteTmpMapper<type>::tmpFromAbsoluteIndex(*iterator));
             if (tmpScore > maxScore) {
-                if (m_unspillableTmps.contains(*iterator))
-                    continue;
-
                 victimIterator = iterator;
                 maxScore = tmpScore;
             }
