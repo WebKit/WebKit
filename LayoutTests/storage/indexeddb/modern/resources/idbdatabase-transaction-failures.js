@@ -1,22 +1,20 @@
 description("This tests some obvious failures that can happen while calling IDBDatabase.transaction()");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("IDBDatabaseTransactionFailuresDatabase");
 var database;
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
     var request = objectStore.put("foo", "bar");

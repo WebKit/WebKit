@@ -3,6 +3,10 @@ This test verifies that: - Opening a new database results in the onupgradeneeded
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 upgradeneeded: old version - 0 new version - 1
 [object IDBTransaction]
 Version change complete

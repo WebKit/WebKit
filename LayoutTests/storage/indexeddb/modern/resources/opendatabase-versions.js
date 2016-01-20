@@ -1,16 +1,12 @@
 description("This test creates a new database with the default version, commits that versionchange transaction, and then reopens it at different versions to make sure the IDBOpenDBRequests behave appropriately.");
 
-
+indexedDBTest(prepareDatabase, openSuccessful);
 
 function log(msg)
 {
     document.getElementById("logger").innerHTML += msg + "";
 }
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {
@@ -18,35 +14,36 @@ function done()
 }
 
 var request = window.indexedDB.open("VersionTestDatabase");
-debug(request + " (firstPhase)");
 
-request.onsuccess = function()
+function openSuccessful()
 {
     debug("First version change successful");
 }
-request.onerror = function(e)
-{
-    debug("Open request error (firstPhase) " + request.error.name);
-}
 
-request.onupgradeneeded = function(e)
+var dbname;
+function prepareDatabase(e)
 {
     var database = event.target.result;
+    dbname = database.name;
+
+    event.target.onerror = function(e) {
+        debug("Open request error (firstPhase) " + event.target.error.name);
+    }
 
     debug("upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
     debug(request.transaction);
-    request.transaction.oncomplete = function()
+    event.target.transaction.oncomplete = function()
     {
         debug("Version change complete (firstPhase). Database version is now - " + database.version);
         database.close();
         secondPhase();
     }
-    request.transaction.onabort = function()
+    event.target.transaction.onabort = function()
     {
         debug("Version change transaction unexpected abort! (firstPhase)");
         done();
     }
-    request.transaction.onerror = function()
+    event.target.transaction.onerror = function()
     {
         debug("Version change transaction unexpected error! (firstPhase)");
         done();
@@ -55,7 +52,7 @@ request.onupgradeneeded = function(e)
 
 function secondPhase()
 {
-    var request = window.indexedDB.open("VersionTestDatabase", 1);
+    var request = window.indexedDB.open(dbname, 1);
     debug(request + " (secondPhase)");
     request.onsuccess = function()
     {
@@ -78,7 +75,7 @@ function secondPhase()
 
 function thirdPhase()
 {
-    var request = window.indexedDB.open("VersionTestDatabase", 2);
+    var request = window.indexedDB.open(dbname, 2);
     debug(request + " (thirdPhase)");
     request.onsuccess = function()
     {
@@ -116,7 +113,7 @@ function thirdPhase()
 function fourthPhase()
 {
     // We've upgraded to version 2, so version 1 should not be openable.
-    var request = window.indexedDB.open("VersionTestDatabase", 1);
+    var request = window.indexedDB.open(dbname, 1);
     debug(request + " (fourthPhase)");
     request.onsuccess = function()
     {

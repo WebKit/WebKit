@@ -1,10 +1,7 @@
 description("This test exercises the readonly attributes on an IDBObjectStore.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
-var request = window.indexedDB.open("ObjectStoreAttributesTestDatabase");
+indexedDBTest(prepareDatabase);
+
 
 function log(message)
 {
@@ -18,11 +15,11 @@ function done()
 
 var database;
 
-request.onupgradeneeded = function(event)
+function prepareDatabase(event)
 {
     debug("First upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
-    var tx = request.transaction;
+    var tx = event.target.transaction;
     database = event.target.result;
 
     debug(tx + " - " + tx.mode);

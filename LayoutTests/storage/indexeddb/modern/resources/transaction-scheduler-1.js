@@ -1,23 +1,23 @@
 description("This test makes sure that two read-only transactions to an object store are active at the same time.");
 
+indexedDBTest(prepareDatabase);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("TransactionScheduler1Database");
-
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    event.target.onerror = null;
+
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
+    dbname = database.name;
     var objectStore = database.createObjectStore("TestObjectStore");
     var request = objectStore.put("foo", "bar");
 
@@ -45,8 +45,8 @@ createRequest.onupgradeneeded = function(event) {
 
 function continueTest()
 {
-    var request1 = window.indexedDB.open("TransactionScheduler1Database", 1);
-    var request2 = window.indexedDB.open("TransactionScheduler1Database", 1);
+    var request1 = window.indexedDB.open(dbname, 1);
+    var request2 = window.indexedDB.open(dbname, 1);
 
     setupRequest(request1, "request 1");
     setupRequest(request2, "request 2");

@@ -2,10 +2,9 @@ description("This test verifies that: \
     - Opening a new database results in the onupgradeneeded handler being called on the IDBOpenDBRequest. \
     - The versionchange transaction representing the upgrade commits successfully. \
     - After that transaction commits, the onsuccess handler on the original IDBOpenDBRequest is called.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase, openSuccess);
+
 
 function done()
 {
@@ -19,34 +18,29 @@ function log(message)
 
 var request = window.indexedDB.open("OpenDatabaseSuccessAfterVersionChangeDatabase");
 
-request.onsuccess = function()
+function openSuccess()
 {
     debug("Got the onsuccess handler as expected.");
 	done();
 }
-request.onerror = function(e)
-{
-    debug("Unexpected onerror handler called");
-	done();
-}
 
-request.onupgradeneeded = function(e)
+function prepareDatabase(e)
 {
     debug("upgradeneeded: old version - " + e.oldVersion + " new version - " + e.newVersion);
-    debug(request.transaction);
+    debug(e.target.transaction);
     
-    request.transaction.oncomplete = function()
+    e.target.transaction.oncomplete = function()
     {
         debug("Version change complete");
     }
     
-    request.transaction.onabort = function()
+    e.target.transaction.onabort = function()
     {
         debug("Version change unexpected abort");
         done();
     }
     
-    request.transaction.onerror = function()
+    e.target.transaction.onerror = function()
     {
         debug("Version change unexpected error");
         done();

@@ -1,23 +1,18 @@
 description("This tests some obvious failures that can happen while calling transaction.objectStore()");
 
+indexedDBTest(prepareDatabase);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
-
-var request = window.indexedDB.open("TransactionObjectStoreFailuresTestDatabase");
 
 function done()
 {
     finishJSTest();
 }
 
-request.onupgradeneeded = function(event)
+function prepareDatabase(event)
 {
     debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
-    var tx = request.transaction;
+    var tx = event.target.transaction;
     var db = event.target.result;
 
     debug(tx + " - " + tx.mode);
@@ -73,4 +68,3 @@ request.onupgradeneeded = function(event)
         done();
     }
 }
-

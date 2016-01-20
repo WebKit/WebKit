@@ -1,9 +1,7 @@
 description("This tests iterating a \"prev\" cursor in a read-write transaction while changing records.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -15,12 +13,11 @@ function log(message)
     debug(message);
 }
 
-var createRequest = window.indexedDB.open("Cursor8Database", 1);
-
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
 

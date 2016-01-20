@@ -1,22 +1,18 @@
 description("This test creates some object stores with keypaths. It then puts some values in them. It makes sure the keys used are as expected.");
 
+indexedDBTest(prepareDatabase);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("KeypathBasicTestDatabase", 1);
-
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;    
     var objectStore1 = database.createObjectStore("OS1", { keyPath: "foo" });
     var objectStore2 = database.createObjectStore("OS2", { keyPath: "foo.bar" });

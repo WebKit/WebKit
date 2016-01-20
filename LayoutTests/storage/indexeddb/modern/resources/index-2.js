@@ -1,8 +1,7 @@
 description("This tests indexes are left in appropriate states after aborted transactions.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -13,8 +12,6 @@ function log(message)
 {
     debug(message);
 }
-
-var createRequest = window.indexedDB.open("Index2Database", 1);
 
 function checkKey(index, key)
 {
@@ -49,10 +46,11 @@ function checkIndex(index)
 
 var database;
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
     var index1 = objectStore.createIndex("TestIndex1", "bar");

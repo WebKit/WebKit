@@ -3,24 +3,24 @@ It then opens two long running read-only transactions, one per object store. \
 It then opens a read-write transaction to both object stores. \
 The read-only transactions both need to finish before the read-write transaction starts.");
 
+indexedDBTest(prepareDatabase);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("TransactionScheduler5Database");
-
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    event.target.onerror = null;
+
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
+    dbname = database.name;
     var objectStore = database.createObjectStore("OS1");
     var request = objectStore.put("bar", "foo");
 
@@ -78,7 +78,7 @@ function setupReadTransactionCallbacks(transaction)
 
 function continueTest()
 {
-    var openDBRequest = window.indexedDB.open("TransactionScheduler5Database", 1);
+    var openDBRequest = window.indexedDB.open(dbname, 1);
     openDBRequest.onsuccess = function(event) {
         debug("Success opening database connection - Starting transactions");
         secondDatabaseConnection = event.target.result;

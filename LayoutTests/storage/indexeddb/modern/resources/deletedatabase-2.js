@@ -1,10 +1,7 @@
 description("This tests that if deleteDatabase is called while there is already an open connection to the database that the open connection gets the appropriate versionChange event. \
 That open connection also has an in-progress transaction at the time it gets the versionChange event.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase, successCallback);
 
 function done()
 {
@@ -18,22 +15,23 @@ function log(message)
 
 var stopSpinning = false;
 
-var request = window.indexedDB.open("DeleteDatabase2TestDatabase");
-request.onsuccess = function()
+function successCallback()
 {
     debug("open db success");
 }
-request.onerror = function(e)
-{
-    debug("Open request error: " + request.error.name);
-}
 
-request.onupgradeneeded = function(e)
+var dbname;
+function prepareDatabase(e)
 {
     debug("Initial upgrade old version - " + e.oldVersion + " new version - " + e.newVersion);
     
-    var versionTransaction = request.transaction;
+    event.target.onerror = function(e) {
+        debug("Open request error: " + event.target.error.name);
+    }
+
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
+    dbname = database.name;
     var objectStore = database.createObjectStore("TestObjectStore");
     objectStore.put("This is a record", 1);
     
@@ -55,17 +53,17 @@ request.onupgradeneeded = function(e)
         window.setTimeout(shutErDown, 0);
     }
         
-    request.transaction.oncomplete = function()
+    event.target.transaction.oncomplete = function()
     {
         debug("First version change complete");
     }
     
-    request.transaction.onabort = function()
+    event.target.transaction.onabort = function()
     {
         debug("Version change unexpected abort");
         done();
     }
-    request.transaction.onerror = function()
+    event.target.transaction.onerror = function()
     {
         debug("Version change unexpected error");
         done();
@@ -77,7 +75,7 @@ request.onupgradeneeded = function(e)
 function continueTest1()
 {
     debug("Requesting deleteDatabase");
-    var request = window.indexedDB.deleteDatabase("DeleteDatabase2TestDatabase");
+    var request = window.indexedDB.deleteDatabase(dbname);
     request.onsuccess = function(e)
     {
         debug("Delete database success: oldVersion " + e.oldVersion + ", newVersion " + e.newVersion);
@@ -98,7 +96,7 @@ function continueTest1()
 function continueTest2()
 {
     debug("Recreating database to make sure it's new and empty");
-    var request = window.indexedDB.open("DeleteDatabase2TestDatabase");
+    var request = window.indexedDB.open(dbname);
 
     request.onupgradeneeded = function(e)
     {

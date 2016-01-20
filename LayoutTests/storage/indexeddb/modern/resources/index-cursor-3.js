@@ -1,8 +1,7 @@
 description("This tests that index cursors properly handle changing indexes.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -142,11 +141,11 @@ function populateObjectStore()
     objectStore.put({ bar: "I" }, 18);  
 }
 
-var createRequest = window.indexedDB.open("IndexCursor3Database", 1);
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
     index = objectStore.createIndex("TestIndex1", "bar");

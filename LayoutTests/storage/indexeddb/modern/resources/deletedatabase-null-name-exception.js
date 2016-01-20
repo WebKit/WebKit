@@ -1,9 +1,5 @@
 description("This test calls deleteDatabase on window.indexedDB with a null database name, making sure there is an exception.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {

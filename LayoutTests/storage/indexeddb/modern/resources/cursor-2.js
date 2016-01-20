@@ -1,9 +1,7 @@
 description("This test checks basic functionality walking a \"next\" and \"prev\" cursor on an object store with some records.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -14,8 +12,6 @@ function log(message)
 {
     debug(message);
 }
-
-var createRequest = window.indexedDB.open("Cursor2Database", 1);
 
 function logCursor(cursor)
 {
@@ -51,10 +47,11 @@ function setupRequest(request)
     } 
 }
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
 

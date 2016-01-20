@@ -1,16 +1,13 @@
 description("This test exercises various uses of IDBObjectStore.count()");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("IDBObjectStoreCount1Database", 1);
 var database;
 var objectStore;
 
@@ -40,10 +37,11 @@ function getCounts()
     getCount(7);    
 }
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
     

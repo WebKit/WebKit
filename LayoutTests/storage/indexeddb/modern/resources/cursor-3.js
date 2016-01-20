@@ -1,9 +1,7 @@
 description("This test various uses of advance() and continue() on a \"next\" cursor.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -14,8 +12,6 @@ function log(message)
 {
     debug(message);
 }
-
-var createRequest = window.indexedDB.open("Cursor3Database", 1);
 
 function logCursor(cursor)
 {
@@ -61,10 +57,11 @@ function setupRequest2(request)
     } 
 }
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
 

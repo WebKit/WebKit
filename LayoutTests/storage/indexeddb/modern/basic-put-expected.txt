@@ -1,3 +1,7 @@
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 Upgrade needed: Old version - 0 New version - 1
 [object IDBTransaction] - versionchange
 [object IDBDatabase]

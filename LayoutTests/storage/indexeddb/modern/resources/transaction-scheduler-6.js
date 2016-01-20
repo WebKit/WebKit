@@ -1,24 +1,21 @@
 description("This test starts two read-only transactions to an object store followed by a read-write transaction. \
 It verifies that the read-write doesn't start until both read-onlys have finished.");
 
+indexedDBTest(prepareDatabase);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("TransactionScheduler6Database");
 var database;
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
     var request = objectStore.put("foo", "bar");

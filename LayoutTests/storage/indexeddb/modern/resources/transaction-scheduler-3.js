@@ -1,23 +1,23 @@
 description("This test makes sure that a write transaction is blocked by a read transaction with overlapping scope. It also makes sure the write transaction starts after the read transaction completes.");
 
+indexedDBTest(prepareDatabase);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("TransactionScheduler3Database");
-
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    event.target.onerror = null;
+
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
+    dbname = database.name;
     var objectStore = database.createObjectStore("OS");
     var request = objectStore.put("bar", "foo");
 
@@ -46,7 +46,7 @@ createRequest.onupgradeneeded = function(event) {
 var secondDatabaseConnection;
 function continueTest()
 {
-    var longRunningReadRequest = window.indexedDB.open("TransactionScheduler3Database", 1);
+    var longRunningReadRequest = window.indexedDB.open(dbname, 1);
     longRunningReadRequest.onsuccess = function(event) {
         debug("Success opening database connection - Starting readonly transaction");
         secondDatabaseConnection = event.target.result;

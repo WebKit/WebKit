@@ -7,37 +7,30 @@ description("This test: \
 -Closes the first and second connections \
 -Makes sure the versionchange transaction for the second connection starts successfully");
 
+indexedDBTest(prepareDatabase, openSuccess);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {
     finishJSTest();
 }
 
-var request = window.indexedDB.open("VersionChangeTestDatabase");
 var connection1;
 var connection2;
 
-request.onsuccess = function()
+function openSuccess()
 {
     debug("First version change successful");
 }
-request.onerror = function(e)
-{
-    debug("Unexpected error (firstPhase)");
-	done();
-}
 
-request.onupgradeneeded = function(e)
+var dbname;
+function prepareDatabase(e)
 {
     var database = event.target.result;
+    dbname = database.name;
 
     debug("upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
-    request.transaction.oncomplete = function()
+    event.target.transaction.oncomplete = function()
     {
         debug("Version change complete (firstPhase). Database version is now - " + database.version);
 
@@ -50,12 +43,12 @@ request.onupgradeneeded = function(e)
         }
         secondPhase();
     }
-    request.transaction.onabort = function()
+    event.target.transaction.onabort = function()
     {
         debug("Version change transaction unexpected abort (firstPhase)");
         done();
     }
-    request.transaction.onerror = function()
+    event.target.transaction.onerror = function()
     {
         debug("Version change transaction unexpected error (firstPhase)");
         done();
@@ -64,7 +57,7 @@ request.onupgradeneeded = function(e)
 
 function secondPhase()
 {
-    var request = window.indexedDB.open("VersionChangeTestDatabase", 1);
+    var request = window.indexedDB.open(dbname, 1);
     request.onsuccess = function()
     {
         debug("Open success (secondPhase)");
@@ -91,7 +84,7 @@ function secondPhase()
 
 function thirdPhase()
 {
-    var request = window.indexedDB.open("VersionChangeTestDatabase", 2);
+    var request = window.indexedDB.open(dbname, 2);
     debug("thirdPhase - Requested database connection with version 2");
     request.onsuccess = function()
     {

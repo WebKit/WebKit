@@ -1,8 +1,7 @@
 description("This test exercises the \"unique\" constraint of indexes.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -14,7 +13,6 @@ function log(message)
     debug(message);
 }
 
-var createRequest = window.indexedDB.open("Index3Database", 1);
 var objectStore;
 
 function checkObjectStore()
@@ -41,10 +39,11 @@ function checkIndex(index, name)
     }
 }
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
     var i1 = objectStore.createIndex("TestIndex1", "bar", { unique: true });

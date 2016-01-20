@@ -1,20 +1,17 @@
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
 
-var request = window.indexedDB.open("NewDatabasePutTestDatabase");
 
 function done()
 {
     finishJSTest();
 }
 
-request.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
-    var tx = request.transaction;
+    var tx = event.target.transaction;
     var db = event.target.result;
 
     debug(tx + " - " + tx.mode);

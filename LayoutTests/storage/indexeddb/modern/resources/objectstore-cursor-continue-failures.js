@@ -1,8 +1,7 @@
 description("This tests some obvious failures that can happen while calling IDBCursor.continue() on object store cursors.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -14,13 +13,13 @@ function log(message)
     debug(message);
 }
 
-var createRequest = window.indexedDB.open("IDBContinueFailuresDatabase", 1);
 var database;
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
     for (var i = 0; i < 10; ++i)

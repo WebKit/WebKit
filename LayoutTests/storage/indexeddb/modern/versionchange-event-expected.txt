@@ -3,6 +3,10 @@ This test: -Opens a connection to a database at version 1, creating the database
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 upgradeneeded (firstPhase): old version - 0 new version - 1
 Version change complete (firstPhase). Database version is now - 1
 First version change successful

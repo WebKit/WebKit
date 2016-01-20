@@ -1,26 +1,24 @@
 description("This tests using Date objects as keys and values.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("DateBasicDatabase", 1);
 var database;
 
 var date1 = new Date("1955-11-05T00:00:00");
 var date2 = new Date("1955-11-12T18:00:00");
 var date3 = new Date("2015-10-21T16:00:00");
     
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
 

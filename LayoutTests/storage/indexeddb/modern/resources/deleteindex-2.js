@@ -1,9 +1,7 @@
 description("This tests deleting an index and then aborting the transaction.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -42,12 +40,15 @@ function checkIndexValues()
     } 
 }
 
-var createRequest = window.indexedDB.open("DeleteIndex2Database", 1);
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    event.target.onerror = null;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
+    dbname = database.name;
     objectStore = database.createObjectStore("TestObjectStore");
     objectStore.put({ bar: "A" }, 1);
     objectStore.put({ bar: "A" }, 2);
@@ -74,12 +75,12 @@ createRequest.onupgradeneeded = function(event) {
 }
 
 function continueTest1() {
-    var createRequest = window.indexedDB.open("DeleteIndex2Database", 2);
+    var createRequest = window.indexedDB.open(dbname, 2);
     createRequest.onupgradeneeded = function(event) {
         debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
         database = event.target.result;
-        var versionTransaction = createRequest.transaction;
+        var versionTransaction = event.target.transaction;
         objectStore = versionTransaction.objectStore("TestObjectStore");
         objectStore.deleteIndex("TestIndex1");
         debug("Deleted the index");
@@ -104,11 +105,11 @@ function continueTest1() {
 }
 
 function continueTest2() {
-    var createRequest = window.indexedDB.open("DeleteIndex2Database", 3);
+    var createRequest = window.indexedDB.open(dbname, 3);
     createRequest.onupgradeneeded = function(event) {
         debug("Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-        var versionTransaction = createRequest.transaction;
+        var versionTransaction = event.target.transaction;
         objectStore = versionTransaction.objectStore("TestObjectStore");
         index = objectStore.index("TestIndex1");
     

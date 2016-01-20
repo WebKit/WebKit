@@ -1,23 +1,24 @@
 description("This test creates an object store then populates it. \
 It then clears it and makes sure it has nothing left in it.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("IDBObjectStoreClearDatabase", 1);
-
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    event.target.onerror = null;
+
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
+    dbname = database.name
     var objectStore = database.createObjectStore("TestObjectStore", { autoIncrement: true });
     var request = objectStore.put("bar1");
     var request = objectStore.put("bar2");
@@ -52,7 +53,7 @@ function getChecker(event) {
 
 function continueTest1()
 {
-    var openRequest = window.indexedDB.open("IDBObjectStoreClearDatabase", 1);
+    var openRequest = window.indexedDB.open(dbname, 1);
 
     openRequest.onerror = function(event) {
         debug("Request unexpected error - " + event);

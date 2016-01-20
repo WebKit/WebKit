@@ -1,10 +1,8 @@
 description("This test starts some version change transactions, creates some object stores, and variably commits or aborts the version change transactions. \
 At various stages it verifies the object stores in the database are as-expected.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -19,13 +17,16 @@ function dumpObjectStores(database) {
     }
 }
 
-var createRequest = window.indexedDB.open("CreateObjectStoreTestDatabase", 1);
-
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    event.target.onerror = null;
+
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
+    dbname = database.name;
     var objectStore = database.createObjectStore("FirstAbortedObjectStore");
     var request = objectStore.put("foo", "bar");
 
@@ -59,12 +60,12 @@ createRequest.onupgradeneeded = function(event) {
 
 function continueTest1()
 {
-    createRequest = window.indexedDB.open("CreateObjectStoreTestDatabase", 1);
+    createRequest = window.indexedDB.open(dbname, 1);
 
     createRequest.onupgradeneeded = function(event) {
         debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-        var versionTransaction = createRequest.transaction;
+        var versionTransaction = event.target.transaction;
         var database = event.target.result;
         dumpObjectStores(database);
         var objectStore = database.createObjectStore("FirstCommittedObjectStore");
@@ -90,12 +91,12 @@ function continueTest1()
 
 function continueTest2()
 {
-    createRequest = window.indexedDB.open("CreateObjectStoreTestDatabase", 2);
+    createRequest = window.indexedDB.open(dbname, 2);
 
     createRequest.onupgradeneeded = function(event) {
         debug("Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-        var versionTransaction = createRequest.transaction;
+        var versionTransaction = event.target.transaction;
         var database = event.target.result;
         var objectStore = database.createObjectStore("SecondCommittedObjectStore");
 
@@ -122,7 +123,7 @@ function continueTest2()
 
 function continueTest3()
 {
-    createRequest = window.indexedDB.open("CreateObjectStoreTestDatabase", 3);
+    createRequest = window.indexedDB.open(dbname, 3);
 
     createRequest.onupgradeneeded = function(event) {
         debug("Fourth upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);

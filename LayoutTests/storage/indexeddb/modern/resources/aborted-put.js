@@ -2,24 +2,24 @@ description("This test creates some object stores, putting some values in them, 
 In a new transaction, it then overwrites those values, but then aborts the transaction. \
 Finally it verifies everything is set up from the first transaction, and nothing from the aborted one committed.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
 
-var request = window.indexedDB.open("AbortedPutTestDatabase");
 
 function done()
 {
     finishJSTest();
 }
 
-request.onupgradeneeded = function(event)
+var dbname;
+
+function prepareDatabase(event)
 {
     debug("First upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
-    var tx = request.transaction;
+    event.target.onerror = null;
+    var tx = event.target.transaction;
     var db = event.target.result;
+    dbname = db.name;
 
     debug(tx + " - " + tx.mode);
     debug(db);
@@ -77,7 +77,7 @@ request.onupgradeneeded = function(event)
 
 function continueTest1()
 {
-    var request = window.indexedDB.open("AbortedPutTestDatabase", 2);
+    var request = window.indexedDB.open(dbname, 2);
 
     request.onupgradeneeded = function(event) {
         debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
@@ -146,7 +146,7 @@ function continueTest1()
 
 function continueTest2()
 {
-    var request = window.indexedDB.open("AbortedPutTestDatabase", 2);
+    var request = window.indexedDB.open(dbname, 2);
 
     request.onupgradeneeded = function(event) {
         debug("Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);

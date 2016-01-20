@@ -1,9 +1,7 @@
 description("This test makes sure that un-handled requests in a transaction receive onerror callbacks when the transaction is aborted.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -32,45 +30,44 @@ function setupRequest(code)
     }   
 }
 
-startTest();
+var dbname;
 
-function startTest() {
-    var createRequest = window.indexedDB.open("AbortRequestsCancelledDatabase", 1);
-    createRequest.onupgradeneeded = function(event) {
-        debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+function prepareDatabase(event) {
+    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-        var versionTransaction = createRequest.transaction;
-        var database = event.target.result;
-        objectStore = database.createObjectStore("TestObjectStore");
-        setupRequest("objectStore.put({ bar: 'A' }, 1);");
-        setupRequest("objectStore.put({ bar: 'B' }, 2);");
-        setupRequest("objectStore.put({ bar: 'C' }, 3);");
+    var versionTransaction = event.target.transaction;
+    var database = event.target.result;
+    event.target.onerror = null;
+    dbname = database.name;
+    objectStore = database.createObjectStore("TestObjectStore");
+    setupRequest("objectStore.put({ bar: 'A' }, 1);");
+    setupRequest("objectStore.put({ bar: 'B' }, 2);");
+    setupRequest("objectStore.put({ bar: 'C' }, 3);");
 
-        versionTransaction.abort();
+    versionTransaction.abort();
 
-        versionTransaction.onabort = function(event) {
-            debug("Initial upgrade versionchange transaction aborted");
-            database.close();
-            continueTest1();
-        }
+    versionTransaction.onabort = function(event) {
+        debug("Initial upgrade versionchange transaction aborted");
+        database.close();
+        continueTest1();
+    }
 
-        versionTransaction.oncomplete = function(event) {
-            debug("Initial upgrade versionchange transaction unexpected complete");
-            done();
-        }
+    versionTransaction.oncomplete = function(event) {
+        debug("Initial upgrade versionchange transaction unexpected complete");
+        done();
+    }
 
-        versionTransaction.onerror = function(event) {
-            debug("Initial upgrade versionchange transaction error " + event);
-        }
+    versionTransaction.onerror = function(event) {
+        debug("Initial upgrade versionchange transaction error " + event);
     }
 }
 
 function continueTest1() {
-    var createRequest = window.indexedDB.open("AbortRequestsCancelledDatabase", 1);
+    var createRequest = window.indexedDB.open(dbname, 1);
     createRequest.onupgradeneeded = function(event) {
         debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-        var versionTransaction = createRequest.transaction;
+        var versionTransaction = event.target.transaction;
         database = event.target.result;
         objectStore = database.createObjectStore("TestObjectStore");
     

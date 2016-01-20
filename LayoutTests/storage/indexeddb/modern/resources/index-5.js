@@ -1,8 +1,7 @@
 description("This tests creating an index on an object store that already has records, and those records would violate the unique constraint of the index. (The index creation should fail).");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -44,11 +43,11 @@ function checkIndexValues()
     } 
 }
 
-var createRequest = window.indexedDB.open("Index5Database", 1);
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
     objectStore.put({ bar: "A" }, 1);

@@ -1,10 +1,7 @@
 description("This test exercises various uses of IDBObjectStore.delete()");
 
+indexedDBTest(prepareDatabase);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function log(message)
 {
@@ -24,7 +21,6 @@ function done()
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("IDBObjectStoreDelete1Database", 1);
 var database;
 var objectStore;
 
@@ -37,10 +33,11 @@ var date6 = new Date("2000-01-02T00:00:00");
 var date7 = new Date("2000-01-03T00:00:00");
 var date8 = new Date("2000-01-04T00:00:00");
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
     

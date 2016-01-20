@@ -1,8 +1,7 @@
 description("This tests cursors that iterate over entire indexes.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -75,11 +74,11 @@ function startNextCursor()
     eval(command);
 }
     
-var createRequest = window.indexedDB.open("IndexCursor1Database", 1);
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
     index1 = objectStore.createIndex("TestIndex1", "bar");

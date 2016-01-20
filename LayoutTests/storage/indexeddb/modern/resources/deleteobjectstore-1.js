@@ -2,23 +2,23 @@ description("This test creates an object store then populates it, then commits t
 It then deletes it, but aborts that transaction. \
 Finally it checks to make sure everything from step 1 is there as expected.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("DeleteObjectStore1Database", 1);
-
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    event.target.onerror = null;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
+    dbname = database.name;
     var objectStore = database.createObjectStore("TestObjectStore");
     for (var i = 0; i < 10; ++i)
         objectStore.put("AH AH AH AH AH", i + " puts");
@@ -46,7 +46,7 @@ function getChecker(event) {
 
 function continueTest1()
 {
-    var openRequest = window.indexedDB.open("DeleteObjectStore1Database", 2);
+    var openRequest = window.indexedDB.open(dbname, 2);
 
     openRequest.onerror = function(event) {
         debug("Request error - " + event);
@@ -90,7 +90,7 @@ function continueTest1()
 
 function continueTest2()
 {
-    var openRequest = window.indexedDB.open("DeleteObjectStore1Database", 1);
+    var openRequest = window.indexedDB.open(dbname, 1);
 
     openRequest.onerror = function(event) {
         debug("Request unexpected error - " + event);

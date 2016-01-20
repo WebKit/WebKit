@@ -3,7 +3,10 @@ This test creates a new database with the default version, commits that versionc
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-[object IDBOpenDBRequest] (firstPhase)
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 upgradeneeded (firstPhase): old version - 0 new version - 1
 [object IDBTransaction]
 Version change complete (firstPhase). Database version is now - 1

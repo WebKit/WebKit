@@ -3,25 +3,21 @@ It then puts some things in that object store, checking the keys that were used.
 But it then aborts that transaction. \
 Then it opens a new one and puts something in it, double checking that the key generator was reverted when the above transaction was aborted.");
 
+indexedDBTest(prepareDatabase);
 
-
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("AutoincrementAbortDatabase", 1);
 var database;
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     var objectStore = database.createObjectStore('TestObjectStore', { autoIncrement: true });
     

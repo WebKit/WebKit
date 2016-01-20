@@ -1,9 +1,7 @@
 description("This test exercises the obvious ways that IDBDatabase.createObjectStore can fail.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -18,14 +16,14 @@ function dumpObjectStores(database) {
     }
 }
 
-var createRequest = window.indexedDB.open("CreateObjectStoreFailuresTestDatabase", 1);
 var database;
 var versionTransaction;
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    versionTransaction = createRequest.transaction;
+    versionTransaction = event.target.transaction;
     database = event.target.result;
 
     try {

@@ -1,8 +1,7 @@
 description("This tests some obvious failures that can happen while opening cursors.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -14,15 +13,15 @@ function log(message)
     debug(message);
 }
 
-var createRequest = window.indexedDB.open("OpenCursorFailuresDatabase", 1);
 var database;
 var objectStore;
 var index;
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
     index = objectStore.createIndex("TestIndex", "bar");

@@ -1,9 +1,7 @@
 description("This tests some obvious failures that can happen while calling IDBObjectStore.index().");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -15,14 +13,15 @@ function log(message)
     debug(message);
 }
 
-var createRequest = window.indexedDB.open("IDBObjectStoreGetIndexFailuresDatabase", 1);
 var database;
-
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
+    dbname = database.name;
     var objectStore = database.createObjectStore("TestObjectStore");
     objectStore.createIndex("TestIndex", "foo");
     
@@ -81,11 +80,11 @@ function continueTest1()
 
 function continueTest2()
 {
-    var createRequest = window.indexedDB.open("IDBObjectStoreGetIndexFailuresDatabase", 2);
+    var createRequest = window.indexedDB.open(dbname, 2);
     createRequest.onupgradeneeded = function(event) {
         debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-        var versionTransaction = createRequest.transaction;
+        var versionTransaction = event.target.transaction;
         var database = event.target.result;
         var objectStore = versionTransaction.objectStore("TestObjectStore");
         database.deleteObjectStore("TestObjectStore");

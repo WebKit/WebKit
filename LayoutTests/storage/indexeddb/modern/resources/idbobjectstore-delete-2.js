@@ -1,10 +1,7 @@
 description("This test exercises IDBObjectStore.delete() followed by an abort to make sure the delete is un-done.");
 
+indexedDBTest(prepareDatabase);
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function log(message)
 {
@@ -24,13 +21,13 @@ function done()
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("IDBObjectStoreDelete2Database", 1);
 var database;
 
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     database.createObjectStore("TestObjectStore").put("bar", "foo");
 

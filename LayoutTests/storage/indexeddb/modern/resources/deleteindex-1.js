@@ -1,9 +1,7 @@
 description("This tests deleting an index and then committing the transaction.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -45,11 +43,11 @@ function checkIndexValues()
     } 
 }
 
-var createRequest = window.indexedDB.open("DeleteIndex1Database", 1);
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
     objectStore.put({ bar: "A" }, 1);

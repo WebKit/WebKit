@@ -1,21 +1,18 @@
 description("This test does basic testing of IDBObjectStore.add(), making sure that an attempt to overwrite an already-existing key fails with the appropriate error.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
 
-var request = window.indexedDB.open("NewDatabaseAddTestDatabase");
 
 function done()
 {
     finishJSTest();
 }
 
-request.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
-    var tx = request.transaction;
+    var tx = event.target.transaction;
     var db = event.target.result;
 
     debug(tx + " - " + tx.mode);

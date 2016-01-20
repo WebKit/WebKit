@@ -1,9 +1,5 @@
 description("This test calls deleteDatabase on window.indexedDB and verifies that an event is fired at the request.");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
 
 function done()
 {

@@ -1,8 +1,7 @@
 description("This tests that indexes added to an object store with existing records are populated upon their creation.");
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
@@ -42,11 +41,11 @@ function checkIndexValues()
     } 
 }
 
-var createRequest = window.indexedDB.open("Index4Database", 1);
-createRequest.onupgradeneeded = function(event) {
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     var database = event.target.result;
     objectStore = database.createObjectStore("TestObjectStore");
     objectStore.put({ bar: "A" }, 1);

@@ -15,13 +15,15 @@ if (testRunner) {
     testRunner.waitUntilDone();
 }
 
-var req1 = indexedDB.open("testDB");
+var dbname = "TestDB" + Date();
+
+var req1 = indexedDB.open(dbname);
 req1.onerror = function() {
     debug("First request unexpected error");
     done();
 }
 
-var req2 = indexedDB.open("testDB");
+var req2 = indexedDB.open(dbname);
 req2.onsuccess = function() {
     debug("Second request done");
     done();

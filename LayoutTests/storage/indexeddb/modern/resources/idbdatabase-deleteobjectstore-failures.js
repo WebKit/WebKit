@@ -1,23 +1,22 @@
 description("This tests some obvious failures that can happen while calling IDBDatabase.deleteObjectStore()");
 
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
-}
+indexedDBTest(prepareDatabase);
+
 
 function done()
 {
     finishJSTest();
 }
 
-var createRequest = window.indexedDB.open("IDBDatabaseDeleteObjectStoreFailuresDatabase", 1);
 var database;
-
-createRequest.onupgradeneeded = function(event) {
+var dbname;
+function prepareDatabase(event)
+{
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
-    var versionTransaction = createRequest.transaction;
+    var versionTransaction = event.target.transaction;
     database = event.target.result;
+    dbname = database.name;
     var objectStore = database.createObjectStore("TestObjectStore");
     var request = objectStore.put("bar", "foo");
 
@@ -71,7 +70,7 @@ function continueTest1()
 
 function continueTest2()
 {
-    var openRequest = window.indexedDB.open("IDBDatabaseDeleteObjectStoreFailuresDatabase", 2);
+    var openRequest = window.indexedDB.open(dbname, 2);
 
     openRequest.onerror = function(event) {
         debug("Request unexpected error - " + event);
@@ -89,7 +88,7 @@ function continueTest2()
     openRequest.onupgradeneeded = function(event) {
         debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
-        var versionTransaction = openRequest.transaction;
+        var versionTransaction = event.target.transaction;
         database = event.target.result;
 
         try {

@@ -3,6 +3,10 @@ This tests that indexes added to an object store with existing records are popul
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 Initial upgrade needed: Old version - 0 New version - 1
 Count is: 18
 Cursor at record: A / 1

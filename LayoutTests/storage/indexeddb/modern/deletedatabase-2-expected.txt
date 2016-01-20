@@ -3,6 +3,10 @@ This tests that if deleteDatabase is called while there is already an open conne
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 Initial upgrade old version - 0 new version - 1
 Requesting deleteDatabase
 First connection received versionchange event: oldVersion 1, newVersion null
