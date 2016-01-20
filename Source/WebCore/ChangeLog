@@ -1,3 +1,14 @@
+2016-01-20  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: InspectorCSSAgent does not call disable in willDestroyFrontendAndBackend
+        https://bugs.webkit.org/show_bug.cgi?id=153289
+        <rdar://problem/24242600>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::willDestroyFrontendAndBackend): Call disable().
+
 2016-01-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Refactor AtomicStringKeyedMRUCache to be a generic LRU cache

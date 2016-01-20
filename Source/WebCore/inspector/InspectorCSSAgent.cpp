@@ -363,6 +363,9 @@ void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
 void InspectorCSSAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     resetNonPersistentData();
+
+    String unused;
+    disable(unused);
 }
 
 void InspectorCSSAgent::discardAgent()
