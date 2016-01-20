@@ -66,7 +66,9 @@ inline unsigned JSArrayBufferView::byteOffset()
 {
     if (!hasArrayBuffer())
         return 0;
-    
+
+    ASSERT(!vector() == !buffer()->data());
+
     ptrdiff_t delta =
         bitwise_cast<uint8_t*>(vector()) - static_cast<uint8_t*>(buffer()->data());
     

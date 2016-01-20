@@ -68,6 +68,8 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
     JSArrayBufferView* thisObject = jsDynamicCast<JSArrayBufferView*>(exec->argument(0));
     if (!thisObject)
         return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view"));
+    if (thisObject->isNeutered())
+        return throwVMTypeError(exec, "Underlying ArrayBuffer has been detached from the view");
 
     return JSValue::encode(jsNumber(thisObject->length()));
 }
@@ -75,8 +77,6 @@ EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncLength(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL typedArrayViewPrivateFuncSort(ExecState* exec)
 {
     JSValue thisValue = exec->argument(0);
-    if (!thisValue.isObject())
-        return throwVMError(exec, createTypeError(exec, "Receiver should be a typed array view but was not an object"));
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewPrivateFuncSort);
 }
 

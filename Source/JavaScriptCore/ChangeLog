@@ -1,3 +1,57 @@
+2016-01-19  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Fix various issues with TypedArrays.
+        https://bugs.webkit.org/show_bug.cgi?id=153245
+
+        Reviewed by Geoffrey Garen.
+
+        This patch fixes a couple of issues with TypedArrays:
+
+        1) We were not checking if a view had been neutered and throwing an error
+        if it had in the our TypedArray.prototype functions.
+
+        2) The TypedArray.prototype.set function had a couple of minor issues with
+        checking for the offset being negative.
+
+        3) The JSArrayBufferView class did not check if the backing store had
+        been neutered when computing the offset even though the view's vector
+        pointer had been set to NULL. This meant that under some conditions we
+        could, occasionally, return a garbage number as the offset. Now, we only
+        neuter views if the backing ArrayBuffer's view is actually transfered.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionNeuterTypedArray):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::isNeutered):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::byteOffset):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncEntries):
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+        (JSC::genericTypedArrayViewProtoFuncFill):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncKeys):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncReverse):
+        (JSC::genericTypedArrayViewPrivateFuncSort):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewProtoFuncSubarray):
+        (JSC::typedArrayViewProtoFuncValues):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewPrivateFuncLength):
+        (JSC::typedArrayViewPrivateFuncSort): Deleted.
+        * tests/stress/typedarray-functions-with-neutered.js: Added.
+        (getGetter):
+        (unit):
+        (args.new.Int32Array):
+        (arrays.typedArrays.map):
+        (checkProtoFunc.throwsCorrectError):
+        (checkProtoFunc):
+        (test):
+
 2016-01-19  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Date.prototype.toLocaleDateString in ECMA-402

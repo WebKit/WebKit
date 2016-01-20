@@ -159,6 +159,7 @@ public:
     
     ArrayBuffer* buffer();
     PassRefPtr<ArrayBufferView> impl();
+    bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
     
     void* vector()
