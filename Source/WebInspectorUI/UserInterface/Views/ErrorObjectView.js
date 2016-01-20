@@ -33,6 +33,9 @@ WebInspector.ErrorObjectView = class ErrorObjectView extends WebInspector.Object
 
         this._object = object;
 
+        this._expanded = false;
+        this._hasStackTrace = false;
+
         this._element = document.createElement("div");
         this._element.classList.add("error-object");
         var previewElement = WebInspector.FormattedValue.createElementForError(this._object);
@@ -103,9 +106,6 @@ WebInspector.ErrorObjectView = class ErrorObjectView extends WebInspector.Object
         this._expanded = true;
         this._element.classList.add("expanded");
 
-        if (this._previewView)
-            this._previewView.showTitle();
-
         this.update();
     }
 
@@ -116,9 +116,11 @@ WebInspector.ErrorObjectView = class ErrorObjectView extends WebInspector.Object
 
         this._expanded = false;
         this._element.classList.remove("expanded");
+    }
 
-        if (this._previewView)
-            this._previewView.showPreview();
+    appendTitleSuffix(suffixElement)
+    {
+        this._element.insertBefore(suffixElement, this._outlineElement);
     }
 
     // Private

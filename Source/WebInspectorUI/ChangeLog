@@ -1,3 +1,23 @@
+2016-01-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception when logging an Error object
+        https://bugs.webkit.org/show_bug.cgi?id=153258
+        <rdar://problem/24249068>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ErrorObjectView.js:
+        (WebInspector.ErrorObjectView):
+        Initialize members that are used later for clarity.
+
+        (WebInspector.ErrorObjectView.prototype.collapse):
+        (WebInspector.ErrorObjectView.prototype.expand):
+        This never has a previewView, remove it.
+
+        (WebInspector.ErrorObjectView.prototype.appendTitleSuffix):
+        Add the suffix ("= $1") after the description and before the
+        content tree outline.
+
 2016-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Subclasses of WebInspector.Object shouldn't overwrite this._listeners
