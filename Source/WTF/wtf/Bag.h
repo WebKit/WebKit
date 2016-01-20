@@ -30,6 +30,7 @@ namespace WTF {
 
 template<typename T>
 class Bag {
+    WTF_MAKE_NONCOPYABLE(Bag);
     WTF_MAKE_FAST_ALLOCATED;
 private:
     class Node {

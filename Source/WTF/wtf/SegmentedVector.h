@@ -132,18 +132,19 @@ namespace WTF {
             return at(size() - 1);
         }
 
-        template <typename U> void append(U&& value)
+        template<typename... Args>
+        void append(Args&&... args)
         {
             ++m_size;
             if (!segmentExistsFor(m_size - 1))
                 allocateSegment();
-            new (NotNull, &last()) T(std::forward<U>(value));
+            new (NotNull, &last()) T(std::forward<Args>(args)...);
         }
 
         template<typename... Args>
         T& alloc(Args&&... args)
         {
-            append<T>(T(std::forward<Args>(args)...));
+            append(std::forward<Args>(args)...);
             return last();
         }
 
