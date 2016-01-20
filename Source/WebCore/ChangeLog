@@ -1,3 +1,10 @@
+2016-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix compile warning when building with GTK+ < 3.14.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::loadThemedIcon):
+
 2016-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Mac] Speculative cmake buildfix after r195317.

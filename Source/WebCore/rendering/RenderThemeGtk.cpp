@@ -375,8 +375,8 @@ static GRefPtr<GdkPixbuf> loadThemedIcon(GtkStyleContext* context, const char* i
 {
     GRefPtr<GIcon> icon = adoptGRef(g_themed_icon_new(iconName));
     unsigned lookupFlags = GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_FORCE_SIZE | GTK_ICON_LOOKUP_FORCE_SVG;
-    GtkTextDirection direction = gtk_style_context_get_direction(context);
 #if GTK_CHECK_VERSION(3, 14, 0)
+    GtkTextDirection direction = gtk_style_context_get_direction(context);
     if (direction & GTK_TEXT_DIR_LTR)
         lookupFlags |= GTK_ICON_LOOKUP_DIR_LTR;
     else if (direction & GTK_TEXT_DIR_RTL)
