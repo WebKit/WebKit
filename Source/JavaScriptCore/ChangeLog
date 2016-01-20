@@ -1,3 +1,14 @@
+2016-01-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Fix a typo in the Air definition of CeilDouble/CeilFloat
+        https://bugs.webkit.org/show_bug.cgi?id=153286
+
+        Reviewed by Mark Lam.
+
+        * b3/air/AirOpcode.opcodes:
+        The second argument should a Def. The previous definition was
+        adding useless constraints on the allocation of the second argument.
+
 2016-01-20  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] The register allocator can use a dangling pointer when selecting a spill candidate

@@ -364,11 +364,11 @@ arm64: AbsDouble U:F:64, D:F:64
 arm64: AbsFloat U:F:32, D:F:32
     Tmp, Tmp
 
-CeilDouble U:F:64, UD:F:64
+CeilDouble U:F:64, D:F:64
     Tmp, Tmp
     x86: Addr, Tmp
 
-CeilFloat U:F:32, UD:F:32
+CeilFloat U:F:32, D:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 
