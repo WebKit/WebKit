@@ -531,8 +531,8 @@ PASS doctype.parentNode
 PASS doctype.previousSibling 
 PASS doctype.nextSibling 
 PASS doctype.name 
-FAIL doctype.publicId assert_equals: expected (string) "" but got (object) null
-FAIL doctype.systemId assert_equals: expected (string) "" but got (object) null
+PASS doctype.publicId 
+PASS doctype.systemId 
 PASS doctype.nodeName 
 PASS doctype.childNodes.length 
 PASS doctype.textContent 
@@ -547,8 +547,8 @@ PASS foreignDoctype.parentNode
 PASS foreignDoctype.previousSibling 
 PASS foreignDoctype.nextSibling 
 PASS foreignDoctype.name 
-FAIL foreignDoctype.publicId assert_equals: expected (string) "" but got (object) null
-FAIL foreignDoctype.systemId assert_equals: expected (string) "" but got (object) null
+PASS foreignDoctype.publicId 
+PASS foreignDoctype.systemId 
 PASS foreignDoctype.nodeName 
 PASS foreignDoctype.childNodes.length 
 PASS foreignDoctype.textContent 

@@ -814,8 +814,8 @@ PASS DocumentType interface: operation remove()
 PASS DocumentType must be primary interface of document.doctype 
 PASS Stringification of document.doctype 
 PASS DocumentType interface: document.doctype must inherit property "name" with the proper type (0) 
-FAIL DocumentType interface: document.doctype must inherit property "publicId" with the proper type (1) assert_equals: expected "string" but got "object"
-FAIL DocumentType interface: document.doctype must inherit property "systemId" with the proper type (2) assert_equals: expected "string" but got "object"
+PASS DocumentType interface: document.doctype must inherit property "publicId" with the proper type (1) 
+PASS DocumentType interface: document.doctype must inherit property "systemId" with the proper type (2) 
 PASS DocumentType interface: document.doctype must inherit property "before" with the proper type (3) 
 PASS DocumentType interface: calling before([object Object],[object Object]) on document.doctype with too few arguments must throw TypeError 
 PASS DocumentType interface: document.doctype must inherit property "after" with the proper type (4) 

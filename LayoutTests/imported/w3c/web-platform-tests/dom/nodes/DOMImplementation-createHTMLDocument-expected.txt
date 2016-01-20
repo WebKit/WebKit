@@ -1,13 +1,13 @@
 
-FAIL createHTMLDocument test 0: "","","" assert_equals: expected (string) "" but got (object) null
-FAIL createHTMLDocument test 1: null,"null","null" assert_equals: expected (string) "" but got (object) null
-FAIL createHTMLDocument test 2: undefined,undefined,"" assert_equals: expected (string) "" but got (object) null
-FAIL createHTMLDocument test 3: "foo  bar baz","foo  bar baz","foo bar baz" assert_equals: expected (string) "" but got (object) null
-FAIL createHTMLDocument test 4: "foo\t\tbar baz","foo\t\tbar baz","foo bar baz" assert_equals: expected (string) "" but got (object) null
-FAIL createHTMLDocument test 5: "foo\n\nbar baz","foo\n\nbar baz","foo bar baz" assert_equals: expected (string) "" but got (object) null
-FAIL createHTMLDocument test 6: "foo\f\fbar baz","foo\f\fbar baz","foo bar baz" assert_equals: expected (string) "" but got (object) null
-FAIL createHTMLDocument test 7: "foo\r\rbar baz","foo\r\rbar baz","foo bar baz" assert_equals: expected (string) "" but got (object) null
-FAIL Missing title argument assert_equals: expected (string) "" but got (object) null
+FAIL createHTMLDocument test 0: "","","" assert_equals: expected 1 but got 0
+PASS createHTMLDocument test 1: null,"null","null" 
+PASS createHTMLDocument test 2: undefined,undefined,"" 
+PASS createHTMLDocument test 3: "foo  bar baz","foo  bar baz","foo bar baz" 
+PASS createHTMLDocument test 4: "foo\t\tbar baz","foo\t\tbar baz","foo bar baz" 
+PASS createHTMLDocument test 5: "foo\n\nbar baz","foo\n\nbar baz","foo bar baz" 
+PASS createHTMLDocument test 6: "foo\f\fbar baz","foo\f\fbar baz","foo bar baz" 
+PASS createHTMLDocument test 7: "foo\r\rbar baz","foo\r\rbar baz","foo bar baz" 
+PASS Missing title argument 
 FAIL createHTMLDocument(): metadata assert_equals: expected "about:blank" but got ""
 FAIL createHTMLDocument(): characterSet aliases assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
 PASS createHTMLDocument(): URL parsing 

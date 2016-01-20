@@ -1,3 +1,21 @@
+2016-01-19  Chris Dumez  <cdumez@apple.com>
+
+        DocumentType.publicId / systemId should never return null
+        https://bugs.webkit.org/show_bug.cgi?id=153264
+
+        Reviewed by Ryosuke Niwa.
+
+        DocumentType.publicId / systemId should never return null as these
+        attributes are not nullable in the IDL:
+        https://dom.spec.whatwg.org/#interface-documenttype
+
+        Instead we should return the empty string. Firefox and Chrome match the
+        specification.
+
+        No new tests, already covered by existing tests.
+
+        * dom/DocumentType.idl:
+
 2016-01-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r195302.

@@ -33,9 +33,9 @@
 
     // DOM Level 2
 
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString publicId;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString systemId;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString internalSubset;        
+    readonly attribute DOMString publicId;
+    readonly attribute DOMString systemId;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString internalSubset;
 };
 
 DocumentType implements ChildNode;
