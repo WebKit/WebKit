@@ -14,6 +14,4 @@ PASS: Event type should be Other.
 ScriptProfiler.trackingUpdate
 PASS: Event type should be Other.
 ScriptProfiler.trackingComplete
-PASS: Profiles should exist when complete.
-PASS: Should be 3 profiles for this session.
 

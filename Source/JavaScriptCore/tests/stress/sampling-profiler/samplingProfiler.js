@@ -38,7 +38,7 @@ function doesTreeHaveStackTrace(tree, stackTrace, isRunFromRunTest = true, verbo
     // stack trace should be top-down array with the deepest
     // call frame at index 0.
     if (isRunFromRunTest)
-        stackTrace = [...stackTrace, "runTest", "<global>"];
+        stackTrace = [...stackTrace, "runTest", "(program)"];
     else
         stackTrace = [...stackTrace];
     

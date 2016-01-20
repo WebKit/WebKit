@@ -405,6 +405,12 @@ void SamplingProfiler::shutdown()
 void SamplingProfiler::start()
 {
     LockHolder locker(m_lock);
+    start(locker);
+}
+
+void SamplingProfiler::start(const LockHolder& locker)
+{
+    ASSERT(m_lock.isLocked());
     m_isActive = true;
     dispatchIfNecessary(locker);
 }
@@ -412,6 +418,12 @@ void SamplingProfiler::start()
 void SamplingProfiler::stop()
 {
     LockHolder locker(m_lock);
+    stop(locker);
+}
+
+void SamplingProfiler::stop(const LockHolder&)
+{
+    ASSERT(m_lock.isLocked());
     m_isActive = false;
     reportStats();
 }
@@ -469,43 +481,138 @@ void SamplingProfiler::noticeVMEntry()
 void SamplingProfiler::clearData()
 {
     LockHolder locker(m_lock);
+    clearData(locker);
+}
+
+void SamplingProfiler::clearData(const LockHolder&)
+{
+    ASSERT(m_lock.isLocked());
     m_stackTraces.clear();
     m_seenExecutables.clear();
     m_indexOfNextStackTraceToVerify = 0;
 }
 
-static String displayName(const SamplingProfiler::StackFrame& stackFrame)
+String SamplingProfiler::StackFrame::displayName()
 {
-    if (stackFrame.frameType == FrameType::Unknown)
-        return ASCIILiteral("<unknown>");
-    if (stackFrame.frameType == FrameType::Host)
-        return ASCIILiteral("<host>");
-    RELEASE_ASSERT(stackFrame.frameType != FrameType::UnverifiedCallee);
+    if (frameType == FrameType::Unknown)
+        return ASCIILiteral("(unknown)");
+    if (frameType == FrameType::Host)
+        return ASCIILiteral("(host)");
+    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
 
-    ExecutableBase* executable = stackFrame.u.verifiedExecutable;
+    ExecutableBase* executable = u.verifiedExecutable;
     if (executable->isHostFunction())
-        return ASCIILiteral("<host>");
+        return static_cast<NativeExecutable*>(executable)->name();
+
+    if (executable->isFunctionExecutable())
+        return static_cast<FunctionExecutable*>(executable)->inferredName().string();
+    if (executable->isProgramExecutable() || executable->isEvalExecutable())
+        return ASCIILiteral("(program)");
+    if (executable->isModuleProgramExecutable())
+        return ASCIILiteral("(module)");
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return String();
+}
+
+String SamplingProfiler::StackFrame::displayNameForJSONTests()
+{
+    if (frameType == FrameType::Unknown)
+        return ASCIILiteral("(unknown)");
+    if (frameType == FrameType::Host)
+        return ASCIILiteral("(host)");
+    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
+
+    ExecutableBase* executable = u.verifiedExecutable;
+    if (executable->isHostFunction())
+        return static_cast<NativeExecutable*>(executable)->name();
 
     if (executable->isFunctionExecutable()) {
         String result = static_cast<FunctionExecutable*>(executable)->inferredName().string();
-        if (!result.isEmpty())
-            return result;
-        return ASCIILiteral("<anonymous-function>");
+        if (result.isEmpty())
+            return ASCIILiteral("(anonymous function)");
+        return result;
     }
     if (executable->isEvalExecutable())
-        return ASCIILiteral("<eval>");
+        return ASCIILiteral("(eval)");
     if (executable->isProgramExecutable())
-        return ASCIILiteral("<global>");
+        return ASCIILiteral("(program)");
     if (executable->isModuleProgramExecutable())
-        return ASCIILiteral("<module>");
+        return ASCIILiteral("(module)");
 
     RELEASE_ASSERT_NOT_REACHED();
-    return "";
+    return String();
 }
 
-String SamplingProfiler::stacktracesAsJSON()
+int SamplingProfiler::StackFrame::startLine()
 {
-    m_lock.lock();
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host)
+        return -1;
+    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
+
+    ExecutableBase* executable = u.verifiedExecutable;
+    if (executable->isHostFunction())
+        return -1;
+    return static_cast<ScriptExecutable*>(executable)->firstLine();
+}
+
+unsigned SamplingProfiler::StackFrame::startColumn()
+{
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host)
+        return -1;
+    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
+
+    ExecutableBase* executable = u.verifiedExecutable;
+    if (executable->isHostFunction())
+        return -1;
+
+    return static_cast<ScriptExecutable*>(executable)->startColumn();
+}
+
+intptr_t SamplingProfiler::StackFrame::sourceID()
+{
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host)
+        return -1;
+    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
+
+    ExecutableBase* executable = u.verifiedExecutable;
+    if (executable->isHostFunction())
+        return -1;
+
+    return static_cast<ScriptExecutable*>(executable)->sourceID();
+}
+
+String SamplingProfiler::StackFrame::url()
+{
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host)
+        return emptyString();
+    RELEASE_ASSERT(frameType != FrameType::UnverifiedCallee);
+
+    ExecutableBase* executable = u.verifiedExecutable;
+    if (executable->isHostFunction())
+        return emptyString();
+
+    String url = static_cast<ScriptExecutable*>(executable)->sourceURL();
+    if (url.isEmpty())
+        return static_cast<ScriptExecutable*>(executable)->source().provider()->sourceURL(); // Fall back to sourceURL directive.
+    return url;
+}
+
+Vector<SamplingProfiler::StackTrace>& SamplingProfiler::stackTraces(const LockHolder&)
+{
+    ASSERT(m_lock.isLocked());
+    {
+        HeapIterationScope heapIterationScope(m_vm.heap);
+        processUnverifiedStackTraces();
+    }
+
+    return m_stackTraces;
+}
+
+String SamplingProfiler::stackTracesAsJSON()
+{
+    LockHolder locker(m_lock);
+
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
         processUnverifiedStackTraces();
@@ -519,14 +626,14 @@ String SamplingProfiler::stacktracesAsJSON()
         if (loopedOnce)
             json.appendLiteral(",");
     };
-    for (const StackTrace& stackTrace : m_stackTraces) {
+    for (StackTrace& stackTrace : m_stackTraces) {
         comma();
         json.appendLiteral("[");
         loopedOnce = false;
-        for (const StackFrame& stackFrame : stackTrace.frames) {
+        for (StackFrame& stackFrame : stackTrace.frames) {
             comma();
             json.appendLiteral("\"");
-            json.append(displayName(stackFrame));
+            json.append(stackFrame.displayNameForJSONTests());
             json.appendLiteral("\"");
             loopedOnce = true;
         }
@@ -535,8 +642,6 @@ String SamplingProfiler::stacktracesAsJSON()
     }
 
     json.appendLiteral("]");
-
-    m_lock.unlock();
 
     return json.toString();
 }

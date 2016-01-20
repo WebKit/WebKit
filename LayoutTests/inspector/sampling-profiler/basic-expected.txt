@@ -1,0 +1,13 @@
+
+== Running test suite: ScriptProfiler.Samples.Basic
+-- Running test case: Sampling Profiler basic
+PASS: Should have seen stacktrace:
+[
+  {
+    "name": "foo"
+  },
+  {
+    "name": "runFor"
+  }
+]
+

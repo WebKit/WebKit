@@ -41,9 +41,9 @@ WebInspector.ScriptInstrument = class ScriptInstrument extends WebInspector.Inst
         }
 
         // FIXME: Make this some UI visible option.
-        const includeProfiles = true;
+        const includeSamples = true;
 
-        ScriptProfilerAgent.startTracking(includeProfiles);
+        ScriptProfilerAgent.startTracking(includeSamples);
     }
 
     stopInstrumentation()

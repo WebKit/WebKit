@@ -37,8 +37,8 @@ WebInspector.ScriptProfilerObserver = class ScriptProfilerObserver
         WebInspector.timelineManager.scriptProfilerTrackingUpdated(event);
     }
 
-    trackingComplete(profiles)
+    trackingComplete(samples)
     {
-        WebInspector.timelineManager.scriptProfilerTrackingCompleted(profiles);
+        WebInspector.timelineManager.scriptProfilerTrackingCompleted(samples);
     }
 };

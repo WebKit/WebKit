@@ -234,14 +234,14 @@ void Debugger::setProfilingClient(ProfilingClient* client)
     recompileAllJSFunctions();
 }
 
-double Debugger::willEvaluateScript(JSGlobalObject& globalObject)
+double Debugger::willEvaluateScript()
 {
-    return m_profilingClient->willEvaluateScript(globalObject);
+    return m_profilingClient->willEvaluateScript();
 }
 
-void Debugger::didEvaluateScript(JSGlobalObject& globalObject, double startTime, ProfilingReason reason)
+void Debugger::didEvaluateScript(double startTime, ProfilingReason reason)
 {
-    m_profilingClient->didEvaluateScript(globalObject, startTime, reason);
+    m_profilingClient->didEvaluateScript(startTime, reason);
 }
 
 void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, BreakpointState enabledOrNot)

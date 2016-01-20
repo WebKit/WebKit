@@ -50,6 +50,7 @@ public:
         Host, 
         Unknown 
     };
+
     struct StackFrame {
         StackFrame(FrameType frameType, EncodedJSValue callee)
             : frameType(frameType)
@@ -72,7 +73,15 @@ public:
             EncodedJSValue unverifiedCallee;
             ExecutableBase* verifiedExecutable;
         } u;
+
+        String displayName();
+        String displayNameForJSONTests(); // Used for JSC stress tests because they want the "(anonymous function)" string for anonymous functions and they want "(eval)" for eval'd code.
+        int startLine();
+        unsigned startColumn();
+        intptr_t sourceID();
+        String url();
     };
+
     struct StackTrace {
         bool needsVerification;
         double timestamp;
@@ -88,13 +97,18 @@ public:
     Lock& getLock() { return m_lock; }
     void setTimingInterval(std::chrono::microseconds interval) { m_timingInterval = interval; }
     JS_EXPORT_PRIVATE void start();
+    void start(const LockHolder&);
     void stop();
-    const Vector<StackTrace>& stackTraces() const { return m_stackTraces; }
-    JS_EXPORT_PRIVATE String stacktracesAsJSON();
+    void stop(const LockHolder&);
+    Vector<StackTrace>& stackTraces(const LockHolder&);
+    JS_EXPORT_PRIVATE String stackTracesAsJSON();
     JS_EXPORT_PRIVATE void noticeCurrentThreadAsJSCExecutionThread();
     void noticeCurrentThreadAsJSCExecutionThread(const LockHolder&);
     JS_EXPORT_PRIVATE void clearData();
+    void clearData(const LockHolder&);
     void processUnverifiedStackTraces(); // You should call this only after acquiring the lock.
+    double totalTime(const LockHolder&) { return m_totalTime; }
+    void setStopWatch(const LockHolder&, Ref<Stopwatch>&& stopwatch) { m_stopwatch = WTFMove(stopwatch); }
 
 private:
     void dispatchIfNecessary(const LockHolder&);

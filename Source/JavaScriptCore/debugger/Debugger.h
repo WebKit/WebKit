@@ -132,15 +132,15 @@ public:
     public:
         virtual ~ProfilingClient() { }
         virtual bool isAlreadyProfiling() const = 0;
-        virtual double willEvaluateScript(JSGlobalObject&) = 0;
-        virtual void didEvaluateScript(JSGlobalObject&, double startTime, ProfilingReason) = 0;
+        virtual double willEvaluateScript() = 0;
+        virtual void didEvaluateScript(double startTime, ProfilingReason) = 0;
     };
 
     void setProfilingClient(ProfilingClient*);
     bool hasProfilingClient() const { return m_profilingClient != nullptr; }
     bool isAlreadyProfiling() const { return m_profilingClient && m_profilingClient->isAlreadyProfiling(); }
-    double willEvaluateScript(JSGlobalObject&);
-    void didEvaluateScript(JSGlobalObject&, double startTime, ProfilingReason);
+    double willEvaluateScript();
+    void didEvaluateScript(double startTime, ProfilingReason);
 
 protected:
     virtual bool needPauseHandling(JSGlobalObject*) { return false; }

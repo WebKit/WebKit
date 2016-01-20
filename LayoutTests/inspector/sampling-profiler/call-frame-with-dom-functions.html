@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+
+function runFor(func, millis) {
+    let start = Date.now();
+    do {
+        func();
+    } while (Date.now() - start < millis);
+}
+
+function foo() {
+    let body = document.body;
+    for (let i = 0; i < 10000; i++) {
+        let p = document.createElement("p");
+        body.appendChild(p);
+    }
+}
+noInline(foo);
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("SciptProfiler.Samples.DOM");
+
+    suite.addTestCase({
+        name: "Sampling Profiler sourceURL directive.",
+        description: "Sample some basic code.",
+        test: (resolve, reject) => {
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
+                let tree = WebInspector.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
+
+                let trace = [
+                    {name: "createElement"},
+                    {name: "foo"},
+                    {name: "runFor"}
+                ];
+                ProtocolTest.expectThat(tree.__test_matchesStackTrace(trace), "Should have seen stacktrace:\n" + JSON.stringify(trace, undefined, 2));
+
+                trace = [
+                    {name: "appendChild"},
+                    {name: "foo"},
+                    {name: "runFor"}
+                ];
+                ProtocolTest.expectThat(tree.__test_matchesStackTrace(trace), "Should have seen stacktrace:\n" + JSON.stringify(trace, undefined, 2));
+
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {includeSamples: true});
+            ProtocolTest.evaluateInPage("runFor(foo, 100)");
+            InspectorProtocol.sendCommand('ScriptProfiler.stopTracking', {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

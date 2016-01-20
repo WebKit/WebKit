@@ -18,12 +18,10 @@ function test()
 
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
                 ProtocolTest.log("ScriptProfiler.trackingComplete");
-                ProtocolTest.expectThat(Array.isArray(messageObject.params.profiles), "Profiles should exist when complete.");
-                ProtocolTest.expectThat(!messageObject.params.profiles.length, "Should be no profiles for this session.");
                 resolve();
             });
 
-            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {profile: true});
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {});
             InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
         }
     });

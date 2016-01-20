@@ -38,7 +38,13 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
         columns.location.title = WebInspector.UIString("Location");
         columns.location.width = "15%";
 
-        columns.callCount.title = WebInspector.UIString("Calls");
+        let isSamplingProfiler = !!window.ScriptProfilerAgent;
+        if (isSamplingProfiler)
+            columns.callCount.title = WebInspector.UIString("Samples");
+        else {
+            // COMPATIBILITY(iOS 9): ScriptProfilerAgent did not exist yet, we had call counts, not samples.
+            columns.callCount.title = WebInspector.UIString("Calls");
+        }
         columns.callCount.width = "5%";
         columns.callCount.aligned = "right";
 

@@ -1642,7 +1642,7 @@ EncodedJSValue JSC_HOST_CALL functionStartSamplingProfiler(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionSamplingProfilerStackTraces(ExecState* exec)
 {
     RELEASE_ASSERT(exec->vm().samplingProfiler());
-    String jsonString = exec->vm().samplingProfiler()->stacktracesAsJSON();
+    String jsonString = exec->vm().samplingProfiler()->stackTracesAsJSON();
     exec->vm().samplingProfiler()->clearData();
     EncodedJSValue result = JSValue::encode(JSONParse(exec, jsonString));
     RELEASE_ASSERT(!exec->hadException());

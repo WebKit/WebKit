@@ -27,7 +27,7 @@
 #include "InspectorScriptProfilerAgent.h"
 
 #include "InspectorEnvironment.h"
-#include "LegacyProfiler.h"
+#include "SamplingProfiler.h"
 #include <wtf/RunLoop.h>
 #include <wtf/Stopwatch.h>
 
@@ -57,15 +57,29 @@ void InspectorScriptProfilerAgent::willDestroyFrontendAndBackend(DisconnectReaso
     stopTracking(ignored);
 }
 
-void InspectorScriptProfilerAgent::startTracking(ErrorString&, const bool* profile)
+void InspectorScriptProfilerAgent::startTracking(ErrorString&, const bool* includeSamples)
 {
     if (m_tracking)
         return;
 
     m_tracking = true;
 
-    if (profile && *profile)
-        m_enableLegacyProfiler = true;
+#if ENABLE(SAMPLING_PROFILER)
+    if (includeSamples && *includeSamples) {
+        VM& vm = m_environment.scriptDebugServer().vm();
+        vm.ensureSamplingProfiler(m_environment.executionStopwatch());
+
+        SamplingProfiler& samplingProfiler = *vm.samplingProfiler();
+        LockHolder locker(samplingProfiler.getLock());
+
+        samplingProfiler.setStopWatch(locker, m_environment.executionStopwatch());
+        samplingProfiler.noticeCurrentThreadAsJSCExecutionThread(locker);
+        samplingProfiler.start(locker);
+        m_enabledSamplingProfiler = true;
+    }
+#else
+    UNUSED_PARAM(includeSamples);
+#endif // ENABLE(SAMPLING_PROFILER)
 
     m_environment.scriptDebugServer().setProfilingClient(this);
 
@@ -78,7 +92,6 @@ void InspectorScriptProfilerAgent::stopTracking(ErrorString&)
         return;
 
     m_tracking = false;
-    m_enableLegacyProfiler = false;
     m_activeEvaluateScript = false;
 
     m_environment.scriptDebugServer().setProfilingClient(nullptr);
@@ -91,22 +104,24 @@ bool InspectorScriptProfilerAgent::isAlreadyProfiling() const
     return m_activeEvaluateScript;
 }
 
-double InspectorScriptProfilerAgent::willEvaluateScript(JSGlobalObject& globalObject)
+double InspectorScriptProfilerAgent::willEvaluateScript()
 {
     m_activeEvaluateScript = true;
 
-    if (m_enableLegacyProfiler)
-        LegacyProfiler::profiler()->startProfiling(globalObject.globalExec(), ASCIILiteral("ScriptProfiler"), m_environment.executionStopwatch());
+#if ENABLE(SAMPLING_PROFILER)
+    if (m_enabledSamplingProfiler) {
+        SamplingProfiler* samplingProfiler = m_environment.scriptDebugServer().vm().samplingProfiler();
+        RELEASE_ASSERT(samplingProfiler);
+        samplingProfiler->noticeCurrentThreadAsJSCExecutionThread();
+    }
+#endif
 
     return m_environment.executionStopwatch()->elapsedTime();
 }
 
-void InspectorScriptProfilerAgent::didEvaluateScript(JSGlobalObject& globalObject, double startTime, ProfilingReason reason)
+void InspectorScriptProfilerAgent::didEvaluateScript(double startTime, ProfilingReason reason)
 {
     m_activeEvaluateScript = false;
-
-    if (m_enableLegacyProfiler)
-        m_profiles.append(LegacyProfiler::profiler()->stopProfiling(globalObject.globalExec(), ASCIILiteral("ScriptProfiler")));
 
     double endTime = m_environment.executionStopwatch()->elapsedTime();
 
@@ -141,71 +156,57 @@ void InspectorScriptProfilerAgent::addEvent(double startTime, double endTime, Pr
     m_frontendDispatcher->trackingUpdate(WTFMove(event));
 }
 
-static Ref<Protocol::Timeline::CPUProfileNodeAggregateCallInfo> buildAggregateCallInfoInspectorObject(const JSC::ProfileNode* node)
+#if ENABLE(SAMPLING_PROFILER)
+static Ref<Protocol::ScriptProfiler::Samples> buildSamples(Vector<SamplingProfiler::StackTrace>& samplingProfilerStackTraces, double totalTime)
 {
-    double startTime = node->calls()[0].startTime();
-    double endTime = node->calls().last().startTime() + node->calls().last().elapsedTime();
+    Ref<Protocol::Array<Protocol::ScriptProfiler::StackTrace>> stackTraces = Protocol::Array<Protocol::ScriptProfiler::StackTrace>::create();
+    for (SamplingProfiler::StackTrace& stackTrace : samplingProfilerStackTraces) {
+        Ref<Protocol::Array<Protocol::ScriptProfiler::StackFrame>> frames = Protocol::Array<Protocol::ScriptProfiler::StackFrame>::create();
+        for (SamplingProfiler::StackFrame& stackFrame : stackTrace.frames) {
+            Ref<Protocol::ScriptProfiler::StackFrame> frame = Protocol::ScriptProfiler::StackFrame::create()
+                .setSourceID(String::number(stackFrame.sourceID()))
+                .setName(stackFrame.displayName())
+                .setLine(stackFrame.startLine())
+                .setColumn(stackFrame.startColumn())
+                .setUrl(stackFrame.url())
+                .release();
+            frames->addItem(WTFMove(frame));
+        }
+        Ref<Protocol::ScriptProfiler::StackTrace> inspectorStackTrace = Protocol::ScriptProfiler::StackTrace::create()
+            .setTimestamp(stackTrace.timestamp)
+            .setStackFrames(WTFMove(frames))
+            .release();
+        stackTraces->addItem(WTFMove(inspectorStackTrace));
+    }
 
-    double totalTime = 0;
-    for (const JSC::ProfileNode::Call& call : node->calls())
-        totalTime += call.elapsedTime();
-
-    return Protocol::Timeline::CPUProfileNodeAggregateCallInfo::create()
-        .setCallCount(node->calls().size())
-        .setStartTime(startTime)
-        .setEndTime(endTime)
+    return Protocol::ScriptProfiler::Samples::create()
+        .setStackTraces(WTFMove(stackTraces))
         .setTotalTime(totalTime)
         .release();
 }
-
-static Ref<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::ProfileNode* node)
-{
-    auto result = Protocol::Timeline::CPUProfileNode::create()
-        .setId(node->id())
-        .setCallInfo(buildAggregateCallInfoInspectorObject(node))
-        .release();
-
-    if (!node->functionName().isEmpty())
-        result->setFunctionName(node->functionName());
-
-    if (!node->url().isEmpty()) {
-        result->setUrl(node->url());
-        result->setLineNumber(node->lineNumber());
-        result->setColumnNumber(node->columnNumber());
-    }
-
-    if (!node->children().isEmpty()) {
-        auto children = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
-        for (RefPtr<JSC::ProfileNode> profileNode : node->children())
-            children->addItem(buildInspectorObject(profileNode.get()));
-        result->setChildren(WTFMove(children));
-    }
-
-    return result;
-}
-
-static Ref<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC::Profile* profile)
-{
-    auto rootNodes = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
-    for (RefPtr<JSC::ProfileNode> profileNode : profile->rootNode()->children())
-        rootNodes->addItem(buildInspectorObject(profileNode.get()));
-
-    return Protocol::Timeline::CPUProfile::create()
-        .setRootNodes(WTFMove(rootNodes))
-        .release();
-}
+#endif // ENABLE(SAMPLING_PROFILER)
 
 void InspectorScriptProfilerAgent::trackingComplete()
 {
-    RefPtr<Inspector::Protocol::Array<InspectorValue>> profiles = Inspector::Protocol::Array<InspectorValue>::create();
-    for (auto& profile : m_profiles) {
-        Ref<InspectorValue> value = buildProfileInspectorObject(profile.get());
-        profiles->addItem(WTFMove(value));
-    }
+#if ENABLE(SAMPLING_PROFILER)
+    if (m_enabledSamplingProfiler) {
+        SamplingProfiler* samplingProfiler = m_environment.scriptDebugServer().vm().samplingProfiler();
+        RELEASE_ASSERT(samplingProfiler);
+        LockHolder locker(samplingProfiler->getLock());
+        samplingProfiler->stop(locker);
+        Ref<Protocol::ScriptProfiler::Samples> samples = buildSamples(samplingProfiler->stackTraces(locker), samplingProfiler->totalTime(locker));
+        samplingProfiler->clearData(locker);
 
-    m_frontendDispatcher->trackingComplete(profiles);
+        locker.unlockEarly();
 
-    m_profiles.clear();
+        m_enabledSamplingProfiler = false;
+
+        m_frontendDispatcher->trackingComplete(WTFMove(samples));
+    } else
+        m_frontendDispatcher->trackingComplete(nullptr);
+#else
+    m_frontendDispatcher->trackingComplete(nullptr);
+#endif // ENABLE(SAMPLING_PROFILER)
 }
 
 } // namespace Inspector

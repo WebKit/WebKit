@@ -39,13 +39,13 @@ public:
         , m_reason(reason)
     {
         if (shouldStartProfile())
-            m_startTime = m_globalObject->debugger()->willEvaluateScript(*m_globalObject);
+            m_startTime = m_globalObject->debugger()->willEvaluateScript();
     }
 
     ~ScriptProfilingScope()
     {
         if (shouldEndProfile())
-            m_globalObject->debugger()->didEvaluateScript(*m_globalObject, m_startTime.value(), m_reason);
+            m_globalObject->debugger()->didEvaluateScript(m_startTime.value(), m_reason);
     }
 
 private:

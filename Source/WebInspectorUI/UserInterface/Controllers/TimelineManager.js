@@ -45,6 +45,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this._webTimelineScriptRecordsExpectingScriptProfilerEvents = null;
         this._scriptProfilerRecords = null;
 
+        this._callingContextTree = null;
+
         this.reset();
     }
 
@@ -682,15 +684,23 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             this._addRecord(record);
     }
 
-    scriptProfilerTrackingCompleted(profiles)
+    scriptProfilerTrackingCompleted(samples)
     {
         console.assert(!this._webTimelineScriptRecordsExpectingScriptProfilerEvents || this._scriptProfilerRecords.length >= this._webTimelineScriptRecordsExpectingScriptProfilerEvents.length);
 
-        // Associate the profiles with the ScriptProfiler created records.
-        if (profiles) {
-            console.assert(this._scriptProfilerRecords.length === profiles.length, this._scriptProfilerRecords.length, profiles.length);
-            for (let i = 0; i < this._scriptProfilerRecords.length; ++i)
-                this._scriptProfilerRecords[i].profilePayload = profiles[i];
+        if (samples) {
+            if (!this._callingContextTree)
+                this._callingContextTree = new WebInspector.CallingContextTree;
+
+            // Associate the stackTraces with the ScriptProfiler created records.
+            let stackTraces = samples.stackTraces;
+            for (let i = 0; i < stackTraces.length; i++)
+                this._callingContextTree.updateTreeWithStackTrace(stackTraces[i]);
+
+            for (let i = 0; i < this._scriptProfilerRecords.length; ++i) {
+                let record = this._scriptProfilerRecords[i];
+                record.profilePayload = this._callingContextTree.toCPUProfilePayload(record.startTime, record.endTime);
+            }
         }
 
         // Associate the ScriptProfiler created records with Web Timeline records.

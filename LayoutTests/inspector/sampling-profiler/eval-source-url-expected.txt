@@ -1,0 +1,23 @@
+
+== Running test suite: ScriptProfiler.Samples.SourceURL
+-- Running test case: Sampling Profiler sourceURL directive.
+PASS: Should have seen stacktrace:
+[
+  {
+    "name": "foo"
+  },
+  {
+    "name": "(program)",
+    "url": "eval.js"
+  },
+  {
+    "name": "eval"
+  },
+  {
+    "name": "bar"
+  },
+  {
+    "name": "runFor"
+  }
+]
+

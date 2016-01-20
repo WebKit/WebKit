@@ -41,12 +41,10 @@ function test()
 
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
                 ProtocolTest.log("ScriptProfiler.trackingComplete");
-                ProtocolTest.expectThat(Array.isArray(messageObject.params.profiles), "Profiles should exist when complete.");
-                ProtocolTest.expectThat(messageObject.params.profiles.length === 3, "Should be 3 profiles for this session.");
                 resolve();
             });
 
-            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {profile: true});
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {});
             ProtocolTest.evaluateInPage("triggerScriptEvaluation()");
             ProtocolTest.evaluateInPage("triggerEventDispatchEvaluation()");
             ProtocolTest.evaluateInPage("triggerTimerEvaluation()");

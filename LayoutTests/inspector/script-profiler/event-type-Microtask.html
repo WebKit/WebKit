@@ -28,12 +28,10 @@ function test()
 
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
                 ProtocolTest.log("ScriptProfiler.trackingComplete");
-                ProtocolTest.expectThat(Array.isArray(messageObject.params.profiles), "Profiles should exist when complete.");
-                ProtocolTest.expectThat(messageObject.params.profiles.length === 1, "Should be 1 profile for this session.");
                 resolve();
             });
 
-            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {profile: true});
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {});
             ProtocolTest.evaluateInPage("triggerMicrotask()");
             InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
         }

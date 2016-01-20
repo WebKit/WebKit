@@ -1,3 +1,76 @@
+2016-01-20  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Hook the sampling profiler into the Timelines UI
+        https://bugs.webkit.org/show_bug.cgi?id=152766
+        <rdar://problem/24066360>
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch adds some necessary functions to SamplingProfiler::StackFrame
+        to allow it to give data to the Inspector for the timelines UI. i.e, the
+        sourceID of the executable of a stack frame.
+
+        This patch also swaps in the SamplingProfiler in place of the
+        LegacyProfiler inside InspectorScriptProfilerAgent. It adds
+        the necessary protocol data to allow the SamplingProfiler's
+        data to hook into the timelines UI.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::setProfilingClient):
+        (JSC::Debugger::willEvaluateScript):
+        (JSC::Debugger::didEvaluateScript):
+        (JSC::Debugger::toggleBreakpoint):
+        * debugger/Debugger.h:
+        * debugger/ScriptProfilingScope.h:
+        (JSC::ScriptProfilingScope::ScriptProfilingScope):
+        (JSC::ScriptProfilingScope::~ScriptProfilingScope):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorScriptProfilerAgent::startTracking):
+        (Inspector::InspectorScriptProfilerAgent::stopTracking):
+        (Inspector::InspectorScriptProfilerAgent::isAlreadyProfiling):
+        (Inspector::InspectorScriptProfilerAgent::willEvaluateScript):
+        (Inspector::InspectorScriptProfilerAgent::didEvaluateScript):
+        (Inspector::InspectorScriptProfilerAgent::addEvent):
+        (Inspector::buildSamples):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        (Inspector::buildAggregateCallInfoInspectorObject): Deleted.
+        (Inspector::buildInspectorObject): Deleted.
+        (Inspector::buildProfileInspectorObject): Deleted.
+        * inspector/agents/InspectorScriptProfilerAgent.h:
+        * inspector/protocol/ScriptProfiler.json:
+        * jsc.cpp:
+        (functionSamplingProfilerStackTraces):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::stop):
+        (JSC::SamplingProfiler::clearData):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::StackFrame::displayNameForJSONTests):
+        (JSC::SamplingProfiler::StackFrame::startLine):
+        (JSC::SamplingProfiler::StackFrame::startColumn):
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::StackFrame::url):
+        (JSC::SamplingProfiler::stackTraces):
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        (JSC::displayName): Deleted.
+        (JSC::SamplingProfiler::stacktracesAsJSON): Deleted.
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::StackFrame::StackFrame):
+        (JSC::SamplingProfiler::getLock):
+        (JSC::SamplingProfiler::setTimingInterval):
+        (JSC::SamplingProfiler::totalTime):
+        (JSC::SamplingProfiler::setStopWatch):
+        (JSC::SamplingProfiler::stackTraces): Deleted.
+        * tests/stress/sampling-profiler-anonymous-function.js:
+        (platformSupportsSamplingProfiler.baz):
+        (platformSupportsSamplingProfiler):
+        * tests/stress/sampling-profiler-basic.js:
+        (platformSupportsSamplingProfiler.nothing):
+        (platformSupportsSamplingProfiler.top):
+        * tests/stress/sampling-profiler/samplingProfiler.js:
+        (doesTreeHaveStackTrace):
+
 2016-01-20  Keith Miller  <keith_miller@apple.com>
 
         TypedArray's .buffer does not return the JSArrayBuffer that was passed to it on creation.

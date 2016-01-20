@@ -8,6 +8,4 @@ ScriptProfiler.trackingStart
 ScriptProfiler.trackingUpdate
 PASS: Event type should be API.
 ScriptProfiler.trackingComplete
-PASS: Profiles should exist when complete.
-PASS: Should be 1 profile for this session.
 

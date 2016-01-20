@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+
+function runFor(func, millis) {
+    let start = Date.now();
+    do {
+        func();
+    } while (Date.now() - start < millis);
+}
+function a() { b(); }
+function b() { c(); }
+function c() { d(); }
+function d() { e(); }
+function e() { f(); }
+function f() { g(); }
+function g() { top(); }
+
+function top() {
+    for (let i = 0; i < 10000; i++) {
+        i++;
+        i--;
+    }
+}
+noInline(top);
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.Samples.ManyCallFrames");
+
+    suite.addTestCase({
+        name: "Sampling Profiler sourceURL directive.",
+        description: "Sample some basic code.",
+        test: (resolve, reject) => {
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
+                let tree = WebInspector.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
+
+                let trace = [
+                    {name: "top"},
+                    {name: "g"},
+                    {name: "f"},
+                    {name: "e"},
+                    {name: "d"},
+                    {name: "c"},
+                    {name: "b"},
+                    {name: "a"},
+                    {name: "runFor"}
+                ];
+                ProtocolTest.expectThat(tree.__test_matchesStackTrace(trace), "Should have seen stacktrace:\n" + JSON.stringify(trace, undefined, 2));
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {includeSamples: true});
+            ProtocolTest.evaluateInPage("runFor(a, 100)");
+            InspectorProtocol.sendCommand('ScriptProfiler.stopTracking', {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

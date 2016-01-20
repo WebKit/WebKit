@@ -50,13 +50,13 @@ public:
     virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     // ScriptProfilerBackendDispatcherHandler
-    virtual void startTracking(ErrorString&, const bool* profile) override;
+    virtual void startTracking(ErrorString&, const bool* includeSamples) override;
     virtual void stopTracking(ErrorString&) override;
 
     // Debugger::ProfilingClient
     virtual bool isAlreadyProfiling() const override;
-    virtual double willEvaluateScript(JSC::JSGlobalObject&) override;
-    virtual void didEvaluateScript(JSC::JSGlobalObject&, double, JSC::ProfilingReason) override;
+    virtual double willEvaluateScript() override;
+    virtual void didEvaluateScript(double, JSC::ProfilingReason) override;
 
 private:
     struct Event {
@@ -70,10 +70,9 @@ private:
 
     std::unique_ptr<ScriptProfilerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<ScriptProfilerBackendDispatcher> m_backendDispatcher;
-    Vector<RefPtr<JSC::Profile>> m_profiles;
     InspectorEnvironment& m_environment;
     bool m_tracking { false };
-    bool m_enableLegacyProfiler { false };
+    bool m_enabledSamplingProfiler { false };
     bool m_activeEvaluateScript { false };
 };
 

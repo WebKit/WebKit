@@ -1,3 +1,31 @@
+2016-01-20  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Hook the sampling profiler into the Timelines UI
+        https://bugs.webkit.org/show_bug.cgi?id=152766
+        <rdar://problem/24066360>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/sampling-profiler: Added.
+        * inspector/sampling-profiler/basic-expected.txt: Added.
+        * inspector/sampling-profiler/basic.html: Added.
+        * inspector/sampling-profiler/call-frame-with-dom-functions-expected.txt: Added.
+        * inspector/sampling-profiler/call-frame-with-dom-functions.html: Added.
+        * inspector/sampling-profiler/eval-source-url-expected.txt: Added.
+        * inspector/sampling-profiler/eval-source-url.html: Added.
+        * inspector/sampling-profiler/many-call-frames-expected.txt: Added.
+        * inspector/sampling-profiler/many-call-frames.html: Added.
+        * inspector/sampling-profiler/named-function-expression-expected.txt: Added.
+        * inspector/sampling-profiler/named-function-expression.html: Added.
+        * inspector/script-profiler/event-type-API-expected.txt:
+        * inspector/script-profiler/event-type-API.html:
+        * inspector/script-profiler/event-type-Microtask-expected.txt:
+        * inspector/script-profiler/event-type-Microtask.html:
+        * inspector/script-profiler/event-type-Other-expected.txt:
+        * inspector/script-profiler/event-type-Other.html:
+        * inspector/script-profiler/tracking-expected.txt:
+        * inspector/script-profiler/tracking.html:
+
 2016-01-20  Daniel Bates  <dabates@apple.com>
 
         CSP: Add tests to ensure that alternative text of an image is rendered when CSP blocks its load

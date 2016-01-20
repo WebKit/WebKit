@@ -18,5 +18,5 @@ if (platformSupportsSamplingProfiler()) {
         });
     }
 
-    runTest(baz, ["<anonymous-function>", "foo", "baz"]);
+    runTest(baz, ["(anonymous function)", "foo", "baz"]);
 }
