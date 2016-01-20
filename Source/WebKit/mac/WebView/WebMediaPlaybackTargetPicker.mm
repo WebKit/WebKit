@@ -29,7 +29,7 @@
 
 #import <WebCore/MediaPlaybackTarget.h>
 #import <WebCore/Page.h>
-#import <WebCore/WebMediaSessionManager.h>
+#import <WebCore/WebMediaSessionManagerMac.h>
 
 std::unique_ptr<WebMediaPlaybackTargetPicker> WebMediaPlaybackTargetPicker::create(WebCore::Page& page)
 {
@@ -43,22 +43,22 @@ WebMediaPlaybackTargetPicker::WebMediaPlaybackTargetPicker(WebCore::Page& page)
 
 void WebMediaPlaybackTargetPicker::addPlaybackTargetPickerClient(uint64_t contextId)
 {
-    WebCore::WebMediaSessionManager::shared().addPlaybackTargetPickerClient(*this, contextId);
+    WebCore::WebMediaSessionManagerMac::singleton().addPlaybackTargetPickerClient(*this, contextId);
 }
 
 void WebMediaPlaybackTargetPicker::removePlaybackTargetPickerClient(uint64_t contextId)
 {
-    WebCore::WebMediaSessionManager::shared().removePlaybackTargetPickerClient(*this, contextId);
+    WebCore::WebMediaSessionManagerMac::singleton().removePlaybackTargetPickerClient(*this, contextId);
 }
 
 void WebMediaPlaybackTargetPicker::showPlaybackTargetPicker(uint64_t contextId, const WebCore::FloatRect& rect, bool hasVideo)
 {
-    WebCore::WebMediaSessionManager::shared().showPlaybackTargetPicker(*this, contextId, WebCore::IntRect(rect), hasVideo);
+    WebCore::WebMediaSessionManagerMac::singleton().showPlaybackTargetPicker(*this, contextId, WebCore::IntRect(rect), hasVideo);
 }
 
 void WebMediaPlaybackTargetPicker::playbackTargetPickerClientStateDidChange(uint64_t contextId, WebCore::MediaProducer::MediaStateFlags state)
 {
-    WebCore::WebMediaSessionManager::shared().clientStateDidChange(*this, contextId, state);
+    WebCore::WebMediaSessionManagerMac::singleton().clientStateDidChange(*this, contextId, state);
 }
 
 void WebMediaPlaybackTargetPicker::setPlaybackTarget(uint64_t contextId, Ref<WebCore::MediaPlaybackTarget>&& target)
@@ -88,7 +88,7 @@ void WebMediaPlaybackTargetPicker::setShouldPlayToPlaybackTarget(uint64_t contex
 void WebMediaPlaybackTargetPicker::invalidate()
 {
     m_page = nullptr;
-    WebCore::WebMediaSessionManager::shared().removeAllPlaybackTargetPickerClients(*this);
+    WebCore::WebMediaSessionManagerMac::singleton().removeAllPlaybackTargetPickerClients(*this);
 }
 
 #endif

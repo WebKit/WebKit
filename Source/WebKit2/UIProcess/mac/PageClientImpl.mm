@@ -72,7 +72,7 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include <WebCore/WebMediaSessionManager.h>
+#include <WebCore/WebMediaSessionManagerMac.h>
 #endif
 
 @interface NSApplication (WebNSApplicationDetails)
@@ -848,7 +848,7 @@ void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 {
-    return WebMediaSessionManager::shared();
+    return WebMediaSessionManagerMac::singleton();
 }
 #endif
 
