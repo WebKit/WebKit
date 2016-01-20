@@ -36,7 +36,7 @@ class JS_EXPORT_PRIVATE Const32Value : public Value {
 public:
     static bool accepts(Opcode opcode) { return opcode == Const32; }
     
-    JS_EXPORT_PRIVATE ~Const32Value();
+    ~Const32Value();
     
     int32_t value() const { return m_value; }
 
@@ -71,7 +71,7 @@ public:
     TriState belowEqualConstant(const Value* other) const override;
 
 protected:
-    JS_EXPORT_PRIVATE void dumpMeta(CommaPrinter&, PrintStream&) const override;
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
     friend class Procedure;
 

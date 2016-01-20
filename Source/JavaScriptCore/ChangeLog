@@ -1,3 +1,15 @@
+2016-01-20  Per Arne Vollan  <peavo@outlook.com>
+
+        [B3][Win64] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=153278
+
+        Reviewed by Filip Pizlo.
+
+        MSVC does not accept that a class declared as exported also have members declared as exported.
+
+        * b3/B3Const32Value.h:
+        * b3/B3ControlValue.h:
+
 2016-01-19  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Fix various issues with TypedArrays.

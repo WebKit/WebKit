@@ -56,7 +56,7 @@ public:
 
     typedef Vector<FrequentedBlock, 2> SuccessorList;
 
-    JS_EXPORT_PRIVATE ~ControlValue();
+    ~ControlValue();
 
     unsigned numSuccessors() const { return m_successors.size(); }
     const FrequentedBlock& successor(unsigned index) const { return m_successors[index]; }
@@ -91,7 +91,7 @@ public:
     void convertToOops();
 
 protected:
-    JS_EXPORT_PRIVATE void dumpMeta(CommaPrinter&, PrintStream&) const override;
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
     // Use this for subclasses.
     template<typename... Arguments>
