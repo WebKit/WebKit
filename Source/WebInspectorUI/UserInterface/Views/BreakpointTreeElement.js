@@ -37,21 +37,21 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
         this._breakpoint = breakpoint;
         this._probeSet = null;
 
-        this._listeners = new WebInspector.EventListenerSet(this, "BreakpointTreeElement listeners");
+        this._listenerSet = new WebInspector.EventListenerSet(this, "BreakpointTreeElement listeners");
         if (!title)
-            this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.LocationDidChange, this._breakpointLocationDidChange);
-        this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateStatus);
-        this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateStatus);
-        this._listeners.register(breakpoint, WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateStatus);
-        this._listeners.register(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._updateStatus);
+            this._listenerSet.register(breakpoint, WebInspector.Breakpoint.Event.LocationDidChange, this._breakpointLocationDidChange);
+        this._listenerSet.register(breakpoint, WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateStatus);
+        this._listenerSet.register(breakpoint, WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateStatus);
+        this._listenerSet.register(breakpoint, WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateStatus);
+        this._listenerSet.register(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._updateStatus);
 
-        this._listeners.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded);
-        this._listeners.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved);
+        this._listenerSet.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded);
+        this._listenerSet.register(WebInspector.probeManager, WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved);
 
         this._statusImageElement = document.createElement("img");
         this._statusImageElement.className = WebInspector.BreakpointTreeElement.StatusImageElementStyleClassName;
-        this._listeners.register(this._statusImageElement, "mousedown", this._statusImageElementMouseDown);
-        this._listeners.register(this._statusImageElement, "click", this._statusImageElementClicked);
+        this._listenerSet.register(this._statusImageElement, "mousedown", this._statusImageElementMouseDown);
+        this._listenerSet.register(this._statusImageElement, "click", this._statusImageElementClicked);
 
         if (!title)
             this._updateTitles();
@@ -106,7 +106,7 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
     {
         super.onattach();
 
-        this._listeners.install();
+        this._listenerSet.install();
 
         for (var probeSet of WebInspector.probeManager.probeSets)
             if (probeSet.breakpoint === this._breakpoint)
@@ -117,7 +117,7 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
     {
         super.ondetach();
 
-        this._listeners.uninstall();
+        this._listenerSet.uninstall();
 
         if (this._probeSet)
             this._removeProbeSet(this._probeSet);

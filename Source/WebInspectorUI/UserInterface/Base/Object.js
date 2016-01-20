@@ -142,10 +142,7 @@ WebInspector.Object = class WebInspectorObject
             if (!object || !object._listeners || event._stoppedPropagation)
                 return;
 
-            if (!(object._listeners instanceof Map)) {
-                console.error("object._listeners should be a Map but it isn't.\n`object` is most likely a WebInspector.EventListenerSet.");
-                return;
-            }
+            console.assert(object._listeners instanceof Map);
 
             let listenersTable = object._listeners.get(eventType);
             if (!listenersTable)

@@ -1,3 +1,27 @@
+2016-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Subclasses of WebInspector.Object shouldn't overwrite this._listeners
+        https://bugs.webkit.org/show_bug.cgi?id=153268
+        <rdar://problem/24252766>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object.prototype.dispatchEventToListeners):
+        Add a console.assert.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement):
+        (WebInspector.BreakpointTreeElement.prototype.onattach):
+        (WebInspector.BreakpointTreeElement.prototype.ondetach):
+        * UserInterface/Views/ProbeSetDataGrid.js:
+        (WebInspector.ProbeSetDataGrid):
+        (WebInspector.ProbeSetDataGrid.prototype.closed):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WebInspector.ProbeSetDetailsSection):
+        (WebInspector.ProbeSetDetailsSection.prototype.closed):
+        Replace all instances of "this._listeners" with "this._listenerSet".
+
 2016-01-19  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add protocol version for iOS 9.3
