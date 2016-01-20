@@ -1,4 +1,30 @@
 =================
+WebKitGTK+ 2.10.5
+=================
+
+What's new in WebKitGTK+ 2.10.5?
+
+  - Disable DNS prefetch when a proxy is configured.
+  - Reduce the maximum simultaneous network connections to match other browsers.
+  - Make WebKitWebView always propagate motion-notify-event signal.
+  - Add a way to force accelerating compositing mode at runtime using an environment variable.
+  - Fix input elements and scrollbars rendering with GTK+ 3.19.
+  - Fix rendering of lines when using solid colors.
+  - Fix UI process crashes related to not having a main resource response when the load is
+    committed for pages restored from the history cache.
+  - Fix a WebProcess crash when loading large contents with custom URI schemes API.
+  - Fix a crash in the UI process when the WebView is destroyed while the screensaver DBus proxy
+    is being created.
+  - Fix WebProcess crashes due to BadDrawable X errors in accelerated compositing mode.
+  - Fix crashes on PPC64 due to mprotect() on address not aligned to the page size.
+  - Fix std::bad_function_call exception raised in dispatchDecidePolicyForNavigationAction.
+  - Fix downloads of data URLs.
+  - Fix runtime critical warnings when closing a page containing windowed plugins.
+  - Fix several crashes and rendering issues.
+  - Translation updates: French, German, Italian, Turkish.
+  - Security fixes: CVE-2015-7096, CVE-2015-7098.
+
+=================
 WebKitGTK+ 2.10.4
 =================
 

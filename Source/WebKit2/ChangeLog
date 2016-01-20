@@ -1,3 +1,9 @@
+2016-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.10.5 release.
+
+        * gtk/NEWS: Add release notes for 2.10.5
+
 2016-01-18  Olivier Blin  <olivier.blin@softathome.com>
 
         [EFL][GTK][WK2] Fix UIProcess build with GStreamer and without VIDEO
