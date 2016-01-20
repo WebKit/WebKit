@@ -1,3 +1,20 @@
+2016-01-20  Keith Miller  <keith_miller@apple.com>
+
+        TypedArray's .buffer does not return the JSArrayBuffer that was passed to it on creation.
+        https://bugs.webkit.org/show_bug.cgi?id=153281
+
+        Reviewed by Geoffrey Garen.
+
+        When creating an JSArrayBuffer we should make sure that the backing ArrayBuffer uses the
+        new JSArrayBuffer as its wrapper. This causes issues when we get the buffer of a Typed Array
+        created by passing a JSArrayBuffer as the backing ArrayBuffer does not have a reference to
+        the original JSArrayBuffer and a new object is created.
+
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::finishCreation):
+        * tests/stress/typedarray-buffer-neutered.js: Added.
+        (arrays.typedArrays.map):
+
 2016-01-20  Andreas Kling  <akling@apple.com>
 
         Pack RegisterAtOffset harder.

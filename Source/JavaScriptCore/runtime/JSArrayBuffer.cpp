@@ -44,6 +44,7 @@ void JSArrayBuffer::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     vm.heap.addReference(this, m_impl);
+    m_impl->m_wrapper = this;
 }
 
 JSArrayBuffer* JSArrayBuffer::create(
