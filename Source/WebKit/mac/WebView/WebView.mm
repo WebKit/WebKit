@@ -6605,6 +6605,10 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 {
 }
 
+- (void)showCandidates:(NSArray<NSTextCheckingResult *> *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString view:(NSView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock
+{
+}
+
 @end
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
 

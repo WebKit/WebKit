@@ -1169,7 +1169,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
         rectForSelectionCandidates = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     auto weakEditor = m_weakPtrFactory.createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] showCandidates:candidates forString:frame->editor().stringForCandidateRequest() inRect:rectForSelectionCandidates view:m_webView completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
+    [m_webView showCandidates:candidates forString:frame->editor().stringForCandidateRequest() inRect:rectForSelectionCandidates view:m_webView completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakEditor)
                 return;
