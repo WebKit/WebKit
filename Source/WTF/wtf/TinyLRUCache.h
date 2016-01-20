@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AtomicStringKeyedMRUCache_h
-#define AtomicStringKeyedMRUCache_h
+#ifndef TinyLRUCache_h
+#define TinyLRUCache_h
 
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-template<typename T, size_t capacity = 4>
-class AtomicStringKeyedMRUCache {
+template<typename KeyType, typename ValueType>
+struct TinyLRUCachePolicy {
+    static bool isKeyNull(const KeyType&) { return false; }
+    static ValueType createValueForNullKey() { return { }; }
+    static ValueType createValueForKey(const KeyType&) { return { }; }
+};
+
+template<typename KeyType, typename ValueType, size_t capacity = 4>
+class TinyLRUCache {
 public:
-    T get(const AtomicString& key)
+    const ValueType& get(const KeyType& key)
     {
-        if (key.isNull()) {
-            static NeverDestroyed<T> valueForNull(createValueForNullKey());
+        if (TinyLRUCachePolicy<KeyType, ValueType>::isKeyNull(key)) {
+            static NeverDestroyed<ValueType> valueForNull = TinyLRUCachePolicy<KeyType, ValueType>::createValueForNullKey();
             return valueForNull;
         }
 
         for (size_t i = 0; i < m_cache.size(); ++i) {
-            if (m_cache[i].first == key) {
-                size_t foundIndex = i;
-                if (foundIndex + 1 < m_cache.size()) {
-                    Entry entry = m_cache[foundIndex];
-                    m_cache.remove(foundIndex);
-                    foundIndex = m_cache.size();
-                    m_cache.append(entry);
-                }
-                return m_cache[foundIndex].second;
-            }
+            if (m_cache[i].first != key)
+                continue;
+
+            if (i == m_cache.size() - 1)
+                return m_cache[i].second;
+
+            // If the entry is not the last one, move it to the end of the cache.
+            Entry entry = WTFMove(m_cache[i]);
+            m_cache.remove(i);
+            m_cache.append(WTFMove(entry));
+            return m_cache[m_cache.size() - 1].second;
         }
+
+        // m_cache[0] is the LRU entry, so remove it.
         if (m_cache.size() == capacity)
             m_cache.remove(0);
 
-        m_cache.append(std::make_pair(key, createValueForKey(key)));
+        m_cache.append(std::make_pair(key, TinyLRUCachePolicy<KeyType, ValueType>::createValueForKey(key)));
         return m_cache.last().second;
     }
 
 private:
-    T createValueForNullKey();
-    T createValueForKey(const AtomicString&);
-
-    typedef std::pair<AtomicString, T> Entry;
+    typedef std::pair<KeyType, ValueType> Entry;
     typedef Vector<Entry, capacity> Cache;
     Cache m_cache;
 };
 
 }
 
-#endif // AtomicStringKeyedMRUCache_h
+#endif // TinyLRUCache_h

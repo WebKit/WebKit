@@ -1,3 +1,31 @@
+2016-01-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Refactor AtomicStringKeyedMRUCache to be a generic LRU cache
+        https://bugs.webkit.org/show_bug.cgi?id=153109
+
+        Reviewed by Darin Adler.
+
+        Replace the template specialization of AtomicStringKeyedMRUCache with
+        template derived from TinyLRUCachePolicy. Override the functions which
+        are needed for creating the values and the null value. Also replace the
+        static function which was returning a NeverDestroyed AtomicStringKeyedMRUCache
+        with a singleton function 'cache' inside the derived template.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/AtomicStringKeyedMRUCache.h: Removed.
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::canHyphenate):
+        (WebCore::lastHyphenLocation):
+        (WebCore::AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>::createValueForNullKey): Deleted.
+        (WebCore::AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>::createValueForKey): Deleted.
+        (WebCore::cfLocaleCache): Deleted.
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::countLeadingSpaces):
+        (WebCore::lastHyphenLocation):
+        (WebCore::AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForNullKey): Deleted.
+        (WebCore::AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForKey): Deleted.
+        (WebCore::hyphenDictionaryCache): Deleted.
+
 2016-01-20  Chris Dumez  <cdumez@apple.com>
 
         Drop support for obsolete Node.isSupported()

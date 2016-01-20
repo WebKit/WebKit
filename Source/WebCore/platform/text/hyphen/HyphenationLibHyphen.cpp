@@ -29,11 +29,11 @@
 
 #if USE(LIBHYPHEN)
 
-#include "AtomicStringKeyedMRUCache.h"
 #include "FileSystem.h"
 #include <hyphen.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TinyLRUCache.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
@@ -167,22 +167,30 @@ private:
 };
 
 template<>
-RefPtr<HyphenationDictionary> AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForNullKey()
+class TinyLRUCachePolicy<AtomicString, RefPtr<HyphenationDictionary>>
 {
-    return HyphenationDictionary::createNull();
-}
+public:
+    static TinyLRUCache<AtomicString, RefPtr<HyphenationDictionary>>& cache()
+    {
+        static NeverDestroyed<TinyLRUCache<AtomicString, RefPtr<HyphenationDictionary>>> cache;
+        return cache;
+    }
 
-template<>
-RefPtr<HyphenationDictionary> AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForKey(const AtomicString& dictionaryPath)
-{
-    return HyphenationDictionary::create(fileSystemRepresentation(dictionaryPath.string()));
-}
+    static bool isKeyNull(const AtomicString& localeIdentifier)
+    {
+        return localeIdentifier.isNull();
+    }
 
-static AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>& hyphenDictionaryCache()
-{
-    static NeverDestroyed<AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>> cache;
-    return cache;
-}
+    static RefPtr<HyphenationDictionary> createValueForNullKey()
+    {
+        return HyphenationDictionary::createNull();
+    }
+
+    static RefPtr<HyphenationDictionary> createValueForKey(const AtomicString& dictionaryPath)
+    {
+        return HyphenationDictionary::create(fileSystemRepresentation(dictionaryPath.string()));
+    }
+};
 
 static void countLeadingSpaces(const CString& utf8String, int32_t& pointerOffset, int32_t& characterOffset)
 {
@@ -225,7 +233,7 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomicStr
     String lowercaseLocaleIdentifier = AtomicString(localeIdentifier.string().convertToASCIILowercase());
     ASSERT(availableLocales().contains(lowercaseLocaleIdentifier));
     for (const auto& dictionaryPath : availableLocales().get(lowercaseLocaleIdentifier)) {
-        RefPtr<HyphenationDictionary> dictionary = hyphenDictionaryCache().get(AtomicString(dictionaryPath));
+        RefPtr<HyphenationDictionary> dictionary = TinyLRUCachePolicy<AtomicString, RefPtr<HyphenationDictionary>>::cache().get(AtomicString(dictionaryPath));
 
         char** replacements = nullptr;
         int* positions = nullptr;

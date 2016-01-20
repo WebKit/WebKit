@@ -1,3 +1,22 @@
+2016-01-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Refactor AtomicStringKeyedMRUCache to be a generic LRU cache
+        https://bugs.webkit.org/show_bug.cgi?id=153109
+
+        Reviewed by Darin Adler.
+
+        Refactor AtomicStringKeyedMRUCache, move it to WTF project and rename it
+        to be TinyLRUCache. Define another template and call it TinyLRUCachePolicy.
+        This one can be overridden for different keys and values. Its function is 
+        creating the cached values.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/TinyLRUCache.h: Added.
+        (WebCore::TinyLRUCachePolicy::isKeyNull):
+        (WebCore::TinyLRUCachePolicy::createValueForNullKey):
+        (WebCore::TinyLRUCachePolicy::createValueForKey):
+        (WebCore::TinyLRUCache::get):
+
 2016-01-19  Saam barati  <sbarati@apple.com>
 
         WTF::Bag should be non-copyable
