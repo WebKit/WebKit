@@ -1,5 +1,17 @@
 2016-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r195089. rdar://problem/24101168
+
+    2016-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Test gardening after r195088
+
+            Unreviewed.
+
+            * http/tests/contentextensions/font-display-none-repeated-layout-expected.txt:
+
+2016-01-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r195088. rdar://problem/24101168
 
     2016-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
