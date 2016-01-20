@@ -145,8 +145,8 @@ private:
     virtual void refView() override;
     virtual void derefView() override;
 
-#if ENABLE(VIDEO)
-    virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    virtual bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
 #endif
 
     // Members of PageClientImpl class
