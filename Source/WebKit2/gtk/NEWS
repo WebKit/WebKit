@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 2.11.4
+=================
+
+What's new in WebKitGTK+ 2.11.4?
+
+  - Prefer to link to LLVM shared libraries when building with FTL enabled.
+  - Fix runtime errors when serializing/deserializing session state.
+  - Fix critical warnings when loading a URL after a session restore.
+  - Fix the build with GTK+ < 3.14.
+  - Fix the build with video support disabled.
+
+=================
 WebKitGTK+ 2.11.3
 =================
 
