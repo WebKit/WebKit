@@ -1,3 +1,13 @@
+2016-01-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Follow up to r195361. Removing ios-simulator-wk2 fast/viewport/ios directory pass expectation, explicitly re-enabling passing tests
+        https://bugs.webkit.org/show_bug.cgi?id=153110
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-01-20  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Date.prototype.toLocaleTimeString in ECMA-402
