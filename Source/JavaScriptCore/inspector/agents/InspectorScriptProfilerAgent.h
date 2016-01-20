@@ -72,7 +72,9 @@ private:
     RefPtr<ScriptProfilerBackendDispatcher> m_backendDispatcher;
     InspectorEnvironment& m_environment;
     bool m_tracking { false };
+#if ENABLE(SAMPLING_PROFILER)
     bool m_enabledSamplingProfiler { false };
+#endif
     bool m_activeEvaluateScript { false };
 };
 
