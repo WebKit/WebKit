@@ -292,7 +292,6 @@ BuildbotQueueView.prototype = {
             fragment.appendChild(content);
             shouldAddPlusSign = true;
         }
-        console.assert(fragment.childNodes.length);
         return fragment;
     },
 

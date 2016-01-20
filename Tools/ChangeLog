@@ -1,3 +1,17 @@
+2016-01-19  Jason Marcell  <jmarcell@apple.com>
+
+        Remove assertion from revisionContentForIteration that is causing errors on the dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=153262
+
+        Reviewed by Alexey Proskuryakov.
+
+        Occasionaly some buildbot iterations will not have their "got_revisions" property populated. In
+        such cases this revisionContentForIteration method does not have any content to return, thus the
+        assertion fails.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype.revisionContentForIteration): Removed assertion that was causing errors.
+
 2016-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Runtime critical warnings when loading a URL after a session restore
