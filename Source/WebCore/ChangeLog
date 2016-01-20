@@ -1,3 +1,9 @@
+2016-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Mac] Speculative cmake buildfix after r195317.
+
+        * PlatformMac.cmake:
+
 2016-01-19  Chris Dumez  <cdumez@apple.com>
 
         DocumentType.publicId / systemId should never return null
