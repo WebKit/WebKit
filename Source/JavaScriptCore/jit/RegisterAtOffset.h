@@ -70,7 +70,7 @@ public:
 
 private:
     Reg m_reg;
-    ptrdiff_t m_offset;
+    ptrdiff_t m_offset : sizeof(ptrdiff_t) * 8 - sizeof(Reg) * 8;
 };
 
 } // namespace JSC

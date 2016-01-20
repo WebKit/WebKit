@@ -1,3 +1,19 @@
+2016-01-20  Andreas Kling  <akling@apple.com>
+
+        Pack RegisterAtOffset harder.
+        <https://webkit.org/b/152501>
+
+        Reviewed by Michael Saboff.
+
+        Pack the register index and the offset into a single pointer-sized word instead of two.
+        This reduces memory consumption by 620 kB on mobile theverge.com.
+
+        The packing doesn't succeed on MSVC for some reason, so I've left out the static
+        assertion about class size in those builds.
+
+        * jit/RegisterAtOffset.cpp:
+        * jit/RegisterAtOffset.h:
+
 2016-01-20  Per Arne Vollan  <peavo@outlook.com>
 
         [B3][Win64] Compile fix.

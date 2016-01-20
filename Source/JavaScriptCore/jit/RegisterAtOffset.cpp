@@ -30,6 +30,10 @@
 
 namespace JSC {
 
+#if !COMPILER(MSVC)
+static_assert(sizeof(RegisterAtOffset) == sizeof(ptrdiff_t), "RegisterAtOffset should be small.");
+#endif
+
 void RegisterAtOffset::dump(PrintStream& out) const
 {
     out.print(reg(), " at ", offset());
