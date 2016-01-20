@@ -31,54 +31,31 @@ function toLocaleString(/* locales, options */)
 
     function toDateTimeOptionsAnyAll(opts)
     {
-        // ToDateTimeOptions abstract operation (ECMA-402 2.0)
-        // http://ecma-international.org/publications/standards/Ecma-402.htm
+        // ToDateTimeOptions(options, "any", "all")
+        // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
 
-        // 1. If options is undefined, then let options be null, else let options be ToObject(options).
-        // 2. ReturnIfAbrupt(options).
-        var optObj;
+        var options;
         if (opts === undefined)
-            optObj = null;
+            options = null;
         else if (opts === null)
             throw new @TypeError("null is not an object");
         else
-            optObj = @Object(opts);
+            options = @Object(opts);
 
-        // 3. Let options be ObjectCreate(options).
-        var options = @Object.create(optObj);
-
-        // 4. Let needDefaults be true.
-        // 5. If required is "date" or "any",
-        // a. For each of the property names "weekday", "year", "month", "day":
-        // i. Let prop be the property name.
-        // ii. Let value be Get(options, prop).
-        // iii. ReturnIfAbrupt(value).
-        // iv. If value is not undefined, then let needDefaults be false.
-        // 6. If required is "time" or "any",
-        // a. For each of the property names "hour", "minute", "second":
-        // i. Let prop be the property name.
-        // ii. Let value be Get(options, prop).
-        // iii. ReturnIfAbrupt(value).
-        // iv. If value is not undefined, then let needDefaults be false.
-        // Check optObj instead of options to reduce lookups up the prototype chain.
-        var needsDefaults = !optObj || (
-            optObj.weekday === undefined &&
-            optObj.year === undefined &&
-            optObj.month === undefined &&
-            optObj.day === undefined &&
-            optObj.hour === undefined &&
-            optObj.minute === undefined &&
-            optObj.second === undefined
+        // Check original instead of descendant to reduce lookups up the prototype chain.
+        var needsDefaults = !options || (
+            options.weekday === undefined &&
+            options.year === undefined &&
+            options.month === undefined &&
+            options.day === undefined &&
+            options.hour === undefined &&
+            options.minute === undefined &&
+            options.second === undefined
         );
 
-        // 7. If needDefaults is true and defaults is either "date" or "all", then a. For each of the property names "year", "month", "day":
-        // i. Let status be CreateDatePropertyOrThrow(options, prop, "numeric").
-        // ii. ReturnIfAbrupt(status).
-        // 8. If needDefaults is true and defaults is either "time" or "all", then
-        // a. For each of the property names "hour", "minute", "second":
-        // i. Let status be CreateDatePropertyOrThrow(options, prop, "numeric").
-        // ii. ReturnIfAbrupt(status).
+        // Only create descendant if it will have own properties.
         if (needsDefaults) {
+            options = @Object.create(options)
             options.year = "numeric";
             options.month = "numeric";
             options.day = "numeric";
@@ -92,25 +69,65 @@ function toLocaleString(/* locales, options */)
     }
 
     // 13.3.1 Date.prototype.toLocaleString ([locales [, options ]]) (ECMA-402 2.0)
-    // http://ecma-international.org/publications/standards/Ecma-402.htm
+    // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleString
 
-    // 1. Let x be thisTimeValue(this value).
-    // 2. ReturnIfAbrupt(x).
     var value = @thisTimeValue.@call(this);
-
-    // 3. If x is NaN, return "Invalid Date".
     if (@isNaN(value))
         return "Invalid Date";
 
-    // 4. Let options be ToDateTimeOptions(options, "any", "all").
-    // 5. ReturnIfAbrupt(options).
     var options = toDateTimeOptionsAnyAll(arguments[1]);
-
-    // 6. Let dateFormat be Construct(%DateTimeFormat%, «locales, options»).
-    // 7. ReturnIfAbrupt(dateFormat).
     var locales = arguments[0];
-    var dateFormat = new @DateTimeFormat(locales, options);
 
-    // 8. Return FormatDateTime(dateFormat, x).
+    var dateFormat = new @DateTimeFormat(locales, options);
+    return dateFormat.format(value);
+}
+
+function toLocaleDateString(/* locales, options */)
+{
+    "use strict";
+
+    function toDateTimeOptionsDateDate(opts)
+    {
+        // ToDateTimeOptions(options, "date", "date")
+        // http://www.ecma-international.org/ecma-402/2.0/#sec-InitializeDateTimeFormat
+
+        var options;
+        if (opts === undefined)
+            options = null;
+        else if (opts === null)
+            throw new @TypeError("null is not an object");
+        else
+            options = @Object(opts);
+
+        // Check original instead of descendant to reduce lookups up the prototype chain.
+        var needsDefaults = !options || (
+            options.weekday === undefined &&
+            options.year === undefined &&
+            options.month === undefined &&
+            options.day === undefined
+        );
+
+        // Only create descendant if it will have own properties.
+        if (needsDefaults) {
+            options = @Object.create(options)
+            options.year = "numeric";
+            options.month = "numeric";
+            options.day = "numeric";
+        }
+
+        return options;
+    }
+
+    // 13.3.2 Date.prototype.toLocaleDateString ([locales [, options ]]) (ECMA-402 2.0)
+    // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleDateString
+
+    var value = @thisTimeValue.@call(this);
+    if (@isNaN(value))
+        return "Invalid Date";
+
+    var options = toDateTimeOptionsDateDate(arguments[1]);
+    var locales = arguments[0];
+
+    var dateFormat = new @DateTimeFormat(locales, options);
     return dateFormat.format(value);
 }

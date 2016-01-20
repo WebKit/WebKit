@@ -493,6 +493,7 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 #if ENABLE(INTL)
     JSC_BUILTIN_FUNCTION("toLocaleString", datePrototypeToLocaleStringCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION("toLocaleDateString", datePrototypeToLocaleDateStringCodeGenerator, DontEnum);
 #else
     UNUSED_PARAM(globalObject);
 #endif // ENABLE(INTL)

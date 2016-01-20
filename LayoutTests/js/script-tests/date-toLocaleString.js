@@ -35,3 +35,40 @@ shouldThrow("new Date(0).toLocaleString('en', null)", "'TypeError: null is not a
 shouldBeEqualToString("new Date(0).toLocaleString('en', { timeZone: 'UTC', hour:'numeric', minute:'2-digit' })", "12:00 AM");
 shouldBeEqualToString("new Date(0).toLocaleString('en', { timeZone: 'UTC', year:'numeric', month:'long' })", "January 1970");
 
+// Test toLocaleDateString ()
+shouldBe("Date.prototype.toLocaleDateString.length", "0");
+shouldBeFalse("Object.getOwnPropertyDescriptor(Date.prototype, 'toLocaleDateString').enumerable");
+shouldBeTrue("Object.getOwnPropertyDescriptor(Date.prototype, 'toLocaleDateString').configurable");
+shouldBeTrue("Object.getOwnPropertyDescriptor(Date.prototype, 'toLocaleDateString').writable");
+
+// Test thisTimeValue abrupt completion.
+shouldNotThrow("Date.prototype.toLocaleDateString.call(new Date)");
+shouldThrow("Date.prototype.toLocaleDateString.call()");
+shouldThrow("Date.prototype.toLocaleDateString.call(undefined)");
+shouldThrow("Date.prototype.toLocaleDateString.call(null)");
+shouldThrow("Date.prototype.toLocaleDateString.call(0)");
+shouldThrow("Date.prototype.toLocaleDateString.call(NaN)");
+shouldThrow("Date.prototype.toLocaleDateString.call(Infinity)");
+shouldThrow("Date.prototype.toLocaleDateString.call('1')");
+shouldThrow("Date.prototype.toLocaleDateString.call({})");
+shouldThrow("Date.prototype.toLocaleDateString.call([])");
+shouldThrow("Date.prototype.toLocaleDateString.call(Symbol())");
+
+shouldBeTrue("typeof new Date().toLocaleDateString() === 'string'");
+
+shouldBeEqualToString("new Date(NaN).toLocaleDateString()", "Invalid Date");
+
+// Test for DateTimeFormat behavior.
+// Test that locale parameter is passed through properly.
+shouldThrow("new Date().toLocaleDateString('i')");
+shouldBeEqualToString("new Date(0).toLocaleDateString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' })", "一九七〇/一/一");
+
+// Defaults to mdy
+shouldBeEqualToString("new Date(0).toLocaleDateString('en', { timeZone: 'UTC' })", "1/1/1970");
+
+// Test that options parameter is passed through properly.
+shouldThrow("new Date(0).toLocaleDateString('en', null)", "'TypeError: null is not an object'");
+// Adds mdy if no date formats specified.
+shouldBeEqualToString("new Date(0).toLocaleDateString('en', { timeZone: 'UTC', hour:'numeric', minute:'2-digit' })", "1/1/1970, 12:00 AM");
+// If any date formats specified, just use them.
+shouldBeEqualToString("new Date(0).toLocaleDateString('en', { timeZone: 'UTC', year:'numeric', month:'long' })", "January 1970");

@@ -1,3 +1,25 @@
+2016-01-19  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Date.prototype.toLocaleDateString in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147612
+
+        Reviewed by Benjamin Poulain.
+
+        Implement toLocaleDateString in builtin JavaScript. Remove comments with
+        spec steps, and instead link to the new HTML version of the spec.
+
+        Avoids creating an extra empty object in the prototype chain of the options
+        object in ToDateTimeOptions. The version used in toLocaleString was updated
+        to match as well.
+
+        * builtins/DatePrototype.js:
+        (toLocaleString.toDateTimeOptionsAnyAll):
+        (toLocaleString):
+        (toLocaleDateString.toDateTimeOptionsDateDate):
+        (toLocaleDateString):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+
 2016-01-19  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] fixSpillSlotZDef() crashes on ARM64

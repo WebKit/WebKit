@@ -1,3 +1,15 @@
+2016-01-19  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Date.prototype.toLocaleDateString in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147612
+
+        Reviewed by Benjamin Poulain.
+
+        Added tests for toLocaleDateString.
+
+        * js/date-toLocaleString-expected.txt:
+        * js/script-tests/date-toLocaleString.js:
+
 2016-01-19  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Split all storage/indexeddb/modern tests into separate HTML + JS format.
