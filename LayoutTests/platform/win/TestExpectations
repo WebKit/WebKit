@@ -3146,3 +3146,6 @@ fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
 media/video-seek-to-current-time.html [ Skip ]
 
 webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]
+
+# This test relies on iOS-specific font fallback.
+fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]

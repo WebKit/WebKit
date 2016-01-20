@@ -93,10 +93,11 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
     } else if (!fontData->platformData().isCompositeFontReference()) {
         // Because we know the implementation of shouldUseCoreText(), if the font isn't for text combine and it isn't a system font,
         // we know it must have vertical glyphs.
-        if (fontData->platformData().isForTextCombine() || fontData->isSystemFont())
-            CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
-        else
+        if (fontData->platformData().widthVariant() == RegularWidth)
             CTFontGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
+        else
+            CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength);
+
         // When buffer consists of surrogate pairs, CTFontGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
         // place the glyphs at indices corresponding to the first character of each pair.
         ASSERT(!(bufferLength % length) && (bufferLength / length == 1 || bufferLength / length == 2));
