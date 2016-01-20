@@ -1,5 +1,14 @@
 2016-01-19  Beth Dakin  <bdakin@apple.com>
 
+        32-bit build fix.
+
+        * WebView/WebView.mm:
+        (-[WebView updateWebViewAdditions]):
+        (-[WebView showCandidates:forString:inRect:view:completionHandler:]):
+        * WebView/WebViewInternal.h:
+
+2016-01-19  Beth Dakin  <bdakin@apple.com>
+
         Move away from NSSpellChecker's showCandidates method
         https://bugs.webkit.org/show_bug.cgi?id=153254
         -and corresponding-
