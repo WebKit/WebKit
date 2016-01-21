@@ -1,0 +1,34 @@
+Check that transactions that may overlap complete properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+db = event.target.result
+store = db.createObjectStore('store')
+store.put('value', 'key')
+
+runParallelTransactions():
+db = event.target.result
+
+transaction1 = db.transaction('store', 'readonly')
+transaction2 = db.transaction('store', 'readonly')
+transaction1GetSuccess = 0
+transaction2GetSuccess = 0
+
+onTransactionComplete():
+first transaction complete, still waiting...
+
+onTransactionComplete():
+PASS transaction1GetSuccess is non-zero.
+PASS transaction2GetSuccess is non-zero.
+db.close()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

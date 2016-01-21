@@ -671,6 +671,7 @@ webkit.org/b/145390 storage/indexeddb/events-private.html [ Failure ]
 webkit.org/b/145390 storage/indexeddb/removed.html [ Failure ]
 webkit.org/b/145390 storage/indexeddb/removed-private.html [ Failure ]
 
+webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792-private.html [ Pass Failure ]
 webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792.html [ Pass Failure ]
 
 # DumpRenderTree does not allow GIFs to animate, thus animated GIF tests don't work in WebKit1.

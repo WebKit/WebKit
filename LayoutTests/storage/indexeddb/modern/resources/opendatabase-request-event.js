@@ -1,12 +1,11 @@
 description("This test calls open on window.indexedDB in various ways, verifying that IDBOpenDBRequest objects are returned when expected and exceptions are thrown when expected.");
 
-
 function done()
 {
     finishJSTest();
 }
 
-var dbname = "TestDatabase" + Date();
+var dbname = setDBNameFromPath() + Date();
 
 try {
     window.indexedDB.open(dbname, 0);

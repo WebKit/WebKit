@@ -1,0 +1,40 @@
+This test exercises the readonly attributes on an IDBObjectStore.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+First upgrade needed: Old version - 0 New version - 1
+[object IDBTransaction] - versionchange
+[object IDBDatabase]
+TestObjectStore1
+TestObjectStore2
+true
+false
+foo
+null
+[object IDBTransaction]
+[object IDBTransaction]
+true
+true
+true
+Object store has indexes:
+Bar index
+Foo index
+After adding another, object store now has indexes:
+Bar index
+Baz index
+Foo index
+First version change transaction completed
+In a new transaction, object store has indexes:
+Bar index
+Baz index
+Foo index
+readonly transaction complete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

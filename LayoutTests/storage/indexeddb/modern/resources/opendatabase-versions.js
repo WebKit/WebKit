@@ -13,25 +13,22 @@ function done()
     finishJSTest();
 }
 
-var request = window.indexedDB.open("VersionTestDatabase");
-
 function openSuccessful()
 {
     debug("First version change successful");
 }
 
-var dbname;
+var dbname = setDBNameFromPath() + Date();
 function prepareDatabase(e)
 {
     var database = event.target.result;
-    dbname = database.name;
 
     event.target.onerror = function(e) {
         debug("Open request error (firstPhase) " + event.target.error.name);
     }
 
     debug("upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
-    debug(request.transaction);
+    debug(event.target.transaction);
     event.target.transaction.oncomplete = function()
     {
         debug("Version change complete (firstPhase). Database version is now - " + database.version);

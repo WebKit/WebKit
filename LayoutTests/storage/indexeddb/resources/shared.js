@@ -138,6 +138,7 @@ function setDBNameFromPath(suffix) {
     if (suffix)
         name += suffix;
     eval('dbname = "' + name + '"');
+    return name;
 }
 
 function preamble(evt)

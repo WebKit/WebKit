@@ -11,6 +11,7 @@ function done()
     finishJSTest();
 }
 
+var dbname;
 function prepareDatabase(event)
 {
     debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
@@ -19,7 +20,7 @@ function prepareDatabase(event)
 
     var versionTransaction = event.target.transaction;
     var database = event.target.result;
-    event.target.onerror = null;
+    dbname = database.name;
     
     versionTransaction.abort();
 
@@ -41,7 +42,7 @@ function prepareDatabase(event)
 
 function continueTest1()
 {
-    createRequest = window.indexedDB.open("VersionChangeAbortTestDatabase", 1);
+    createRequest = window.indexedDB.open(dbname, 1);
 
     createRequest.onupgradeneeded = function(event) {
         debug("Second upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
@@ -69,7 +70,7 @@ function continueTest1()
 
 function continueTest2()
 {
-    createRequest = window.indexedDB.open("VersionChangeAbortTestDatabase", 2);
+    createRequest = window.indexedDB.open(dbname, 2);
 
     createRequest.onupgradeneeded = function(event) {
         debug("Third upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
@@ -98,7 +99,7 @@ function continueTest2()
 
 function continueTest3()
 {
-    createRequest = window.indexedDB.open("VersionChangeAbortTestDatabase", 2);
+    createRequest = window.indexedDB.open(dbname, 2);
 
     createRequest.onupgradeneeded = function(event) {
         debug("Fourth upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);

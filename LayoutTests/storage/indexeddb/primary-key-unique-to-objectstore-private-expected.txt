@@ -1,0 +1,10 @@
+About to add person and note
+Successfully added person
+Successfully added note
+Successfully got person
+name
+id
+Successfully got note
+note
+uid
+

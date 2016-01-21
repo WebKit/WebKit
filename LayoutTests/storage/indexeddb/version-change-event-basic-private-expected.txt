@@ -1,0 +1,7 @@
+0 version: TypeError: Type error
+Negative version: TypeError: Value -1 is outside the range [0, 9007199254740991]
+String version: TypeError: Value NaN is outside the range [0, 9007199254740991]
+First request: 0 1
+Second request: 0 1
+Third request: 0 2
+

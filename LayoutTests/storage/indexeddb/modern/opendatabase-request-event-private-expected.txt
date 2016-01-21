@@ -1,0 +1,13 @@
+This test calls open on window.indexedDB in various ways, verifying that IDBOpenDBRequest objects are returned when expected and exceptions are thrown when expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Caught exception TypeError: Type error
+Caught exception TypeError: Value -1 is outside the range [0, 9007199254740991]
+[object IDBOpenDBRequest]
+upgradeneeded: old version - 0 new version - 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

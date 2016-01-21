@@ -12,7 +12,8 @@ function log(msg) {
     document.getElementById("logger").innerHTML += msg + "<br>";
 }
 
-var openRequest = indexedDB.open("pkutos", 1);
+var dbname = setDBNameFromPath();
+var openRequest = indexedDB.open(dbname, 1);
 
 openRequest.onupgradeneeded = function(e) {
     var thisDB = e.target.result;

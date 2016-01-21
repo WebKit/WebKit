@@ -1,6 +1,5 @@
 description("This test makes sure that IDBRequest.readyState returns expected values.");
 
-
 function done()
 {
     finishJSTest();
@@ -11,7 +10,8 @@ function log(message)
     debug(message);
 }
 
-var createRequest = window.indexedDB.open("RequestReadyStateDatabase" + Date(), 1);
+var dbname = setDBNameFromPath() + Date();
+var createRequest = window.indexedDB.open(dbname, 1);
 debug("After calling indexedDB.open(), create request readyState is: " + createRequest.readyState);
 
 createRequest.onupgradeneeded = function(event) {
