@@ -365,6 +365,10 @@ static inline bool shouldCacheSchemeIndefinitely(const String& scheme)
     if (equalIgnoringCase(scheme, "applewebdata"))
         return true;
 #endif
+#if USE(SOUP)
+    if (equalIgnoringCase(scheme, "resource"))
+        return true;
+#endif
     return equalIgnoringCase(scheme, "data");
 }
 
