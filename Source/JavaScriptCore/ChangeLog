@@ -1,5 +1,11 @@
 2016-01-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, undo DFGCommon.h change that accidentally enabled the B3 JIT.
+
+        * dfg/DFGCommon.h:
+
+2016-01-21  Filip Pizlo  <fpizlo@apple.com>
+
         Move32 should have an Imm, Tmp form
         https://bugs.webkit.org/show_bug.cgi?id=153313
 
