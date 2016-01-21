@@ -767,8 +767,7 @@ void GraphicsContext::drawImage(Image& image, const FloatRect& destination, cons
         return;
     }
 
-    // FIXME (49002): Should be InterpolationLow
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
     image.draw(*this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_orientationDescription);
 }
 
@@ -822,8 +821,7 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
     if (paintingDisabled())
         return;
 
-    // FIXME (49002): Should be InterpolationLow
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
     image.draw(*this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
 }
 
@@ -848,8 +846,7 @@ void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> imag
     if (paintingDisabled() || !image)
         return;
     
-    // FIXME (49002): Should be InterpolationLow
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
 
     ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
 }

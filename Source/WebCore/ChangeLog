@@ -1,3 +1,20 @@
+2016-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        GraphicsContext: low quality drawImage and drawImageBuffer should use InterpolationLow
+        https://bugs.webkit.org/show_bug.cgi?id=49002
+
+        Reviewed by Chris Dumez.
+
+        When using low quality image scaling for images which are getting painted often,
+        the code used InterpolationNone, which make the images look even worse than they should.
+
+        Not easily testable.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawImageBuffer):
+        (WebCore::GraphicsContext::drawConsumingImageBuffer):
+
 2016-01-19  Ada Chan  <adachan@apple.com>
 
         Make it possible to enable VIDEO_PRESENTATION_MODE on other Cocoa platforms.
