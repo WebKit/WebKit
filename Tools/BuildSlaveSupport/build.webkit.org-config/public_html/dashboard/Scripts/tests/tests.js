@@ -42,3 +42,97 @@ test("_appendPendingRevisionCount", function()
     var revisionsBehind = view.element.getElementsByClassName("message")[0].innerHTML.match(/.*(\d+) revision(|s) behind/)[1];
     equal(revisionsBehind, "1", "assert revisions behind");
 });
+
+module("BuildBotQueue", {
+    setup: function() {
+        this.queue = new MockBuildbotQueue();
+        this.queue.branches = [{
+            name: "trunk",
+            repository: {
+                name: "openSource",
+            }
+        }];
+    }
+});
+
+test("compareIterations by revisions", function()
+{
+    var finished = false;
+    var iteration1 = new BuildbotIteration(this.queue, 1, finished);
+    var iteration2 = new BuildbotIteration(this.queue, 2, finished);
+    iteration1.revision = { "openSource": 33018 };
+    iteration2.revision = { "openSource": 33019 };
+    iteration1.loaded = true;
+    iteration2.loaded = true;
+    ok(this.queue.compareIterations(iteration2, iteration1) < 0, "compareIterations: less than");
+    ok(this.queue.compareIterations(iteration1, iteration2) > 0, "compareIterations: greater than");
+    strictEqual(this.queue.compareIterations(iteration2, iteration2), 0, "compareIterations: equal");
+});
+
+test("compareIterations by loaded (one revision missing)", function()
+{
+    var finished = false;
+    var iteration1 = new BuildbotIteration(this.queue, 1, finished);
+    var iteration2 = new BuildbotIteration(this.queue, 2, finished);
+    iteration1.revision = {};
+    iteration2.revision = { "openSource": 33019 };
+    iteration1.loaded = false;
+    iteration2.loaded = true;
+    ok(this.queue.compareIterations(iteration1, iteration2) > 0, "compareIterations: greater than");
+    ok(this.queue.compareIterations(iteration2, iteration1) < 0, "compareIterations: less than");
+});
+
+test("compareIterations by loaded (same revision)", function()
+{
+    var finished = false;
+    var iteration1 = new BuildbotIteration(this.queue, 1, finished);
+    var iteration2 = new BuildbotIteration(this.queue, 2, finished);
+    iteration1.revision = { "openSource": 33019 };
+    iteration2.revision = { "openSource": 33019 };
+    iteration1.loaded = false;
+    iteration2.loaded = true;
+    ok(this.queue.compareIterations(iteration1, iteration2) > 0, "compareIterations: greater than");
+    ok(this.queue.compareIterations(iteration2, iteration1) < 0, "compareIterations: less than");
+});
+
+test("compareIterations by id (revisions not specified)", function()
+{
+    var finished = false;
+    var iteration1 = new BuildbotIteration(this.queue, 1, finished);
+    var iteration2 = new BuildbotIteration(this.queue, 2, finished);
+    iteration1.revision = {};
+    iteration2.revision = {};
+    iteration1.loaded = false;
+    iteration2.loaded = false;
+    ok(this.queue.compareIterations(iteration2, iteration1) < 0, "compareIterations: less than");
+    ok(this.queue.compareIterations(iteration1, iteration2) > 0, "compareIterations: greater than");
+    strictEqual(this.queue.compareIterations(iteration2, iteration2), 0, "compareIterations: equal");
+});
+
+test("compareIterations by id (same revision)", function()
+{
+    var finished = false;
+    var iteration1 = new BuildbotIteration(this.queue, 1, finished);
+    var iteration2 = new BuildbotIteration(this.queue, 2, finished);
+    iteration1.revision = { "openSource": 33019 };
+    iteration2.revision = { "openSource": 33019 };
+    iteration1.loaded = false;
+    iteration2.loaded = false;
+    ok(this.queue.compareIterations(iteration2, iteration1) < 0, "compareIterations: less than");
+    ok(this.queue.compareIterations(iteration1, iteration2) > 0, "compareIterations: greater than");
+    strictEqual(this.queue.compareIterations(iteration2, iteration2), 0, "compareIterations: equal");
+});
+
+test("compareIterationsByRevisions", function()
+{
+    var finished = false;
+    var iteration1 = new BuildbotIteration(this.queue, 1, finished);
+    var iteration2 = new BuildbotIteration(this.queue, 2, finished);
+    iteration1.revision = { "openSource": 33018 };
+    iteration2.revision = { "openSource": 33019 };
+    iteration1.loaded = true;
+    iteration2.loaded = false;
+    ok(this.queue.compareIterationsByRevisions(iteration2, iteration1) < 0, "compareIterationsByRevisions: less than");
+    ok(this.queue.compareIterationsByRevisions(iteration1, iteration2) > 0, "compareIterationsByRevisions: greater than");
+    strictEqual(this.queue.compareIterationsByRevisions(iteration2, iteration2), 0, "compareIterationsByRevisions: equal");
+});
