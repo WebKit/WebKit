@@ -1,3 +1,16 @@
+2016-01-21  Julien Isorce  <j.isorce@samsung.com>
+
+        Ensure to use compatible liborc version with wanted gstreamer version
+        https://bugs.webkit.org/show_bug.cgi?id=153276
+
+        For example gst-plugins-base-1.4.4 fails to build with liborc-0.4.24.
+        The user may have a very recent liborc installed on his system.
+
+        Reviewed by Philippe Normand.
+
+        * efl/jhbuild.modules: add liborc-0.4.17 and make it a gst dependency.
+        * gtk/jhbuild.modules: add liborc-0.4.17 and make it a gst depencendy.
+
 2016-01-21  Nan Wang  <n_wang@apple.com>
 
         AX: [IOS] Implement next/previous text marker functions using TextIterator

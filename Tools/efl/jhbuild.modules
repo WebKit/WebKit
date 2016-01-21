@@ -239,7 +239,17 @@
             md5sum="9c0cfef285d5c4a5c80d00904ddab380"/>
   </autotools>
 
+  <autotools id="orc" autogenargs="--disable-gtk-doc" autogen-sh="configure">
+    <branch module="orc/orc-0.4.17.tar.gz" version="0.4.17"
+            repo="gstreamer"
+            hash="sha256:4fc7cca48c59fff23afee78fb642cdbde001f56401c8f47b95a16578d1d5d7e8"
+            md5sum="af1bf3dab9e69f3c36f389285e2a12a1"/>
+  </autotools>
+
   <autotools id="gstreamer" autogenargs="--disable-gtk-doc" autogen-sh="configure">
+    <dependencies>
+      <dep package="orc"/>
+    </dependencies>
     <branch module="gstreamer/gstreamer-1.4.4.tar.xz" version="1.4.4"
             repo="gstreamer"
             hash="sha256:f0e305d91a93d05bf9e332cd4256ca07d77f5186a4d73847b7ae6db218f2c237"
