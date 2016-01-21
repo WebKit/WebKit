@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #ifndef WebVideoFullscreenInterface_h
 #define WebVideoFullscreenInterface_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include <wtf/Vector.h>
 
@@ -36,7 +35,10 @@ class String;
 }
 
 namespace WebCore {
-    
+
+bool supportsPictureInPicture();
+
+#if PLATFORM(IOS)
 class TimeRanges;
 
 class WebVideoFullscreenInterface {
@@ -47,7 +49,7 @@ public:
     virtual void resetMediaState() = 0;
     virtual void setDuration(double) = 0;
     virtual void setCurrentTime(double currentTime, double anchorTime) = 0;
-    virtual void setBufferedTime(double bufferedTime) = 0;
+    virtual void setBufferedTime(double) = 0;
     virtual void setRate(bool isPlaying, float playbackRate) = 0;
     virtual void setVideoDimensions(bool hasVideo, float width, float height) = 0;
     virtual void setSeekableRanges(const TimeRanges&) = 0;
@@ -57,6 +59,7 @@ public:
     virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) = 0;
     virtual void setWirelessVideoPlaybackDisabled(bool) = 0;
 };
+#endif
 
 }
 

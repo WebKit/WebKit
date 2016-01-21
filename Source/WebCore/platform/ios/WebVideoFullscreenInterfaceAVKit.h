@@ -161,8 +161,6 @@ protected:
     void doEnterFullscreen();
 };
 
-bool supportsPictureInPicture();
-
 }
 
 #endif

@@ -1,3 +1,12 @@
+2016-01-19  Ada Chan  <adachan@apple.com>
+
+        Make it possible to enable VIDEO_PRESENTATION_MODE on other Cocoa platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=153218
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-01-21  Per Arne Vollan  <peavo@outlook.com>
 
         [B3][CMake] Add missing source file.

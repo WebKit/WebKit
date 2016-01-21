@@ -1,3 +1,33 @@
+2016-01-19  Ada Chan  <adachan@apple.com>
+
+        Make it possible to enable VIDEO_PRESENTATION_MODE on other Cocoa platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=153218
+
+        Reviewed by Eric Carlson.
+
+        No new tests. Code refactoring.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        Move WebVideoFullscreenInterface.h from ios to cocoa.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitSupportsPresentationMode):
+        The declaration of supportsPictureInPicture() has been moved to WebVideoFullscreenInterface.h
+        so include that header instead. Guard the supportsPictureInPicture() call with PLATFORM(COCOA)
+        as that method is only defined in Cocoa.
+        * platform/cocoa/WebVideoFullscreenInterface.h: Renamed from Source/WebCore/platform/ios/WebVideoFullscreenInterface.h.
+        Also move the declaration of supportsPictureInPicture() here.
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        Implementations of methods related to the video fullscreen layer are now guarded by
+        PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)) instead.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        Declaration of supportsPictureInPicture() has been moved to WebVideoFullscreenInterface.h
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm: Added.
+        (WebCore::supportsPictureInPicture):
+        Return false for now.
+
 2016-01-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         A crash reproducible in Path::isEmpty() under RenderSVGShape::paint()

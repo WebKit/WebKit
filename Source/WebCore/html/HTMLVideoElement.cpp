@@ -45,7 +45,7 @@
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-#include "WebVideoFullscreenInterfaceAVKit.h"
+#include "WebVideoFullscreenInterface.h"
 #endif
 
 namespace WebCore {
@@ -373,8 +373,14 @@ bool HTMLVideoElement::webkitSupportsPresentationMode(const String& mode) const
     if (mode == presentationModeFullscreen())
         return mediaSession().fullscreenPermitted(*this) && supportsFullscreen();
 
-    if (mode == presentationModePictureInPicture())
-        return supportsPictureInPicture() && mediaSession().allowsPictureInPicture(*this) && supportsFullscreen();
+    if (mode == presentationModePictureInPicture()) {
+#if PLATFORM(COCOA)
+        if (!supportsPictureInPicture())
+            return false;
+#endif
+
+        return mediaSession().allowsPictureInPicture(*this) && supportsFullscreen();
+    }
 
     if (mode == presentationModeInline())
         return !mediaSession().requiresFullscreenForVideoPlayback(*this);
