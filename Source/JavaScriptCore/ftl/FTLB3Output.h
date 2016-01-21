@@ -158,16 +158,32 @@ public:
     LValue doubleAbs(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Abs, origin(), value); }
     LValue doubleCeil(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Ceil, origin(), operand); }
 
-    LValue doubleSin(LValue value) { return callWithoutSideEffects(B3::Double, sin, value); }
-    LValue doubleCos(LValue value) { return callWithoutSideEffects(B3::Double, cos, value); }
+    LValue doubleSin(LValue value)
+    {
+        double (*sinDouble)(double) = sin;
+        return callWithoutSideEffects(B3::Double, sinDouble, value);
+    }
+    LValue doubleCos(LValue value)
+    {
+        double (*cosDouble)(double) = cos;
+        return callWithoutSideEffects(B3::Double, cosDouble, value);
+    }
 
-    LValue doublePow(LValue xOperand, LValue yOperand) { return callWithoutSideEffects(B3::Double, pow, xOperand, yOperand); }
+    LValue doublePow(LValue xOperand, LValue yOperand)
+    {
+        double (*powDouble)(double, double) = pow;
+        return callWithoutSideEffects(B3::Double, powDouble, xOperand, yOperand);
+    }
 
     LValue doublePowi(LValue xOperand, LValue yOperand);
 
     LValue doubleSqrt(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Sqrt, origin(), value); }
 
-    LValue doubleLog(LValue value) { return callWithoutSideEffects(B3::Double, log, value); }
+    LValue doubleLog(LValue value)
+    {
+        double (*logDouble)(double) = log;
+        return callWithoutSideEffects(B3::Double, logDouble, value);
+    }
 
     static bool hasSensibleDoubleToInt();
     LValue doubleToInt(LValue);
