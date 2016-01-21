@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Tests that navigator.geolocation.getCurrentPosition() returns error POSITION_UNAVAILABLE when called from a document in a sandboxed iframe.</p>
+<iframe src="resources/sandboxed-iframe-geolocation-getCurrentPosition.html" sandbox="allow-scripts" width="100%" height="300"></iframe>
+</body>
+</html>

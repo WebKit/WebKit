@@ -1,0 +1,9 @@
+Tests that navigator.geolocation.getCurrentPosition() returns error POSITION_UNAVAILABLE when called from a srcdoc.
+
+
+
+--------
+Frame: 'frame'
+--------
+FAIL should have invoked error callback, but invoked success callback.
+

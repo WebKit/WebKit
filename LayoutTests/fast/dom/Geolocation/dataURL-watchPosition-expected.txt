@@ -1,0 +1,3 @@
+PASS error.code is error.POSITION_UNAVAILABLE.
+PASS error.message is "Origin does not have permission to use Geolocation service".
+
