@@ -1351,6 +1351,11 @@ public:
     {
         m_assembler.movl_rr(src, dest);
     }
+
+    void zeroExtend32ToPtr(TrustedImm32 src, RegisterID dest)
+    {
+        m_assembler.movl_i32r(src.m_value, dest);
+    }
 #else
     void move(RegisterID src, RegisterID dest)
     {

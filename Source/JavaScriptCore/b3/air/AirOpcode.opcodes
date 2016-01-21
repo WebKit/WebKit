@@ -431,6 +431,7 @@ Move32 U:G:32, ZD:G:32
     Index, Tmp as load32
     Tmp, Addr as store32
     Tmp, Index as store32
+    x86: Imm, Tmp as zeroExtend32ToPtr
     x86: Imm, Addr as store32
     x86: Imm, Index as store32
 
