@@ -2301,3 +2301,6 @@ accessibility/content-editable-as-textarea.html [ Missing ]
 
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
+
+# This test relies on iOS-specific font fallback.
+fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
