@@ -1,0 +1,3 @@
+
+FAIL IndexedDB inside of a WebWorker  assert_equals: worker has idb object expected true but got false
+

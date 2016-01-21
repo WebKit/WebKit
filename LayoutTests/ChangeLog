@@ -1,3 +1,12 @@
+2016-01-21  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Make -private copies of each w3c IDB test.
+        https://bugs.webkit.org/show_bug.cgi?id=153319
+
+        Reviewed by Alex Christensen.
+
+        * platform/wk2/TestExpectations:
+
 2016-01-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove a ios-simulator-wk2 specific expectation file since the results are identical on wk1 and wk2

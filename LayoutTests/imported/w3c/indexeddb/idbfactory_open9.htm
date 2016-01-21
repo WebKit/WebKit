@@ -5,13 +5,14 @@
 <script src=support.js></script>
 
 <script>
+var date = Date();
 function should_throw(val, name) {
     if (!name) {
         name = ((typeof val == "object" && val) ? "object" : format_value(val))
     }
     test(function() {
       assert_throws(new TypeError(), function() {
-        window.indexedDB.open('test', val);
+        window.indexedDB.open('test' + date, val);
       });
     }, "Calling open() with version argument " + name + " should throw TypeError.")
 }
@@ -47,9 +48,10 @@ should_throw({
 /* Valid */
 
 function should_work(val) {
+    
     var name = format_value(val);
     var t = async_test("Calling open() with version argument " + name + " should not throw.")
-    var rq = createdb(t, val)
+    var rq = createdb(t, val + date)
     rq.onupgradeneeded = function() {
         t.done()
     }

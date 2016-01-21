@@ -1,0 +1,3 @@
+
+PASS IDBCursor.continue() - object store - iterate to the next record 
+

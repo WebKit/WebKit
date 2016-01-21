@@ -1,0 +1,3 @@
+
+PASS IDBObjectStore.openCursor() - invalid - pass something other than number 
+

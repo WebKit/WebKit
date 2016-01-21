@@ -1,0 +1,3 @@
+
+PASS IDBCursor.update() - objectstore - modify a record in the object store  
+

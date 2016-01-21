@@ -1,0 +1,5 @@
+
+PASS IDBFactory.cmp() - no argument 
+PASS IDBFactory.cmp() - null 
+PASS IDBFactory.cmp() - NaN 
+
