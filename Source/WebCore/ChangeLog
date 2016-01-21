@@ -1,3 +1,15 @@
+2016-01-21  Beth Dakin  <bdakin@apple.com>
+
+        Add the ability to update WebKitAdditions to WK2
+        https://bugs.webkit.org/show_bug.cgi?id=153320
+        -and corresponding-
+        rdar://problem/23639629
+
+        Reviewed by Anders Carlsson.
+
+        This SPI is un-used now.
+        * platform/spi/mac/NSSpellCheckerSPI.h:
+
 2016-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         GraphicsContext: low quality drawImage and drawImageBuffer should use InterpolationLow

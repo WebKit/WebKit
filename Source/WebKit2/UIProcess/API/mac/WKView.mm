@@ -1447,4 +1447,8 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(WTF::Optional<WebCore::Scrol
 
 @end
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKViewAdditions.mm>
+#endif
+
 #endif // PLATFORM(MAC)

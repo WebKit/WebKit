@@ -419,6 +419,26 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @end
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditions.mm>
+#else
+namespace WebKit {
+
+void WebViewImpl::updateWebViewImplAdditions()
+{
+}
+
+void WebViewImpl::showCandidates(NSArray *candidates, NSString *string, NSRect rectOfTypedString, NSView *view, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate))
+{
+}
+
+void WebViewImpl::webViewImplAdditionsWillDestroyView()
+{
+}
+
+} // namespace WebKit
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+
 namespace WebKit {
 
 static NSTrackingAreaOptions trackingAreaOptions()
@@ -493,6 +513,7 @@ WebViewImpl::~WebViewImpl()
     [m_layoutStrategy invalidate];
 
     [m_immediateActionController willDestroyView:m_view];
+    webViewImplAdditionsWillDestroyView();
 
     m_page->close();
 
@@ -566,6 +587,8 @@ bool WebViewImpl::becomeFirstResponder()
     m_page->restoreSelectionInFocusedEditableElement();
 
     m_inBecomeFirstResponder = false;
+
+    updateWebViewImplAdditions();
 
     if (direction != NSDirectSelection) {
         NSEvent *event = [NSApp currentEvent];
@@ -1725,6 +1748,7 @@ void WebViewImpl::selectionDidChange()
 {
     updateFontPanelIfNeeded();
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    updateWebViewImplAdditions();
     if (!m_page->editorState().isMissingPostLayoutData)
         requestCandidatesForSelectionIfNeeded();
 #endif
@@ -2134,13 +2158,13 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
         return;
 
     auto weakThis = createWeakPtr();
-    [[NSSpellChecker sharedSpellChecker] showCandidates:candidates forString:postLayoutData.stringForCandidateRequest inRect:postLayoutData.selectionClipRect view:m_view completionHandler:[weakThis](NSTextCheckingResult *acceptedCandidate) {
+    showCandidates(candidates, postLayoutData.stringForCandidateRequest, postLayoutData.selectionClipRect, m_view, [weakThis](NSTextCheckingResult *acceptedCandidate) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakThis)
                 return;
             weakThis->handleAcceptedCandidate(acceptedCandidate);
         });
-    }];
+    });
 }
 
 static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheckingResult *nsResult)

@@ -50,6 +50,10 @@ OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
 OBJC_CLASS _WKThumbnailView;
 
+#if USE(APPLE_INTERNAL_SDK) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#import <WebKitAdditions/WebViewImplAdditionsDeclarations.h>
+#endif
+
 @protocol WebViewImplDelegate
 
 - (NSTextInputContext *)_web_superInputContext;
@@ -469,6 +473,14 @@ public:
     void rightMouseDown(NSEvent *);
     void rightMouseDragged(NSEvent *);
     void rightMouseUp(NSEvent *);
+
+    void updateWebViewImplAdditions();
+    void showCandidates(NSArray *candidates, NSString *, NSRect rectOfTypedString, NSView *, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate));
+    void webViewImplAdditionsWillDestroyView();
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditions.h>
+#endif
 
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }

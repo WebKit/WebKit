@@ -4347,4 +4347,8 @@ static constexpr std::chrono::milliseconds didFinishLoadingTimeout = std::chrono
 #import <WebKitAdditions/WKWebViewAdditions.mm>
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewAdditionsMac.mm>
+#endif
+
 #endif // WK_API_ENABLED
