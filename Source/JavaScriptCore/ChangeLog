@@ -1,3 +1,17 @@
+2016-01-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r195375.
+        https://bugs.webkit.org/show_bug.cgi?id=153300
+
+        Caused crashes on GuardMalloc (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "TypedArray's .buffer does not return the JSArrayBuffer that
+        was passed to it on creation."
+        https://bugs.webkit.org/show_bug.cgi?id=153281
+        http://trac.webkit.org/changeset/195375
+
 2016-01-19  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should have basic path specialization
