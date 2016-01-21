@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,10 @@
 #include "B3ConstDoubleValue.h"
 #include "B3ConstFloatValue.h"
 #include "B3PatchpointValue.h"
+#include "B3PhiChildren.h"
 #include "B3Procedure.h"
 #include "B3Value.h"
+#include <wtf/GraphNodeWorklist.h>
 
 namespace JSC { namespace B3 {
 
@@ -201,6 +203,29 @@ inline T Value::asNumber() const
         return static_cast<T>(asFloat());
     default:
         return T();
+    }
+}
+
+template<typename Functor>
+void Value::walk(const Functor& functor, PhiChildren* phiChildren)
+{
+    GraphNodeWorklist<Value*> worklist;
+    worklist.push(this);
+    while (Value* value = worklist.pop()) {
+        WalkStatus status = functor(value);
+        switch (status) {
+        case Continue:
+            if (value->opcode() == Phi) {
+                if (phiChildren)
+                    worklist.pushAll(phiChildren->at(value).values());
+            } else
+                worklist.pushAll(value->children());
+            break;
+        case IgnoreChildren:
+            break;
+        case Stop:
+            return;
+        }
     }
 }
 

@@ -1,3 +1,16 @@
+2016-01-19  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have basic path specialization
+        https://bugs.webkit.org/show_bug.cgi?id=153200
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/GraphNodeWorklist.h:
+        (WTF::GraphNodeWorklist::push):
+        (WTF::GraphNodeWorklist::pushAll):
+        (WTF::GraphNodeWorklist::isEmpty):
+        (WTF::GraphNodeWorklist::notEmpty):
+
 2016-01-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Refactor AtomicStringKeyedMRUCache to be a generic LRU cache

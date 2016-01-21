@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,6 +155,11 @@ void ConstFloatValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(comma);
     out.printf("%le", m_value);
+}
+
+Value* ConstFloatValue::cloneImpl() const
+{
+    return new ConstFloatValue(*this);
 }
 
 } } // namespace JSC::B3

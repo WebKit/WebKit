@@ -89,9 +89,33 @@ void Value::replaceWithNop()
     this->owner = owner;
 }
 
+void Value::replaceWithPhi()
+{
+    if (m_type == Void) {
+        replaceWithNop();
+        return;
+    }
+    
+    unsigned index = m_index;
+    Origin origin = m_origin;
+    BasicBlock* owner = this->owner;
+    Type type = m_type;
+
+    this->Value::~Value();
+
+    new (this) Value(index, Phi, type, origin);
+
+    this->owner = owner;
+}
+
 void Value::dump(PrintStream& out) const
 {
     out.print(dumpPrefix, m_index);
+}
+
+Value* Value::cloneImpl() const
+{
+    return new Value(*this);
 }
 
 void Value::dumpChildren(CommaPrinter& comma, PrintStream& out) const
@@ -100,7 +124,7 @@ void Value::dumpChildren(CommaPrinter& comma, PrintStream& out) const
         out.print(comma, pointerDump(child));
 }
 
-void Value::deepDump(const Procedure& proc, PrintStream& out) const
+void Value::deepDump(const Procedure* proc, PrintStream& out) const
 {
     out.print(m_type, " ", *this, " = ", m_opcode);
 

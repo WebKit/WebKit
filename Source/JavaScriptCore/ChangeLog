@@ -1,3 +1,198 @@
+2016-01-19  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have basic path specialization
+        https://bugs.webkit.org/show_bug.cgi?id=153200
+
+        Reviewed by Benjamin Poulain.
+
+        This adds two different kind of path specializations:
+
+        - Check(Select) where the Select results are constants is specialized into a Branch
+          instead of a Select and duplicated paths where the results of the Select are folded.
+
+        - Tail duplication. A jump to a small block causes the block's contents to be copied over
+          the Jump.
+
+        Both optimizations required being able to clone Values. We can now do that using
+        proc.clone(value).
+
+        Check(Select) specialization needed some utilities for walking graphs of Values.
+
+        Tail duplication needed SSA fixup, so I added a way to demote values to anonymous stack
+        slots (B3's equivalent of non-SSA variables) and a way to "fix SSA", i.e. to allocate
+        anonymous stack slots to SSA values along with an optimal Phi graph.
+
+        This is a big speed-up on Octane/deltablue. It's a 2.2% speed-up on Octane overall.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3ArgumentRegValue.cpp:
+        (JSC::B3::ArgumentRegValue::dumpMeta):
+        (JSC::B3::ArgumentRegValue::cloneImpl):
+        * b3/B3ArgumentRegValue.h:
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::append):
+        (JSC::B3::BasicBlock::appendNonTerminal):
+        (JSC::B3::BasicBlock::removeLast):
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::values):
+        * b3/B3BasicBlockInlines.h:
+        (JSC::B3::BasicBlock::appendNew):
+        (JSC::B3::BasicBlock::appendNewNonTerminal):
+        (JSC::B3::BasicBlock::replaceLastWithNew):
+        * b3/B3BlockInsertionSet.h:
+        * b3/B3BreakCriticalEdges.cpp: Added.
+        (JSC::B3::breakCriticalEdges):
+        * b3/B3BreakCriticalEdges.h: Added.
+        * b3/B3CCallValue.cpp:
+        (JSC::B3::CCallValue::~CCallValue):
+        (JSC::B3::CCallValue::cloneImpl):
+        * b3/B3CCallValue.h:
+        * b3/B3CheckValue.cpp:
+        (JSC::B3::CheckValue::convertToAdd):
+        (JSC::B3::CheckValue::cloneImpl):
+        (JSC::B3::CheckValue::CheckValue):
+        * b3/B3CheckValue.h:
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::dumpMeta):
+        (JSC::B3::Const32Value::cloneImpl):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::dumpMeta):
+        (JSC::B3::Const64Value::cloneImpl):
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::dumpMeta):
+        (JSC::B3::ConstDoubleValue::cloneImpl):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.cpp:
+        (JSC::B3::ConstFloatValue::dumpMeta):
+        (JSC::B3::ConstFloatValue::cloneImpl):
+        * b3/B3ConstFloatValue.h:
+        * b3/B3ControlValue.cpp:
+        (JSC::B3::ControlValue::dumpMeta):
+        (JSC::B3::ControlValue::cloneImpl):
+        * b3/B3ControlValue.h:
+        * b3/B3DuplicateTails.cpp: Added.
+        (JSC::B3::duplicateTails):
+        * b3/B3DuplicateTails.h: Added.
+        * b3/B3FixSSA.cpp: Added.
+        (JSC::B3::demoteValues):
+        (JSC::B3::fixSSA):
+        * b3/B3FixSSA.h: Added.
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3IndexSet.h:
+        (JSC::B3::IndexSet::Iterable::Iterable):
+        (JSC::B3::IndexSet::values):
+        (JSC::B3::IndexSet::indices):
+        * b3/B3InsertionSet.cpp:
+        (JSC::B3::InsertionSet::insertIntConstant):
+        (JSC::B3::InsertionSet::insertBottom):
+        (JSC::B3::InsertionSet::execute):
+        * b3/B3InsertionSet.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::tmp):
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::dumpMeta):
+        (JSC::B3::MemoryValue::cloneImpl):
+        * b3/B3MemoryValue.h:
+        * b3/B3OriginDump.cpp: Added.
+        (JSC::B3::OriginDump::dump):
+        * b3/B3OriginDump.h:
+        (JSC::B3::OriginDump::OriginDump):
+        (JSC::B3::OriginDump::dump): Deleted.
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::dumpMeta):
+        (JSC::B3::PatchpointValue::cloneImpl):
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        * b3/B3PatchpointValue.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::clone):
+        (JSC::B3::Procedure::addIntConstant):
+        (JSC::B3::Procedure::addBottom):
+        (JSC::B3::Procedure::addBoolConstant):
+        (JSC::B3::Procedure::deleteValue):
+        * b3/B3Procedure.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3SSACalculator.cpp: Added.
+        (JSC::B3::SSACalculator::Variable::dump):
+        (JSC::B3::SSACalculator::Variable::dumpVerbose):
+        (JSC::B3::SSACalculator::Def::dump):
+        (JSC::B3::SSACalculator::SSACalculator):
+        (JSC::B3::SSACalculator::~SSACalculator):
+        (JSC::B3::SSACalculator::reset):
+        (JSC::B3::SSACalculator::newVariable):
+        (JSC::B3::SSACalculator::newDef):
+        (JSC::B3::SSACalculator::nonLocalReachingDef):
+        (JSC::B3::SSACalculator::reachingDefAtTail):
+        (JSC::B3::SSACalculator::dump):
+        * b3/B3SSACalculator.h: Added.
+        (JSC::B3::SSACalculator::Variable::index):
+        (JSC::B3::SSACalculator::Variable::Variable):
+        (JSC::B3::SSACalculator::Def::variable):
+        (JSC::B3::SSACalculator::Def::block):
+        (JSC::B3::SSACalculator::Def::value):
+        (JSC::B3::SSACalculator::Def::Def):
+        (JSC::B3::SSACalculator::variable):
+        (JSC::B3::SSACalculator::computePhis):
+        (JSC::B3::SSACalculator::phisForBlock):
+        (JSC::B3::SSACalculator::reachingDefAtHead):
+        * b3/B3StackSlotKind.h:
+        * b3/B3StackSlotValue.cpp:
+        (JSC::B3::StackSlotValue::dumpMeta):
+        (JSC::B3::StackSlotValue::cloneImpl):
+        * b3/B3StackSlotValue.h:
+        * b3/B3SwitchValue.cpp:
+        (JSC::B3::SwitchValue::dumpMeta):
+        (JSC::B3::SwitchValue::cloneImpl):
+        (JSC::B3::SwitchValue::SwitchValue):
+        * b3/B3SwitchValue.h:
+        * b3/B3UpsilonValue.cpp:
+        (JSC::B3::UpsilonValue::dumpMeta):
+        (JSC::B3::UpsilonValue::cloneImpl):
+        * b3/B3UpsilonValue.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::replaceWithNop):
+        (JSC::B3::Value::replaceWithPhi):
+        (JSC::B3::Value::dump):
+        (JSC::B3::Value::cloneImpl):
+        (JSC::B3::Value::dumpChildren):
+        (JSC::B3::Value::deepDump):
+        * b3/B3Value.h:
+        (JSC::B3::DeepValueDump::DeepValueDump):
+        (JSC::B3::DeepValueDump::dump):
+        (JSC::B3::deepDump):
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::asNumber):
+        (JSC::B3::Value::walk):
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::intConstant):
+        (JSC::B3::ValueKey::dump):
+        * b3/B3ValueKey.h:
+        (JSC::B3::ValueKey::ValueKey):
+        (JSC::B3::ValueKey::opcode):
+        (JSC::B3::ValueKey::type):
+        (JSC::B3::ValueKey::childIndex):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::forAllTmps):
+        (JSC::B3::Air::Code::isFastTmp):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+        (JSC::B3::Air::UseCounts::operator[]):
+        (JSC::B3::Air::UseCounts::dump):
+        * b3/testb3.cpp:
+        (JSC::B3::testSelectInvert):
+        (JSC::B3::testCheckSelect):
+        (JSC::B3::testCheckSelectCheckSelect):
+        (JSC::B3::testPowDoubleByIntegerLoop):
+        (JSC::B3::run):
+        * runtime/Options.h:
+
 2016-01-20  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Fix a typo in the Air definition of CeilDouble/CeilFloat

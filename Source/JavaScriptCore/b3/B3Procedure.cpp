@@ -68,6 +68,16 @@ BasicBlock* Procedure::addBlock(double frequency)
     return result;
 }
 
+Value* Procedure::clone(Value* value)
+{
+    std::unique_ptr<Value> clone(value->cloneImpl());
+    Value* result = clone.get();
+    clone->m_index = addValueIndex();
+    clone->owner = nullptr;
+    m_values[clone->m_index] = WTFMove(clone);
+    return result;
+}
+
 Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
 {
     switch (type) {
@@ -88,6 +98,16 @@ Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
 Value* Procedure::addIntConstant(Value* likeValue, int64_t value)
 {
     return addIntConstant(likeValue->origin(), likeValue->type(), value);
+}
+
+Value* Procedure::addBottom(Origin origin, Type type)
+{
+    return addIntConstant(origin, type, 0);
+}
+
+Value* Procedure::addBottom(Value* value)
+{
+    return addBottom(value->origin(), value->type());
 }
 
 Value* Procedure::addBoolConstant(Origin origin, TriState triState)
@@ -165,7 +185,7 @@ Vector<BasicBlock*> Procedure::blocksInPostOrder()
 
 void Procedure::deleteValue(Value* value)
 {
-    ASSERT(m_values[value->index()].get() == value);
+    RELEASE_ASSERT(m_values[value->index()].get() == value);
     m_valueIndexFreeList.append(value->index());
     m_values[value->index()] = nullptr;
 }

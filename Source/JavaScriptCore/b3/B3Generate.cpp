@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@
 #include "AirGenerate.h"
 #include "AirInstInlines.h"
 #include "B3Common.h"
+#include "B3DuplicateTails.h"
+#include "B3FoldPathConstants.h"
 #include "B3LegalizeMemoryOffsets.h"
 #include "B3LowerMacros.h"
 #include "B3LowerMacrosAfterOptimizations.h"
@@ -73,11 +75,19 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
     if (shouldValidateIR())
         validate(procedure);
 
+    if (optLevel >= 1) {
+        reduceDoubleToFloat(procedure);
+        reduceStrength(procedure);
+        duplicateTails(procedure);
+        foldPathConstants(procedure);
+        
+        // FIXME: Add more optimizations here.
+        // https://bugs.webkit.org/show_bug.cgi?id=150507
+    }
+
     lowerMacros(procedure);
 
     if (optLevel >= 1) {
-        reduceDoubleToFloat(procedure);
-
         reduceStrength(procedure);
         
         // FIXME: Add more optimizations here.
@@ -85,9 +95,7 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
     }
 
     lowerMacrosAfterOptimizations(procedure);
-
     legalizeMemoryOffsets(procedure);
-
     moveConstants(procedure);
 
     if (shouldValidateIR())

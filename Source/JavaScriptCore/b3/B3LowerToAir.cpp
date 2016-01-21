@@ -88,6 +88,8 @@ public:
             switch (value->opcode()) {
             case Phi: {
                 m_phiToTmp[value] = m_code.newTmp(Arg::typeForB3Type(value->type()));
+                if (verbose)
+                    dataLog("Phi tmp for ", *value, ": ", m_phiToTmp[value], "\n");
                 break;
             }
             case B3::StackSlot: {
@@ -306,6 +308,8 @@ private:
                 realTmp = m_code.newTmp(Arg::typeForB3Type(value->type()));
                 if (m_procedure.isFastConstant(value->key()))
                     m_code.addFastTmp(realTmp);
+                if (verbose)
+                    dataLog("Tmp for ", *value, ": ", realTmp, "\n");
             }
             tmp = realTmp;
         }

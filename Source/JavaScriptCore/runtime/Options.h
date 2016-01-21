@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -344,6 +344,8 @@ typedef const char* optionString;
     v(double, rareBlockPenalty, 0.001, nullptr) \
     v(bool, airSpillsEverything, false, nullptr) \
     v(bool, logAirRegisterPressure, false, nullptr) \
+    v(unsigned, maxB3TailDupBlockSize, 3, nullptr) \
+    v(unsigned, maxB3TailDupBlockSuccessors, 3, nullptr) \
     \
     v(bool, useDollarVM, false, "installs the $vm debugging tool in global objects") \
     v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \

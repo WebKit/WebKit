@@ -72,7 +72,7 @@ public:
     template<typename CollectionType>
     class Iterable {
     public:
-        Iterable(const CollectionType& collection, const IndexSet& set)
+        Iterable(const CollectionType& collection, const BitVector& set)
             : m_collection(collection)
             , m_set(set)
         {
@@ -122,7 +122,7 @@ public:
 
     private:
         const CollectionType& m_collection;
-        const IndexSet& m_set;
+        const BitVector& m_set;
     };
 
     // For basic blocks, you do:
@@ -133,7 +133,7 @@ public:
     template<typename CollectionType>
     Iterable<CollectionType> values(const CollectionType& collection) const
     {
-        return Iterable<CollectionType>(collection);
+        return Iterable<CollectionType>(collection, indices());
     }
 
     const BitVector& indices() const { return m_set; }

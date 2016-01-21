@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,14 @@ ValueType* BasicBlock::appendNew(Procedure& procedure, Arguments... arguments)
 {
     ValueType* result = procedure.add<ValueType>(arguments...);
     append(result);
+    return result;
+}
+
+template<typename ValueType, typename... Arguments>
+ValueType* BasicBlock::appendNewNonTerminal(Procedure& procedure, Arguments... arguments)
+{
+    ValueType* result = procedure.add<ValueType>(arguments...);
+    appendNonTerminal(result);
     return result;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,10 +71,13 @@ public:
     ValueList& values() { return m_values; }
 
     JS_EXPORT_PRIVATE void append(Value*);
+    JS_EXPORT_PRIVATE void appendNonTerminal(Value*);
     JS_EXPORT_PRIVATE void replaceLast(Procedure&, Value*);
 
     template<typename ValueType, typename... Arguments>
     ValueType* appendNew(Procedure&, Arguments...);
+    template<typename ValueType, typename... Arguments>
+    ValueType* appendNewNonTerminal(Procedure&, Arguments...);
 
     JS_EXPORT_PRIVATE Value* appendIntConstant(Procedure&, Origin, Type, int64_t value);
     Value* appendIntConstant(Procedure&, Value* likeValue, int64_t value);

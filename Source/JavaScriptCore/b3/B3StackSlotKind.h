@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,8 @@ enum class StackSlotKind : uint8_t {
     // slot.
     Locked,
 
-    // These stack slots could share space with other stack slots, provided that they aren't live
-    // at the same time. The compiler still has to do escape analysis, since these can be escaped
-    // explicitly in IR.
+    // These stack slots behave like variables. Undefined behavior happens if you store less than
+    // the width of the slot.
     Anonymous
 
     // FIXME: We should add a third mode, which means that the stack slot will be read asynchronously

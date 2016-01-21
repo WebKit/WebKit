@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,11 @@ void CheckValue::convertToAdd()
 {
     RELEASE_ASSERT(opcode() == CheckAdd || opcode() == CheckSub || opcode() == CheckMul);
     m_opcode = CheckAdd;
+}
+
+Value* CheckValue::cloneImpl() const
+{
+    return new CheckValue(*this);
 }
 
 // Use this form for CheckAdd, CheckSub, and CheckMul.

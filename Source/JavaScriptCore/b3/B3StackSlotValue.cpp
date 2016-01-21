@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,11 @@ StackSlotValue::~StackSlotValue()
 void StackSlotValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(comma, "byteSize = ", m_byteSize, ", kind = ", m_kind);
+}
+
+Value* StackSlotValue::cloneImpl() const
+{
+    return new StackSlotValue(*this);
 }
 
 } } // namespace JSC::B3

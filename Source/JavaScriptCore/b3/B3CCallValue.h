@@ -41,6 +41,9 @@ public:
 
     Effects effects { Effects::forCall() };
 
+protected:
+    Value* cloneImpl() const override;
+    
 private:
     friend class Procedure;
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirArg.h"
 #include "AirBasicBlock.h"
 #include "AirSpecial.h"
 #include "AirStackSlot.h"

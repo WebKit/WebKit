@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3FrequentedBlock.h"
+#include "B3SuccessorCollection.h"
 #include "B3Value.h"
 
 namespace JSC { namespace B3 {
@@ -64,6 +65,17 @@ public:
     const SuccessorList& successors() const { return m_successors; }
     SuccessorList& successors() { return m_successors; }
 
+    BasicBlock* successorBlock(unsigned index) const { return successor(index).block(); }
+    BasicBlock*& successorBlock(unsigned index) { return successor(index).block(); }
+    SuccessorCollection<BasicBlock, SuccessorList> successorBlocks()
+    {
+        return SuccessorCollection<BasicBlock, SuccessorList>(successors());
+    }
+    SuccessorCollection<const BasicBlock, const SuccessorList> successorBlocks() const
+    {
+        return SuccessorCollection<const BasicBlock, const SuccessorList>(successors());
+    }
+
     bool replaceSuccessor(BasicBlock* from, BasicBlock* to);
 
     const FrequentedBlock& taken() const
@@ -92,6 +104,8 @@ public:
 
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
+
+    Value* cloneImpl() const override;
 
     // Use this for subclasses.
     template<typename... Arguments>

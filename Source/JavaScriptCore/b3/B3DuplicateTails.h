@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3UpsilonValue_h
-#define B3UpsilonValue_h
+#ifndef B3DuplicateTails_h
+#define B3DuplicateTails_h
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
-
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE UpsilonValue : public Value {
-public:
-    static bool accepts(Opcode opcode) { return opcode == Upsilon; }
+class Procedure;
 
-    ~UpsilonValue();
+// Replaces jumps to tiny basic blocks with the contents of those basic blocks. Also simplifies
+// branches that are path-redundant. Does not do a fixpoint, because it does not have a good way
+// of detecting termination.
 
-    Value* phi() const { return m_phi; }
-    void setPhi(Value* phi)
-    {
-        ASSERT(child(0)->type() == phi->type());
-        ASSERT(phi->opcode() == Phi);
-        m_phi = phi;
-    }
-
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
-
-private:
-    friend class Procedure;
-
-    // Note that passing the Phi during construction is optional. A valid pattern is to first create
-    // the Upsilons without the Phi, then create the Phi, then go back and tell the Upsilons about
-    // the Phi. This allows you to emit code in its natural order.
-    UpsilonValue(unsigned index, Origin origin, Value* value, Value* phi = nullptr)
-        : Value(index, CheckedOpcode, Upsilon, Void, origin, value)
-        , m_phi(phi)
-    {
-        if (phi)
-            ASSERT(value->type() == phi->type());
-    }
-
-    Value* m_phi;
-};
+void duplicateTails(Procedure&);
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3UpsilonValue_h
+#endif // B3DuplicateTails_h
 

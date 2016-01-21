@@ -65,6 +65,8 @@ public:
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
+    Value* cloneImpl() const override;
+
 private:
     friend class Procedure;
 

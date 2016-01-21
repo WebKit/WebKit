@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,12 @@ BasicBlock::~BasicBlock()
 void BasicBlock::append(Value* value)
 {
     m_values.append(value);
+}
+
+void BasicBlock::appendNonTerminal(Value* value)
+{
+    m_values.append(m_values.last());
+    m_values[m_values.size() - 1] = value;
 }
 
 void BasicBlock::removeLast(Procedure& proc)

@@ -76,8 +76,13 @@ public:
     template<typename ValueType, typename... Arguments>
     ValueType* add(Arguments...);
 
+    Value* clone(Value*);
+
     Value* addIntConstant(Origin, Type, int64_t value);
     Value* addIntConstant(Value*, int64_t value);
+
+    Value* addBottom(Origin, Type);
+    Value* addBottom(Value*);
 
     // Returns null for MixedTriState.
     Value* addBoolConstant(Origin, TriState);

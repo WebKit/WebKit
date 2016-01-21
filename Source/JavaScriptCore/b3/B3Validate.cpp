@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -352,6 +352,7 @@ public:
             case Upsilon:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->as<UpsilonValue>()->phi(), ("At ", *value));
+                VALIDATE(value->as<UpsilonValue>()->phi()->opcode() == Phi, ("At ", *value));
                 VALIDATE(value->child(0)->type() == value->as<UpsilonValue>()->phi()->type(), ("At ", *value));
                 VALIDATE(valueInProc.contains(value->as<UpsilonValue>()->phi()), ("At ", *value));
                 break;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,16 @@ Value* InsertionSet::insertIntConstant(size_t index, Origin origin, Type type, i
 Value* InsertionSet::insertIntConstant(size_t index, Value* likeValue, int64_t value)
 {
     return insertIntConstant(index, likeValue->origin(), likeValue->type(), value);
+}
+
+Value* InsertionSet::insertBottom(size_t index, Origin origin, Type type)
+{
+    return insertValue(index, m_procedure.addBottom(origin, type));
+}
+
+Value* InsertionSet::insertBottom(size_t index, Value* likeValue)
+{
+    return insertBottom(index, likeValue->origin(), likeValue->type());
 }
 
 void InsertionSet::execute(BasicBlock* block)

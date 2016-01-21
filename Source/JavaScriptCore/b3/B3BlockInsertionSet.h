@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,8 +61,8 @@ public:
     // everything at and after valueIndex. If the optional InsertionSet is provided, it will get
     // executed on the newly created block - this makes sense if you had previously inserted
     // things into the original block, since the newly created block will be indexed identically
-    // to hold this block was indexed for all values prior to valueIndex. After this runs, it
-    // sets valueIndex to zero. This allows you to use this method for things like:
+    // to how this block was indexed for all values prior to valueIndex. After this runs, it sets
+    // valueIndex to zero. This allows you to use this method for things like:
     //
     // for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
     //     Value* value = block->at(valueIndex);

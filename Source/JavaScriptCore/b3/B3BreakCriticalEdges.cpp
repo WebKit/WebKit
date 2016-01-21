@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3UpsilonValue_h
-#define B3UpsilonValue_h
+#include "config.h"
+#include "B3BreakCriticalEdges.h"
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
+#include "B3BasicBlockInlines.h"
+#include "B3BlockInsertionSet.h"
+#include "B3ControlValue.h"
+#include "B3ProcedureInlines.h"
+#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE UpsilonValue : public Value {
-public:
-    static bool accepts(Opcode opcode) { return opcode == Upsilon; }
+void breakCriticalEdges(Procedure& proc)
+{
+    BlockInsertionSet insertionSet(proc);
+    
+    for (BasicBlock* block : proc) {
+        if (block->numSuccessors() <= 1)
+            continue;
 
-    ~UpsilonValue();
+        for (BasicBlock*& successor : block->successorBlocks()) {
+            if (successor->numPredecessors() <= 1)
+                continue;
 
-    Value* phi() const { return m_phi; }
-    void setPhi(Value* phi)
-    {
-        ASSERT(child(0)->type() == phi->type());
-        ASSERT(phi->opcode() == Phi);
-        m_phi = phi;
+            BasicBlock* pad =
+                insertionSet.insertBefore(successor, successor->frequency());
+            pad->appendNew<ControlValue>(
+                proc, Jump, successor->at(0)->origin(), FrequentedBlock(successor));
+            pad->addPredecessor(block);
+            successor->replacePredecessor(block, pad);
+            successor = pad;
+        }
     }
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
-
-private:
-    friend class Procedure;
-
-    // Note that passing the Phi during construction is optional. A valid pattern is to first create
-    // the Upsilons without the Phi, then create the Phi, then go back and tell the Upsilons about
-    // the Phi. This allows you to emit code in its natural order.
-    UpsilonValue(unsigned index, Origin origin, Value* value, Value* phi = nullptr)
-        : Value(index, CheckedOpcode, Upsilon, Void, origin, value)
-        , m_phi(phi)
-    {
-        if (phi)
-            ASSERT(value->type() == phi->type());
-    }
-
-    Value* m_phi;
-};
+    insertionSet.execute();
+    proc.invalidateCFG();
+}
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3UpsilonValue_h
 

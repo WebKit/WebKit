@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,13 @@ public:
             return false;
         m_stack.append(node);
         return true;
+    }
+
+    template<typename Iterable>
+    void pushAll(const Iterable& iterable)
+    {
+        for (Node node : iterable)
+            push(node);
     }
 
     bool isEmpty() const { return m_stack.isEmpty(); }

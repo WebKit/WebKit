@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,10 +42,10 @@ namespace JSC { namespace B3 {
 
 class BasicBlock;
 class CheckValue;
+class PhiChildren;
 class Procedure;
 
 class JS_EXPORT_PRIVATE Value {
-    WTF_MAKE_NONCOPYABLE(Value);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef Vector<Value*, 3> AdjacencyList;
@@ -84,9 +84,10 @@ public:
 
     void replaceWithIdentity(Value*);
     void replaceWithNop();
+    void replaceWithPhi();
 
     void dump(PrintStream&) const;
-    void deepDump(const Procedure&, PrintStream&) const;
+    void deepDump(const Procedure*, PrintStream&) const;
 
     // This is how you cast Values. For example, if you want to do something provided that we have a
     // ArgumentRegValue, you can do:
@@ -204,7 +205,22 @@ public:
     // of Identity's.
     void performSubstitution();
 
+    // Walk the ancestors of this value (i.e. the graph of things it transitively uses). This
+    // either walks phis or not, depending on whether PhiChildren is null. Your callback gets
+    // called with the signature:
+    //
+    //     (Value*) -> WalkStatus
+    enum WalkStatus {
+        Continue,
+        IgnoreChildren,
+        Stop
+    };
+    template<typename Functor>
+    void walk(const Functor& functor, PhiChildren* = nullptr);
+
 protected:
+    virtual Value* cloneImpl() const;
+    
     virtual void dumpChildren(CommaPrinter&, PrintStream&) const;
     virtual void dumpMeta(CommaPrinter&, PrintStream&) const;
 
@@ -220,6 +236,9 @@ private:
 
 protected:
     enum CheckedOpcodeTag { CheckedOpcode };
+
+    Value(const Value&) = default;
+    Value& operator=(const Value&) = default;
     
     // Instantiate values via Procedure.
     // This form requires specifying the type explicitly:
@@ -315,7 +334,7 @@ public:
 
 class DeepValueDump {
 public:
-    DeepValueDump(const Procedure& proc, const Value* value)
+    DeepValueDump(const Procedure* proc, const Value* value)
         : m_proc(proc)
         , m_value(value)
     {
@@ -330,13 +349,17 @@ public:
     }
 
 private:
-    const Procedure& m_proc;
+    const Procedure* m_proc;
     const Value* m_value;
 };
 
 inline DeepValueDump deepDump(const Procedure& proc, const Value* value)
 {
-    return DeepValueDump(proc, value);
+    return DeepValueDump(&proc, value);
+}
+inline DeepValueDump deepDump(const Value* value)
+{
+    return DeepValueDump(nullptr, value);
 }
 
 } } // namespace JSC::B3

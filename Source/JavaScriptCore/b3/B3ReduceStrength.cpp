@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BasicBlockInlines.h"
+#include "B3BlockInsertionSet.h"
 #include "B3ControlValue.h"
 #include "B3Dominators.h"
 #include "B3IndexSet.h"
@@ -258,6 +259,7 @@ public:
     ReduceStrength(Procedure& proc)
         : m_proc(proc)
         , m_insertionSet(proc)
+        , m_blockInsertionSet(proc)
     {
     }
 
@@ -286,6 +288,11 @@ public:
                 m_block = block;
                 
                 for (m_index = 0; m_index < block->size(); ++m_index) {
+                    if (verbose) {
+                        dataLog(
+                            "Looking at ", *block, " #", m_index, ": ",
+                            deepDump(m_proc, block->at(m_index)), "\n");
+                    }
                     m_value = m_block->at(m_index);
                     m_value->performSubstitution();
                     
@@ -295,6 +302,13 @@ public:
                 m_insertionSet.execute(m_block);
             }
 
+            if (m_blockInsertionSet.execute()) {
+                m_proc.resetReachability();
+                m_proc.invalidateCFG();
+                m_dominators = &m_proc.dominators(); // Recompute if necessary.
+                m_changedCFG = true;
+            }
+            
             simplifyCFG();
 
             if (m_changedCFG) {
@@ -1387,6 +1401,51 @@ private:
                 && checkValue->child(0)->child(1)->isInt(0)) {
                 checkValue->child(0) = checkValue->child(0)->child(0);
                 m_changed = true;
+            }
+
+            // If we are checking some bounded-size SSA expression that leads to a Select that
+            // has a constant as one of its results, then turn the Select into a Branch and split
+            // the code between the Check and the Branch. For example, this:
+            //
+            //     @a = Select(@p, @x, 42)
+            //     @b = Add(@a, 35)
+            //     Check(@b)
+            //
+            // becomes this:
+            //
+            //     Branch(@p, #truecase, #falsecase)
+            //
+            //   BB#truecase:
+            //     @b_truecase = Add(@x, 35)
+            //     Check(@b_truecase)
+            //     Upsilon(@x, ^a)
+            //     Upsilon(@b_truecase, ^b)
+            //     Jump(#continuation)
+            //
+            //   BB#falsecase:
+            //     @b_falsecase = Add(42, 35)
+            //     Check(@b_falsecase)
+            //     Upsilon(42, ^a)
+            //     Upsilon(@b_falsecase, ^b)
+            //     Jump(#continuation)
+            //
+            //   BB#continuation:
+            //     @a = Phi()
+            //     @b = Phi()
+            //
+            // The goal of this optimization is to kill a lot of code in one of those basic
+            // blocks. This is pretty much guaranteed since one of those blocks will replace all
+            // uses of the Select with a constant, and that constant will be transitively used
+            // from the check.
+            static const unsigned selectSpecializationBound = 3;
+            Value* select = findRecentNodeMatching(
+                m_value->child(0), selectSpecializationBound,
+                [&] (Value* value) -> bool {
+                    return value->opcode() == Select
+                        && (value->child(1)->isConstant() && value->child(2)->isConstant());
+                });
+            if (select) {
+                specializeSelect(select);
                 break;
             }
             break;
@@ -1456,6 +1515,148 @@ private:
         default:
             break;
         }
+    }
+
+    // Find a node that:
+    //     - functor(node) returns true.
+    //     - it's reachable from the given node via children.
+    //     - it's in the last "bound" slots in the current basic block.
+    // This algorithm is optimized under the assumption that the bound is small.
+    template<typename Functor>
+    Value* findRecentNodeMatching(Value* start, unsigned bound, const Functor& functor)
+    {
+        unsigned startIndex = bound < m_index ? m_index - bound : 0;
+        Value* result = nullptr;
+        start->walk(
+            [&] (Value* value) -> Value::WalkStatus {
+                bool found = false;
+                for (unsigned i = startIndex; i <= m_index; ++i) {
+                    if (m_block->at(i) == value)
+                        found = true;
+                }
+                if (!found)
+                    return Value::IgnoreChildren;
+
+                if (functor(value)) {
+                    result = value;
+                    return Value::Stop;
+                }
+
+                return Value::Continue;
+            });
+        return result;
+    }
+
+    // This specializes a sequence of code up to a Select. This doesn't work when we're at a
+    // terminal. It would be cool to fix that eventually. The main problem is that instead of
+    // splitting the block, we should just insert the then/else blocks. We'll have to create
+    // double the Phis and double the Upsilons. It'll probably be the sort of optimization that
+    // we want to do only after we've done loop optimizations, since this will *definitely*
+    // obscure things. In fact, even this simpler form of select specialization will possibly
+    // obscure other optimizations. It would be great to have two modes of strength reduction,
+    // one that does obscuring optimizations and runs late, and another that does not do
+    // obscuring optimizations and runs early.
+    // FIXME: Make select specialization handle branches.
+    // FIXME: Have a form of strength reduction that does no obscuring optimizations and runs
+    // early.
+    void specializeSelect(Value* source)
+    {
+        if (verbose)
+            dataLog("Specializing select: ", deepDump(m_proc, source), "\n");
+
+        // This mutates startIndex to account for the fact that m_block got the front of it
+        // chopped off.
+        BasicBlock* predecessor =
+            m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+
+        // Splitting will commit the insertion set, which changes the exact position of the
+        // source. That's why we do the search after splitting.
+        unsigned startIndex = UINT_MAX;
+        for (unsigned i = predecessor->size(); i--;) {
+            if (predecessor->at(i) == source) {
+                startIndex = i;
+                break;
+            }
+        }
+        
+        RELEASE_ASSERT(startIndex != UINT_MAX);
+
+        // By BasicBlock convention, caseIndex == 0 => then, caseIndex == 1 => else.
+        static const unsigned numCases = 2;
+        BasicBlock* cases[numCases];
+        for (unsigned i = 0; i < numCases; ++i)
+            cases[i] = m_blockInsertionSet.insertBefore(m_block);
+
+        HashMap<Value*, Value*> mappings[2];
+
+        // Save things we want to know about the source.
+        Value* predicate = source->child(0);
+
+        for (unsigned i = 0; i < numCases; ++i)
+            mappings[i].add(source, source->child(1 + i));
+
+        auto cloneValue = [&] (Value* value) {
+            ASSERT(value != source);
+
+            for (unsigned i = 0; i < numCases; ++i) {
+                Value* clone = m_proc.clone(value);
+                for (Value*& child : clone->children()) {
+                    if (Value* newChild = mappings[i].get(child))
+                        child = newChild;
+                }
+                if (value->type() != Void)
+                    mappings[i].add(value, clone);
+
+                cases[i]->append(clone);
+                if (value->type() != Void)
+                    cases[i]->appendNew<UpsilonValue>(m_proc, value->origin(), clone, value);
+            }
+
+            value->replaceWithPhi();
+        };
+
+        // The jump that the splitter inserted is of no use to us.
+        predecessor->removeLast(m_proc);
+
+        // Hance the source, it's special.
+        for (unsigned i = 0; i < numCases; ++i) {
+            cases[i]->appendNew<UpsilonValue>(
+                m_proc, source->origin(), source->child(1 + i), source);
+        }
+        source->replaceWithPhi();
+        m_insertionSet.insertValue(m_index, source);
+
+        // Now handle all values between the source and the check.
+        for (unsigned i = startIndex + 1; i < predecessor->size(); ++i) {
+            Value* value = predecessor->at(i);
+            value->owner = nullptr;
+
+            cloneValue(value);
+
+            if (value->type() != Void)
+                m_insertionSet.insertValue(m_index, value);
+            else
+                m_proc.deleteValue(value);
+        }
+
+        // Finally, deal with the check.
+        cloneValue(m_value);
+
+        // Remove the values from the predecessor.
+        predecessor->values().resize(startIndex);
+        
+        predecessor->appendNew<ControlValue>(
+            m_proc, Branch, source->origin(), predicate,
+            FrequentedBlock(cases[0]), FrequentedBlock(cases[1]));
+
+        for (unsigned i = 0; i < numCases; ++i) {
+            cases[i]->appendNew<ControlValue>(
+                m_proc, Jump, m_value->origin(), FrequentedBlock(m_block));
+        }
+
+        m_changed = true;
+
+        predecessor->updatePredecessorsAfter();
     }
 
     // Turn this: Add(constant, value)
@@ -1836,6 +2037,7 @@ private:
 
     Procedure& m_proc;
     InsertionSet m_insertionSet;
+    BlockInsertionSet m_blockInsertionSet;
     BasicBlock* m_block { nullptr };
     unsigned m_index { 0 };
     Value* m_value { nullptr };

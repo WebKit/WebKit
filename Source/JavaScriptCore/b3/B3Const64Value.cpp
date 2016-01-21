@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -239,6 +239,11 @@ TriState Const64Value::belowEqualConstant(const Value* other) const
 void Const64Value::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(comma, m_value);
+}
+
+Value* Const64Value::cloneImpl() const
+{
+    return new Const64Value(*this);
 }
 
 } } // namespace JSC::B3
