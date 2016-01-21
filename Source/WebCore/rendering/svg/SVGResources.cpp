@@ -25,6 +25,7 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
+#include "RenderSVGRoot.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 #include "SVGPaint.h"
@@ -281,6 +282,27 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
     }
 
     return foundResources;
+}
+
+void SVGResources::layoutDifferentRootIfNeeded(const RenderSVGRoot* svgRoot)
+{
+    if (clipper() && svgRoot != SVGRenderSupport::findTreeRootObject(*clipper()))
+        clipper()->layoutIfNeeded();
+
+    if (masker() && svgRoot != SVGRenderSupport::findTreeRootObject(*masker()))
+        masker()->layoutIfNeeded();
+
+    if (filter() && svgRoot != SVGRenderSupport::findTreeRootObject(*filter()))
+        filter()->layoutIfNeeded();
+
+    if (markerStart() && svgRoot != SVGRenderSupport::findTreeRootObject(*markerStart()))
+        markerStart()->layoutIfNeeded();
+
+    if (markerMid() && svgRoot != SVGRenderSupport::findTreeRootObject(*markerMid()))
+        markerMid()->layoutIfNeeded();
+
+    if (markerEnd() && svgRoot != SVGRenderSupport::findTreeRootObject(*markerEnd()))
+        markerEnd()->layoutIfNeeded();
 }
 
 void SVGResources::removeClientFromCache(RenderElement& renderer, bool markForInvalidation) const

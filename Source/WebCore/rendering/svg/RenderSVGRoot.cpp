@@ -455,12 +455,10 @@ bool RenderSVGRoot::hasRelativeDimensions() const
 
 void RenderSVGRoot::addResourceForClientInvalidation(RenderSVGResourceContainer* resource)
 {
-    RenderElement* svgRoot = resource->parent();
-    while (svgRoot && !is<RenderSVGRoot>(*svgRoot))
-        svgRoot = svgRoot->parent();
+    RenderSVGRoot* svgRoot = SVGRenderSupport::findTreeRootObject(*resource);
     if (!svgRoot)
         return;
-    downcast<RenderSVGRoot>(*svgRoot).m_resourcesNeedingToInvalidateClients.add(resource);
+    svgRoot->m_resourcesNeedingToInvalidateClients.add(resource);
 }
 
 }

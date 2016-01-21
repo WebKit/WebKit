@@ -89,7 +89,11 @@ void RenderSVGShape::updateShapeFromElement()
 
 bool RenderSVGShape::isEmpty() const
 {
-    return path().isEmpty();
+    // This function should never be called before assigning a new Path to m_path.
+    // But this bug can happen if this renderer was created and its layout was not
+    // done before painting. Assert this did not happen but do not crash.
+    ASSERT(hasPath());
+    return !hasPath() || path().isEmpty();
 }
 
 void RenderSVGShape::fillShape(GraphicsContext& context) const

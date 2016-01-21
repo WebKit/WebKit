@@ -94,8 +94,13 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
     m_isInvalidating = true;
     bool needsLayout = mode == LayoutAndBoundariesInvalidation;
     bool markForInvalidation = mode != ParentOnlyInvalidation;
+    auto* root = SVGRenderSupport::findTreeRootObject(*this);
 
     for (auto* client : m_clients) {
+        // We should not mark any client outside the current root for invalidation
+        if (root != SVGRenderSupport::findTreeRootObject(*client))
+            continue;
+
         if (is<RenderSVGResourceContainer>(*client)) {
             downcast<RenderSVGResourceContainer>(*client).removeAllClientsFromCache(markForInvalidation);
             continue;

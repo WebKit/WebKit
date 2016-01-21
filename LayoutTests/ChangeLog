@@ -1,3 +1,31 @@
+2016-01-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        A crash reproducible in Path::isEmpty() under RenderSVGShape::paint()
+        https://bugs.webkit.org/show_bug.cgi?id=149613
+
+        Reviewed by Darin Adler.
+        
+        When running the layout of an SVG root and it has resources which are
+        referenced by clients in other SVG roots, make sure we run the layout
+        for these resources before running the layout for their clients.
+
+        * svg/custom/filter-update-different-root-expected.html: Added.
+        * svg/custom/filter-update-different-root.html: Added.
+        Without this patch this test crashes because we paint a dirty RenderSVGShape.
+        
+        * svg/custom/pattern-update-different-root-expected.html: Added.
+        * svg/custom/pattern-update-different-root.html: Added.
+        Without this patch this test works fine but it is good to have it to catch
+        cases where the SVG root needs to run re-layout for its children resources
+        and hence their clients if its size has changed.
+
+        * svg/custom/unicode-in-tspan-multi-svg-crash-expected.txt:
+        * svg/custom/unicode-in-tspan-multi-svg-crash.html:
+        This test was ported from Blink in http://trac.webkit.org/changeset/166420.
+        The expectation of this test was changed in Blink:
+        https://src.chromium.org/viewvc/blink?revision=158480&view=revision.
+        
+
 2016-01-21  Nan Wang  <n_wang@apple.com>
 
         AX: [IOS] Implement next/previous text marker functions using TextIterator

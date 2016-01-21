@@ -1,3 +1,77 @@
+2016-01-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        A crash reproducible in Path::isEmpty() under RenderSVGShape::paint()
+        https://bugs.webkit.org/show_bug.cgi?id=149613
+
+        Reviewed by Darin Adler.
+
+        When RenderSVGRoot::layout() realizes its layout size has changed and
+        it has resources which have relative sizes, it marks all the clients of
+        the resources for invalidates regardless whether they belong to the
+        same RenderSVGRoot or not. But it reruns the layout only for its children.
+        If one of these clients comes before the current RenderSVGRoot in the render
+        tree, ee end up having renderer marked for invalidation at rendering time.
+        This also prevents scheduling the layout if the same renderer is marked
+        for another invalidation later. We prevent this because we do not want
+        to schedule another layout for a renderer which is already marked for
+        invalidation. This can cause crash if the renderer is an RenderSVGPath.
+        
+        The fix is to mark "only" the clients of a resource which belong to the
+        same RenderSVGRoot of the resource. Also we need to run the layout for
+        all the resources which belong to different RenderSVGRoots before running
+        the layout for an SVG renderer.
+         
+        Tests: svg/custom/filter-update-different-root.html
+               svg/custom/pattern-update-different-root.html
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        We should not mark any client outside the current root for invalidation
+        
+        * rendering/svg/RenderSVGResourceContainer.h: Remove unneeded private keyword.
+        
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::addResourceForClientInvalidation):
+        Code clean up; use findTreeRootObject() instead of repeating the same code.
+        
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::isEmpty): Avoid crashing if RenderSVGShape::isEmpty()
+        is called before calling RenderSVGShape::layout().
+         
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout): findTreeRootObject() now returns a pointer.
+        
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::findTreeRootObject): I do think nothing 
+        guarantees that an SVG renderer has to have an RenderSVGRoot in its
+        ancestors. So change this function to return a pointer. Also Provide
+        the non-const version of this function.
+         
+        (WebCore::SVGRenderSupport::layoutDifferentRootIfNeeded): Runs the layout
+        if needed for all the resources which belong to different RenderSVGRoots.
+        
+        (WebCore::SVGRenderSupport::layoutChildren): Make sure all the renderer's
+        resources which belong to different RenderSVGRoots are laid out before
+        running the layout for this renderer.
+        
+        * rendering/svg/SVGRenderSupport.h: Remove a mysterious comment.
+        
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::layoutDifferentRootIfNeeded): Run the layout for
+        all the resources which belong to different RenderSVGRoots outside the
+        context of their RenderSVGRoots.
+        
+        * rendering/svg/SVGResources.h:
+        (WebCore::SVGResources::clipper):
+        (WebCore::SVGResources::markerStart):
+        (WebCore::SVGResources::markerMid):
+        (WebCore::SVGResources::markerEnd):
+        (WebCore::SVGResources::masker):
+        (WebCore::SVGResources::filter):
+        (WebCore::SVGResources::fill):
+        (WebCore::SVGResources::stroke):
+        Code clean up; use nullptr instead of 0.
+
 2016-01-21  Jer Noble  <jer.noble@apple.com>
 
         [EME] Correctly report errors when generating key requests from AVContentKeySession.

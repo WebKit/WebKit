@@ -35,6 +35,7 @@ class RenderSVGResourceContainer;
 class RenderSVGResourceFilter;
 class RenderSVGResourceMarker;
 class RenderSVGResourceMasker;
+class RenderSVGRoot;
 class SVGRenderStyle;
 
 // Holds a set of resources associated with a RenderObject
@@ -44,24 +45,19 @@ public:
     SVGResources();
 
     bool buildCachedResources(const RenderElement&, const RenderStyle&);
+    void layoutDifferentRootIfNeeded(const RenderSVGRoot*);
 
     // Ordinary resources
-    RenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper : 0; }
-    RenderSVGResourceMarker* markerStart() const { return m_markerData ? m_markerData->markerStart : 0; }
-    RenderSVGResourceMarker* markerMid() const { return m_markerData ? m_markerData->markerMid : 0; }
-    RenderSVGResourceMarker* markerEnd() const { return m_markerData ? m_markerData->markerEnd : 0; }
-    RenderSVGResourceMasker* masker() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->masker : 0; }
-
-    RenderSVGResourceFilter* filter() const
-    {
-        if (m_clipperFilterMaskerData)
-            return m_clipperFilterMaskerData->filter;
-        return 0;
-    }
+    RenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper : nullptr; }
+    RenderSVGResourceMarker* markerStart() const { return m_markerData ? m_markerData->markerStart : nullptr; }
+    RenderSVGResourceMarker* markerMid() const { return m_markerData ? m_markerData->markerMid : nullptr; }
+    RenderSVGResourceMarker* markerEnd() const { return m_markerData ? m_markerData->markerEnd : nullptr; }
+    RenderSVGResourceMasker* masker() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->masker : nullptr; }
+    RenderSVGResourceFilter* filter() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->filter : nullptr; }
 
     // Paint servers
-    RenderSVGResourceContainer* fill() const { return m_fillStrokeData ? m_fillStrokeData->fill : 0; }
-    RenderSVGResourceContainer* stroke() const { return m_fillStrokeData ? m_fillStrokeData->stroke : 0; }
+    RenderSVGResourceContainer* fill() const { return m_fillStrokeData ? m_fillStrokeData->fill : nullptr; }
+    RenderSVGResourceContainer* stroke() const { return m_fillStrokeData ? m_fillStrokeData->stroke : nullptr; }
 
     // Chainable resources - linked through xlink:href
     RenderSVGResourceContainer* linkedResource() const { return m_linkedResource; }
