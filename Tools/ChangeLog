@@ -1,3 +1,9 @@
+2016-01-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert accidental unreviewed commit.
+
+        * Scripts/display-profiler-output:
+
 2016-01-20  Jason Marcell  <jmarcell@apple.com>
 
         Refactor compareIterations to remove duplicate code.

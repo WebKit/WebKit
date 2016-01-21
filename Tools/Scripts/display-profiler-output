@@ -535,7 +535,7 @@ def sortByMode(list)
     end
 end
 
-def summary(mode, order)
+def summary(mode)
     remaining = screenWidth
     
     # Figure out how many columns we need for the code block names, and for counts
@@ -618,14 +618,7 @@ def summary(mode, order)
     puts
     $bytecodes.sort {
         | a, b |
-        case order
-        when :bytecode
-            b.totalMaxTopExecutionCount <=> a.totalMaxTopExecutionCount
-        when :machine
-            b.totalMaxBottomExecutionCount <=> a.totalMaxBottomExecutionCount
-        else
-            raise
-        end
+        b.totalMaxTopExecutionCount <=> a.totalMaxTopExecutionCount
     }.each {
         | bytecode |
         print(center(bytecode.name(hashCols), hashCols))
@@ -745,13 +738,9 @@ def executeCommand(*commandArray)
     when "quit", "q", "exit"
         exit 0
     when "summary", "s"
-        summary(:summary, :bytecode)
+        summary(:summary)
     when "full", "f"
-        if args[0] and (args[0] == "m" or args[0] == "machine")
-            summary(:full, :machine)
-        else
-            summary(:full, :bytecode)
-        end
+        summary(:full)
     when "source"
         if args.length != 1
             puts "Usage: source <code block hash>"
