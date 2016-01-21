@@ -8429,6 +8429,66 @@ void testSwitchChillDiv(unsigned degree, unsigned gap = 1)
     CHECK(!invoke<int32_t>(*code, degree * gap + 1, 42, 11));
 }
 
+void testSwitchTargettingSameBlock()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    BasicBlock* terminate = proc.addBlock();
+    terminate->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        terminate->appendNew<Const32Value>(proc, Origin(), 5));
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(
+        proc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        FrequentedBlock(terminate));
+
+    BasicBlock* otherTarget = proc.addBlock();
+    otherTarget->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        otherTarget->appendNew<Const32Value>(proc, Origin(), 42));
+    switchValue->appendCase(SwitchCase(3, FrequentedBlock(otherTarget)));
+    switchValue->appendCase(SwitchCase(13, FrequentedBlock(otherTarget)));
+
+    auto code = compile(proc);
+
+    for (unsigned i = 0; i < 20; ++i) {
+        int32_t expected = (i == 3 || i == 13) ? 42 : 5;
+        CHECK(invoke<int32_t>(*code, i) == expected);
+    }
+}
+
+void testSwitchTargettingSameBlockFoldPathConstant()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    BasicBlock* terminate = proc.addBlock();
+    terminate->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        terminate->appendNew<Const32Value>(proc, Origin(), 42));
+
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(
+        proc, Origin(),
+        argument,
+        FrequentedBlock(terminate));
+
+    BasicBlock* otherTarget = proc.addBlock();
+    otherTarget->appendNew<ControlValue>(
+        proc, Return, Origin(), argument);
+    switchValue->appendCase(SwitchCase(3, FrequentedBlock(otherTarget)));
+    switchValue->appendCase(SwitchCase(13, FrequentedBlock(otherTarget)));
+
+    auto code = compile(proc);
+
+    for (unsigned i = 0; i < 20; ++i) {
+        int32_t expected = (i == 3 || i == 13) ? i : 42;
+        CHECK(invoke<int32_t>(*code, i) == expected);
+    }
+}
+
 void testTruncFold(int64_t value)
 {
     Procedure proc;
@@ -10384,6 +10444,9 @@ void run(const char* filter)
     RUN(testSwitchChillDiv(10, 2));
     RUN(testSwitchChillDiv(100, 1));
     RUN(testSwitchChillDiv(100, 100));
+
+    RUN(testSwitchTargettingSameBlock());
+    RUN(testSwitchTargettingSameBlockFoldPathConstant());
 
     RUN(testTrunc(0));
     RUN(testTrunc(1));

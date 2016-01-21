@@ -1,3 +1,28 @@
+2016-01-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] foldPathConstants() makes invalid assumptions with Switch
+        https://bugs.webkit.org/show_bug.cgi?id=153324
+
+        Reviewed by Filip Pizlo.
+
+        If a Switch() has two cases pointing to the same basic block, foldPathConstants()
+        was adding two override for that block with two different constants.
+        If the block with the Switch dominates the target, both override were equally valid
+        and we were assuming any of the constants as the value in the target block.
+
+        See testSwitchTargettingSameBlockFoldPathConstant() for an example that breaks.
+
+        This patch adds checks to ignore any block that is reached more than
+        once by the control value.
+
+        * b3/B3FoldPathConstants.cpp:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/testb3.cpp:
+        (JSC::B3::testSwitchTargettingSameBlock):
+        (JSC::B3::testSwitchTargettingSameBlockFoldPathConstant):
+        (JSC::B3::run):
+
 2016-01-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, undo DFGCommon.h change that accidentally enabled the B3 JIT.

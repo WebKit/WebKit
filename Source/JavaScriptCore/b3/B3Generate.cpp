@@ -91,7 +91,7 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
 
     if (optLevel >= 1) {
         reduceStrength(procedure);
-        
+
         // FIXME: Add more optimizations here.
         // https://bugs.webkit.org/show_bug.cgi?id=150507
     }

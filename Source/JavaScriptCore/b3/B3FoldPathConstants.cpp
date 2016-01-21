@@ -90,6 +90,8 @@ public:
             ControlValue* branch = block->last()->as<ControlValue>();
             switch (branch->opcode()) {
             case Branch:
+                if (branch->successorBlock(0) == branch->successorBlock(1))
+                    continue;
                 addOverride(
                     block, branch->child(0),
                     Override::nonZero(branch->successorBlock(0)));
@@ -97,13 +99,21 @@ public:
                     block, branch->child(0),
                     Override::constant(branch->successorBlock(1), 0));
                 break;
-            case Switch:
+            case Switch: {
+                HashMap<BasicBlock*, unsigned> targetUses;
+                for (const SwitchCase& switchCase : *branch->as<SwitchValue>())
+                    targetUses.add(switchCase.targetBlock(), 0).iterator->value++;
+
                 for (const SwitchCase& switchCase : *branch->as<SwitchValue>()) {
+                    if (targetUses.find(switchCase.targetBlock())->value != 1)
+                        continue;
+
                     addOverride(
                         block, branch->child(0),
                         Override::constant(switchCase.targetBlock(), switchCase.caseValue()));
                 }
                 break;
+            }
             default:
                 break;
             }
