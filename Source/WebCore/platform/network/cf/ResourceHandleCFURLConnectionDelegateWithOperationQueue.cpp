@@ -133,7 +133,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!protector->hasHandle()) {
+        if (!protector->hasHandle() || !m_handle->client()) {
             continueDidReceiveResponse();
             return;
         }
@@ -172,7 +172,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(CFD
     CFRetain(data);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle()) {
+        if (protector->hasHandle() && m_handle->client()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
             m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFData(data), originalLength);
@@ -188,7 +188,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading()
     // capture "this" by pointer value, and use a C++ lambda to prevent other unintentional capturing.
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!protector->hasHandle())
+        if (!protector->hasHandle() || !m_handle->client())
             return;
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
@@ -204,7 +204,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail(CFErrorRef
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     CFRetain(error);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle()) {
+        if (protector->hasHandle() && m_handle->client()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
             m_handle->client()->didFail(m_handle, ResourceError(error));
@@ -221,7 +221,7 @@ CFCachedURLResponseRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!protector->hasHandle()) {
+        if (!protector->hasHandle() || !m_handle->client()) {
             continueWillCacheResponse(nullptr);
             return;
         }
@@ -257,7 +257,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(CF
     // capture "this" by pointer value, and use a C++ lambda to prevent other unintentional capturing.
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!protector->hasHandle())
+        if (!protector->hasHandle() || !m_handle->client())
             return;
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
@@ -309,7 +309,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveDataArra
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     CFRetain(dataArray);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle()) {
+        if (protector->hasHandle() && m_handle->client()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
             m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFDataArray(dataArray), -1);

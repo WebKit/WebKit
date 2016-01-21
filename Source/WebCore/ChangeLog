@@ -1,3 +1,26 @@
+2016-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        ResourceHandleCFURLConnectionDelegateWithOperationQueue delegate methods don't NULL-check m_handle->client()
+        <https://webkit.org/b/152675>
+        <rdar://problem/24034044>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willCacheResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveDataArray):
+        - Add NULL check for m_handle->client() as is done in the
+          WebCoreResourceHandleAsOperationQueueDelegate class in
+          WebCoreResourceHandleAsOperationQueueDelegate.mm.  (The NULL
+          check for -connection:didReceiveResponse: is currently
+          missing, but there are crashes there, too, that are covered by
+          Bug 152673.)
+
 2016-01-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Use TinyLRUCache in caching the CGColorRef in WebCore::cachedCGColor()
