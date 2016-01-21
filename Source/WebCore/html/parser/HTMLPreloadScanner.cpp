@@ -208,7 +208,7 @@ private:
                 m_mediaAttribute = attributeValue;
                 Ref<MediaQuerySet> mediaSet = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
                 Vector<std::unique_ptr<MediaQueryResult>> viewportDependentMediaQueryResults;
-                MediaQueryEvaluator evaluator(document.printing() ? "print" : "screen", document.frame(), document.documentElement()->computedStyle());
+                MediaQueryEvaluator evaluator(document.printing() ? "print" : "screen", document.frame(), document.documentElement() ? document.documentElement()->computedStyle() : nullptr);
                 m_mediaMatched = evaluator.evalCheckingViewportDependentResults(mediaSet.ptr(), viewportDependentMediaQueryResults);
             }
             break;
