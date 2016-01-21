@@ -63,6 +63,7 @@ private:
     void element() const = delete;
 
     virtual const char* renderName() const override { return "RenderSVGResourceClipper"; }
+    bool isSVGResourceClipper() const override { return true; }
 
     bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&);
     bool drawContentIntoMaskImage(const ClipperMaskImage&, const FloatRect& objectBoundingBox);
@@ -75,6 +76,9 @@ private:
 
 }
 
-SPECIALIZE_TYPE_TRAITS_RENDER_SVG_RESOURCE(RenderSVGResourceClipper, ClipperResourceType)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderSVGResourceClipper)
+static bool isType(const WebCore::RenderObject& renderer) { return renderer.isSVGResourceClipper(); }
+static bool isType(const WebCore::RenderSVGResource& resource) { return resource.resourceType() == WebCore::ClipperResourceType; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

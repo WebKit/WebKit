@@ -1,3 +1,22 @@
+2016-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        http://victordarras.fr/cssgame/ doesn't work in Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=153285
+        <rdar://problem/24212369>
+
+        Reviewed by Tim Horton.
+
+        This patch adds support for hittesting ClipPathOperation::Reference.
+
+        Tests: svg/clip-path/hittest-clip-path-reference-miss.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGResourceClipper):
+        * rendering/svg/RenderSVGResourceClipper.h:
+        (isType):
+
 2016-01-20  David Kilzer  <ddkilzer@apple.com>
 
         ResourceHandleCFURLConnectionDelegateWithOperationQueue delegate methods don't NULL-check m_handle->client()

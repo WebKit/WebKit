@@ -59,6 +59,7 @@
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
@@ -2462,8 +2463,18 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
                 return false;
             break;
         }
-        // FIXME: handle Reference/Box
-        case ClipPathOperation::Reference:
+        case ClipPathOperation::Reference: {
+            const auto& referenceClipPathOperation = downcast<ReferenceClipPathOperation>(*style().clipPath());
+            auto* element = document().getElementById(referenceClipPathOperation.fragment());
+            if (!element || !element->renderer())
+                break;
+            if (!is<SVGClipPathElement>(*element))
+                break;
+            auto& clipper = downcast<RenderSVGResourceClipper>(*element->renderer());
+            if (!clipper.hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint(locationInContainer.point() - localOffset)))
+                return false;
+            break;
+        }
         case ClipPathOperation::Box:
             break;
         }

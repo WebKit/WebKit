@@ -1,3 +1,16 @@
+2016-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        http://victordarras.fr/cssgame/ doesn't work in Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=153285
+        <rdar://problem/24212369>
+
+        Reviewed by Tim Horton.
+
+        This patch adds support for hittesting ClipPathOperation::Reference.
+
+        * svg/clip-path/hittest-clip-path-reference-miss-expected.html: Added.
+        * svg/clip-path/hittest-clip-path-reference-miss.html: Added.
+
 2016-01-20  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add -private.html variants of every storage/indexeddb test that doesn't already have them.

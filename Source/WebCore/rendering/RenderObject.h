@@ -419,6 +419,7 @@ public:
     virtual bool isSVGForeignObject() const { return false; }
     virtual bool isSVGResourceContainer() const { return false; }
     virtual bool isSVGResourceFilter() const { return false; }
+    virtual bool isSVGResourceClipper() const { return false; }
     virtual bool isSVGResourceFilterPrimitive() const { return false; }
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
