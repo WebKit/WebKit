@@ -1,3 +1,18 @@
+2016-01-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Use TinyLRUCache in caching the CGColorRef in WebCore::cachedCGColor()
+        https://bugs.webkit.org/show_bug.cgi?id=153279
+
+        Reviewed by Dean Jackson.
+
+        Reuse the new template TinyLRUCache in caching the CGColor instead of
+        having the same code repeated twice.
+
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::leakCGColor):
+        (WebCore::RetainPtr<CGColorRef>>::createValueForKey):
+        (WebCore::cachedCGColor):
+
 2016-01-20  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: InspectorCSSAgent does not call disable in willDestroyFrontendAndBackend

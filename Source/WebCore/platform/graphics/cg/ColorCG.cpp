@@ -31,6 +31,7 @@
 #include "GraphicsContextCG.h"
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TinyLRUCache.h>
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #else
@@ -107,6 +108,12 @@ static CGColorRef leakCGColor(const Color& color)
     return CGColorCreate(sRGBColorSpaceRef(), components);
 }
 
+template<>
+RetainPtr<CGColorRef> TinyLRUCachePolicy<Color, RetainPtr<CGColorRef>>::createValueForKey(const Color& color)
+{
+    return adoptCF(leakCGColor(color));
+}
+
 CGColorRef cachedCGColor(const Color& color)
 {
     switch (color.rgb()) {
@@ -126,24 +133,8 @@ CGColorRef cachedCGColor(const Color& color)
 
     ASSERT(color.rgb());
 
-    const size_t cacheSize = 32;
-    static RGBA32 cachedRGBAValues[cacheSize];
-    static RetainPtr<CGColorRef>* cachedCGColors = new RetainPtr<CGColorRef>[cacheSize];
-
-    for (size_t i = 0; i < cacheSize; ++i) {
-        if (cachedRGBAValues[i] == color.rgb())
-            return cachedCGColors[i].get();
-    }
-
-    CGColorRef newCGColor = leakCGColor(color);
-
-    static size_t cursor;
-    cachedRGBAValues[cursor] = color.rgb();
-    cachedCGColors[cursor] = adoptCF(newCGColor);
-    if (++cursor == cacheSize)
-        cursor = 0;
-
-    return newCGColor;
+    static NeverDestroyed<TinyLRUCache<Color, RetainPtr<CGColorRef>, 32>> cache;
+    return cache.get().get(color).get();
 }
 
 }
