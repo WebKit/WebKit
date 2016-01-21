@@ -1,3 +1,19 @@
+2016-01-21  Keith Miller  <keith_miller@apple.com>
+
+        Fix bug in TypedArray.prototype.set and add tests
+        https://bugs.webkit.org/show_bug.cgi?id=153309
+
+        Reviewed by Michael Saboff.
+
+        This patch fixes an issue with TypedArray.prototype.set where we would
+        assign a double to an unsigned without checking that the double was
+        in the range of the unsigned. Additionally, the patch also adds
+        tests for set for cases that were not covered before.
+
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        * tests/stress/typedarray-set.js: Added.
+
 2016-01-19  Ada Chan  <adachan@apple.com>
 
         Make it possible to enable VIDEO_PRESENTATION_MODE on other Cocoa platforms.

@@ -75,7 +75,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(ExecState* exec)
             return JSValue::encode(jsUndefined());
         if (offsetNumber < 0)
             return throwVMRangeError(exec, "Offset should not be negative");
-        offset = offsetNumber;
+        offset = static_cast<unsigned>(std::min(offsetNumber, static_cast<double>(std::numeric_limits<unsigned>::max())));
     } else
         offset = 0;
 
