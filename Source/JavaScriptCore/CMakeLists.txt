@@ -120,6 +120,7 @@ set(JavaScriptCore_SOURCES
     b3/B3DataSection.cpp
     b3/B3DuplicateTails.cpp
     b3/B3Effects.cpp
+    b3/B3EliminateCommonSubexpressions.cpp
     b3/B3FixSSA.cpp
     b3/B3FoldPathConstants.cpp
     b3/B3FrequencyClass.cpp
@@ -142,6 +143,7 @@ set(JavaScriptCore_SOURCES
     b3/B3PhaseScope.cpp
     b3/B3PhiChildren.cpp
     b3/B3Procedure.cpp
+    b3/B3PureCSE.cpp
     b3/B3ReduceDoubleToFloat.cpp
     b3/B3ReduceStrength.cpp
     b3/B3SSACalculator.cpp

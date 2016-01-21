@@ -33,6 +33,7 @@
 #include "AirInstInlines.h"
 #include "B3Common.h"
 #include "B3DuplicateTails.h"
+#include "B3EliminateCommonSubexpressions.h"
 #include "B3FoldPathConstants.h"
 #include "B3LegalizeMemoryOffsets.h"
 #include "B3LowerMacros.h"
@@ -78,6 +79,7 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
     if (optLevel >= 1) {
         reduceDoubleToFloat(procedure);
         reduceStrength(procedure);
+        eliminateCommonSubexpressions(procedure);
         duplicateTails(procedure);
         foldPathConstants(procedure);
         

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,65 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3InsertionSet_h
-#define B3InsertionSet_h
+#include "config.h"
+#include "B3PureCSE.h"
 
 #if ENABLE(B3_JIT)
 
-#include "B3Origin.h"
-#include "B3Type.h"
-#include <wtf/Insertion.h>
-#include <wtf/Vector.h>
+#include "B3Dominators.h"
+#include "B3Value.h"
 
 namespace JSC { namespace B3 {
 
-class BasicBlock;
-class Procedure;
-class Value;
+PureCSE::PureCSE()
+{
+}
 
-typedef WTF::Insertion<Value*> Insertion;
+PureCSE::~PureCSE()
+{
+}
 
-class InsertionSet {
-public:
-    InsertionSet(Procedure& procedure)
-        : m_procedure(procedure)
-    {
+void PureCSE::clear()
+{
+    m_map.clear();
+}
+
+bool PureCSE::process(Value* value, Dominators& dominators)
+{
+    if (value->opcode() == Identity)
+        return false;
+
+    ValueKey key = value->key();
+    if (!key)
+        return false;
+
+    Matches& matches = m_map.add(key, Matches()).iterator->value;
+
+    for (Value* match : matches) {
+        if (dominators.dominates(match->owner, value->owner)) {
+            value->replaceWithIdentity(match);
+            return true;
+        }
     }
 
-    bool isEmpty() const { return m_insertions.isEmpty(); }
-
-    Procedure& code() { return m_procedure; }
-
-    void appendInsertion(const Insertion& insertion)
-    {
-        m_insertions.append(insertion);
-    }
-
-    Value* insertValue(size_t index, Value* value)
-    {
-        appendInsertion(Insertion(index, value));
-        return value;
-    }
-
-    template<typename ValueType, typename... Arguments>
-    ValueType* insert(size_t index, Arguments... arguments);
-
-    Value* insertIntConstant(size_t index, Origin, Type, int64_t value);
-    Value* insertIntConstant(size_t index, Value* likeValue, int64_t value);
-
-    Value* insertBottom(size_t index, Origin, Type);
-    Value* insertBottom(size_t index, Value*);
-
-    void execute(BasicBlock*);
-
-private:
-    Procedure& m_procedure;
-    Vector<Insertion, 8> m_insertions;
-};
+    matches.append(value);
+    return false;
+}
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3InsertionSet_h
 

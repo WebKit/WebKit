@@ -1,3 +1,41 @@
+2016-01-21  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have load elimination
+        https://bugs.webkit.org/show_bug.cgi?id=153288
+
+        Reviewed by Geoffrey Garen.
+
+        I needed a way to track sets of ranges, where there is a high likelihood that all of the
+        ranges overlap. So I created RangeSet. It's a usually-sorted list of coalesced ranges.
+        Practically this means that right now, FTL B3 will end up with two kinds of range sets: a set
+        that just contains top and a set that contains nothing. In the future, most sets will either
+        be top of empty but some of them will contain a handful of other things.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MathExtras.h:
+        (WTF::leftShiftWithSaturation):
+        (WTF::nonEmptyRangesOverlap):
+        (WTF::rangesOverlap):
+        * wtf/RangeSet.h: Added.
+        (WTF::RangeSet::RangeSet):
+        (WTF::RangeSet::~RangeSet):
+        (WTF::RangeSet::add):
+        (WTF::RangeSet::contains):
+        (WTF::RangeSet::overlaps):
+        (WTF::RangeSet::clear):
+        (WTF::RangeSet::dump):
+        (WTF::RangeSet::dumpRaw):
+        (WTF::RangeSet::compact):
+        (WTF::RangeSet::overlapsNonEmpty):
+        (WTF::RangeSet::subsumesNonEmpty):
+        (WTF::RangeSet::findRange):
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearchImpl):
+        (WTF::binarySearch):
+        (WTF::tryBinarySearch):
+        (WTF::approximateBinarySearch):
+
 2016-01-19  Ada Chan  <adachan@apple.com>
 
         Make it possible to enable VIDEO_PRESENTATION_MODE on other Cocoa platforms.

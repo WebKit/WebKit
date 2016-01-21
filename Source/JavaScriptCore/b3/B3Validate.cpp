@@ -371,6 +371,8 @@ public:
                 VALIDATE(value->type() == Void, ("At ", *value));
                 break;
             }
+
+            VALIDATE(!(value->effects().writes && value->key()), ("At ", *value));
         }
     }
 

@@ -1,3 +1,49 @@
+2016-01-21  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have load elimination
+        https://bugs.webkit.org/show_bug.cgi?id=153288
+
+        Reviewed by Geoffrey Garen.
+
+        This adds a complete GCSE pass that includes load elimination. It would have been super hard
+        to make this work as part of the reduceStrength() fixpoint, since GCSE needs to analyze
+        control flow and reduceStrength() is messing with control flow. So, I did a compromise: I
+        factored out the pure CSE that reduceStrength() was already doing, and now we have:
+
+        - reduceStrength() still does pure CSE using the new PureCSE helper.
+
+        - eliminateCommonSubexpressions() is a separate phase that does general CSE. It uses the
+          PureCSE helper for pure values and does its own special thing for memory values.
+        
+        Unfortunately, this doesn't help any benchmark right now. It doesn't hurt anything, either,
+        and it's likely to become a bigger pay-off once we implement other features, like mapping
+        FTL's abstract heaps onto B3's heap ranges.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3EliminateCommonSubexpressions.cpp: Added.
+        (JSC::B3::eliminateCommonSubexpressions):
+        * b3/B3EliminateCommonSubexpressions.h: Added.
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3HeapRange.h:
+        (JSC::B3::HeapRange::HeapRange):
+        * b3/B3InsertionSet.h:
+        (JSC::B3::InsertionSet::InsertionSet):
+        (JSC::B3::InsertionSet::isEmpty):
+        (JSC::B3::InsertionSet::code):
+        (JSC::B3::InsertionSet::appendInsertion):
+        * b3/B3MemoryValue.h:
+        * b3/B3PureCSE.cpp: Added.
+        (JSC::B3::PureCSE::PureCSE):
+        (JSC::B3::PureCSE::~PureCSE):
+        (JSC::B3::PureCSE::clear):
+        (JSC::B3::PureCSE::process):
+        * b3/B3PureCSE.h: Added.
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3ReduceStrength.h:
+        * b3/B3Validate.cpp:
+
 2016-01-21  Keith Miller  <keith_miller@apple.com>
 
         Fix bug in TypedArray.prototype.set and add tests

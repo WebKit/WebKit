@@ -60,6 +60,9 @@ public:
     const HeapRange& range() const { return m_range; }
     void setRange(const HeapRange& range) { m_range = range; }
 
+    bool isStore() const { return type() == Void; }
+    bool isLoad() const { return type() != Void; }
+
     size_t accessByteSize() const;
 
 protected:

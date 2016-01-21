@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,65 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3InsertionSet_h
-#define B3InsertionSet_h
+#ifndef B3PureCSE_h
+#define B3PureCSE_h
 
 #if ENABLE(B3_JIT)
 
-#include "B3Origin.h"
-#include "B3Type.h"
-#include <wtf/Insertion.h>
+#include "B3ValueKey.h"
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
 
-class BasicBlock;
-class Procedure;
+class Dominators;
 class Value;
 
-typedef WTF::Insertion<Value*> Insertion;
+typedef Vector<Value*, 1> Matches;
 
-class InsertionSet {
+// This is a reusable utility for doing pure CSE. You can use it to do pure CSE on a program by just
+// proceeding in order an calling process().
+class PureCSE {
 public:
-    InsertionSet(Procedure& procedure)
-        : m_procedure(procedure)
-    {
-    }
+    PureCSE();
+    ~PureCSE();
 
-    bool isEmpty() const { return m_insertions.isEmpty(); }
+    void clear();
 
-    Procedure& code() { return m_procedure; }
-
-    void appendInsertion(const Insertion& insertion)
-    {
-        m_insertions.append(insertion);
-    }
-
-    Value* insertValue(size_t index, Value* value)
-    {
-        appendInsertion(Insertion(index, value));
-        return value;
-    }
-
-    template<typename ValueType, typename... Arguments>
-    ValueType* insert(size_t index, Arguments... arguments);
-
-    Value* insertIntConstant(size_t index, Origin, Type, int64_t value);
-    Value* insertIntConstant(size_t index, Value* likeValue, int64_t value);
-
-    Value* insertBottom(size_t index, Origin, Type);
-    Value* insertBottom(size_t index, Value*);
-
-    void execute(BasicBlock*);
-
+    bool process(Value*, Dominators&);
+    
 private:
-    Procedure& m_procedure;
-    Vector<Insertion, 8> m_insertions;
+    HashMap<ValueKey, Matches> m_map;
 };
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3InsertionSet_h
+#endif // B3PureCSE_h
 

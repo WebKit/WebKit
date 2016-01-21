@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -419,6 +419,20 @@ inline T leftShiftWithSaturation(T value, unsigned shiftAmount, T max = std::num
     return result;
 }
 
+// Check if two ranges overlap assuming that neither range is empty.
+template<typename T>
+inline bool nonEmptyRangesOverlap(T leftMin, T leftMax, T rightMin, T rightMax)
+{
+    ASSERT(leftMin < leftMax);
+    ASSERT(rightMin < rightMax);
+    
+    if (leftMin <= rightMin && leftMax > rightMin)
+        return true;
+    if (rightMin <= leftMin && rightMax > leftMin)
+        return true;
+    return false;
+}
+
 // Pass ranges with the min being inclusive and the max being exclusive. For example, this should
 // return false:
 //
@@ -434,12 +448,8 @@ inline bool rangesOverlap(T leftMin, T leftMax, T rightMin, T rightMax)
         return false;
     if (rightMin == rightMax)
         return false;
-    
-    if (leftMin <= rightMin && leftMax > rightMin)
-        return true;
-    if (rightMin <= leftMin && rightMax > leftMin)
-        return true;
-    return false;
+
+    return nonEmptyRangesOverlap(leftMin, leftMax, rightMin, rightMax);
 }
 
 } // namespace WTF

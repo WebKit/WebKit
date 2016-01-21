@@ -40,6 +40,8 @@ namespace JSC { namespace B3 {
 
 class HeapRange {
 public:
+    typedef unsigned Type;
+    
     HeapRange()
         : m_begin(0)
         , m_end(0)

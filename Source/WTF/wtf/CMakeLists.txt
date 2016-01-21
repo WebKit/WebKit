@@ -77,6 +77,7 @@ set(WTF_HEADERS
     RAMSize.h
     RandomNumber.h
     RandomNumberSeed.h
+    RangeSet.h
     RawPointer.h
     RedBlackTree.h
     Ref.h

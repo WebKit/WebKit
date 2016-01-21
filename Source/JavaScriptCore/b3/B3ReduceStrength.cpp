@@ -38,6 +38,7 @@
 #include "B3PhaseScope.h"
 #include "B3PhiChildren.h"
 #include "B3ProcedureInlines.h"
+#include "B3PureCSE.h"
 #include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
 #include "B3ValueKey.h"
@@ -282,7 +283,7 @@ public:
 
             m_proc.resetValueOwners();
             m_dominators = &m_proc.dominators(); // Recompute if necessary.
-            m_pureValues.clear();
+            m_pureCSE.clear();
 
             for (BasicBlock* block : m_proc.blocksInPreOrder()) {
                 m_block = block;
@@ -1751,31 +1752,7 @@ private:
 
     void replaceIfRedundant()
     {
-        // This does a very simple pure dominator-based CSE. In the future we could add load elimination.
-        // Note that if we add load elimination, we should do it by directly matching load and store
-        // instructions instead of using the ValueKey functionality or doing DFG HeapLocation-like
-        // things.
-
-        // Don't bother with identities. We kill those anyway.
-        if (m_value->opcode() == Identity)
-            return;
-
-        ValueKey key = m_value->key();
-        if (!key)
-            return;
-        
-        Vector<Value*, 1>& matches = m_pureValues.add(key, Vector<Value*, 1>()).iterator->value;
-
-        // Replace this value with whichever value dominates us.
-        for (Value* match : matches) {
-            if (m_dominators->dominates(match->owner, m_value->owner)) {
-                m_value->replaceWithIdentity(match);
-                m_changed = true;
-                return;
-            }
-        }
-
-        matches.append(m_value);
+        m_changed |= m_pureCSE.process(m_value, *m_dominators);
     }
 
     void simplifyCFG()
@@ -2042,7 +2019,7 @@ private:
     unsigned m_index { 0 };
     Value* m_value { nullptr };
     Dominators* m_dominators { nullptr };
-    HashMap<ValueKey, Vector<Value*, 1>> m_pureValues;
+    PureCSE m_pureCSE;
     bool m_changed { false };
     bool m_changedCFG { false };
 };

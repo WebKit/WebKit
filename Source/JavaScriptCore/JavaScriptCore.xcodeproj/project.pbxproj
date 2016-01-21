@@ -467,6 +467,10 @@
 		0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7025A81714B0F800382C0E /* DFGOSRExitCompilerCommon.h */; };
 		0F714CA416EA92F000F3EBEB /* DFGBackwardsPropagationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F714CA116EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.cpp */; };
 		0F714CA516EA92F200F3EBEB /* DFGBackwardsPropagationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F714CA216EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.h */; };
+		0F725CA71C503DED00AD943A /* B3EliminateCommonSubexpressions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F725CA31C503DED00AD943A /* B3EliminateCommonSubexpressions.cpp */; };
+		0F725CA81C503DED00AD943A /* B3EliminateCommonSubexpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CA41C503DED00AD943A /* B3EliminateCommonSubexpressions.h */; };
+		0F725CA91C503DED00AD943A /* B3PureCSE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F725CA51C503DED00AD943A /* B3PureCSE.cpp */; };
+		0F725CAA1C503DED00AD943A /* B3PureCSE.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CA61C503DED00AD943A /* B3PureCSE.h */; };
 		0F725CAF1C506D3B00AD943A /* B3FoldPathConstants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F725CAD1C506D3B00AD943A /* B3FoldPathConstants.cpp */; };
 		0F725CB01C506D3B00AD943A /* B3FoldPathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CAE1C506D3B00AD943A /* B3FoldPathConstants.h */; };
 		0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652A3A201651C66100A80AFE /* ARM64Disassembler.cpp */; };
@@ -2647,6 +2651,10 @@
 		0F7025A81714B0F800382C0E /* DFGOSRExitCompilerCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitCompilerCommon.h; path = dfg/DFGOSRExitCompilerCommon.h; sourceTree = "<group>"; };
 		0F714CA116EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGBackwardsPropagationPhase.cpp; path = dfg/DFGBackwardsPropagationPhase.cpp; sourceTree = "<group>"; };
 		0F714CA216EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBackwardsPropagationPhase.h; path = dfg/DFGBackwardsPropagationPhase.h; sourceTree = "<group>"; };
+		0F725CA31C503DED00AD943A /* B3EliminateCommonSubexpressions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3EliminateCommonSubexpressions.cpp; path = b3/B3EliminateCommonSubexpressions.cpp; sourceTree = "<group>"; };
+		0F725CA41C503DED00AD943A /* B3EliminateCommonSubexpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3EliminateCommonSubexpressions.h; path = b3/B3EliminateCommonSubexpressions.h; sourceTree = "<group>"; };
+		0F725CA51C503DED00AD943A /* B3PureCSE.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3PureCSE.cpp; path = b3/B3PureCSE.cpp; sourceTree = "<group>"; };
+		0F725CA61C503DED00AD943A /* B3PureCSE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3PureCSE.h; path = b3/B3PureCSE.h; sourceTree = "<group>"; };
 		0F725CAD1C506D3B00AD943A /* B3FoldPathConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3FoldPathConstants.cpp; path = b3/B3FoldPathConstants.cpp; sourceTree = "<group>"; };
 		0F725CAE1C506D3B00AD943A /* B3FoldPathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3FoldPathConstants.h; path = b3/B3FoldPathConstants.h; sourceTree = "<group>"; };
 		0F766D1C15A5028D008F363E /* JITStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubRoutine.h; sourceTree = "<group>"; };
@@ -4783,6 +4791,8 @@
 				0F6B8AD71C4EDDA200969052 /* B3DuplicateTails.h */,
 				0FEC85C41BE16F5A0080FF74 /* B3Effects.cpp */,
 				0FEC85BE1BE167A00080FF74 /* B3Effects.h */,
+				0F725CA31C503DED00AD943A /* B3EliminateCommonSubexpressions.cpp */,
+				0F725CA41C503DED00AD943A /* B3EliminateCommonSubexpressions.h */,
 				0F6B8AE01C4EFE1700969052 /* B3FixSSA.cpp */,
 				0F6B8AE11C4EFE1700969052 /* B3FixSSA.h */,
 				0F725CAD1C506D3B00AD943A /* B3FoldPathConstants.cpp */,
@@ -4834,6 +4844,8 @@
 				0FEC84E11BDACDAC0080FF74 /* B3Procedure.cpp */,
 				0FEC84E21BDACDAC0080FF74 /* B3Procedure.h */,
 				0FEC84E31BDACDAC0080FF74 /* B3ProcedureInlines.h */,
+				0F725CA51C503DED00AD943A /* B3PureCSE.cpp */,
+				0F725CA61C503DED00AD943A /* B3PureCSE.h */,
 				43422A641C16221E00E2EB98 /* B3ReduceDoubleToFloat.cpp */,
 				43422A651C16221E00E2EB98 /* B3ReduceDoubleToFloat.h */,
 				0FEC85B71BE1462F0080FF74 /* B3ReduceStrength.cpp */,
@@ -7324,6 +7336,7 @@
 				0FC97F3E18202119002C9B26 /* DFGInvalidationPointInjectionPhase.h in Headers */,
 				0FEA0A34170D40BF00BB722C /* DFGJITCode.h in Headers */,
 				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,
+				0F725CA81C503DED00AD943A /* B3EliminateCommonSubexpressions.h in Headers */,
 				A78A9779179738B8009DF744 /* DFGJITFinalizer.h in Headers */,
 				0FC97F4018202119002C9B26 /* DFGJumpReplacement.h in Headers */,
 				A73A535B1799CD5D00170C19 /* DFGLazyJSValue.h in Headers */,
@@ -7651,6 +7664,7 @@
 				A1D792FD1B43864B004516F5 /* IntlNumberFormat.h in Headers */,
 				A1D792FF1B43864B004516F5 /* IntlNumberFormatConstructor.h in Headers */,
 				A125846E1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h in Headers */,
+				0F725CAA1C503DED00AD943A /* B3PureCSE.h in Headers */,
 				A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */,
 				A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */,
 				A55165D31BDF0B9E003B75C1 /* InspectorScriptProfilerAgent.h in Headers */,
@@ -8880,6 +8894,7 @@
 				A7D9A29417A0BC7400EE2618 /* DFGAtTailAbstractState.cpp in Sources */,
 				0F666EC61835672B00D017F1 /* DFGAvailability.cpp in Sources */,
 				0F2B9CE219D0BA7D00B1D1B5 /* DFGAvailabilityMap.cpp in Sources */,
+				0F725CA71C503DED00AD943A /* B3EliminateCommonSubexpressions.cpp in Sources */,
 				0F714CA416EA92F000F3EBEB /* DFGBackwardsPropagationPhase.cpp in Sources */,
 				A7D89CF217A0B8CC00773AD8 /* DFGBasicBlock.cpp in Sources */,
 				A7D89CF317A0B8CC00773AD8 /* DFGBlockInsertionSet.cpp in Sources */,
@@ -9328,6 +9343,7 @@
 				14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */,
 				142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */,
 				70B791981C024A29002481E2 /* GeneratorPrototype.cpp in Sources */,
+				0F725CA91C503DED00AD943A /* B3PureCSE.cpp in Sources */,
 				4340A4841A9051AF00D73CCA /* MathCommon.cpp in Sources */,
 				0F37308C1C0BD29100052BFA /* B3PhiChildren.cpp in Sources */,
 				14469DDF107EC7E700650446 /* MathObject.cpp in Sources */,
