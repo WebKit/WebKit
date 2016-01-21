@@ -92,15 +92,8 @@ public:
             return false;
         
         unsigned index = findRange(range);
-        if (index + 1 < m_ranges.size()
-            && subsumesNonEmpty(m_ranges[index + 1], range))
-            return true;
-        if (index < m_ranges.size()
-            && subsumesNonEmpty(m_ranges[index], range))
-            return true;
-        if (static_cast<unsigned>(index - 1) < m_ranges.size()
-            && subsumesNonEmpty(m_ranges[index - 1], range))
-            return true;
+        if (index != UINT_MAX)
+            return subsumesNonEmpty(m_ranges[index], range);
         return false;
     }
 
@@ -109,17 +102,7 @@ public:
         if (range.begin() == range.end())
             return false;
         
-        unsigned index = findRange(range);
-        if (index + 1 < m_ranges.size()
-            && overlapsNonEmpty(m_ranges[index + 1], range))
-            return true;
-        if (index < m_ranges.size()
-            && overlapsNonEmpty(m_ranges[index], range))
-            return true;
-        if (static_cast<unsigned>(index - 1) < m_ranges.size()
-            && overlapsNonEmpty(m_ranges[index - 1], range))
-            return true;
-        return false;
+        return findRange(range) != UINT_MAX;
     }
 
     void clear()
@@ -191,14 +174,13 @@ private:
     {
         const_cast<RangeSet*>(this)->compact();
 
-        const Range* found = approximateBinarySearch<const Range, Type>(
-            m_ranges, m_ranges.size(), range.begin(), [&] (const Range* range) -> Type {
-                return range->begin();
-            });
-        if (!found)
-            return UINT_MAX;
-
-        return found - m_ranges.begin();
+        // FIXME: Once we start using this in anger, we will want this to be a binary search.
+        for (unsigned i = 0; i < m_ranges.size(); ++i) {
+            if (overlapsNonEmpty(m_ranges[i], range))
+                return i;
+        }
+        
+        return UINT_MAX;
     }
     
     Vector<Range, 8> m_ranges;

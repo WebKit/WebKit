@@ -1,5 +1,26 @@
 2016-01-21  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION(r195417): many tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=153316
+
+        Reviewed by Saam Barati.
+
+        This rolls out the StdLibExtras.h change, and simplifies RangeSet to not use binary search.
+        That's fine for now, since B3 doesn't stress RangeSet enough right now.
+
+        * wtf/RangeSet.h:
+        (WTF::RangeSet::contains):
+        (WTF::RangeSet::overlaps):
+        (WTF::RangeSet::clear):
+        (WTF::RangeSet::findRange):
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearchImpl):
+        (WTF::binarySearch):
+        (WTF::tryBinarySearch):
+        (WTF::approximateBinarySearch):
+
+2016-01-21  Filip Pizlo  <fpizlo@apple.com>
+
         B3 should have load elimination
         https://bugs.webkit.org/show_bug.cgi?id=153288
 
