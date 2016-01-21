@@ -44,9 +44,9 @@ public:
 
     virtual void setClient(CDMSessionClient* client) override { m_client = client; }
     virtual const String& sessionId() const override { return m_sessionId; }
-    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
+    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
     virtual void releaseKeys() override;
-    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
+    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
 
 protected:
     CDMSessionClient* m_client;
@@ -112,7 +112,7 @@ MockCDMSession::MockCDMSession(CDMSessionClient* client)
 {
 }
 
-RefPtr<Uint8Array> MockCDMSession::generateKeyRequest(const String&, Uint8Array* initData, String&, unsigned short& errorCode, unsigned long&)
+RefPtr<Uint8Array> MockCDMSession::generateKeyRequest(const String&, Uint8Array* initData, String&, unsigned short& errorCode, uint32_t&)
 {
     for (unsigned i = 0; i < initDataPrefix()->length(); ++i) {
         if (!initData || i >= initData->length() || initData->item(i) != initDataPrefix()->item(i)) {
@@ -128,7 +128,7 @@ void MockCDMSession::releaseKeys()
     // no-op
 }
 
-bool MockCDMSession::update(Uint8Array* key, RefPtr<Uint8Array>&, unsigned short& errorCode, unsigned long&)
+bool MockCDMSession::update(Uint8Array* key, RefPtr<Uint8Array>&, unsigned short& errorCode, uint32_t&)
 {
     for (unsigned i = 0; i < keyPrefix()->length(); ++i) {
         if (i >= key->length() || key->item(i) != keyPrefix()->item(i)) {
