@@ -1,3 +1,25 @@
+2016-01-21  Nan Wang  <n_wang@apple.com>
+
+        AX: [IOS] Implement next/previous text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=153292
+        <rdar://problem/24268243>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/previous-next-text-marker-expected.txt: Removed.
+        * accessibility/mac/previous-next-text-marker.html: Removed.
+        * accessibility/mac/text-marker-with-user-select-none-expected.txt: Removed.
+        * accessibility/mac/text-marker-with-user-select-none.html: Removed.
+        * accessibility/text-marker: Added.
+        * accessibility/text-marker/text-marker-previous-next-expected.txt: Added.
+        * accessibility/text-marker/text-marker-previous-next.html: Added.
+        * accessibility/text-marker/text-marker-with-user-select-none-expected.txt: Added.
+        * accessibility/text-marker/text-marker-with-user-select-none.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-01-20  Zalan Bujtas  <zalan@apple.com>
 
         http://victordarras.fr/cssgame/ doesn't work in Safari.

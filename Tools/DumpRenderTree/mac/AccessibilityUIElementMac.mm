@@ -1612,7 +1612,7 @@ void AccessibilityUIElement::removeSelection()
     // FIXME: implement
 }
 
-#if SUPPORTS_AX_TEXTMARKERS
+#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
 
 // Text markers
 AccessibilityTextMarkerRange AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
@@ -1846,7 +1846,7 @@ bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarker
     return true;
 }
 
-#endif // SUPPORTS_AX_TEXTMARKERS
+#endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
 
 JSStringRef AccessibilityUIElement::supportedActions()
 {

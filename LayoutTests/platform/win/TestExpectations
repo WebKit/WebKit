@@ -1718,6 +1718,9 @@ webkit.org/b/146903 accessibility/roles-table-and-cell.html [ Skip ]
 webkit.org/b/138566 accessibility/aria-modal.html [ Skip ]
 webkit.org/b/138566 accessibility/aria-modal-multiple-dialogs.html [ Skip ]
 
+# Text marker tests are not supported
+webkit.org/b/153292 accessibility/text-marker [ Skip ]
+
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################

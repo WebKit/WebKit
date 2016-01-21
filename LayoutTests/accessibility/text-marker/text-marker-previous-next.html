@@ -44,26 +44,31 @@ c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px;
         
         // Check next text marker. (Advance 5 characters, it will land at <br>.)
         var currentMarker = startMarker;
+        var previousMarker, markerRange;
         for (var i = 0; i < 5; i++) {
+            previousMarker = currentMarker;
             currentMarker = text.nextTextMarker(currentMarker);
         }
-        var element = text.accessibilityElementForTextMarker(currentMarker);
-        shouldBe("element.stringValue", "'AXValue: '");
+        markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "''");
         
         // Advance one more character, it will lande at "t" in "text1".
+        previousMarker = currentMarker;
         currentMarker = text.nextTextMarker(currentMarker);
-        element = text.accessibilityElementForTextMarker(currentMarker);
-        shouldBe("element.stringValue", "'AXValue: text1'");
+        markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "'t'");
         
         // Check previous text marker. (Traverse backwards one character, it will land at <br>.)
+        previousMarker = text.previousTextMarker(previousMarker);
         currentMarker = text.previousTextMarker(currentMarker);
-        element = text.accessibilityElementForTextMarker(currentMarker);
-        shouldBe("element.stringValue", "'AXValue: '");
+        markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "''");
         
         // Traverse backwards one more character, it will land at the last character of "text".
+        previousMarker = text.previousTextMarker(previousMarker);
         currentMarker = text.previousTextMarker(currentMarker);
-        element = text.accessibilityElementForTextMarker(currentMarker);
-        shouldBe("element.stringValue", "'AXValue: text'");
+        markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "'t'");
         
         // Check the case with replaced node
         var text2 = accessibilityController.accessibleElementById("text2");
@@ -73,19 +78,21 @@ c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px;
         debug("Object string for range: " + str);
         
         currentMarker = text2.startTextMarkerForTextMarkerRange(textMarkerRange2);
-        // Advance 4 characters, it will land at first character of " d".
-        for (var i = 0; i < 4; i++) {
+        // Advance 5 characters, it will land at "d".
+        for (var i = 0; i < 5; i++) {
+            previousMarker = currentMarker;
             currentMarker = text2.nextTextMarker(currentMarker);
-            element = text2.accessibilityElementForTextMarker(currentMarker);
-            debug(element.stringValue);
         }
+        markerRange = text2.textMarkerRangeForMarkers(previousMarker, currentMarker);
+        shouldBe("text2.stringForTextMarkerRange(markerRange)", "'d'");
         
-        // Traverse backwards 4 characters, it will land at the last character of "text1".
-        for (var i = 0; i < 4; i++) {
+        // Traverse backwards 5 characters, it will land at the last character of "text1".
+        for (var i = 0; i < 5; i++) {
+            previousMarker = text2.previousTextMarker(previousMarker);
             currentMarker = text2.previousTextMarker(currentMarker);
-            element = text2.accessibilityElementForTextMarker(currentMarker);
-            debug(element.stringValue);
         }
+        markerRange = text2.textMarkerRangeForMarkers(previousMarker, currentMarker);
+        shouldBe("text2.stringForTextMarkerRange(markerRange)", "'1'");
         
         // Check the case with user-select:none, nextTextMarker/previousTextMarker should still work.
         var text3 = accessibilityController.accessibleElementById("text3");
@@ -100,7 +107,7 @@ c <img src="#" aria-label="blah" style="background-color: #aaaaaa; width: 100px;
             }
         }
         marker2 = currentMarker;
-        var markerRange = text3.textMarkerRangeForMarkers(marker1, marker2);
+        markerRange = text3.textMarkerRangeForMarkers(marker1, marker2);
         shouldBe("text3.stringForTextMarkerRange(markerRange)", "'ect'");
         // Iterate backwards the second marker for 6 characters, the range should be "sel"
         for (var i = 0; i < 6; i++) {

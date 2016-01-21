@@ -12,20 +12,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS text.textMarkerRangeLength(textMarkerRange) is 4
 PASS text.accessibilityElementForTextMarker(startMarker).isEqual(text) is true
 PASS text.accessibilityElementForTextMarker(endMarker).isEqual(text) is true
-PASS element.stringValue is 'AXValue: '
-PASS element.stringValue is 'AXValue: text1'
-PASS element.stringValue is 'AXValue: '
-PASS element.stringValue is 'AXValue: text'
+PASS text.stringForTextMarkerRange(markerRange) is ''
+PASS text.stringForTextMarkerRange(markerRange) is 't'
+PASS text.stringForTextMarkerRange(markerRange) is ''
+PASS text.stringForTextMarkerRange(markerRange) is 't'
 PASS text2.textMarkerRangeLength(textMarkerRange2) is 5
 Object string for range: c [ATTACHMENT] d
-AXValue: c 
-AXValue: c 
-AXValue: 
-AXValue:  d
-AXValue: 
-AXValue: c 
-AXValue: c 
-AXValue: text1
+PASS text2.stringForTextMarkerRange(markerRange) is 'd'
+PASS text2.stringForTextMarkerRange(markerRange) is '1'
 PASS text3.stringForTextMarkerRange(markerRange) is 'ect'
 PASS text3.stringForTextMarkerRange(markerRange) is 'sel'
 PASS !psw.accessibilityElementForTextMarker(start) is true

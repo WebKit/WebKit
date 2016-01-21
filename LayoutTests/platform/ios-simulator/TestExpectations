@@ -2764,6 +2764,9 @@ webkit.org/b/149297 accessibility/aria-current.html [ Pass ]
 # Enable "aria-table-attributes" test for iOS
 webkit.org/b/150366 accessibility/aria-table-attributes.html [ Pass ]
 
+# Enable Text marker tests for iOS
+webkit.org/b/153292 accessibility/text-marker [ Pass ]
+
 # More flaky tests (Sept 18, 2015)
 
 fast/forms/select-element-focus-ring.html [ Failure Pass ]

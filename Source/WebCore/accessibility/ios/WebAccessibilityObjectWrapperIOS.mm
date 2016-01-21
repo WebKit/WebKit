@@ -134,6 +134,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 }
 
 + (WebAccessibilityTextMarker *)textMarkerWithVisiblePosition:(VisiblePosition&)visiblePos cache:(AXObjectCache*)cache;
++ (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(CharacterOffset&)characterOffset cache:(AXObjectCache*)cache;
++ (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const RefPtr<Range>)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache;
 
 @end
 
@@ -178,6 +180,33 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
 }
 
++ (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(CharacterOffset&)characterOffset cache:(AXObjectCache*)cache
+{
+    if (!cache)
+        return nil;
+    
+    if (characterOffset.isNull())
+        return nil;
+    
+    TextMarkerData textMarkerData;
+    cache->textMarkerDataForCharacterOffset(textMarkerData, *characterOffset.node, characterOffset.offset, false);
+    if (!textMarkerData.axID && !textMarkerData.ignored)
+        return nil;
+    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
+}
+
++ (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const RefPtr<Range>)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache
+{
+    if (!cache)
+        return nil;
+    
+    TextMarkerData textMarkerData;
+    cache->startOrEndTextMarkerDataForRange(textMarkerData, range, isStart);
+    if (!textMarkerData.axID)
+        return nil;
+    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
+}
+
 - (NSData *)dataRepresentation
 {
     return [NSData dataWithBytes:&_textMarkerData length:sizeof(TextMarkerData)];
@@ -186,6 +215,25 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (VisiblePosition)visiblePosition
 {
     return _cache->visiblePositionForTextMarkerData(_textMarkerData);
+}
+
+- (CharacterOffset)characterOffset
+{
+    if (_textMarkerData.ignored)
+        return CharacterOffset();
+    return CharacterOffset(_textMarkerData.node, _textMarkerData.characterStartIndex, _textMarkerData.characterOffset);
+}
+
+- (BOOL)isIgnored
+{
+    return _textMarkerData.ignored;
+}
+
+- (AccessibilityObject*)accessibilityObject
+{
+    if (_textMarkerData.ignored)
+        return nullptr;
+    return _cache->accessibilityObjectForTextMarkerData(_textMarkerData);
 }
 
 - (NSString *)description
@@ -1831,25 +1879,11 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
     
-    if ([markers count] != 2)
+    RefPtr<Range> range = [self rangeForTextMarkers:markers];
+    if (!range)
         return nil;
     
-    WebAccessibilityTextMarker* startMarker = [markers objectAtIndex:0];
-    WebAccessibilityTextMarker* endMarker = [markers objectAtIndex:1];
-    if (![startMarker isKindOfClass:[WebAccessibilityTextMarker class]] || ![endMarker isKindOfClass:[WebAccessibilityTextMarker class]])
-        return nil;
-    
-    // extract the start and end VisiblePosition
-    VisiblePosition startVisiblePosition = [startMarker visiblePosition];
-    if (startVisiblePosition.isNull())
-        return nil;
-    
-    VisiblePosition endVisiblePosition = [endMarker visiblePosition];
-    if (endVisiblePosition.isNull())
-        return nil;
-
-    VisiblePositionRange visiblePosRange = VisiblePositionRange(startVisiblePosition, endVisiblePosition);
-    return m_object->stringForVisiblePositionRange(visiblePosRange);
+    return m_object->stringForRange(range);
 }
 
 static int blockquoteLevel(RenderObject* renderer)
@@ -2124,13 +2158,8 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (![self _prepareAccessibilityCall])
         return nil;
     
-    VisiblePositionRange range = m_object->visiblePositionRange();
-    VisiblePosition startPosition = range.start;
-    VisiblePosition endPosition = range.end;
-    WebAccessibilityTextMarker* start = [WebAccessibilityTextMarker textMarkerWithVisiblePosition:startPosition cache:m_object->axObjectCache()];
-    WebAccessibilityTextMarker* end = [WebAccessibilityTextMarker textMarkerWithVisiblePosition:endPosition cache:m_object->axObjectCache()];
-    
-    return [NSArray arrayWithObjects:start, end, nil];
+    RefPtr<Range> range = m_object->elementRange();
+    return [self textMarkersForRange:range];
 }
 
 // A method to get the normalized text cursor range of an element. Used in DumpRenderTree.
@@ -2160,8 +2189,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!marker)
         return nil;
     
-    VisiblePosition visiblePosition = [marker visiblePosition];
-    AccessibilityObject* obj = m_object->accessibilityObjectForPosition(visiblePosition);
+    AccessibilityObject* obj = [marker accessibilityObject];
     if (!obj)
         return nil;
     
@@ -2354,14 +2382,10 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!marker)
         return nil;
     
-    VisiblePosition start = [marker visiblePosition];
-    VisiblePosition nextMarker = m_object->nextVisiblePosition(start);
-    
-    return [WebAccessibilityTextMarker textMarkerWithVisiblePosition:nextMarker cache:m_object->axObjectCache()];
+    CharacterOffset start = [marker characterOffset];
+    return [self nextMarkerForCharacterOffset:start];
 }
 
-// This method is intended to return the marker at the start of the line starting at
-// the marker that is passed into the method.
 - (WebAccessibilityTextMarker *)previousMarkerForMarker:(WebAccessibilityTextMarker *)marker
 {
     if (![self _prepareAccessibilityCall])
@@ -2370,10 +2394,8 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!marker)
         return nil;
     
-    VisiblePosition start = [marker visiblePosition];
-    VisiblePosition previousMarker = m_object->previousVisiblePosition(start);
-    
-    return [WebAccessibilityTextMarker textMarkerWithVisiblePosition:previousMarker cache:m_object->axObjectCache()];
+    CharacterOffset start = [marker characterOffset];
+    return [self previousMarkerForCharacterOffset:start];
 }
 
 // This method is intended to return the bounds of a text marker range in screen coordinates.
@@ -2401,6 +2423,87 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     
     VisiblePosition pos = m_object->visiblePositionForPoint(IntPoint(point));
     return [WebAccessibilityTextMarker textMarkerWithVisiblePosition:pos cache:m_object->axObjectCache()];
+}
+
+- (WebAccessibilityTextMarker *)nextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
+{
+    characterOffset.offset = characterOffset.offset + 1;
+    WebAccessibilityTextMarker *textMarker = [WebAccessibilityTextMarker textMarkerWithCharacterOffset:characterOffset cache:m_object->axObjectCache()];
+    if (textMarker && textMarker.isIgnored)
+        textMarker = [self nextMarkerForCharacterOffset:characterOffset];
+    return textMarker;
+}
+
+- (WebAccessibilityTextMarker *)previousMarkerForCharacterOffset:(CharacterOffset&)characterOffset
+{
+    characterOffset.offset = characterOffset.offset - 1;
+    WebAccessibilityTextMarker *textMarker = [WebAccessibilityTextMarker textMarkerWithCharacterOffset:characterOffset cache:m_object->axObjectCache()];
+    if (textMarker && textMarker.isIgnored)
+        textMarker = [self previousMarkerForCharacterOffset:characterOffset];
+    return textMarker;
+}
+
+- (RefPtr<Range>)rangeForTextMarkers:(NSArray *)textMarkers
+{
+    if ([textMarkers count] != 2)
+        return nullptr;
+    
+    WebAccessibilityTextMarker *startMarker = [textMarkers objectAtIndex:0];
+    WebAccessibilityTextMarker *endMarker = [textMarkers objectAtIndex:1];
+    
+    if (![startMarker isKindOfClass:[WebAccessibilityTextMarker class]] || ![endMarker isKindOfClass:[WebAccessibilityTextMarker class]])
+        return nullptr;
+    
+    AXObjectCache* cache = m_object->axObjectCache();
+    if (!cache)
+        return nullptr;
+    
+    CharacterOffset startCharacterOffset = [startMarker characterOffset];
+    CharacterOffset endCharacterOffset = [endMarker characterOffset];
+    return cache->rangeForUnorderedCharacterOffsets(startCharacterOffset, endCharacterOffset);
+}
+
+- (NSInteger)lengthForTextMarkers:(NSArray *)textMarkers
+{
+    if (![self _prepareAccessibilityCall])
+        return 0;
+    
+    RefPtr<Range> range = [self rangeForTextMarkers:textMarkers];
+    int length = AXObjectCache::lengthForRange(range.get());
+    return length < 0 ? 0 : length;
+}
+
+- (WebAccessibilityTextMarker *)startOrEndTextMarkerForTextMarkers:(NSArray *)textMarkers isStart:(BOOL)isStart
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    
+    RefPtr<Range> range = [self rangeForTextMarkers:textMarkers];
+    if (!range)
+        return nil;
+    
+    return [WebAccessibilityTextMarker startOrEndTextMarkerForRange:range isStart:isStart cache:m_object->axObjectCache()];
+}
+
+- (NSArray *)textMarkerRangeForMarkers:(NSArray *)textMarkers
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    
+    RefPtr<Range> range = [self rangeForTextMarkers:textMarkers];
+    return [self textMarkersForRange:range];
+}
+
+- (NSArray *)textMarkersForRange:(RefPtr<Range>)range
+{
+    if (!range)
+        return nil;
+    
+    WebAccessibilityTextMarker* start = [WebAccessibilityTextMarker startOrEndTextMarkerForRange:range isStart:YES cache:m_object->axObjectCache()];
+    WebAccessibilityTextMarker* end = [WebAccessibilityTextMarker startOrEndTextMarkerForRange:range isStart:NO cache:m_object->axObjectCache()];
+    if (!start || !end)
+        return nil;
+    return [NSArray arrayWithObjects:start, end, nil];
 }
 
 - (NSString *)accessibilityIdentifier

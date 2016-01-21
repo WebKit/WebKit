@@ -94,6 +94,16 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (NSUInteger)accessibilityARIAColumnIndex;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
+
+// TextMarker related
+- (NSArray *)textMarkerRange;
+- (NSInteger)lengthForTextMarkers:(NSArray *)textMarkers;
+- (NSString *)stringForTextMarkers:(NSArray *)markers;
+- (id)startOrEndTextMarkerForTextMarkers:(NSArray*)textMarkers isStart:(BOOL)isStart;
+- (NSArray *)textMarkerRangeForMarkers:(NSArray *)textMarkers;
+- (id)nextMarkerForMarker:(id)marker;
+- (id)previousMarkerForMarker:(id)marker;
+- (id)accessibilityObjectForTextMarker:(id)marker;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -410,6 +420,137 @@ JSStringRef AccessibilityUIElement::pathDescription() const
     
     return [result createJSStringRef];
 }
+
+#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS)
+
+// Text markers
+
+AccessibilityTextMarkerRange AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
+{
+    id textMarkerRange = [element->platformUIElement() textMarkerRange];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+}
+
+AccessibilityTextMarkerRange AccessibilityUIElement::selectedTextMarkerRange()
+{
+    return nullptr;
+}
+
+void AccessibilityUIElement::resetSelectedTextMarkerRange()
+{
+}
+
+int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* range)
+{
+    id textMarkers = (id)range->platformTextMarkerRange();
+    return [m_element lengthForTextMarkers:textMarkers];
+}
+
+AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
+{
+    NSArray *textMarkers = [NSArray arrayWithObjects:(id)startMarker->platformTextMarker(), (id)endMarker->platformTextMarker(), nil];
+    id textMarkerRange = [m_element textMarkerRangeForMarkers:textMarkers];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+}
+
+AccessibilityTextMarker AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
+{
+    id textMarkers = (id)range->platformTextMarkerRange();
+    id textMarker = [m_element startOrEndTextMarkerForTextMarkers:textMarkers isStart:YES];
+    return AccessibilityTextMarker(textMarker);
+}
+
+AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
+{
+    id textMarkers = (id)range->platformTextMarkerRange();
+    id textMarker = [m_element startOrEndTextMarkerForTextMarkers:textMarkers isStart:NO];
+    return AccessibilityTextMarker(textMarker);
+}
+
+AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker* marker)
+{
+    id obj = [m_element accessibilityObjectForTextMarker:(id)marker->platformTextMarker()];
+    if (obj)
+        return AccessibilityUIElement(obj);
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::textMarkerForPoint(int x, int y)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::previousTextMarker(AccessibilityTextMarker* textMarker)
+{
+    id previousMarker = [m_element previousMarkerForMarker:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker(previousMarker);
+}
+
+AccessibilityTextMarker AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker* textMarker)
+{
+    id nextMarker = [m_element nextMarkerForMarker:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker(nextMarker);
+}
+
+JSStringRef AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
+{
+    id textMarkers = (id)markerRange->platformTextMarkerRange();
+    if (!textMarkers || ![textMarkers isKindOfClass:[NSArray class]])
+        return JSStringCreateWithCharacters(0, 0);
+    return [[m_element stringForTextMarkers:textMarkers] createJSStringRef];
+}
+
+bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*)
+{
+    return false;
+}
+
+int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*)
+{
+    return -1;
+}
+
+bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*)
+{
+    return false;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::textMarkerForIndex(int)
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::startTextMarker()
+{
+    return nullptr;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::endTextMarker()
+{
+    return nullptr;
+}
+
+bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange*)
+{
+    return false;
+}
+
+#endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS)
 
 #pragma mark Unused
 

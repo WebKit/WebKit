@@ -28,7 +28,7 @@
 
 #include <JavaScriptCore/JSObjectRef.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS)
 #define SUPPORTS_AX_TEXTMARKERS 1
 #else
 #define SUPPORTS_AX_TEXTMARKERS 0
@@ -58,7 +58,7 @@ public:
     
 private:
     static JSClassRef getJSClass();
-#if SUPPORTS_AX_TEXTMARKERS
+#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
     RetainPtr<PlatformTextMarker> m_textMarker;
 #else
     PlatformTextMarker m_textMarker;
@@ -78,7 +78,7 @@ public:
     
 private:
     static JSClassRef getJSClass();
-#if SUPPORTS_AX_TEXTMARKERS
+#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
     RetainPtr<PlatformTextMarkerRange> m_textMarkerRange;
 #else
     PlatformTextMarkerRange m_textMarkerRange;

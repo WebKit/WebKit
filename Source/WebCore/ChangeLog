@@ -1,3 +1,48 @@
+2016-01-21  Nan Wang  <n_wang@apple.com>
+
+        AX: [IOS] Implement next/previous text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=153292
+        <rdar://problem/24268243>
+
+        Reviewed by Chris Fleizach.
+
+        Added support for the refactored next/previous text marker functions on iOS. And 
+        made text marker tests working on iOS.
+        Also, fixed an issue in AXObjectCache where creating a range with a replaced node
+        at the start or end might exclude that node.
+
+        Tests: accessibility/text-marker/text-marker-previous-next.html
+               accessibility/text-marker/text-marker-with-user-select-none.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::characterOffsetsInOrder):
+        (WebCore::resetNodeAndOffsetForReplacedNode):
+        (WebCore::AXObjectCache::rangeForUnorderedCharacterOffsets):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (+[WebAccessibilityTextMarker textMarkerWithVisiblePosition:cache:]):
+        (+[WebAccessibilityTextMarker textMarkerWithCharacterOffset:cache:]):
+        (+[WebAccessibilityTextMarker startOrEndTextMarkerForRange:isStart:cache:]):
+        (-[WebAccessibilityTextMarker dataRepresentation]):
+        (-[WebAccessibilityTextMarker visiblePosition]):
+        (-[WebAccessibilityTextMarker characterOffset]):
+        (-[WebAccessibilityTextMarker isIgnored]):
+        (-[WebAccessibilityTextMarker accessibilityObject]):
+        (-[WebAccessibilityTextMarker description]):
+        (-[WebAccessibilityObjectWrapper stringForTextMarkers:]):
+        (blockquoteLevel):
+        (-[WebAccessibilityObjectWrapper textMarkerRange]):
+        (-[WebAccessibilityObjectWrapper accessibilityObjectForTextMarker:]):
+        (-[WebAccessibilityObjectWrapper nextMarkerForMarker:]):
+        (-[WebAccessibilityObjectWrapper previousMarkerForMarker:]):
+        (-[WebAccessibilityObjectWrapper textMarkerForPoint:]):
+        (-[WebAccessibilityObjectWrapper nextMarkerForCharacterOffset:]):
+        (-[WebAccessibilityObjectWrapper previousMarkerForCharacterOffset:]):
+        (-[WebAccessibilityObjectWrapper rangeForTextMarkers:]):
+        (-[WebAccessibilityObjectWrapper lengthForTextMarkers:]):
+        (-[WebAccessibilityObjectWrapper startOrEndTextMarkerForTextMarkers:isStart:]):
+        (-[WebAccessibilityObjectWrapper textMarkerRangeForMarkers:]):
+        (-[WebAccessibilityObjectWrapper accessibilityIdentifier]):
+
 2016-01-20  Zalan Bujtas  <zalan@apple.com>
 
         http://victordarras.fr/cssgame/ doesn't work in Safari.

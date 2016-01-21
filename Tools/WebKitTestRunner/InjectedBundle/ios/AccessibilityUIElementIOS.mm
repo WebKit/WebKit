@@ -71,6 +71,16 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIAColumnIndex;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
+
+// TextMarker related
+- (NSArray *)textMarkerRange;
+- (NSInteger)lengthForTextMarkers:(NSArray *)textMarkers;
+- (NSString *)stringForTextMarkers:(NSArray *)markers;
+- (id)startOrEndTextMarkerForTextMarkers:(NSArray*)textMarkers isStart:(BOOL)isStart;
+- (NSArray *)textMarkerRangeForMarkers:(NSArray *)textMarkers;
+- (id)nextMarkerForMarker:(id)marker;
+- (id)previousMarkerForMarker:(id)marker;
+- (id)accessibilityObjectForTextMarker:(id)marker;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -982,42 +992,55 @@ PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerR
 
 PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
-    return 0;
+    id textMarkerRange = [element->platformUIElement() textMarkerRange];
+    return AccessibilityTextMarkerRange::create(textMarkerRange);
 }
 
 int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* range)
 {
-    return 0;
+    id textMarkers = (id)range->platformTextMarkerRange();    
+    return [m_element lengthForTextMarkers:textMarkers];
 }
 
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousTextMarker(AccessibilityTextMarker* textMarker)
 {
-    return 0;
+    id previousMarker = [m_element previousMarkerForMarker:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker::create(previousMarker);
 }
 
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker* textMarker)
 {
-    return 0;
+    id nextMarker = [m_element nextMarkerForMarker:(id)textMarker->platformTextMarker()];
+    return AccessibilityTextMarker::create(nextMarker);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
 {
-    return 0;
+    id textMarkers = (id)markerRange->platformTextMarkerRange();
+    if (!textMarkers || ![textMarkers isKindOfClass:[NSArray class]])
+        return JSStringCreateWithCharacters(0, 0);
+    return [[m_element stringForTextMarkers:textMarkers] createJSStringRef];
 }
 
 PassRefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
 {
-    return 0;
+    NSArray *textMarkers = [NSArray arrayWithObjects:(id)startMarker->platformTextMarker(), (id)endMarker->platformTextMarker(), nil];
+    id textMarkerRange = [m_element textMarkerRangeForMarkers:textMarkers];
+    return AccessibilityTextMarkerRange::create(textMarkerRange);
 }
 
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
 {
-    return 0;
+    id textMarkers = (id)range->platformTextMarkerRange();
+    id textMarker = [m_element startOrEndTextMarkerForTextMarkers:textMarkers isStart:YES];
+    return AccessibilityTextMarker::create(textMarker);
 }
 
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
 {
-    return 0;
+    id textMarkers = (id)range->platformTextMarkerRange();
+    id textMarker = [m_element startOrEndTextMarkerForTextMarkers:textMarkers isStart:NO];
+    return AccessibilityTextMarker::create(textMarker);
 }
 
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)
@@ -1037,7 +1060,10 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(i
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker* marker)
 {
-    return 0;
+    id obj = [m_element accessibilityObjectForTextMarker:(id)marker->platformTextMarker()];
+    if (obj)
+        return AccessibilityUIElement::create(obj);
+    return nullptr;
 }
 
 bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef attribute, AccessibilityTextMarkerRange* range)

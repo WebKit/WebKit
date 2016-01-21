@@ -1,3 +1,69 @@
+2016-01-21  Nan Wang  <n_wang@apple.com>
+
+        AX: [IOS] Implement next/previous text marker functions using TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=153292
+        <rdar://problem/24268243>
+
+        Reviewed by Chris Fleizach.
+
+        Made text marker tests available on iOS.
+
+        * DumpRenderTree/AccessibilityTextMarker.h:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/ios/AccessibilityTextMarkerIOS.mm: Added.
+        (AccessibilityTextMarker::AccessibilityTextMarker):
+        (AccessibilityTextMarker::~AccessibilityTextMarker):
+        (AccessibilityTextMarker::isEqual):
+        (AccessibilityTextMarker::platformTextMarker):
+        (AccessibilityTextMarkerRange::AccessibilityTextMarkerRange):
+        (AccessibilityTextMarkerRange::~AccessibilityTextMarkerRange):
+        (AccessibilityTextMarkerRange::isEqual):
+        (AccessibilityTextMarkerRange::platformTextMarkerRange):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::pathDescription):
+        (AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::textMarkerRangeForElement):
+        (AccessibilityUIElement::selectedTextMarkerRange):
+        (AccessibilityUIElement::resetSelectedTextMarkerRange):
+        (AccessibilityUIElement::textMarkerRangeLength):
+        (AccessibilityUIElement::textMarkerRangeForMarkers):
+        (AccessibilityUIElement::startTextMarkerForTextMarkerRange):
+        (AccessibilityUIElement::endTextMarkerForTextMarkerRange):
+        (AccessibilityUIElement::accessibilityElementForTextMarker):
+        (AccessibilityUIElement::endTextMarkerForBounds):
+        (AccessibilityUIElement::startTextMarkerForBounds):
+        (AccessibilityUIElement::textMarkerForPoint):
+        (AccessibilityUIElement::previousTextMarker):
+        (AccessibilityUIElement::nextTextMarker):
+        (AccessibilityUIElement::stringForTextMarkerRange):
+        (AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+        (AccessibilityUIElement::indexForTextMarker):
+        (AccessibilityUIElement::isTextMarkerValid):
+        (AccessibilityUIElement::textMarkerForIndex):
+        (AccessibilityUIElement::startTextMarker):
+        (AccessibilityUIElement::endTextMarker):
+        (AccessibilityUIElement::setSelectedVisibleTextRange):
+        (AccessibilityUIElement::getLinkedUIElements):
+        * DumpRenderTree/mac/AccessibilityTextMarkerMac.mm:
+        (AccessibilityTextMarkerRange::platformTextMarkerRange):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::removeSelection):
+        (AccessibilityUIElement::lineTextMarkerRangeForTextMarker):
+        (AccessibilityUIElement::setSelectedVisibleTextRange):
+        (AccessibilityUIElement::supportedActions):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::textMarkerRangeForElement):
+        (WTR::AccessibilityUIElement::textMarkerRangeLength):
+        (WTR::AccessibilityUIElement::previousTextMarker):
+        (WTR::AccessibilityUIElement::nextTextMarker):
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange):
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers):
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForBounds):
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker):
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+
 2016-01-20  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, revert accidental unreviewed commit.

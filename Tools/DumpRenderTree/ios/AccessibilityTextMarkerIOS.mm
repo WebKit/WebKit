@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,11 @@
  */
 
 #import "config.h"
-
 #import "AccessibilityTextMarker.h"
+
 #import "DumpRenderTree.h"
 
-#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
+#if SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS)
 
 // MARK: AccessibilityTextMarker
 
@@ -53,7 +53,7 @@ bool AccessibilityTextMarker::isEqual(AccessibilityTextMarker* other)
 
 PlatformTextMarker AccessibilityTextMarker::platformTextMarker() const 
 { 
-    return m_textMarker.get();
+    return m_textMarker;
 }
 
 // MARK: AccessibilityTextMarkerRange
@@ -79,7 +79,7 @@ bool AccessibilityTextMarkerRange::isEqual(AccessibilityTextMarkerRange* other)
 
 PlatformTextMarkerRange AccessibilityTextMarkerRange::platformTextMarkerRange() const
 {
-    return m_textMarkerRange.get();
+    return m_textMarkerRange;
 }
 
-#endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(MAC)
+#endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS)

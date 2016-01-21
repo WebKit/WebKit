@@ -2346,6 +2346,9 @@ accessibility/content-editable-as-textarea.html [ Missing ]
 webkit.org/b/146887 accessibility/aria-roledescription.html [ Failure ]
 webkit.org/b/146887 accessibility/list-detection.html [ Failure ]
 
+# Text marker tests are not supported
+webkit.org/b/153292 accessibility/text-marker [ Skip ]
+
 # This test hardcodes the result of a platform-dependent font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]
 fast/text/fallback-language-han-2.html [ Skip ]
