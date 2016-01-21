@@ -453,6 +453,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     }
 }
 
+- (void)_webViewDestroyed
+{
+    _webView = nil;
+}
+
 #pragma mark PageClientImpl methods
 
 - (std::unique_ptr<DrawingAreaProxy>)_createDrawingAreaProxy

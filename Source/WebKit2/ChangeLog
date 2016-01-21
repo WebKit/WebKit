@@ -1,3 +1,24 @@
+2016-01-21  Dean Jackson  <dino@apple.com>
+
+        [iOS] Crash in _endPotentialTapAndEnableDoubleTapGesturesIfNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=153326
+        <rdar://problem/24264339>
+
+        Reviewed by Anders Carlsson.
+
+        UIKit's UIGestureRecognizer could call back into the WKContentView
+        after the associated WKWebView has disappeared. The fix is to
+        explicitly null the WKWebView reference as we deallocate.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView dealloc]): Tell the WKContentView we are going away.
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _webViewDestroyed]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _endPotentialTapAndEnableDoubleTapGesturesIfNecessary]):
+        Only do something if the WKWebView is still around.
+
 2016-01-21  Beth Dakin  <bdakin@apple.com>
 
         Add the ability to update WebKitAdditions to WK2

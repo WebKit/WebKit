@@ -484,6 +484,8 @@ static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint32_t types)
 #endif
 
 #if PLATFORM(IOS)
+    [_contentView _webViewDestroyed];
+
     if (_remoteObjectRegistry)
         _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
 
