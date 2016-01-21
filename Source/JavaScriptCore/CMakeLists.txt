@@ -121,6 +121,7 @@ set(JavaScriptCore_SOURCES
     b3/B3DuplicateTails.cpp
     b3/B3Effects.cpp
     b3/B3FixSSA.cpp
+    b3/B3FoldPathConstants.cpp
     b3/B3FrequencyClass.cpp
     b3/B3Generate.cpp
     b3/B3HeapRange.cpp
