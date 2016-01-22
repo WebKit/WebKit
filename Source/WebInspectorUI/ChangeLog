@@ -1,5 +1,33 @@
 2016-01-22  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Sidebar's should remember their width's
+        https://bugs.webkit.org/show_bug.cgi?id=153007
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.widthDidChange):
+        Now calls superclass function.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.set selectedSidebarPanel):
+        Now calls _recalculateWidth with the saved width value of the sidebar as
+        the first parameter.
+
+        (WebInspector.Sidebar.prototype.set collapsed):
+        Now only calls _recalculateWidth if the selected sidebar panel is visible,
+        seeing as if it is hidden the width is irrelevant.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel):
+        Creates a setting object using the panel's identifier to store the current width.
+
+        (WebInspector.SidebarPanel.prototype.get savedWidth):
+        (WebInspector.SidebarPanel.prototype.widthDidChange):
+        So long as the current width has a value, save it to the setting object.
+
+2016-01-22  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Class toggle add icon flashes when changing nodes
         https://bugs.webkit.org/show_bug.cgi?id=153341
 

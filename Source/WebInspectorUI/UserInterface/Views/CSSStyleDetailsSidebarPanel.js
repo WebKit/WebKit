@@ -172,6 +172,8 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
     widthDidChange()
     {
+        super.widthDidChange();
+
         this._updateNoForcedPseudoClassesScrollOffset();
 
         if (this._selectedPanel)

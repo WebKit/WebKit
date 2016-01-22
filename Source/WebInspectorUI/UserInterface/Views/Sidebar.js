@@ -147,7 +147,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
             if (this._selectedSidebarPanel.visible) {
                 this._selectedSidebarPanel.shown();
                 this._selectedSidebarPanel.visibilityDidChange();
-                this._recalculateWidth();
+                this._recalculateWidth(this._selectedSidebarPanel.savedWidth);
             }
         }
 
@@ -200,14 +200,13 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
             this._navigationBar.needsLayout();
 
         if (this._selectedSidebarPanel) {
-            if (this._selectedSidebarPanel.visible)
+            if (this._selectedSidebarPanel.visible) {
                 this._selectedSidebarPanel.shown();
-            else
+                this._recalculateWidth(this._selectedSidebarPanel.savedWidth);
+            } else
                 this._selectedSidebarPanel.hidden();
 
             this._selectedSidebarPanel.visibilityDidChange();
-            this._selectedSidebarPanel.widthDidChange();
-            this._recalculateWidth();
         }
 
         this.dispatchEventToListeners(WebInspector.Sidebar.Event.CollapsedStateDidChange);
