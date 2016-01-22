@@ -1,3 +1,15 @@
+2016-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Only set CMake output directories if they aren't already set
+        https://bugs.webkit.org/show_bug.cgi?id=153373
+
+        Reviewed by Michael Catanzaro.
+
+        * CMakeLists.txt:
+        r195242 caused Windows builds to copy files to bin instead of bin64.
+        CMAKE_RUNTIME_OUTPUT_DIRECTORY is being set in OptionsWin.cmake, and this was now resetting it.
+        This also makes it so you can set these variables by command line.
+
 2016-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.4 release.
