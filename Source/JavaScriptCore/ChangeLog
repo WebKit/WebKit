@@ -1,3 +1,18 @@
+2016-01-21  Andreas Kling  <akling@apple.com>
+
+        Add some missing WTF_MAKE_FAST_ALLOCATED in JavaScriptCore.
+        <https://webkit.org/b/153335>
+
+        Reviewed by Alex Christensen.
+
+        Saw these things getting system malloc()'ed in an Instruments trace.
+
+        * inspector/InspectorAgentBase.h:
+        * jit/CallFrameShuffleData.h:
+        * jit/CallFrameShuffler.h:
+        * jit/RegisterAtOffsetList.h:
+        * runtime/GenericOffset.h:
+
 2016-01-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Catch parameter should accept BindingPattern

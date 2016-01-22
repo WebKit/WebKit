@@ -34,6 +34,8 @@
 namespace JSC {
 
 struct CallFrameShuffleData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     unsigned numLocals;
     ValueRecovery callee;
     Vector<ValueRecovery> args;

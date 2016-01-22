@@ -34,6 +34,7 @@
 namespace JSC {
 
 class RegisterAtOffsetList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum OffsetBaseType { FramePointerBased, ZeroBased };
 

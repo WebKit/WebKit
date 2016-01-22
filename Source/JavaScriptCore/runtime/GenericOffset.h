@@ -34,6 +34,7 @@ namespace JSC {
 // A mixin for creating the various kinds of variable offsets that our engine supports.
 template<typename T>
 class GenericOffset {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static const unsigned invalidOffset = UINT_MAX;
     

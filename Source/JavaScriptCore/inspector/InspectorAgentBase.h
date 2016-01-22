@@ -63,6 +63,7 @@ enum class DisconnectReason {
 };
 
 class InspectorAgentBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~InspectorAgentBase() { }
 
