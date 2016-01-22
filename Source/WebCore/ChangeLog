@@ -1,3 +1,26 @@
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
+        DOMImplementation.createHTMLDocument("") should append an empty Text Node to the title Element
+        https://bugs.webkit.org/show_bug.cgi?id=153374
+
+        Reviewed by Ryosuke Niwa.
+
+        DOMImplementation.createHTMLDocument("") should append an empty Text
+        Node to the title Element as per the steps at:
+        - https://dom.spec.whatwg.org/#dom-domimplementation-createhtmldocument (step 6)
+
+        Firefox and Chrome follow the specification here.
+
+        Previously, WebKit would rely on HTMLTitleElement.text setter which
+        does not create a Text Node if the title is the empty string, as per:
+        - https://html.spec.whatwg.org/multipage/semantics.html#dom-title-text
+        - https://dom.spec.whatwg.org/#dom-node-textcontent
+
+        No new tests, already covered by existing test.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createHTMLDocument):
+
 2016-01-17  Ada Chan  <adachan@apple.com>
 
         Add a mode parameter to MediaControllerInterface::supportsFullscreen() and ChromeClient::supportsVideoFullscreen().

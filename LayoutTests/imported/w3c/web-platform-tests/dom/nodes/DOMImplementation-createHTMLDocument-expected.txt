@@ -1,5 +1,5 @@
 
-FAIL createHTMLDocument test 0: "","","" assert_equals: expected 1 but got 0
+PASS createHTMLDocument test 0: "","","" 
 PASS createHTMLDocument test 1: null,"null","null" 
 PASS createHTMLDocument test 2: undefined,undefined,"" 
 PASS createHTMLDocument test 3: "foo  bar baz","foo  bar baz","foo bar baz" 

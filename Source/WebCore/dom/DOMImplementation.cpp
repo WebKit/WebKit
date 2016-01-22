@@ -35,6 +35,8 @@
 #include "FrameLoaderClient.h"
 #include "FTPDirectoryDocument.h"
 #include "HTMLDocument.h"
+#include "HTMLHeadElement.h"
+#include "HTMLTitleElement.h"
 #include "Image.h"
 #include "ImageDocument.h"
 #include "MainFrame.h"
@@ -51,12 +53,15 @@
 #include "Settings.h"
 #include "StyleSheetContents.h"
 #include "SubframeLoader.h"
+#include "Text.h"
 #include "TextDocument.h"
 #include "XMLNames.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 typedef HashSet<String, CaseFoldingHash> FeatureSet;
 
@@ -296,13 +301,17 @@ bool DOMImplementation::isTextMIMEType(const String& mimeType)
 
 Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    Ref<HTMLDocument> doc = HTMLDocument::create(nullptr, URL());
-    doc->open();
-    doc->write("<!doctype html><html><body></body></html>");
-    if (!title.isNull())
-        doc->setTitle(title);
-    doc->setSecurityOriginPolicy(m_document.securityOriginPolicy());
-    return doc;
+    auto document = HTMLDocument::create(nullptr, URL());
+    document->open();
+    document->write("<!doctype html><html><head></head><body></body></html>");
+    if (!title.isNull()) {
+        auto titleElement = HTMLTitleElement::create(titleTag, document);
+        titleElement->appendChild(document->createTextNode(title));
+        ASSERT(document->head());
+        document->head()->appendChild(WTFMove(titleElement));
+    }
+    document->setSecurityOriginPolicy(m_document.securityOriginPolicy());
+    return document;
 }
 
 Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const URL& url)

@@ -1,5 +1,17 @@
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
+        DOMImplementation.createHTMLDocument("") should append an empty Text Node to the title Element
+        https://bugs.webkit.org/show_bug.cgi?id=153374
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing W3C DOM tests now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument-expected.txt:
+        * web-platform-tests/dom/ranges/Range-selectNode-expected.txt:
+
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
         Document.URL / Document.documentURI should return "about:blank" instead of empty string / null
         https://bugs.webkit.org/show_bug.cgi?id=153363
         <rdar://problem/22549736>

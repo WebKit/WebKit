@@ -151,6 +151,10 @@ PASS ****** foreign doc: title node, current doc's range, type 1
 PASS ****** foreign doc: title node, foreign doc's range, type 1 
 PASS ****** foreign doc: title node, XML doc's range, type 1 
 PASS ****** foreign doc: title node, detached range, type 1 
+PASS ******** foreign doc: #text node, current doc's range, type 3 
+PASS ******** foreign doc: #text node, foreign doc's range, type 3 
+PASS ******** foreign doc: #text node, XML doc's range, type 3 
+PASS ******** foreign doc: #text node, detached range, type 3 
 PASS **** foreign doc: body node, current doc's range, type 1 
 PASS **** foreign doc: body node, foreign doc's range, type 1 
 PASS **** foreign doc: body node, XML doc's range, type 1 
