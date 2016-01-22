@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Object");
+
+    suite.addTestCase({
+        name: "Events propagation",
+        description: "WebInspector.Object shouldn't dispatch constructor-level events multiple times",
+        test: function() {
+            class Parent extends WebInspector.Object {}
+            class Child extends Parent {}
+
+            const eventName = "clicked";
+            let dispatchCount = 0;
+
+            Parent.addEventListener(eventName, () => dispatchCount++);
+
+            let child = new Child;
+            child.dispatchEventToListeners(eventName);
+
+            InspectorTest.log("Dispatch count: " + dispatchCount);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing WebInspector.Object.</p>
+</body>
+</html>

@@ -139,12 +139,16 @@ WebInspector.Object = class WebInspectorObject
 
         function dispatch(object)
         {
-            if (!object || !object._listeners || event._stoppedPropagation)
+            if (!object || event._stoppedPropagation)
                 return;
 
-            console.assert(object._listeners instanceof Map);
+            let listenerTypesMap = object._listeners;
+            if (!listenerTypesMap || !object.hasOwnProperty("_listeners"))
+                return;
 
-            let listenersTable = object._listeners.get(eventType);
+            console.assert(listenerTypesMap instanceof Map);
+
+            let listenersTable = listenerTypesMap.get(eventType);
             if (!listenersTable)
                 return;
 
