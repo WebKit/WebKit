@@ -258,7 +258,7 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
 
     if (m_method == FormSubmission::PostMethod) {
         frameRequest.resourceRequest().setHTTPMethod("POST");
-        frameRequest.resourceRequest().setHTTPBody(m_formData);
+        frameRequest.resourceRequest().setHTTPBody(m_formData.copyRef());
 
         // construct some user headers if necessary
         if (m_boundary.isEmpty())

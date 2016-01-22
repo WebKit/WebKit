@@ -763,9 +763,10 @@ static inline size_t getFormElementsCount(ResourceHandle* job)
 
     // Resolve the blob elements so the formData can correctly report it's size.
     formData = formData->resolveBlobReferences();
-    job->firstRequest().setHTTPBody(formData);
+    size_t size = formData->elements().size();
+    job->firstRequest().setHTTPBody(WTFMove(formData));
 
-    return formData->elements().size();
+    return size;
 }
 
 static void setupFormData(ResourceHandle* job, CURLoption sizeOption, struct curl_slist** headers)

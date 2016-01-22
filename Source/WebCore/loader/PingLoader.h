@@ -32,7 +32,7 @@
 #ifndef PingLoader_h
 #define PingLoader_h
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -45,7 +45,7 @@ class PingLoader {
 public:
     static void loadImage(Frame&, const URL&);
     static void sendPing(Frame&, const URL& pingURL, const URL& destinationURL);
-    static void sendViolationReport(Frame&, const URL& reportURL, PassRefPtr<FormData> report);
+    static void sendViolationReport(Frame&, const URL& reportURL, RefPtr<FormData>&& report);
 
 private:
     static void startPingLoad(Frame&, ResourceRequest&);

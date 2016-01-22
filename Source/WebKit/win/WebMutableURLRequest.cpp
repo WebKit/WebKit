@@ -307,7 +307,7 @@ HRESULT WebMutableURLRequest::setHTTPBody(_In_opt_ IStream* data)
     if (FAILED(data->Read(formData, stat.cbSize.LowPart, &bytesRead)))
         return E_FAIL;
 
-    m_request.setHTTPBody(httpBody);
+    m_request.setHTTPBody(WTFMove(httpBody));
     return S_OK;
 }
 

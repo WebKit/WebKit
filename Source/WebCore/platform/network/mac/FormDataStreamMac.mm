@@ -33,7 +33,6 @@
 
 #import "FormData.h"
 #import "FormDataStreamCFNet.h"
-#import <wtf/PassRefPtr.h>
 
 @interface NSURLRequest (WebNSURLRequestDetails)
 - (CFURLRequestRef)_CFURLRequest;
@@ -41,9 +40,9 @@
 
 namespace WebCore {
 
-void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> prpFormData)
+void setHTTPBody(NSMutableURLRequest *request, FormData* formData)
 {
-    setHTTPBody(const_cast<CFMutableURLRequestRef>([request _CFURLRequest]), prpFormData);
+    setHTTPBody(const_cast<CFMutableURLRequestRef>([request _CFURLRequest]), formData);
 }
 
 FormData* httpBodyFromStream(NSInputStream *stream)

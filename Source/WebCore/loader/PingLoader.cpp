@@ -123,7 +123,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     startPingLoad(frame, request);
 }
 
-void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, PassRefPtr<FormData> report)
+void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, RefPtr<FormData>&& report)
 {
     ResourceRequest request(reportURL);
 
@@ -134,7 +134,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, PassRef
 
     request.setHTTPMethod("POST");
     request.setHTTPContentType("application/json");
-    request.setHTTPBody(report);
+    request.setHTTPBody(WTFMove(report));
 
     bool removeCookies = true;
     if (Document* document = frame.document()) {

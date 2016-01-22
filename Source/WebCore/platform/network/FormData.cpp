@@ -70,54 +70,54 @@ FormData::~FormData()
     removeGeneratedFilesIfNeeded();
 }
 
-PassRefPtr<FormData> FormData::create()
+Ref<FormData> FormData::create()
 {
-    return adoptRef(new FormData);
+    return adoptRef(*new FormData);
 }
 
-PassRefPtr<FormData> FormData::create(const void* data, size_t size)
+Ref<FormData> FormData::create(const void* data, size_t size)
 {
-    RefPtr<FormData> result = create();
+    Ref<FormData> result = create();
     result->appendData(data, size);
-    return result.release();
+    return result;
 }
 
-PassRefPtr<FormData> FormData::create(const CString& string)
+Ref<FormData> FormData::create(const CString& string)
 {
-    RefPtr<FormData> result = create();
+    Ref<FormData> result = create();
     result->appendData(string.data(), string.length());
-    return result.release();
+    return result;
 }
 
-PassRefPtr<FormData> FormData::create(const Vector<char>& vector)
+Ref<FormData> FormData::create(const Vector<char>& vector)
 {
-    RefPtr<FormData> result = create();
+    Ref<FormData> result = create();
     result->appendData(vector.data(), vector.size());
-    return result.release();
+    return result;
 }
 
-PassRefPtr<FormData> FormData::create(const FormDataList& list, const TextEncoding& encoding, EncodingType encodingType)
+Ref<FormData> FormData::create(const FormDataList& list, const TextEncoding& encoding, EncodingType encodingType)
 {
-    RefPtr<FormData> result = create();
+    Ref<FormData> result = create();
     result->appendKeyValuePairItems(list, encoding, false, 0, encodingType);
-    return result.release();
+    return result;
 }
 
-PassRefPtr<FormData> FormData::createMultiPart(const FormDataList& list, const TextEncoding& encoding, Document* document)
+Ref<FormData> FormData::createMultiPart(const FormDataList& list, const TextEncoding& encoding, Document* document)
 {
-    RefPtr<FormData> result = create();
+    Ref<FormData> result = create();
     result->appendKeyValuePairItems(list, encoding, true, document);
-    return result.release();
+    return result;
 }
 
-PassRefPtr<FormData> FormData::copy() const
+Ref<FormData> FormData::copy() const
 {
-    return adoptRef(new FormData(*this));
+    return adoptRef(*new FormData(*this));
 }
 
-PassRefPtr<FormData> FormData::deepCopy() const
+Ref<FormData> FormData::deepCopy() const
 {
-    RefPtr<FormData> formData(create());
+    Ref<FormData> formData(create());
 
     formData->m_alwaysStream = m_alwaysStream;
 
@@ -135,7 +135,7 @@ PassRefPtr<FormData> FormData::deepCopy() const
             break;
         }
     }
-    return formData.release();
+    return formData;
 }
 
 void FormData::appendData(const void* data, size_t size)
@@ -302,7 +302,7 @@ static void appendBlobResolved(FormData* formData, const URL& url)
     }
 }
 
-PassRefPtr<FormData> FormData::resolveBlobReferences()
+Ref<FormData> FormData::resolveBlobReferences()
 {
     // First check if any blobs needs to be resolved, or we can take the fast path.
     bool hasBlob = false;
@@ -316,10 +316,10 @@ PassRefPtr<FormData> FormData::resolveBlobReferences()
     }
 
     if (!hasBlob)
-        return this;
+        return *this;
 
     // Create a copy to append the result into.
-    RefPtr<FormData> newFormData = FormData::create();
+    Ref<FormData> newFormData = FormData::create();
     newFormData->setAlwaysStream(alwaysStream());
     newFormData->setIdentifier(identifier());
     it = elements().begin();
@@ -330,11 +330,11 @@ PassRefPtr<FormData> FormData::resolveBlobReferences()
         else if (element.m_type == FormDataElement::Type::EncodedFile)
             newFormData->appendFileRange(element.m_filename, element.m_fileStart, element.m_fileLength, element.m_expectedFileModificationTime, element.m_shouldGenerateFile);
         else if (element.m_type == FormDataElement::Type::EncodedBlob)
-            appendBlobResolved(newFormData.get(), element.m_url);
+            appendBlobResolved(newFormData.ptr(), element.m_url);
         else
             ASSERT_NOT_REACHED();
     }
-    return newFormData.release();
+    return newFormData;
 }
 
 void FormData::generateFiles(Document* document)

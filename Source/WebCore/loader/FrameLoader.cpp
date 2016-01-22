@@ -2654,7 +2654,6 @@ void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String&
 
     const ResourceRequest& inRequest = request.resourceRequest();
     const URL& url = inRequest.url();
-    RefPtr<FormData> formData = inRequest.httpBody();
     const String& contentType = inRequest.httpContentType();
     String origin = inRequest.httpOrigin();
 
@@ -2664,7 +2663,7 @@ void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String&
         workingResourceRequest.setHTTPReferrer(referrer);
     workingResourceRequest.setHTTPOrigin(origin);
     workingResourceRequest.setHTTPMethod("POST");
-    workingResourceRequest.setHTTPBody(formData);
+    workingResourceRequest.setHTTPBody(inRequest.httpBody());
     workingResourceRequest.setHTTPContentType(contentType);
     addExtraFieldsToRequest(workingResourceRequest, loadType, true);
 
@@ -3299,7 +3298,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
         formData->generateFiles(m_frame.document());
 
         request.setHTTPMethod("POST");
-        request.setHTTPBody(formData);
+        request.setHTTPBody(WTFMove(formData));
         request.setHTTPContentType(item.formContentType());
         RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item.referrer());
         addHTTPOriginIfNeeded(request, securityOrigin->toString());

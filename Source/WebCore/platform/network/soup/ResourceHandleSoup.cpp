@@ -506,7 +506,7 @@ static void doRedirect(ResourceHandle* handle)
         // or if current redirection says so
         if (message->method == SOUP_METHOD_GET || shouldRedirectAsGET(message, newURL, crossOrigin)) {
             newRequest.setHTTPMethod("GET");
-            newRequest.setHTTPBody(0);
+            newRequest.setHTTPBody(nullptr);
             newRequest.clearHTTPContentType();
         }
     }

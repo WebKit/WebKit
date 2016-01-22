@@ -190,7 +190,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     else
         nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
 
-    RefPtr<FormData> formData = httpBody();
+    FormData* formData = httpBody();
     if (formData && !formData->isEmpty())
         WebCore::setHTTPBody(nsRequest, formData);
 

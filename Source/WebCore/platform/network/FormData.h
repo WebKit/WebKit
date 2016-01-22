@@ -194,23 +194,23 @@ public:
         MultipartFormData // for multipart/form-data
     };
 
-    WEBCORE_EXPORT static PassRefPtr<FormData> create();
-    WEBCORE_EXPORT static PassRefPtr<FormData> create(const void*, size_t);
-    static PassRefPtr<FormData> create(const CString&);
-    static PassRefPtr<FormData> create(const Vector<char>&);
-    static PassRefPtr<FormData> create(const FormDataList&, const TextEncoding&, EncodingType = FormURLEncoded);
-    static PassRefPtr<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
+    WEBCORE_EXPORT static Ref<FormData> create();
+    WEBCORE_EXPORT static Ref<FormData> create(const void*, size_t);
+    static Ref<FormData> create(const CString&);
+    static Ref<FormData> create(const Vector<char>&);
+    static Ref<FormData> create(const FormDataList&, const TextEncoding&, EncodingType = FormURLEncoded);
+    static Ref<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
     WEBCORE_EXPORT ~FormData();
 
     // FIXME: Both these functions perform a deep copy of m_elements, but differ in handling of other data members.
     // How much of that is intentional? We need better names that explain the difference.
-    PassRefPtr<FormData> copy() const;
-    PassRefPtr<FormData> deepCopy() const;
+    Ref<FormData> copy() const;
+    Ref<FormData> deepCopy() const;
 
     template<typename Encoder>
     void encode(Encoder&) const;
     template<typename Decoder>
-    static PassRefPtr<FormData> decode(Decoder&);
+    static RefPtr<FormData> decode(Decoder&);
 
     WEBCORE_EXPORT void appendData(const void* data, size_t);
     void appendFile(const String& filePath, bool shouldGenerateFile = false);
@@ -223,7 +223,7 @@ public:
 
     // Resolve all blob references so we only have file and data.
     // If the FormData has no blob references to resolve, this is returned.
-    PassRefPtr<FormData> resolveBlobReferences();
+    Ref<FormData> resolveBlobReferences();
 
     bool isEmpty() const { return m_elements.isEmpty(); }
     const Vector<FormDataElement>& elements() const { return m_elements; }
@@ -289,7 +289,7 @@ void FormData::encode(Encoder& encoder) const
 }
 
 template<typename Decoder>
-PassRefPtr<FormData> FormData::decode(Decoder& decoder)
+RefPtr<FormData> FormData::decode(Decoder& decoder)
 {
     RefPtr<FormData> data = FormData::create();
 
@@ -305,7 +305,7 @@ PassRefPtr<FormData> FormData::decode(Decoder& decoder)
     if (!decoder.decode(data->m_identifier))
         return nullptr;
 
-    return data.release();
+    return data;
 }
 
 } // namespace WebCore

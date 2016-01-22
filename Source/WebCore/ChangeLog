@@ -1,3 +1,58 @@
+2016-01-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Remove PassRefPtr from ResourceRequest and FormData
+        https://bugs.webkit.org/show_bug.cgi?id=153229
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests.
+
+        Making ResourceRequest::setHTTPBody take a RefPtr<FormData>&&.
+        Moving FormData from PassRefPtr to RefPtr.
+
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::didBlockScript):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::populateFrameLoadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/PingLoader.h:
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::create):
+        (WebCore::FormData::createMultiPart):
+        (WebCore::FormData::copy):
+        (WebCore::FormData::deepCopy):
+        (WebCore::FormData::resolveBlobReferences):
+        * platform/network/FormData.h:
+        (WebCore::FormData::decode):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::setHTTPBody):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::setHTTPBody):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::setHTTPBody):
+        * platform/network/cf/FormDataStreamCFNet.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getFormElementsCount):
+        * platform/network/mac/FormDataStreamMac.h:
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::setHTTPBody):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::doRedirect):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2016-01-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(INDEXED_DATABASE) build after r195443

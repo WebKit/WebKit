@@ -121,7 +121,7 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
         RefPtr<FormData> formData = FormData::decode(decoder);
         if (!formData)
             return false;
-        result.request.setHTTPBody(formData.release());
+        result.request.setHTTPBody(WTFMove(formData));
 
         SandboxExtension::HandleArray requestBodySandboxExtensionHandles;
         if (!decoder.decode(requestBodySandboxExtensionHandles))

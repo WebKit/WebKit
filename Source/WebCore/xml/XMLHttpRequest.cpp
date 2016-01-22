@@ -743,7 +743,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET");
         ASSERT(m_method != "HEAD");
-        request.setHTTPBody(m_requestEntityBody.release());
+        request.setHTTPBody(WTFMove(m_requestEntityBody));
     }
 
     if (!m_requestHeaders.isEmpty())

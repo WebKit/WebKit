@@ -204,7 +204,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     } else
         cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), firstPartyForCookies.get());
 
-    RefPtr<FormData> formData = httpBody();
+    FormData* formData = httpBody();
     if (formData && !formData->isEmpty())
         WebCore::setHTTPBody(cfRequest, formData);
 
@@ -335,7 +335,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     *this = delegateProvidedRequest;
 
     setPriority(oldPriority);
-    setHTTPBody(oldHTTPBody.release());
+    setHTTPBody(WTFMove(oldHTTPBody));
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);
 }

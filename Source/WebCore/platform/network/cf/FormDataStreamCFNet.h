@@ -39,7 +39,7 @@ namespace WebCore {
 
 class FormData;
 
-void setHTTPBody(CFMutableURLRequestRef, PassRefPtr<FormData>);
+void setHTTPBody(CFMutableURLRequestRef, FormData*);
 
 FormData* httpBodyFromStream(CFReadStreamRef);
 
