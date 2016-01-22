@@ -739,6 +739,7 @@ using WTF::charactersToDouble;
 using WTF::charactersToFloat;
 using WTF::equal;
 using WTF::equalIgnoringCase;
+using WTF::equalLettersIgnoringASCIICase;
 using WTF::find;
 using WTF::isAllSpecialCharacters;
 using WTF::isSpaceOrNewline;

@@ -1,3 +1,9 @@
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix the Windows build after r195452.
+
+        * wtf/text/WTFString.h:
+
 2016-01-22  Darin Adler  <darin@apple.com>
 
         Reduce use of equalIgnoringCase to just ignore ASCII case
