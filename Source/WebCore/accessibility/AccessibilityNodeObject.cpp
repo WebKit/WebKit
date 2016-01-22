@@ -1845,13 +1845,14 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
     g = 0;
     b = 0;
 
+#if ENABLE(INPUT_TYPE_COLOR)
     if (!isColorWell())
         return;
 
     if (!is<HTMLInputElement>(node()))
         return;
 
-    HTMLInputElement& input = downcast<HTMLInputElement>(*node());
+    auto& input = downcast<HTMLInputElement>(*node());
     if (!input.isColorControl())
         return;
 
@@ -1860,6 +1861,7 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
     r = color.red();
     g = color.green();
     b = color.blue();
+#endif
 }
 
 // This function implements the ARIA accessible name as described by the Mozilla                                        
