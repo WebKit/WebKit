@@ -267,6 +267,8 @@ protected:
     void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);
 
+    virtual void didReplaceSharedBufferContents() { }
+
     // FIXME: Make the rest of these data members private and use functions in derived classes instead.
     HashCountedSet<CachedResourceClient*> m_clients;
     ResourceRequest m_resourceRequest;

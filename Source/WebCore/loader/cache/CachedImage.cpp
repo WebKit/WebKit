@@ -436,6 +436,16 @@ void CachedImage::finishLoading(SharedBuffer* data)
     CachedResource::finishLoading(data);
 }
 
+void CachedImage::didReplaceSharedBufferContents()
+{
+    if (m_image) {
+        // Let the Image know that the SharedBuffer has been rejigged, so it can let go of any references to the heap-allocated resource buffer.
+        // FIXME(rdar://problem/24275617): It would be better if we could somehow tell the Image's decoder to swap in the new contents without destroying anything.
+        m_image->destroyDecodedData(true);
+    }
+    CachedResource::didReplaceSharedBufferContents();
+}
+
 void CachedImage::error(CachedResource::Status status)
 {
     checkShouldPaintBrokenImage();

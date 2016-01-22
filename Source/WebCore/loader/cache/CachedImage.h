@@ -127,6 +127,8 @@ private:
 
     void addIncrementalDataBuffer(SharedBuffer&);
 
+    void didReplaceSharedBufferContents() override;
+
     typedef std::pair<LayoutSize, float> SizeAndZoom;
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;
     ContainerSizeRequests m_pendingContainerSizeRequests;
