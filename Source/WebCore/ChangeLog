@@ -1,3 +1,13 @@
+2016-01-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(INDEXED_DATABASE) build after r195443
+        https://bugs.webkit.org/show_bug.cgi?id=153350
+
+        Unreviewed buildfix.
+
+        * page/Page.cpp:
+        (WebCore::Page::setSessionID):
+
 2016-01-22  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Remove a focus ring on anchor node when focused by mouse.

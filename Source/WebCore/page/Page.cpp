@@ -1735,8 +1735,10 @@ void Page::setSessionID(SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
 
+#if ENABLE(INDEXED_DATABASE)
     if (sessionID != m_sessionID)
         m_idbIDBConnectionToServer = nullptr;
+#endif
 
     bool privateBrowsingStateChanged = (sessionID.isEphemeral() != m_sessionID.isEphemeral());
 
