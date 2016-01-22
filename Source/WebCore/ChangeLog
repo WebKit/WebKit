@@ -1,3 +1,34 @@
+2016-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r168244): Content in horizontal-bt page is offset such that only the end is viewable and there is a white gap at the top
+        https://bugs.webkit.org/show_bug.cgi?id=136019
+
+        Reviewed by Dan Bernstein.
+
+        In horizontal-bt documents (where the page starts scrolled to the bottom, and scrolling up goes into negative scroll positions),
+        the position of the root content layer would be set incorrectly by the scrolling thread, resulting in misplaced
+        content.
+
+        Fix by having the renamed "yPositionForRootContentLayer" take scroll origin into
+        account, and being more consistent about using scrollOrigin to position this layer.
+
+        Test: fast/scrolling/programmatic-horizontal-bt-document-scroll.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::yPositionForFooterLayer): Moved
+        (WebCore::FrameView::positionForRootContentLayer): Take scrollOrigin, and subtract it from the computed value.
+        (WebCore::FrameView::yPositionForRootContentLayer): Renamed.
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll): We've already pushed the new scrollPosition onto the FrameView,
+        so we can just use the member function to compute the positionForContentsLayer.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition): This is the bug fix; FrameView::positionForRootContentLayer()
+        now takes scrollOrigin into account.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition): Rather than using the documentRect, position the root content layer
+        in terms of the scroll origin (which is -documentRect.location()).
+
 2016-01-21  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Support populating/extracting database metadata with SQLite backend.

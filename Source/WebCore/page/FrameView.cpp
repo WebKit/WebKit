@@ -1766,19 +1766,19 @@ float FrameView::yPositionForHeaderLayer(const FloatPoint& scrollPosition, float
     return scrollY;
 }
 
-float FrameView::yPositionForRootContentLayer(const FloatPoint& scrollPosition, float topContentInset, float headerHeight)
-{
-    return yPositionForHeaderLayer(scrollPosition, topContentInset) + headerHeight;
-}
-
 float FrameView::yPositionForFooterLayer(const FloatPoint& scrollPosition, float topContentInset, float totalContentsHeight, float footerHeight)
 {
     return yPositionForHeaderLayer(scrollPosition, topContentInset) + totalContentsHeight - footerHeight;
 }
 
-float FrameView::yPositionForRootContentLayer() const
+FloatPoint FrameView::positionForRootContentLayer(const FloatPoint& scrollPosition, const FloatPoint& scrollOrigin, float topContentInset, float headerHeight)
 {
-    return yPositionForRootContentLayer(scrollPosition(), topContentInset(), headerHeight());
+    return FloatPoint(0, yPositionForHeaderLayer(scrollPosition, topContentInset) + headerHeight) - toFloatSize(scrollOrigin);
+}
+
+FloatPoint FrameView::positionForRootContentLayer() const
+{
+    return positionForRootContentLayer(scrollPosition(), scrollOrigin(), topContentInset(), headerHeight());
 }
 
 #if PLATFORM(IOS)

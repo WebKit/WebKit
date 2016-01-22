@@ -1,3 +1,15 @@
+2016-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r168244): Content in horizontal-bt page is offset such that only the end is viewable and there is a white gap at the top
+        https://bugs.webkit.org/show_bug.cgi?id=136019
+
+        Reviewed by Dan Bernstein.
+
+        Test that scrolls a horizontal-bt document.
+
+        * fast/scrolling/programmatic-horizontal-bt-document-scroll-expected.html: Added.
+        * fast/scrolling/programmatic-horizontal-bt-document-scroll.html: Added.
+
 2016-01-21  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Support populating/extracting database metadata with SQLite backend.

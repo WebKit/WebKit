@@ -693,7 +693,8 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() co
     
 static FloatPoint shadowLayerPositionForFrame(FrameView& frameView, FloatPoint origin)
 {
-    FloatPoint position = frameView.renderView()->documentRect().location() + FloatPoint(0, frameView.yPositionForRootContentLayer());
+    // FIXME: correct for b-t documents?
+    FloatPoint position = frameView.positionForRootContentLayer();
     return position + origin.expandedTo(FloatPoint());
 }
 

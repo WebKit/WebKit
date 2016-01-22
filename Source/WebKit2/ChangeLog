@@ -1,3 +1,17 @@
+2016-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r168244): Content in horizontal-bt page is offset such that only the end is viewable and there is a white gap at the top
+        https://bugs.webkit.org/show_bug.cgi?id=136019
+
+        Reviewed by Dan Bernstein.
+
+        Now call frameView.positionForRootContentLayer(), and add a FIXME questioning the
+        behavior in horizontal b-t documents. However, this code isn't hit now that we always
+        do extended backgrounds, so never have shadow layers.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::shadowLayerPositionForFrame):
+
 2016-01-21  Dean Jackson  <dino@apple.com>
 
         Move _allowsDoubleTapGestures implementation out of category
