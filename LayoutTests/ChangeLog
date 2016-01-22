@@ -1,3 +1,13 @@
+2016-01-21  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Support populating/extracting database metadata with SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153318
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations: Skip all of the tests that run against the
+          SQLite backend and currently fail (which is most of them!)
+
 2016-01-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r195305): Web Inspector: WebInspector.Object can dispatch constructor-level events multiple times

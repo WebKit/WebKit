@@ -874,6 +874,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/legacy/LegacyVersionChangeEvent.cpp
 
     Modules/indexeddb/server/IDBConnectionToClient.cpp
+    Modules/indexeddb/server/IDBSerialization.cpp
     Modules/indexeddb/server/IDBServer.cpp
     Modules/indexeddb/server/IndexValueEntry.cpp
     Modules/indexeddb/server/IndexValueStore.cpp
@@ -885,6 +886,8 @@ set(WebCore_SOURCES
     Modules/indexeddb/server/MemoryObjectStore.cpp
     Modules/indexeddb/server/MemoryObjectStoreCursor.cpp
     Modules/indexeddb/server/SQLiteIDBBackingStore.cpp
+    Modules/indexeddb/server/SQLiteIDBCursor.cpp
+    Modules/indexeddb/server/SQLiteIDBTransaction.cpp
     Modules/indexeddb/server/ServerOpenDBRequest.cpp
     Modules/indexeddb/server/UniqueIDBDatabase.cpp
     Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp

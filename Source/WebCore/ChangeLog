@@ -1,3 +1,102 @@
+2016-01-21  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Support populating/extracting database metadata with SQLite backend.
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=153318
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by current tests).
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::willAbortTransaction): Committing transactions can abort if the commit
+          ends in error.
+
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::didCommit): Before a committing transaction is aborted, notify the
+          IDBDatabase that it aborted.
+
+        Copied over from WK2:
+        * Modules/indexeddb/server/IDBSerialization.cpp: Added.
+        (WebCore::serializeIDBKeyPath):
+        (WebCore::deserializeIDBKeyPath):
+        (WebCore::serializeIDBKeyData):
+        (WebCore::deserializeIDBKeyData):
+        * Modules/indexeddb/server/IDBSerialization.h: Added.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::createBackingStore): Optionally create a SQLite backing store.
+        
+        Mostly copied over verbatim from WebKit2's UniqueIDBDatabaseBackingStoreSQLite.cpp: 
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::idbKeyCollate):
+        (WebCore::IDBServer::v1RecordsTableSchema):
+        (WebCore::IDBServer::v1RecordsTableSchemaAlternate):
+        (WebCore::IDBServer::v2RecordsTableSchema):
+        (WebCore::IDBServer::v2RecordsTableSchemaAlternate):
+        (WebCore::IDBServer::createOrMigrateRecordsTableIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createAndPopulateInitialDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::unregisterCursor):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        Copied over from WK2:
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp: Added.
+        (WebCore::IDBServer::SQLiteIDBCursor::maybeCreate):
+        (WebCore::IDBServer::SQLiteIDBCursor::SQLiteIDBCursor):
+        (WebCore::IDBServer::buildIndexStatement):
+        (WebCore::IDBServer::buildObjectStoreStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::establishStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::createSQLiteStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::objectStoreRecordsChanged):
+        (WebCore::IDBServer::SQLiteIDBCursor::resetAndRebindStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::bindArguments):
+        (WebCore::IDBServer::SQLiteIDBCursor::advance):
+        (WebCore::IDBServer::SQLiteIDBCursor::advanceUnique):
+        (WebCore::IDBServer::SQLiteIDBCursor::advanceOnce):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce):
+        (WebCore::IDBServer::SQLiteIDBCursor::iterate):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h: Added.
+        (WebCore::IDBServer::SQLiteIDBCursor::identifier):
+        (WebCore::IDBServer::SQLiteIDBCursor::transaction):
+        (WebCore::IDBServer::SQLiteIDBCursor::objectStoreID):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentKey):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentPrimaryKey):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentValueBuffer):
+        (WebCore::IDBServer::SQLiteIDBCursor::didError):
+
+        Copied over from WK2:
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp: Added.
+        (WebCore::IDBServer::SQLiteIDBTransaction::SQLiteIDBTransaction):
+        (WebCore::IDBServer::SQLiteIDBTransaction::~SQLiteIDBTransaction):
+        (WebCore::IDBServer::SQLiteIDBTransaction::begin):
+        (WebCore::IDBServer::SQLiteIDBTransaction::commit):
+        (WebCore::IDBServer::SQLiteIDBTransaction::reset):
+        (WebCore::IDBServer::SQLiteIDBTransaction::rollback):
+        (WebCore::IDBServer::SQLiteIDBTransaction::maybeOpenCursor):
+        (WebCore::IDBServer::SQLiteIDBTransaction::closeCursor):
+        (WebCore::IDBServer::SQLiteIDBTransaction::notifyCursorsOfChanges):
+        (WebCore::IDBServer::SQLiteIDBTransaction::clearCursors):
+        (WebCore::IDBServer::SQLiteIDBTransaction::inProgress):
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h: Added.
+        (WebCore::IDBServer::SQLiteIDBTransaction::transactionIdentifier):
+        (WebCore::IDBServer::SQLiteIDBTransaction::mode):
+        (WebCore::IDBServer::SQLiteIDBTransaction::sqliteTransaction):
+
+        * page/Page.cpp:
+        (WebCore::Page::setSessionID): If the new SessionID is different from the last one,
+          clear the IDBConnectionToServer.
+        (WebCore::Page::idbConnection): Always ask the DatabaseProvider; It handles whether or not 
+          the session is ephemeral.
+
 2016-01-21  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix after r195302.

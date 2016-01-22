@@ -386,8 +386,10 @@ void IDBTransaction::didCommit(const IDBError& error)
     if (error.isNull()) {
         m_database->didCommitTransaction(*this);
         fireOnComplete();
-    } else
+    } else {
+        m_database->willAbortTransaction(*this);
         notifyDidAbort(error);
+    }
 
     finishAbortOrCommit();
 }

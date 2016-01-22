@@ -31,12 +31,17 @@
 #include "IDBBackingStore.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
+#include "IDBResourceIdentifier.h"
+#include "SQLiteIDBTransaction.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class SQLiteDatabase;
 
 namespace IDBServer {
+
+class SQLiteIDBCursor;
 
 class SQLiteIDBBackingStore : public IDBBackingStore {
 public:
@@ -68,11 +73,20 @@ public:
 
     virtual void deleteBackingStore() override final;
 
+    void unregisterCursor(SQLiteIDBCursor&);
+
 private:
+    bool ensureValidRecordsTable();
+    std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
+    std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();
+
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 
     std::unique_ptr<SQLiteDatabase> m_sqliteDB;
+
+    HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
+    HashMap<IDBResourceIdentifier, SQLiteIDBCursor*> m_cursors;
 
     String m_absoluteDatabaseDirectory;
 };

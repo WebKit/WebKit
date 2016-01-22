@@ -117,9 +117,10 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
 {
     ASSERT(!isMainThread());
 
-    // FIXME: Once the SQLite backing store is functional, conditionally make either a Memory or SQLite backing store.
+    if (m_databaseDirectoryPath.isEmpty())
+        return MemoryIDBBackingStore::create(identifier);
 
-    return MemoryIDBBackingStore::create(identifier);
+    return std::make_unique<SQLiteIDBBackingStore>(identifier, m_databaseDirectoryPath);
 }
 
 void IDBServer::openDatabase(const IDBRequestData& requestData)

@@ -1932,6 +1932,12 @@
 		510D4A36103165EE0049EA54 /* SocketStreamHandleBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510D4A30103165EE0049EA54 /* SocketStreamHandleBase.cpp */; };
 		510D4A37103165EE0049EA54 /* SocketStreamHandleBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A31103165EE0049EA54 /* SocketStreamHandleBase.h */; };
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; };
+		511EC1271C50AACA0032F983 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1251C50AA570032F983 /* IDBSerialization.cpp */; };
+		511EC1281C50AACA0032F983 /* IDBSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 511EC1261C50AA570032F983 /* IDBSerialization.h */; };
+		511EC12B1C50ABBF0032F983 /* SQLiteIDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */; };
+		511EC12C1C50ABBF0032F983 /* SQLiteIDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 511EC12A1C50ABBA0032F983 /* SQLiteIDBTransaction.h */; };
+		511EC12F1C50ABF50032F983 /* SQLiteIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC12D1C50ABEC0032F983 /* SQLiteIDBCursor.cpp */; };
+		511EC1301C50ABF50032F983 /* SQLiteIDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 511EC12E1C50ABEC0032F983 /* SQLiteIDBCursor.h */; };
 		511EF2C017F0FD3500E4FA16 /* JSIDBAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2A817F0FC4800E4FA16 /* JSIDBAny.cpp */; };
 		511EF2C117F0FD3500E4FA16 /* JSIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2A917F0FC4800E4FA16 /* JSIDBCursor.cpp */; };
 		511EF2C217F0FD3500E4FA16 /* JSIDBCursorWithValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2AA17F0FC4800E4FA16 /* JSIDBCursorWithValue.cpp */; };
@@ -9369,6 +9375,12 @@
 		510D4A30103165EE0049EA54 /* SocketStreamHandleBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandleBase.cpp; sourceTree = "<group>"; };
 		510D4A31103165EE0049EA54 /* SocketStreamHandleBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandleBase.h; sourceTree = "<group>"; };
 		510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandleClient.h; sourceTree = "<group>"; };
+		511EC1251C50AA570032F983 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
+		511EC1261C50AA570032F983 /* IDBSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSerialization.h; sourceTree = "<group>"; };
+		511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteIDBTransaction.cpp; sourceTree = "<group>"; };
+		511EC12A1C50ABBA0032F983 /* SQLiteIDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteIDBTransaction.h; sourceTree = "<group>"; };
+		511EC12D1C50ABEC0032F983 /* SQLiteIDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteIDBCursor.cpp; sourceTree = "<group>"; };
+		511EC12E1C50ABEC0032F983 /* SQLiteIDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteIDBCursor.h; sourceTree = "<group>"; };
 		511EC1A5188DACA400BA3EB6 /* IDBKeyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKeyData.h; sourceTree = "<group>"; };
 		511EC1A7188DAE7B00BA3EB6 /* IDBKeyData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKeyData.cpp; sourceTree = "<group>"; };
 		511EF2A817F0FC4800E4FA16 /* JSIDBAny.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBAny.cpp; sourceTree = "<group>"; };
@@ -16969,6 +16981,8 @@
 				516D7D6D1BB5F06500AF7C77 /* IDBConnectionToClient.cpp */,
 				510A58FE1BB07AA500C19282 /* IDBConnectionToClient.h */,
 				516D7D6E1BB5F06500AF7C77 /* IDBConnectionToClientDelegate.h */,
+				511EC1251C50AA570032F983 /* IDBSerialization.cpp */,
+				511EC1261C50AA570032F983 /* IDBSerialization.h */,
 				510A58EF1BAB720F00C19282 /* IDBServer.cpp */,
 				510A58F01BAB720F00C19282 /* IDBServer.h */,
 				51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */,
@@ -16991,6 +17005,10 @@
 				517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */,
 				512BDB481C456FAB006494DF /* SQLiteIDBBackingStore.cpp */,
 				512BDB491C456FAB006494DF /* SQLiteIDBBackingStore.h */,
+				511EC12D1C50ABEC0032F983 /* SQLiteIDBCursor.cpp */,
+				511EC12E1C50ABEC0032F983 /* SQLiteIDBCursor.h */,
+				511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */,
+				511EC12A1C50ABBA0032F983 /* SQLiteIDBTransaction.h */,
 				516F7F6B1C31C79D00F111DC /* ServerOpenDBRequest.cpp */,
 				516F7F6C1C31C79D00F111DC /* ServerOpenDBRequest.h */,
 				518864DE1BBAF30F00E540C9 /* UniqueIDBDatabase.cpp */,
@@ -26633,6 +26651,7 @@
 				1A762C780A074F2600989F5B /* JSXPathNSResolver.h in Headers */,
 				1A762C7A0A074F2600989F5B /* JSXPathResult.h in Headers */,
 				BCEFE1EB0DCA5F6400739219 /* JSXSLTProcessor.h in Headers */,
+				511EC1301C50ABF50032F983 /* SQLiteIDBCursor.h in Headers */,
 				85031B440A44EFC700F992E0 /* KeyboardEvent.h in Headers */,
 				1AE00D59182DAC8D00087DD7 /* KeyedCoding.h in Headers */,
 				517A63C51B74318F00E7DCDC /* KeyedDecoderCF.h in Headers */,
@@ -27339,6 +27358,7 @@
 				078E094317D16E1C00420AA1 /* RTCSessionDescriptionDescriptor.h in Headers */,
 				078E094417D16E1C00420AA1 /* RTCSessionDescriptionRequest.h in Headers */,
 				078E092A17D14D1C00420AA1 /* RTCStatsReport.h in Headers */,
+				511EC1281C50AACA0032F983 /* IDBSerialization.h in Headers */,
 				078E094517D16E1C00420AA1 /* RTCStatsRequest.h in Headers */,
 				078E092C17D14D1C00420AA1 /* RTCStatsResponse.h in Headers */,
 				078E094617D16E1C00420AA1 /* RTCStatsResponseBase.h in Headers */,
@@ -27647,6 +27667,7 @@
 				B22279A50D00BF220071B782 /* SVGComponentTransferFunctionElement.h in Headers */,
 				B22279A80D00BF220071B782 /* SVGCursorElement.h in Headers */,
 				B22279AE0D00BF220071B782 /* SVGDefsElement.h in Headers */,
+				511EC12C1C50ABBF0032F983 /* SQLiteIDBTransaction.h in Headers */,
 				B22279B10D00BF220071B782 /* SVGDescElement.h in Headers */,
 				B22279B40D00BF220071B782 /* SVGDocument.h in Headers */,
 				B28C6A280D00C44800334AA4 /* SVGDocumentExtensions.h in Headers */,
@@ -30007,6 +30028,7 @@
 				C6F08FC91431000D00685849 /* JSMutationRecord.cpp in Sources */,
 				BCD9C2C00C17B69E005C90A2 /* JSNamedNodeMap.cpp in Sources */,
 				BCD9C2630C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp in Sources */,
+				511EC1271C50AACA0032F983 /* IDBSerialization.cpp in Sources */,
 				A9D247F70D757E3400FDF959 /* JSNavigator.cpp in Sources */,
 				073BE34017D17E01002BD431 /* JSNavigatorUserMedia.cpp in Sources */,
 				073BE34817D17E7A002BD431 /* JSNavigatorUserMediaError.cpp in Sources */,
@@ -31213,6 +31235,7 @@
 				B2227A020D00BF220071B782 /* SVGFESpotLightElement.cpp in Sources */,
 				B2227A050D00BF220071B782 /* SVGFETileElement.cpp in Sources */,
 				B2227A080D00BF220071B782 /* SVGFETurbulenceElement.cpp in Sources */,
+				511EC12B1C50ABBF0032F983 /* SQLiteIDBTransaction.cpp in Sources */,
 				845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */,
 				081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */,
 				B2227A0B0D00BF220071B782 /* SVGFilterElement.cpp in Sources */,
@@ -31454,6 +31477,7 @@
 				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,
 				CD8B5A42180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.mm in Sources */,
 				CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */,
+				511EC12F1C50ABF50032F983 /* SQLiteIDBCursor.cpp in Sources */,
 				26F9A83818A046AC00AEB88A /* ViewportConfiguration.cpp in Sources */,
 				3FFFF9AD159D9B060020BBD5 /* ViewportStyleResolver.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,

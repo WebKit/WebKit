@@ -330,6 +330,9 @@ void IDBDatabase::willAbortTransaction(IDBTransaction& transaction)
     LOG(IndexedDB, "IDBDatabase::willAbortTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
+    if (!refTransaction)
+        refTransaction = m_committingTransactions.take(transaction.info().identifier());
+
     ASSERT(refTransaction);
     m_abortingTransactions.set(transaction.info().identifier(), WTFMove(refTransaction));
 

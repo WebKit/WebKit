@@ -1735,6 +1735,9 @@ void Page::setSessionID(SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
 
+    if (sessionID != m_sessionID)
+        m_idbIDBConnectionToServer = nullptr;
+
     bool privateBrowsingStateChanged = (sessionID.isEphemeral() != m_sessionID.isEphemeral());
 
     m_sessionID = sessionID;
@@ -1836,13 +1839,8 @@ void Page::setAllowsMediaDocumentInlinePlayback(bool flag)
 #if ENABLE(INDEXED_DATABASE)
 IDBClient::IDBConnectionToServer& Page::idbConnection()
 {
-    if (!m_idbIDBConnectionToServer) {
-        if (usesEphemeralSession()) {
-            auto inProcessServer = InProcessIDBServer::create();
-            m_idbIDBConnectionToServer = &inProcessServer->connectionToServer();
-        } else
-            m_idbIDBConnectionToServer = &databaseProvider().idbConnectionToServerForSession(m_sessionID);
-    }
+    if (!m_idbIDBConnectionToServer)
+        m_idbIDBConnectionToServer = &databaseProvider().idbConnectionToServerForSession(m_sessionID);
     
     return *m_idbIDBConnectionToServer;
 }
