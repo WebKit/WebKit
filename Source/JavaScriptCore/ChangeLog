@@ -1,3 +1,32 @@
+2016-01-22  Mark Lam  <mark.lam@apple.com>
+
+        We should OSR exit with Int52Overflow when we fail to make an Int52 where we expect one.
+        https://bugs.webkit.org/show_bug.cgi?id=153379
+
+        Reviewed by Filip Pizlo.
+
+        In DFG::Graph::addShouldSpeculateMachineInt(), we check
+        !hasExitSite(add, Int52Overflow) when determining whether it's ok to speculate
+        that an operand is of type Int52 or not.  However, the Int52Rep code that
+        converts a double to Int52 will OSR exit with exit kind BadType instead.
+        This renders the hasExitSite() check in addShouldSpeculateMachineInt() useless.
+        This patch fixes this by changing Int52Rep to OSR exit with exit kind
+        Int52Overflow instead when it fails to convert a double to an Int52.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (JSC::DFG::SpeculativeJIT::typeCheck):
+        (JSC::DFG::SpeculativeJIT::usedRegisters):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::needsTypeCheck):
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::typeCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendTypeCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::doubleToStrictInt52):
+
 2016-01-22  Saam barati  <sbarati@apple.com>
 
         Current implementation of Parser::createSavePoint is a foot gun

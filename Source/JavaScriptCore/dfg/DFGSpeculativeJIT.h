@@ -2447,7 +2447,7 @@ public:
     
     // Helpers for performing type checks on an edge stored in the given registers.
     bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_interpreter.needsTypeCheck(edge, typesPassedThrough); }
-    void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail);
+    void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, ExitKind = BadType);
     
     void speculateCellTypeWithoutTypeFiltering(Edge, GPRReg cellGPR, JSType);
     void speculateCellType(Edge, GPRReg cellGPR, SpeculatedType, JSType);
@@ -3379,14 +3379,17 @@ void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocat
     }
 }
 
-#define DFG_TYPE_CHECK(source, edge, typesPassedThrough, jumpToFail) do { \
+#define DFG_TYPE_CHECK_WITH_EXIT_KIND(exitKind, source, edge, typesPassedThrough, jumpToFail) do { \
         JSValueSource _dtc_source = (source);                           \
         Edge _dtc_edge = (edge);                                        \
         SpeculatedType _dtc_typesPassedThrough = typesPassedThrough;    \
         if (!needsTypeCheck(_dtc_edge, _dtc_typesPassedThrough))        \
             break;                                                      \
-        typeCheck(_dtc_source, _dtc_edge, _dtc_typesPassedThrough, (jumpToFail)); \
+        typeCheck(_dtc_source, _dtc_edge, _dtc_typesPassedThrough, (jumpToFail), exitKind); \
     } while (0)
+
+#define DFG_TYPE_CHECK(source, edge, typesPassedThrough, jumpToFail) \
+    DFG_TYPE_CHECK_WITH_EXIT_KIND(BadType, source, edge, typesPassedThrough, jumpToFail)
 
 } } // namespace JSC::DFG
 

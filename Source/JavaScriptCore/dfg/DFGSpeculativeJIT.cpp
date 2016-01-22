@@ -298,11 +298,11 @@ void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs js
     terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.node());
 }
 
-void SpeculativeJIT::typeCheck(JSValueSource source, Edge edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail)
+void SpeculativeJIT::typeCheck(JSValueSource source, Edge edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, ExitKind exitKind)
 {
     ASSERT(needsTypeCheck(edge, typesPassedThrough));
     m_interpreter.filter(edge, typesPassedThrough);
-    speculationCheck(BadType, source, edge.node(), jumpToFail);
+    speculationCheck(exitKind, source, edge.node(), jumpToFail);
 }
 
 RegisterSet SpeculativeJIT::usedRegisters()

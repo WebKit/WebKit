@@ -2211,7 +2211,7 @@ void SpeculativeJIT::compile(Node* node)
             
             callOperation(operationConvertDoubleToInt52, resultGPR, valueFPR);
             
-            DFG_TYPE_CHECK(
+            DFG_TYPE_CHECK_WITH_EXIT_KIND(Int52Overflow,
                 JSValueRegs(), node->child1(), SpecInt52AsDouble,
                 m_jit.branch64(
                     JITCompiler::Equal, resultGPR,

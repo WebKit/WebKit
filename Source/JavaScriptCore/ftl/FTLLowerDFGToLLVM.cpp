@@ -109,14 +109,17 @@ NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
 
 // Using this instead of typeCheck() helps to reduce the load on LLVM, by creating
 // significantly less dead code.
-#define FTL_TYPE_CHECK(lowValue, highValue, typesPassedThrough, failCondition) do { \
+#define FTL_TYPE_CHECK_WITH_EXIT_KIND(exitKind, lowValue, highValue, typesPassedThrough, failCondition) do { \
         FormattedValue _ftc_lowValue = (lowValue);                      \
         Edge _ftc_highValue = (highValue);                              \
         SpeculatedType _ftc_typesPassedThrough = (typesPassedThrough);  \
         if (!m_interpreter.needsTypeCheck(_ftc_highValue, _ftc_typesPassedThrough)) \
             break;                                                      \
-        typeCheck(_ftc_lowValue, _ftc_highValue, _ftc_typesPassedThrough, (failCondition)); \
+        typeCheck(_ftc_lowValue, _ftc_highValue, _ftc_typesPassedThrough, (failCondition), exitKind); \
     } while (false)
+
+#define FTL_TYPE_CHECK(lowValue, highValue, typesPassedThrough, failCondition) \
+    FTL_TYPE_CHECK_WITH_EXIT_KIND(BadType, lowValue, highValue, typesPassedThrough, failCondition)
 
 class LowerDFGToLLVM {
     WTF_MAKE_NONCOPYABLE(LowerDFGToLLVM);
@@ -8974,19 +8977,19 @@ private:
     
     void typeCheck(
         FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
-        LValue failCondition)
+        LValue failCondition, ExitKind exitKind = BadType)
     {
-        appendTypeCheck(lowValue, highValue, typesPassedThrough, failCondition);
+        appendTypeCheck(lowValue, highValue, typesPassedThrough, failCondition, exitKind);
     }
     
     void appendTypeCheck(
         FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
-        LValue failCondition)
+        LValue failCondition, ExitKind exitKind)
     {
         if (!m_interpreter.needsTypeCheck(highValue, typesPassedThrough))
             return;
         ASSERT(mayHaveTypeCheck(highValue.useKind()));
-        appendOSRExit(BadType, lowValue, highValue.node(), failCondition, m_origin);
+        appendOSRExit(exitKind, lowValue, highValue.node(), failCondition, m_origin);
         m_interpreter.filter(highValue, typesPassedThrough);
     }
     
@@ -9399,7 +9402,7 @@ private:
     {
         LValue possibleResult = m_out.call(
             m_out.int64, m_out.operation(operationConvertDoubleToInt52), value);
-        FTL_TYPE_CHECK(
+        FTL_TYPE_CHECK_WITH_EXIT_KIND(Int52Overflow,
             doubleValue(value), edge, SpecInt52AsDouble,
             m_out.equal(possibleResult, m_out.constInt64(JSValue::notInt52)));
         
