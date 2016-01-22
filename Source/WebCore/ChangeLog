@@ -1,3 +1,33 @@
+2016-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        createElementFromSavedToken shouldn't have the code to create a non-HTML element
+        https://bugs.webkit.org/show_bug.cgi?id=153327
+
+        Reviewed by Chris Dumez.
+
+        Since HTMLConstructionSite::createElementFromSavedToken is only used to instantiate a formatting element,
+        there is no need for it to support creating a non-HTML elements. Remove the branch and assert that this
+        is indeed the case.
+
+        createElementFromSavedToken is called in HTMLTreeBuilder::callTheAdoptionAgency and HTMLConstructionSite's
+        reconstructTheActiveFormattingElements. In both cases, the stack item passed to createElementFromSavedToken
+        is guaranteed to be in the list of active formatting elements, which only contains formatting elements.
+
+        No new tests since there is no behavioral change.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::insertFormattingElement):
+        (WebCore::HTMLConstructionSite::createElement): Returns Ref<Element> instead of PassRefPtr<Element>.
+        (WebCore::HTMLConstructionSite::createHTMLElement): Ditto.
+        (WebCore::HTMLConstructionSite::createElementFromSavedToken): Ditto. Removed the code to instantiate
+        a non-HTML element. Also assert that an element created by this function is a formatting tag.
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLConstructionSite::isFormattingTag): Put into HTMLConstructionSite to add an assertion.
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+
 2016-01-21  Andreas Kling  <akling@apple.com>
 
         CGImageSource sometimes retains temporary SharedBuffer data indefinitely, doubling memory cost.

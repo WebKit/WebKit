@@ -51,11 +51,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline void setAttributes(Element* element, AtomicHTMLToken* token, ParserContentPolicy parserContentPolicy)
+static inline void setAttributes(Element& element, AtomicHTMLToken* token, ParserContentPolicy parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
-        element->stripScriptingAttributes(token->attributes());
-    element->parserSetAttributes(token->attributes());
+        element.stripScriptingAttributes(token->attributes());
+    element.parserSetAttributes(token->attributes());
 }
 
 static bool hasImpliedEndTag(const HTMLStackItem& item)
@@ -262,7 +262,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
 void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken* token)
 {
     Ref<HTMLHtmlElement> element = HTMLHtmlElement::create(*m_document);
-    setAttributes(element.ptr(), token, m_parserContentPolicy);
+    setAttributes(element.get(), token, m_parserContentPolicy);
     attachLater(m_attachmentRoot, element.ptr());
     m_openElements.pushHTMLHtmlElement(HTMLStackItem::create(element.copyRef(), *token));
 
@@ -452,7 +452,7 @@ void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomicHTMLToken* token
 void HTMLConstructionSite::insertHTMLHeadElement(AtomicHTMLToken* token)
 {
     ASSERT(!shouldFosterParent());
-    m_head = HTMLStackItem::create(*createHTMLElement(token), *token);
+    m_head = HTMLStackItem::create(createHTMLElement(token), *token);
     attachLater(&currentNode(), &m_head->element());
     m_openElements.pushHTMLHeadElement(m_head);
 }
@@ -498,6 +498,7 @@ void HTMLConstructionSite::insertFormattingElement(AtomicHTMLToken* token)
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#the-stack-of-open-elements
     // Possible active formatting elements include:
     // a, b, big, code, em, font, i, nobr, s, small, strike, strong, tt, and u.
+    ASSERT(isFormattingTag(token->name()));
     insertHTMLElement(token);
     m_activeFormattingElements.append(&currentStackItem());
 }
@@ -511,11 +512,11 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken* token)
     // those flags or effects thereof.
     const bool parserInserted = m_parserContentPolicy != AllowScriptingContentAndDoNotMarkAlreadyStarted;
     const bool alreadyStarted = m_isParsingFragment && parserInserted;
-    RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
+    Ref<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
     setAttributes(element.get(), token, m_parserContentPolicy);
     if (scriptingContentIsAllowed(m_parserContentPolicy))
-        attachLater(&currentNode(), element);
-    m_openElements.push(HTMLStackItem::create(element.releaseNonNull(), *token));
+        attachLater(&currentNode(), element.ptr());
+    m_openElements.push(HTMLStackItem::create(WTFMove(element), *token));
 }
 
 void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken* token, const AtomicString& namespaceURI)
@@ -615,12 +616,12 @@ void HTMLConstructionSite::takeAllChildren(HTMLStackItem& newParent, HTMLElement
     m_taskQueue.append(task);
 }
 
-PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken* token, const AtomicString& namespaceURI)
+Ref<Element> HTMLConstructionSite::createElement(AtomicHTMLToken* token, const AtomicString& namespaceURI)
 {
     QualifiedName tagName(nullAtom, token->name(), namespaceURI);
-    RefPtr<Element> element = ownerDocumentForCurrentNode().createElement(tagName, true);
+    Ref<Element> element = ownerDocumentForCurrentNode().createElement(tagName, true);
     setAttributes(element.get(), token, m_parserContentPolicy);
-    return element.release();
+    return element;
 }
 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
@@ -632,7 +633,7 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
     return currentNode().document();
 }
 
-PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* token)
+Ref<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* token)
 {
     QualifiedName tagName(nullAtom, token->name(), xhtmlNamespaceURI);
     // FIXME: This can't use HTMLConstructionSite::createElement because we
@@ -641,29 +642,26 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* tok
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#create-an-element-for-the-token
     Document& ownerDocument = ownerDocumentForCurrentNode();
     bool insideTemplateElement = !ownerDocument.frame();
-    RefPtr<Element> element = HTMLElementFactory::createElement(tagName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
+    Ref<Element> element = HTMLElementFactory::createElement(tagName, ownerDocument, insideTemplateElement ? nullptr : form(), true);
     
     // FIXME: This is a hack to connect images to pictures before the image has
     // been inserted into the document. It can be removed once asynchronous image
     // loading is working.
-    if (is<HTMLPictureElement>(currentNode()) && is<HTMLImageElement>(*element.get()))
-        downcast<HTMLImageElement>(*element.get()).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
+    if (is<HTMLPictureElement>(currentNode()) && is<HTMLImageElement>(element))
+        downcast<HTMLImageElement>(element.get()).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
 
     setAttributes(element.get(), token, m_parserContentPolicy);
     ASSERT(element->isHTMLElement());
-    return element.release();
+    return element;
 }
 
-PassRefPtr<HTMLStackItem> HTMLConstructionSite::createElementFromSavedToken(HTMLStackItem* item)
+Ref<HTMLStackItem> HTMLConstructionSite::createElementFromSavedToken(HTMLStackItem* item)
 {
-    RefPtr<Element> element;
     // NOTE: Moving from item -> token -> item copies the Attribute vector twice!
     AtomicHTMLToken fakeToken(HTMLToken::StartTag, item->localName(), Vector<Attribute>(item->attributes()));
-    if (item->namespaceURI() == HTMLNames::xhtmlNamespaceURI)
-        element = createHTMLElement(&fakeToken);
-    else
-        element = createElement(&fakeToken, item->namespaceURI());
-    return HTMLStackItem::create(element.releaseNonNull(), fakeToken, item->namespaceURI());
+    ASSERT(item->namespaceURI() == HTMLNames::xhtmlNamespaceURI);
+    ASSERT(isFormattingTag(item->localName()));
+    return HTMLStackItem::create(createHTMLElement(&fakeToken), fakeToken, item->namespaceURI());
 }
 
 bool HTMLConstructionSite::indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const

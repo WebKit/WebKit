@@ -121,7 +121,7 @@ static bool isNonAnchorFormattingTag(const AtomicString& tagName)
 }
 
 // https://html.spec.whatwg.org/multipage/syntax.html#formatting
-static bool isFormattingTag(const AtomicString& tagName)
+bool HTMLConstructionSite::isFormattingTag(const AtomicString& tagName)
 {
     return tagName == aTag || isNonAnchorFormattingTag(tagName);
 }
@@ -1883,7 +1883,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken& token)
         m_tree.openElements().popUntilNumberedHeaderElementPopped();
         return;
     }
-    if (isFormattingTag(token.name())) {
+    if (HTMLConstructionSite::isFormattingTag(token.name())) {
         callTheAdoptionAgency(token);
         return;
     }
