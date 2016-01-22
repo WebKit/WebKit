@@ -51,6 +51,8 @@ public:
     void doubleTapAtPoint(long x, long y, JSValueRef callback);
     
     void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
+    void keyDownUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
+    void keyUpUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
 
     void setWillBeginZoomingCallback(JSValueRef);
     JSValueRef willBeginZoomingCallback() const;

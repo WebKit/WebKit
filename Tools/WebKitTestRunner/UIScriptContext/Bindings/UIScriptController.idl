@@ -36,6 +36,8 @@ interface UIScriptController {
     void doubleTapAtPoint(long x, long y, object callback);
 
     void typeCharacterUsingHardwareKeyboard(DOMString character, object callback);
+    void keyDownUsingHardwareKeyboard(DOMString character, object callback);
+    void keyUpUsingHardwareKeyboard(DOMString character, object callback);
 
     attribute object didShowKeyboardCallback;
     attribute object didHideKeyboardCallback;

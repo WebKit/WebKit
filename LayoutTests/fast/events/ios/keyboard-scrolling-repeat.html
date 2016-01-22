@@ -1,0 +1,89 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+    <script id="ui-script" type="text/plain">
+        (function() {
+            // FIXME (151264): Need to tap to focus so that key events go through.
+            uiController.singleTapAtPoint(50, 25, function() {
+                uiController.keyDownUsingHardwareKeyboard("downArrow", function() {
+                    uiController.didEndScrollingCallback = function() {
+                        uiController.uiScriptComplete();
+                    };
+                });
+            });
+        })();
+    </script>
+
+    <script id="ui-script-waitforscroll" type="text/plain">
+        (function() {
+            uiController.didEndScrollingCallback = function() {
+                uiController.uiScriptComplete();
+            };
+        })();
+    </script>
+
+    <script id="ui-script-keyup" type="text/plain">
+        (function() {
+            uiController.keyUpUsingHardwareKeyboard("downArrow", function() {
+                uiController.uiScriptComplete();
+            });
+        })();
+    </script>
+
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getInitialUIScript()
+        {
+            return document.getElementById("ui-script").text;
+        }
+
+        function getWaitForScrollUIScript()
+        {
+            return document.getElementById("ui-script-waitforscroll").text;
+        }
+
+        function getKeyUpUIScript()
+        {
+            return document.getElementById("ui-script-keyup").text;
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            debug("Before starting to hold the down arrow, window.scrollY = " + window.scrollY);
+            testRunner.runUIScript(getInitialUIScript(), function(result) {
+                debug("After starting to hold the down arrow, window.scrollY = " + window.scrollY);
+                testRunner.runUIScript(getWaitForScrollUIScript(), function(result) {
+                    debug("After continuing to hold the down arrow, window.scrollY = " + window.scrollY);
+                    testRunner.runUIScript(getKeyUpUIScript(), function(result) {
+                        testRunner.notifyDone();
+                    });
+                });
+            });
+        }
+    </script>
+    <style>
+    #placeholder {
+        width: 100px;
+        height: 5000px;
+    }
+    </style>
+</head>
+
+<body style="margin: 0;" onload="runTest()">
+    <div id="placeholder">
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+
+</html>

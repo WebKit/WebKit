@@ -7,6 +7,30 @@
 
 2016-01-22  Tim Horton  <timothy_horton@apple.com>
 
+        Add a test for iOS arrow-key repeat
+        https://bugs.webkit.org/show_bug.cgi?id=152857
+        <rdar://problem/24017380>
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::keyUpUsingHardwareKeyboard):
+        (WTR::UIScriptController::keyDownUsingHardwareKeyboard):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator keyPress:completionBlock:]):
+        (-[HIDEventGenerator keyDown:completionBlock:]):
+        (-[HIDEventGenerator keyUp:completionBlock:]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::typeCharacterUsingHardwareKeyboard):
+        (WTR::UIScriptController::keyDownUsingHardwareKeyboard):
+        (WTR::UIScriptController::keyUpUsingHardwareKeyboard):
+        Make it possible to independently send keyUp/keyDown, instead of just paired.
+
+2016-01-22  Tim Horton  <timothy_horton@apple.com>
+
         Reproducible "Unhanded web process message 'WebUserContentController:AddUserScripts'" and friends
         https://bugs.webkit.org/show_bug.cgi?id=153193
         <rdar://problem/24222034>

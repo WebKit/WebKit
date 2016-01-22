@@ -1,0 +1,7 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before starting to hold the down arrow, window.scrollY = 0
+After starting to hold the down arrow, window.scrollY = 40
+After continuing to hold the down arrow, window.scrollY = 80
+

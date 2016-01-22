@@ -130,6 +130,14 @@ void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef, JSValue
 {
 }
 
+void UIScriptController::keyUpUsingHardwareKeyboard(JSStringRef, JSValueRef)
+{
+}
+
+void UIScriptController::keyDownUsingHardwareKeyboard(JSStringRef, JSValueRef)
+{
+}
+
 double UIScriptController::zoomScale() const
 {
     return 1;

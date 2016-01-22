@@ -106,7 +106,31 @@ void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef characte
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     // Assumes that the keyboard is already shown.
+    [[HIDEventGenerator sharedHIDEventGenerator] keyPress:toWTFString(toWK(character)) completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
+void UIScriptController::keyDownUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    // Assumes that the keyboard is already shown.
     [[HIDEventGenerator sharedHIDEventGenerator] keyDown:toWTFString(toWK(character)) completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
+void UIScriptController::keyUpUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    // Assumes that the keyboard is already shown.
+    [[HIDEventGenerator sharedHIDEventGenerator] keyUp:toWTFString(toWK(character)) completionBlock:^{
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

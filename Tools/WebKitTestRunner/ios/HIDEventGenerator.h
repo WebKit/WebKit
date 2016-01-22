@@ -51,6 +51,8 @@
 - (void)markerEventReceived:(IOHIDEventRef)event;
 
 // Keyboard
+- (void)keyPress:(NSString *)character completionBlock:(void (^)(void))completionBlock;
 - (void)keyDown:(NSString *)character completionBlock:(void (^)(void))completionBlock;
+- (void)keyUp:(NSString *)character completionBlock:(void (^)(void))completionBlock;
 
 @end

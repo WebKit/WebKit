@@ -1,3 +1,15 @@
+2016-01-22  Tim Horton  <timothy_horton@apple.com>
+
+        Add a test for iOS arrow-key repeat
+        https://bugs.webkit.org/show_bug.cgi?id=152857
+        <rdar://problem/24017380>
+
+        Reviewed by Darin Adler.
+
+        * fast/events/ios/keyboard-scrolling-repeat-expected.txt: Added.
+        * fast/events/ios/keyboard-scrolling-repeat.html: Added.
+        Add the aforementioned test. It waits for the held-down arrow key to scroll twice, then sends the up.
+
 2016-01-21  Sam Weinig  <sam@webkit.org>
 
         Treat non-https actions on secure pages as mixed content
