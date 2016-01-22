@@ -216,8 +216,8 @@ private:
                         fixups.append(mask);
                         Value* zext = m_proc.add<Value>(
                             BitAnd, m_value->origin(), match->child(0), mask);
-                        fixups.append(sext);
-                        return sext;
+                        fixups.append(zext);
+                        return zext;
                     }
                     return nullptr;
                 });
@@ -256,8 +256,8 @@ private:
                         fixups.append(mask);
                         Value* zext = m_proc.add<Value>(
                             BitAnd, m_value->origin(), match->child(0), mask);
-                        fixups.append(sext);
-                        return sext;
+                        fixups.append(zext);
+                        return zext;
                     }
                     return nullptr;
                 });
