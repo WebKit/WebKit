@@ -1,3 +1,77 @@
+2016-01-22  Antti Koivisto  <antti@apple.com>
+
+        Style resolver initialization cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=153356
+
+        Reviewed by Simon Fraser.
+
+            Simplify StyleResolver::State initialization.
+            Also use more references and other cleanups.
+
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::prepareEvaluator):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::classNamesAffectedByRules):
+        (WebCore::StyleResolver::State::State):
+
+            Initialize State using a constructor instead of bunch of construction functions.
+            Remove m_styledElement field which is just a casted version of m_element.
+
+        (WebCore::StyleResolver::State::updateConversionData):
+        (WebCore::StyleResolver::State::setStyle):
+        (WebCore::StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        (WebCore::StyleResolver::locateSharedStyle):
+        (WebCore::isAtShadowBoundary):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        (WebCore::StyleResolver::clearCachedPropertiesAffectedByViewportUnits):
+        (WebCore::isCacheableInMatchedPropertiesCache):
+
+            Disallow caching of document element style entirely because the writing-mode and direction properties have special handling.
+            The existing check wasn't robust.
+
+        (WebCore::extractDirectionAndWritingMode):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyPropertyToStyle):
+        (WebCore::StyleResolver::State::initElement): Deleted.
+        (WebCore::StyleResolver::initElement): Deleted.
+        (WebCore::StyleResolver::State::initForStyleResolve): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::mediaQueryEvaluator):
+        (WebCore::StyleResolver::State::State):
+        (WebCore::StyleResolver::State::document):
+        (WebCore::StyleResolver::State::element):
+        (WebCore::StyleResolver::State::style):
+        (WebCore::StyleResolver::State::takeStyle):
+        (WebCore::StyleResolver::State::styledElement): Deleted.
+        * dom/Element.cpp:
+        (WebCore::Element::resolveStyle):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getUncachedPseudoStyle):
+        (WebCore::RenderElement::containingBlockForFixedPosition):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::computeStyleInRegion):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::styleForElement):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::customStyleForRenderer):
+        (WebCore::SVGElement::computedStyle):
+        (WebCore::addQualifiedName):
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::ensureAnimatedSMILStyleProperties):
+        (WebCore::SVGElementRareData::overrideComputedStyle):
+
 2016-01-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: <code> group and friends should have a custom subrole

@@ -65,14 +65,13 @@ public:
         return *m_animatedSMILStyleProperties;
     }
 
-    RenderStyle* overrideComputedStyle(Element* element, RenderStyle* parentStyle)
+    RenderStyle* overrideComputedStyle(Element& element, RenderStyle* parentStyle)
     {
-        ASSERT(element);
         if (!m_useOverrideComputedStyle)
             return 0;
         if (!m_overrideComputedStyle || m_needsOverrideComputedStyleUpdate) {
             // The style computed here contains no CSS Animations/Transitions or SMIL induced rules - this is needed to compute the "base value" for the SMIL animation sandwhich model.
-            m_overrideComputedStyle = element->styleResolver().styleForElement(element, parentStyle, DisallowStyleSharing, MatchAllRulesExcludingSMIL);
+            m_overrideComputedStyle = element.styleResolver().styleForElement(element, parentStyle, DisallowStyleSharing, MatchAllRulesExcludingSMIL);
             m_needsOverrideComputedStyleUpdate = false;
         }
         ASSERT(m_overrideComputedStyle);

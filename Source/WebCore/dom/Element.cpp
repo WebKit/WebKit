@@ -1404,7 +1404,7 @@ StyleResolver& Element::styleResolver()
 
 Ref<RenderStyle> Element::resolveStyle(RenderStyle* parentStyle)
 {
-    return styleResolver().styleForElement(this, parentStyle);
+    return styleResolver().styleForElement(*this, parentStyle);
 }
 
 // Returns true is the given attribute is an event handler.

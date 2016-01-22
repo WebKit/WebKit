@@ -793,7 +793,7 @@ RefPtr<RenderStyle> SVGElement::customStyleForRenderer(RenderStyle& parentStyle)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
     if (auto* styleElement = this->correspondingElement())
-        return styleElement->styleResolver().styleForElement(styleElement, &parentStyle, DisallowStyleSharing);
+        return styleElement->styleResolver().styleForElement(*styleElement, &parentStyle, DisallowStyleSharing);
 
     return resolveStyle(&parentStyle);
 }
@@ -827,7 +827,7 @@ RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
             parentStyle = &renderer->style();
     }
 
-    return m_svgRareData->overrideComputedStyle(this, parentStyle);
+    return m_svgRareData->overrideComputedStyle(*this, parentStyle);
 }
 
 static void addQualifiedName(HashMap<AtomicString, QualifiedName>& map, const QualifiedName& name)

@@ -191,7 +191,6 @@ inline void StyleResolver::State::cacheBorderAndBackground()
 inline void StyleResolver::State::clear()
 {
     m_element = nullptr;
-    m_styledElement = nullptr;
     m_parentStyle = nullptr;
     m_regionForStyling = nullptr;
     m_pendingImageProperties.clear();
@@ -265,7 +264,7 @@ StyleResolver::StyleResolver(Document& document)
         m_medium = std::make_unique<MediaQueryEvaluator>("all");
 
     if (root)
-        m_rootDefaultStyle = styleForElement(root, m_document.renderStyle(), DisallowStyleSharing, MatchOnlyUserAgentRules);
+        m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), DisallowStyleSharing, MatchOnlyUserAgentRules);
 
     if (m_rootDefaultStyle && view)
         m_medium = std::make_unique<MediaQueryEvaluator>(view->mediaType(), &view->frame(), m_rootDefaultStyle.get());
@@ -342,54 +341,27 @@ bool StyleResolver::classNamesAffectedByRules(const SpaceSplitString& classNames
     return false;
 }
 
+StyleResolver::State::State(Element& element, RenderStyle* parentStyle, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
+    : m_element(&element)
+    , m_parentStyle(parentStyle)
+    , m_regionForStyling(regionForStyling)
+    , m_elementLinkState(element.document().visitedLinkState().determineLinkState(element))
+    , m_selectorFilter(selectorFilter)
+{
+    bool resetStyleInheritance = hasShadowRootParent(element) && downcast<ShadowRoot>(element.parentNode())->resetStyleInheritance();
+    if (resetStyleInheritance)
+        m_parentStyle = nullptr;
+
+    auto& document = element.document();
+    auto* documentElement = document.documentElement();
+    m_rootElementStyle = (!documentElement || documentElement == &element) ? document.renderStyle() : documentElement->renderStyle();
+
+    updateConversionData();
+}
+
 inline void StyleResolver::State::updateConversionData()
 {
     m_cssToLengthConversionData = CSSToLengthConversionData(m_style.get(), m_rootElementStyle, m_element ? document().renderView() : nullptr);
-}
-
-inline void StyleResolver::State::initElement(Element* element)
-{
-    m_element = element;
-    m_styledElement = element && is<StyledElement>(*element) ? downcast<StyledElement>(element) : nullptr;
-    m_elementLinkState = element ? element->document().visitedLinkState().determineLinkState(*element) : NotInsideLink;
-    updateConversionData();
-}
-
-inline void StyleResolver::initElement(Element* e)
-{
-    if (m_state.element() != e) {
-        m_state.initElement(e);
-        if (e && e == e->document().documentElement()) {
-            e->document().setDirectionSetOnDocumentElement(false);
-            e->document().setWritingModeSetOnDocumentElement(false);
-        }
-    }
-}
-
-inline void StyleResolver::State::initForStyleResolve(Document& document, Element* e, RenderStyle* parentStyle, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
-{
-    m_regionForStyling = regionForStyling;
-
-    if (e) {
-        bool resetStyleInheritance = hasShadowRootParent(*e) && downcast<ShadowRoot>(*e->parentNode()).resetStyleInheritance();
-        m_parentStyle = resetStyleInheritance ? nullptr : parentStyle;
-    } else
-        m_parentStyle = parentStyle;
-
-    Node* docElement = e ? e->document().documentElement() : nullptr;
-    RenderStyle* docStyle = document.renderStyle();
-    m_rootElementStyle = docElement && e != docElement ? docElement->renderStyle() : docStyle;
-
-    m_style = nullptr;
-    m_pendingImageProperties.clear();
-    m_fontDirty = false;
-    
-    m_authorRollback = nullptr;
-    m_userRollback = nullptr;
-
-    m_selectorFilter = selectorFilter;
-
-    updateConversionData();
 }
 
 inline void StyleResolver::State::setStyle(Ref<RenderStyle>&& style)
@@ -524,7 +496,7 @@ bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledE
     } else
         return false;
 
-    if (state.styledElement()->presentationAttributeStyle() != sharingCandidate.presentationAttributeStyle())
+    if (downcast<StyledElement>(*state.element()).presentationAttributeStyle() != sharingCandidate.presentationAttributeStyle())
         return false;
 
     if (state.element()->hasTagName(progressTag)) {
@@ -568,7 +540,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement& element) const
         return false;
     if (!sharingCandidateHasIdenticalStyleAffectingAttributes(element))
         return false;
-    if (element.additionalPresentationAttributeStyle() != state.styledElement()->additionalPresentationAttributeStyle())
+    if (element.additionalPresentationAttributeStyle() != downcast<StyledElement>(*state.element()).additionalPresentationAttributeStyle())
         return false;
     if (element.affectsNextSiblingElementStyle() || element.styleIsAffectedByPreviousSibling())
         return false;
@@ -645,18 +617,19 @@ inline StyledElement* StyleResolver::findSiblingForStyleSharing(Node* node, unsi
 RenderStyle* StyleResolver::locateSharedStyle()
 {
     State& state = m_state;
-    if (!state.styledElement() || !state.parentStyle())
+    if (!is<StyledElement>(state.element()) || !state.parentStyle())
         return nullptr;
+    auto& styledElement = downcast<StyledElement>(*state.element());
 
     // If the element has inline style it is probably unique.
-    if (state.styledElement()->inlineStyle())
+    if (styledElement.inlineStyle())
         return nullptr;
-    if (state.styledElement()->isSVGElement() && downcast<SVGElement>(*state.styledElement()).animatedSMILStyleProperties())
+    if (styledElement.isSVGElement() && downcast<SVGElement>(styledElement).animatedSMILStyleProperties())
         return nullptr;
     // Ids stop style sharing if they show up in the stylesheets.
-    if (state.styledElement()->hasID() && m_ruleSets.features().idsInRules.contains(state.styledElement()->idForStyleResolution().impl()))
+    if (styledElement.hasID() && m_ruleSets.features().idsInRules.contains(styledElement.idForStyleResolution().impl()))
         return nullptr;
-    if (parentElementPreventsSharing(state.element()->parentElement()))
+    if (parentElementPreventsSharing(styledElement.parentElement()))
         return nullptr;
     if (state.element() == state.document().cssTarget())
         return nullptr;
@@ -671,7 +644,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
     unsigned count = 0;
     unsigned visitedNodeCount = 0;
     StyledElement* shareElement = nullptr;
-    Node* cousinList = state.styledElement()->previousSibling();
+    Node* cousinList = styledElement.previousSibling();
     while (cousinList) {
         shareElement = findSiblingForStyleSharing(cousinList, count);
         if (shareElement)
@@ -690,7 +663,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
     if (styleSharingCandidateMatchesRuleSet(m_ruleSets.uncommonAttribute()))
         return nullptr;
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
-    if (parentElementPreventsSharing(state.element()->parentElement()))
+    if (parentElementPreventsSharing(styledElement.parentElement()))
         return nullptr;
     return shareElement->renderStyle();
 }
@@ -703,26 +676,32 @@ static inline bool isAtShadowBoundary(const Element* element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* defaultParent,
+Ref<RenderStyle> StyleResolver::styleForElement(Element& element, RenderStyle* parentStyle,
     StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
 
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
-    if (sharingBehavior == AllowStyleSharing && !element->document().haveStylesheetsLoaded() && !element->renderer()) {
+    if (sharingBehavior == AllowStyleSharing && !m_document.haveStylesheetsLoaded() && !element.renderer()) {
         if (!s_styleNotYetAvailable) {
             s_styleNotYetAvailable = &RenderStyle::create().leakRef();
             s_styleNotYetAvailable->setDisplay(NONE);
-            s_styleNotYetAvailable->fontCascade().update(&document().fontSelector());
+            s_styleNotYetAvailable->fontCascade().update(&m_document.fontSelector());
         }
-        element->document().setHasNodesWithPlaceholderStyle();
+        m_document.setHasNodesWithPlaceholderStyle();
         return *s_styleNotYetAvailable;
     }
 
+    m_state = State(element, parentStyle, regionForStyling, selectorFilter);
     State& state = m_state;
-    initElement(element);
-    state.initForStyleResolve(document(), element, defaultParent, regionForStyling, selectorFilter);
+
+    if (&element == m_document.documentElement() && matchingBehavior == MatchAllRules) {
+        // These bits may be set when resolving document element style.
+        // FIXME: Style resolver shouldn't mutate document.
+        m_document.setDirectionSetOnDocumentElement(false);
+        m_document.setWritingModeSetOnDocumentElement(false);
+    }
 
     if (sharingBehavior == AllowStyleSharing) {
         if (RenderStyle* sharedStyle = locateSharedStyle()) {
@@ -733,17 +712,17 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::create());
-        state.style()->inheritFrom(state.parentStyle(), isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
+        state.style()->inheritFrom(state.parentStyle(), isAtShadowBoundary(&element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
     } else {
         state.setStyle(defaultStyleForElement());
         state.setParentStyle(RenderStyle::clone(state.style()));
     }
 
-    if (element->isLink()) {
+    if (element.isLink()) {
         state.style()->setIsLink(true);
         EInsideLink linkState = state.elementLinkState();
         if (linkState != NotInsideLink) {
-            bool forceVisited = InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassVisited);
+            bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassVisited);
             if (forceVisited)
                 linkState = InsideVisitedLink;
         }
@@ -751,11 +730,11 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
     }
 
     bool needsCollection = false;
-    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(*element, needsCollection);
+    CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element, needsCollection);
     if (needsCollection)
         m_ruleSets.collectFeatures();
 
-    ElementRuleCollector collector(*element, state.style(), m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(element, state.style(), m_ruleSets, m_state.selectorFilter());
     collector.setRegionForStyling(regionForStyling);
     collector.setMedium(m_medium.get());
 
@@ -767,7 +746,7 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
     applyMatchedProperties(collector.matchedResult(), element);
 
     // Clean up our style object's display and text decorations (among other fixups).
-    adjustRenderStyle(*state.style(), *state.parentStyle(), element);
+    adjustRenderStyle(*state.style(), *state.parentStyle(), &element);
 
     if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
@@ -836,12 +815,12 @@ Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle
     return state.takeStyle();
 }
 
-void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* elementStyle, KeyframeList& list)
+void StyleResolver::keyframeStylesForAnimation(Element& element, const RenderStyle* elementStyle, KeyframeList& list)
 {
     list.clear();
 
     // Get the keyframesRule for this name
-    if (!e || list.animationName().isEmpty())
+    if (list.animationName().isEmpty())
         return;
 
     m_keyframesRuleMap.checkConsistency();
@@ -856,8 +835,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     const Vector<RefPtr<StyleKeyframe>>& keyframes = keyframesRule->keyframes();
     for (unsigned i = 0; i < keyframes.size(); ++i) {
         // Apply the declaration to the style. This is a simplified version of the logic in styleForElement
-        initElement(e);
-        m_state.initForStyleResolve(document(), e, nullptr);
+        m_state = State(element, nullptr);
 
         const StyleKeyframe* keyframe = keyframes[i].get();
 
@@ -897,17 +875,11 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     }
 }
 
-PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle)
+PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element& element, const PseudoStyleRequest& pseudoStyleRequest, RenderStyle& parentStyle)
 {
-    ASSERT(parentStyle);
-    if (!element)
-        return nullptr;
+    m_state = State(element, &parentStyle);
 
     State& state = m_state;
-
-    initElement(element);
-
-    state.initForStyleResolve(document(), element, parentStyle);
 
     if (m_state.parentStyle()) {
         state.setStyle(RenderStyle::create());
@@ -921,7 +893,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* element, c
     // those rules.
 
     // Check UA, user and author rules.
-    ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(element, m_state.style(), m_ruleSets, m_state.selectorFilter());
     collector.setPseudoStyleRequest(pseudoStyleRequest);
     collector.setMedium(m_medium.get());
     collector.matchUARules();
@@ -955,7 +927,11 @@ Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 {
     RELEASE_ASSERT(!m_inLoadPendingImages);
 
-    m_state.initForStyleResolve(m_document, m_document.documentElement(), m_document.renderStyle());
+    auto* documentElement = m_document.documentElement();
+    if (!documentElement)
+        return RenderStyle::create();
+
+    m_state = State(*documentElement, m_document.renderStyle());
 
     m_state.setStyle(RenderStyle::create());
     m_state.style()->inheritFrom(m_state.rootElementStyle());
@@ -1397,10 +1373,9 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
     if (!element || !element->document().haveStylesheetsLoaded())
         return Vector<RefPtr<StyleRule>>();
 
-    initElement(element);
-    m_state.initForStyleResolve(document(), element, nullptr);
+    m_state = State(*element, nullptr);
 
-    ElementRuleCollector collector(*element, m_state.style(), m_ruleSets, m_state.selectorFilter());
+    ElementRuleCollector collector(*element, nullptr, m_ruleSets, m_state.selectorFilter());
     collector.setMode(SelectorChecker::Mode::CollectingRules);
     collector.setPseudoStyleRequest(PseudoStyleRequest(pseudoId));
     collector.setMedium(m_medium.get());
@@ -1555,10 +1530,11 @@ void StyleResolver::clearCachedPropertiesAffectedByViewportUnits()
         m_matchedPropertiesCache.remove(key);
 }
 
-static bool isCacheableInMatchedPropertiesCache(const Element* element, const RenderStyle* style, const RenderStyle* parentStyle)
+static bool isCacheableInMatchedPropertiesCache(const Element& element, const RenderStyle* style, const RenderStyle* parentStyle)
 {
-    // FIXME: CSSPropertyWebkitWritingMode modifies state when applying to document element. We can't skip the applying by caching.
-    if (element == element->document().documentElement() && element->document().writingModeSetOnDocumentElement())
+    // FIXME: Writing mode and direction properties modify state when applying to document element by calling
+    // Document::setWritingMode/DirectionSetOnDocumentElement. We can't skip the applying by caching.
+    if (&element == element.document().documentElement())
         return false;
     if (style->unique() || (style->styleType() != NOPSEUDO && parentStyle->unique()))
         return false;
@@ -1607,9 +1583,8 @@ void extractDirectionAndWritingMode(const RenderStyle& style, const StyleResolve
     }
 }
 
-void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element* element, ShouldUseMatchedPropertiesCache shouldUseMatchedPropertiesCache)
+void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element& element, ShouldUseMatchedPropertiesCache shouldUseMatchedPropertiesCache)
 {
-    ASSERT(element);
     State& state = m_state;
     unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties().data(), matchResult.matchedProperties().size()) : 0;
     bool applyInheritedOnly = false;
@@ -1620,7 +1595,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
         state.style()->copyNonInheritedFrom(cacheItem->renderStyle.get());
-        if (state.parentStyle()->inheritedDataShared(cacheItem->parentRenderStyle.get()) && !isAtShadowBoundary(element)) {
+        if (state.parentStyle()->inheritedDataShared(cacheItem->parentRenderStyle.get()) && !isAtShadowBoundary(&element)) {
             EInsideLink linkStatus = state.style()->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
@@ -1706,15 +1681,15 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     
     if (cacheItem || !cacheHash)
         return;
-    if (!isCacheableInMatchedPropertiesCache(state.element(), state.style(), state.parentStyle()))
+    if (!isCacheableInMatchedPropertiesCache(*state.element(), state.style(), state.parentStyle()))
         return;
     addToMatchedPropertiesCache(state.style(), state.parentStyle(), cacheHash, matchResult);
 }
 
 void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, RenderStyle* style)
 {
-    initElement(nullptr);
-    m_state.initForStyleResolve(document(), nullptr, style);
+    m_state = State();
+    m_state.setParentStyle(*style);
     m_state.setStyle(*style);
     applyPropertyToCurrentStyle(id, value);
 }

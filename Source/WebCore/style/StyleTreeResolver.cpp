@@ -127,7 +127,7 @@ Ref<RenderStyle> TreeResolver::styleForElement(Element& element, RenderStyle& in
         if (RefPtr<RenderStyle> style = element.customStyleForRenderer(inheritedStyle))
             return style.releaseNonNull();
     }
-    return m_styleResolver.styleForElement(&element, &inheritedStyle, AllowStyleSharing, MatchAllRules, nullptr, &m_selectorFilter);
+    return m_styleResolver.styleForElement(element, &inheritedStyle, AllowStyleSharing, MatchAllRules, nullptr, &m_selectorFilter);
 }
 
 #if ENABLE(CSS_REGIONS)

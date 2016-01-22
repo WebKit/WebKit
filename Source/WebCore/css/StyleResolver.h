@@ -135,12 +135,12 @@ public:
     StyleResolver(Document&);
     ~StyleResolver();
 
-    Ref<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle, StyleSharingBehavior = AllowStyleSharing,
+    Ref<RenderStyle> styleForElement(Element&, RenderStyle* parentStyle, StyleSharingBehavior = AllowStyleSharing,
         RuleMatchingBehavior = MatchAllRules, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
-    void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
+    void keyframeStylesForAnimation(Element&, const RenderStyle*, KeyframeList&);
 
-    PassRefPtr<RenderStyle> pseudoStyleForElement(Element*, const PseudoStyleRequest&, RenderStyle* parentStyle);
+    PassRefPtr<RenderStyle> pseudoStyleForElement(Element&, const PseudoStyleRequest&, RenderStyle& parentStyle);
 
     Ref<RenderStyle> styleForPage(int pageIndex);
     Ref<RenderStyle> defaultStyleForElement();
@@ -160,7 +160,6 @@ public:
     const MediaQueryEvaluator& mediaQueryEvaluator() const { return *m_medium; }
 
 private:
-    void initElement(Element*);
     RenderStyle* locateSharedStyle();
     bool styleSharingCandidateMatchesRuleSet(RuleSet*);
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
@@ -333,7 +332,7 @@ private:
     bool fastRejectSelector(const RuleData&) const;
 
     enum ShouldUseMatchedPropertiesCache { DoNotUseMatchedPropertiesCache = 0, UseMatchedPropertiesCache };
-    void applyMatchedProperties(const MatchResult&, const Element*, ShouldUseMatchedPropertiesCache = UseMatchedPropertiesCache);
+    void applyMatchedProperties(const MatchResult&, const Element&, ShouldUseMatchedPropertiesCache = UseMatchedPropertiesCache);
 
     void applyCascadedProperties(CascadedProperties&, int firstProperty, int lastProperty, const MatchResult*);
     void cascadeMatches(CascadedProperties&, const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
@@ -359,33 +358,16 @@ public:
     typedef HashMap<CSSPropertyID, RefPtr<CSSValue>> PendingImagePropertyMap;
 
     class State {
-        WTF_MAKE_NONCOPYABLE(State);
     public:
-        State()
-            : m_element(nullptr)
-            , m_styledElement(nullptr)
-            , m_parentStyle(nullptr)
-            , m_rootElementStyle(nullptr)
-            , m_regionForStyling(nullptr)
-            , m_elementLinkState(NotInsideLink)
-            , m_elementAffectedByClassRules(false)
-            , m_applyPropertyToRegularStyle(true)
-            , m_applyPropertyToVisitedLinkStyle(false)
-            , m_fontDirty(false)
-            , m_fontSizeHasViewportUnits(false)
-            , m_hasUAAppearance(false)
-            , m_backgroundData(BackgroundFillLayer)
-        {
-        }
+        State() { }
+        State(Element&, RenderStyle* parentStyle, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
 
     public:
-        void initElement(Element*);
-        void initForStyleResolve(Document&, Element*, RenderStyle* parentStyle, const RenderRegion* regionForStyling = nullptr, const SelectorFilter* = nullptr);
         void clear();
 
         Document& document() const { return m_element->document(); }
         Element* element() const { return m_element; }
-        StyledElement* styledElement() const { return m_styledElement; }
+
         void setStyle(Ref<RenderStyle>&&);
         RenderStyle* style() const { return m_style.get(); }
         Ref<RenderStyle> takeStyle() { return m_style.releaseNonNull(); }
@@ -444,34 +426,28 @@ public:
     private:
         void updateConversionData();
 
-        Element* m_element;
+        Element* m_element { nullptr };
         RefPtr<RenderStyle> m_style;
-        StyledElement* m_styledElement;
         RefPtr<RenderStyle> m_parentStyle;
-        RenderStyle* m_rootElementStyle;
+        RenderStyle* m_rootElementStyle { nullptr };
 
-        // Required to ASSERT in applyProperties.
-        const RenderRegion* m_regionForStyling;
+        const RenderRegion* m_regionForStyling { nullptr };
         
-        EInsideLink m_elementLinkState;
+        EInsideLink m_elementLinkState { NotInsideLink };
 
-        bool m_elementAffectedByClassRules;
+        bool m_elementAffectedByClassRules { false };
+        bool m_applyPropertyToRegularStyle { true };
+        bool m_applyPropertyToVisitedLinkStyle { false };
+        bool m_fontDirty { false };
+        bool m_fontSizeHasViewportUnits { false };
+        bool m_hasUAAppearance { false };
 
-        bool m_applyPropertyToRegularStyle;
-        bool m_applyPropertyToVisitedLinkStyle;
-
-        PendingImagePropertyMap m_pendingImageProperties;
-
-        Vector<RefPtr<ReferenceFilterOperation>> m_filtersWithPendingSVGDocuments;
-
-        bool m_fontDirty;
-        bool m_fontSizeHasViewportUnits;
-
-        bool m_hasUAAppearance;
         BorderData m_borderData;
-        FillLayer m_backgroundData;
+        FillLayer m_backgroundData { BackgroundFillLayer };
         Color m_backgroundColor;
 
+        PendingImagePropertyMap m_pendingImageProperties;
+        Vector<RefPtr<ReferenceFilterOperation>> m_filtersWithPendingSVGDocuments;
         CSSToLengthConversionData m_cssToLengthConversionData;
         
         CascadeLevel m_cascadeLevel { UserAgentLevel };

@@ -49,7 +49,7 @@ KeyframeAnimation::KeyframeAnimation(Animation& animation, RenderElement* render
 {
     // Get the keyframe RenderStyles
     if (m_object && m_object->element())
-        m_object->element()->styleResolver().keyframeStylesForAnimation(m_object->element(), unanimatedStyle, m_keyframes);
+        m_object->element()->styleResolver().keyframeStylesForAnimation(*m_object->element(), unanimatedStyle, m_keyframes);
 
     // Update the m_transformFunctionListValid flag based on whether the function lists in the keyframes match.
     validateTransformFunctionList();
