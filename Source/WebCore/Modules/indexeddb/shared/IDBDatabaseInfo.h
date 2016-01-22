@@ -57,6 +57,7 @@ public:
     Vector<String> objectStoreNames() const;
 
     void deleteObjectStore(const String& objectStoreName);
+    void deleteObjectStore(uint64_t objectStoreIdentifier);
 
 #ifndef NDEBUG
     String loggingString() const;

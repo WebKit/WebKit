@@ -135,6 +135,11 @@ void IDBDatabaseInfo::deleteObjectStore(const String& objectStoreName)
     m_objectStoreMap.remove(info->identifier());
 }
 
+void IDBDatabaseInfo::deleteObjectStore(uint64_t objectStoreIdentifier)
+{
+    m_objectStoreMap.remove(objectStoreIdentifier);
+}
+
 #ifndef NDEBUG
 String IDBDatabaseInfo::loggingString() const
 {

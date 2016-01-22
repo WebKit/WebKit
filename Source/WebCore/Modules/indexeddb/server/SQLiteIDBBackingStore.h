@@ -55,7 +55,7 @@ public:
     virtual IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) override final;
     virtual IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) override final;
     virtual IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&) override final;
-    virtual IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, const String& objectStoreName) override final;
+    virtual IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier) override final;
     virtual IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier) override final;
     virtual IDBError createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&) override final;
     virtual IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& indexName) override final;
@@ -76,6 +76,10 @@ public:
     void unregisterCursor(SQLiteIDBCursor&);
 
 private:
+    String filenameForDatabaseName() const;
+    String fullDatabaseDirectory() const;
+    String fullDatabasePath() const;
+
     bool ensureValidRecordsTable();
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();

@@ -502,28 +502,35 @@ void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transact
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteObjectStore");
 
     uint64_t callbackID = storeCallback(callback);
-    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performDeleteObjectStore, callbackID, transaction.info().identifier(), objectStoreName));
+
+    auto* info = m_databaseInfo->infoForExistingObjectStore(objectStoreName);
+    if (!info) {
+        performErrorCallback(callbackID, { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete non-existant object store") });
+        return;
+    }
+
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performDeleteObjectStore, callbackID, transaction.info().identifier(), info->identifier()));
 }
 
-void UniqueIDBDatabase::performDeleteObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const String& objectStoreName)
+void UniqueIDBDatabase::performDeleteObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performDeleteObjectStore");
 
     ASSERT(m_backingStore);
-    m_backingStore->deleteObjectStore(transactionIdentifier, objectStoreName);
+    m_backingStore->deleteObjectStore(transactionIdentifier, objectStoreIdentifier);
 
     IDBError error;
-    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformDeleteObjectStore, callbackIdentifier, error, objectStoreName));
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformDeleteObjectStore, callbackIdentifier, error, objectStoreIdentifier));
 }
 
-void UniqueIDBDatabase::didPerformDeleteObjectStore(uint64_t callbackIdentifier, const IDBError& error, const String& objectStoreName)
+void UniqueIDBDatabase::didPerformDeleteObjectStore(uint64_t callbackIdentifier, const IDBError& error, uint64_t objectStoreIdentifier)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformDeleteObjectStore");
 
     if (error.isNull())
-        m_databaseInfo->deleteObjectStore(objectStoreName);
+        m_databaseInfo->deleteObjectStore(objectStoreIdentifier);
 
     performErrorCallback(callbackIdentifier, error);
 }

@@ -36,9 +36,8 @@
 namespace WebCore {
 namespace IDBServer {
 
-SQLiteIDBTransaction::SQLiteIDBTransaction(SQLiteIDBBackingStore& backingStore, const IDBResourceIdentifier& transactionIdentifier, IndexedDB::TransactionMode mode)
-    : m_identifier(transactionIdentifier)
-    , m_mode(mode)
+SQLiteIDBTransaction::SQLiteIDBTransaction(SQLiteIDBBackingStore& backingStore, const IDBTransactionInfo& info)
+    : m_info(info)
     , m_backingStore(backingStore)
 {
 }
@@ -53,43 +52,51 @@ SQLiteIDBTransaction::~SQLiteIDBTransaction()
 }
 
 
-bool SQLiteIDBTransaction::begin(SQLiteDatabase& database)
+IDBError SQLiteIDBTransaction::begin(SQLiteDatabase& database)
 {
     ASSERT(!m_sqliteTransaction);
-    m_sqliteTransaction = std::make_unique<SQLiteTransaction>(database, m_mode == IndexedDB::TransactionMode::ReadOnly);
 
+    m_sqliteTransaction = std::make_unique<SQLiteTransaction>(database, m_info.mode() == IndexedDB::TransactionMode::ReadOnly);
     m_sqliteTransaction->begin();
 
-    return m_sqliteTransaction->inProgress();
+    if (m_sqliteTransaction->inProgress())
+        return { };
+
+    return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not start SQLite transaction in database backend") };
 }
 
-bool SQLiteIDBTransaction::commit()
+IDBError SQLiteIDBTransaction::commit()
 {
-    // It's okay to not have a SQLite transaction or not have started it yet because it's okay for a WebProcess
-    // to request the commit of a transaction immediately after creating it before it has even been used.
     if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
-        return false;
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("No SQLite transaction in progress to commit") };
 
     m_sqliteTransaction->commit();
 
-    return !m_sqliteTransaction->inProgress();
+    if (m_sqliteTransaction->inProgress())
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to commit SQLite transaction in database backend") };
+
+    reset();
+    return { };
 }
 
-bool SQLiteIDBTransaction::reset()
+IDBError SQLiteIDBTransaction::abort()
+{
+    if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("No SQLite transaction in progress to abort") };
+
+    m_sqliteTransaction->rollback();
+
+    if (m_sqliteTransaction->inProgress())
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to abort SQLite transaction in database backend") };
+
+    reset();
+    return { };
+}
+
+void SQLiteIDBTransaction::reset()
 {
     m_sqliteTransaction = nullptr;
     clearCursors();
-
-    return true;
-}
-
-bool SQLiteIDBTransaction::rollback()
-{
-    ASSERT(m_sqliteTransaction);
-    if (m_sqliteTransaction->inProgress())
-        m_sqliteTransaction->rollback();
-
-    return true;
 }
 
 SQLiteIDBCursor* SQLiteIDBTransaction::maybeOpenCursor(const IDBCursorInfo& info)

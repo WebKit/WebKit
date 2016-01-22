@@ -52,7 +52,7 @@ public:
 
     IDBTransactionInfo isolatedCopy() const;
 
-    IDBResourceIdentifier identifier() const { return m_identifier; }
+    const IDBResourceIdentifier& identifier() const { return m_identifier; }
 
     IndexedDB::TransactionMode mode() const { return m_mode; }
     uint64_t newVersion() const { return m_newVersion; }

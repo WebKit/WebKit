@@ -1,3 +1,65 @@
+2016-01-22  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Add transactions and create/delete object store to SQLite backend
+        https://bugs.webkit.org/show_bug.cgi?id=153359
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by many tests now passing).
+
+        * Modules/indexeddb/server/IDBBackingStore.h: Change deleteObjectStore to work on an ID instead of name.
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::takeObjectStoreByIdentifier):
+        (WebCore::IDBServer::MemoryIDBBackingStore::takeObjectStoreByName): Deleted.
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+
+        Clean up filename generation a bit to actually match the previous directory structure.
+        Add begin/commit/abort transaction support.
+        Add create/delete object store support:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::filenameForDatabaseName):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::fullDatabaseDirectory):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::fullDatabasePath):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        Clean up SQLiteIDBTransaction to fit with the new WebCore backing store model, which is slightly
+        different from the old WebKit2 backing store model:
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        (WebCore::IDBServer::SQLiteIDBTransaction::SQLiteIDBTransaction):
+        (WebCore::IDBServer::SQLiteIDBTransaction::begin):
+        (WebCore::IDBServer::SQLiteIDBTransaction::commit):
+        (WebCore::IDBServer::SQLiteIDBTransaction::abort):
+        (WebCore::IDBServer::SQLiteIDBTransaction::reset):
+        (WebCore::IDBServer::SQLiteIDBTransaction::rollback): Deleted.
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+        (WebCore::IDBServer::SQLiteIDBTransaction::transactionIdentifier):
+        (WebCore::IDBServer::SQLiteIDBTransaction::mode):
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performDeleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformDeleteObjectStore):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        
+        * Modules/indexeddb/shared/IDBDatabaseInfo.cpp:
+        (WebCore::IDBDatabaseInfo::deleteObjectStore):
+        * Modules/indexeddb/shared/IDBDatabaseInfo.h:
+        
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        (WebCore::IDBObjectStoreInfo::maxIndexID):
+        
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        (WebCore::IDBTransactionInfo::identifier):
+
 2016-01-22  Antti Koivisto  <antti@apple.com>
 
         Style resolver initialization cleanups

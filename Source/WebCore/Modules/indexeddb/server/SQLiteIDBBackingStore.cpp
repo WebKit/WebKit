@@ -29,10 +29,12 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "FileSystem.h"
+#include "IDBBindingUtilities.h"
 #include "IDBDatabaseException.h"
 #include "IDBKeyData.h"
 #include "IDBSerialization.h"
 #include "IDBTransactionInfo.h"
+#include "IndexKey.h"
 #include "Logging.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteFileSystem.h"
@@ -40,6 +42,8 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include <wtf/NeverDestroyed.h>
+
+using namespace JSC;
 
 namespace WebCore {
 namespace IDBServer {
@@ -390,6 +394,33 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     return databaseInfo;
 }
 
+String SQLiteIDBBackingStore::filenameForDatabaseName() const
+{
+    ASSERT(!m_identifier.databaseName().isNull());
+
+    if (m_identifier.databaseName().isEmpty())
+        return "%00";
+
+    String filename = encodeForFileName(m_identifier.databaseName());
+    filename.replace('.', "%2E");
+
+    return filename;
+}
+
+String SQLiteIDBBackingStore::fullDatabaseDirectory() const
+{
+    ASSERT(!m_identifier.databaseName().isNull());
+
+    return pathByAppendingComponent(m_absoluteDatabaseDirectory, filenameForDatabaseName());
+}
+
+String SQLiteIDBBackingStore::fullDatabasePath() const
+{
+    ASSERT(!m_identifier.databaseName().isNull());
+
+    return pathByAppendingComponent(fullDatabaseDirectory(), "IndexedDB.sqlite3");
+}
+
 const IDBDatabaseInfo& SQLiteIDBBackingStore::getOrEstablishDatabaseInfo()
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::getOrEstablishDatabaseInfo - database %s", m_identifier.databaseName().utf8().data());
@@ -399,9 +430,8 @@ const IDBDatabaseInfo& SQLiteIDBBackingStore::getOrEstablishDatabaseInfo()
 
     m_databaseInfo = std::make_unique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
 
-    makeAllDirectories(m_absoluteDatabaseDirectory);
-
-    String dbFilename = pathByAppendingComponent(m_absoluteDatabaseDirectory, "IndexedDB.sqlite3");
+    makeAllDirectories(fullDatabaseDirectory());
+    String dbFilename = fullDatabasePath();
 
     m_sqliteDB = std::make_unique<SQLiteDatabase>();
     if (!m_sqliteDB->open(dbFilename)) {
@@ -437,38 +467,175 @@ const IDBDatabaseInfo& SQLiteIDBBackingStore::getOrEstablishDatabaseInfo()
 IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::beginTransaction - %s", info.identifier().loggingString().utf8().data());
-    UNUSED_PARAM(info);
 
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto addResult = m_transactions.add(info.identifier(), nullptr);
+    if (!addResult.isNewEntry) {
+        LOG_ERROR("Attempt to establish transaction identifier that already exists");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to establish transaction identifier that already exists") };
+    }
+
+    addResult.iterator->value = std::make_unique<SQLiteIDBTransaction>(*this, info);
+    return addResult.iterator->value->begin(*m_sqliteDB);
 }
 
 IDBError SQLiteIDBBackingStore::abortTransaction(const IDBResourceIdentifier& identifier)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::abortTransaction - %s", identifier.loggingString().utf8().data());
-    UNUSED_PARAM(identifier);
 
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto transaction = m_transactions.take(identifier);
+    if (!transaction) {
+        LOG_ERROR("Attempt to commit a transaction that hasn't been established");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to abort a transaction that hasn't been established") };
+    }
+
+    return transaction->abort();
 }
 
 IDBError SQLiteIDBBackingStore::commitTransaction(const IDBResourceIdentifier& identifier)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::commitTransaction - %s", identifier.loggingString().utf8().data());
-    UNUSED_PARAM(identifier);
 
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto transaction = m_transactions.take(identifier);
+    if (!transaction) {
+        LOG_ERROR("Attempt to commit a transaction that hasn't been established");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to commit a transaction that hasn't been established") };
+    }
+
+    return transaction->commit();
 }
 
-IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier&, const IDBObjectStoreInfo& info)
+IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& info)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::createObjectStore - adding OS %s with ID %" PRIu64, info.name().utf8().data(), info.identifier());
-    UNUSED_PARAM(info);
 
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to create an object store without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to create an object store without an in-progress transaction") };
+    }
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to create an object store in a non-version-change transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to create an object store in a non-version-change transaction") };
+    }
+
+    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
+    if (!keyPathBlob) {
+        LOG_ERROR("Unable to serialize IDBKeyPath to save in database for new object store");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize IDBKeyPath to save in database for new object store") };
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO ObjectStoreInfo VALUES (?, ?, ?, ?, ?);"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, info.identifier()) != SQLITE_OK
+            || sql.bindText(2, info.name()) != SQLITE_OK
+            || sql.bindBlob(3, keyPathBlob->data(), keyPathBlob->size()) != SQLITE_OK
+            || sql.bindInt(4, info.autoIncrement()) != SQLITE_OK
+            || sql.bindInt64(5, info.maxIndexID()) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", info.name().utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not create object store") };
+        }
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO KeyGenerators VALUES (?, 0);"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, info.identifier()) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not seed initial key generator value for ObjectStoreInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not seed initial key generator value for object store") };
+        }
+    }
+
+    return { };
 }
 
-IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier&, const String&)
+IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    LOG(IndexedDB, "SQLiteIDBBackingStore::deleteObjectStore - object store %" PRIu64, objectStoreIdentifier);
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to delete an object store without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete an object store without an in-progress transaction") };
+    }
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to delete an object store in a non-version-change transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete an object store in a non-version-change transaction") };
+    }
+
+    // Delete the ObjectStore record
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM ObjectStoreInfo WHERE id = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreIdentifier) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete object store id %" PRIi64 " from ObjectStoreInfo table (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not delete object store") };
+        }
+    }
+
+    // Delete the ObjectStore's key generator record if there is one.
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM KeyGenerators WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreIdentifier) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete object store from KeyGenerators table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not delete key generator for deleted object store") };
+        }
+    }
+
+    // Delete all associated records
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreIdentifier) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete records for object store %" PRIi64 " (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not delete records for deleted object store") };
+        }
+    }
+
+    // Delete all associated Indexes
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexInfo WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreIdentifier) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete index from IndexInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not delete IDBIndex for deleted object store") };
+        }
+    }
+
+    // Delete all associated Index records
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreIdentifier) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete index records(%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not delete IDBIndex records for deleted object store") };
+        }
+    }
+
+    return true;
 }
 
 IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier&, uint64_t)
@@ -543,7 +710,7 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier&, cons
 
 void SQLiteIDBBackingStore::deleteBackingStore()
 {
-    String dbFilename = pathByAppendingComponent(m_absoluteDatabaseDirectory, "IndexedDB.sqlite3");
+    String dbFilename = fullDatabasePath();
 
     LOG(IndexedDB, "SQLiteIDBBackingStore::deleteBackingStore deleting file '%s' on disk", dbFilename.utf8().data());
 

@@ -28,7 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBError.h"
 #include "IDBResourceIdentifier.h"
+#include "IDBTransactionInfo.h"
 #include "IndexedDB.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -48,31 +50,30 @@ class SQLiteIDBCursor;
 class SQLiteIDBTransaction {
     WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
 public:
-    SQLiteIDBTransaction(SQLiteIDBBackingStore&, const IDBResourceIdentifier& transactionIdentifier, IndexedDB::TransactionMode);
+    SQLiteIDBTransaction(SQLiteIDBBackingStore&, const IDBTransactionInfo&);
     ~SQLiteIDBTransaction();
 
-    const IDBResourceIdentifier& transactionIdentifier() const { return m_identifier; }
+    const IDBResourceIdentifier& transactionIdentifier() const { return m_info.identifier(); }
 
-    bool begin(SQLiteDatabase&);
-    bool commit();
-    bool reset();
-    bool rollback();
+    IDBError begin(SQLiteDatabase&);
+    IDBError commit();
+    IDBError abort();
 
     SQLiteIDBCursor* maybeOpenCursor(const IDBCursorInfo&);
 
     void closeCursor(SQLiteIDBCursor&);
     void notifyCursorsOfChanges(int64_t objectStoreID);
 
-    IndexedDB::TransactionMode mode() const { return m_mode; }
+    IndexedDB::TransactionMode mode() const { return m_info.mode(); }
     bool inProgress() const;
 
     SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }
 
 private:
     void clearCursors();
+    void reset();
 
-    IDBResourceIdentifier m_identifier;
-    IndexedDB::TransactionMode m_mode;
+    IDBTransactionInfo m_info;
 
     SQLiteIDBBackingStore& m_backingStore;
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;

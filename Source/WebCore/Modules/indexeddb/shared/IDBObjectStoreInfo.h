@@ -46,6 +46,7 @@ public:
     const String& name() const { return m_name; }
     const IDBKeyPath& keyPath() const { return m_keyPath; }
     bool autoIncrement() const { return m_autoIncrement; }
+    uint64_t maxIndexID() const { return m_maxIndexID; }
 
     IDBObjectStoreInfo isolatedCopy() const;
 
