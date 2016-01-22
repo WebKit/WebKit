@@ -15,6 +15,7 @@ else ()
     list(APPEND JavaScriptCore_LIBRARIES
         CoreFoundation${DEBUG_SUFFIX}
         ${ICU_LIBRARIES}
+        winmm
     )
 endif ()
 
