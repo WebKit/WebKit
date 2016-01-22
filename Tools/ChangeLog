@@ -1,3 +1,17 @@
+2016-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the lldb WebCoreLayoutUnitProvider to not dynamically look up the LayoutUnit denominator
+        https://bugs.webkit.org/show_bug.cgi?id=153334
+
+        Reviewed by Zalan Bujtas.
+        
+        Evaluating expressions in the LayoutUnit summary provider seems to cause
+        re-entrancy problems in lldb python bindings, so just hardcode the LayoutUnit
+        denominator to 64.
+
+        * lldb/lldb_webkit.py:
+        (WebCoreLayoutUnitProvider.to_string):
+
 2016-01-21  Filip Pizlo  <fpizlo@apple.com>
 
         display-profiler-output should be able to display code blocks sorted by machine counts
