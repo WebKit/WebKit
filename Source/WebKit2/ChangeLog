@@ -1,3 +1,26 @@
+2016-01-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Tooltips do not honor some types of obscuring windows
+        https://bugs.webkit.org/show_bug.cgi?id=153263
+        <rdar://problem/21423972>
+
+        Reviewed by Simon Fraser.
+
+        Recognize that the current WebView is obscured by comparing the current event's Window Number against
+        the Window Number of the current WebView. If they don't match, something is in the way.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::windowIsFrontWindowUnderMouse): Added.
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::windowIsFrontWindowUnderMouse):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMouseEvent): Check if the current WebView is obscured. If it
+        is, clear the tooltip and return.
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::windowIsFrontWindowUnderMouse): Added.
+
 2016-01-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove PassRefPtr from ResourceRequest and FormData

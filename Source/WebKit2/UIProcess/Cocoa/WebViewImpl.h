@@ -478,6 +478,8 @@ public:
     void showCandidates(NSArray *candidates, NSString *, NSRect rectOfTypedString, NSView *, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate));
     void webViewImplAdditionsWillDestroyView();
 
+    bool windowIsFrontWindowUnderMouse(NSEvent *);
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewImplAdditions.h>
 #endif

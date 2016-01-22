@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import "DownloadProxy.h"
 #import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
+#import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
 #import "StringUtilities.h"
@@ -828,6 +829,11 @@ _WKRemoteObjectRegistry *PageClientImpl::remoteObjectRegistry()
 void PageClientImpl::didRestoreScrollPosition()
 {
     m_impl->didRestoreScrollPosition();
+}
+
+bool PageClientImpl::windowIsFrontWindowUnderMouse(const NativeWebMouseEvent& event)
+{
+    return m_impl->windowIsFrontWindowUnderMouse(event.nativeEvent());
 }
 
 } // namespace WebKit

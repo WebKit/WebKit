@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -239,6 +239,7 @@ private:
     virtual void derefView() override;
 
     virtual void didRestoreScrollPosition() override;
+    virtual bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
 };
 
 } // namespace WebKit

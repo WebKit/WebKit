@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3972,6 +3972,15 @@ void WebViewImpl::mouseDragged(NSEvent *event)
     mouseDraggedInternal(event);
 }
 
+bool WebViewImpl::windowIsFrontWindowUnderMouse(NSEvent *event)
+{
+    NSRect eventScreenPosition = [m_view.window convertRectToScreen:NSMakeRect(event.locationInWindow.x, event.locationInWindow.y, 0, 0)];
+    NSInteger eventWindowNumber = [NSWindow windowNumberAtPoint:eventScreenPosition.origin belowWindowWithWindowNumber:0];
+        
+    return m_view.window.windowNumber != eventWindowNumber;
+}
+
+    
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
