@@ -1,3 +1,10 @@
+2016-01-22  Enrica Casucci  <enrica@apple.com>
+
+        Unreviewed build fix after http://trac.webkit.org/changeset/195474.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+
 2016-01-22  Tim Horton  <timothy_horton@apple.com>
 
         Reproducible "Unhanded web process message 'WebUserContentController:AddUserScripts'" and friends

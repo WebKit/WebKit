@@ -79,11 +79,15 @@ WKPreferencesRef TestController::platformPreferences()
 
 void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)
 {
+#if WK_API_ENABLED
     RetainPtr<WKWebViewConfiguration> copiedConfiguration = adoptNS([globalWebViewConfiguration copy]);
     if (options.useDataDetection)
         [copiedConfiguration setDataDetectorTypes:WKDataDetectorTypeAll];
 
     m_mainWebView = std::make_unique<PlatformWebView>(copiedConfiguration.get(), options);
+#else
+    m_mainWebView = std::make_unique<PlatformWebView>(globalWebViewConfiguration, options);
+#endif
 }
 
 PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
