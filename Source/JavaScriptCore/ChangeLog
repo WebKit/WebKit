@@ -1,3 +1,9 @@
+2016-01-22  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed. Mark es6 tests as passing.
+
+        * tests/es6.yaml:
+
 2016-01-22  Saam barati  <sbarati@apple.com>
 
         op_profile_type 32-bit LLInt implementation has a bug

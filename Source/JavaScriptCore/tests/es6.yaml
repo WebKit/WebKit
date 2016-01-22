@@ -891,7 +891,7 @@
 - path: es6/Promise_Promise.race_generic_iterables.js
   cmd: runES6 :fail
 - path: es6/Promise_Promise[Symbol.species].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/proper_tail_calls_tail_call_optimisation_direct_recursion.js
   cmd: runES6 :normal
 - path: es6/proper_tail_calls_tail_call_optimisation_mutual_recursion.js
@@ -1087,7 +1087,7 @@
 - path: es6/RegExp.prototype_properties_RegExp.prototype[Symbol.split].js
   cmd: runES6 :fail
 - path: es6/RegExp.prototype_properties_RegExp[Symbol.species].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/RegExp_is_subclassable_correct_prototype_chain.js
   cmd: runES6 :normal
 - path: es6/RegExp_y_and_u_flags_u_flag.js
@@ -1111,7 +1111,7 @@
 - path: es6/Set_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/Set_Set[Symbol.species].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/spread_..._operator_with_astral_plane_strings_in_function_calls.js
   cmd: runES6 :fail
 - path: es6/spread_..._operator_with_generator_instances_in_arrays.js
@@ -1177,7 +1177,7 @@
 - path: es6/typed_arrays_%TypedArray%[Symbol.species].js
   cmd: runES6 :fail
 - path: es6/typed_arrays_ArrayBuffer[Symbol.species].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_correct_prototype_chains.js
   cmd: runES6 :fail
 - path: es6/WeakMap_iterator_closing.js
@@ -1205,7 +1205,7 @@
 - path: es6/well-known_symbols_Symbol.species_Array.prototype.splice.js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.species_existence.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.species_RegExp.prototype[Symbol.split].js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.split.js
