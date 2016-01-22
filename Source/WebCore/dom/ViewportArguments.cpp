@@ -314,9 +314,9 @@ static float findSizeValue(const String& keyString, const String& valueString, D
     // 3) device-width and device-height are used as keywords.
     // 4) Other keywords and unknown values translate to 0.0.
 
-    if (equalIgnoringCase(valueString, "device-width"))
+    if (equalLettersIgnoringASCIICase(valueString, "device-width"))
         return ViewportArguments::ValueDeviceWidth;
-    if (equalIgnoringCase(valueString, "device-height"))
+    if (equalLettersIgnoringASCIICase(valueString, "device-height"))
         return ViewportArguments::ValueDeviceHeight;
 
     float value = numericPrefix(keyString, valueString, document);
@@ -335,13 +335,13 @@ static float findScaleValue(const String& keyString, const String& valueString, 
     // 4) device-width and device-height are translated to 10.0.
     // 5) no and unknown values are translated to 0.0
 
-    if (equalIgnoringCase(valueString, "yes"))
+    if (equalLettersIgnoringASCIICase(valueString, "yes"))
         return 1;
-    if (equalIgnoringCase(valueString, "no"))
+    if (equalLettersIgnoringASCIICase(valueString, "no"))
         return 0;
-    if (equalIgnoringCase(valueString, "device-width"))
+    if (equalLettersIgnoringASCIICase(valueString, "device-width"))
         return 10;
-    if (equalIgnoringCase(valueString, "device-height"))
+    if (equalLettersIgnoringASCIICase(valueString, "device-height"))
         return 10;
 
     float value = numericPrefix(keyString, valueString, document);
@@ -361,13 +361,13 @@ static float findBooleanValue(const String& keyString, const String& valueString
     // Numbers >= 1, numbers <= -1, device-width and device-height are mapped to yes.
     // Numbers in the range <-1, 1>, and unknown values, are mapped to no.
 
-    if (equalIgnoringCase(valueString, "yes"))
+    if (equalLettersIgnoringASCIICase(valueString, "yes"))
         return 1;
-    if (equalIgnoringCase(valueString, "no"))
+    if (equalLettersIgnoringASCIICase(valueString, "no"))
         return 0;
-    if (equalIgnoringCase(valueString, "device-width"))
+    if (equalLettersIgnoringASCIICase(valueString, "device-width"))
         return 1;
-    if (equalIgnoringCase(valueString, "device-height"))
+    if (equalLettersIgnoringASCIICase(valueString, "device-height"))
         return 1;
 
     float value = numericPrefix(keyString, valueString, document);

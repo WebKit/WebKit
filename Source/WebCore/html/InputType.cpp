@@ -1006,8 +1006,7 @@ void InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldE
     if (newValue < stepRange.minimum())
         newValue = stepRange.minimum();
 
-    const AtomicString& stepString = element().fastGetAttribute(stepAttr);
-    if (!equalIgnoringCase(stepString, "any"))
+    if (!equalLettersIgnoringASCIICase(element().fastGetAttribute(stepAttr), "any"))
         newValue = stepRange.alignValueForStep(current, newValue);
 
     if (newValue - stepRange.maximum() > acceptableErrorValue) {

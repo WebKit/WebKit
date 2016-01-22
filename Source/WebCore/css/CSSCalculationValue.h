@@ -31,14 +31,16 @@
 #ifndef CSSCalculationValue_h
 #define CSSCalculationValue_h
 
-#include "CSSParserValues.h"
 #include "CSSPrimitiveValue.h"
 #include "CalculationValue.h"
 
 namespace WebCore {
 
+class CSSParserValueList;
 class CSSToLengthConversionData;
 class RenderStyle;
+
+struct CSSParserString;
 
 enum CalculationCategory {
     CalcNumber = 0,

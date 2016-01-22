@@ -52,13 +52,13 @@ Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Docum
 void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == shapeAttr) {
-        if (equalIgnoringCase(value, "default"))
+        if (equalLettersIgnoringASCIICase(value, "default"))
             m_shape = Default;
-        else if (equalIgnoringCase(value, "circle"))
+        else if (equalLettersIgnoringASCIICase(value, "circle"))
             m_shape = Circle;
-        else if (equalIgnoringCase(value, "poly"))
+        else if (equalLettersIgnoringASCIICase(value, "poly"))
             m_shape = Poly;
-        else if (equalIgnoringCase(value, "rect"))
+        else if (equalLettersIgnoringASCIICase(value, "rect"))
             m_shape = Rect;
         invalidateCachedRegion();
     } else if (name == coordsAttr) {

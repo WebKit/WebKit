@@ -157,7 +157,7 @@ ContentDispositionType contentDispositionType(const String& contentDisposition)
     String dispositionType = parameters[0];
     dispositionType.stripWhiteSpace();
 
-    if (equalIgnoringCase(dispositionType, "inline"))
+    if (equalLettersIgnoringASCIICase(dispositionType, "inline"))
         return ContentDispositionInline;
 
     // Some broken sites just send bogus headers like
@@ -483,11 +483,11 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(const String& header)
     for (size_t i = 0; i < headers.size(); i++) {
         String currentHeader = headers[i].stripWhiteSpace();
         XFrameOptionsDisposition currentValue = XFrameOptionsNone;
-        if (equalIgnoringCase(currentHeader, "deny"))
+        if (equalLettersIgnoringASCIICase(currentHeader, "deny"))
             currentValue = XFrameOptionsDeny;
-        else if (equalIgnoringCase(currentHeader, "sameorigin"))
+        else if (equalLettersIgnoringASCIICase(currentHeader, "sameorigin"))
             currentValue = XFrameOptionsSameOrigin;
-        else if (equalIgnoringCase(currentHeader, "allowall"))
+        else if (equalLettersIgnoringASCIICase(currentHeader, "allowall"))
             currentValue = XFrameOptionsAllowAll;
         else
             currentValue = XFrameOptionsInvalid;

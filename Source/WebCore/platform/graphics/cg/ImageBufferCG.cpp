@@ -417,11 +417,11 @@ static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
     static const CFStringRef kUTTypePNG = CFSTR("public.png");
     static const CFStringRef kUTTypeGIF = CFSTR("com.compuserve.gif");
 
-    if (equalIgnoringCase(mimeType, "image/png"))
+    if (equalLettersIgnoringASCIICase(mimeType, "image/png"))
         return kUTTypePNG;
-    if (equalIgnoringCase(mimeType, "image/jpeg"))
+    if (equalLettersIgnoringASCIICase(mimeType, "image/jpeg"))
         return jpegUTI();
-    if (equalIgnoringCase(mimeType, "image/gif"))
+    if (equalLettersIgnoringASCIICase(mimeType, "image/gif"))
         return kUTTypeGIF;
 
     ASSERT_NOT_REACHED();

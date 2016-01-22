@@ -288,8 +288,7 @@ bool SQLiteStatement::isColumnDeclaredAsBlob(int col)
         if (prepare() != SQLITE_OK)
             return false;
     }
-
-    return equalIgnoringCase(String("BLOB"), String(reinterpret_cast<const UChar*>(sqlite3_column_decltype16(m_statement, col))));
+    return equalLettersIgnoringASCIICase(StringView(reinterpret_cast<const UChar*>(sqlite3_column_decltype16(m_statement, col))), "blob");
 }
 
 String SQLiteStatement::getColumnName(int col)

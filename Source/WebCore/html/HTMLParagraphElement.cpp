@@ -58,11 +58,11 @@ bool HTMLParagraphElement::isPresentationAttribute(const QualifiedName& name) co
 void HTMLParagraphElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
-        if (equalIgnoringCase(value, "middle") || equalIgnoringCase(value, "center"))
+        if (equalLettersIgnoringASCIICase(value, "middle") || equalLettersIgnoringASCIICase(value, "center"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
-        else if (equalIgnoringCase(value, "left"))
+        else if (equalLettersIgnoringASCIICase(value, "left"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitLeft);
-        else if (equalIgnoringCase(value, "right"))
+        else if (equalLettersIgnoringASCIICase(value, "right"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, value);

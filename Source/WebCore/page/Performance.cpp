@@ -116,19 +116,20 @@ PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByType(const Strin
     RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
 
 #if ENABLE(RESOURCE_TIMING)
-    if (equalIgnoringCase(entryType, "resource"))
+    if (equalLettersIgnoringASCIICase(entryType, "resource")) {
         for (auto& resource : m_resourceTimingBuffer)
             entries->append(resource);
-#endif // ENABLE(RESOURCE_TIMING)
+    }
+#endif
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
-        if (equalIgnoringCase(entryType, "mark"))
+        if (equalLettersIgnoringASCIICase(entryType, "mark"))
             entries->appendAll(m_userTiming->getMarks());
-        else if (equalIgnoringCase(entryType, "measure"))
+        else if (equalLettersIgnoringASCIICase(entryType, "measure"))
             entries->appendAll(m_userTiming->getMeasures());
     }
-#endif // ENABLE(USER_TIMING)
+#endif
 
     entries->sort();
     return entries;

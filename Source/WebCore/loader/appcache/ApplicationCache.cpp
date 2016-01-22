@@ -123,14 +123,8 @@ ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
 
 bool ApplicationCache::requestIsHTTPOrHTTPSGet(const ResourceRequest& request)
 {
-    if (!request.url().protocolIsInHTTPFamily())
-        return false;
-    
-    if (!equalIgnoringCase(request.httpMethod(), "GET"))
-        return false;
-
-    return true;
-}    
+    return request.url().protocolIsInHTTPFamily() && equalLettersIgnoringASCIICase(request.httpMethod(), "get");
+}
 
 ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceRequest& request)
 {

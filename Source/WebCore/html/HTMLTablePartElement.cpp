@@ -54,24 +54,24 @@ void HTMLTablePartElement::collectStyleForPresentationAttribute(const QualifiedN
         if (!url.isEmpty())
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url).string())));
     } else if (name == valignAttr) {
-        if (equalIgnoringCase(value, "top"))
+        if (equalLettersIgnoringASCIICase(value, "top"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueTop);
-        else if (equalIgnoringCase(value, "middle"))
+        else if (equalLettersIgnoringASCIICase(value, "middle"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueMiddle);
-        else if (equalIgnoringCase(value, "bottom"))
+        else if (equalLettersIgnoringASCIICase(value, "bottom"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueBottom);
-        else if (equalIgnoringCase(value, "baseline"))
+        else if (equalLettersIgnoringASCIICase(value, "baseline"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueBaseline);
         else
             addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, value);
     } else if (name == alignAttr) {
-        if (equalIgnoringCase(value, "middle") || equalIgnoringCase(value, "center"))
+        if (equalLettersIgnoringASCIICase(value, "middle") || equalLettersIgnoringASCIICase(value, "center"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
-        else if (equalIgnoringCase(value, "absmiddle"))
+        else if (equalLettersIgnoringASCIICase(value, "absmiddle"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
-        else if (equalIgnoringCase(value, "left"))
+        else if (equalLettersIgnoringASCIICase(value, "left"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitLeft);
-        else if (equalIgnoringCase(value, "right"))
+        else if (equalLettersIgnoringASCIICase(value, "right"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, value);

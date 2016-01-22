@@ -322,7 +322,7 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
     for (size_t i = 0; i < queryCount; ++i) {
         const MediaQuery* query = mediaQueries[i].get();
         String mediaType = query->mediaType();
-        if (!query->ignored() && !equalIgnoringCase(mediaType, "print")) {
+        if (!query->ignored() && !equalLettersIgnoringASCIICase(mediaType, "print")) {
             auto& expressions = query->expressions();
             for (size_t j = 0; j < expressions.size(); ++j) {
                 const MediaQueryExp* exp = expressions.at(j).get();

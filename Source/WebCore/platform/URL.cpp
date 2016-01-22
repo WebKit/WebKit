@@ -787,7 +787,7 @@ bool URL::protocolIs(const char* protocol) const
 
     // JavaScript URLs are "valid" and should be executed even if URL decides they are invalid.
     // The free function protocolIsJavaScript() should be used instead. 
-    ASSERT(!equalIgnoringCase(protocol, String("javascript")));
+    ASSERT(!equalLettersIgnoringASCIICase(StringView(protocol), "javascript"));
 
     if (!m_isValid)
         return false;

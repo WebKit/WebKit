@@ -277,7 +277,7 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
     for (Vector<String>::const_iterator it = paths.begin(), end = paths.end(); it != end; ++it) {
         const String& path = *it;
 
-        if (path.length() > fileExtension.length() && path.endsWith(fileExtension, true)) {
+        if (path.length() > fileExtension.length() && path.endsWith(fileExtension)) {
             String file = pathGetFileName(path);
             String originIdentifier = file.substring(0, file.length() - fileExtension.length());
             if (!originSetCopy.contains(originIdentifier))

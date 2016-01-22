@@ -95,7 +95,7 @@ void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& 
     } else if (name == textAttr) {
         addHTMLColorToStyle(style, CSSPropertyColor, value);
     } else if (name == bgpropertiesAttr) {
-        if (equalIgnoringCase(value, "fixed"))
+        if (equalLettersIgnoringASCIICase(value, "fixed"))
            addPropertyToPresentationAttributeStyle(style, CSSPropertyBackgroundAttachment, CSSValueFixed);
     } else
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);

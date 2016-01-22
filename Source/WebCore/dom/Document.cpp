@@ -3342,7 +3342,7 @@ void Document::updateViewportArguments()
 // FIXME: Find a better place for this functionality.
 void setParserFeature(const String& key, const String& value, Document* document, void*)
 {
-    if (key == "telephone" && equalIgnoringCase(value, "no"))
+    if (key == "telephone" && equalLettersIgnoringASCIICase(value, "no"))
         document->setIsTelephoneNumberParsingAllowed(false);
 }
 
@@ -3370,13 +3370,13 @@ void Document::processReferrerPolicy(const String& policy)
 
     // Note that we're supporting both the standard and legacy keywords for referrer
     // policies, as defined by http://www.w3.org/TR/referrer-policy/#referrer-policy-delivery-meta
-    if (equalIgnoringCase(policy, "no-referrer") || equalIgnoringCase(policy, "never"))
+    if (equalLettersIgnoringASCIICase(policy, "no-referrer") || equalLettersIgnoringASCIICase(policy, "never"))
         setReferrerPolicy(ReferrerPolicyNever);
-    else if (equalIgnoringCase(policy, "unsafe-url") || equalIgnoringCase(policy, "always"))
+    else if (equalLettersIgnoringASCIICase(policy, "unsafe-url") || equalLettersIgnoringASCIICase(policy, "always"))
         setReferrerPolicy(ReferrerPolicyAlways);
-    else if (equalIgnoringCase(policy, "origin"))
+    else if (equalLettersIgnoringASCIICase(policy, "origin"))
         setReferrerPolicy(ReferrerPolicyOrigin);
-    else if (equalIgnoringCase(policy, "no-referrer-when-downgrade") || equalIgnoringCase(policy, "default"))
+    else if (equalLettersIgnoringASCIICase(policy, "no-referrer-when-downgrade") || equalLettersIgnoringASCIICase(policy, "default"))
         setReferrerPolicy(ReferrerPolicyDefault);
     else {
         addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, "Failed to set referrer policy: The value '" + policy + "' is not one of 'no-referrer', 'origin', 'no-referrer-when-downgrade', or 'unsafe-url'. Defaulting to 'no-referrer'.");
@@ -4161,21 +4161,21 @@ RefPtr<Event> Document::createEvent(const String& type, ExceptionCode& ec)
     // The following strings are the ones from the DOM specification
     // <https://dom.spec.whatwg.org/#dom-document-createevent>.
 
-    if (equalIgnoringASCIICase(type, "customevent"))
+    if (equalLettersIgnoringASCIICase(type, "customevent"))
         return CustomEvent::create();
-    if (equalIgnoringASCIICase(type, "event") || equalIgnoringASCIICase(type, "events") || equalIgnoringASCIICase(type, "htmlevents"))
+    if (equalLettersIgnoringASCIICase(type, "event") || equalLettersIgnoringASCIICase(type, "events") || equalLettersIgnoringASCIICase(type, "htmlevents"))
         return Event::create();
-    if (equalIgnoringASCIICase(type, "keyboardevent") || equalIgnoringASCIICase(type, "keyboardevents"))
+    if (equalLettersIgnoringASCIICase(type, "keyboardevent") || equalLettersIgnoringASCIICase(type, "keyboardevents"))
         return KeyboardEvent::create();
-    if (equalIgnoringASCIICase(type, "messageevent"))
+    if (equalLettersIgnoringASCIICase(type, "messageevent"))
         return MessageEvent::create();
-    if (equalIgnoringASCIICase(type, "mouseevent") || equalIgnoringASCIICase(type, "mouseevents"))
+    if (equalLettersIgnoringASCIICase(type, "mouseevent") || equalLettersIgnoringASCIICase(type, "mouseevents"))
         return MouseEvent::create();
-    if (equalIgnoringASCIICase(type, "uievent") || equalIgnoringASCIICase(type, "uievents"))
+    if (equalLettersIgnoringASCIICase(type, "uievent") || equalLettersIgnoringASCIICase(type, "uievents"))
         return UIEvent::create();
 
 #if ENABLE(TOUCH_EVENTS)
-    if (equalIgnoringASCIICase(type, "touchevent"))
+    if (equalLettersIgnoringASCIICase(type, "touchevent"))
         return TouchEvent::create();
 #endif
 
@@ -4185,7 +4185,7 @@ RefPtr<Event> Document::createEvent(const String& type, ExceptionCode& ec)
     // However, since there is no provision for initializing the event once it is created,
     // there is no practical value in this feature.
 
-    if (equalIgnoringASCIICase(type, "svgzoomevents"))
+    if (equalLettersIgnoringASCIICase(type, "svgzoomevents"))
         return SVGZoomEvent::create();
 
     // The following strings are for event classes where WebKit supplies an init function.
@@ -4195,25 +4195,25 @@ RefPtr<Event> Document::createEvent(const String& type, ExceptionCode& ec)
     // FIXME: For each of the strings below, prove there is no content depending on it and remove
     // both the string and the corresponding init function for that class.
 
-    if (equalIgnoringASCIICase(type, "compositionevent"))
+    if (equalLettersIgnoringASCIICase(type, "compositionevent"))
         return CompositionEvent::create();
-    if (equalIgnoringASCIICase(type, "hashchangeevent"))
+    if (equalLettersIgnoringASCIICase(type, "hashchangeevent"))
         return HashChangeEvent::create();
-    if (equalIgnoringASCIICase(type, "mutationevent") || equalIgnoringASCIICase(type, "mutationevents"))
+    if (equalLettersIgnoringASCIICase(type, "mutationevent") || equalLettersIgnoringASCIICase(type, "mutationevents"))
         return MutationEvent::create();
-    if (equalIgnoringASCIICase(type, "overflowevent"))
+    if (equalLettersIgnoringASCIICase(type, "overflowevent"))
         return OverflowEvent::create();
-    if (equalIgnoringASCIICase(type, "storageevent"))
+    if (equalLettersIgnoringASCIICase(type, "storageevent"))
         return StorageEvent::create();
-    if (equalIgnoringASCIICase(type, "textevent"))
+    if (equalLettersIgnoringASCIICase(type, "textevent"))
         return TextEvent::create();
-    if (equalIgnoringASCIICase(type, "wheelevent"))
+    if (equalLettersIgnoringASCIICase(type, "wheelevent"))
         return WheelEvent::create();
 
 #if ENABLE(DEVICE_ORIENTATION)
-    if (equalIgnoringASCIICase(type, "devicemotionevent"))
+    if (equalLettersIgnoringASCIICase(type, "devicemotionevent"))
         return DeviceMotionEvent::create();
-    if (equalIgnoringASCIICase(type, "deviceorientationevent"))
+    if (equalLettersIgnoringASCIICase(type, "deviceorientationevent"))
         return DeviceOrientationEvent::create();
 #endif
 
@@ -5338,7 +5338,7 @@ void Document::initDNSPrefetch()
 
 void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
 {
-    if (equalIgnoringCase(dnsPrefetchControl, "on") && !m_haveExplicitlyDisabledDNSPrefetch) {
+    if (equalLettersIgnoringASCIICase(dnsPrefetchControl, "on") && !m_haveExplicitlyDisabledDNSPrefetch) {
         m_isDNSPrefetchEnabled = true;
         return;
     }

@@ -157,7 +157,7 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const Strin
 
     m_initData = initData;
 
-    if (equalIgnoringCase(mimeType, "keyrelease")) {
+    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease")) {
         m_mode = KeyRelease;
         return generateKeyReleaseMessage(errorCode, systemCode);
     }

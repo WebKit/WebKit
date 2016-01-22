@@ -832,16 +832,17 @@ key_list:
 key:
     maybe_unary_operator PERCENTAGE { $$.id = CSSValueInvalid; $$.isInt = false; $$.fValue = $1 * $2; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
     | IDENT {
-        $$.id = CSSValueInvalid; $$.isInt = false; $$.unit = CSSPrimitiveValue::CSS_NUMBER;
-        CSSParserString& str = $1;
-        if (str.equalIgnoringCase("from"))
+        $$.id = CSSValueInvalid;
+        $$.isInt = false;
+        if (equalLettersIgnoringASCIICase($1, "from"))
             $$.fValue = 0;
-        else if (str.equalIgnoringCase("to"))
+        else if (equalLettersIgnoringASCIICase($1, "to"))
             $$.fValue = 100;
         else {
             $$.unit = 0;
             YYERROR;
         }
+        $$.unit = CSSPrimitiveValue::CSS_NUMBER;
     }
     | error {
         $$.unit = 0;

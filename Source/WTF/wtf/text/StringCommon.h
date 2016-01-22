@@ -31,6 +31,9 @@
 
 namespace WTF {
 
+template<typename CharacterType> bool equalLettersIgnoringASCIICase(const CharacterType*, const char* lowercaseLetters, unsigned length);
+template<typename StringClass, unsigned length> bool equalLettersIgnoringASCIICaseCommon(const StringClass&, const char (&lowercaseLetters)[length]);
+
 template<typename T>
 inline T loadUnaligned(const char* s)
 {
@@ -545,6 +548,42 @@ size_t findCommon(const StringClass& haystack, const StringClass& needle, unsign
     return findInner(haystack.characters16() + start, needle.characters16(), start, searchLength, needleLength);
 }
 
+// This is marked inline since it's mostly used in non-inline functions for each string type.
+// When used directly in code it's probably OK to be inline; maybe the loop will be unrolled.
+template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(const CharacterType* characters, const char* lowercaseLetters, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (!isASCIIAlphaCaselessEqual(characters[i], lowercaseLetters[i]))
+            return false;
+    }
+    return true;
 }
+
+// This is intentionally not marked inline because it's used often and is not speed-critical enough to want it inlined everywhere.
+template<typename StringClass> bool equalLettersIgnoringASCIICaseCommonWithoutLength(const StringClass& string, const char* lowercaseLetters)
+{
+#if !ASSERT_DISABLED
+    ASSERT(*lowercaseLetters);
+    for (const char* letter = lowercaseLetters; *letter; ++letter)
+        ASSERT(toASCIILowerUnchecked(*letter) == *letter);
+#endif
+    unsigned length = string.length();
+    if (length != strlen(lowercaseLetters))
+        return false;
+    if (string.is8Bit())
+        return equalLettersIgnoringASCIICase(string.characters8(), lowercaseLetters, length);
+    return equalLettersIgnoringASCIICase(string.characters16(), lowercaseLetters, length);
+}
+
+template<typename StringClass, unsigned length> inline bool equalLettersIgnoringASCIICaseCommon(const StringClass& string, const char (&lowercaseLetters)[length])
+{
+    // Don't actually use the length; we are choosing code size over speed.
+    const char* pointer = lowercaseLetters;
+    return equalLettersIgnoringASCIICaseCommonWithoutLength(string, pointer);
+}
+
+}
+
+using WTF::equalLettersIgnoringASCIICase;
 
 #endif // StringCommon_h

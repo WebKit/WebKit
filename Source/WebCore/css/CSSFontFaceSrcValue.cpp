@@ -41,7 +41,7 @@ namespace WebCore {
 #if ENABLE(SVG_FONTS)
 bool CSSFontFaceSrcValue::isSVGFontFaceSrc() const
 {
-    return equalIgnoringCase(m_format, "svg");
+    return equalLettersIgnoringASCIICase(m_format, "svg");
 }
 
 bool CSSFontFaceSrcValue::isSVGFontTarget() const

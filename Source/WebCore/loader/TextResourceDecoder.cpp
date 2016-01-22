@@ -302,9 +302,9 @@ breakBreak:
 
 TextResourceDecoder::ContentType TextResourceDecoder::determineContentType(const String& mimeType)
 {
-    if (equalIgnoringCase(mimeType, "text/css"))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/css"))
         return CSS;
-    if (equalIgnoringCase(mimeType, "text/html"))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/html"))
         return HTML;
     if (DOMImplementation::isXMLMIMEType(mimeType))
         return XML;

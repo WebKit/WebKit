@@ -417,7 +417,7 @@ unsigned AccessibilityTableCell::ariaRowSpan() const
     
     // ARIA 1.1: Authors must set the value of aria-rowspan to an integer greater than or equal to 0.
     // Setting the value to 0 indicates that the cell or gridcell is to span all the remaining rows in the row group.
-    if (equalIgnoringCase(rowSpanValue, "0"))
+    if (rowSpanValue == "0")
         return 0;
     if (rowSpanValue.toInt() >= 1)
         return rowSpanValue.toInt();

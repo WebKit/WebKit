@@ -489,7 +489,7 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
             component = component.substring(1);
         }
 
-        if (equalIgnoringCase(component, "all")) {
+        if (equalLettersIgnoringASCIICase(component, "all")) {
             setStateOfAllChannels(channels, count, logChannelState);
             continue;
         }

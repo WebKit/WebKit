@@ -106,7 +106,7 @@ TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const AttributeLi
         const String& attributeValue = attribute.second;
 
         if (attributeName == http_equivAttr) {
-            if (equalIgnoringCase(attributeValue, "content-type"))
+            if (equalLettersIgnoringASCIICase(attributeValue, "content-type"))
                 gotPragma = true;
         } else if (charset.isEmpty()) {
             if (attributeName == charsetAttr) {

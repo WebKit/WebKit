@@ -209,9 +209,7 @@ static CGFloat toNSFontWeight(FontWeight fontWeight)
 
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, CTFontSymbolicTraits desiredTraits, float size)
 {
-    if (equalIgnoringASCIICase(family, "-webkit-system-font")
-        || equalIgnoringASCIICase(family, "-apple-system")
-        || equalIgnoringASCIICase(family, "-apple-system-font")) {
+    if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font")) {
         RetainPtr<CTFontRef> result = toCTFont([NSFont systemFontOfSize:size weight:toNSFontWeight(weight)]);
         if (desiredTraits & kCTFontItalicTrait) {
             if (auto italicizedFont = adoptCF(CTFontCreateCopyWithSymbolicTraits(result.get(), size, nullptr, desiredTraits, desiredTraits)))
@@ -220,7 +218,7 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
         return result;
     }
 
-    if (equalIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {
+    if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {
         int numberSpacingType = kNumberSpacingType;
         int monospacedNumbersSelector = kMonospacedNumbersSelector;
         RetainPtr<CFNumberRef> numberSpacingNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &numberSpacingType));
@@ -238,10 +236,10 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
         return adoptCF(CTFontCreateCopyWithAttributes(result.get(), size, nullptr, adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get())).get()));
     }
 
-    if (equalIgnoringASCIICase(family, "-apple-menu"))
+    if (equalLettersIgnoringASCIICase(family, "-apple-menu"))
         return toCTFont([NSFont menuFontOfSize:size]);
 
-    if (equalIgnoringASCIICase(family, "-apple-status-bar"))
+    if (equalLettersIgnoringASCIICase(family, "-apple-status-bar"))
         return toCTFont([NSFont labelFontOfSize:size]);
 
     return nullptr;

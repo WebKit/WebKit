@@ -180,7 +180,7 @@ void ImageLoader::updateFromElement()
 
         String crossOriginMode = element().fastGetAttribute(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
-            StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+            StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
             updateRequestForAccessControl(request.mutableResourceRequest(), document.securityOrigin(), allowCredentials);
         }
 

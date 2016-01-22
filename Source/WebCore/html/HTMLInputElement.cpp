@@ -641,7 +641,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         addToRadioButtonGroup();
         HTMLTextFormControlElement::parseAttribute(name, value);
     } else if (name == autocompleteAttr) {
-        if (equalIgnoringCase(value, "off")) {
+        if (equalLettersIgnoringASCIICase(value, "off")) {
             m_autocomplete = Off;
             registerForSuspensionCallbackIfNeeded();
         } else {

@@ -280,13 +280,13 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
             // A no-cache directive with a value is only meaningful for proxy caches.
             // It should be ignored by a browser level cache.
             // http://tools.ietf.org/html/rfc7234#section-5.2.2.2
-            if (equalIgnoringCase(directives[i].first, "no-cache") && directives[i].second.isEmpty())
+            if (equalLettersIgnoringASCIICase(directives[i].first, "no-cache") && directives[i].second.isEmpty())
                 result.noCache = true;
-            else if (equalIgnoringCase(directives[i].first, "no-store"))
+            else if (equalLettersIgnoringASCIICase(directives[i].first, "no-store"))
                 result.noStore = true;
-            else if (equalIgnoringCase(directives[i].first, "must-revalidate"))
+            else if (equalLettersIgnoringASCIICase(directives[i].first, "must-revalidate"))
                 result.mustRevalidate = true;
-            else if (equalIgnoringCase(directives[i].first, "max-age")) {
+            else if (equalLettersIgnoringASCIICase(directives[i].first, "max-age")) {
                 if (result.maxAge) {
                     // First max-age directive wins if there are multiple ones.
                     continue;
@@ -295,7 +295,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 double maxAge = directives[i].second.toDouble(&ok);
                 if (ok)
                     result.maxAge = duration_cast<microseconds>(duration<double>(maxAge));
-            } else if (equalIgnoringCase(directives[i].first, "max-stale")) {
+            } else if (equalLettersIgnoringASCIICase(directives[i].first, "max-stale")) {
                 // https://tools.ietf.org/html/rfc7234#section-5.2.1.2
                 if (result.maxStale) {
                     // First max-stale directive wins if there are multiple ones.

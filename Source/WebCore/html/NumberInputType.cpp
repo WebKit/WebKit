@@ -166,8 +166,8 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
 {
     preferredSize = defaultSize;
 
-    const String stepString = element().fastGetAttribute(stepAttr);
-    if (equalIgnoringCase(stepString, "any"))
+    auto& stepString = element().fastGetAttribute(stepAttr);
+    if (equalLettersIgnoringASCIICase(stepString, "any"))
         return false;
 
     const Decimal minimum = parseToDecimalForNumberType(element().fastGetAttribute(minAttr));

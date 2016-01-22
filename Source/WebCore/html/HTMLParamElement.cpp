@@ -55,7 +55,7 @@ String HTMLParamElement::value() const
 
 bool HTMLParamElement::isURLParameter(const String& name)
 {
-    return equalIgnoringCase(name, "data") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "src");
+    return equalLettersIgnoringASCIICase(name, "data") || equalLettersIgnoringASCIICase(name, "movie") || equalLettersIgnoringASCIICase(name, "src");
 }
 
 bool HTMLParamElement::isURLAttribute(const Attribute& attribute) const

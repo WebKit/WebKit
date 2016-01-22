@@ -109,8 +109,8 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
 }
 
 SecurityOrigin::SecurityOrigin(const URL& url)
-    : m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
-    , m_host(url.host().isNull() ? "" : url.host().lower())
+    : m_protocol(url.protocol().isNull() ? emptyString() : url.protocol().lower())
+    , m_host(url.host().isNull() ? emptyString() : url.host().lower())
     , m_port(url.port())
     , m_isUnique(false)
     , m_universalAccess(false)
@@ -133,9 +133,9 @@ SecurityOrigin::SecurityOrigin(const URL& url)
 }
 
 SecurityOrigin::SecurityOrigin()
-    : m_protocol("")
-    , m_host("")
-    , m_domain("")
+    : m_protocol(emptyString())
+    , m_host(emptyString())
+    , m_domain(emptyString())
     , m_port(InvalidPort)
     , m_isUnique(true)
     , m_universalAccess(false)
@@ -462,9 +462,9 @@ bool SecurityOrigin::isLocal() const
 String SecurityOrigin::toString() const
 {
     if (isUnique())
-        return "null";
+        return ASCIILiteral("null");
     if (m_protocol == "file" && m_enforceFilePathSeparation)
-        return "null";
+        return ASCIILiteral("null");
     return toRawString();
 }
 
@@ -552,7 +552,7 @@ String SecurityOrigin::databaseIdentifier() const
     // Now that we've fixed that bug, we still need to produce this string
     // to avoid breaking existing persistent state.
     if (m_needsDatabaseIdentifierQuirkForFiles)
-        return "file__0";
+        return ASCIILiteral("file__0");
 
     StringBuilder stringBuilder;
     stringBuilder.append(m_protocol);

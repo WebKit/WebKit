@@ -114,9 +114,9 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
         // FIXME: If we are already attached, this has no effect.
     } else if (name == scrollingAttr) {
         // Auto and yes both simply mean "allow scrolling." No means "don't allow scrolling."
-        if (equalIgnoringCase(value, "auto") || equalIgnoringCase(value, "yes"))
+        if (equalLettersIgnoringASCIICase(value, "auto") || equalLettersIgnoringASCIICase(value, "yes"))
             m_scrolling = document().frameElementsShouldIgnoreScrolling() ? ScrollbarAlwaysOff : ScrollbarAuto;
-        else if (equalIgnoringCase(value, "no"))
+        else if (equalLettersIgnoringASCIICase(value, "no"))
             m_scrolling = ScrollbarAlwaysOff;
         // FIXME: If we are already attached, this has no effect.
     } else

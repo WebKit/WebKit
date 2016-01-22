@@ -489,7 +489,7 @@ const AtomicString& HTMLImageElement::alt() const
 bool HTMLImageElement::draggable() const
 {
     // Image elements are draggable by default.
-    return !equalIgnoringCase(fastGetAttribute(draggableAttr), "false");
+    return !equalLettersIgnoringASCIICase(fastGetAttribute(draggableAttr), "false");
 }
 
 void HTMLImageElement::setHeight(int value)

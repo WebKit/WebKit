@@ -237,11 +237,11 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& 
 
 #if PLATFORM(IOS)
     String legacyAirplayAttributeValue = element.fastGetAttribute(HTMLNames::webkitairplayAttr);
-    if (equalIgnoringCase(legacyAirplayAttributeValue, "deny")) {
+    if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "deny")) {
         LOG(Media, "MediaElementSession::wirelessVideoPlaybackDisabled - returning TRUE because of legacy attribute");
         return true;
     }
-    if (equalIgnoringCase(legacyAirplayAttributeValue, "allow")) {
+    if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "allow")) {
         LOG(Media, "MediaElementSession::wirelessVideoPlaybackDisabled - returning FALSE because of legacy attribute");
         return false;
     }

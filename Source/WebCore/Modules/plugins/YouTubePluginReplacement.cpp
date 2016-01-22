@@ -50,13 +50,13 @@ PassRefPtr<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement
 
 bool YouTubePluginReplacement::supportsMimeType(const String& mimeType)
 {
-    return equalIgnoringCase(mimeType, "application/x-shockwave-flash")
-        || equalIgnoringCase(mimeType, "application/futuresplash");
+    return equalLettersIgnoringASCIICase(mimeType, "application/x-shockwave-flash")
+        || equalLettersIgnoringASCIICase(mimeType, "application/futuresplash");
 }
 
 bool YouTubePluginReplacement::supportsFileExtension(const String& extension)
 {
-    return equalIgnoringCase(extension, "spl") || equalIgnoringCase(extension, "swf");
+    return equalLettersIgnoringASCIICase(extension, "spl") || equalLettersIgnoringASCIICase(extension, "swf");
 }
 
 YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)

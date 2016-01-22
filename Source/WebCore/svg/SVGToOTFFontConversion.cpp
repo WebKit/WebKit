@@ -1361,8 +1361,8 @@ bool SVGToOTFFontConverter::compareCodepointsLexicographically(const GlyphData& 
     }
 
     if (iterator1 == codePoints1.end() && iterator2 == codePoints2.end()) {
-        bool firstIsIsolated = data1.glyphElement && equalIgnoringCase(data1.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated");
-        bool secondIsIsolated = data2.glyphElement && equalIgnoringCase(data2.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated");
+        bool firstIsIsolated = data1.glyphElement && equalLettersIgnoringASCIICase(data1.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated");
+        bool secondIsIsolated = data2.glyphElement && equalLettersIgnoringASCIICase(data2.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated");
         return firstIsIsolated && !secondIsIsolated;
     }
     return iterator1 == codePoints1.end();
@@ -1457,7 +1457,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         if (m_codepointsToIndicesMap.isValidKey(glyph.codepoints)) {
             auto& glyphVector = m_codepointsToIndicesMap.add(glyph.codepoints, Vector<Glyph>()).iterator->value;
             // Prefer isolated arabic forms
-            if (glyph.glyphElement && equalIgnoringCase(glyph.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated"))
+            if (glyph.glyphElement && equalLettersIgnoringASCIICase(glyph.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated"))
                 glyphVector.insert(0, i);
             else
                 glyphVector.append(i);
@@ -1469,7 +1469,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         Vector<String> segments;
         m_fontFaceElement->fastGetAttribute(SVGNames::font_weightAttr).string().split(' ', segments);
         for (auto& segment : segments) {
-            if (equalIgnoringCase(segment, "bold")) {
+            if (equalLettersIgnoringASCIICase(segment, "bold")) {
                 m_weight = 7;
                 break;
             }
@@ -1482,7 +1482,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         }
         m_fontFaceElement->fastGetAttribute(SVGNames::font_styleAttr).string().split(' ', segments);
         for (auto& segment : segments) {
-            if (equalIgnoringCase(segment, "italic") || equalIgnoringCase(segment, "oblique")) {
+            if (equalLettersIgnoringASCIICase(segment, "italic") || equalLettersIgnoringASCIICase(segment, "oblique")) {
                 m_italic = true;
                 break;
             }

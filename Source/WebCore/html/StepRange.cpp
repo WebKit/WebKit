@@ -97,7 +97,7 @@ Decimal StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescript
     if (stepString.isEmpty())
         return stepDescription.defaultValue();
 
-    if (equalIgnoringCase(stepString, "any")) {
+    if (equalLettersIgnoringASCIICase(stepString, "any")) {
         switch (anyStepHandling) {
         case RejectAny:
             return Decimal::nan();

@@ -505,7 +505,7 @@ String Pasteboard::readString(const String& type)
     // Grab the value off the pasteboard corresponding to the cocoaType
     if (cocoaType == String(NSURLPboardType)) {
         // "url" and "text/url-list" both map to NSURLPboardType in cocoaTypeFromHTMLClipboardType(), "url" only wants the first URL
-        bool onlyFirstURL = (equalIgnoringCase(type, "url"));
+        bool onlyFirstURL = equalLettersIgnoringASCIICase(type, "url");
         Vector<String> absoluteURLs = absoluteURLsFromPasteboard(m_pasteboardName, onlyFirstURL);
         for (size_t i = 0; i < absoluteURLs.size(); i++)
             cocoaValue = i ? "\n" + absoluteURLs[i]: absoluteURLs[i];

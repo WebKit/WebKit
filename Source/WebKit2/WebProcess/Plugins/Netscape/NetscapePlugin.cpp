@@ -648,18 +648,18 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
     }
 
 #if PLUGIN_ARCHITECTURE(X11)
-    if (equalIgnoringCase(parameters.mimeType, "application/x-shockwave-flash")) {
+    if (equalLettersIgnoringASCIICase(parameters.mimeType, "application/x-shockwave-flash")) {
         size_t wmodeIndex = parameters.names.find("wmode");
         if (wmodeIndex != notFound) {
             // Transparent window mode is not supported by X11 backend.
-            if (equalIgnoringCase(parameters.values[wmodeIndex], "transparent")
-                || (m_pluginModule->pluginQuirks().contains(PluginQuirks::ForceFlashWindowlessMode) && equalIgnoringCase(parameters.values[wmodeIndex], "window")))
+            if (equalLettersIgnoringASCIICase(parameters.values[wmodeIndex], "transparent")
+                || (m_pluginModule->pluginQuirks().contains(PluginQuirks::ForceFlashWindowlessMode) && equalLettersIgnoringASCIICase(parameters.values[wmodeIndex], "window")))
                 paramValues[wmodeIndex] = "opaque";
         } else if (m_pluginModule->pluginQuirks().contains(PluginQuirks::ForceFlashWindowlessMode)) {
             paramNames.append("wmode");
             paramValues.append("opaque");
         }
-    } else if (equalIgnoringCase(parameters.mimeType, "application/x-webkit-test-netscape")) {
+    } else if (equalLettersIgnoringASCIICase(parameters.mimeType, "application/x-webkit-test-netscape")) {
         paramNames.append("windowedPlugin");
         paramValues.append("false");
     }
@@ -676,7 +676,7 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
 #if PLUGIN_ARCHITECTURE(MAC)
     if (m_pluginModule->pluginQuirks().contains(PluginQuirks::MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists)) {
         for (size_t i = 0; i < parameters.names.size(); ++i) {
-            if (equalIgnoringCase(parameters.names[i], "background")) {
+            if (equalLettersIgnoringASCIICase(parameters.names[i], "background")) {
                 setIsTransparent(isTransparentSilverlightBackgroundValue(parameters.values[i].lower()));
                 break;
             }

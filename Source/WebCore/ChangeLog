@@ -1,3 +1,499 @@
+2016-01-22  Darin Adler  <darin@apple.com>
+
+        Reduce use of equalIgnoringCase to just ignore ASCII case
+        https://bugs.webkit.org/show_bug.cgi?id=153266
+
+        Reviewed by Ryosuke Niwa.
+
+        Changed many call sites that were using equalIgnoringCase to instead use
+        equalLettersIgnoringASCIICase. What these all have in common is that the
+        thing they are comparing with is a string literal that has all lowercase
+        letters, spaces, and a few simple examples of punctuation.
+
+        Not 100% sure that the new function name is just right, but it's a long name
+        so it's easy to change it with a global replace if we come up with a better one.
+
+        Or if we decide ther eis no need for the "letters" optimization, we can change
+        these all to just use equalIgnoringASCIICase, also with a global replace.
+
+        Also made a few tweaks to some code nearby and some includes.
+
+        * Modules/encryptedmedia/CDMPrivateClearKey.cpp:
+        (WebCore::CDMPrivateClearKey::supportsKeySystem): Use equalLettersIgnoringASCIICase.
+        (WebCore::CDMPrivateClearKey::supportsKeySystemAndMimeType): Ditto.
+        * Modules/encryptedmedia/CDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::update): Ditto.
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::supportsMimeType): Ditto.
+        (WebCore::YouTubePluginReplacement::supportsFileExtension): Ditto.
+        * Modules/webdatabase/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::createVTable): Ditto.
+        (WebCore::DatabaseAuthorizer::dropVTable): Ditto.
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readHTTPHeaders): Ditto.
+        (WebCore::WebSocketHandshake::checkResponseHeaders): Ditto.
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::findAriaModalNodes): Ditto.
+        (WebCore::AXObjectCache::handleMenuItemSelected): Ditto.
+        (WebCore::AXObjectCache::handleAriaModalChange): Ditto.
+        (WebCore::isNodeAriaVisible): Ditto.
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::isEnabled): Ditto.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole): Use isColorControl
+        instead of checking the typeAttr of the HTMLInputElement directly.
+        (WebCore::AccessibilityNodeObject::isEnabled): Use equalLettersIgnoringASCIICase.
+        (WebCore::AccessibilityNodeObject::isPressed): Ditto.
+        (WebCore::AccessibilityNodeObject::isChecked): Ditto.
+        (WebCore::AccessibilityNodeObject::isMultiSelectable): Ditto.
+        (WebCore::AccessibilityNodeObject::isRequired): Ditto.
+        (WebCore::shouldUseAccessibilityObjectInnerText): Ditto.
+        (WebCore::AccessibilityNodeObject::colorValue): Ditto.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::contentEditableAttributeIsEnabled):
+        Use equalLettersIgnoringASCIICase.
+        (WebCore::AccessibilityObject::ariaIsMultiline): Ditto.
+        (WebCore::AccessibilityObject::liveRegionStatusIsEnabled): Ditto.
+        (WebCore::AccessibilityObject::sortDirection): Ditto.
+        (WebCore::AccessibilityObject::supportsARIAPressed): Ditto.
+        (WebCore::AccessibilityObject::supportsExpanded): Ditto.
+        (WebCore::AccessibilityObject::isExpanded): Ditto.
+        (WebCore::AccessibilityObject::checkboxOrRadioValue): Ditto.
+        (WebCore::AccessibilityObject::isARIAHidden): Ditto.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::supportsARIADragging): Ditto.
+        (WebCore::AccessibilityRenderObject::defaultObjectInclusion): Ditto.
+        (WebCore::AccessibilityRenderObject::elementAttributeValue): Ditto.
+        (WebCore::AccessibilityRenderObject::isSelected): Ditto.
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole): Ditto.
+        (WebCore::AccessibilityRenderObject::orientation): Ditto.
+        (WebCore::AccessibilityRenderObject::canSetExpandedAttribute): Ditto.
+        (WebCore::AccessibilityRenderObject::canSetValueAttribute): Ditto.
+        (WebCore::AccessibilityRenderObject::ariaLiveRegionAtomic): Ditto.
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::ariaRowSpan): Use == to compare a string
+        with "0" since there is no need to "ignore case" when there are no letters.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::create): Use equalLettersIgnoringASCIICase.
+
+        * css/CSSCalculationValue.h: Removed unneeded include of CSSParserValues.h.
+        * css/CSSCustomPropertyValue.h: Ditto.
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::isSVGFontFaceSrc): Use equalLettersIgnoringASCIICase.
+
+        * css/CSSGrammar.y.in: Use equalLettersIgnoringASCIICase. Also restructured the code
+        a bit to have more normal formatting and reordered it slightly.
+
+        * css/CSSParser.cpp:
+        (WebCore::equal): Deleted.
+        (WebCore::equalIgnoringCase): Deleted.
+        (WebCore::equalLettersIgnoringASCIICase): Added. Replaces function templates named
+        equal and equalIgnoringCase that are no longer used.
+        (WebCore::CSSParser::parseValue): Use equalLettersIgnoringASCIICase.
+        (WebCore::CSSParser::parseNonElementSnapPoints): Ditto.
+        (WebCore::CSSParser::parseAlt): Ditto.
+        (WebCore::CSSParser::parseContent): Ditto.
+        (WebCore::CSSParser::parseFillImage): Ditto.
+        (WebCore::CSSParser::parseAnimationName): Ditto.
+        (WebCore::CSSParser::parseAnimationTrigger): Ditto.
+        (WebCore::CSSParser::parseAnimationProperty): Ditto.
+        (WebCore::CSSParser::parseKeyframeSelector): Ditto.
+        (WebCore::CSSParser::parseAnimationTimingFunction): Ditto.
+        (WebCore::CSSParser::parseGridTrackList): Ditto.
+        (WebCore::CSSParser::parseGridTrackSize): Ditto.
+        (WebCore::CSSParser::parseDashboardRegions): Ditto.
+        (WebCore::CSSParser::parseClipShape): Ditto.
+        (WebCore::CSSParser::parseBasicShapeInset): Ditto.
+        (WebCore::CSSParser::parseBasicShape): Ditto.
+        (WebCore::CSSParser::parseFontFaceSrcURI): Ditto.
+        (WebCore::CSSParser::parseFontFaceSrc): Ditto.
+        (WebCore::CSSParser::isCalculation): Ditto.
+        (WebCore::CSSParser::parseColorFromValue): Ditto.
+        (WebCore::CSSParser::parseBorderImage): Ditto.
+        (WebCore::parseDeprecatedGradientPoint): Ditto.
+        (WebCore::parseDeprecatedGradientColorStop): Ditto.
+        (WebCore::CSSParser::parseDeprecatedGradient): Ditto.
+        (WebCore::CSSParser::parseLinearGradient): Ditto.
+        (WebCore::CSSParser::parseRadialGradient): Ditto.
+        (WebCore::CSSParser::isGeneratedImageValue): Ditto.
+        (WebCore::CSSParser::parseGeneratedImage): Ditto.
+        (WebCore::filterInfoForName): Ditto.
+        (WebCore::validFlowName): Ditto.
+        (WebCore::CSSParser::realLex): Ditto.
+        (WebCore::isValidNthToken): Ditto.
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::parsePagePseudoSelector): Ditto.
+
+        * css/CSSParserValues.h:
+        (WebCore::equalLettersIgnoringASCIICase): Added.
+
+        * css/CSSVariableDependentValue.h: Removed unneeded include of CSSParserValues.h.
+
+        * css/MediaList.cpp:
+        (WebCore::reportMediaQueryWarningIfNeeded): Use equalLettersIgnoringASCIICase.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::mediaTypeMatch): Ditto.
+        (WebCore::MediaQueryEvaluator::mediaTypeMatchSpecific): Ditto.
+        (WebCore::evalResolution): Ditto.
+
+        * css/SelectorPseudoTypeMap.h: Removed unneeded include of CSSParserValues.h.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTouchCallout): Use equalLettersIgnoringASCIICase.
+
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py: Added an include of
+        CSSParserValues.h since it's no longer included by SelectorPseudoTypeMap.h.
+
+        * dom/Document.cpp:
+        (WebCore::setParserFeature): Use equalLettersIgnoringASCIICase.
+        (WebCore::Document::processReferrerPolicy): Ditto.
+        (WebCore::Document::createEvent): Ditto.
+        (WebCore::Document::parseDNSPrefetchControlHeader): Ditto.
+
+        * dom/Element.cpp:
+        (WebCore::Element::spellcheckAttributeState): Use isNull instead of doing
+        checking equality with nullAtom. Use isEmpty instead of equalIgnoringCase("").
+        Use equalLettersIgnoringASCIICase.
+        (WebCore::Element::canContainRangeEndPoint): Ditto.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::isValidCSSContentType): Use equalLettersIgnoringASCIICase.
+        Added comment about peculiar behavior where we do case-sensitive processing of
+        the MIME type if the document is XML.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript): Use equalLettersIgnoringASCIICase.
+        (WebCore::ScriptElement::isScriptForEventSupported): Ditto.
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::parseSandboxPolicy): Ditto.
+        * dom/ViewportArguments.cpp:
+        (WebCore::findSizeValue): Ditto.
+        (WebCore::findScaleValue): Ditto.
+        (WebCore::findBooleanValue): Ditto.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDefaultParagraphSeparator): Use equalLettersIgnoringASCIICase.
+        (WebCore::executeInsertBacktab): Use ASCIILiteral.
+        (WebCore::executeInsertHTML): Use emptyString.
+        (WebCore::executeInsertLineBreak): Use ASCIILiteral.
+        (WebCore::executeInsertNewline): Ditto.
+        (WebCore::executeInsertTab): Ditto.
+        (WebCore::executeJustifyCenter): Ditto.
+        (WebCore::executeJustifyFull): Ditto.
+        (WebCore::executeJustifyLeft): Ditto.
+        (WebCore::executeJustifyRight): Ditto.
+        (WebCore::executeStrikethrough): Ditto.
+        (WebCore::executeStyleWithCSS): Use equalLettersIgnoringASCIICase.
+        (WebCore::executeUseCSS): Ditto.
+        (WebCore::executeSubscript): Use ASCIILiteral.
+        (WebCore::executeSuperscript): Ditto.
+        (WebCore::executeToggleBold): Ditto.
+        (WebCore::executeToggleItalic): Ditto.
+        (WebCore::executeUnderline): Ditto.
+        (WebCore::executeUnscript): Ditto.
+        (WebCore::stateBold): Ditto.
+        (WebCore::stateItalic): Ditto.
+        (WebCore::stateStrikethrough): Ditto.
+        (WebCore::stateSubscript): Ditto.
+        (WebCore::stateSuperscript): Ditto.
+        (WebCore::stateUnderline): Ditto.
+        (WebCore::stateJustifyCenter): Ditto.
+        (WebCore::stateJustifyFull): Ditto.
+        (WebCore::stateJustifyLeft): Ditto.
+        (WebCore::stateJustifyRight): Ditto.
+        (WebCore::valueFormatBlock): Use emptyString.
+        (WebCore::Editor::Command::value): Use ASCIILiteral.
+
+        * editing/TextIterator.cpp:
+        (WebCore::isRendererReplacedElement): Use equalLettersIgnoringASCIICase.
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::isNormalizedContentType): Use isASCIIUpper.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setFormInfoFromRequest): Use equalLettersIgnoringASCIICase.
+
+        * html/Autocapitalize.cpp:
+        (WebCore::valueOn): Deleted.
+        (WebCore::valueOff): Deleted.
+        (WebCore::valueNone): Deleted.
+        (WebCore::valueWords): Deleted.
+        (WebCore::valueSentences): Deleted.
+        (WebCore::valueAllCharacters): Deleted.
+        (WebCore::autocapitalizeTypeForAttributeValue): Use equalLettersIgnoringASCIICase.
+        (WebCore::stringForAutocapitalizeType): Put the AtomicString globals right in the
+        switch statement instead of in separate functions.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::draggable): Use equalLettersIgnoringASCIICase.
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::parseAttribute): Ditto.
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseAttribute): Ditto.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toDataURL): Use ASCIILiteral.
+
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::collectStyleForPresentationAttribute):
+        Use equalLettersIgnoringASCIICase.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::designMode): Use ASCIILiteral.
+        (WebCore::HTMLDocument::setDesignMode): Use equalLettersIgnoringASCIICase.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName): Updated comment.
+        (WebCore::isLTROrRTLIgnoringCase): Use equalLettersIgnoringASCIICase.
+        (WebCore::contentEditableType): Ditto.
+        (WebCore::HTMLElement::collectStyleForPresentationAttribute): Ditto.
+        (WebCore::toValidDirValue): Ditto.
+        (WebCore::HTMLElement::insertAdjacent): Ditto.
+        (WebCore::contextElementForInsertion): Ditto.
+        (WebCore::HTMLElement::applyAlignmentAttributeToStyle): Ditto.
+        (WebCore::HTMLElement::setContentEditable): Ditto.
+        (WebCore::HTMLElement::draggable): Ditto.
+        (WebCore::HTMLElement::translateAttributeMode): Ditto.
+        (WebCore::HTMLElement::hasDirectionAuto): Ditto.
+        (WebCore::HTMLElement::directionality): Ditto.
+        (WebCore::HTMLElement::dirAttributeChanged): Ditto.
+        (WebCore::HTMLElement::addHTMLColorToStyle): Ditto.
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::autocorrect): Ditto.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::autocorrect): Ditto.
+        (WebCore::HTMLFormElement::shouldAutocomplete): Ditto.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseAttribute): Ditto.
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseAttribute): Use equalLettersIgnoringASCIICase.
+        Use == when comparing with "0" and "1" since there is no need for case folding.
+
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForPresentationAttribute):
+        Use equalLettersIgnoringASCIICase.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::draggable): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute): Ditto.
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::appendFormData): Ditto.
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Ditto.
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process): Ditto.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::mapDataParamToSrc): Use references, modern for loops, simplify
+        logic to not use array indices, use ASCIILiteral and equalLettersIgnoringASCIICase.
+        (WebCore::HTMLObjectElement::parametersForPlugin): Update to call new function.
+        (WebCore::HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk): Use equalLettersIgnoringASCIICase.
+        (WebCore::HTMLObjectElement::containsJavaApplet): Ditto.
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::isURLParameter): Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::getBordersFromFrameAttributeValue): Ditto.
+        (WebCore::HTMLTableElement::collectStyleForPresentationAttribute): Ditto.
+        (WebCore::HTMLTableElement::parseAttribute): Ditto.
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseAttribute): Ditto.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setRangeText): Ditto.
+        (WebCore::HTMLTextFormControlElement::directionForFormData): Ditto.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute): Ditto.
+        * html/InputType.cpp:
+        (WebCore::InputType::applyStep): Ditto.
+        * html/LinkRelAttribute.cpp:
+        (WebCore::LinkRelAttribute::LinkRelAttribute): Ditto.
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::wirelessVideoPlaybackDisabled): Ditto.
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::sizeShouldIncludeDecoration): Ditto.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createStepRange): Ditto.
+        (WebCore::RangeInputType::handleKeydownEvent): Ditto.
+        * html/StepRange.cpp:
+        (WebCore::StepRange::parseStep): Ditto.
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::parseColor): Ditto.
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::setCompatibilityModeFromDoctype): Ditto.
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::isHTMLIntegrationPoint): Ditto.
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::encodingFromMetaAttributes): Ditto.
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute): Ditto.
+        (WebCore::TokenPreloadScanner::StartTagScanner::crossOriginModeAllowsCookies): Ditto.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable): Ditto.
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::isDangerousHTTPEquiv): Ditto.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::hasRequiredFileIdentifier): Removed unneeded special case
+        for empty string.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::createXHRTextDecoder): Use equalLettersIgnoringASCIICase.
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::createOtherResourceTextDecoder): Ditto.
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isOnAccessControlSimpleRequestHeaderWhitelist): Ditto.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy): Ditto.
+        * loader/FormSubmission.cpp:
+        (WebCore::appendMailtoPostFormDataToURL): Ditto.
+        (WebCore::FormSubmission::Attributes::parseEncodingType): Ditto.
+        (WebCore::FormSubmission::Attributes::parseMethodType): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldPerformFragmentNavigation): Ditto.
+        (WebCore::FrameLoader::shouldTreatURLAsSrcdocDocument): Ditto.
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement): Ditto.
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::start): Ditto.
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::createJavaAppletWidget): Ditto.
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::determineContentType): Ditto.
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::load): Ditto.
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::requestIsHTTPOrHTTPSGet): Ditto.
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::canUseSheet): Ditto.
+        * loader/cache/CachedResource.cpp:
+        (WebCore::shouldCacheSchemeIndefinitely): Ditto.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::modify): Ditto.
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor): Ditto.
+        * page/Performance.cpp:
+        (WebCore::Performance::webkitGetEntriesByType): Ditto.
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::passesTimingAllowCheck): Ditto.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin): Use emptyString.
+        (WebCore::SecurityOrigin::toString): Use ASCIILiteral.
+        (WebCore::SecurityOrigin::databaseIdentifier): Ditto.
+
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse): Use equalLettersIgnoringASCIICase.
+        (WebCore::UserContentURLPattern::matches): Ditto.
+        * platform/URL.cpp:
+        (WebCore::URL::protocolIs): Ditto.
+
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType):
+        Changed to use early exit and equalLettersIgnoringASCIICase. Added comment
+        about inconsistency with next function.
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsMIMEType): Added comment
+        about inconsistency with previous function.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::generateKeyRequest):
+        Use equalLettersIgnoringASCIICase.
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::generateKeyRequest): Ditto.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::utiFromMIMEType): Ditto.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::similarFont): Changed to not use so many global
+        variables and use equalLettersIgnoringASCIICase.
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::platformFontWithFamilySpecialCase): Ditto.
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Use equalLettersIgnoringASCIICase.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::readString): Ditto.
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::createAsync): Ditto.
+        (WebCore::BlobResourceHandle::loadResourceSynchronously): Ditto.
+        * platform/network/CacheValidation.cpp:
+        (WebCore::parseCacheControlDirectives): Ditto.
+        * platform/network/FormData.h:
+        (WebCore::FormData::parseEncodingType): Ditto.
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::contentDispositionType): Ditto.
+        (WebCore::parseXFrameOptionsHeader): Ditto.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isHTTP): Use protocolIsInHTTPFamily, which is
+        both clearer and more efficient.
+        (WebCore::ResourceResponseBase::isAttachment): Rewrite to be a bit more terse
+        and use equalLettersIgnoringASCIICase.
+
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegate::createResourceRequest):
+        Use equalLettersIgnoringASCIICase.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest): Ditto.
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open): Ditto.
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::isColumnDeclaredAsBlob): Ditto.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::defaultTextEncodingNameForSystemLanguage): Use ASCIILiteral
+        and equalLettersIgnoringASCIICase.
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::updateFromElement): Use equalLettersIgnoringASCIICase.
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::compareCodepointsLexicographically): Ditto.
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter): Ditto.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setEditingBehavior): Ditto.
+        (WebCore::InternalSettings::setShouldDisplayTrackKind): Ditto.
+        (WebCore::InternalSettings::shouldDisplayTrackKind): Ditto.
+        * testing/Internals.cpp:
+        (WebCore::markerTypeFrom): Ditto.
+        (WebCore::markerTypesFrom): Ditto.
+        (WebCore::Internals::mediaElementHasCharacteristic): Ditto.
+        (WebCore::Internals::setCaptionDisplayMode): Ditto.
+        (WebCore::Internals::beginMediaSessionInterruption): Ditto.
+        (WebCore::Internals::endMediaSessionInterruption): Ditto.
+        (WebCore::Internals::setMediaSessionRestrictions): Ditto.
+        (WebCore::Internals::setMediaElementRestrictions): Ditto.
+        (WebCore::Internals::postRemoteControlCommand): Ditto.
+        (WebCore::Internals::setAudioContextRestrictions): Ditto.
+        (WebCore::Internals::setMockMediaPlaybackTargetPickerState): Ditto.
+        * testing/MockCDM.cpp:
+        (WebCore::MockCDM::supportsKeySystem): Ditto.
+        (WebCore::MockCDM::supportsKeySystemAndMimeType): Ditto.
+        (WebCore::MockCDM::supportsMIMEType): Ditto.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isSetCookieHeader): Ditto.
+        (WebCore::XMLHttpRequest::responseXML): Ditto.
+        (WebCore::XMLHttpRequest::isAllowedHTTPMethod): Ditto.
+        (WebCore::XMLHttpRequest::didReceiveData): Ditto.
+
 2016-01-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove PassRefPtr from ResourceRequest and FormData

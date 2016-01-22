@@ -244,12 +244,12 @@ void HTMLTextFormControlElement::setRangeText(const String& replacement, unsigne
 
     subtreeHasChanged();
 
-    if (equalIgnoringCase(selectionMode, "select")) {
+    if (equalLettersIgnoringASCIICase(selectionMode, "select")) {
         newSelectionStart = start;
         newSelectionEnd = start + replacementLength;
-    } else if (equalIgnoringCase(selectionMode, "start"))
+    } else if (equalLettersIgnoringASCIICase(selectionMode, "start"))
         newSelectionStart = newSelectionEnd = start;
-    else if (equalIgnoringCase(selectionMode, "end"))
+    else if (equalLettersIgnoringASCIICase(selectionMode, "end"))
         newSelectionStart = newSelectionEnd = start + replacementLength;
     else {
         // Default is "preserve".
@@ -745,10 +745,10 @@ String HTMLTextFormControlElement::directionForFormData() const
         if (dirAttributeValue.isNull())
             continue;
 
-        if (equalIgnoringCase(dirAttributeValue, "rtl") || equalIgnoringCase(dirAttributeValue, "ltr"))
+        if (equalLettersIgnoringASCIICase(dirAttributeValue, "rtl") || equalLettersIgnoringASCIICase(dirAttributeValue, "ltr"))
             return dirAttributeValue;
 
-        if (equalIgnoringCase(dirAttributeValue, "auto")) {
+        if (equalLettersIgnoringASCIICase(dirAttributeValue, "auto")) {
             bool isAuto;
             TextDirection textDirection = static_cast<const HTMLElement*>(element)->directionalityIfhasDirAutoAttribute(isAuto);
             return textDirection == RTL ? "rtl" : "ltr";

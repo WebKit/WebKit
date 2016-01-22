@@ -138,21 +138,20 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
     setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
-static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)
+static void mapDataParamToSrc(Vector<String>& paramNames, Vector<String>& paramValues)
 {
-    // Some plugins don't understand the "data" attribute of the OBJECT tag (i.e. Real and WMP
-    // require "src" attribute).
-    int srcIndex = -1, dataIndex = -1;
-    for (unsigned int i = 0; i < paramNames->size(); ++i) {
-        if (equalIgnoringCase((*paramNames)[i], "src"))
-            srcIndex = i;
-        else if (equalIgnoringCase((*paramNames)[i], "data"))
-            dataIndex = i;
+    // Some plugins don't understand the "data" attribute of the OBJECT tag (i.e. Real and WMP require "src" attribute).
+    bool foundSrcParam = false;
+    String dataParamValue;
+    for (unsigned i = 0; i < paramNames.size(); ++i) {
+        if (equalLettersIgnoringASCIICase(paramNames[i], "src"))
+            foundSrcParam = true;
+        else if (equalLettersIgnoringASCIICase(paramNames[i], "data"))
+            dataParamValue = paramValues[i];
     }
-    
-    if (srcIndex == -1 && dataIndex != -1) {
-        paramNames->append("src");
-        paramValues->append((*paramValues)[dataIndex]);
+    if (!foundSrcParam && !dataParamValue.isNull()) {
+        paramNames.append(ASCIILiteral("src"));
+        paramValues.append(WTFMove(dataParamValue));
     }
 }
 
@@ -182,10 +181,10 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
         paramValues.append(param.value());
 
         // FIXME: url adjustment does not belong in this function.
-        if (url.isEmpty() && urlParameter.isEmpty() && (equalIgnoringCase(name, "src") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "code") || equalIgnoringCase(name, "url")))
+        if (url.isEmpty() && urlParameter.isEmpty() && (equalLettersIgnoringASCIICase(name, "src") || equalLettersIgnoringASCIICase(name, "movie") || equalLettersIgnoringASCIICase(name, "code") || equalLettersIgnoringASCIICase(name, "url")))
             urlParameter = stripLeadingAndTrailingHTMLSpaces(param.value());
         // FIXME: serviceType calculation does not belong in this function.
-        if (serviceType.isEmpty() && equalIgnoringCase(name, "type")) {
+        if (serviceType.isEmpty() && equalLettersIgnoringASCIICase(name, "type")) {
             serviceType = param.value();
             size_t pos = serviceType.find(';');
             if (pos != notFound)
@@ -215,7 +214,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
         }
     }
     
-    mapDataParamToSrc(&paramNames, &paramValues);
+    mapDataParamToSrc(paramNames, paramValues);
     
     // HTML5 says that an object resource's URL is specified by the object's data
     // attribute, not by a param element. However, for compatibility, allow the
@@ -259,11 +258,11 @@ bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
     if (!document().page()
         || !document().page()->settings().needsSiteSpecificQuirks()
         || hasFallbackContent()
-        || !equalIgnoringCase(fastGetAttribute(classidAttr), "clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"))
+        || !equalLettersIgnoringASCIICase(fastGetAttribute(classidAttr), "clsid:02bf25d5-8c17-4b23-bc80-d3488abddc6b"))
         return false;
 
     for (auto& metaElement : descendantsOfType<HTMLMetaElement>(document())) {
-        if (equalIgnoringCase(metaElement.name(), "generator") && metaElement.content().startsWith("Mac OS X Server Web Services Server", false))
+        if (equalLettersIgnoringASCIICase(metaElement.name(), "generator") && metaElement.content().startsWith("Mac OS X Server Web Services Server", false))
             return true;
     }
 
@@ -475,7 +474,7 @@ bool HTMLObjectElement::containsJavaApplet() const
         return true;
 
     for (auto& child : childrenOfType<Element>(*this)) {
-        if (child.hasTagName(paramTag) && equalIgnoringCase(child.getNameAttribute(), "type")
+        if (child.hasTagName(paramTag) && equalLettersIgnoringASCIICase(child.getNameAttribute(), "type")
             && MIMETypeRegistry::isJavaAppletMIMEType(child.getAttribute(valueAttr).string()))
             return true;
         if (child.hasTagName(objectTag) && downcast<HTMLObjectElement>(child).containsJavaApplet())

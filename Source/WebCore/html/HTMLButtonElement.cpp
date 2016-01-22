@@ -96,9 +96,9 @@ bool HTMLButtonElement::isPresentationAttribute(const QualifiedName& name) const
 void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == typeAttr) {
-        if (equalIgnoringCase(value, "reset"))
+        if (equalLettersIgnoringASCIICase(value, "reset"))
             m_type = RESET;
-        else if (equalIgnoringCase(value, "button"))
+        else if (equalLettersIgnoringASCIICase(value, "button"))
             m_type = BUTTON;
         else
             m_type = SUBMIT;

@@ -146,13 +146,10 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
         return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
     }
 
-    static NeverDestroyed<AtomicString> systemUIFontWithWebKitPrefix("-webkit-system-font", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> systemUIFontWithApplePrefix("-apple-system", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> systemUIFontWithAppleAlternatePrefix("-apple-system-font", AtomicString::ConstructFromLiteral);
-    if (equalIgnoringCase(family, systemUIFontWithWebKitPrefix) || equalIgnoringCase(family, systemUIFontWithApplePrefix) || equalIgnoringCase(family, systemUIFontWithAppleAlternatePrefix)) {
+    if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font")) {
         CTFontUIFontType fontType = kCTFontUIFontSystem;
         if (weight > FontWeight300) {
-            // The comment below has been copied from CoreText/UIFoundation. However, in WebKit we synthesize the oblique,
+            // The code below has been copied from CoreText/UIFoundation. However, in WebKit we synthesize the oblique,
             // so we should investigate the result <rdar://problem/14449340>:
             if (traits & kCTFontTraitBold)
                 fontType = kCTFontUIFontEmphasizedSystem;
@@ -168,8 +165,7 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
         return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
     }
 
-    static NeverDestroyed<AtomicString> systemUIMonospacedNumbersFontWithApplePrefix("-apple-system-monospaced-numbers", AtomicString::ConstructFromLiteral);
-    if (equalIgnoringCase(family, systemUIMonospacedNumbersFontWithApplePrefix)) {
+    if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {
         RetainPtr<CTFontDescriptorRef> systemFontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, nullptr));
         RetainPtr<CTFontDescriptorRef> monospaceFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithFeature(systemFontDescriptor.get(), (CFNumberRef)@(kNumberSpacingType), (CFNumberRef)@(kMonospacedNumbersSelector)));
         return adoptCF(CTFontCreateWithFontDescriptor(monospaceFontDescriptor.get(), size, nullptr));

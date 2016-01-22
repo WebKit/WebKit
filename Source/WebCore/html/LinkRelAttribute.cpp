@@ -42,19 +42,19 @@ LinkRelAttribute::LinkRelAttribute()
 
 LinkRelAttribute::LinkRelAttribute(const String& rel)
 {
-    if (equalIgnoringCase(rel, "stylesheet"))
+    if (equalLettersIgnoringASCIICase(rel, "stylesheet"))
         isStyleSheet = true;
-    else if (equalIgnoringCase(rel, "icon") || equalIgnoringCase(rel, "shortcut icon"))
+    else if (equalLettersIgnoringASCIICase(rel, "icon") || equalLettersIgnoringASCIICase(rel, "shortcut icon"))
         iconType = Favicon;
 #if ENABLE(TOUCH_ICON_LOADING)
-    else if (equalIgnoringCase(rel, "apple-touch-icon"))
+    else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon"))
         iconType = TouchIcon;
-    else if (equalIgnoringCase(rel, "apple-touch-icon-precomposed"))
+    else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon-precomposed"))
         iconType = TouchPrecomposedIcon;
 #endif
-    else if (equalIgnoringCase(rel, "dns-prefetch"))
+    else if (equalLettersIgnoringASCIICase(rel, "dns-prefetch"))
         isDNSPrefetch = true;
-    else if (equalIgnoringCase(rel, "alternate stylesheet") || equalIgnoringCase(rel, "stylesheet alternate")) {
+    else if (equalLettersIgnoringASCIICase(rel, "alternate stylesheet") || equalLettersIgnoringASCIICase(rel, "stylesheet alternate")) {
         isStyleSheet = true;
         isAlternate = true;
     } else {
@@ -64,22 +64,22 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
         Vector<String> list;
         relCopy.split(' ', list);
         for (auto& word : list) {
-            if (equalIgnoringCase(word, "stylesheet"))
+            if (equalLettersIgnoringASCIICase(word, "stylesheet"))
                 isStyleSheet = true;
-            else if (equalIgnoringCase(word, "alternate"))
+            else if (equalLettersIgnoringASCIICase(word, "alternate"))
                 isAlternate = true;
-            else if (equalIgnoringCase(word, "icon"))
+            else if (equalLettersIgnoringASCIICase(word, "icon"))
                 iconType = Favicon;
 #if ENABLE(TOUCH_ICON_LOADING)
-            else if (equalIgnoringCase(word, "apple-touch-icon"))
+            else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon"))
                 iconType = TouchIcon;
-            else if (equalIgnoringCase(word, "apple-touch-icon-precomposed"))
+            else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon-precomposed"))
                 iconType = TouchPrecomposedIcon;
 #endif
 #if ENABLE(LINK_PREFETCH)
-            else if (equalIgnoringCase(word, "prefetch"))
+            else if (equalLettersIgnoringASCIICase(word, "prefetch"))
                 isLinkPrefetch = true;
-            else if (equalIgnoringCase(word, "subresource"))
+            else if (equalLettersIgnoringASCIICase(word, "subresource"))
                 isLinkSubresource = true;
 #endif
         }

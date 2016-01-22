@@ -504,17 +504,16 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
 
 #if PLATFORM(IOS)
     // Substitute the default monospace font for well-known monospace fonts.
-    static NeverDestroyed<AtomicString> monaco("monaco", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> menlo("menlo", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> courier("courier", AtomicString::ConstructFromLiteral);
-    if (equalIgnoringCase(family, monaco) || equalIgnoringCase(family, menlo))
+    if (equalLettersIgnoringASCIICase(family, "monaco") || equalLettersIgnoringASCIICase(family, "menlo")) {
+        static NeverDestroyed<AtomicString> courier("courier", AtomicString::ConstructFromLiteral);
         return fontForFamily(description, courier);
+    }
 
     // Substitute Verdana for Lucida Grande.
-    static NeverDestroyed<AtomicString> lucidaGrande("lucida grande", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> verdana("verdana", AtomicString::ConstructFromLiteral);
-    if (equalIgnoringCase(family, lucidaGrande))
+    if (equalLettersIgnoringASCIICase(family, "lucida grande")) {
+        static NeverDestroyed<AtomicString> verdana("verdana", AtomicString::ConstructFromLiteral);
         return fontForFamily(description, verdana);
+    }
 #endif
 
     static NeverDestroyed<String> arabic(ASCIILiteral("Arabic"));

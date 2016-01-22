@@ -73,22 +73,23 @@ bool CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType(const String& ke
     if (!supportsKeySystem(keySystem))
         return false;
 
-    if (!mimeType.isEmpty()) {
-        if (equalIgnoringCase(mimeType, "keyrelease"))
-            return true;
+    if (mimeType.isEmpty())
+        return true;
 
-        MediaEngineSupportParameters parameters;
-        parameters.isMediaSource = true;
-        parameters.type = mimeType;
+    // FIXME: Why is this ignoring case since the check in supportsMIMEType is checking case?
+    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"))
+        return true;
 
-        return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::IsNotSupported;
-    }
+    MediaEngineSupportParameters parameters;
+    parameters.isMediaSource = true;
+    parameters.type = mimeType;
 
-    return true;
+    return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::IsNotSupported;
 }
 
 bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
 {
+    // FIXME: Why is this checking case since the check in supportsKeySystemAndMimeType is ignoring case?
     if (mimeType == "keyrelease")
         return true;
 

@@ -168,7 +168,7 @@ bool Blob::isNormalizedContentType(const String& contentType)
         for (size_t i = 0; i < length; ++i) {
             if (characters[i] < 0x20 || characters[i] > 0x7e)
                 return false;
-            if (characters[i] >= 'A' && characters[i] <= 'Z')
+            if (isASCIIUpper(characters[i]))
                 return false;
         }
     } else {
@@ -176,7 +176,7 @@ bool Blob::isNormalizedContentType(const String& contentType)
         for (size_t i = 0; i < length; ++i) {
             if (characters[i] < 0x20 || characters[i] > 0x7e)
                 return false;
-            if (characters[i] >= 'A' && characters[i] <= 'Z')
+            if (isASCIIUpper(characters[i]))
                 return false;
         }
     }
@@ -190,7 +190,7 @@ bool Blob::isNormalizedContentType(const CString& contentType)
     for (size_t i = 0; i < length; ++i) {
         if (characters[i] < 0x20 || characters[i] > 0x7e)
             return false;
-        if (characters[i] >= 'A' && characters[i] <= 'Z')
+        if (isASCIIUpper(characters[i]))
             return false;
     }
     return true;

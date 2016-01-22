@@ -308,13 +308,10 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
             return IgnoredRole;
         if (input.isSearchField())
             return SearchFieldRole;
-        
 #if ENABLE(INPUT_TYPE_COLOR)
-        const AtomicString& type = input.getAttribute(typeAttr);
-        if (equalIgnoringCase(type, "color"))
+        if (input.isColorControl())
             return ColorWellRole;
 #endif
-
         return TextFieldRole;
     }
     if (node()->hasTagName(selectTag)) {
@@ -650,9 +647,9 @@ bool AccessibilityNodeObject::isEnabled() const
     // ARIA says that the disabled status applies to the current element and all descendant elements.
     for (AccessibilityObject* object = const_cast<AccessibilityNodeObject*>(this); object; object = object->parentObject()) {
         const AtomicString& disabledStatus = object->getAttribute(aria_disabledAttr);
-        if (equalIgnoringCase(disabledStatus, "true"))
+        if (equalLettersIgnoringASCIICase(disabledStatus, "true"))
             return false;
-        if (equalIgnoringCase(disabledStatus, "false"))
+        if (equalLettersIgnoringASCIICase(disabledStatus, "false"))
             break;
     }
     
@@ -684,7 +681,7 @@ bool AccessibilityNodeObject::isPressed() const
     // If this is an ARIA button, check the aria-pressed attribute rather than node()->active()
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (ariaRole == ButtonRole || ariaRole == ToggleButtonRole) {
-        if (equalIgnoringCase(getAttribute(aria_pressedAttr), "true"))
+        if (equalLettersIgnoringASCIICase(getAttribute(aria_pressedAttr), "true"))
             return true;
         return false;
     }
@@ -719,7 +716,7 @@ bool AccessibilityNodeObject::isChecked() const
         break;
     }
     
-    if (validRole && equalIgnoringCase(getAttribute(aria_checkedAttr), "true"))
+    if (validRole && equalLettersIgnoringASCIICase(getAttribute(aria_checkedAttr), "true"))
         return true;
 
     return false;
@@ -734,9 +731,9 @@ bool AccessibilityNodeObject::isHovered() const
 bool AccessibilityNodeObject::isMultiSelectable() const
 {
     const AtomicString& ariaMultiSelectable = getAttribute(aria_multiselectableAttr);
-    if (equalIgnoringCase(ariaMultiSelectable, "true"))
+    if (equalLettersIgnoringASCIICase(ariaMultiSelectable, "true"))
         return true;
-    if (equalIgnoringCase(ariaMultiSelectable, "false"))
+    if (equalLettersIgnoringASCIICase(ariaMultiSelectable, "false"))
         return false;
     
     return node() && node()->hasTagName(selectTag) && downcast<HTMLSelectElement>(*node()).multiple();
@@ -764,9 +761,9 @@ bool AccessibilityNodeObject::isRequired() const
 {
     // Explicit aria-required values should trump native required attributes.
     const AtomicString& requiredValue = getAttribute(aria_requiredAttr);
-    if (equalIgnoringCase(requiredValue, "true"))
+    if (equalLettersIgnoringASCIICase(requiredValue, "true"))
         return true;
-    if (equalIgnoringCase(requiredValue, "false"))
+    if (equalLettersIgnoringASCIICase(requiredValue, "false"))
         return false;
 
     Node* n = this->node();
@@ -1640,7 +1637,7 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Acce
         && !obj->accessibleNameDerivesFromContent())
         return false;
     
-    if (equalIgnoringCase(obj->getAttribute(aria_hiddenAttr), "true"))
+    if (equalLettersIgnoringASCIICase(obj->getAttribute(aria_hiddenAttr), "true"))
         return false;
     
     // If something doesn't expose any children, then we can always take the inner text content.
@@ -1855,8 +1852,7 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
         return;
 
     HTMLInputElement& input = downcast<HTMLInputElement>(*node());
-    const AtomicString& type = input.getAttribute(typeAttr);
-    if (!equalIgnoringCase(type, "color"))
+    if (!input.isColorControl())
         return;
 
     // HTMLInputElement::value always returns a string parseable by Color().

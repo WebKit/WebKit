@@ -362,14 +362,14 @@ bool CachedResource::isExpired() const
 static inline bool shouldCacheSchemeIndefinitely(const String& scheme)
 {
 #if PLATFORM(COCOA)
-    if (equalIgnoringCase(scheme, "applewebdata"))
+    if (equalLettersIgnoringASCIICase(scheme, "applewebdata"))
         return true;
 #endif
 #if USE(SOUP)
-    if (equalIgnoringCase(scheme, "resource"))
+    if (equalLettersIgnoringASCIICase(scheme, "resource"))
         return true;
 #endif
-    return equalIgnoringCase(scheme, "data");
+    return equalLettersIgnoringASCIICase(scheme, "data");
 }
 
 std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceResponse& response) const

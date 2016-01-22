@@ -473,7 +473,7 @@ void HistoryItem::setFormInfoFromRequest(const ResourceRequest& request)
 {
     m_referrer = request.httpReferrer();
     
-    if (equalIgnoringCase(request.httpMethod(), "POST")) {
+    if (equalLettersIgnoringASCIICase(request.httpMethod(), "post")) {
         // FIXME: Eventually we have to make this smart enough to handle the case where
         // we have a stream for the body to handle the "data interspersed with files" feature.
         m_formData = request.httpBody();

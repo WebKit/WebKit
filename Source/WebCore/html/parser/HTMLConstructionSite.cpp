@@ -375,12 +375,12 @@ void HTMLConstructionSite::setCompatibilityModeFromDoctype(const String& name, c
         || publicId.startsWith("-//W3C//DTD HTML Experimental 970421//", false)
         || publicId.startsWith("-//W3C//DTD W3 HTML//", false)
         || publicId.startsWith("-//W3O//DTD W3 HTML 3.0//", false)
-        || equalIgnoringCase(publicId, "-//W3O//DTD W3 HTML Strict 3.0//EN//")
+        || equalLettersIgnoringASCIICase(publicId, "-//w3o//dtd w3 html strict 3.0//en//")
         || publicId.startsWith("-//WebTechs//DTD Mozilla HTML 2.0//", false)
         || publicId.startsWith("-//WebTechs//DTD Mozilla HTML//", false)
-        || equalIgnoringCase(publicId, "-/W3C/DTD HTML 4.0 Transitional/EN")
-        || equalIgnoringCase(publicId, "HTML")
-        || equalIgnoringCase(systemId, "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd")
+        || equalLettersIgnoringASCIICase(publicId, "-/w3c/dtd html 4.0 transitional/en")
+        || equalLettersIgnoringASCIICase(publicId, "html")
+        || equalLettersIgnoringASCIICase(systemId, "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd")
         || (systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Frameset//", false))
         || (systemId.isEmpty() && publicId.startsWith("-//W3C//DTD HTML 4.01 Transitional//", false))) {
         setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);

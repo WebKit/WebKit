@@ -470,34 +470,34 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
     for (; p < end; p++) {
         size_t consumedLength = parseHTTPHeader(p, end - p, m_failureReason, name, value);
         if (!consumedLength)
-            return 0;
+            return nullptr;
         p += consumedLength;
 
         // Stop once we consumed an empty line.
         if (name.isEmpty())
             break;
 
-        if (equalIgnoringCase("sec-websocket-extensions", name)) {
+        if (equalLettersIgnoringASCIICase(name, "sec-websocket-extensions")) {
             if (sawSecWebSocketExtensionsHeaderField) {
                 m_failureReason = "The Sec-WebSocket-Extensions header MUST NOT appear more than once in an HTTP response";
-                return 0;
+                return nullptr;
             }
             if (!m_extensionDispatcher.processHeaderValue(value)) {
                 m_failureReason = m_extensionDispatcher.failureReason();
-                return 0;
+                return nullptr;
             }
             sawSecWebSocketExtensionsHeaderField = true;
-        } else if (equalIgnoringCase("Sec-WebSocket-Accept", name)) {
+        } else if (equalLettersIgnoringASCIICase(name, "sec-websocket-accept")) {
             if (sawSecWebSocketAcceptHeaderField) {
                 m_failureReason = "The Sec-WebSocket-Accept header MUST NOT appear more than once in an HTTP response";
-                return 0;
+                return nullptr;
             }
             m_serverHandshakeResponse.addHTTPHeaderField(name, value);
             sawSecWebSocketAcceptHeaderField = true;
-        } else if (equalIgnoringCase("Sec-WebSocket-Protocol", name)) {
+        } else if (equalLettersIgnoringASCIICase(name, "sec-websocket-protocol")) {
             if (sawSecWebSocketProtocolHeaderField) {
                 m_failureReason = "The Sec-WebSocket-Protocol header MUST NOT appear more than once in an HTTP response";
-                return 0;
+                return nullptr;
             }
             m_serverHandshakeResponse.addHTTPHeaderField(name, value);
             sawSecWebSocketProtocolHeaderField = true;
@@ -527,11 +527,11 @@ bool WebSocketHandshake::checkResponseHeaders()
         return false;
     }
 
-    if (!equalIgnoringCase(serverUpgrade, "websocket")) {
+    if (!equalLettersIgnoringASCIICase(serverUpgrade, "websocket")) {
         m_failureReason = "Error during WebSocket handshake: 'Upgrade' header value is not 'WebSocket'";
         return false;
     }
-    if (!equalIgnoringCase(serverConnection, "upgrade")) {
+    if (!equalLettersIgnoringASCIICase(serverConnection, "upgrade")) {
         m_failureReason = "Error during WebSocket handshake: 'Connection' header value is not 'Upgrade'";
         return false;
     }

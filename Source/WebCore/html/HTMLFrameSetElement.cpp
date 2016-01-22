@@ -104,10 +104,10 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const Atomic
 
     if (name == frameborderAttr) {
         if (!value.isNull()) {
-            if (equalIgnoringCase(value, "no") || equalIgnoringCase(value, "0")) {
+            if (equalLettersIgnoringASCIICase(value, "no") || value == "0") {
                 m_frameborder = false;
                 m_frameborderSet = true;
-            } else if (equalIgnoringCase(value, "yes") || equalIgnoringCase(value, "1")) {
+            } else if (equalLettersIgnoringASCIICase(value, "yes") || value == "1") {
                 m_frameborderSet = true;
             }
         } else {

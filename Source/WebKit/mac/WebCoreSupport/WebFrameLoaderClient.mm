@@ -1940,7 +1940,7 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugI
 #endif
     NSMutableArray *attributeKeys = kit(paramNames);
 #if !PLATFORM(IOS)
-    if (frame && frame->settings().needsSiteSpecificQuirks() && equalIgnoringCase(mimeType, "application/x-snkp")) {
+    if (frame && frame->settings().needsSiteSpecificQuirks() && equalLettersIgnoringASCIICase(mimeType, "application/x-snkp")) {
         for (NSUInteger i = 0; i < [attributeKeys count]; ++i)
             [attributeKeys replaceObjectAtIndex:i withObject:[[attributeKeys objectAtIndex:i] lowercaseString]];
     }

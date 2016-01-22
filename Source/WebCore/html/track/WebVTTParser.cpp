@@ -247,12 +247,8 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
     // A WebVTT file identifier consists of an optional BOM character,
     // the string "WEBVTT" followed by an optional space or tab character,
     // and any number of characters that are not line terminators ...
-    if (line.isEmpty())
-        return false;
-
     if (!line.startsWith(fileIdentifier, fileIdentifierLength))
         return false;
-
     if (line.length() > fileIdentifierLength && !isHTMLSpace(line[fileIdentifierLength]))
         return false;
     return true;

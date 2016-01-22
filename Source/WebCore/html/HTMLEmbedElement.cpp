@@ -90,7 +90,7 @@ bool HTMLEmbedElement::isPresentationAttribute(const QualifiedName& name) const
 void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == hiddenAttr) {
-        if (equalIgnoringCase(value, "yes") || equalIgnoringCase(value, "true")) {
+        if (equalLettersIgnoringASCIICase(value, "yes") || equalLettersIgnoringASCIICase(value, "true")) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, 0, CSSPrimitiveValue::CSS_PX);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyHeight, 0, CSSPrimitiveValue::CSS_PX);
         }

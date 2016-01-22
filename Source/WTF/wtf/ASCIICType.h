@@ -189,7 +189,18 @@ inline char upperNibbleToASCIIHexDigit(uint8_t value)
 
 template<typename CharacterType> inline bool isASCIIAlphaCaselessEqual(CharacterType inputCharacter, char expectedASCIILowercaseLetter)
 {
-    ASSERT(isASCIILower(expectedASCIILowercaseLetter));
+    // Name of this argument says this must be a lowercase letter, but it can actually be:
+    //   - a lowercase letter
+    //   - a numeric digit
+    //   - a space
+    //   - punctuation in the range 0x21-0x3F, including "-", "/", and "+"
+    // It cannot be:
+    //   - an uppercase letter
+    //   - a non-ASCII character
+    //   - other punctuation, such as underscore and backslash
+    //   - a control character such as "\n"
+    // FIXME: Would be nice to make both the function name and expectedASCIILowercaseLetter argument name clearer.
+    ASSERT(toASCIILowerUnchecked(expectedASCIILowercaseLetter) == expectedASCIILowercaseLetter);
     return LIKELY(toASCIILowerUnchecked(inputCharacter) == expectedASCIILowercaseLetter);
 }
 

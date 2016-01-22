@@ -357,11 +357,11 @@ String defaultTextEncodingNameForSystemLanguage()
     // ICU uses this name for a different encoding, so we need to change the name to a value that actually gives us windows-949.
     // In addition, this value must match what is used in Safari, see <rdar://problem/5579292>.
     // On some OS versions, the result is CP949 (uppercase).
-    if (equalIgnoringCase(systemEncodingName, "cp949"))
-        systemEncodingName = "ks_c_5601-1987";
+    if (equalLettersIgnoringASCIICase(systemEncodingName, "cp949"))
+        systemEncodingName = ASCIILiteral("ks_c_5601-1987");
     return systemEncodingName;
 #else
-    return String("ISO-8859-1");
+    return ASCIILiteral("ISO-8859-1");
 #endif
 }
 

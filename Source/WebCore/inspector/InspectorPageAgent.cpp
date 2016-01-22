@@ -126,7 +126,7 @@ static RefPtr<TextResourceDecoder> createXHRTextDecoder(const String& mimeType, 
     else if (DOMImplementation::isXMLMIMEType(mimeType.lower())) {
         decoder = TextResourceDecoder::create("application/xml");
         decoder->useLenientXMLDecoding();
-    } else if (equalIgnoringCase(mimeType, "text/html"))
+    } else if (equalLettersIgnoringASCIICase(mimeType, "text/html"))
         decoder = TextResourceDecoder::create("text/html", "UTF-8");
     else
         decoder = TextResourceDecoder::create("text/plain", "UTF-8");

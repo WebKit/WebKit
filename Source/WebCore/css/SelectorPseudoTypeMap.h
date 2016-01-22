@@ -26,10 +26,11 @@
 #ifndef SelectorPseudoTypeMap_h
 #define SelectorPseudoTypeMap_h
 
-#include "CSSParserValues.h"
 #include "CSSSelector.h"
 
 namespace WebCore {
+
+struct CSSParserString;
 
 struct PseudoClassOrCompatibilityPseudoElement {
     CSSSelector::PseudoClassType pseudoClass;

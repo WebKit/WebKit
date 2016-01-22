@@ -56,9 +56,9 @@ bool isOnAccessControlSimpleRequestHeaderWhitelist(HTTPHeaderName name, const St
     case HTTPHeaderName::ContentType: {
         // Preflight is required for MIME types that can not be sent via form submission.
         String mimeType = extractMIMETypeFromMediaType(value);
-        return equalIgnoringCase(mimeType, "application/x-www-form-urlencoded")
-            || equalIgnoringCase(mimeType, "multipart/form-data")
-            || equalIgnoringCase(mimeType, "text/plain");
+        return equalIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded")
+            || equalIgnoringASCIICase(mimeType, "multipart/form-data")
+            || equalIgnoringASCIICase(mimeType, "text/plain");
     }
     default:
         return false;

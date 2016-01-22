@@ -135,7 +135,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
 #if PLATFORM(IOS) && ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (name == webkitairplayAttr) {
             bool disabled = false;
-            if (equalIgnoringCase(fastGetAttribute(HTMLNames::webkitairplayAttr), "deny"))
+            if (equalLettersIgnoringASCIICase(fastGetAttribute(HTMLNames::webkitairplayAttr), "deny"))
                 disabled = true;
             mediaSession().setWirelessVideoPlaybackDisabled(*this, disabled);
         }

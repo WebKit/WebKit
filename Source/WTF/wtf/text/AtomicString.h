@@ -223,8 +223,7 @@ inline bool equalIgnoringASCIICase(const AtomicString& a, const AtomicString& b)
 inline bool equalIgnoringASCIICase(const AtomicString& a, const String& b) { return equalIgnoringASCIICase(a.impl(), b.impl()); }
 inline bool equalIgnoringASCIICase(const String& a, const AtomicString& b) { return equalIgnoringASCIICase(a.impl(), b.impl()); }
 
-template <unsigned charactersCount>
-inline bool equalIgnoringASCIICase(const AtomicString& a, const char (&b)[charactersCount]) { return equalIgnoringASCIICase<charactersCount>(a.impl(), b); }
+template<unsigned length> bool equalLettersIgnoringASCIICase(const AtomicString&, const char (&lowercaseLetters)[length]);
 
 inline AtomicString::AtomicString()
 {
@@ -336,6 +335,11 @@ template<> struct DefaultHash<AtomicString> {
     typedef AtomicStringHash Hash;
 };
 
+template<unsigned length> inline bool equalLettersIgnoringASCIICase(const AtomicString& string, const char (&lowercaseLetters)[length])
+{
+    return equalLettersIgnoringASCIICase(string.string(), lowercaseLetters);
+}
+
 } // namespace WTF
 
 #ifndef ATOMICSTRING_HIDE_GLOBALS
@@ -351,4 +355,5 @@ using WTF::xlinkAtom;
 #endif
 
 #include <wtf/text/StringConcatenate.h>
+
 #endif // AtomicString_h

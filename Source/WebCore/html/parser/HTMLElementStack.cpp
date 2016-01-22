@@ -284,8 +284,8 @@ bool HTMLElementStack::isHTMLIntegrationPoint(HTMLStackItem& item)
         const Attribute* encodingAttr = item.findAttribute(MathMLNames::encodingAttr);
         if (encodingAttr) {
             const String& encoding = encodingAttr->value();
-            return equalIgnoringCase(encoding, "text/html")
-                || equalIgnoringCase(encoding, "application/xhtml+xml");
+            return equalLettersIgnoringASCIICase(encoding, "text/html")
+                || equalLettersIgnoringASCIICase(encoding, "application/xhtml+xml");
         }
         return false;
     }

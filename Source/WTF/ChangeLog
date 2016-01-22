@@ -1,3 +1,35 @@
+2016-01-22  Darin Adler  <darin@apple.com>
+
+        Reduce use of equalIgnoringCase to just ignore ASCII case
+        https://bugs.webkit.org/show_bug.cgi?id=153266
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCIIAlphaCaselessEqual): Loosened the assertion in this function
+        so it can work with ASCII spaces, numeric digits, and some punctuation.
+        Commented that we might want to change its name later.
+
+        * wtf/Assertions.cpp:
+        (WTFInitializeLogChannelStatesFromString): Use equalLettersIgnoringASCIICase.
+
+        * wtf/text/AtomicString.h:
+        (WTF::equalLettersIgnoringASCIICase): Added. Calls the version that takes a String.
+
+        * wtf/text/StringCommon.h:
+        (WTF::equalLettersIgnoringASCIICase): Added. Takes a pointer to characters.
+        (WTF::equalLettersIgnoringASCIICaseCommonWithoutLength): Added.
+        (WTF::equalLettersIgnoringASCIICaseCommon): Added.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equalLettersIgnoringASCIICase): Added. Calls equalLettersIgnoringASCIICaseCommon.
+
+        * wtf/text/StringView.h:
+        (WTF::equalLettersIgnoringASCIICase): Added. Calls equalLettersIgnoringASCIICaseCommon.
+
+        * wtf/text/WTFString.h: Reordered/reformatted a little.
+        (WTF::equalIgnoringASCIICase): Added. Calls the version that takes a StringImpl.
+
 2016-01-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Buildfix for older GCCs after r195142

@@ -229,13 +229,13 @@ private:
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, typeAttr))
-                m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
+                m_inputIsImage = equalLettersIgnoringASCIICase(attributeValue, "image");
             break;
         case TagId::Meta:
             if (match(attributeName, contentAttr))
                 m_metaContent = attributeValue;
             else if (match(attributeName, nameAttr))
-                m_metaIsViewport = equalIgnoringCase(attributeValue, "viewport");
+                m_metaIsViewport = equalLettersIgnoringASCIICase(attributeValue, "viewport");
             break;
         case TagId::Base:
         case TagId::Style:
@@ -315,7 +315,7 @@ private:
 
     bool crossOriginModeAllowsCookies()
     {
-        return m_crossOriginMode.isNull() || equalIgnoringCase(m_crossOriginMode, "use-credentials");
+        return m_crossOriginMode.isNull() || equalLettersIgnoringASCIICase(m_crossOriginMode, "use-credentials");
     }
 
     TagId m_tagId;

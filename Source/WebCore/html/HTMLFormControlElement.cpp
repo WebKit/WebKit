@@ -562,13 +562,14 @@ bool HTMLFormControlElement::isDefaultButtonForForm() const
 }
 
 #if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
-// FIXME: We should look to share these methods with class HTMLFormElement instead of duplicating them.
+
+// FIXME: We should look to share this code with class HTMLFormElement instead of duplicating the logic.
 
 bool HTMLFormControlElement::autocorrect() const
 {
     const AtomicString& autocorrectValue = fastGetAttribute(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
-        return !equalIgnoringCase(autocorrectValue, "off");
+        return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
     if (HTMLFormElement* form = this->form())
         return form->autocorrect();
     return true;
@@ -598,6 +599,7 @@ void HTMLFormControlElement::setAutocapitalize(const AtomicString& value)
 {
     setAttribute(autocapitalizeAttr, value);
 }
+
 #endif
 
 HTMLFormControlElement* HTMLFormControlElement::enclosingFormControlElement(Node* node)

@@ -2065,7 +2065,7 @@ bool FrameView::scrollToAnchor(const String& name)
     }
   
     // Implement the rule that "" and "top" both mean top of page as in other browsers.
-    if (!anchorElement && !(name.isEmpty() || equalIgnoringCase(name, "top")))
+    if (!anchorElement && !(name.isEmpty() || equalLettersIgnoringASCIICase(name, "top")))
         return false;
 
     ContainerNode* scrollPositionAnchor = anchorElement;

@@ -71,15 +71,15 @@ void HTMLMetaElement::process()
     if (contentValue.isNull())
         return;
 
-    if (equalIgnoringCase(name(), "viewport"))
+    if (equalLettersIgnoringASCIICase(name(), "viewport"))
         document().processViewport(contentValue, ViewportArguments::ViewportMeta);
 #if PLATFORM(IOS)
-    else if (equalIgnoringCase(name(), "format-detection"))
+    else if (equalLettersIgnoringASCIICase(name(), "format-detection"))
         document().processFormatDetection(contentValue);
-    else if (equalIgnoringCase(name(), "apple-mobile-web-app-orientations"))
+    else if (equalLettersIgnoringASCIICase(name(), "apple-mobile-web-app-orientations"))
         document().processWebAppOrientations();
 #endif
-    else if (equalIgnoringCase(name(), "referrer"))
+    else if (equalLettersIgnoringASCIICase(name(), "referrer"))
         document().processReferrerPolicy(contentValue);
 
     // Get the document to process the tag, but only if we're actually part of DOM tree (changing a meta tag while

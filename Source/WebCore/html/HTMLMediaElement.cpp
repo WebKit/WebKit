@@ -659,9 +659,9 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
     else if (name == loopAttr)
         updateSleepDisabling();
     else if (name == preloadAttr) {
-        if (equalIgnoringCase(value, "none"))
+        if (equalLettersIgnoringASCIICase(value, "none"))
             m_preload = MediaPlayer::None;
-        else if (equalIgnoringCase(value, "metadata"))
+        else if (equalLettersIgnoringASCIICase(value, "metadata"))
             m_preload = MediaPlayer::MetaData;
         else {
             // The spec does not define an "invalid value default" but "auto" is suggested as the

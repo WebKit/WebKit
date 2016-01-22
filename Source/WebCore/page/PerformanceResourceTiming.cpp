@@ -59,7 +59,7 @@ static bool passesTimingAllowCheck(const ResourceResponse& response, Document* r
         return true;
 
     const String& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
-    if (timingAllowOriginString.isEmpty() || equalIgnoringCase(timingAllowOriginString, "null"))
+    if (timingAllowOriginString.isEmpty() || equalLettersIgnoringASCIICase(timingAllowOriginString, "null"))
         return false;
 
     if (timingAllowOriginString == "*")

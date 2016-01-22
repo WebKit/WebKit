@@ -129,7 +129,7 @@ bool CachedCSSStyleSheet::canUseSheet(MIMETypeCheck mimeTypeCheck, bool* hasVali
     // This code defaults to allowing the stylesheet for non-HTTP protocols so
     // folks can use standards mode for local HTML documents.
     String mimeType = extractMIMETypeFromMediaType(response().httpHeaderField(HTTPHeaderName::ContentType));
-    bool typeOK = mimeType.isEmpty() || equalIgnoringCase(mimeType, "text/css") || equalIgnoringCase(mimeType, "application/x-unknown-content-type");
+    bool typeOK = mimeType.isEmpty() || equalLettersIgnoringASCIICase(mimeType, "text/css") || equalLettersIgnoringASCIICase(mimeType, "application/x-unknown-content-type");
     if (hasValidMIMEType)
         *hasValidMIMEType = typeOK;
     return typeOK;

@@ -91,6 +91,8 @@ output_file.write("""
 #include "config.h"
 #include "SelectorPseudoTypeMap.h"
 
+#include "CSSParserValues.h"
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-pragmas"

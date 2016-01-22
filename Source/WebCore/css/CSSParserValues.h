@@ -107,6 +107,8 @@ struct CSSParserString {
     bool m_is8Bit;
 };
 
+template<unsigned length> bool equalLettersIgnoringASCIICase(const CSSParserString&, const char (&lowercaseLetters)[length]);
+
 struct CSSParserFunction;
 struct CSSParserVariable;
 
@@ -275,6 +277,12 @@ inline void CSSParserValue::setFromValueList(std::unique_ptr<CSSParserValueList>
     this->valueList = valueList.release();
     unit = ValueList;
 }
+
+template<unsigned length> inline bool equalLettersIgnoringASCIICase(const CSSParserString& string, const char (&lowercaseLetters)[length])
+{
+    return WTF::equalLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
+}
+
 }
 
 #endif

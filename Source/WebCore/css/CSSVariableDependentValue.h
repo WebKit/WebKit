@@ -26,7 +26,6 @@
 #ifndef CSSVariableDependentValue_h
 #define CSSVariableDependentValue_h
 
-#include "CSSParserValues.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueList.h"
 #include <wtf/RefPtr.h>

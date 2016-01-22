@@ -301,21 +301,21 @@ static bool getBordersFromFrameAttributeValue(const AtomicString& value, bool& b
     borderBottom = false;
     borderLeft = false;
 
-    if (equalIgnoringCase(value, "above"))
+    if (equalLettersIgnoringASCIICase(value, "above"))
         borderTop = true;
-    else if (equalIgnoringCase(value, "below"))
+    else if (equalLettersIgnoringASCIICase(value, "below"))
         borderBottom = true;
-    else if (equalIgnoringCase(value, "hsides"))
+    else if (equalLettersIgnoringASCIICase(value, "hsides"))
         borderTop = borderBottom = true;
-    else if (equalIgnoringCase(value, "vsides"))
+    else if (equalLettersIgnoringASCIICase(value, "vsides"))
         borderLeft = borderRight = true;
-    else if (equalIgnoringCase(value, "lhs"))
+    else if (equalLettersIgnoringASCIICase(value, "lhs"))
         borderLeft = true;
-    else if (equalIgnoringCase(value, "rhs"))
+    else if (equalLettersIgnoringASCIICase(value, "rhs"))
         borderRight = true;
-    else if (equalIgnoringCase(value, "box") || equalIgnoringCase(value, "border"))
+    else if (equalLettersIgnoringASCIICase(value, "box") || equalLettersIgnoringASCIICase(value, "border"))
         borderTop = borderBottom = borderLeft = borderRight = true;
-    else if (!equalIgnoringCase(value, "void"))
+    else if (!equalLettersIgnoringASCIICase(value, "void"))
         return false;
     return true;
 }
@@ -351,7 +351,7 @@ void HTMLTableElement::collectStyleForPresentationAttribute(const QualifiedName&
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
     } else if (name == alignAttr) {
         if (!value.isEmpty()) {
-            if (equalIgnoringCase(value, "center")) {
+            if (equalLettersIgnoringASCIICase(value, "center")) {
                 addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarginStart, CSSValueAuto);
                 addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarginEnd, CSSValueAuto);
             } else
@@ -403,15 +403,15 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicStr
         m_frameAttr = getBordersFromFrameAttributeValue(value, borderTop, borderRight, borderBottom, borderLeft);
     } else if (name == rulesAttr) {
         m_rulesAttr = UnsetRules;
-        if (equalIgnoringCase(value, "none"))
+        if (equalLettersIgnoringASCIICase(value, "none"))
             m_rulesAttr = NoneRules;
-        else if (equalIgnoringCase(value, "groups"))
+        else if (equalLettersIgnoringASCIICase(value, "groups"))
             m_rulesAttr = GroupsRules;
-        else if (equalIgnoringCase(value, "rows"))
+        else if (equalLettersIgnoringASCIICase(value, "rows"))
             m_rulesAttr = RowsRules;
-        else if (equalIgnoringCase(value, "cols"))
+        else if (equalLettersIgnoringASCIICase(value, "cols"))
             m_rulesAttr = ColsRules;
-        else if (equalIgnoringCase(value, "all"))
+        else if (equalLettersIgnoringASCIICase(value, "all"))
             m_rulesAttr = AllRules;
     } else if (name == cellpaddingAttr) {
         if (!value.isEmpty())

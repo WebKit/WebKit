@@ -2873,11 +2873,11 @@ void Element::requestPointerLock()
 SpellcheckAttributeState Element::spellcheckAttributeState() const
 {
     const AtomicString& value = fastGetAttribute(HTMLNames::spellcheckAttr);
-    if (value == nullAtom)
+    if (value.isNull())
         return SpellcheckAttributeDefault;
-    if (equalIgnoringCase(value, "true") || equalIgnoringCase(value, ""))
+    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"))
         return SpellcheckAttributeTrue;
-    if (equalIgnoringCase(value, "false"))
+    if (equalLettersIgnoringASCIICase(value, "false"))
         return SpellcheckAttributeFalse;
 
     return SpellcheckAttributeDefault;
@@ -3372,7 +3372,7 @@ void Element::clearHasPendingResources()
 
 bool Element::canContainRangeEndPoint() const
 {
-    return !equalIgnoringCase(fastGetAttribute(roleAttr), "img");
+    return !equalLettersIgnoringASCIICase(fastGetAttribute(roleAttr), "img");
 }
 
 String Element::completeURLsInAttributeValue(const URL& base, const Attribute& attribute) const

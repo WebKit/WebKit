@@ -2806,7 +2806,7 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
 
     // FIXME: What about load types other than Standard and Reload?
 
-    return (!isFormSubmission || equalIgnoringCase(httpMethod, "GET"))
+    return (!isFormSubmission || equalLettersIgnoringASCIICase(httpMethod, "get"))
         && loadType != FrameLoadType::Reload
         && loadType != FrameLoadType::ReloadFromOrigin
         && loadType != FrameLoadType::Same
@@ -3216,7 +3216,7 @@ bool FrameLoader::shouldTreatURLAsSameAsCurrent(const URL& url) const
 
 bool FrameLoader::shouldTreatURLAsSrcdocDocument(const URL& url) const
 {
-    if (!equalIgnoringCase(url.string(), "about:srcdoc"))
+    if (!equalLettersIgnoringASCIICase(url.string(), "about:srcdoc"))
         return false;
     HTMLFrameOwnerElement* ownerElement = m_frame.ownerElement();
     if (!ownerElement)

@@ -65,7 +65,7 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
 {
     String body = data.flattenToString();
 
-    if (equalIgnoringCase(encodingType, "text/plain")) {
+    if (equalLettersIgnoringASCIICase(encodingType, "text/plain")) {
         // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
         body = decodeURLEscapeSequences(body.replaceWithLiteral('&', "\r\n").replace('+', ' ') + "\r\n");
     }
@@ -90,9 +90,9 @@ void FormSubmission::Attributes::parseAction(const String& action)
 
 String FormSubmission::Attributes::parseEncodingType(const String& type)
 {
-    if (equalIgnoringCase(type, "multipart/form-data"))
+    if (equalLettersIgnoringASCIICase(type, "multipart/form-data"))
         return "multipart/form-data";
-    if (equalIgnoringCase(type, "text/plain"))
+    if (equalLettersIgnoringASCIICase(type, "text/plain"))
         return "text/plain";
     return "application/x-www-form-urlencoded";
 }
@@ -105,7 +105,7 @@ void FormSubmission::Attributes::updateEncodingType(const String& type)
 
 FormSubmission::Method FormSubmission::Attributes::parseMethodType(const String& type)
 {
-    return equalIgnoringCase(type, "post") ? FormSubmission::PostMethod : FormSubmission::GetMethod;
+    return equalLettersIgnoringASCIICase(type, "post") ? FormSubmission::PostMethod : FormSubmission::GetMethod;
 }
 
 void FormSubmission::Attributes::updateMethodType(const String& type)

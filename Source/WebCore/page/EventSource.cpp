@@ -211,7 +211,7 @@ void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& resp
     if (responseIsValid) {
         const String& charset = response.textEncodingName();
         // If we have a charset, the only allowed value is UTF-8 (case-insensitive).
-        responseIsValid = charset.isEmpty() || equalIgnoringCase(charset, "UTF-8");
+        responseIsValid = charset.isEmpty() || equalLettersIgnoringASCIICase(charset, "utf-8");
         if (!responseIsValid) {
             String message = makeString("EventSource's response has a charset (\"", charset, "\") that is not UTF-8. Aborting the connection.");
             // FIXME: We are missing the source line.

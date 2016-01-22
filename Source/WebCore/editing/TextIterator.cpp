@@ -261,7 +261,7 @@ bool isRendererReplacedElement(RenderObject* renderer)
         Element& element = downcast<Element>(*renderer->node());
         if (is<HTMLFormControlElement>(element) || is<HTMLLegendElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element))
             return true;
-        if (equalIgnoringCase(element.fastGetAttribute(roleAttr), "img"))
+        if (equalLettersIgnoringASCIICase(element.fastGetAttribute(roleAttr), "img"))
             return true;
     }
 

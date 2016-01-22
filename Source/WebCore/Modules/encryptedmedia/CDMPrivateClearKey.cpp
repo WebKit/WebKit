@@ -38,7 +38,7 @@ namespace WebCore {
 
 bool CDMPrivateClearKey::supportsKeySystem(const String& keySystem)
 {
-    if (!equalIgnoringCase(keySystem, "org.w3c.clearkey"))
+    if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"))
         return false;
 
     // The MediaPlayer must also support the key system:
@@ -47,7 +47,7 @@ bool CDMPrivateClearKey::supportsKeySystem(const String& keySystem)
 
 bool CDMPrivateClearKey::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
 {
-    if (!equalIgnoringCase(keySystem, "org.w3c.clearkey"))
+    if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"))
         return false;
 
     // The MediaPlayer must also support the key system:

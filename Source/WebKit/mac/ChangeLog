@@ -1,3 +1,13 @@
+2016-01-22  Darin Adler  <darin@apple.com>
+
+        Reduce use of equalIgnoringCase to just ignore ASCII case
+        https://bugs.webkit.org/show_bug.cgi?id=153266
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin): Use equalLettersIgnoringASCIICase.
+
 2016-01-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Tooltips do not honor some types of obscuring windows

@@ -45,9 +45,9 @@ namespace WebCore {
 
 enum ColorParseResult { ParsedRGBA, ParsedCurrentColor, ParsedSystemColor, ParseFailed };
 
-static ColorParseResult parseColor(RGBA32& parsedColor, const String& colorString, Document* document = 0)
+static ColorParseResult parseColor(RGBA32& parsedColor, const String& colorString, Document* document = nullptr)
 {
-    if (equalIgnoringCase(colorString, "currentcolor"))
+    if (equalLettersIgnoringASCIICase(colorString, "currentcolor"))
         return ParsedCurrentColor;
     if (CSSParser::parseColor(parsedColor, colorString))
         return ParsedRGBA;

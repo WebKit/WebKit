@@ -239,9 +239,9 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     String codeBaseURLString;
 
     for (size_t i = 0; i < paramNames.size(); ++i) {
-        if (equalIgnoringCase(paramNames[i], "baseurl"))
+        if (equalLettersIgnoringASCIICase(paramNames[i], "baseurl"))
             baseURLString = paramValues[i];
-        else if (equalIgnoringCase(paramNames[i], "codebase"))
+        else if (equalLettersIgnoringASCIICase(paramNames[i], "codebase"))
             codeBaseURLString = paramValues[i];
     }
 

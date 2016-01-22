@@ -1025,7 +1025,7 @@ inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(Sty
 #if PLATFORM(IOS)
 inline bool StyleBuilderConverter::convertTouchCallout(StyleResolver&, CSSValue& value)
 {
-    return !equalIgnoringCase(downcast<CSSPrimitiveValue>(value).getStringValue(), "none");
+    return !equalLettersIgnoringASCIICase(downcast<CSSPrimitiveValue>(value).getStringValue(), "none");
 }
 #endif
 

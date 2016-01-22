@@ -137,13 +137,13 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
             }
 
             String algorithm;
-            if (!keyDictionary.get("alg", algorithm) || !equalIgnoringCase(algorithm, "a128kw")) {
+            if (!keyDictionary.get("alg", algorithm) || !equalLettersIgnoringASCIICase(algorithm, "a128kw")) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: algorithm unsupported", this);
                 continue;
             }
 
             String keyType;
-            if (!keyDictionary.get("kty", keyType) || !equalIgnoringCase(keyType, "oct")) {
+            if (!keyDictionary.get("kty", keyType) || !equalLettersIgnoringASCIICase(keyType, "oct")) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: keyType unsupported", this);
                 continue;
             }

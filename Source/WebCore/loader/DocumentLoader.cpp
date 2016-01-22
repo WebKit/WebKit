@@ -714,12 +714,12 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     switch (policy) {
     case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
-        bool isRemoteWebArchive = (equalIgnoringCase("application/x-webarchive", mimeType)
-            || equalIgnoringCase("application/x-mimearchive", mimeType)
+        bool isRemoteWebArchive = (equalLettersIgnoringASCIICase(mimeType, "application/x-webarchive")
+            || equalLettersIgnoringASCIICase(mimeType, "application/x-mimearchive")
 #if PLATFORM(GTK)
-            || equalIgnoringCase("message/rfc822", mimeType)
+            || equalLettersIgnoringASCIICase(mimeType, "message/rfc822")
 #endif
-            || equalIgnoringCase("multipart/related", mimeType))
+            || equalLettersIgnoringASCIICase(mimeType, "multipart/related"))
             && !m_substituteData.isValid() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol());
         if (!frameLoader()->client().canShowMIMEType(mimeType) || isRemoteWebArchive) {
             frameLoader()->policyChecker().cannotShowMIMEType(m_response);

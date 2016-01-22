@@ -497,7 +497,7 @@ String HTMLCanvasElement::toDataURL(const String& mimeType, const double* qualit
     }
 
     if (m_size.isEmpty() || !buffer())
-        return String("data:,");
+        return ASCIILiteral("data:,");
 
     String encodingMimeType = toEncodingMimeType(mimeType);
 

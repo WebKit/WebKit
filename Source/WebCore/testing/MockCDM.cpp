@@ -55,7 +55,7 @@ protected:
 
 bool MockCDM::supportsKeySystem(const String& keySystem)
 {
-    return equalIgnoringCase(keySystem, "com.webcore.mock");
+    return equalLettersIgnoringASCIICase(keySystem, "com.webcore.mock");
 }
 
 bool MockCDM::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
@@ -63,12 +63,12 @@ bool MockCDM::supportsKeySystemAndMimeType(const String& keySystem, const String
     if (!supportsKeySystem(keySystem))
         return false;
 
-    return equalIgnoringCase(mimeType, "video/mock");
+    return equalLettersIgnoringASCIICase(mimeType, "video/mock");
 }
 
 bool MockCDM::supportsMIMEType(const String& mimeType)
 {
-    return equalIgnoringCase(mimeType, "video/mock");
+    return equalLettersIgnoringASCIICase(mimeType, "video/mock");
 }
 
 std::unique_ptr<CDMSession> MockCDM::createSession(CDMSessionClient* client)

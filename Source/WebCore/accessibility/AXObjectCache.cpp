@@ -168,7 +168,7 @@ void AXObjectCache::findAriaModalNodes()
         // Must have dialog or alertdialog role
         if (!nodeHasRole(element, "dialog") && !nodeHasRole(element, "alertdialog"))
             continue;
-        if (!equalIgnoringCase(element->fastGetAttribute(aria_modalAttr), "true"))
+        if (!equalLettersIgnoringASCIICase(element->fastGetAttribute(aria_modalAttr), "true"))
             continue;
         
         m_ariaModalNodesSet.add(element);
@@ -948,7 +948,7 @@ void AXObjectCache::handleMenuItemSelected(Node* node)
     if (!nodeHasRole(node, "menuitem") && !nodeHasRole(node, "menuitemradio") && !nodeHasRole(node, "menuitemcheckbox"))
         return;
     
-    if (!downcast<Element>(*node).focused() && !equalIgnoringCase(downcast<Element>(*node).fastGetAttribute(aria_selectedAttr), "true"))
+    if (!downcast<Element>(*node).focused() && !equalLettersIgnoringASCIICase(downcast<Element>(*node).fastGetAttribute(aria_selectedAttr), "true"))
         return;
     
     postNotification(getOrCreate(node), &document(), AXMenuListItemSelected);
@@ -1357,7 +1357,7 @@ void AXObjectCache::handleAriaModalChange(Node* node)
         return;
     
     stopCachingComputedObjectAttributes();
-    if (equalIgnoringCase(downcast<Element>(*node).fastGetAttribute(aria_modalAttr), "true")) {
+    if (equalLettersIgnoringASCIICase(downcast<Element>(*node).fastGetAttribute(aria_modalAttr), "true")) {
         // Add the newly modified node to the modal nodes set, and set it to be the current valid aria modal node.
         // We will recompute the current valid aria modal node in ariaModalNode() when this node is not visible.
         m_ariaModalNodesSet.add(node);
@@ -1854,10 +1854,10 @@ bool isNodeAriaVisible(Node* node)
     for (Node* testNode = node; testNode; testNode = testNode->parentNode()) {
         if (is<Element>(*testNode)) {
             const AtomicString& ariaHiddenValue = downcast<Element>(*testNode).fastGetAttribute(aria_hiddenAttr);
-            if (equalIgnoringCase(ariaHiddenValue, "true"))
+            if (equalLettersIgnoringASCIICase(ariaHiddenValue, "true"))
                 return false;
             
-            bool ariaHiddenFalse = equalIgnoringCase(ariaHiddenValue, "false");
+            bool ariaHiddenFalse = equalLettersIgnoringASCIICase(ariaHiddenValue, "false");
             if (!testNode->renderer() && !ariaHiddenFalse)
                 return false;
             if (!ariaHiddenFalsePresent && ariaHiddenFalse)

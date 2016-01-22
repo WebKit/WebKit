@@ -182,11 +182,11 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
 CSSParserSelector* CSSParserSelector::parsePagePseudoSelector(const CSSParserString& pseudoTypeString)
 {
     CSSSelector::PagePseudoClassType pseudoType;
-    if (pseudoTypeString.equalIgnoringCase("first"))
+    if (equalLettersIgnoringASCIICase(pseudoTypeString, "first"))
         pseudoType = CSSSelector::PagePseudoClassFirst;
-    else if (pseudoTypeString.equalIgnoringCase("left"))
+    else if (equalLettersIgnoringASCIICase(pseudoTypeString, "left"))
         pseudoType = CSSSelector::PagePseudoClassLeft;
-    else if (pseudoTypeString.equalIgnoringCase("right"))
+    else if (equalLettersIgnoringASCIICase(pseudoTypeString, "right"))
         pseudoType = CSSSelector::PagePseudoClassRight;
     else
         return nullptr;

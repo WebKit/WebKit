@@ -283,43 +283,43 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
         return;
 
     FrameSelection::EAlteration alter;
-    if (equalIgnoringCase(alterString, "extend"))
+    if (equalLettersIgnoringASCIICase(alterString, "extend"))
         alter = FrameSelection::AlterationExtend;
-    else if (equalIgnoringCase(alterString, "move"))
+    else if (equalLettersIgnoringASCIICase(alterString, "move"))
         alter = FrameSelection::AlterationMove;
     else
         return;
 
     SelectionDirection direction;
-    if (equalIgnoringCase(directionString, "forward"))
+    if (equalLettersIgnoringASCIICase(directionString, "forward"))
         direction = DirectionForward;
-    else if (equalIgnoringCase(directionString, "backward"))
+    else if (equalLettersIgnoringASCIICase(directionString, "backward"))
         direction = DirectionBackward;
-    else if (equalIgnoringCase(directionString, "left"))
+    else if (equalLettersIgnoringASCIICase(directionString, "left"))
         direction = DirectionLeft;
-    else if (equalIgnoringCase(directionString, "right"))
+    else if (equalLettersIgnoringASCIICase(directionString, "right"))
         direction = DirectionRight;
     else
         return;
 
     TextGranularity granularity;
-    if (equalIgnoringCase(granularityString, "character"))
+    if (equalLettersIgnoringASCIICase(granularityString, "character"))
         granularity = CharacterGranularity;
-    else if (equalIgnoringCase(granularityString, "word"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "word"))
         granularity = WordGranularity;
-    else if (equalIgnoringCase(granularityString, "sentence"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "sentence"))
         granularity = SentenceGranularity;
-    else if (equalIgnoringCase(granularityString, "line"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "line"))
         granularity = LineGranularity;
-    else if (equalIgnoringCase(granularityString, "paragraph"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "paragraph"))
         granularity = ParagraphGranularity;
-    else if (equalIgnoringCase(granularityString, "lineboundary"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "lineboundary"))
         granularity = LineBoundary;
-    else if (equalIgnoringCase(granularityString, "sentenceboundary"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "sentenceboundary"))
         granularity = SentenceBoundary;
-    else if (equalIgnoringCase(granularityString, "paragraphboundary"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "paragraphboundary"))
         granularity = ParagraphBoundary;
-    else if (equalIgnoringCase(granularityString, "documentboundary"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "documentboundary"))
         granularity = DocumentBoundary;
     else
         return;

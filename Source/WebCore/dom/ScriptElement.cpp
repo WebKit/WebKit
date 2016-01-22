@@ -262,7 +262,7 @@ bool ScriptElement::requestScript(const String& sourceUrl)
         String crossOriginMode = m_element.fastGetAttribute(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
             m_requestUsesAccessControl = true;
-            StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+            StoredCredentials allowCredentials = equalLettersIgnoringASCIICase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
             updateRequestForAccessControl(request.mutableResourceRequest(), m_element.document().securityOrigin(), allowCredentials);
         }
         request.setCharset(scriptCharset());
@@ -371,11 +371,11 @@ bool ScriptElement::isScriptForEventSupported() const
     String forAttribute = forAttributeValue();
     if (!eventAttribute.isNull() && !forAttribute.isNull()) {
         forAttribute = stripLeadingAndTrailingHTMLSpaces(forAttribute);
-        if (!equalIgnoringCase(forAttribute, "window"))
+        if (!equalLettersIgnoringASCIICase(forAttribute, "window"))
             return false;
 
         eventAttribute = stripLeadingAndTrailingHTMLSpaces(eventAttribute);
-        if (!equalIgnoringCase(eventAttribute, "onload") && !equalIgnoringCase(eventAttribute, "onload()"))
+        if (!equalLettersIgnoringASCIICase(eventAttribute, "onload") && !equalLettersIgnoringASCIICase(eventAttribute, "onload()"))
             return false;
     }
     return true;

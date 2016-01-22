@@ -26,7 +26,6 @@
 #ifndef CSSCustomPropertyValue_h
 #define CSSCustomPropertyValue_h
 
-#include "CSSParserValues.h"
 #include "CSSValue.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

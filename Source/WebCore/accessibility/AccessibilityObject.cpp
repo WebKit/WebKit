@@ -1546,7 +1546,7 @@ bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
         return false;
     
     // Both "true" (case-insensitive) and the empty string count as true.
-    return contentEditableValue.isEmpty() || equalIgnoringCase(contentEditableValue, "true");
+    return contentEditableValue.isEmpty() || equalLettersIgnoringASCIICase(contentEditableValue, "true");
 }
     
 #if HAVE(ACCESSIBILITY)
@@ -1835,7 +1835,7 @@ const String& AccessibilityObject::actionVerb() const
 
 bool AccessibilityObject::ariaIsMultiline() const
 {
-    return equalIgnoringCase(getAttribute(aria_multilineAttr), "true");
+    return equalLettersIgnoringASCIICase(getAttribute(aria_multilineAttr), "true");
 }
 
 String AccessibilityObject::invalidStatus() const
@@ -2246,7 +2246,7 @@ bool AccessibilityObject::supportsARIAAttributes() const
     
 bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomicString& liveRegionStatus)
 {
-    return equalIgnoringCase(liveRegionStatus, "polite") || equalIgnoringCase(liveRegionStatus, "assertive");
+    return equalLettersIgnoringASCIICase(liveRegionStatus, "polite") || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive");
 }
     
 bool AccessibilityObject::supportsARIALiveRegion() const
@@ -2299,11 +2299,11 @@ AccessibilityObject* AccessibilityObject::focusedUIElement() const
 AccessibilitySortDirection AccessibilityObject::sortDirection() const
 {
     const AtomicString& sortAttribute = getAttribute(aria_sortAttr);
-    if (equalIgnoringCase(sortAttribute, "ascending"))
+    if (equalLettersIgnoringASCIICase(sortAttribute, "ascending"))
         return SortDirectionAscending;
-    if (equalIgnoringCase(sortAttribute, "descending"))
+    if (equalLettersIgnoringASCIICase(sortAttribute, "descending"))
         return SortDirectionDescending;
-    if (equalIgnoringCase(sortAttribute, "other"))
+    if (equalLettersIgnoringASCIICase(sortAttribute, "other"))
         return SortDirectionOther;
     
     return SortDirectionNone;
@@ -2358,14 +2358,14 @@ void AccessibilityObject::classList(Vector<String>& classList) const
 bool AccessibilityObject::supportsARIAPressed() const
 {
     const AtomicString& expanded = getAttribute(aria_pressedAttr);
-    return equalIgnoringCase(expanded, "true") || equalIgnoringCase(expanded, "false");
+    return equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false");
 }
     
 bool AccessibilityObject::supportsExpanded() const
 {
     // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
     const AtomicString& expanded = getAttribute(aria_expandedAttr);
-    if (equalIgnoringCase(expanded, "true") || equalIgnoringCase(expanded, "false"))
+    if (equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false"))
         return true;
     switch (roleValue()) {
     case ComboBoxRole:
@@ -2379,7 +2379,7 @@ bool AccessibilityObject::supportsExpanded() const
     
 bool AccessibilityObject::isExpanded() const
 {
-    if (equalIgnoringCase(getAttribute(aria_expandedAttr), "true"))
+    if (equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"))
         return true;
     
     if (is<HTMLDetailsElement>(node()))
@@ -2410,17 +2410,17 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 
     if (isToggleButton()) {
         const AtomicString& ariaPressed = getAttribute(aria_pressedAttr);
-        if (equalIgnoringCase(ariaPressed, "true"))
+        if (equalLettersIgnoringASCIICase(ariaPressed, "true"))
             return ButtonStateOn;
-        if (equalIgnoringCase(ariaPressed, "mixed"))
+        if (equalLettersIgnoringASCIICase(ariaPressed, "mixed"))
             return ButtonStateMixed;
         return ButtonStateOff;
     }
     
     const AtomicString& result = getAttribute(aria_checkedAttr);
-    if (equalIgnoringCase(result, "true"))
+    if (equalLettersIgnoringASCIICase(result, "true"))
         return ButtonStateOn;
-    if (equalIgnoringCase(result, "mixed")) {
+    if (equalLettersIgnoringASCIICase(result, "mixed")) {
         // ARIA says that radio, menuitemradio, and switch elements must NOT expose button state mixed.
         AccessibilityRole ariaRole = ariaRoleAttribute();
         if (ariaRole == RadioButtonRole || ariaRole == MenuItemRadioRole || ariaRole == SwitchRole)
@@ -2428,7 +2428,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
         return ButtonStateMixed;
     }
     
-    if (equalIgnoringCase(getAttribute(indeterminateAttr), "true"))
+    if (equalLettersIgnoringASCIICase(getAttribute(indeterminateAttr), "true"))
         return ButtonStateMixed;
     
     return ButtonStateOff;
@@ -2842,7 +2842,7 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
 bool AccessibilityObject::isARIAHidden() const
 {
     for (const AccessibilityObject* object = this; object; object = object->parentObject()) {
-        if (equalIgnoringCase(object->getAttribute(aria_hiddenAttr), "true"))
+        if (equalLettersIgnoringASCIICase(object->getAttribute(aria_hiddenAttr), "true"))
             return true;
     }
     return false;

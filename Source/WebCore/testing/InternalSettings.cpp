@@ -379,13 +379,13 @@ void InternalSettings::setWirelessPlaybackDisabled(bool available)
 void InternalSettings::setEditingBehavior(const String& editingBehavior, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    if (equalIgnoringCase(editingBehavior, "win"))
+    if (equalLettersIgnoringASCIICase(editingBehavior, "win"))
         settings()->setEditingBehaviorType(EditingWindowsBehavior);
-    else if (equalIgnoringCase(editingBehavior, "mac"))
+    else if (equalLettersIgnoringASCIICase(editingBehavior, "mac"))
         settings()->setEditingBehaviorType(EditingMacBehavior);
-    else if (equalIgnoringCase(editingBehavior, "unix"))
+    else if (equalLettersIgnoringASCIICase(editingBehavior, "unix"))
         settings()->setEditingBehaviorType(EditingUnixBehavior);
-    else if (equalIgnoringCase(editingBehavior, "ios"))
+    else if (equalLettersIgnoringASCIICase(editingBehavior, "ios"))
         settings()->setEditingBehaviorType(EditingIOSBehavior);
     else
         ec = SYNTAX_ERR;
@@ -400,11 +400,11 @@ void InternalSettings::setShouldDisplayTrackKind(const String& kind, bool enable
         return;
     CaptionUserPreferences* captionPreferences = page()->group().captionPreferences();
 
-    if (equalIgnoringCase(kind, "Subtitles"))
+    if (equalLettersIgnoringASCIICase(kind, "subtitles"))
         captionPreferences->setUserPrefersSubtitles(enabled);
-    else if (equalIgnoringCase(kind, "Captions"))
+    else if (equalLettersIgnoringASCIICase(kind, "captions"))
         captionPreferences->setUserPrefersCaptions(enabled);
-    else if (equalIgnoringCase(kind, "TextDescriptions"))
+    else if (equalLettersIgnoringASCIICase(kind, "textdescriptions"))
         captionPreferences->setUserPrefersTextDescriptions(enabled);
     else
         ec = SYNTAX_ERR;
@@ -423,11 +423,11 @@ bool InternalSettings::shouldDisplayTrackKind(const String& kind, ExceptionCode&
         return false;
     CaptionUserPreferences* captionPreferences = page()->group().captionPreferences();
 
-    if (equalIgnoringCase(kind, "Subtitles"))
+    if (equalLettersIgnoringASCIICase(kind, "subtitles"))
         return captionPreferences->userPrefersSubtitles();
-    if (equalIgnoringCase(kind, "Captions"))
+    if (equalLettersIgnoringASCIICase(kind, "captions"))
         return captionPreferences->userPrefersCaptions();
-    if (equalIgnoringCase(kind, "TextDescriptions"))
+    if (equalLettersIgnoringASCIICase(kind, "textdescriptions"))
         return captionPreferences->userPrefersTextDescriptions();
 
     ec = SYNTAX_ERR;

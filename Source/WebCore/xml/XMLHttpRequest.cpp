@@ -77,7 +77,7 @@ enum XMLHttpRequestSendArrayBufferOrView {
 
 static bool isSetCookieHeader(const String& name)
 {
-    return equalIgnoringCase(name, "set-cookie") || equalIgnoringCase(name, "set-cookie2");
+    return equalLettersIgnoringASCIICase(name, "set-cookie") || equalLettersIgnoringASCIICase(name, "set-cookie2");
 }
 
 static void replaceCharsetInMediaType(String& mediaType, const String& charsetValue)
@@ -204,7 +204,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 
     if (!m_createdDocument) {
         String mimeType = responseMIMEType();
-        bool isHTML = equalIgnoringCase(mimeType, "text/html");
+        bool isHTML = equalLettersIgnoringASCIICase(mimeType, "text/html");
 
         // The W3C spec requires the final MIME type to be some valid XML type, or text/html.
         // If it is text/html, then the responseType of "document" must have been supplied explicitly.
@@ -397,9 +397,9 @@ void XMLHttpRequest::setWithCredentials(bool value, ExceptionCode& ec)
 
 bool XMLHttpRequest::isAllowedHTTPMethod(const String& method)
 {
-    return !equalIgnoringCase(method, "TRACE")
-        && !equalIgnoringCase(method, "TRACK")
-        && !equalIgnoringCase(method, "CONNECT");
+    return !equalLettersIgnoringASCIICase(method, "trace")
+        && !equalLettersIgnoringASCIICase(method, "track")
+        && !equalLettersIgnoringASCIICase(method, "connect");
 }
 
 String XMLHttpRequest::uppercaseKnownHTTPMethod(const String& method)
@@ -1170,7 +1170,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
             m_decoder = TextResourceDecoder::create("application/xml");
             // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
             m_decoder->useLenientXMLDecoding();
-        } else if (equalIgnoringCase(responseMIMEType(), "text/html"))
+        } else if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"))
             m_decoder = TextResourceDecoder::create("text/html", "UTF-8");
         else
             m_decoder = TextResourceDecoder::create("text/plain", "UTF-8");

@@ -440,7 +440,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
             request.setHTTPMethod(lastHTTPMethod);
     
             FormData* body = d->m_firstRequest.httpBody();
-            if (!equalIgnoringCase(lastHTTPMethod, "GET") && body && !body->isEmpty())
+            if (!equalLettersIgnoringASCIICase(lastHTTPMethod, "get") && body && !body->isEmpty())
                 request.setHTTPBody(body);
 
             String originalContentType = d->m_firstRequest.httpContentType();

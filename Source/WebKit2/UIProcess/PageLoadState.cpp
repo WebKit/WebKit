@@ -203,7 +203,7 @@ bool PageLoadState::hasOnlySecureContent(const Data& data)
     if (data.hasInsecureContent)
         return false;
 
-    return data.url.startsWith("https:", false);
+    return WebCore::protocolIs(data.url, "https");
 }
 
 bool PageLoadState::hasOnlySecureContent() const

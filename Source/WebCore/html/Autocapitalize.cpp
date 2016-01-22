@@ -30,55 +30,19 @@
 
 namespace WebCore {
 
-static const AtomicString& valueOn()
-{
-    static NeverDestroyed<const AtomicString> valueOn("on", AtomicString::ConstructFromLiteral);
-    return valueOn;
-}
-
-static const AtomicString& valueOff()
-{
-    static NeverDestroyed<const AtomicString> valueOff("off", AtomicString::ConstructFromLiteral);
-    return valueOff;
-}
-
-static const AtomicString& valueNone()
-{
-    static NeverDestroyed<const AtomicString> valueNone("none", AtomicString::ConstructFromLiteral);
-    return valueNone;
-}
-
-static const AtomicString& valueWords()
-{
-    static NeverDestroyed<const AtomicString> valueWords("words", AtomicString::ConstructFromLiteral);
-    return valueWords;
-}
-
-static const AtomicString& valueSentences()
-{
-    static NeverDestroyed<const AtomicString> valueSentences("sentences", AtomicString::ConstructFromLiteral);
-    return valueSentences;
-}
-
-static const AtomicString& valueAllCharacters()
-{
-    static NeverDestroyed<const AtomicString> valueAllCharacters("characters", AtomicString::ConstructFromLiteral);
-    return valueAllCharacters;
-}
-
 WebAutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomicString& attributeValue)
 {
     // Omitted / missing values are the Default state.
-    if (attributeValue.isNull() || attributeValue.isEmpty())
+    if (attributeValue.isEmpty())
         return WebAutocapitalizeTypeDefault;
 
-    if (equalIgnoringCase(attributeValue, valueOn()) || equalIgnoringCase(attributeValue, valueSentences()))
+    if (equalLettersIgnoringASCIICase(attributeValue, "on") || equalLettersIgnoringASCIICase(attributeValue, "sentences"))
         return WebAutocapitalizeTypeSentences;
-    if (equalIgnoringCase(attributeValue, valueOff()) || equalIgnoringCase(attributeValue, valueNone()))
+    if (equalLettersIgnoringASCIICase(attributeValue, "off") || equalLettersIgnoringASCIICase(attributeValue, "none"))
         return WebAutocapitalizeTypeNone;
-    if (equalIgnoringCase(attributeValue, valueWords()))
+    if (equalLettersIgnoringASCIICase(attributeValue, "words"))
         return WebAutocapitalizeTypeWords;
-    if (equalIgnoringCase(attributeValue, valueAllCharacters()))
+    if (equalLettersIgnoringASCIICase(attributeValue, "characters"))
         return WebAutocapitalizeTypeAllCharacters;
 
     // Unrecognized values fall back to "on".
@@ -90,14 +54,22 @@ const AtomicString& stringForAutocapitalizeType(WebAutocapitalizeType type)
     switch (type) {
     case WebAutocapitalizeTypeDefault:
         return nullAtom;
-    case WebAutocapitalizeTypeNone:
-        return valueNone();
-    case WebAutocapitalizeTypeSentences:
-        return valueSentences();
-    case WebAutocapitalizeTypeWords:
-        return valueWords();
-    case WebAutocapitalizeTypeAllCharacters:
-        return valueAllCharacters();
+    case WebAutocapitalizeTypeNone: {
+        static NeverDestroyed<const AtomicString> valueNone("none", AtomicString::ConstructFromLiteral);
+        return valueNone;
+    }
+    case WebAutocapitalizeTypeSentences: {
+        static NeverDestroyed<const AtomicString> valueSentences("sentences", AtomicString::ConstructFromLiteral);
+        return valueSentences;
+    }
+    case WebAutocapitalizeTypeWords: {
+        static NeverDestroyed<const AtomicString> valueWords("words", AtomicString::ConstructFromLiteral);
+        return valueWords;
+    }
+    case WebAutocapitalizeTypeAllCharacters: {
+        static NeverDestroyed<const AtomicString> valueAllCharacters("characters", AtomicString::ConstructFromLiteral);
+        return valueAllCharacters;
+    }
     }
 
     ASSERT_NOT_REACHED();
