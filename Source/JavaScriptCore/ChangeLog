@@ -1,3 +1,20 @@
+2016-01-22  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should reduce obvious forms of Shl(SShr)
+        https://bugs.webkit.org/show_bug.cgi?id=153362
+
+        Reviewed by Mark Lam and Saam Barati.
+
+        This is a 40% speed-up in AsmBench-0.9/dry.c.js.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testStore16Load16Z):
+        (JSC::B3::testSShrShl32):
+        (JSC::B3::testSShrShl64):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+
 2016-01-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal Windows build

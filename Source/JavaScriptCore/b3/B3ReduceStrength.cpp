@@ -743,6 +743,55 @@ private:
                 break;
             }
 
+            if (m_value->child(1)->hasInt32()
+                && m_value->child(0)->opcode() == Shl
+                && m_value->child(0)->child(1)->hasInt32()
+                && m_value->child(1)->asInt32() == m_value->child(0)->child(1)->asInt32()) {
+                switch (m_value->child(1)->asInt32()) {
+                case 16:
+                    if (m_value->type() == Int32) {
+                        // Turn this: SShr(Shl(value, 16), 16)
+                        // Into this: SExt16(value)
+                        replaceWithNewValue(
+                            m_proc.add<Value>(
+                                SExt16, m_value->origin(), m_value->child(0)->child(0)));
+                    }
+                    break;
+
+                case 24:
+                    if (m_value->type() == Int32) {
+                        // Turn this: SShr(Shl(value, 24), 24)
+                        // Into this: SExt8(value)
+                        replaceWithNewValue(
+                            m_proc.add<Value>(
+                                SExt8, m_value->origin(), m_value->child(0)->child(0)));
+                    }
+                    break;
+
+                case 32:
+                    if (m_value->type() == Int64) {
+                        // Turn this: SShr(Shl(value, 32), 32)
+                        // Into this: SExt32(Trunc(value))
+                        replaceWithNewValue(
+                            m_proc.add<Value>(
+                                SExt32, m_value->origin(),
+                                m_insertionSet.insert<Value>(
+                                    m_index, Trunc, m_value->origin(),
+                                    m_value->child(0)->child(0))));
+                    }
+                    break;
+
+                // FIXME: Add cases for 48 and 56, but that would translate to SExt32(SExt8) or
+                // SExt32(SExt16), which we don't currently lower efficiently.
+
+                default:
+                    break;
+                }
+
+                if (m_value->opcode() != SShr)
+                    break;
+            }
+
             if (handleShiftByZero())
                 break;
 

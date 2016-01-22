@@ -9501,6 +9501,48 @@ void testStore16Load16Z(int32_t value)
     CHECK(compileAndRun<int32_t>(proc, value) == static_cast<uint16_t>(value));
 }
 
+void testSShrShl32(int32_t value, int32_t sshrAmount, int32_t shlAmount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, SShr, Origin(),
+            root->appendNew<Value>(
+                proc, Shl, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendNew<Const32Value>(proc, Origin(), shlAmount)),
+            root->appendNew<Const32Value>(proc, Origin(), sshrAmount)));
+
+    CHECK(
+        compileAndRun<int32_t>(proc, value)
+        == ((value << (shlAmount & 31)) >> (sshrAmount & 31)));
+}
+
+void testSShrShl64(int64_t value, int32_t sshrAmount, int32_t shlAmount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, SShr, Origin(),
+            root->appendNew<Value>(
+                proc, Shl, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<Const32Value>(proc, Origin(), shlAmount)),
+            root->appendNew<Const32Value>(proc, Origin(), sshrAmount)));
+
+    CHECK(
+        compileAndRun<int64_t>(proc, value)
+        == ((value << (shlAmount & 63)) >> (sshrAmount & 63)));
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -10784,6 +10826,95 @@ void run(const char* filter)
     RUN(testStore16Load16Z(12345));
     RUN(testStore16Load16Z(12345678));
     RUN(testStore16Load16Z(-123));
+
+    RUN(testSShrShl32(42, 24, 24));
+    RUN(testSShrShl32(-42, 24, 24));
+    RUN(testSShrShl32(4200, 24, 24));
+    RUN(testSShrShl32(-4200, 24, 24));
+    RUN(testSShrShl32(4200000, 24, 24));
+    RUN(testSShrShl32(-4200000, 24, 24));
+
+    RUN(testSShrShl32(42, 16, 16));
+    RUN(testSShrShl32(-42, 16, 16));
+    RUN(testSShrShl32(4200, 16, 16));
+    RUN(testSShrShl32(-4200, 16, 16));
+    RUN(testSShrShl32(4200000, 16, 16));
+    RUN(testSShrShl32(-4200000, 16, 16));
+
+    RUN(testSShrShl32(42, 8, 8));
+    RUN(testSShrShl32(-42, 8, 8));
+    RUN(testSShrShl32(4200, 8, 8));
+    RUN(testSShrShl32(-4200, 8, 8));
+    RUN(testSShrShl32(4200000, 8, 8));
+    RUN(testSShrShl32(-4200000, 8, 8));
+    RUN(testSShrShl32(420000000, 8, 8));
+    RUN(testSShrShl32(-420000000, 8, 8));
+
+    RUN(testSShrShl64(42, 56, 56));
+    RUN(testSShrShl64(-42, 56, 56));
+    RUN(testSShrShl64(4200, 56, 56));
+    RUN(testSShrShl64(-4200, 56, 56));
+    RUN(testSShrShl64(4200000, 56, 56));
+    RUN(testSShrShl64(-4200000, 56, 56));
+    RUN(testSShrShl64(420000000, 56, 56));
+    RUN(testSShrShl64(-420000000, 56, 56));
+    RUN(testSShrShl64(42000000000, 56, 56));
+    RUN(testSShrShl64(-42000000000, 56, 56));
+
+    RUN(testSShrShl64(42, 48, 48));
+    RUN(testSShrShl64(-42, 48, 48));
+    RUN(testSShrShl64(4200, 48, 48));
+    RUN(testSShrShl64(-4200, 48, 48));
+    RUN(testSShrShl64(4200000, 48, 48));
+    RUN(testSShrShl64(-4200000, 48, 48));
+    RUN(testSShrShl64(420000000, 48, 48));
+    RUN(testSShrShl64(-420000000, 48, 48));
+    RUN(testSShrShl64(42000000000, 48, 48));
+    RUN(testSShrShl64(-42000000000, 48, 48));
+
+    RUN(testSShrShl64(42, 32, 32));
+    RUN(testSShrShl64(-42, 32, 32));
+    RUN(testSShrShl64(4200, 32, 32));
+    RUN(testSShrShl64(-4200, 32, 32));
+    RUN(testSShrShl64(4200000, 32, 32));
+    RUN(testSShrShl64(-4200000, 32, 32));
+    RUN(testSShrShl64(420000000, 32, 32));
+    RUN(testSShrShl64(-420000000, 32, 32));
+    RUN(testSShrShl64(42000000000, 32, 32));
+    RUN(testSShrShl64(-42000000000, 32, 32));
+
+    RUN(testSShrShl64(42, 24, 24));
+    RUN(testSShrShl64(-42, 24, 24));
+    RUN(testSShrShl64(4200, 24, 24));
+    RUN(testSShrShl64(-4200, 24, 24));
+    RUN(testSShrShl64(4200000, 24, 24));
+    RUN(testSShrShl64(-4200000, 24, 24));
+    RUN(testSShrShl64(420000000, 24, 24));
+    RUN(testSShrShl64(-420000000, 24, 24));
+    RUN(testSShrShl64(42000000000, 24, 24));
+    RUN(testSShrShl64(-42000000000, 24, 24));
+
+    RUN(testSShrShl64(42, 16, 16));
+    RUN(testSShrShl64(-42, 16, 16));
+    RUN(testSShrShl64(4200, 16, 16));
+    RUN(testSShrShl64(-4200, 16, 16));
+    RUN(testSShrShl64(4200000, 16, 16));
+    RUN(testSShrShl64(-4200000, 16, 16));
+    RUN(testSShrShl64(420000000, 16, 16));
+    RUN(testSShrShl64(-420000000, 16, 16));
+    RUN(testSShrShl64(42000000000, 16, 16));
+    RUN(testSShrShl64(-42000000000, 16, 16));
+
+    RUN(testSShrShl64(42, 8, 8));
+    RUN(testSShrShl64(-42, 8, 8));
+    RUN(testSShrShl64(4200, 8, 8));
+    RUN(testSShrShl64(-4200, 8, 8));
+    RUN(testSShrShl64(4200000, 8, 8));
+    RUN(testSShrShl64(-4200000, 8, 8));
+    RUN(testSShrShl64(420000000, 8, 8));
+    RUN(testSShrShl64(-420000000, 8, 8));
+    RUN(testSShrShl64(42000000000, 8, 8));
+    RUN(testSShrShl64(-42000000000, 8, 8));
 
     if (tasks.isEmpty())
         usage();
