@@ -1616,6 +1616,8 @@ void AXObjectCache::setTextMarkerDataWithCharacterOffset(TextMarkerData& textMar
     }
     
     RefPtr<AccessibilityObject> obj = this->getOrCreate(domNode);
+    if (!obj)
+        return;
     
     // Convert to visible position.
     VisiblePosition visiblePosition = visiblePositionFromCharacterOffset(obj.get(), characterOffset);

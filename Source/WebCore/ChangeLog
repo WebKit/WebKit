@@ -1,3 +1,20 @@
+2016-01-22  Nan Wang  <n_wang@apple.com>
+
+        AX: Crash in setTextMarkerDataWithCharacterOffset
+        https://bugs.webkit.org/show_bug.cgi?id=153365
+        <rdar://problem/24287924>
+
+        Reviewed by Chris Fleizach.
+
+        Sometimes when we try to create a text marker range from a stale text marker with a removed
+        node, it will cause crash. Fixed it by adding a null check for the AccessibilityObject we
+        create in setTextMarkerDataWithCharacterOffset.
+
+        Test: accessibility/text-marker/text-marker-range-with-removed-node-crash.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::setTextMarkerDataWithCharacterOffset):
+
 2016-01-22  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add transactions and create/delete object store to SQLite backend
