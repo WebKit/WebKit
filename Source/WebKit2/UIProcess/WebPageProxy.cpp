@@ -443,12 +443,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkStore);
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
 
-    if (m_process->state() == WebProcessProxy::State::Running) {
-        if (m_userContentController)
-            m_process->addWebUserContentControllerProxy(*m_userContentController);
-        m_process->addVisitedLinkStore(m_visitedLinkStore);
-    }
-
     updateViewState();
     updateActivityToken();
     updateProccessSuppressionState();
@@ -798,6 +792,23 @@ void WebPageProxy::initializeWebPage()
 #if PLATFORM(COCOA)
     send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled));
 #endif
+
+    m_needsToFinishInitializingWebPageAfterProcessLaunch = true;
+    finishInitializingWebPageAfterProcessLaunch();
+}
+
+void WebPageProxy::finishInitializingWebPageAfterProcessLaunch()
+{
+    if (!m_needsToFinishInitializingWebPageAfterProcessLaunch)
+        return;
+    if (m_process->state() != WebProcessProxy::State::Running)
+        return;
+
+    m_needsToFinishInitializingWebPageAfterProcessLaunch = false;
+
+    if (m_userContentController)
+        m_process->addWebUserContentControllerProxy(*m_userContentController);
+    m_process->addVisitedLinkStore(m_visitedLinkStore);
 }
 
 void WebPageProxy::close()
@@ -3615,10 +3626,7 @@ void WebPageProxy::webProcessWillShutDown()
 void WebPageProxy::processDidFinishLaunching()
 {
     ASSERT(m_process->state() == WebProcessProxy::State::Running);
-
-    if (m_userContentController)
-        m_process->addWebUserContentControllerProxy(*m_userContentController);
-    m_process->addVisitedLinkStore(m_visitedLinkStore);
+    finishInitializingWebPageAfterProcessLaunch();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -5063,6 +5071,8 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     m_isValid = false;
     m_isPageSuspended = false;
+
+    m_needsToFinishInitializingWebPageAfterProcessLaunch = false;
 
     m_editorState = EditorState();
 

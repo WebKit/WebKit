@@ -1463,6 +1463,8 @@ private:
 
     void handleAutoFillButtonClick(const UserData&);
 
+    void finishInitializingWebPageAfterProcessLaunch();
+
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
     void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
 
@@ -1612,6 +1614,8 @@ private:
 
     // Whether it can run modal child web pages.
     bool m_canRunModal;
+
+    bool m_needsToFinishInitializingWebPageAfterProcessLaunch { false };
 
     bool m_isInPrintingMode;
     bool m_isPerformingDOMPrintOperation;

@@ -1,3 +1,42 @@
+2016-01-22  Tim Horton  <timothy_horton@apple.com>
+
+        Reproducible "Unhanded web process message 'WebUserContentController:AddUserScripts'" and friends
+        https://bugs.webkit.org/show_bug.cgi?id=153193
+        <rdar://problem/24222034>
+
+        Reviewed by Darin Adler.
+
+        The WebPageProxy constructor assumes that if its WebProcess is already running,
+        it can add itself to the existing WebUserContentController(Proxy) and all will be well.
+
+        However, if the API client constructs a different WKUserContentController for two views,
+        and forces them both into the same process, WebPageProxy's constructor sends a message
+        with a WebUserContentController ID that doesn't exist yet on the WebProcess side
+        (because createWebPage, which usually brings it up, hasn't happened yet), and we 
+        drop the message on the floor (and get the aforementioned logging).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::initializeWebPageAfterProcessLaunch):
+        Instead of connecting our WebUserContentControllerProxy and WebVisitedLinkStoreProxy
+        to our WebProcessProxy in the constructor, when doing so might send messages
+        to the WebProcess that arrive before their corresponding WebProcess objects have
+        been created, do this in initializeWebPageAfterProcessLaunch, which always runs
+        during-or-after inititalizeWebPage (and always after the CreateWebPage message goes out).
+
+        (WebKit::WebPageProxy::initializeWebPage):
+        Mark us as needing initializeWebPageAfterProcessLaunch run, and run it right now
+        if the WebProcess is already up.
+        (WebKit::WebPageProxy::processDidFinishLaunching):
+        If the WebProcess wasn't up at the end of initializeWebPage, we'll eventually end up here
+        after it is launched, and will initializeWebPageAfterProcessLaunch.
+
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        If the WebProcess dies, we don't want to initializeWebPageAfterProcessLaunch
+        until after initializeWebPage runs again, so make sure the flag isn't set.
+
+        * UIProcess/WebPageProxy.h:
+
 2016-01-22  Darin Adler  <darin@apple.com>
 
         Reduce use of equalIgnoringCase to just ignore ASCII case

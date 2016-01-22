@@ -28,7 +28,9 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WebKit.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
@@ -167,6 +169,50 @@ TEST(WKUserContentController, ScriptMessageHandlerCallRemovedHandler)
          "} catch (e) {"
          "    window.webkit.messageHandlers.handlerToPost.postMessage('PASS');"
          "}" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+
+    EXPECT_WK_STREQ(@"PASS", (NSString *)[lastScriptMessage body]);
+}
+
+static RetainPtr<WKWebView> webViewForScriptMessageHandlerMultipleHandlerRemovalTest(WKWebViewConfiguration *configuration)
+{
+    RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configurationCopy = adoptNS([configuration copy]);
+    [configurationCopy setUserContentController:[[[WKUserContentController alloc] init] autorelease]];
+    [[configurationCopy userContentController] addScriptMessageHandler:handler.get() name:@"handlerToRemove"];
+    [[configurationCopy userContentController] addScriptMessageHandler:handler.get() name:@"handlerToPost"];
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationCopy.get()]);
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    return webView;
+}
+
+TEST(WKUserContentController, ScriptMessageHandlerMultipleHandlerRemoval)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<_WKProcessPoolConfiguration> processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setMaximumProcessCount:1];
+    [configuration setProcessPool:[[[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()] autorelease]];
+
+    RetainPtr<WKWebView> webView = webViewForScriptMessageHandlerMultipleHandlerRemovalTest(configuration.get());
+    RetainPtr<WKWebView> webView2 = webViewForScriptMessageHandlerMultipleHandlerRemovalTest(configuration.get());
+
+    [[[webView configuration] userContentController] removeScriptMessageHandlerForName:@"handlerToRemove"];
+    [[[webView2 configuration] userContentController] removeScriptMessageHandlerForName:@"handlerToRemove"];
+
+    [webView evaluateJavaScript:
+     @"try {"
+     "    handlerToRemove.postMessage('FAIL');"
+     "} catch (e) {"
+     "    window.webkit.messageHandlers.handlerToPost.postMessage('PASS');"
+     "}" completionHandler:nil];
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;

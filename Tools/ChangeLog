@@ -1,3 +1,18 @@
+2016-01-22  Tim Horton  <timothy_horton@apple.com>
+
+        Reproducible "Unhanded web process message 'WebUserContentController:AddUserScripts'" and friends
+        https://bugs.webkit.org/show_bug.cgi?id=153193
+        <rdar://problem/24222034>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        (webViewForScriptMessageHandlerMultipleHandlerRemovalTest):
+        (TEST):
+        Add a test that exhibits the problems we're fixing here.
+        Before, it would both log and assert in debug, and crash in release.
+        Now it runs happily to completion.
+
 2016-01-22  Enrica Casucci  <enrica@apple.com>
 
         Add support for testing data detection.
