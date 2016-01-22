@@ -1,3 +1,13 @@
+2016-01-21  Dave Hyatt  <hyatt@apple.com>
+
+        Elements with overflow and border-radius don't show in multicolumn properly.
+        https://bugs.webkit.org/show_bug.cgi?id=152920
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/border-radius-overflow-columns-expected.html: Added.
+        * fast/multicol/border-radius-overflow-columns.html: Added.
+
 2016-01-22  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Remove a focus ring on anchor node when focused by mouse.
