@@ -1,0 +1,23 @@
+This test checks the behavior of Array.prototype.toLocaleString as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Array.prototype.toLocaleString.length is 0
+PASS Object.getOwnPropertyDescriptor(Array.prototype, 'toLocaleString').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Array.prototype, 'toLocaleString').configurable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype, 'toLocaleString').writable is true
+PASS Array.prototype.toLocaleString.call() threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.toLocaleString.call()').
+PASS Array.prototype.toLocaleString.call(undefined) threw exception TypeError: undefined is not an object (evaluating 'Array.prototype.toLocaleString.call(undefined)').
+PASS Array.prototype.toLocaleString.call(null) threw exception TypeError: null is not an object (evaluating 'Array.prototype.toLocaleString.call(null)').
+PASS Array.prototype.toLocaleString.call({ length: 5, 0: 'zero', 1: 1, 3: 'three', 5: 'five' }) is "zero,1,,three,"
+PASS [].toLocaleString() is ""
+PASS Array(5).toLocaleString() is ",,,,"
+PASS [ null, null ].toLocaleString() is ","
+PASS [ undefined, undefined ].toLocaleString() is ","
+PASS [ new Date ].toLocaleString('i') threw exception RangeError: invalid language tag: i.
+PASS [ new Date(NaN), new Date(0) ].toLocaleString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }) is "Invalid Date,一九七〇/一/一 上午一二:〇〇:〇〇"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

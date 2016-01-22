@@ -1,3 +1,17 @@
+2016-01-21  Andy VanWagoner  <andy@instructure.com>
+
+        [INTL] Implement Array.prototype.toLocaleString in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147614
+
+        Reviewed by Benjamin Poulain.
+
+        The primary changes in the ECMA-402 version, and the existing implementation
+        are passing the arguments on to each element's toLocaleString call, and
+        missing/undefined/null elements become empty string instead of being skipped.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToLocaleString):
+
 2016-01-21  Per Arne Vollan  <peavo@outlook.com>
 
         [B3][Win64] Compile fixes.

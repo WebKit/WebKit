@@ -336,6 +336,31 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
+#if ENABLE(INTL)
+    ArgList arguments(exec);
+    for (unsigned i = 0; i < length; ++i) {
+        JSValue element = thisObject->getIndex(exec, i);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        if (element.isUndefinedOrNull())
+            element = jsEmptyString(exec);
+        else {
+            JSValue conversionFunction = element.get(exec, exec->propertyNames().toLocaleString);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+            CallData callData;
+            CallType callType = getCallData(conversionFunction, callData);
+            if (callType != CallTypeNone) {
+                element = call(exec, conversionFunction, callType, callData, element, arguments);
+                if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+            }
+        }
+        stringJoiner.append(*exec, element);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
+#else // !ENABLE(INTL)
     for (unsigned i = 0; i < length; ++i) {
         JSValue element = thisObject->getIndex(exec, i);
         if (exec->hadException())
@@ -356,6 +381,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     }
+#endif // !ENABLE(INTL)
 
     return JSValue::encode(stringJoiner.join(*exec));
 }
