@@ -1,3 +1,60 @@
+2016-01-22  Saam barati  <sbarati@apple.com>
+
+        Current implementation of Parser::createSavePoint is a foot gun
+        https://bugs.webkit.org/show_bug.cgi?id=153293
+
+        Reviewed by Oliver Hunt.
+
+        The previous use of SavePoint (up until this patch)
+        really meant that we're saving the LexerState. This
+        was so poorly named that it was being misused all over
+        our parser. For example, anything that parsed an
+        AssignmentExpression between saving/restoring really
+        wanted to save both Lexer state and Parser state.
+
+        This patch changes SavePoint to mean save all the
+        state. The old SavePoint is renamed to LexerState with
+        corresponding internal<Save/Restore>LexerState functions.
+        The old <save/restore>State() function is renamed to
+        internal<Save/Restore>ParserState().
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::declareRestOrNormalParameter):
+        (JSC::Parser<LexerType>::parseAssignmentElement):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExpression):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseYieldExpression):
+        (JSC::Parser<LexerType>::parseConditionalExpression):
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        (JSC::Parser<LexerType>::parseObjectLiteral):
+        (JSC::Parser<LexerType>::parseStrictObjectLiteral):
+        (JSC::Parser<LexerType>::parseArrayLiteral):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+        * parser/Parser.h:
+        (JSC::Parser::hasError):
+        (JSC::Parser::internalSaveParserState):
+        (JSC::Parser::restoreParserState):
+        (JSC::Parser::internalSaveLexerState):
+        (JSC::Parser::restoreLexerState):
+        (JSC::Parser::createSavePointForError):
+        (JSC::Parser::createSavePoint):
+        (JSC::Parser::restoreSavePointWithError):
+        (JSC::Parser::restoreSavePoint):
+        (JSC::Parser::saveState): Deleted.
+        (JSC::Parser::restoreState): Deleted.
+
 2016-01-22  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed. fnormal => normal.

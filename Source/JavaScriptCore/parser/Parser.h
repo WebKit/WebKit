@@ -1269,20 +1269,67 @@ private:
         return !m_errorMessage.isNull();
     }
 
-    struct SavePoint {
+    enum class FunctionParsePhase { Parameters, Body };
+    struct ParserState {
+        int assignmentCount { 0 };
+        int nonLHSCount { 0 };
+        int nonTrivialExpressionCount { 0 };
+        FunctionParsePhase functionParsePhase { FunctionParsePhase::Body };
+        const Identifier* lastIdentifier { nullptr };
+        const Identifier* lastFunctionName { nullptr };
+    };
+
+    // If you're using this directly, you probably should be using
+    // createSavePoint() instead.
+    ALWAYS_INLINE ParserState internalSaveParserState()
+    {
+        return m_parserState;
+    }
+
+    ALWAYS_INLINE void restoreParserState(const ParserState& state)
+    {
+        m_parserState = state;
+    }
+
+    struct LexerState {
         int startOffset;
         unsigned oldLineStartOffset;
         unsigned oldLastLineNumber;
         unsigned oldLineNumber;
     };
-    
-    ALWAYS_INLINE SavePoint createSavePointForError()
+
+    // If you're using this directly, you probably should be using
+    // createSavePoint() instead.
+    // i.e, if you parse any kind of AssignmentExpression between
+    // saving/restoring, you should definitely not be using this directly.
+    ALWAYS_INLINE LexerState internalSaveLexerState()
     {
-        SavePoint result;
+        LexerState result;
         result.startOffset = m_token.m_location.startOffset;
         result.oldLineStartOffset = m_token.m_location.lineStartOffset;
         result.oldLastLineNumber = m_lexer->lastLineNumber();
         result.oldLineNumber = m_lexer->lineNumber();
+        return result;
+    }
+
+    ALWAYS_INLINE void restoreLexerState(const LexerState& lexerState)
+    {
+        m_lexer->setOffset(lexerState.startOffset, lexerState.oldLineStartOffset);
+        next();
+        m_lexer->setLastLineNumber(lexerState.oldLastLineNumber);
+        m_lexer->setLineNumber(lexerState.oldLineNumber);
+    }
+
+    struct SavePoint {
+        ParserState parserState;
+        LexerState lexerState;
+    };
+    
+    ALWAYS_INLINE SavePoint createSavePointForError()
+    {
+        SavePoint result;
+        result.parserState = internalSaveParserState();
+        result.lexerState = internalSaveLexerState();
         return result;
     }
     
@@ -1295,10 +1342,8 @@ private:
     ALWAYS_INLINE void restoreSavePointWithError(const SavePoint& savePoint, const String& message)
     {
         m_errorMessage = message;
-        m_lexer->setOffset(savePoint.startOffset, savePoint.oldLineStartOffset);
-        next();
-        m_lexer->setLastLineNumber(savePoint.oldLastLineNumber);
-        m_lexer->setLineNumber(savePoint.oldLineNumber);
+        restoreLexerState(savePoint.lexerState);
+        restoreParserState(savePoint.parserState);
     }
 
     ALWAYS_INLINE void restoreSavePoint(const SavePoint& savePoint)
@@ -1306,51 +1351,21 @@ private:
         restoreSavePointWithError(savePoint, String());
     }
 
-    enum class FunctionParsePhase { Parameters, Body };
-    struct ParserState {
-        int assignmentCount;
-        int nonLHSCount;
-        int nonTrivialExpressionCount;
-        FunctionParsePhase functionParsePhase;
-    };
-
-    ALWAYS_INLINE ParserState saveState()
-    {
-        ParserState result;
-        result.assignmentCount = m_assignmentCount;
-        result.nonLHSCount = m_nonLHSCount;
-        result.nonTrivialExpressionCount = m_nonTrivialExpressionCount;
-        result.functionParsePhase = m_functionParsePhase;
-        return result;
-    }
-
-    ALWAYS_INLINE void restoreState(const ParserState& state)
-    {
-        m_assignmentCount = state.assignmentCount;
-        m_nonLHSCount = state.nonLHSCount;
-        m_nonTrivialExpressionCount = state.nonTrivialExpressionCount;
-        m_functionParsePhase = state.functionParsePhase;
-    }
-
     VM* m_vm;
     const SourceCode* m_source;
     ParserArena m_parserArena;
     std::unique_ptr<LexerType> m_lexer;
     FunctionParameters* m_parameters { nullptr };
+
+    ParserState m_parserState;
     
     bool m_hasStackOverflow;
     String m_errorMessage;
     JSToken m_token;
     bool m_allowsIn;
     JSTextPosition m_lastTokenEndPosition;
-    int m_assignmentCount;
-    int m_nonLHSCount;
     bool m_syntaxAlreadyValidated;
     int m_statementDepth;
-    int m_nonTrivialExpressionCount;
-    FunctionParsePhase m_functionParsePhase;
-    const Identifier* m_lastIdentifier;
-    const Identifier* m_lastFunctionName;
     RefPtr<SourceProviderCache> m_functionCache;
     SourceElements* m_sourceElements;
     bool m_parsingBuiltin;
