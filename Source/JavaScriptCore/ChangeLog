@@ -1,5 +1,12 @@
 2016-01-22  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed. Forgot to git stash pop some of the changes.
+        This should mark the rest of the es6 tests as passing.
+
+        * tests/es6.yaml:
+
+2016-01-22  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed. Mark es6 tests as passing.
 
         * tests/es6.yaml:

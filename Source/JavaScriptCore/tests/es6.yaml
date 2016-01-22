@@ -743,7 +743,7 @@
 - path: es6/Array_static_methods_Array.from_map_function_instances_of_iterables.js
   cmd: runES6 :fail
 - path: es6/Array_static_methods_Array[Symbol.species].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/arrow_functions_lexical_arguments_binding.js
   cmd: runES6 :fail
 - path: es6/arrow_functions_lexical_new.target_binding.js
@@ -865,7 +865,7 @@
 - path: es6/Map_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/Map_Map[Symbol.species].js
-  cmd: runES6 :fail
+  cmd: runES6 :fnormal
 - path: es6/miscellaneous_built-in_prototypes_are_not_instances.js
   cmd: runES6 :fail
 - path: es6/miscellaneous_function_length_is_configurable.js
