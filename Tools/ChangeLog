@@ -1,3 +1,19 @@
+2016-01-22  Enrica Casucci  <enrica@apple.com>
+
+        Add support for testing data detection.
+        https://bugs.webkit.org/show_bug.cgi?id=153360
+
+        Reviewed by Tim Horton.
+
+        Adding a new testing option (useDataDetection) to turn on
+        data detection when running the a test.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+
 2016-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the lldb WebCoreLayoutUnitProvider to not dynamically look up the LayoutUnit denominator

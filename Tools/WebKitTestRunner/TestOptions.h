@@ -39,6 +39,7 @@ struct TestOptions {
     bool useFixedLayout { false };
     bool isSVGTest { false };
     bool isHiDPITest { false };
+    bool useDataDetection { false };
 
     Vector<String> overrideLanguages;
     

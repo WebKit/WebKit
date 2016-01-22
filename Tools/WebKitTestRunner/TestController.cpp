@@ -917,6 +917,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.useThreadedScrolling = parseBooleanTestHeaderValue(value);
         if (key == "useFlexibleViewport")
             testOptions.useFlexibleViewport = parseBooleanTestHeaderValue(value);
+        if (key == "useDataDetection")
+            testOptions.useDataDetection = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
