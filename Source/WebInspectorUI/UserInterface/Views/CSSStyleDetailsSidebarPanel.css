@@ -65,22 +65,25 @@
     white-space: nowrap;
 }
 
-.sidebar > .panel.details.css-style > .content + .options-container {
+.sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container) {
     display: flex;
     align-items: center;
     position: absolute;
-    bottom: 0;
     width: 100%;
-    height: 29px;
     background-color: white;
     border-top: 1px solid hsl(0, 0%, 70%);
 }
 
-.sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) + .options-container {
+.sidebar > .panel.details.css-style > .content ~ .options-container {
+    bottom: 0;
+    height: 30px;
+}
+
+.sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) ~ :matches(.options-container, .class-list-container) {
     display: none;
 }
 
-.sidebar > .panel.details.css-style > .content + .options-container > .new-rule {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
     width: 15px;
     min-width: 15px;
     height: 15px;
@@ -89,14 +92,75 @@
     opacity: 0.7;
 }
 
-.sidebar > .panel.details.css-style > .content + .options-container > .filter-bar {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .filter-bar {
     width: -webkit-fill-available;
     background-color: transparent;
 }
 
-.sidebar > .panel.details.css-style > .content:not(.supports-new-rule) + .options-container > .new-rule,
-.sidebar > .panel.details.css-style > .content:not(.has-filter-bar) + .options-container > .filter-bar {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
+    margin: 0 5px 1px 0;
+    padding: 2px 4px 3px;
+    background: none;
+    border: none;
+    border-radius: 3px;
+    -webkit-appearance: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected {
+    color: white;
+    background-color: hsl(212, 92%, 54%);
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:not(.selected):hover {
+    color: white;
+    background-color: hsla(212, 92%, 54%, 0.5);
+}
+
+.sidebar > .panel.details.css-style > .content:not(.supports-new-rule) ~ .options-container > .new-rule,
+.sidebar > .panel.details.css-style > .content:not(.has-filter-bar) ~ .options-container > .filter-bar {
     display: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container {
+    flex-wrap: wrap;
+    bottom: 30px;
+    max-height: 65px;
+    padding: 3px 2px;
+    overflow-y: scroll;
+}
+
+/* FIXME: <https://webkit.org/b/152674> Elements with the "hidden" attribute still show up if "display: flex;" */
+.sidebar > .panel.details.css-style > .content ~ .class-list-container[hidden] {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > input[type="checkbox"] {
+    pointer-events: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .add-class-icon {
+    width: 12px;
+    height: 12px;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
+    width: 100px;
+    height: 18px;
+    margin: 0 0 0 2px;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class.active > .add-class-icon,
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class:not(.active) > .class-name-input {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .class-list-container > *:matches(.new-class, .class-toggle) {
+    margin: 1px 3px;
 }
 
 .sidebar > .panel.details.css-style > .content.filter-in-progress .filter-matching {

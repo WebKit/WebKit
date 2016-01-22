@@ -1,3 +1,68 @@
+2016-01-21  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add toggle-able list of classes for each element
+        https://bugs.webkit.org/show_bug.cgi?id=152678
+
+        Reviewed by Timothy Hatcher.
+
+        Adds a button to the CSS sidebar that, when toggled, displays a section
+        directly above it containing all the classes for the selected node that,
+        when toggled, adds or removes the class from the node.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.callFunction.mycallback):
+        (WebInspector.RemoteObject.prototype.callFunction):
+        Add extra handling of arguments to allow nicer looking calls by other classes.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        Changed next-sibling selector (+) to general-sibling selector (~).
+
+        (.sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container)):
+        (.sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) ~ :matches(.options-container, .class-list-container)):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:not(.selected):hover):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container[hidden]):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > input[type="checkbox"]):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .add-class-icon):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class:not(.active) > .class-name-input):
+        (.sidebar > .panel.details.css-style > .content ~ .class-list-container > *:matches(.new-class, .class-toggle)):
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        Also changed the few instances of "var" to "let".
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.refresh):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.addEventListeners):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._handleNodeAttributeModified):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._handleNodeAttributeRemoved):
+        Adds listeners to the DOMNode specifically listening for changes to the
+        class attribute and repopulates the class toggle list if fired.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._classToggleButtonClicked):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._addClassContainerClicked):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._addClassInputKeyPressed):
+        If the Enter key is pressed, add a new class equal to the input value.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._addClassInputBlur):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._populateClassToggles):
+        Loops through all the classes, including previously removed ones, for the
+        selected node and creates a toggle for each.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._createToggleForClassName.classNameToggleChanged):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._createToggleForClassName):
+        Creates a toggle element for the given className and adds it to the container.
+
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._toggleClass.resolvedNode.toggleClass):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._toggleClass.resolvedNode):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._toggleClass):
+        Uses the Element.classList to toggle the given className on the selected node.
+
 2016-01-20  Saam barati  <sbarati@apple.com>
 
         Web Inspector: Hook the sampling profiler into the Timelines UI
