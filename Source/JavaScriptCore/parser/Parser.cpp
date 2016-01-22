@@ -795,20 +795,35 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createB
     
     ASSERT(name.impl()->isAtomic() || name.impl()->isSymbol());
 
-    if (kind == DestructureToVariables) {
+    switch (kind) {
+    case DestructuringKind::DestructureToVariables: {
         DeclarationResultMask declarationResult = declareVariable(&name);
         failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot declare a variable named '", name.impl(), "' in strict mode");
         if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
             internalFailWithMessage(false, "Cannot declare a var variable that shadows a let/const/class variable: '", name.impl(), "'");
-    } else if (kind == DestructureToLet || kind == DestructureToConst) {
-        DeclarationResultMask declarationResult = declareVariable(&name, kind == DestructureToLet ? DeclarationType::LetDeclaration : DeclarationType::ConstDeclaration);
+        break;
+    }
+
+    case DestructuringKind::DestructureToLet:
+    case DestructuringKind::DestructureToConst:
+    case DestructuringKind::DestructureToCatchParameters: {
+        DeclarationResultMask declarationResult = declareVariable(&name, kind == DestructuringKind::DestructureToConst ? DeclarationType::ConstDeclaration : DeclarationType::LetDeclaration);
         if (declarationResult != DeclarationResult::Valid) {
             failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot destructure to a variable named '", name.impl(), "' in strict mode");
             failIfTrue(declarationResult & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare a lexical variable twice: '", name.impl(), "'");
         }
-    } else if (kind == DestructureToParameters) {
+        break;
+    }
+
+    case DestructuringKind::DestructureToParameters: {
         declareRestOrNormalParameter(name, duplicateIdentifier);
         propagateError();
+        break;
+    }
+
+    case DestructuringKind::DestructureToExpressions: {
+        break;
+    }
     }
 
     if (exportType == ExportType::Exported) {
@@ -856,13 +871,13 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseArrowFun
 template <typename LexerType>
 template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::tryParseDestructuringPatternExpression(TreeBuilder& context, AssignmentContext bindingContext)
 {
-    return parseDestructuringPattern(context, DestructureToExpressions, ExportType::NotExported, nullptr, nullptr, bindingContext);
+    return parseDestructuringPattern(context, DestructuringKind::DestructureToExpressions, ExportType::NotExported, nullptr, nullptr, bindingContext);
 }
 
 template <typename LexerType>
 template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
 {
-    if (kind == DestructureToExpressions)
+    if (kind == DestructuringKind::DestructureToExpressions)
         return parseAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth);
     return parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth);
 }
@@ -891,6 +906,25 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseAs
     }
 
     return createAssignmentElement(context, element, startPosition, lastTokenEndPosition());
+}
+
+static const char* destructuringKindToVariableKindName(DestructuringKind kind)
+{
+    switch (kind) {
+    case DestructuringKind::DestructureToLet:
+    case DestructuringKind::DestructureToConst:
+        return "lexical variable name";
+    case DestructuringKind::DestructureToVariables:
+        return "variable name";
+    case DestructuringKind::DestructureToParameters:
+        return "parameter name";
+    case DestructuringKind::DestructureToCatchParameters:
+        return "catch parameter name";
+    case DestructuringKind::DestructureToExpressions:
+        return "expression name";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "invalid";
 }
 
 template <typename LexerType>
@@ -924,11 +958,11 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 JSTokenLocation location = m_token.m_location;
                 next();
                 auto innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
-                if (kind == DestructureToExpressions && !innerPattern)
+                if (kind == DestructuringKind::DestructureToExpressions && !innerPattern)
                     return 0;
                 failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
 
-                failIfTrue(kind != DestructureToExpressions && !context.isBindingNode(innerPattern),  "Expected identifier for a rest element destructuring pattern");
+                failIfTrue(kind != DestructuringKind::DestructureToExpressions && !context.isBindingNode(innerPattern),  "Expected identifier for a rest element destructuring pattern");
 
                 context.appendArrayPatternRestEntry(arrayPattern, location, innerPattern);
                 restElementWasFound = true;
@@ -937,7 +971,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
 
             JSTokenLocation location = m_token.m_location;
             auto innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
-            if (kind == DestructureToExpressions && !innerPattern)
+            if (kind == DestructuringKind::DestructureToExpressions && !innerPattern)
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
             TreeExpression defaultValue = parseDefaultValueForDestructuringPattern(context);
@@ -967,14 +1001,14 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             TreeDestructuringPattern innerPattern = 0;
             JSTokenLocation location = m_token.m_location;
             if (matchSpecIdentifier()) {
-                failIfTrue(match(LET) && (kind == DestructureToLet || kind == DestructureToConst), "Can't use 'let' as an identifier name for a LexicalDeclaration");
+                failIfTrue(match(LET) && (kind == DestructuringKind::DestructureToLet || kind == DestructuringKind::DestructureToConst), "Can't use 'let' as an identifier name for a LexicalDeclaration");
                 propertyName = m_token.m_data.ident;
                 JSToken identifierToken = m_token;
                 next();
                 if (consume(COLON))
                     innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 else {
-                    if (kind == DestructureToExpressions) {
+                    if (kind == DestructuringKind::DestructureToExpressions) {
                         bool isEvalOrArguments = m_vm->propertyNames->eval == *propertyName || m_vm->propertyNames->arguments == *propertyName;
                         if (isEvalOrArguments && strictMode())
                             reclassifyExpressionError(ErrorIndicatesPattern, ErrorIndicatesNothing);
@@ -1001,7 +1035,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                     break;
                 default:
                     if (m_token.m_type != RESERVED && m_token.m_type != RESERVED_IF_STRICT && !(m_token.m_type & KeywordTokenFlag)) {
-                        if (kind == DestructureToExpressions)
+                        if (kind == DestructuringKind::DestructureToExpressions)
                             return 0;
                         failWithMessage("Expected a property name");
                     }
@@ -1010,7 +1044,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 }
                 next();
                 if (!consume(COLON)) {
-                    if (kind == DestructureToExpressions)
+                    if (kind == DestructuringKind::DestructureToExpressions)
                         return 0;
                     semanticFailIfTrue(tokenType == RESERVED, "Cannot use abbreviated destructuring syntax for reserved name '", propertyName->impl(), "'");
                     semanticFailIfTrue(tokenType == RESERVED_IF_STRICT, "Cannot use abbreviated destructuring syntax for reserved name '", propertyName->impl(), "' in strict mode");
@@ -1020,7 +1054,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 }
                 innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
             }
-            if (kind == DestructureToExpressions && !innerPattern)
+            if (kind == DestructuringKind::DestructureToExpressions && !innerPattern)
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
             TreeExpression defaultValue = parseDefaultValueForDestructuringPattern(context);
@@ -1032,7 +1066,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             }
         } while (consume(COMMA));
 
-        if (kind == DestructureToExpressions && !match(CLOSEBRACE))
+        if (kind == DestructuringKind::DestructureToExpressions && !match(CLOSEBRACE))
             return 0;
         consumeOrFail(CLOSEBRACE, "Expected either a closing '}' or an ',' after a property destructuring pattern");
         pattern = objectPattern;
@@ -1041,12 +1075,12 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
 
     default: {
         if (!matchSpecIdentifier()) {
-            if (kind == DestructureToExpressions)
+            if (kind == DestructuringKind::DestructureToExpressions)
                 return 0;
-            semanticFailureDueToKeyword("variable name");
+            semanticFailureDueToKeyword(destructuringKindToVariableKindName(kind));
             failWithMessage("Expected a parameter pattern or a ')' in parameter list");
         }
-        failIfTrue(match(LET) && (kind == DestructureToLet || kind == DestructureToConst), "Can't use 'let' as an identifier name for a LexicalDeclaration");
+        failIfTrue(match(LET) && (kind == DestructuringKind::DestructureToLet || kind == DestructuringKind::DestructureToConst), "Can't use 'let' as an identifier name for a LexicalDeclaration");
         pattern = createBindingPattern(context, kind, exportType, *m_token.m_data.ident, m_token, bindingContext, duplicateIdentifier);
         next();
         break;
@@ -1466,7 +1500,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
     ASSERT(match(TRY));
     JSTokenLocation location(tokenLocation());
     TreeStatement tryBlock = 0;
-    const Identifier* ident = &m_vm->propertyNames->nullIdentifier;
+    TreeDestructuringPattern catchPattern = 0;
     TreeStatement catchBlock = 0;
     TreeStatement finallyBlock = 0;
     int firstLine = tokenLine();
@@ -1481,22 +1515,25 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         next();
         
         handleProductionOrFail(OPENPAREN, "(", "start", "'catch' target");
-        if (!matchSpecIdentifier()) {
-            semanticFailureDueToKeyword("catch variable name");
-            failWithMessage("Expected identifier name as catch target");
-        }
-        ident = m_token.m_data.ident;
-        next();
         AutoPopScopeRef catchScope(this, pushScope());
         catchScope->setIsLexicalScope();
         catchScope->preventVarDeclarations();
-        failIfTrueIfStrict(catchScope->declareLexicalVariable(ident, false) & DeclarationResult::InvalidStrictMode, "Cannot declare a catch variable named '", ident->impl(), "' in strict mode");
+        const Identifier* ident = nullptr;
+        if (matchSpecIdentifier()) {
+            ident = m_token.m_data.ident;
+            catchPattern = context.createBindingLocation(m_token.m_location, *ident, m_token.m_startPosition, m_token.m_endPosition, AssignmentContext::DeclarationStatement);
+            next();
+            failIfTrueIfStrict(catchScope->declareLexicalVariable(ident, false) & DeclarationResult::InvalidStrictMode, "Cannot declare a catch variable named '", ident->impl(), "' in strict mode");
+        } else {
+            catchPattern = parseDestructuringPattern(context, DestructuringKind::DestructureToCatchParameters, ExportType::NotExported);
+            failIfFalse(catchPattern, "Cannot parse this destructuring pattern");
+        }
         handleProductionOrFail(CLOSEPAREN, ")", "end", "'catch' target");
         matchOrFail(OPENBRACE, "Expected exception handler to be a block statement");
         catchBlock = parseBlockStatement(context);
         failIfFalse(catchBlock, "Unable to parse 'catch' block");
         catchEnvironment = catchScope->finalizeLexicalEnvironment();
-        RELEASE_ASSERT(catchEnvironment.size() == 1 && catchEnvironment.contains(ident->impl()));
+        RELEASE_ASSERT(!ident || (catchEnvironment.size() == 1 && catchEnvironment.contains(ident->impl())));
         popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo);
     }
     
@@ -1507,7 +1544,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         failIfFalse(finallyBlock, "Cannot parse finally body");
     }
     failIfFalse(catchBlock || finallyBlock, "Try statements must have at least a catch or finally block");
-    return context.createTryStatement(location, tryBlock, ident, catchBlock, finallyBlock, firstLine, lastLine, catchEnvironment);
+    return context.createTryStatement(location, tryBlock, catchPattern, catchBlock, finallyBlock, firstLine, lastLine, catchEnvironment);
 }
 
 template <typename LexerType>
@@ -1691,7 +1728,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
             failIfTrue(match(COMMA), "Rest parameter should be the last parameter in a function declaration"); // Let's have a good error message for this common case.
             isRestParameter = true;
         } else
-            parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
+            parameter = parseDestructuringPattern(context, DestructuringKind::DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
         failIfFalse(parameter, "Cannot parse parameter pattern");
         if (!isRestParameter)
             defaultValue = parseDefaultValueForDestructuringPattern(context);
@@ -1783,7 +1820,7 @@ template <typename LexerType> template <class TreeBuilder> int Parser<LexerType>
                 consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
             } else {
                 functionInfo.parameterCount = 1;
-                auto parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported);
+                auto parameter = parseDestructuringPattern(context, DestructuringKind::DestructureToParameters, ExportType::NotExported);
                 failIfFalse(parameter, "Cannot parse parameter pattern");
                 context.appendParameter(parameterList, parameter, 0);
             }
@@ -1803,7 +1840,7 @@ template <typename LexerType> template <class TreeBuilder> int Parser<LexerType>
     } else if (mode == SourceParseMode::SetterMode) {
         failIfTrue(match(CLOSEPAREN), "setter functions must have one parameter");
         const Identifier* duplicateParameter = nullptr;
-        auto parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported, &duplicateParameter);
+        auto parameter = parseDestructuringPattern(context, DestructuringKind::DestructureToParameters, ExportType::NotExported, &duplicateParameter);
         failIfFalse(parameter, "setter functions must have one parameter");
         auto defaultValue = parseDefaultValueForDestructuringPattern(context);
         propagateError();

@@ -1526,13 +1526,13 @@ namespace JSC {
     public:
         using ParserArenaDeletable::operator new;
 
-        TryNode(const JSTokenLocation&, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, VariableEnvironment& catchEnvironment, StatementNode* finallyBlock);
+        TryNode(const JSTokenLocation&, StatementNode* tryBlock, DestructuringPatternNode* catchPattern, StatementNode* catchBlock, VariableEnvironment& catchEnvironment, StatementNode* finallyBlock);
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
         StatementNode* m_tryBlock;
-        const Identifier& m_thrownValueIdent;
+        DestructuringPatternNode* m_catchPattern;
         StatementNode* m_catchBlock;
         StatementNode* m_finallyBlock;
     };

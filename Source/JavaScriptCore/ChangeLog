@@ -1,3 +1,61 @@
+2016-01-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Catch parameter should accept BindingPattern
+        https://bugs.webkit.org/show_bug.cgi?id=152385
+
+        Reviewed by Saam Barati.
+
+        This patch implements destructuring in catch parameter.
+        Catch parameter accepts binding pattern and binding identifier.
+        It creates lexical bindings. And "yield" and "let" are specially
+        handled as is the same to function parameters.
+
+        In addition to that, we make destructuring parsing errors more descriptive.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createTryStatement):
+        * parser/NodeConstructors.h:
+        (JSC::TryNode::TryNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::tryParseDestructuringPatternExpression):
+        (JSC::Parser<LexerType>::parseBindingOrAssignmentElement):
+        (JSC::destructuringKindToVariableKindName):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseTryStatement):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        * parser/Parser.h:
+        (JSC::Parser::destructuringKindFromDeclarationType):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createTryStatement):
+        * tests/es6.yaml:
+        * tests/es6/destructuring_in_catch_heads.js: Added.
+        (test):
+        * tests/stress/catch-parameter-destructuring.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (prototype.call):
+        (catch):
+        (shouldThrow.try.throw.get error):
+        (initialize):
+        (array):
+        (generator.gen):
+        (generator):
+        * tests/stress/catch-parameter-syntax.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        * tests/stress/reserved-word-with-escape.js:
+        (testSyntaxError.String.raw.a):
+        (String.raw.SyntaxError.Cannot.use.the.keyword.string_appeared_here.as.a.name):
+        * tests/stress/yield-named-variable.js:
+
 2016-01-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build.

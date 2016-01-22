@@ -639,7 +639,7 @@ namespace JSC {
         void emitThrowReferenceError(const String& message);
         void emitThrowTypeError(const String& message);
 
-        void emitPushCatchScope(const Identifier& property, RegisterID* exceptionValue, VariableEnvironment&);
+        void emitPushCatchScope(VariableEnvironment&);
         void emitPopCatchScope(VariableEnvironment&);
 
         void emitGetScope();

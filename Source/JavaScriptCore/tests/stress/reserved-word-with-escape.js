@@ -52,85 +52,85 @@ testSyntaxError(String.raw`function var() { }`, String.raw`SyntaxError: Cannot u
 testSyntaxError(String.raw`function v\u0061r() { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a function name.`);
 testSyntaxError(String.raw`function v\u{0061}r() { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a function name.`);
 
-testSyntaxError(String.raw`function a(var) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`function a(v\u0061r) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`function a(v\u{0061}r) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`function a(var) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`function a(v\u0061r) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`function a(v\u{0061}r) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
 testSyntaxError(String.raw`function a({var}) { }`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`function a({v\u0061r}) { }`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`function a({v\u{0061}r}) { }`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
-testSyntaxError(String.raw`function a({var:var}) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`function a({var:v\u0061r}) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`function a({var:v\u{0061}r}) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`function a({var:var}) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`function a({var:v\u0061r}) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`function a({var:v\u{0061}r}) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
-testSyntaxError(String.raw`function a([var]) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`function a([v\u0061r]) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`function a([v\u{0061}r]) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`function a([var]) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`function a([v\u0061r]) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`function a([v\u{0061}r]) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
 testSyntaxError(String.raw`(function var() { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a function name.`);
 testSyntaxError(String.raw`(function v\u0061r() { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a function name.`);
 testSyntaxError(String.raw`(function v\u{0061}r() { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a function name.`);
 
-testSyntaxError(String.raw`(function a(var) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a(v\u0061r) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a(v\u{0061}r) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a(var) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a(v\u0061r) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a(v\u{0061}r) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
 testSyntaxError(String.raw`(function a({var}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`(function a({v\u0061r}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`(function a({v\u{0061}r}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
-testSyntaxError(String.raw`(function a({var:var}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a({var:v\u0061r}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a({var:v\u{0061}r}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a({var:var}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a({var:v\u0061r}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a({var:v\u{0061}r}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
-testSyntaxError(String.raw`(function a([var]) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a([v\u0061r]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a([v\u{0061}r]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a([var]) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a([v\u0061r]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a([v\u{0061}r]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
 testSyntaxError(String.raw`(function a([{var}]) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`(function a([{v\u0061r}]) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`(function a([{v\u{0061}r}]) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
-testSyntaxError(String.raw`(function a([{var:var}]) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a([{var:v\u0061r}]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a([{var:v\u{0061}r}]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a([{var:var}]) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a([{var:v\u0061r}]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a([{var:v\u{0061}r}]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
-testSyntaxError(String.raw`(function a([[var]]) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a([[v\u0061r]]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a([[v\u{0061}r]]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a([[var]]) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a([[v\u0061r]]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a([[v\u{0061}r]]) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
 testSyntaxError(String.raw`(function a({ hello: {var}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`(function a({ hello: {v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`(function a({ hello: {v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
-testSyntaxError(String.raw`(function a({ hello: {var:var}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a({ hello: {var:v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a({ hello: {var:v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a({ hello: {var:var}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ hello: {var:v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ hello: {var:v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
-testSyntaxError(String.raw`(function a({ hello: [var]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a({ hello: [v\u0061r]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a({ hello: [v\u{0061}r]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a({ hello: [var]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ hello: [v\u0061r]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ hello: [v\u{0061}r]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
 testSyntaxError(String.raw`(function a({ 0: {var} }) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`(function a({ 0: {v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 testSyntaxError(String.raw`(function a({ 0: {v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'var'.`);
 
-testSyntaxError(String.raw`(function a({ 0: {var:var}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a({ 0: {var:v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a({ 0: {var:v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a({ 0: {var:var}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ 0: {var:v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ 0: {var:v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
-testSyntaxError(String.raw`(function a({ 0: {value:var}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a({ 0: {value:v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a({ 0: {value:v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a({ 0: {value:var}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ 0: {value:v\u0061r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ 0: {value:v\u{0061}r}}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
-testSyntaxError(String.raw`(function a({ 0: [var]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a variable name.`);
-testSyntaxError(String.raw`(function a({ 0: [v\u0061r]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a variable name.`);
-testSyntaxError(String.raw`(function a({ 0: [v\u{0061}r]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a variable name.`);
+testSyntaxError(String.raw`(function a({ 0: [var]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'var' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ 0: [v\u0061r]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a parameter name.`);
+testSyntaxError(String.raw`(function a({ 0: [v\u{0061}r]}) { })`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a parameter name.`);
 
-testSyntaxError(String.raw`try { } catch(var) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a catch variable name.`);
-testSyntaxError(String.raw`try { } catch(v\u0061r) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a catch variable name.`);
-testSyntaxError(String.raw`try { } catch(v\u{0061}r) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a catch variable name.`);
+testSyntaxError(String.raw`try { } catch(var) { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a catch parameter name.`);
+testSyntaxError(String.raw`try { } catch(v\u0061r) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a catch parameter name.`);
+testSyntaxError(String.raw`try { } catch(v\u{0061}r) { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u{0061}r' as a catch parameter name.`);
 
 testSyntaxError(String.raw`class var { }`, String.raw`SyntaxError: Cannot use the keyword 'var' as a class name.`);
 testSyntaxError(String.raw`class v\u0061r { }`, String.raw`SyntaxError: Cannot use the keyword 'v\u0061r' as a class name.`);

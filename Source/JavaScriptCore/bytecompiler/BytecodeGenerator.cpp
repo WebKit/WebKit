@@ -3588,14 +3588,9 @@ void BytecodeGenerator::popScopedControlFlowContext()
     m_localScopeDepth--;
 }
 
-void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterID* exceptionValue, VariableEnvironment& environment)
+void BytecodeGenerator::emitPushCatchScope(VariableEnvironment& environment)
 {
-    RELEASE_ASSERT(environment.contains(property.impl()));
     pushLexicalScopeInternal(environment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::CatchScope, ScopeRegisterType::Block);
-    Variable exceptionVar = variable(property);
-    RELEASE_ASSERT(exceptionVar.isResolved());
-    RefPtr<RegisterID> scope = emitResolveScope(nullptr, exceptionVar);
-    emitPutToScope(scope.get(), exceptionVar, exceptionValue, ThrowIfNotFound, NotInitialization);
 }
 
 void BytecodeGenerator::emitPopCatchScope(VariableEnvironment& environment) 

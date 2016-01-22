@@ -172,6 +172,8 @@
   cmd: runES6 :normal
 - path: es6/destructuring_empty_patterns_in_parameters.js
   cmd: runES6 :normal
+- path: es6/destructuring_in_catch_heads.js
+  cmd: runES6 :normal
 - path: es6/destructuring_in_for-in_loop_heads.js
   cmd: runES6 :normal
 - path: es6/destructuring_in_for-of_loop_heads.js

@@ -36,14 +36,14 @@ PASS Does not have syntax error: ''use strict'; function foo() { { let x; } var 
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let let;'
-SyntaxError: Cannot use the keyword 'let' as a variable name.
-SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
 PASS Has syntax error: ''use strict'; let let;'
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'const let;'
-SyntaxError: Cannot use the keyword 'let' as a variable name.
-SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
 PASS Has syntax error: ''use strict'; const let;'
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
@@ -54,8 +54,8 @@ PASS Has syntax error: ''use strict'; let {let};'
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let {l: let};'
-SyntaxError: Cannot use the keyword 'let' as a variable name.
-SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
 PASS Has syntax error: ''use strict'; let {l: let};'
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
@@ -66,8 +66,8 @@ PASS Has syntax error: ''use strict'; let {l: {let}};'
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let {l: [let]};'
-SyntaxError: Cannot use the keyword 'let' as a variable name.
-SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
 PASS Has syntax error: ''use strict'; let {l: [let]};'
 SyntaxError: Unexpected token ';'. Expected an initializer in destructuring variable declaration.
 SyntaxError: Unexpected token ';'. Expected an initializer in destructuring variable declaration.
@@ -141,11 +141,11 @@ PASS Has syntax error: 'let arr = []; for (let    of arr) {}'
 SyntaxError: Unexpected identifier 'arr'. Expected either 'in' or 'of' in enumeration syntax.
 SyntaxError: Unexpected identifier 'arr'. Expected either 'in' or 'of' in enumeration syntax.
 PASS Has syntax error: ''use strict'; let arr = []; for (let    of arr) {}'
-SyntaxError: Cannot use the keyword 'in' as a variable name.
-SyntaxError: Cannot use the keyword 'in' as a variable name.
+SyntaxError: Cannot use the keyword 'in' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'in' as a lexical variable name.
 PASS Has syntax error: 'let obj = {}; for (let    in arr) {}'
-SyntaxError: Cannot use the keyword 'in' as a variable name.
-SyntaxError: Cannot use the keyword 'in' as a variable name.
+SyntaxError: Cannot use the keyword 'in' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'in' as a lexical variable name.
 PASS Has syntax error: ''use strict'; let obj = {}; for (let    in arr) {}'
 SyntaxError: Cannot declare a let variable twice: 'i'.
 SyntaxError: Cannot declare a let variable twice: 'i'.
@@ -204,8 +204,8 @@ PASS Has syntax error: ''use strict'; function foo() {}; function bar(){} let ba
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'for (let let = 0; let < 10; let++) {}'
-SyntaxError: Cannot use the keyword 'let' as a variable name.
-SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
 PASS Has syntax error: ''use strict'; for (let let = 0; let < 10; let++) {}'
 SyntaxError: Unexpected token '['. Expected either 'in' or 'of' in enumeration syntax.
 SyntaxError: Unexpected token '['. Expected either 'in' or 'of' in enumeration syntax.
@@ -213,11 +213,11 @@ PASS Has syntax error: 'for (let of []) {}'
 SyntaxError: Unexpected token '['. Expected either 'in' or 'of' in enumeration syntax.
 SyntaxError: Unexpected token '['. Expected either 'in' or 'of' in enumeration syntax.
 PASS Has syntax error: ''use strict'; for (let of []) {}'
-SyntaxError: Cannot use the keyword 'in' as a variable name.
-SyntaxError: Cannot use the keyword 'in' as a variable name.
+SyntaxError: Cannot use the keyword 'in' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'in' as a lexical variable name.
 PASS Has syntax error: 'for (let in {}) {}'
-SyntaxError: Cannot use the keyword 'in' as a variable name.
-SyntaxError: Cannot use the keyword 'in' as a variable name.
+SyntaxError: Cannot use the keyword 'in' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'in' as a lexical variable name.
 PASS Has syntax error: ''use strict'; for (let in {}) {}'
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
@@ -374,8 +374,8 @@ SyntaxError: Cannot use the keyword 'let' as a variable name.
 SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; var {p: let} = 40;'
 PASS Does not have syntax error: '(function test(let){});'
-SyntaxError: Cannot use the keyword 'let' as a variable name.
-SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a parameter name.
+SyntaxError: Cannot use the keyword 'let' as a parameter name.
 PASS Has syntax error: ''use strict'; (function test(let){});'
 PASS Does not have syntax error: 'let: for (v of []) break let;'
 SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
@@ -398,8 +398,8 @@ SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in para
 SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: ''use strict'; let: for (var v = 0; false; ) {};'
 PASS Does not have syntax error: 'try { } catch(let) {}'
-SyntaxError: Cannot use the keyword 'let' as a catch variable name.
-SyntaxError: Cannot use the keyword 'let' as a catch variable name.
+SyntaxError: Cannot use the keyword 'let' as a catch parameter name.
+SyntaxError: Cannot use the keyword 'let' as a catch parameter name.
 PASS Has syntax error: ''use strict'; try { } catch(let) {}'
 PASS successfullyParsed is true
 

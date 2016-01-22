@@ -48,13 +48,13 @@ function t1() {
     "use strict";
     let yield = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 testSyntaxError(`
 function t1() {
     "use strict";
     const yield = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 
 testSyntax(`
 function t1() {
@@ -118,13 +118,13 @@ function t1() {
     "use strict";
     let { i: yield } = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 testSyntaxError(`
 function t1() {
     "use strict";
     const { i: yield } = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 
 testSyntax(`
 function t1() {
@@ -153,13 +153,13 @@ function t1() {
     "use strict";
     let [ yield ] = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 testSyntaxError(`
 function t1() {
     "use strict";
     const [ yield ] = 20;
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a lexical variable name.`);
 
 testSyntax(`
 function t1() {
@@ -187,7 +187,7 @@ function t1() {
     } catch (yield) {
     }
 }
-`, `SyntaxError: Cannot use the keyword 'yield' as a catch variable name.`);
+`, `SyntaxError: Cannot use the keyword 'yield' as a catch parameter name.`);
 
 testSyntax(`
 function t1() {

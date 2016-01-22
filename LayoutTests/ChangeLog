@@ -1,3 +1,20 @@
+2016-01-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Catch parameter should accept BindingPattern
+        https://bugs.webkit.org/show_bug.cgi?id=152385
+
+        Reviewed by Saam Barati.
+
+        * js/dom/reserved-words-as-property-expected.txt:
+        * js/let-syntax-expected.txt:
+        * js/mozilla/strict/12.14.1-expected.txt:
+        * js/mozilla/strict/script-tests/12.14.1.js:
+        * sputnik/Conformance/12_Statement/12.14_The_try_Statement/S12.14_A16_T10-expected.txt:
+        * sputnik/Conformance/12_Statement/12.14_The_try_Statement/S12.14_A16_T13-expected.txt:
+        * sputnik/Conformance/12_Statement/12.14_The_try_Statement/S12.14_A16_T5-expected.txt:
+        * sputnik/Conformance/12_Statement/12.14_The_try_Statement/S12.14_A16_T7-expected.txt:
+        * sputnik/Conformance/12_Statement/12.14_The_try_Statement/S12.14_A16_T8-expected.txt:
+
 2016-01-21  Andy VanWagoner  <andy@instructure.com>
 
         [INTL] Implement Array.prototype.toLocaleString in ECMA-402

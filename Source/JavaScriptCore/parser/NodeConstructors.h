@@ -874,11 +874,11 @@ namespace JSC {
     {
     }
 
-    inline TryNode::TryNode(const JSTokenLocation& location, StatementNode* tryBlock, const Identifier& thrownValueIdent, StatementNode* catchBlock, VariableEnvironment& catchEnvironment, StatementNode* finallyBlock)
+    inline TryNode::TryNode(const JSTokenLocation& location, StatementNode* tryBlock, DestructuringPatternNode* catchPattern, StatementNode* catchBlock, VariableEnvironment& catchEnvironment, StatementNode* finallyBlock)
         : StatementNode(location)
         , VariableEnvironmentNode(catchEnvironment)
         , m_tryBlock(tryBlock)
-        , m_thrownValueIdent(thrownValueIdent)
+        , m_catchPattern(catchPattern)
         , m_catchBlock(catchBlock)
         , m_finallyBlock(finallyBlock)
     {

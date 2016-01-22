@@ -81,10 +81,11 @@ enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionBodyType { ArrowFunctionBodyExpression, ArrowFunctionBodyBlock, StandardFunctionBodyBlock };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
 
-enum DestructuringKind {
+enum class DestructuringKind {
     DestructureToVariables,
     DestructureToLet,
     DestructureToConst,
+    DestructureToCatchParameters,
     DestructureToParameters,
     DestructureToExpressions
 };
@@ -801,15 +802,15 @@ private:
     {
         switch (type) {
         case DeclarationType::VarDeclaration:
-            return DestructureToVariables;
+            return DestructuringKind::DestructureToVariables;
         case DeclarationType::LetDeclaration:
-            return DestructureToLet;
+            return DestructuringKind::DestructureToLet;
         case DeclarationType::ConstDeclaration:
-            return DestructureToConst;
+            return DestructuringKind::DestructureToConst;
         }
 
         RELEASE_ASSERT_NOT_REACHED();
-        return DestructureToVariables;
+        return DestructuringKind::DestructureToVariables;
     }
 
     ALWAYS_INLINE AssignmentContext assignmentContextFromDeclarationType(DeclarationType type)
