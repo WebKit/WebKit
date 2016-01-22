@@ -1,3 +1,21 @@
+2016-01-22  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Remove a focus ring on anchor node when focused by mouse.
+        https://bugs.webkit.org/show_bug.cgi?id=136121
+
+        Reviewed by Michael Catanzaro.
+
+        Safari, Chrome and FF don't show a focus ring, the dotted rectangle on anchor node
+        for mouse clicking. I think the behavior is reasonable and looks better.
+        No reason for gtk & efl ports to keep the focus on anchor node. Of course, this change should not
+        affect the focus ring for tab navigation.
+
+        No new tests since an existing test can cover this.
+        Tests: fast/events/click-focus-anchor.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isMouseFocusable):
+
 2016-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r168244): Content in horizontal-bt page is offset such that only the end is viewable and there is a white gap at the top

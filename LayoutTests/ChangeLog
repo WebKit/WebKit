@@ -1,3 +1,15 @@
+2016-01-22  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Remove a focus ring on anchor node when focused by mouse.
+        https://bugs.webkit.org/show_bug.cgi?id=136121
+
+        Reviewed by Michael Catanzaro.
+
+        Removed gtk and efl specific results for the test.
+
+        * platform/efl/fast/events/click-focus-anchor-expected.txt: Removed.
+        * platform/gtk/fast/events/click-focus-anchor-expected.txt: Removed.
+
 2016-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r168244): Content in horizontal-bt page is offset such that only the end is viewable and there is a white gap at the top
