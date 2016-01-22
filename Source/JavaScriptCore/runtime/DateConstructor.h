@@ -26,13 +26,14 @@
 namespace JSC {
 
 class DatePrototype;
+class GetterSetter;
 
 class DateConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static DateConstructor* create(VM& vm, Structure* structure, DatePrototype* datePrototype)
+    static DateConstructor* create(VM& vm, Structure* structure, DatePrototype* datePrototype, GetterSetter*)
     {
         DateConstructor* constructor = new (NotNull, allocateCell<DateConstructor>(vm.heap)) DateConstructor(vm, structure);
         constructor->finishCreation(vm, datePrototype);

@@ -30,16 +30,24 @@
 
 namespace JSC {
 
+class JSTypedArrayViewPrototype;
+class GetterSetter;
+
 class JSTypedArrayViewConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
 protected:
     JSTypedArrayViewConstructor(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*, JSObject* prototype);
+    void finishCreation(VM&, JSGlobalObject*, JSTypedArrayViewPrototype*, GetterSetter* speciesSymbol);
 
 public:
-    static JSTypedArrayViewConstructor* create(VM&, JSGlobalObject*, Structure*, JSObject* prototype);
+    static JSTypedArrayViewConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSTypedArrayViewPrototype* prototype, GetterSetter* speciesSymbol)
+    {
+        JSTypedArrayViewConstructor* result = new (NotNull, allocateCell<JSTypedArrayViewConstructor>(vm.heap)) JSTypedArrayViewConstructor(vm, structure);
+        result->finishCreation(vm, globalObject, prototype, speciesSymbol);
+        return result;
+    }
 
     DECLARE_INFO;
 

@@ -1,3 +1,15 @@
+2016-01-22  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add Symbol.species properties to the relevant constructors
+        https://bugs.webkit.org/show_bug.cgi?id=153339
+
+        Reviewed by Michael Saboff.
+
+        Add species to the list of property names on the Symbol object.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2016-01-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: ARIA combo boxes are not returning the right value for selected text range

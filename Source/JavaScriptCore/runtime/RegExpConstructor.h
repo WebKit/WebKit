@@ -29,16 +29,17 @@
 namespace JSC {
 
 class RegExpPrototype;
+class GetterSetter;
 
 class RegExpConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static RegExpConstructor* create(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
+    static RegExpConstructor* create(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype, GetterSetter* species)
     {
         RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(vm.heap)) RegExpConstructor(vm, structure, regExpPrototype);
-        constructor->finishCreation(vm, regExpPrototype);
+        constructor->finishCreation(vm, regExpPrototype, species);
         return constructor;
     }
 
@@ -68,7 +69,7 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 protected:
-    void finishCreation(VM&, RegExpPrototype*);
+    void finishCreation(VM&, RegExpPrototype*, GetterSetter* species);
 
 private:
     RegExpConstructor(VM&, Structure*, RegExpPrototype*);

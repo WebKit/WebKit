@@ -31,15 +31,16 @@
 namespace JSC {
 
 class MapPrototype;
+class GetterSetter;
 
 class MapConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static MapConstructor* create(VM& vm, Structure* structure, MapPrototype* mapPrototype)
+    static MapConstructor* create(VM& vm, Structure* structure, MapPrototype* mapPrototype, GetterSetter* speciesSymbol)
     {
         MapConstructor* constructor = new (NotNull, allocateCell<MapConstructor>(vm.heap)) MapConstructor(vm, structure);
-        constructor->finishCreation(vm, mapPrototype);
+        constructor->finishCreation(vm, mapPrototype, speciesSymbol);
         return constructor;
     }
 
@@ -55,7 +56,7 @@ private:
         : Base(vm, structure)
     {
     }
-    void finishCreation(VM&, MapPrototype*);
+    void finishCreation(VM&, MapPrototype*, GetterSetter* speciesSymbol);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
 };

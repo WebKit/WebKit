@@ -28,6 +28,7 @@
 
 #include "Error.h"
 #include "ExceptionHelpers.h"
+#include "GetterSetter.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSGlobalObject.h"
@@ -47,22 +48,23 @@ JSArrayBufferConstructor::JSArrayBufferConstructor(VM& vm, Structure* structure)
 {
 }
 
-void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* prototype)
+void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* prototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, ASCIILiteral("ArrayBuffer"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontEnum | DontDelete | ReadOnly);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
 
     JSGlobalObject* globalObject = this->globalObject();
     JSC_NATIVE_FUNCTION(vm.propertyNames->isView, arrayBufferFuncIsView, DontEnum, 1);
 }
 
-JSArrayBufferConstructor* JSArrayBufferConstructor::create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype)
+JSArrayBufferConstructor* JSArrayBufferConstructor::create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype, GetterSetter* speciesSymbol)
 {
     JSArrayBufferConstructor* result =
         new (NotNull, allocateCell<JSArrayBufferConstructor>(vm.heap))
         JSArrayBufferConstructor(vm, structure);
-    result->finishCreation(vm, prototype);
+    result->finishCreation(vm, prototype, speciesSymbol);
     return result;
 }
 

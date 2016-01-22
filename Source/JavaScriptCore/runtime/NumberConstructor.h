@@ -26,13 +26,14 @@
 namespace JSC {
 
 class NumberPrototype;
+class GetterSetter;
 
 class NumberConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | ImplementsHasInstance | ImplementsDefaultHasInstance;
 
-    static NumberConstructor* create(VM& vm, Structure* structure, NumberPrototype* numberPrototype)
+    static NumberConstructor* create(VM& vm, Structure* structure, NumberPrototype* numberPrototype, GetterSetter*)
     {
         NumberConstructor* constructor = new (NotNull, allocateCell<NumberConstructor>(vm.heap)) NumberConstructor(vm, structure);
         constructor->finishCreation(vm, numberPrototype);

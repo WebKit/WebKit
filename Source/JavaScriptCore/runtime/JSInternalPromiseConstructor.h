@@ -38,7 +38,7 @@ public:
     typedef JSPromiseConstructor Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static JSInternalPromiseConstructor* create(VM&, Structure*, JSInternalPromisePrototype*);
+    static JSInternalPromiseConstructor* create(VM&, Structure*, JSInternalPromisePrototype*, GetterSetter*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;

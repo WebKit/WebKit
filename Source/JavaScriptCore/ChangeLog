@@ -1,3 +1,70 @@
+2016-01-22  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add Symbol.species properties to the relevant constructors
+        https://bugs.webkit.org/show_bug.cgi?id=153339
+
+        Reviewed by Michael Saboff.
+
+        This patch adds Symbol.species to the RegExp, Array, TypedArray, Map, Set, ArrayBuffer, and
+        Promise constructors.  The functions that use these properties will be added in a later
+        patch.
+
+        * builtins/GlobalObject.js:
+        (speciesGetter):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::create):
+        * runtime/BooleanConstructor.h:
+        (JSC::BooleanConstructor::create):
+        * runtime/CommonIdentifiers.h:
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::create):
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::create):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        (JSC::JSArrayBufferConstructor::create):
+        * runtime/JSArrayBufferConstructor.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSInternalPromiseConstructor.cpp:
+        (JSC::JSInternalPromiseConstructor::create):
+        * runtime/JSInternalPromiseConstructor.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::create):
+        (JSC::JSPromiseConstructor::finishCreation):
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        (JSC::JSTypedArrayViewConstructor::create): Deleted.
+        * runtime/JSTypedArrayViewConstructor.h:
+        (JSC::JSTypedArrayViewConstructor::create):
+        * runtime/MapConstructor.cpp:
+        (JSC::MapConstructor::finishCreation):
+        * runtime/MapConstructor.h:
+        (JSC::MapConstructor::create):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::create):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::create):
+        * runtime/SetConstructor.cpp:
+        (JSC::SetConstructor::finishCreation):
+        * runtime/SetConstructor.h:
+        (JSC::SetConstructor::create):
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::create):
+        * runtime/SymbolConstructor.h:
+        (JSC::SymbolConstructor::create):
+        * runtime/WeakMapConstructor.h:
+        (JSC::WeakMapConstructor::create):
+        * runtime/WeakSetConstructor.h:
+        (JSC::WeakSetConstructor::create):
+        * tests/stress/symbol-species.js: Added.
+        (testSymbolSpeciesOnConstructor):
+
 2016-01-21  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] The IRC allocator can mess up the degree of Tmps interfering with move-related Tmps

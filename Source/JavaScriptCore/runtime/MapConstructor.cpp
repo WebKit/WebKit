@@ -27,6 +27,7 @@
 #include "MapConstructor.h"
 
 #include "Error.h"
+#include "GetterSetter.h"
 #include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -39,11 +40,12 @@ namespace JSC {
 
 const ClassInfo MapConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(MapConstructor) };
 
-void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype)
+void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, mapPrototype->classInfo()->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, mapPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
 }
 
 static EncodedJSValue JSC_HOST_CALL callMap(ExecState* exec)

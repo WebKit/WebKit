@@ -23,6 +23,7 @@
 #include "RegExpConstructor.h"
 
 #include "Error.h"
+#include "GetterSetter.h"
 #include "JSCInlines.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpPrototype.h"
@@ -90,7 +91,7 @@ RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure, RegExpPrototy
 {
 }
 
-void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype)
+void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, regExpPrototype->classInfo()->className);
     ASSERT(inherits(info()));
@@ -100,6 +101,8 @@ void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype)
 
     // no. of arguments for constructor
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
 }
 
 void RegExpConstructor::destroy(JSCell* cell)

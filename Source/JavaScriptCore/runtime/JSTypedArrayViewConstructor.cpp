@@ -28,10 +28,12 @@
 
 #include "CallFrame.h"
 #include "Error.h"
+#include "GetterSetter.h"
 #include "JSCBuiltins.h"
 #include "JSCellInlines.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSObject.h"
+#include "JSTypedArrayViewPrototype.h"
 #include "JSTypedArrays.h"
 
 namespace JSC {
@@ -43,23 +45,15 @@ JSTypedArrayViewConstructor::JSTypedArrayViewConstructor(VM& vm, Structure* stru
 
 const ClassInfo JSTypedArrayViewConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTypedArrayViewConstructor) };
 
-void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, JSObject* prototype)
+void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, JSTypedArrayViewPrototype* prototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, "TypedArray");
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(3), DontEnum | DontDelete | ReadOnly);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
 
     JSC_BUILTIN_FUNCTION(vm.propertyNames->of, typedArrayConstructorOfCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION(vm.propertyNames->from, typedArrayConstructorFromCodeGenerator, DontEnum);
-}
-
-JSTypedArrayViewConstructor* JSTypedArrayViewConstructor::create(
-    VM& vm, JSGlobalObject* globalObject, Structure* structure,
-    JSObject* prototype)
-{
-    JSTypedArrayViewConstructor* result = new (NotNull, allocateCell<JSTypedArrayViewConstructor>(vm.heap)) JSTypedArrayViewConstructor(vm, structure);
-    result->finishCreation(vm, globalObject, prototype);
-    return result;
 }
 
 Structure* JSTypedArrayViewConstructor::createStructure(

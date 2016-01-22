@@ -29,6 +29,7 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "Exception.h"
+#include "GetterSetter.h"
 #include "IteratorOperations.h"
 #include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"
@@ -61,10 +62,10 @@ const ClassInfo JSPromiseConstructor::s_info = { "Function", &Base::s_info, &pro
 @end
 */
 
-JSPromiseConstructor* JSPromiseConstructor::create(VM& vm, Structure* structure, JSPromisePrototype* promisePrototype)
+JSPromiseConstructor* JSPromiseConstructor::create(VM& vm, Structure* structure, JSPromisePrototype* promisePrototype, GetterSetter* speciesSymbol)
 {
     JSPromiseConstructor* constructor = new (NotNull, allocateCell<JSPromiseConstructor>(vm.heap)) JSPromiseConstructor(vm, structure);
-    constructor->finishCreation(vm, promisePrototype);
+    constructor->finishCreation(vm, promisePrototype, speciesSymbol);
     constructor->addOwnInternalSlots(vm, structure->globalObject());
     return constructor;
 }
@@ -79,11 +80,12 @@ JSPromiseConstructor::JSPromiseConstructor(VM& vm, Structure* structure)
 {
 }
 
-void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePrototype)
+void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePrototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, ASCIILiteral("Promise"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, promisePrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
 }
 
 void JSPromiseConstructor::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)

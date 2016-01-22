@@ -31,6 +31,7 @@
 namespace JSC {
 
 class JSArrayBufferPrototype;
+class GetterSetter;
 
 class JSArrayBufferConstructor : public InternalFunction {
 public:
@@ -38,10 +39,10 @@ public:
 
 protected:
     JSArrayBufferConstructor(VM&, Structure*);
-    void finishCreation(VM&, JSArrayBufferPrototype*);
+    void finishCreation(VM&, JSArrayBufferPrototype*, GetterSetter* speciesSymbol);
 
 public:
-    static JSArrayBufferConstructor* create(VM&, Structure*, JSArrayBufferPrototype*);
+    static JSArrayBufferConstructor* create(VM&, Structure*, JSArrayBufferPrototype*, GetterSetter* speciesSymbol);
     
     DECLARE_INFO;
     

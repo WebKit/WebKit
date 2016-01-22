@@ -27,6 +27,7 @@
 #include "SetConstructor.h"
 
 #include "Error.h"
+#include "GetterSetter.h"
 #include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -40,11 +41,12 @@ namespace JSC {
 
 const ClassInfo SetConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(SetConstructor) };
 
-void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype)
+void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, setPrototype->classInfo()->className);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, setPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
 }
 
 static EncodedJSValue JSC_HOST_CALL callSet(ExecState* exec)

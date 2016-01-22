@@ -31,12 +31,13 @@
 namespace JSC {
 
 class WeakSetPrototype;
+class GetterSetter;
 
 class WeakSetConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static WeakSetConstructor* create(VM& vm, Structure* structure, WeakSetPrototype* prototype)
+    static WeakSetConstructor* create(VM& vm, Structure* structure, WeakSetPrototype* prototype, GetterSetter*)
     {
         WeakSetConstructor* constructor = new (NotNull, allocateCell<WeakSetConstructor>(vm.heap)) WeakSetConstructor(vm, structure);
         constructor->finishCreation(vm, prototype);

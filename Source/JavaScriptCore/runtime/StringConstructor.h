@@ -26,13 +26,14 @@
 namespace JSC {
 
 class StringPrototype;
+class GetterSetter;
 
 class StringConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static StringConstructor* create(VM& vm, Structure* structure, StringPrototype* stringPrototype)
+    static StringConstructor* create(VM& vm, Structure* structure, StringPrototype* stringPrototype, GetterSetter*)
     {
         StringConstructor* constructor = new (NotNull, allocateCell<StringConstructor>(vm.heap)) StringConstructor(vm, structure);
         constructor->finishCreation(vm, stringPrototype);

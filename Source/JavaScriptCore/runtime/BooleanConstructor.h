@@ -26,12 +26,13 @@
 namespace JSC {
 
 class BooleanPrototype;
+class GetterSetter;
 
 class BooleanConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static BooleanConstructor* create(VM& vm, Structure* structure, BooleanPrototype* booleanPrototype)
+    static BooleanConstructor* create(VM& vm, Structure* structure, BooleanPrototype* booleanPrototype, GetterSetter*)
     {
         BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(vm.heap)) BooleanConstructor(vm, structure);
         constructor->finishCreation(vm, booleanPrototype);

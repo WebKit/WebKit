@@ -47,10 +47,10 @@ const ClassInfo JSInternalPromiseConstructor::s_info = { "Function", &Base::s_in
 @end
 */
 
-JSInternalPromiseConstructor* JSInternalPromiseConstructor::create(VM& vm, Structure* structure, JSInternalPromisePrototype* promisePrototype)
+JSInternalPromiseConstructor* JSInternalPromiseConstructor::create(VM& vm, Structure* structure, JSInternalPromisePrototype* promisePrototype, GetterSetter* speciesSymbol)
 {
     JSInternalPromiseConstructor* constructor = new (NotNull, allocateCell<JSInternalPromiseConstructor>(vm.heap)) JSInternalPromiseConstructor(vm, structure);
-    constructor->finishCreation(vm, promisePrototype);
+    constructor->finishCreation(vm, promisePrototype, speciesSymbol);
     return constructor;
 }
 

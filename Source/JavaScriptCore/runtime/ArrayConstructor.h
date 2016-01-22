@@ -28,16 +28,17 @@ namespace JSC {
 class ArrayAllocationProfile;
 class ArrayPrototype;
 class JSArray;
+class GetterSetter;
 
 class ArrayConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
-    static ArrayConstructor* create(VM& vm, Structure* structure, ArrayPrototype* arrayPrototype)
+    static ArrayConstructor* create(VM& vm, Structure* structure, ArrayPrototype* arrayPrototype, GetterSetter* speciesSymbol)
     {
         ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(vm.heap)) ArrayConstructor(vm, structure);
-        constructor->finishCreation(vm, arrayPrototype);
+        constructor->finishCreation(vm, arrayPrototype, speciesSymbol);
         return constructor;
     }
 
@@ -49,7 +50,7 @@ public:
     }
 
 protected:
-    void finishCreation(VM&, ArrayPrototype*);
+    void finishCreation(VM&, ArrayPrototype*, GetterSetter* speciesSymbol);
 
 private:
     ArrayConstructor(VM&, Structure*);
