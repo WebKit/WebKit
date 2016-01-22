@@ -1,3 +1,15 @@
+2016-01-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should know that CeilDouble has the partial register stall issue
+        https://bugs.webkit.org/show_bug.cgi?id=153338
+
+        Rubber stamped by Benjamin Poulain.
+
+        This is a 8% speed-up on Kraken with B3 enabled, mostly because of a 2.4x speed-up on
+        audio-oscillator.
+
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+
 2016-01-21  Andy VanWagoner  <andy@instructure.com>
 
         [INTL] Implement Array.prototype.toLocaleString in ECMA-402
