@@ -1,3 +1,11 @@
+2016-01-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaselining http/tests/security/originHeader/origin-header-for-https.html after r195477
+
+        Unreviewed test gardening.
+
+        * http/tests/security/originHeader/origin-header-for-https-expected.txt:
+
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
         Document.URL / Document.documentURI should return "about:blank" instead of empty string / null
