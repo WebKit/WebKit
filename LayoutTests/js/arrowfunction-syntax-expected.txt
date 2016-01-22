@@ -48,6 +48,10 @@ PASS ((x, y, {c:b, d:a}) => x + y + a + b)("x_", "y_", {c:"a_", d:"b_"}) is "x_y
 PASS (({c:b, d:a}, x, y) => x + y + a + b)({c:"a_", d:"b_"}, "x_", "y_") is "x_y_b_a_"
 PASS ((x, y, {c:b, d:a}, [e, f]) => x + y + a + b + e + f)("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"]) is "x_y_b_a_e_f_"
 PASS ((x, y, {c:b, d:a}, [e, f], ...theArgs) => x + y + a + b + e + f + theArgs[0] + theArgs[1])("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"], "g_", "h_") is "x_y_b_a_e_f_g_h_"
+PASS ((x, y = 'default-value') => x + y)('input-value:') is "input-value:default-value"
+PASS ((x, y = 'default-value') => x + y)('input-value:', undefined) is "input-value:default-value"
+PASS ((x, y = 'default-value') => x + y)() is "undefineddefault-value"
+PASS ((x, y = 'default-value') => x + y)('input-value-1:','input-value-2') is "input-value-1:input-value-2"
 PASS arr1(["a_", "b_"]) is "a_b_"
 PASS arr2({a:"a_", b:"b_"}) is "a_b_"
 PASS arr3({c:"a_", d:"b_"}) is "a_b_"
@@ -56,6 +60,10 @@ PASS arr5("x_", "y_", {c:"a_", d:"b_"}) is "x_y_b_a_"
 PASS arr6({c:"a_", d:"b_"}, "x_", "y_") is "x_y_b_a_"
 PASS arr7("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"]) is "x_y_b_a_e_f_"
 PASS arr8("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"], "g_", "h_") is "x_y_b_a_e_f_g_h_"
+PASS arr9("input-value:") is "input-value:default-value"
+PASS arr9("input-value:", undefined) is "input-value:default-value"
+PASS arr9() is "undefineddefault-value"
+PASS arr9("input-value-1:", "input-value-2") is "input-value-1:input-value-2"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,17 @@
+2016-01-22  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function. Default arguments in arrow functions
+        https://bugs.webkit.org/show_bug.cgi?id=152537
+
+        Reviewed by Saam Barati.
+
+        Default arguments in arrow function parameters have been already 
+        implemented by patch from issue https://bugs.webkit.org/show_bug.cgi?id=146934. 
+        Current patch adds only tests for this feature  
+
+        * js/arrowfunction-syntax-expected.txt:
+        * js/script-tests/arrowfunction-syntax.js:
+
 2016-01-22  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add Symbol.species properties to the relevant constructors

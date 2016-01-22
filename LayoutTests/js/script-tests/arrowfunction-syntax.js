@@ -87,6 +87,10 @@ shouldBe('((x, y, {c:b, d:a}) => x + y + a + b)("x_", "y_", {c:"a_", d:"b_"})', 
 shouldBe('(({c:b, d:a}, x, y) => x + y + a + b)({c:"a_", d:"b_"}, "x_", "y_")', '"x_y_b_a_"');
 shouldBe('((x, y, {c:b, d:a}, [e, f]) => x + y + a + b + e + f)("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"])', '"x_y_b_a_e_f_"');
 shouldBe('((x, y, {c:b, d:a}, [e, f], ...theArgs) => x + y + a + b + e + f + theArgs[0] + theArgs[1])("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"], "g_", "h_")', '"x_y_b_a_e_f_g_h_"');
+shouldBe("((x, y = 'default-value') => x + y)('input-value:')",'"input-value:default-value"');
+shouldBe("((x, y = 'default-value') => x + y)('input-value:', undefined)",'"input-value:default-value"');
+shouldBe("((x, y = 'default-value') => x + y)()",'"undefineddefault-value"');
+shouldBe("((x, y = 'default-value') => x + y)('input-value-1:','input-value-2')",'"input-value-1:input-value-2"');
 
 var arr1 = ([a, b]) => a + b;
 shouldBe('arr1(["a_", "b_"])', '"a_b_"');
@@ -111,5 +115,11 @@ shouldBe('arr7("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"])', '"x_y_b_a_e_f_"');
 
 var arr8 = (x, y, {c:b, d:a}, [e, f], ...theArgs) => x + y + a + b + e + f + theArgs[0] + theArgs[1];
 shouldBe('arr8("x_", "y_", {c:"a_", d:"b_"}, ["e_", "f_"], "g_", "h_")', '"x_y_b_a_e_f_g_h_"');
+
+var arr9 = (x, y = 'default-value') => x + y;
+shouldBe('arr9("input-value:")','"input-value:default-value"');
+shouldBe('arr9("input-value:", undefined)','"input-value:default-value"');
+shouldBe('arr9()','"undefineddefault-value"');
+shouldBe('arr9("input-value-1:", "input-value-2")','"input-value-1:input-value-2"');
 
 var successfullyParsed = true;
