@@ -1,3 +1,18 @@
+2016-01-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: ARIA combo boxes are not returning the right value for selected text range
+        https://bugs.webkit.org/show_bug.cgi?id=153260
+
+        Reviewed by Darin Adler.
+
+        Just because an element has an ARIA role doesn't mean we should always use the selected text range of the whole document.
+        If the element is also a text based ARIA control, we can still use the element's inner text range to return the right value.
+
+        Test: accessibility/selected-text-range-aria-elements.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::selectedTextRange):
+
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix after r195452.

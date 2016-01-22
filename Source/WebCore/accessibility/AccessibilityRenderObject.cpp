@@ -1493,7 +1493,8 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
         return PlainTextRange();
     
     AccessibilityRole ariaRole = ariaRoleAttribute();
-    if (isNativeTextControl() && ariaRole == UnknownRole) {
+    // Use the text control native range if it's a native object and it has no ARIA role (or has a text based ARIA role).
+    if (isNativeTextControl() && (ariaRole == UnknownRole || isARIATextControl())) {
         HTMLTextFormControlElement& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
         return PlainTextRange(textControl.selectionStart(), textControl.selectionEnd() - textControl.selectionStart());
     }
