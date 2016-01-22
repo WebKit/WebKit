@@ -1,3 +1,15 @@
+2016-01-22  Enrica Casucci  <enrica@apple.com>
+
+        Remove dependency from DataDetectorsCore on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=153358
+        rdar://problem/24294651
+
+        Reviewed by Anders Carlsson.
+
+        Avoid build dependencies.
+
+        * Configurations/WebCore.xcconfig:
+
 2016-01-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: ARIA combo boxes are not returning the right value for selected text range
