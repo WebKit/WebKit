@@ -1,5 +1,21 @@
 2016-01-22  Keith Miller  <keith_miller@apple.com>
 
+        Equivalence PropertyCondition needs to check the offset it uses to load the value from is not invalidOffset
+        https://bugs.webkit.org/show_bug.cgi?id=152912
+
+        Reviewed by Mark Lam.
+
+        When checking the validity of an Equivalence PropertyCondition we do not check that the offset returned by
+        the structure of the object in the equivalence condition is valid. The offset might be wrong for many reasons.
+        The one we now test for is when the GlobalObject has a property that becomes a variable the property is deleted
+        thus the offset is now invalid.
+
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint):
+        * tests/stress/global-property-into-variable-get-from-scope.js: Added.
+
+2016-01-22  Keith Miller  <keith_miller@apple.com>
+
         [ES6] Add Symbol.species properties to the relevant constructors
         https://bugs.webkit.org/show_bug.cgi?id=153339
 

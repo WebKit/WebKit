@@ -172,6 +172,15 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         // https://bugs.webkit.org/show_bug.cgi?id=134641
         
         PropertyOffset currentOffset = structure->getConcurrently(uid());
+        if (currentOffset == invalidOffset) {
+            if (verbose) {
+                dataLog(
+                    "Invalid because the base no long appears to have ", uid(), " on its structure: ",
+                        RawPointer(base), "\n");
+            }
+            return false;
+        }
+
         JSValue currentValue = base->getDirect(currentOffset);
         if (currentValue != requiredValue()) {
             if (verbose) {
