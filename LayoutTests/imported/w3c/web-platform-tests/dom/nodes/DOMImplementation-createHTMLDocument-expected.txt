@@ -8,7 +8,7 @@ PASS createHTMLDocument test 5: "foo\n\nbar baz","foo\n\nbar baz","foo bar baz"
 PASS createHTMLDocument test 6: "foo\f\fbar baz","foo\f\fbar baz","foo bar baz" 
 PASS createHTMLDocument test 7: "foo\r\rbar baz","foo\r\rbar baz","foo bar baz" 
 PASS Missing title argument 
-FAIL createHTMLDocument(): metadata assert_equals: expected "about:blank" but got ""
+PASS createHTMLDocument(): metadata 
 FAIL createHTMLDocument(): characterSet aliases assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
 PASS createHTMLDocument(): URL parsing 
 

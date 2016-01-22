@@ -650,6 +650,7 @@ public:
 
     virtual const URL& url() const override final { return m_url; }
     void setURL(const URL&);
+    const URL& urlForBindings() const { return m_url.isEmpty() ? blankURL() : m_url; }
 
     // To understand how these concepts relate to one another, please see the
     // comments surrounding their declaration.

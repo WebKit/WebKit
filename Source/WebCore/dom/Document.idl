@@ -82,7 +82,7 @@
     // read-only for other clients.
              [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString documentURI;
 #else
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString documentURI;
+    [ImplementedAs=urlForBindings] readonly attribute DOMString documentURI;
 #endif
 
     // DOM Level 2 Events (DocumentEvents interface)
@@ -165,7 +165,7 @@
 #else
     readonly attribute DOMString domain;
 #endif
-    readonly attribute DOMString URL;
+    [ImplementedAs=urlForBindings] readonly attribute DOMString URL;
 
     [TreatNullAs=NullString, GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
 

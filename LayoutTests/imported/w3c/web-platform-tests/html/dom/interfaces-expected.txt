@@ -1259,7 +1259,7 @@ FAIL XMLDocument interface: document.implementation.createDocument(null, "", nul
 FAIL XMLDocument interface: calling load(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "load" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "implementation" with the proper type (0) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "URL" with the proper type (1) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "documentURI" with the proper type (2) assert_equals: expected "string" but got "object"
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "documentURI" with the proper type (2) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "origin" with the proper type (3) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "compatMode" with the proper type (4) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "characterSet" with the proper type (5) 

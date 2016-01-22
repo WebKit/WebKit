@@ -141,7 +141,7 @@ PASS foreignDoc.childNodes.length
 PASS foreignDoc.childNodes[0] 
 PASS foreignDoc.childNodes[1] 
 PASS foreignDoc.childNodes[2] 
-FAIL foreignDoc.URL assert_equals: expected "about:blank" but got ""
+PASS foreignDoc.URL 
 PASS foreignDoc.compatMode 
 PASS foreignDoc.characterSet 
 PASS foreignDoc.contentType 
@@ -153,7 +153,7 @@ PASS foreignDoc.previousSibling
 PASS foreignDoc.parentElement 
 PASS foreignDoc.parentNode 
 PASS foreignDoc.ownerDocument 
-FAIL foreignDoc.documentURI assert_equals: expected (string) "about:blank" but got (object) null
+PASS foreignDoc.documentURI 
 PASS foreignDoc.inputEncoding 
 FAIL foreignDoc.charset assert_equals: expected (string) "UTF-8" but got (undefined) undefined
 PASS foreignDoc.firstChild 
@@ -215,7 +215,7 @@ PASS xmlDoc.childNodes[0]
 PASS xmlDoc.childNodes[1] 
 PASS xmlDoc.childNodes[2] 
 PASS xmlDoc.childNodes[3] 
-FAIL xmlDoc.URL assert_equals: expected "about:blank" but got ""
+PASS xmlDoc.URL 
 PASS xmlDoc.compatMode 
 PASS xmlDoc.characterSet 
 PASS xmlDoc.contentType 
@@ -227,7 +227,7 @@ PASS xmlDoc.previousSibling
 PASS xmlDoc.parentElement 
 PASS xmlDoc.parentNode 
 PASS xmlDoc.ownerDocument 
-FAIL xmlDoc.documentURI assert_equals: expected (string) "about:blank" but got (object) null
+PASS xmlDoc.documentURI 
 PASS xmlDoc.inputEncoding 
 FAIL xmlDoc.charset assert_equals: expected (string) "UTF-8" but got (undefined) undefined
 PASS xmlDoc.firstChild 

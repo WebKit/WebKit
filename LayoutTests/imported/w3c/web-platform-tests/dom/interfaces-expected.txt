@@ -482,7 +482,7 @@ PASS XMLDocument must be primary interface of xmlDoc
 FAIL Stringification of xmlDoc assert_equals: class string of xmlDoc expected "[object XMLDocument]" but got "[object Document]"
 PASS Document interface: xmlDoc must inherit property "implementation" with the proper type (0) 
 PASS Document interface: xmlDoc must inherit property "URL" with the proper type (1) 
-FAIL Document interface: xmlDoc must inherit property "documentURI" with the proper type (2) assert_equals: expected "string" but got "object"
+PASS Document interface: xmlDoc must inherit property "documentURI" with the proper type (2) 
 PASS Document interface: xmlDoc must inherit property "origin" with the proper type (3) 
 PASS Document interface: xmlDoc must inherit property "compatMode" with the proper type (4) 
 PASS Document interface: xmlDoc must inherit property "characterSet" with the proper type (5) 

@@ -1,3 +1,25 @@
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Document.URL / Document.documentURI should return "about:blank" instead of empty string / null
+        https://bugs.webkit.org/show_bug.cgi?id=153363
+        <rdar://problem/22549736>
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop outdated tests.
+
+        * dom/xhtml/level3/core/documentgetdocumenturi02-expected.txt: Removed.
+        * dom/xhtml/level3/core/documentgetdocumenturi02.js: Removed.
+        * dom/xhtml/level3/core/documentgetdocumenturi02.xhtml: Removed.
+        * dom/xhtml/level3/core/documentgetdocumenturi03-expected.txt: Removed.
+        * dom/xhtml/level3/core/documentgetdocumenturi03.js: Removed.
+        * dom/xhtml/level3/core/documentgetdocumenturi03.xhtml: Removed.
+        * dom/xhtml/level3/core/documentsetdocumenturi03-expected.txt: Removed.
+        * dom/xhtml/level3/core/documentsetdocumenturi03.js: Removed.
+        * dom/xhtml/level3/core/documentsetdocumenturi03.xhtml: Removed.
+        * fast/dom/document-attribute-js-null-expected.txt:
+        * fast/dom/document-attribute-js-null.html:
+
 2016-01-22  Tim Horton  <timothy_horton@apple.com>
 
         Add a test for iOS arrow-key repeat
