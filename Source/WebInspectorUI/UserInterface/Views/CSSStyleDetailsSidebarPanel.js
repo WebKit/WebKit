@@ -353,8 +353,9 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
     _populateClassToggles()
     {
-        this._classListContainer.removeChildren();
-        this._classListContainer.appendChild(this._addClassContainer);
+        // Ensure that _addClassContainer is the first child of _classListContainer.
+        while (this._classListContainer.children.length > 1)
+            this._classListContainer.children[1].remove();
 
         let classes = this.domNode.getAttribute("class");
         let classToggledMap = this.domNode[WebInspector.CSSStyleDetailsSidebarPanel.ToggledClassesSymbol];
