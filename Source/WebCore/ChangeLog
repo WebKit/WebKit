@@ -1,3 +1,24 @@
+2016-01-21  Sam Weinig  <sam@webkit.org>
+
+        Treat non-https actions on secure pages as mixed content
+        <rdar://problem/23144492>
+        https://bugs.webkit.org/show_bug.cgi?id=153322
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests:  http/tests/security/mixedContent/insecure-form-in-iframe.html
+                http/tests/security/mixedContent/insecure-form-in-main-frame.html
+                http/tests/security/mixedContent/javascript-url-form-in-main-frame.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseAttribute):
+        Check form actions for mixed content.
+
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::checkFormForMixedContent):
+        * loader/MixedContentChecker.h:
+        Add new function to check and warn if a form's action is mixed content.
+
 2016-01-22  Nan Wang  <n_wang@apple.com>
 
         AX: Crash in setTextMarkerDataWithCharacterOffset

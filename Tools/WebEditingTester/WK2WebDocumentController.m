@@ -81,7 +81,13 @@ static WKWebViewConfiguration *defaultConfiguration()
 
 - (void)loadHTMLString:(NSString *)content
 {
-    [_webView loadHTMLString:content baseURL:nil];
+    NSStringEncoding encoding = NSUnicodeStringEncoding;
+
+    NSData *data = [content dataUsingEncoding:encoding];
+    CFStringEncoding cfEncoding = CFStringConvertNSStringEncodingToEncoding(encoding);
+    NSString *textEncodingName = (__bridge NSString *)CFStringConvertEncodingToIANACharSetName(cfEncoding);
+
+    [_webView _loadData:data MIMEType:@"text/html" characterEncodingName:textEncodingName baseURL:[NSURL URLWithString:@"x-webdoc:/klsadfgjlfsdj/"] userData:nil];
 }
 
 - (void)performTextFinderAction:(id)sender

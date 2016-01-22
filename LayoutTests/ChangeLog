@@ -1,3 +1,20 @@
+2016-01-21  Sam Weinig  <sam@webkit.org>
+
+        Treat non-https actions on secure pages as mixed content
+        <rdar://problem/23144492>
+        https://bugs.webkit.org/show_bug.cgi?id=153322
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/security/mixedContent/insecure-form-in-iframe-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-form-in-iframe.html: Added.
+        * http/tests/security/mixedContent/insecure-form-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-form-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/javascript-url-form-in-main-frame-expected.txt: Added.
+        * http/tests/security/mixedContent/javascript-url-form-in-main-frame.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-form.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-javascript-url-form.html: Added.
+
 2016-01-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm as flaky on ios-simulator
