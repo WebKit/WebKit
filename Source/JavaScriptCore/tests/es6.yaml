@@ -865,7 +865,7 @@
 - path: es6/Map_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/Map_Map[Symbol.species].js
-  cmd: runES6 :fnormal
+  cmd: runES6 :normal
 - path: es6/miscellaneous_built-in_prototypes_are_not_instances.js
   cmd: runES6 :fail
 - path: es6/miscellaneous_function_length_is_configurable.js
