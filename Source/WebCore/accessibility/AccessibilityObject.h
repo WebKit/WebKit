@@ -540,7 +540,8 @@ public:
     bool isMeter() const;
     bool isSplitter() const { return roleValue() == SplitterRole; }
     bool isToolbar() const { return roleValue() == ToolbarRole; }
-
+    bool isStyleFormatGroup() const;
+    
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }
     virtual bool isSelected() const { return false; }

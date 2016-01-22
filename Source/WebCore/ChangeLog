@@ -1,3 +1,24 @@
+2016-01-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <code> group and friends should have a custom subrole
+        https://bugs.webkit.org/show_bug.cgi?id=153282
+
+        Reviewed by Mario Sanchez Prada.
+
+        Add some custom subroles for the mac for code, ins, del, cite, var, samp, pre, kbd,
+        so that assistive tech can recognize them.
+
+        Test: accessibility/mac/subroles-for-formatted-groups.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isStyleFormatGroup):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper subrole]):
+
 2016-01-22  Enrica Casucci  <enrica@apple.com>
 
         Remove dependency from DataDetectorsCore on iOS.

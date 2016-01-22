@@ -1,0 +1,22 @@
+code
+kbd
+sample
+pre
+var insert delete cite
+This test makes sure that formatting style groups.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+code: AXSubrole: AXCodeStyleGroup
+kbd: AXSubrole: AXKeyboardInputStyleGroup
+samp: AXSubrole: AXSampleStyleGroup
+pre: AXSubrole: AXPreformattedStyleGroup
+var: AXSubrole: AXVariableStyleGroup
+ins: AXSubrole: AXInsertStyleGroup
+del: AXSubrole: AXDeleteStyleGroup
+cite: AXSubrole: AXCiteStyleGroup
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

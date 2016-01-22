@@ -2361,6 +2361,27 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isSwitch())
         return NSAccessibilitySwitchSubrole;
 
+    if (role == GroupRole) {
+        if (Node* node = m_object->node()) {
+            if (node->hasTagName(kbdTag))
+                return @"AXKeyboardInputStyleGroup";
+            if (node->hasTagName(codeTag))
+                return @"AXCodeStyleGroup";
+            if (node->hasTagName(preTag))
+                return @"AXPreformattedStyleGroup";
+            if (node->hasTagName(sampTag))
+                return @"AXSampleStyleGroup";
+            if (node->hasTagName(varTag))
+                return @"AXVariableStyleGroup";
+            if (node->hasTagName(citeTag))
+                return @"AXCiteStyleGroup";
+            if (node->hasTagName(insTag))
+                return @"AXInsertStyleGroup";
+            if (node->hasTagName(delTag))
+                return @"AXDeleteStyleGroup";
+        }
+    }
+    
     // Ruby subroles
     switch (role) {
     case RubyBaseRole:

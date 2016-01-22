@@ -1,3 +1,16 @@
+2016-01-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <code> group and friends should have a custom subrole
+        https://bugs.webkit.org/show_bug.cgi?id=153282
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/duplicate-child-nodes-expected.txt:
+        * accessibility/mac/subroles-for-formatted-groups-expected.txt: Added.
+        * accessibility/mac/subroles-for-formatted-groups.html: Added.
+        * accessibility/roles-computedRoleString-expected.txt:
+        * accessibility/roles-computedRoleString.html:
+
 2016-01-22  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function. Default arguments in arrow functions

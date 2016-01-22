@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<code id="code">code</code><br>
+<kbd id="kbd">kbd</kbd><br>
+<samp id="samp">sample</samp><br>
+<pre id="pre">pre</pre>
+<var id="var">var</var>
+<ins id="ins">insert</ins>
+<del id="del">delete</del>
+<cite id="cite">cite</cite>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that formatting style groups.");
+
+    if (window.accessibilityController) {
+          debug("code: " + accessibilityController.accessibleElementById('code').subrole);
+          debug("kbd: " + accessibilityController.accessibleElementById('kbd').subrole);
+          debug("samp: " + accessibilityController.accessibleElementById('samp').subrole);
+          debug("pre: " + accessibilityController.accessibleElementById('pre').subrole);
+          debug("var: " + accessibilityController.accessibleElementById('var').subrole);
+          debug("ins: " + accessibilityController.accessibleElementById('ins').subrole);
+          debug("del: " + accessibilityController.accessibleElementById('del').subrole);
+          debug("cite: " + accessibilityController.accessibleElementById('cite').subrole);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

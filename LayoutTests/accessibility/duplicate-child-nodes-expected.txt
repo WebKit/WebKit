@@ -3,6 +3,7 @@ Child nodes should not be duplicated in the accessibility tree.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS webArea.childAtIndex(0).isEqual(webArea.childAtIndex(1)) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

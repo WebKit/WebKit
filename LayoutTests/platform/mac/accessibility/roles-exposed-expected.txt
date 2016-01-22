@@ -70,24 +70,24 @@ canvas
       AXRoleDescription: 
       
 cite
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXCiteStyleGroup
+      AXRoleDescription: group
       
 code
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXCodeStyleGroup
+      AXRoleDescription: group
       
 del:not([datetime])
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXDeleteStyleGroup
+      AXRoleDescription: group
       
 del[datetime]
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXDeleteStyleGroup
+      AXRoleDescription: group
       
 dfn
       AXRole: AXGroup
@@ -335,14 +335,14 @@ input[type='week']
       AXRoleDescription: text field
       
 ins:not([datetime])
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXInsertStyleGroup
+      AXRoleDescription: group
       
 ins[datetime]
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXInsertStyleGroup
+      AXRoleDescription: group
       
 map
       AXRole: 
@@ -556,7 +556,7 @@ p
       
 pre
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXPreformattedStyleGroup
       AXRoleDescription: group
       
 progress
@@ -575,9 +575,9 @@ s
       AXRoleDescription: 
       
 samp
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXSampleStyleGroup
+      AXRoleDescription: group
       
 section
       AXRole: AXGroup
@@ -730,9 +730,9 @@ li
       AXRoleDescription: group
       
 var
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXVariableStyleGroup
+      AXRoleDescription: group
       
 wbr
       AXRole: 

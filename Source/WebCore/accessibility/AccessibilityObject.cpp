@@ -2940,6 +2940,18 @@ void AccessibilityObject::setPreventKeyboardDOMEventDispatch(bool on)
 }
 #endif
 
+bool AccessibilityObject::isStyleFormatGroup() const
+{
+    Node* node = this->node();
+    if (!node)
+        return false;
+    
+    return node->hasTagName(kbdTag) || node->hasTagName(codeTag)
+    || node->hasTagName(preTag) || node->hasTagName(sampTag)
+    || node->hasTagName(varTag) || node->hasTagName(citeTag)
+    || node->hasTagName(insTag) || node->hasTagName(delTag);
+}
+    
 bool AccessibilityObject::isContainedByPasswordField() const
 {
     Node* node = this->node();

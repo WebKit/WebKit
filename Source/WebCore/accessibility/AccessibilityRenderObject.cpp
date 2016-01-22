@@ -1386,6 +1386,9 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (node && node->hasTagName(dfnTag))
         return false;
     
+    if (isStyleFormatGroup())
+        return false;
+    
     // Make sure that ruby containers are not ignored.
     if (m_renderer->isRubyRun() || m_renderer->isRubyBlock() || m_renderer->isRubyInline())
         return false;
@@ -2581,7 +2584,10 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return SVGRootRole;
     if (node && node->hasTagName(SVGNames::gTag))
         return GroupRole;
-
+    
+    if (isStyleFormatGroup())
+        return GroupRole;
+    
 #if ENABLE(MATHML)
     if (node && node->hasTagName(MathMLNames::mathTag))
         return DocumentMathRole;
