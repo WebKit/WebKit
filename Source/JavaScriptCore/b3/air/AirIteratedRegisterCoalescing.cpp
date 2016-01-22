@@ -291,6 +291,25 @@ private:
         }
     }
 
+
+    bool addEdgeDistinctWithoutDegreeChange(IndexType a, IndexType b)
+    {
+        ASSERT(a != b);
+        if (m_interferenceEdges.add(InterferenceEdge(a, b)).isNewEntry) {
+            if (!isPrecolored(a)) {
+                ASSERT(!m_adjacencyList[a].contains(b));
+                m_adjacencyList[a].append(b);
+            }
+
+            if (!isPrecolored(b)) {
+                ASSERT(!m_adjacencyList[b].contains(a));
+                m_adjacencyList[b].append(a);
+            }
+            return true;
+        }
+        return false;
+    }
+
     bool isMoveRelated(IndexType tmpIndex)
     {
         for (unsigned moveIndex : m_moveList[tmpIndex]) {
@@ -365,8 +384,19 @@ private:
         m_moveList[u].add(vMoves.begin(), vMoves.end());
 
         forEachAdjacent(v, [this, u] (IndexType adjacentTmpIndex) {
-            addEdgeDistinct(adjacentTmpIndex, u);
-            decrementDegree(adjacentTmpIndex);
+            if (addEdgeDistinctWithoutDegreeChange(adjacentTmpIndex, u)) {
+                // If we added a new edge between the adjacentTmp and u, it replaces the edge
+                // that existed with v.
+                // The degree of adjacentTmp remains the same since the edge just changed from u to v.
+                // All we need to do is update the degree of u.
+                if (!isPrecolored(u))
+                    m_degrees[u]++;
+            } else {
+                // If we already had an edge between the adjacentTmp and u, the degree of u
+                // is already correct. The degree of the adjacentTmp decreases since the edge
+                // with v is no longer relevant (we can think of it as merged with the edge with u).
+                decrementDegree(adjacentTmpIndex);
+            }
         });
 
         if (m_degrees[u] >= m_regsInPriorityOrder.size() && m_freezeWorklist.remove(u))

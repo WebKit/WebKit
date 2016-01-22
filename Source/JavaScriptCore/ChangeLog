@@ -1,3 +1,50 @@
+2016-01-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] The IRC allocator can mess up the degree of Tmps interfering with move-related Tmps
+        https://bugs.webkit.org/show_bug.cgi?id=153340
+
+        Reviewed by Filip Pizlo.
+
+        The JavaScriptCore tests uncovered an interested bug in the iterated register
+        coalescing allocator. When coalescing a move under the right conditions, it is
+        possible to mess-up the graph for the Tmps interfering with the coalesced Tmps.
+
+        Some context first:
+        -When coalescing a move, we alias one Tmp to another. Let say that we had
+             Move X, Y
+         the coalescing may alias Y to X: Y->X.
+        -Since X and Y are equivalent after coalescing, any interference
+         edge with Y is "moved" to X.
+         The way this was done was to add an edge to X for every edge there was with Y.
+         Say we had an edge R--Y, we add an edge R--X.
+         Adding an edge increases the degree of R and Y. The degree of R was then
+         fixed by calling decrementDegree() on it.
+        -decrementDegree() is non trivial. It will move the Tmp to the right list
+         for further processing if the Tmp's degree becomes lower than the number
+         of available registers.
+
+        The bug appear in a particular case. Say we have 3 Tmp, A, B, and C.
+        -A and B are move related, they can be coalesced.
+        -A has an interference edge with C.
+        -B does not have and interfence edge with C.
+        -C's degree is exactly the number of avaialble registers/colors minus one (k - 1).
+         -> This implies C is already in its list.
+
+        We coalesce A and B into B (A->B).
+        -The first step, addEdgeDistinct() adds an edge between B and C. The degrees of
+         B and C are increased by one. The degree of C becomes k.
+        -Next, decrementDegree() is called on C. Its degree decreases to k-1.
+         Because of the change from k to k-1, decrementDegree() adds C to a list again.
+
+        We have two kinds of bugs depending on the test:
+        -A Tmp can be added to the simplifyWorklist several time.
+        -A Tmp can be in both simplifyWorklist and freezeWorklist (because its move-related
+         status changed since the last decrementDegree()).
+        In both cases, the Tmps interfering with the duplicated Tmp will end up with
+        a degree lower than their real value.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+
 2016-01-21  Andreas Kling  <akling@apple.com>
 
         Add some missing WTF_MAKE_FAST_ALLOCATED in JavaScriptCore.
