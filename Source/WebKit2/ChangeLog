@@ -1,5 +1,20 @@
 2016-01-21  Dean Jackson  <dino@apple.com>
 
+        Move _allowsDoubleTapGestures implementation out of category
+        https://bugs.webkit.org/show_bug.cgi?id=153329
+        <rdar://problem/24289768>
+
+        Reviewed by Simon Fraser.
+
+        We were generating a linker warning because the implementation
+        was located inside the WKPrivate category.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _allowsDoubleTapGestures]): Move this out of
+        the category.
+
+2016-01-21  Dean Jackson  <dino@apple.com>
+
         [iOS] Crash in _endPotentialTapAndEnableDoubleTapGesturesIfNecessary
         https://bugs.webkit.org/show_bug.cgi?id=153326
         <rdar://problem/24264339>

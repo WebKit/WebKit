@@ -1586,6 +1586,22 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView setBackgroundColor:backgroundColor];
 }
 
+- (BOOL)_allowsDoubleTapGestures
+{
+    if (_fastClickingIsDisabled)
+        return YES;
+
+    // If the page is not user scalable, we don't allow double tap gestures.
+    if (![_scrollView isZoomEnabled] || [_scrollView minimumZoomScale] >= [_scrollView maximumZoomScale])
+        return NO;
+
+    // For scalable viewports, only disable double tap gestures if the viewport width is device width.
+    if (_viewportMetaTagWidth != WebCore::ViewportArguments::ValueDeviceWidth)
+        return YES;
+
+    return !areEssentiallyEqualAsFloat(contentZoomScale(self), _initialScaleFactor);
+}
+
 #pragma mark - UIScrollViewDelegate
 
 - (BOOL)usesStandardContentView
@@ -4053,22 +4069,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (![self _isDisplayingPDF])
         return nil;
     return [(WKPDFView *)_customContentView.get() suggestedFilename];
-}
-
-- (BOOL)_allowsDoubleTapGestures
-{
-    if (_fastClickingIsDisabled)
-        return YES;
-
-    // If the page is not user scalable, we don't allow double tap gestures.
-    if (![_scrollView isZoomEnabled] || [_scrollView minimumZoomScale] >= [_scrollView maximumZoomScale])
-        return NO;
-
-    // For scalable viewports, only disable double tap gestures if the viewport width is device width.
-    if (_viewportMetaTagWidth != WebCore::ViewportArguments::ValueDeviceWidth)
-        return YES;
-
-    return !areEssentiallyEqualAsFloat(contentZoomScale(self), _initialScaleFactor);
 }
 
 - (_WKWebViewPrintFormatter *)_webViewPrintFormatter
