@@ -1,3 +1,21 @@
+2016-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Don't ignore the return value of CCRandomCopyBytes
+        https://bugs.webkit.org/show_bug.cgi?id=153369
+        <rdar://problem/22198376>
+        <rdar://problem/22198378>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tested by existing Crypto tests.
+
+        * crypto/mac/CryptoKeyMac.cpp:
+        (WebCore::CryptoKey::randomData): RELEASE_ASSERT if CCRandomCopyBytes ever returns
+        anything besides kCCSuccess.
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::createAndStoreMasterKey): Ditto.
+        (WebCore::wrapSerializedCryptoKey): Ditto.
+
 2016-01-21  Sam Weinig  <sam@webkit.org>
 
         Treat non-https actions on secure pages as mixed content

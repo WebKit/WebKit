@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,8 @@ namespace WebCore {
 Vector<uint8_t> CryptoKey::randomData(size_t size)
 {
     Vector<uint8_t> result(size);
-    CCRandomCopyBytes(kCCRandomDefault, result.data(), result.size());
+    int rc = CCRandomCopyBytes(kCCRandomDefault, result.data(), result.size());
+    RELEASE_ASSERT(rc == kCCSuccess);
     return result;
 }
 

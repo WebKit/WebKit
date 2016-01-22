@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,8 @@ static NSString* masterKeyAccountNameForCurrentApplication()
 static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
 {
     masterKeyData.resize(masterKeySizeInBytes);
-    CCRandomCopyBytes(kCCRandomDefault, masterKeyData.data(), masterKeyData.size());
+    int rc = CCRandomCopyBytes(kCCRandomDefault, masterKeyData.data(), masterKeyData.size());
+    RELEASE_ASSERT(rc == kCCSuccess);
 
 #if PLATFORM(IOS)
     NSBundle *mainBundle = [NSBundle mainBundle];
@@ -171,7 +172,8 @@ bool getDefaultWebCryptoMasterKey(Vector<uint8_t>& masterKey)
 bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result)
 {
     Vector<uint8_t> kek(16);
-    CCRandomCopyBytes(kCCRandomDefault, kek.data(), kek.size());
+    int rc = CCRandomCopyBytes(kCCRandomDefault, kek.data(), kek.size());
+    RELEASE_ASSERT(rc == kCCSuccess);
 
     Vector<uint8_t> wrappedKEK(CCSymmetricWrappedSize(kCCWRAPAES, kek.size()));
 
