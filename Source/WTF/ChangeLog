@@ -1,3 +1,12 @@
+2016-01-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Buildfix for older GCCs after r195142
+        https://bugs.webkit.org/show_bug.cgi?id=153351
+
+        Unreviewed buildfix.
+
+        * wtf/SystemTracing.h:
+
 2016-01-21  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r195417): many tests crash
