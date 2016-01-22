@@ -2401,7 +2401,7 @@ _llint_op_profile_type:
     loadisFromInstruction(1, t2)
     loadConstantOrVariable(t2, t5, t0)
 
-    bieq t4, EmptyValueTag, .opProfileTypeDone
+    bieq t5, EmptyValueTag, .opProfileTypeDone
 
     # t2 is holding the pointer to the current log entry.
     loadp TypeProfilerLog::m_currentLogEntryPtr[t1], t2

@@ -1,3 +1,16 @@
+2016-01-22  Saam barati  <sbarati@apple.com>
+
+        op_profile_type 32-bit LLInt implementation has a bug
+        https://bugs.webkit.org/show_bug.cgi?id=153368
+
+        Reviewed by Michael Saboff.
+
+        r189293 changed which registers were used, specifically
+        using t5 instead of t4. That change forgot to replace
+        t4 with t5 in one specific instance.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2016-01-22  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should reduce obvious forms of Shl(SShr)
