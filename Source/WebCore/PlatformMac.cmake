@@ -335,6 +335,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
     platform/cocoa/ThemeCocoa.cpp
     platform/cocoa/VNodeTrackerCocoa.cpp
+    platform/cocoa/WebCoreNSErrorExtras.mm
 
     platform/graphics/DisplayRefreshMonitor.cpp
     platform/graphics/DisplayRefreshMonitorManager.cpp
