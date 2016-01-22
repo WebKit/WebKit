@@ -9457,6 +9457,50 @@ void testBranch64EqualMemImm(int64_t left, int64_t right)
     CHECK(compileAndRun<bool>(proc, &left) == (left == right));
 }
 
+void testStore8Load8Z(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    
+    int8_t byte;
+    Value* ptr = root->appendNew<ConstPtrValue>(proc, Origin(), &byte);
+    
+    root->appendNew<MemoryValue>(
+        proc, Store8, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        ptr);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(proc, Load8Z, Origin(), ptr));
+
+    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<uint8_t>(value));
+}
+
+void testStore16Load16Z(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    
+    int16_t byte;
+    Value* ptr = root->appendNew<ConstPtrValue>(proc, Origin(), &byte);
+    
+    root->appendNew<MemoryValue>(
+        proc, Store16, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        ptr);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(proc, Load16Z, Origin(), ptr));
+
+    CHECK(compileAndRun<int32_t>(proc, value) == static_cast<uint16_t>(value));
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -10729,6 +10773,17 @@ void run(const char* filter)
     RUN(testBranch64EqualMemImm(-1, -1));
     RUN(testBranch64EqualMemImm(1, -1));
     RUN(testBranch64EqualMemImm(-1, 1));
+
+    RUN(testStore8Load8Z(0));
+    RUN(testStore8Load8Z(123));
+    RUN(testStore8Load8Z(12345));
+    RUN(testStore8Load8Z(-123));
+
+    RUN(testStore16Load16Z(0));
+    RUN(testStore16Load16Z(123));
+    RUN(testStore16Load16Z(12345));
+    RUN(testStore16Load16Z(12345678));
+    RUN(testStore16Load16Z(-123));
 
     if (tasks.isEmpty())
         usage();

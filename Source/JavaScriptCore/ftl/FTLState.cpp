@@ -78,6 +78,8 @@ State::State(Graph& graph)
         [this] (PrintStream& out, B3::Origin origin) {
             out.print("DFG:", bitwise_cast<Node*>(origin.data()));
         });
+
+    proc->setFrontendData(&graph);
 #endif // FTL_USES_B3
 }
 

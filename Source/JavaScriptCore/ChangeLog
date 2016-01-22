@@ -1,5 +1,49 @@
 2016-01-21  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 CSE should be able to match a full redundancy even if none of the matches dominate the value in question
+        https://bugs.webkit.org/show_bug.cgi?id=153321
+
+        Reviewed by Benjamin Poulain.
+
+        I once learned that LLVM's GVN can manufacture Phi functions. I don't know the details
+        but I'm presuming that it involves:
+
+            if (p)
+                tmp1 = *ptr
+            else
+                tmp2 = *ptr
+            tmp3 = *ptr // Replace this with Phi(tmp1, tmp2).
+
+        This adds such an optimization to our CSE. The idea is that we search through basic
+        blocks until we find the value we want, a side effect, or the start of the procedure. If
+        we find a value that matches our search criteria, we record it and ignore the
+        predecessors. If we find a side effect or the start of the procedure, we give up the
+        whole search. This ensures that if we come out of the search without giving up, we'll
+        have a set of matches that are fully redundant.
+
+        CSE could then create a Phi graph by using SSACalculator. But the recent work on FixSSA
+        revealed a much more exciting option: create a stack slot! In case there is more than one
+        match, CSE now creates a stack slot that each match stores to, and replaces the redundant
+        instruction with a loadfrom the stack slot. The stack slot is anonymous, which ensures
+        that FixSSA will turn it into an optimal Phi graph or whatever.
+
+        This is a significant speed-up on Octane/richards.
+
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3FixSSA.cpp:
+        (JSC::B3::fixSSA):
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::setFrontendData):
+        (JSC::B3::Procedure::frontendData):
+        * b3/testb3.cpp:
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+
+2016-01-21  Filip Pizlo  <fpizlo@apple.com>
+
         Air should know that CeilDouble has the partial register stall issue
         https://bugs.webkit.org/show_bug.cgi?id=153338
 

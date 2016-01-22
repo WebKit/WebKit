@@ -122,6 +122,8 @@ void demoteValues(Procedure& proc, const IndexSet<Value>& values)
 
 bool fixSSA(Procedure& proc)
 {
+    PhaseScope phaseScope(proc, "fixSSA");
+    
     // Collect the stack "variables". If there aren't any, then we don't have anything to do.
     // That's a fairly common case.
     HashMap<StackSlotValue*, Type> stackVariable;

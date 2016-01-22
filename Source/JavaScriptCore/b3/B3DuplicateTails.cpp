@@ -123,12 +123,6 @@ public:
 
         m_proc.resetReachability();
         m_proc.invalidateCFG();
-
-        if (verbose) {
-            dataLog("Procedure just before SSA conversion:\n");
-            dataLog(m_proc);
-        }
-        fixSSA(m_proc);
     }
     
 private:

@@ -71,6 +71,12 @@ public:
     // Usually you use this via OriginDump, though it's cool to use it directly.
     void printOrigin(PrintStream& out, Origin origin) const;
 
+    // This is a debugging hack. Sometimes while debugging B3 you need to break the abstraction
+    // and get at the DFG Graph, or whatever data structure the frontend used to describe the
+    // program. The FTL passes the DFG Graph.
+    void setFrontendData(const void* value) { m_frontendData = value; }
+    const void* frontendData() const { return m_frontendData; }
+
     JS_EXPORT_PRIVATE BasicBlock* addBlock(double frequency = 1);
     
     template<typename ValueType, typename... Arguments>
@@ -284,6 +290,7 @@ private:
     std::unique_ptr<OpaqueByproducts> m_byproducts;
     std::unique_ptr<Air::Code> m_code;
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
+    const void* m_frontendData;
 };
 
 } } // namespace JSC::B3

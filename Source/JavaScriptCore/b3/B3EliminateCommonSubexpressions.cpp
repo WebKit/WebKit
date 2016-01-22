@@ -37,9 +37,13 @@
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3PureCSE.h"
+#include "B3StackSlotValue.h"
 #include "B3ValueKey.h"
 #include "B3ValueInlines.h"
+#include "DFGGraph.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
+#include <wtf/ListDump.h>
 #include <wtf/RangeSet.h>
 
 namespace JSC { namespace B3 {
@@ -60,11 +64,24 @@ const bool verbose = false;
 typedef Vector<MemoryValue*, 1> MemoryMatches;
 
 struct ImpureBlockData {
+    void dump(PrintStream& out) const
+    {
+        out.print("{writes = ", writes, ", memoryValues = {");
+
+        CommaPrinter comma;
+        for (auto& entry : memoryValues)
+            out.print(comma, pointerDump(entry.key), "=>", pointerListDump(entry.value));
+
+        out.print("}}");
+    }
+    
     RangeSet<HeapRange> writes;
     
     // Maps an address base to all of the MemoryValues that do things to it. After we're done
-    // processing a map, this tells us the values at tail.
-    HashMap<Value*, MemoryMatches> memoryValues;
+    // processing a map, this tells us the values at tail. Note that we use a Matches array
+    // because those MemoryValues could be turned into Identity's, and we need to check for this
+    // as we go.
+    HashMap<Value*, Matches> memoryValues;
 };
 
 class CSE {
@@ -85,21 +102,50 @@ public:
         m_proc.resetValueOwners();
 
         for (BasicBlock* block : m_proc) {
-            m_data = &m_impureBlockData[block];
-            for (Value* value : *block)
-                m_data->writes.add(value->effects().writes);
+            ImpureBlockData& data = m_impureBlockData[block];
+            for (Value* value : *block) {
+                if (HeapRange writes = value->effects().writes)
+                    clobber(data, writes);
+
+                if (MemoryValue* memory = value->as<MemoryValue>())
+                    addMemoryValue(data, memory);
+            }
+
+            if (verbose)
+                dataLog("Block ", *block, ": ", data, "\n");
         }
-        
-        for (BasicBlock* block : m_proc.blocksInPreOrder()) {
-            m_block = block;
-            m_data = &m_impureBlockData[block];
-            m_writes.clear();
-            for (m_index = 0; m_index < block->size(); ++m_index) {
-                m_value = block->at(m_index);
+
+        Vector<BasicBlock*> postOrder = m_proc.blocksInPostOrder();
+        for (unsigned i = postOrder.size(); i--;) {
+            m_block = postOrder[i];
+            if (verbose)
+                dataLog("Looking at ", *m_block, ":\n");
+
+            m_data = ImpureBlockData();
+            for (m_index = 0; m_index < m_block->size(); ++m_index) {
+                m_value = m_block->at(m_index);
                 process();
+            }
+            m_insertionSet.execute(m_block);
+            m_impureBlockData[m_block] = m_data;
+        }
+
+        for (StackSlotValue* stack : m_stacks)
+            m_insertionSet.insertValue(0, stack);
+        for (BasicBlock* block : m_proc) {
+            for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
+                auto iter = m_stores.find(block->at(valueIndex));
+                if (iter == m_stores.end())
+                    continue;
+
+                for (Value* value : iter->value)
+                    m_insertionSet.insertValue(valueIndex + 1, value);
             }
             m_insertionSet.execute(block);
         }
+
+        if (verbose)
+            dataLog("B3 after CSE:\n", m_proc);
 
         return m_changed;
     }
@@ -116,21 +162,23 @@ private:
         }
 
         if (HeapRange writes = m_value->effects().writes)
-            clobber(writes);
+            clobber(m_data, writes);
         
         if (MemoryValue* memory = m_value->as<MemoryValue>())
             processMemory(memory);
     }
 
-    void clobber(HeapRange writes)
+    void clobber(ImpureBlockData& data, HeapRange writes)
     {
-        m_writes.add(writes);
+        data.writes.add(writes);
         
-        m_data->memoryValues.removeIf(
-            [&] (HashMap<Value*, MemoryMatches>::KeyValuePairType& entry) -> bool {
+        data.memoryValues.removeIf(
+            [&] (HashMap<Value*, Matches>::KeyValuePairType& entry) -> bool {
                 entry.value.removeAllMatching(
-                    [&] (MemoryValue* memory) -> bool {
-                        return memory->range().overlaps(writes);
+                    [&] (Value* value) -> bool {
+                        if (MemoryValue* memory = value->as<MemoryValue>())
+                            return memory->range().overlaps(writes);
+                        return true;
                     });
                 return entry.value.isEmpty();
             });
@@ -156,74 +204,88 @@ private:
         
         switch (memory->opcode()) {
         case Load8Z: {
-            MemoryValue* match = findMemoryValue(
-                ptr, range, [&] (MemoryValue* candidate) -> bool {
+            handleMemoryValue(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
                     return candidate->offset() == offset
                         && (candidate->opcode() == Load8Z || candidate->opcode() == Store8);
+                },
+                [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Store8) {
+                        Value* mask = m_proc.add<Const32Value>(m_value->origin(), 0xff);
+                        fixups.append(mask);
+                        Value* zext = m_proc.add<Value>(
+                            BitAnd, m_value->origin(), match->child(0), mask);
+                        fixups.append(sext);
+                        return sext;
+                    }
+                    return nullptr;
                 });
-            if (replace(match))
-                break;
-            addMemoryValue(memory);
             break;
         }
 
         case Load8S: {
-            MemoryValue* match = findMemoryValue(
-                ptr, range, [&] (MemoryValue* candidate) -> bool {
+            handleMemoryValue(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
                     return candidate->offset() == offset
                         && (candidate->opcode() == Load8S || candidate->opcode() == Store8);
+                },
+                [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Store8) {
+                        Value* sext = m_proc.add<Value>(
+                            SExt8, m_value->origin(), match->child(0));
+                        fixups.append(sext);
+                        return sext;
+                    }
+                    return nullptr;
                 });
-            if (match) {
-                if (match->opcode() == Store8) {
-                    m_value->replaceWithIdentity(
-                        m_insertionSet.insert<Value>(
-                            m_index, SExt8, m_value->origin(), match->child(0)));
-                    m_changed = true;
-                    break;
-                }
-                replace(match);
-                break;
-            }
-            addMemoryValue(memory);
             break;
         }
 
         case Load16Z: {
-            MemoryValue* match = findMemoryValue(
-                ptr, range, [&] (MemoryValue* candidate) -> bool {
+            handleMemoryValue(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
                     return candidate->offset() == offset
                         && (candidate->opcode() == Load16Z || candidate->opcode() == Store16);
+                },
+                [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Store16) {
+                        Value* mask = m_proc.add<Const32Value>(m_value->origin(), 0xffff);
+                        fixups.append(mask);
+                        Value* zext = m_proc.add<Value>(
+                            BitAnd, m_value->origin(), match->child(0), mask);
+                        fixups.append(sext);
+                        return sext;
+                    }
+                    return nullptr;
                 });
-            if (replace(match))
-                break;
-            addMemoryValue(memory);
             break;
         }
 
         case Load16S: {
-            MemoryValue* match = findMemoryValue(
+            handleMemoryValue(
                 ptr, range, [&] (MemoryValue* candidate) -> bool {
                     return candidate->offset() == offset
                         && (candidate->opcode() == Load16S || candidate->opcode() == Store16);
+                },
+                [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Store16) {
+                        Value* sext = m_proc.add<Value>(
+                            SExt16, m_value->origin(), match->child(0));
+                        fixups.append(sext);
+                        return sext;
+                    }
+                    return nullptr;
                 });
-            if (match) {
-                if (match->opcode() == Store16) {
-                    m_value->replaceWithIdentity(
-                        m_insertionSet.insert<Value>(
-                            m_index, SExt16, m_value->origin(), match->child(0)));
-                    m_changed = true;
-                    break;
-                }
-                replace(match);
-                break;
-            }
-            addMemoryValue(memory);
             break;
         }
 
         case Load: {
-            MemoryValue* match = findMemoryValue(
-                ptr, range, [&] (MemoryValue* candidate) -> bool {
+            handleMemoryValue(
+                ptr, range,
+                [&] (MemoryValue* candidate) -> bool {
                     if (candidate->offset() != offset)
                         return false;
 
@@ -235,16 +297,13 @@ private:
 
                     return false;
                 });
-            if (replace(match))
-                break;
-            addMemoryValue(memory);
             break;
         }
 
         case Store8:
         case Store16:
         case Store: {
-            addMemoryValue(memory);
+            addMemoryValue(m_data, memory);
             break;
         }
 
@@ -255,31 +314,95 @@ private:
         }
     }
 
-    bool replace(MemoryValue* match)
+    template<typename Filter>
+    void handleMemoryValue(Value* ptr, HeapRange range, const Filter& filter)
     {
-        if (!match)
+        handleMemoryValue(
+            ptr, range, filter,
+            [] (MemoryValue*, Vector<Value*>&) -> Value* {
+                return nullptr;
+            });
+    }
+
+    template<typename Filter, typename Replace>
+    void handleMemoryValue(
+        Value* ptr, HeapRange range, const Filter& filter, const Replace& replace)
+    {
+        MemoryMatches matches = findMemoryValue(ptr, range, filter);
+        if (replaceMemoryValue(matches, replace))
+            return;
+        addMemoryValue(m_data, m_value->as<MemoryValue>());
+    }
+
+    template<typename Replace>
+    bool replaceMemoryValue(const MemoryMatches& matches, const Replace& replace)
+    {
+        if (matches.isEmpty())
             return false;
 
         if (verbose)
-            dataLog("Eliminating ", *m_value, " due to ", *match, "\n");
+            dataLog("Eliminating ", *m_value, " due to ", pointerListDump(matches), "\n");
         
-        if (match->isStore())
-            m_value->replaceWithIdentity(match->child(0));
-        else
-            m_value->replaceWithIdentity(match);
         m_changed = true;
-        return true;
-    }
 
-    void addMemoryValue(MemoryValue* memory)
-    {
-        addMemoryValue(*m_data, memory);
+        if (matches.size() == 1) {
+            MemoryValue* dominatingMatch = matches[0];
+            RELEASE_ASSERT(m_dominators.dominates(dominatingMatch->owner, m_block));
+            
+            if (verbose)
+                dataLog("    Eliminating using ", *dominatingMatch, "\n");
+            Vector<Value*> extraValues;
+            if (Value* value = replace(dominatingMatch, extraValues)) {
+                for (Value* extraValue : extraValues)
+                    m_insertionSet.insertValue(m_index, extraValue);
+                m_value->replaceWithIdentity(value);
+            } else {
+                if (dominatingMatch->isStore())
+                    m_value->replaceWithIdentity(dominatingMatch->child(0));
+                else
+                    m_value->replaceWithIdentity(dominatingMatch);
+            }
+            return true;
+        }
+
+        // FIXME: It would be way better if this phase just did SSA calculation directly.
+        // Right now we're relying on the fact that CSE's position in the phase order is
+        // almost right before SSA fixup.
+            
+        StackSlotValue* stack = m_proc.add<StackSlotValue>(
+            m_value->origin(), sizeofType(m_value->type()), StackSlotKind::Anonymous);
+        m_stacks.append(stack);
+
+        MemoryValue* load = m_insertionSet.insert<MemoryValue>(
+            m_index, Load, m_value->type(), m_value->origin(), stack);
+        if (verbose)
+            dataLog("    Inserting load of value: ", *load, "\n");
+        m_value->replaceWithIdentity(load);
+            
+        for (MemoryValue* match : matches) {
+            Vector<Value*>& stores = m_stores.add(match, Vector<Value*>()).iterator->value;
+
+            Value* value = replace(match, stores);
+            if (!value) {
+                if (match->isStore())
+                    value = match->child(0);
+                else
+                    value = match;
+            }
+                
+            Value* store = m_proc.add<MemoryValue>(Store, m_value->origin(), value, stack);
+            stores.append(store);
+        }
+
+        return true;
     }
 
     void addMemoryValue(ImpureBlockData& data, MemoryValue* memory)
     {
-        MemoryMatches& matches =
-            data.memoryValues.add(memory->lastChild(), MemoryMatches()).iterator->value;
+        if (verbose)
+            dataLog("Adding memory: ", *memory, "\n");
+        
+        Matches& matches = data.memoryValues.add(memory->lastChild(), Matches()).iterator->value;
 
         if (matches.contains(memory))
             return;
@@ -288,60 +411,79 @@ private:
     }
 
     template<typename Filter>
-    MemoryValue* findMemoryValue(Value* ptr, HeapRange range, const Filter& filter)
+    MemoryMatches findMemoryValue(Value* ptr, HeapRange range, const Filter& filter)
     {
+        if (verbose)
+            dataLog(*m_value, ": looking for ", *ptr, "...\n");
+        
         auto find = [&] (ImpureBlockData& data) -> MemoryValue* {
             auto iter = data.memoryValues.find(ptr);
             if (iter != data.memoryValues.end()) {
-                for (MemoryValue* candidate : iter->value) {
-                    if (filter(candidate))
-                        return candidate;
+                for (Value* candidateValue : iter->value) {
+                    if (MemoryValue* candidateMemory = candidateValue->as<MemoryValue>()) {
+                        if (filter(candidateMemory))
+                            return candidateMemory;
+                    }
                 }
             }
             return nullptr;
         };
 
-        if (MemoryValue* match = find(*m_data))
-            return match;
+        if (MemoryValue* match = find(m_data)) {
+            if (verbose)
+                dataLog("    Found ", *match, " locally.\n");
+            return { match };
+        }
 
-        if (m_writes.overlaps(range))
-            return nullptr;
+        if (m_data.writes.overlaps(range)) {
+            if (verbose)
+                dataLog("    Giving up because of writes.\n");
+            return { };
+        }
 
         BlockWorklist worklist;
         Vector<BasicBlock*, 8> seenList;
 
         worklist.pushAll(m_block->predecessors());
 
-        MemoryValue* match = nullptr;
+        MemoryMatches matches;
 
         while (BasicBlock* block = worklist.pop()) {
+            if (verbose)
+                dataLog("    Looking at ", *block, "\n");
             seenList.append(block);
 
             ImpureBlockData& data = m_impureBlockData[block];
 
-            if (m_dominators.strictlyDominates(block, m_block)) {
-                match = find(data);
-                if (match)
-                    continue;
+            MemoryValue* match = find(data);
+            if (match && match != m_value) {
+                if (verbose)
+                    dataLog("    Found match: ", *match, "\n");
+                matches.append(match);
+                continue;
             }
 
-            if (data.writes.overlaps(range))
-                return nullptr;
+            if (data.writes.overlaps(range)) {
+                if (verbose)
+                    dataLog("    Giving up because of writes.\n");
+                return { };
+            }
 
+            if (!block->numPredecessors()) {
+                if (verbose)
+                    dataLog("    Giving up because it's live at root.\n");
+                // This essentially proves that this is live at the prologue. That means that we
+                // cannot reliably optimize this case.
+                return { };
+            }
+            
             worklist.pushAll(block->predecessors());
         }
 
-        if (!match)
-            return nullptr;
-
-        for (BasicBlock* block : seenList)
-            addMemoryValue(m_impureBlockData[block], match);
-        addMemoryValue(match);
-
-        return match;
+        if (verbose)
+            dataLog("    Got matches: ", pointerListDump(matches), "\n");
+        return matches;
     }
-
-    typedef Vector<Value*, 1> Matches;
 
     Procedure& m_proc;
 
@@ -350,12 +492,14 @@ private:
     
     IndexMap<BasicBlock, ImpureBlockData> m_impureBlockData;
 
-    ImpureBlockData* m_data;
-    RangeSet<HeapRange> m_writes;
+    ImpureBlockData m_data;
 
     BasicBlock* m_block;
     unsigned m_index;
     Value* m_value;
+
+    Vector<StackSlotValue*> m_stacks;
+    HashMap<Value*, Vector<Value*>> m_stores;
 
     InsertionSet m_insertionSet;
 
