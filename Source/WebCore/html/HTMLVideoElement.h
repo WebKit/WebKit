@@ -96,7 +96,7 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
     virtual bool isVideo() const override { return true; }
     virtual bool hasVideo() const override { return player() && player()->hasVideo(); }
-    virtual bool supportsFullscreen() const override;
+    virtual bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const override;
     virtual bool isURLAttribute(const Attribute&) const override;
     virtual const AtomicString& imageSourceURL() const override;
 

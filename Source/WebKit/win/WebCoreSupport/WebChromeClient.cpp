@@ -747,7 +747,7 @@ COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
 
 #if ENABLE(VIDEO)
 
-bool WebChromeClient::supportsVideoFullscreen()
+bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode)
 {
     return true;
 }

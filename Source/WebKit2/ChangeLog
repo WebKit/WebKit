@@ -1,3 +1,14 @@
+2016-01-17  Ada Chan  <adachan@apple.com>
+
+        Add a mode parameter to MediaControllerInterface::supportsFullscreen() and ChromeClient::supportsVideoFullscreen().
+        https://bugs.webkit.org/show_bug.cgi?id=153220
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::supportsVideoFullscreen):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2016-01-22  Tim Horton  <timothy_horton@apple.com>
 
         Reproducible "Unhanded web process message 'WebUserContentController:AddUserScripts'" and friends

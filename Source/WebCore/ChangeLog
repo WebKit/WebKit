@@ -1,3 +1,58 @@
+2016-01-17  Ada Chan  <adachan@apple.com>
+
+        Add a mode parameter to MediaControllerInterface::supportsFullscreen() and ChromeClient::supportsVideoFullscreen().
+        https://bugs.webkit.org/show_bug.cgi?id=153220
+
+        Reviewed by Eric Carlson.
+
+        No new tests, just code refactoring.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::supportsFullscreen):
+        Just pass in VideoFullscreenModeStandard as this is used for checking the standard fullscreen case.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        Only use the FullScreen API if the mode is VideoFullscreenModeStandard. Call ChromeClient::supportsVideoFullscreen()
+        with the mode.
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        Move the fullscreen element check up so we can use this method to exit picture-in-picture mode.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen):
+        Ditto.
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen):
+        Pass in VideoFullscreenModeStandard to supportsFullscreen() as this is used for the standard fullscreen case.
+        (WebCore::HTMLVideoElement::webkitSupportsFullscreen):
+        Ditto.
+        (WebCore::HTMLVideoElement::webkitSupportsPresentationMode):
+        Pass in the correct VideoFullscreenMode to supportsFullscreen() corresponding to the mode string passed in.
+        (WebCore::HTMLVideoElement::setFullscreenMode):
+        Pass in the mode to supportsFullscreen().
+        * html/HTMLVideoElement.h:
+
+        * html/MediaController.h:
+        * html/MediaControllerInterface.h:
+        Make supportsFullscreen() take a VideoFullscreenMode.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::reset):
+        Pass in VideoFullscreenModeStandard to supportsFullscreen() here since this is used for the standard
+        fullscreen button.
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::reset):
+        Ditto.
+
+        * page/ChromeClient.h:
+        Make supportsVideoFullscreen() take a VideoFullscreenMode.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::mediaSupportsFullscreen):
+        (WebCore::HitTestResult::toggleMediaFullscreenState):
+        (WebCore::HitTestResult::enterFullscreenForVideo):
+        Pass in VideoFullscreenModeStandard in the code relating to the standard fullscreen.
+
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
         Document.URL / Document.documentURI should return "about:blank" instead of empty string / null

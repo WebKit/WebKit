@@ -202,7 +202,7 @@ bool MediaControlsHost::allowsInlineMediaPlayback() const
 
 bool MediaControlsHost::supportsFullscreen()
 {
-    return m_mediaElement->supportsFullscreen();
+    return m_mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard);
 }
 
 bool MediaControlsHost::userGestureRequired() const

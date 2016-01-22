@@ -84,7 +84,7 @@ public:
     enum PlaybackState { WAITING, PLAYING, ENDED };
     const AtomicString& playbackState() const;
 
-    virtual bool supportsFullscreen() const override { return false; }
+    virtual bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const override { return false; }
     virtual bool isFullscreen() const override { return false; }
     virtual void enterFullscreen() override { }
 

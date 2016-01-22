@@ -307,7 +307,7 @@ void MediaControlsApple::reset()
 
     updateStatusDisplay();
 
-    if (m_mediaController->supportsFullscreen())
+    if (m_mediaController->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard))
         m_fullScreenButton->show();
     else
         m_fullScreenButton->hide();

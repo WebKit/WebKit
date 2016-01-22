@@ -116,7 +116,7 @@ void MediaControls::reset()
     refreshClosedCaptionsButtonVisibility();
 
     if (m_fullScreenButton) {
-        if (m_mediaController->supportsFullscreen() && m_mediaController->hasVideo())
+        if (m_mediaController->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard) && m_mediaController->hasVideo())
             m_fullScreenButton->show();
         else
             m_fullScreenButton->hide();

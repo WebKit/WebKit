@@ -139,7 +139,7 @@ public:
     virtual void scrollRectIntoView(const WebCore::IntRect&) const { }
 
 #if ENABLE(VIDEO)
-    virtual bool supportsVideoFullscreen();
+    virtual bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     virtual void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
     virtual void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
 #endif

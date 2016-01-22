@@ -120,7 +120,7 @@ public:
     WEBCORE_EXPORT virtual void returnToRealtime() override;
 
     // Eventually overloaded in HTMLVideoElement
-    virtual bool supportsFullscreen() const override { return false; };
+    virtual bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const override { return false; };
 
     virtual bool supportsScanning() const override;
 

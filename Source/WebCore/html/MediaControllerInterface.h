@@ -70,7 +70,7 @@ public:
     virtual ReadyState readyState() const = 0;
 
     // MediaControlElements:
-    virtual bool supportsFullscreen() const = 0;
+    virtual bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const = 0;
     virtual bool isFullscreen() const = 0;
     virtual void enterFullscreen() = 0;
 

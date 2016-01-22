@@ -1,3 +1,14 @@
+2016-01-17  Ada Chan  <adachan@apple.com>
+
+        Add a mode parameter to MediaControllerInterface::supportsFullscreen() and ChromeClient::supportsVideoFullscreen().
+        https://bugs.webkit.org/show_bug.cgi?id=153220
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::supportsVideoFullscreen):
+        * WebCoreSupport/WebChromeClient.h:
+
 2016-01-22  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove PassRefPtr from ResourceRequest and FormData

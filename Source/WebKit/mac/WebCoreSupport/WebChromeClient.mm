@@ -910,7 +910,7 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 
 #if ENABLE(VIDEO)
 
-bool WebChromeClient::supportsVideoFullscreen()
+bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode)
 {
 #if PLATFORM(IOS)
     if (!Settings::avKitEnabled())
