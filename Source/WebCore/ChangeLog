@@ -1,3 +1,33 @@
+2016-01-22  Enrica Casucci  <enrica@apple.com>
+
+        Add support for DataDetectors in WK (iOS).
+        https://bugs.webkit.org/show_bug.cgi?id=152989
+        rdar://problem/22855960
+
+        Reviewed by Tim Horton.
+
+        This patch adds the logic to perform data detection and modify
+        the DOM by adding data detector links as appropriate.
+        The data detector results returned by detectContentInRange are
+        stored in the Frame object.
+
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::resultIsURL):
+        (WebCore::constructURLStringForResult):
+        (WebCore::removeResultLinksFromAnchor):
+        (WebCore::searchForLinkRemovingExistingDDLinks):
+        (WebCore::dataDetectorTypeForCategory):
+        (WebCore::buildQuery):
+        (WebCore::DataDetection::detectContentInRange):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * page/Frame.h:
+        (WebCore::Frame::setDataDetectionResults):
+        (WebCore::Frame::dataDetectionResults):
+        * platform/spi/cocoa/DataDetectorsCoreSPI.h:
+        (DDQueryOffsetCompare):
+
 2016-01-22  Daniel Bates  <dabates@apple.com>
 
         LayoutTest http/tests/security/xssAuditor/embed-tag-in-path-unterminated.html crashing
@@ -1724,7 +1754,6 @@
         (WebCore::matchesFutureCuePseudoClass):
         (WebCore::matchesPastCuePseudoClass):
 
->>>>>>> .r195316
 2016-01-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r195179.

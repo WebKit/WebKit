@@ -315,7 +315,7 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 #endif
 
 #if ENABLE(DATA_DETECTION)
-static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint32_t types)
+static WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
 {
     if (static_cast<WKDataDetectorTypes>(types) == WKDataDetectorTypeNone)
         return WebCore::DataDetectorTypeNone;

@@ -1,3 +1,15 @@
+2016-01-22  Enrica Casucci  <enrica@apple.com>
+
+        Add support for DataDetectors in WK (iOS).
+        https://bugs.webkit.org/show_bug.cgi?id=152989
+        rdar://problem/22855960
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (fromWKDataDetectorTypes): Changed parameter to uint64_t to
+        successfully compare against WKDataDetectorTypeAll.
+
 2016-01-17  Ada Chan  <adachan@apple.com>
 
         Add a mode parameter to MediaControllerInterface::supportsFullscreen() and ChromeClient::supportsVideoFullscreen().

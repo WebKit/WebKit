@@ -2279,14 +2279,14 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 m_client.dispatchDidFailLoad(error);
                 loadingEvent = AXObjectCache::AXLoadingFailed;
             } else {
-                m_client.dispatchDidFinishLoad();
-                loadingEvent = AXObjectCache::AXLoadingFinished;
 #if ENABLE(DATA_DETECTION)
                 if (m_frame.settings().dataDetectorTypes() != DataDetectorTypeNone) {
                     RefPtr<Range> documentRange = makeRange(firstPositionInNode(m_frame.document()->documentElement()), lastPositionInNode(m_frame.document()->documentElement()));
-                    DataDetection::detectContentInRange(documentRange, m_frame.settings().dataDetectorTypes());
+                    m_frame.setDataDetectionResults(DataDetection::detectContentInRange(documentRange, m_frame.settings().dataDetectorTypes()));
                 }
 #endif
+                m_client.dispatchDidFinishLoad();
+                loadingEvent = AXObjectCache::AXLoadingFinished;
             }
 
             // Notify accessibility.

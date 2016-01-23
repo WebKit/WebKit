@@ -47,10 +47,13 @@
 #include "FrameWin.h"
 #endif
 
+#if PLATFORM(COCOA)
+OBJC_CLASS NSArray;
+#endif
+
 #if PLATFORM(IOS)
 OBJC_CLASS DOMCSSStyleDeclaration;
 OBJC_CLASS DOMNode;
-OBJC_CLASS NSArray;
 OBJC_CLASS NSString;
 #endif
 
@@ -185,6 +188,11 @@ namespace WebCore {
         WEBCORE_EXPORT float frameScaleFactor() const;
 
         void deviceOrPageScaleFactorChanged();
+        
+#if ENABLE(DATA_DETECTION)
+        void setDataDetectionResults(NSArray *results) { m_dataDetectionResults = results; }
+        NSArray *dataDetectionResults() const { return m_dataDetectionResults.get(); }
+#endif
 
 #if PLATFORM(IOS)
         const ViewportArguments& viewportArguments() const;
@@ -292,6 +300,9 @@ namespace WebCore {
         const std::unique_ptr<EventHandler> m_eventHandler;
         const std::unique_ptr<AnimationController> m_animationController;
 
+#if ENABLE(DATA_DETECTION)
+        RetainPtr<NSArray> m_dataDetectionResults;
+#endif
 #if PLATFORM(IOS)
         void betterApproximateNode(const IntPoint& testPoint, NodeQualifier, Node*& best, Node* failedNode, IntPoint& bestPoint, IntRect& bestRect, const IntRect& testRect);
         bool hitTestResultAtViewportLocation(const FloatPoint& viewportLocation, HitTestResult&, IntPoint& center);

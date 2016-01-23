@@ -30,6 +30,7 @@
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS DDActionContext;
+OBJC_CLASS NSArray;
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ public:
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static RetainPtr<DDActionContext> detectItemAroundHitTestResult(const HitTestResult&, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange);
 #endif
-    WEBCORE_EXPORT static void detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes);
+    WEBCORE_EXPORT static NSArray *detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes);
 };
 
 } // namespace WebCore

@@ -44,6 +44,12 @@
 #import "VisibleUnits.h"
 #import "htmlediting.h"
 
+#if PLATFORM(IOS)
+const char *dataDetectorsURLScheme = "x-apple-data-detectors";
+const char *dataDetectorsAttributeTypeKey = "x-apple-data-detectors-type";
+const char *dataDetectorsAttributeResultKey = "x-apple-data-detectors-result";
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(MAC)
@@ -138,9 +144,412 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
     return detectItemAtPositionWithRange(position, contextRange, detectedDataBoundingBox, detectedDataRange);
 }
 #endif // PLATFORM(MAC)
-
-void DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes)
+    
+#if PLATFORM(IOS)
+    
+static BOOL resultIsURL(DDResultRef result)
 {
+    if (!result)
+        return NO;
+    
+    static NSSet *urlTypes = [[NSSet setWithObjects: (NSString *)getDDBinderHttpURLKey(), (NSString *)getDDBinderWebURLKey(), (NSString *)getDDBinderMailURLKey(), (NSString *)getDDBinderGenericURLKey(), (NSString *)getDDBinderEmailKey(), nil] retain];
+    return [urlTypes containsObject:(NSString *)DDResultGetType(result)];
 }
 
+static NSString *constructURLStringForResult(DDResultRef currentResult, NSString *resultIdentifier, NSDate *referenceDate, NSTimeZone *referenceTimeZone, DataDetectorTypes detectionTypes)
+{
+    if (!DDResultHasProperties(currentResult, DDResultPropertyPassiveDisplay))
+        return nil;
+    
+    DDURLifierPhoneNumberDetectionTypes phoneTypes = (detectionTypes & DataDetectorTypePhoneNumber) ? DDURLifierPhoneNumberDetectionRegular : DDURLifierPhoneNumberDetectionNone;
+    DDResultCategory category = DDResultGetCategory(currentResult);
+    CFStringRef type = DDResultGetType(currentResult);
+    
+    if (((detectionTypes & DataDetectorTypeAddress) && (DDResultCategoryAddress == category))
+        || ((detectionTypes & DataDetectorTypeTrackingNumber) && (CFStringCompare(getDDBinderTrackingNumberKey(), type, 0) == kCFCompareEqualTo))
+        || ((detectionTypes & DataDetectorTypeFlight) && (CFStringCompare(getDDBinderFlightInformationKey(), type, 0) == kCFCompareEqualTo))
+        || ((detectionTypes & DataDetectorTypePhoneNumber) && (DDResultCategoryPhoneNumber == category))
+        || ((detectionTypes & DataDetectorTypeLink) && resultIsURL(currentResult))) {
+        
+        return DDURLStringForResult(currentResult, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
+    }
+    if ((detectionTypes & DataDetectorTypeCalendarEvent) && (DDResultCategoryCalendarEvent == category)) {
+        if (!DDResultIsPastDate(currentResult, (CFDateRef)referenceDate, (CFTimeZoneRef)referenceTimeZone))
+            return DDURLStringForResult(currentResult, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
+    }
+    return nil;
+}
+
+static void removeResultLinksFromAnchor(Node* node, Node* nodeParent)
+{
+    // Perform a depth-first search for anchor nodes, which have the DDURLScheme attribute set to true,
+    // take their children and insert them before the anchor,
+    // and then remove the anchor.
+    
+    if (!node)
+        return;
+    
+    BOOL nodeIsDDAnchor = is<HTMLAnchorElement>(*node) && downcast<Element>(*node).getAttribute(getDDURLScheme()) == "true";
+    
+    RefPtr<NodeList> children = node->childNodes();
+    unsigned childCount = children->length();
+    for (size_t i = 0; i < childCount; i++) {
+        Node *child = children->item(i);
+        if (is<Element>(*child))
+            removeResultLinksFromAnchor(child, node);
+    }
+    
+    if (nodeIsDDAnchor && nodeParent) {
+        children = node->childNodes();
+        childCount = children->length();
+        
+        // Iterate over the children and move them all onto the same level as this anchor.
+        // Remove the anchor afterwards.
+        for (size_t i = 0; i < childCount; i++) {
+            Node *child = children->item(0);
+            nodeParent->insertBefore(child, node, ASSERT_NO_EXCEPTION);
+        }
+        nodeParent->removeChild(node, ASSERT_NO_EXCEPTION);
+    }
+}
+
+static bool searchForLinkRemovingExistingDDLinks(Node* startNode, Node* endNode)
+{
+    Node *node = startNode;
+    while (node) {
+        if (is<HTMLAnchorElement>(*node)) {
+            if (downcast<Element>(*node).getAttribute(getDDURLScheme()) != "true")
+                return true;
+            removeResultLinksFromAnchor(node, node->parentElement());
+        }
+        
+        if (node == endNode) {
+            // If we found the end node and no link, return false unless an ancestor node is a link.
+            // The only ancestors not tested at this point are in the direct line from self's parent to the top.
+            node = startNode->parentNode();
+            while (node) {
+                if (is<HTMLAnchorElement>(*node)) {
+                    if (downcast<Element>(*node).getAttribute(getDDURLScheme()) != "true")
+                        return true;
+                    removeResultLinksFromAnchor(node, node->parentElement());
+                }
+                node = node->parentNode();
+            }
+            return false;
+        }
+        
+        RefPtr<NodeList> childNodes = node->childNodes();
+        if (childNodes->length())
+            node = childNodes->item(0);
+        else {
+            Node *newNode = node->nextSibling();
+            Node *parentNode = node;
+            while (!newNode) {
+                parentNode = parentNode->parentNode();
+                if (!parentNode)
+                    return false;
+                newNode = parentNode->nextSibling();
+            }
+            node = newNode;
+        }
+    }
+    return false;
+}
+
+static NSString *dataDetectorTypeForCategory(DDResultCategory category)
+{
+    switch (category) {
+    case DDResultCategoryPhoneNumber:
+        return @"telephone";
+    case DDResultCategoryLink:
+        return @"link";
+    case DDResultCategoryAddress:
+        return @"address";
+    case DDResultCategoryCalendarEvent:
+        return @"calendar-event";
+    case DDResultCategoryMisc:
+        return @"misc";
+    default:
+        return @"";
+    }
+}
+
+static String dataDetectorStringForPath(NSIndexPath* path)
+{
+    NSUInteger length = path.length;
+    
+    switch (length) {
+    case 0:
+        return String();
+        
+    case 1:
+        return String::format("%lu", (unsigned long)[path indexAtPosition:0]);
+        
+    case 2:
+        return String::format("%lu/%lu", (unsigned long)[path indexAtPosition:0], (unsigned long)[path indexAtPosition:1]);
+        
+    default:
+        {
+            String componentsString = String::format("%lu", (unsigned long)[path indexAtPosition:0]);
+            for (NSUInteger i = 1 ; i < length ; i++) {
+                componentsString.append("/");
+                componentsString.append(String::format("%lu", (unsigned long)[path indexAtPosition:i]));
+            }
+
+            return componentsString;
+        }
+    }
+}
+
+static void buildQuery(DDScanQueryRef scanQuery, Range* contextRange)
+{
+    // Once we're over this number of fragments, stop at the first hard break.
+    const CFIndex maxFragmentWithHardBreak = 1000;
+    // Once we're over this number of fragments, we stop at the line.
+    const CFIndex maxFragmentWithLinebreak = 5000;
+    // Once we're over this number of fragments, we stop at the space.
+    const CFIndex maxFragmentSpace = 10000;
+
+    CFCharacterSetRef whiteSpacesSet = CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline);
+    CFCharacterSetRef newLinesSet = CFCharacterSetGetPredefined(kCFCharacterSetNewline);
+    
+    RefPtr<Range> endRange;
+    CFIndex iteratorCount = 0;
+    CFIndex fragmentCount = 0;
+    
+    // Build the scan query adding separators.
+    // For each fragment the iterator increment is stored as metadata.
+    for (TextIterator iterator(contextRange); !iterator.atEnd(); iterator.advance(), iteratorCount++) {
+        size_t currentTextLength = iterator.text().length();
+        if (!currentTextLength) {
+            DDScanQueryAddSeparator(scanQuery, DDTextCoalescingTypeHardBreak);
+            if (iteratorCount > maxFragmentWithHardBreak)
+                break;
+            continue;
+        }
+        // Test for white space nodes, we're coalescing them.
+        const UniChar *currentCharPtr = iterator.text().upconvertedCharacters();
+        
+        bool containsOnlyWhiteSpace = true;
+        bool hasTab = false;
+        bool hasNewline = false;
+        int nbspCount = 0;
+        for (NSUInteger i = 0; i < currentTextLength; i++) {
+            if (!CFCharacterSetIsCharacterMember(whiteSpacesSet, *currentCharPtr)) {
+                containsOnlyWhiteSpace = false;
+                break;
+            }
+            
+            if (CFCharacterSetIsCharacterMember(newLinesSet, *currentCharPtr))
+                hasNewline = true;
+            else if (*currentCharPtr == '\t')
+                hasTab = true;
+            
+            // Multiple consecutive non breakable spaces are most likely simulated tabs.
+            if (*currentCharPtr == 0xa0) {
+                if (++nbspCount > 2)
+                    hasTab = true;
+            } else
+                nbspCount = 0;
+
+            currentCharPtr++;
+        }
+        if (containsOnlyWhiteSpace) {
+            if (hasNewline) {
+                DDScanQueryAddLineBreak(scanQuery);
+                if (iteratorCount > maxFragmentWithLinebreak)
+                    break;
+            } else {
+                DDScanQueryAddSeparator(scanQuery, hasTab ? DDTextCoalescingTypeTab : DDTextCoalescingTypeSpace);
+                if (iteratorCount > maxFragmentSpace)
+                    break;
+            }
+            continue;
+        }
+        
+        RetainPtr<CFStringRef> currentText = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, iterator.text().upconvertedCharacters(), iterator.text().length()));
+        DDScanQueryAddTextFragment(scanQuery, currentText.get(), CFRangeMake(0, currentTextLength), (void *)iteratorCount, (DDTextFragmentMode)0, DDTextCoalescingTypeNone);
+        fragmentCount++;
+    }
+}
+
+static inline CFComparisonResult queryOffsetCompare(DDQueryOffset o1, DDQueryOffset o2)
+{
+    if (o1.queryIndex < o2.queryIndex)
+        return kCFCompareLessThan;
+    if (o1.queryIndex > o2.queryIndex)
+        return kCFCompareGreaterThan;
+    if (o1.offset < o2.offset)
+        return kCFCompareLessThan;
+    if (o1.offset > o2.offset)
+        return kCFCompareGreaterThan;
+    return kCFCompareEqualTo;
+}
+
+NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes types)
+{
+    RetainPtr<DDScannerRef> scanner = adoptCF(DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
+    RetainPtr<DDScanQueryRef> scanQuery = adoptCF(DDScanQueryCreate(NULL));
+    buildQuery(scanQuery.get(), contextRange.get());
+    
+    // FIXME: we should add a timeout to this call to make sure it doesn't take too much time.
+    if (!DDScannerScanQuery(scanner.get(), scanQuery.get()))
+        return nil;
+    
+    RetainPtr<CFArrayRef> scannerResults = adoptCF(DDScannerCopyResultsWithOptions(scanner.get(), getDDScannerCopyResultsOptionsForPassiveUse() | DDScannerCopyResultsOptionsCoalesceSignatures));
+    if (!scannerResults)
+        return nil;
+    
+    CFIndex resultCount = CFArrayGetCount(scannerResults.get());
+    if (!resultCount)
+        return nil;
+    
+    Vector<RetainPtr<DDResultRef>> allResults;
+    Vector<RetainPtr<NSIndexPath>> indexPaths;
+    NSInteger currentTopLevelIndex = 0;
+
+    // Iterate through the scanner results to find signatures and extract all the subresults while
+    // populating the array of index paths to use in the href of the anchors being created.
+    for (id resultObject in (NSArray *)scannerResults.get()) {
+        DDResultRef result = (DDResultRef)resultObject;
+        NSIndexPath *indexPath = [NSIndexPath indexPathWithIndex:currentTopLevelIndex];
+        if (CFStringCompare(DDResultGetType(result), getDDBinderSignatureBlockKey(), 0) == kCFCompareEqualTo) {
+            NSArray *subresults = (NSArray *)DDResultGetSubResults(result);
+            
+            for (NSUInteger subResultIndex = 0 ; subResultIndex < [subresults count] ; subResultIndex++) {
+                indexPaths.append([indexPath indexPathByAddingIndex:subResultIndex]);
+                allResults.append((DDResultRef)[subresults objectAtIndex:subResultIndex]);
+            }
+        } else {
+            allResults.append(result);
+            indexPaths.append(indexPath);
+        }
+        currentTopLevelIndex++;
+    }
+
+    Vector<Vector<RefPtr<Range>>> allResultRanges;
+    TextIterator iterator(contextRange.get());
+    CFIndex iteratorCount = 0;
+
+    // Iterate through the array of the expanded results to create a vector of Range objects that indicate
+    // where the DOM needs to be modified.
+    // Each result can be contained all in one text node or can span multiple text nodes.
+    for (auto& result : allResults) {
+        DDQueryRange queryRange = DDResultGetQueryRangeForURLification(result.get());
+        CFIndex iteratorTargetAdvanceCount = (CFIndex)DDScanQueryGetFragmentMetaData(scanQuery.get(), queryRange.start.queryIndex);
+        while (iteratorCount < iteratorTargetAdvanceCount) {
+            iterator.advance();
+            iteratorCount++;
+        }
+
+        Vector<RefPtr<Range>> fragmentRanges;
+        RefPtr<Range> currentRange = iterator.range();
+        CFIndex fragmentIndex = queryRange.start.queryIndex;
+        if (fragmentIndex == queryRange.end.queryIndex)
+            fragmentRanges.append(TextIterator::subrange(currentRange.get(), queryRange.start.offset, queryRange.end.offset - queryRange.start.offset));
+        else
+            fragmentRanges.append(currentRange);
+        
+        while (fragmentIndex < queryRange.end.queryIndex) {
+            fragmentIndex++;
+            iteratorTargetAdvanceCount = (CFIndex)DDScanQueryGetFragmentMetaData(scanQuery.get(), fragmentIndex);
+            while (iteratorCount < iteratorTargetAdvanceCount) {
+                iterator.advance();
+                iteratorCount++;
+            }
+            currentRange = iterator.range();
+            fragmentRanges.append(currentRange);
+        }
+        allResultRanges.append(fragmentRanges);
+    }
+    
+    CFTimeZoneRef tz = CFTimeZoneCopyDefault();
+    NSDate *referenceDate = [NSDate date];
+    Text* lastTextNodeToUpdate = nullptr;
+    String lastNodeContent;
+    size_t contentOffset = 0;
+    DDQueryOffset lastModifiedQueryOffset = {-1, 0};
+    
+    // For each result add the link.
+    // Since there could be multiple results in the same text node, the node is only modified when
+    // we are about to process a different text node.
+    resultCount = allResults.size();
+    
+    for (CFIndex resultIndex = 0; resultIndex < resultCount; resultIndex++) {
+        DDResultRef coreResult = allResults[resultIndex].get();
+        DDQueryRange queryRange = DDResultGetQueryRangeForURLification(coreResult);
+        Vector<RefPtr<Range>> resultRanges = allResultRanges[resultIndex];
+
+        // Compare the query offsets to make sure we don't go backwards
+        if (queryOffsetCompare(lastModifiedQueryOffset, queryRange.start) >= 0)
+            continue;
+
+        if (!resultRanges.size())
+            continue;
+
+        NSString *identifier = dataDetectorStringForPath(indexPaths[resultIndex].get());
+        NSString *correspondingURL = constructURLStringForResult(coreResult, identifier, referenceDate, (NSTimeZone *)tz, types);
+        
+        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(&resultRanges.first()->startContainer(), &resultRanges.last()->endContainer()))
+            continue;
+        
+        lastModifiedQueryOffset = queryRange.end;
+
+        for (auto& range : resultRanges) {
+            Node* parentNode = range->startContainer().parentNode();
+            Text& currentTextNode = downcast<Text>(range->startContainer());
+            Document& document = currentTextNode.document();
+            String textNodeData;
+            
+            if (lastTextNodeToUpdate != &currentTextNode) {
+                if (lastTextNodeToUpdate)
+                    lastTextNodeToUpdate->setData(lastNodeContent);
+                contentOffset = 0;
+                if (range->startOffset() > 0)
+                    textNodeData = currentTextNode.substringData(0, range->startOffset(), ASSERT_NO_EXCEPTION);
+            } else
+                textNodeData = currentTextNode.substringData(contentOffset, range->startOffset() - contentOffset, ASSERT_NO_EXCEPTION);
+            
+            if (!textNodeData.isEmpty()) {
+                RefPtr<Node> newNode = Text::create(document, textNodeData);
+                parentNode->insertBefore(newNode, &currentTextNode, ASSERT_NO_EXCEPTION);
+                contentOffset = range->startOffset();
+            }
+            
+            // Create the actual anchor node and insert it before the current node.
+            textNodeData = currentTextNode.substringData(range->startOffset(), range->endOffset() - range->startOffset(), ASSERT_NO_EXCEPTION);
+            RefPtr<Node> newNode = Text::create(document, textNodeData);
+            parentNode->insertBefore(newNode, &currentTextNode, ASSERT_NO_EXCEPTION);
+            
+            RefPtr<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document);
+            anchorElement->setHref(correspondingURL);
+            anchorElement->setDir("ltr");
+            RefPtr<Attr> color = downcast<Element>(parentNode)->getAttributeNode("color");
+            if (color)
+                anchorElement->setAttribute(HTMLNames::styleAttr, color->style()->cssText());
+            
+            anchorElement->Node::appendChild(newNode, ASSERT_NO_EXCEPTION);
+            parentNode->insertBefore(anchorElement, &currentTextNode, ASSERT_NO_EXCEPTION);
+            // Add a special attribute to mark this URLification as the result of data detectors.
+            anchorElement->setAttribute(QualifiedName(nullAtom, dataDetectorsURLScheme, nullAtom), "true");
+            anchorElement->setAttribute(QualifiedName(nullAtom, dataDetectorsAttributeTypeKey, nullAtom), dataDetectorTypeForCategory(DDResultGetCategory(coreResult)));
+            anchorElement->setAttribute(QualifiedName(nullAtom, dataDetectorsAttributeResultKey, nullAtom), identifier);
+            contentOffset = range->endOffset();
+            
+            lastNodeContent = currentTextNode.substringData(range->endOffset(), currentTextNode.length() - range->endOffset(), ASSERT_NO_EXCEPTION);
+            lastTextNodeToUpdate = &currentTextNode;
+        }        
+    }
+    if (lastTextNodeToUpdate)
+        lastTextNodeToUpdate->setData(lastNodeContent);
+    
+    return [getDDScannerResultClass() resultsFromCoreResults:scannerResults.get()];
+}
+
+#else
+NSArray *DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes)
+{
+    return nil;
+}
+#endif
 } // namespace WebCore
