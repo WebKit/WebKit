@@ -1,3 +1,12 @@
+2016-01-22  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Implement put, get, and delete records for the SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153375
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-22  Daniel Bates  <dabates@apple.com>
 
         LayoutTest http/tests/security/xssAuditor/embed-tag-in-path-unterminated.html crashing

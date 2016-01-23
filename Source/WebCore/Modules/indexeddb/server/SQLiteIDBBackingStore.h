@@ -84,6 +84,8 @@ private:
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();
 
+    IDBError deleteRecord(SQLiteIDBTransaction&, int64_t objectStoreID, const IDBKeyData&);
+
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 

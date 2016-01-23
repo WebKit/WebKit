@@ -1,3 +1,20 @@
+2016-01-22  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Implement put, get, and delete records for the SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153375
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by many existing tests now passing).
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
 2016-01-22  Enrica Casucci  <enrica@apple.com>
 
         Add support for DataDetectors in WK (iOS).
