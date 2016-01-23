@@ -1,0 +1,28 @@
+Tests that tagName and nodeName uppercases ASCII and only ASCII letters in a HTML document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+htmlDocument = document
+PASS htmlDocument.createElement("İnput").tagName is "İNPUT"
+PASS htmlDocument.createElement("ınput").tagName is "ıNPUT"
+PASS htmlDocument.createElement("xİnput").nodeName is "XİNPUT"
+PASS htmlDocument.createElement("xınput").nodeName is "XıNPUT"
+PASS htmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x:İnput").tagName is "X:İNPUT"
+PASS htmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "xİ:ınput").tagName is "Xİ:ıNPUT"
+PASS htmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x:İnput").nodeName is "X:İNPUT"
+PASS htmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "xı:İnput").nodeName is "Xı:İNPUT"
+
+xmlDocument = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html")
+PASS xmlDocument.createElement("İnput").tagName is "İnput"
+PASS xmlDocument.createElement("ınput").tagName is "ınput"
+PASS xmlDocument.createElement("xİnput").nodeName is "xİnput"
+PASS xmlDocument.createElement("xınput").nodeName is "xınput"
+PASS xmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x:İnput").tagName is "x:İnput"
+PASS xmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "xİ:ınput").tagName is "xİ:ınput"
+PASS xmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x:İnput").nodeName is "x:İnput"
+PASS xmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "xı:İnput").nodeName is "xı:İnput"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

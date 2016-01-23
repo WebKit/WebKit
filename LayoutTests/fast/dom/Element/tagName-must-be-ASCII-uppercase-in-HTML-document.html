@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+description('Tests that tagName and nodeName uppercases ASCII and only ASCII letters in a HTML document.');
+
+evalAndLog('htmlDocument = document');
+shouldBeEqualToString('htmlDocument.createElement("\u0130nput").tagName', '\u0130NPUT');
+shouldBeEqualToString('htmlDocument.createElement("\u0131nput").tagName', '\u0131NPUT');
+shouldBeEqualToString('htmlDocument.createElement("x\u0130nput").nodeName', 'X\u0130NPUT');
+shouldBeEqualToString('htmlDocument.createElement("x\u0131nput").nodeName', 'X\u0131NPUT');
+
+shouldBeEqualToString('htmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x:\u0130nput").tagName', 'X:\u0130NPUT');
+shouldBeEqualToString('htmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x\u0130:\u0131nput").tagName', 'X\u0130:\u0131NPUT');
+shouldBeEqualToString('htmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x:\u0130nput").nodeName', 'X:\u0130NPUT');
+shouldBeEqualToString('htmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x\u0131:\u0130nput").nodeName', 'X\u0131:\u0130NPUT');
+
+debug('');
+evalAndLog('xmlDocument = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html")');
+shouldBeEqualToString('xmlDocument.createElement("\u0130nput").tagName', '\u0130nput');
+shouldBeEqualToString('xmlDocument.createElement("\u0131nput").tagName', '\u0131nput');
+shouldBeEqualToString('xmlDocument.createElement("x\u0130nput").nodeName', 'x\u0130nput');
+shouldBeEqualToString('xmlDocument.createElement("x\u0131nput").nodeName', 'x\u0131nput');
+
+shouldBeEqualToString('xmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x:\u0130nput").tagName', 'x:\u0130nput');
+shouldBeEqualToString('xmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x\u0130:\u0131nput").tagName', 'x\u0130:\u0131nput');
+shouldBeEqualToString('xmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x:\u0130nput").nodeName', 'x:\u0130nput');
+shouldBeEqualToString('xmlDocument.createElementNS("http://www.w3.org/1999/xhtml", "x\u0131:\u0130nput").nodeName', 'x\u0131:\u0130nput');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

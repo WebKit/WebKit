@@ -1,3 +1,15 @@
+2016-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLElement::nodeName should not upper case non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=153231
+
+        Reviewed by Darin Adler.
+
+        Added a regression test since the rebaselined W3C test case is very simple and doesn't all permutations.
+
+        * fast/dom/Element/tagName-must-be-ASCII-uppercase-in-HTML-document-expected.txt: Added.
+        * fast/dom/Element/tagName-must-be-ASCII-uppercase-in-HTML-document.html: Added.
+
 2016-01-22  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Disable simultaneous transactions in the SQLite backend for now.

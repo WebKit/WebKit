@@ -339,6 +339,7 @@ public:
     // want to do any conversion for non-ASCII letters.
     WTF_EXPORT_STRING_API String convertToASCIILowercase() const;
     WTF_EXPORT_STRING_API String lower() const;
+    WTF_EXPORT_STRING_API String convertToASCIIUppercase() const;
     WTF_EXPORT_STRING_API String upper() const;
 
     WTF_EXPORT_STRING_API String lower(const AtomicString& localeIdentifier) const;

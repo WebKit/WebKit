@@ -679,42 +679,41 @@ Ref<StringImpl> StringImpl::foldCase()
     return newImpl.releaseNonNull();
 }
 
-Ref<StringImpl> StringImpl::convertToASCIILowercase()
+template<StringImpl::CaseConvertType type, typename CharacterType>
+ALWAYS_INLINE Ref<StringImpl> StringImpl::convertASCIICase(StringImpl& impl, const CharacterType* data, unsigned length)
 {
-    if (is8Bit()) {
-        unsigned failingIndex;
-        for (unsigned i = 0; i < m_length; ++i) {
-            LChar character = m_data8[i];
-            if (UNLIKELY(isASCIIUpper(character))) {
-                failingIndex = i;
-                goto SlowPath;
-            }
+    unsigned failingIndex;
+    for (unsigned i = 0; i < length; ++i) {
+        CharacterType character = data[i];
+        if (type == CaseConvertType::Lower ? UNLIKELY(isASCIIUpper(character)) : LIKELY(isASCIILower(character))) {
+            failingIndex = i;
+            goto SlowPath;
         }
-        return *this;
+    }
+    return impl;
 
 SlowPath:
-        LChar* data8;
-        Ref<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data8);
-        for (unsigned i = 0; i < failingIndex; ++i)
-            data8[i] = m_data8[i];
-        for (unsigned i = failingIndex; i < m_length; ++i)
-            data8[i] = toASCIILower(m_data8[i]);
-        return newImpl;
-    }
-
-    bool noUpper = true;
-    for (unsigned i = 0; i < m_length; ++i) {
-        if (UNLIKELY(isASCIIUpper(m_data16[i])))
-            noUpper = false;
-    }
-    if (noUpper)
-        return *this;
-
-    UChar* data16;
-    Ref<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data16);
-    for (unsigned i = 0; i < m_length; ++i)
-        data16[i] = toASCIILower(m_data16[i]);
+    CharacterType* newData;
+    Ref<StringImpl> newImpl = createUninitializedInternalNonEmpty(length, newData);
+    for (unsigned i = 0; i < failingIndex; ++i)
+        newData[i] = data[i];
+    for (unsigned i = failingIndex; i < length; ++i)
+        newData[i] = type == CaseConvertType::Lower ? toASCIILower(data[i]) : toASCIIUpper(data[i]);
     return newImpl;
+}
+
+Ref<StringImpl> StringImpl::convertToASCIILowercase()
+{
+    if (is8Bit())
+        return convertASCIICase<CaseConvertType::Lower>(*this, m_data8, m_length);
+    return convertASCIICase<CaseConvertType::Lower>(*this, m_data16, m_length);
+}
+
+Ref<StringImpl> StringImpl::convertToASCIIUppercase()
+{
+    if (is8Bit())
+        return convertASCIICase<CaseConvertType::Upper>(*this, m_data8, m_length);
+    return convertASCIICase<CaseConvertType::Upper>(*this, m_data16, m_length);
 }
 
 template <class UCharPredicate>

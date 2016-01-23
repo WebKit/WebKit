@@ -1,3 +1,26 @@
+2016-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLElement::nodeName should not upper case non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=153231
+
+        Reviewed by Darin Adler.
+
+        Added convertToASCIIUppercase to AtomicString, String, and StringImpl. 
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::convertASCIICase): Generalized from convertToASCIILowercase.
+        (WTF::AtomicString::convertToASCIILowercase):
+        (WTF::AtomicString::convertToASCIIUppercase):
+        * wtf/text/AtomicString.h:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::convertASCIICase): Generalized from convertToASCIILowercase.
+        (WTF::StringImpl::convertToASCIILowercase):
+        (WTF::StringImpl::convertToASCIIUppercase):
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.cpp:
+        (WTF::String::convertToASCIIUppercase): Added.
+        * wtf/text/WTFString.h:
+
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix the Windows build after r195452.

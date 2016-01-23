@@ -1,3 +1,19 @@
+2016-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLElement::nodeName should not upper case non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=153231
+
+        Reviewed by Darin Adler.
+
+        Use the newly added convertToASCIIUppercase to generate the string for tagName and nodeName.
+
+        Test: fast/dom/Element/tagName-must-be-ASCII-uppercase-in-HTML-document.html
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::localNameUpper): Use convertToASCIIUppercase.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName): Use convertToASCIIUppercase.
+
 2016-01-22  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Disable simultaneous transactions in the SQLite backend for now.

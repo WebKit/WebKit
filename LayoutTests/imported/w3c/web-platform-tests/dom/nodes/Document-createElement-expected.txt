@@ -21,7 +21,7 @@ PASS createElement("math")
 PASS createElement("FOO") 
 PASS createElement("marK") 
 PASS createElement("İnput") 
-FAIL createElement("ınput") assert_equals: expected "ıNPUT" but got "INPUT"
+PASS createElement("ınput") 
 PASS createElement("") 
 PASS createElement("1foo") 
 PASS createElement("̀foo") 

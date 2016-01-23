@@ -154,6 +154,7 @@ public:
         { return m_string.endsWith<matchLength>(prefix, caseSensitive); }
 
     WTF_EXPORT_STRING_API AtomicString convertToASCIILowercase() const;
+    WTF_EXPORT_STRING_API AtomicString convertToASCIIUppercase() const;
     WTF_EXPORT_STRING_API AtomicString lower() const;
     AtomicString upper() const { return AtomicString(impl()->upper()); }
 
@@ -185,6 +186,9 @@ public:
 private:
     // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.
     AtomicString(ASCIILiteral);
+
+    enum class CaseConvertType { Upper, Lower };
+    template<CaseConvertType> AtomicString convertASCIICase() const;
 
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);
 

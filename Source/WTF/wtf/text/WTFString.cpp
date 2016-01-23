@@ -343,6 +343,14 @@ String String::convertToASCIILowercase() const
     return m_impl->convertToASCIILowercase();
 }
 
+String String::convertToASCIIUppercase() const
+{
+    // FIXME: Should this function, and the many others like it, be inlined?
+    if (!m_impl)
+        return String();
+    return m_impl->convertToASCIIUppercase();
+}
+
 String String::lower() const
 {
     if (!m_impl)

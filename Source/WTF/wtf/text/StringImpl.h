@@ -676,6 +676,7 @@ public:
     float toFloat(bool* ok = 0);
 
     WTF_EXPORT_STRING_API Ref<StringImpl> convertToASCIILowercase();
+    WTF_EXPORT_STRING_API Ref<StringImpl> convertToASCIIUppercase();
     WTF_EXPORT_STRING_API Ref<StringImpl> lower();
     WTF_EXPORT_STRING_API Ref<StringImpl> upper();
     WTF_EXPORT_STRING_API Ref<StringImpl> lower(const AtomicString& localeIdentifier);
@@ -850,6 +851,9 @@ private:
 
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
     static const unsigned s_copyCharsInlineCutOff = 20;
+
+    enum class CaseConvertType { Upper, Lower };
+    template<CaseConvertType type, typename CharacterType> static Ref<StringImpl> convertASCIICase(StringImpl&, const CharacterType*, unsigned);
 
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
     template <class UCharPredicate> Ref<StringImpl> stripMatchedCharacters(UCharPredicate);
