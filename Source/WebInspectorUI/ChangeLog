@@ -1,3 +1,48 @@
+2016-01-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Reduce unnecessary forced layouts in TimelineRuler
+        https://bugs.webkit.org/show_bug.cgi?id=153390
+        <rdar://problem/24312241>
+
+        Reviewed by Timothy Hatcher.
+
+        TimelineRuler's width rarely changes. It should only need to calculate
+        its width when added to the DOM or if the content view containing it
+        has resized and the bounds of the ruler may have changed.
+
+        Switch everything in TimelineRuler to using a cached width, and add
+        an explicit method, resize, to update this width. This eliminated
+        frequent hangs I was seeing while recording timelines.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.shown):
+        (WebInspector.OverviewTimelineView.prototype.updateLayoutForResize):
+        Resize the ruler when the view is shown or resized.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.shown):
+        (WebInspector.TimelineOverview.prototype.updateLayoutForResize):
+        Resize the ruler when the view is shown or resized.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.layout):
+        Inform the current content view of a resize if possible.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.resize):
+        Update the width.
+
+        (WebInspector.TimelineRuler.prototype._recalculate):
+        (WebInspector.TimelineRuler.prototype._needsMarkerLayout):
+        (WebInspector.TimelineRuler.prototype._needsSelectionLayout):
+        (WebInspector.TimelineRuler.prototype._handleMouseMove):
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseMove):
+        Use cached width.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.createCombinedBars): Deleted.
+        Remove some stale code.
+
 2016-01-22  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Sidebar's should remember their width's

@@ -257,6 +257,8 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
     {
         this._visible = true;
 
+        this._timelineRuler.resize()
+
         for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
             timelineOverviewGraph.shown();
 
@@ -313,6 +315,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
     updateLayoutForResize()
     {
         this._cachedScrollContainerWidth = NaN;
+        this._timelineRuler.resize()
         this.updateLayout();
     }
 

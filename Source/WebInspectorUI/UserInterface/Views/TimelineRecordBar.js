@@ -125,8 +125,6 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
             visibleRecords.sort(compareByActiveStartTime);
         }
 
-        lastRecordType = null;
-
         var activeStartTime = NaN;
         var activeEndTime = NaN;
         var activeRecords = [];

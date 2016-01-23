@@ -324,6 +324,10 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     layout()
     {
         this._currentTimelineOverview.updateLayoutForResize();
+
+        let currentContentView = this._contentViewContainer.currentContentView;
+        if (currentContentView && currentContentView.updateLayoutForResize)
+            currentContentView.updateLayoutForResize();
     }
 
     // Private

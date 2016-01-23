@@ -506,7 +506,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         this._scheduledMarkerLayoutUpdateIdentifier = requestAnimationFrame(() => {
             this._scheduledMarkerLayoutUpdateIdentifier = undefined;
 
-            let visibleWidth = this.element.clientWidth;
+            let visibleWidth = this._cachedClientWidth;
             if (visibleWidth <= 0)
                 return;
 
@@ -529,7 +529,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         this._scheduledSelectionLayoutUpdateIdentifier = requestAnimationFrame(() => {
             this._scheduledSelectionLayoutUpdateIdentifier = undefined;
 
-            let visibleWidth = this.element.clientWidth;
+            let visibleWidth = this._cachedClientWidth;
             if (visibleWidth <= 0)
                 return;
 
@@ -537,9 +537,15 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         });
     }
 
+    resize()
+    {
+        this._cachedClientWidth = this.element.clientWidth;
+        this._recalculate();
+    }
+
     _recalculate()
     {
-        let visibleWidth = this.element.clientWidth;
+        let visibleWidth = this._cachedClientWidth;
         if (visibleWidth <= 0)
             return 0;
 
@@ -732,7 +738,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
             this.element.classList.add(WebInspector.TimelineRuler.ResizingSelectionStyleClassName);
         }
 
-        this._updateSelection(this.element.clientWidth, this.duration);
+        this._updateSelection(this._cachedClientWidth, this.duration);
 
         event.preventDefault();
         event.stopPropagation();
@@ -826,7 +832,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
                 this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + this.minimumSelectionDuration, currentTime), this.endTime);
         }
 
-        this._updateSelection(this.element.clientWidth, this.duration);
+        this._updateSelection(this._cachedClientWidth, this.duration);
 
         event.preventDefault();
         event.stopPropagation();
