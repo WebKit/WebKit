@@ -1,3 +1,19 @@
+2016-01-23  Wonchul Lee  <wonchul.lee@collabora.co.uk>
+
+        [GTK] Fix media controls displaying without controls attribute
+        https://bugs.webkit.org/show_bug.cgi?id=152500
+
+        Media controls is not displayed without controls attribute by default
+        when the video element has text track. It'll be displayed on fullscreen
+        regardless of controls attribute.
+
+        Reviewed by Michael Catanzaro.
+
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.shouldHaveControls):
+        (ControllerGtk.prototype.reconnectControls):
+        (ControllerGtk.prototype.removeControls):
+        (ControllerGtk.prototype.configureControls): Deleted.
 2016-01-23  Alex Christensen  <achristensen@webkit.org>
 
         Use credentials from a URL with NetworkSession like we did with ResourceHandle

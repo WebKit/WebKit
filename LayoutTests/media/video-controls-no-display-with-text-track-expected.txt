@@ -1,0 +1,12 @@
+Tests that video controls are not shown for videos with a text track when the controls attribute is not present, except when fullscreen
+
+EVENT(canplay)
+
+** Video controls should not be shown **
+EXPECTED (panel == 'null') OK
+EVENT(webkitfullscreenchange)
+
+** Video controls should be shown on fullscreen **
+EXPECTED (panel.style['display'] != 'none') OK
+END OF TEST
+

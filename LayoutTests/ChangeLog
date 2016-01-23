@@ -1,3 +1,17 @@
+2016-01-23  Wonchul Lee  <wonchul.lee@collabora.co.uk>
+
+        [GTK] Fix media controls displaying without controls attribute
+        https://bugs.webkit.org/show_bug.cgi?id=152500
+
+        Media controls is not displayed without controls attribute by default
+        when the video element has text track. It'll be displayed on fullscreen
+        regardless of controls attribute.
+
+        Reviewed by Michael Catanzaro.
+
+        * media/video-controls-no-display-with-text-track-expected.txt: Added.
+        * media/video-controls-no-display-with-text-track.html: Added.
+
 2016-01-23  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement clearing object stores and opening cursors in the SQLite backend.
