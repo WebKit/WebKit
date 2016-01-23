@@ -31,6 +31,7 @@
 #include "FileSystem.h"
 #include "IDBBindingUtilities.h"
 #include "IDBDatabaseException.h"
+#include "IDBGetResult.h"
 #include "IDBKeyData.h"
 #include "IDBSerialization.h"
 #include "IDBTransactionInfo.h"
@@ -639,9 +640,42 @@ IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
     return true;
 }
 
-IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier&, uint64_t)
+IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to clear an object store without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to clear an object store without an in-progress transaction") };
+    }
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to clear an object store in a read-only transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to clear an object store in a read-only transaction") };
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreID) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not clear records from object store id %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to clear object store") };
+        }
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreID) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete records from index record store id %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to delete index records while clearing object store") };
+        }
+    }
+
+    return { };
 }
 
 IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier&, const IDBIndexInfo&)
@@ -913,14 +947,63 @@ IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceI
     return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
 }
 
-IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier&, const IDBCursorInfo&, IDBGetResult&)
+IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo& info, IDBGetResult& result)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to open a cursor in database without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to open a cursor in database without an in-progress transaction") };
+    }
+
+    auto* cursor = transaction->maybeOpenCursor(info);
+    if (!cursor) {
+        LOG_ERROR("Unable to open cursor");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to open cursor") };
+    }
+
+    m_cursors.set(cursor->identifier(), cursor);
+
+    result = { cursor->currentKey(), cursor->currentPrimaryKey(), ThreadSafeDataBuffer::copyVector(cursor->currentValueBuffer()) };
+    return { };
 }
 
-IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier&, const IDBResourceIdentifier&, const IDBKeyData&, uint32_t, IDBGetResult&)
+IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBKeyData& key, uint32_t count, IDBGetResult& result)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* cursor = m_cursors.get(cursorIdentifier);
+    if (!cursor) {
+        LOG_ERROR("Attempt to iterate a cursor that doesn't exist");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to iterate a cursor that doesn't exist") };
+    }
+
+    ASSERT_UNUSED(transactionIdentifier, cursor->transaction()->transactionIdentifier() == transactionIdentifier);
+
+    if (!cursor->transaction() || !cursor->transaction()->inProgress()) {
+        LOG_ERROR("Attempt to iterate a cursor without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to iterate a cursor without an in-progress transaction") };
+    }
+
+    if (key.isValid()) {
+        if (!cursor->iterate(key)) {
+            LOG_ERROR("Attempt to iterate cursor failed");
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to iterate cursor failed") };
+        }
+    } else {
+        if (!count)
+            count = 1;
+        if (!cursor->advance(count)) {
+            LOG_ERROR("Attempt to advance cursor failed");
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to advance cursor failed") };
+        }
+    }
+
+    result = { cursor->currentKey(), cursor->currentPrimaryKey(), ThreadSafeDataBuffer::copyVector(cursor->currentValueBuffer()) };
+    return { };
 }
 
 void SQLiteIDBBackingStore::deleteBackingStore()
