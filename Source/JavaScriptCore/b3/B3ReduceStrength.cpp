@@ -30,6 +30,7 @@
 
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
+#include "B3ComputeDivisionMagic.h"
 #include "B3ControlValue.h"
 #include "B3Dominators.h"
 #include "B3IndexSet.h"
@@ -508,7 +509,91 @@ private:
             // Note that this uses ChillDiv semantics. That's fine, because the rules for Div
             // are strictly weaker: it has corner cases where it's allowed to do anything it
             // likes.
-            replaceWithNewValue(m_value->child(0)->divConstant(m_proc, m_value->child(1)));
+            if (replaceWithNewValue(m_value->child(0)->divConstant(m_proc, m_value->child(1))))
+                break;
+
+            if (m_value->child(1)->hasInt()) {
+                switch (m_value->child(1)->asInt()) {
+                case -1:
+                    // Turn this: Div(value, -1)
+                    // Into this: Neg(value)
+                    replaceWithNewValue(
+                        m_proc.add<Value>(Neg, m_value->origin(), m_value->child(0)));
+                    break;
+
+                case 0:
+                    // Turn this: Div(value, 0)
+                    // Into this: 0
+                    // We can do this because it's precisely correct for ChillDiv and for Div we
+                    // are allowed to do whatever we want.
+                    m_value->replaceWithIdentity(m_value->child(1));
+                    m_changed = true;
+                    break;
+
+                case 1:
+                    // Turn this: Div(value, 1)
+                    // Into this: value
+                    m_value->replaceWithIdentity(m_value->child(0));
+                    m_changed = true;
+                    break;
+
+                default:
+                    // Perform super comprehensive strength reduction of division. Currently we
+                    // only do this for 32-bit divisions, since we need a high multiply
+                    // operation. We emulate it using 64-bit multiply. We can't emulate 64-bit
+                    // high multiply with a 128-bit multiply because we don't have a 128-bit
+                    // multiply. We could do it with a patchpoint if we cared badly enough.
+
+                    if (m_value->type() != Int32)
+                        break;
+
+                    int32_t divisor = m_value->child(1)->asInt32();
+                    DivisionMagic<int32_t> magic = computeDivisionMagic(divisor);
+
+                    // Perform the "high" multiplication. We do it just to get the high bits.
+                    // This is sort of like multiplying by the reciprocal, just more gnarly. It's
+                    // from Hacker's Delight and I don't claim to understand it.
+                    Value* magicQuotient = m_insertionSet.insert<Value>(
+                        m_index, Trunc, m_value->origin(),
+                        m_insertionSet.insert<Value>(
+                            m_index, ZShr, m_value->origin(),
+                            m_insertionSet.insert<Value>(
+                                m_index, Mul, m_value->origin(),
+                                m_insertionSet.insert<Value>(
+                                    m_index, SExt32, m_value->origin(), m_value->child(0)),
+                                m_insertionSet.insert<Const64Value>(
+                                    m_index, m_value->origin(), magic.magicMultiplier)),
+                            m_insertionSet.insert<Const32Value>(
+                                m_index, m_value->origin(), 32)));
+
+                    if (divisor > 0 && magic.magicMultiplier < 0) {
+                        magicQuotient = m_insertionSet.insert<Value>(
+                            m_index, Add, m_value->origin(), magicQuotient, m_value->child(0));
+                    }
+                    if (divisor < 0 && magic.magicMultiplier > 0) {
+                        magicQuotient = m_insertionSet.insert<Value>(
+                            m_index, Sub, m_value->origin(), magicQuotient, m_value->child(0));
+                    }
+                    if (magic.shift > 0) {
+                        magicQuotient = m_insertionSet.insert<Value>(
+                            m_index, SShr, m_value->origin(), magicQuotient,
+                            m_insertionSet.insert<Const32Value>(
+                                m_index, m_value->origin(), magic.shift));
+                    }
+                    m_value->replaceWithIdentity(
+                        m_insertionSet.insert<Value>(
+                            m_index, Add, m_value->origin(), magicQuotient,
+                            m_insertionSet.insert<Value>(
+                                m_index, ZShr, m_value->origin(), magicQuotient,
+                                m_insertionSet.insert<Const32Value>(
+                                    m_index, m_value->origin(), 31))));
+                    m_changed = true;
+                    break;
+                }
+
+                if (m_value->opcode() != ChillDiv && m_value->opcode() != Div)
+                    break;
+            }
             break;
 
         case Mod:

@@ -1,3 +1,31 @@
+2016-01-22  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should strength-reduce division by a constant
+        https://bugs.webkit.org/show_bug.cgi?id=153386
+
+        Reviewed by Benjamin Poulain.
+
+        You can turn a 32-bit division by a constant into a 64-bit multiplication by a constant
+        plus some shifts. A book called "Hacker's Delight" has a bunch of math about this. The
+        hard part is finding the constant by which to multiply, and the amount by which to shift.
+        The book tells you some theroems, but you still have to turn that into code by thinking
+        deep thoughts. Luckily I was able to avoid that because it turns out that LLVM already
+        has code for this. It's called APInt::magic(), where APInt is their class for reasoning
+        about integers.
+
+        The code has a compatible license to ours and we have already in the past taken code from
+        LLVM. So, that's what this patch does. The LLVM code is localized in
+        B3ComputeDivisionMagic.h. Then reduceStrength() uses that to construct the multiply+shift
+        sequence.
+
+        This is an enormous speed-up on AsmBench-0.9/bigfib.cpp.js. It makes us as fast on that
+        test as LLVM. It reduces our deficit on AsmBench to 1.5%. Previously it was 4.5%.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3ComputeDivisionMagic.h: Added.
+        (JSC::B3::computeDivisionMagic):
+        * b3/B3ReduceStrength.cpp:
+
 2016-01-22  Saam barati  <sbarati@apple.com>
 
         genericUnwind might overflow the instructions() vector when catching an FTL exception

@@ -492,6 +492,7 @@
 		0F8335B71639C1E6001443B5 /* ArrayAllocationProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8335B41639C1E3001443B5 /* ArrayAllocationProfile.cpp */; };
 		0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8335B51639C1E3001443B5 /* ArrayAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F8364B7164B0C110053329A /* DFGBranchDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8364B5164B0C0E0053329A /* DFGBranchDirection.h */; };
+		0F86AE201C5311C5006BE8EC /* B3ComputeDivisionMagic.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F86AE1F1C5311C5006BE8EC /* B3ComputeDivisionMagic.h */; };
 		0F885E111849A3BE00F1E3FA /* BytecodeUseDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F885E101849A3BE00F1E3FA /* BytecodeUseDef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F893BDB1936E23C001211F4 /* DFGStructureAbstractValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F893BDA1936E23C001211F4 /* DFGStructureAbstractValue.cpp */; };
 		0F898F311B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F898F2F1B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.cpp */; };
@@ -2674,6 +2675,7 @@
 		0F8335B41639C1E3001443B5 /* ArrayAllocationProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayAllocationProfile.cpp; sourceTree = "<group>"; };
 		0F8335B51639C1E3001443B5 /* ArrayAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayAllocationProfile.h; sourceTree = "<group>"; };
 		0F8364B5164B0C0E0053329A /* DFGBranchDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBranchDirection.h; path = dfg/DFGBranchDirection.h; sourceTree = "<group>"; };
+		0F86AE1F1C5311C5006BE8EC /* B3ComputeDivisionMagic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ComputeDivisionMagic.h; path = b3/B3ComputeDivisionMagic.h; sourceTree = "<group>"; };
 		0F885E101849A3BE00F1E3FA /* BytecodeUseDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeUseDef.h; sourceTree = "<group>"; };
 		0F893BDA1936E23C001211F4 /* DFGStructureAbstractValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStructureAbstractValue.cpp; path = dfg/DFGStructureAbstractValue.cpp; sourceTree = "<group>"; };
 		0F898F2F1B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGIntegerRangeOptimizationPhase.cpp; path = dfg/DFGIntegerRangeOptimizationPhase.cpp; sourceTree = "<group>"; };
@@ -4771,6 +4773,7 @@
 				0FEC84C21BDACDAC0080FF74 /* B3Commutativity.h */,
 				0F338DFF1BF0276C0013C88F /* B3Compilation.cpp */,
 				0F338E001BF0276C0013C88F /* B3Compilation.h */,
+				0F86AE1F1C5311C5006BE8EC /* B3ComputeDivisionMagic.h */,
 				0FEC84C31BDACDAC0080FF74 /* B3Const32Value.cpp */,
 				0FEC84C41BDACDAC0080FF74 /* B3Const32Value.h */,
 				0FEC84C51BDACDAC0080FF74 /* B3Const64Value.cpp */,
@@ -7989,6 +7992,7 @@
 				BC18C4560E16F5CD00B34460 /* Protect.h in Headers */,
 				1474C33B16AA2D950062F01D /* PrototypeMap.h in Headers */,
 				0F5780A218FE1E98001E72D9 /* PureNaN.h in Headers */,
+				0F86AE201C5311C5006BE8EC /* B3ComputeDivisionMagic.h in Headers */,
 				0F15CD231BA5F9860031FFD3 /* PutByIdFlags.h in Headers */,
 				0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */,
 				0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */,
