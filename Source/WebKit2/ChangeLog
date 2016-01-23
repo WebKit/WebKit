@@ -3,7 +3,7 @@
         <rdar://problem/24304228> REGRESSION (r184215): Staged XPC services load non-staged shims
         https://bugs.webkit.org/show_bug.cgi?id=153389
 
-        Reviewed by Alexey Prooskuryakov.
+        Reviewed by Alexey Proskuryakov.
 
         * Configurations/Shim.xcconfig: Don’t override the install name when using a staged install path.
 
