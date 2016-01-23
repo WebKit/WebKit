@@ -123,6 +123,7 @@ HashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtect
         ASSERT(index != notFound);
         directoryURL = directoryURL.substring(0, (index == directoryURLPathStart) ? index + 1 : index);
         ASSERT(directoryURL.length() > directoryURLPathStart);
+        ASSERT(directoryURL.length() == directoryURLPathStart + 1 || directoryURL[directoryURL.length() - 1] != '/');
     }
 }
 
