@@ -1,3 +1,17 @@
+2016-01-23  Alex Christensen  <achristensen@webkit.org>
+
+        Use credentials from a URL with NetworkSession like we did with ResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=153328
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch fixes at least http/tests/xmlhttprequest/basic-auth-credentials-escaping.html when using NetworkSession.
+
+        * platform/network/ProtectionSpaceBase.h:
+        (WebCore::ProtectionSpaceBase::encodingRequiresPlatformData):
+        * platform/network/ResourceRequestBase.h:
+        Add some WEBCORE_EXPORT macros for functions that are now used in WebKit2.
+
 2016-01-23  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement clearing object stores and opening cursors in the SQLite backend.

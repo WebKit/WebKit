@@ -50,13 +50,12 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters&
     , m_currentRequest(parameters.request)
 {
 #if USE(NETWORK_SESSION)
-    if (!parameters.defersLoading) {
-        if (auto* networkSession = SessionTracker::networkSession(parameters.sessionID)) {
-            m_task = networkSession->createDataTaskWithRequest(parameters.request, *this);
+    if (auto* networkSession = SessionTracker::networkSession(parameters.sessionID)) {
+        m_task = std::make_unique<NetworkDataTask>(*networkSession, *this, parameters.request);
+        if (!parameters.defersLoading)
             m_task->resume();
-        } else
-            ASSERT_NOT_REACHED();
-    }
+    } else
+        ASSERT_NOT_REACHED();
 #else
     m_handle = ResourceHandle::create(m_networkingContext.get(), parameters.request, this, parameters.defersLoading, parameters.contentSniffingPolicy == SniffContent);
 #endif

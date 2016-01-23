@@ -65,7 +65,7 @@ namespace WebCore {
         WEBCORE_EXPORT const URL& url() const;
         WEBCORE_EXPORT void setURL(const URL& url);
 
-        void removeCredentials();
+        WEBCORE_EXPORT void removeCredentials();
 
         WEBCORE_EXPORT ResourceRequestCachePolicy cachePolicy() const;
         WEBCORE_EXPORT void setCachePolicy(ResourceRequestCachePolicy cachePolicy);

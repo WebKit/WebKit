@@ -56,7 +56,6 @@ public:
     static const char* supplementName();
 
 #if USE(NETWORK_SESSION)
-    typedef NetworkSessionTaskClient::ChallengeCompletionHandler ChallengeCompletionHandler;
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
     void didReceiveAuthenticationChallenge(PendingDownload&, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);

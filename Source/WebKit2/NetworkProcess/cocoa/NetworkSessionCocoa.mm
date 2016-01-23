@@ -110,10 +110,16 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 {
     if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
         auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->client().didReceiveChallenge(challenge, [completionHandlerCopy](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
+        auto challengeCompletionHandler = [completionHandlerCopy](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
+        {
             completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
             Block_release(completionHandlerCopy);
-        });
+        };
+        
+        if (networkDataTask->tryPasswordBasedAuthentication(challenge, challengeCompletionHandler))
+            return;
+        
+        networkDataTask->client().didReceiveChallenge(challenge, challengeCompletionHandler);
     }
 }
 
@@ -229,11 +235,6 @@ NetworkSession::~NetworkSession()
     [m_session invalidateAndCancel];
 }
 
-std::unique_ptr<NetworkDataTask> NetworkSession::createDataTaskWithRequest(const WebCore::ResourceRequest& request, NetworkSessionTaskClient& client)
-{
-    return std::make_unique<NetworkDataTask>(*this, client, [m_session dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)]);
-}
-
 NetworkDataTask* NetworkSession::dataTaskForIdentifier(NetworkDataTask::TaskIdentifier taskIdentifier)
 {
     ASSERT(isMainThread());
@@ -263,13 +264,20 @@ DownloadID NetworkSession::takeDownloadID(NetworkDataTask::TaskIdentifier taskId
     return downloadID;
 }
 
-NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkSessionTaskClient& client, RetainPtr<NSURLSessionDataTask>&& task)
+NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkSessionTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials)
     : m_session(session)
     , m_client(client)
-    , m_task(WTFMove(task))
 {
-    ASSERT(!m_session.m_dataTaskMap.contains(taskIdentifier()));
     ASSERT(isMainThread());
+
+    auto request = requestWithCredentials;
+    m_user = request.url().user();
+    m_password = request.url().pass();
+    request.removeCredentials();
+    
+    m_task = [m_session.m_session dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)];
+    
+    ASSERT(!m_session.m_dataTaskMap.contains(taskIdentifier()));
     m_session.m_dataTaskMap.add(taskIdentifier(), this);
 }
 
@@ -281,6 +289,21 @@ NetworkDataTask::~NetworkDataTask()
     m_session.m_dataTaskMap.remove(taskIdentifier());
 }
 
+bool NetworkDataTask::tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler completionHandler)
+{
+    if (!challenge.protectionSpace().isPasswordBased())
+        return false;
+
+    if (!m_user.isNull() && !m_password.isNull()) {
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceForSession));
+        m_user = String();
+        m_password = String();
+        return true;
+    }
+
+    return false;
+}
+    
 void NetworkDataTask::cancel()
 {
     [m_task cancel];

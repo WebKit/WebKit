@@ -68,7 +68,7 @@ public:
     WEBCORE_EXPORT ProtectionSpaceAuthenticationScheme authenticationScheme() const;
     
     bool receivesCredentialSecurely() const;
-    bool isPasswordBased() const;
+    WEBCORE_EXPORT bool isPasswordBased() const;
 
     bool encodingRequiresPlatformData() const { return false; }
 
