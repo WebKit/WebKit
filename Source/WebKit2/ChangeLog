@@ -1,5 +1,12 @@
 2016-01-23  Alex Christensen  <achristensen@webkit.org>
 
+        CMake build fix after r195494.
+
+        * PlatformMac.cmake:
+        WebKit2 needs to be able to find DataDetectors.h.
+
+2016-01-23  Alex Christensen  <achristensen@webkit.org>
+
         Use credentials from a URL with NetworkSession like we did with ResourceHandle
         https://bugs.webkit.org/show_bug.cgi?id=153328
 
