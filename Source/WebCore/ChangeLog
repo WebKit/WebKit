@@ -1,3 +1,33 @@
+2016-01-22  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Disable simultaneous transactions in the SQLite backend for now.
+        https://bugs.webkit.org/show_bug.cgi?id=153381
+
+        Reviewed by Alex Christensen.
+
+        No new tests (This resolves many of the currently crashing/asserting tests).
+
+        Right now we're porting the Legacy IDB SQLite backend to Modern IDB.
+        
+        The way the Legacy backend works is restricted to one transaction at a time.
+        
+        There's many tricks we can play to resolve this, but that task is better performed
+        once all of the basic functionality is done.
+        
+        Fixing this limitation is covered by https://bugs.webkit.org/show_bug.cgi?id=153382
+
+        * Modules/indexeddb/server/IDBBackingStore.h: Add a "supports simultaneous transactions" getter.
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::enqueueTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::takeNextRunnableTransaction): If the backing store does
+          not support simultaneous transactions but there is a transaction in progress, return.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
         document.charset should be an alias for document.characterSet

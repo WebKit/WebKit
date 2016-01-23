@@ -78,6 +78,7 @@ public:
     virtual IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBKeyData&, uint32_t count, IDBGetResult& outResult) = 0;
 
     virtual void deleteBackingStore() = 0;
+    virtual bool supportsSimultaneousTransactions() = 0;
 };
 
 } // namespace IDBServer

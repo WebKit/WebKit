@@ -72,6 +72,7 @@ public:
     virtual IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBKeyData&, uint32_t count, IDBGetResult& outResult) override final;
 
     virtual void deleteBackingStore() override final;
+    virtual bool supportsSimultaneousTransactions() override final { return false; }
 
     void unregisterCursor(SQLiteIDBCursor&);
 

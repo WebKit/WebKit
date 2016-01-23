@@ -209,6 +209,7 @@ void UniqueIDBDatabase::deleteBackingStore()
     if (m_backingStore) {
         m_backingStore->deleteBackingStore();
         m_backingStore = nullptr;
+        m_backingStoreSupportsSimultaneousTransactions = false;
     }
 
     m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didDeleteBackingStore));
@@ -446,6 +447,7 @@ void UniqueIDBDatabase::openBackingStore(const IDBDatabaseIdentifier& identifier
 
     ASSERT(!m_backingStore);
     m_backingStore = m_server.createBackingStore(identifier);
+    m_backingStoreSupportsSimultaneousTransactions = m_backingStore->supportsSimultaneousTransactions();
     auto databaseInfo = m_backingStore->getOrEstablishDatabaseInfo();
 
     m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didOpenBackingStore, databaseInfo));
@@ -1088,7 +1090,7 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
 
 void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& transaction)
 {
-    LOG(IndexedDB, "UniqueIDBDatabase::enqueueTransaction");
+    LOG(IndexedDB, "UniqueIDBDatabase::enqueueTransaction - %s", transaction->info().loggingString().utf8().data());
 
     ASSERT(transaction->info().mode() != IndexedDB::TransactionMode::VersionChange);
 
@@ -1183,6 +1185,12 @@ template<typename T> bool scopesOverlap(const T& aScopes, const Vector<uint64_t>
 
 RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransaction(bool& hadDeferredTransactions)
 {
+    hadDeferredTransactions = false;
+    if (!m_backingStoreSupportsSimultaneousTransactions && !m_inProgressTransactions.isEmpty()) {
+        LOG(IndexedDB, "UniqueIDBDatabase::takeNextRunnableTransaction - Backing store only supports 1 transaction, and we already have 1");
+        return nullptr;
+    }
+
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> deferredTransactions;
     RefPtr<UniqueIDBDatabaseTransaction> currentTransaction;
 

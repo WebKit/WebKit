@@ -195,6 +195,8 @@ private:
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBDatabaseInfo> m_mostRecentDeletedDatabaseInfo;
 
+    bool m_backingStoreSupportsSimultaneousTransactions { false };
+
     HashMap<uint64_t, ErrorCallback> m_errorCallbacks;
     HashMap<uint64_t, KeyDataCallback> m_keyDataCallbacks;
     HashMap<uint64_t, GetResultCallback> m_getResultCallbacks;
