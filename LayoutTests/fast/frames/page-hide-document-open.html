@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+Passes if it does not crash.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+win = window.open("resources/page-hide-document-open-win.html");
+</script>

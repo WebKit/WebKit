@@ -1338,6 +1338,7 @@ protected:
 private:
     friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
+    friend class IgnoreOpensDuringUnloadCountIncrementer;
 
     void updateTitleElement(Element* newTitleElement);
 
@@ -1528,8 +1529,11 @@ private:
     bool m_frameElementsShouldIgnoreScrolling;
     SelectionRestorationMode m_updateFocusAppearanceRestoresSelection;
 
-    // http://www.whatwg.org/specs/web-apps/current-work/#ignore-destructive-writes-counter
-    unsigned m_ignoreDestructiveWriteCount;
+    // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-destructive-writes-counter
+    unsigned m_ignoreDestructiveWriteCount { 0 };
+
+    // https://html.spec.whatwg.org/multipage/webappapis.html#ignore-opens-during-unload-counter
+    unsigned m_ignoreOpensDuringUnloadCount { 0 };
 
     unsigned m_styleRecalcCount { 0 };
 

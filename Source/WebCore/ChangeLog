@@ -1,3 +1,75 @@
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Document.open / Document.write should be prevented while the document is being unloaded
+        https://bugs.webkit.org/show_bug.cgi?id=153255
+        <rdar://problem/22741293>
+
+        Reviewed by Ryosuke Niwa.
+
+        Document.open / Document.write should be prevented while the document
+        is being unloaded, as per the HTML specification:
+        - https://html.spec.whatwg.org/multipage/webappapis.html#dom-document-open (step 6)
+        - https://html.spec.whatwg.org/multipage/webappapis.html#dom-document-write (step 3)
+
+        This patch is aligning our behavior with the specification and Firefox.
+        Calling Document.open / Document.write during the document was being
+        unloaded would cause us to crash as this was unexpected.
+
+        Tests: fast/frames/page-hide-document-open.html
+               fast/frames/page-unload-document-open.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new IgnoreOpensDuringUnloadCountIncrementer.h header.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        Abort if the document's ignore-opens-during-unload counter is greater
+        than zero, as per:
+        https://html.spec.whatwg.org/multipage/webappapis.html#dom-document-open (step 6)
+
+        (WebCore::Document::write):
+        Abort if the insertion point is undefined and the document's
+        ignore-opens-during-unload counter is greater than zero, as per:
+        https://html.spec.whatwg.org/multipage/webappapis.html#dom-document-write (step 3)
+
+        * dom/Document.h:
+        Add data member to maintain the document's ignore-opens-during-unload counter:
+        https://html.spec.whatwg.org/multipage/webappapis.html#ignore-opens-during-unload-counter
+
+        * dom/IgnoreOpensDuringUnloadCountIncrementer.h: Added.
+        Add utility class to increment / decrement a document's
+        ignore-opens-during-unload counter.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        When a page goes into PageCache, we don't end up calling
+        FrameLoader::detachChildren() so we need to increment the document's
+        ignore-opens-during-unload counter before calling stopLoading() on each
+        subframe.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachChildren):
+        detachChildren() will end up firing the pagehide / unload events in each
+        child frame so we increment the parent frame's document's
+        ignore-opens-during-unload counter. This behavior matches the text of:
+        https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
+
+        As per the spec, the document's ignore-opens-during-unload counter should
+        be incremented before firing the pagehide / unload events at the document's
+        Window object. It should be decremented only after firing the pagehide /
+        unload events in each subframe. This is needed in case a subframe tries to
+        call document.open / document.write on a parent frame's document, from its
+        pagehide or unload handler.
+
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+        Increment the document's ignore-opens-during-unload counter before firing
+        the pagehide / unload events and decrement it after. As per the spec, we
+        are not supposed to decrement this early. We actually supposed to wait
+        until the pagehide / unload events have been fired in all the subframes.
+        For this reason, we take care of re-incrementing the document's
+        ignore-opens-during-unload in detachChildren(), which will take care of
+        firing the pagehide / unload in the subframes.
+
 2016-01-22  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement put, get, and delete records for the SQLite backend.

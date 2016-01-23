@@ -1,3 +1,24 @@
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Document.open / Document.write should be prevented while the document is being unloaded
+        https://bugs.webkit.org/show_bug.cgi?id=153255
+        <rdar://problem/22741293>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout tests that cover calling Document.open / Document.write from
+        unload and pagehide handlers.
+
+        * fast/frames/page-hide-document-open-expected.txt: Added.
+        * fast/frames/page-hide-document-open.html: Added.
+        * fast/frames/page-unload-document-open-expected.txt: Added.
+        * fast/frames/page-unload-document-open.html: Added.
+        * fast/frames/resources/finish-test.html: Added.
+        * fast/frames/resources/page-hide-document-open-frame.html: Added.
+        * fast/frames/resources/page-hide-document-open-win.html: Added.
+        * fast/frames/resources/page-unload-document-open-frame.html: Added.
+        * fast/frames/resources/page-unload-document-open-win.html: Added.
+
 2016-01-22  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement put, get, and delete records for the SQLite backend.

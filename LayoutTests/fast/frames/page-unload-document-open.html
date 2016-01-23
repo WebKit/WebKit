@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+Passes if it does not crash.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+win = window.open("resources/page-unload-document-open-win.html");
+</script>

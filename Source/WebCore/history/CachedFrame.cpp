@@ -39,6 +39,7 @@
 #include "FrameView.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -157,9 +158,17 @@ CachedFrame::CachedFrame(Frame& frame)
     m_document->setInPageCache(true);
     frame.loader().stopLoading(UnloadEventPolicyUnloadAndPageHide);
 
-    // Create the CachedFrames for all Frames in the FrameTree.
-    for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        m_childFrames.append(std::make_unique<CachedFrame>(*child));
+    {
+        // The following will fire the pagehide event in each subframe and the HTML specification states
+        // that the parent document's ignore-opens-during-unload counter should be incremented while the
+        // pagehide event is being fired in its subframes:
+        // https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
+        IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_document.get());
+
+        // Create the CachedFrames for all Frames in the FrameTree.
+        for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
+            m_childFrames.append(std::make_unique<CachedFrame>(*child));
+    }
 
     // Active DOM objects must be suspended before we cache the frame script data,
     // but after we've fired the pagehide event, in case that creates more objects.
