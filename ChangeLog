@@ -1,5 +1,18 @@
 2016-01-22  Alex Christensen  <achristensen@webkit.org>
 
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=153385
+        rdar://problem/24310408
+
+        Reviewed by Brian Weinstein.
+
+        * Source/cmake/WinTools.make:
+        * Source/cmake/tools/vsprops: Copied from WebKitLibraries/win/tools/vsprops.
+        These property sheets are needed for some projects that are not in this repository
+        and don't use CMake in the official build.  We want to leave them unchanged for now.
+
+2016-01-22  Alex Christensen  <achristensen@webkit.org>
+
         Only set CMake output directories if they aren't already set
         https://bugs.webkit.org/show_bug.cgi?id=153373
 
