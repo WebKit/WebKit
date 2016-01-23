@@ -187,7 +187,11 @@
 
     // IE extensions
 
-             [TreatReturnedNullStringAs=Undefined, TreatNullAs=NullString] attribute DOMString charset;
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+    [TreatReturnedNullStringAs=Undefined, TreatNullAs=NullString] attribute DOMString charset;
+#else
+    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString charset;
+#endif
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString defaultCharset;
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString readyState;
 

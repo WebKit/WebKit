@@ -1,5 +1,21 @@
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
+        document.charset should be an alias for document.characterSet
+        https://bugs.webkit.org/show_bug.cgi?id=153367
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing W3C tests now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument-expected.txt:
+        * web-platform-tests/dom/nodes/Document-constructor-expected.txt:
+        * web-platform-tests/dom/nodes/Node-properties-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
         DOMImplementation.createHTMLDocument("") should append an empty Text Node to the title Element
         https://bugs.webkit.org/show_bug.cgi?id=153374
 

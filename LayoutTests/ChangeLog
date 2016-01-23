@@ -1,5 +1,22 @@
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
+        document.charset should be an alias for document.characterSet
+        https://bugs.webkit.org/show_bug.cgi?id=153367
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop outdated tests.
+
+        * fast/dom/Document/document-charset-expected.txt:
+        * fast/dom/document-attribute-js-null-expected.txt:
+        * fast/dom/document-attribute-js-null.html:
+        * fast/encoding/css-charset-default-expected.txt:
+        * fast/encoding/css-charset-default.xhtml:
+        * fast/encoding/external-script-charset.js: Removed.
+        * fast/encoding/external-script-charset.xhtml: Removed.
+
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
         Document.open / Document.write should be prevented while the document is being unloaded
         https://bugs.webkit.org/show_bug.cgi?id=153255
         <rdar://problem/22741293>

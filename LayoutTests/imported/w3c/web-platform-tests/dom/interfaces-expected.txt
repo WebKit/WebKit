@@ -486,7 +486,7 @@ PASS Document interface: xmlDoc must inherit property "documentURI" with the pro
 PASS Document interface: xmlDoc must inherit property "origin" with the proper type (3) 
 PASS Document interface: xmlDoc must inherit property "compatMode" with the proper type (4) 
 PASS Document interface: xmlDoc must inherit property "characterSet" with the proper type (5) 
-FAIL Document interface: xmlDoc must inherit property "charset" with the proper type (6) assert_equals: expected "string" but got "undefined"
+PASS Document interface: xmlDoc must inherit property "charset" with the proper type (6) 
 PASS Document interface: xmlDoc must inherit property "inputEncoding" with the proper type (7) 
 PASS Document interface: xmlDoc must inherit property "contentType" with the proper type (8) 
 PASS Document interface: xmlDoc must inherit property "doctype" with the proper type (9) 

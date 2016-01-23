@@ -1,5 +1,24 @@
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
+        document.charset should be an alias for document.characterSet
+        https://bugs.webkit.org/show_bug.cgi?id=153367
+
+        Reviewed by Ryosuke Niwa.
+
+        document.charset should be an alias for document.characterSet:
+        - https://dom.spec.whatwg.org/#dom-document-charset
+
+        It should also be read-only.
+
+        Chrome matches the specification.
+
+        No new tests, already covered by existing tests.
+
+        * dom/Document.h:
+        * dom/Document.idl:
+
+2016-01-22  Chris Dumez  <cdumez@apple.com>
+
         Document.open / Document.write should be prevented while the document is being unloaded
         https://bugs.webkit.org/show_bug.cgi?id=153255
         <rdar://problem/22741293>

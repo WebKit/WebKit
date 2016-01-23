@@ -2,6 +2,6 @@
 FAIL new Document(): interfaces assert_false: Should not be an XMLDocument expected false got true
 PASS new Document(): children 
 PASS new Document(): metadata 
-FAIL new Document(): characterSet aliases assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
+PASS new Document(): characterSet aliases 
 FAIL new Document(): URL parsing assert_equals: expected "http://example.org/?%C3%A4" but got "http://example.org/?ä"
 

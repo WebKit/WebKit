@@ -10,20 +10,20 @@ Initial
 
 Setting charset to UTF-8...
 
- document.charset: UTF-8
+ document.charset: KOI8-R
 
  document.defaultCharset: defined
 
- document.characterSet: UTF-8
+ document.characterSet: KOI8-R
 
- document.inputEncoding: UTF-8
+ document.inputEncoding: KOI8-R
 
 Setting characterSet to KOI8-R (expected to fail, matching Firefox)...
 
- document.charset: UTF-8
+ document.charset: KOI8-R
 
  document.defaultCharset: defined
 
- document.characterSet: UTF-8
+ document.characterSet: KOI8-R
 
- document.inputEncoding: UTF-8
+ document.inputEncoding: KOI8-R

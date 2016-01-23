@@ -425,7 +425,7 @@ public:
 
     AtomicString encoding() const { return textEncoding().domName(); }
 
-    void setCharset(const String&);
+    void setCharset(const String&); // Used by ObjC / GOBject bindings only.
 
     void setContent(const String&);
 

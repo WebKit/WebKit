@@ -155,7 +155,7 @@ PASS foreignDoc.parentNode
 PASS foreignDoc.ownerDocument 
 PASS foreignDoc.documentURI 
 PASS foreignDoc.inputEncoding 
-FAIL foreignDoc.charset assert_equals: expected (string) "UTF-8" but got (undefined) undefined
+PASS foreignDoc.charset 
 PASS foreignDoc.firstChild 
 PASS foreignDoc.lastChild 
 PASS foreignDoc.hasChildNodes() 
@@ -229,7 +229,7 @@ PASS xmlDoc.parentNode
 PASS xmlDoc.ownerDocument 
 PASS xmlDoc.documentURI 
 PASS xmlDoc.inputEncoding 
-FAIL xmlDoc.charset assert_equals: expected (string) "UTF-8" but got (undefined) undefined
+PASS xmlDoc.charset 
 PASS xmlDoc.firstChild 
 PASS xmlDoc.lastChild 
 PASS xmlDoc.hasChildNodes() 
