@@ -1,3 +1,13 @@
+2016-01-22  Saam barati  <sbarati@apple.com>
+
+        genericUnwind might overflow the instructions() vector when catching an FTL exception
+        https://bugs.webkit.org/show_bug.cgi?id=153383
+
+        Reviewed by Benjamin Poulain.
+
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+
 2016-01-22  Mark Lam  <mark.lam@apple.com>
 
         We should OSR exit with Int52Overflow when we fail to make an Int52 where we expect one.
