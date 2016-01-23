@@ -1,3 +1,24 @@
+2016-01-22  Daniel Bates  <dabates@apple.com>
+
+        LayoutTest http/tests/security/xssAuditor/embed-tag-in-path-unterminated.html crashing
+        https://bugs.webkit.org/show_bug.cgi?id=153250
+        <rdar://problem/12172843>
+        And
+        <rdar://problem/24248040>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove an incorrect assertion that the absolute URL associated with a protection space cannot
+        contain consecutive forward slash (/) characters. A URL can contain consecutive forward slashes.
+        This also makes the invariants for CredentialStorage::findDefaultProtectionSpaceForURL() symmetric
+        with the invariants for WebCore::protectionSpaceMapKeyFromURL().
+
+        Tests: http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html
+               http/tests/xmlhttprequest/basic-auth-load-URL-with-consecutive-slashes.html
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::findDefaultProtectionSpaceForURL):
+
 2016-01-22  Chris Dumez  <cdumez@apple.com>
 
         DOMImplementation.createHTMLDocument("") should append an empty Text Node to the title Element
