@@ -91,13 +91,9 @@ bool DisplayList::shouldDumpForFlags(AsTextFlags flags, const Item& item)
 String DisplayList::asText(AsTextFlags flags) const
 {
     TextStream stream;
-    size_t numItems = m_list.size();
-    for (size_t i = 0; i < numItems; ++i) {
-        const auto& item = m_list[i].get();
+    for (auto& item : m_list) {
         if (!shouldDumpForFlags(flags, item))
             continue;
-
-        TextStream::GroupScope scope(stream);
         stream << item;
     }
     return stream.release();

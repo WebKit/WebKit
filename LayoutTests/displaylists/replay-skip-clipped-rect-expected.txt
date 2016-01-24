@@ -1,16 +1,15 @@
 recorded: 
-(
-  (translate
-    (x 0.00)
-    (y 0.00)))
-(
-  (fill-rect-with-color
-    (extent at (412,0) size 100x100)
-    (rect at (412,0) size 100x100)
-    (color #0000FF)))
+(translate
+  (x 0.00)
+  (y 0.00))
+(fill-rect-with-color
+  (extent at (412,0) size 100x100)
+  (rect at (412,0) size 100x100)
+  (color #0000FF))
 
 replayed: 
 (
-  (translate
-    (x 0.00)
-    (y 0.00)))
+  (clip at (512,0) size 512x200)
+(translate
+  (x 0.00)
+  (y 0.00))

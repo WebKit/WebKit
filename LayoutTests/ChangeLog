@@ -1,5 +1,19 @@
 2016-01-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Make the dumped display list representation a bit more compact
+        https://bugs.webkit.org/show_bug.cgi?id=153409
+
+        Reviewed by Zalan Bujtas.
+        
+        Updated results.
+
+        * displaylists/extent-includes-shadow-expected.txt:
+        * displaylists/extent-includes-transforms-expected.txt:
+        * displaylists/layer-dispay-list-expected.txt:
+        * displaylists/replay-skip-clipped-rect-expected.txt:
+
+2016-01-24  Simon Fraser  <simon.fraser@apple.com>
+
         Add testing for display list replay, and skip clipped-out items on replay
         https://bugs.webkit.org/show_bug.cgi?id=153408
 

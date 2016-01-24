@@ -1,24 +1,18 @@
 
-(
-  (translate
-    (x 0.00)
-    (y 22.00)))
-(
-  (concatentate-ctm
-    (ctm {m=((0.87,0.50)(-0.50,0.87)) t=(81.70,-18.30)})))
-(
-  (save
-    (restore-index 5)))
-(
-  (set-state
-    (change-flags 1024)
-    (shadow-blur 12.00)
-    (shadow-offset width=10 height=20)
-    (shadows-use-legacy-radius 0)))
-(
-  (fill-rect-with-color
-    (extent at (7.14,0.20) size 184.55x185.65)
-    (rect at (0,0) size 100x100)
-    (color #0000FF)))
-(
-  (restore))
+(translate
+  (x 0.00)
+  (y 22.00))
+(concatentate-ctm
+  (ctm {m=((0.87,0.50)(-0.50,0.87)) t=(81.70,-18.30)}))
+(save
+  (restore-index 5))
+(set-state
+  (change-flags 1024)
+  (shadow-blur 12.00)
+  (shadow-offset width=10 height=20)
+  (shadows-use-legacy-radius 0))
+(fill-rect-with-color
+  (extent at (7.14,0.20) size 184.55x185.65)
+  (rect at (0,0) size 100x100)
+  (color #0000FF))
+(restore)
