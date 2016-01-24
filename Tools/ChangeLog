@@ -1,3 +1,9 @@
+2016-01-24  Dan Bernstein  <mitz@apple.com>
+
+        Added project.xcworkspace and xcuserdata to this project’s svn:ignore.
+
+        * LayoutTestRelay/LayoutTestRelay.xcodeproj: Added property svn:ignore.
+
 2016-01-22  Enrica Casucci  <enrica@apple.com>
 
         Unreviewed build fix after http://trac.webkit.org/changeset/195474.
