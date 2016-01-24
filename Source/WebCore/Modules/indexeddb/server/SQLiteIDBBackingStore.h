@@ -33,6 +33,7 @@
 #include "IDBDatabaseInfo.h"
 #include "IDBResourceIdentifier.h"
 #include "SQLiteIDBTransaction.h"
+#include <JavaScriptCore/Strong.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -86,6 +87,8 @@ private:
     std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();
 
     IDBError deleteRecord(SQLiteIDBTransaction&, int64_t objectStoreID, const IDBKeyData&);
+    IDBError uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const IDBKeyData& keyValue, const IDBKeyData& indexKey);
+    IDBError uncheckedHasIndexRecord(int64_t indexID, const IDBKeyData&, bool& hasRecord);
 
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
@@ -96,6 +99,9 @@ private:
     HashMap<IDBResourceIdentifier, SQLiteIDBCursor*> m_cursors;
 
     String m_absoluteDatabaseDirectory;
+
+    RefPtr<JSC::VM> m_vm;
+    JSC::Strong<JSC::JSGlobalObject> m_globalObject;
 };
 
 } // namespace IDBServer

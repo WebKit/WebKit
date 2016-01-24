@@ -118,6 +118,11 @@ SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
 {
     if (m_sqliteDB)
         m_sqliteDB->close();
+
+    if (m_vm) {
+        JSLockHolder locker(m_vm.get());
+        m_vm = nullptr;
+    }
 }
 
 static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
@@ -678,10 +683,170 @@ IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
     return { };
 }
 
-IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier&, const IDBIndexInfo&)
+IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo& info)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to create an index without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to create an index without an in-progress transaction") };
+    }
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to create an index in a non-version-change transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to create an index in a non-version-change transaction") };
+    }
+
+    RefPtr<SharedBuffer> keyPathBlob = serializeIDBKeyPath(info.keyPath());
+    if (!keyPathBlob) {
+        LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize IDBKeyPath to create index in database") };
+    }
+
+    SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IndexInfo VALUES (?, ?, ?, ?, ?, ?);"));
+    if (sql.prepare() != SQLITE_OK
+        || sql.bindInt64(1, info.identifier()) != SQLITE_OK
+        || sql.bindText(2, info.name()) != SQLITE_OK
+        || sql.bindInt64(3, info.objectStoreIdentifier()) != SQLITE_OK
+        || sql.bindBlob(4, keyPathBlob->data(), keyPathBlob->size()) != SQLITE_OK
+        || sql.bindInt(5, info.unique()) != SQLITE_OK
+        || sql.bindInt(6, info.multiEntry()) != SQLITE_OK
+        || sql.step() != SQLITE_DONE) {
+        LOG_ERROR("Could not add index '%s' to IndexInfo table (%i) - %s", info.name().utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to create index in database") };
+    }
+
+    // Write index records for any records that already exist in this object store.
+
+    auto cursor = transaction->maybeOpenBackingStoreCursor(info.objectStoreIdentifier());
+
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to populate indexes in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to populate indexes in database") };
+    }
+
+    if (!m_vm) {
+        ASSERT(!m_globalObject);
+        m_vm = VM::create();
+    }
+
+    JSLockHolder locker(m_vm.get());
+
+    if (!m_globalObject)
+        m_globalObject.set(*m_vm, JSGlobalObject::create(*m_vm, JSGlobalObject::createStructure(*m_vm, jsNull())));
+
+    while (!cursor->currentKey().isNull()) {
+        auto& key = cursor->currentKey();
+        auto& valueBuffer = cursor->currentValueBuffer();
+
+        auto value = deserializeIDBValueBuffer(m_globalObject->globalExec(), Vector<uint8_t>(valueBuffer), true);
+
+        IndexKey indexKey;
+        generateIndexKeyForValue(*m_globalObject->globalExec(), info, value.jsValue(), indexKey);
+
+        if (!info.multiEntry()) {
+            IDBError error = uncheckedPutIndexRecord(info.objectStoreIdentifier(), info.identifier(), key, indexKey.asOneKey());
+            if (!error.isNull()) {
+                LOG_ERROR("Unable to put index record for newly created index");
+                return error;
+            }
+        }
+
+        Vector<IDBKeyData> indexKeys = indexKey.multiEntry();
+
+        if (info.unique()) {
+            bool hasRecord;
+            IDBError error;
+            for (auto& indexKey : indexKeys) {
+                error = uncheckedHasIndexRecord(info.identifier(), indexKey, hasRecord);
+                if (hasRecord)
+                    return IDBError(IDBDatabaseException::ConstraintError);
+                if (!error.isNull())
+                    return error;
+            }
+        }
+
+        for (auto& indexKey : indexKeys) {
+            IDBError error = uncheckedPutIndexRecord(info.objectStoreIdentifier(), info.identifier(), key, indexKey);
+            if (!error.isNull()) {
+                LOG_ERROR("Unable to put index record for newly created index");
+                return error;
+            }
+        }
+
+        if (!cursor->advance(1)) {
+            LOG_ERROR("Error advancing cursor while indexing existing records for new index.");
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error advancing cursor while indexing existing records for new index") };
+        }
+    }
+
+    return { };
 }
+
+IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(int64_t indexID, const IDBKeyData& indexKey, bool& hasRecord)
+{
+    hasRecord = false;
+
+    RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
+    if (!indexKeyBuffer) {
+        LOG_ERROR("Unable to serialize index key to be stored in the database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize IDBKey to check for index record in database") };
+    }
+
+    SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT rowid FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT);"));
+    if (sql.prepare() != SQLITE_OK
+        || sql.bindInt64(1, indexID) != SQLITE_OK
+        || sql.bindBlob(2, indexKeyBuffer->data(), indexKeyBuffer->size()) != SQLITE_OK) {
+        LOG_ERROR("Error checking for index record in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Error checking for index record in database") };
+    }
+
+    int sqlResult = sql.step();
+    if (sqlResult == SQLITE_OK || sqlResult == SQLITE_DONE)
+        return { };
+
+    if (sqlResult != SQLITE_ROW) {
+        // There was an error fetching the record from the database.
+        LOG_ERROR("Could not check if key exists in index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Error checking for existence of IDBKey in index") };
+    }
+
+    hasRecord = true;
+    return { };
+}
+
+
+IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyData& keyValue, const WebCore::IDBKeyData& indexKey)
+{
+    RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
+    if (!indexKeyBuffer) {
+        LOG_ERROR("Unable to serialize index key to be stored in the database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize index key to be stored in the database") };
+    }
+
+    RefPtr<SharedBuffer> valueBuffer = serializeIDBKeyData(keyValue);
+    if (!valueBuffer) {
+        LOG_ERROR("Unable to serialize the value to be stored in the database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize value to be stored in the database") };
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IndexRecords VALUES (?, ?, CAST(? AS TEXT), CAST(? AS TEXT));"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, indexID) != SQLITE_OK
+            || sql.bindInt64(2, objectStoreID) != SQLITE_OK
+            || sql.bindBlob(3, indexKeyBuffer->data(), indexKeyBuffer->size()) != SQLITE_OK
+            || sql.bindBlob(4, valueBuffer->data(), valueBuffer->size()) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not put index record for index %" PRIi64 " in object store %" PRIi64 " in Records table (%i) - %s", indexID, objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error putting index record into database") };
+        }
+    }
+
+    return { };
+}
+
 
 IDBError SQLiteIDBBackingStore::deleteIndex(const IDBResourceIdentifier&, uint64_t, const String&)
 {

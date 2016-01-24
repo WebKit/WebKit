@@ -1,3 +1,28 @@
+2016-01-24  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Support IDBObjectStore.createIndex in the SQLite backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=153410
+
+        Reviewed by Darin Adler.
+
+        No new tests (Covered by unskipping many existing tests).
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::~SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedHasIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::maybeCreateBackingStoreCursor):
+        (WebCore::IDBServer::SQLiteIDBCursor::SQLiteIDBCursor):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        (WebCore::IDBServer::SQLiteIDBTransaction::maybeOpenBackingStoreCursor):
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+
 2016-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         Make the dumped display list representation a bit more compact

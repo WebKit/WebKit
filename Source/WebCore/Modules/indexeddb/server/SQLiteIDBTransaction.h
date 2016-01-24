@@ -59,6 +59,7 @@ public:
     IDBError commit();
     IDBError abort();
 
+    std::unique_ptr<SQLiteIDBCursor> maybeOpenBackingStoreCursor(uint64_t objectStoreID);
     SQLiteIDBCursor* maybeOpenCursor(const IDBCursorInfo&);
 
     void closeCursor(SQLiteIDBCursor&);
