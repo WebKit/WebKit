@@ -1,7 +1,5 @@
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
 var targetDiv;
 function doTest()
@@ -11,13 +9,12 @@ function doTest()
     if (window.internals)
         internals.setElementUsesDisplayListDrawing(targetDiv, true);
     
-    window.setTimeout(function() {
-        if (window.internals) {
-            var displayList = internals.displayListForElement(targetDiv);
-            document.getElementById('output').textContent = displayList;
-        }
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 0);
+    if (window.testRunner)
+        testRunner.display();
+
+    if (window.internals) {
+        var displayList = internals.displayListForElement(targetDiv);
+        document.getElementById('output').textContent = displayList;
+    }
 }
 window.addEventListener('load', doTest, false);

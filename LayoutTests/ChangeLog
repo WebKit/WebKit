@@ -1,3 +1,16 @@
+2016-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Layout Test displaylists/extent-includes-transforms.html is flaky on mac-wk1
+        https://bugs.webkit.org/show_bug.cgi?id=153308
+
+        Reviewed by Dan Bernstein.
+
+        Rather than assuming that a zero-delay timer will fire after the next layer flush,
+        force a flush with testRunner.display(), which fixes flakiness.
+
+        * displaylists/resources/dump-target-display-list.js:
+        (doTest):
+
 2016-01-23  Wonchul Lee  <wonchul.lee@collabora.co.uk>
 
         [GTK] Fix media controls displaying without controls attribute
