@@ -1,3 +1,10 @@
+2016-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        New WK1 baselines.
+
+        * platform/mac-wk1/displaylists/extent-includes-shadow-expected.txt:
+        * platform/mac-wk1/displaylists/extent-includes-transforms-expected.txt:
+
 2016-01-24  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Support IDBObjectStore.createIndex in the SQLite backing store.
