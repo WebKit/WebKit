@@ -1,3 +1,22 @@
+2016-01-23  Aaron Chu  <arona.chu@gmail.com>
+
+        Web Inspector: AXI: node-link-list should be collapsible
+        https://bugs.webkit.org/show_bug.cgi?id=130911
+        
+        Reviewed by Timothy Hatcher.
+
+        Accessibility Inspector: for a very long children node list, only the first 5 nodes are shown.
+        Remaining nodes are hidden by a "# More…" link by which a user can click to reveal the remainder 
+        of the node list.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshAccessibility.linkListForNodeIds):
+        * UserInterface/Views/Main.css:
+        (.expand-list-button):
+        (.node-link-list, .node-link-list li:not([hidden])):
+        (.node-link-list, .node-link-list li): Deleted.
+
 2016-01-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce unnecessary forced layouts in TimelineRuler

@@ -300,25 +300,43 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         }
 
         function linkListForNodeIds(nodeIds) {
-            var hasLinks = false;
-            var linkList = null;
-            if (nodeIds !== undefined) {
-                linkList = document.createElement("ul");
-                linkList.className = "node-link-list";    
-                for (var nodeId of nodeIds) {
-                    var node = WebInspector.domTreeManager.nodeForId(nodeId);
-                    if (node) {
-                        var link = WebInspector.linkifyAccessibilityNodeReference(node);
-                        if (link) {
-                            hasLinks = true;
-                            var listitem = document.createElement("li");
-                            listitem.appendChild(link);
-                            linkList.appendChild(listitem);
-                        }
-                    }
-                }
+            if (!nodeIds) 
+                return null;
+
+            const itemsToShow = 5;
+            let hasLinks = false;
+            let listItemCount = 0;
+            let container = document.createElement("div");
+            container.classList.add("list-container")
+            let linkList = container.createChild("ul", "node-link-list");            
+            let initiallyHiddenItems = [];
+            for (let nodeId of nodeIds) {
+                let node = WebInspector.domTreeManager.nodeForId(nodeId);
+                if (!node)
+                    continue;
+                let link = WebInspector.linkifyAccessibilityNodeReference(node);
+                hasLinks = true;
+                let li = linkList.createChild("li");
+                li.appendChild(link);
+                if (listItemCount >= itemsToShow) {  
+                    li.hidden = true;
+                    initiallyHiddenItems.push(li);
+                } 
+                listItemCount++;
             }
-            return hasLinks ? linkList : null;
+            container.appendChild(linkList);
+            if (listItemCount > itemsToShow) {
+                let moreNodesButton = container.createChild("button", "expand-list-button");
+                moreNodesButton.textContent = WebInspector.UIString("%d More\u2026").format(listItemCount - itemsToShow);
+                moreNodesButton.addEventListener("click", () => {
+                    initiallyHiddenItems.forEach((element) => element.hidden = false);
+                    moreNodesButton.remove();
+                });
+            }
+            if (hasLinks) 
+                return container;
+
+            return null;
         }
 
         function accessibilityPropertiesCallback(accessibilityProperties) {

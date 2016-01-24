@@ -305,12 +305,23 @@ body.window-inactive #split-content-browser {
     display: none !important;
 }
 
+.expand-list-button {
+    -webkit-appearance: none;
+    text-decoration: underline;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    cursor: pointer;
+    color: black;
+}
+
 .node-link {
     text-decoration: underline;
     cursor: pointer;
 }
 
-.node-link-list, .node-link-list li {
+.node-link-list, .node-link-list li:not([hidden]) {
     display: block;
     margin: 0;
     padding: 0;
