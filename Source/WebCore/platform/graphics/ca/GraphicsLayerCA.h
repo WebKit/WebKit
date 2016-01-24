@@ -210,6 +210,9 @@ private:
 
     WEBCORE_EXPORT virtual String displayListAsText(DisplayList::AsTextFlags) const override;
 
+    WEBCORE_EXPORT virtual void setIsTrackingDisplayListReplay(bool) override;
+    WEBCORE_EXPORT virtual String replayDisplayListAsText(DisplayList::AsTextFlags) const override;
+
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const override;
 
     WEBCORE_EXPORT virtual bool shouldRepaintOnSizeChange() const override;

@@ -1,3 +1,22 @@
+2016-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Add testing for display list replay, and skip clipped-out items on replay
+        https://bugs.webkit.org/show_bug.cgi?id=153408
+
+        Reviewed by Zalan Bujtas.
+
+        Test that a clipped-out rectangle is not painted.
+
+        In order to get the rect into the display list, we need to make the target
+        compositing layer be tiled, and to be clipped by an ancestor so that only the
+        second tile renders. (This complexity is required because in simpler scenarios,
+        the rect is clipped out at recording time.)
+
+        * displaylists/replay-skip-clipped-rect-expected.txt: Added.
+        * displaylists/replay-skip-clipped-rect.html: Added.
+        * displaylists/resources/dump-target-replay-list.js: Added.
+        (doTest):
+
 2016-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Layout Test displaylists/extent-includes-transforms.html is flaky on mac-wk1

@@ -1996,6 +1996,28 @@ void Internals::setElementUsesDisplayListDrawing(Element* element, bool usesDisp
     layer->backing()->setUsesDisplayListDrawing(usesDisplayListDrawing);
 }
 
+void Internals::setElementTracksDisplayListReplay(Element* element, bool isTrackingReplay, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!element || !element->renderer() || !element->renderer()->hasLayer()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
+    if (!layer->isComposited()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    
+    layer->backing()->setIsTrackingDisplayListReplay(isTrackingReplay);
+}
+
 String Internals::displayListForElement(Element* element, ExceptionCode& ec)
 {
     return displayListForElement(element, 0, ec);
@@ -2025,6 +2047,37 @@ String Internals::displayListForElement(Element* element, unsigned flags, Except
         displayListFlags |= DisplayList::AsTextFlag::IncludesPlatformOperations;
     
     return layer->backing()->displayListAsText(displayListFlags);
+}
+
+String Internals::replayDisplayListForElement(Element* element, ExceptionCode& ec)
+{
+    return replayDisplayListForElement(element, 0, ec);
+}
+
+String Internals::replayDisplayListForElement(Element* element, unsigned flags, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    if (!element || !element->renderer() || !element->renderer()->hasLayer()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+    
+    RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
+    if (!layer->isComposited()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    DisplayList::AsTextFlags displayListFlags = 0;
+    if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
+        displayListFlags |= DisplayList::AsTextFlag::IncludesPlatformOperations;
+    
+    return layer->backing()->replayDisplayListAsText(displayListFlags);
 }
 
 void Internals::garbageCollectDocumentResources(ExceptionCode& ec) const

@@ -26,7 +26,9 @@
 #ifndef DisplayListReplayer_h
 #define DisplayListReplayer_h
 
+#include "DisplayList.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -35,16 +37,14 @@ class GraphicsContext;
 
 namespace DisplayList {
 
-class DisplayList;
-
 class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
     Replayer(GraphicsContext&, const DisplayList&);
     ~Replayer();
 
-    void replay(const FloatRect& initialClip);
-
+    std::unique_ptr<DisplayList> replay(const FloatRect& initialClip, bool trackReplayList = false);
+    
 private:
     const DisplayList& m_displayList;
     GraphicsContext& m_context;

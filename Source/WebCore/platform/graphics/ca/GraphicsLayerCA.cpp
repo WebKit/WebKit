@@ -47,6 +47,7 @@
 #include <limits.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/WTFString.h>
@@ -357,6 +358,14 @@ PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(Platf
 #endif
 }
 
+typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
+
+static LayerDisplayListHashMap& layerDisplayListMap()
+{
+    static NeverDestroyed<LayerDisplayListHashMap> sharedHashMap;
+    return sharedHashMap;
+}
+
 GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
     , m_needsFullRepaint(false)
@@ -390,6 +399,9 @@ void GraphicsLayerCA::initialize(Type layerType)
 
 GraphicsLayerCA::~GraphicsLayerCA()
 {
+    if (UNLIKELY(isTrackingDisplayListReplay()))
+        layerDisplayListMap().remove(this);
+
     // Do cleanup while we can still safely call methods on the derived class.
     willBeDestroyed();
 }
@@ -1445,7 +1457,13 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
     m_hasEverPainted = true;
     if (m_displayList) {
         DisplayList::Replayer replayer(context, *m_displayList);
-        replayer.replay(clip);
+        
+        if (UNLIKELY(isTrackingDisplayListReplay())) {
+            auto replayList = replayer.replay(clip, isTrackingDisplayListReplay());
+            layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>(clip, WTFMove(replayList)));
+        } else
+            replayer.replay(clip);
+
         return;
     }
 
@@ -3277,6 +3295,32 @@ String GraphicsLayerCA::displayListAsText(DisplayList::AsTextFlags flags) const
         return String();
 
     return m_displayList->asText(flags);
+}
+
+void GraphicsLayerCA::setIsTrackingDisplayListReplay(bool isTracking)
+{
+    if (isTracking == m_isTrackingDisplayListReplay)
+        return;
+
+    m_isTrackingDisplayListReplay = isTracking;
+    if (!m_isTrackingDisplayListReplay)
+        layerDisplayListMap().remove(this);
+}
+
+String GraphicsLayerCA::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
+{
+    auto it = layerDisplayListMap().find(this);
+    if (it != layerDisplayListMap().end()) {
+        TextStream stream;
+        
+        TextStream::GroupScope scope(stream);
+        stream.dumpProperty("clip", it->value.first);
+        stream << it->value.second->asText(flags);
+        return stream.release();
+        
+    }
+
+    return String();
 }
 
 void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)

@@ -254,6 +254,7 @@ public:
     RefPtr<ClientRectList> nonFastScrollableRects(ExceptionCode&) const;
 
     void setElementUsesDisplayListDrawing(Element*, bool usesDisplayListDrawing, ExceptionCode&);
+    void setElementTracksDisplayListReplay(Element*, bool isTrackingReplay, ExceptionCode&);
 
     enum {
         // Values need to be kept in sync with Internals.idl.
@@ -261,6 +262,9 @@ public:
     };
     String displayListForElement(Element*, unsigned flags, ExceptionCode&);
     String displayListForElement(Element*, ExceptionCode&);
+
+    String replayDisplayListForElement(Element*, unsigned flags, ExceptionCode&);
+    String replayDisplayListForElement(Element*, ExceptionCode&);
 
     void garbageCollectDocumentResources(ExceptionCode&) const;
 

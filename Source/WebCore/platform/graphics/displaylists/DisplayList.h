@@ -51,6 +51,7 @@ typedef unsigned AsTextFlags;
 class DisplayList {
     WTF_MAKE_NONCOPYABLE(DisplayList);
     friend class Recorder;
+    friend class Replayer;
 public:
     DisplayList() = default;
     DisplayList(DisplayList&&) = default;
@@ -65,7 +66,7 @@ public:
         ASSERT(index < m_list.size());
         return m_list[index].get();
     }
-    
+
     void clear();
     void removeItemsFromIndex(size_t);
 
@@ -84,6 +85,12 @@ private:
     {
         m_list.append(WTFMove(item));
         return m_list.last().get();
+    }
+
+    // Less efficient append, only used for tracking replay.
+    void appendItem(Item& item)
+    {
+        m_list.append(item);
     }
 
     static bool shouldDumpForFlags(AsTextFlags, const Item&);

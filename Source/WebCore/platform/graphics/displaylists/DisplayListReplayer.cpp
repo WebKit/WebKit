@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DisplayListReplayer.h"
 
-#include "DisplayList.h"
 #include "DisplayListItems.h"
 #include "GraphicsContext.h"
 #include "Logging.h"
@@ -45,17 +44,35 @@ Replayer::~Replayer()
 {
 }
 
-void Replayer::replay(const FloatRect& initialClip)
+std::unique_ptr<DisplayList> Replayer::replay(const FloatRect& initialClip, bool trackReplayList)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nReplaying with clip " << initialClip);
     UNUSED_PARAM(initialClip);
 
+    std::unique_ptr<DisplayList> replayList;
+    if (UNLIKELY(trackReplayList))
+        replayList = std::make_unique<DisplayList>();
+
     size_t numItems = m_displayList.itemCount();
     for (size_t i = 0; i < numItems; ++i) {
         auto& item = m_displayList.list()[i].get();
-        LOG_WITH_STREAM(DisplayLists, stream << "drawing  " << i << " " << item);
+
+        if (is<DrawingItem>(item)) {
+            const DrawingItem& drawingItem = downcast<DrawingItem>(item);
+            if (drawingItem.extentKnown() && !drawingItem.extent().intersects(initialClip)) {
+                LOG_WITH_STREAM(DisplayLists, stream << "skipping " << i << " " << item);
+                continue;
+            }
+        }
+
+        LOG_WITH_STREAM(DisplayLists, stream << "applying " << i << " " << item);
         item.apply(m_context);
+
+        if (UNLIKELY(trackReplayList))
+            replayList->appendItem(const_cast<Item&>(item));
     }
+    
+    return replayList;
 }
 
 } // namespace DisplayList

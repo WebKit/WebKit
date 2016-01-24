@@ -245,6 +245,9 @@ public:
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
     WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const;
 
+    WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool);
+    WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const;
+
     LayoutSize devicePixelFractionFromRenderer() const { return m_devicePixelFractionFromRenderer; }
 
 private:

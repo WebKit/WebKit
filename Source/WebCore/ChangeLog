@@ -1,3 +1,54 @@
+2016-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Add testing for display list replay, and skip clipped-out items on replay
+        https://bugs.webkit.org/show_bug.cgi?id=153408
+
+        Reviewed by Zalan Bujtas.
+        
+        Make it possible to save and serialize a DisplayList of Items which were
+        actually applied on replay, so that replay-time optimizations can be tested.
+        
+        This exposes internals.setElementTracksDisplayListReplay() and
+        internals.replayDisplayListForElement().
+        
+        Do a trivial replay-time optimization, which is to skip items whose extents are
+        outside the replay clip.
+
+        Test: displaylists/replay-skip-clipped-rect.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setIsTrackingDisplayListReplay):
+        (WebCore::GraphicsLayer::isTrackingDisplayListReplay):
+        (WebCore::GraphicsLayer::replayDisplayListAsText):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::layerDisplayListMap): Use a singleton map to store the replay display lists
+        to avoid bloating GraphicsLayerCA for test-only code. The map stores a pair of the
+        replay list and a clip rect, which are both dumped. Dumping the clip rect ensures that
+        we're reporting the replay for the correct tile in a test (since there will be a replay
+        for each tile).
+        (WebCore::GraphicsLayerCA::~GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+        (WebCore::GraphicsLayerCA::setIsTrackingDisplayListReplay):
+        (WebCore::GraphicsLayerCA::replayDisplayListAsText):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/displaylists/DisplayList.h:
+        (WebCore::DisplayList::DisplayList::appendItem):
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::Replayer::replay): In the unlikely event of tracking replays,
+        allocate a new DisplayList and append to it items which actually get applied.
+        * platform/graphics/displaylists/DisplayListReplayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setIsTrackingDisplayListReplay):
+        (WebCore::RenderLayerBacking::replayDisplayListAsText):
+        * rendering/RenderLayerBacking.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setElementTracksDisplayListReplay):
+        (WebCore::Internals::replayDisplayListForElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-01-23  Wonchul Lee  <wonchul.lee@collabora.co.uk>
 
         [GTK] Fix media controls displaying without controls attribute

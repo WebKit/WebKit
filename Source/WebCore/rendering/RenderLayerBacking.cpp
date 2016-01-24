@@ -198,6 +198,16 @@ String RenderLayerBacking::displayListAsText(DisplayList::AsTextFlags flags) con
     return m_graphicsLayer->displayListAsText(flags);
 }
 
+void RenderLayerBacking::setIsTrackingDisplayListReplay(bool isTrackingReplay)
+{
+    m_graphicsLayer->setIsTrackingDisplayListReplay(isTrackingReplay);
+}
+
+String RenderLayerBacking::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
+{
+    return m_graphicsLayer->replayDisplayListAsText(flags);
+}
+
 void RenderLayerBacking::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
 {
     compositor().layerTiledBackingUsageChanged(layer, usingTiledBacking);

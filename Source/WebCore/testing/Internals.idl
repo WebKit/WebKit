@@ -226,10 +226,14 @@ enum MediaControlEvent {
 
     // These throw if the element does not have a compositing layer.
     [RaisesException] void setElementUsesDisplayListDrawing(Element element, boolean usesDisplayListDrawing);
+    [RaisesException] void setElementTracksDisplayListReplay(Element element, boolean trackReplay);
 
     // Flags for displayListForElement.
     const unsigned short DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS = 1;
+    // Returns the recorded display list.
     [RaisesException] DOMString displayListForElement(Element element, optional unsigned short flags);
+    // Returns the display list that was actually painted.
+    [RaisesException] DOMString replayDisplayListForElement(Element element, optional unsigned short flags);
 
     [RaisesException] void garbageCollectDocumentResources();
 
