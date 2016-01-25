@@ -26,13 +26,20 @@
 
 #include "config.h"
 
-#include "ByteLengthQueuingStrategyBuiltins.cpp"
-#include "CountQueuingStrategyBuiltins.cpp"
+#if ENABLE(FETCH_API)
 #include "FetchHeadersBuiltins.cpp"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
 #include "MediaDevicesBuiltins.cpp"
 #include "NavigatorUserMediaBuiltins.cpp"
 #include "RTCPeerConnectionBuiltins.cpp"
 #include "RTCPeerConnectionInternalsBuiltins.cpp"
+#endif
+
+#if ENABLE(STREAMS_API)
+#include "ByteLengthQueuingStrategyBuiltins.cpp"
+#include "CountQueuingStrategyBuiltins.cpp"
 #include "ReadableStreamBuiltins.cpp"
 #include "ReadableStreamControllerBuiltins.cpp"
 #include "ReadableStreamInternalsBuiltins.cpp"
@@ -40,3 +47,4 @@
 #include "StreamInternalsBuiltins.cpp"
 #include "WritableStreamBuiltins.cpp"
 #include "WritableStreamInternalsBuiltins.cpp"
+#endif
