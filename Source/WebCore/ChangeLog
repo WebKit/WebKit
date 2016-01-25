@@ -1,3 +1,16 @@
+2016-01-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r195559.
+        https://bugs.webkit.org/show_bug.cgi?id=153458
+
+        This change broke the iOS build (Requested by ryanhaddad on
+        #webkit).
+
+        Reverted changeset:
+
+        "Fix the ASAN build."
+        http://trac.webkit.org/changeset/195559
+
 2016-01-25  Antti Koivisto  <antti@apple.com>
 
         Resolving direction and writing mode properties should not mutate document

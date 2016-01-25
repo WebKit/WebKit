@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "SoftLinking.h"
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <DataDetectorsCore/DDBinderKeys_Private.h>
@@ -129,5 +131,36 @@ void *DDScanQueryGetFragmentMetaData(DDScanQueryRef, CFIndex queryIndex);
 bool DDResultHasProperties(DDResultRef, CFIndex propertySet);
 CFArrayRef DDResultGetSubResults(DDResultRef);
 DDQueryRange DDResultGetQueryRangeForURLification(DDResultRef);
+
+#if PLATFORM(IOS)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
+SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)
+SOFT_LINK(DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef * errorRef), (type, options, errorRef))
+SOFT_LINK(DataDetectorsCore, DDScannerScanQuery, Boolean, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
+SOFT_LINK(DataDetectorsCore, DDScanQueryCreate, DDScanQueryRef, (CFAllocatorRef allocator), (allocator))
+SOFT_LINK(DataDetectorsCore, DDScannerCopyResultsWithOptions, CFArrayRef, (DDScannerRef scanner, DDScannerCopyResultsOptions options), (scanner, options))
+SOFT_LINK(DataDetectorsCore, DDResultGetRange, CFRange, (DDResultRef result), (result))
+SOFT_LINK(DataDetectorsCore, DDResultGetType, CFStringRef, (DDResultRef result), (result))
+SOFT_LINK(DataDetectorsCore, DDResultGetCategory, DDResultCategory, (DDResultRef result), (result))
+SOFT_LINK(DataDetectorsCore, DDResultIsPastDate, Boolean, (DDResultRef result, CFDateRef referenceDate, CFTimeZoneRef referenceTimeZone), (result, referenceDate, referenceTimeZone))
+SOFT_LINK(DataDetectorsCore, DDScanQueryAddTextFragment, void, (DDScanQueryRef query, CFStringRef fragment, CFRange range, void *identifier, DDTextFragmentMode mode, DDTextCoalescingType type), (query, fragment, range, identifier, mode, type))
+SOFT_LINK(DataDetectorsCore, DDScanQueryAddSeparator, void, (DDScanQueryRef query, DDTextCoalescingType type), (query, type))
+SOFT_LINK(DataDetectorsCore, DDScanQueryAddLineBreak, void, (DDScanQueryRef query), (query))
+SOFT_LINK(DataDetectorsCore, DDScanQueryGetFragmentMetaData, void *, (DDScanQueryRef query, CFIndex queryIndex), (query, queryIndex))
+SOFT_LINK(DataDetectorsCore, DDResultHasProperties, bool, (DDResultRef result, CFIndex propertySet), (result, propertySet))
+SOFT_LINK(DataDetectorsCore, DDResultGetSubResults, CFArrayRef, (DDResultRef result), (result))
+SOFT_LINK(DataDetectorsCore, DDResultGetQueryRangeForURLification, DDQueryRange, (DDResultRef result), (result))
+SOFT_LINK(DataDetectorsCore, DDURLStringForResult, NSString *, (DDResultRef currentResult, NSString * resultIdentifier, DDURLifierPhoneNumberDetectionTypes includingTelGroups, NSDate * referenceDate, NSTimeZone * referenceTimeZone), (currentResult, resultIdentifier, includingTelGroups, referenceDate, referenceTimeZone))
+SOFT_LINK_POINTER(DataDetectorsCore, DDBinderHttpURLKey, CFStringRef)
+SOFT_LINK_POINTER(DataDetectorsCore, DDBinderWebURLKey, CFStringRef)
+SOFT_LINK_POINTER(DataDetectorsCore, DDBinderMailURLKey, CFStringRef)
+SOFT_LINK_POINTER(DataDetectorsCore, DDBinderGenericURLKey, CFStringRef)
+SOFT_LINK_POINTER(DataDetectorsCore, DDBinderEmailKey, CFStringRef)
+SOFT_LINK_POINTER(DataDetectorsCore, DDBinderTrackingNumberKey, CFStringRef)
+SOFT_LINK_POINTER(DataDetectorsCore, DDBinderFlightInformationKey, CFStringRef)
+SOFT_LINK_POINTER(DataDetectorsCore, DDBinderSignatureBlockKey, CFStringRef)
+SOFT_LINK_POINTER(DataDetectorsCore, DDURLScheme, NSString *)
+SOFT_LINK_CONSTANT(DataDetectorsCore, DDScannerCopyResultsOptionsForPassiveUse, DDScannerCopyResultsOptions)
+#endif
 
 }
