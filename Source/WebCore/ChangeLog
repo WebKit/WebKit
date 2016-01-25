@@ -1,3 +1,13 @@
+2016-01-25  Sam Weinig  <sam@webkit.org>
+
+        Fix the ASAN build.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa/DataDetection.mm:
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm: Added.
+        * platform/cocoa/DataDetectorsCoreSoftLink.h: Added.
+        * platform/spi/cocoa/DataDetectorsCoreSPI.h:
+
 2016-01-25  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Another build fix after r195545
