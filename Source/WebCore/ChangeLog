@@ -1,3 +1,11 @@
+2016-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Fix clean build after r195545.
+
+        * CMakeLists.txt:
+        * PlatformWin.cmake:
+        I got a little carried away.  WebCore already had a pre-build event.  It was correct before r195545.
+
 2016-01-25  Beth Dakin  <bdakin@apple.com>
 
         Handle soft spaces after accepted candidates

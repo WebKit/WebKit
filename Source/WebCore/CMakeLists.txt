@@ -3775,7 +3775,7 @@ if (WebCore_PRE_BUILD_COMMAND)
     add_dependencies(WebCore WebCorePreBuild)
 endif ()
 
-if (WebCore_PRE_BUILD_COMMAND)
+if (WebCore_POST_BUILD_COMMAND)
     add_custom_command(TARGET WebCore PRE_BUILD COMMAND ${WebCore_PRE_BUILD_COMMAND} VERBATIM)
 endif ()
 
