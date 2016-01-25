@@ -1,3 +1,33 @@
+2016-01-24  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: add support for placing Views in DataGrid column headers
+        https://bugs.webkit.org/show_bug.cgi?id=153387
+        <rdar://problem/24310797>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds a new DataGrid column property, `headerView`, allowing a
+        custom View object to be placed in a column's header cell. The grid ensures
+        that the left and right edges of the view are kept in sync as columns are
+        resized. As most views use absolute positioning and are styled in CSS, the
+        vertical position and height of the view isn't set by the grid.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.insertColumn):
+        If the new column includes the `headerView` column data property,
+        it should take priority over `titleDOMFragment` and title text.
+        The specified View object is inserted into the DOM under the
+        column's <th> element, and added as a subview of the data grid.
+        (WebInspector.DataGrid.prototype.layout):
+        Update header views after performing default layout.
+        (WebInspector.DataGrid.prototype._showColumn):
+        Set `hidden` column property false instead of deleting it.
+        (WebInspector.DataGrid.prototype._positionHeaderViews):
+        Update the left and right style positions for all Views embedded in
+        column header cells, then update their layouts.
+        (WebInspector.DataGrid.prototype.resizerDragging):
+        Update header views after column resizers are repositioned.
+
 2016-01-24  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Highlight timeline range handles on hover

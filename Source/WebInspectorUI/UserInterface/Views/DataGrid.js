@@ -474,11 +474,19 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         var referenceElement = this._headerTableRowElement.children[insertionIndex];
         this._headerTableRowElement.insertBefore(headerCellElement, referenceElement);
 
-        var div = headerCellElement.createChild("div");
-        if (column["titleDOMFragment"])
-            div.appendChild(column["titleDOMFragment"]);
-        else
-            div.textContent = column["title"] || "";
+        if (column["headerView"]) {
+            let headerView = column["headerView"];
+            console.assert(headerView instanceof WebInspector.View);
+
+            headerCellElement.appendChild(headerView.element);
+            this.addSubview(headerView);
+        } else {
+            let titleElement = headerCellElement.createChild("div");
+            if (column["titleDOMFragment"])
+                titleElement.appendChild(column["titleDOMFragment"]);
+            else
+                titleElement.textContent = column["title"] || "";
+        }
 
         if (column["sortable"]) {
             listeners.register(headerCellElement, "click", this._headerCellClicked);
@@ -609,6 +617,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         }
 
         this._positionResizerElements();
+        this._positionHeaderViews();
     }
 
     columnWidthsMap()
@@ -640,7 +649,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     _showColumn(columnIdentifier)
     {
-        delete this.columns.get(columnIdentifier)["hidden"];
+        this.columns.get(columnIdentifier)["hidden"] = false;
     }
 
     _hideColumn(columnIdentifier)
@@ -706,6 +715,38 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         }
         if (previousResizer)
             previousResizer[WebInspector.DataGrid.NextColumnOrdinalSymbol] = this.orderedColumns.length - 1;
+    }
+
+    _positionHeaderViews()
+    {
+        let visibleHeaderViews = false;
+        for (let column of this.columns.values()) {
+            if (column["headerView"] && !column["hidden"]) {
+                visibleHeaderViews = true;
+                break;
+            }
+        }
+
+        if (!visibleHeaderViews)
+            return;
+
+        let left = 0;
+        for (let columnIdentifier of this.orderedColumns) {
+            let column = this.columns.get(columnIdentifier);
+            console.assert(column, "Missing column data for header cell with columnIdentifier " + columnIdentifier);
+            if (!column)
+                continue;
+
+            let columnWidth = this._headerTableCellElements.get(columnIdentifier).offsetWidth;
+            let headerView = column["headerView"];
+            if (headerView) {
+                headerView.element.style.left = left + "px";
+                headerView.element.style.width = columnWidth + "px";
+                headerView.updateLayout();
+            }
+
+            left += columnWidth;
+        }
     }
 
     addPlaceholderNode()
@@ -1285,6 +1326,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
         this._dataTableColumnGroupElement.children[rightCellIndex].style.width = percentRightColumn;
 
         this._positionResizerElements();
+        this._positionHeaderViews();
         event.preventDefault();
     }
 
