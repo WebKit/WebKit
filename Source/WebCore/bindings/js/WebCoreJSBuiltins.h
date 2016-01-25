@@ -27,13 +27,20 @@
 #ifndef WebCoreJSBuiltins_h
 #define WebCoreJSBuiltins_h
 
-#include "ByteLengthQueuingStrategyBuiltins.h"
-#include "CountQueuingStrategyBuiltins.h"
+#if ENABLE(FETCH_API)
 #include "FetchHeadersBuiltins.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
 #include "MediaDevicesBuiltins.h"
 #include "NavigatorUserMediaBuiltins.h"
 #include "RTCPeerConnectionBuiltins.h"
 #include "RTCPeerConnectionInternalsBuiltins.h"
+#endif
+
+#if ENABLE(STREAMS_API)
+#include "ByteLengthQueuingStrategyBuiltins.h"
+#include "CountQueuingStrategyBuiltins.h"
 #include "ReadableStreamBuiltins.h"
 #include "ReadableStreamControllerBuiltins.h"
 #include "ReadableStreamInternalsBuiltins.h"
@@ -41,6 +48,8 @@
 #include "StreamInternalsBuiltins.h"
 #include "WritableStreamBuiltins.h"
 #include "WritableStreamInternalsBuiltins.h"
+#endif
+
 #include <runtime/VM.h>
 
 namespace WebCore {

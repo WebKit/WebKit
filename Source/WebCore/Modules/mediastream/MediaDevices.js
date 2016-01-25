@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @conditional=ENABLE(MEDIA_STREAM)
+// @optional=MEDIA_STREAM
 
 function getUserMedia(options)
 {
