@@ -1126,9 +1126,32 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     return { };
 }
 
-IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier&, uint64_t, uint64_t, IndexedDB::IndexRecordType, const IDBKeyRangeData&, IDBGetResult&)
+IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, uint64_t indexID, IndexedDB::IndexRecordType type, const IDBKeyRangeData& range, IDBGetResult& getResult)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    LOG(IndexedDB, "SQLiteIDBBackingStore::getIndexRecord");
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to get an index record from database without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to get an index record from database without an in-progress transaction") };
+    }
+
+    auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreID, indexID, range);
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to perform index get in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Cannot open cursor to perform index get in database") };
+    }
+
+    if (type == IndexedDB::IndexRecordType::Key)
+        getResult = { cursor->currentPrimaryKey() };
+    else {
+        getResult = { SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()) };
+        getResult.setKeyData(cursor->currentPrimaryKey());
+    }
+
+    return { };
 }
 
 IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, uint64_t& outCount)
