@@ -241,6 +241,11 @@ void NetworkLoad::didBecomeDownload()
     m_client.didConvertToDownload();
 }
 
+void NetworkLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
+{
+    m_client.didSendData(totalBytesSent, totalBytesExpectedToSend);
+}
+
 #else
 
 void NetworkLoad::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse& receivedResponse)

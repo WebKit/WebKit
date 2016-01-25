@@ -95,6 +95,12 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
     return self;
 }
 
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
+{
+    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier))
+        networkDataTask->client().didSendData(totalBytesSent, totalBytesExpectedToSend);
+}
+
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
     if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {

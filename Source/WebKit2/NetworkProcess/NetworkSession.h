@@ -76,6 +76,7 @@ public:
     virtual void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) = 0;
     virtual void didCompleteWithError(const WebCore::ResourceError&) = 0;
     virtual void didBecomeDownload() = 0;
+    virtual void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) = 0;
 
     virtual ~NetworkSessionTaskClient() { }
 };

@@ -1,3 +1,24 @@
+2016-01-24  Alex Christensen  <achristensen@webkit.org>
+
+        Report upload progress to NetworkLoadClient when using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=153388
+
+        Reviewed by Darin Adler.
+
+        This fixes http/tests/xmlhttprequest/upload-onload-event.html and a few other tests.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didBecomeDownload):
+        (WebKit::NetworkLoad::didSendData):
+        (WebKit::NetworkLoad::didReceiveResponseAsync):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSessionTaskClient::~NetworkSessionTaskClient):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate initWithNetworkSession:]):
+        (-[WKNetworkSessionDelegate URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:]):
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+
 2016-01-24  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Reduce PassRefPtr uses in dom - 4

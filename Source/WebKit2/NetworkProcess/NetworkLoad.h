@@ -73,6 +73,7 @@ public:
     virtual void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) final override;
     virtual void didCompleteWithError(const WebCore::ResourceError&) final override;
     virtual void didBecomeDownload() final override;
+    virtual void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) override;
 #else
     // ResourceHandleClient
     virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
