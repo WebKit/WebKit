@@ -391,7 +391,7 @@ void DrawGlyphs::computeBounds()
         FloatRect glyphRect = FloatRect(current.x(), current.y() - ascent, advance.width(), ascent + descent);
         m_bounds.unite(glyphRect);
 
-        current += FloatSize(advance);
+        current.move(advance.width(), advance.height());
     }
 }
 

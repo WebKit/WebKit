@@ -1,3 +1,15 @@
+2016-01-25  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Do not convert GlyphBufferAdvance to FloatSize
+        https://bugs.webkit.org/show_bug.cgi?id=153421
+
+        Reviewed by Simon Fraser.
+
+        No new tests needed.
+
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawGlyphs::computeBounds):
+
 2016-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.createElement should be able to create a custom element
