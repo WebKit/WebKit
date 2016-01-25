@@ -10,12 +10,12 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 document.write("<p>Initial</p>");
-document.write("<p>&nbsp;document.charset: " + document.charset + "</p>"); // MSIE
-document.write("<p>&nbsp;document.defaultCharset: " + (document.defaultCharset ? "defined" : "undefined") + "</p>"); // MSIE
-document.write("<p>&nbsp;document.characterSet: " + document.characterSet + "</p>"); // Firefox
-document.write("<p>&nbsp;document.inputEncoding: " + document.inputEncoding + "</p>"); // DOM3
+document.write("<p>&nbsp;document.charset: " + document.charset + "</p>");
+document.write("<p>&nbsp;document.defaultCharset: " + (document.defaultCharset ? "defined" : "undefined") + "</p>");
+document.write("<p>&nbsp;document.characterSet: " + document.characterSet + "</p>");
+document.write("<p>&nbsp;document.inputEncoding: " + document.inputEncoding + "</p>");
 
-document.write("<p>Setting charset to UTF-8...</p>");
+document.write("<p>Setting charset to UTF-8 (expected to fail as it is read-only)</p>");
 try {
     document.charset = "utf-8";
     document.write("<p>&nbsp;document.charset: " + document.charset + "</p>");
@@ -23,13 +23,12 @@ try {
     document.write("<p>&nbsp;document.characterSet: " + document.characterSet + "</p>");
     document.write("<p>&nbsp;document.inputEncoding: " + document.inputEncoding + "</p>");
 } catch (ex) {
-    document.write("<p>Failure</p>");
+    document.write("<p>Failure (expected)</p>");
 }
 
-// throws an exception in Firefox, but JavaScriptCore seems to silently ignore assignment to read-only properties
-document.write("<p>Setting characterSet to KOI8-R (expected to fail, matching Firefox)...</p>");
+document.write("<p>Setting characterSet to UTF-8 (expected to fail as it is read-only)</p>");
 try {
-    document.characterSet = "KOI8-R";
+    document.characterSet = "utf-8";
     document.write("<p>&nbsp;document.charset: " + document.charset + "</p>");
     document.write("<p>&nbsp;document.defaultCharset: " + (document.defaultCharset ? "defined" : "undefined") + "</p>");
     document.write("<p>&nbsp;document.characterSet: " + document.characterSet + "</p>");
