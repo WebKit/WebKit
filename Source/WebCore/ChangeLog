@@ -1,5 +1,19 @@
 2016-01-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        WebCoreJSBuiltins do not use to do conditional include
+        https://bugs.webkit.org/show_bug.cgi?id=153306
+
+        Reviewed by Alex Christensen.
+
+        Removing compilation guards as builtin generator adds them in the files themselves.
+
+        No change in behavior.
+
+        * bindings/js/WebCoreJSBuiltins.cpp:
+        * bindings/js/WebCoreJSBuiltins.h:
+
+2016-01-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Fetch API] Implement Fetch API Headers
         https://bugs.webkit.org/show_bug.cgi?id=152384
 
