@@ -27,6 +27,10 @@
 #ifndef WebCoreJSBuiltins_h
 #define WebCoreJSBuiltins_h
 
+#if ENABLE(FETCH_API)
+#include "FetchHeadersBuiltins.h"
+#endif
+
 #if ENABLE(MEDIA_STREAM)
 #include "MediaDevicesBuiltins.h"
 #include "NavigatorUserMediaBuiltins.h"
@@ -54,6 +58,9 @@ class JSBuiltinFunctions {
 public:
     explicit JSBuiltinFunctions(JSC::VM& v)
         : vm(v)
+#if ENABLE(FETCH_API)
+        , m_fetchHeadersBuiltins(&vm)
+#endif
 #if ENABLE(STREAMS_API)
         , m_byteLengthQueuingStrategyBuiltins(&vm)
         , m_countQueuingStrategyBuiltins(&vm)
@@ -81,6 +88,9 @@ public:
         m_rtcPeerConnectionInternalsBuiltins.exportNames();
 #endif
     }
+#if ENABLE(FETCH_API)
+    FetchHeadersBuiltinsWrapper& fetchHeadersBuiltins() { return m_fetchHeadersBuiltins; }
+#endif
 #if ENABLE(STREAMS_API)
     ByteLengthQueuingStrategyBuiltinsWrapper& byteLengthQueuingStrategyBuiltins() { return m_byteLengthQueuingStrategyBuiltins; }
     CountQueuingStrategyBuiltinsWrapper& countQueuingStrategyBuiltins() { return m_countQueuingStrategyBuiltins; }
@@ -101,6 +111,9 @@ public:
 
 private:
     JSC::VM& vm;
+#if ENABLE(FETCH_API)
+    FetchHeadersBuiltinsWrapper m_fetchHeadersBuiltins;
+#endif
 #if ENABLE(STREAMS_API)
     ByteLengthQueuingStrategyBuiltinsWrapper m_byteLengthQueuingStrategyBuiltins;
     CountQueuingStrategyBuiltinsWrapper m_countQueuingStrategyBuiltins;

@@ -26,6 +26,10 @@
 
 #include "config.h"
 
+#if ENABLE(FETCH_API)
+#include "FetchHeadersBuiltins.cpp"
+#endif
+
 #if ENABLE(MEDIA_STREAM)
 #include "MediaDevicesBuiltins.cpp"
 #include "NavigatorUserMediaBuiltins.cpp"

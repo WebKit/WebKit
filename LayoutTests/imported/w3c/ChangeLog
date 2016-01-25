@@ -1,3 +1,25 @@
+2016-01-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement Fetch API Headers
+        https://bugs.webkit.org/show_bug.cgi?id=152384
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/headers/headers-basic-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/headers-basic.html: Added.
+        * web-platform-tests/fetch/api/headers/headers-casing-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/headers-casing.html: Added.
+        * web-platform-tests/fetch/api/headers/headers-errors-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/headers-errors.html: Added.
+        * web-platform-tests/fetch/api/headers/headers-idl-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/headers-idl.html: Added.
+        * web-platform-tests/fetch/api/headers/headers-nameshake-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/headers-nameshake.html: Added.
+        * web-platform-tests/fetch/api/headers/headers-normalize-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/headers-normalize.html: Added.
+        * web-platform-tests/fetch/api/headers/headers-structure-expected.txt: Added.
+        * web-platform-tests/fetch/api/headers/headers-structure.html: Added.
+
 2016-01-24  Chris Dumez  <cdumez@apple.com>
 
         An XMLDocument interface should be exposed on the global Window object

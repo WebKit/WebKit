@@ -1547,6 +1547,7 @@
 		41F066E50F64BCF600A07EAC /* ScriptGlobalObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F066E30F64BCF600A07EAC /* ScriptGlobalObject.cpp */; };
 		41F1D21F0EF35C2A00DA8753 /* ScriptCachedFrameData.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41F1D2200EF35C2A00DA8753 /* ScriptCachedFrameData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */; };
+		41F54F8D1C50C50800338488 /* FetchHeaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F54F821C50C4F600338488 /* FetchHeaders.cpp */; };
 		41F584C7104652CB009CAA64 /* JSMessagePortCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */; };
 		41FA303E1316C29C00C0BFC5 /* RenderMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */; };
 		41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */; };
@@ -2775,6 +2776,8 @@
 		7CEAC1091B483D7F00334482 /* NodeOrString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEAC1081B483D7F00334482 /* NodeOrString.cpp */; };
 		7CFDC57C1AC1D80500E24A57 /* ContentExtensionError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFDC57A1AC1D80500E24A57 /* ContentExtensionError.cpp */; };
 		7CFDC57D1AC1D80500E24A57 /* ContentExtensionError.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CFDC57B1AC1D80500E24A57 /* ContentExtensionError.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7D4C96DC1AD4483500365A50 /* JSFetchHeaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D4C96D81AD4483500365A50 /* JSFetchHeaders.cpp */; };
+		7D4C96DD1AD4483500365A50 /* JSFetchHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D4C96D91AD4483500365A50 /* JSFetchHeaders.h */; };
 		7D741BDA177226AA00859170 /* CSSValueKeywords.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 6565814809D13043000E61D7 /* CSSValueKeywords.h */; };
 		7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */; };
 		7E428CE513E3407F003B661C /* ResourceHandleIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */; };
@@ -8940,6 +8943,10 @@
 		41F066E30F64BCF600A07EAC /* ScriptGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptGlobalObject.cpp; sourceTree = "<group>"; };
 		41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCachedFrameData.h; sourceTree = "<group>"; };
 		41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCachedFrameData.cpp; sourceTree = "<group>"; };
+		41F54F821C50C4F600338488 /* FetchHeaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchHeaders.cpp; sourceTree = "<group>"; };
+		41F54F831C50C4F600338488 /* FetchHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchHeaders.h; sourceTree = "<group>"; };
+		41F54F841C50C4F600338488 /* FetchHeaders.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchHeaders.idl; sourceTree = "<group>"; };
+		41F54F851C50C4F600338488 /* FetchHeaders.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchHeaders.js; sourceTree = "<group>"; };
 		41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessagePortCustom.h; sourceTree = "<group>"; };
 		41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
 		41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
@@ -10318,6 +10325,8 @@
 		7CEAC1081B483D7F00334482 /* NodeOrString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeOrString.cpp; sourceTree = "<group>"; };
 		7CFDC57A1AC1D80500E24A57 /* ContentExtensionError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionError.cpp; sourceTree = "<group>"; };
 		7CFDC57B1AC1D80500E24A57 /* ContentExtensionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionError.h; sourceTree = "<group>"; };
+		7D4C96D81AD4483500365A50 /* JSFetchHeaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchHeaders.cpp; sourceTree = "<group>"; };
+		7D4C96D91AD4483500365A50 /* JSFetchHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFetchHeaders.h; sourceTree = "<group>"; };
 		7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubresourceLoaderCF.cpp; sourceTree = "<group>"; };
 		7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceHandleIOS.mm; sourceTree = "<group>"; };
 		7E46F6F81627A2C900062223 /* JSOESElementIndexUint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESElementIndexUint.cpp; sourceTree = "<group>"; };
@@ -15734,6 +15743,7 @@
 				A83B790E0CCAFF97000B0825 /* CSS */,
 				CDA98DCD1601515C00FEA3B1 /* EncryptedMedia */,
 				A83B79120CCB003F000B0825 /* Events */,
+				42A023FA1A39F13A00F722CF /* FetchAPI */,
 				89878576122CA1DA003AABDA /* FileAPI */,
 				518F4FFC194CABE30081BAAE /* Gamepad */,
 				A83B79080CCAFF2B000B0825 /* HTML */,
@@ -16571,6 +16581,26 @@
 				7C4C96D91AD4483500365A60 /* JSWritableStream.h */,
 			);
 			name = Streams;
+			sourceTree = "<group>";
+		};
+		41F54F7C1C50C4F600338488 /* fetch */ = {
+			isa = PBXGroup;
+			children = (
+				41F54F821C50C4F600338488 /* FetchHeaders.cpp */,
+				41F54F831C50C4F600338488 /* FetchHeaders.h */,
+				41F54F841C50C4F600338488 /* FetchHeaders.idl */,
+				41F54F851C50C4F600338488 /* FetchHeaders.js */,
+			);
+			path = fetch;
+			sourceTree = "<group>";
+		};
+		42A023FA1A39F13A00F722CF /* FetchAPI */ = {
+			isa = PBXGroup;
+			children = (
+				7D4C96D81AD4483500365A50 /* JSFetchHeaders.cpp */,
+				7D4C96D91AD4483500365A50 /* JSFetchHeaders.h */,
+			);
+			name = FetchAPI;
 			sourceTree = "<group>";
 		};
 		439046C212DA25CE00AF80A2 /* mathml */ = {
@@ -19245,6 +19275,7 @@
 			children = (
 				CE26169D187E6554007955F3 /* airplay */,
 				CDA98DBD16014E0800FEA3B1 /* encryptedmedia */,
+				41F54F7C1C50C4F600338488 /* fetch */,
 				518F4FE9194CA4B60081BAAE /* gamepad */,
 				971145FF14EF007900674FD9 /* geolocation */,
 				9712A55315004E3C0048AF10 /* indexeddb */,
@@ -26389,6 +26420,7 @@
 				077664FD183E6B5C00133B92 /* JSQuickTimePluginReplacement.h in Headers */,
 				B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */,
 				65DF320209D1CC60000BE325 /* JSRange.h in Headers */,
+				7D4C96DD1AD4483500365A50 /* JSFetchHeaders.h in Headers */,
 				7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */,
 				6C4C96DF1AD4483500365A50 /* JSReadableStreamController.h in Headers */,
 				4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */,
@@ -30091,6 +30123,7 @@
 				077664FC183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp in Sources */,
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,
 				65DF320109D1CC60000BE325 /* JSRange.cpp in Sources */,
+				7D4C96DC1AD4483500365A50 /* JSFetchHeaders.cpp in Sources */,
 				7C4C96DC1AD4483500365A50 /* JSReadableStream.cpp in Sources */,
 				6C4C96DE1AD4483500365A50 /* JSReadableStreamController.cpp in Sources */,
 				4129DF851BB5B80700322A16 /* JSReadableStreamPrivateConstructors.cpp in Sources */,
@@ -30212,6 +30245,7 @@
 				B2FA3D940AB75A6F000E5AC4 /* JSSVGFETurbulenceElement.cpp in Sources */,
 				B2FA3D960AB75A6F000E5AC4 /* JSSVGFilterElement.cpp in Sources */,
 				B27B28250CEF0C0700D39D54 /* JSSVGFontElement.cpp in Sources */,
+				41F54F8D1C50C50800338488 /* FetchHeaders.cpp in Sources */,
 				A83B79040CCAFF15000B0825 /* JSSVGFontFaceElement.cpp in Sources */,
 				A83B79010CCAFF15000B0825 /* JSSVGFontFaceFormatElement.cpp in Sources */,
 				A83B79030CCAFF15000B0825 /* JSSVGFontFaceNameElement.cpp in Sources */,

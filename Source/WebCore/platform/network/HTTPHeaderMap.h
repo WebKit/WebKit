@@ -139,6 +139,8 @@ public:
     WEBCORE_EXPORT String get(const String& name) const;
     WEBCORE_EXPORT void set(const String& name, const String& value);
     void add(const String& name, const String& value);
+    bool contains(const String&) const;
+    bool remove(const String&);
 
     WEBCORE_EXPORT String get(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);

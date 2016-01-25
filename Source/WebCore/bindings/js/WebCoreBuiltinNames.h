@@ -32,13 +32,15 @@
 namespace WebCore {
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro)\
-    macro(operations) \
+    macro(appendFromJS) \
     macro(closeRequested) \
     macro(closedPromiseCapability) \
     macro(controlledReadableStream) \
     macro(controller) \
     macro(disturbed) \
     macro(getUserMediaFromJS) \
+    macro(initializeWith) \
+    macro(operations) \
     macro(ownerReadableStream) \
     macro(privateGetStats) \
     macro(pulling) \

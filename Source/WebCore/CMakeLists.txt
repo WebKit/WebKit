@@ -6,6 +6,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/battery"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
+    "${WEBCORE_DIR}/Modules/fetch"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
@@ -138,6 +139,7 @@ set(WebCore_IDL_INCLUDES
     Modules/airplay
     Modules/battery
     Modules/encryptedmedia
+    Modules/fetch
     Modules/geolocation
     Modules/indexeddb
     Modules/indieui
@@ -168,6 +170,8 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/battery/BatteryManager.idl
     Modules/battery/NavigatorBattery.idl
+
+    Modules/fetch/FetchHeaders.idl
 
     Modules/geolocation/Coordinates.idl
     Modules/geolocation/Geolocation.idl
@@ -809,6 +813,8 @@ set(WebCore_SOURCES
     Modules/battery/BatteryManager.cpp
     Modules/battery/BatteryStatus.cpp
     Modules/battery/NavigatorBattery.cpp
+
+    Modules/fetch/FetchHeaders.cpp
 
     Modules/geolocation/Coordinates.cpp
     Modules/geolocation/GeoNotifier.cpp
@@ -3640,6 +3646,7 @@ GENERATE_BINDINGS(WebCoreTestSupport_SOURCES
 # WebCore JS Builtins
 
 set(WebCore_BUILTINS_SOURCES
+    ${WEBCORE_DIR}/Modules/fetch/FetchHeaders.js
     ${WEBCORE_DIR}/Modules/mediastream/MediaDevices.js
     ${WEBCORE_DIR}/Modules/mediastream/NavigatorUserMedia.js
     ${WEBCORE_DIR}/Modules/mediastream/RTCPeerConnection.js

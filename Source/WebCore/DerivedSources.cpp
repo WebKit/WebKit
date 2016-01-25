@@ -154,6 +154,7 @@
 #include "JSEvent.cpp"
 #include "JSEventSource.cpp"
 #include "JSEventTarget.cpp"
+#include "JSFetchHeaders.cpp"
 #include "JSFile.cpp"
 #include "JSFileError.cpp"
 #include "JSFileException.cpp"

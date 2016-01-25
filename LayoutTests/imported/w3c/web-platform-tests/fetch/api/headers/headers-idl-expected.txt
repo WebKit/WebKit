@@ -1,0 +1,24 @@
+
+FAIL Headers interface: existence and properties of interface object assert_equals: class string of Headers expected "[object Function]" but got "[object HeadersConstructor]"
+PASS Headers interface object length 
+PASS Headers interface object name 
+PASS Headers interface: existence and properties of interface prototype object 
+FAIL Headers interface: existence and properties of interface prototype object's "constructor" property assert_true: Headers.prototype.constructor is not writable expected true got false
+PASS Headers interface: operation append(ByteString,ByteString) 
+PASS Headers interface: operation delete(ByteString) 
+PASS Headers interface: operation get(ByteString) 
+PASS Headers interface: operation has(ByteString) 
+PASS Headers interface: operation set(ByteString,ByteString) 
+PASS Headers must be primary interface of new Headers() 
+PASS Stringification of new Headers() 
+PASS Headers interface: new Headers() must inherit property "append" with the proper type (0) 
+PASS Headers interface: calling append(ByteString,ByteString) on new Headers() with too few arguments must throw TypeError 
+PASS Headers interface: new Headers() must inherit property "delete" with the proper type (1) 
+PASS Headers interface: calling delete(ByteString) on new Headers() with too few arguments must throw TypeError 
+PASS Headers interface: new Headers() must inherit property "get" with the proper type (2) 
+PASS Headers interface: calling get(ByteString) on new Headers() with too few arguments must throw TypeError 
+PASS Headers interface: new Headers() must inherit property "has" with the proper type (3) 
+PASS Headers interface: calling has(ByteString) on new Headers() with too few arguments must throw TypeError 
+PASS Headers interface: new Headers() must inherit property "set" with the proper type (4) 
+PASS Headers interface: calling set(ByteString,ByteString) on new Headers() with too few arguments must throw TypeError 
+

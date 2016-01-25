@@ -30,6 +30,7 @@ VPATH = \
     $(WebCore) \
     $(WebCore)/Modules/airplay \
     $(WebCore)/Modules/encryptedmedia \
+    $(WebCore)/Modules/fetch \
     $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
@@ -53,6 +54,7 @@ VPATH = \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/editing \
+    $(WebCore)/fetch \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/html/canvas \
@@ -77,6 +79,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/encryptedmedia/MediaKeyNeededEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeySession.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeys.idl \
+    $(WebCore)/Modules/fetch/FetchHeaders.idl \
     $(WebCore)/Modules/gamepad/Gamepad.idl \
     $(WebCore)/Modules/gamepad/GamepadButton.idl \
     $(WebCore)/Modules/gamepad/GamepadEvent.idl \
@@ -1253,6 +1256,7 @@ WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 # WebCore JS Builtins
 
 WebCore_BUILTINS_SOURCES = \
+    $(WebCore)/Modules/fetch/FetchHeaders.js \
     $(WebCore)/Modules/mediastream/MediaDevices.js \
     $(WebCore)/Modules/mediastream/NavigatorUserMedia.js \
     $(WebCore)/Modules/mediastream/RTCPeerConnection.js \

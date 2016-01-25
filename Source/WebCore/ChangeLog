@@ -1,3 +1,53 @@
+2016-01-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Fetch API] Implement Fetch API Headers
+        https://bugs.webkit.org/show_bug.cgi?id=152384
+
+        Reviewed by Darin Adler.
+
+        Adding Fetch Headers API as a wapper around HTTPHeaderMap.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/headers/headers-basic.html
+               imported/w3c/web-platform-tests/fetch/api/headers/headers-casing.html
+               imported/w3c/web-platform-tests/fetch/api/headers/headers-errors.html
+               imported/w3c/web-platform-tests/fetch/api/headers/headers-idl.html
+               imported/w3c/web-platform-tests/fetch/api/headers/headers-nameshake.html
+               imported/w3c/web-platform-tests/fetch/api/headers/headers-normalize.html
+               imported/w3c/web-platform-tests/fetch/api/headers/headers-structure.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/fetch/FetchHeaders.cpp: Added.
+        (WebCore::FetchHeaders::initializeWith):
+        (WebCore::isForbiddenHeaderName):
+        (WebCore::isForbiddenResponseHeaderName):
+        (WebCore::isSimpleHeader):
+        (WebCore::canWriteHeader):
+        (WebCore::FetchHeaders::append):
+        (WebCore::FetchHeaders::remove):
+        (WebCore::FetchHeaders::get):
+        (WebCore::FetchHeaders::has):
+        (WebCore::FetchHeaders::set):
+        * Modules/fetch/FetchHeaders.h: Added.
+        (WebCore::FetchHeaders::create):
+        (WebCore::FetchHeaders::~FetchHeaders):
+        (WebCore::FetchHeaders::internalHeaders):
+        (WebCore::FetchHeaders::FetchHeaders):
+        * Modules/fetch/FetchHeaders.idl: Added.
+        * Modules/fetch/FetchHeaders.js: Added.
+        (initializeFetchHeaders):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/js/WebCoreJSBuiltins.cpp:
+        * bindings/js/WebCoreJSBuiltins.h:
+        (WebCore::JSBuiltinFunctions::JSBuiltinFunctions):
+        (WebCore::JSBuiltinFunctions::fetchHeadersBuiltins):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::contains):
+        (WebCore::HTTPHeaderMap::remove):
+        * platform/network/HTTPHeaderMap.h:
+
 2016-01-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] grid shorthand must reset gap properties to their initial values

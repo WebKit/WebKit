@@ -101,6 +101,22 @@ void HTTPHeaderMap::add(const String& name, const String& value)
     add(headerName, value);
 }
 
+bool HTTPHeaderMap::contains(const String& name) const
+{
+    HTTPHeaderName headerName;
+    if (findHTTPHeaderName(name, headerName))
+        return contains(headerName);
+    return m_uncommonHeaders.contains(name);
+}
+
+bool HTTPHeaderMap::remove(const String& name)
+{
+    HTTPHeaderName headerName;
+    if (findHTTPHeaderName(name, headerName))
+        return remove(headerName);
+    return m_uncommonHeaders.remove(name);
+}
+
 String HTTPHeaderMap::get(HTTPHeaderName name) const
 {
     return m_commonHeaders.get(name);

@@ -758,6 +758,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'HashChangeEvent').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'HashChangeEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HashChangeEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HashChangeEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'Headers').value is Headers
+PASS Object.getOwnPropertyDescriptor(global, 'Headers').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Headers').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Headers').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'Headers').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'History').value is History
 PASS Object.getOwnPropertyDescriptor(global, 'History').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'History').hasOwnProperty('set') is false

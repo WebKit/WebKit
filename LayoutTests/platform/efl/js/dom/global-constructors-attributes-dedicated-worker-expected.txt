@@ -39,6 +39,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'FileReaderSync').hasOwnPr
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'FileReaderSync').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'FileReaderSync').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'FileReaderSync').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Headers').value is Headers
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Headers').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Headers').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Headers').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'Headers').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ImageData').value is ImageData
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('set') is false
