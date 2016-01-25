@@ -60,6 +60,8 @@ webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass
 
 webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pass Crash ]
 
+webkit.org/b/153039 [ Debug ] inspector/heap/garbageCollected.html [ Pass Timeout ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
