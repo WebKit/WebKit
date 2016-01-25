@@ -1,3 +1,14 @@
+2016-01-25  Aakash Jain  <aakash_jain@apple.com>
+
+        Failing to upload to flakiness dashboard should not be a hard error
+        https://bugs.webkit.org/show_bug.cgi?id=153444
+        <rdar://problem/22146294>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._upload_json_files): If JSON file is not generated, do not try to upload it.
+
 2016-01-25  Daniel Bates  <dabates@apple.com>
 
         WebKitTestRunner: Credential cache is not cleared between tests

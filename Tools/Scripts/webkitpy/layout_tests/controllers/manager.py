@@ -381,6 +381,7 @@ class Manager(object):
             _log.debug("Finished writing JSON file for the test results server.")
         else:
             _log.debug("Failed to generate JSON file for the test results server.")
+            return
 
         json_files = ["incremental_results.json", "full_results.json", "times_ms.json"]
 
