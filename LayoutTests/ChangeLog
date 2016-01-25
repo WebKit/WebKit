@@ -1,3 +1,13 @@
+2016-01-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] grid shorthand must reset gap properties to their initial values
+        https://bugs.webkit.org/show_bug.cgi?id=153354
+
+        Reviewed by Darin Adler.
+
+        * fast/css-grid-layout/grid-shorthand-get-set-expected.txt:
+        * fast/css-grid-layout/grid-shorthand-get-set.html:
+
 2016-01-24  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement deleteIndex and getCount for the SQLite backing store.

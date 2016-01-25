@@ -1,3 +1,18 @@
+2016-01-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] grid shorthand must reset gap properties to their initial values
+        https://bugs.webkit.org/show_bug.cgi?id=153354
+
+        Reviewed by Darin Adler.
+
+        Both 'grid-row-gap' & 'grid-column-gap' are considered reset-only subproperties of the
+        'grid' shorthand meaning that, even thought the shorthand does not offer a way to set
+        their values, it must in any case reset them to the initial ones.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridShorthand):
+        * css/CSSPropertyNames.in:
+
 2016-01-24  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Implement deleteIndex and getCount for the SQLite backing store.

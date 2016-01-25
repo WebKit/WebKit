@@ -491,7 +491,7 @@ justify-self [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData
 justify-items [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]
 -webkit-justify-items = justify-items
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
--webkit-grid [Longhands=-webkit-grid-template-columns|-webkit-grid-template-rows|-webkit-grid-template-areas|-webkit-grid-auto-flow|-webkit-grid-auto-columns|-webkit-grid-auto-rows]
+-webkit-grid [Longhands=-webkit-grid-template-columns|-webkit-grid-template-rows|-webkit-grid-template-areas|-webkit-grid-auto-flow|-webkit-grid-auto-columns|-webkit-grid-auto-rows|-webkit-grid-column-gap|-webkit-grid-row-gap]
 -webkit-grid-area [Longhands=-webkit-grid-row-start|-webkit-grid-column-start|-webkit-grid-row-end|-webkit-grid-column-end]
 -webkit-grid-auto-columns [Converter=GridTrackSize]
 -webkit-grid-auto-rows [Converter=GridTrackSize]

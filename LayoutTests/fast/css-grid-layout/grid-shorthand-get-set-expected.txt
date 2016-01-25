@@ -258,6 +258,12 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')
 PASS element.style.webkitGridAutoColumns is "initial"
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is "auto"
 PASS element.style.webkitGridAutoRows is "initial"
+
+Test the inherit value on reset-only subproperties (grid-*-gap)
+PASS getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-column-gap') is "0px"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-row-gap') is "0px"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-column-gap') is "20px"
+PASS getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-row-gap') is "100px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

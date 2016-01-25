@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
 <link href="resources/grid.css" rel="stylesheet">
@@ -178,6 +178,17 @@
     testGridDefinitionsSetJSValues("column 10px / 20px", "none", "none", "none", "column", "10px", "20px", "initial", "initial", "initial", "column", "10px", "20px");
     testGridDefinitionsSetJSValues("none", "none", "none", "none", "row", "auto", "auto", "none", "none", "none", "initial", "initial", "initial");
 
+    debug("");
+    debug("Test the inherit value on reset-only subproperties (grid-*-gap)");
+    document.body.style.webkitGridRowGap = "100px";
+    document.body.style.webkitGridColumnGap = "20px";
+    var anotherElement = document.createElement("div");
+    document.body.appendChild(anotherElement);
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-column-gap')", "0px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-row-gap')", "0px");
+    anotherElement.style.webkitGrid = "inherit";
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-column-gap')", "20px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('-webkit-grid-row-gap')", "100px");
 </script>
 </body>
 </html>
