@@ -373,7 +373,9 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
         if (!this._dontUpdateScrollLeft) {
             this._ignoreNextScrollEvent = true;
-            this._scrollContainerElement.scrollLeft = Math.ceil((scrollStartTime - this._startTime) / this._durationPerPixel);
+            let scrollLeft = Math.ceil((scrollStartTime - this._startTime) / this._durationPerPixel);
+            if (scrollLeft)
+                this._scrollContainerElement.scrollLeft = scrollLeft;
         }
 
         for (let timelineOverviewGraph of this._timelineOverviewGraphsMap.values()) {

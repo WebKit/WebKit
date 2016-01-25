@@ -1,3 +1,16 @@
+2016-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Reduce unnecessary forced layouts in TimelineOverview
+        https://bugs.webkit.org/show_bug.cgi?id=153392
+        <rdar://problem/24312344>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.layout):
+        Ignore setting the scrollLeft if we would be setting it to 0.
+        This helps avoid a forced layout in common cases.
+
 2016-01-25  Johan K. Jensen  <jj@johanjensen.dk>
 
         Web Inspector: timelines clear button should be inactive if nothing can be cleared
