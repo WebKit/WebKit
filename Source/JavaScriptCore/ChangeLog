@@ -1,5 +1,11 @@
 2016-01-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix the comment about FTL_USES_B3.
+
+        * dfg/DFGCommon.h:
+
+2016-01-25  Filip Pizlo  <fpizlo@apple.com>
+
         Switch FTL to B3 on X86_64/Mac
         https://bugs.webkit.org/show_bug.cgi?id=153445
 
