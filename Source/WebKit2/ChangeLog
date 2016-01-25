@@ -1,3 +1,17 @@
+2016-01-25  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Enable speculative revalidation
+        https://bugs.webkit.org/show_bug.cgi?id=153443
+        <rdar://problem/23092196>
+
+        Reviewed by Antti Koivisto.
+
+        Enable speculative revalidation to better evaluate performance and
+        robustness.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+
 2016-01-25  Beth Dakin  <bdakin@apple.com>
 
         Handle soft spaces after accepted candidates
