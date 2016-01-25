@@ -1,3 +1,30 @@
+2016-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r192773): [GTK] maps.google.com unresponsive/stalls since r192773
+        https://bugs.webkit.org/show_bug.cgi?id=153194
+
+        Reviewed by Michael Catanzaro.
+
+        In r192773 we implemented the JavaScriptCore garbage collector
+        timers for the GTK+ port. Those timers schedule sources in the
+        current thread default main context, but JS web worker threads
+        implementation doesn't use WTF::RunLoop, but its own WorkerRunLoop
+        class that doesn't create a GMainContext for the new thread. This
+        means that for web sites using workers, we are now doing garbage
+        collection of worker VMs in the main thread which ends up in a
+        deadlock at some point. We need to ensure that worker threads
+        create a GMainContext and push it as the default one for the
+        thread before the WorkerGlobalScope is created. This way when the
+        worker Heap is created, the GC timers use the right context to
+        schedule their sources. And then we need to check if there are
+        sources pending in the thread main context on every worker run
+        loop iteration.
+
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::runInMode):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+
 2016-01-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r195533.

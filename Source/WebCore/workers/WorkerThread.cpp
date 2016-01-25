@@ -44,6 +44,10 @@
 #include "WebCoreThread.h"
 #endif
 
+#if PLATFORM(GTK)
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 namespace WebCore {
 
 static StaticLock threadSetMutex;
@@ -134,6 +138,11 @@ void WorkerThread::workerThread()
     FloatingPointEnvironment::singleton().propagateMainThreadEnvironment();
 #endif
 
+#if PLATFORM(GTK)
+    GRefPtr<GMainContext> mainContext = adoptGRef(g_main_context_new());
+    g_main_context_push_thread_default(mainContext.get());
+#endif
+
     {
         LockHolder lock(m_threadCreationMutex);
         m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType, m_startupData->m_topOrigin.release());
@@ -153,6 +162,10 @@ void WorkerThread::workerThread()
     m_startupData = nullptr;
 
     runEventLoop();
+
+#if PLATFORM(GTK)
+    g_main_context_pop_thread_default(mainContext.get());
+#endif
 
     ThreadIdentifier threadID = m_threadID;
 
