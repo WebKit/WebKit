@@ -179,7 +179,7 @@ public:
 
     bool isBeingDispatched() const { return eventPhase(); }
 
-    virtual PassRefPtr<Event> cloneFor(HTMLIFrameElement*) const;
+    virtual Ref<Event> cloneFor(HTMLIFrameElement*) const;
 
     virtual EventTarget* relatedTarget() const { return nullptr; }
 

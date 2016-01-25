@@ -68,10 +68,9 @@ Ref<DeviceMotionData> DeviceMotionData::create()
     return adoptRef(*new DeviceMotionData);
 }
 
-Ref<DeviceMotionData> DeviceMotionData::create(PassRefPtr<Acceleration> acceleration, PassRefPtr<Acceleration> accelerationIncludingGravity,
-                                               PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval)
+Ref<DeviceMotionData> DeviceMotionData::create(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, bool canProvideInterval, double interval)
 {
-    return adoptRef(*new DeviceMotionData(acceleration, accelerationIncludingGravity, rotationRate, canProvideInterval, interval));
+    return adoptRef(*new DeviceMotionData(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), canProvideInterval, interval));
 }
 
 DeviceMotionData::DeviceMotionData()
@@ -80,11 +79,10 @@ DeviceMotionData::DeviceMotionData()
 {
 }
 
-DeviceMotionData::DeviceMotionData(PassRefPtr<Acceleration> acceleration, PassRefPtr<Acceleration> accelerationIncludingGravity,
-                                   PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval)
-    : m_acceleration(acceleration)
-    , m_accelerationIncludingGravity(accelerationIncludingGravity)
-    , m_rotationRate(rotationRate)
+DeviceMotionData::DeviceMotionData(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, bool canProvideInterval, double interval)
+    : m_acceleration(WTFMove(acceleration))
+    , m_accelerationIncludingGravity(WTFMove(accelerationIncludingGravity))
+    , m_rotationRate(WTFMove(rotationRate))
     , m_canProvideInterval(canProvideInterval)
     , m_interval(interval)
 {

@@ -120,7 +120,7 @@ void DeviceMotionClientIOS::motionChanged(double xAcceleration, double yAccelera
     }
 #endif // PLATFORM(IOS_SIMULATOR)
 
-    m_currentDeviceMotionData = DeviceMotionData::create(acceleration, accelerationIncludingGravity, rotationRate, true, kMotionUpdateInterval);
+    m_currentDeviceMotionData = DeviceMotionData::create(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), true, kMotionUpdateInterval);
     m_controller->didChangeDeviceMotion(m_currentDeviceMotionData.get());
 }
 

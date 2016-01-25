@@ -733,7 +733,7 @@ public:
     String selectedStylesheetSet() const;
     void setSelectedStylesheetSet(const String&);
 
-    WEBCORE_EXPORT bool setFocusedElement(PassRefPtr<Element>, FocusDirection = FocusDirectionNone);
+    WEBCORE_EXPORT bool setFocusedElement(Element*, FocusDirection = FocusDirectionNone);
     Element* focusedElement() const { return m_focusedElement.get(); }
     UserActionElementSet& userActionElements()  { return m_userActionElements; }
     const UserActionElementSet& userActionElements() const { return m_userActionElements; }
@@ -924,7 +924,7 @@ public:
 
     HTMLBodyElement* body() const;
     WEBCORE_EXPORT HTMLElement* bodyOrFrameset() const;
-    void setBodyOrFrameset(PassRefPtr<HTMLElement>, ExceptionCode&);
+    void setBodyOrFrameset(RefPtr<HTMLElement>&&, ExceptionCode&);
 
     Location* location() const;
 
@@ -957,7 +957,7 @@ public:
     JSModuleLoader* moduleLoader() { return m_moduleLoader.get(); }
 
     HTMLScriptElement* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : nullptr; }
-    void pushCurrentScript(PassRefPtr<HTMLScriptElement>);
+    void pushCurrentScript(HTMLScriptElement*);
     void popCurrentScript();
 
 #if ENABLE(XSLT)
@@ -1056,7 +1056,7 @@ public:
     WEBCORE_EXPORT void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
 
-    void setDecoder(PassRefPtr<TextResourceDecoder>);
+    void setDecoder(RefPtr<TextResourceDecoder>&&);
     TextResourceDecoder* decoder() const { return m_decoder.get(); }
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;

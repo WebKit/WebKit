@@ -188,8 +188,8 @@ JSValue JSDeviceMotionEvent::initDeviceMotionEvent(ExecState& state)
 
     bool intervalProvided = !state.argument(6).isUndefinedOrNull();
     double interval = state.argument(6).toNumber(&state);
-    RefPtr<DeviceMotionData> deviceMotionData = DeviceMotionData::create(acceleration, accelerationIncludingGravity, rotationRate, intervalProvided, interval);
-    wrapped().initDeviceMotionEvent(type, bubbles, cancelable, deviceMotionData.get());
+    auto deviceMotionData = DeviceMotionData::create(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), intervalProvided, interval);
+    wrapped().initDeviceMotionEvent(type, bubbles, cancelable, deviceMotionData.ptr());
     return jsUndefined();
 }
 

@@ -1,3 +1,42 @@
+2016-01-24  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce PassRefPtr uses in dom - 4
+        https://bugs.webkit.org/show_bug.cgi?id=153270
+
+        Reviewed by Darin Adler.
+
+        As a step to remove PassRefPtr uses, this patch reduces the uses in WebCore/dom.
+
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::JSDeviceMotionEvent::initDeviceMotionEvent):
+        * dom/DeviceMotionData.cpp:
+        (WebCore::DeviceMotionData::create):
+        (WebCore::DeviceMotionData::DeviceMotionData):
+        * dom/DeviceMotionData.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setBodyOrFrameset):
+        (WebCore::Document::setFocusedElement):
+        (WebCore::Document::setDecoder):
+        (WebCore::Document::pushCurrentScript):
+        * dom/Document.h:
+        * dom/Event.cpp:
+        (WebCore::Event::cloneFor):
+        * dom/Event.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::cloneFor):
+        * dom/MouseEvent.h:
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodePointer::NodePointer):
+        (WebCore::NodeIterator::NodeIterator):
+        * dom/NodeIterator.h:
+        (WebCore::NodeIterator::create):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent):
+        * platform/ios/DeviceMotionClientIOS.mm:
+        (WebCore::DeviceMotionClientIOS::motionChanged):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2016-01-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Loading] General cleanup

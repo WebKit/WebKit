@@ -157,7 +157,7 @@ bool Event::isWheelEvent() const
     return false;
 }
 
-PassRefPtr<Event> Event::cloneFor(HTMLIFrameElement*) const
+Ref<Event> Event::cloneFor(HTMLIFrameElement*) const
 {
     return Event::create(type(), bubbles(), cancelable());
 }

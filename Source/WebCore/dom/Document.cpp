@@ -2586,10 +2586,8 @@ HTMLElement* Document::bodyOrFrameset() const
     return nullptr;
 }
 
-void Document::setBodyOrFrameset(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
+void Document::setBodyOrFrameset(RefPtr<HTMLElement>&& newBody, ExceptionCode& ec)
 {
-    RefPtr<HTMLElement> newBody = prpNewBody;
-
     // FIXME: This does not support setting a <frameset> Element, only a <body>. This does
     // not match the HTML specification:
     // https://html.spec.whatwg.org/multipage/dom.html#dom-document-body
@@ -3764,10 +3762,9 @@ void Document::setAnnotatedRegions(const Vector<AnnotatedRegionValue>& regions)
 }
 #endif
 
-bool Document::setFocusedElement(PassRefPtr<Element> prpNewFocusedElement, FocusDirection direction)
+bool Document::setFocusedElement(Element* element, FocusDirection direction)
 {
-    RefPtr<Element> newFocusedElement = prpNewFocusedElement;
-
+    RefPtr<Element> newFocusedElement = element;
     // Make sure newFocusedElement is actually in this document
     if (newFocusedElement && (&newFocusedElement->document() != this))
         return true;
@@ -4572,9 +4569,9 @@ bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, S
     return true;
 }
 
-void Document::setDecoder(PassRefPtr<TextResourceDecoder> decoder)
+void Document::setDecoder(RefPtr<TextResourceDecoder>&& decoder)
 {
-    m_decoder = decoder;
+    m_decoder = WTFMove(decoder);
 }
 
 URL Document::completeURL(const String& url, const URL& baseURLOverride) const
@@ -4841,7 +4838,7 @@ String Document::queryCommandValue(const String& commandName)
     return command(this, commandName).value();
 }
 
-void Document::pushCurrentScript(PassRefPtr<HTMLScriptElement> newCurrentScript)
+void Document::pushCurrentScript(HTMLScriptElement* newCurrentScript)
 {
     ASSERT(newCurrentScript);
     m_currentScriptStack.append(newCurrentScript);

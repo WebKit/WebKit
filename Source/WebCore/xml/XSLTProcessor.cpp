@@ -103,7 +103,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
 
     RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create(sourceMIMEType);
     decoder->setEncoding(sourceEncoding.isEmpty() ? UTF8Encoding() : TextEncoding(sourceEncoding), TextResourceDecoder::EncodingFromXMLHeader);
-    result->setDecoder(decoder.release());
+    result->setDecoder(WTFMove(decoder));
 
     result->setContent(documentSource);
 

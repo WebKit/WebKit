@@ -26,7 +26,6 @@
 #ifndef DeviceMotionData_h
 #define DeviceMotionData_h
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -83,8 +82,7 @@ public:
     };
 
     WEBCORE_EXPORT static Ref<DeviceMotionData> create();
-    WEBCORE_EXPORT static Ref<DeviceMotionData> create(PassRefPtr<Acceleration>, PassRefPtr<Acceleration> accelerationIncludingGravity,
-                                        PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval);
+    WEBCORE_EXPORT static Ref<DeviceMotionData> create(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, bool canProvideInterval, double interval);
 
     const Acceleration* acceleration() const { return m_acceleration.get(); }
     const Acceleration* accelerationIncludingGravity() const { return m_accelerationIncludingGravity.get(); }
@@ -94,8 +92,7 @@ public:
 
 private:
     DeviceMotionData();
-    DeviceMotionData(PassRefPtr<Acceleration> acceleration, PassRefPtr<Acceleration> accelerationIncludingGravity,
-                     PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval);
+    DeviceMotionData(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, bool canProvideInterval, double interval);
 
     RefPtr<Acceleration> m_acceleration;
     RefPtr<Acceleration> m_accelerationIncludingGravity;

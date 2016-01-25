@@ -104,7 +104,7 @@ public:
 
     virtual int which() const override;
 
-    virtual PassRefPtr<Event> cloneFor(HTMLIFrameElement*) const override;
+    virtual Ref<Event> cloneFor(HTMLIFrameElement*) const override;
 
 protected:
     MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, AbstractView*,

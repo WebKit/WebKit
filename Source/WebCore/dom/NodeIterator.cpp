@@ -37,7 +37,7 @@ NodeIterator::NodePointer::NodePointer()
 {
 }
 
-NodeIterator::NodePointer::NodePointer(PassRefPtr<Node> n, bool b)
+NodeIterator::NodePointer::NodePointer(Node* n, bool b)
     : node(n)
     , isPointerBeforeNode(b)
 {
@@ -76,7 +76,7 @@ bool NodeIterator::NodePointer::moveToPrevious(Node* root)
     return node;
 }
 
-NodeIterator::NodeIterator(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
+NodeIterator::NodeIterator(Node* rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
     : NodeIteratorBase(*rootNode, whatToShow, WTFMove(filter))
     , m_referenceNode(root(), true)
 {
