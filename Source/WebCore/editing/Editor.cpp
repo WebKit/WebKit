@@ -3562,7 +3562,10 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
         m_frame.selection().setSelectedRange(candidateRange.get(), UPSTREAM, true);
 
     insertText(acceptedCandidate.replacement, 0);
-    insertText(String(" "), 0);
+
+    // Some candidates come with a space built in, and we do not need to add another space in that case.
+    if (!acceptedCandidate.replacement.endsWith(' '))
+        insertText(ASCIILiteral(" "), 0);
 }
 
 bool Editor::unifiedTextCheckerEnabled() const

@@ -2210,6 +2210,14 @@ void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidat
     if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
         return;
 
+    NSRange range = [acceptedCandidate range];
+    if (acceptedCandidate.replacementString && [acceptedCandidate.replacementString length] > 0) {
+        NSRange replacedRange = NSMakeRange(range.location, [acceptedCandidate.replacementString length]);
+        NSRange softSpaceRange = NSMakeRange(NSMaxRange(replacedRange) - 1, 1);
+        if ([acceptedCandidate.replacementString hasSuffix:@" "])
+            m_softSpaceRange = softSpaceRange;
+    }
+
     m_page->handleAcceptedCandidate(textCheckingResultFromNSTextCheckingResult(acceptedCandidate));
 }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
@@ -3511,13 +3519,22 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     } else
         text = string;
 
+    BOOL needToRemoveSoftSpace = NO;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if (m_softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(m_softSpaceRange) || replacementRange.location == NSNotFound) && replacementRange.length == 0 && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text language:nil]) {
+        replacementRange = m_softSpaceRange;
+        needToRemoveSoftSpace = YES;
+    }
+#endif
+    m_softSpaceRange = NSMakeRange(NSNotFound, 0);
+
     // insertText can be called for several reasons:
     // - If it's from normal key event processing (including key bindings), we save the action to perform it later.
     // - If it's from an input method, then we should insert the text now.
     // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
     // then we also execute it immediately, as there will be no other chance.
     Vector<WebCore::KeypressCommand>* keypressCommands = m_collectedKeypressCommands;
-    if (keypressCommands) {
+    if (keypressCommands && !needToRemoveSoftSpace) {
         ASSERT(replacementRange.location == NSNotFound);
         WebCore::KeypressCommand command("insertText:", text);
         keypressCommands->append(command);

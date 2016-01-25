@@ -637,6 +637,7 @@ private:
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     String m_lastStringForCandidateRequest;
 #endif
+    NSRange m_softSpaceRange { NSNotFound, 0 };
 };
     
 } // namespace WebKit

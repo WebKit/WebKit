@@ -1,3 +1,20 @@
+2016-01-25  Beth Dakin  <bdakin@apple.com>
+
+        Handle soft spaces after accepted candidates
+        https://bugs.webkit.org/show_bug.cgi?id=153331
+        -and corresponding-
+        rdar://problem/23958418
+
+        Reviewed by Darin Adler.
+
+        Candidates now come with built-in spaces, so we should not insert a space for 
+        them.
+        * editing/Editor.cpp:
+        (WebCore::Editor::handleAcceptedCandidate):
+
+        New SPI to properly handle these soft spaces.
+        * platform/spi/mac/NSSpellCheckerSPI.h:
+
 2016-01-25  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Copy forwarding headers before building a project
