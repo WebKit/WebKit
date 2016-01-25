@@ -1,5 +1,52 @@
 2016-01-24  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Implement deleteIndex and getCount for the SQLite backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=153415
+
+        Reviewed by Darin Adler.
+
+        No new tests (Handful of tests now pass, improvements on a handful of others).
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteIndex):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::takeIndexByIdentifier):
+        (WebCore::IDBServer::MemoryObjectStore::deleteIndex):
+        (WebCore::IDBServer::MemoryObjectStore::deleteAllIndexes):
+        (WebCore::IDBServer::MemoryObjectStore::takeIndexByName): Deleted.
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getCount):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::maybeCreateBackingStoreCursor):
+        (WebCore::IDBServer::SQLiteIDBCursor::SQLiteIDBCursor):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        (WebCore::IDBServer::SQLiteIDBTransaction::maybeOpenBackingStoreCursor):
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::performDeleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformDeleteIndex):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::deleteIndex):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+
+2016-01-24  Brady Eidson  <beidson@apple.com>
+
         Unreviewed, speculative fix for:
         Modern IDB: Some IDB tests crash in ~SQLiteIDBBackingStore
         https://bugs.webkit.org/show_bug.cgi?id=153418

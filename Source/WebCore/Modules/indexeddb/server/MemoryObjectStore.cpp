@@ -124,31 +124,31 @@ void MemoryObjectStore::maybeRestoreDeletedIndex(Ref<MemoryIndex>&& index)
     registerIndex(WTFMove(index));
 }
 
-RefPtr<MemoryIndex> MemoryObjectStore::takeIndexByName(const String& name)
+RefPtr<MemoryIndex> MemoryObjectStore::takeIndexByIdentifier(uint64_t indexIdentifier)
 {
-    auto indexByName = m_indexesByName.take(name);
-    if (!indexByName)
+    auto indexByIdentifier = m_indexesByIdentifier.take(indexIdentifier);
+    if (!indexByIdentifier)
         return nullptr;
 
-    auto index = m_indexesByIdentifier.take(indexByName->info().identifier());
+    auto index = m_indexesByName.take(indexByIdentifier->info().name());
     ASSERT(index);
 
     return index;
 }
 
-IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transaction, const String& indexName)
+IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transaction, uint64_t indexIdentifier)
 {
     LOG(IndexedDB, "MemoryObjectStore::deleteIndex");
 
     if (!m_writeTransaction || !m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
         return IDBError(IDBDatabaseException::ConstraintError);
     
-    auto index = takeIndexByName(indexName);
+    auto index = takeIndexByIdentifier(indexIdentifier);
     ASSERT(index);
     if (!index)
         return IDBError(IDBDatabaseException::ConstraintError);
 
-    m_info.deleteIndex(indexName);
+    m_info.deleteIndex(indexIdentifier);
     transaction.indexDeleted(*index);
 
     return { };
@@ -156,14 +156,14 @@ IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transacti
 
 void MemoryObjectStore::deleteAllIndexes(MemoryBackingStoreTransaction& transaction)
 {
-    Vector<String> indexNames;
-    indexNames.reserveInitialCapacity(m_indexesByName.size());
+    Vector<uint64_t> indexIdentifiers;
+    indexIdentifiers.reserveInitialCapacity(m_indexesByName.size());
 
-    for (auto& name : m_indexesByName.keys())
-        indexNames.uncheckedAppend(name);
+    for (auto& index : m_indexesByName.values())
+        indexIdentifiers.uncheckedAppend(index->info().identifier());
 
-    for (auto& name : indexNames)
-        deleteIndex(transaction, name);
+    for (auto identifier : indexIdentifiers)
+        deleteIndex(transaction, identifier);
 }
 
 bool MemoryObjectStore::containsRecord(const IDBKeyData& key)

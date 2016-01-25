@@ -99,12 +99,12 @@ void SQLiteIDBTransaction::reset()
     clearCursors();
 }
 
-std::unique_ptr<SQLiteIDBCursor> SQLiteIDBTransaction::maybeOpenBackingStoreCursor(uint64_t objectStoreID)
+std::unique_ptr<SQLiteIDBCursor> SQLiteIDBTransaction::maybeOpenBackingStoreCursor(uint64_t objectStoreID, uint64_t indexID, const IDBKeyRangeData& range)
 {
     ASSERT(m_sqliteTransaction);
     ASSERT(m_sqliteTransaction->inProgress());
 
-    return SQLiteIDBCursor::maybeCreateBackingStoreCursor(*this, objectStoreID);
+    return SQLiteIDBCursor::maybeCreateBackingStoreCursor(*this, objectStoreID, indexID, range);
 }
 
 SQLiteIDBCursor* SQLiteIDBTransaction::maybeOpenCursor(const IDBCursorInfo& info)

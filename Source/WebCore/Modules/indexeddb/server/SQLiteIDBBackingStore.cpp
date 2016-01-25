@@ -720,7 +720,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
 
     // Write index records for any records that already exist in this object store.
 
-    auto cursor = transaction->maybeOpenBackingStoreCursor(info.objectStoreIdentifier());
+    auto cursor = transaction->maybeOpenBackingStoreCursor(info.objectStoreIdentifier(), 0, IDBKeyRangeData::allKeys());
 
     if (!cursor) {
         LOG_ERROR("Cannot open cursor to populate indexes in database");
@@ -849,9 +849,47 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, i
 }
 
 
-IDBError SQLiteIDBBackingStore::deleteIndex(const IDBResourceIdentifier&, uint64_t, const String&)
+IDBError SQLiteIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    LOG(IndexedDB, "SQLiteIDBBackingStore::deleteIndex - object store %" PRIu64, objectStoreIdentifier);
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to delete index without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete index without an in-progress transaction") };
+    }
+
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to delete index during a non-version-change transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete index during a non-version-change transaction") };
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexInfo WHERE id = ? AND objectStoreID = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, indexIdentifier) != SQLITE_OK
+            || sql.bindInt64(2, objectStoreIdentifier) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete index id %" PRIi64 " from IndexInfo table (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error deleting index from database") };
+        }
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexRecords WHERE indexID = ? AND objectStoreID = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, indexIdentifier) != SQLITE_OK
+            || sql.bindInt64(2, objectStoreIdentifier) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not delete index records for index id %" PRIi64 " from IndexRecords table (%i) - %s", indexIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Error deleting index records from database") };
+        }
+    }
+
+    return { };
 }
 
 IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, const IDBKeyData& keyData, bool& keyExists)
@@ -1093,9 +1131,30 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier&, uin
     return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
 }
 
-IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier&, uint64_t, uint64_t, const IDBKeyRangeData&, uint64_t&)
+IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, uint64_t& outCount)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    LOG(IndexedDB, "SQLiteIDBBackingStore::getCount - object store %" PRIu64, objectStoreIdentifier);
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    outCount = 0;
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to get count from database without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to get count from database without an in-progress transaction") };
+    }
+
+    auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreIdentifier, indexIdentifier, range);
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to populate indexes in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to populate indexes in database") };
+    }
+
+    while (cursor->advance(1))
+        ++outCount;
+
+    return { };
 }
 
 IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier&, uint64_t, uint64_t&)

@@ -113,6 +113,11 @@ void IDBObjectStoreInfo::deleteIndex(const String& indexName)
     m_indexMap.remove(info->identifier());
 }
 
+void IDBObjectStoreInfo::deleteIndex(uint64_t indexIdentifier)
+{
+    m_indexMap.remove(indexIdentifier);
+}
+
 #ifndef NDEBUG
 String IDBObjectStoreInfo::loggingString(int indent) const
 {

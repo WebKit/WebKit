@@ -204,7 +204,7 @@ IDBError MemoryIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
     return objectStore->createIndex(*rawTransaction, info);
 }
 
-IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& indexName)
+IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::deleteIndex");
 
@@ -216,7 +216,7 @@ IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
     if (!objectStore)
         return IDBError(IDBDatabaseException::ConstraintError);
 
-    return objectStore->deleteIndex(*rawTransaction, indexName);
+    return objectStore->deleteIndex(*rawTransaction, indexIdentifier);
 }
 
 void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectStore& objectStore)

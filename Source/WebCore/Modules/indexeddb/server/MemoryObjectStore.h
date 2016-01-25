@@ -66,7 +66,7 @@ public:
     MemoryBackingStoreTransaction* writeTransaction() { return m_writeTransaction; }
 
     IDBError createIndex(MemoryBackingStoreTransaction&, const IDBIndexInfo&);
-    IDBError deleteIndex(MemoryBackingStoreTransaction&, const String& indexName);
+    IDBError deleteIndex(MemoryBackingStoreTransaction&, uint64_t indexIdentifier);
     void deleteAllIndexes(MemoryBackingStoreTransaction&);
     void registerIndex(Ref<MemoryIndex>&&);
 
@@ -108,7 +108,7 @@ private:
     void updateCursorsForPutRecord(std::set<IDBKeyData>::iterator);
     void updateCursorsForDeleteRecord(const IDBKeyData&);
 
-    RefPtr<MemoryIndex> takeIndexByName(const String& name);
+    RefPtr<MemoryIndex> takeIndexByIdentifier(uint64_t indexIdentifier);
 
     IDBObjectStoreInfo m_info;
 

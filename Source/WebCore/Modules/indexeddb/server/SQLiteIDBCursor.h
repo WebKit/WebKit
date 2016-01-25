@@ -46,10 +46,10 @@ class SQLiteIDBCursor {
     WTF_MAKE_NONCOPYABLE(SQLiteIDBCursor);
 public:
     static std::unique_ptr<SQLiteIDBCursor> maybeCreate(SQLiteIDBTransaction&, const IDBCursorInfo&);
-    static std::unique_ptr<SQLiteIDBCursor> maybeCreateBackingStoreCursor(SQLiteIDBTransaction&, const uint64_t objectStoreIdentifier);
+    static std::unique_ptr<SQLiteIDBCursor> maybeCreateBackingStoreCursor(SQLiteIDBTransaction&, const uint64_t objectStoreIdentifier, const uint64_t indexIdentifier, const IDBKeyRangeData&);
 
     SQLiteIDBCursor(SQLiteIDBTransaction&, const IDBCursorInfo&);
-    SQLiteIDBCursor(SQLiteIDBTransaction&, uint64_t objectStoreID);
+    SQLiteIDBCursor(SQLiteIDBTransaction&, uint64_t objectStoreID, uint64_t indexID, const IDBKeyRangeData&);
 
     const IDBResourceIdentifier& identifier() const { return m_cursorIdentifier; }
     SQLiteIDBTransaction* transaction() const { return m_transaction; }

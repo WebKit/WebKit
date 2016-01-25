@@ -59,6 +59,7 @@ public:
     Vector<String> indexNames() const;
 
     void deleteIndex(const String& indexName);
+    void deleteIndex(uint64_t indexIdentifier);
 
 #ifndef NDEBUG
     String loggingString(int indent = 0) const;

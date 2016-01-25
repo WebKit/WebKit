@@ -1,3 +1,12 @@
+2016-01-24  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Implement deleteIndex and getCount for the SQLite backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=153415
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, update test after r195497
