@@ -121,6 +121,7 @@ SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
 
     if (m_vm) {
         JSLockHolder locker(m_vm.get());
+        m_globalObject.clear();
         m_vm = nullptr;
     }
 }

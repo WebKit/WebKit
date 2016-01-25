@@ -1,3 +1,15 @@
+2016-01-24  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed, speculative fix for:
+        Modern IDB: Some IDB tests crash in ~SQLiteIDBBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=153418
+
+        No new tests.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::~SQLiteIDBBackingStore): Clear the global object
+          before wiping out the VM.
+
 2016-01-24  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Reduce PassRefPtr uses in dom - 4
