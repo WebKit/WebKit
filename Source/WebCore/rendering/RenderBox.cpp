@@ -384,12 +384,13 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     if (isDocElementRenderer || isBodyRenderer) {
         // Propagate the new writing mode and direction up to the RenderView.
+        auto* documentElementRenderer = document().documentElement()->renderer();
         RenderStyle& viewStyle = view().style();
         bool viewChangedWritingMode = false;
         bool rootStyleChanged = false;
         bool viewStyleChanged = false;
-        RenderObject* rootRenderer = isBodyRenderer ? document().documentElement()->renderer() : nullptr;
-        if (viewStyle.direction() != newStyle.direction() && (isDocElementRenderer || !document().directionSetOnDocumentElement())) {
+        auto* rootRenderer = isBodyRenderer ? documentElementRenderer : nullptr;
+        if (viewStyle.direction() != newStyle.direction() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetDirection())) {
             viewStyle.setDirection(newStyle.direction());
             viewStyleChanged = true;
             if (isBodyRenderer) {
@@ -399,7 +400,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
             setNeedsLayoutAndPrefWidthsRecalc();
         }
 
-        if (viewStyle.writingMode() != newStyle.writingMode() && (isDocElementRenderer || !document().writingModeSetOnDocumentElement())) {
+        if (viewStyle.writingMode() != newStyle.writingMode() && (isDocElementRenderer || !documentElementRenderer->style().hasExplicitlySetWritingMode())) {
             viewStyle.setWritingMode(newStyle.writingMode());
             viewChangedWritingMode = true;
             viewStyleChanged = true;

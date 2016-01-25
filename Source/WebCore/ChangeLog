@@ -1,3 +1,33 @@
+2016-01-25  Antti Koivisto  <antti@apple.com>
+
+        Resolving direction and writing mode properties should not mutate document
+        https://bugs.webkit.org/show_bug.cgi?id=153446
+
+        Reviewed by Andreas Kling.
+
+        Replace directionSetOnDocumentElement/writingModeSetOnDocumentElement document flags them with style flags.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueDirection):
+        (WebCore::StyleBuilderCustom::resetEffectiveZoom):
+        (WebCore::StyleBuilderCustom::applyValueWebkitWritingMode):
+        (WebCore::StyleBuilderCustom::applyValueWebkitTextOrientation):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::markers):
+        (WebCore::Document::directionSetOnDocumentElement): Deleted.
+        (WebCore::Document::writingModeSetOnDocumentElement): Deleted.
+        (WebCore::Document::setDirectionSetOnDocumentElement): Deleted.
+        (WebCore::Document::setWritingModeSetOnDocumentElement): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/style/RenderStyle.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2016-01-25  Sam Weinig  <sam@webkit.org>
 
         Fix the ASAN build.

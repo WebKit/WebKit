@@ -932,11 +932,6 @@ public:
 
     DocumentMarkerController& markers() const { return *m_markers; }
 
-    bool directionSetOnDocumentElement() const { return m_directionSetOnDocumentElement; }
-    bool writingModeSetOnDocumentElement() const { return m_writingModeSetOnDocumentElement; }
-    void setDirectionSetOnDocumentElement(bool b) { m_directionSetOnDocumentElement = b; }
-    void setWritingModeSetOnDocumentElement(bool b) { m_writingModeSetOnDocumentElement = b; }
-
     bool execCommand(const String& command, bool userInterface = false, const String& value = String());
     bool queryCommandEnabled(const String& command);
     bool queryCommandIndeterm(const String& command);
@@ -1661,9 +1656,6 @@ private:
     ViewportArguments m_viewportArguments;
 
     ReferrerPolicy m_referrerPolicy;
-
-    bool m_directionSetOnDocumentElement;
-    bool m_writingModeSetOnDocumentElement;
 
 #if ENABLE(WEB_TIMING)
     DocumentTiming m_documentTiming;

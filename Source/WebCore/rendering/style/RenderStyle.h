@@ -275,6 +275,12 @@ public:
         bool isLink() const { return getBoolean(isLinkOffset); }
         void setIsLink(bool value) { updateBoolean(value, isLinkOffset); }
 
+        bool hasExplicitlySetDirection() const { return getBoolean(hasExplicitlySetDirectionOffset); }
+        void setHasExplicitlySetDirection(bool value) { updateBoolean(value, hasExplicitlySetDirectionOffset); }
+
+        bool hasExplicitlySetWritingMode() const { return getBoolean(hasExplicitlySetWritingModeOffset); }
+        void setHasExplicitlySetWritingMode(bool value) { updateBoolean(value, hasExplicitlySetWritingModeOffset); }
+
         static ptrdiff_t flagsMemoryOffset() { return OBJECT_OFFSETOF(NonInheritedFlags, m_flags); }
         static uint64_t flagIsaffectedByActive() { return oneBitMask << affectedByActiveOffset; }
         static uint64_t flagIsaffectedByHover() { return oneBitMask << affectedByHoverOffset; }
@@ -354,15 +360,17 @@ public:
         static const uint64_t tableLayoutBitMask = oneBitMask;
         static const unsigned tableLayoutOffset = explicitInheritanceOffset + explicitInheritanceBitCount;
         static const unsigned verticalAlignBitCount = 4;
-        static const unsigned verticalAlignPadding = 2;
-        static const unsigned verticalAlignAndPaddingBitCount = verticalAlignBitCount + verticalAlignPadding;
         static const uint64_t verticalAlignMask = (oneBitMask << verticalAlignBitCount) - 1;
         static const unsigned verticalAlignOffset = tableLayoutOffset + tableLayoutBitCount;
+        static const unsigned hasExplicitlySetDirectionBitcount = 1;
+        static const unsigned hasExplicitlySetDirectionOffset = verticalAlignOffset + verticalAlignBitCount;
+        static const unsigned hasExplicitlySetWritingModeBitcount = 1;
+        static const unsigned hasExplicitlySetWritingModeOffset = hasExplicitlySetDirectionOffset + hasExplicitlySetDirectionBitcount;
 
         // Byte 6.
         static const unsigned pseudoBitsBitCount = 7;
         static const uint64_t pseudoBitsMask = (oneBitMask << pseudoBitsBitCount) - 1;
-        static const unsigned pseudoBitsOffset = verticalAlignOffset + verticalAlignBitCount;
+        static const unsigned pseudoBitsOffset = hasExplicitlySetWritingModeOffset + hasExplicitlySetWritingModeBitcount;
 
         static const unsigned hasViewportUnitsBitCount = 1;
         static const uint64_t hasViewportUnitsBitMask = (oneBitMask << hasViewportUnitsBitCount) - 1;
@@ -386,7 +394,7 @@ public:
         static const unsigned isLinkOffset = affectedByDragOffset + 1;
 
 
-        // Only 60 bits are assigned. There are 4 bits available currently used as padding to improve code generation.
+        // Only 60 bits are assigned. There are 2 bits available currently used as padding to improve code generation.
         // If you add more style bits here, you will also need to update RenderStyle::copyNonInheritedFrom().
         uint64_t m_flags;
     };
@@ -744,6 +752,7 @@ public:
 
     TextDirection direction() const { return static_cast<TextDirection>(inherited_flags._direction); }
     bool isLeftToRightDirection() const { return direction() == LTR; }
+    bool hasExplicitlySetDirection() const { return noninherited_flags.hasExplicitlySetDirection(); }
 
     const Length& specifiedLineHeight() const;
     Length lineHeight() const;
@@ -1381,6 +1390,7 @@ public:
     void setTextDecorationSkip(TextDecorationSkip skip) { SET_VAR(rareInheritedData, m_textDecorationSkip, skip); }
     void setTextUnderlinePosition(TextUnderlinePosition v) { SET_VAR(rareInheritedData, m_textUnderlinePosition, v); }
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
+    void setHasExplicitlySetDirection(bool v) { noninherited_flags.setHasExplicitlySetDirection(v); }
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     void setSpecifiedLineHeight(Length v);
 #endif
@@ -1864,6 +1874,9 @@ public:
         inherited_flags.m_writingMode = v;
         return true;
     }
+
+    bool hasExplicitlySetWritingMode() const { return noninherited_flags.hasExplicitlySetWritingMode(); }
+    void setHasExplicitlySetWritingMode(bool v) { noninherited_flags.setHasExplicitlySetWritingMode(v); }
 
     // A unique style is one that has matches something that makes it impossible to share.
     bool unique() const { return noninherited_flags.isUnique(); }

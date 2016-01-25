@@ -164,10 +164,7 @@ private:
 inline void StyleBuilderCustom::applyValueDirection(StyleResolver& styleResolver, CSSValue& value)
 {
     styleResolver.style()->setDirection(downcast<CSSPrimitiveValue>(value));
-
-    Element* element = styleResolver.element();
-    if (element && styleResolver.element() == element->document().documentElement())
-        element->document().setDirectionSetOnDocumentElement(true);
+    styleResolver.style()->setHasExplicitlySetDirection(true);
 }
 
 inline void StyleBuilderCustom::resetEffectiveZoom(StyleResolver& styleResolver)
@@ -707,11 +704,7 @@ inline void StyleBuilderCustom::applyValueWebkitLocale(StyleResolver& styleResol
 inline void StyleBuilderCustom::applyValueWebkitWritingMode(StyleResolver& styleResolver, CSSValue& value)
 {
     styleResolver.setWritingMode(downcast<CSSPrimitiveValue>(value));
-
-    // FIXME: It is not ok to modify document state while applying style.
-    auto& state = styleResolver.state();
-    if (state.element() && state.element() == state.document().documentElement())
-        state.document().setWritingModeSetOnDocumentElement(true);
+    styleResolver.style()->setHasExplicitlySetWritingMode(true);
 }
 
 inline void StyleBuilderCustom::applyValueWebkitTextOrientation(StyleResolver& styleResolver, CSSValue& value)

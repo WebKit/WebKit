@@ -696,13 +696,6 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element& element, RenderStyle* p
     m_state = State(element, parentStyle, regionForStyling, selectorFilter);
     State& state = m_state;
 
-    if (&element == m_document.documentElement() && matchingBehavior == MatchAllRules) {
-        // These bits may be set when resolving document element style.
-        // FIXME: Style resolver shouldn't mutate document.
-        m_document.setDirectionSetOnDocumentElement(false);
-        m_document.setWritingModeSetOnDocumentElement(false);
-    }
-
     if (sharingBehavior == AllowStyleSharing) {
         if (RenderStyle* sharedStyle = locateSharedStyle()) {
             state.clear();
