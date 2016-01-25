@@ -2884,6 +2884,6 @@ webkit.org/b/153110 fast/viewport/ios/width-is-device-width-overflowing-body-ove
 fast/viewport/ios/width-is-device-width.html [ Pass ]
 fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit.html [ Pass ]
 
-webkit.org/b/153371 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm [ Pass Failure ]
+webkit.org/b/153371 imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm [ Pass Failure ]
 
 webkit.org/b/152446 http/tests/loading/preload-no-store-frame-src.html [ Failure ]
