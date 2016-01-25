@@ -1,5 +1,12 @@
 2016-01-25  Alex Christensen  <achristensen@webkit.org>
 
+        [Win] Another build fix after r195545
+
+        * CMakeLists.txt:
+        r195548 didn't change all the pre-builds back to post-builds.
+
+2016-01-25  Alex Christensen  <achristensen@webkit.org>
+
         [Win] Fix clean build after r195545.
 
         * CMakeLists.txt:
