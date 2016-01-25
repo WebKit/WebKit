@@ -1073,18 +1073,6 @@ void WebProcessPool::useTestingNetworkSession()
     m_shouldUseTestingNetworkSession = true;
 }
 
-void WebProcessPool::resetTestingNetworkSession()
-{
-    ASSERT(!m_processes.isEmpty());
-    ASSERT(m_networkProcess);
-
-    if (!m_shouldUseTestingNetworkSession || !m_networkProcess || m_processes.isEmpty())
-        return;
-
-    sendToAllProcesses(Messages::WebProcess::SwitchToNewTestingSession());
-    m_networkProcess->send(Messages::NetworkProcess::SwitchToNewTestingSession(), 0);
-}
-
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
     if (m_networkProcess)

@@ -210,8 +210,6 @@ private:
     void initializeWebProcess(WebProcessCreationParameters&&);
     void platformInitializeWebProcess(WebProcessCreationParameters&&);
 
-    void switchToNewTestingSession();
-
     void platformTerminate();
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&) const;

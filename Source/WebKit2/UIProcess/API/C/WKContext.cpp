@@ -538,11 +538,6 @@ void WKContextUseTestingNetworkSession(WKContextRef context)
     toImpl(context)->useTestingNetworkSession();
 }
 
-void WKContextResetTestingNetworkSession(WKContextRef context)
-{
-    toImpl(context)->resetTestingNetworkSession();
-}
-
 WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());

@@ -714,8 +714,6 @@ bool TestController::resetStateToConsistentValues()
 
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
-    WKContextResetTestingNetworkSession(TestController::singleton().context());
-
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset the EventSender for each test.
