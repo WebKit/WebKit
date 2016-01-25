@@ -1,3 +1,46 @@
+2016-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Switch FTL to B3 on X86_64/Mac
+        https://bugs.webkit.org/show_bug.cgi?id=153445
+
+        Rubber stamped by Geoffrey Garen.
+
+        This finally switches from LLVM to B3 in the FTL on X86_64 on the Mac. We recommend that other
+        X86_64 platforms make the switch as well. We will be focusing our performance work on B3 rather
+        than LLVM in the future. ARM64 support is also coming soon, so we will be able to remove FTL
+        LLVM code once that lands.
+
+        Right now this mostly appears as perf-neutral on the major tests. However, it does have the
+        following immediate benefits:
+
+        - Dramatic reduction in FTL compile times, on the order of 5x-10x. This means huge speed-ups in
+          shorter-running tests like V8Spider (21%) and JSRegress (8%).
+
+        - It makes the FTL simpler and more robust because we don't have to do stackmap section
+          parsing. This makes it easier to add new FTL features. We are already working on features,
+          like the sampling profiler, which will only have a FTL B3 implementation.
+
+        - Speed-ups on some throughput benchmarks like mandreel, richards, imaging-gaussian-blur. It's
+          still a slow down on other throughput benchmarks, though.
+
+        We started writing B3 in October, so it's pretty awesome that the throughput of the code it
+        generates is already on par with LLVM.
+        
+        This does not fundamentally change how the FTL works. FTL was built to lower DFG IR to a C-like
+        SSA IR, and then rely on powerful SSA optimizations and comprehensive instruction selection and
+        register allocation to turn that code into something that runs fast. B3 also has a C-like SSA
+        IR, has an instruction selector that is in some ways more powerful than LLVM's (B3 does global
+        instruction selection rather than block-local like LLVM), and it has a register allocator that
+        is in some ways more powerful also (B3 uses IRC, a mature graph coloring allocator, while LLVM
+        does not do graph coloring). We expect FTL B3's performance to improve a lot after we turn it
+        on and can focus our efforts on tuning it.
+
+        I didn't find any test regressions after running both JSC tests and layout tests. Basic
+        browsing still works. JetStream performance difference is within the margin of error. EWS is
+        happy.
+
+        * dfg/DFGCommon.h:
+
 2016-01-25  Andreas Kling  <akling@apple.com>
 
         Restore CodeBlock jettison code Geoff accidentally removed
