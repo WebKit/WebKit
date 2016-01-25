@@ -1,3 +1,23 @@
+2016-01-25  Andreas Kling  <akling@apple.com>
+
+        Restore CodeBlock jettison code Geoff accidentally removed
+        https://bugs.webkit.org/show_bug.cgi?id=151241
+
+        Rubber-stamped by Geoffrey Garen.
+
+        Geoff meant to add this back in <http://trac.webkit.org/changeset/190827>
+        but missed.
+
+        Then he added it back in, but it was rolled out due to a crash on Animometer.
+        I can no longer produce a crash on Animometer, either with today's version of
+        the benchmark, or the one that existed at the time of the rollout.
+
+        Given this, let's roll it back in and see how it goes.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::timeToLive):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+
 2016-01-22  Filip Pizlo  <fpizlo@apple.com>
 
         mandreel should run just as fast in FTL B3 as FTL LLVM
