@@ -1,3 +1,16 @@
+2016-01-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Media "ended" event incorrectly fires when currentTime is set
+        https://bugs.webkit.org/show_bug.cgi?id=150348
+        <rdar://problem/24247974>
+
+        Reviewed by Jer Noble.
+
+        Test: media/media-ended-fired-once.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::invalidateCachedTime): Always mark m_cachedTime as invalid.
+
 2016-01-25  Konstantin Tokarev  <annulen@yandex.ru>
 
         Do not convert GlyphBufferAdvance to FloatSize

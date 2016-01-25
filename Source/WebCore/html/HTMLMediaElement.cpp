@@ -2687,6 +2687,7 @@ void HTMLMediaElement::refreshCachedTime() const
 
 void HTMLMediaElement::invalidateCachedTime() const
 {
+    m_cachedTime = MediaTime::invalidTime();
     if (!m_player || !m_player->maximumDurationToCacheMediaTime())
         return;
 
@@ -2701,7 +2702,6 @@ void HTMLMediaElement::invalidateCachedTime() const
     static const double minimumTimePlayingBeforeCacheSnapshot = 0.5;
 
     m_minimumClockTimeToUpdateCachedTime = monotonicallyIncreasingTime() + minimumTimePlayingBeforeCacheSnapshot;
-    m_cachedTime = MediaTime::invalidTime();
 }
 
 // playback state
