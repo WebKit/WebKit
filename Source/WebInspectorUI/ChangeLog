@@ -1,3 +1,18 @@
+2016-01-25  Johan K. Jensen  <jj@johanjensen.dk>
+
+        Web Inspector: timelines clear button should be inactive if nothing can be cleared
+        https://bugs.webkit.org/show_bug.cgi?id=132756
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.shown):
+        Enable clear button if timeline is not readonly and contains data, when switching timelines.
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStarted):
+        Enable clear button when a capturing starts.
+        (WebInspector.TimelineRecordingContentView.prototype._recordingReset):
+        Disable clear button after resetting recording.
+
 2016-01-25  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Timelines: "Timer Installed150ms delay" — no space before the delay number

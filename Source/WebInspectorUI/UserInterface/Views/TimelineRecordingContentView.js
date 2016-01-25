@@ -163,7 +163,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     {
         this._currentTimelineOverview.shown();
         this._contentViewContainer.shown();
-        this._clearTimelineNavigationItem.enabled = !this._recording.readonly;
+        this._clearTimelineNavigationItem.enabled = !this._recording.readonly && !isNaN(this._recording.startTime);
 
         this._currentContentViewDidChange();
 
@@ -502,6 +502,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     {
         if (!this._updating)
             this._startUpdatingCurrentTime(event.data.startTime);
+        this._clearTimelineNavigationItem.enabled = !this._recording.readonly;
     }
 
     _capturingStopped(event)
@@ -654,6 +655,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._overviewTimelineView.reset();
         for (var timelineView of this._timelineViewMap.values())
             timelineView.reset();
+        this._clearTimelineNavigationItem.enabled = false;
     }
 
     _recordingUnloaded(event)
