@@ -3,7 +3,7 @@ This test checks for <rdar://problem/5303567> REGRESSION: XMLHttpRequest.respons
 PASS: No exception.
 readyState: 4 (number)
 responseText: <?xml version="1.0" encoding="UTF-8"?>... (string)
-responseXML: [object Document] (object)
+responseXML: [object XMLDocument] (object)
 status: 0 (number)
 statusText:  (string)
 

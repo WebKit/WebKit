@@ -55,6 +55,7 @@
 #include "SubframeLoader.h"
 #include "Text.h"
 #include "TextDocument.h"
+#include "XMLDocument.h"
 #include "XMLNames.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -220,16 +221,16 @@ DOMImplementation* DOMImplementation::getInterface(const String& /*feature*/)
     return 0;
 }
 
-RefPtr<Document> DOMImplementation::createDocument(const String& namespaceURI,
+RefPtr<XMLDocument> DOMImplementation::createDocument(const String& namespaceURI,
     const String& qualifiedName, DocumentType* doctype, ExceptionCode& ec)
 {
-    RefPtr<Document> doc;
+    RefPtr<XMLDocument> doc;
     if (namespaceURI == SVGNames::svgNamespaceURI)
         doc = SVGDocument::create(0, URL());
     else if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
-        doc = Document::createXHTML(0, URL());
+        doc = XMLDocument::createXHTML(0, URL());
     else
-        doc = Document::create(0, URL());
+        doc = XMLDocument::create(0, URL());
 
     doc->setSecurityOriginPolicy(m_document.securityOriginPolicy());
 
@@ -320,7 +321,7 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
     if (type == "text/html")
         return HTMLDocument::create(frame, url);
     if (type == "application/xhtml+xml")
-        return Document::createXHTML(frame, url);
+        return XMLDocument::createXHTML(frame, url);
 
 #if ENABLE(FTPDIR)
     // Plugins cannot take FTP from us either
@@ -371,7 +372,7 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
         return SVGDocument::create(frame, url);
 
     if (isXMLMIMEType(type))
-        return Document::create(frame, url);
+        return XMLDocument::create(frame, url);
 
     return HTMLDocument::create(frame, url);
 }

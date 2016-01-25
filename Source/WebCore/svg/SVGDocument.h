@@ -22,13 +22,13 @@
 #ifndef SVGDocument_h
 #define SVGDocument_h
 
-#include "Document.h"
+#include "XMLDocument.h"
 
 namespace WebCore {
 
 class SVGSVGElement;
 
-class SVGDocument final : public Document {
+class SVGDocument final : public XMLDocument {
 public:
     static Ref<SVGDocument> create(Frame*, const URL&);
 

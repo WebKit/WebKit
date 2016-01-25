@@ -767,7 +767,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString& errorString, int nodeId, const
         return;
 
     Document& document = node->document();
-    if (!document.isHTMLDocument() && !document.isXHTMLDocument() && !document.isSVGDocument()) {
+    if (!document.isHTMLDocument() && !document.isXMLDocument()) {
         errorString = ASCIILiteral("Not an HTML/XML document");
         return;
     }

@@ -1,3 +1,28 @@
+2016-01-24  Chris Dumez  <cdumez@apple.com>
+
+        An XMLDocument interface should be exposed on the global Window object
+        https://bugs.webkit.org/show_bug.cgi?id=153378
+        <rdar://problem/24315465>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline some layout tests now that XMLDocument is exposed.
+
+        * fast/dom/DOMImplementation/createDocument-namespace-err-expected.txt:
+        * fast/dom/DOMImplementation/script-tests/createDocument-namespace-err.js:
+        * fast/dom/Document/clone-node-expected.txt:
+        * fast/dom/Document/clone-node.html:
+        * fast/dom/Document/xml-document-focus-expected.txt:
+        * fast/dom/Document/xml-document-focus.xml:
+        * fast/dom/dom-parse-serialize-display-expected.txt:
+        * fast/dom/dom-parse-serialize-expected.txt:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/dom/wrapper-classes.html:
+        * fast/dom/xmlserializer-serialize-to-string-exception-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-bad-mimetype-expected.txt:
+        * http/tests/xmlhttprequest/supported-xml-content-types-expected.txt:
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+
 2016-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         New WK1 baselines.

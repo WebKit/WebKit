@@ -198,10 +198,6 @@
     // Additional constructors.
     [CustomGetter, CustomConstructor] attribute HTMLImageElementNamedConstructor Image; // Usable with new operator
 
-    // Mozilla has a separate XMLDocument object for XML documents.
-    // We just use Document for this.
-    attribute DocumentConstructor XMLDocument;
-
     [Conditional=IOS_TOUCH_EVENTS, CustomGetter] attribute TouchConstructor Touch; // Usable with the new operator
     [Conditional=IOS_TOUCH_EVENTS, CustomGetter] attribute TouchListConstructor TouchList; // Usable with the new operator
 

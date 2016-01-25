@@ -82,7 +82,7 @@ ALERT: PASS: window.SyntaxError should be 'function SyntaxError() {    [native c
 ALERT: PASS: window.Text should be '[object TextConstructor]' and is.
 ALERT: PASS: window.TypeError should be 'function TypeError() {    [native code]}' and is.
 ALERT: PASS: window.URIError should be 'function URIError() {    [native code]}' and is.
-ALERT: PASS: window.XMLDocument should be '[object DocumentConstructor]' and is.
+ALERT: PASS: window.XMLDocument should be '[object XMLDocumentConstructor]' and is.
 ALERT: PASS: window.XMLSerializer should be '[object XMLSerializerConstructor]' and is.
 ALERT: PASS: window.XPathEvaluator should be '[object XPathEvaluatorConstructor]' and is.
 ALERT: PASS: window.XPathResult should be '[object XPathResultConstructor]' and is.

@@ -36,6 +36,7 @@
 #include "SVGDocument.h"
 #include "ScriptController.h"
 #include "TouchList.h"
+#include "XMLDocument.h"
 #include <wtf/GetPtr.h>
 
 #if ENABLE(WEBGL)
@@ -58,6 +59,8 @@ static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObje
         wrapper = CREATE_DOM_WRAPPER(&globalObject, HTMLDocument, &document);
     else if (document.isSVGDocument())
         wrapper = CREATE_DOM_WRAPPER(&globalObject, SVGDocument, &document);
+    else if (document.isXMLDocument())
+        wrapper = CREATE_DOM_WRAPPER(&globalObject, XMLDocument, &document);
     else
         wrapper = CREATE_DOM_WRAPPER(&globalObject, Document, &document);
 

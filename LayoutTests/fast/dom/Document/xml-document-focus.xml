@@ -11,7 +11,7 @@
 description("Make sure the focus management API is available to XML documents.");
 
 shouldNotBe("document.__proto__", "HTMLDocument.prototype");
-shouldBe("document.__proto__", "Document.prototype");
+shouldBe("document.__proto__", "XMLDocument.prototype");
 shouldBeTrue("document.hasFocus()");
 shouldBe("document.activeElement", "document.body");
 var testElement = document.getElementById("testElement");

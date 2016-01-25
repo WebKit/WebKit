@@ -418,6 +418,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/WebKitNamedFlow.idl
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
+    dom/XMLDocument.idl
 
     fileapi/Blob.idl
     fileapi/File.idl

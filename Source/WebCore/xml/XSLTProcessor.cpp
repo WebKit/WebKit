@@ -40,6 +40,7 @@
 #include "SecurityOriginPolicy.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
+#include "XMLDocument.h"
 #include "markup.h"
 
 #include <wtf/Assertions.h>
@@ -77,7 +78,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
 
     RefPtr<Document> result;
     if (sourceMIMEType == "text/plain") {
-        result = Document::createXHTML(frame, sourceIsDocument ? ownerDocument->url() : URL());
+        result = XMLDocument::createXHTML(frame, sourceIsDocument ? ownerDocument->url() : URL());
         transformTextStringToXHTMLDocumentString(documentSource);
     } else
         result = DOMImplementation::createDocument(sourceMIMEType, frame, sourceIsDocument ? ownerDocument->url() : URL());

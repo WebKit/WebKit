@@ -3,8 +3,8 @@ createDocument tests modeled after createElementNS tests from mozilla which were
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.implementation.createDocument().toString() is "[object Document]"
-PASS document.implementation.createDocument("http://www.example.com").toString() is "[object Document]"
+PASS document.implementation.createDocument().toString() is "[object XMLDocument]"
+PASS document.implementation.createDocument("http://www.example.com").toString() is "[object XMLDocument]"
 PASS createDocument(, , null)
 PASS createDocument(null, , null)
 FAIL createDocument(, null, null)

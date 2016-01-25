@@ -38,9 +38,9 @@ PASS jsWrapperClass(document.createTreeWalker(root, 0, null, false).constructor)
 
 XML
 
-PASS jsWrapperClass(xmlDocument) is 'Document'
-PASS jsWrapperClass(xmlDocument.__proto__) is 'DocumentPrototype'
-PASS jsWrapperClass(xmlDocument.constructor) is 'DocumentConstructor'
+PASS jsWrapperClass(xmlDocument) is 'XMLDocument'
+PASS jsWrapperClass(xmlDocument.__proto__) is 'XMLDocumentPrototype'
+PASS jsWrapperClass(xmlDocument.constructor) is 'XMLDocumentConstructor'
 PASS jsWrapperClass(xmlDocument.createCDATASection()) is 'CDATASection'
 PASS jsWrapperClass(xmlDocument.createCDATASection().__proto__) is 'CDATASectionPrototype'
 PASS jsWrapperClass(xmlDocument.createCDATASection().constructor) is 'CDATASectionConstructor'

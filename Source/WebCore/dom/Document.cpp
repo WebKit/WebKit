@@ -167,6 +167,7 @@
 #include "TreeWalker.h"
 #include "VisitedLinkState.h"
 #include "WheelEvent.h"
+#include "XMLDocument.h"
 #include "XMLDocumentParser.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -3510,7 +3511,12 @@ Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
 
 Ref<Document> Document::cloneDocumentWithoutChildren() const
 {
-    return isXHTMLDocument() ? createXHTML(nullptr, url()) : create(nullptr, url());
+    if (isXMLDocument()) {
+        if (isXHTMLDocument())
+            return XMLDocument::createXHTML(nullptr, url());
+        return XMLDocument::create(nullptr, url());
+    }
+    return create(nullptr, url());
 }
 
 void Document::cloneDataFromDocument(const Document& other)

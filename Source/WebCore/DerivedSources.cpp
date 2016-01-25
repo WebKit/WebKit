@@ -528,6 +528,7 @@
 #include "JSWorkerGlobalScope.cpp"
 #include "JSWorkerLocation.cpp"
 #include "JSWorkerNavigator.cpp"
+#include "JSXMLDocument.cpp"
 #include "JSXMLHttpRequest.cpp"
 #include "JSXMLHttpRequestException.cpp"
 #include "JSXMLHttpRequestProgressEvent.cpp"

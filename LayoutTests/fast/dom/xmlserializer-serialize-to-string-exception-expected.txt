@@ -40,7 +40,7 @@ PASS
 12. Verifying XMLSerializer.serializeToString() should NOT-THROW exception with node value = [object HTMLHtmlElement]
 PASS
 
-13. Verifying XMLSerializer.serializeToString() should NOT-THROW exception with node value = [object Document]
+13. Verifying XMLSerializer.serializeToString() should NOT-THROW exception with node value = [object XMLDocument]
 PASS
 
 14. Verifying XMLSerializer.serializeToString() should NOT-THROW exception with node value = [object Element]

@@ -26,6 +26,7 @@
 
 #include "Document.h"
 #include "MediaPlayer.h"
+#include "XMLDocument.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -53,7 +54,7 @@ public:
     // DOM methods & attributes for DOMImplementation
     static bool hasFeature(const String& feature, const String& version);
     RefPtr<DocumentType> createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId, ExceptionCode&);
-    RefPtr<Document> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*, ExceptionCode&);
+    RefPtr<XMLDocument> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*, ExceptionCode&);
 
     DOMImplementation* getInterface(const String& feature);
 

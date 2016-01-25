@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS document.__proto__ is not HTMLDocument.prototype
-PASS document.__proto__ is Document.prototype
+PASS document.__proto__ is XMLDocument.prototype
 PASS document.hasFocus() is true
 PASS document.activeElement is document.body
 PASS document.activeElement is testElement

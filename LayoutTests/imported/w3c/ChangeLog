@@ -1,3 +1,18 @@
+2016-01-24  Chris Dumez  <cdumez@apple.com>
+
+        An XMLDocument interface should be exposed on the global Window object
+        https://bugs.webkit.org/show_bug.cgi?id=153378
+        <rdar://problem/24315465>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline several W3C DOM and HTML tests now that more checks are
+        passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/nodes/Document-constructor-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2016-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLElement::nodeName should not upper case non-ASCII characters

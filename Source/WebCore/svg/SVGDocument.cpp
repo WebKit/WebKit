@@ -28,7 +28,7 @@
 namespace WebCore {
 
 SVGDocument::SVGDocument(Frame* frame, const URL& url)
-    : Document(frame, url, SVGDocumentClass)
+    : XMLDocument(frame, url, SVGDocumentClass)
 {
 }
 

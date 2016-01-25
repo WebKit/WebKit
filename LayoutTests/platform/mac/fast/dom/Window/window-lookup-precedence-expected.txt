@@ -294,8 +294,8 @@ PASS win['UIEvent'] == '[object UIEventConstructor]' is true
 PASS win['UIEvent'] == '[object UIEventConstructor]' is true
 PASS win['WheelEvent'] == '[object WheelEventConstructor]' is true
 PASS win['WheelEvent'] == '[object WheelEventConstructor]' is true
-PASS win['XMLDocument'] == '[object DocumentConstructor]' is true
-PASS win['XMLDocument'] == '[object DocumentConstructor]' is true
+PASS win['XMLDocument'] == '[object XMLDocumentConstructor]' is true
+PASS win['XMLDocument'] == '[object XMLDocumentConstructor]' is true
 PASS win['XMLHttpRequest'] == '[object XMLHttpRequestConstructor]' is true
 PASS win['XMLHttpRequest'] == '[object XMLHttpRequestConstructor]' is true
 PASS win['XMLHttpRequestException'] == '[object XMLHttpRequestExceptionConstructor]' is true

@@ -1254,7 +1254,7 @@ PASS EventTarget interface: iframe.contentDocument must inherit property "dispat
 PASS EventTarget interface: calling dispatchEvent(Event) on iframe.contentDocument with too few arguments must throw TypeError 
 FAIL XMLDocument interface: operation load(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "load" missing
 PASS XMLDocument must be primary interface of document.implementation.createDocument(null, "", null) 
-FAIL Stringification of document.implementation.createDocument(null, "", null) assert_equals: class string of document.implementation.createDocument(null, "", null) expected "[object XMLDocument]" but got "[object Document]"
+PASS Stringification of document.implementation.createDocument(null, "", null) 
 FAIL XMLDocument interface: document.implementation.createDocument(null, "", null) must inherit property "load" with the proper type (0) assert_inherits: property "load" not found in prototype chain
 FAIL XMLDocument interface: calling load(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "load" not found in prototype chain
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "implementation" with the proper type (0) 

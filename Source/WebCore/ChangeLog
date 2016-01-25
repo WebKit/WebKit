@@ -1,3 +1,66 @@
+2016-01-24  Chris Dumez  <cdumez@apple.com>
+
+        An XMLDocument interface should be exposed on the global Window object
+        https://bugs.webkit.org/show_bug.cgi?id=153378
+        <rdar://problem/24315465>
+
+        Reviewed by Darin Adler.
+
+        Expose an XMLDocument interface on the global Window object, as per:
+        - https://dom.spec.whatwg.org/#xmldocument
+
+        DOMImplementation.createDocument() now returns an XMLDocument instead
+        of a Document, as per:
+        - https://dom.spec.whatwg.org/#dom-domimplementation-createdocument
+
+        Previously, WebKit would alias XMLDocument to Document which caused
+        some W3C tests to fail.
+
+        Chrome and Firefox already match the specification here.
+
+        No new tests, already covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::createNewDocumentWrapper):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/DOMImplementation.h:
+        * dom/DOMImplementation.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::cloneDocumentWithoutChildren):
+        * dom/Document.h:
+        (WebCore::Document::isXMLDocument):
+        (WebCore::Document::create): Deleted.
+        (WebCore::Document::createNonRenderedPlaceholder): Deleted.
+        * dom/XMLDocument.h: Added.
+        (WebCore::XMLDocument::create):
+        (WebCore::XMLDocument::createXHTML):
+        (WebCore::XMLDocument::XMLDocument):
+        (isType):
+        * dom/XMLDocument.idl: Added.
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchDocument):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        * page/DOMWindow.idl:
+        * page/PageSerializer.cpp:
+        (WebCore::SerializerMarkupAccumulator::SerializerMarkupAccumulator):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument):
+        * svg/SVGDocument.h:
+        * svg/SVGDocument.idl:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2016-01-24  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Support IDBObjectStore.createIndex in the SQLite backing store.

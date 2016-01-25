@@ -11,8 +11,8 @@ function className(object) {
 
 var doc = document.implementation.createDocument('', 'root', null);
 
-shouldBe('doc.cloneNode(false).__proto__', 'Document.prototype');
-shouldBeEqualToString('className(doc.cloneNode(false))', 'Document');
+shouldBe('doc.cloneNode(false).__proto__', 'XMLDocument.prototype');
+shouldBeEqualToString('className(doc.cloneNode(false))', 'XMLDocument');
 shouldBeEqualToString('doc.cloneNode(true).documentElement.localName', 'root');
 shouldBeEqualToString('doc.cloneNode(true).contentType', 'application/xml');
 shouldBeEqualToString('document.cloneNode(true).compatMode', 'CSS1Compat');

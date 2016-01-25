@@ -44,10 +44,6 @@ CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'children' on 
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstElementChild' on a non-Document object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastElementChild' on a non-Document object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childElementCount' on a non-Document object.
-CONSOLE MESSAGE: line 793: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 2475: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 793: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 2475: Deprecated attempt to access property 'nodeType' on a non-Node object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'children' on a non-DocumentFragment object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstElementChild' on a non-DocumentFragment object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastElementChild' on a non-DocumentFragment object.
@@ -473,13 +469,13 @@ FAIL Document interface: operation query(DOMString) assert_own_property: interfa
 FAIL Document interface: operation queryAll(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "queryAll" missing
 PASS Document interface: operation querySelector(DOMString) 
 PASS Document interface: operation querySelectorAll(DOMString) 
-FAIL XMLDocument interface: existence and properties of interface object assert_equals: class string of XMLDocument expected "[object Function]" but got "[object DocumentConstructor]"
+FAIL XMLDocument interface: existence and properties of interface object assert_equals: class string of XMLDocument expected "[object Function]" but got "[object XMLDocumentConstructor]"
 PASS XMLDocument interface object length 
-FAIL XMLDocument interface object name assert_equals: wrong value for XMLDocument.name expected "XMLDocument" but got "Document"
-FAIL XMLDocument interface: existence and properties of interface prototype object assert_equals: prototype of XMLDocument.prototype is not Document.prototype expected Node object of unknown type but got Node object of unknown type
+PASS XMLDocument interface object name 
+PASS XMLDocument interface: existence and properties of interface prototype object 
 FAIL XMLDocument interface: existence and properties of interface prototype object's "constructor" property assert_true: XMLDocument.prototype.constructor is not writable expected true got false
 PASS XMLDocument must be primary interface of xmlDoc 
-FAIL Stringification of xmlDoc assert_equals: class string of xmlDoc expected "[object XMLDocument]" but got "[object Document]"
+PASS Stringification of xmlDoc 
 PASS Document interface: xmlDoc must inherit property "implementation" with the proper type (0) 
 PASS Document interface: xmlDoc must inherit property "URL" with the proper type (1) 
 PASS Document interface: xmlDoc must inherit property "documentURI" with the proper type (2) 

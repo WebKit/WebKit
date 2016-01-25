@@ -15,7 +15,7 @@ text to parse
 
 document object
 
-[object Document]
+[object XMLDocument]
 
 document object serialized
 

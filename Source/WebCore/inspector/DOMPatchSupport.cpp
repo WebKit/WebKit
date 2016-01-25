@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "InspectorHistory.h"
 #include "Node.h"
+#include "XMLDocument.h"
 #include "XMLDocumentParser.h"
 
 #include <wtf/Deque.h>
@@ -88,9 +89,9 @@ void DOMPatchSupport::patchDocument(const String& markup)
     if (m_document->isHTMLDocument())
         newDocument = HTMLDocument::create(nullptr, URL());
     else if (m_document->isXHTMLDocument())
-        newDocument = HTMLDocument::createXHTML(nullptr, URL());
+        newDocument = XMLDocument::createXHTML(nullptr, URL());
     else if (m_document->isSVGDocument())
-        newDocument = Document::create(nullptr, URL());
+        newDocument = XMLDocument::create(nullptr, URL());
 
     ASSERT(newDocument);
     RefPtr<DocumentParser> parser;

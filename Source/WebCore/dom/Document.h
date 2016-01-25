@@ -266,7 +266,8 @@ enum DocumentClass {
     PluginDocumentClass = 1 << 3,
     MediaDocumentClass = 1 << 4,
     SVGDocumentClass = 1 << 5,
-    TextDocumentClass = 1 << 6
+    TextDocumentClass = 1 << 6,
+    XMLDocumentClass = 1 << 7,
 };
 
 typedef unsigned char DocumentClassFlags;
@@ -301,10 +302,7 @@ public:
     {
         return adoptRef(*new Document(frame, url));
     }
-    static Ref<Document> createXHTML(Frame* frame, const URL& url)
-    {
-        return adoptRef(*new Document(frame, url, XHTMLDocumentClass));
-    }
+
     static Ref<Document> createNonRenderedPlaceholder(Frame* frame, const URL& url)
     {
         return adoptRef(*new Document(frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
@@ -487,6 +485,7 @@ public:
     bool isSynthesized() const { return m_isSynthesized; }
     bool isHTMLDocument() const { return m_documentClasses & HTMLDocumentClass; }
     bool isXHTMLDocument() const { return m_documentClasses & XHTMLDocumentClass; }
+    bool isXMLDocument() const { return m_documentClasses & XMLDocumentClass; }
     bool isImageDocument() const { return m_documentClasses & ImageDocumentClass; }
     bool isSVGDocument() const { return m_documentClasses & SVGDocumentClass; }
     bool isPluginDocument() const { return m_documentClasses & PluginDocumentClass; }

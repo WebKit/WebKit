@@ -1,5 +1,5 @@
 
-FAIL new Document(): interfaces assert_false: Should not be an XMLDocument expected false got true
+PASS new Document(): interfaces 
 PASS new Document(): children 
 PASS new Document(): metadata 
 PASS new Document(): characterSet aliases 

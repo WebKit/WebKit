@@ -19,7 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface SVGDocument : Document {
+// FIXME: This interface no longer exists in SVG2.
+interface SVGDocument : XMLDocument {
     readonly attribute SVGSVGElement        rootElement;
 
     // Overwrite the one in events::DocumentEvent
