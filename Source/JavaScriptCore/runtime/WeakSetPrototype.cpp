@@ -45,9 +45,9 @@ void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, protoFuncWeakSetDelete, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->has, protoFuncWeakSetHas, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->add, protoFuncWeakSetAdd, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, protoFuncWeakSetDelete, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, protoFuncWeakSetHas, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->add, protoFuncWeakSetAdd, DontEnum, 1);
 
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakSet"), DontEnum | ReadOnly);
 }

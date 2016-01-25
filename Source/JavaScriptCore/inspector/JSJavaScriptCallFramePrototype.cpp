@@ -68,8 +68,8 @@ void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* glob
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION("evaluate", jsJavaScriptCallFramePrototypeFunctionEvaluate, DontEnum, 1);
-    JSC_NATIVE_FUNCTION("scopeType", jsJavaScriptCallFramePrototypeFunctionScopeType, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluate", jsJavaScriptCallFramePrototypeFunctionEvaluate, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeType", jsJavaScriptCallFramePrototypeFunctionScopeType, DontEnum, 1);
 
     JSC_NATIVE_NON_INDEX_ACCESSOR("caller", jsJavaScriptCallFrameAttributeCaller, DontEnum | Accessor);
     JSC_NATIVE_NON_INDEX_ACCESSOR("sourceID", jsJavaScriptCallFrameAttributeSourceID, DontEnum | Accessor);

@@ -492,9 +492,9 @@ void DatePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
 
 #if ENABLE(INTL)
-    JSC_BUILTIN_FUNCTION("toLocaleString", datePrototypeToLocaleStringCodeGenerator, DontEnum);
-    JSC_BUILTIN_FUNCTION("toLocaleDateString", datePrototypeToLocaleDateStringCodeGenerator, DontEnum);
-    JSC_BUILTIN_FUNCTION("toLocaleTimeString", datePrototypeToLocaleTimeStringCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleString", datePrototypeToLocaleStringCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleDateString", datePrototypeToLocaleDateStringCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleTimeString", datePrototypeToLocaleTimeStringCodeGenerator, DontEnum);
 #else
     UNUSED_PARAM(globalObject);
 #endif // ENABLE(INTL)

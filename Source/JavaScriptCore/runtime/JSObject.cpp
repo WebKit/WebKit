@@ -2330,10 +2330,6 @@ JSFunction* JSObject::putDirectBuiltinFunction(VM& vm, JSGlobalObject* globalObj
 
 JSFunction* JSObject::putDirectBuiltinFunctionWithoutTransition(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, FunctionExecutable* functionExecutable, unsigned attributes)
 {
-    StringImpl* name = propertyName.publicName();
-    if (!name)
-        name = vm.propertyNames->anonymous.impl();
-    ASSERT(name);
     JSFunction* function = JSFunction::createBuiltinFunction(vm, static_cast<FunctionExecutable*>(functionExecutable), globalObject);
     putDirectWithoutTransition(vm, propertyName, function, attributes);
     return function;
@@ -2342,8 +2338,9 @@ JSFunction* JSObject::putDirectBuiltinFunctionWithoutTransition(VM& vm, JSGlobal
 void JSObject::putDirectNativeFunctionWithoutTransition(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
 {
     StringImpl* name = propertyName.publicName();
+    if (!name)
+        name = vm.propertyNames->anonymous.impl();
     ASSERT(name);
-
     JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, intrinsic);
     putDirectWithoutTransition(vm, propertyName, function, attributes);
 }

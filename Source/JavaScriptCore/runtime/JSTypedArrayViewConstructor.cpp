@@ -52,8 +52,8 @@ void JSTypedArrayViewConstructor::finishCreation(VM& vm, JSGlobalObject* globalO
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(3), DontEnum | DontDelete | ReadOnly);
     putDirectNonIndexAccessor(vm, vm.propertyNames->speciesSymbol, speciesSymbol, Accessor | ReadOnly | DontEnum | DontDelete);
 
-    JSC_BUILTIN_FUNCTION(vm.propertyNames->of, typedArrayConstructorOfCodeGenerator, DontEnum);
-    JSC_BUILTIN_FUNCTION(vm.propertyNames->from, typedArrayConstructorFromCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->of, typedArrayConstructorOfCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->from, typedArrayConstructorFromCodeGenerator, DontEnum);
 }
 
 Structure* JSTypedArrayViewConstructor::createStructure(

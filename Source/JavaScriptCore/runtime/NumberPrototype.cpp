@@ -82,7 +82,7 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     setInternalValue(vm, jsNumber(0));
 
 #if ENABLE(INTL)
-    JSC_BUILTIN_FUNCTION("toLocaleString", numberPrototypeToLocaleStringCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleString", numberPrototypeToLocaleStringCodeGenerator, DontEnum);
 #else
     UNUSED_PARAM(globalObject);
 #endif // ENABLE(INTL)

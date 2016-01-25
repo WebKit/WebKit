@@ -90,8 +90,8 @@ void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePro
 
 void JSPromiseConstructor::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)
 {
-    JSC_BUILTIN_FUNCTION(vm.propertyNames->builtinNames().resolvePrivateName(), promiseConstructorResolveCodeGenerator, DontEnum | DontDelete | ReadOnly);
-    JSC_BUILTIN_FUNCTION(vm.propertyNames->builtinNames().rejectPrivateName(), promiseConstructorRejectCodeGenerator, DontEnum | DontDelete | ReadOnly);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().resolvePrivateName(), promiseConstructorResolveCodeGenerator, DontEnum | DontDelete | ReadOnly);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().rejectPrivateName(), promiseConstructorRejectCodeGenerator, DontEnum | DontDelete | ReadOnly);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)

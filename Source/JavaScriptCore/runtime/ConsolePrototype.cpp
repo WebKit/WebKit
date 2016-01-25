@@ -68,27 +68,27 @@ void ConsolePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     // For legacy reasons, console properties are enumerable, writable, deleteable,
     // and all have a length of 0. This may change if Console is standardized.
 
-    JSC_NATIVE_FUNCTION("debug", consoleProtoFuncDebug, None, 0);
-    JSC_NATIVE_FUNCTION("error", consoleProtoFuncError, None, 0);
-    JSC_NATIVE_FUNCTION("log", consoleProtoFuncLog, None, 0);
-    JSC_NATIVE_FUNCTION("info", consoleProtoFuncInfo, None, 0);
-    JSC_NATIVE_FUNCTION("warn", consoleProtoFuncWarn, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("debug", consoleProtoFuncDebug, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("error", consoleProtoFuncError, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("log", consoleProtoFuncLog, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("info", consoleProtoFuncInfo, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("warn", consoleProtoFuncWarn, None, 0);
 
-    JSC_NATIVE_FUNCTION("clear", consoleProtoFuncClear, None, 0);
-    JSC_NATIVE_FUNCTION("dir", consoleProtoFuncDir, None, 0);
-    JSC_NATIVE_FUNCTION("dirxml", consoleProtoFuncDirXML, None, 0);
-    JSC_NATIVE_FUNCTION("table", consoleProtoFuncTable, None, 0);
-    JSC_NATIVE_FUNCTION("trace", consoleProtoFuncTrace, None, 0);
-    JSC_NATIVE_FUNCTION("assert", consoleProtoFuncAssert, None, 0);
-    JSC_NATIVE_FUNCTION("count", consoleProtoFuncCount, None, 0);
-    JSC_NATIVE_FUNCTION("profile", consoleProtoFuncProfile, None, 0);
-    JSC_NATIVE_FUNCTION("profileEnd", consoleProtoFuncProfileEnd, None, 0);
-    JSC_NATIVE_FUNCTION("time", consoleProtoFuncTime, None, 0);
-    JSC_NATIVE_FUNCTION("timeEnd", consoleProtoFuncTimeEnd, None, 0);
-    JSC_NATIVE_FUNCTION("timeStamp", consoleProtoFuncTimeStamp, None, 0);
-    JSC_NATIVE_FUNCTION("group", consoleProtoFuncGroup, None, 0);
-    JSC_NATIVE_FUNCTION("groupCollapsed", consoleProtoFuncGroupCollapsed, None, 0);
-    JSC_NATIVE_FUNCTION("groupEnd", consoleProtoFuncGroupEnd, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("clear", consoleProtoFuncClear, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("dir", consoleProtoFuncDir, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("dirxml", consoleProtoFuncDirXML, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("table", consoleProtoFuncTable, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trace", consoleProtoFuncTrace, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("assert", consoleProtoFuncAssert, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("count", consoleProtoFuncCount, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profile", consoleProtoFuncProfile, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profileEnd", consoleProtoFuncProfileEnd, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("time", consoleProtoFuncTime, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeEnd", consoleProtoFuncTimeEnd, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeStamp", consoleProtoFuncTimeStamp, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("group", consoleProtoFuncGroup, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupCollapsed", consoleProtoFuncGroupCollapsed, None, 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupEnd", consoleProtoFuncGroupEnd, None, 0);
 }
 
 static String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)

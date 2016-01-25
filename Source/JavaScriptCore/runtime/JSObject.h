@@ -1480,15 +1480,27 @@ ALWAYS_INLINE Identifier makeIdentifier(VM&, const Identifier& name)
         vm, globalObject, makeIdentifier(vm, (jsName)), (length), cppName, \
         (intrinsic), (attributes))
 
+#define JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(jsName, cppName, attributes, length, intrinsic) \
+    putDirectNativeFunctionWithoutTransition(\
+        vm, globalObject, makeIdentifier(vm, (jsName)), (length), cppName, \
+        (intrinsic), (attributes))
+
 // As above, but this assumes that the function you're defining doesn't have an
 // intrinsic.
 #define JSC_NATIVE_FUNCTION(jsName, cppName, attributes, length) \
     JSC_NATIVE_INTRINSIC_FUNCTION(jsName, cppName, (attributes), (length), NoIntrinsic)
 
+#define JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(jsName, cppName, attributes, length) \
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(jsName, cppName, (attributes), (length), NoIntrinsic)
+
 // Identical helpers but for builtins. Note that currently, we don't support builtins that are
 // also intrinsics, but we probably will do that eventually.
 #define JSC_BUILTIN_FUNCTION(jsName, generatorName, attributes) \
     putDirectBuiltinFunction(\
+        vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm), (attributes))
+
+#define JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(jsName, generatorName, attributes) \
+    putDirectBuiltinFunctionWithoutTransition(\
         vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm), (attributes))
 
 // Helper for defining native getters on properties.

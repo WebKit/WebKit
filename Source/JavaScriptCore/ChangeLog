@@ -1,3 +1,61 @@
+2016-01-25  Andreas Kling  <akling@apple.com>
+
+        Reduce number of Structures created at startup.
+        <https://webkit.org/b/153399>
+
+        Reviewed by Darin Adler.
+
+        For *Constructor and *Prototype objects that are only created once per JSGlobalObject,
+        build up the Structures using addPropertyWithoutTransition() helpers to avoid creating
+        tons of transitions that would just end up floating around and never getting used.
+
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/ConsolePrototype.cpp:
+        (JSC::ConsolePrototype::finishCreation):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectNativeFunctionWithoutTransition):
+        (JSC::JSObject::putDirectBuiltinFunctionWithoutTransition): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::addOwnInternalSlots):
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::addOwnInternalSlots):
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::finishCreation):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+
 2016-01-22  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should strength-reduce division by a constant
