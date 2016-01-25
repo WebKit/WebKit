@@ -1,3 +1,16 @@
+2016-01-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Timelines: "Timer Installed150ms delay" — no space before the delay number
+        https://bugs.webkit.org/show_bug.cgi?id=153416
+
+        Reviewed by Timothy Hatcher.
+
+        Fix for tree element subtitle rule that regressed in https://bugs.webkit.org/show_bug.cgi?id=153146.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline .item .alternate-subtitle::before):
+        Em dash should be inserted before both subtitle types.
+
 2016-01-24  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: add support for placing Views in DataGrid column headers

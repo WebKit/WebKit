@@ -224,6 +224,7 @@ body.window-inactive .tree-outline .item.selected {
     content: "";
 }
 
-.tree-outline .item .subtitle::before {
+.tree-outline .item .subtitle::before,
+.tree-outline .item .alternate-subtitle::before {
     content: " — ";
 }
