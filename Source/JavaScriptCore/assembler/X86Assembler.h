@@ -187,6 +187,7 @@ private:
     //     -v: 32 or 64bit depending on the operand-size attribute.
     //     -z: 32bit in both 32bit and 64bit mode. Common for immediate values.
     typedef enum {
+        OP_ADD_EbGb                     = 0x00,
         OP_ADD_EvGv                     = 0x01,
         OP_ADD_GvEv                     = 0x03,
         OP_ADD_EAXIv                    = 0x05,
@@ -433,6 +434,33 @@ public:
         m_formatter.oneByteOp(OP_ADD_EvGv, src, base, offset);
     }
 
+    void addl_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp(OP_ADD_EvGv, src, base, index, scale, offset);
+    }
+
+    void addb_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp8(OP_ADD_EbGb, src, base, offset);
+    }
+
+    void addb_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp8(OP_ADD_EbGb, src, base, index, scale, offset);
+    }
+
+    void addw_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp8(OP_ADD_EvGv, src, base, offset);
+    }
+
+    void addw_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp8(OP_ADD_EvGv, src, base, index, scale, offset);
+    }
+
     void addl_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -455,6 +483,53 @@ public:
         } else {
             m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADD, base, offset);
             m_formatter.immediate32(imm);
+        }
+    }
+
+    void addl_im(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_ADD, base, index, scale, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_ADD, base, index, scale, offset);
+            m_formatter.immediate32(imm);
+        }
+    }
+
+    void addb_im(int imm, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp8(OP_GROUP1_EbIb, GROUP1_OP_ADD, base, offset);
+        m_formatter.immediate8(imm);
+    }
+
+    void addb_im(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp8(OP_GROUP1_EbIb, GROUP1_OP_ADD, base, index, scale, offset);
+        m_formatter.immediate8(imm);
+    }
+
+    void addw_im(int imm, int offset, RegisterID base)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp8(OP_GROUP1_EvIb, GROUP1_OP_ADD, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp8(OP_GROUP1_EvIz, GROUP1_OP_ADD, base, offset);
+            m_formatter.immediate16(imm);
+        }
+    }
+
+    void addw_im(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp8(OP_GROUP1_EvIb, GROUP1_OP_ADD, base, index, scale, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp8(OP_GROUP1_EvIz, GROUP1_OP_ADD, base, index, scale, offset);
+            m_formatter.immediate16(imm);
         }
     }
 
@@ -1564,6 +1639,9 @@ public:
     void movw_rm(RegisterID src, int offset, RegisterID base)
     {
         m_formatter.prefix(PRE_OPERAND_SIZE);
+
+        // FIXME: We often use oneByteOp8 for 16-bit operations. It's not clear that this is
+        // necessary. https://bugs.webkit.org/show_bug.cgi?id=153433
         m_formatter.oneByteOp8(OP_MOV_EvGv, src, base, offset);
     }
 

@@ -458,15 +458,20 @@ private:
         return result;
     }
 
-    ArgPromise loadPromise(Value* loadValue, B3::Opcode loadOpcode)
+    ArgPromise loadPromiseAnyOpcode(Value* loadValue)
     {
-        if (loadValue->opcode() != loadOpcode)
-            return Arg();
         if (!canBeInternal(loadValue))
             return Arg();
         if (crossesInterference(loadValue))
             return Arg();
         return ArgPromise(addr(loadValue), loadValue);
+    }
+
+    ArgPromise loadPromise(Value* loadValue, B3::Opcode loadOpcode)
+    {
+        if (loadValue->opcode() != loadOpcode)
+            return Arg();
+        return loadPromiseAnyOpcode(loadValue);
     }
 
     ArgPromise loadPromise(Value* loadValue)
@@ -744,14 +749,34 @@ private:
         Arg storeAddr = addr(m_value);
         ASSERT(storeAddr);
 
+        auto getLoadPromise = [&] (Value* load) -> ArgPromise {
+            switch (m_value->opcode()) {
+            case B3::Store:
+                if (load->opcode() != B3::Load)
+                    return ArgPromise();
+                break;
+            case B3::Store8:
+                if (load->opcode() != B3::Load8Z && load->opcode() != B3::Load8S)
+                    return ArgPromise();
+                break;
+            case B3::Store16:
+                if (load->opcode() != B3::Load16Z && load->opcode() != B3::Load16S)
+                    return ArgPromise();
+                break;
+            default:
+                return ArgPromise();
+            }
+            return loadPromiseAnyOpcode(load);
+        };
+        
         ArgPromise loadPromise;
         Value* otherValue = nullptr;
-        
-        loadPromise = this->loadPromise(left);
+
+        loadPromise = getLoadPromise(left);
         if (loadPromise.peek() == storeAddr)
             otherValue = right;
         else if (commutativity == Commutative) {
-            loadPromise = this->loadPromise(right);
+            loadPromise = getLoadPromise(right);
             if (loadPromise.peek() == storeAddr)
                 otherValue = left;
         }
@@ -1779,12 +1804,42 @@ private:
 
         case B3::Store8: {
             Value* valueToStore = m_value->child(0);
+            if (canBeInternal(valueToStore)) {
+                bool matched = false;
+                switch (valueToStore->opcode()) {
+                case Add:
+                    matched = tryAppendStoreBinOp<Add8, Air::Oops, Commutative>(
+                        valueToStore->child(0), valueToStore->child(1));
+                    break;
+                default:
+                    break;
+                }
+                if (matched) {
+                    commitInternal(valueToStore);
+                    return;
+                }
+            }
             m_insts.last().append(createStore(Air::Store8, valueToStore, addr(m_value)));
             return;
         }
 
         case B3::Store16: {
             Value* valueToStore = m_value->child(0);
+            if (canBeInternal(valueToStore)) {
+                bool matched = false;
+                switch (valueToStore->opcode()) {
+                case Add:
+                    matched = tryAppendStoreBinOp<Add16, Air::Oops, Commutative>(
+                        valueToStore->child(0), valueToStore->child(1));
+                    break;
+                default:
+                    break;
+                }
+                if (matched) {
+                    commitInternal(valueToStore);
+                    return;
+                }
+            }
             m_insts.last().append(createStore(Air::Store16, valueToStore, addr(m_value)));
             return;
         }

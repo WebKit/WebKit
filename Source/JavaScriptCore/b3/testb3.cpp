@@ -4266,7 +4266,30 @@ void testNegPtr(intptr_t value)
     CHECK(compileAndRun<intptr_t>(proc, value) == -value);
 }
 
-void testStoreAddLoad(int amount)
+void testStoreAddLoad32(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoadImm32(int amount)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -4285,6 +4308,382 @@ void testStoreAddLoad(int amount)
 
     CHECK(!compileAndRun<int>(proc));
     CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoad8(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int8_t slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store8, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoadImm8(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int8_t slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store8, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<Const32Value>(proc, Origin(), amount)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoad16(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int16_t slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store16, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoadImm16(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int16_t slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store16, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<Const32Value>(proc, Origin(), amount)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoad64(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int64_t slot = 37000000000ll;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), slotPtr),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37000000000ll + amount);
+}
+
+void testStoreAddLoadImm64(int64_t amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int64_t slot = 370000000000ll;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), slotPtr),
+            root->appendNew<Const64Value>(proc, Origin(), amount)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == 370000000000ll + amount);
+}
+
+void testStoreAddLoad32Index(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int slot = 37;
+    int* ptr = &slot;
+    intptr_t zero = 0;
+    Value* slotPtr = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &ptr)),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &zero)));
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoadImm32Index(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int slot = 37;
+    int* ptr = &slot;
+    intptr_t zero = 0;
+    Value* slotPtr = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &ptr)),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &zero)));
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr),
+            root->appendNew<Const32Value>(proc, Origin(), amount)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoad8Index(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int8_t slot = 37;
+    int8_t* ptr = &slot;
+    intptr_t zero = 0;
+    Value* slotPtr = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &ptr)),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &zero)));
+    root->appendNew<MemoryValue>(
+        proc, Store8, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoadImm8Index(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int8_t slot = 37;
+    int8_t* ptr = &slot;
+    intptr_t zero = 0;
+    Value* slotPtr = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &ptr)),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &zero)));
+    root->appendNew<MemoryValue>(
+        proc, Store8, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<Const32Value>(proc, Origin(), amount)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoad16Index(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int16_t slot = 37;
+    int16_t* ptr = &slot;
+    intptr_t zero = 0;
+    Value* slotPtr = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &ptr)),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &zero)));
+    root->appendNew<MemoryValue>(
+        proc, Store16, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoadImm16Index(int amount, B3::Opcode loadOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int16_t slot = 37;
+    int16_t* ptr = &slot;
+    intptr_t zero = 0;
+    Value* slotPtr = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &ptr)),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &zero)));
+    root->appendNew<MemoryValue>(
+        proc, Store16, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, loadOpcode, Origin(), slotPtr),
+            root->appendNew<Const32Value>(proc, Origin(), amount)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == 37 + amount);
+}
+
+void testStoreAddLoad64Index(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int64_t slot = 37000000000ll;
+    int64_t* ptr = &slot;
+    intptr_t zero = 0;
+    Value* slotPtr = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &ptr)),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &zero)));
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), slotPtr),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == 37000000000ll + amount);
+}
+
+void testStoreAddLoadImm64Index(int64_t amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int64_t slot = 370000000000ll;
+    int64_t* ptr = &slot;
+    intptr_t zero = 0;
+    Value* slotPtr = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &ptr)),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &zero)));
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), slotPtr),
+            root->appendNew<Const64Value>(proc, Origin(), amount)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == 370000000000ll + amount);
 }
 
 void testStoreSubLoad(int amount)
@@ -10276,7 +10675,30 @@ void run(const char* filter)
     RUN(testAdd1Ptr(bitwise_cast<intptr_t>(vm)));
     RUN(testNeg32(52));
     RUN(testNegPtr(53));
-    RUN(testStoreAddLoad(46));
+    RUN(testStoreAddLoad32(46));
+    RUN(testStoreAddLoadImm32(46));
+    RUN(testStoreAddLoad64(4600));
+    RUN(testStoreAddLoadImm64(4600));
+    RUN(testStoreAddLoad8(4, Load8Z));
+    RUN(testStoreAddLoadImm8(4, Load8Z));
+    RUN(testStoreAddLoad8(4, Load8S));
+    RUN(testStoreAddLoadImm8(4, Load8S));
+    RUN(testStoreAddLoad16(6, Load16Z));
+    RUN(testStoreAddLoadImm16(6, Load16Z));
+    RUN(testStoreAddLoad16(6, Load16S));
+    RUN(testStoreAddLoadImm16(6, Load16S));
+    RUN(testStoreAddLoad32Index(46));
+    RUN(testStoreAddLoadImm32Index(46));
+    RUN(testStoreAddLoad64Index(4600));
+    RUN(testStoreAddLoadImm64Index(4600));
+    RUN(testStoreAddLoad8Index(4, Load8Z));
+    RUN(testStoreAddLoadImm8Index(4, Load8Z));
+    RUN(testStoreAddLoad8Index(4, Load8S));
+    RUN(testStoreAddLoadImm8Index(4, Load8S));
+    RUN(testStoreAddLoad16Index(6, Load16Z));
+    RUN(testStoreAddLoadImm16Index(6, Load16Z));
+    RUN(testStoreAddLoad16Index(6, Load16S));
+    RUN(testStoreAddLoadImm16Index(6, Load16S));
     RUN(testStoreSubLoad(46));
     RUN(testStoreAddLoadInterference(52));
     RUN(testStoreAddAndLoad(47, 0xffff));

@@ -1,3 +1,77 @@
+2016-01-22  Filip Pizlo  <fpizlo@apple.com>
+
+        mandreel should run just as fast in FTL B3 as FTL LLVM
+        https://bugs.webkit.org/show_bug.cgi?id=153394
+
+        Reviewed by Gavin Barraclough.
+
+        This fixes two performance bugs and one disassembler bug.
+
+        - B3 now turns Branches into Jumps when they are dominated by a Check on the same
+          condition. This is like the opposite of foldPathConstants() was doing.
+
+        - Air now supports adding to 8-bit or 16-bit memory locations on x86. B3 now knows how to
+          lower Store8(Add(Load8Z(...))) and various other things to these new instructions.
+
+        - Disassembler now knows to print out the instruction's width, whenever it has one.
+          Previously, we'd print movb, movw, movl, and movq as "mov", which is unhelpful if
+          you're storing an immediate, for example.
+
+        This adds a bunch of tests for the new instruction forms. This is a big speed-up on
+        mandreel. It makes us just as fast as LLVM on that benchmark.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::add8):
+        (JSC::MacroAssemblerX86Common::add16):
+        (JSC::MacroAssemblerX86Common::add32AndSetFlags):
+        (JSC::MacroAssemblerX86Common::clz32AfterBsr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addl_rm):
+        (JSC::X86Assembler::addb_rm):
+        (JSC::X86Assembler::addw_rm):
+        (JSC::X86Assembler::addl_ir):
+        (JSC::X86Assembler::addl_im):
+        (JSC::X86Assembler::addb_im):
+        (JSC::X86Assembler::addw_im):
+        (JSC::X86Assembler::addq_rr):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::addr):
+        (JSC::B3::Air::LowerToAir::loadPromiseAnyOpcode):
+        (JSC::B3::Air::LowerToAir::loadPromise):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3PureCSE.cpp:
+        (JSC::B3::PureCSE::clear):
+        (JSC::B3::PureCSE::findMatch):
+        (JSC::B3::PureCSE::process):
+        * b3/B3PureCSE.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testNegPtr):
+        (JSC::B3::testStoreAddLoad32):
+        (JSC::B3::testStoreAddLoadImm32):
+        (JSC::B3::testStoreAddLoad8):
+        (JSC::B3::testStoreAddLoadImm8):
+        (JSC::B3::testStoreAddLoad16):
+        (JSC::B3::testStoreAddLoadImm16):
+        (JSC::B3::testStoreAddLoad64):
+        (JSC::B3::testStoreAddLoadImm64):
+        (JSC::B3::testStoreAddLoad32Index):
+        (JSC::B3::testStoreAddLoadImm32Index):
+        (JSC::B3::testStoreAddLoad8Index):
+        (JSC::B3::testStoreAddLoadImm8Index):
+        (JSC::B3::testStoreAddLoad16Index):
+        (JSC::B3::testStoreAddLoadImm16Index):
+        (JSC::B3::testStoreAddLoad64Index):
+        (JSC::B3::testStoreAddLoadImm64Index):
+        (JSC::B3::testStoreSubLoad):
+        (JSC::B3::run):
+        (JSC::B3::testStoreAddLoad): Deleted.
+        * disassembler/udis86/udis86_syn-att.c:
+        (ud_translate_att):
+
 2016-01-25  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Copy forwarding headers before building a project

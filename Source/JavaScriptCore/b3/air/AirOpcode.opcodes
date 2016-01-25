@@ -110,9 +110,23 @@ Nop
 Add32 U:G:32, UZD:G:32
     Tmp, Tmp
     x86: Imm, Addr
+    x86: Imm, Index
     Imm, Tmp
     x86: Addr, Tmp
     x86: Tmp, Addr
+    x86: Tmp, Index
+
+x86: Add8 U:G:8, UD:G:8
+    Imm, Addr
+    Imm, Index
+    Tmp, Addr
+    Tmp, Index
+
+x86: Add16 U:G:16, UD:G:16
+    Imm, Addr
+    Imm, Index
+    Tmp, Addr
+    Tmp, Index
 
 Add32 U:G:32, U:G:32, ZD:G:32
     Imm, Tmp, Tmp

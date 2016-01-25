@@ -167,6 +167,7 @@ extern void
 ud_translate_att(struct ud *u)
 {
   int size = 0;
+  unsigned i;
 
   /* check if P_OSO prefix is used */
   if (! P_OSO(u->itab_entry->prefix) && u->pfx_opr) {
@@ -229,19 +230,19 @@ ud_translate_att(struct ud *u)
 		mkasm(u, "%s", ud_lookup_mnemonic(u->mnemonic));
   }
 
-  if (u->c1)
-	size = u->operand[0].size;
-  else if (u->c2)
-	size = u->operand[1].size;
-  else if (u->c3)
-	size = u->operand[2].size;
+  for (i = 3; i--;) {
+      if (u->operand[i].size > size)
+          size = u->operand[i].size;
+  }
 
   if (size == 8)
-	mkasm(u, "b");
+      mkasm(u, "b");
   else if (size == 16)
-	mkasm(u, "w");
+      mkasm(u, "w");
+  else if (size == 32)
+      mkasm(u, "l");
   else if (size == 64)
- 	mkasm(u, "q");
+      mkasm(u, "q");
 
   mkasm(u, " ");
 

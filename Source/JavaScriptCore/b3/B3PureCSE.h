@@ -34,6 +34,7 @@
 
 namespace JSC { namespace B3 {
 
+class BasicBlock;
 class Dominators;
 class Value;
 
@@ -47,6 +48,8 @@ public:
     ~PureCSE();
 
     void clear();
+
+    Value* findMatch(const ValueKey&, BasicBlock*, Dominators&);
 
     bool process(Value*, Dominators&);
     

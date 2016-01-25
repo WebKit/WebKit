@@ -42,7 +42,7 @@
 #include "B3PureCSE.h"
 #include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
-#include "B3ValueKey.h"
+#include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/HashMap.h>
@@ -1643,7 +1643,19 @@ private:
                 m_changedCFG = true;
                 break;
             }
-            
+
+            // If a check for the same property dominates us, we can kill the branch. This sort
+            // of makes sense here because it's cheap, but hacks like this show that we're going
+            // to need SCCP.
+            Value* check = m_pureCSE.findMatch(
+                ValueKey(Check, Void, branch->child(0)), m_block, *m_dominators);
+            if (check) {
+                // The Check would have side-exited if child(0) was non-zero. So, it must be
+                // zero here.
+                branch->taken().block()->removePredecessor(m_block);
+                branch->convertToJump(branch->notTaken().block());
+                m_changedCFG = true;
+            }
             break;
         }
             

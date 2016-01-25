@@ -46,6 +46,23 @@ void PureCSE::clear()
     m_map.clear();
 }
 
+Value* PureCSE::findMatch(const ValueKey& key, BasicBlock* block, Dominators& dominators)
+{
+    if (!key)
+        return nullptr;
+
+    auto iter = m_map.find(key);
+    if (iter == m_map.end())
+        return nullptr;
+
+    for (Value* match : iter->value) {
+        if (dominators.dominates(match->owner, block))
+            return match;
+    }
+
+    return nullptr;
+}
+
 bool PureCSE::process(Value* value, Dominators& dominators)
 {
     if (value->opcode() == Identity)
