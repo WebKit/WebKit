@@ -1215,6 +1215,17 @@ void WebEditorClient::handleAcceptedCandidate(NSTextCheckingResult *acceptedCand
     if (selection != m_lastSelectionForRequestedCandidates)
         return;
 
+    NSView <WebDocumentView> *view = [[[m_webView selectedFrame] frameView] documentView];
+    if ([view isKindOfClass:[WebHTMLView class]]) {
+        NSRange range = [acceptedCandidate range];
+        if (acceptedCandidate.replacementString && [acceptedCandidate.replacementString length] > 0) {
+            NSRange replacedRange = NSMakeRange(range.location, [acceptedCandidate.replacementString length]);
+            NSRange softSpaceRange = NSMakeRange(NSMaxRange(replacedRange) - 1, 1);
+            if ([acceptedCandidate.replacementString hasSuffix:@" "])
+                [(WebHTMLView *)view _setSoftSpaceRange:softSpaceRange];
+        }
+    }
+
     frame->editor().handleAcceptedCandidate(textCheckingResultFromNSTextCheckingResult(acceptedCandidate));
 }
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200

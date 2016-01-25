@@ -1,3 +1,30 @@
+2016-01-25  Beth Dakin  <bdakin@apple.com>
+
+        WK1: Handle soft spaces after accepted candidates
+        https://bugs.webkit.org/show_bug.cgi?id=153442
+        -and corresponding-
+        rdar://problem/23958418
+
+        Reviewed by Tim Horton.
+
+        The space at the end of candidates is a soft space. If that space exists, 
+        cache the range of the space in m_softSpaceRange.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleAcceptedCandidate):
+
+        New ivar in WebHTMLViewPrivate softSpaceRange keeps track to the NSRange of a 
+        soft space if the last text that was inserted has a soft space at the end.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView initWithFrame:]):
+        (-[WebHTMLView _setSoftSpaceRange:]):
+
+        When new text is inserted, find out if it is being inserted right after a 
+        soft space. If it is, then [NSSpellChecker deletesAutospaceBeforeString] will 
+        tell us if the space needs to be removed. If that is the case, then set the 
+        replacementString to the soft space.
+        (-[WebHTMLView insertText:]):
+        * WebView/WebHTMLViewInternal.h:
+
 2016-01-17  Ada Chan  <adachan@apple.com>
 
         Add a mode parameter to MediaControllerInterface::supportsFullscreen() and ChromeClient::supportsVideoFullscreen().

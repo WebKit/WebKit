@@ -109,6 +109,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
+#import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
@@ -977,6 +978,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 #if !PLATFORM(IOS)
     BOOL installedTrackingArea;
     id flagsChangedEventMonitor;
+    NSRange softSpaceRange;
 #endif
 
 #ifndef NDEBUG
@@ -2844,6 +2846,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     _private = [[WebHTMLViewPrivate alloc] init];
 
     _private->pluginController = [[WebPluginController alloc] initWithDocumentView:self];
+    _private->softSpaceRange = NSMakeRange(NSNotFound, 0);
 #if PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] 
             addObserver:self selector:@selector(markedTextUpdate:) 
@@ -6126,7 +6129,12 @@ static BOOL writingDirectionKeyBindingsEnabled()
     [fontManager setSelectedFont:font isMultiple:multipleFonts];
     [fontManager setSelectedAttributes:(attributes ? attributes : @{ }) isMultiple:multipleFonts];
 }
-#endif
+
+- (void)_setSoftSpaceRange:(NSRange)range
+{
+    _private->softSpaceRange = range;
+}
+#endif // !PLATFORM(IOS)
 
 - (BOOL)_canSmartCopyOrDelete
 {
@@ -7085,6 +7093,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     if (!coreFrame || !coreFrame->editor().canEdit())
         return;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if (_private->softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(_private->softSpaceRange) || replacementRange.location == NSNotFound) && replacementRange.length == 0 && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text language:nil])
+        replacementRange = _private->softSpaceRange;
+#endif
+#if !PLATFORM(IOS)
+    _private->softSpaceRange = NSMakeRange(NSNotFound, 0);
+#endif
 
     if (replacementRange.location != NSNotFound)
         [[self _frame] _selectNSRange:replacementRange];

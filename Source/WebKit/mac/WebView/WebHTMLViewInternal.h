@@ -42,6 +42,7 @@ namespace WebCore {
 - (void)_selectionChanged;
 #if !PLATFORM(IOS)
 - (void)_updateFontPanel;
+- (void)_setSoftSpaceRange:(NSRange)range;
 #endif
 - (BOOL)_canSmartCopyOrDelete;
 
