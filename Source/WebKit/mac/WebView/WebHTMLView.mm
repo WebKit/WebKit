@@ -2846,11 +2846,12 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     _private = [[WebHTMLViewPrivate alloc] init];
 
     _private->pluginController = [[WebPluginController alloc] initWithDocumentView:self];
-    _private->softSpaceRange = NSMakeRange(NSNotFound, 0);
 #if PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] 
             addObserver:self selector:@selector(markedTextUpdate:) 
                    name:WebMarkedTextUpdatedNotification object:nil];
+#else
+    _private->softSpaceRange = NSMakeRange(NSNotFound, 0);
 #endif
     
     return self;
@@ -7094,7 +7095,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (!coreFrame || !coreFrame->editor().canEdit())
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     if (_private->softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(_private->softSpaceRange) || replacementRange.location == NSNotFound) && replacementRange.length == 0 && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text language:nil])
         replacementRange = _private->softSpaceRange;
 #endif

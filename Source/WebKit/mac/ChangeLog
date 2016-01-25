@@ -1,5 +1,13 @@
 2016-01-25  Beth Dakin  <bdakin@apple.com>
 
+        Build fix.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView initWithFrame:]):
+        (-[WebHTMLView insertText:]):
+
+2016-01-25  Beth Dakin  <bdakin@apple.com>
+
         WK1: Handle soft spaces after accepted candidates
         https://bugs.webkit.org/show_bug.cgi?id=153442
         -and corresponding-
