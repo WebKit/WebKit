@@ -183,8 +183,14 @@ body.window-inactive .timeline-ruler > .header > .divider {
 }
 
 .timeline-ruler > .selection-handle.clamped {
-    border: 1px solid hsl(0, 0%, 64%);
+    border-color: hsl(0, 0%, 64%);
     background-color: white;
+}
+
+.timeline-ruler > .selection-handle:hover,
+.timeline-ruler > .selection-handle:active {
+    background-color: hsl(0, 0%, 50%);
+    border-color: white;
 }
 
 .timeline-ruler.both-handles-clamped > .selection-handle {

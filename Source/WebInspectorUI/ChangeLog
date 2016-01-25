@@ -1,3 +1,19 @@
+2016-01-24  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Highlight timeline range handles on hover
+        https://bugs.webkit.org/show_bug.cgi?id=153395
+        <rdar://problem/24312364>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .selection-handle.clamped):
+        Gardening. No need to repeat "1px solid".
+
+        (.timeline-ruler > .selection-handle:hover, .timeline-ruler > .selection-handle:active):
+        ":active" pseudo selector is needed to keep the handle highligted while it's being dragged
+        regardress if the mouse cursor is hovering over it or not.
+
 2016-01-23  Aaron Chu  <arona.chu@gmail.com>
 
         Web Inspector: AXI: node-link-list should be collapsible
