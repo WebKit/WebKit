@@ -49,9 +49,9 @@ public:
     void beginLoadIfNeeded(CachedResourceLoader&);
     virtual bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
-    virtual bool ensureCustomFontData(bool externalSVG, const AtomicString& remoteURI);
+    virtual bool ensureCustomFontData(const AtomicString& remoteURI);
 
-    virtual RefPtr<Font> createFont(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG, const FontFeatureSettings&, const FontVariantSettings&);
+    virtual RefPtr<Font> createFont(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&);
 
 protected:
     FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&);

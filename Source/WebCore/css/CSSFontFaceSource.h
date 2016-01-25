@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class CachedFont;
 class CSSFontFace;
 class CSSFontSelector;
 class Font;
@@ -68,8 +67,7 @@ public:
 #if ENABLE(SVG_FONTS)
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement.get(); }
     void setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement> element) { m_svgFontFaceElement = element; }
-    bool isSVGFontFaceSource() const { return m_svgFontFaceElement || m_hasExternalSVGFont; }
-    void setHasExternalSVGFont() { m_hasExternalSVGFont = true; }
+    bool isSVGFontFaceSource() const;
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
@@ -91,7 +89,6 @@ private:
 
 #if ENABLE(SVG_FONTS) || ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SVGFontFaceElement> m_svgFontFaceElement;
-    bool m_hasExternalSVGFont;
 #endif
 };
 

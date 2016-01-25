@@ -125,8 +125,8 @@ bool isValidHTTPToken(const String& value)
 {
     if (value.isEmpty())
         return false;
-    for (unsigned i = 0; i < value.length(); ++i) {
-        UChar c = value[i];
+    auto valueStringView = StringView(value);
+    for (UChar c : valueStringView.codeUnits()) {
         if (c <= 0x20 || c >= 0x7F
             || c == '(' || c == ')' || c == '<' || c == '>' || c == '@'
             || c == ',' || c == ';' || c == ':' || c == '\\' || c == '"'

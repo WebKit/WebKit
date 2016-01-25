@@ -180,18 +180,11 @@ static Ref<CSSFontFace> createFontFace(CSSValueList& srcList, FontTraitsMask tra
             Settings* settings = document ? document->settings() : nullptr;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
             if (allowDownloading && item.isSupportedFormat() && document) {
-                CachedFont* cachedFont = item.cachedFont(document, foundSVGFont, isInitiatingElementInUserAgentShadowTree);
-                if (cachedFont) {
+                if (CachedFont* cachedFont = item.cachedFont(document, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
                     source = std::make_unique<CSSFontFaceSource>(item.resource(), cachedFont);
-#if ENABLE(SVG_FONTS)
-                    if (foundSVGFont)
-                        source->setHasExternalSVGFont();
-#endif
-                }
             }
-        } else {
+        } else
             source = std::make_unique<CSSFontFaceSource>(item.resource());
-        }
 
         if (source) {
 #if ENABLE(SVG_FONTS)

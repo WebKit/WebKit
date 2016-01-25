@@ -92,7 +92,7 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader& loader)
     }
 }
 
-bool CachedFont::ensureCustomFontData(bool, const AtomicString&)
+bool CachedFont::ensureCustomFontData(const AtomicString&)
 {
     return ensureCustomFontData(m_data.get());
 }
@@ -121,7 +121,7 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
     return m_fontCustomPlatformData.get();
 }
 
-RefPtr<Font> CachedFont::createFont(const FontDescription& fontDescription, const AtomicString&, bool syntheticBold, bool syntheticItalic, bool, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)
+RefPtr<Font> CachedFont::createFont(const FontDescription& fontDescription, const AtomicString&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)
 {
     return Font::create(platformDataFromCustomData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings), true, false);
 }

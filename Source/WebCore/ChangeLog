@@ -1,3 +1,41 @@
+2016-01-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Loading] General cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=153403
+
+        Reviewed by Darin Adler.
+
+        It turns out that CSSFontFaceSource::m_hasExternalSVGFont exactly equals
+        whether or not CSSFontFaceSource::m_font is a CachedSVGFont. Therefore,
+        the variable is redundant.
+
+        In addition, it was being passed to functions on CSSFontFaceSource::m_font,
+        which means it was always true inside the CachedSVGFont subclass and
+        always false for the CachedFont. Therefore, there is no reason pass this
+        variable to these functions because its value can be determined at
+        authorship time.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource): Deleted.
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::createFontFace):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::createFont):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::createFont):
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+        * loader/cache/CachedSVGFont.h:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isValidHTTPToken):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::uppercaseKnownHTTPMethod):
+
 2016-01-24  Chris Dumez  <cdumez@apple.com>
 
         An XMLDocument interface should be exposed on the global Window object

@@ -57,9 +57,6 @@ CSSFontFaceSource::CSSFontFaceSource(const String& str, CachedFont* font)
     : m_string(str)
     , m_font(font)
     , m_face(0)
-#if ENABLE(SVG_FONTS)
-    , m_hasExternalSVGFont(false)
-#endif
 {
     if (m_font)
         m_font->addClient(this);
@@ -119,14 +116,10 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
     if (!m_font || m_font->isLoaded()) {
         if (m_font) {
-            bool hasExternalSVGFont = false;
-#if ENABLE(SVG_FONTS)
-            hasExternalSVGFont = m_hasExternalSVGFont;
-#endif
-            if (!m_font->ensureCustomFontData(hasExternalSVGFont, m_string))
+            if (!m_font->ensureCustomFontData(m_string))
                 return nullptr;
 
-            font = m_font->createFont(fontDescription, m_string, syntheticBold, syntheticItalic, hasExternalSVGFont, fontFaceFeatures, fontFaceVariantSettings);
+            font = m_font->createFont(fontDescription, m_string, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceVariantSettings);
         } else {
 #if ENABLE(SVG_FONTS)
             // In-Document SVG Fonts
@@ -163,6 +156,13 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
     return font.release();
 }
+
+#if ENABLE(SVG_FONTS)
+bool CSSFontFaceSource::isSVGFontFaceSource() const
+{
+    return m_svgFontFaceElement || is<CachedSVGFont>(m_font.get());
+}
+#endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
 bool CSSFontFaceSource::isDecodeError() const
