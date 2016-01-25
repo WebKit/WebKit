@@ -498,6 +498,11 @@ void WebProcess::setCacheModel(uint32_t cm)
     }
 }
 
+void WebProcess::switchToNewTestingSession()
+{
+    NetworkStorageSession::switchToNewTestingSession();
+}
+
 WebPage* WebProcess::focusedWebPage() const
 {    
     for (auto& page : m_pageMap.values()) {

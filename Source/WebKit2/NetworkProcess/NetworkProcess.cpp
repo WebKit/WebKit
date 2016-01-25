@@ -255,6 +255,11 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
 #endif
 }
 
+void NetworkProcess::switchToNewTestingSession()
+{
+    NetworkStorageSession::switchToNewTestingSession();
+}
+
 void NetworkProcess::ensurePrivateBrowsingSession(SessionID sessionID)
 {
     RemoteNetworkingContext::ensurePrivateBrowsingSession(sessionID);

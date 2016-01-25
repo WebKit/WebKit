@@ -45,6 +45,8 @@ messages -> WebProcess LegacyReceiver {
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
+    SwitchToNewTestingSession()
+
     // Legacy private browsing session is per process. Individual pages or page groups may use the private session or the default one as appropriate.
     EnsurePrivateBrowsingSession(WebCore::SessionID sessionID)
     DestroyPrivateBrowsingSession(WebCore::SessionID sessionID)

@@ -1,3 +1,29 @@
+2016-01-25  Daniel Bates  <dabates@apple.com>
+
+        WebKitTestRunner: Credential cache is not cleared between tests
+        https://bugs.webkit.org/show_bug.cgi?id=153407
+        <rdar://problem/24280834>
+
+        Reviewed by Brady Eidson.
+
+        Add SPI to call NetworkStorageSession::switchToNewTestingSession() to create a new testing session.
+        The new testing session will have an empty credential cache.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::switchToNewTestingSession): Added.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in: Added message SwitchToNewTestingSession().
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextResetTestingNetworkSession): Added.
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::resetTestingNetworkSession): Added.
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::switchToNewTestingSession): Added.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Added message SwitchToNewTestingSession().
+
 2016-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.createElement should be able to create a custom element
