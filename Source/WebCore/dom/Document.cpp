@@ -90,6 +90,7 @@
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
+#include "HTMLUnknownElement.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "HashChangeEvent.h"
@@ -882,18 +883,40 @@ void Document::childrenChanged(const ChildChange& change)
     clearStyleResolver();
 }
 
-RefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)
+static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, const QualifiedName qualifiedName, ExceptionCode& ec)
 {
-    if (!isValidName(name)) {
+    RefPtr<HTMLElement> element = HTMLElementFactory::createKnownElement(qualifiedName, document);
+    if (LIKELY(element))
+        return element;
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    auto* definitions = document.customElementDefinitions();
+    if (UNLIKELY(definitions)) {
+        if (auto* interface = definitions->findInterface(qualifiedName))
+            return interface->constructElement(qualifiedName.localName());
+    }
+#endif
+
+    if (UNLIKELY(!Document::isValidName(qualifiedName.localName()))) {
         ec = INVALID_CHARACTER_ERR;
         return nullptr;
     }
 
+    return HTMLUnknownElement::create(qualifiedName, document);
+}
+
+RefPtr<Element> Document::createElementForBindings(const AtomicString& name, ExceptionCode& ec)
+{
     if (isHTMLDocument())
-        return HTMLElementFactory::createElement(QualifiedName(nullAtom, name.convertToASCIILowercase(), xhtmlNamespaceURI), *this);
+        return createHTMLElementWithNameValidation(*this, QualifiedName(nullAtom, name.convertToASCIILowercase(), xhtmlNamespaceURI), ec);
 
     if (isXHTMLDocument())
-        return HTMLElementFactory::createElement(QualifiedName(nullAtom, name, xhtmlNamespaceURI), *this);
+        return createHTMLElementWithNameValidation(*this, QualifiedName(nullAtom, name, xhtmlNamespaceURI), ec);
+
+    if (!isValidName(name)) {
+        ec = INVALID_CHARACTER_ERR;
+        return nullptr;
+    }
 
     return createElement(QualifiedName(nullAtom, name, nullAtom), false);
 }

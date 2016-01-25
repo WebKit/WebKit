@@ -1,3 +1,60 @@
+2016-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.createElement should be able to create a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=153173
+
+        Reviewed by Darin Adler.
+
+        Added the support for constructing a custom element via document.createElement.
+
+        Extracted HTMLElementFactory::createKnownElement, which returns nullptr when the specified name doesn't match
+        any builtin element instead of out of HTMLUnknownElement, out of HTMLElementFactory::createElement.
+
+        Test: fast/custom-elements/Document-createElement.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::constructHTMLElement): Added. Constructs a custom element by invoking its
+        constructor. We allow exceptions to be thrown by the constructor so the caller is responsible for checking
+        any exceptions in the ExecState before preceeding if the returned value is null.
+
+        * bindings/js/JSCustomElementInterface.h:
+        (WebCore::JSCustomElementInterface::constructSVGElement): Added.
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated): Exit early if the element is a custom element as the wrapper had already been
+        created by super() call inside the custom element'c constructor.
+
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState):
+        * bindings/js/JSMainThreadExecStateInstrumentation.h:
+        (WebCore::JSMainThreadExecState::instrumentFunctionInternal): Generalized from instrumentFunctionCall so that
+        we can use it for both call and construct.
+        (WebCore::JSMainThreadExecState::instrumentFunctionCall): Specialized the above function for call.
+        (WebCore::JSMainThreadExecState::instrumentFunctionConstruct): Ditto for construct.
+
+        * dom/CustomElementDefinitions.cpp:
+        (WebCore::CustomElementDefinitions::findInterface): Added.
+        * dom/CustomElementDefinitions.h:
+
+        * dom/Document.cpp:
+        (WebCore::createHTMLElementWithNameValidation): Extracted from createElement.
+        (WebCore::Document::createElementForBindings): Renamed from createElement. Specifies
+        ShouldCreateCustomElement::Create to create a custom element before using fallback elements.
+        * dom/Document.h:
+        * dom/Document.idl:
+
+        * dom/Node.h:
+        (WebCore::Node::isCustomElement): Added. This flag is used to identify a custom element.
+        (WebCore::Node::setIsCustomElement): Added.
+
+        * dom/make_names.pl: Extracted createKnownElement from createElement for createHTMLElementWithNameValidation.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::createInspectorStyleSheetForDocument): Use qualified name object to instantiate
+        a style element and set type content attribute.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setNodeName): Use createElementForBindings here since we might be creating an
+        arbitrary element here. Also use RefPtr instead of raw pointers while mutating DOM for safety.
+
 2016-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r192773): [GTK] maps.google.com unresponsive/stalls since r192773

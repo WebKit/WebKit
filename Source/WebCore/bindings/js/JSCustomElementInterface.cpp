@@ -31,9 +31,9 @@
 #if ENABLE(CUSTOM_ELEMENTS)
 
 #include "DOMWrapperWorld.h"
-#include "Element.h"
 #include "JSDOMGlobalObject.h"
 #include "JSElement.h"
+#include "JSHTMLElement.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
 #include "ScriptExecutionContext.h"
@@ -53,6 +53,49 @@ JSCustomElementInterface::JSCustomElementInterface(JSObject* constructor, JSDOMG
 
 JSCustomElementInterface::~JSCustomElementInterface()
 {
+}
+
+RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& tagName)
+{
+    if (!canInvokeCallback())
+        return nullptr;
+
+    Ref<JSCustomElementInterface> protect(*this);
+
+    JSLockHolder lock(m_isolatedWorld->vm());
+
+    if (!m_constructor)
+        return nullptr;
+
+    ScriptExecutionContext* context = scriptExecutionContext();
+    if (!context)
+        return nullptr;
+    ASSERT(context->isDocument());
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, *m_isolatedWorld);
+    ExecState* state = globalObject->globalExec();
+
+    ConstructData constructData;
+    ConstructType constructType = m_constructor->methodTable()->getConstructData(m_constructor.get(), constructData);
+    if (constructType == ConstructTypeNone) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    MarkedArgumentBuffer args;
+    args.append(jsStringWithCache(state, tagName));
+
+    InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionConstruct(context, constructType, constructData);
+    JSValue newElement = construct(state, m_constructor.get(), constructType, constructData, args);
+    InspectorInstrumentation::didCallFunction(cookie, context);
+
+    if (newElement.isEmpty())
+        return nullptr;
+
+    Element* wrappedElement = JSElement::toWrapped(newElement);
+    if (!wrappedElement)
+        return nullptr;
+    wrappedElement->setIsCustomElement();
+    return wrappedElement;
 }
 
 } // namespace WebCore

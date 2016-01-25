@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: Extensions to Document interface</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="document.createElement should instantiate a custom element">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+test(function () {
+    class MyCustomElement extends HTMLElement {};
+
+    assert_true(document.createElement('my-custom-element') instanceof HTMLElement);
+    assert_false(document.createElement('my-custom-element') instanceof MyCustomElement);
+
+    document.defineCustomElement('my-custom-element', MyCustomElement);
+    var instance = document.createElement('my-custom-element');
+    assert_true(instance instanceof MyCustomElement);
+    assert_equals(instance.localName, 'my-custom-element');
+    assert_equals(instance.namespaceURI, 'http://www.w3.org/1999/xhtml', 'A custom element HTML must use HTML namespace');
+
+}, 'document.createElement must create an instance of custom elements');
+
+test(function () {
+    class ObjectCustomElement extends HTMLElement {
+        constructor()
+        {
+            return {foo: 'bar'};
+        }
+    };
+    document.defineCustomElement('object-custom-element', ObjectCustomElement);
+
+    var instance = new ObjectCustomElement;
+    assert_true(instance instanceof Object);
+    assert_equals(instance.foo, 'bar');
+
+    assert_equals(document.createElement('object-custom-element'), null);
+}, 'document.createElement must return null when a custom element constructor returns an object that is not an instance of Node');
+
+test(function () {
+    class TextCustomElement extends HTMLElement {
+        constructor()
+        {
+            return document.createTextNode('hello');
+        }
+    };
+    document.defineCustomElement('text-custom-element', TextCustomElement);
+    assert_true(new TextCustomElement instanceof Text);
+    assert_equals(document.createElement('object-custom-element'), null);
+}, 'document.createElement must return null when a custom element constructor returns a Text node');
+
+test(function () {
+    var createdElement = null;
+    class DivCustomElement extends HTMLElement {
+        constructor()
+        {
+            super();
+            createdElement = document.createElement('div');
+            return createdElement;
+        }
+    };
+    document.defineCustomElement('div-custom-element', DivCustomElement);
+    assert_true(new DivCustomElement instanceof HTMLDivElement);
+
+    var instance = document.createElement('div-custom-element');
+    assert_true(instance instanceof HTMLDivElement);
+    assert_equals(instance, createdElement);
+}, 'document.createElement must return an element returned by a custom element constructor');
+
+test(function () {
+    var exceptionToThrow = {message: 'exception thrown by a custom constructor'};
+    class ThrowCustomElement extends HTMLElement {
+        constructor()
+        {
+            super();
+            if (exceptionToThrow)
+                throw exceptionToThrow;
+        }
+    };
+    document.defineCustomElement('throw-custom-element', ThrowCustomElement);
+
+    assert_throws(null, function () { new ThrowCustomElement; });
+
+    try {
+        document.createElement('throw-custom-element');
+        assert(false, 'document.createElement must throw when a custom element constructor throws');
+    } catch (exception) {
+        assert_equals(exception, exceptionToThrow, 'document.createElement must throw the same exception custom element constructor throws');
+    }
+
+    exceptionToThrow = false;
+    var instance = document.createElement('throw-custom-element');
+    assert_true(instance instanceof ThrowCustomElement);
+    assert_equals(instance.localName, 'throw-custom-element');
+
+}, 'document.createElement must re-throw an exception thrown by a custom element constructor');
+
+</script>
+</body>
+</html>

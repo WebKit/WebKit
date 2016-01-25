@@ -776,14 +776,8 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
     if (!document.isHTMLDocument() && !document.isSVGDocument())
         return nullptr;
 
-    ExceptionCode ec = 0;
-    RefPtr<Element> styleElement = document.createElement("style", ec);
-    if (ec)
-        return nullptr;
-
-    styleElement->setAttribute("type", "text/css", ec);
-    if (ec)
-        return nullptr;
+    Ref<Element> styleElement = document.createElement(HTMLNames::styleTag, false);
+    styleElement->setAttribute(HTMLNames::typeAttr, "text/css");
 
     ContainerNode* targetNode;
     // HEAD is absent in ImageDocuments, for example.
@@ -799,7 +793,8 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
     // Set this flag, so when we create it, we put it into the via inspector map.
     m_creatingViaInspectorStyleSheet = true;
     InlineStyleOverrideScope overrideScope(document);
-    targetNode->appendChild(styleElement.releaseNonNull(), ec);
+    ExceptionCode ec = 0;
+    targetNode->appendChild(WTFMove(styleElement), ec);
     m_creatingViaInspectorStyleSheet = false;
     if (ec)
         return nullptr;

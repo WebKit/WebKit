@@ -93,6 +93,7 @@ public:
     }
 
     static InspectorInstrumentationCookie instrumentFunctionCall(ScriptExecutionContext*, JSC::CallType, const JSC::CallData&);
+    static InspectorInstrumentationCookie instrumentFunctionConstruct(ScriptExecutionContext*, JSC::ConstructType, const JSC::ConstructData&);
 
 private:
     explicit JSMainThreadExecState(JSC::ExecState* exec)
@@ -115,6 +116,8 @@ private:
         if (didExitJavaScript)
             didLeaveScriptContext();
     }
+
+    template<typename Type, Type jsType, typename DataType> static InspectorInstrumentationCookie instrumentFunctionInternal(ScriptExecutionContext*, Type, const DataType&);
 
     static JSC::ExecState* s_mainThreadState;
     JSC::ExecState* m_previousState;

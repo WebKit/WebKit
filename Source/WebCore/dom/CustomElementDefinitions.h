@@ -50,6 +50,7 @@ class CustomElementDefinitions {
 public:
     bool defineElement(const QualifiedName&, Ref<JSCustomElementInterface>&&);
 
+    JSCustomElementInterface* findInterface(const QualifiedName&) const;
     JSCustomElementInterface* findInterface(const AtomicString&) const;
     const QualifiedName& findName(const JSC::JSObject*) const;
 

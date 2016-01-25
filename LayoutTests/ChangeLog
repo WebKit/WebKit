@@ -1,3 +1,16 @@
+2016-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.createElement should be able to create a custom element
+        https://bugs.webkit.org/show_bug.cgi?id=153173
+
+        Reviewed by Darin Adler.
+
+        Add a test for creating a custom elemnet via document.createElement.
+        The behavior is to be documented later.
+
+        * fast/custom-elements/Document-createElement-expected.txt: Added.
+        * fast/custom-elements/Document-createElement.html: Added.
+
 2016-01-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Fetch API] Implement Fetch API Headers

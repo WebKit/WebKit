@@ -54,6 +54,10 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Element* e
     if (!element)
         return jsNull();
 
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (element->isCustomElement())
+        return getCachedWrapper(globalObject->world(), element);
+#endif
     ASSERT(!getCachedWrapper(globalObject->world(), element));
 
     JSDOMObject* wrapper;        

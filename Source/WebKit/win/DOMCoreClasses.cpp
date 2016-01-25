@@ -635,7 +635,7 @@ HRESULT DOMDocument::createElement(_In_ BSTR tagName, _COM_Outptr_opt_ IDOMEleme
 
     String tagNameString(tagName);
     ExceptionCode ec;
-    *result = DOMElement::createInstance(m_document->createElement(tagNameString, ec).get());
+    *result = DOMElement::createInstance(m_document->createElementForBindings(tagNameString, ec).get());
     return *result ? S_OK : E_FAIL;
 }
 

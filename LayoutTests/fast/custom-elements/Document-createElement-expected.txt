@@ -1,0 +1,7 @@
+
+PASS document.createElement must create an instance of custom elements 
+PASS document.createElement must return null when a custom element constructor returns an object that is not an instance of Node 
+PASS document.createElement must return null when a custom element constructor returns a Text node 
+PASS document.createElement must return an element returned by a custom element constructor 
+PASS document.createElement must re-throw an exception thrown by a custom element constructor 
+

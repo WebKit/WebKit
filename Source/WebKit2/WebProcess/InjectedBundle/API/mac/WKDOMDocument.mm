@@ -39,7 +39,7 @@
 {
     // FIXME: Do something about the exception.
     WebCore::ExceptionCode ec = 0;
-    return WebKit::toWKDOMElement(downcast<WebCore::Document>(*_impl).createElement(tagName, ec).get());
+    return WebKit::toWKDOMElement(downcast<WebCore::Document>(*_impl).createElementForBindings(tagName, ec).get());
 }
 
 - (WKDOMText *)createTextNode:(NSString *)data

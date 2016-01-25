@@ -286,6 +286,11 @@ public:
     HTMLSlotElement* assignedSlot() const;
 #endif
 
+#if ENABLE(CUSTOM_ELEMENTS)
+    bool isCustomElement() const { return getFlag(IsCustomElement); }
+    void setIsCustomElement() { return setFlag(IsCustomElement); }
+#endif
+
     // Returns null, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
 
@@ -617,7 +622,7 @@ protected:
         HasSyntheticAttrChildNodesFlag = 1 << 19,
         HasCustomStyleResolveCallbacksFlag = 1 << 20,
         HasEventTargetDataFlag = 1 << 21,
-        // HeyItIsAFreeBit = 1 << 22,
+        IsCustomElement = 1 << 22,
         IsInShadowTreeFlag = 1 << 23,
         IsMathMLFlag = 1 << 24,
 

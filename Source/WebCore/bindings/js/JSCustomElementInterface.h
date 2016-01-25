@@ -49,6 +49,8 @@ namespace WebCore {
 class DOMWrapperWorld;
 class Element;
 class JSDOMGlobalObject;
+class MathMLElement;
+class SVGElement;
 
 class JSCustomElementInterface : public RefCounted<JSCustomElementInterface>, public ActiveDOMCallback {
 public:
@@ -56,6 +58,8 @@ public:
     {
         return adoptRef(*new JSCustomElementInterface(callback, globalObject));
     }
+
+    RefPtr<Element> constructElement(const AtomicString&);
 
     ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
     JSC::JSObject* constructor() { return m_constructor.get(); }

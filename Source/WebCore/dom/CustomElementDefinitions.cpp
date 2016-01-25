@@ -82,6 +82,12 @@ bool CustomElementDefinitions::defineElement(const QualifiedName& fullName, Ref<
     return true;
 }
 
+JSCustomElementInterface* CustomElementDefinitions::findInterface(const QualifiedName& name) const
+{
+    auto it = m_nameMap.find(name.localName());
+    return it == m_nameMap.end() || it->value.fullName != name ? nullptr : it->value.interface.get();
+}
+
 JSCustomElementInterface* CustomElementDefinitions::findInterface(const AtomicString& name) const
 {
     auto it = m_nameMap.find(name);

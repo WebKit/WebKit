@@ -978,6 +978,13 @@ END
     ;
 
     my %tagConstructorMap = buildConstructorMap();
+    my $argumentList;
+
+    if ($parameters{namespace} eq "HTML") {
+        $argumentList = "name, document, formElement, createdByParser";
+    } else {
+        $argumentList = "name, document, createdByParser";
+    }
 
     printConstructors($F, \%tagConstructorMap);
 
@@ -1002,22 +1009,22 @@ END
         map.add(table[i].name.localName().impl(), table[i].function);
 }
 
-Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
+RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
 {
     static NeverDestroyed<HashMap<AtomicStringImpl*, $parameters{namespace}ConstructorFunction>> functions;
     if (functions.get().isEmpty())
         populate$parameters{namespace}FactoryMap(functions);
-    if ($parameters{namespace}ConstructorFunction function = functions.get().get(name.localName().impl()))
-END
-    ;
+    $parameters{namespace}ConstructorFunction function = functions.get().get(name.localName().impl());
+    if (LIKELY(function))
+        return function($argumentList);
+    return nullptr;
+}
 
-    if ($parameters{namespace} eq "HTML") {
-        print F "        return function(name, document, formElement, createdByParser);\n";
-    } else {
-        print F "        return function(name, document, createdByParser);\n";
-    }
-
-    print F <<END
+Ref<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
+{
+    RefPtr<$parameters{namespace}Element> element = $parameters{namespace}ElementFactory::createKnownElement($argumentList);
+    if (LIKELY(element))
+        return element.releaseNonNull();
     return $parameters{fallbackInterfaceName}::create(name, document);
 }
 
@@ -1058,6 +1065,9 @@ namespace WebCore {
 END
 ;
 
+print F "        static RefPtr<$parameters{namespace}Element> createKnownElement(const QualifiedName&, Document&";
+print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
+print F ", bool createdByParser = false);\n\n";
 print F "        static Ref<$parameters{namespace}Element> createElement(const QualifiedName&, Document&";
 print F ", HTMLFormElement* = nullptr" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser = false);\n";

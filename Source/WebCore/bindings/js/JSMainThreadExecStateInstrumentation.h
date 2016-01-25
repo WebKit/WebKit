@@ -33,18 +33,29 @@
 
 namespace WebCore {
 
-inline InspectorInstrumentationCookie JSMainThreadExecState::instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType callType, const JSC::CallData& callData)
+template<typename Type, Type jsType, class DataType>
+inline InspectorInstrumentationCookie JSMainThreadExecState::instrumentFunctionInternal(ScriptExecutionContext* context, Type callType, const DataType& callData)
 {
     if (!InspectorInstrumentation::timelineAgentEnabled(context))
         return InspectorInstrumentationCookie();
     String resourceName;
     int lineNumber = 1;
-    if (callType == JSC::CallTypeJS) {
+    if (callType == jsType) {
         resourceName = callData.js.functionExecutable->sourceURL();
         lineNumber = callData.js.functionExecutable->firstLine();
     } else
         resourceName = "undefined";
     return InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
+}
+
+inline InspectorInstrumentationCookie JSMainThreadExecState::instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType type, const JSC::CallData& data)
+{
+    return instrumentFunctionInternal<JSC::CallType, JSC::CallTypeJS, JSC::CallData>(context, type, data);
+}
+
+inline InspectorInstrumentationCookie JSMainThreadExecState::instrumentFunctionConstruct(ScriptExecutionContext* context, JSC::ConstructType type, const JSC::ConstructData& data)
+{
+    return instrumentFunctionInternal<JSC::ConstructType, JSC::ConstructTypeJS, JSC::ConstructData>(context, type, data);
 }
 
 } // namespace WebCore
