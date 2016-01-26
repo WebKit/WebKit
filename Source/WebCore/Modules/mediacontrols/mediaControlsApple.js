@@ -1087,9 +1087,9 @@ Controller.prototype = {
         try {
             this.updateBase();
 
-            if (this.shouldHaveControls() && !this.hasControls())
+            if (this.shouldHaveControls())
                 this.addControls();
-            else if (!this.shouldHaveControls() && this.hasControls())
+            else
                 this.removeControls();
         } catch(e) {
             if (window.console)
@@ -1540,11 +1540,6 @@ Controller.prototype = {
         this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
         this.base.appendChild(this.controls.panel);
         this.updateControls();
-    },
-
-    hasControls: function()
-    {
-        return this.controls.panel.parentElement;
     },
 
     updateTime: function()
