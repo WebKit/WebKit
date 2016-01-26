@@ -1824,6 +1824,7 @@ variable_function:
     | VARFUNCTION maybe_space expr closing_parenthesis {
         $$.id = CSSValueInvalid;
         $$.unit = 0;
+        delete $3;
         YYERROR;
     }
     | VARFUNCTION maybe_space expr_recovery closing_parenthesis {

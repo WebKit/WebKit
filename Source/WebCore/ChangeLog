@@ -1,3 +1,20 @@
+2016-01-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        CSSGrammar.y:1742.31-34: warning: unused value: $3
+        https://bugs.webkit.org/show_bug.cgi?id=153462
+
+        Reviewed by Alex Christensen.
+
+        This warning indicates that we have a memory leak. From the bison manual:
+
+        "Right-hand side symbols of a rule that explicitly triggers a syntax error via YYERROR are
+        not discarded automatically. As a rule of thumb, destructors are invoked only when user
+        actions cannot manage the memory."
+
+        Arguably a design error, but that's how it is.
+
+        * css/CSSGrammar.y.in:
+
 2016-01-26  Jer Noble  <jer.noble@apple.com>
 
         Calling video.controls=true during a scrub operation cancels scrub.
