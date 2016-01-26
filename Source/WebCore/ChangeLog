@@ -1,3 +1,9 @@
+2016-01-25  Antti Koivisto  <antti@apple.com>
+
+        Fix the comment.
+
+        * rendering/style/RenderStyle.h:
+
 2016-01-25  Enrica Casucci  <enrica@apple.com>
 
         Add support for DataDetectors in WK (iOS).

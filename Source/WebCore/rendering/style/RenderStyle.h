@@ -394,7 +394,7 @@ public:
         static const unsigned isLinkOffset = affectedByDragOffset + 1;
 
 
-        // Only 60 bits are assigned. There are 2 bits available currently used as padding to improve code generation.
+        // 62 bits are assigned. There are 2 bits available currently used as padding to improve code generation.
         // If you add more style bits here, you will also need to update RenderStyle::copyNonInheritedFrom().
         uint64_t m_flags;
     };
