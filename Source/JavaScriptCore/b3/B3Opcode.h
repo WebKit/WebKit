@@ -51,7 +51,7 @@ enum Opcode : int16_t {
     // The magical stack slot. This is viewed as executing at the top of the program regardless of
     // where in control flow you put it. Each instance of a StackSlot Value gets a disjoint range of
     // stack memory. Use the StackSlotValue class.
-    StackSlot,
+    SlotBase,
 
     // The magical argument register. This is viewed as executing at the top of the program
     // regardless of where in control flow you put it, and the compiler takes care to ensure that we

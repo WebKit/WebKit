@@ -30,6 +30,7 @@
 
 #include "B3ArgumentRegValue.h"
 #include "B3ProcedureInlines.h"
+#include "B3SlotBaseValue.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
 
@@ -104,6 +105,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
         return proc.add<ConstFloatValue>(origin, floatValue());
     case ArgumentReg:
         return proc.add<ArgumentRegValue>(origin, Reg::fromIndex(static_cast<unsigned>(value())));
+    case SlotBase:
+        return proc.add<SlotBaseValue>(origin, proc.stackSlots()[value()]);
     default:
         return nullptr;
     }

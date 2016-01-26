@@ -36,6 +36,7 @@
 #include "B3DataSection.h"
 #include "B3Dominators.h"
 #include "B3OpaqueByproducts.h"
+#include "B3StackSlot.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
@@ -89,6 +90,20 @@ void Procedure::setBlockOrderImpl(Vector<BasicBlock*>& blocks)
         block->m_index = i;
         m_blocks[i] = std::unique_ptr<BasicBlock>(block);
     }
+}
+
+StackSlot* Procedure::addStackSlot(unsigned byteSize, StackSlotKind kind)
+{
+    size_t index = addStackSlotIndex();
+    std::unique_ptr<StackSlot> slot(new StackSlot(index, byteSize, kind));
+    StackSlot* result = slot.get();
+    m_stackSlots[index] = WTFMove(slot);
+    return result;
+}
+
+StackSlot* Procedure::addAnonymousStackSlot(Type type)
+{
+    return addStackSlot(sizeofType(type), StackSlotKind::Anonymous);
 }
 
 Value* Procedure::clone(Value* value)
@@ -192,6 +207,11 @@ void Procedure::dump(PrintStream& out) const
         }
         dataLog("    ", deepDump(*this, value), "\n");
     }
+    if (stackSlots().size()) {
+        out.print("Stack slots:\n");
+        for (StackSlot* slot : stackSlots())
+            out.print("    ", pointerDump(slot), ": ", deepDump(slot), "\n");
+    }
     if (m_byproducts->count())
         out.print(*m_byproducts);
 }
@@ -204,6 +224,14 @@ Vector<BasicBlock*> Procedure::blocksInPreOrder()
 Vector<BasicBlock*> Procedure::blocksInPostOrder()
 {
     return B3::blocksInPostOrder(at(0));
+}
+
+void Procedure::deleteStackSlot(StackSlot* stackSlot)
+{
+    RELEASE_ASSERT(m_stackSlots[stackSlot->index()].get() == stackSlot);
+    RELEASE_ASSERT(!stackSlot->isLocked());
+    m_stackSlotIndexFreeList.append(stackSlot->index());
+    m_stackSlots[stackSlot->index()] = nullptr;
 }
 
 void Procedure::deleteValue(Value* value)
@@ -280,6 +308,17 @@ unsigned Procedure::frameSize() const
 const RegisterAtOffsetList& Procedure::calleeSaveRegisters() const
 {
     return code().calleeSaveRegisters();
+}
+
+size_t Procedure::addStackSlotIndex()
+{
+    if (m_stackSlotIndexFreeList.isEmpty()) {
+        size_t index = m_stackSlots.size();
+        m_stackSlots.append(nullptr);
+        return index;
+    }
+    
+    return m_stackSlotIndexFreeList.takeLast();
 }
 
 size_t Procedure::addValueIndex()

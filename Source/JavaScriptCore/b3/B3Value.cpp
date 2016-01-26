@@ -34,7 +34,8 @@
 #include "B3MemoryValue.h"
 #include "B3OriginDump.h"
 #include "B3ProcedureInlines.h"
-#include "B3StackSlotValue.h"
+#include "B3SlotBaseValue.h"
+#include "B3StackSlot.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
@@ -383,7 +384,7 @@ Effects Value::effects() const
     case Const64:
     case ConstDouble:
     case ConstFloat:
-    case StackSlot:
+    case SlotBase:
     case ArgumentReg:
     case FramePointer:
     case Add:
@@ -535,6 +536,10 @@ ValueKey Value::key() const
         return ValueKey(
             ArgumentReg, type(),
             static_cast<int64_t>(as<ArgumentRegValue>()->argumentReg().index()));
+    case SlotBase:
+        return ValueKey(
+            SlotBase, type(),
+            static_cast<int64_t>(as<SlotBaseValue>()->slot()->index()));
     default:
         return ValueKey();
     }
@@ -565,7 +570,7 @@ void Value::checkOpcode(Opcode opcode)
     ASSERT(!ControlValue::accepts(opcode));
     ASSERT(!MemoryValue::accepts(opcode));
     ASSERT(!PatchpointValue::accepts(opcode));
-    ASSERT(!StackSlotValue::accepts(opcode));
+    ASSERT(!SlotBaseValue::accepts(opcode));
     ASSERT(!UpsilonValue::accepts(opcode));
 }
 #endif // !ASSERT_DISABLED

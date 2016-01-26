@@ -79,9 +79,10 @@ void Output::appendTo(LBasicBlock block)
     m_block = block;
 }
 
-StackSlotValue* Output::lockedStackSlot(size_t bytes)
+SlotBaseValue* Output::lockedStackSlot(size_t bytes)
 {
-    return m_block->appendNew<StackSlotValue>(m_proc, origin(), bytes, StackSlotKind::Locked);
+    return m_block->appendNew<SlotBaseValue>(
+        m_proc, origin(), m_proc.addStackSlot(bytes, StackSlotKind::Locked));
 }
 
 LValue Output::neg(LValue value)

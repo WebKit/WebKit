@@ -31,7 +31,7 @@
 #include "AirCode.h"
 #include "B3Generate.h"
 #include "B3ProcedureInlines.h"
-#include "B3StackSlotValue.h"
+#include "B3StackSlot.h"
 #include "CodeBlockWithJITType.h"
 #include "CCallHelpers.h"
 #include "DFGCommon.h"
@@ -84,6 +84,12 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     int localsOffset =
         state.capturedValue->offsetFromFP() / sizeof(EncodedJSValue) + graph.m_nextMachineLocal;
+    if (shouldDumpDisassembly()) {
+        dataLog(
+            "localsOffset = ", localsOffset, " for stack slot: ",
+            pointerDump(state.capturedValue), " at ", RawPointer(state.capturedValue), "\n");
+    }
+    
     for (unsigned i = graph.m_inlineVariableData.size(); i--;) {
         InlineCallFrame* inlineCallFrame = graph.m_inlineVariableData[i].inlineCallFrame;
         

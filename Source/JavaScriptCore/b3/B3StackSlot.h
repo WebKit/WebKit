@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3StackSlotValue_h
-#define B3StackSlotValue_h
+#ifndef B3StackSlot_h
+#define B3StackSlot_h
 
 #if ENABLE(B3_JIT)
 
 #include "B3StackSlotKind.h"
-#include "B3Value.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PrintStream.h>
 
 namespace JSC { namespace B3 {
+
+class Procedure;
 
 namespace Air {
 class StackSlot;
 } // namespace Air
 
-class JS_EXPORT_PRIVATE StackSlotValue : public Value {
-public:
-    static bool accepts(Opcode opcode) { return opcode == StackSlot; }
+class StackSlot {
+    WTF_MAKE_NONCOPYABLE(StackSlot);
+    WTF_MAKE_FAST_ALLOCATED;
 
-    ~StackSlotValue();
+public:
+    ~StackSlot();
 
     unsigned byteSize() const { return m_byteSize; }
     StackSlotKind kind() const { return m_kind; }
+    bool isLocked() const { return m_kind == StackSlotKind::Locked; }
+    unsigned index() const { return m_index; }
 
     // This gets assigned at the end of compilation. But, you can totally pin stack slots. Use the
     // set method to do that.
@@ -56,31 +63,48 @@ public:
         m_offsetFromFP = value;
     }
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
+    void dump(PrintStream& out) const;
+    void deepDump(PrintStream&) const;
 
 private:
     friend class Air::StackSlot;
     friend class Procedure;
 
-    StackSlotValue(unsigned index, Origin origin, unsigned byteSize, StackSlotKind kind)
-        : Value(index, CheckedOpcode, StackSlot, pointerType(), origin)
-        , m_byteSize(byteSize)
-        , m_kind(kind)
-        , m_offsetFromFP(0)
+    StackSlot(unsigned index, unsigned byteSize, StackSlotKind);
+
+    unsigned m_index;
+    unsigned m_byteSize;
+    StackSlotKind m_kind;
+    intptr_t m_offsetFromFP { 0 };
+};
+
+class DeepStackSlotDump {
+public:
+    DeepStackSlotDump(const StackSlot* slot)
+        : m_slot(slot)
     {
     }
 
-    unsigned m_byteSize;
-    StackSlotKind m_kind;
-    intptr_t m_offsetFromFP;
+    void dump(PrintStream& out) const
+    {
+        if (m_slot)
+            m_slot->deepDump(out);
+        else
+            out.print("<null>");
+    }
+
+private:
+    const StackSlot* m_slot;
 };
+
+inline DeepStackSlotDump deepDump(const StackSlot* slot)
+{
+    return DeepStackSlotDump(slot);
+}
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3StackSlotValue_h
+#endif // B3StackSlot_h
 

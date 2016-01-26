@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,26 +24,34 @@
  */
 
 #include "config.h"
-#include "B3StackSlotValue.h"
+#include "B3StackSlot.h"
 
 #if ENABLE(B3_JIT)
 
 namespace JSC { namespace B3 {
 
-StackSlotValue::~StackSlotValue()
+StackSlot::~StackSlot()
 {
 }
 
-void StackSlotValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
+void StackSlot::dump(PrintStream& out) const
 {
-    out.print(comma, "byteSize = ", m_byteSize, ", kind = ", m_kind);
+    out.print("stack", m_index);
 }
 
-Value* StackSlotValue::cloneImpl() const
+void StackSlot::deepDump(PrintStream& out) const
 {
-    return new StackSlotValue(*this);
+    out.print("byteSize = ", m_byteSize, ", offsetFromFP = ", m_offsetFromFP, ", kind = ", m_kind);
+}
+
+StackSlot::StackSlot(unsigned index, unsigned byteSize, StackSlotKind kind)
+    : m_index(index)
+    , m_byteSize(byteSize)
+    , m_kind(kind)
+{
 }
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

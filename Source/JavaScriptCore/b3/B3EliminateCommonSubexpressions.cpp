@@ -37,7 +37,8 @@
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3PureCSE.h"
-#include "B3StackSlotValue.h"
+#include "B3SlotBaseValue.h"
+#include "B3StackSlot.h"
 #include "B3ValueKey.h"
 #include "B3ValueInlines.h"
 #include "DFGGraph.h"
@@ -130,7 +131,7 @@ public:
             m_impureBlockData[m_block] = m_data;
         }
 
-        for (StackSlotValue* stack : m_stacks)
+        for (SlotBaseValue* stack : m_stacks)
             m_insertionSet.insertValue(0, stack);
         for (BasicBlock* block : m_proc) {
             for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
@@ -369,8 +370,8 @@ private:
         // Right now we're relying on the fact that CSE's position in the phase order is
         // almost right before SSA fixup.
             
-        StackSlotValue* stack = m_proc.add<StackSlotValue>(
-            m_value->origin(), sizeofType(m_value->type()), StackSlotKind::Anonymous);
+        SlotBaseValue* stack = m_proc.add<SlotBaseValue>(
+            m_value->origin(), m_proc.addAnonymousStackSlot(m_value->type()));
         m_stacks.append(stack);
 
         MemoryValue* load = m_insertionSet.insert<MemoryValue>(
@@ -498,7 +499,7 @@ private:
     unsigned m_index;
     Value* m_value;
 
-    Vector<StackSlotValue*> m_stacks;
+    Vector<SlotBaseValue*> m_stacks;
     HashMap<Value*, Vector<Value*>> m_stores;
 
     InsertionSet m_insertionSet;

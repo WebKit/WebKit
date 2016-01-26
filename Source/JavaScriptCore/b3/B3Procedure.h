@@ -30,6 +30,7 @@
 
 #include "B3OpaqueByproducts.h"
 #include "B3Origin.h"
+#include "B3StackSlotKind.h"
 #include "B3Type.h"
 #include "B3ValueKey.h"
 #include "PureNaN.h"
@@ -49,6 +50,7 @@ class BasicBlock;
 class BlockInsertionSet;
 class CFG;
 class Dominators;
+class StackSlot;
 class Value;
 
 namespace Air { class Code; }
@@ -90,6 +92,9 @@ public:
             blocks.append(block);
         setBlockOrderImpl(blocks);
     }
+
+    JS_EXPORT_PRIVATE StackSlot* addStackSlot(unsigned byteSize, StackSlotKind);
+    JS_EXPORT_PRIVATE StackSlot* addAnonymousStackSlot(Type);
     
     template<typename ValueType, typename... Arguments>
     ValueType* add(Arguments...);
@@ -172,6 +177,75 @@ public:
     Vector<BasicBlock*> blocksInPreOrder();
     Vector<BasicBlock*> blocksInPostOrder();
 
+    class StackSlotsCollection {
+    public:
+        StackSlotsCollection(const Procedure& proc)
+            : m_proc(proc)
+        {
+        }
+
+        unsigned size() const { return m_proc.m_stackSlots.size(); }
+        StackSlot* at(unsigned index) const { return m_proc.m_stackSlots[index].get(); }
+        StackSlot* operator[](unsigned index) const { return at(index); }
+
+        class iterator {
+        public:
+            iterator()
+                : m_collection(nullptr)
+                , m_index(0)
+            {
+            }
+
+            iterator(const StackSlotsCollection& collection, unsigned index)
+                : m_collection(&collection)
+                , m_index(findNext(index))
+            {
+            }
+
+            StackSlot* operator*()
+            {
+                return m_collection->at(m_index);
+            }
+
+            iterator& operator++()
+            {
+                m_index = findNext(m_index + 1);
+                return *this;
+            }
+
+            bool operator==(const iterator& other) const
+            {
+                return m_index == other.m_index;
+            }
+
+            bool operator!=(const iterator& other) const
+            {
+                return !(*this == other);
+            }
+
+        private:
+            unsigned findNext(unsigned index)
+            {
+                while (index < m_collection->size() && !m_collection->at(index))
+                    index++;
+                return index;
+            }
+            
+            const StackSlotsCollection* m_collection;
+            unsigned m_index;
+        };
+
+        iterator begin() const { return iterator(*this, 0); }
+        iterator end() const { return iterator(*this, size()); }
+
+    private:
+        const Procedure& m_proc;
+    };
+
+    StackSlotsCollection stackSlots() const { return StackSlotsCollection(*this); }
+
+    void deleteStackSlot(StackSlot*);
+    
     class ValuesCollection {
     public:
         ValuesCollection(const Procedure& procedure)
@@ -292,10 +366,13 @@ private:
     
     void setBlockOrderImpl(Vector<BasicBlock*>&);
 
+    size_t addStackSlotIndex();
     JS_EXPORT_PRIVATE size_t addValueIndex();
-    
+
+    Vector<std::unique_ptr<StackSlot>> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     Vector<std::unique_ptr<Value>> m_values;
+    Vector<size_t> m_stackSlotIndexFreeList;
     Vector<size_t> m_valueIndexFreeList;
     std::unique_ptr<CFG> m_cfg;
     std::unique_ptr<Dominators> m_dominators;

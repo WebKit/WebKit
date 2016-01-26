@@ -23,44 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirStackSlot.h"
+#ifndef B3SlotBaseValue_h
+#define B3SlotBaseValue_h
 
 #if ENABLE(B3_JIT)
 
-#include "B3StackSlot.h"
+#include "B3Value.h"
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC { namespace B3 {
 
-void StackSlot::setOffsetFromFP(intptr_t value)
-{
-    m_offsetFromFP = value;
-    if (m_b3Slot)
-        m_b3Slot->m_offsetFromFP = value;
-}
+class StackSlot;
 
-void StackSlot::dump(PrintStream& out) const
-{
-    out.print("stack", m_index);
-}
+class JS_EXPORT_PRIVATE SlotBaseValue : public Value {
+public:
+    static bool accepts(Opcode opcode) { return opcode == SlotBase; }
 
-void StackSlot::deepDump(PrintStream& out) const
-{
-    out.print("byteSize = ", m_byteSize, ", offsetFromFP = ", m_offsetFromFP, ", kind = ", m_kind);
-    if (m_b3Slot)
-        out.print(", b3Slot = ", *m_b3Slot, ": (", B3::deepDump(m_b3Slot), ")");
-}
+    ~SlotBaseValue();
 
-StackSlot::StackSlot(unsigned byteSize, unsigned index, StackSlotKind kind, B3::StackSlot* b3Slot)
-    : m_byteSize(byteSize)
-    , m_index(index)
-    , m_offsetFromFP(b3Slot ? b3Slot->offsetFromFP() : 0)
-    , m_kind(kind)
-    , m_b3Slot(b3Slot)
-{
-    ASSERT(byteSize);
-}
+    StackSlot* slot() const { return m_slot; }
 
-} } } // namespace JSC::B3::Air
+protected:
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
+
+    Value* cloneImpl() const override;
+
+private:
+    friend class Procedure;
+
+    SlotBaseValue(unsigned index, Origin origin, StackSlot* slot)
+        : Value(index, CheckedOpcode, SlotBase, pointerType(), origin)
+        , m_slot(slot)
+    {
+    }
+
+    StackSlot* m_slot;
+};
+
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3SlotBaseValue_h
+

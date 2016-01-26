@@ -147,11 +147,12 @@ set(JavaScriptCore_SOURCES
     b3/B3ReduceDoubleToFloat.cpp
     b3/B3ReduceStrength.cpp
     b3/B3SSACalculator.cpp
+    b3/B3SlotBaseValue.cpp
     b3/B3StackmapGenerationParams.cpp
     b3/B3StackmapSpecial.cpp
     b3/B3StackmapValue.cpp
     b3/B3StackSlotKind.cpp
-    b3/B3StackSlotValue.cpp
+    b3/B3StackSlot.cpp
     b3/B3SwitchCase.cpp
     b3/B3SwitchValue.cpp
     b3/B3TimingScope.cpp

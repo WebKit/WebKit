@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 
 namespace JSC { namespace B3 {
 
-class StackSlotValue;
+class StackSlot;
 
 namespace Air {
 
@@ -65,7 +65,7 @@ public:
         return 8;
     }
 
-    StackSlotValue* value() const { return m_value; }
+    B3::StackSlot* b3Slot() const { return m_b3Slot; }
 
     // Zero means that it's not yet assigned.
     intptr_t offsetFromFP() const { return m_offsetFromFP; }
@@ -80,13 +80,13 @@ public:
 private:
     friend class Code;
 
-    StackSlot(unsigned byteSize, unsigned index, StackSlotKind, StackSlotValue*);
+    StackSlot(unsigned byteSize, unsigned index, StackSlotKind, B3::StackSlot*);
     
     unsigned m_byteSize;
     unsigned m_index;
     intptr_t m_offsetFromFP;
     StackSlotKind m_kind;
-    StackSlotValue* m_value;
+    B3::StackSlot* m_b3Slot;
 };
 
 class DeepStackSlotDump {
@@ -119,7 +119,7 @@ namespace WTF {
 
 inline void printInternal(PrintStream& out, JSC::B3::Air::StackSlot* stackSlot)
 {
-    out.print(*stackSlot);
+    out.print(pointerDump(stackSlot));
 }
 
 } // namespace WTF

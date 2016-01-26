@@ -38,7 +38,8 @@
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3SSACalculator.h"
-#include "B3StackSlotValue.h"
+#include "B3SlotBaseValue.h"
+#include "B3StackSlot.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include <wtf/CommaPrinter.h>
@@ -51,19 +52,19 @@ const bool verbose = false;
 
 void demoteValues(Procedure& proc, const IndexSet<Value>& values)
 {
-    HashMap<Value*, StackSlotValue*> map;
-    HashMap<Value*, StackSlotValue*> phiMap;
+    HashMap<Value*, SlotBaseValue*> map;
+    HashMap<Value*, SlotBaseValue*> phiMap;
 
     // Create stack slots.
     InsertionSet insertionSet(proc);
     for (Value* value : values.values(proc.values())) {
-        StackSlotValue* stack = insertionSet.insert<StackSlotValue>(
-            0, value->origin(), sizeofType(value->type()), StackSlotKind::Anonymous);
+        SlotBaseValue* stack = insertionSet.insert<SlotBaseValue>(
+            0, value->origin(), proc.addAnonymousStackSlot(value->type()));
         map.add(value, stack);
 
         if (value->opcode() == Phi) {
-            StackSlotValue* phiStack = insertionSet.insert<StackSlotValue>(
-                0, value->origin(), sizeofType(value->type()), StackSlotKind::Anonymous);
+            SlotBaseValue* phiStack = insertionSet.insert<SlotBaseValue>(
+                0, value->origin(), proc.addAnonymousStackSlot(value->type()));
             phiMap.add(value, phiStack);
         }
     }
@@ -89,31 +90,31 @@ void demoteValues(Procedure& proc, const IndexSet<Value>& values)
             Value* value = block->at(valueIndex);
 
             if (value->opcode() == Phi) {
-                if (StackSlotValue* stack = phiMap.get(value)) {
+                if (SlotBaseValue* slotBase = phiMap.get(value)) {
                     value->replaceWithIdentity(
                         insertionSet.insert<MemoryValue>(
-                            valueIndex, Load, value->type(), value->origin(), stack));
+                            valueIndex, Load, value->type(), value->origin(), slotBase));
                 }
             } else {
                 for (Value*& child : value->children()) {
-                    if (StackSlotValue* stack = map.get(child)) {
+                    if (SlotBaseValue* slotBase = map.get(child)) {
                         child = insertionSet.insert<MemoryValue>(
-                            valueIndex, Load, child->type(), value->origin(), stack);
+                            valueIndex, Load, child->type(), value->origin(), slotBase);
                     }
                 }
 
                 if (UpsilonValue* upsilon = value->as<UpsilonValue>()) {
-                    if (StackSlotValue* stack = phiMap.get(upsilon->phi())) {
+                    if (SlotBaseValue* slotBase = phiMap.get(upsilon->phi())) {
                         insertionSet.insert<MemoryValue>(
-                            valueIndex, Store, upsilon->origin(), upsilon->child(0), stack);
+                            valueIndex, Store, upsilon->origin(), upsilon->child(0), slotBase);
                         value->replaceWithNop();
                     }
                 }
             }
 
-            if (StackSlotValue* stack = map.get(value)) {
+            if (SlotBaseValue* slotBase = map.get(value)) {
                 insertionSet.insert<MemoryValue>(
-                    valueIndex + 1, Store, value->origin(), value, stack);
+                    valueIndex + 1, Store, value->origin(), value, slotBase);
             }
         }
         insertionSet.execute(block);
@@ -126,9 +127,10 @@ bool fixSSA(Procedure& proc)
     
     // Collect the stack "variables". If there aren't any, then we don't have anything to do.
     // That's a fairly common case.
-    HashMap<StackSlotValue*, Type> stackVariable;
+    HashMap<StackSlot*, Type> stackVariable;
     for (Value* value : proc.values()) {
-        if (StackSlotValue* stack = value->as<StackSlotValue>()) {
+        if (SlotBaseValue* slotBase = value->as<SlotBaseValue>()) {
+            StackSlot* stack = slotBase->slot();
             if (stack->kind() == StackSlotKind::Anonymous)
                 stackVariable.add(stack, Void);
         }
@@ -141,14 +143,16 @@ bool fixSSA(Procedure& proc)
     // Store on anonymous variables.
     for (Value* value : proc.values()) {
         auto reject = [&] (Value* value) {
-            if (StackSlotValue* stack = value->as<StackSlotValue>())
-                stackVariable.remove(stack);
+            if (SlotBaseValue* slotBase = value->as<SlotBaseValue>())
+                stackVariable.remove(slotBase->slot());
         };
         
         auto handleAccess = [&] (Value* access, Type type) {
-            StackSlotValue* stack = access->lastChild()->as<StackSlotValue>();
-            if (!stack)
+            SlotBaseValue* slotBase = access->lastChild()->as<SlotBaseValue>();
+            if (!slotBase)
                 return;
+
+            StackSlot* stack = slotBase->slot();
             
             if (value->as<MemoryValue>()->offset()) {
                 stackVariable.remove(stack);
@@ -184,16 +188,14 @@ bool fixSSA(Procedure& proc)
         }
     }
 
-    Vector<StackSlotValue*> deadValues;
+    Vector<StackSlot*> deadSlots;
     for (auto& entry : stackVariable) {
         if (entry.value == Void)
-            deadValues.append(entry.key);
+            deadSlots.append(entry.key);
     }
 
-    for (StackSlotValue* deadValue : deadValues) {
-        deadValue->replaceWithNop();
-        stackVariable.remove(deadValue);
-    }
+    for (StackSlot* deadSlot : deadSlots)
+        stackVariable.remove(deadSlot);
 
     if (stackVariable.isEmpty())
         return false;
@@ -204,11 +206,11 @@ bool fixSSA(Procedure& proc)
     SSACalculator ssa(proc);
 
     // Create a SSACalculator::Variable for every stack variable.
-    Vector<StackSlotValue*> variableToStack;
-    HashMap<StackSlotValue*, SSACalculator::Variable*> stackToVariable;
+    Vector<StackSlot*> variableToStack;
+    HashMap<StackSlot*, SSACalculator::Variable*> stackToVariable;
 
     for (auto& entry : stackVariable) {
-        StackSlotValue* stack = entry.key;
+        StackSlot* stack = entry.key;
         SSACalculator::Variable* variable = ssa.newVariable();
         RELEASE_ASSERT(variable->index() == variableToStack.size());
         variableToStack.append(stack);
@@ -221,9 +223,11 @@ bool fixSSA(Procedure& proc)
             if (value->opcode() != Store)
                 continue;
 
-            StackSlotValue* stack = value->child(1)->as<StackSlotValue>();
-            if (!stack)
+            SlotBaseValue* slotBase = value->child(1)->as<SlotBaseValue>();
+            if (!slotBase)
                 continue;
+
+            StackSlot* stack = slotBase->slot();
 
             if (SSACalculator::Variable* variable = stackToVariable.get(stack))
                 ssa.newDef(variable, block, value->child(0));
@@ -233,8 +237,8 @@ bool fixSSA(Procedure& proc)
     // Decide where Phis are to be inserted. This creates them but does not insert them.
     ssa.computePhis(
         [&] (SSACalculator::Variable* variable, BasicBlock* block) -> Value* {
-            StackSlotValue* stack = variableToStack[variable->index()];
-            Value* phi = proc.add<Value>(Phi, stackVariable.get(stack), stack->origin());
+            StackSlot* stack = variableToStack[variable->index()];
+            Value* phi = proc.add<Value>(Phi, stackVariable.get(stack), block->at(0)->origin());
             if (verbose) {
                 dataLog(
                     "Adding Phi for ", pointerDump(stack), " at ", *block, ": ",
@@ -245,12 +249,12 @@ bool fixSSA(Procedure& proc)
 
     // Now perform the conversion.
     InsertionSet insertionSet(proc);
-    HashMap<StackSlotValue*, Value*> mapping;
+    HashMap<StackSlot*, Value*> mapping;
     for (BasicBlock* block : proc.blocksInPreOrder()) {
         mapping.clear();
 
         for (auto& entry : stackToVariable) {
-            StackSlotValue* stack = entry.key;
+            StackSlot* stack = entry.key;
             SSACalculator::Variable* variable = entry.value;
 
             SSACalculator::Def* def = ssa.reachingDefAtHead(block, variable);
@@ -259,7 +263,7 @@ bool fixSSA(Procedure& proc)
         }
 
         for (SSACalculator::Def* phiDef : ssa.phisForBlock(block)) {
-            StackSlotValue* stack = variableToStack[phiDef->variable()->index()];
+            StackSlot* stack = variableToStack[phiDef->variable()->index()];
 
             insertionSet.insertValue(0, phiDef->value());
             mapping.set(stack, phiDef->value());
@@ -271,7 +275,8 @@ bool fixSSA(Procedure& proc)
 
             switch (value->opcode()) {
             case Load: {
-                if (StackSlotValue* stack = value->child(0)->as<StackSlotValue>()) {
+                if (SlotBaseValue* slotBase = value->child(0)->as<SlotBaseValue>()) {
+                    StackSlot* stack = slotBase->slot();
                     if (Value* replacement = mapping.get(stack))
                         value->replaceWithIdentity(replacement);
                 }
@@ -279,7 +284,8 @@ bool fixSSA(Procedure& proc)
             }
                 
             case Store: {
-                if (StackSlotValue* stack = value->child(1)->as<StackSlotValue>()) {
+                if (SlotBaseValue* slotBase = value->child(1)->as<SlotBaseValue>()) {
+                    StackSlot* stack = slotBase->slot();
                     if (stackToVariable.contains(stack)) {
                         mapping.set(stack, value->child(0));
                         value->replaceWithNop();
@@ -299,7 +305,7 @@ bool fixSSA(Procedure& proc)
             for (SSACalculator::Def* phiDef : ssa.phisForBlock(successorBlock)) {
                 Value* phi = phiDef->value();
                 SSACalculator::Variable* variable = phiDef->variable();
-                StackSlotValue* stack = variableToStack[variable->index()];
+                StackSlot* stack = variableToStack[variable->index()];
 
                 Value* mappedValue = mapping.get(stack);
                 if (verbose) {
@@ -318,10 +324,6 @@ bool fixSSA(Procedure& proc)
 
         insertionSet.execute(block);
     }
-
-    // Finally, kill the stack slots.
-    for (StackSlotValue* stack : variableToStack)
-        stack->replaceWithNop();
 
     if (verbose) {
         dataLog("B3 after SSA conversion:\n");

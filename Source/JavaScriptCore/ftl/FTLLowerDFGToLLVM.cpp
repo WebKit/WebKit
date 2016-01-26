@@ -207,9 +207,9 @@ public:
 
 #if FTL_USES_B3
         size_t sizeOfCaptured = sizeof(JSValue) * m_graph.m_nextMachineLocal;
-        B3::StackSlotValue* capturedBase = m_out.lockedStackSlot(sizeOfCaptured);
+        B3::SlotBaseValue* capturedBase = m_out.lockedStackSlot(sizeOfCaptured);
         m_captured = m_out.add(capturedBase, m_out.constIntPtr(sizeOfCaptured));
-        state->capturedValue = capturedBase;
+        state->capturedValue = capturedBase->slot();
 #else // FTL_USES_B3
         LValue capturedAlloca = m_out.alloca(arrayType(m_out.int64, m_graph.m_nextMachineLocal));
         

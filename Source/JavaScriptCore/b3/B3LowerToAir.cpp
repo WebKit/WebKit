@@ -47,7 +47,8 @@
 #include "B3PhaseScope.h"
 #include "B3PhiChildren.h"
 #include "B3Procedure.h"
-#include "B3StackSlotValue.h"
+#include "B3SlotBaseValue.h"
+#include "B3StackSlot.h"
 #include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
 #include "B3ValueInlines.h"
@@ -92,15 +93,13 @@ public:
                     dataLog("Phi tmp for ", *value, ": ", m_phiToTmp[value], "\n");
                 break;
             }
-            case B3::StackSlot: {
-                StackSlotValue* stackSlotValue = value->as<StackSlotValue>();
-                m_stackToStack.add(stackSlotValue, m_code.addStackSlot(stackSlotValue));
-                break;
-            }
             default:
                 break;
             }
         }
+
+        for (B3::StackSlot* stack : m_procedure.stackSlots())
+            m_stackToStack.add(stack, m_code.addStackSlot(stack));
 
         // Figure out which blocks are not rare.
         m_fastWorklist.push(m_procedure[0]);
@@ -433,8 +432,8 @@ private:
         case FramePointer:
             return Arg::addr(Tmp(GPRInfo::callFrameRegister), offset);
 
-        case B3::StackSlot:
-            return Arg::stack(m_stackToStack.get(address->as<StackSlotValue>()), offset);
+        case SlotBase:
+            return Arg::stack(m_stackToStack.get(address->as<SlotBaseValue>()->slot()), offset);
 
         default:
             return fallback();
@@ -1914,10 +1913,10 @@ private:
             return;
         }
 
-        case B3::StackSlot: {
+        case SlotBase: {
             append(
                 Lea,
-                Arg::stack(m_stackToStack.get(m_value->as<StackSlotValue>())),
+                Arg::stack(m_stackToStack.get(m_value->as<SlotBaseValue>()->slot())),
                 tmp(m_value));
             return;
         }
@@ -2284,7 +2283,7 @@ private:
     IndexMap<Value, Tmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
     IndexMap<Value, Tmp> m_phiToTmp; // Each Phi gets its own Tmp.
     IndexMap<B3::BasicBlock, Air::BasicBlock*> m_blockToBlock;
-    HashMap<StackSlotValue*, Air::StackSlot*> m_stackToStack;
+    HashMap<B3::StackSlot*, Air::StackSlot*> m_stackToStack;
 
     UseCounts m_useCounts;
     PhiChildren m_phiChildren;

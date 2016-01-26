@@ -37,7 +37,8 @@
 #include "B3MathExtras.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
-#include "B3StackSlotValue.h"
+#include "B3SlotBaseValue.h"
+#include "B3StackSlot.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
@@ -4987,7 +4988,8 @@ void testStackSlot()
     BasicBlock* root = proc.addBlock();
     root->appendNew<ControlValue>(
         proc, Return, Origin(),
-        root->appendNew<StackSlotValue>(proc, Origin(), 1, StackSlotKind::Anonymous));
+        root->appendNew<SlotBaseValue>(
+            proc, Origin(), proc.addStackSlot(1, StackSlotKind::Anonymous)));
 
     void* stackSlot = compileAndRun<void*>(proc);
     CHECK(stackSlot < &proc);
@@ -5015,8 +5017,8 @@ void testStoreLoadStackSlot(int value)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
-    StackSlotValue* stack = root->appendNew<StackSlotValue>(
-        proc, Origin(), sizeof(int), StackSlotKind::Anonymous);
+    SlotBaseValue* stack = root->appendNew<SlotBaseValue>(
+        proc, Origin(), proc.addStackSlot(sizeof(int), StackSlotKind::Anonymous));
 
     root->appendNew<MemoryValue>(
         proc, Store, Origin(),

@@ -47,7 +47,7 @@ namespace JSC {
 
 namespace B3 {
 class PatchpointValue;
-class StackSlotValue;
+class StackSlot;
 } // namespace B3
 
 namespace FTL {
@@ -89,7 +89,7 @@ public:
     // are no applicable catch blocks anywhere in the Graph.
     RefPtr<PatchpointExceptionHandle> defaultExceptionHandle;
     Box<CCallHelpers::Label> exceptionHandler { Box<CCallHelpers::Label>::create() };
-    B3::StackSlotValue* capturedValue { nullptr };
+    B3::StackSlot* capturedValue { nullptr };
 #else // FTL_USES_B3
     unsigned handleStackOverflowExceptionStackmapID { UINT_MAX };
     unsigned handleExceptionStackmapID { UINT_MAX };

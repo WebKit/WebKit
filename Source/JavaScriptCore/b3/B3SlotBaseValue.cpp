@@ -24,43 +24,28 @@
  */
 
 #include "config.h"
-#include "AirStackSlot.h"
+#include "B3SlotBaseValue.h"
 
 #if ENABLE(B3_JIT)
 
 #include "B3StackSlot.h"
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC { namespace B3 {
 
-void StackSlot::setOffsetFromFP(intptr_t value)
+SlotBaseValue::~SlotBaseValue()
 {
-    m_offsetFromFP = value;
-    if (m_b3Slot)
-        m_b3Slot->m_offsetFromFP = value;
 }
 
-void StackSlot::dump(PrintStream& out) const
+void SlotBaseValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print("stack", m_index);
+    out.print(comma, pointerDump(m_slot));
 }
 
-void StackSlot::deepDump(PrintStream& out) const
+Value* SlotBaseValue::cloneImpl() const
 {
-    out.print("byteSize = ", m_byteSize, ", offsetFromFP = ", m_offsetFromFP, ", kind = ", m_kind);
-    if (m_b3Slot)
-        out.print(", b3Slot = ", *m_b3Slot, ": (", B3::deepDump(m_b3Slot), ")");
+    return new SlotBaseValue(*this);
 }
 
-StackSlot::StackSlot(unsigned byteSize, unsigned index, StackSlotKind kind, B3::StackSlot* b3Slot)
-    : m_byteSize(byteSize)
-    , m_index(index)
-    , m_offsetFromFP(b3Slot ? b3Slot->offsetFromFP() : 0)
-    , m_kind(kind)
-    , m_b3Slot(b3Slot)
-{
-    ASSERT(byteSize);
-}
-
-} } } // namespace JSC::B3::Air
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

@@ -40,7 +40,7 @@
 #include "B3ControlValue.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
-#include "B3StackSlotValue.h"
+#include "B3SlotBaseValue.h"
 #include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
@@ -102,7 +102,7 @@ public:
 
     LValue framePointer() { return m_block->appendNew<B3::Value>(m_proc, B3::FramePointer, origin()); }
 
-    B3::StackSlotValue* lockedStackSlot(size_t bytes);
+    B3::SlotBaseValue* lockedStackSlot(size_t bytes);
 
     LValue constBool(bool value) { return m_block->appendNew<B3::Const32Value>(m_proc, origin(), value); }
     LValue constInt32(int32_t value) { return m_block->appendNew<B3::Const32Value>(m_proc, origin(), value); }

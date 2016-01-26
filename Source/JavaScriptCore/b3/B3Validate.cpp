@@ -33,7 +33,8 @@
 #include "B3Dominators.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
-#include "B3StackSlotValue.h"
+#include "B3SlotBaseValue.h"
+#include "B3StackSlot.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include <wtf/HashSet.h>
@@ -152,7 +153,7 @@ public:
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(value->type() == Float, ("At ", *value));
                 break;
-            case StackSlot:
+            case SlotBase:
             case FramePointer:
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(value->type() == pointerType(), ("At ", *value));
@@ -410,9 +411,11 @@ private:
     void validateStackAccess(Value* value)
     {
         MemoryValue* memory = value->as<MemoryValue>();
-        StackSlotValue* stack = value->lastChild()->as<StackSlotValue>();
-        if (!stack)
+        SlotBaseValue* slotBase = value->lastChild()->as<SlotBaseValue>();
+        if (!slotBase)
             return;
+
+        StackSlot* stack = slotBase->slot();
 
         VALIDATE(memory->offset() >= 0, ("At ", *value));
         VALIDATE(memory->offset() + memory->accessByteSize() <= stack->byteSize(), ("At ", *value));

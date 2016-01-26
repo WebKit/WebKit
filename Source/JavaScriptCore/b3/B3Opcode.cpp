@@ -95,8 +95,8 @@ void printInternal(PrintStream& out, Opcode opcode)
     case ConstFloat:
         out.print("ConstFloat");
         return;
-    case StackSlot:
-        out.print("StackSlot");
+    case SlotBase:
+        out.print("SlotBase");
         return;
     case ArgumentReg:
         out.print("ArgumentReg");

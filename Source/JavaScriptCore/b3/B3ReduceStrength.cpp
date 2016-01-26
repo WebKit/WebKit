@@ -40,6 +40,8 @@
 #include "B3PhiChildren.h"
 #include "B3ProcedureInlines.h"
 #include "B3PureCSE.h"
+#include "B3SlotBaseValue.h"
+#include "B3StackSlot.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
@@ -2075,14 +2077,18 @@ private:
                 break;
         }
 
+        IndexSet<StackSlot> liveStackSlots;
+        
         for (BasicBlock* block : m_proc) {
             size_t sourceIndex = 0;
             size_t targetIndex = 0;
             while (sourceIndex < block->size()) {
                 Value* value = block->at(sourceIndex++);
-                if (worklist.saw(value))
+                if (worklist.saw(value)) {
+                    if (SlotBaseValue* slotBase = value->as<SlotBaseValue>())
+                        liveStackSlots.add(slotBase->slot());
                     block->at(targetIndex++) = value;
-                else {
+                } else {
                     m_proc.deleteValue(value);
                     
                     // It's not entirely clear if this is needed. I think it makes sense to have
@@ -2093,6 +2099,12 @@ private:
                 }
             }
             block->values().resize(targetIndex);
+        }
+
+        for (StackSlot* slot : m_proc.stackSlots()) {
+            if (slot->isLocked() || liveStackSlots.contains(slot))
+                continue;
+            m_proc.deleteStackSlot(slot);
         }
     }
 

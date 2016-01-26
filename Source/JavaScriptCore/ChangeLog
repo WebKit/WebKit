@@ -1,3 +1,181 @@
+2016-01-26  Filip Pizlo  <fpizlo@apple.com>
+
+        The thing that B3 uses to describe a stack slot should not be a Value
+        https://bugs.webkit.org/show_bug.cgi?id=153491
+        rdar://problem/24349446
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+
+        Prior to this change, B3 represented stack slots by having a StackSlotValue that carried
+        two meanings:
+
+        - It represented a stack slot.
+
+        - It was a kind of Value for getting the base of the stack slot.
+
+        This seems like a good idea until you consider the following issues.
+
+        1) A Value can be killed if it is on an unreachable path, or if it has no effects and
+           nobody refers to it. But the FTL uses StackSlotValue to allocate space on the stack.
+           When it does this, it doesn't want it to be killed. It will dereference the object, so
+           killing it is a bug.
+
+        2) A premise of B3 is that it should be always legal to perform the following
+           transformation on a value:
+
+           value->replaceWithIdentity(insertionSet.insertValue(index, proc.clone(value)));
+
+           This inserts a new value just before the old one. The new value is a clone of the old
+           one. Then the old one is essentially deleted (anything that becomes an identity dies
+           shortly thereafter). Problem (1) prevents this from being legal, which breaks a major
+           premise of B3 IR.
+
+        3) A premise of B3 is that it should be always legal to perform the following
+           transformation on a value:
+
+           Before:
+                   @42 = Thing(...)
+
+           After:
+                   Branch(@doesntMatter, #yes, #no)
+               BB#yes:
+                   @42_one = Thing(...)
+                   Upsilon(@42_one, ^42)
+                   Jump(#done)
+               BB#no:
+                   @42_two = Thing(...)
+                   Upsilon(@42_two, ^42)
+                   Jump(#done)
+               BB#done:
+                   @42 = Phi()
+
+           But prior to this change, such a transformation makes absolutely no sense for
+           StackSlot. It will "work" in the sense that the compiler will proceed undaunted, but
+           it will disable SSA fix-up for the cloned stack slot and we will end up allocating two
+           stack slots instead of one, and then we will assume that they both escape, which will
+           disable efficient stack allocation. Note that the moral equivalent of this
+           transformation could already happen due to tail duplication, and the only reason why
+           it's not a bug right now is that we happen to hoist stack slots to the root block. But
+           the whole point of our stack slots was supposed to be that they do not have to be
+           hoisted.
+
+        This change fixes this issue by splitting StackSlotValue into two things: SlotBaseValue,
+        which is a pure operation for getting the base address of a StackSlot, and StackSlot,
+        which is a representation of the actual stack slot. StackSlot cannot get duplicated and
+        can only be killed if it's anonymous. SlotBaseValue can be killed, moved, cloned,
+        hoisted, etc. Since it has no effects and it has a ValueKey, it's one of the most
+        permissive Values in the IR, just as one would hope (after all, there is actually zero
+        code that needs to execute to evaluate SlotBaseValue).
+
+        This fixes a crash that we saw with GuardMalloc and ASan. It also makes the IR a lot more
+        easy to reason about.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3FixSSA.cpp:
+        (JSC::B3::demoteValues):
+        (JSC::B3::fixSSA):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::setBlockOrderImpl):
+        (JSC::B3::Procedure::addStackSlot):
+        (JSC::B3::Procedure::addAnonymousStackSlot):
+        (JSC::B3::Procedure::clone):
+        (JSC::B3::Procedure::dump):
+        (JSC::B3::Procedure::blocksInPostOrder):
+        (JSC::B3::Procedure::deleteStackSlot):
+        (JSC::B3::Procedure::deleteValue):
+        (JSC::B3::Procedure::calleeSaveRegisters):
+        (JSC::B3::Procedure::addStackSlotIndex):
+        (JSC::B3::Procedure::addValueIndex):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::setBlockOrder):
+        (JSC::B3::Procedure::StackSlotsCollection::StackSlotsCollection):
+        (JSC::B3::Procedure::StackSlotsCollection::size):
+        (JSC::B3::Procedure::StackSlotsCollection::at):
+        (JSC::B3::Procedure::StackSlotsCollection::operator[]):
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::iterator):
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::operator*):
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::operator++):
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::operator==):
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::operator!=):
+        (JSC::B3::Procedure::StackSlotsCollection::iterator::findNext):
+        (JSC::B3::Procedure::StackSlotsCollection::begin):
+        (JSC::B3::Procedure::StackSlotsCollection::end):
+        (JSC::B3::Procedure::stackSlots):
+        (JSC::B3::Procedure::ValuesCollection::ValuesCollection):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3SlotBaseValue.cpp: Copied from Source/JavaScriptCore/b3/B3StackSlotValue.cpp.
+        (JSC::B3::SlotBaseValue::~SlotBaseValue):
+        (JSC::B3::SlotBaseValue::dumpMeta):
+        (JSC::B3::SlotBaseValue::cloneImpl):
+        (JSC::B3::StackSlotValue::~StackSlotValue): Deleted.
+        (JSC::B3::StackSlotValue::dumpMeta): Deleted.
+        (JSC::B3::StackSlotValue::cloneImpl): Deleted.
+        * b3/B3SlotBaseValue.h: Copied from Source/JavaScriptCore/b3/B3StackSlotValue.h.
+        * b3/B3StackSlot.cpp: Added.
+        (JSC::B3::StackSlot::~StackSlot):
+        (JSC::B3::StackSlot::dump):
+        (JSC::B3::StackSlot::deepDump):
+        (JSC::B3::StackSlot::StackSlot):
+        * b3/B3StackSlot.h: Added.
+        (JSC::B3::StackSlot::byteSize):
+        (JSC::B3::StackSlot::kind):
+        (JSC::B3::StackSlot::isLocked):
+        (JSC::B3::StackSlot::index):
+        (JSC::B3::StackSlot::offsetFromFP):
+        (JSC::B3::StackSlot::setOffsetFromFP):
+        (JSC::B3::DeepStackSlotDump::DeepStackSlotDump):
+        (JSC::B3::DeepStackSlotDump::dump):
+        (JSC::B3::deepDump):
+        * b3/B3StackSlotValue.cpp: Removed.
+        * b3/B3StackSlotValue.h: Removed.
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::checkOpcode):
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::materialize):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addBlock):
+        (JSC::B3::Air::Code::addStackSlot):
+        (JSC::B3::Air::Code::addSpecial):
+        * b3/air/AirCode.h:
+        * b3/air/AirStackSlot.cpp:
+        (JSC::B3::Air::StackSlot::setOffsetFromFP):
+        (JSC::B3::Air::StackSlot::dump):
+        (JSC::B3::Air::StackSlot::deepDump):
+        (JSC::B3::Air::StackSlot::StackSlot):
+        * b3/air/AirStackSlot.h:
+        (JSC::B3::Air::StackSlot::alignment):
+        (JSC::B3::Air::StackSlot::b3Slot):
+        (JSC::B3::Air::StackSlot::offsetFromFP):
+        (WTF::printInternal):
+        (JSC::B3::Air::StackSlot::value): Deleted.
+        * b3/testb3.cpp:
+        (JSC::B3::testStackSlot):
+        (JSC::B3::testStoreLoadStackSlot):
+        * ftl/FTLB3Compile.cpp:
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::appendTo):
+        (JSC::FTL::Output::lockedStackSlot):
+        (JSC::FTL::Output::neg):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::framePointer):
+        (JSC::FTL::Output::constBool):
+        (JSC::FTL::Output::constInt32):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        * ftl/FTLState.h:
+
 2016-01-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove a useless #include
