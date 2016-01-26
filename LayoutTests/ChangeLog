@@ -1,3 +1,14 @@
+2016-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Give the layout test results file a <title> showing the date and time the tests were run
+        https://bugs.webkit.org/show_bug.cgi?id=153187
+
+        Reviewed by Darin Adler.
+        
+        Generate a <title> element from the 'date' property in the JSON.
+
+        * fast/harness/results.html:
+
 2016-01-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.

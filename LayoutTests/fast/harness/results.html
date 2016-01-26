@@ -1385,9 +1385,18 @@ function failingTestsTable(tests, title, id)
     return header + tableRowHtml + '</table></div>';
 }
 
+function updateTitle()
+{
+    var dateString = globalState().results.date;
+    
+    var title = document.createElement('title');
+    title.textContent = 'Layout Test Results from ' + dateString;
+    document.head.appendChild(title);
+}
 
 function generatePage()
 {
+    updateTitle();
     forEachTest(processGlobalStateFor);
     forOtherCrashes();
 
