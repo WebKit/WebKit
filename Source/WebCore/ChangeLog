@@ -1,3 +1,13 @@
+2016-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Add a Dictionary overload that returns an Optional result
+        https://bugs.webkit.org/show_bug.cgi?id=153507
+
+        Reviewed by Tim Horton.
+
+        * bindings/js/Dictionary.h:
+        (WebCore::Dictionary::get):
+
 2016-01-26  Philip Rogers  <pdr@chromium.org>
 
         Let SVG images not taint canvases except when containing foreignObjects
