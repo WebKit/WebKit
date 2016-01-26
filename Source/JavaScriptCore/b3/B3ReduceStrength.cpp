@@ -816,7 +816,7 @@ private:
                 break;
             }
 
-            if (handleShiftByZero())
+            if (handleShiftAmount())
                 break;
 
             break;
@@ -878,7 +878,7 @@ private:
                     break;
             }
 
-            if (handleShiftByZero())
+            if (handleShiftAmount())
                 break;
 
             break;
@@ -891,7 +891,7 @@ private:
                 break;
             }
 
-            if (handleShiftByZero())
+            if (handleShiftAmount())
                 break;
 
             break;
@@ -1886,14 +1886,29 @@ private:
         return true;
     }
 
-    bool handleShiftByZero()
+    bool handleShiftAmount()
     {
         // Shift anything by zero is identity.
-        if (m_value->child(1)->isInt(0)) {
+        if (m_value->child(1)->isInt32(0)) {
             m_value->replaceWithIdentity(m_value->child(0));
             m_changed = true;
             return true;
         }
+
+        // The shift already masks its shift amount. If the shift amount is being masked by a
+        // redundant amount, then remove the mask. For example,
+        // Turn this: Shl(@x, BitAnd(@y, 63))
+        // Into this: Shl(@x, @y)
+        unsigned mask = sizeofType(m_value->type()) * 8 - 1;
+        if (m_value->child(1)->opcode() == BitAnd
+            && m_value->child(1)->child(1)->hasInt32()
+            && (m_value->child(1)->child(1)->asInt32() & mask) == mask) {
+            m_value->child(1) = m_value->child(1)->child(0);
+            m_changed = true;
+            // Don't need to return true, since we're still the same shift, and we can still cascade
+            // through other optimizations.
+        }
+        
         return false;
     }
 

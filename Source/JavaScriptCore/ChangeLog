@@ -1,5 +1,25 @@
 2016-01-26  Filip Pizlo  <fpizlo@apple.com>
 
+        Shifts by an amount computed using BitAnd with a mask that subsumes the shift's own mask should be rewired around the BitAnd
+        https://bugs.webkit.org/show_bug.cgi?id=153505
+
+        Reviewed by Saam Barati.
+
+        Turn this: Shl(@x, BitAnd(@y, 63))
+        Into this: Shl(@x, @y)
+
+        It matters for Octane/crypto.
+
+        We should also stop FTL from generating such code, but even if we did that, we'd still want
+        this optimization in case user code did the BitAnd.
+
+        Also we can't stop the FTL from generating such code yet, because when targetting LLVM, you
+        must mask your shifts this way.
+
+        * b3/B3ReduceStrength.cpp:
+
+2016-01-26  Filip Pizlo  <fpizlo@apple.com>
+
         The thing that B3 uses to describe a stack slot should not be a Value
         https://bugs.webkit.org/show_bug.cgi?id=153491
         rdar://problem/24349446
