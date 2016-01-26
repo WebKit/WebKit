@@ -198,12 +198,12 @@ static bool canCachePage(Page& page)
         isCacheable = false;
     }
 #if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS)
-    if (DeviceMotionController::isActiveAt(page)) {
+    if (DeviceMotionController::isActiveAt(&page)) {
         PCLOG("   -Page is using DeviceMotion");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::deviceMotionKey());
         isCacheable = false;
     }
-    if (DeviceOrientationController::isActiveAt(page)) {
+    if (DeviceOrientationController::isActiveAt(&page)) {
         PCLOG("   -Page is using DeviceOrientation");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::deviceOrientationKey());
         isCacheable = false;
