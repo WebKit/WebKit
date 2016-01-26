@@ -67,13 +67,14 @@ struct Size : MarkedBlock::CountFunctor {
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
 public:
-    // [ 16 ... 128 ]
+    // [ 16 ... 768 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
-    static const size_t preciseCutoff = 128;
+    static const size_t preciseCutoff = 768;
     static const size_t preciseCount = preciseCutoff / preciseStep;
 
-    // [ 256 ... blockSize/2 ]
-    static const size_t impreciseStep = 2 * preciseCutoff;
+    // [ 1024 ... blockSize/2 ]
+    static const size_t impreciseStart = 1024;
+    static const size_t impreciseStep = 256;
     static const size_t impreciseCutoff = MarkedBlock::blockSize / 2;
     static const size_t impreciseCount = impreciseCutoff / impreciseStep;
 

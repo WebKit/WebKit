@@ -1,3 +1,43 @@
+2016-01-25  Andreas Kling  <akling@apple.com>
+
+        MarkedSpace should have more precise allocators.
+        <https://webkit.org/b/153448>
+        <rdar://problem/23897477>
+
+        Reviewed by Geoffrey Garen.
+
+        The four classes responsible for the bulk of MarkedBlock allocations today are:
+
+            - FunctionCodeBlock (640 bytes)
+            - UnlinkedFunctionCodeBlock (304 bytes)
+            - FunctionExecutable (168 bytes)
+            - UnlinkedFunctionExecutable (144 bytes)
+
+        Due to the size class distribution in MarkedSpace, we've been wasting quite a lot
+        of heap space on these objects. Our "precise" allocators allowed allocation sizes
+        in 16-byte increments up to 128 bytes, but after that point, we'd only allocate
+        in 256-byte size increments.
+
+        Thus each instance of those classes would waste space as follows:
+
+            - FunctionCodeBlock (768-byte cell, 128 bytes wasted)
+            - UnlinkedFunctionCodeBlock (512-byte cell, 208 bytes wasted)
+            - FunctionExecutable(256-byte cell, 88 bytes wasted)
+            - UnlinkedFunctionExecutable(256-byte cell, 112 bytes wasted)
+
+        This patch raises the limit for precise allocations from 128 to 768, allowing us
+        to allocate these objects with far better space efficiency.
+
+        The cost of this is 7kB worth of MarkedAllocators and 70 (~2x) more allocators to
+        iterate whenever we iterate all the allocators.
+
+        * heap/MarkedSpace.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::forEachAllocator):
+        (JSC::MarkedSpace::isPagedOut):
+
 2016-01-25  Filip Pizlo  <fpizlo@apple.com>
 
         Fix the comment about FTL_USES_B3.

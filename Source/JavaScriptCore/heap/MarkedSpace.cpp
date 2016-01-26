@@ -62,7 +62,7 @@ MarkedSpace::MarkedSpace(Heap* heap)
         destructorAllocatorFor(cellSize).init(heap, this, cellSize, true);
     }
 
-    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
+    for (size_t cellSize = impreciseStart; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
         allocatorFor(cellSize).init(heap, this, cellSize, false);
         destructorAllocatorFor(cellSize).init(heap, this, cellSize, true);
     }
@@ -109,7 +109,7 @@ void MarkedSpace::resetAllocators()
         destructorAllocatorFor(cellSize).reset();
     }
 
-    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
+    for (size_t cellSize = impreciseStart; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
         allocatorFor(cellSize).reset();
         destructorAllocatorFor(cellSize).reset();
     }
@@ -154,7 +154,7 @@ void MarkedSpace::forEachAllocator(Functor& functor)
         functor(destructorAllocatorFor(cellSize));
     }
 
-    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
+    for (size_t cellSize = impreciseStart; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
         functor(allocatorFor(cellSize));
         functor(destructorAllocatorFor(cellSize));
     }
@@ -191,7 +191,7 @@ bool MarkedSpace::isPagedOut(double deadline)
             return true;
     }
 
-    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
+    for (size_t cellSize = impreciseStart; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
         if (allocatorFor(cellSize).isPagedOut(deadline) 
             || destructorAllocatorFor(cellSize).isPagedOut(deadline))
             return true;
