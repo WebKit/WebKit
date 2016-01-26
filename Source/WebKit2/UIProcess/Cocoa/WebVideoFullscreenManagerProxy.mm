@@ -378,8 +378,7 @@ void WebVideoFullscreenManagerProxy::setVideoDimensions(uint64_t contextId, bool
 void WebVideoFullscreenManagerProxy::setSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges)
 {
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
-    for (const auto& range : ranges)
-    {
+    for (const auto& range : ranges) {
         ASSERT(isfinite(range.first));
         ASSERT(isfinite(range.second));
         ASSERT(range.second >= range.first);

@@ -1,3 +1,25 @@
+2016-01-25  Ada Chan  <adachan@apple.com>
+
+        Move WebVideoFullscreenManager and related classes from iOS specific folders to cocoa folders
+        https://bugs.webkit.org/show_bug.cgi?id=153473
+
+        Reviewed by Eric Carlson.
+
+        * DerivedSources.make:
+        Add new paths.
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h: Renamed from Source/WebKit2/UIProcess/ios/WebVideoFullscreenManagerProxy.h.
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in: Renamed from Source/WebKit2/UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in.
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm: Renamed from Source/WebKit2/UIProcess/ios/WebVideoFullscreenManagerProxy.mm.
+        (WebKit::WebVideoFullscreenManagerProxy::setSeekableRangesVector):
+        Fix a style error by moving the opening curly brace to the same line as the for statement.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Update due to changes to the file locations.
+        * WebProcess/cocoa/WebVideoFullscreenManager.h: Renamed from Source/WebKit2/WebProcess/ios/WebVideoFullscreenManager.h.
+        * WebProcess/cocoa/WebVideoFullscreenManager.messages.in: Renamed from Source/WebKit2/WebProcess/ios/WebVideoFullscreenManager.messages.in.
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm: Renamed from Source/WebKit2/WebProcess/ios/WebVideoFullscreenManager.mm.
+        (WebKit::WebVideoFullscreenInterfaceContext::setSeekableRanges):
+        Fix a style error by adding a missing space after a comma.
+
 2016-01-26  Daniel Bates  <dabates@apple.com>
 
         WebKitTestRunner: Credential cache is not cleared between tests

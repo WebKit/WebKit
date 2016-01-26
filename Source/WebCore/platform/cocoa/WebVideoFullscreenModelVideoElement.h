@@ -46,7 +46,8 @@ class WebVideoFullscreenInterface;
 
 class WebVideoFullscreenModelVideoElement : public WebVideoFullscreenModel, public EventListener {
 public:
-    static RefPtr<WebVideoFullscreenModelVideoElement> create() {
+    static RefPtr<WebVideoFullscreenModelVideoElement> create()
+    {
         return adoptRef(*new WebVideoFullscreenModelVideoElement());
     }
     WEBCORE_EXPORT virtual ~WebVideoFullscreenModelVideoElement();

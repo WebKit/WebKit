@@ -313,7 +313,7 @@ void WebVideoFullscreenManager::setSeekableRanges(uint64_t contextId, const WebC
         ExceptionCode exceptionCode;
         double start = timeRanges.start(i, exceptionCode);
         double end = timeRanges.end(i, exceptionCode);
-        rangesVector.append(std::pair<double,double>(start, end));
+        rangesVector.append(std::pair<double, double>(start, end));
     }
 
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetSeekableRangesVector(contextId, WTFMove(rangesVector)), m_page->pageID());

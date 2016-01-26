@@ -52,9 +52,11 @@ VPATH = \
     $(WebKit2)/WebProcess/UserContent \
     $(WebKit2)/WebProcess/WebCoreSupport \
     $(WebKit2)/WebProcess/WebPage \
+    $(WebKit2)/WebProcess/cocoa \
     $(WebKit2)/WebProcess/ios \
     $(WebKit2)/WebProcess \
     $(WebKit2)/UIProcess \
+    $(WebKit2)/UIProcess/Cocoa \
     $(WebKit2)/UIProcess/Databases \
     $(WebKit2)/UIProcess/Downloads \
     $(WebKit2)/UIProcess/Network \
