@@ -1,3 +1,26 @@
+2016-01-25  Dave Hyatt  <hyatt@apple.com>
+
+        Speculative fixes for crashing in viewportChangeAffectedPicture
+        https://bugs.webkit.org/show_bug.cgi?id=153450
+
+        Reviewed by Dean Jackson.
+
+        Don't attach any conditions to the removal of a picture element from
+        the document's HashSet. This ensures that if the condition is ever
+        wrong for any reason, we'll still remove the picture element on
+        destruction.
+
+        Fix the media query evaluation to match the other evaluations (used by
+        the preload scanner and HTMLImageElement). This includes using the
+        document element's computed style instead of our own and also null
+        checking the document element first. This is the likely cause of the
+        crashes.
+
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::~HTMLPictureElement):
+        (WebCore::HTMLPictureElement::didMoveToNewDocument):
+        (WebCore::HTMLPictureElement::viewportChangeAffectedPicture):
+
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
         Make sure a page is still PageCache-able after firing the 'pagehide' events
