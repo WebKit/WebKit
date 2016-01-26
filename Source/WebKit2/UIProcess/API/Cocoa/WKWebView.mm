@@ -423,6 +423,10 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 - (void)dealloc
 {
+#if PLATFORM(IOS)
+    [_contentView _webViewDestroyed];
+#endif
+
     if (_remoteObjectRegistry)
         _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
 

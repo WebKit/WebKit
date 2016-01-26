@@ -455,6 +455,11 @@ private:
     }
 }
 
+- (void)_webViewDestroyed
+{
+    _webView = nil;
+}
+
 #pragma mark PageClientImpl methods
 
 - (std::unique_ptr<DrawingAreaProxy>)_createDrawingAreaProxy

@@ -74,6 +74,8 @@ struct WebPageConfiguration;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;
 
+- (void)_webViewDestroyed;
+
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (void)_processDidExit;
 - (void)_didRelaunchProcess;
