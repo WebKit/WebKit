@@ -148,6 +148,7 @@ fast/events/clear-drag-state.html
 fast/events/clear-edit-drag-state.html
 fast/events/content-changed-during-drop.html
 fast/events/crash-on-mutate-during-drop.html
+fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html
 fast/events/drag-and-drop-autoscroll-inner-frame.html
 fast/events/drag-and-drop-autoscroll.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
