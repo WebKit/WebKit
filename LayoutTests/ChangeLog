@@ -1,3 +1,12 @@
+2016-01-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaselining cssom/subpixel-offsetleft-top-width-height-values.html for ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152308
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/cssom/subpixel-offsetleft-top-width-height-values-expected.txt: Added.
+
 2016-01-26  Philip Rogers  <pdr@chromium.org>
 
         Let SVG images not taint canvases except when containing foreignObjects
