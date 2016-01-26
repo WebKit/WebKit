@@ -107,16 +107,18 @@ def main():
         "Xvfb",
     ]
 
+    # This allows to specify on the environment of the bot a list of process that should be killed.
+    tasksToKill = os.getenv("WEBKITBOT_TASKSTOKILL", "").split()
     if sys.platform == 'darwin':
-        for task in tasksToKillMac:
+        for task in tasksToKill + tasksToKillMac:
             os.system("killall -9 -v -m " + task)
         # Kill all instances of python executing run-webkit-tests
         os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
     elif sys.platform == 'cygwin' or sys.platform == 'win32':
-        for task in tasksToKillWin:
+        for task in tasksToKill + tasksToKillWin:
             os.system("taskkill /t /f /im " + task)
     elif sys.platform.startswith('linux'):
-        for task in taskToKillUnix:
+        for task in tasksToKill + taskToKillUnix:
             os.system("killall -9 -v " + task)
         os.system("ps aux | grep -P '.+/python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
     else:
