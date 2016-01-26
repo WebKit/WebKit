@@ -1,7 +1,7 @@
 <html>
     <head>
-        <script src="media-file.js"></script>
-        <script src="video-test.js"></script>
+        <script src='media-file.js'></script>
+        <script src='video-test.js'></script>
         <script>
             var video1;
             var video2;
@@ -13,38 +13,53 @@
 
                 if (window.internals)
                     internals.setMockMediaPlaybackTargetPickerEnabled(true);
-
-                video1.addEventListener('webkitplaybacktargetavailabilitychanged', targetAvailabilityChanged);
-                setTimeout(setSource, 200);
-            }
-            
-            function targetAvailabilityChanged(event)
-            {
-                consoleWrite(`<br>EVENT: '${event.type}', event.availability = '${event.availability}'<br>`);
-
-                if (event.availability != "available")
-                    return;
-
-                if (event.availability == "available" && video2.src == "") {
-                    failTest("Event sent before any video is a candidate for airplay");
-                    return;
-                }
                 
-                endTest();
+                video1.addEventListener('webkitplaybacktargetavailabilitychanged', noSource, true);
             }
             
-            function setSource()
+            function noSource(event)
             {
-                consoleWrite('** setting src on video that does not have event listener');
+                video1.removeEventListener('webkitplaybacktargetavailabilitychanged', noSource, true);
+
+                consoleWrite(`EVENT( ${event.type} )`);
+                testExpected('event.availability', 'not-available');
+
+                video1.addEventListener('webkitplaybacktargetavailabilitychanged', haveTarget, true);
+
+                consoleWrite('<br>** simulate device becoming available');
                 if (window.internals)
-                    internals.setMockMediaPlaybackTargetPickerState("Sleepy TV", "DeviceAvailable");
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+            }
+                
+            function haveTarget(event)
+            {
+                // setMockMediaPlaybackTargetPickerState happens asynchronously in WK2 and a
+                // 'webkitplaybacktargetavailabilitychanged' is always sent when an event listener
+                // is added, so we may get a "not available" event first.
+                if (event.availability == 'not-available')
+                    return;
+
+                video1.removeEventListener('webkitplaybacktargetavailabilitychanged', haveTarget, true);
+                consoleWrite(`EVENT( ${event.type} )`);
+
+                consoleWrite('<br>** set src on video that does not have event listener');
+
                 video2.src = findMediaFile('video', 'content/test');
+                video1.addEventListener('webkitplaybacktargetavailabilitychanged', withSource, true);
+            }
+
+            function withSource(event)
+            {
+                consoleWrite(`EVENT( ${event.type} )`);
+                testExpected('event.availability', 'available');
+                consoleWrite('');
+                endTest();
             }
 
         </script>
     </head>
 
-    <body onload="start()">
+    <body onload='start()'>
         <video controls></video>
         <br>
         <video controls></video>

@@ -1,3 +1,18 @@
+2016-01-26  Eric Carlson  <eric.carlson@apple.com>
+
+        LayoutTest media/airplay-target-availability.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=153100
+        <rdar://problem/24346796>
+
+        Reviewed by Daniel Bates.
+
+        No new tests, media/airplay-target-availability.html was updated
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::clientStateDidChange): Schedule a configuration scan if
+          any of the config flags have changed.
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetMonitoring): Update logging.
+
 2016-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Main frame scrollbars not updated on hovering when using overlay scrollbars

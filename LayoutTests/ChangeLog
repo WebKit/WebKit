@@ -1,3 +1,14 @@
+2016-01-26  Eric Carlson  <eric.carlson@apple.com>
+
+        LayoutTest media/airplay-target-availability.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=153100
+        <rdar://problem/24346796>
+
+        Reviewed by Daniel Bates.
+
+        * media/airplay-target-availability-expected.txt:
+        * media/airplay-target-availability.html:
+
 2016-01-26  Daniel Bates  <dabates@apple.com>
 
         LayoutTest http/tests/security/xssAuditor/embed-tag-in-path-unterminated.html crashing
