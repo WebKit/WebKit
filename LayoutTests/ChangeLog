@@ -1,3 +1,12 @@
+2016-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking inspector/codemirror/prettyprinting-css-rules.html as flaky on mac-wk1 debug
+        https://bugs.webkit.org/show_bug.cgi?id=153460
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
         First parameter to window.showModalDialog() should be mandatory

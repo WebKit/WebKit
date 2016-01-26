@@ -62,6 +62,8 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 
 webkit.org/b/153039 [ Debug ] inspector/heap/garbageCollected.html [ Pass Timeout ]
 
+webkit.org/b/153460 [ Debug ] inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
+
 webkit.org/b/153438 imported/w3c/indexeddb/keyorder-private.html [ Pass Failure ]
 
 ### END OF (1) Failures with bug reports
