@@ -54,6 +54,9 @@ public:
         if (m_graph.m_profiledBlock->m_didFailFTLCompilation)
             return false;
 
+        if (!Options::bytecodeRangeToFTLCompile().isInRange(m_graph.m_profiledBlock->instructionCount()))
+            return false;
+
 #if ENABLE(FTL_JIT)
         FTL::CapabilityLevel level = FTL::canCompile(m_graph);
         if (level == FTL::CannotCompile)
