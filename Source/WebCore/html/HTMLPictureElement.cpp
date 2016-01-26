@@ -39,13 +39,12 @@ HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document& d
 
 HTMLPictureElement::~HTMLPictureElement()
 {
-    if (hasViewportDependentResults())
-        document().removeViewportDependentPicture(*this);
+    document().removeViewportDependentPicture(*this);
 }
 
 void HTMLPictureElement::didMoveToNewDocument(Document* oldDocument)
 {
-    if (hasViewportDependentResults() && oldDocument)
+    if (oldDocument)
         oldDocument->removeViewportDependentPicture(*this);
     HTMLElement::didMoveToNewDocument(oldDocument);
     sourcesChanged();
@@ -64,7 +63,7 @@ void HTMLPictureElement::sourcesChanged()
 
 bool HTMLPictureElement::viewportChangeAffectedPicture()
 {
-    MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), computedStyle());
+    MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), document().documentElement() ? document().documentElement()->computedStyle() : nullptr);
     unsigned numResults = m_viewportDependentMediaQueryResults.size();
     for (unsigned i = 0; i < numResults; i++) {
         if (evaluator.eval(&m_viewportDependentMediaQueryResults[i]->m_expression) != m_viewportDependentMediaQueryResults[i]->m_result)
