@@ -1,3 +1,21 @@
+2016-01-26  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] WebProcess crashes when quickly attempting many DnD operations
+        https://bugs.webkit.org/show_bug.cgi?id=138468
+
+        Reviewed by Michael Catanzaro.
+
+        New test added to check that the web process does not crash when multiple
+        DnD operations are quickly attempted over the same draggable element.
+
+        * fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash-expected.txt: Added.
+        * fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html: Added.
+
+        Added the new test to the failure expectations for mac-wk2, as there's no
+        suitable implementation of eventSender in place yet (see bug 42194).
+
+        * platform/mac-wk2/TestExpectations: Added failure expectation for the new test.
+
 2016-01-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection.html asserts frequently

@@ -74,8 +74,9 @@ private:
     WebCore::DataObjectGtk* requestDragData(GdkDragContext*, const WebCore::IntPoint& position, unsigned time);
 
     WebPageProxy& m_page;
+    GRefPtr<GdkDragContext> m_dragContext;
+    RefPtr<WebCore::DataObjectGtk> m_draggingDataObject;
     HashMap<GdkDragContext*, std::unique_ptr<DroppingContext>> m_droppingContexts;
-    HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk>> m_draggingDataObjects;
 };
 
 } // namespace WebKit

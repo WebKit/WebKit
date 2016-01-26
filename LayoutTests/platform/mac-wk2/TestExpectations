@@ -90,6 +90,7 @@ fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-and-drop.html
 fast/events/drag-and-drop-link.html
+fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html
 fast/events/drag-in-frames.html
 fast/events/drag-parent-node.html
 fast/events/dropzone-001.html

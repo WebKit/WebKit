@@ -1,3 +1,29 @@
+2016-01-26  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] WebProcess crashes when quickly attempting many DnD operations
+        https://bugs.webkit.org/show_bug.cgi?id=138468
+
+        Reviewed by Michael Catanzaro.
+
+        Do not allow different DnD operations over the same element at the
+        same time, so that any new attempt to DnD an element happening before
+        a previous attempt has ended will take precedence, cancelling the older
+        operation before going ahead with the new one.
+
+        This is consistent with how WebCore::EventHandler handles DnD operations,
+        preventing the web process from crashing in scenarios where the user might
+        try to perform many DnD operations over the same element very quickly.
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::DragAndDropHandler): Initialized new member.
+        (WebKit::DragAndDropHandler::startDrag): Ensure a previous DnD operation
+        is cancelled before handling the new one that has just started.
+        (WebKit::DragAndDropHandler::fillDragData): Protect against calling this
+        function from webkitWebViewBaseDragDataGet for already cancelled operations.
+        (WebKit::DragAndDropHandler::finishDrag): Protect against calling this
+        function from webkitWebViewBaseDragEnd for already cancelled operations.
+        * UIProcess/gtk/DragAndDropHandler.h:
+
 2016-01-25  Enrica Casucci  <enrica@apple.com>
 
         Add support for DataDetectors in WK (iOS).

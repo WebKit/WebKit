@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+var htmlHyperlink;
+var dragBeginPositionX;
+var dragBeginPositionY;
+var dragEndPositionX;
+var dragEndPositionY;
+
+var dragHasStarted = false;
+var dragHasEnded = false;
+var maxNumberOfRuns = 20;
+var currentRun = 0;
+
+function finishTest()
+{
+    debug("<br>");
+    shouldBeTrue("dragHasStarted");
+    shouldBeTrue("dragHasEnded");
+    finishJSTest();
+}
+
+function dragStart(e) {
+    dragHasStarted = true;
+}
+
+function dragEnd(e) {
+    dragHasEnded = true;
+    if (currentRun < maxNumberOfRuns)
+        return;
+    window.setTimeout(finishTest, 0);
+}
+
+function dragAndDrop(beginX, beginY, endX, endY)
+{
+    if (!window.eventSender)
+        return;
+
+    eventSender.mouseMoveTo(beginX, beginY);
+    eventSender.mouseDown();
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(endX, endY);
+    eventSender.mouseUp();
+}
+
+function runNextStep()
+{
+    if (currentRun++ >= maxNumberOfRuns)
+        return;
+
+    debug("Dragging HTML hyperlink around. Attempt #" + currentRun);
+    dragAndDrop(dragBeginPositionX, dragBeginPositionY, dragEndPositionX, dragEndPositionY);
+    window.setTimeout(runNextStep, 0);
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+
+    htmlHyperlink = document.getElementById("htmlHyperlink");
+
+    htmlHyperlink.ondragstart = dragStart;
+    htmlHyperlink.ondragend = dragEnd;
+
+    dragBeginPositionX = htmlHyperlink.offsetLeft + htmlHyperlink.offsetWidth / 2;
+    dragBeginPositionY = htmlHyperlink.offsetTop + htmlHyperlink.offsetHeight / 2;
+    dragEndPositionX = dragBeginPositionX + htmlHyperlink.offsetWidth + 50;
+    dragEndPositionY = dragBeginPositionY + htmlHyperlink.offsetHeight + 50;
+
+    runNextStep();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+  <a id="htmlHyperlink" href="http://www.whatwg.org/html">HTML hyperlink</a>
+<p>
+<div id="console"></div>
+<script>
+description("This test checks that quickly attempting a drag'n'drop operation multiple times over the same element does not crash the web process.");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
