@@ -2951,6 +2951,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
 
     {
         ForbidPromptsScope forbidPrompts(m_frame.page());
+        IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(m_frame.document());
         domWindow->dispatchEvent(beforeUnloadEvent, domWindow->document());
     }
 

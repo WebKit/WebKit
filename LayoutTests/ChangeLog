@@ -1,5 +1,19 @@
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
+        document.open() / write() should be prevented in beforeunload event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=153432
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a layout test to check that document.open() / write() is indeed
+        prevented inside 'beforeunload' event handlers.
+
+        * fast/frames/page-beforeunload-document-open-expected.txt: Added.
+        * fast/frames/page-beforeunload-document-open.html: Added.
+        * fast/frames/resources/page-beforeunload-document-open-frame.html: Added.
+
+2016-01-26  Chris Dumez  <cdumez@apple.com>
+
         Add support for HTMLDataElement
         https://bugs.webkit.org/show_bug.cgi?id=153459
 
