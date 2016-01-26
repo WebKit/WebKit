@@ -69,6 +69,15 @@ Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGImageElement(tagName, document));
 }
 
+bool SVGImageElement::hasSingleSecurityOrigin() const
+{
+    auto* renderer = downcast<RenderSVGImage>(this->renderer());
+    if (!renderer || !renderer->imageResource().hasImage())
+        return true;
+    auto* image = renderer->imageResource().cachedImage()->image();
+    return !image || image->hasSingleSecurityOrigin();
+}
+
 bool SVGImageElement::isSupportedAttribute(const QualifiedName& attrName)
 {
     static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;

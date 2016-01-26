@@ -1,3 +1,19 @@
+2016-01-26  Philip Rogers  <pdr@chromium.org>
+
+        Let SVG images not taint canvases except when containing foreignObjects
+        https://bugs.webkit.org/show_bug.cgi?id=119639
+
+        Reviewed by Brent Fulgham.
+
+        * svg/as-image/resources/svg-with-feimage-with-link.svg: Added.
+        * svg/as-image/resources/svg-with-image-with-link.svg: Added.
+        * svg/as-image/svg-canvas-pattern-with-link-tainted-expected.txt: Added.
+        * svg/as-image/svg-canvas-pattern-with-link-tainted.html: Added.
+        * svg/as-image/svg-canvas-svg-with-feimage-with-link-tainted-expected.txt: Added.
+        * svg/as-image/svg-canvas-svg-with-feimage-with-link-tainted.html: Added.
+        * svg/as-image/svg-canvas-svg-with-image-with-link-tainted-expected.txt: Added.
+        * svg/as-image/svg-canvas-svg-with-image-with-link-tainted.html: Added.
+
 2016-01-26  Jer Noble  <jer.noble@apple.com>
 
         Calling video.controls=true during a scrub operation cancels scrub.

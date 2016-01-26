@@ -42,6 +42,8 @@ public:
 
     virtual ~SVGFEImageElement();
 
+    bool hasSingleSecurityOrigin() const;
+
 private:
     SVGFEImageElement(const QualifiedName&, Document&);
 

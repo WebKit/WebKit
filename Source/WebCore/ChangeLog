@@ -1,3 +1,44 @@
+2016-01-26  Philip Rogers  <pdr@chromium.org>
+
+        Let SVG images not taint canvases except when containing foreignObjects
+        https://bugs.webkit.org/show_bug.cgi?id=119639
+
+        Reviewed by Brent Fulgham.
+
+        r153876 caused SVG images to not taint canvases but the patch allowed
+        for subimage resources. This can be a problem if a subimage (e.g., data
+        uri image) contains a foreignObject which can violate security (e.g.,
+        visited links).
+
+        This patch updates SVGImage::hasSingleSecurityOrigin to check if the
+        image contains any foreignObjects or images that themselves contain
+        foreignObjects. SVG images without foreignObjects are allowed to not
+        taint canvases.
+
+        Canvas patterns are problematic because an animated SVG image can switch
+        between tainting and not tainting the canvas. A FIXME has been added to
+        solve this, and in the meantime we cause SVG images to taint patterns.
+
+        Tests: svg/as-image/svg-canvas-pattern-with-link-tainted.html
+               svg/as-image/svg-canvas-svg-with-feimage-with-link-tainted.html
+               svg/as-image/svg-canvas-svg-with-image-with-link-tainted.html
+
+        * html/canvas/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+        (WebCore::CanvasPattern::~CanvasPattern):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::~SVGFEImageElement):
+        (WebCore::SVGFEImageElement::hasSingleSecurityOrigin):
+        (WebCore::SVGFEImageElement::clearResourceReferences):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::create):
+        (WebCore::SVGImageElement::hasSingleSecurityOrigin):
+        (WebCore::SVGImageElement::isSupportedAttribute):
+        * svg/SVGImageElement.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::hasSingleSecurityOrigin):
+
 2016-01-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         CSSGrammar.y:1742.31-34: warning: unused value: $3

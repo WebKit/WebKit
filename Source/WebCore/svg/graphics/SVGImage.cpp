@@ -41,8 +41,10 @@
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
 #include "SVGDocument.h"
+#include "SVGFEImageElement.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGImageClients.h"
+#include "SVGImageElement.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "TextStream.h"
@@ -80,9 +82,20 @@ bool SVGImage::hasSingleSecurityOrigin() const
     if (!rootElement)
         return true;
 
-    // Don't allow foreignObject elements since they can leak information with arbitrary HTML (like spellcheck or control theme).
-    if (descendantsOfType<SVGForeignObjectElement>(*rootElement).first())
-        return false;
+    // FIXME: Once foreignObject elements within SVG images are updated to not leak cross-origin data
+    // (e.g., visited links, spellcheck) we can remove the SVGForeignObjectElement check here and
+    // research if we can remove the Image::hasSingleSecurityOrigin mechanism entirely.
+    for (auto& element : descendantsOfType<SVGElement>(*rootElement)) {
+        if (is<SVGForeignObjectElement>(element))
+            return false;
+        if (is<SVGImageElement>(element)) {
+            if (!downcast<SVGImageElement>(element).hasSingleSecurityOrigin())
+                return false;
+        } else if (is<SVGFEImageElement>(element)) {
+            if (!downcast<SVGFEImageElement>(element).hasSingleSecurityOrigin())
+                return false;
+        }
+    }
 
     // Because SVG image rendering disallows external resources and links,
     // these images effectively are restricted to a single security origin.
