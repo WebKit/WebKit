@@ -4,9 +4,9 @@ Blocked access to external URL http://www2.localhost:8800/
 CONSOLE MESSAGE: line 18: XMLHttpRequest cannot load javascript:alert('FAIL'). Cross origin requests are only supported for HTTP.
 Blocked access to external URL http://www2.localhost:8800/folder.txt
 
-FAIL XMLHttpRequest: send() - non same-origin (mailto:test@example.org) assert_throws: function "function () { client.send() }" threw object "Error: NETWORK_ERR: XMLHttpRequest Exception 101" that is not a DOMException NetworkError: property "code" is equal to 101, expected 19
-FAIL XMLHttpRequest: send() - non same-origin (tel:+31600000000) assert_throws: function "function () { client.send() }" threw object "Error: NETWORK_ERR: XMLHttpRequest Exception 101" that is not a DOMException NetworkError: property "code" is equal to 101, expected 19
-FAIL XMLHttpRequest: send() - non same-origin (http://www2.localhost:8800/) assert_throws: function "function () { client.send() }" threw object "Error: ABORT_ERR: XMLHttpRequest Exception 102" that is not a DOMException NetworkError: property "code" is equal to 102, expected 19
-FAIL XMLHttpRequest: send() - non same-origin (javascript:alert('FAIL')) assert_throws: function "function () { client.send() }" threw object "Error: NETWORK_ERR: XMLHttpRequest Exception 101" that is not a DOMException NetworkError: property "code" is equal to 101, expected 19
-FAIL XMLHttpRequest: send() - non same-origin (folder.txt) assert_throws: function "function () { client.send() }" threw object "Error: ABORT_ERR: XMLHttpRequest Exception 102" that is not a DOMException NetworkError: property "code" is equal to 102, expected 19
+PASS XMLHttpRequest: send() - non same-origin (mailto:test@example.org) 
+PASS XMLHttpRequest: send() - non same-origin (tel:+31600000000) 
+FAIL XMLHttpRequest: send() - non same-origin (http://www2.localhost:8800/) assert_throws: function "function () { client.send() }" threw object "Error: AbortError: DOM Exception 20" that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
+PASS XMLHttpRequest: send() - non same-origin (javascript:alert('FAIL')) 
+FAIL XMLHttpRequest: send() - non same-origin (folder.txt) assert_throws: function "function () { client.send() }" threw object "Error: AbortError: DOM Exception 20" that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
 

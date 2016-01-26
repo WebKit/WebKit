@@ -4,6 +4,5 @@ DOMCoreException
 FileException
 SQLException
 SVGException
-XMLHttpRequestException
 XPathException
 

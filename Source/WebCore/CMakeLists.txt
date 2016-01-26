@@ -638,7 +638,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
-    xml/XMLHttpRequestException.idl
     xml/XMLHttpRequestProgressEvent.idl
     xml/XMLHttpRequestUpload.idl
     xml/XMLSerializer.idl
@@ -2813,7 +2812,6 @@ set(WebCore_SOURCES
     xml/NativeXPathNSResolver.cpp
     xml/XMLErrors.cpp
     xml/XMLHttpRequest.cpp
-    xml/XMLHttpRequestException.cpp
     xml/XMLHttpRequestProgressEventThrottle.cpp
     xml/XMLHttpRequestUpload.cpp
     xml/XMLSerializer.cpp

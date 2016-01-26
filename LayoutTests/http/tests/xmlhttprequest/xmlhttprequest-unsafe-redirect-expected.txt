@@ -4,7 +4,7 @@ Sync XHR started.
 readyState change 1
 readyState change 4
 Error event.
-Exception: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+Exception: Error: NetworkError: DOM Exception 19
 Async XHR started.
 readyState change 1
 readyState change 4

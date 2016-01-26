@@ -6,4 +6,4 @@ This test verifies that sandboxed iframe does not have XmlHttpRequest access to 
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-PASS: Exception thrown. Sandboxed iframe XHR access was denied in 'send'. [NETWORK_ERR: XMLHttpRequest Exception 101].
+PASS: Exception thrown. Sandboxed iframe XHR access was denied in 'send'. [NetworkError: DOM Exception 19].

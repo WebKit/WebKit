@@ -1,3 +1,19 @@
+2016-01-26  Daniel Bates  <dabates@apple.com>
+
+        Remove XMLHttpRequestException
+        https://bugs.webkit.org/show_bug.cgi?id=102698
+        <rdar://problem/24338476>
+
+        Reviewed by Chris Dumez.
+
+        Update test result now that we throw DOMException.{ABORT, NETWORK, TIMEOUT}Error instead of XMLHttpRequestException.{ABORT, NETWORK, TIMEOUT}_ERR.
+
+        * web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin.sub-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-redirect-bogus-sync-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-redirect-infinite-sync-expected.txt:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync-expected.txt:
+
 2016-01-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         imported/w3c/web-platform-tests/streams-api/readable-streams/garbage-collection.html asserts frequently

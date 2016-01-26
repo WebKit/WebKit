@@ -300,8 +300,6 @@ PASS win['XMLDocument'] == '[object DocumentConstructor]' is true
 PASS win['XMLDocument'] == '[object DocumentConstructor]' is true
 PASS win['XMLHttpRequest'] == '[object XMLHttpRequestConstructor]' is true
 PASS win['XMLHttpRequest'] == '[object XMLHttpRequestConstructor]' is true
-PASS win['XMLHttpRequestException'] == '[object XMLHttpRequestExceptionConstructor]' is true
-PASS win['XMLHttpRequestException'] == '[object XMLHttpRequestExceptionConstructor]' is true
 PASS win['XMLSerializer'] == '[object XMLSerializerConstructor]' is true
 PASS win['XMLSerializer'] == '[object XMLSerializerConstructor]' is true
 PASS win['XPathEvaluator'] == '[object XPathEvaluatorConstructor]' is true

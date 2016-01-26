@@ -1,3 +1,50 @@
+2016-01-26  Daniel Bates  <dabates@apple.com>
+
+        Remove XMLHttpRequestException
+        https://bugs.webkit.org/show_bug.cgi?id=102698
+        <rdar://problem/24338476>
+
+        Reviewed by Chris Dumez.
+
+        Update test result now that we throw DOMException.{ABORT, NETWORK, TIMEOUT}Error instead of XMLHttpRequestException.{ABORT, NETWORK, TIMEOUT}_ERR.
+
+        * fast/dom/Window/resources/window-properties.js:
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/files/apply-blob-url-to-xhr-expected.txt:
+        * fast/files/workers/worker-apply-blob-url-to-xhr-expected.txt:
+        * http/tests/appcache/non-html.xhtml:
+        * http/tests/appcache/simple.html:
+        * http/tests/contentextensions/sync-xhr-blocked-expected.txt:
+        * http/tests/local/fileapi/send-sliced-dragged-file-expected.txt:
+        * http/tests/workers/worker-importScripts-expected.txt:
+        * http/tests/xmlhttprequest/XMLHttpRequestException-expected.txt:
+        * http/tests/xmlhttprequest/XMLHttpRequestException.html:
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard-expected.txt:
+        * http/tests/xmlhttprequest/connection-error-sync-expected.txt:
+        * http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * http/tests/xmlhttprequest/origin-exact-matching-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-https-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-removal-expected.txt:
+        * http/tests/xmlhttprequest/workers/access-control-basic-get-fail-non-simple-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2016-01-26  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GTK] WebProcess crashes when quickly attempting many DnD operations

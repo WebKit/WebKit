@@ -148,7 +148,6 @@ var propertyInfo = [
     ["WheelEvent", "object"],
     ["XMLDocument", "object"],
     ["XMLHttpRequest", "object"],
-    ["XMLHttpRequestException", "object"],
     ["XMLSerializer", "object"],
     ["XPathEvaluator", "object"],
     ["XPathException", "object"],

@@ -13,7 +13,7 @@ readystatechange 4
 progress
 error
 loadend
-Error: NETWORK_ERR: XMLHttpRequest Exception 101
+Error: NetworkError: DOM Exception 19
 
 Step 3: Cross origin request, allowed
 readystatechange 4

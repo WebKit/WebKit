@@ -3,7 +3,7 @@ CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest
 Tests that origin whitelisting for https does not match http URLs.
 
 Testing: http://localhost:8000/xmlhttprequest/resources/get.txt (sync)
-PASS: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+PASS: Error: NetworkError: DOM Exception 19
 Testing: http://localhost:8000/xmlhttprequest/resources/get.txt (async)
 PASS: 0
 

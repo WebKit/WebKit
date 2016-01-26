@@ -1,7 +1,7 @@
 
-FAIL XMLHttpRequest: send() - Redirects (bogus Location header; sync) (301: foobar://abcd) assert_throws: function "function () { client.send(null) }" threw object "Error: NETWORK_ERR: XMLHttpRequest Exception 101" that is not a DOMException NetworkError: property "code" is equal to 101, expected 19
-FAIL XMLHttpRequest: send() - Redirects (bogus Location header; sync) (302: http://z) assert_throws: function "function () { client.send(null) }" threw object "Error: NETWORK_ERR: XMLHttpRequest Exception 101" that is not a DOMException NetworkError: property "code" is equal to 101, expected 19
-FAIL XMLHttpRequest: send() - Redirects (bogus Location header; sync) (302: mailto:someone@example.org) assert_throws: function "function () { client.send(null) }" threw object "Error: NETWORK_ERR: XMLHttpRequest Exception 101" that is not a DOMException NetworkError: property "code" is equal to 101, expected 19
-FAIL XMLHttpRequest: send() - Redirects (bogus Location header; sync) (303: http://z) assert_throws: function "function () { client.send(null) }" threw object "Error: NETWORK_ERR: XMLHttpRequest Exception 101" that is not a DOMException NetworkError: property "code" is equal to 101, expected 19
-FAIL XMLHttpRequest: send() - Redirects (bogus Location header; sync) (303: tel:1234567890) assert_throws: function "function () { client.send(null) }" threw object "Error: NETWORK_ERR: XMLHttpRequest Exception 101" that is not a DOMException NetworkError: property "code" is equal to 101, expected 19
+PASS XMLHttpRequest: send() - Redirects (bogus Location header; sync) (301: foobar://abcd) 
+PASS XMLHttpRequest: send() - Redirects (bogus Location header; sync) (302: http://z) 
+PASS XMLHttpRequest: send() - Redirects (bogus Location header; sync) (302: mailto:someone@example.org) 
+PASS XMLHttpRequest: send() - Redirects (bogus Location header; sync) (303: http://z) 
+PASS XMLHttpRequest: send() - Redirects (bogus Location header; sync) (303: tel:1234567890) 
 

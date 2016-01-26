@@ -46,7 +46,7 @@ function cached()
         req.open("GET", "/resources/network-simulator.php?test=appcache-non-html&amp;path=/appcache/resources/not-in-cache.txt", false);
         req.send();
     } catch (e) {
-        if (e.code == XMLHttpRequestException.NETWORK_ERR)
+        if (e.code == DOMException.NETWORK_ERR)
             hadError = true;
     }
 

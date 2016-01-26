@@ -15,7 +15,7 @@ function cached()
         req.open("GET", "resources/not-in-cache.txt", false);
         req.send();
     } catch (e) {
-        if (e.code == XMLHttpRequestException.NETWORK_ERR)
+        if (e.code == DOMException.NETWORK_ERR)
             hadError = true;
     }
 

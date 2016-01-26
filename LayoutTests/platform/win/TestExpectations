@@ -723,9 +723,6 @@ webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html 
 # This test is dependant on DRT being able to open windows.
 fast/dom/Window/new-window-opener.html
 
-# <rdar://5667279> Undefined value exception
-http/tests/xmlhttprequest/XMLHttpRequestException.html [ Skip ]
-
 # <rdar://5670235> Sometimes spews output into the next test
 http/tests/security/cross-frame-access-put.html [ Skip ]
 

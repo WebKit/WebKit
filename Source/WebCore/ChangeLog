@@ -1,3 +1,38 @@
+2016-01-26  Daniel Bates  <dabates@apple.com>
+
+        Remove XMLHttpRequestException
+        https://bugs.webkit.org/show_bug.cgi?id=102698
+        <rdar://problem/24338476>
+
+        Reviewed by Chris Dumez.
+
+        Inspired by a patch by Erik Arvidsson.
+
+        As per <https://xhr.spec.whatwg.org> (21 January 2016) and <https://html.spec.whatwg.org/multipage/workers.html#dom-workerglobalscope-importscripts> (25 January 2016)
+        XMLHttpRequest and WorkerGlobalScope.importScripts() should throw a DOMException object instead
+        of a XMLHttpRequestException object when a NetworkError, AbortError, or TimeoutError occur. This
+        makes the behavior of WebKit more closely conform to these standards as well as the behavior of
+        other browsers.
+
+        * CMakeLists.txt: Remove entries for XMLHttpRequestException.idl and XMLHttpRequestException.cpp.
+        * DerivedSources.make: Remove entry for XMLHttpRequestException.idl.
+        * WebCore.order: Remove exported symbols for XMLHttpRequestException.
+        * WebCore.vcxproj/WebCore.vcxproj: Remove entries for JSXMLHttpRequestException.{cpp, h}, XMLHttpRequestException.{cpp, h}
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase): Remove logic for XMLHttpRequestException.
+        * dom/DOMExceptions.in: Remove entry for XMLHttpRequestException.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::importScripts): Throw DOMException.NETWORK_ERR instead of XMLHttpRequestException.NETWORK_ERR.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest): Ditto.
+        (WebCore::XMLHttpRequest::didFail): Throw DOMException.ABORT_ERR instead of XMLHttpRequestException.ABORT_ERR.
+        (WebCore::XMLHttpRequest::didReachTimeout): Throw DOMException.TIMEOUT_ERR instead of XMLHttpRequestException.TIMEOUT_ERR.
+        * xml/XMLHttpRequestException.cpp: Removed.
+        * xml/XMLHttpRequestException.h: Removed.
+        * xml/XMLHttpRequestException.idl: Removed.
+
 2016-01-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         WebCoreJSBuiltins do not use to do conditional include

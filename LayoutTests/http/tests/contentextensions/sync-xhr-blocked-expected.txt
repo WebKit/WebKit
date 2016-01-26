@@ -2,5 +2,5 @@ CONSOLE MESSAGE: line 21: Content blocker prevented frame displaying http://127.
 CONSOLE MESSAGE: line 21: XMLHttpRequest cannot load http://127.0.0.1:8000/contentextensions/resources/url-blocking-test.js. 
 Synchronous status: 0, readyState:1, responseText: 
 Synchronous status: 0, readyState:4, responseText: 
-Synchronous error: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+Synchronous error: Error: NetworkError: DOM Exception 19
 

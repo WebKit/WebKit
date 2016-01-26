@@ -39,7 +39,7 @@ PASS event.dataTransfer contains a File object on drop.
 PASS subfile.size is 5
 PASS subfile.type is ""
 PASS Expected response data received: OK
-PASS Expected exception thrown: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+PASS Expected exception thrown: Error: NetworkError: DOM Exception 19
 PASS successfullyParsed is true
 
 TEST COMPLETE

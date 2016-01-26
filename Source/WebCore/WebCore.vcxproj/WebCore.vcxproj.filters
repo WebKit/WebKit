@@ -2921,9 +2921,6 @@
     <ClCompile Include="..\xml\XMLHttpRequest.cpp">
       <Filter>xml</Filter>
     </ClCompile>
-    <ClCompile Include="..\xml\XMLHttpRequestException.cpp">
-      <Filter>xml</Filter>
-    </ClCompile>
     <ClCompile Include="..\xml\XMLHttpRequestProgressEventThrottle.cpp">
       <Filter>xml</Filter>
     </ClCompile>
@@ -6235,9 +6232,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSXMLHttpRequest.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSXMLHttpRequestException.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSXMLHttpRequestProgressEvent.cpp">
@@ -9976,9 +9970,6 @@
     <ClInclude Include="..\xml\XMLHttpRequest.h">
       <Filter>xml</Filter>
     </ClInclude>
-    <ClInclude Include="..\xml\XMLHttpRequestException.h">
-      <Filter>xml</Filter>
-    </ClInclude>
     <ClInclude Include="..\xml\XMLHttpRequestProgressEvent.h">
       <Filter>xml</Filter>
     </ClInclude>
@@ -13648,9 +13639,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSXMLHttpRequest.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSXMLHttpRequestException.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSXMLHttpRequestProgressEvent.h">

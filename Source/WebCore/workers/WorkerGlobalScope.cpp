@@ -49,7 +49,6 @@
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
 #include "WorkerThreadableLoader.h"
-#include "XMLHttpRequestException.h"
 #include <bindings/ScriptValue.h>
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptCallStack.h>
@@ -188,7 +187,7 @@ void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode&
 
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
         if (scriptLoader->failed()) {
-            ec = XMLHttpRequestException::NETWORK_ERR;
+            ec = NETWORK_ERR;
             return;
         }
 

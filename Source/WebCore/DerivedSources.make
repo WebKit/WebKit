@@ -538,7 +538,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/workers/WorkerLocation.idl \
     $(WebCore)/xml/DOMParser.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
-    $(WebCore)/xml/XMLHttpRequestException.idl \
     $(WebCore)/xml/XMLHttpRequestProgressEvent.idl \
     $(WebCore)/xml/XMLHttpRequestUpload.idl \
     $(WebCore)/xml/XMLSerializer.idl \

@@ -1,10 +1,10 @@
-Tests the properties of the XMLHttpRequestException object.
+Tests the properties of the exceptions related to XMLHttpRequest.
 
-PASS e.toString() is "Error: NETWORK_ERR: XMLHttpRequest Exception 101"
-PASS Object.prototype.toString.call(e) is "[object XMLHttpRequestException]"
-FAIL Object.prototype.toString.call(e.__proto__) is not "[object XMLHttpRequestException]". Was "[object XMLHttpRequestExceptionPrototype]"
-PASS e.constructor.toString() is "[object XMLHttpRequestExceptionConstructor]"
-PASS e.constructor is window.XMLHttpRequestException
+PASS e.toString() is "Error: NetworkError: DOM Exception 19"
+PASS Object.prototype.toString.call(e) is "[object DOMException]"
+FAIL Object.prototype.toString.call(e.__proto__) is not "[object DOMException]". Was "[object DOMExceptionPrototype]"
+PASS e.constructor.toString() is "[object DOMExceptionConstructor]"
+PASS e.constructor is window.DOMException
 PASS e.NETWORK_ERR is e.constructor.NETWORK_ERR
-PASS e.NETWORK_ERR is 101
+PASS e.NETWORK_ERR is 19
 

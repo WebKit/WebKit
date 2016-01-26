@@ -4,20 +4,20 @@ Per the spec, these test cases should be allowed, but cross-origin redirects are
 
 Testing /resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
 Expecting success: false
-PASS: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+PASS: Error: NetworkError: DOM Exception 19
 Testing /resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
 Expecting success: true
 PASS: PASS: Cross-domain access allowed.
 
 Testing http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
 Expecting success: false
-PASS: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+PASS: Error: NetworkError: DOM Exception 19
 Testing http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
 Expecting success: false
 PASS: 0
 Testing http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
 Expecting success: false
-PASS: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+PASS: Error: NetworkError: DOM Exception 19
 Testing http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
 Expecting success: false
 PASS: 0

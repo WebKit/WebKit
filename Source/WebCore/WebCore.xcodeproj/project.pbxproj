@@ -3862,7 +3862,6 @@
 		978D07BE145A0F6C0096908D /* DOMCoreException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07BD145A0F6C0096908D /* DOMCoreException.cpp */; };
 		978D07CA145A10160096908D /* SVGException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07C9145A10160096908D /* SVGException.cpp */; };
 		978D07CC145A102E0096908D /* XPathException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07CB145A102E0096908D /* XPathException.cpp */; };
-		978D07CE145A10370096908D /* XMLHttpRequestException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07CD145A10370096908D /* XMLHttpRequestException.cpp */; };
 		979F43D31075E44A0000F83B /* NavigationScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979F43D11075E44A0000F83B /* NavigationScheduler.cpp */; };
 		979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 979F43D21075E44A0000F83B /* NavigationScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AA3CA5145237CC003E1DA6 /* EventTargetHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */; };
@@ -5547,9 +5546,6 @@
 		BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */; };
 		BC60D8F30D2A11E000B9918F /* ExceptionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D8F10D2A11E000B9918F /* ExceptionBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60D90C0D2A17CE00B9918F /* EventException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D9090D2A17CE00B9918F /* EventException.h */; };
-		BC60D9C90D2A29E500B9918F /* XMLHttpRequestException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D9C70D2A29E500B9918F /* XMLHttpRequestException.h */; };
-		BC60DA390D2A302800B9918F /* JSXMLHttpRequestException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60DA370D2A302800B9918F /* JSXMLHttpRequestException.cpp */; };
-		BC60DA3A0D2A302800B9918F /* JSXMLHttpRequestException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DA380D2A302800B9918F /* JSXMLHttpRequestException.h */; };
 		BC60DA5B0D2A31F700B9918F /* XPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DA590D2A31F700B9918F /* XPathException.h */; };
 		BC60DB490D2A3D1E00B9918F /* JSXPathException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */; };
 		BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DB480D2A3D1E00B9918F /* JSXPathException.h */; };
@@ -11408,7 +11404,6 @@
 		978D07BD145A0F6C0096908D /* DOMCoreException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCoreException.cpp; sourceTree = "<group>"; };
 		978D07C9145A10160096908D /* SVGException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGException.cpp; sourceTree = "<group>"; };
 		978D07CB145A102E0096908D /* XPathException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPathException.cpp; sourceTree = "<group>"; };
-		978D07CD145A10370096908D /* XMLHttpRequestException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestException.cpp; sourceTree = "<group>"; };
 		979F43D11075E44A0000F83B /* NavigationScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationScheduler.cpp; sourceTree = "<group>"; };
 		979F43D21075E44A0000F83B /* NavigationScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationScheduler.h; sourceTree = "<group>"; };
 		97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetHeaders.h; sourceTree = "<group>"; };
@@ -13357,10 +13352,6 @@
 		BC60D8F10D2A11E000B9918F /* ExceptionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionBase.h; sourceTree = "<group>"; };
 		BC60D9090D2A17CE00B9918F /* EventException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventException.h; sourceTree = "<group>"; };
 		BC60D90A0D2A17CE00B9918F /* EventException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventException.idl; sourceTree = "<group>"; };
-		BC60D9C70D2A29E500B9918F /* XMLHttpRequestException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestException.h; sourceTree = "<group>"; };
-		BC60D9C80D2A29E500B9918F /* XMLHttpRequestException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XMLHttpRequestException.idl; sourceTree = "<group>"; };
-		BC60DA370D2A302800B9918F /* JSXMLHttpRequestException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestException.cpp; sourceTree = "<group>"; };
-		BC60DA380D2A302800B9918F /* JSXMLHttpRequestException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestException.h; sourceTree = "<group>"; };
 		BC60DA590D2A31F700B9918F /* XPathException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathException.h; sourceTree = "<group>"; };
 		BC60DA5A0D2A31F700B9918F /* XPathException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XPathException.idl; sourceTree = "<group>"; };
 		BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathException.cpp; sourceTree = "<group>"; };
@@ -20788,8 +20779,6 @@
 				1ACE53DE0A8D18810022947D /* JSDOMParser.h */,
 				BC348BD10DB7F804004ABAB9 /* JSXMLHttpRequest.cpp */,
 				BC348BD20DB7F804004ABAB9 /* JSXMLHttpRequest.h */,
-				BC60DA370D2A302800B9918F /* JSXMLHttpRequestException.cpp */,
-				BC60DA380D2A302800B9918F /* JSXMLHttpRequestException.h */,
 				F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */,
 				F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */,
 				BCDFD4930E30592F009D10AD /* JSXMLHttpRequestUpload.cpp */,
@@ -23102,9 +23091,6 @@
 				BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */,
 				BC772C450C4EB2C60083285F /* XMLHttpRequest.h */,
 				BC348BA70DB7F1B8004ABAB9 /* XMLHttpRequest.idl */,
-				978D07CD145A10370096908D /* XMLHttpRequestException.cpp */,
-				BC60D9C70D2A29E500B9918F /* XMLHttpRequestException.h */,
-				BC60D9C80D2A29E500B9918F /* XMLHttpRequestException.idl */,
 				F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */,
 				F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */,
 				A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */,
@@ -26697,7 +26683,6 @@
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 				7C4C96DD1AD4483500365A60 /* JSWritableStream.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
-				BC60DA3A0D2A302800B9918F /* JSXMLHttpRequestException.h in Headers */,
 				F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */,
 				BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */,
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
@@ -28300,7 +28285,6 @@
 				00B9318C13BA8DCC0035A948 /* XMLDocumentParserScope.h in Headers */,
 				59C28046138DC2410079B7E2 /* XMLErrors.h in Headers */,
 				BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */,
-				BC60D9C90D2A29E500B9918F /* XMLHttpRequestException.h in Headers */,
 				F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */,
 				A136A00D1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h in Headers */,
 				BCDFD48E0E305290009D10AD /* XMLHttpRequestUpload.h in Headers */,
@@ -30428,7 +30412,6 @@
 				7C4C96DC1AD4483500365A60 /* JSWritableStream.cpp in Sources */,
 				BC348BD30DB7F804004ABAB9 /* JSXMLHttpRequest.cpp in Sources */,
 				BC348BBE0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp in Sources */,
-				BC60DA390D2A302800B9918F /* JSXMLHttpRequestException.cpp in Sources */,
 				F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */,
 				BCDFD4950E30592F009D10AD /* JSXMLHttpRequestUpload.cpp in Sources */,
 				1ACE53F60A8D19470022947D /* JSXMLSerializer.cpp in Sources */,
@@ -31703,7 +31686,6 @@
 				00B9318B13BA8DC90035A948 /* XMLDocumentParserScope.cpp in Sources */,
 				59C28045138DC2410079B7E2 /* XMLErrors.cpp in Sources */,
 				BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */,
-				978D07CE145A10370096908D /* XMLHttpRequestException.cpp in Sources */,
 				A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */,
 				BCDFD48F0E305290009D10AD /* XMLHttpRequestUpload.cpp in Sources */,
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,

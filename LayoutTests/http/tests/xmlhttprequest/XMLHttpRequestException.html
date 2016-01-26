@@ -1,6 +1,6 @@
 <html>
 <body>
-<p>Tests the properties of the XMLHttpRequestException object.</p>
+<p>Tests the properties of the exceptions related to XMLHttpRequest.</p>
 <pre id="console"></pre>
 <script>
     function shouldBeEqualToString(__a, __b)
@@ -43,13 +43,13 @@
         e = err;
     }
 
-    shouldBeEqualToString("e.toString()", "Error: NETWORK_ERR: XMLHttpRequest Exception 101");
-    shouldBeEqualToString("Object.prototype.toString.call(e)", "[object XMLHttpRequestException]");
-    shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object XMLHttpRequestException]");
-    shouldBeEqualToString("e.constructor.toString()", "[object XMLHttpRequestExceptionConstructor]");
-    shouldBe("e.constructor", "window.XMLHttpRequestException");
+    shouldBeEqualToString("e.toString()", "Error: NetworkError: DOM Exception 19");
+    shouldBeEqualToString("Object.prototype.toString.call(e)", "[object DOMException]");
+    shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object DOMException]");
+    shouldBeEqualToString("e.constructor.toString()", "[object DOMExceptionConstructor]");
+    shouldBe("e.constructor", "window.DOMException");
     shouldBe("e.NETWORK_ERR", "e.constructor.NETWORK_ERR");
-    shouldBe("e.NETWORK_ERR", "101");
+    shouldBe("e.NETWORK_ERR", "19");
 </script>
 </body>
 </html>
