@@ -1387,6 +1387,10 @@ if (JavaScriptCore_PRE_BUILD_COMMAND)
     add_custom_command(TARGET JavaScriptCore PRE_BUILD COMMAND ${JavaScriptCore_PRE_BUILD_COMMAND} VERBATIM)
 endif ()
 
+if (JavaScriptCore_POST_BUILD_COMMAND)
+    add_custom_command(TARGET JavaScriptCore POST_BUILD COMMAND ${JavaScriptCore_POST_BUILD_COMMAND} VERBATIM)
+endif ()
+
 if (JavaScriptCore_OUTPUT_NAME)
     set_target_properties(JavaScriptCore PROPERTIES OUTPUT_NAME ${JavaScriptCore_OUTPUT_NAME})
 endif ()
