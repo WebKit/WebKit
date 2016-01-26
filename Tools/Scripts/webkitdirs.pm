@@ -1500,20 +1500,7 @@ sub checkRequiredSystemConfig
             print "most likely fail. The latest Xcode is available from the App Store.\n";
             print "*************************************************************\n";
         }
-    } elsif (isGtk() or isEfl() or isWindows() or isCygwin()) {
-        my @cmds = qw(bison gperf flex);
-        my @missing = ();
-        my $oldPath = $ENV{PATH};
-        foreach my $cmd (@cmds) {
-            push @missing, $cmd if not commandExists($cmd);
-        }
-
-        if (@missing) {
-            my $list = join ", ", @missing;
-            die "ERROR: $list missing but required to build WebKit.\n";
-        }
     }
-    # Win32 and other platforms may want to check for minimum config
 }
 
 sub determineWindowsSourceDir()

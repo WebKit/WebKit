@@ -1,5 +1,18 @@
 2016-01-26  Konstantin Tokarev  <annulen@yandex.ru>
 
+        [webkitdirs] Removed check for bison, gperf, and flex.
+        https://bugs.webkit.org/show_bug.cgi?id=153496
+
+        Reviewed by Alex Christensen.
+
+        This prerequisites are checked in WebKitCommon.cmake and don't
+        have to be in $PATH.
+
+        * Scripts/webkitdirs.pm:
+        (checkRequiredSystemConfig):
+
+2016-01-26  Konstantin Tokarev  <annulen@yandex.ru>
+
         [webkitdirs] isCMakeBuild should be true by default
         https://bugs.webkit.org/show_bug.cgi?id=153497
 
