@@ -47,6 +47,7 @@
 #include "RenderNamedFlowThread.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
+#include "ScrollbarTheme.h"
 #include "Settings.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
@@ -197,21 +198,23 @@ bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& l
 
     FrameFlatteningLayoutDisallower disallower(frameView());
 
-    if (layer()->hitTest(request, location, result))
-        return true;
+    bool resultLayer = layer()->hitTest(request, location, result);
 
-    // FIXME: Consider if this test should be done unconditionally.
-    if (request.allowsFrameScrollbars()) {
-        // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
-        // so we need to test ScrollView scrollbars separately here.
-        IntPoint windowPoint = frameView().contentsToWindow(location.roundedPoint());
-        if (Scrollbar* frameScrollbar = frameView().scrollbarAtPoint(windowPoint)) {
-            result.setScrollbar(frameScrollbar);
-            return true;
+    // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
+    // so we need to test ScrollView scrollbars separately here. In case of using overlay scrollbars, the layer hit test
+    // will always work so we need to check the ScrollView scrollbars in that case too.
+    if (!resultLayer || ScrollbarTheme::theme().usesOverlayScrollbars()) {
+        // FIXME: Consider if this test should be done unconditionally.
+        if (request.allowsFrameScrollbars()) {
+            IntPoint windowPoint = frameView().contentsToWindow(location.roundedPoint());
+            if (Scrollbar* frameScrollbar = frameView().scrollbarAtPoint(windowPoint)) {
+                result.setScrollbar(frameScrollbar);
+                return true;
+            }
         }
     }
 
-    return false;
+    return resultLayer;
 }
 
 void RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit, LogicalExtentComputedValues& computedValues) const

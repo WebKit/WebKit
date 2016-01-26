@@ -1,3 +1,21 @@
+2016-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Main frame scrollbars not updated on hovering when using overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=153304
+
+        Reviewed by Michael Catanzaro.
+
+        Legacy scrollbars were fixed in r194155, but overlay scrollbars
+        are not notified when they are hovered. This is because the layer
+        hit test in RenderView::hitTest always returns true when using
+        overlay scrollbars and we are returning early in such case,
+        ignoring the HitTestRequest::AllowFrameScrollbars flag. So, in
+        case of using overlay scrollbars we still need to check the
+        RenderView scrollbars even when the layer hit test succeeded.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::hitTest):
+
 2016-01-26  Daniel Bates  <dabates@apple.com>
 
         LayoutTest http/tests/security/xssAuditor/embed-tag-in-path-unterminated.html crashing
