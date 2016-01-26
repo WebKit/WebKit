@@ -1,3 +1,19 @@
+2016-01-26  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to window.showModalDialog() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=153436
+
+        Reviewed by Youenn Fablet.
+
+        * fast/dom/Window/showModalDialog-mandatory-parameter-expected.txt: Added.
+        * fast/dom/Window/showModalDialog-mandatory-parameter.html: Added.
+        Add layout test to check that showModalDialog()'s first parameter is indeed
+        mandatory.
+
+        * fast/dom/null-page-show-modal-dialog-crash.html:
+        Update existing test now that showModalDialog()'s first parameter is
+        mandatory.
+
 2016-01-26  Eric Carlson  <eric.carlson@apple.com>
 
         LayoutTest media/airplay-target-availability.html is flaky

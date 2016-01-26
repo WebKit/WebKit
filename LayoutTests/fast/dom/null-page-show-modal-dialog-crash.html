@@ -16,9 +16,9 @@ iframe.onload = function() {
 
     iframe.parentNode.removeChild(iframe);
     if (iframeWindow.showModalDialog)
-        iframeWindow.showModalDialog();
+        iframeWindow.showModalDialog("Test");
     if (f)
-        f.call(iframeWindow);
+        f.call(iframeWindow, "Test");
 };
 
 document.body.appendChild(iframe);

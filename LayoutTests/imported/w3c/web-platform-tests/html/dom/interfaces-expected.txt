@@ -5694,6 +5694,7 @@ FAIL Window interface: operation alert() desc is not an Object. (evaluating '"ge
 FAIL Window interface: operation confirm(DOMString) desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation prompt(DOMString,DOMString) desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation print() desc is not an Object. (evaluating '"get" in desc')
+FAIL Window interface: operation showModalDialog(DOMString,any) desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation postMessage(any,DOMString,[object Object]) assert_equals: property should be writable if and only if not unforgeable expected true but got false
 FAIL Window interface: operation captureEvents() desc is not an Object. (evaluating '"get" in desc')
 FAIL Window interface: operation releaseEvents() desc is not an Object. (evaluating '"get" in desc')
@@ -5821,116 +5822,118 @@ PASS Window interface: calling confirm(DOMString) on window with too few argumen
 PASS Window interface: window must inherit property "prompt" with the proper type (32) 
 PASS Window interface: calling prompt(DOMString,DOMString) on window with too few arguments must throw TypeError 
 PASS Window interface: window must inherit property "print" with the proper type (33) 
-PASS Window interface: window must inherit property "postMessage" with the proper type (34) 
+PASS Window interface: window must inherit property "showModalDialog" with the proper type (34) 
+PASS Window interface: calling showModalDialog(DOMString,any) on window with too few arguments must throw TypeError 
+PASS Window interface: window must inherit property "postMessage" with the proper type (35) 
 FAIL Window interface: calling postMessage(any,DOMString,[object Object]) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: SyntaxError: DOM Exception 12" ("SyntaxError") expected object "TypeError" ("TypeError")
-PASS Window interface: window must inherit property "captureEvents" with the proper type (35) 
-PASS Window interface: window must inherit property "releaseEvents" with the proper type (36) 
-PASS Window interface: window must inherit property "onabort" with the proper type (37) 
-FAIL Window interface: window must inherit property "onautocomplete" with the proper type (38) assert_own_property: expected property "onautocomplete" missing
-FAIL Window interface: window must inherit property "onautocompleteerror" with the proper type (39) assert_own_property: expected property "onautocompleteerror" missing
-PASS Window interface: window must inherit property "onblur" with the proper type (40) 
-FAIL Window interface: window must inherit property "oncancel" with the proper type (41) assert_own_property: expected property "oncancel" missing
-PASS Window interface: window must inherit property "oncanplay" with the proper type (42) 
-PASS Window interface: window must inherit property "oncanplaythrough" with the proper type (43) 
-PASS Window interface: window must inherit property "onchange" with the proper type (44) 
-PASS Window interface: window must inherit property "onclick" with the proper type (45) 
-FAIL Window interface: window must inherit property "onclose" with the proper type (46) assert_own_property: expected property "onclose" missing
-PASS Window interface: window must inherit property "oncontextmenu" with the proper type (47) 
-FAIL Window interface: window must inherit property "oncuechange" with the proper type (48) assert_own_property: expected property "oncuechange" missing
-PASS Window interface: window must inherit property "ondblclick" with the proper type (49) 
-PASS Window interface: window must inherit property "ondrag" with the proper type (50) 
-PASS Window interface: window must inherit property "ondragend" with the proper type (51) 
-PASS Window interface: window must inherit property "ondragenter" with the proper type (52) 
-FAIL Window interface: window must inherit property "ondragexit" with the proper type (53) assert_own_property: expected property "ondragexit" missing
-PASS Window interface: window must inherit property "ondragleave" with the proper type (54) 
-PASS Window interface: window must inherit property "ondragover" with the proper type (55) 
-PASS Window interface: window must inherit property "ondragstart" with the proper type (56) 
-PASS Window interface: window must inherit property "ondrop" with the proper type (57) 
-PASS Window interface: window must inherit property "ondurationchange" with the proper type (58) 
-PASS Window interface: window must inherit property "onemptied" with the proper type (59) 
-PASS Window interface: window must inherit property "onended" with the proper type (60) 
-PASS Window interface: window must inherit property "onerror" with the proper type (61) 
-PASS Window interface: window must inherit property "onfocus" with the proper type (62) 
-PASS Window interface: window must inherit property "oninput" with the proper type (63) 
-PASS Window interface: window must inherit property "oninvalid" with the proper type (64) 
-PASS Window interface: window must inherit property "onkeydown" with the proper type (65) 
-PASS Window interface: window must inherit property "onkeypress" with the proper type (66) 
-PASS Window interface: window must inherit property "onkeyup" with the proper type (67) 
-PASS Window interface: window must inherit property "onload" with the proper type (68) 
-PASS Window interface: window must inherit property "onloadeddata" with the proper type (69) 
-PASS Window interface: window must inherit property "onloadedmetadata" with the proper type (70) 
-PASS Window interface: window must inherit property "onloadstart" with the proper type (71) 
-PASS Window interface: window must inherit property "onmousedown" with the proper type (72) 
-PASS Window interface: window must inherit property "onmouseenter" with the proper type (73) 
-PASS Window interface: window must inherit property "onmouseleave" with the proper type (74) 
-PASS Window interface: window must inherit property "onmousemove" with the proper type (75) 
-PASS Window interface: window must inherit property "onmouseout" with the proper type (76) 
-PASS Window interface: window must inherit property "onmouseover" with the proper type (77) 
-PASS Window interface: window must inherit property "onmouseup" with the proper type (78) 
-PASS Window interface: window must inherit property "onmousewheel" with the proper type (79) 
-PASS Window interface: window must inherit property "onpause" with the proper type (80) 
-PASS Window interface: window must inherit property "onplay" with the proper type (81) 
-PASS Window interface: window must inherit property "onplaying" with the proper type (82) 
-PASS Window interface: window must inherit property "onprogress" with the proper type (83) 
-PASS Window interface: window must inherit property "onratechange" with the proper type (84) 
-PASS Window interface: window must inherit property "onreset" with the proper type (85) 
-PASS Window interface: window must inherit property "onresize" with the proper type (86) 
-PASS Window interface: window must inherit property "onscroll" with the proper type (87) 
-PASS Window interface: window must inherit property "onseeked" with the proper type (88) 
-PASS Window interface: window must inherit property "onseeking" with the proper type (89) 
-PASS Window interface: window must inherit property "onselect" with the proper type (90) 
-FAIL Window interface: window must inherit property "onshow" with the proper type (91) assert_own_property: expected property "onshow" missing
-FAIL Window interface: window must inherit property "onsort" with the proper type (92) assert_own_property: expected property "onsort" missing
-PASS Window interface: window must inherit property "onstalled" with the proper type (93) 
-PASS Window interface: window must inherit property "onsubmit" with the proper type (94) 
-PASS Window interface: window must inherit property "onsuspend" with the proper type (95) 
-PASS Window interface: window must inherit property "ontimeupdate" with the proper type (96) 
-FAIL Window interface: window must inherit property "ontoggle" with the proper type (97) assert_own_property: expected property "ontoggle" missing
-PASS Window interface: window must inherit property "onvolumechange" with the proper type (98) 
-PASS Window interface: window must inherit property "onwaiting" with the proper type (99) 
-FAIL Window interface: window must inherit property "onafterprint" with the proper type (100) assert_own_property: expected property "onafterprint" missing
-FAIL Window interface: window must inherit property "onbeforeprint" with the proper type (101) assert_own_property: expected property "onbeforeprint" missing
-PASS Window interface: window must inherit property "onbeforeunload" with the proper type (102) 
-PASS Window interface: window must inherit property "onhashchange" with the proper type (103) 
-FAIL Window interface: window must inherit property "onlanguagechange" with the proper type (104) assert_own_property: expected property "onlanguagechange" missing
-PASS Window interface: window must inherit property "onmessage" with the proper type (105) 
-PASS Window interface: window must inherit property "onoffline" with the proper type (106) 
-PASS Window interface: window must inherit property "ononline" with the proper type (107) 
-PASS Window interface: window must inherit property "onpagehide" with the proper type (108) 
-PASS Window interface: window must inherit property "onpageshow" with the proper type (109) 
-PASS Window interface: window must inherit property "onpopstate" with the proper type (110) 
-PASS Window interface: window must inherit property "onstorage" with the proper type (111) 
-PASS Window interface: window must inherit property "onunload" with the proper type (112) 
-PASS Window interface: window must inherit property "btoa" with the proper type (113) 
+PASS Window interface: window must inherit property "captureEvents" with the proper type (36) 
+PASS Window interface: window must inherit property "releaseEvents" with the proper type (37) 
+PASS Window interface: window must inherit property "onabort" with the proper type (38) 
+FAIL Window interface: window must inherit property "onautocomplete" with the proper type (39) assert_own_property: expected property "onautocomplete" missing
+FAIL Window interface: window must inherit property "onautocompleteerror" with the proper type (40) assert_own_property: expected property "onautocompleteerror" missing
+PASS Window interface: window must inherit property "onblur" with the proper type (41) 
+FAIL Window interface: window must inherit property "oncancel" with the proper type (42) assert_own_property: expected property "oncancel" missing
+PASS Window interface: window must inherit property "oncanplay" with the proper type (43) 
+PASS Window interface: window must inherit property "oncanplaythrough" with the proper type (44) 
+PASS Window interface: window must inherit property "onchange" with the proper type (45) 
+PASS Window interface: window must inherit property "onclick" with the proper type (46) 
+FAIL Window interface: window must inherit property "onclose" with the proper type (47) assert_own_property: expected property "onclose" missing
+PASS Window interface: window must inherit property "oncontextmenu" with the proper type (48) 
+FAIL Window interface: window must inherit property "oncuechange" with the proper type (49) assert_own_property: expected property "oncuechange" missing
+PASS Window interface: window must inherit property "ondblclick" with the proper type (50) 
+PASS Window interface: window must inherit property "ondrag" with the proper type (51) 
+PASS Window interface: window must inherit property "ondragend" with the proper type (52) 
+PASS Window interface: window must inherit property "ondragenter" with the proper type (53) 
+FAIL Window interface: window must inherit property "ondragexit" with the proper type (54) assert_own_property: expected property "ondragexit" missing
+PASS Window interface: window must inherit property "ondragleave" with the proper type (55) 
+PASS Window interface: window must inherit property "ondragover" with the proper type (56) 
+PASS Window interface: window must inherit property "ondragstart" with the proper type (57) 
+PASS Window interface: window must inherit property "ondrop" with the proper type (58) 
+PASS Window interface: window must inherit property "ondurationchange" with the proper type (59) 
+PASS Window interface: window must inherit property "onemptied" with the proper type (60) 
+PASS Window interface: window must inherit property "onended" with the proper type (61) 
+PASS Window interface: window must inherit property "onerror" with the proper type (62) 
+PASS Window interface: window must inherit property "onfocus" with the proper type (63) 
+PASS Window interface: window must inherit property "oninput" with the proper type (64) 
+PASS Window interface: window must inherit property "oninvalid" with the proper type (65) 
+PASS Window interface: window must inherit property "onkeydown" with the proper type (66) 
+PASS Window interface: window must inherit property "onkeypress" with the proper type (67) 
+PASS Window interface: window must inherit property "onkeyup" with the proper type (68) 
+PASS Window interface: window must inherit property "onload" with the proper type (69) 
+PASS Window interface: window must inherit property "onloadeddata" with the proper type (70) 
+PASS Window interface: window must inherit property "onloadedmetadata" with the proper type (71) 
+PASS Window interface: window must inherit property "onloadstart" with the proper type (72) 
+PASS Window interface: window must inherit property "onmousedown" with the proper type (73) 
+PASS Window interface: window must inherit property "onmouseenter" with the proper type (74) 
+PASS Window interface: window must inherit property "onmouseleave" with the proper type (75) 
+PASS Window interface: window must inherit property "onmousemove" with the proper type (76) 
+PASS Window interface: window must inherit property "onmouseout" with the proper type (77) 
+PASS Window interface: window must inherit property "onmouseover" with the proper type (78) 
+PASS Window interface: window must inherit property "onmouseup" with the proper type (79) 
+PASS Window interface: window must inherit property "onmousewheel" with the proper type (80) 
+PASS Window interface: window must inherit property "onpause" with the proper type (81) 
+PASS Window interface: window must inherit property "onplay" with the proper type (82) 
+PASS Window interface: window must inherit property "onplaying" with the proper type (83) 
+PASS Window interface: window must inherit property "onprogress" with the proper type (84) 
+PASS Window interface: window must inherit property "onratechange" with the proper type (85) 
+PASS Window interface: window must inherit property "onreset" with the proper type (86) 
+PASS Window interface: window must inherit property "onresize" with the proper type (87) 
+PASS Window interface: window must inherit property "onscroll" with the proper type (88) 
+PASS Window interface: window must inherit property "onseeked" with the proper type (89) 
+PASS Window interface: window must inherit property "onseeking" with the proper type (90) 
+PASS Window interface: window must inherit property "onselect" with the proper type (91) 
+FAIL Window interface: window must inherit property "onshow" with the proper type (92) assert_own_property: expected property "onshow" missing
+FAIL Window interface: window must inherit property "onsort" with the proper type (93) assert_own_property: expected property "onsort" missing
+PASS Window interface: window must inherit property "onstalled" with the proper type (94) 
+PASS Window interface: window must inherit property "onsubmit" with the proper type (95) 
+PASS Window interface: window must inherit property "onsuspend" with the proper type (96) 
+PASS Window interface: window must inherit property "ontimeupdate" with the proper type (97) 
+FAIL Window interface: window must inherit property "ontoggle" with the proper type (98) assert_own_property: expected property "ontoggle" missing
+PASS Window interface: window must inherit property "onvolumechange" with the proper type (99) 
+PASS Window interface: window must inherit property "onwaiting" with the proper type (100) 
+FAIL Window interface: window must inherit property "onafterprint" with the proper type (101) assert_own_property: expected property "onafterprint" missing
+FAIL Window interface: window must inherit property "onbeforeprint" with the proper type (102) assert_own_property: expected property "onbeforeprint" missing
+PASS Window interface: window must inherit property "onbeforeunload" with the proper type (103) 
+PASS Window interface: window must inherit property "onhashchange" with the proper type (104) 
+FAIL Window interface: window must inherit property "onlanguagechange" with the proper type (105) assert_own_property: expected property "onlanguagechange" missing
+PASS Window interface: window must inherit property "onmessage" with the proper type (106) 
+PASS Window interface: window must inherit property "onoffline" with the proper type (107) 
+PASS Window interface: window must inherit property "ononline" with the proper type (108) 
+PASS Window interface: window must inherit property "onpagehide" with the proper type (109) 
+PASS Window interface: window must inherit property "onpageshow" with the proper type (110) 
+PASS Window interface: window must inherit property "onpopstate" with the proper type (111) 
+PASS Window interface: window must inherit property "onstorage" with the proper type (112) 
+PASS Window interface: window must inherit property "onunload" with the proper type (113) 
+PASS Window interface: window must inherit property "btoa" with the proper type (114) 
 PASS Window interface: calling btoa(DOMString) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "atob" with the proper type (114) 
+PASS Window interface: window must inherit property "atob" with the proper type (115) 
 PASS Window interface: calling atob(DOMString) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "setTimeout" with the proper type (115) 
+PASS Window interface: window must inherit property "setTimeout" with the proper type (116) 
 FAIL Window interface: calling setTimeout(Function,long,any) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Window interface: window must inherit property "setTimeout" with the proper type (116) 
+PASS Window interface: window must inherit property "setTimeout" with the proper type (117) 
 FAIL Window interface: calling setTimeout(DOMString,long,any) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Window interface: window must inherit property "clearTimeout" with the proper type (117) 
+PASS Window interface: window must inherit property "clearTimeout" with the proper type (118) 
 PASS Window interface: calling clearTimeout(long) on window with too few arguments must throw TypeError 
-PASS Window interface: window must inherit property "setInterval" with the proper type (118) 
+PASS Window interface: window must inherit property "setInterval" with the proper type (119) 
 FAIL Window interface: calling setInterval(Function,long,any) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Window interface: window must inherit property "setInterval" with the proper type (119) 
+PASS Window interface: window must inherit property "setInterval" with the proper type (120) 
 FAIL Window interface: calling setInterval(DOMString,long,any) on window with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Window interface: window must inherit property "clearInterval" with the proper type (120) 
+PASS Window interface: window must inherit property "clearInterval" with the proper type (121) 
 PASS Window interface: calling clearInterval(long) on window with too few arguments must throw TypeError 
-FAIL Window interface: window must inherit property "createImageBitmap" with the proper type (121) assert_own_property: expected property "createImageBitmap" missing
+FAIL Window interface: window must inherit property "createImageBitmap" with the proper type (122) assert_own_property: expected property "createImageBitmap" missing
 FAIL Window interface: calling createImageBitmap(ImageBitmapSource,long,long,long,long) on window with too few arguments must throw TypeError assert_own_property: expected property "createImageBitmap" missing
-PASS Window interface: window must inherit property "sessionStorage" with the proper type (122) 
-PASS Window interface: window must inherit property "localStorage" with the proper type (123) 
+PASS Window interface: window must inherit property "sessionStorage" with the proper type (123) 
+PASS Window interface: window must inherit property "localStorage" with the proper type (124) 
 FAIL EventTarget interface: window must inherit property "addEventListener" with the proper type (0) assert_inherits: property "addEventListener" found on object expected in prototype chain
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on window with too few arguments must throw TypeError assert_inherits: property "addEventListener" found on object expected in prototype chain
 FAIL EventTarget interface: window must inherit property "removeEventListener" with the proper type (1) assert_inherits: property "removeEventListener" found on object expected in prototype chain

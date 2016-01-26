@@ -577,6 +577,9 @@ inline JSValue DialogHandler::returnValue() const
 
 JSValue JSDOMWindow::showModalDialog(ExecState& state)
 {
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
+
     String urlString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(0));
     if (state.hadException())
         return jsUndefined();

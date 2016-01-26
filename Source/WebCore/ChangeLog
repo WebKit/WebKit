@@ -1,3 +1,25 @@
+2016-01-26  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to window.showModalDialog() should be mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=153436
+
+        Reviewed by Youenn Fablet.
+
+        Make window.showModalDialog()'s first parameter mandatory to match the
+        last specification containing it:
+        http://dev.w3.org/html5/spec-preview/user-prompts.html#dialogs-implemented-using-separate-documents
+
+        The new behavior also matches Firefox, while Chrome no longer supports
+        this operation.
+
+        With this change, the W3C HTML test suite no longer hangs in the middle
+        because it mistakenly pops up a modal dialog during testing.
+
+        Test: fast/dom/Window/showModalDialog-mandatory-parameter.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::showModalDialog):
+
 2016-01-26  Eric Carlson  <eric.carlson@apple.com>
 
         LayoutTest media/airplay-target-availability.html is flaky
