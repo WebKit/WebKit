@@ -76,15 +76,6 @@ inline bool isX86_64()
 #endif
 }
 
-inline bool isIOS()
-{
-#if PLATFORM(IOS)
-    return true;
-#else
-    return false;
-#endif
-}
-
 inline bool optimizeForARMv7IDIVSupported()
 {
     return isARMv7IDIVSupported() && Options::useArchitectureSpecificOptimizations();

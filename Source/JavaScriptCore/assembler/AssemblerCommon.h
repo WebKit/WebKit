@@ -28,6 +28,15 @@
 
 namespace JSC {
 
+ALWAYS_INLINE bool isIOS()
+{
+#if PLATFORM(IOS)
+    return true;
+#else
+    return false;
+#endif
+}
+
 ALWAYS_INLINE bool isInt9(int32_t value)
 {
     return value == ((value << 23) >> 23);

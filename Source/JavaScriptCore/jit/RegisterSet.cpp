@@ -45,7 +45,11 @@ RegisterSet RegisterSet::stackRegisters()
 RegisterSet RegisterSet::reservedHardwareRegisters()
 {
 #if CPU(ARM64)
+#if PLATFORM(IOS)
+    return RegisterSet(ARM64Registers::x18, ARM64Registers::lr);
+#else
     return RegisterSet(ARM64Registers::lr);
+#endif // PLATFORM(IOS)
 #else
     return RegisterSet();
 #endif

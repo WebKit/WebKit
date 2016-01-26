@@ -3276,8 +3276,18 @@ private:
         return (insn & 0x7c000000) == 0x14000000;
     }
 
-    static int xOrSp(RegisterID reg) { ASSERT(!isZr(reg)); return reg; }
-    static int xOrZr(RegisterID reg) { ASSERT(!isSp(reg)); return reg & 31; }
+    static int xOrSp(RegisterID reg)
+    {
+        ASSERT(!isZr(reg));
+        ASSERT(!isIOS() || reg != ARM64Registers::x18);
+        return reg;
+    }
+    static int xOrZr(RegisterID reg)
+    {
+        ASSERT(!isSp(reg));
+        ASSERT(!isIOS() || reg != ARM64Registers::x18);
+        return reg & 31;
+    }
     static FPRegisterID xOrZrAsFPR(RegisterID reg) { return static_cast<FPRegisterID>(xOrZr(reg)); }
     static int xOrZrOrSp(bool useZr, RegisterID reg) { return useZr ? xOrZr(reg) : xOrSp(reg); }
 
