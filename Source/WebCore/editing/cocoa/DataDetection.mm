@@ -45,13 +45,21 @@
 #import "VisibleUnits.h"
 #import "htmlediting.h"
 
-#if PLATFORM(IOS)
 const char *dataDetectorsURLScheme = "x-apple-data-detectors";
 const char *dataDetectorsAttributeTypeKey = "x-apple-data-detectors-type";
 const char *dataDetectorsAttributeResultKey = "x-apple-data-detectors-result";
-#endif
 
 namespace WebCore {
+
+bool DataDetection::isDataDetectorLink(Element* element)
+{
+    return element->getAttribute(dataDetectorsURLScheme) == "true";
+}
+
+String DataDetection::dataDetectorIdentifier(Element* element)
+{
+    return element->getAttribute(dataDetectorsAttributeResultKey);
+}
 
 #if PLATFORM(MAC)
 
@@ -145,7 +153,7 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
     return detectItemAtPositionWithRange(position, contextRange, detectedDataBoundingBox, detectedDataRange);
 }
 #endif // PLATFORM(MAC)
-    
+
 #if PLATFORM(IOS)
     
 static BOOL resultIsURL(DDResultRef result)
@@ -190,7 +198,7 @@ static void removeResultLinksFromAnchor(Node* node, Node* nodeParent)
     if (!node)
         return;
     
-    BOOL nodeIsDDAnchor = is<HTMLAnchorElement>(*node) && downcast<Element>(*node).getAttribute(get_DataDetectorsCore_DDURLScheme()) == "true";
+    BOOL nodeIsDDAnchor = is<HTMLAnchorElement>(*node) && downcast<Element>(*node).getAttribute(dataDetectorsURLScheme) == "true";
     
     RefPtr<NodeList> children = node->childNodes();
     unsigned childCount = children->length();
@@ -219,7 +227,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node* startNode, Node* endNode)
     Node *node = startNode;
     while (node) {
         if (is<HTMLAnchorElement>(*node)) {
-            if (downcast<Element>(*node).getAttribute(get_DataDetectorsCore_DDURLScheme()) != "true")
+            if (downcast<Element>(*node).getAttribute(dataDetectorsURLScheme) != "true")
                 return true;
             removeResultLinksFromAnchor(node, node->parentElement());
         }
@@ -230,7 +238,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node* startNode, Node* endNode)
             node = startNode->parentNode();
             while (node) {
                 if (is<HTMLAnchorElement>(*node)) {
-                    if (downcast<Element>(*node).getAttribute(get_DataDetectorsCore_DDURLScheme()) != "true")
+                    if (downcast<Element>(*node).getAttribute(dataDetectorsURLScheme) != "true")
                         return true;
                     removeResultLinksFromAnchor(node, node->parentElement());
                 }
@@ -448,8 +456,12 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         CFIndex fragmentIndex = queryRange.start.queryIndex;
         if (fragmentIndex == queryRange.end.queryIndex)
             fragmentRanges.append(TextIterator::subrange(currentRange.get(), queryRange.start.offset, queryRange.end.offset - queryRange.start.offset));
-        else
-            fragmentRanges.append(currentRange);
+        else {
+            if (!queryRange.start.offset)
+                fragmentRanges.append(currentRange);
+            else
+                fragmentRanges.append(Range::create(currentRange->ownerDocument(), &currentRange->startContainer(), currentRange->startOffset() + queryRange.start.offset, &currentRange->endContainer(), currentRange->endOffset()));
+        }
         
         while (fragmentIndex < queryRange.end.queryIndex) {
             fragmentIndex++;

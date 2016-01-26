@@ -31,6 +31,7 @@
 #import "APIUIClient.h"
 #import "DataReference.h"
 #import "EditingRange.h"
+#import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"

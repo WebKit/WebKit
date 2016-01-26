@@ -59,6 +59,10 @@ SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
 SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
 SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
 
+@interface DDDetectionController (StagingToRemove)
+- (NSArray *)actionsForURL:(NSURL *)url identifier:(NSString *)identifier selectedText:(NSString *)selectedText results:(NSArray *)results context:(NSDictionary *)context;
+@end
+
 using namespace WebKit;
 
 #if HAVE(APP_LINKS)
@@ -414,14 +418,27 @@ static LSAppLink *appLinkForURL(NSURL *url)
     if (!delegate)
         return;
 
-    NSURL *targetURL = [NSURL URLWithString:[delegate positionInformationForActionSheetAssistant:self].url];
+    const WebKit::InteractionInformationAtPosition& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
+    NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
     if (!targetURL)
         return;
 
     if (![[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
         return;
 
-    NSArray *dataDetectorsActions = [[getDDDetectionControllerClass() sharedController] actionsForAnchor:nil url:targetURL forFrame:nil];
+    DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
+    NSArray *dataDetectorsActions = nil;
+    if ([controller respondsToSelector:@selector(actionsForURL:identifier:selectedText:results:context:)]) {
+        NSDictionary *context = nil;
+        NSString *textAtSelection = nil;
+
+        if ([delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
+            context = [delegate dataDetectionContextForActionSheetAssistant:self];
+        if ([delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
+            textAtSelection = [delegate selectedTextForActionSheetAssistant:self];
+        dataDetectorsActions = [controller actionsForURL:targetURL identifier:positionInformation.dataDetectorIdentifier selectedText:textAtSelection results:positionInformation.dataDetectorResults.get() context:context];
+    } else
+        dataDetectorsActions = [controller actionsForAnchor:nil url:targetURL forFrame:nil];
     if ([dataDetectorsActions count] == 0)
         return;
 

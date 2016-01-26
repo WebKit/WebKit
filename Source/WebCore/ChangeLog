@@ -1,3 +1,26 @@
+2016-01-25  Enrica Casucci  <enrica@apple.com>
+
+        Add support for DataDetectors in WK (iOS).
+        https://bugs.webkit.org/show_bug.cgi?id=152989
+        rdar://problem/22855960
+
+        Reviewed by Tim Horton.
+
+        Adding new helper functions for data detection related tasks.
+        The patch also fixes a bug when creating DOM ranges from DDQueryRange
+        spanning multiple fragments.
+
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::isDataDetectorLink):
+        (WebCore::DataDetection::dataDetectorIdentifier):
+        (WebCore::detectItemAtPositionWithRange):
+        (WebCore::DataDetection::detectItemAroundHitTestResult):
+        (WebCore::resultIsURL):
+        (WebCore::removeResultLinksFromAnchor):
+        (WebCore::searchForLinkRemovingExistingDDLinks):
+        (WebCore::DataDetection::detectContentInRange):
+
 2016-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove broken cache from CSSFontFaceSource

@@ -28,12 +28,14 @@
 
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 OBJC_CLASS DDActionContext;
 OBJC_CLASS NSArray;
 
 namespace WebCore {
 
+class Element;
 class FloatRect;
 class HitTestResult;
 class Range;
@@ -55,6 +57,8 @@ public:
     WEBCORE_EXPORT static RetainPtr<DDActionContext> detectItemAroundHitTestResult(const HitTestResult&, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange);
 #endif
     WEBCORE_EXPORT static NSArray *detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes);
+    WEBCORE_EXPORT static bool isDataDetectorLink(Element*);
+    WEBCORE_EXPORT static String dataDetectorIdentifier(Element*);
 };
 
 } // namespace WebCore

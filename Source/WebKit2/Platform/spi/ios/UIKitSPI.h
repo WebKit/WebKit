@@ -842,5 +842,7 @@ extern NSString *const UIKeyInputPageUp;
 extern NSString *const UIKeyInputPageDown;
 
 extern const NSString *UIPreviewDataLink;
+extern const NSString *UIPreviewDataDDResult;
+extern const NSString *UIPreviewDataDDContext;
 
 WTF_EXTERN_C_END

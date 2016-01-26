@@ -55,6 +55,8 @@ struct InteractionInformationAtPosition;
 - (void)updatePositionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant willStartInteractionWithElement:(_WKActivatedElementInfo *)element;
 - (void)actionSheetAssistantDidStopInteraction:(WKActionSheetAssistant *)assistant;
+- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
+- (NSString *)selectedTextForActionSheetAssistant:(WKActionSheetAssistant *)assistant;
 
 @end
 

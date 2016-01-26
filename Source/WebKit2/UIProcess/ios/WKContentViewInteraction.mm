@@ -62,6 +62,7 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <WebCore/Color.h>
 #import <WebCore/CoreGraphicsSPI.h>
+#import <WebCore/DataDetectorsCoreSPI.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/Path.h>
@@ -236,6 +237,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @property (strong, nonatomic, readonly) UIGestureRecognizer *presentationSecondaryGestureRecognizer;
 @end
 #endif
+
+@interface DDDetectionController (StagingToRemove)
+- (DDResultRef)resultForURL:(NSURL *)url identifier:(NSString *)identifier selectedText:(NSString *)selectedText results:(NSArray *)results context:(NSDictionary *)context extendedContext:(NSDictionary **)extendedContext;
+@end
 
 @interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
 - (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated;
@@ -3471,6 +3476,20 @@ static bool isAssistableInputType(InputType type)
     _page->stopInteraction();
 }
 
+- (NSDictionary *)dataDetectionContextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    NSDictionary *context = nil;
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_dataDetectionContextForWebView:)])
+        context = [uiDelegate _dataDetectionContextForWebView:_webView];
+    return context;
+}
+
+- (NSString *)selectedTextForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    return [self selectedText];
+}
+
 @end
 
 #if HAVE(LINK_PREVIEW)
@@ -3545,7 +3564,7 @@ static bool isAssistableInputType(InputType type)
         return nil;
 
     String absoluteLinkURL = _positionInformation.url;
-    if (!useImageURLForLink && (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL))) {
+    if (!useImageURLForLink && (absoluteLinkURL.isEmpty() || (!WebCore::protocolIsInHTTPFamily(absoluteLinkURL) && !_positionInformation.isDataDetectorLink))) {
         if (canShowLinkPreview && !canShowImagePreview)
             return nil;
         canShowLinkPreview = NO;
@@ -3558,6 +3577,22 @@ static bool isAssistableInputType(InputType type)
             dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
         else
             dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.url];
+        if (_positionInformation.isDataDetectorLink) {
+            NSDictionary *context = nil;
+            id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+            if ([uiDelegate respondsToSelector:@selector(_dataDetectionContextForWebView:)])
+                context = [uiDelegate _dataDetectionContextForWebView:_webView];
+
+            DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
+            if ([controller respondsToSelector:@selector(resultForURL:identifier:selectedText:results:context:extendedContext:)]) {
+                NSDictionary *newContext = nil;
+                DDResultRef ddResult = [controller resultForURL:dataForPreview[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
+                if (ddResult)
+                    dataForPreview[UIPreviewDataDDResult] = (__bridge id)ddResult;
+                if (newContext)
+                    dataForPreview[UIPreviewDataDDContext] = newContext;
+            }
+        }
     } else if (canShowImagePreview) {
         *type = UIPreviewItemTypeImage;
         dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];

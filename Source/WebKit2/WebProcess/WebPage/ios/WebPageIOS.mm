@@ -50,6 +50,7 @@
 #import "WebProcess.h"
 #import <CoreText/CTFont.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/DataDetection.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
 #import <WebCore/Element.h>
@@ -2202,6 +2203,13 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                         if (textIndicator)
                             info.linkIndicator = textIndicator->data();
                     }
+#if ENABLE(DATA_DETECTION)
+                    info.isDataDetectorLink = DataDetection::isDataDetectorLink(element);
+                    if (info.isDataDetectorLink) {
+                        info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(element);
+                        info.dataDetectorResults = element->document().frame()->dataDetectionResults();
+                    }
+#endif
                 } else if (element->renderer() && element->renderer()->isRenderImage()) {
                     info.isImage = true;
                     auto& renderImage = downcast<RenderImage>(*(element->renderer()));

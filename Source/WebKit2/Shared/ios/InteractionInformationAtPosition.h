@@ -47,6 +47,9 @@ struct InteractionInformationAtPosition {
     bool isImage { false };
     bool isAnimatedImage { false };
     bool isClickableElement { false };
+#if ENABLE(DATA_DETECTION)
+    bool isDataDetectorLink { false };
+#endif
     String url;
     String imageURL;
     String title;
@@ -54,6 +57,10 @@ struct InteractionInformationAtPosition {
     RefPtr<ShareableBitmap> image;
 
     WebCore::TextIndicatorData linkIndicator;
+#if ENABLE(DATA_DETECTION)
+    String dataDetectorIdentifier;
+    RetainPtr<NSArray> dataDetectorResults;
+#endif
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, InteractionInformationAtPosition&);

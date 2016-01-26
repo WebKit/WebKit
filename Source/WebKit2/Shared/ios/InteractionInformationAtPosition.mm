@@ -23,15 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InteractionInformationAtPosition.h"
+#import "config.h"
+#import "InteractionInformationAtPosition.h"
 
-#include "Arguments.h"
-#include "WebCoreArgumentCoders.h"
+#import "ArgumentCodersCF.h"
+#import "Arguments.h"
+#import "WebCoreArgumentCoders.h"
+#import <WebCore/DataDetectorsCoreSPI.h>
+#import <WebCore/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)
+SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)
 
 namespace WebKit {
 
 #if PLATFORM(IOS)
+
 void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << point;
@@ -53,6 +60,19 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
     if (image)
         image->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
+#if ENABLE(DATA_DETECTION)
+    encoder << isDataDetectorLink;
+    if (isDataDetectorLink) {
+        encoder << dataDetectorIdentifier;
+        RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
+        RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+        [archiver setRequiresSecureCoding:YES];
+        [archiver encodeObject:dataDetectorResults.get() forKey:@"dataDetectorResults"];
+        [archiver finishEncoding];
+        
+        IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));        
+    }
+#endif
 }
 
 bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, InteractionInformationAtPosition& result)
@@ -105,6 +125,30 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
 
     if (!handle.isNull())
         result.image = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
+
+#if ENABLE(DATA_DETECTION)
+    if (!decoder.decode(result.isDataDetectorLink))
+        return false;
+    
+    if (result.isDataDetectorLink) {
+        if (!decoder.decode(result.dataDetectorIdentifier))
+            return false;
+        RetainPtr<CFDataRef> data;
+        if (!IPC::decode(decoder, data))
+            return false;
+        
+        RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
+        [unarchiver setRequiresSecureCoding:YES];
+        @try {
+            result.dataDetectorResults = [unarchiver decodeObjectOfClasses:[NSSet setWithArray:@[ [NSArray class], getDDScannerResultClass()] ] forKey:@"dataDetectorResults"];
+        } @catch (NSException *exception) {
+            LOG_ERROR("Failed to decode NSArray of DDScanResult: %@", exception);
+            return false;
+        }
+        
+        [unarchiver finishDecoding];
+    }
+#endif
 
     return true;
 }
