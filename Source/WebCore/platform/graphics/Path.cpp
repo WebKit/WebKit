@@ -194,25 +194,26 @@ void Path::dump() const
 
 TextStream& operator<<(TextStream& stream, const Path& path)
 {
-    TextStream::GroupScope group(stream);
-    stream << "path " << &path;
-
-    path.apply([&stream](const PathElement& element) {
+    bool isFirst = true;
+    path.apply([&stream, &isFirst](const PathElement& element) {
+        if (!isFirst)
+            stream << ", ";
+        isFirst = false;
         switch (element.type) {
         case PathElementMoveToPoint: // The points member will contain 1 value.
-            stream << " move to " << element.points[0];
+            stream << "move to " << element.points[0];
             break;
         case PathElementAddLineToPoint: // The points member will contain 1 value.
-            stream << " add line to " << element.points[0];
+            stream << "add line to " << element.points[0];
             break;
         case PathElementAddQuadCurveToPoint: // The points member will contain 2 values.
-            stream << " add quad curve to " << element.points[0] << " " << element.points[1];
+            stream << "add quad curve to " << element.points[0] << " " << element.points[1];
             break;
         case PathElementAddCurveToPoint: // The points member will contain 3 values.
-            stream << " add curve to " << element.points[0] << " " << element.points[1] << " " << element.points[2];
+            stream << "add curve to " << element.points[0] << " " << element.points[1] << " " << element.points[2];
             break;
         case PathElementCloseSubpath: // The points member will contain no values.
-            stream << " close subpath";
+            stream << "close subpath";
             break;
         }
     });

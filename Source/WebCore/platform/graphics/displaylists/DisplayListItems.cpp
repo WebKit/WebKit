@@ -326,9 +326,9 @@ void ClipOutToPath::apply(GraphicsContext& context) const
     context.clipOut(m_path);
 }
 
-static TextStream& operator<<(TextStream& ts, const ClipOutToPath&)
+static TextStream& operator<<(TextStream& ts, const ClipOutToPath& item)
 {
-//    ts.dumpProperty("path", item.path()); // FIXME: path logging.
+    ts.dumpProperty("path", item.path());
     return ts;
 }
 
@@ -339,7 +339,7 @@ void ClipPath::apply(GraphicsContext& context) const
 
 static TextStream& operator<<(TextStream& ts, const ClipPath& item)
 {
-//    ts.dumpProperty("path", item.path()); // FIXME: path logging.
+    ts.dumpProperty("path", item.path());
     ts.dumpProperty("wind-rule", item.windRule());
     return ts;
 }
@@ -809,7 +809,7 @@ void FillPath::apply(GraphicsContext& context) const
 static TextStream& operator<<(TextStream& ts, const FillPath& item)
 {
     ts << static_cast<const DrawingItem&>(item);
-//    ts.dumpProperty("path", item.path()); // FIXME: path logging.
+    ts.dumpProperty("path", item.path());
     return ts;
 }
 
@@ -863,7 +863,7 @@ void StrokePath::apply(GraphicsContext& context) const
 static TextStream& operator<<(TextStream& ts, const StrokePath& item)
 {
     ts << static_cast<const DrawingItem&>(item);
-//    ts.dumpProperty("path", item.path()); // FIXME: path logging.
+    ts.dumpProperty("path", item.path());
     return ts;
 }
 
