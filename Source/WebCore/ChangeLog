@@ -1,5 +1,30 @@
 2016-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r195477. rdar://problem/24001780
+
+    2016-01-21  Sam Weinig  <sam@webkit.org>
+
+            Treat non-https actions on secure pages as mixed content
+            <rdar://problem/23144492>
+            https://bugs.webkit.org/show_bug.cgi?id=153322
+
+            Reviewed by Alexey Proskuryakov.
+
+            Tests:  http/tests/security/mixedContent/insecure-form-in-iframe.html
+                    http/tests/security/mixedContent/insecure-form-in-main-frame.html
+                    http/tests/security/mixedContent/javascript-url-form-in-main-frame.html
+
+            * html/HTMLFormElement.cpp:
+            (WebCore::HTMLFormElement::parseAttribute):
+            Check form actions for mixed content.
+
+            * loader/MixedContentChecker.cpp:
+            (WebCore::MixedContentChecker::checkFormForMixedContent):
+            * loader/MixedContentChecker.h:
+            Add new function to check and warn if a form's action is mixed content.
+
+2016-01-25  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r195393. rdar://problem/24042909
 
     2016-01-20  David Kilzer  <ddkilzer@apple.com>
