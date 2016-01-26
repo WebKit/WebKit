@@ -1,5 +1,5 @@
 
-FAIL Node.cloneNode Can't find variable: HTMLDataElement
+FAIL Node.cloneNode Can't find variable: HTMLDataListElement
 PASS createElement(a) 
 PASS createElement(abbr) 
 PASS createElement(acronym) 
@@ -26,6 +26,7 @@ PASS createElement(cite)
 PASS createElement(code) 
 PASS createElement(col) 
 PASS createElement(colgroup) 
+PASS createElement(data) 
 PASS createDocumentFragment 
 PASS createTextNode 
 PASS createComment 

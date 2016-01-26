@@ -259,8 +259,8 @@ PASS Interfaces for nextid
 PASS Interfaces for NEXTID 
 PASS Interfaces for bdi 
 PASS Interfaces for BDI 
-FAIL Interfaces for data assert_equals: Element data should have HTMLDataElement as its primary interface. expected "[object HTMLDataElement]" but got "[object HTMLUnknownElement]"
-FAIL Interfaces for DATA assert_equals: Element DATA should have HTMLDataElement as its primary interface. expected "[object HTMLDataElement]" but got "[object HTMLUnknownElement]"
+PASS Interfaces for data 
+PASS Interfaces for DATA 
 PASS Interfaces for a 
 PASS Interfaces for A 
 PASS Interfaces for area 

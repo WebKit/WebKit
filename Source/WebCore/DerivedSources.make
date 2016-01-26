@@ -354,6 +354,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/html/HTMLCanvasElement.idl \
     $(WebCore)/html/HTMLCollection.idl \
     $(WebCore)/html/HTMLDListElement.idl \
+    $(WebCore)/html/HTMLDataElement.idl \
     $(WebCore)/html/HTMLDataListElement.idl \
     $(WebCore)/html/HTMLDetailsElement.idl \
     $(WebCore)/html/HTMLDirectoryElement.idl \

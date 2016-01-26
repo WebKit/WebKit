@@ -438,6 +438,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'HTMLDListElement').hasOwnProperty(
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLDListElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLDListElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLDListElement').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLDataElement').value is HTMLDataElement
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLDataElement').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLDataElement').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLDataElement').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLDataElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLDetailsElement').value is HTMLDetailsElement
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLDetailsElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLDetailsElement').hasOwnProperty('set') is false

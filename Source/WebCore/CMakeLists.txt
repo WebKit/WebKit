@@ -449,6 +449,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLCanvasElement.idl
     html/HTMLCollection.idl
     html/HTMLDListElement.idl
+    html/HTMLDataElement.idl
     html/HTMLDataListElement.idl
     html/HTMLDetailsElement.idl
     html/HTMLDirectoryElement.idl
@@ -1656,6 +1657,7 @@ set(WebCore_SOURCES
     html/HTMLCanvasElement.cpp
     html/HTMLCollection.cpp
     html/HTMLDListElement.cpp
+    html/HTMLDataElement.cpp
     html/HTMLDataListElement.cpp
     html/HTMLDetailsElement.cpp
     html/HTMLDirectoryElement.cpp

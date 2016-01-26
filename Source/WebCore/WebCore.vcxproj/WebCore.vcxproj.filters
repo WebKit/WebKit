@@ -3713,6 +3713,9 @@
     <ClCompile Include="..\html\HTMLCollection.cpp">
       <Filter>html</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\HTMLDataElement.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\HTMLDataListElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -5314,6 +5317,9 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLCollection.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLDataElement.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLDataListElement.cpp">
@@ -10876,6 +10882,9 @@
     <ClInclude Include="..\html\HTMLCollection.h">
       <Filter>html</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\HTMLDataElement.h">
+      <Filter>html</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\HTMLDataListElement.h">
       <Filter>html</Filter>
     </ClInclude>
@@ -12727,6 +12736,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLCollection.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLDataElement.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLDataListElement.h">

@@ -183,6 +183,7 @@
 #include "JSHTMLButtonElement.cpp"
 #include "JSHTMLCanvasElement.cpp"
 #include "JSHTMLCollection.cpp"
+#include "JSHTMLDataElement.cpp"
 #include "JSHTMLDataListElement.cpp"
 #include "JSHTMLDetailsElement.cpp"
 #include "JSHTMLDirectoryElement.cpp"

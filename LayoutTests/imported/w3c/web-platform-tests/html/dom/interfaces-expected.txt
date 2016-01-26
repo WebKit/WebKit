@@ -223,6 +223,7 @@ CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'port' on a no
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'pathname' on a non-HTMLAnchorElement object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'search' on a non-HTMLAnchorElement object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'hash' on a non-HTMLAnchorElement object.
+CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'value' on a non-HTMLDataElement object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'dateTime' on a non-HTMLTimeElement object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'clear' on a non-HTMLBRElement object.
 CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'cite' on a non-HTMLModElement object.
@@ -2738,15 +2739,17 @@ PASS HTMLAnchorElement interface: document.createElement("a") must inherit prope
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "pathname" with the proper type (21) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "search" with the proper type (22) 
 PASS HTMLAnchorElement interface: document.createElement("a") must inherit property "hash" with the proper type (23) 
-FAIL HTMLDataElement interface: existence and properties of interface object assert_own_property: self does not have own property "HTMLDataElement" expected property "HTMLDataElement" missing
-FAIL HTMLDataElement interface object length assert_own_property: self does not have own property "HTMLDataElement" expected property "HTMLDataElement" missing
-FAIL HTMLDataElement interface object name assert_own_property: self does not have own property "HTMLDataElement" expected property "HTMLDataElement" missing
-FAIL HTMLDataElement interface: existence and properties of interface prototype object assert_own_property: self does not have own property "HTMLDataElement" expected property "HTMLDataElement" missing
-FAIL HTMLDataElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "HTMLDataElement" expected property "HTMLDataElement" missing
-FAIL HTMLDataElement interface: attribute value assert_own_property: self does not have own property "HTMLDataElement" expected property "HTMLDataElement" missing
-FAIL HTMLDataElement must be primary interface of document.createElement("data") assert_own_property: self does not have own property "HTMLDataElement" expected property "HTMLDataElement" missing
-FAIL Stringification of document.createElement("data") assert_equals: class string of document.createElement("data") expected "[object HTMLDataElement]" but got "[object HTMLUnknownElement]"
-FAIL HTMLDataElement interface: document.createElement("data") must inherit property "value" with the proper type (0) assert_inherits: property "value" not found in prototype chain
+FAIL HTMLDataElement interface: existence and properties of interface object assert_equals: class string of HTMLDataElement expected "[object Function]" but got "[object HTMLDataElementConstructor]"
+PASS HTMLDataElement interface object length 
+PASS HTMLDataElement interface object name 
+PASS HTMLDataElement interface: existence and properties of interface prototype object 
+FAIL HTMLDataElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDataElement.prototype.constructor is not writable expected true got false
+FAIL HTMLDataElement interface: attribute value assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS HTMLDataElement must be primary interface of document.createElement("data") 
+PASS Stringification of document.createElement("data") 
+PASS HTMLDataElement interface: document.createElement("data") must inherit property "value" with the proper type (0) 
 FAIL HTMLTimeElement interface: existence and properties of interface object assert_equals: class string of HTMLTimeElement expected "[object Function]" but got "[object HTMLTimeElementConstructor]"
 PASS HTMLTimeElement interface object length 
 PASS HTMLTimeElement interface object name 

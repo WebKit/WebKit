@@ -2846,6 +2846,8 @@
 		830519961BB0F11000F3772E /* HTMLTimeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 830519931BB0F0E700F3772E /* HTMLTimeElement.h */; };
 		8306EFF11B8BCEA50031D032 /* NativeNodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8306EFF01B8BCE7C0031D032 /* NativeNodeFilter.cpp */; };
 		830784B21C52EE2C00104D1D /* XMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 830784B11C52EE1900104D1D /* XMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83120C701C56F3F6001CB112 /* HTMLDataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831D1F291C56ECA000F5F6C0 /* HTMLDataElement.cpp */; };
+		83120C711C56F3FB001CB112 /* HTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
 		832B843619D8E57400B26055 /* SVGAnimateElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */; };
 		8348BFAB1B85729800912F36 /* ClassCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8348BFA91B85729500912F36 /* ClassCollection.cpp */; };
@@ -2855,6 +2857,8 @@
 		8358CB6F1C53277200E0C2D8 /* JSXMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F570AE1C53268E007FD6CB /* JSXMLDocument.cpp */; };
 		8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F570AD1C53268E007FD6CB /* JSXMLDocument.h */; };
 		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
+		8367587E1C56E99B008A1087 /* JSHTMLDataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834B86A91C56E93E00F3F0E3 /* JSHTMLDataElement.cpp */; };
+		8367587F1C56E99B008A1087 /* JSHTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A81C56E93E00F3F0E3 /* JSHTMLDataElement.h */; };
 		836BAD211BD1CA670037356A /* HTMLTableHeaderCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836BAD1F1BD1CA670037356A /* HTMLTableHeaderCellElement.h */; };
 		836BAD221BD1CA670037356A /* HTMLTableDataCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836BAD201BD1CA670037356A /* HTMLTableDataCellElement.h */; };
 		836CB1F61BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836CB1F21BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h */; };
@@ -10402,10 +10406,15 @@
 		8306EFF01B8BCE7C0031D032 /* NativeNodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeNodeFilter.cpp; sourceTree = "<group>"; };
 		830784B01C52EE1900104D1D /* XMLDocument.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XMLDocument.idl; sourceTree = "<group>"; };
 		830784B11C52EE1900104D1D /* XMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocument.h; sourceTree = "<group>"; };
+		831D1F291C56ECA000F5F6C0 /* HTMLDataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataElement.cpp; sourceTree = "<group>"; };
 		832B843319D8E55100B26055 /* SVGAnimateElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimateElementBase.h; sourceTree = "<group>"; };
 		832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimateElementBase.cpp; sourceTree = "<group>"; };
 		8348BFA91B85729500912F36 /* ClassCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassCollection.cpp; sourceTree = "<group>"; };
 		8348BFAA1B85729500912F36 /* ClassCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassCollection.h; sourceTree = "<group>"; };
+		834B86A61C56E83A00F3F0E3 /* HTMLDataElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataElement.idl; sourceTree = "<group>"; };
+		834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataElement.h; sourceTree = "<group>"; };
+		834B86A81C56E93E00F3F0E3 /* JSHTMLDataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataElement.h; sourceTree = "<group>"; };
+		834B86A91C56E93E00F3F0E3 /* JSHTMLDataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataElement.cpp; sourceTree = "<group>"; };
 		834DD4F31BE08989002C9C3E /* PageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageMac.mm; sourceTree = "<group>"; };
 		83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFamily.h; sourceTree = "<group>"; };
 		835D363619FF6193004C93AB /* StyleBuilderCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderCustom.h; sourceTree = "<group>"; };
@@ -18936,6 +18945,9 @@
 				A8DF3FC9097FA0FB0052981B /* HTMLCollection.cpp */,
 				A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */,
 				85DF2F690AA3C74300AD64C5 /* HTMLCollection.idl */,
+				831D1F291C56ECA000F5F6C0 /* HTMLDataElement.cpp */,
+				834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */,
+				834B86A61C56E83A00F3F0E3 /* HTMLDataElement.idl */,
 				F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */,
 				F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */,
 				F5C041D90FFCA7CE00839D4A /* HTMLDataListElement.idl */,
@@ -19940,6 +19952,8 @@
 				938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */,
 				BCCBAD3E0C18C14200CE890F /* JSHTMLCollection.cpp */,
 				BCCBAD3F0C18C14200CE890F /* JSHTMLCollection.h */,
+				834B86A91C56E93E00F3F0E3 /* JSHTMLDataElement.cpp */,
+				834B86A81C56E93E00F3F0E3 /* JSHTMLDataElement.h */,
 				F5C041E10FFCA96D00839D4A /* JSHTMLDataListElement.cpp */,
 				F5C041E20FFCA96D00839D4A /* JSHTMLDataListElement.h */,
 				D359D8BC129CA55C0006E5D2 /* JSHTMLDetailsElement.cpp */,
@@ -25495,6 +25509,7 @@
 				858C38A70AA8F20400B187A4 /* DOMRect.h in Headers */,
 				85E711D60AC5D5350053270F /* DOMRectInternal.h in Headers */,
 				5185FCB71BB4C7670012898F /* DOMRequestState.h in Headers */,
+				8367587F1C56E99B008A1087 /* JSHTMLDataElement.h in Headers */,
 				855D358A0AD707310019AAC7 /* DOMRGBColor.h in Headers */,
 				BCD0FC4F0DBD720B00B2F630 /* DOMRGBColorInternal.h in Headers */,
 				2D9A246E15B9BD0000D34527 /* DOMSecurityPolicy.h in Headers */,
@@ -27799,6 +27814,7 @@
 				B2227A510D00BF220071B782 /* SVGNumberList.h in Headers */,
 				B2227A540D00BF220071B782 /* SVGPaint.h in Headers */,
 				B2227A570D00BF220071B782 /* SVGParserUtilities.h in Headers */,
+				83120C711C56F3FB001CB112 /* HTMLDataElement.h in Headers */,
 				2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */,
 				84C6784D1214814700A92902 /* SVGPathBlender.h in Headers */,
 				8476C9EB11DF6A2900555B02 /* SVGPathBuilder.h in Headers */,
@@ -28946,6 +28962,7 @@
 				BC772E16133162C2001EC9CE /* CSSLineBoxContainValue.cpp in Sources */,
 				A80E6CFC0A1989CA007FB8C5 /* CSSMediaRule.cpp in Sources */,
 				314BE3A31B30F6D100141982 /* CSSNamedImageValue.cpp in Sources */,
+				8367587E1C56E99B008A1087 /* JSHTMLDataElement.cpp in Sources */,
 				F98FFF4411A2676200F548E8 /* CSSOMUtils.cpp in Sources */,
 				A80E6CF50A1989CA007FB8C5 /* CSSPageRule.cpp in Sources */,
 				BC772B3D0C4EA91E0083285F /* CSSParser.cpp in Sources */,
@@ -29043,6 +29060,7 @@
 				0FE5FBD61C3DD51E0007A2CA /* DisplayListRecorder.cpp in Sources */,
 				0FE5FBD81C3DD51E0007A2CA /* DisplayListReplayer.cpp in Sources */,
 				49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */,
+				83120C701C56F3F6001CB112 /* HTMLDataElement.cpp in Sources */,
 				2D29ECC5192ECC8300984B78 /* DisplayRefreshMonitorClient.cpp in Sources */,
 				0F97A658155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm in Sources */,
 				49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */,
