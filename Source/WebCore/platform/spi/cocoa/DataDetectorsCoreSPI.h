@@ -112,9 +112,10 @@ typedef struct __DDScanner *DDScannerRef;
 
 typedef CFIndex DDScannerCopyResultsOptions;
 typedef CFIndex DDScannerOptions;
-extern const DDScannerCopyResultsOptions DDScannerCopyResultsOptionsForPassiveUse;
 
 extern "C" {
+
+extern const DDScannerCopyResultsOptions DDScannerCopyResultsOptionsForPassiveUse;
 
 DDScannerRef DDScannerCreate(DDScannerType, DDScannerOptions, CFErrorRef*);
 DDScanQueryRef DDScanQueryCreate(CFAllocatorRef);

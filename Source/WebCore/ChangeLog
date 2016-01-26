@@ -1,5 +1,11 @@
 2016-01-25  Sam Weinig  <sam@webkit.org>
 
+        Try to fix the simulator build.
+
+        * platform/spi/cocoa/DataDetectorsCoreSPI.h:
+
+2016-01-25  Sam Weinig  <sam@webkit.org>
+
         Roll back in r195559 with a build fix.
 
         * WebCore.xcodeproj/project.pbxproj:
