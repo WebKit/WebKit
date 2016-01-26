@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSHistory.h"
 
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
 #include "SerializedScriptValue.h"
@@ -139,7 +140,7 @@ JSValue JSHistory::pushState(ExecState& state)
             return jsUndefined();
     }
 
-    ExceptionCode ec = 0;
+    ExceptionCodeWithMessage ec;
     wrapped().stateObjectAdded(historyState.release(), title, url, History::StateObjectType::Push, ec);
     setDOMException(&state, ec);
 
@@ -168,7 +169,7 @@ JSValue JSHistory::replaceState(ExecState& state)
             return jsUndefined();
     }
 
-    ExceptionCode ec = 0;
+    ExceptionCodeWithMessage ec;
     wrapped().stateObjectAdded(historyState.release(), title, url, History::StateObjectType::Replace, ec);
     setDOMException(&state, ec);
 

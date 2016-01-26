@@ -1,3 +1,37 @@
+2016-01-26  Brady Eidson  <beidson@apple.com>
+
+        History.pushState causes intense memory pressure.
+        https://bugs.webkit.org/show_bug.cgi?id=153435
+
+        Reviewed by Sam Weinig, Oliver Hunt, and Geoff Garen.
+
+        * TestExpectations: Mark some of the new tests as slow.
+        
+        * fast/loader/stateobjects/pushstate-frequency-expected.txt: Added.
+        * fast/loader/stateobjects/pushstate-frequency-iframe-expected.txt: Added.
+        * fast/loader/stateobjects/pushstate-frequency-iframe.html: Added.
+        * fast/loader/stateobjects/pushstate-frequency-with-user-gesture-expected.txt: Added.
+        * fast/loader/stateobjects/pushstate-frequency-with-user-gesture.html: Added.
+        * fast/loader/stateobjects/pushstate-frequency.html: Added.
+        * fast/loader/stateobjects/replacestate-frequency-expected.txt: Added.
+        * fast/loader/stateobjects/replacestate-frequency-iframe-expected.txt: Added.
+        * fast/loader/stateobjects/replacestate-frequency-iframe.html: Added.
+        * fast/loader/stateobjects/replacestate-frequency-with-user-gesture-expected.txt: Added.
+        * fast/loader/stateobjects/replacestate-frequency-with-user-gesture.html: Added.
+        * fast/loader/stateobjects/replacestate-frequency.html: Added.
+        * fast/loader/stateobjects/resources/pushstate-iframe.html: Added.
+        * fast/loader/stateobjects/resources/replacestate-iframe.html: Added.
+        * loader/stateobjects/pushstate-size-expected.txt: Added.
+        * loader/stateobjects/pushstate-size-iframe-expected.txt: Added.
+        * loader/stateobjects/pushstate-size-iframe.html: Added.
+        * loader/stateobjects/pushstate-size.html: Added.
+        * loader/stateobjects/replacestate-size-expected.txt: Added.
+        * loader/stateobjects/replacestate-size-iframe-expected.txt: Added.
+        * loader/stateobjects/replacestate-size-iframe.html: Added.
+        * loader/stateobjects/replacestate-size.html: Added.
+        * loader/stateobjects/resources/pushstate-iframe.html: Added.
+        * loader/stateobjects/resources/replacestate-iframe.html: Added.
+        
 2016-01-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaselining cssom/subpixel-offsetleft-top-width-height-values.html for ios-simulator

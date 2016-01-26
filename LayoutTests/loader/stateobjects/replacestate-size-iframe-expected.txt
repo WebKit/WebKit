@@ -1,0 +1,17 @@
+Test should not crash.
+replaceState() in any frame should not always count against the global quota. Instead it should literally replace the most recent state object added from that frame.
+Pushing 59+mb of state objects (but less than 61mb)
+Replace the last 1mb object with a 2mb object, bringing the total to 60+mb
+It fit.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+The total payload is currently 60+mb. Pushing a 1mb object brings that 61+mb.
+It fit.
+The total payload is currently 61+mb. Replacing the last 1mb with 2mb brings that to 62+mb.
+It fit.
+The total payload is currently 62+mb. Replacing the last 2mb with 4mb brings that to 64+mb, and should not fit.
+Expected exception replacing 2mb with 4mb:Error: QuotaExceededError: DOM Exception 22
+

@@ -34,9 +34,12 @@
 #include "FrameLoaderClient.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "MainFrame.h"
 #include "Page.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -136,16 +139,90 @@ URL History::urlForState(const String& urlString)
     return URL(baseURL, urlString);
 }
 
-void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const String& title, const String& urlString, StateObjectType stateObjectType, ExceptionCode& ec)
+void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const String& title, const String& urlString, StateObjectType stateObjectType, ExceptionCodeWithMessage& ec)
 {
+    // Each unique main-frame document is only allowed to send 64mb of state object payload to the UI client/process.
+    static uint32_t totalStateObjectPayloadLimit = 0x4000000;
+    static unsigned perUserGestureStateObjectLimit = 100;
+
     if (!m_frame || !m_frame->page())
         return;
-    
+
     URL fullURL = urlForState(urlString);
     if (!fullURL.isValid() || !m_frame->document()->securityOrigin()->canRequest(fullURL)) {
-        ec = SECURITY_ERR;
+        ec.code = SECURITY_ERR;
         return;
     }
+
+    Document* mainDocument = m_frame->page()->mainFrame().document();
+    History* mainHistory = nullptr;
+    if (mainDocument) {
+        if (auto* mainDOMWindow = mainDocument->domWindow())
+            mainHistory = mainDOMWindow->history();
+    }
+
+    if (!mainHistory)
+        return;
+
+    bool processingUserGesture = ScriptController::processingUserGesture();
+    if (!processingUserGesture && mainHistory->m_nonUserGestureObjectsAdded >= perUserGestureStateObjectLimit) {
+        ec.code = SECURITY_ERR;
+        if (stateObjectType == StateObjectType::Replace)
+            ec.message = String::format("Attempt to use history.replaceState() more than %u times without a user gesture", perUserGestureStateObjectLimit);
+        else
+            ec.message = String::format("Attempt to use history.pushState() more than %u times without a user gesture", perUserGestureStateObjectLimit);
+        return;
+    }
+
+    double userGestureTimestamp = mainDocument->lastHandledUserGestureTimestamp();
+    if (processingUserGesture) {
+        if (mainHistory->m_currentUserGestureTimestamp < userGestureTimestamp) {
+            mainHistory->m_currentUserGestureTimestamp = userGestureTimestamp;
+            mainHistory->m_currentUserGestureObjectsAdded = 0;
+        }
+
+        if (mainHistory->m_currentUserGestureObjectsAdded >= perUserGestureStateObjectLimit) {
+            ec.code = SECURITY_ERR;
+            if (stateObjectType == StateObjectType::Replace)
+                ec.message = String::format("Attempt to use history.replaceState() more than %u times per gesture", perUserGestureStateObjectLimit);
+            else
+                ec.message = String::format("Attempt to use history.pushState() more than %u times per user gesture", perUserGestureStateObjectLimit);
+            return;
+        }
+    }
+
+    Checked<unsigned> titleSize = title.length();
+    titleSize *= 2;
+
+    Checked<unsigned> urlSize = fullURL.string().length();
+    urlSize *= 2;
+
+    Checked<uint64_t> payloadSize = titleSize;
+    payloadSize += urlSize;
+    payloadSize += data ? data->data().size() : 0;
+
+    Checked<uint64_t> newTotalUsage = mainHistory->m_totalStateObjectUsage;
+
+    if (stateObjectType == StateObjectType::Replace)
+        newTotalUsage -= m_mostRecentStateObjectUsage;
+    newTotalUsage += payloadSize;
+
+    if (newTotalUsage > totalStateObjectPayloadLimit) {
+        ec.code = QUOTA_EXCEEDED_ERR;
+        if (stateObjectType == StateObjectType::Replace)
+            ec.message = ASCIILiteral("Attempt to store more data than allowed using history.replaceState()");
+        else
+            ec.message = ASCIILiteral("Attempt to store more data than allowed using history.pushState()");
+        return;
+    }
+
+    m_mostRecentStateObjectUsage = payloadSize.unsafeGet();
+
+    mainHistory->m_totalStateObjectUsage = newTotalUsage.unsafeGet();
+    if (processingUserGesture)
+        ++mainHistory->m_currentUserGestureObjectsAdded;
+    else
+        ++mainHistory->m_nonUserGestureObjectsAdded;
 
     if (!urlString.isEmpty())
         m_frame->document()->updateURLForPushOrReplaceState(fullURL);

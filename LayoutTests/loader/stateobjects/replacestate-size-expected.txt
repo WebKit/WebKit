@@ -1,0 +1,8 @@
+Test should not crash.
+replaceState() should not always count against the global quota. Instead it should literally replace the most recent state object added.
+Pushing 63+mb of state objects (but less than 64mb)
+Replacing the last state object with one that should fit
+It fit
+Replacing the last state object with one that should not fit
+Expected exception replacing the last state object: Error: QuotaExceededError: DOM Exception 22
+

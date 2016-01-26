@@ -847,3 +847,9 @@ http/tests/security/contentSecurityPolicy/script-src-blocked-error-event.html [ 
 http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html # Needs expected file.
 http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src.html # Needs expected file.
 http/tests/security/contentSecurityPolicy/1.1/stylehash-default-src.html # Needs expected file.
+
+# These state object tests purposefully stress a resource limit, and take multiple seconds to run.
+loader/stateobjects/pushstate-size-iframe.html [ Slow ]
+loader/stateobjects/pushstate-size.html [ Slow ]
+loader/stateobjects/replacestate-size-iframe.html [ Slow ]
+loader/stateobjects/replacestate-size.html [ Slow ]

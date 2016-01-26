@@ -1,3 +1,32 @@
+2016-01-26  Brady Eidson  <beidson@apple.com>
+
+        History.pushState causes intense memory pressure.
+        https://bugs.webkit.org/show_bug.cgi?id=153435
+
+        Reviewed by Sam Weinig, Oliver Hunt, and Geoff Garen.
+
+        Tests: fast/loader/stateobjects/pushstate-frequency-iframe.html
+               fast/loader/stateobjects/pushstate-frequency-with-user-gesture.html
+               fast/loader/stateobjects/pushstate-frequency.html
+               fast/loader/stateobjects/replacestate-frequency-iframe.html
+               fast/loader/stateobjects/replacestate-frequency-with-user-gesture.html
+               fast/loader/stateobjects/replacestate-frequency.html
+               loader/stateobjects/pushstate-size-iframe.html
+               loader/stateobjects/pushstate-size.html
+               loader/stateobjects/replacestate-size-iframe.html
+               loader/stateobjects/replacestate-size.html
+
+        Add restrictions on how frequently push/replaceState can be called,
+        as well as how much of a cumulative payload they can deliver.
+        
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * page/History.h:
+
 2016-01-26  Anders Carlsson  <andersca@apple.com>
 
         Add a Dictionary overload that returns an Optional result
