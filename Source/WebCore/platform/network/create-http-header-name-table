@@ -32,7 +32,7 @@ import sys
 
 program_name = os.path.basename(__file__)
 if len(sys.argv) < 2:
-    sys.stderr.write("Usage: %s INPUT_FILE\n" % program_name)
+    sys.stderr.write("Usage: %s INPUT_FILE GPERF_EXECUTABLE\n" % program_name)
     exit(1)
 
 input_path = sys.argv[1]
@@ -238,7 +238,7 @@ WEBCORE_EXPORT StringView httpHeaderNameString(HTTPHeaderName);
 ''')
 header_file.close()
 
-gperf = os.getenv('GPERF') or 'gperf'
+gperf = os.getenv('GPERF') or sys.argv[2]
 
 if os.system('%s --key-positions="*" -D -n -s 2 HTTPHeaderNames.gperf --output-file=HTTPHeaderNames.cpp' % gperf):
     sys.stderr.write('Failed to run gperf.')

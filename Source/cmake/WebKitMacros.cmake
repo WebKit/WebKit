@@ -221,7 +221,7 @@ macro(MAKE_HASH_TOOLS _source)
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}.cpp ${_hash_tools_h}
         MAIN_DEPENDENCY ${_source}.gperf
-        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/make-hash-tools.pl ${DERIVED_SOURCES_WEBCORE_DIR} ${_source}.gperf
+        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/make-hash-tools.pl ${DERIVED_SOURCES_WEBCORE_DIR} ${_source}.gperf ${GPERF_EXECUTABLE}
         VERBATIM)
 
     unset(_name)

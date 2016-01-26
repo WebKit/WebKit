@@ -175,10 +175,15 @@ if ($supplementalMakefileDeps) {
     WriteFileIfChanged($supplementalMakefileDeps, $makefileDeps);
 }
 
+my $cygwinPathAdded;
 sub CygwinPathIfNeeded
 {
     my $path = shift;
     if ($path && $Config{osname} eq "cygwin") {
+        if (not $cygwinPathAdded) {
+            $ENV{PATH} = "$ENV{PATH}:/cygdrive/c/cygwin/bin";
+            $cygwinPathAdded = 1; 
+        }
         chomp($path = `cygpath -u '$path'`);
         $path =~ s/[\r\n]//;
     }

@@ -885,13 +885,11 @@ makevalues.intermediate : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindin
 
 # CSS Selector pseudo type name to value map.
 
-WEBCORE_CSS_SELECTOR_PSEUDO_TYPE_MAP_KEYWORDS := $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in
-SelectorPseudoClassAndCompatibilityElementMap.cpp : $(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py $(WEBCORE_CSS_SELECTOR_PSEUDO_TYPE_MAP_KEYWORDS)
-	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py" $(WEBCORE_CSS_SELECTOR_PSEUDO_TYPE_MAP_KEYWORDS) "$(FEATURE_DEFINES)"
+SelectorPseudoClassAndCompatibilityElementMap.cpp : $(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in
+	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py" $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in gperf "$(FEATURE_DEFINES)"
 
-WEBCORE_CSS_SELECTOR_PSEUDO_ELEMENTS_TYPE_MAP_KEYWORDS := $(WebCore)/css/SelectorPseudoElementTypeMap.in
-SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.py $(WEBCORE_CSS_SELECTOR_PSEUDO_ELEMENTS_TYPE_MAP_KEYWORDS)
-	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WEBCORE_CSS_SELECTOR_PSEUDO_ELEMENTS_TYPE_MAP_KEYWORDS) "$(FEATURE_DEFINES)"
+SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.py $(WebCore)/css/SelectorPseudoElementTypeMap.in
+	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WebCore)/css/SelectorPseudoElementTypeMap.in gperf "$(FEATURE_DEFINES)"
 
 # --------
 
@@ -927,7 +925,7 @@ HTMLEntityTable.cpp : html/parser/HTMLEntityNames.in $(WebCore)/html/parser/crea
 # HTTP header names
 
 HTTPHeaderNames.h : platform/network/HTTPHeaderNames.in $(WebCore)/platform/network/create-http-header-name-table
-	$(PYTHON) $(WebCore)/platform/network/create-http-header-name-table $(WebCore)/platform/network/HTTPHeaderNames.in
+	$(PYTHON) $(WebCore)/platform/network/create-http-header-name-table $(WebCore)/platform/network/HTTPHeaderNames.in gperf
 
 # --------
 

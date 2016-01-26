@@ -1,3 +1,27 @@
+2016-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=153469
+
+        Reviewed by Brent Fulgham.
+
+        * CMakeLists.txt:
+        Pass the GPERF_EXECUTABLE that we found to perl scripts so they can use it instead of just calling gperf.
+        This is needed for builds where gperf is not in the PATH.
+        * DerivedSources.make:
+        Pass "gperf" as the gperf command to retain existing functionality on mac.
+        * bindings/scripts/preprocess-idls.pl:
+        (CygwinPathIfNeeded):
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+        Add /cygdrive/c/cygwin/bin to the PATH before calling cygpath.
+        This is needed for builds where we are using cygwin, but C:/cygwin/bin is not in the PATH.
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py:
+        * css/makeSelectorPseudoElementsMap.py:
+        * css/makeprop.pl:
+        * platform/network/create-http-header-name-table:
+        Use the gperf executable passed in as a command line parameter if it is given.
+
 2016-01-25  Simon Fraser  <simon.fraser@apple.com>
 
         DisplayList items can log paths now

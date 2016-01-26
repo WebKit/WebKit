@@ -29,8 +29,10 @@ use warnings;
 
 my $defines;
 my $preprocessor;
+my $gperf;
 GetOptions('defines=s' => \$defines,
-           'preprocessor=s' => \$preprocessor);
+           'preprocessor=s' => \$preprocessor,
+           'gperf-executable=s' => \$gperf);
 
 my @NAMES = applyPreprocessor("CSSPropertyNames.in", $defines, $preprocessor);
 die "We've reached more than 1024 CSS properties, please make sure to update CSSProperty/StylePropertyMetadata accordingly" if (scalar(@NAMES) > 1024);
@@ -1046,5 +1048,7 @@ EOF
 
 close SHORTHANDS_CPP;
 
-my $gperf = $ENV{GPERF} ? $ENV{GPERF} : "gperf";
+if (not $gperf) {
+    $gperf = $ENV{GPERF} ? $ENV{GPERF} : "gperf";
+}
 system("\"$gperf\" --key-positions=\"*\" -D -n -s 2 CSSPropertyNames.gperf --output-file=CSSPropertyNames.cpp") == 0 || die "calling gperf failed: $?";

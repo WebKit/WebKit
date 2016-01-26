@@ -207,7 +207,7 @@ PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementS
 """)
 output_file.close()
 
-gperf_command = 'gperf'
+gperf_command = sys.argv[2]
 if 'GPERF' in os.environ:
     gperf_command = os.environ['GPERF']
 

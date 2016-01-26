@@ -76,6 +76,7 @@ sub applyPreprocessor
 
     my $pid = 0;
     if ($Config{osname} eq "cygwin") {
+        $ENV{PATH} = "$ENV{PATH}:/cygdrive/c/cygwin/bin";
         my @preprocessorAndFlags;
         if ($preprocessor eq "/usr/bin/gcc") {
             @preprocessorAndFlags = split(' ', $preprocessor);
