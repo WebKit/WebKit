@@ -1,3 +1,31 @@
+2016-01-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove broken cache from CSSFontFaceSource
+        https://bugs.webkit.org/show_bug.cgi?id=153440
+
+        Reviewed by Simon Fraser.
+
+        This cache has been broken since 2013 (r158085). Given we didn't notice a perf
+        hit when it broke, and the fact it's been broken for years, it clearly isn't
+        necessary.
+
+        https://bugs.webkit.org/show_bug.cgi?id=153414 consists of a fairly invasive
+        change to CSSFontFaceSource; this patch includes a working version of this
+        cache, along with an easy way to enable/disable it (to measure possible perf
+        changes).
+
+        This patch is a short-term cleanup patch in the mean time until the above
+        invasive change gets landed.
+
+        No new tests because there is no behavior (or performance!) change.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        (WebCore::CSSFontFaceSource::~CSSFontFaceSource): Deleted.
+        (WebCore::CSSFontFaceSource::pruneTable): Deleted.
+        (WebCore::CSSFontFaceSource::fontLoaded): Deleted.
+        * css/CSSFontFaceSource.h:
+
 2016-01-25  Sam Weinig  <sam@webkit.org>
 
         Try to fix the simulator build.

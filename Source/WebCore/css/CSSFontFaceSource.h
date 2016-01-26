@@ -34,7 +34,6 @@
 #include "SVGFontFaceElement.h"
 #endif
 #include "Timer.h"
-#include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -81,7 +80,6 @@ private:
     AtomicString m_string; // URI for remote, built-in font name for local.
     CachedResourceHandle<CachedFont> m_font; // For remote fonts, a pointer to our cached resource.
     CSSFontFace* m_face; // Our owning font face.
-    HashMap<unsigned, RefPtr<Font>> m_fontTable; // The hash key is composed of size synthetic styles.
 
 #if ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
