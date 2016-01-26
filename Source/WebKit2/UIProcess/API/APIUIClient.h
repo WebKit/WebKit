@@ -37,6 +37,7 @@
 #if PLATFORM(IOS)
 OBJC_CLASS NSArray;
 OBJC_CLASS _WKActivatedElementInfo;
+OBJC_CLASS UIViewController;
 #endif
 
 namespace WebCore {
@@ -161,6 +162,7 @@ public:
 #endif
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return defaultActions; }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }
+    virtual UIViewController *presentingViewController() { return nullptr; }
 #endif
 
     virtual void didClickAutoFillButton(WebKit::WebPageProxy&, API::Object*) { }

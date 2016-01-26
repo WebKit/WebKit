@@ -92,6 +92,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
     m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
+    m_delegateMethods.presentingViewControllerForWebView = [delegate respondsToSelector:@selector(_presentingViewControllerForWebView:)];
 #endif
     m_delegateMethods.webViewImageOrMediaDocumentSizeChanged = [delegate respondsToSelector:@selector(_webView:imageOrMediaDocumentSizeChanged:)];
 
@@ -380,6 +381,19 @@ void UIDelegate::UIClient::didNotHandleTapAsClick(const WebCore::IntPoint& point
 
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate.m_webView didNotHandleTapAsClickAtPoint:point];
 }
+
+UIViewController *UIDelegate::UIClient::presentingViewController()
+{
+    if (!m_uiDelegate.m_delegateMethods.presentingViewControllerForWebView)
+        return nullptr;
+
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return nullptr;
+
+    return [static_cast<id <WKUIDelegatePrivate>>(delegate) _presentingViewControllerForWebView:m_uiDelegate.m_webView];
+}
+
 #endif
 
 void UIDelegate::UIClient::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSize)

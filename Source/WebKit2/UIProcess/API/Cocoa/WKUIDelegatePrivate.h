@@ -83,6 +83,8 @@ struct UIEdgeInsets;
 - (BOOL)_webView:(WKWebView *)webView shouldPreviewElement:(_WKPreviewElementInfo *)elementInfo;
 - (UIViewController *)_webView:(WKWebView *)webView previewingViewControllerForElement:(_WKPreviewElementInfo *)elementInfo defaultActions:(NSArray<UIPreviewActionItem *> *)previewActions WK_AVAILABLE(NA, WK_IOS_TBA);
 - (void)_webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_AVAILABLE(NA, WK_IOS_TBA);
+
+- (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView WK_AVAILABLE(NA, WK_IOS_TBA);
 #else
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_AVAILABLE(WK_MAC_TBA, NA);
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_AVAILABLE(WK_MAC_TBA, NA);
