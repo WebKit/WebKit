@@ -1,3 +1,41 @@
+2016-01-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        Skip all inspector/sampling-profiler tests meanwhile the feature is not enabled on the GTK+ port.
+        Report and mark a new regression on test inspector/dom-debugger/node-removed.html timing out.
+        Rebaseline a bunch of tests after r194847.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt: Rebaseline after r194847.
+        * platform/gtk/fast/forms/auto-fill-button/input-auto-fill-button-expected.png: Added. Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug1188-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug1188-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug18359-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug18359-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug2479-3-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug2479-3-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug2479-4-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug2479-4-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug29326-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug29326-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug33855-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug33855-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug4382-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug4382-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug96334-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/bugs/bug96334-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/core/margins-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/core/margins-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/dom/tableDom-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla/dom/tableDom-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png: Rebaseline after r194847.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt: Rebaseline after r194847.
+        * platform/gtk/transforms/2d/zoom-menulist-expected.png: Rebaseline after r194847.
+        * platform/gtk/transforms/2d/zoom-menulist-expected.txt: Rebaseline after r194847.
+
 2016-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/w3c/indexeddb/keyorder-private.html as flaky on mac-wk1
@@ -4476,7 +4514,7 @@
         * http/tests/security/blocked-on-redirect-expected.txt: Added.
         * http/tests/security/blocked-on-redirect.html: Added.
 
-gi2016-01-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+2016-01-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed gardening.
 

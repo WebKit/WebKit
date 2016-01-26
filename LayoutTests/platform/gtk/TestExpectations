@@ -631,6 +631,9 @@ webkit.org/b/152620 css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFail
 webkit.org/b/152620 css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 webkit.org/b/152620 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 
+# Requires ENABLE(SAMPLING_PROFILER)
+webkit.org/b/153466 inspector/sampling-profiler [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1410,6 +1413,8 @@ webkit.org/b/146731 fast/events/touch/touch-scaled-scrolled.html [ Timeout ]
 webkit.org/b/146731 fast/events/touch/touch-stale-node-crash.html [ Timeout ]
 
 webkit.org/b/153061 [ Release ] imported/w3c/indexeddb/idbindex-multientry-big.htm [ Timeout ]
+
+webkit.org/b/153468 inspector/dom-debugger/node-removed.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
