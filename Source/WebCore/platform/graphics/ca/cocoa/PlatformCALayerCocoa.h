@@ -173,6 +173,8 @@ private:
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
+    AVPlayerLayer *avPlayerLayer() const;
+
     RetainPtr<NSObject> m_delegate;
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;

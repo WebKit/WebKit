@@ -1,3 +1,82 @@
+2016-01-22  Ada Chan  <adachan@apple.com>
+
+        Enable API related to the video fullscreen layer in MediaPlayerPrivateAVFoundationObjC
+        also on Mac with video presentation mode support.
+        https://bugs.webkit.org/show_bug.cgi?id=153222
+
+        Reviewed by Eric Carlson.
+
+        No new tests. Covered by existing tests.
+
+        Introduce VideoFullscreenLayerManager to deal with the video layer when switching
+        between inline and fullscreen mode. We'll reuse it in other MediaPlayerPrivateInterface
+        implementations.
+
+        Now that MediaPlayerPrivateAVFoundationObjC's platform layer can be a WebVideoContainerLayer,
+        this exposes a bug in PlatformCALayerCocoa::clone() where we assumed the platform layer
+        is always an AVPlayerLayer if the PlatformCALayer's layer type is LayerTypeAVPlayerLayer.
+        Add a helper method to get an AVPlayerLayer from a PlatformCALayerCocoa (which also handles
+        WebVideoContainerLayer case) and use it in PlatformCALayerCocoa::clone().
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add VideoFullscreenLayerManager to the project.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        Create m_videoFullscreenLayerManager. The video inline layer, video fullscreen layer,
+        and the video fullscreen frame are now managed by that class.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        Just call VideoFullscreenLayerManager::setVideoLayer() to handle adding the video
+        layer in either the inline or fullscreen layer.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer):
+        Call VideoFullscreenLayerManager::didDestroyVideoLayer().
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformLayer):
+        Get the video inline layer from VideoFullscreenLayerManager.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer):
+        Call VideoFullscreenLayerManager::setVideoFullscreenLayer().
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame):
+        Call VideoFullscreenLayerManager::setVideoFullscreenFrame().
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode):
+        Guard the iOS specific code properly.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity):
+        Get the video fullscreen layer from VideoFullscreenLayerManager.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation):
+        Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds):
+        Get the video fullscreen layer and video fullscreen frame from VideoFullscreenLayerManager.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation):
+        Get the video fullscreen layer from VideoFullscreenLayerManager.
+
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.h: Added.
+        (WebCore::VideoFullscreenLayerManager::videoInlineLayer):
+        (WebCore::VideoFullscreenLayerManager::videoFullscreenLayer):
+        (WebCore::VideoFullscreenLayerManager::videoFullscreenFrame):
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.mm: Added.
+        (-[WebVideoContainerLayer setBounds:]):
+        (-[WebVideoContainerLayer setPosition:]):
+        WebVideoContainerLayer was moved from MediaPlayerPrivateAVFoundationObjC.mm.
+        (WebCore::VideoFullscreenLayerManager::create):
+        (WebCore::VideoFullscreenLayerManager::VideoFullscreenLayerManager):
+        (WebCore::VideoFullscreenLayerManager::setVideoLayer):
+        Code moved from MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer().
+        (WebCore::VideoFullscreenLayerManager::setVideoFullscreenLayer):
+        Code moved from MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer().
+        (WebCore::VideoFullscreenLayerManager::setVideoFullscreenFrame):
+        Code moved from MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame().
+        (WebCore::VideoFullscreenLayerManager::didDestroyVideoLayer):
+        Code moved from MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer().
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (PlatformCALayerCocoa::clone):
+        Use the new PlatformCALayerCocoa::avPlayerLayer() method to get the AVPlayerLayer from both the
+        destination and source PlatformCALayers.
+        (PlatformCALayerCocoa::avPlayerLayer):
+        Return nil if the layer type is not LayerTypeAVPlayerLayer. Otherwise, return the
+        platform layer if it is indeed an AVPlayerLayer. If not, it should be a WebVideoContainerLayer
+        and we should return its sublayer which should be an AVPlayerLayer.
+
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
         First parameter to window.showModalDialog() should be mandatory

@@ -2273,6 +2273,7 @@
 		52CCA9E815E3F64C0053C77F /* DOMDOMNamedFlowCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CCA9E515E3F64C0053C77F /* DOMDOMNamedFlowCollection.h */; };
 		52CCA9E915E3F64C0053C77F /* DOMDOMNamedFlowCollection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52CCA9E615E3F64C0053C77F /* DOMDOMNamedFlowCollection.mm */; };
 		52CCA9EA15E3F64C0053C77F /* DOMDOMNamedFlowCollectionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CCA9E715E3F64C0053C77F /* DOMDOMNamedFlowCollectionInternal.h */; };
+		52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManager.mm */; };
 		52E2CAFC19FF0207001EEB4F /* MediaProducer.h in Headers */ = {isa = PBXBuildFile; fileRef = 52E2CAFB19FF0207001EEB4F /* MediaProducer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52F10865162B6DA4009AC81E /* MixedContentChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F10862162B6D82009AC81E /* MixedContentChecker.cpp */; };
 		52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F10863162B6D82009AC81E /* MixedContentChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9752,6 +9753,8 @@
 		52CCA9E515E3F64C0053C77F /* DOMDOMNamedFlowCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMNamedFlowCollection.h; sourceTree = "<group>"; };
 		52CCA9E615E3F64C0053C77F /* DOMDOMNamedFlowCollection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMDOMNamedFlowCollection.mm; sourceTree = "<group>"; };
 		52CCA9E715E3F64C0053C77F /* DOMDOMNamedFlowCollectionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMNamedFlowCollectionInternal.h; sourceTree = "<group>"; };
+		52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenLayerManager.mm; sourceTree = "<group>"; };
+		52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManager.h; sourceTree = "<group>"; };
 		52E2CAFB19FF0207001EEB4F /* MediaProducer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaProducer.h; sourceTree = "<group>"; };
 		52F10862162B6D82009AC81E /* MixedContentChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MixedContentChecker.cpp; sourceTree = "<group>"; };
 		52F10863162B6D82009AC81E /* MixedContentChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MixedContentChecker.h; sourceTree = "<group>"; };
@@ -22967,6 +22970,8 @@
 				7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */,
 				CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */,
 				CDC8B5A818047FF10016E685 /* SourceBufferPrivateAVFObjC.mm */,
+				52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManager.h */,
+				52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManager.mm */,
 				CD336F6517FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp */,
 				CD336F6617FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h */,
 				CD8B5A41180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.h */,
@@ -31514,6 +31519,7 @@
 				2E3BBF071162DA1100B9409A /* UUID.cpp in Sources */,
 				F5A154271279534D00D0B0C0 /* ValidationMessage.cpp in Sources */,
 				FD3160AE12B026F700C1A359 /* VectorMath.cpp in Sources */,
+				52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManager.mm in Sources */,
 				CDE83DB1183C44060031EAA3 /* VideoPlaybackQuality.cpp in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,

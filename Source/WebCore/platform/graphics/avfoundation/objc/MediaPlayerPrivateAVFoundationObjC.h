@@ -74,6 +74,10 @@ class MediaSelectionGroupAVFObjC;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
 
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+class VideoFullscreenLayerManager;
+#endif
+
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
 public:
     explicit MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
@@ -160,12 +164,14 @@ private:
     virtual void paint(GraphicsContext&, const FloatRect&) override;
     virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     virtual PlatformLayer* platformLayer() const override;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     virtual void setVideoFullscreenLayer(PlatformLayer*) override;
     virtual void setVideoFullscreenFrame(FloatRect) override;
     virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity) override;
     virtual void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) override;
+#endif
 
+#if PLATFORM(IOS)
     virtual NSArray *timedMetadata() const override;
     virtual String accessLog() const override;
     virtual String errorLog() const override;
@@ -315,10 +321,8 @@ private:
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
     RetainPtr<AVPlayerLayer> m_videoLayer;
-#if PLATFORM(IOS)
-    RetainPtr<PlatformLayer> m_videoInlineLayer;
-    RetainPtr<PlatformLayer> m_videoFullscreenLayer;
-    FloatRect m_videoFullscreenFrame;
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;
     MediaPlayer::VideoGravity m_videoFullscreenGravity;
     RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
 #endif

@@ -85,6 +85,11 @@
 #endif
 
 #import <AVFoundation/AVFoundation.h>
+
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#import "VideoFullscreenLayerManager.h"
+#endif
+
 #if PLATFORM(IOS)
 #import "WAKAppKitStubs.h"
 #import <CoreImage/CoreImage.h>
@@ -112,28 +117,6 @@ template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionA
     typedef RefPtr<WebCore::MediaSelectionOptionAVFObjC> value_type;
 };
 }
-
-@interface WebVideoContainerLayer : CALayer
-@end
-
-@implementation WebVideoContainerLayer
-
-- (void)setBounds:(CGRect)bounds
-{
-    [super setBounds:bounds];
-    for (CALayer* layer in self.sublayers)
-        layer.frame = bounds;
-}
-
-- (void)setPosition:(CGPoint)position
-{
-    if (!CATransform3DIsIdentity(self.transform)) {
-        // Pre-apply the transform added in the WebProcess to fix <rdar://problem/18316542> to the position.
-        position = CGPointApplyAffineTransform(position, CATransform3DGetAffineTransform(self.transform));
-    }
-    [super setPosition:position];
-}
-@end
 
 #if ENABLE(AVF_CAPTIONS)
 // Note: This must be defined before our SOFT_LINK macros:
@@ -474,7 +457,8 @@ void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistra
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
     , m_weakPtrFactory(this)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    , m_videoFullscreenLayerManager(VideoFullscreenLayerManager::create())
     , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
 #endif
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithCallback:this]))
@@ -693,22 +677,13 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     IntSize defaultSize = snappedIntRect(player()->client().mediaPlayerContentBoxRect()).size();
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
 
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    m_videoFullscreenLayerManager->setVideoLayer(m_videoLayer.get(), defaultSize);
+
 #if PLATFORM(IOS)
-    [m_videoLayer web_disableAllActions];
-    m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
-#ifndef NDEBUG
-    [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
-#endif
-    [m_videoInlineLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
-    if (m_videoFullscreenLayer) {
-        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
-        [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
-    } else {
-        [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
-        [m_videoLayer setFrame:m_videoInlineLayer.get().bounds];
-    }
     if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
         [m_videoLayer setPIPModeEnabled:(player()->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
+#endif
 #else
     [m_videoLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
 #endif
@@ -724,10 +699,8 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
     [m_videoLayer.get() removeObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay"];
     [m_videoLayer.get() setPlayer:nil];
 
-#if PLATFORM(IOS)
-    if (m_videoFullscreenLayer)
-        [m_videoLayer removeFromSuperlayer];
-    m_videoInlineLayer = nil;
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    m_videoFullscreenLayerManager->didDestroyVideoLayer();
 #endif
 
     m_videoLayer = nil;
@@ -1114,49 +1087,24 @@ PlatformMedia MediaPlayerPrivateAVFoundationObjC::platformMedia() const
 
 PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 {
-#if PLATFORM(IOS)
-    return m_haveBeenAskedToCreateLayer ? m_videoInlineLayer.get() : nullptr;
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    return m_haveBeenAskedToCreateLayer ? m_videoFullscreenLayerManager->videoInlineLayer() : nullptr;
 #else
     return m_haveBeenAskedToCreateLayer ? m_videoLayer.get() : nullptr;
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer)
 {
-    if (m_videoFullscreenLayer == videoFullscreenLayer)
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer() == videoFullscreenLayer)
         return;
 
-    m_videoFullscreenLayer = videoFullscreenLayer;
+    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer);
 
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    
-    CAContext *oldContext = [m_videoLayer context];
-    CAContext *newContext = nil;
-    
-    if (m_videoFullscreenLayer && m_videoLayer) {
-        [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
-        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
-        newContext = [m_videoFullscreenLayer context];
-    } else if (m_videoInlineLayer && m_videoLayer) {
-        [m_videoLayer setFrame:[m_videoInlineLayer bounds]];
-        [m_videoLayer removeFromSuperlayer];
-        [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
-        newContext = [m_videoInlineLayer context];
-    } else if (m_videoLayer)
-        [m_videoLayer removeFromSuperlayer];
-
-    if (oldContext && newContext && oldContext != newContext) {
-        mach_port_t fencePort = [oldContext createFencePort];
-        [newContext setFencePort:fencePort];
-        mach_port_deallocate(mach_task_self(), fencePort);
-    }
-    [CATransaction commit];
-
-    if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer() && m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
-        [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
+        [m_videoFullscreenLayerManager->videoFullscreenLayer() addSublayer:m_textTrackRepresentationLayer.get()];
     }
 
     updateDisableExternalPlayback();
@@ -1164,13 +1112,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame)
 {
-    m_videoFullscreenFrame = frame;
-    if (!m_videoFullscreenLayer)
-        return;
-
-    if (m_videoLayer) {
-        [m_videoLayer setFrame:CGRectMake(0, 0, frame.width(), frame.height())];
-    }
+    m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
     syncTextTrackBounds();
 }
 
@@ -1199,10 +1141,17 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
+#if PLATFORM(IOS)
     if (m_videoLayer && [m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
         [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
+#else
+    UNUSED_PARAM(mode);
+#endif
 }
 
+#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+
+#if PLATFORM(IOS)
 NSArray *MediaPlayerPrivateAVFoundationObjC::timedMetadata() const
 {
     if (m_currentMetaData)
@@ -1828,10 +1777,10 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
     if (!m_videoLayer)
         return;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     // Do not attempt to change the video gravity while in full screen mode.
     // See setVideoFullscreenGravity().
-    if (m_videoFullscreenLayer)
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer())
         return;
 #endif
 
@@ -2120,8 +2069,8 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
 
 bool MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation() const
 {
-#if PLATFORM(IOS)
-    if (m_videoFullscreenLayer)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer())
         return true;
 #endif
     return false;
@@ -2129,18 +2078,19 @@ bool MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation() const
 
 void MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds()
 {
-#if PLATFORM(IOS)
-    if (!m_videoFullscreenLayer || !m_textTrackRepresentationLayer)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (!m_videoFullscreenLayerManager->videoFullscreenLayer() || !m_textTrackRepresentationLayer)
         return;
-    
-    CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height());
+
+    FloatRect videoFullscreenFrame = m_videoFullscreenLayerManager->videoFullscreenFrame();
+    CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height());
     [m_textTrackRepresentationLayer setFrame:textFrame];
 #endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     PlatformLayer* representationLayer = representation ? representation->platformLayer() : nil;
     if (representationLayer == m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
@@ -2152,9 +2102,9 @@ void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRep
 
     m_textTrackRepresentationLayer = representationLayer;
 
-    if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {
+    if (m_videoFullscreenLayerManager->videoFullscreenLayer() && m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
-        [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
+        [m_videoFullscreenLayerManager->videoFullscreenLayer() addSublayer:m_textTrackRepresentationLayer.get()];
     }
 
 #else
@@ -3142,7 +3092,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
         return;
 
 #if PLATFORM(IOS)
-    [m_avPlayer setUsesExternalPlaybackWhileExternalScreenIsActive:m_videoFullscreenLayer != nil];
+    [m_avPlayer setUsesExternalPlaybackWhileExternalScreenIsActive:m_videoFullscreenLayerManager->videoFullscreenLayer() != nil];
 #endif
 }
 #endif

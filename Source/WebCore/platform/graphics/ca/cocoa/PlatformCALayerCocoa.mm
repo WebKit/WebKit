@@ -361,10 +361,11 @@ PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* o
 
     if (type == LayerTypeAVPlayerLayer) {
         ASSERT([newLayer->platformLayer() isKindOfClass:getAVPlayerLayerClass()]);
-        ASSERT([platformLayer() isKindOfClass:getAVPlayerLayerClass()]);
 
-        AVPlayerLayer* destinationPlayerLayer = static_cast<AVPlayerLayer *>(newLayer->platformLayer());
-        AVPlayerLayer* sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
+        AVPlayerLayer *destinationPlayerLayer = static_cast<PlatformCALayerCocoa *>(newLayer.get())->avPlayerLayer();
+        AVPlayerLayer *sourcePlayerLayer = avPlayerLayer();
+        ASSERT(sourcePlayerLayer);
+
         dispatch_async(dispatch_get_main_queue(), ^{
             [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
         });
@@ -1109,4 +1110,22 @@ PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::createCompatibleLayer(Platform
 void PlatformCALayerCocoa::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
 {
     wkCALayerEnumerateRectsBeingDrawnWithBlock(m_layer.get(), context, block);
+}
+
+AVPlayerLayer *PlatformCALayerCocoa::avPlayerLayer() const
+{
+    if (layerType() != LayerTypeAVPlayerLayer)
+        return nil;
+
+    if ([platformLayer() isKindOfClass:getAVPlayerLayerClass()])
+        return static_cast<AVPlayerLayer *>(platformLayer());
+
+    if ([platformLayer() isKindOfClass:objc_getClass("WebVideoContainerLayer")]) {
+        ASSERT([platformLayer() sublayers].count == 1);
+        ASSERT([[platformLayer() sublayers][0] isKindOfClass:getAVPlayerLayerClass()]);
+        return static_cast<AVPlayerLayer *>([platformLayer() sublayers][0]);
+    }
+
+    ASSERT_NOT_REACHED();
+    return nil;
 }
