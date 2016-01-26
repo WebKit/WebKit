@@ -1,3 +1,17 @@
+2016-01-25  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Arrow function specific features. Lexical bind "arguments"
+        https://bugs.webkit.org/show_bug.cgi?id=145132
+
+        Reviewed by Saam Barati.
+
+        Current patch is implementing lexical bind of arguments, so in this callback we need 
+        to return to ordinary function.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object.singleFireEventListener.let.wrappedCallback):
+        (WebInspector.Object.singleFireEventListener):
+
 2016-01-25  Saam barati  <sbarati@apple.com>
 
         Web Inspector: Have top-level ScriptTimelineDataGridNode events show sample counts

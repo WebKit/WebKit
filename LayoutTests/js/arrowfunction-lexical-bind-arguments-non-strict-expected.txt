@@ -1,0 +1,28 @@
+Tests for ES6 arrow function lexical bind of arguments
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS arr.length is 2
+PASS arr[0] is "ABC"
+PASS arr[1] is "DEF"
+PASS typeof arr[2] is "undefined"
+PASS afFactory1('AB', 'CD', 'EF')('G', 'H') is "AB-CD-EF-G-H"
+PASS (new afFactory2('P1', 'Q2', 'R3')).func('A4', 'B5') is "P1_Q2_R3_A4_B5"
+PASS (new afFactory3('PQ', 'RS', 'TU')).func('VW', 'XY')('Z', 'A') is "PQ_RS_TU_VW_XY_Z_A"
+PASS af5.func('VW', 'XY')('Z', '') is "GH_IJ_KL_VW_XY_Z_"
+PASS objInternal.method('H') is "ABC-H"
+PASS (() => arguments)() is arguments
+PASS func_with_eval("abc", "def")("xyz")[0] is "abc"
+PASS func_with_eval("abc", "def")("xyz")[1] is "def"
+PASS af_block_scope('A', 'B')('C') is 'branch-1'
+PASS af_function_scope(true, 'D', 'E')('F') is 'af_function_scope'
+PASS af_mixed_scope(true, 'G', 'H')('I') is 'local-scope'
+PASS test() is 40000
+PASS foo(10, 11, 12).next().value()[0] is 10
+PASS foo(10, 11, 12).next().value()[1] is 11
+PASS foo(10, 11, 12).next().value()[2] is 12
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

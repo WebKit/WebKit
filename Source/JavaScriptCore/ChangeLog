@@ -1,3 +1,29 @@
+2016-01-25  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Arrow function specific features. Lexical bind "arguments"
+        https://bugs.webkit.org/show_bug.cgi?id=145132
+
+        Reviewed by Saam Barati.
+        
+        Added support of ES6 arrow function specific feature, lexical bind of arguments. 
+        http://www.ecma-international.org/ecma-262/6.0/#sec-arrow-function-definitions-runtime-semantics-evaluation
+        'arguments' variable in arrow function must resolve to a binding in a lexically enclosing environment.
+        In srict mode it points to arguments object, and in non-stric mode it points to arguments object or varible 
+        with name 'arguments' if it was declared. 
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::setSourceParseMode):
+        (JSC::Scope::isArrowFunction):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::setIsArrowFunction):
+        * tests/es6.yaml:
+        * tests/stress/arrowfunction-lexical-bind-arguments-non-strict-1.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-arguments-non-strict-2.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-arguments-strict.js: Added.
+
 2016-01-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] We should never use x18 on iOS ARM64

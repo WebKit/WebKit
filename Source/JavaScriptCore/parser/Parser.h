@@ -170,6 +170,7 @@ struct Scope {
         , m_strictMode(strictMode)
         , m_isFunction(isFunction)
         , m_isGenerator(isGenerator)
+        , m_isArrowFunction(false)
         , m_isLexicalScope(false)
         , m_isFunctionBoundary(false)
         , m_isValidStrictMode(true)
@@ -191,6 +192,7 @@ struct Scope {
         , m_strictMode(rhs.m_strictMode)
         , m_isFunction(rhs.m_isFunction)
         , m_isGenerator(rhs.m_isGenerator)
+        , m_isArrowFunction(rhs.m_isArrowFunction)
         , m_isLexicalScope(rhs.m_isLexicalScope)
         , m_isFunctionBoundary(rhs.m_isFunctionBoundary)
         , m_isValidStrictMode(rhs.m_isValidStrictMode)
@@ -257,8 +259,11 @@ struct Scope {
         case SourceParseMode::GetterMode:
         case SourceParseMode::SetterMode:
         case SourceParseMode::MethodMode:
-        case SourceParseMode::ArrowFunctionMode:
             setIsFunction();
+            break;
+
+        case SourceParseMode::ArrowFunctionMode:
+            setIsArrowFunction();
             break;
 
         case SourceParseMode::ProgramMode:
@@ -446,6 +451,7 @@ struct Scope {
 
     void setNeedsFullActivation() { m_needsFullActivation = true; }
     bool needsFullActivation() const { return m_needsFullActivation; }
+    bool isArrowFunction() { return m_isArrowFunction; }
 
     bool hasDirectSuper() { return m_hasDirectSuper; }
     void setHasDirectSuper() { m_hasDirectSuper = true; }
@@ -464,7 +470,7 @@ struct Scope {
                     continue;
 
                 // "arguments" reference should be resolved at function boudary.
-                if (nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && impl == m_vm->propertyNames->arguments.impl())
+                if (nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && impl == m_vm->propertyNames->arguments.impl() && !nestedScope->isArrowFunction())
                     continue;
 
                 m_usedVariables.add(impl);
@@ -580,6 +586,12 @@ private:
         m_isGenerator = true;
         m_hasArguments = false;
     }
+    
+    void setIsArrowFunction()
+    {
+        setIsFunction();
+        m_isArrowFunction = true;
+    }
 
     void setIsModule()
     {
@@ -597,6 +609,7 @@ private:
     bool m_strictMode : 1;
     bool m_isFunction : 1;
     bool m_isGenerator : 1;
+    bool m_isArrowFunction : 1;
     bool m_isLexicalScope : 1;
     bool m_isFunctionBoundary : 1;
     bool m_isValidStrictMode : 1;

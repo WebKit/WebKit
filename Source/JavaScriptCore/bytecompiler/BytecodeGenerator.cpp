@@ -243,7 +243,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     bool shouldCaptureSomeOfTheThings = m_shouldEmitDebugHooks || m_codeBlock->needsFullScopeChain() || containsArrowOrEvalButNotInArrowBlock;
 
     bool shouldCaptureAllOfTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
-    bool needsArguments = functionNode->usesArguments() || codeBlock->usesEval();
+    bool needsArguments = (functionNode->usesArguments() || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction()));
 
     // Generator never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
     if (parseMode == SourceParseMode::GeneratorBodyMode)
@@ -508,10 +508,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                 break;
             }
         }
-        
-        if (!haveParameterNamedArguments) {
+
+        // Do not create arguments variable in case of Arrow function. Value will be loaded from parent scope
+        if (!haveParameterNamedArguments && !m_codeBlock->isArrowFunction()) {
             createVariable(
                 propertyNames().arguments, varKind(propertyNames().arguments.impl()), functionSymbolTable);
+
             m_needToInitializeArguments = true;
         }
     }
