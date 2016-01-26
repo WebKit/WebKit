@@ -1863,7 +1863,7 @@ void Page::setResourceUsageOverlayVisible(bool visible)
 
 bool Page::canTabSuspend()
 {
-    return s_tabSuspensionIsEnabled && !m_isPrerender && (m_pageThrottler.activityState() == PageActivityState::NoFlags) && PageCache::singleton().canCache(this);
+    return s_tabSuspensionIsEnabled && !m_isPrerender && (m_pageThrottler.activityState() == PageActivityState::NoFlags) && PageCache::singleton().canCache(*this);
 }
 
 void Page::setIsTabSuspended(bool shouldSuspend)

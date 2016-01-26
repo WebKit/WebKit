@@ -1772,9 +1772,8 @@ void FrameLoader::commitProvisionalLoad()
 
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
-    HistoryItem& item = *history().currentItem();
-    if (!m_frame.tree().parent() && PageCache::singleton().canCache(m_frame.page()) && !item.isInPageCache())
-        PageCache::singleton().add(item, *m_frame.page());
+    if (!m_frame.tree().parent() && history().currentItem())
+        PageCache::singleton().addIfCacheable(*history().currentItem(), m_frame.page());
 
     if (m_loadType != FrameLoadType::Replace)
         closeOldDataSources();

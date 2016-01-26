@@ -41,6 +41,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "HistoryController.h"
+#include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MemoryPressureHandler.h"
@@ -272,22 +273,19 @@ PageCache& PageCache::singleton()
     return globalPageCache;
 }
     
-bool PageCache::canCache(Page* page) const
+bool PageCache::canCache(Page& page) const
 {
-    if (!page)
-        return false;
-
     if (!m_maxSize) {
-        logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::isDisabledKey());
+        logPageCacheFailureDiagnosticMessage(&page, DiagnosticLoggingKeys::isDisabledKey());
         return false;
     }
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::underMemoryPressureKey());
+        logPageCacheFailureDiagnosticMessage(&page, DiagnosticLoggingKeys::underMemoryPressureKey());
         return false;
     }
     
-    return canCachePage(*page);
+    return canCachePage(page);
 }
 
 void PageCache::pruneToSizeNow(unsigned size, PruningReason pruningReason)
@@ -374,14 +372,57 @@ static String pruningReasonToDiagnosticLoggingKey(PruningReason pruningReason)
     return emptyString();
 }
 
-void PageCache::add(HistoryItem& item, Page& page)
+static void setInPageCache(Page& page, bool isInPageCache)
 {
-    ASSERT(canCache(&page));
+    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document())
+            document->setInPageCache(isInPageCache);
+    }
+}
 
-    // Remove stale cache entry if necessary.
-    remove(item);
+static void firePageHideEventRecursively(Frame& frame)
+{
+    auto* document = frame.document();
+    if (!document)
+        return;
 
-    item.m_cachedPage = std::make_unique<CachedPage>(page);
+    // stopLoading() will fire the pagehide event in each subframe and the HTML specification states
+    // that the parent document's ignore-opens-during-unload counter should be incremented while the
+    // pagehide event is being fired in its subframes:
+    // https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
+    IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(document);
+
+    frame.loader().stopLoading(UnloadEventPolicyUnloadAndPageHide);
+
+    for (RefPtr<Frame> child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
+        firePageHideEventRecursively(*child);
+}
+
+void PageCache::addIfCacheable(HistoryItem& item, Page* page)
+{
+    if (item.isInPageCache())
+        return;
+
+    if (!page || !canCache(*page))
+        return;
+
+    // Make sure all the documents know they are being added to the PageCache.
+    setInPageCache(*page, true);
+
+    // Fire the pagehide event in all frames.
+    firePageHideEventRecursively(page->mainFrame());
+
+    // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
+    // could have altered the page in a way that could prevent caching.
+    if (!canCache(*page)) {
+        setInPageCache(*page, false);
+        return;
+    }
+
+    // Make sure we no longer fire any JS events past this point.
+    NoEventDispatchAssertion assertNoEventDispatch;
+
+    item.m_cachedPage = std::make_unique<CachedPage>(*page);
     item.m_pruningReason = PruningReason::None;
     m_items.add(&item);
     

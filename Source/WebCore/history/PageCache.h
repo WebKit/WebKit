@@ -46,14 +46,14 @@ public:
     // Function to obtain the global page cache.
     WEBCORE_EXPORT static PageCache& singleton();
 
-    bool canCache(Page*) const;
+    bool canCache(Page&) const;
 
     // Used when memory is low to prune some cached pages.
     WEBCORE_EXPORT void pruneToSizeNow(unsigned maxSize, PruningReason);
     WEBCORE_EXPORT void setMaxSize(unsigned); // number of pages to cache.
     unsigned maxSize() const { return m_maxSize; }
 
-    void add(HistoryItem&, Page&); // Prunes if maxSize() is exceeded.
+    void addIfCacheable(HistoryItem&, Page*); // Prunes if maxSize() is exceeded.
     WEBCORE_EXPORT void remove(HistoryItem&);
     CachedPage* get(HistoryItem&, Page*);
     std::unique_ptr<CachedPage> take(HistoryItem&, Page*);

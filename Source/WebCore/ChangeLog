@@ -1,3 +1,33 @@
+2016-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Make sure a page is still PageCache-able after firing the 'pagehide' events
+        https://bugs.webkit.org/show_bug.cgi?id=153449
+
+        Reviewed by Andreas Kling.
+
+        Make sure a page is still PageCache-able after firing the 'pagehide'
+        events and abort if it isn't. This should improve robustness and it is
+        easy for pagehide event handlers to do things that would make a Page no
+        longer PageCache-able and this leads to bugs that are difficult to
+        investigate.
+
+        To achieve this, the 'pagehide' event firing logic was moved out of the
+        CachedFrame constructor. It now happens earlier in
+        PageCache::addIfCacheable() after checking if the page is cacheable and
+        before constructing the CachedPage / CachedFrames. After firing the
+        'pagehide' event in PageCache::addIfCacheable(), we check again that
+        the page is still cacheable and we abort early if it is not.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * history/PageCache.cpp:
+        (WebCore::setInPageCache):
+        (WebCore::firePageHideEventRecursively):
+        (WebCore::PageCache::addIfCacheable):
+        * history/PageCache.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2016-01-26  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Tim Horton.
