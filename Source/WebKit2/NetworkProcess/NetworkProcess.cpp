@@ -255,6 +255,11 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
 #endif
 }
 
+void NetworkProcess::clearCachedCredentials()
+{
+    NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
+}
+
 void NetworkProcess::ensurePrivateBrowsingSession(SessionID sessionID)
 {
     RemoteNetworkingContext::ensurePrivateBrowsingSession(sessionID);

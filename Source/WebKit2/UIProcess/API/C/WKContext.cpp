@@ -538,6 +538,11 @@ void WKContextUseTestingNetworkSession(WKContextRef context)
     toImpl(context)->useTestingNetworkSession();
 }
 
+void WKContextClearCachedCredentials(WKContextRef context)
+{
+    toImpl(context)->clearCachedCredentials();
+}
+
 WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());

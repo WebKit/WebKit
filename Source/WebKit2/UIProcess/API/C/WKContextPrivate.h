@@ -82,6 +82,9 @@ WK_EXPORT void WKContextSetUsesNetworkProcess(WKContextRef, bool);
 // Test only. Should be called before any secondary processes are started.
 WK_EXPORT void WKContextUseTestingNetworkSession(WKContextRef context);
 
+// Test only. Should be called before running a test.
+WK_EXPORT void WKContextClearCachedCredentials(WKContextRef context);
+
 typedef void (*WKContextInvalidMessageFunction)(WKStringRef messageName);
 WK_EXPORT void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunction invalidMessageFunction);
     

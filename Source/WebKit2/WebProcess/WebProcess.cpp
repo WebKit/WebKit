@@ -498,6 +498,11 @@ void WebProcess::setCacheModel(uint32_t cm)
     }
 }
 
+void WebProcess::clearCachedCredentials()
+{
+    NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
+}
+
 WebPage* WebProcess::focusedWebPage() const
 {    
     for (auto& page : m_pageMap.values()) {

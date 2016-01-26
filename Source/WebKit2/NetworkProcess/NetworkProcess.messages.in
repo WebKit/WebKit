@@ -32,6 +32,8 @@ messages -> NetworkProcess LegacyReceiver {
     UserPreferredLanguagesChanged(Vector<String> languages)
 #endif
 
+    ClearCachedCredentials()
+
     EnsurePrivateBrowsingSession(WebCore::SessionID sessionID)
     DestroyPrivateBrowsingSession(WebCore::SessionID sessionID)
 

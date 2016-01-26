@@ -1073,6 +1073,13 @@ void WebProcessPool::useTestingNetworkSession()
     m_shouldUseTestingNetworkSession = true;
 }
 
+void WebProcessPool::clearCachedCredentials()
+{
+    sendToAllProcesses(Messages::WebProcess::ClearCachedCredentials());
+    if (m_networkProcess)
+        m_networkProcess->send(Messages::NetworkProcess::ClearCachedCredentials(), 0);
+}
+
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
     if (m_networkProcess)
