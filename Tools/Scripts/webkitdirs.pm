@@ -2090,9 +2090,7 @@ sub determineIsCMakeBuild()
 
 sub isCMakeBuild()
 {
-    if (isEfl() || isGtk() || isAnyWindows()) {
-        return 1;
-    }
+    return 1 unless isAppleMacWebKit();
     determineIsCMakeBuild();
     return $isCMakeBuild;
 }
