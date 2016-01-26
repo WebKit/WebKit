@@ -140,9 +140,6 @@ sub dittoHeaders
 if ($clean) {
     print "Cleaning.\n";    
     (system("rm", "-rf", File::Spec->catfile($productDir, "usr", "local", "include", "WebKitSystemInterface.h")) == 0) or die;
-    if (isIOSWebKit()) {
-        (system("rm", "-rf", File::Spec->catfile($productDir, "usr", "local", "include", "WebKitSystemInterfaceIOS.h")) == 0) or die;
-    }
     (system("rm", "-rf", "$productDir$llvmPrefix") == 0) or die;
     unlink glob "$productDir/libWebKitSystemInterface*" or die if glob "$productDir/libWebKitSystemInterface*";
     unlink glob "$productDir/usr/local/lib/libWebKitSystemInterface*" or die if glob "$productDir/usr/local/lib/libWebKitSystemInterface*";
@@ -169,6 +166,8 @@ if ($wksi) {
             "libWebKitSystemInterfaceIOSSimulator8.4.a",
             "libWebKitSystemInterfaceIOSDevice9.0.a",
             "libWebKitSystemInterfaceIOSSimulator9.0.a",
+            "libWebKitSystemInterfaceIOSDevice9.2.a",
+            "libWebKitSystemInterfaceIOSSimulator9.2.a",
         ));
     } else {
         push(@librariesToCopy, (
@@ -188,7 +187,6 @@ if ($wksi) {
     }
     
     dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
-    dittoHeaders("WebKitLibraries/WebKitSystemInterfaceIOS.h", "$productDir/usr/local/include/WebKitSystemInterfaceIOS.h") if isIOSWebKit();
 }
 
 if ($llvm) {
