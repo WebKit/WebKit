@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-controls-timeline-set-controls-property</title>
+    <script src="media-controls.js"></script>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+    var x;
+    var y;
+    var seekCount = 0;
+
+    function runTest()
+    {
+        findMediaElement();
+        waitForEvent('playing', beginScrubbing);
+        video.src = findMediaFile('video', 'content/test');
+        video.play();
+    }
+
+    function beginScrubbing()
+    {
+        if (window.eventSender) {
+
+            var timelineCoordinate;
+            try {
+                timelineCoordinate = mediaControlsButtonCoordinates(video, 'timeline');
+            } catch (exception) {
+                failTest(exception.description);
+                return;
+            }
+            x = timelineCoordinate[0];
+            y = timelineCoordinate[1];
+
+            eventSender.dragMode = false;
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+        }
+        waitForEvent('pause', setControls);
+        waitForEvent('seeked', seeked)
+        window.setTimeout('move()', 100);
+    }
+
+    function move()
+    {
+        if (window.eventSender) {
+            x += 10;
+            eventSender.mouseMoveTo(x, y);
+        }
+    }
+
+    function setControls()
+    {
+        video.controls = 'true';
+    }
+
+    function seeked()
+    {
+        ++seekCount;
+        if (seekCount < 6) {
+            window.setTimeout('move()', 100);
+            return;
+        }
+
+        if (window.eventSender)
+            eventSender.mouseUp();
+        endTest();
+    }
+
+    
+    </script>
+</head>
+
+<body onload="runTest()">
+    <p>Test that dragging the timeline slider after setting video.controls=true causes seeks.</p>
+    <video controls></video>
+</body>
+</html>
+
