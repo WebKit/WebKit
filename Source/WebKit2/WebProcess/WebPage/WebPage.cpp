@@ -2982,6 +2982,8 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setMaximumScaleFactor(m_viewportConfiguration.maximumScale());
     layerTransaction.setInitialScaleFactor(m_viewportConfiguration.initialScale());
     layerTransaction.setViewportMetaTagWidth(m_viewportConfiguration.viewportArguments().width);
+    layerTransaction.setViewportMetaTagWidthWasExplicit(m_viewportConfiguration.viewportArguments().widthWasExplicit);
+    layerTransaction.setViewportMetaTagCameFromImageDocument(m_viewportConfiguration.viewportArguments().type == ViewportArguments::ImageDocument);
     layerTransaction.setAllowsUserScaling(allowsUserScaling());
 #endif
 #if PLATFORM(MAC)

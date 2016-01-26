@@ -230,6 +230,12 @@ public:
     double viewportMetaTagWidth() const { return m_viewportMetaTagWidth; }
     void setViewportMetaTagWidth(double width) { m_viewportMetaTagWidth = width; }
 
+    bool viewportMetaTagWidthWasExplicit() const { return m_viewportMetaTagWidthWasExplicit; }
+    void setViewportMetaTagWidthWasExplicit(bool widthWasExplicit) { m_viewportMetaTagWidthWasExplicit = widthWasExplicit; }
+
+    bool viewportMetaTagCameFromImageDocument() const { return m_viewportMetaTagCameFromImageDocument; }
+    void setViewportMetaTagCameFromImageDocument(bool cameFromImageDocument) { m_viewportMetaTagCameFromImageDocument = cameFromImageDocument; }
+
     bool allowsUserScaling() const { return m_allowsUserScaling; }
     void setAllowsUserScaling(bool allowsUserScaling) { m_allowsUserScaling = allowsUserScaling; }
 
@@ -271,6 +277,8 @@ private:
     WebCore::LayoutMilestones m_newlyReachedLayoutMilestones { 0 };
     bool m_scaleWasSetByUIProcess { false };
     bool m_allowsUserScaling { false };
+    bool m_viewportMetaTagWidthWasExplicit { false };
+    bool m_viewportMetaTagCameFromImageDocument { false };
 };
 
 } // namespace WebKit

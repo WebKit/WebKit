@@ -1,3 +1,32 @@
+2016-01-26  Dean Jackson  <dino@apple.com>
+
+        [iOS] Documents without an explicit width should not get fast tapping
+        https://bugs.webkit.org/show_bug.cgi?id=153465
+        <rdar://problem/23962529>
+
+        Reviewed by Simon Fraser (and Wenson Hseih).
+
+        As the title says, documents that do not set a viewport should
+        not get the fast click behaviour. There were complaints that we broke
+        double-tap to scroll in ImageDocuments where the image was narrow and long.
+
+        The fix is to just keep a flag that tells the UI process if the
+        width was explicit. However, it turns out that those ImageDocuments
+        are given an explicit device-width, which is fine for scaling but
+        really should behave as auto for fast tapping. So we also need
+        to tell the UIProcess if the viewport arguments came from an
+        ImageDocument.
+
+        Test: fast/events/ios/viewport-no-width-value-allows-double-tap.html
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::findSizeValue): Add a parameter that toggles a flag
+        if the size was explicitly set.
+        (WebCore::setViewportFeature): Remember if the width was
+        explicit.
+        * dom/ViewportArguments.h: Add a widthWasExplicit flag.
+        (WebCore::ViewportArguments::operator==):
+
 2016-01-25  Dave Hyatt  <hyatt@apple.com>
 
         Speculative fixes for crashing in viewportChangeAffectedPicture

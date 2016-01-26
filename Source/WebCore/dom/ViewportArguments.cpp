@@ -307,24 +307,31 @@ static float numericPrefix(const String& keyString, const String& valueString, D
     return value;
 }
 
-static float findSizeValue(const String& keyString, const String& valueString, Document* document)
+static float findSizeValue(const String& keyString, const String& valueString, Document* document, bool* valueWasExplicit = nullptr)
 {
     // 1) Non-negative number values are translated to px lengths.
     // 2) Negative number values are translated to auto.
     // 3) device-width and device-height are used as keywords.
     // 4) Other keywords and unknown values translate to 0.0.
 
+    if (valueWasExplicit)
+        *valueWasExplicit = true;
+
     if (equalLettersIgnoringASCIICase(valueString, "device-width"))
         return ViewportArguments::ValueDeviceWidth;
+
     if (equalLettersIgnoringASCIICase(valueString, "device-height"))
         return ViewportArguments::ValueDeviceHeight;
 
-    float value = numericPrefix(keyString, valueString, document);
+    float sizeValue = numericPrefix(keyString, valueString, document);
 
-    if (value < 0)
+    if (sizeValue < 0) {
+        if (valueWasExplicit)
+            *valueWasExplicit = false;
         return ViewportArguments::ValueAuto;
+    }
 
-    return value;
+    return sizeValue;
 }
 
 static float findScaleValue(const String& keyString, const String& valueString, Document* document)
@@ -383,7 +390,7 @@ void setViewportFeature(const String& keyString, const String& valueString, Docu
     ViewportArguments* arguments = static_cast<ViewportArguments*>(data);
 
     if (keyString == "width")
-        arguments->width = findSizeValue(keyString, valueString, document);
+        arguments->width = findSizeValue(keyString, valueString, document, &arguments->widthWasExplicit);
     else if (keyString == "height")
         arguments->height = findSizeValue(keyString, valueString, document);
     else if (keyString == "initial-scale")

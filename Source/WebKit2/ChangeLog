@@ -1,3 +1,41 @@
+2016-01-26  Dean Jackson  <dino@apple.com>
+
+        [iOS] Documents without an explicit width should not get fast tapping
+        https://bugs.webkit.org/show_bug.cgi?id=153465
+        <rdar://problem/23962529>
+
+        Reviewed by Simon Fraser (and Wenson Hseih).
+
+        As the title says, documents that do not set a viewport should
+        not get the fast click behaviour. There were complaints that we broke
+        double-tap to scroll in ImageDocuments where the image was narrow and long.
+
+        The fix is to just keep a flag that tells the UI process if the
+        width was explicit. However, it turns out that those ImageDocuments
+        are given an explicit device-width, which is fine for scaling but
+        really should behave as auto for fast tapping. So we also need
+        to tell the UIProcess if the viewport arguments came from an
+        ImageDocument.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h: Add two new flags into
+        the transaction.
+        (WebKit::RemoteLayerTreeTransaction::viewportMetaTagWidthWasExplicit):
+        (WebKit::RemoteLayerTreeTransaction::setViewportMetaTagWidthWasExplicit):
+        (WebKit::RemoteLayerTreeTransaction::viewportMetaTagCameFromImageDocument):
+        (WebKit::RemoteLayerTreeTransaction::setViewportMetaTagCameFromImageDocument):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::description):
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]): Notice whether or not the viewport
+        width was explicit.
+        (-[WKWebView _allowsDoubleTapGestures]): Return yes if the width
+        was not explicit, or if the viewport came from an ImageDocument.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+
 2016-01-26  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r194557): Keyboard shortcuts stop working after the WKWebView is unparented and reparented

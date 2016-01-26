@@ -201,6 +201,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     CGSize _maximumUnobscuredSizeOverride;
     CGRect _inputViewBounds;
     CGFloat _viewportMetaTagWidth;
+    BOOL _viewportMetaTagWidthWasExplicit;
+    BOOL _viewportMetaTagCameFromImageDocument;
     CGFloat _initialScaleFactor;
     BOOL _fastClickingIsDisabled;
 
@@ -1118,6 +1120,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
     _viewportMetaTagWidth = layerTreeTransaction.viewportMetaTagWidth();
+    _viewportMetaTagWidthWasExplicit = layerTreeTransaction.viewportMetaTagWidthWasExplicit();
+    _viewportMetaTagCameFromImageDocument = layerTreeTransaction.viewportMetaTagCameFromImageDocument();
     _initialScaleFactor = layerTreeTransaction.initialScaleFactor();
     if (![_contentView _mayDisableDoubleTapGesturesDuringSingleTap])
         [_contentView _setDoubleTapGesturesEnabled:self._allowsDoubleTapGestures];
@@ -1594,6 +1598,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     // If the page is not user scalable, we don't allow double tap gestures.
     if (![_scrollView isZoomEnabled] || [_scrollView minimumZoomScale] >= [_scrollView maximumZoomScale])
         return NO;
+
+    // If the viewport width was not explicit, we allow double tap gestures.
+    if (!_viewportMetaTagWidthWasExplicit || _viewportMetaTagCameFromImageDocument)
+        return YES;
 
     // For scalable viewports, only disable double tap gestures if the viewport width is device width.
     if (_viewportMetaTagWidth != WebCore::ViewportArguments::ValueDeviceWidth)

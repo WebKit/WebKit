@@ -1,3 +1,15 @@
+2016-01-26  Dean Jackson  <dino@apple.com>
+
+        [iOS] Documents without an explicit width should not get fast tapping
+        https://bugs.webkit.org/show_bug.cgi?id=153465
+
+        Reviewed by Simon Fraser (and Wenson Hseih).
+
+        * fast/events/ios/thin-gradient.jpg: Added.
+        * fast/events/ios/viewport-no-width-value-allows-double-tap-expected.txt: Added.
+        * fast/events/ios/viewport-no-width-value-allows-double-tap.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-01-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html on ios-simulator
