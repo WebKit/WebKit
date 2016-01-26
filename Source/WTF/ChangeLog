@@ -1,3 +1,16 @@
+2016-01-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Make HashTable iterators STL iterators compatible
+        https://bugs.webkit.org/show_bug.cgi?id=153512
+
+        Reviewed by Alex Christensen.
+
+        While r178581 makes many hash table iterators STL compatible, still several iterators are not.
+        This patch fixes that; inheriting std::iterator correctly to meet STL iterator requirements (like iterator_category etc.)
+        It could recover Windows build failure.
+
+        * wtf/HashTable.h:
+
 2016-01-26  Anders Carlsson  <andersca@apple.com>
 
         BlockPtr needs boolean operators

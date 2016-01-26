@@ -23,6 +23,7 @@
 #define WTF_HashTable_h
 
 #include <atomic>
+#include <iterator>
 #include <mutex>
 #include <string.h>
 #include <type_traits>
@@ -103,7 +104,7 @@ namespace WTF {
     typedef enum { HashItemKnownGood } HashItemKnownGoodTag;
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    class HashTableConstIterator {
+    class HashTableConstIterator : public std::iterator<std::forward_iterator_tag, Value, std::ptrdiff_t, const Value*, const Value&> {
     private:
         typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
         typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
@@ -239,7 +240,7 @@ namespace WTF {
     };
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    class HashTableIterator {
+    class HashTableIterator : public std::iterator<std::forward_iterator_tag, Value, std::ptrdiff_t, Value*, Value&> {
     private:
         typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
         typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
@@ -1425,7 +1426,7 @@ namespace WTF {
 
     // iterator adapters
 
-    template<typename HashTableType, typename ValueType> struct HashTableConstIteratorAdapter {
+    template<typename HashTableType, typename ValueType> struct HashTableConstIteratorAdapter : public std::iterator<std::forward_iterator_tag, ValueType, std::ptrdiff_t, const ValueType*, const ValueType&> {
         HashTableConstIteratorAdapter() {}
         HashTableConstIteratorAdapter(const typename HashTableType::const_iterator& impl) : m_impl(impl) {}
 
@@ -1439,7 +1440,7 @@ namespace WTF {
         typename HashTableType::const_iterator m_impl;
     };
 
-    template<typename HashTableType, typename ValueType> struct HashTableIteratorAdapter {
+    template<typename HashTableType, typename ValueType> struct HashTableIteratorAdapter : public std::iterator<std::forward_iterator_tag, ValueType, std::ptrdiff_t, ValueType*, ValueType&> {
         HashTableIteratorAdapter() {}
         HashTableIteratorAdapter(const typename HashTableType::iterator& impl) : m_impl(impl) {}
 
