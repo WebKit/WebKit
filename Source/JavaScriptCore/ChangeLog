@@ -1,3 +1,12 @@
+2016-01-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove a useless #include
+        https://bugs.webkit.org/show_bug.cgi?id=153474
+
+        Reviewed by Alexey Proskuryakov.
+
+        * b3/B3ReduceStrength.cpp:
+
 2016-01-26  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Fix clean build after r195545.

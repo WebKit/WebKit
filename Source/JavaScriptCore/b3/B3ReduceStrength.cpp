@@ -41,7 +41,6 @@
 #include "B3ProcedureInlines.h"
 #include "B3PureCSE.h"
 #include "B3UpsilonValue.h"
-#include "B3UseCounts.h"
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
 #include <wtf/GraphNodeWorklist.h>
