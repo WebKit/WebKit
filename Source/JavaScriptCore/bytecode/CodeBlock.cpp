@@ -81,28 +81,6 @@
 
 namespace JSC {
 
-static std::chrono::milliseconds timeToLive(JITCode::JITType jitType)
-{
-    switch (jitType) {
-    case JITCode::InterpreterThunk:
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::seconds(5));
-    case JITCode::BaselineJIT:
-        // Effectively 10 additional seconds, since BaselineJIT and
-        // InterpreterThunk share a CodeBlock.
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::seconds(15));
-    case JITCode::DFGJIT:
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::seconds(20));
-    case JITCode::FTLJIT:
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::seconds(60));
-    default:
-        return std::chrono::milliseconds::max();
-    }
-}
-
 const ClassInfo CodeBlock::s_info = {
     "CodeBlock", 0, 0,
     CREATE_METHOD_TABLE(CodeBlock)
@@ -2552,13 +2530,7 @@ bool CodeBlock::shouldJettisonDueToWeakReference()
 
 bool CodeBlock::shouldJettisonDueToOldAge()
 {
-    if (Heap::isMarked(this))
-        return false;
-
-    if (timeSinceCreation() < timeToLive(jitType()))
-        return false;
-
-    return true;
+    return false;
 }
 
 #if ENABLE(DFG_JIT)
