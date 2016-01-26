@@ -1,5 +1,24 @@
 2016-01-26  Daniel Bates  <dabates@apple.com>
 
+        LayoutTest http/tests/security/xssAuditor/embed-tag-in-path-unterminated.html crashing
+        https://bugs.webkit.org/show_bug.cgi?id=153250
+        <rdar://problem/12172843>
+        And
+        <rdar://problem/24248040>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The test case http/tests/xmlhttprequest/basic-auth-load-URL-with-consecutive-slashes.html was derived
+        from a test case written by Yongjun Zhang in <https://bugs.webkit.org/attachment.cgi?id=65189> (bug #44461).
+
+        * http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt: Added.
+        * http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html: Added.
+        * http/tests/xmlhttprequest/basic-auth-load-URL-with-consecutive-slashes-expected.txt: Added.
+        * http/tests/xmlhttprequest/basic-auth-load-URL-with-consecutive-slashes.html: Added.
+        * platform/wk2/http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt: Added.
+
+2016-01-26  Daniel Bates  <dabates@apple.com>
+
         Remove XMLHttpRequestException
         https://bugs.webkit.org/show_bug.cgi?id=102698
         <rdar://problem/24338476>
