@@ -68,6 +68,29 @@ BasicBlock* Procedure::addBlock(double frequency)
     return result;
 }
 
+void Procedure::setBlockOrderImpl(Vector<BasicBlock*>& blocks)
+{
+    IndexSet<BasicBlock> blocksSet;
+    blocksSet.addAll(blocks);
+
+    for (BasicBlock* block : *this) {
+        if (!blocksSet.contains(block))
+            blocks.append(block);
+    }
+
+    // Place blocks into this's block list by first leaking all of the blocks and then readopting
+    // them.
+    for (auto& entry : m_blocks)
+        entry.release();
+
+    m_blocks.resize(blocks.size());
+    for (unsigned i = 0; i < blocks.size(); ++i) {
+        BasicBlock* block = blocks[i];
+        block->m_index = i;
+        m_blocks[i] = std::unique_ptr<BasicBlock>(block);
+    }
+}
+
 Value* Procedure::clone(Value* value)
 {
     std::unique_ptr<Value> clone(value->cloneImpl());

@@ -51,6 +51,23 @@ void Output::initialize(AbstractHeapRepository& heaps)
     m_heaps = &heaps;
 }
 
+LBasicBlock Output::newBlock(const char*)
+{
+    LBasicBlock result = m_proc.addBlock(m_frequency);
+
+    if (!m_nextBlock)
+        m_blockOrder.append(result);
+    else
+        m_blockOrder.insertBefore(m_nextBlock, result);
+
+    return result;
+}
+
+void Output::applyBlockOrder()
+{
+    m_proc.setBlockOrder(m_blockOrder);
+}
+
 LBasicBlock Output::appendTo(LBasicBlock block, LBasicBlock nextBlock)
 {
     appendTo(block);

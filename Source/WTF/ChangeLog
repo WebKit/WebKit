@@ -1,3 +1,43 @@
+2016-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+        FTLB3Output should maintain good block order like the LLVM one does
+        https://bugs.webkit.org/show_bug.cgi?id=152222
+
+        Reviewed by Geoffrey Garen.
+
+        In the FTL we need to be able to construct a list by inserting elements before other
+        specific elements. We didn't already have a scalable way to do this, so this adds such a
+        data structure to WTF. This also has changes to SentinelLinkedList to make it support
+        these kinds of insertions.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/OrderMaker.h: Added.
+        (WTF::OrderMaker::Node::Node):
+        (WTF::OrderMaker::OrderMaker):
+        (WTF::OrderMaker::prepend):
+        (WTF::OrderMaker::append):
+        (WTF::OrderMaker::insertBefore):
+        (WTF::OrderMaker::insertAfter):
+        (WTF::OrderMaker::iterator::iterator):
+        (WTF::OrderMaker::iterator::operator*):
+        (WTF::OrderMaker::iterator::operator++):
+        (WTF::OrderMaker::iterator::operator==):
+        (WTF::OrderMaker::iterator::operator!=):
+        (WTF::OrderMaker::begin):
+        (WTF::OrderMaker::end):
+        (WTF::OrderMaker::newNode):
+        * wtf/SentinelLinkedList.h:
+        (WTF::BasicRawSentinelNode::isOnList):
+        (WTF::BasicRawSentinelNode<T>::remove):
+        (WTF::BasicRawSentinelNode<T>::prepend):
+        (WTF::BasicRawSentinelNode<T>::append):
+        (WTF::RawNode>::SentinelLinkedList):
+        (WTF::RawNode>::push):
+        (WTF::RawNode>::append):
+        (WTF::RawNode>::remove):
+        (WTF::RawNode>::prepend):
+        (WTF::RawNode>::isOnList):
+
 2016-01-25  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Copy forwarding headers before building a project

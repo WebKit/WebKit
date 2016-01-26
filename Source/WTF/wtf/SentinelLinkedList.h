@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,6 +70,9 @@ public:
     }
     
     void remove();
+
+    void prepend(BasicRawSentinelNode*);
+    void append(BasicRawSentinelNode*);
     
 private:
     BasicRawSentinelNode* m_next;
@@ -82,8 +85,15 @@ public:
 
     SentinelLinkedList();
 
+    // Pushes to the front of the list. It's totally backwards from what you'd expect.
     void push(T*);
+
+    // Appends to the end of the list.
+    void append(T*);
+    
     static void remove(T*);
+    static void prepend(T* existingNode, T* newNode);
+    static void append(T* existingNode, T* newNode);
     
     bool isOnList(T*);
 
@@ -100,6 +110,18 @@ private:
 template <typename T> void BasicRawSentinelNode<T>::remove()
 {
     SentinelLinkedList<T, BasicRawSentinelNode<T>>::remove(static_cast<T*>(this));
+}
+
+template <typename T> void BasicRawSentinelNode<T>::prepend(BasicRawSentinelNode* node)
+{
+    SentinelLinkedList<T, BasicRawSentinelNode<T>>::prepend(
+        static_cast<T*>(this), static_cast<T*>(node));
+}
+
+template <typename T> void BasicRawSentinelNode<T>::append(BasicRawSentinelNode* node)
+{
+    SentinelLinkedList<T, BasicRawSentinelNode<T>>::append(
+        static_cast<T*>(this), static_cast<T*>(node));
 }
 
 template <typename T, typename RawNode> inline SentinelLinkedList<T, RawNode>::SentinelLinkedList()
@@ -139,6 +161,22 @@ template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNod
     next->setPrev(node);
 }
 
+template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNode>::append(T* node)
+{
+    ASSERT(node);
+    ASSERT(!node->prev());
+    ASSERT(!node->next());
+    
+    RawNode* prev = m_tailSentinel.prev();
+    RawNode* next = &m_tailSentinel;
+
+    node->setPrev(prev);
+    node->setNext(next);
+
+    prev->setNext(node);
+    next->setPrev(node);
+}
+
 template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNode>::remove(T* node)
 {
     ASSERT(node);
@@ -153,6 +191,44 @@ template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNod
     
     node->setPrev(0);
     node->setNext(0);
+}
+
+template <typename T, typename RawNode>
+inline void SentinelLinkedList<T, RawNode>::prepend(T* existingNode, T* newNode)
+{
+    ASSERT(existingNode);
+    ASSERT(!!existingNode->prev());
+    ASSERT(!!existingNode->next());
+    ASSERT(newNode);
+    ASSERT(!newNode->prev());
+    ASSERT(!newNode->next());
+
+    RawNode* prev = existingNode->prev();
+
+    newNode->setNext(existingNode);
+    newNode->setPrev(prev);
+    
+    prev->setNext(newNode);
+    existingNode->setPrev(newNode);
+}
+
+template <typename T, typename RawNode>
+inline void SentinelLinkedList<T, RawNode>::append(T* existingNode, T* newNode)
+{
+    ASSERT(existingNode);
+    ASSERT(!!existingNode->prev());
+    ASSERT(!!existingNode->next());
+    ASSERT(newNode);
+    ASSERT(!newNode->prev());
+    ASSERT(!newNode->next());
+
+    RawNode* next = existingNode->next();
+
+    newNode->setNext(next);
+    newNode->setPrev(existingNode);
+    
+    next->setPrev(newNode);
+    existingNode->setNext(newNode);
 }
 
 template <typename T, typename RawNode> inline bool SentinelLinkedList<T, RawNode>::isOnList(T* node)

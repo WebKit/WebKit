@@ -454,6 +454,9 @@ public:
         // write a B3 phase that so aggressively assumes the lack of orphans that it would crash
         // if any orphans were around. We might even have such phases already.
         m_proc.deleteOrphans();
+
+        // We put the blocks into the B3 procedure in a super weird order. Now we reorder them.
+        m_out.applyBlockOrder();
 #endif // FTL_USES_B3
 
 #if !FTL_USES_B3

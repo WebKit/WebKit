@@ -53,6 +53,7 @@
 #include "FTLValueFromBlock.h"
 #include "FTLWeight.h"
 #include "FTLWeightedTarget.h"
+#include <wtf/OrderMaker.h>
 #include <wtf/StringPrintStream.h>
 
 // FIXME: remove this once everything can be generated through B3.
@@ -82,11 +83,7 @@ public:
         m_frequency = value;
     }
 
-    LBasicBlock newBlock(const char* name = "")
-    {
-        UNUSED_PARAM(name);
-        return m_proc.addBlock(m_frequency);
-    }
+    LBasicBlock newBlock(const char* name = "");
 
     LBasicBlock insertNewBlocksBefore(LBasicBlock nextBlock)
     {
@@ -94,6 +91,8 @@ public:
         m_nextBlock = nextBlock;
         return lastNextBlock;
     }
+
+    void applyBlockOrder();
 
     LBasicBlock appendTo(LBasicBlock, LBasicBlock nextBlock);
     void appendTo(LBasicBlock);
@@ -469,6 +468,8 @@ public:
     double m_frequency { 1 };
 
 private:
+    OrderMaker<LBasicBlock> m_blockOrder;
+    
     template<typename Function, typename... Args>
     LValue callWithoutSideEffects(B3::Type type, Function function, LValue arg1, Args... args)
     {

@@ -78,6 +78,18 @@ public:
     const void* frontendData() const { return m_frontendData; }
 
     JS_EXPORT_PRIVATE BasicBlock* addBlock(double frequency = 1);
+
+    // Changes the order of basic blocks to be as in the supplied vector. The vector does not
+    // need to mention every block in the procedure. Blocks not mentioned will be placed after
+    // these blocks in the same order as they were in originally.
+    template<typename BlockIterable>
+    void setBlockOrder(const BlockIterable& iterable)
+    {
+        Vector<BasicBlock*> blocks;
+        for (BasicBlock* block : iterable)
+            blocks.append(block);
+        setBlockOrderImpl(blocks);
+    }
     
     template<typename ValueType, typename... Arguments>
     ValueType* add(Arguments...);
@@ -278,6 +290,8 @@ public:
 private:
     friend class BlockInsertionSet;
     
+    void setBlockOrderImpl(Vector<BasicBlock*>&);
+
     JS_EXPORT_PRIVATE size_t addValueIndex();
     
     Vector<std::unique_ptr<BasicBlock>> m_blocks;

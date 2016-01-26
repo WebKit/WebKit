@@ -1221,10 +1221,16 @@ public:
                         minValue = std::max(minValue, relationship.minValueOfLeft());
                         maxValue = std::min(maxValue, relationship.maxValueOfLeft());
                     }
+
+                    if (verbose)
+                        dataLog("    minValue = ", minValue, ", maxValue = ", maxValue, "\n");
                     
                     if (sumOverflows<int>(minValue, node->child2()->asInt32()) ||
                         sumOverflows<int>(maxValue, node->child2()->asInt32()))
                         break;
+
+                    if (verbose)
+                        dataLog("    It's in bounds.\n");
                     
                     executeNode(block->at(nodeIndex));
                     node->setArithMode(Arith::Unchecked);

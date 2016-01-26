@@ -1,3 +1,42 @@
+2016-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+        FTLB3Output should maintain good block order like the LLVM one does
+        https://bugs.webkit.org/show_bug.cgi?id=152222
+
+        Reviewed by Geoffrey Garen.
+
+        This fixes FTLB3Output to emit an ordered B3 IR. This makes inspecting IR *a lot* easier.
+        It will also be a performance win whenever we use range-based data structures for
+        liveness.
+
+        Also two small other changes:
+        - Added some more dumping in integer range optimization phase.
+        - Refined the disassembler's printing of instruction width suffixes so that "jzl" is not
+          a thing. It was using "l" as the suffix because jumps take a 32-bit immediate.
+
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::setBlockOrderImpl):
+        (JSC::B3::Procedure::clone):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::frontendData):
+        (JSC::B3::Procedure::setBlockOrder):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * disassembler/udis86/udis86_syn-att.c:
+        (ud_translate_att):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::initialize):
+        (JSC::FTL::Output::newBlock):
+        (JSC::FTL::Output::applyBlockOrder):
+        (JSC::FTL::Output::appendTo):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::setFrequency):
+        (JSC::FTL::Output::insertNewBlocksBefore):
+        (JSC::FTL::Output::callWithoutSideEffects):
+        (JSC::FTL::Output::newBlock): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+
 2016-01-25  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Arrow function specific features. Lexical bind "arguments"

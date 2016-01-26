@@ -231,7 +231,8 @@ ud_translate_att(struct ud *u)
   }
 
   for (i = 3; i--;) {
-      if (u->operand[i].size > size)
+      if (u->operand[i].size > size
+          && u->operand[i].type != UD_OP_JIMM)
           size = u->operand[i].size;
   }
 
