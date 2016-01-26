@@ -1,3 +1,18 @@
+2016-01-26  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Do not convert GlyphBufferAdvance to FloatSize
+        https://bugs.webkit.org/show_bug.cgi?id=153429
+
+        GlyphBufferAdvance is not necessaryly convertible to FloatSize.
+        Also, this code was doing extra work by transforming height value.
+
+        Reviewed by Antti Koivisto.
+
+        No new tests needed.
+
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGGlyphToPathTranslator::extents):
+
 2016-01-22  Ada Chan  <adachan@apple.com>
 
         Enable API related to the video fullscreen layer in MediaPlayerPrivateAVFoundationObjC
