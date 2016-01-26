@@ -669,6 +669,8 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 - (BOOL)canBecomeFirstResponder
 {
+    if (_isResigningFirstResponder)
+        return NO;
     // We might want to return something else
     // if we decide to enable/disable interaction programmatically.
     return YES;
@@ -676,6 +678,8 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 
 - (BOOL)becomeFirstResponder
 {
+    if (_isResigningFirstResponder)
+        return NO;
     BOOL didBecomeFirstResponder = [super becomeFirstResponder];
     if (didBecomeFirstResponder)
         [_textSelectionAssistant activateSelection];
@@ -688,6 +692,8 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     // FIXME: Maybe we should call resignFirstResponder on the superclass
     // and do nothing if the return value is NO.
 
+    _isResigningFirstResponder = YES;
+
     if (!_webView->_activeFocusedStateRetainCount) {
         // We need to complete the editing operation before we blur the element.
         [_inputPeripheral endEditing];
@@ -698,7 +704,11 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_webSelectionAssistant resignedFirstResponder];
     [_textSelectionAssistant deactivateSelection];
 
-    return [super resignFirstResponder];
+    bool superDidResign = [super resignFirstResponder];
+
+    _isResigningFirstResponder = NO;
+
+    return superDidResign;
 }
 
 #if ENABLE(TOUCH_EVENTS)

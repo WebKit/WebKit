@@ -161,6 +161,8 @@ struct WKAutoCorrectionData {
     BOOL _didAccessoryTabInitiateFocus;
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;
+
+    BOOL _isResigningFirstResponder;
 }
 
 @end
