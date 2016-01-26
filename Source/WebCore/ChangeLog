@@ -1,3 +1,39 @@
+2016-01-20  Andy Estes  <aestes@apple.com>
+
+        Re-enable synchronous popstate event for safari-601-branch
+        https://bugs.webkit.org/show_bug.cgi?id=153297
+        rdar://problem/24154417
+
+        Reviewed by Brent Fulgham.
+
+        r192369 made the popstate event dispatch asynchronously, which matches what the HTML5 spec says to do.
+        However, due to compatibility regressions, we do not want to include this behavior change in
+        safari-601-branch. This change reverts r192369's changes to Document.cpp, but retains the new tests.
+        This change is intended only for safari-601-branch and its copies. The popstate event should remain
+        asynchronous in trunk.
+
+        Firing popstate synchronously makes both fast/loader/remove-iframe-during-history-navigation-different.
+        Html and fast/loader/remove-iframe-during-history-navigation-same.html crash, because their onpopstate
+        handlers remove frames from the document that will later be accessed by
+        HistoryController::recursiveGoToItem().
+
+        To prevent the crashes, this change does two things:
+        1. Keep a reference to the current frame inside FrameLoader::loadSameDocumentItem(), since calling
+           loadInSameDocument() might otherwise delete it.
+        2. Handle a null frame when iterating a HistoryItem's child frames in
+           HistoryController::recursiveGoToItem(), since calling goToItem() on one frame might cause another
+           frame to be deleted.
+
+        Covered by existing tests. fast/loader/stateobjects/popstate-is-asynchronous-expected.txt was updated
+        to expect popstate to be synchronous.
+
+        * dom/Document.cpp:
+        (WebCore::Document::enqueuePopstateEvent):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSameDocumentItem):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::recursiveGoToItem):
+
 2016-01-25  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r195477. rdar://problem/24001780
