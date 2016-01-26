@@ -32,6 +32,7 @@
 @interface NSSpellChecker ()
 - (NSInteger)requestCandidatesForSelectedRange:(NSRange)selectedRange inString:(NSString *)stringToCheck types:(NSTextCheckingTypes)checkingTypes options:(NSDictionary<NSString *, id> *)options inSpellDocumentWithTag:(NSInteger)tag completionHandler:(void (^)(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates))completionHandler;
 - (BOOL)deletesAutospaceBeforeString:(NSString *)string language:(NSString *)language;
++ (BOOL)isAutomaticTextCompletionEnabled;
 @end
 
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 102000

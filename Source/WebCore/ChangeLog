@@ -1,3 +1,10 @@
+2016-01-26  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Tim Horton.
+
+        Add one more bit of SPI.
+        * platform/spi/mac/NSSpellCheckerSPI.h:
+
 2016-01-26  Olivier Blin  <olivier.blin@softathome.com>
 
         Fix build with ENABLE_DEVICE_ORIENTATION on non-iOS platforms
