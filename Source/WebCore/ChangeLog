@@ -1,3 +1,17 @@
+2016-01-26  Jeremy Noble  <jer.noble@apple.com>
+
+        [EME][Mac] Crash in [AVStreamSession addStreamDataParser:]; uncaught exception
+        https://bugs.webkit.org/show_bug.cgi?id=153495
+
+        Reviewed by Eric Carlson.
+
+        When AVContentKeySession is not available, fall back to pre-AVContentKeySession behavior;
+        namely, immediately create an AVStreamSession object in
+        willProvideContentKeyRequestInitializationData, rather than waiting for didProvide.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID):
+
 2016-01-26  Dean Jackson  <dino@apple.com>
 
         [iOS] Documents without an explicit width should not get fast tapping

@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #import "BlockExceptions.h"
+#import "CDMSessionAVContentKeySession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "ExceptionCodePlaceholder.h"
 #import "Logging.h"
@@ -721,6 +722,11 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
 
     if (CDMSessionMediaSourceAVFObjC* session = m_mediaSource->player()->cdmSession())
         session->addParser(m_parser.get());
+    else if (!CDMSessionAVContentKeySession::isAvailable()) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        [m_mediaSource->player()->streamSession() addStreamDataParser:m_parser.get()];
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
 #else
     UNUSED_PARAM(trackID);
 #endif
