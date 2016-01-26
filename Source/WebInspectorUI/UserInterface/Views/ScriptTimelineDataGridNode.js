@@ -83,7 +83,7 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
             selfTime: duration,
             totalTime: duration,
             averageTime: duration,
-            callCount: NaN,
+            callCount: this._record.callCountOrSamples,
             location: callFrameOrSourceCodeLocation
         };
     }

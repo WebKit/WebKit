@@ -38,6 +38,14 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
         this._details = details || "";
         this._profilePayload = profilePayload || null;
         this._profile = null;
+
+        // COMPATIBILITY(iOS 9): Before the ScriptProfilerAgent we did not have sample data. Return NaN to match old behavior.
+        if (!window.ScriptProfilerAgent)
+            this._callCountOrSamples = NaN;
+        else {
+            // NOTE: _callCountOrSamples is being treated as the number of samples.
+            this._callCountOrSamples = 0;
+        }
     }
 
     // Public
@@ -56,6 +64,11 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
     {
         this._initializeProfileFromPayload();
         return this._profile;
+    }
+
+    get callCountOrSamples()
+    {
+        return this._callCountOrSamples;
     }
 
     isGarbageCollection()
@@ -157,6 +170,12 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
 
                 stack.pop();
             }
+        }
+
+        // COMPATIBILITY (iOS 9): We only do this when we have ScriptProfilerAgent because before that we didn't have a Sampling Profiler.
+        if (window.ScriptProfilerAgent) {
+            for (let i = 0; i < rootNodes.length; i++)
+                this._callCountOrSamples += rootNodes[i].callInfo.callCount;
         }
 
         this._profile = new WebInspector.Profile(rootNodes);

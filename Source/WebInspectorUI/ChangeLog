@@ -1,3 +1,20 @@
+2016-01-25  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Have top-level ScriptTimelineDataGridNode events show sample counts
+        https://bugs.webkit.org/show_bug.cgi?id=153447
+        <rdar://problem/24334137>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord):
+        (WebInspector.ScriptTimelineRecord.prototype.get profile):
+        (WebInspector.ScriptTimelineRecord.prototype.get callCount):
+        (WebInspector.ScriptTimelineRecord.prototype.isGarbageCollection):
+        (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload):
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get data):
+
 2016-01-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce unnecessary forced layouts in TimelineOverview
