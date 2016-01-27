@@ -1,3 +1,12 @@
+2016-01-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Win EWS after r195545.
+        https://bugs.webkit.org/show_bug.cgi?id=153434
+
+        * PlatformWin.cmake:
+        Copy WebKit.h after building WebKitGUID, because it doesn't exist before.
+        This should fix EWS problems like the one seen in bug 153522.
+
 2016-01-25  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Copy forwarding headers before building a project
