@@ -1,3 +1,17 @@
+2016-01-27  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [GTK] Problem running promises code in workers
+        https://bugs.webkit.org/show_bug.cgi?id=152340
+
+        Reviewed by Carlos Garcia Campos.
+
+        Test file that creates two testharness promise tests. Each test creates 10000 promises, pushes them into an
+        array and vends them in a timeout.
+
+        * js/promises-tests/promises-in-workers-expected.txt: Added.
+        * js/promises-tests/promises-in-workers.html: Added.
+        * js/promises-tests/promises-in-workers.js: Added.
+
 2016-01-26  Jer Noble  <jer.noble@apple.com>
 
         Calling video.controls=true during a scrub operation cancels scrub.
