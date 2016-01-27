@@ -1,5 +1,16 @@
 2016-01-26  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline imported/w3c/web-platform-tests/html/semantics/interfaces.html for ios-simulator after support 
+        for HTMLDataElement was added in r195627, removing ios-simulator-wk2 specific result.
+        https://bugs.webkit.org/show_bug.cgi?id=153459
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Removed.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt:
+
+2016-01-26  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skipping tests added with r195625 that are unsupported on ios-simulator
 
         Unreviewed test gardening.

@@ -13,12 +13,12 @@ PASS Interfaces for b
 PASS Interfaces for B 
 PASS Interfaces for base 
 PASS Interfaces for BASE 
-FAIL Interfaces for basefont assert_equals: Element basefont should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLBaseFontElement]"
-FAIL Interfaces for BASEFONT assert_equals: Element BASEFONT should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLBaseFontElement]"
+PASS Interfaces for basefont 
+PASS Interfaces for BASEFONT 
 PASS Interfaces for bdo 
 PASS Interfaces for BDO 
-FAIL Interfaces for bgsound assert_equals: Element bgsound should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
-FAIL Interfaces for BGSOUND assert_equals: Element BGSOUND should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
+PASS Interfaces for bgsound 
+PASS Interfaces for BGSOUND 
 PASS Interfaces for big 
 PASS Interfaces for BIG 
 PASS Interfaces for blink 
@@ -185,14 +185,14 @@ PASS Interfaces for table
 PASS Interfaces for TABLE 
 PASS Interfaces for tbody 
 PASS Interfaces for TBODY 
-FAIL Interfaces for td assert_equals: Element td should have HTMLTableDataCellElement as its primary interface. expected "[object HTMLTableDataCellElement]" but got "[object HTMLTableCellElement]"
-FAIL Interfaces for TD assert_equals: Element TD should have HTMLTableDataCellElement as its primary interface. expected "[object HTMLTableDataCellElement]" but got "[object HTMLTableCellElement]"
+PASS Interfaces for td 
+PASS Interfaces for TD 
 PASS Interfaces for textarea 
 PASS Interfaces for TEXTAREA 
 PASS Interfaces for tfoot 
 PASS Interfaces for TFOOT 
-FAIL Interfaces for th assert_equals: Element th should have HTMLTableHeaderCellElement as its primary interface. expected "[object HTMLTableHeaderCellElement]" but got "[object HTMLTableCellElement]"
-FAIL Interfaces for TH assert_equals: Element TH should have HTMLTableHeaderCellElement as its primary interface. expected "[object HTMLTableHeaderCellElement]" but got "[object HTMLTableCellElement]"
+PASS Interfaces for th 
+PASS Interfaces for TH 
 PASS Interfaces for thead 
 PASS Interfaces for THEAD 
 PASS Interfaces for title 
@@ -237,8 +237,12 @@ FAIL Interfaces for meter assert_equals: Element meter should have HTMLMeterElem
 FAIL Interfaces for METER assert_equals: Element METER should have HTMLMeterElement as its primary interface. expected "[object HTMLMeterElement]" but got "[object HTMLUnknownElement]"
 PASS Interfaces for ruby 
 PASS Interfaces for RUBY 
+PASS Interfaces for rb 
+PASS Interfaces for RB 
 PASS Interfaces for rt 
 PASS Interfaces for RT 
+PASS Interfaces for rtc 
+PASS Interfaces for RTC 
 PASS Interfaces for rp 
 PASS Interfaces for RP 
 PASS Interfaces for figure 
@@ -253,12 +257,10 @@ FAIL Interfaces for command assert_equals: Element command should have HTMLComma
 FAIL Interfaces for COMMAND assert_equals: Element COMMAND should have HTMLCommandElement as its primary interface. expected "[object HTMLCommandElement]" but got "[object HTMLElement]"
 PASS Interfaces for nextid 
 PASS Interfaces for NEXTID 
-FAIL Interfaces for rb assert_equals: Element rb should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
-FAIL Interfaces for RB assert_equals: Element RB should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
 PASS Interfaces for bdi 
 PASS Interfaces for BDI 
-FAIL Interfaces for data assert_equals: Element data should have HTMLDataElement as its primary interface. expected "[object HTMLDataElement]" but got "[object HTMLUnknownElement]"
-FAIL Interfaces for DATA assert_equals: Element DATA should have HTMLDataElement as its primary interface. expected "[object HTMLDataElement]" but got "[object HTMLUnknownElement]"
+PASS Interfaces for data 
+PASS Interfaces for DATA 
 PASS Interfaces for a 
 PASS Interfaces for A 
 PASS Interfaces for area 
