@@ -1,3 +1,11 @@
+2016-01-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skipping tests added with r195625 that are unsupported on ios-simulator
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
         document.open() / write() should be prevented in beforeunload event handlers

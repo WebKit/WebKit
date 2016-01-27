@@ -210,6 +210,10 @@ fast/events/touch [ Skip ]
 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ]
 fast/scrolling/overflow-scroll-past-max.html [ Skip ]
 pageoverlay/overlay-small-frame-mouse-events.html [ Skip ]
+loader/stateobjects/pushstate-size.html [ Skip ]
+loader/stateobjects/pushstate-size-iframe.html [ Skip ]
+fast/loader/stateobjects/replacestate-frequency-with-user-gesture.html [ Skip ]
+fast/loader/stateobjects/pushstate-frequency-with-user-gesture.html [ Skip ]
 
 ###
 # Known failures
