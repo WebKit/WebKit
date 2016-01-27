@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BasicBlockInlines.h"
+#include "B3BreakCriticalEdges.h"
 #include "B3ControlValue.h"
 #include "B3Dominators.h"
 #include "B3FixSSA.h"
@@ -58,6 +59,11 @@ public:
 
     void run()
     {
+        // Breaking critical edges introduces blocks that jump to things. Those Jumps' successors
+        // become candidates for tail duplication. Prior to critical edge breaking, some of those
+        // Jumps would have been Branches, and so no tail duplication would have happened.
+        breakCriticalEdges(m_proc);
+        
         // Find blocks that would be candidates for tail duplication. They must be small enough
         // and they much not have too many successors.
 
