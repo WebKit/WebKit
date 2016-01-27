@@ -1,3 +1,13 @@
+2016-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [B3] Fix control reaches end of non-void function GCC warning after r195139
+        https://bugs.webkit.org/show_bug.cgi?id=153426
+
+        Reviewed by Michael Catanzaro.
+
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::cooled):
+
 2016-01-26  Saam barati  <sbarati@apple.com>
 
         testb3 and testAir should be compiled under -O0

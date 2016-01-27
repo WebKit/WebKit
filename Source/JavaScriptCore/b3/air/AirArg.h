@@ -258,6 +258,7 @@ public:
         case LateUse:
             return LateColdUse;
         }
+        ASSERT_NOT_REACHED();
     }
 
     // Returns true if the Role implies that the Inst will Use the Arg before doing anything else.
