@@ -1,3 +1,13 @@
+2016-01-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::TmpWidth uses a stale pointer into its HashMap after it calls add()
+        https://bugs.webkit.org/show_bug.cgi?id=153546
+
+        Reviewed by Saam Barati.
+
+        * b3/air/AirTmpWidth.cpp:
+        (JSC::B3::Air::TmpWidth::recompute):
+
 2016-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Remove ENABLE_CURRENTSRC
