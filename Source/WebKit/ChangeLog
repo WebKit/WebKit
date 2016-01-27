@@ -1,5 +1,12 @@
 2016-01-27  Alex Christensen  <achristensen@webkit.org>
 
+        [Win] Clean build fix after r195680.
+
+        * PlatformWin.cmake:
+        Use the post build command for the post build event.
+
+2016-01-27  Alex Christensen  <achristensen@webkit.org>
+
         Fix Win EWS after r195545.
         https://bugs.webkit.org/show_bug.cgi?id=153434
 
