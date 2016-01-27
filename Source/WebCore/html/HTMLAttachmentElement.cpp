@@ -74,7 +74,7 @@ void HTMLAttachmentElement::setFile(File* file)
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if ((name == progressAttr || name == titleAttr || name == subtitleAttr) && is<RenderAttachment>(renderer())) {
+    if ((name == progressAttr || name == titleAttr || name == subtitleAttr || name == typeAttr) && is<RenderAttachment>(renderer())) {
         downcast<RenderAttachment>(*renderer()).invalidate();
         return;
     }
@@ -88,6 +88,11 @@ String HTMLAttachmentElement::attachmentTitle() const
     if (!title.isEmpty())
         return title;
     return m_file ? m_file->name() : String();
+}
+
+String HTMLAttachmentElement::attachmentType() const
+{
+    return fastGetAttribute(typeAttr);
 }
 
 } // namespace WebCore

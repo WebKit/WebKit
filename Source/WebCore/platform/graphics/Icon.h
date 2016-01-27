@@ -60,6 +60,11 @@ public:
     WEBCORE_EXPORT static PassRefPtr<Icon> createIconForImage(NativeImagePtr);
 #endif
 
+#if PLATFORM(MAC)
+    static RefPtr<Icon> createIconForUTI(const String&);
+    static RefPtr<Icon> createIconForMIMEType(const String&);
+#endif
+
 private:
 #if PLATFORM(IOS)
     Icon(CGImageRef);

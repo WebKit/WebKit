@@ -41,6 +41,7 @@ public:
     void setFile(File*);
 
     String attachmentTitle() const;
+    String attachmentType() const;
 
 private:
     HTMLAttachmentElement(const QualifiedName&, Document&);

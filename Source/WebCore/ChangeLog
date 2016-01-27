@@ -1,3 +1,32 @@
+2016-01-27  Tim Horton  <timothy_horton@apple.com>
+
+        Need to be able to specify MIME type for <attachment> without filename or handle
+        https://bugs.webkit.org/show_bug.cgi?id=153552
+        <rdar://problem/20145857>
+
+        Reviewed by Anders Carlsson.
+
+        Tests: fast/attachment/attachment-default-icon.html
+               fast/attachment/attachment-type-attribute.html
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::parseAttribute):
+        Invalidate attachment when 'type' attribute changes.
+
+        (WebCore::HTMLAttachmentElement::attachmentType):
+        * html/HTMLAttachmentElement.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::createIconForUTI):
+        (WebCore::Icon::createIconForMIMEType):
+        Add Icon class methods to retrieve an icon given a UTI or MIME type.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::paintAttachmentIcon):
+        Use the 'type' attribute (a MIME type) if we have one. Otherwise,
+        use the filename. Lastly fall back to a plain file icon (using the root
+        file UTI, public.data).
+
 2016-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Remove ENABLE_CURRENTSRC

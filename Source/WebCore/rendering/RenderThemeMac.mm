@@ -2339,10 +2339,20 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
 
 static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
-    Vector<String> filenames;
-    if (File* file = attachment.attachmentElement().file())
-        filenames.append(file->path());
-    RefPtr<Icon> icon = Icon::createIconForFiles(filenames);
+    RefPtr<Icon> icon;
+    String type = attachment.attachmentElement().attachmentType();
+    if (!type.isEmpty())
+        icon = Icon::createIconForMIMEType(type);
+    else {
+        Vector<String> filenames;
+        if (File* file = attachment.attachmentElement().file())
+            filenames.append(file->path());
+        icon = Icon::createIconForFiles(filenames);
+    }
+
+    if (!icon)
+        icon = Icon::createIconForUTI("public.data");
+
     if (!icon)
         return;
     icon->paint(context, layout.iconRect);

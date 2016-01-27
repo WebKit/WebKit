@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<attachment id="attachment" title="  "></attachment>
+<script>
+var file;
+if (window.internals)
+    file = window.internals.createFile("resources/test-file.dat");
+
+document.getElementById("attachment").file = file;
+</script>
+</body>
+</html>
