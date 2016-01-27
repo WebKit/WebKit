@@ -1,5 +1,22 @@
 2016-01-26  Anders Carlsson  <andersca@apple.com>
 
+        WebKitAdditions should be able to modify derived source rules
+        https://bugs.webkit.org/show_bug.cgi?id=153514
+
+        Reviewed by Tim Horton.
+
+        * Configurations/BaseTarget.xcconfig:
+        * Configurations/WebKit.xcconfig:
+        Set WEBKITADDITIONS_HEADER_SEARCH_PATHS.
+
+        * DerivedSources.make:
+        Move the path computation earlier and include WebKitDerivedSourcesAdditions.make.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Pass our WebKitAdditions paths as include paths to make.
+
+2016-01-26  Anders Carlsson  <andersca@apple.com>
+
         Add a private WKUIDelegate method for getting a presenting view controller for a WKWebView on iOS
         https://bugs.webkit.org/show_bug.cgi?id=153510
 

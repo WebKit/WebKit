@@ -1,3 +1,16 @@
+2016-01-26  Anders Carlsson  <andersca@apple.com>
+
+        WebKitAdditions should be able to modify derived source rules
+        https://bugs.webkit.org/show_bug.cgi?id=153514
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make:
+        Include WebCoreDerivedSourcesAdditions.make.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Pass our WebKitAdditions paths as include paths to make.
+
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
         document.open() / write() should be prevented in beforeunload event handlers

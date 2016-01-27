@@ -763,6 +763,8 @@ ADDITIONAL_BINDING_IDLS += \
 endif
 endif # IOS
 
+-include WebCoreDerivedSourcesAdditions.make
+
 NON_SVG_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 
 all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
