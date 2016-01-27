@@ -2309,11 +2309,12 @@ sub GenerateImplementation
                     }
                 } else {
                     push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-                    push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
-                    push(@implContent, "        if (jsDynamicCast<${className}Prototype*>(slotBase))\n");
-                    push(@implContent, "            return reportDeprecatedGetterError(*state, \"$interfaceName\", \"$name\");\n");
-                    push(@implContent, "        return throwGetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
-                    push(@implContent, "    }\n");
+                    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
+                    if ($attribute->signature->extendedAttributes->{"LenientThis"}) {
+                        push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                    } else {
+                        push(@implContent, "        return throwGetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
+                    }
                 }
             }
 
@@ -2648,10 +2649,9 @@ sub GenerateImplementation
                 } else {
                     push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
                     push(@implContent, "    if (UNLIKELY(!castedThis)) {\n");
-                    push(@implContent, "        if (jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue)))\n");
-                    push(@implContent, "            reportDeprecatedSetterError(*state, \"$interfaceName\", \"$name\");\n");
-                    push(@implContent, "        else\n");
-                    push(@implContent, "            throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
+                    if (!$attribute->signature->extendedAttributes->{"LenientThis"}) {
+                        push(@implContent, "        throwSetterTypeError(*state, \"$interfaceName\", \"$name\");\n");
+                    }
                     push(@implContent, "        return;\n");
                     push(@implContent, "    }\n");
                 }

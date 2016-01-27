@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 526: Deprecated attempt to access property 'href' on a non-HTMLAnchorElement object.
-CONSOLE MESSAGE: line 526: Deprecated attempt to access property 'href' on a non-HTMLAnchorElement object.
 Make sure DOM attributes handle different types of |this| properly
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -8,10 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS objectWithDocumentAsPrototype.all is undefined.
 See what happens if we put the anchor prototype on a div
 PASS testDiv instanceof HTMLAnchorElement is true
-PASS testDiv.href is undefined.
+PASS testDiv.href threw exception TypeError: The HTMLAnchorElement.href getter can only be used on instances of HTMLAnchorElement.
 PASS testDiv.href='error' threw exception TypeError: The HTMLAnchorElement.href setter can only be used on instances of HTMLAnchorElement.
 PASS testDiv instanceof HTMLAnchorElement is true
-PASS testDiv.href is undefined.
+PASS testDiv.href threw exception TypeError: The HTMLAnchorElement.href getter can only be used on instances of HTMLAnchorElement.
 PASS testDiv.href='error' threw exception TypeError: The HTMLAnchorElement.href setter can only be used on instances of HTMLAnchorElement.
 PASS successfullyParsed is true
 

@@ -67,8 +67,8 @@
     [NotEnumerable] attribute EventHandler onloadedmetadata;
     [NotEnumerable] attribute EventHandler onloadstart;
     [NotEnumerable] attribute EventHandler onmousedown;
-    [NotEnumerable] attribute EventHandler onmouseenter;
-    [NotEnumerable] attribute EventHandler onmouseleave;
+    [NotEnumerable, LenientThis] attribute EventHandler onmouseenter;
+    [NotEnumerable, LenientThis] attribute EventHandler onmouseleave;
     [NotEnumerable] attribute EventHandler onmousemove;
     [NotEnumerable] attribute EventHandler onmouseout;
     [NotEnumerable] attribute EventHandler onmouseover;

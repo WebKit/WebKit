@@ -56,7 +56,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     attribute long long                longLongAttr;
     attribute unsigned long long       unsignedLongLongAttr;
     attribute DOMString                stringAttr;
-    attribute TestObj testObjAttr;
+    attribute TestObj                  testObjAttr;
+    [LenientThis] attribute TestObj    lenientTestObjAttr;
 
     // WK_ucfirst, WK_lcfirst exceptional cases.
     attribute TestObj                  XMLObjAttr;

@@ -90,6 +90,7 @@ enum {
     PROP_UNSIGNED_LONG_LONG_ATTR,
     PROP_STRING_ATTR,
     PROP_TEST_OBJ_ATTR,
+    PROP_LENIENT_TEST_OBJ_ATTR,
     PROP_XML_OBJ_ATTR,
     PROP_CREATE,
     PROP_REFLECTED_STRING_ATTR,
@@ -298,6 +299,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_TEST_OBJ_ATTR:
         g_value_set_object(value, webkit_dom_test_obj_get_test_obj_attr(self));
+        break;
+    case PROP_LENIENT_TEST_OBJ_ATTR:
+        g_value_set_object(value, webkit_dom_test_obj_get_lenient_test_obj_attr(self));
         break;
     case PROP_XML_OBJ_ATTR:
         g_value_set_object(value, webkit_dom_test_obj_get_xml_obj_attr(self));
@@ -589,6 +593,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "test-obj-attr",
             "TestObj:test-obj-attr",
             "read-only WebKitDOMTestObj* TestObj:test-obj-attr",
+            WEBKIT_DOM_TYPE_TEST_OBJ,
+            WEBKIT_PARAM_READABLE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_LENIENT_TEST_OBJ_ATTR,
+        g_param_spec_object(
+            "lenient-test-obj-attr",
+            "TestObj:lenient-test-obj-attr",
+            "read-only WebKitDOMTestObj* TestObj:lenient-test-obj-attr",
             WEBKIT_DOM_TYPE_TEST_OBJ,
             WEBKIT_PARAM_READABLE));
 
@@ -1809,6 +1823,25 @@ void webkit_dom_test_obj_set_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMTest
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::TestObj* convertedValue = WebKit::core(value);
     item->setTestObjAttr(convertedValue);
+}
+
+WebKitDOMTestObj* webkit_dom_test_obj_get_lenient_test_obj_attr(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->lenientTestObjAttr());
+    return WebKit::kit(gobjectResult.get());
+}
+
+void webkit_dom_test_obj_set_lenient_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
+    WebCore::TestObj* item = WebKit::core(self);
+    WebCore::TestObj* convertedValue = WebKit::core(value);
+    item->setLenientTestObjAttr(convertedValue);
 }
 
 WebKitDOMTestObj* webkit_dom_test_obj_get_xml_obj_attr(WebKitDOMTestObj* self)

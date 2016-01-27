@@ -871,6 +871,27 @@ WEBKIT_API void
 webkit_dom_test_obj_set_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
 
 /**
+ * webkit_dom_test_obj_get_lenient_test_obj_attr:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none): A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API WebKitDOMTestObj*
+webkit_dom_test_obj_get_lenient_test_obj_attr(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_lenient_test_obj_attr:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_lenient_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
+
+/**
  * webkit_dom_test_obj_get_xml_obj_attr:
  * @self: A #WebKitDOMTestObj
  *

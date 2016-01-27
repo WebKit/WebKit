@@ -1,102 +1,4 @@
 CONSOLE MESSAGE: line 198: callback not yet supported
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'type' on a non-Event object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'target' on a non-Event object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'currentTarget' on a non-Event object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'eventPhase' on a non-Event object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'bubbles' on a non-Event object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'cancelable' on a non-Event object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'defaultPrevented' on a non-Event object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'timeStamp' on a non-Event object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'type' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'target' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'addedNodes' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'removedNodes' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'previousSibling' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nextSibling' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'attributeName' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'attributeNamespace' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'oldValue' on a non-MutationRecord object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nodeName' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'baseURI' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'ownerDocument' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'parentNode' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'parentElement' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childNodes' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstChild' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastChild' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'previousSibling' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nextSibling' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nodeValue' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'textContent' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'implementation' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'URL' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'documentURI' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'origin' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'compatMode' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'characterSet' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'charset' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'inputEncoding' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'contentType' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'doctype' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'documentElement' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'children' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstElementChild' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastElementChild' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childElementCount' on a non-Document object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'children' on a non-DocumentFragment object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstElementChild' on a non-DocumentFragment object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastElementChild' on a non-DocumentFragment object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childElementCount' on a non-DocumentFragment object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'name' on a non-DocumentType object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'publicId' on a non-DocumentType object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'systemId' on a non-DocumentType object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'namespaceURI' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'prefix' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'localName' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'tagName' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'id' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'className' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'classList' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'attributes' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'children' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'firstElementChild' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lastElementChild' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'childElementCount' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'previousElementSibling' on a non-Element object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nextElementSibling' on a non-Element object.
-CONSOLE MESSAGE: line 793: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 2475: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'namespaceURI' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'prefix' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'localName' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'name' on a non-Attr object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'value' on a non-Attr object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nodeValue' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'textContent' on a non-Node object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'ownerElement' on a non-Attr object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'specified' on a non-Attr object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'data' on a non-CharacterData object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'length' on a non-CharacterData object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'previousElementSibling' on a non-CharacterData object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'nextElementSibling' on a non-CharacterData object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'wholeText' on a non-Text object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'target' on a non-ProcessingInstruction object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'startContainer' on a non-Range object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'startOffset' on a non-Range object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'endContainer' on a non-Range object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'endOffset' on a non-Range object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'collapsed' on a non-Range object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'commonAncestorContainer' on a non-Range object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'root' on a non-NodeIterator object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'referenceNode' on a non-NodeIterator object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'pointerBeforeReferenceNode' on a non-NodeIterator object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'whatToShow' on a non-NodeIterator object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'filter' on a non-NodeIterator object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'root' on a non-TreeWalker object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'whatToShow' on a non-TreeWalker object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'filter' on a non-TreeWalker object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'currentNode' on a non-TreeWalker object.
 DOM IDL tests
 
 
@@ -105,15 +7,9 @@ PASS Event interface object length
 PASS Event interface object name 
 PASS Event interface: existence and properties of interface prototype object 
 FAIL Event interface: existence and properties of interface prototype object's "constructor" property assert_true: Event.prototype.constructor is not writable expected true got false
-FAIL Event interface: attribute type assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Event interface: attribute target assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Event interface: attribute currentTarget assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Event interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Event interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Event interface: attribute currentTarget assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Event interface: constant NONE on interface object 
 PASS Event interface: constant NONE on interface prototype object 
 PASS Event interface: constant CAPTURING_PHASE on interface object 
@@ -122,24 +18,14 @@ PASS Event interface: constant AT_TARGET on interface object
 PASS Event interface: constant AT_TARGET on interface prototype object 
 PASS Event interface: constant BUBBLING_PHASE on interface object 
 PASS Event interface: constant BUBBLING_PHASE on interface prototype object 
-FAIL Event interface: attribute eventPhase assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Event interface: attribute eventPhase assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Event interface: operation stopPropagation() 
 PASS Event interface: operation stopImmediatePropagation() 
-FAIL Event interface: attribute bubbles assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Event interface: attribute cancelable assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Event interface: attribute bubbles assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Event interface: attribute cancelable assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Event interface: operation preventDefault() 
-FAIL Event interface: attribute defaultPrevented assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Event interface: attribute timeStamp assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Event interface: attribute defaultPrevented assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Event interface: attribute timeStamp assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Event interface: operation initEvent(DOMString,boolean,boolean) assert_equals: property has wrong .length expected 3 but got 0
 PASS Event must be primary interface of document.createEvent("Event") 
 PASS Stringification of document.createEvent("Event") 
@@ -275,33 +161,15 @@ PASS MutationRecord interface object length
 PASS MutationRecord interface object name 
 PASS MutationRecord interface: existence and properties of interface prototype object 
 FAIL MutationRecord interface: existence and properties of interface prototype object's "constructor" property assert_true: MutationRecord.prototype.constructor is not writable expected true got false
-FAIL MutationRecord interface: attribute type assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL MutationRecord interface: attribute target assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL MutationRecord interface: attribute addedNodes assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL MutationRecord interface: attribute removedNodes assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL MutationRecord interface: attribute previousSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL MutationRecord interface: attribute nextSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL MutationRecord interface: attribute attributeName assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL MutationRecord interface: attribute attributeNamespace assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL MutationRecord interface: attribute oldValue assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL MutationRecord interface: attribute type assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL MutationRecord interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL MutationRecord interface: attribute addedNodes assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL MutationRecord interface: attribute removedNodes assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL MutationRecord interface: attribute previousSibling assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL MutationRecord interface: attribute nextSibling assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL MutationRecord interface: attribute attributeName assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL MutationRecord interface: attribute attributeNamespace assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL MutationRecord interface: attribute oldValue assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Node interface: existence and properties of interface object assert_equals: class string of Node expected "[object Function]" but got "[object NodeConstructor]"
 PASS Node interface object length 
 PASS Node interface object name 
@@ -331,46 +199,20 @@ PASS Node interface: constant DOCUMENT_FRAGMENT_NODE on interface object
 PASS Node interface: constant DOCUMENT_FRAGMENT_NODE on interface prototype object 
 PASS Node interface: constant NOTATION_NODE on interface object 
 PASS Node interface: constant NOTATION_NODE on interface prototype object 
-FAIL Node interface: attribute nodeType assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute nodeName assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute baseURI assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute ownerDocument assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute parentNode assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute parentElement assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Node interface: attribute nodeType assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute nodeName assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute baseURI assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute ownerDocument assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute parentNode assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute parentElement assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Node interface: operation hasChildNodes() 
-FAIL Node interface: attribute childNodes assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute firstChild assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute lastChild assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute previousSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute nextSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute nodeValue assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Node interface: attribute textContent assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Node interface: attribute childNodes assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute firstChild assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute lastChild assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute previousSibling assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute nextSibling assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute nodeValue assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Node interface: attribute textContent assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Node interface: operation normalize() 
 PASS Node interface: operation cloneNode(boolean) 
 FAIL Node interface: operation isEqualNode(Node) assert_equals: property has wrong .length expected 1 but got 0
@@ -400,39 +242,17 @@ PASS Document interface object length
 PASS Document interface object name 
 PASS Document interface: existence and properties of interface prototype object 
 FAIL Document interface: existence and properties of interface prototype object's "constructor" property assert_true: Document.prototype.constructor is not writable expected true got false
-FAIL Document interface: attribute implementation assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute URL assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute documentURI assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute origin assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute compatMode assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute characterSet assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute charset assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute inputEncoding assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute contentType assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute doctype assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute documentElement assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Document interface: attribute implementation assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute URL assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute documentURI assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute origin assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute compatMode assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute characterSet assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute charset assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute inputEncoding assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute contentType assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute doctype assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute documentElement assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: operation getElementsByTagName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: operation getElementsByTagNameNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL Document interface: operation getElementsByClassName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -451,18 +271,10 @@ PASS Document interface: operation createRange()
 PASS Document interface: operation createNodeIterator(Node,unsigned long,NodeFilter) 
 PASS Document interface: operation createTreeWalker(Node,unsigned long,NodeFilter) 
 FAIL Document interface: operation getElementById(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Document interface: attribute children assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute firstElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute lastElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Document interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Document interface: attribute children assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute firstElementChild assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute lastElementChild assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute childElementCount assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Document interface: operation prepend([object Object],[object Object]) 
 PASS Document interface: operation append([object Object],[object Object]) 
 FAIL Document interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
@@ -670,18 +482,10 @@ PASS DocumentFragment interface object name
 PASS DocumentFragment interface: existence and properties of interface prototype object 
 FAIL DocumentFragment interface: existence and properties of interface prototype object's "constructor" property assert_true: DocumentFragment.prototype.constructor is not writable expected true got false
 FAIL DocumentFragment interface: operation getElementById(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL DocumentFragment interface: attribute children assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL DocumentFragment interface: attribute firstElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL DocumentFragment interface: attribute lastElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL DocumentFragment interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL DocumentFragment interface: attribute children assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL DocumentFragment interface: attribute firstElementChild assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL DocumentFragment interface: attribute lastElementChild assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL DocumentFragment interface: attribute childElementCount assert_equals: getter must be Function expected "function" but got "undefined"
 PASS DocumentFragment interface: operation prepend([object Object],[object Object]) 
 PASS DocumentFragment interface: operation append([object Object],[object Object]) 
 FAIL DocumentFragment interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
@@ -794,15 +598,9 @@ PASS DocumentType interface object length
 PASS DocumentType interface object name 
 PASS DocumentType interface: existence and properties of interface prototype object 
 FAIL DocumentType interface: existence and properties of interface prototype object's "constructor" property assert_true: DocumentType.prototype.constructor is not writable expected true got false
-FAIL DocumentType interface: attribute name assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL DocumentType interface: attribute publicId assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL DocumentType interface: attribute systemId assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL DocumentType interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL DocumentType interface: attribute publicId assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL DocumentType interface: attribute systemId assert_equals: getter must be Function expected "function" but got "undefined"
 PASS DocumentType interface: operation before([object Object],[object Object]) 
 PASS DocumentType interface: operation after([object Object],[object Object]) 
 PASS DocumentType interface: operation replaceWith([object Object],[object Object]) 
@@ -903,31 +701,15 @@ PASS Element interface object length
 PASS Element interface object name 
 PASS Element interface: existence and properties of interface prototype object 
 FAIL Element interface: existence and properties of interface prototype object's "constructor" property assert_true: Element.prototype.constructor is not writable expected true got false
-FAIL Element interface: attribute namespaceURI assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute prefix assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute localName assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute tagName assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute id assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute className assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute classList assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Element interface: attribute namespaceURI assert_own_property: expected property "namespaceURI" missing
+FAIL Element interface: attribute prefix assert_own_property: expected property "prefix" missing
+FAIL Element interface: attribute localName assert_own_property: expected property "localName" missing
+FAIL Element interface: attribute tagName assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Element interface: attribute id assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Element interface: attribute className assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Element interface: attribute classList assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Element interface: operation hasAttributes() 
-FAIL Element interface: attribute attributes assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Element interface: attribute attributes assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Element interface: operation getAttribute(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Element interface: operation getAttributeNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL Element interface: operation setAttribute(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
@@ -946,30 +728,18 @@ PASS Element interface: operation matches(DOMString)
 FAIL Element interface: operation getElementsByTagName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Element interface: operation getElementsByTagNameNS(DOMString,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL Element interface: operation getElementsByClassName(DOMString) assert_equals: property has wrong .length expected 1 but got 0
-FAIL Element interface: attribute children assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute firstElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute lastElementChild assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Element interface: attribute children assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Element interface: attribute firstElementChild assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Element interface: attribute lastElementChild assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Element interface: attribute childElementCount assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Element interface: operation prepend([object Object],[object Object]) 
 PASS Element interface: operation append([object Object],[object Object]) 
 FAIL Element interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
 FAIL Element interface: operation queryAll(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "queryAll" missing
 PASS Element interface: operation querySelector(DOMString) 
 PASS Element interface: operation querySelectorAll(DOMString) 
-FAIL Element interface: attribute previousElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Element interface: attribute nextElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Element interface: attribute previousElementSibling assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Element interface: attribute nextElementSibling assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Element interface: operation before([object Object],[object Object]) 
 PASS Element interface: operation after([object Object],[object Object]) 
 PASS Element interface: operation replaceWith([object Object],[object Object]) 
@@ -1169,35 +939,17 @@ FAIL NamedNodeMap interface: operation removeNamedItemNS(DOMString,DOMString) as
 FAIL Attr interface: existence and properties of interface object assert_equals: class string of Attr expected "[object Function]" but got "[object AttrConstructor]"
 PASS Attr interface object length 
 PASS Attr interface object name 
-FAIL Attr interface: existence and properties of interface prototype object assert_equals: prototype of Attr.prototype is not Object.prototype expected object "[object Object]" but got Node object of unknown type
+FAIL Attr interface: existence and properties of interface prototype object assert_equals: prototype of Attr.prototype is not Object.prototype expected object "[object Object]" but got object "[object NodePrototype]"
 FAIL Attr interface: existence and properties of interface prototype object's "constructor" property assert_true: Attr.prototype.constructor is not writable expected true got false
-FAIL Attr interface: attribute namespaceURI assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Attr interface: attribute prefix assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Attr interface: attribute localName assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Attr interface: attribute name assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Attr interface: attribute value assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Attr interface: attribute nodeValue assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Attr interface: attribute textContent assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Attr interface: attribute ownerElement assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Attr interface: attribute specified assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Attr interface: attribute namespaceURI assert_own_property: expected property "namespaceURI" missing
+FAIL Attr interface: attribute prefix assert_own_property: expected property "prefix" missing
+FAIL Attr interface: attribute localName assert_own_property: expected property "localName" missing
+FAIL Attr interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Attr interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Attr interface: attribute nodeValue assert_own_property: expected property "nodeValue" missing
+FAIL Attr interface: attribute textContent assert_own_property: expected property "textContent" missing
+FAIL Attr interface: attribute ownerElement assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Attr interface: attribute specified assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Attr must be primary interface of document.querySelector("[id]").attributes[0] 
 PASS Stringification of document.querySelector("[id]").attributes[0] 
 PASS Attr interface: document.querySelector("[id]").attributes[0] must inherit property "namespaceURI" with the proper type (0) 
@@ -1214,23 +966,15 @@ PASS CharacterData interface object length
 PASS CharacterData interface object name 
 PASS CharacterData interface: existence and properties of interface prototype object 
 FAIL CharacterData interface: existence and properties of interface prototype object's "constructor" property assert_true: CharacterData.prototype.constructor is not writable expected true got false
-FAIL CharacterData interface: attribute data assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL CharacterData interface: attribute length assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL CharacterData interface: attribute data assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL CharacterData interface: attribute length assert_equals: getter must be Function expected "function" but got "undefined"
 PASS CharacterData interface: operation substringData(unsigned long,unsigned long) 
 PASS CharacterData interface: operation appendData(DOMString) 
 PASS CharacterData interface: operation insertData(unsigned long,DOMString) 
 PASS CharacterData interface: operation deleteData(unsigned long,unsigned long) 
 PASS CharacterData interface: operation replaceData(unsigned long,unsigned long,DOMString) 
-FAIL CharacterData interface: attribute previousElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL CharacterData interface: attribute nextElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL CharacterData interface: attribute previousElementSibling assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL CharacterData interface: attribute nextElementSibling assert_equals: getter must be Function expected "function" but got "undefined"
 PASS CharacterData interface: operation before([object Object],[object Object]) 
 PASS CharacterData interface: operation after([object Object],[object Object]) 
 PASS CharacterData interface: operation replaceWith([object Object],[object Object]) 
@@ -1241,9 +985,7 @@ PASS Text interface object name
 PASS Text interface: existence and properties of interface prototype object 
 FAIL Text interface: existence and properties of interface prototype object's "constructor" property assert_true: Text.prototype.constructor is not writable expected true got false
 PASS Text interface: operation splitText(unsigned long) 
-FAIL Text interface: attribute wholeText assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Text interface: attribute wholeText assert_equals: getter must be Function expected "function" but got "undefined"
 PASS Text must be primary interface of document.createTextNode("abc") 
 PASS Stringification of document.createTextNode("abc") 
 PASS Text interface: document.createTextNode("abc") must inherit property "splitText" with the proper type (0) 
@@ -1354,9 +1096,7 @@ PASS ProcessingInstruction interface object length
 PASS ProcessingInstruction interface object name 
 PASS ProcessingInstruction interface: existence and properties of interface prototype object 
 FAIL ProcessingInstruction interface: existence and properties of interface prototype object's "constructor" property assert_true: ProcessingInstruction.prototype.constructor is not writable expected true got false
-FAIL ProcessingInstruction interface: attribute target assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL ProcessingInstruction interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
 PASS ProcessingInstruction must be primary interface of xmlDoc.createProcessingInstruction("abc", "def") 
 PASS Stringification of xmlDoc.createProcessingInstruction("abc", "def") 
 PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "target" with the proper type (0) 
@@ -1572,24 +1312,12 @@ PASS Range interface object length
 PASS Range interface object name 
 PASS Range interface: existence and properties of interface prototype object 
 FAIL Range interface: existence and properties of interface prototype object's "constructor" property assert_true: Range.prototype.constructor is not writable expected true got false
-FAIL Range interface: attribute startContainer assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Range interface: attribute startOffset assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Range interface: attribute endContainer assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Range interface: attribute endOffset assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Range interface: attribute collapsed assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL Range interface: attribute commonAncestorContainer assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL Range interface: attribute startContainer assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Range interface: attribute startOffset assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Range interface: attribute endContainer assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Range interface: attribute endOffset assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Range interface: attribute collapsed assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Range interface: attribute commonAncestorContainer assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Range interface: operation setStart(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
 FAIL Range interface: operation setEnd(Node,unsigned long) assert_equals: property has wrong .length expected 2 but got 1
 PASS Range interface: operation setStartBefore(Node) 
@@ -1734,21 +1462,11 @@ PASS NodeIterator interface object length
 PASS NodeIterator interface object name 
 PASS NodeIterator interface: existence and properties of interface prototype object 
 FAIL NodeIterator interface: existence and properties of interface prototype object's "constructor" property assert_true: NodeIterator.prototype.constructor is not writable expected true got false
-FAIL NodeIterator interface: attribute root assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL NodeIterator interface: attribute referenceNode assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL NodeIterator interface: attribute pointerBeforeReferenceNode assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL NodeIterator interface: attribute whatToShow assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL NodeIterator interface: attribute filter assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL NodeIterator interface: attribute root assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL NodeIterator interface: attribute referenceNode assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL NodeIterator interface: attribute pointerBeforeReferenceNode assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL NodeIterator interface: attribute whatToShow assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL NodeIterator interface: attribute filter assert_equals: getter must be Function expected "function" but got "undefined"
 PASS NodeIterator interface: operation nextNode() 
 PASS NodeIterator interface: operation previousNode() 
 PASS NodeIterator interface: operation detach() 
@@ -1767,18 +1485,10 @@ PASS TreeWalker interface object length
 PASS TreeWalker interface object name 
 PASS TreeWalker interface: existence and properties of interface prototype object 
 FAIL TreeWalker interface: existence and properties of interface prototype object's "constructor" property assert_true: TreeWalker.prototype.constructor is not writable expected true got false
-FAIL TreeWalker interface: attribute root assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL TreeWalker interface: attribute whatToShow assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL TreeWalker interface: attribute filter assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL TreeWalker interface: attribute currentNode assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL TreeWalker interface: attribute root assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL TreeWalker interface: attribute whatToShow assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL TreeWalker interface: attribute filter assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL TreeWalker interface: attribute currentNode assert_equals: getter must be Function expected "function" but got "undefined"
 PASS TreeWalker interface: operation parentNode() 
 PASS TreeWalker interface: operation firstChild() 
 PASS TreeWalker interface: operation lastChild() 

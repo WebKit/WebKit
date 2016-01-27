@@ -1,5 +1,21 @@
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
+        Getting / Setting property on prototype object must throw TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=153547
+        <rdar://problem/24370650>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update a few layout tests that were expecting getting a property on
+        the prototype object to return undefined instead of throwing.
+
+        * js/dom/dom-as-prototype-assignment-exception-expected.txt:
+        * js/dom/dom-attributes-on-mismatch-type-expected.txt:
+        * js/dom/dom-attributes-on-mismatch-type.html:
+        * js/dom/script-tests/dom-as-prototype-assignment-exception.js:
+
+2016-01-27  Chris Dumez  <cdumez@apple.com>
+
         window.atob() should ignore spaces in input
         https://bugs.webkit.org/show_bug.cgi?id=153522
         <rdar://problem/24357822>

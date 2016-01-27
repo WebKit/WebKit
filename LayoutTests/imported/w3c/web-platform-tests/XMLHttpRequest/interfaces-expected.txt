@@ -1,17 +1,4 @@
 CONSOLE MESSAGE: line 198: callback not yet supported
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'onreadystatechange' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'readyState' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'timeout' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'withCredentials' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'upload' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'responseURL' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'status' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'statusText' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'responseType' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'responseXML' on a non-XMLHttpRequest object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'lengthComputable' on a non-ProgressEvent object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'loaded' on a non-ProgressEvent object.
-CONSOLE MESSAGE: line 1151: Deprecated attempt to access property 'total' on a non-ProgressEvent object.
 XMLHttpRequest IDL tests
 
 
@@ -56,9 +43,7 @@ PASS XMLHttpRequest interface object length
 PASS XMLHttpRequest interface object name 
 FAIL XMLHttpRequest interface: existence and properties of interface prototype object assert_own_property: should inherit from XMLHttpRequestEventTarget, but self has no such property expected property "XMLHttpRequestEventTarget" missing
 FAIL XMLHttpRequest interface: existence and properties of interface prototype object's "constructor" property assert_true: XMLHttpRequest.prototype.constructor is not writable expected true got false
-FAIL XMLHttpRequest interface: attribute onreadystatechange assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL XMLHttpRequest interface: attribute onreadystatechange assert_equals: getter must be Function expected "function" but got "undefined"
 PASS XMLHttpRequest interface: constant UNSENT on interface object 
 PASS XMLHttpRequest interface: constant UNSENT on interface prototype object 
 PASS XMLHttpRequest interface: constant OPENED on interface object 
@@ -69,43 +54,25 @@ PASS XMLHttpRequest interface: constant LOADING on interface object
 PASS XMLHttpRequest interface: constant LOADING on interface prototype object 
 PASS XMLHttpRequest interface: constant DONE on interface object 
 PASS XMLHttpRequest interface: constant DONE on interface prototype object 
-FAIL XMLHttpRequest interface: attribute readyState assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL XMLHttpRequest interface: attribute readyState assert_equals: getter must be Function expected "function" but got "undefined"
 PASS XMLHttpRequest interface: operation open(ByteString,USVString) 
 PASS XMLHttpRequest interface: operation open(ByteString,USVString,boolean,USVString,USVString) 
 PASS XMLHttpRequest interface: operation setRequestHeader(ByteString,ByteString) 
-FAIL XMLHttpRequest interface: attribute timeout assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL XMLHttpRequest interface: attribute withCredentials assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL XMLHttpRequest interface: attribute upload assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL XMLHttpRequest interface: attribute timeout assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL XMLHttpRequest interface: attribute withCredentials assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL XMLHttpRequest interface: attribute upload assert_equals: getter must be Function expected "function" but got "undefined"
 PASS XMLHttpRequest interface: operation send([object Object],[object Object]) 
 PASS XMLHttpRequest interface: operation abort() 
-FAIL XMLHttpRequest interface: attribute responseURL assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL XMLHttpRequest interface: attribute status assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL XMLHttpRequest interface: attribute statusText assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL XMLHttpRequest interface: attribute responseURL assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL XMLHttpRequest interface: attribute status assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL XMLHttpRequest interface: attribute statusText assert_equals: getter must be Function expected "function" but got "undefined"
 PASS XMLHttpRequest interface: operation getResponseHeader(ByteString) 
 PASS XMLHttpRequest interface: operation getAllResponseHeaders() 
 PASS XMLHttpRequest interface: operation overrideMimeType(DOMString) 
-FAIL XMLHttpRequest interface: attribute responseType assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL XMLHttpRequest interface: attribute responseType assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL XMLHttpRequest interface: attribute response assert_true: The prototype object must have a property "response" expected true got false
 FAIL XMLHttpRequest interface: attribute responseText assert_true: The prototype object must have a property "responseText" expected true got false
-FAIL XMLHttpRequest interface: attribute responseXML assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL XMLHttpRequest interface: attribute responseXML assert_equals: getter must be Function expected "function" but got "undefined"
 PASS XMLHttpRequest must be primary interface of new XMLHttpRequest() 
 PASS Stringification of new XMLHttpRequest() 
 PASS XMLHttpRequest interface: new XMLHttpRequest() must inherit property "onreadystatechange" with the proper type (0) 
@@ -218,13 +185,7 @@ PASS ProgressEvent interface object length
 PASS ProgressEvent interface object name 
 PASS ProgressEvent interface: existence and properties of interface prototype object 
 FAIL ProgressEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: ProgressEvent.prototype.constructor is not writable expected true got false
-FAIL ProgressEvent interface: attribute lengthComputable assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL ProgressEvent interface: attribute loaded assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
-FAIL ProgressEvent interface: attribute total assert_throws: getting property on prototype object must throw TypeError function "function () {
-    [native code]
-}" did not throw
+FAIL ProgressEvent interface: attribute lengthComputable assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ProgressEvent interface: attribute loaded assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ProgressEvent interface: attribute total assert_equals: getter must be Function expected "function" but got "undefined"
 

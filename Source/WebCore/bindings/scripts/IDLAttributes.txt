@@ -88,6 +88,7 @@ JSCustomToNativeObject
 JSGenerateToJSObject
 JSGenerateToNativeObject
 JSLegacyParent=*
+LenientThis
 MasqueradesAsUndefined
 NamedConstructor=*
 NewImpurePropertyFiresWatchpoints

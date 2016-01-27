@@ -325,7 +325,7 @@
     [NotEnumerable] attribute EventHandler onselectionchange;
 
     // Unique to Document
-    [NotEnumerable] attribute EventHandler onreadystatechange;
+    [NotEnumerable, LenientThis] attribute EventHandler onreadystatechange;
     [NotEnumerable, Conditional=CSP_NEXT] attribute EventHandler onsecuritypolicyviolation;
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange;
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror;

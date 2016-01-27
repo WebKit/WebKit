@@ -1,5 +1,68 @@
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
+        Getting / Setting property on prototype object must throw TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=153547
+        <rdar://problem/24370650>
+
+        Reviewed by Ryosuke Niwa.
+
+        Gettingi / Setting property on prototype object must throw TypeError as per
+        Web IDL specification:
+        http://heycam.github.io/webidl/#dfn-attribute-getter (Step 2.4.2)
+        http://heycam.github.io/webidl/#dfn-attribute-setter (Step 3.5)
+
+        Firefox and Chrome already throw a TypeError in this case, as per
+        the specification. However, WebKit was returning null and merely
+        logging a deprecation error message. This patch aligns our behavior
+        with other browsers and the specification.
+
+        This patch also adds support for the [LenientThis] IDL extended
+        attribute:
+        http://heycam.github.io/webidl/#LenientThis
+
+        For [LenientThis] attributes, we do not throw a TypeError if the
+        attribute getter / setter is called on an object which does not
+        implement the expected interface, as per:
+        http://heycam.github.io/webidl/#dfn-attribute-getter (Step 2.4.1)
+        http://heycam.github.io/webidl/#dfn-attribute-setter (Step 3.5)
+
+        No new tests, already covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        Add support for [LenientThis]:
+        http://heycam.github.io/webidl/#LenientThis
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        Rebaseline bindings tests.
+
+        * bindings/scripts/test/TestObj.idl:
+        Add coverage for [LenientThis] attributes.
+
+        * dom/Document.idl:
+        Mark 'onreadystatechange' as [LenientThis] as per the HTML
+        specification:
+        https://html.spec.whatwg.org/#document
+
+        * dom/GlobalEventHandlers.idl:
+        Mark 'onmouseeneter' / 'onmouseleave' as [LenientThis] as per the
+        HTML specification:
+        https://html.spec.whatwg.org/#globaleventhandlers
+
+2016-01-27  Chris Dumez  <cdumez@apple.com>
+
         window.atob() should ignore spaces in input
         https://bugs.webkit.org/show_bug.cgi?id=153522
         <rdar://problem/24357822>

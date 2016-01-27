@@ -225,6 +225,20 @@
     IMPL->setTestObjAttr(core(newTestObjAttr));
 }
 
+- (DOMTestObj *)lenientTestObjAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->lenientTestObjAttr()));
+}
+
+- (void)setLenientTestObjAttr:(DOMTestObj *)newLenientTestObjAttr
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newLenientTestObjAttr);
+
+    IMPL->setLenientTestObjAttr(core(newLenientTestObjAttr));
+}
+
 - (DOMTestObj *)XMLObjAttr
 {
     WebCore::JSMainThreadNullState state;

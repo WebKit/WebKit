@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Makes sure that assigning to a DOM property directly on the prototype throws a TypeError.");
+
+shouldThrow('document.prototype.oncopy = "fail"');
+shouldThrow('Document.prototype.selectedStylesheetSet = "fail"');
+shouldThrow('HTMLElement.prototype.innerText = "fail"');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -121,11 +121,8 @@ EncodedJSValue jsTestNodeName(ExecState* state, JSObject* slotBase, EncodedJSVal
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestNode* castedThis = jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
-        if (jsDynamicCast<JSTestNodePrototype*>(slotBase))
-            return reportDeprecatedGetterError(*state, "TestNode", "name");
+    if (UNLIKELY(!castedThis))
         return throwGetterTypeError(*state, "TestNode", "name");
-    }
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.name());
     return JSValue::encode(result);
@@ -146,10 +143,7 @@ void setJSTestNodeName(ExecState* state, JSObject* baseObject, EncodedJSValue th
     UNUSED_PARAM(baseObject);
     JSTestNode* castedThis = jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
-        if (jsDynamicCast<JSTestNodePrototype*>(JSValue::decode(thisValue)))
-            reportDeprecatedSetterError(*state, "TestNode", "name");
-        else
-            throwSetterTypeError(*state, "TestNode", "name");
+        throwSetterTypeError(*state, "TestNode", "name");
         return;
     }
     auto& impl = castedThis->wrapped();

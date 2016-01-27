@@ -73,6 +73,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property unsigned long long unsignedLongLongAttr;
 @property (copy) NSString *stringAttr;
 @property (strong) DOMTestObj *testObjAttr;
+@property (strong) DOMTestObj *lenientTestObjAttr;
 @property (strong) DOMTestObj *XMLObjAttr;
 @property BOOL create;
 @property (copy) NSString *reflectedStringAttr;
