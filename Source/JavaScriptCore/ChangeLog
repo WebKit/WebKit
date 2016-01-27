@@ -1,3 +1,12 @@
+2016-01-26  Saam barati  <sbarati@apple.com>
+
+        testb3 and testAir should be compiled under -O0
+        https://bugs.webkit.org/show_bug.cgi?id=153520
+
+        Reviewed by Benjamin Poulain.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2016-01-26  Filip Pizlo  <fpizlo@apple.com>
 
         B3's integer range analysis should know that Mul'ing two sufficiently small numbers will yield a number that still has a meaningful range

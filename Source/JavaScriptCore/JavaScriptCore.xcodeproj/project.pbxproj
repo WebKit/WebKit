@@ -417,7 +417,7 @@
 		0F6183311C45BF070072450B /* AirLowerMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183281C45BF070072450B /* AirLowerMacros.h */; };
 		0F61833C1C45F62A0072450B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		0F61833D1C45F62A0072450B /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
-		0F6183451C45F6600072450B /* testair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183441C45F6600072450B /* testair.cpp */; };
+		0F6183451C45F6600072450B /* testair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183441C45F6600072450B /* testair.cpp */; settings = {COMPILER_FLAGS = "-O0"; }; };
 		0F620174143FCD330068B77C /* DFGVariableAccessData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */; };
 		0F620176143FCD3B0068B77C /* DFGBasicBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620170143FCD2F0068B77C /* DFGBasicBlock.h */; };
 		0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */; };
@@ -893,7 +893,7 @@
 		0FEC85931BDB1E100080FF74 /* AirGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85921BDB1E100080FF74 /* AirGenerated.cpp */; };
 		0FEC85A31BDB5CF10080FF74 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		0FEC85A41BDB5CF10080FF74 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
-		0FEC85AF1BDB5D5E0080FF74 /* testb3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85AE1BDB5D5E0080FF74 /* testb3.cpp */; };
+		0FEC85AF1BDB5D5E0080FF74 /* testb3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85AE1BDB5D5E0080FF74 /* testb3.cpp */; settings = {COMPILER_FLAGS = "-O0"; }; };
 		0FEC85B31BDED9570080FF74 /* B3ConstPtrValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85B21BDED9570080FF74 /* B3ConstPtrValue.h */; };
 		0FEC85B91BE1462F0080FF74 /* B3InsertionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85B41BE1462F0080FF74 /* B3InsertionSet.cpp */; };
 		0FEC85BA1BE1462F0080FF74 /* B3InsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85B51BE1462F0080FF74 /* B3InsertionSet.h */; };
