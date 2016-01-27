@@ -1,3 +1,17 @@
+2016-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused FramesLarge.png variants, only the smaller Frames icon is used for the Rendering Frames timeline
+        https://bugs.webkit.org/show_bug.cgi?id=153523
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/FramesLarge.png: Removed.
+        * UserInterface/Images/FramesLarge@2x.png: Removed.
+        * UserInterface/Images/gtk/FramesLarge.png: Removed.
+        * UserInterface/Images/gtk/FramesLarge@2x.png: Removed.
+        * UserInterface/Views/TimelineIcons.css:
+        (.rendering-frame-icon.large .icon): Deleted.
+
 2016-01-25  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Arrow function specific features. Lexical bind "arguments"
