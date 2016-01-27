@@ -1,5 +1,18 @@
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
+        Setting HTMLInputElement.value to null to set its value to the empty string
+        https://bugs.webkit.org/show_bug.cgi?id=153519
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a layout test to make sure that setting HTMLInputElement.value to null
+        actually sets its value to the empty string.
+
+        * fast/dom/HTMLInputElement/input-value-set-null-expected.txt: Added.
+        * fast/dom/HTMLInputElement/input-value-set-null.html: Added.
+
+2016-01-26  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, temporarily skip fast/history/page-cache-webdatabase-no-transaction-db.html
         https://bugs.webkit.org/show_bug.cgi?id=153525
 

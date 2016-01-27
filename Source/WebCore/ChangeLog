@@ -1,3 +1,24 @@
+2016-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Setting HTMLInputElement.value to null to set its value to the empty string
+        https://bugs.webkit.org/show_bug.cgi?id=153519
+
+        Reviewed by Ryosuke Niwa.
+
+        Setting HTMLInputElement.value to null to set its value to the empty string:
+        - https://html.spec.whatwg.org/#htmlinputelement
+        - http://heycam.github.io/webidl/#TreatNullAs
+
+        WebKit would previously unset the value attribute instead, which caused
+        it to fallback to input.defaultValue if set.
+
+        Firefox and Chrome behave correctly.
+
+        Test: fast/dom/HTMLInputElement/input-value-set-null.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+
 2016-01-26  Anders Carlsson  <andersca@apple.com>
 
         WebKitAdditions should be able to modify derived source rules

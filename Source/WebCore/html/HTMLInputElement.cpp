@@ -983,7 +983,7 @@ void HTMLInputElement::setValue(const String& value, ExceptionCode& ec, TextFiel
         ec = INVALID_STATE_ERR;
         return;
     }
-    setValue(value, eventBehavior);
+    setValue(value.isNull() ? emptyString() : value, eventBehavior);
 }
 
 void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior)
