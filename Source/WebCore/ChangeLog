@@ -1,3 +1,29 @@
+2016-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        ScrollAnimator is not notified when mouse entered, moved or exited a RenderListBox
+        https://bugs.webkit.org/show_bug.cgi?id=153398
+
+        Reviewed by Michael Catanzaro.
+
+        EvenHandler is checking whether the enclosing layer of a node is
+        registered as scrollable area of its frame view. That doesn't work
+        for list boxes, because they are the scrollable area
+        themselves. Also when entering a list box the node under mouse is
+        not usually the list box itself, but any of its children, a
+        HTMLOptionElement or a HTMLOptGroupElement. Instead of comparing
+        layers, we should find the enclosing scrollable area of the target
+        elements and compare them to decide whether the mouse has entered,
+        left or moved a scrollable area.
+
+        * page/EventHandler.cpp:
+        (WebCore::enclosingScrollableArea): Return the enclosing
+        scrollable area of the given node. If the node doesn't have a
+        renderer, it traverses its parents. If the renderer is a
+        RenderListBox it is returned, otherwhise the enclosing layer is
+        returned.
+        (WebCore::EventHandler::mouseMoved): Use enclosingScrollableArea.
+        (WebCore::EventHandler::updateMouseEventTargetNode): Ditto.
+
 2016-01-26  Sam Weinig  <sam@webkit.org>
 
         Try touching DerivedSources.make to force rebuilding.
