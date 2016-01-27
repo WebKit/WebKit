@@ -27,9 +27,18 @@
 #include <functional>
 #include <wtf/text/AtomicString.h>
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/EventNamesAdditions.h>)
+#import <WebKitAdditions/EventNamesAdditions.h>
+#endif
+
 namespace WebCore {
 
+#if !defined(ADDITIONAL_DOM_EVENT_NAMES_FOR_EACH)
+#define ADDITIONAL_DOM_EVENT_NAMES_FOR_EACH(macro)
+#endif
+
 #define DOM_EVENT_NAMES_FOR_EACH(macro) \
+    ADDITIONAL_DOM_EVENT_NAMES_FOR_EACH(macro) \
     macro(DOMActivate) \
     macro(DOMCharacterDataModified) \
     macro(DOMContentLoaded) \

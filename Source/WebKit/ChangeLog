@@ -1,3 +1,13 @@
+2016-01-27  Anders Carlsson  <andersca@apple.com>
+
+        Add WebKitAdditions extension points to WebCore, WebKit and WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=153550
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files.
+
 2016-01-27  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Clean build fix after r195680.

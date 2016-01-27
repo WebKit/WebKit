@@ -763,6 +763,11 @@ ADDITIONAL_BINDING_IDLS += \
 endif
 endif # IOS
 
+vpath %.in $(WEBKITADDITIONS_HEADER_SEARCH_PATHS)
+
+ADDITIONAL_EVENT_NAMES =
+ADDITIONAL_EVENT_TARGET_FACTORY =
+
 -include WebCoreDerivedSourcesAdditions.make
 
 NON_SVG_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
@@ -1118,15 +1123,19 @@ XLinkNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/S
 
 # Register event constructors and targets
 
+EVENT_NAMES = EventNames.in $(ADDITIONAL_EVENT_NAMES)
+
 EventFactory.cpp EventHeaders.h EventInterfaces.h : EventFactory.intermediate
 .INTERMEDIATE : EventFactory.intermediate
-EventFactory.intermediate : dom/make_event_factory.pl dom/EventNames.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventNames.in
+EventFactory.intermediate : dom/make_event_factory.pl $(EVENT_NAMES)
+	$(PERL) -I $(WebCore)/bindings/scripts $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
+
+EVENT_TARGET_FACTORY = EventTargetFactory.in $(ADDITIONAL_EVENT_TARGET_FACTORY)
 
 EventTargetHeaders.h EventTargetInterfaces.h : EventTargetFactory.intermediate
 .INTERMEDIATE : EventTargetFactory.intermediate
-EventTargetFactory.intermediate : dom/make_event_factory.pl dom/EventTargetFactory.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventTargetFactory.in
+EventTargetFactory.intermediate : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
+	$(PERL) -I $(WebCore)/bindings/scripts $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
 ExceptionCodeDescription.cpp ExceptionCodeDescription.h ExceptionHeaders.h ExceptionInterfaces.h : MakeDOMExceptions.intermediate
 .INTERMEDIATE : MakeDOMExceptions.intermediate

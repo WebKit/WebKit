@@ -122,6 +122,10 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyIncludes.h>)
+#include <WebKitAdditions/WebPageProxyIncludes.h>
+#endif
+
 #if ENABLE(MEDIA_SESSION)
 namespace WebCore {
 class MediaSessionMetadata;
@@ -1537,6 +1541,10 @@ private:
 
 #if ENABLE(VIBRATION)
     RefPtr<WebVibrationProxy> m_vibration;
+#endif
+
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyMembers.h>)
+#include <WebKitAdditions/WebPageProxyMembers.h>
 #endif
 
     CallbackMap m_callbacks;

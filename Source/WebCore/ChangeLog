@@ -1,3 +1,35 @@
+2016-01-27  Anders Carlsson  <andersca@apple.com>
+
+        Add WebKitAdditions extension points to WebCore, WebKit and WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=153550
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources.make:
+        Add the ability for WebKitAdditions to add events and event targets.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * bindings/scripts/InFilesCompiler.pm:
+        (initializeFromCommandLine):
+        (compile):
+        Handle multiple --input parameters.
+
+        * dom/EventNames.h:
+        Handle adding more event names.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::MainFrame):
+        * page/MainFrame.h:
+        * page/PageConfiguration.h:
+        Add extension points.
+
+        * platform/cocoa/WebKitAdditions.mm: Added.
+        Import additions.
+
 2016-01-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix many Index tests.

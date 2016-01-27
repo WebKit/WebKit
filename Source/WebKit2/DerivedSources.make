@@ -67,6 +67,7 @@ VPATH = \
     $(WebKit2)/UIProcess/UserContent \
     $(WebKit2)/UIProcess/mac \
     $(WebKit2)/UIProcess/ios \
+    $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) \
 #
 
 MESSAGE_RECEIVERS = \

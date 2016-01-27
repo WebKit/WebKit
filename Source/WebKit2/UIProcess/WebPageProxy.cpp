@@ -168,6 +168,10 @@
 #include <WebCore/MediaSessionMetadata.h>
 #endif
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyIncludes.h>)
+#include <WebKitAdditions/WebPageProxyIncludes.h>
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -473,6 +477,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_vibration = WebVibrationProxy::create(this);
 #endif
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInitialization.h>)
+#include <WebKitAdditions/WebPageProxyInitialization.h>
+#endif
+
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
     if (m_sessionID.isEphemeral())
@@ -699,6 +707,10 @@ void WebPageProxy::reattachToWebProcess()
 #endif
 #if PLATFORM(IOS)
     m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
+#endif
+
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInitialization.h>)
+#include <WebKitAdditions/WebPageProxyInitialization.h>
 #endif
 
     initializeWebPage();
@@ -5030,6 +5042,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     m_pageClient.mediaSessionManager().removeAllPlaybackTargetPickerClients(*this);
+#endif
+
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInvalidation.h>)
+#include <WebKitAdditions/WebPageProxyInvalidation.h>
 #endif
 
     CallbackBase::Error error;

@@ -295,6 +295,10 @@
 #import <WebCore/WebMediaSessionManagerMac.h>
 #endif
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebViewIncludes.h>)
+#import <WebKitAdditions/WebViewIncludes.h>
+#endif
+
 #if PLATFORM(MAC)
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 #endif
@@ -968,6 +972,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
 #endif
+
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebViewInitialization.mm>)
+#import <WebKitAdditions/WebViewInitialization.mm>
+#endif
+
     pageConfiguration.editorClient = new WebEditorClient(self);
     pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
@@ -1207,6 +1216,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = new WebDragClient(self);
 #endif
+
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebViewInitialization.mm>)
+#import <WebKitAdditions/WebViewInitialization.mm>
+#endif
+
     pageConfiguration.editorClient = new WebEditorClient(self);
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;

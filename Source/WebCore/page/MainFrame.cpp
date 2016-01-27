@@ -39,6 +39,10 @@
 #include "ServicesOverlayController.h"
 #endif /* PLATFORM(MAC) */
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/MainFrameIncludes.h>)
+#include <WebKitAdditions/MainFrameIncludes.h>
+#endif
+
 namespace WebCore {
 
 inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
@@ -53,6 +57,9 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
     , m_diagnosticLoggingClient(configuration.diagnosticLoggingClient)
 {
+#if defined(__has_include) && __has_include(<WebKitAdditions/MainFrameInitialization.cpp>)
+#include <WebKitAdditions/MainFrameInitialization.cpp>
+#endif
 }
 
 MainFrame::~MainFrame()

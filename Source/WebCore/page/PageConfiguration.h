@@ -29,6 +29,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/PageConfigurationIncludes.h>)
+#include <WebKitAdditions/PageConfigurationIncludes.h>
+#endif
+
 namespace WebCore {
 
 class AlternativeTextClient;
@@ -72,6 +76,10 @@ public:
     ValidationMessageClient* validationMessageClient { nullptr };
     FrameLoaderClient* loaderClientForMainFrame { nullptr };
     DiagnosticLoggingClient* diagnosticLoggingClient { nullptr };
+
+#if defined(__has_include) && __has_include(<WebKitAdditions/PageConfigurationMembers.h>)
+#include <WebKitAdditions/PageConfigurationMembers.h>
+#endif
 
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;
     RefPtr<DatabaseProvider> databaseProvider;

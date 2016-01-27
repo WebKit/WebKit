@@ -227,6 +227,10 @@
 #include <WebCore/MediaPlayerRequestInstallMissingPluginsCallback.h>
 #endif
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageIncludes.h>)
+#include <WebKitAdditions/WebPageIncludes.h>
+#endif
+
 using namespace JSC;
 using namespace WebCore;
 
@@ -379,6 +383,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if USE(AUTOCORRECTION_PANEL)
     pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(this);
 #endif
+
     pageConfiguration.plugInClient = new WebPlugInClient(*this);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(*this);
@@ -388,6 +393,10 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageConfiguration.storageNamespaceProvider = WebStorageNamespaceProvider::getOrCreate(m_pageGroup->pageGroupID());
     pageConfiguration.userContentController = m_userContentController ? &m_userContentController->userContentController() : &m_pageGroup->userContentController();
     pageConfiguration.visitedLinkStore = VisitedLinkTableController::getOrCreate(parameters.visitedLinkTableID);
+
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageInitialization.h>)
+#include <WebKitAdditions/WebPageInitialization.h>
+#endif
 
     m_page = std::make_unique<Page>(pageConfiguration);
 

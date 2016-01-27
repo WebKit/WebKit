@@ -1,3 +1,21 @@
+2016-01-27  Anders Carlsson  <andersca@apple.com>
+
+        Add WebKitAdditions extension points to WebCore, WebKit and WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=153550
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        Add WKA header search paths.
+
+        * WebKitAdditions.mm: Added.
+        Add addition files.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        Add extension points.
+
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
         window.atob() should ignore spaces in input

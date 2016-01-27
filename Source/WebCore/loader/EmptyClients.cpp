@@ -44,6 +44,10 @@
 #include "StorageNamespaceProvider.h"
 #include <wtf/NeverDestroyed.h>
 
+#if defined(__has_include) && __has_include(<WebKitAdditions/EmptyClientsIncludes.h>)
+#include <WebKitAdditions/EmptyClientsIncludes.h>
+#endif
+
 namespace WebCore {
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
@@ -133,6 +137,10 @@ void fillWithEmptyClients(PageConfiguration& pageConfiguration)
     pageConfiguration.databaseProvider = adoptRef(new EmptyDatabaseProvider);
     pageConfiguration.storageNamespaceProvider = adoptRef(new EmptyStorageNamespaceProvider);
     pageConfiguration.visitedLinkStore = adoptRef(new EmptyVisitedLinkStore);
+
+#if defined(__has_include) && __has_include(<WebKitAdditions/EmptyClientsFill.cpp>)
+#include <WebKitAdditions/EmptyClientsFill.cpp>
+#endif
 }
 
 class EmptyPopupMenu : public PopupMenu {
