@@ -1208,7 +1208,7 @@ define NL
 endef
 
 $(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES) DerivedSources.make
-	$(foreach f,$(BINDING_IDLS),echo $(f)>>$(IDL_FILES_TMP)$(NL))
+	$(foreach f,$(BINDING_IDLS),@echo $(f)>>$(IDL_FILES_TMP)$(NL))
 	$(call preprocess_idls_script, $(PREPROCESS_IDLS_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
 	$(DELETE) $(IDL_FILES_TMP)
 
