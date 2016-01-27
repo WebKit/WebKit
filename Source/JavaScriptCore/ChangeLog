@@ -1,3 +1,48 @@
+2016-01-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] When lowering B3 to Air, preferRightForResult() should prefer values from the same block
+        https://bugs.webkit.org/show_bug.cgi?id=153477
+
+        Reviewed by Filip Pizlo.
+
+        In cases like this:
+
+        Block #0
+            @1 = something
+            @2 = Jump #1
+        Block #1
+            @3 = something else
+            @4 = Add(@3, @1)
+            ...
+            @42 = Branch(@x, #1, #2)
+
+        B3LowerToAir would pick @1 for the argument copied
+        for what goes into the UseDef side of Add.
+
+        This created a bunch of moves that could never be coalesced.
+        In Kraken's imaging-desaturate, there were enough Moves to slow
+        down the hot loop.
+
+        Ideally, we should not use UseCount for lowering. We should use
+        the real liveness for preferRightForResult(), and a loop-weighted
+        use-count for effective addresses. The problem is keeping the cost
+        low for those simple helpers.
+
+        In this patch, I went with a simple heuristic: prioritize the value
+        defined in the same block for UseDef.
+
+        There is one other way that would be cheap but a bit invasive:
+        -Get rid of UseDef.
+        -Make every ops, 3 operands.
+        -Tell the register allocator to attempt aliasing of the 2 uses
+         with the def.
+        -If the allocator fails, just add a move as needed.
+
+        For now, the simple heuristic seems okay for the cases have.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::preferRightForResult):
+
 2016-01-26  Filip Pizlo  <fpizlo@apple.com>
 
         Tail duplication should break critical edges first

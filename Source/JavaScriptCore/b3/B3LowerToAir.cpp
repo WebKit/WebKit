@@ -583,18 +583,27 @@ private:
         // - A child might be a candidate for coalescing with this value.
         //
         // Currently, we have machinery in place to recognize super obvious forms of the latter issue.
-
-        bool result = m_useCounts.numUsingInstructions(right) == 1;
         
         // We recognize when a child is a Phi that has this value as one of its children. We're very
         // conservative about this; for example we don't even consider transitive Phi children.
         bool leftIsPhiWithThis = m_phiChildren[left].transitivelyUses(m_value);
         bool rightIsPhiWithThis = m_phiChildren[right].transitivelyUses(m_value);
-        
-        if (leftIsPhiWithThis != rightIsPhiWithThis)
-            result = rightIsPhiWithThis;
 
-        return result;
+        if (leftIsPhiWithThis != rightIsPhiWithThis)
+            return rightIsPhiWithThis;
+
+        bool leftResult = m_useCounts.numUsingInstructions(left) == 1;
+        bool rightResult = m_useCounts.numUsingInstructions(right) == 1;
+        if (leftResult && rightResult) {
+            // If one operand is not in the block, it could be in a block dominating a loop
+            // containing m_value.
+            if (left->owner == m_value->owner)
+                return false;
+            if (right->owner == m_value->owner)
+                return true;
+        }
+
+        return rightResult;
     }
 
     template<Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble, Air::Opcode opcodeFloat, Commutativity commutativity = NotCommutative>
