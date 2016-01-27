@@ -47,6 +47,13 @@ test("_loaded", function()
     }
 });
 
+test("_parseRevisionFromURL", function()
+{
+    strictEqual(this.trac._parseRevisionFromURL("https://trac.webkit.org/changeset/190497"), "190497", "Subversion");
+    strictEqual(this.trac._parseRevisionFromURL("http://trac.foobar.com/repository/changeset/75388/project"), "75388", "Subversion with suffix");
+    strictEqual(this.trac._parseRevisionFromURL("https://git.foobar.com/trac/Whatever.git/changeset/0e498db5d8e5b5a342631"), "0e498db5d8e5b5a342631", "Git");
+});
+
 module("BuildBotQueueView");
 
 var settings = new Settings;

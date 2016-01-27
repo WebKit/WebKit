@@ -1,3 +1,17 @@
+2016-01-27  Jason Marcell  <jmarcell@apple.com>
+
+        Refactor logic for parsing Trac revisions into its own function and add logic for parsing git hashes.
+        https://bugs.webkit.org/show_bug.cgi?id=153332
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        (Trac.prototype._xmlTimelineURL): Uses new function.
+        (Trac.prototype._parseRevisionFromURL): Added. Pulled out logic for parsing revisions from a URL. Also added
+        logic for parsing git hashes.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/tests.js: Added tests for
+        Trac._parseRevisionFromURL.
+
 2016-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Remove Mavericks from the flakiness dashboard
