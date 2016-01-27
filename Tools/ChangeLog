@@ -1,3 +1,25 @@
+2016-01-27  Jason Marcell  <jmarcell@apple.com>
+
+        Fix bugs caused by incorrect usage of "branch" vs. "branchName".
+        https://bugs.webkit.org/show_bug.cgi?id=153330
+
+        Reviewed by Daniel Bates.
+
+        In an earlier patch we started using the name "branch" to indicate a branch object, whereas
+        "branchName" implies that the variable or property in question is simply a string. We fixed some
+        inconsistencies regarding this issue in 152982 but further bugs and inconsistencies were recently
+        spotted in BuildbotQueueView.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._popoverLinesForCommitRange): Change branchName to branch in method signature.
+        Changed branchName to branch.name in call to commitsOnBranch.
+        (BuildbotQueueView.prototype._presentPopoverForPendingCommits): Change branch.name to branch in call to
+        _popoverLinesForCommitRange.
+        (BuildbotQueueView.prototype._presentPopoverForRevisionRange): Changed context.branchName to context.branch.name.
+        (BuildbotQueueView.prototype._revisionContentWithPopoverForIteration): Changed branch.name to branch.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/tests.js: Added tests to verify
+        fix.
+
 2016-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add API to access closed shadowRoot in InjectedBundle

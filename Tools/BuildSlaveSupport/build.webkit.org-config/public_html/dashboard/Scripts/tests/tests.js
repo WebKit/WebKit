@@ -54,24 +54,99 @@ test("_parseRevisionFromURL", function()
     strictEqual(this.trac._parseRevisionFromURL("https://git.foobar.com/trac/Whatever.git/changeset/0e498db5d8e5b5a342631"), "0e498db5d8e5b5a342631", "Git");
 });
 
-module("BuildBotQueueView");
+module("BuildBotQueueView", {
+    setup: function() {
+        this.trac = new MockTrac();
+        this.queue = new MockBuildbotQueue();
+        this.trunkBranch = {
+            name: "trunk",
+            repository: {
+                name: "openSource",
+                trac: this.trac,
+                isSVN: true,
+            }
+        };
+        this.queue.branches = [this.trunkBranch];
+        this.view = new MockBuildbotQueueView([this.queue]);
+    }
+});
 
 var settings = new Settings;
 test("_appendPendingRevisionCount", function()
 {
-    trac = new MockTrac();
-    var queue = new MockBuildbotQueue();
-    queue.branches = [{
-        name: "trunk",
-        repository: {
-            name: "openSource",
-            trac: trac
-        }
-    }]
-    var view = new MockBuildbotQueueView([queue]);
-    view._appendPendingRevisionCount(queue);
-    var revisionsBehind = view.element.getElementsByClassName("message")[0].innerHTML.match(/.*(\d+) revision(|s) behind/)[1];
+    this.view._appendPendingRevisionCount(this.queue);
+    var revisionsBehind = this.view.element.getElementsByClassName("message")[0].innerHTML.match(/.*(\d+) revision(|s) behind/)[1];
     equal(revisionsBehind, "1", "assert revisions behind");
+});
+
+test("_popoverLinesForCommitRange", function()
+{
+    var lines = this.view._popoverLinesForCommitRange(this.trac, this.trunkBranch, 33018, 33020);
+    strictEqual(lines.length, 3, "has 3 lines");
+});
+
+test("_presentPopoverForPendingCommits", function()
+{
+    var element = document.createElement("div");
+    var popover = new Dashboard.Popover();
+    this.view._presentPopoverForPendingCommits(element, popover, this.queue);
+    var nodeList = popover._element.getElementsByClassName("pending-commit");
+    strictEqual(nodeList.length, 1, "has 1 pending commit");
+});
+
+test("_presentPopoverForRevisionRange", function()
+{
+    var element = document.createElement("div");
+    var popover = new Dashboard.Popover();
+    var context = {
+        trac: this.trac,
+        branch: this.trunkBranch,
+        firstRevision: 33018,
+        lastRevision: 33020
+    };
+    this.view._presentPopoverForRevisionRange(element, popover, context);
+    var nodeList = popover._element.getElementsByClassName("pending-commit");
+    strictEqual(nodeList.length, 3, "has 3 commits");
+});
+
+test("_presentPopoverForRevisionRange no commits", function()
+{
+    var element = document.createElement("div");
+    var popover = new Dashboard.Popover();
+    var context = {
+        trac: this.trac,
+        branch: this.trunkBranch,
+        firstRevision: 33020,
+        lastRevision: 33018
+    };
+    this.view._presentPopoverForRevisionRange(element, popover, context);
+    var nodeList = popover._element.getElementsByClassName("pending-commit");
+    strictEqual(nodeList.length, 0, "has 0 commits");
+});
+
+test("_revisionContentWithPopoverForIteration", function()
+{
+    var finished = false;
+    var iteration = new BuildbotIteration(this.queue, 1, finished);
+    iteration.revision = { "openSource": 33018 };
+    var previousIteration = null;
+    var content = this.view._revisionContentWithPopoverForIteration(iteration, previousIteration, this.trunkBranch);
+    strictEqual(content.innerHTML, "r33018", "should have correct revision number.");
+    strictEqual(content.classList.contains("revision-number"), true, "should have class 'revision-number'.");
+    strictEqual(content.classList.contains("popover-tracking"), false, "should not have class 'popover-tracking'.");
+});
+
+test("_revisionContentWithPopoverForIteration has previousIteration", function()
+{
+    var finished = false;
+    var iteration = new BuildbotIteration(this.queue, 2, finished);
+    iteration.revision = { "openSource": 33022 };
+    var previousIteration = new BuildbotIteration(this.queue, 1, finished);
+    previousIteration.revision = { "openSource": 33018 };
+    var content = this.view._revisionContentWithPopoverForIteration(iteration, previousIteration, this.trunkBranch);
+    strictEqual(content.innerHTML, "r33022", "should have correct revision number.");
+    strictEqual(content.classList.contains("revision-number"), true, "should have class 'revision-number'.");
+    strictEqual(content.classList.contains("popover-tracking"), true, "should have class 'popover-tracking'.");
 });
 
 module("BuildBotQueue", {
