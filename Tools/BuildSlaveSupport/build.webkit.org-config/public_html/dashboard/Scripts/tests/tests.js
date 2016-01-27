@@ -23,6 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+module("Trac", {
+    setup: function() {
+        this.trac = new MockTrac();
+    }
+});
+
+test("_loaded", function()
+{
+    var client = new XMLHttpRequest();
+    client.open('GET', 'test-fixture-trac-rss.xml', false);
+    client.onreadystatechange = function () {
+        if (client.readyState === client.DONE)
+            this.trac._loaded(client.responseXML);
+    }.bind(this);
+    client.send();
+    var commits = this.trac.recordedCommits;
+    strictEqual(commits.length, 8, "should have 8 commits");
+    for (var i = 1; i < commits.length; i++) {
+        var firstRevision = commits[i - 1].revisionNumber;
+        var secondRevision = commits[i].revisionNumber;
+        strictEqual(secondRevision - firstRevision, 1, "commits should be in order " + firstRevision + ", " + secondRevision);
+    }
+});
+
 module("BuildBotQueueView");
 
 var settings = new Settings;
