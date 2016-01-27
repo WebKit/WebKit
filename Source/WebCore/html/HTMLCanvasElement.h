@@ -162,21 +162,18 @@ private:
 #endif
 
     HashSet<CanvasObserver*> m_observers;
-
-    IntSize m_size;
-
     std::unique_ptr<CanvasRenderingContext> m_context;
 
-    bool m_rendererIsCanvas;
-
-    bool m_ignoreReset;
     FloatRect m_dirtyRect;
+    IntSize m_size;
 
-    bool m_originClean;
+    bool m_originClean { true };
+    bool m_rendererIsCanvas { false };
+    bool m_ignoreReset { false };
 
     // m_createdImageBuffer means we tried to malloc the buffer.  We didn't necessarily get it.
-    mutable bool m_hasCreatedImageBuffer;
-    mutable bool m_didClearImageBuffer;
+    mutable bool m_hasCreatedImageBuffer { false };
+    mutable bool m_didClearImageBuffer { false };
     mutable std::unique_ptr<ImageBuffer> m_imageBuffer;
     mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
     

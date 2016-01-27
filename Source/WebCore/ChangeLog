@@ -1,3 +1,16 @@
+2016-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Use initializers in HTMLCanvasElement
+        https://bugs.webkit.org/show_bug.cgi?id=153472
+
+        Reviewed by Michael Catanzaro.
+
+        Use initializers, and re-order member variables for better packing.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        * html/HTMLCanvasElement.h:
+
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
         Setting HTMLInputElement.value to null to set its value to the empty string
