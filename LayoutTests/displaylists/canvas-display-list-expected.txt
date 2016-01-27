@@ -1,0 +1,13 @@
+ 
+(set-state
+  (change-flags 256)
+  (fill-color #C80000))
+(fill-rect
+  (extent at (10,10) size 55x50)
+  (rect at (10,10) size 55x50))
+(set-state
+  (change-flags 256)
+  (fill-color #0000C87F))
+(fill-rect
+  (extent at (30,30) size 55x50)
+  (rect at (30,30) size 55x50))

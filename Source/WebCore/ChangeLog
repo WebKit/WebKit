@@ -1,3 +1,54 @@
+2016-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow canvas to use display-list drawing for testing
+        https://bugs.webkit.org/show_bug.cgi?id=153475
+
+        Reviewed by Dean Jackson.
+
+        Optionally have 2D <canvas> use display-list drawing, which is only enabled
+        via Internals for now.
+
+        Support displayListAsText() and replayDisplayListAsText() on canvas, so we can
+        use it to test playback optimizations. [Note that displayListAsText() always
+        returns an empty string currently, because the display list is cleared when the
+        canvas is painted to the page.]
+
+        Display list rendering is implemented by giving CanvasRenderingContext2D an
+        optional DisplayListDrawingContext, which packages up a display list, recorder
+        and recording context. The existing paintRenderingResultsToCanvas() is overridden
+        to replay the recorded display list into the primary canvas context.
+
+        Tracked replay display lists are stored in a static map, keyed by the CanvasRenderingContext2D.
+
+        Test: displaylists/canvas-display-list.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::setUsesDisplayListDrawing):
+        (WebCore::HTMLCanvasElement::setTracksDisplayListReplay):
+        (WebCore::HTMLCanvasElement::displayListAsText):
+        (WebCore::HTMLCanvasElement::replayDisplayListAsText):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::DisplayListDrawingContext::DisplayListDrawingContext):
+        (WebCore::contextDisplayListMap):
+        (WebCore::CanvasRenderingContext2D::~CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::setTracksDisplayListReplay):
+        (WebCore::CanvasRenderingContext2D::displayListAsText):
+        (WebCore::CanvasRenderingContext2D::replayDisplayListAsText):
+        (WebCore::CanvasRenderingContext2D::paintRenderingResultsToCanvas):
+        (WebCore::CanvasRenderingContext2D::drawingContext):
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D): Deleted.
+        * html/canvas/CanvasRenderingContext2D.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setElementUsesDisplayListDrawing):
+        (WebCore::Internals::setElementTracksDisplayListReplay):
+        (WebCore::Internals::displayListForElement):
+        (WebCore::Internals::replayDisplayListForElement):
+
 2016-01-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Generalize ResourceUsageData gathering to be used outside of ResourceUsageOverlay

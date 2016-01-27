@@ -40,6 +40,8 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "DOMPath.h"
+#include "DisplayListRecorder.h"
+#include "DisplayListReplayer.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FloatQuad.h"
 #include "HTMLImageElement.h"
@@ -55,6 +57,7 @@
 #include "StyleResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
+#include "TextStream.h"
 
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
@@ -85,6 +88,25 @@ static const int defaultFontSize = 10;
 static const char* const defaultFontFamily = "sans-serif";
 static const char* const defaultFont = "10px sans-serif";
 
+struct DisplayListDrawingContext {
+    GraphicsContext context;
+    DisplayList::Recorder recorder;
+    DisplayList::DisplayList displayList;
+    
+    DisplayListDrawingContext(const FloatRect& clip)
+        : recorder(context, displayList, clip, AffineTransform())
+    {
+    }
+};
+
+typedef HashMap<const CanvasRenderingContext2D*, std::unique_ptr<DisplayList::DisplayList>> ContextDisplayListHashMap;
+
+static ContextDisplayListHashMap& contextDisplayListMap()
+{
+    static NeverDestroyed<ContextDisplayListHashMap> sharedHashMap;
+    return sharedHashMap;
+}
+
 class CanvasStrokeStyleApplier : public StrokeStyleApplier {
 public:
     CanvasStrokeStyleApplier(CanvasRenderingContext2D* canvasContext)
@@ -112,7 +134,6 @@ private:
 CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
     : CanvasRenderingContext(canvas)
     , m_stateStack(1)
-    , m_unrealizedSaveCount(0)
     , m_usesCSSCompatibilityParseMode(usesCSSCompatibilityParseMode)
 #if ENABLE(DASHBOARD_SUPPORT)
     , m_usesDashboardCompatibilityMode(usesDashboardCompatibilityMode)
@@ -141,6 +162,9 @@ CanvasRenderingContext2D::~CanvasRenderingContext2D()
 #if !ASSERT_DISABLED
     unwindStateStack();
 #endif
+
+    if (UNLIKELY(tracksDisplayListReplay()))
+        contextDisplayListMap().remove(this);
 }
 
 bool CanvasRenderingContext2D::isAccelerated() const
@@ -162,6 +186,8 @@ void CanvasRenderingContext2D::reset()
     m_stateStack.first() = State();
     m_path.clear();
     m_unrealizedSaveCount = 0;
+    
+    m_recordingContext = nullptr;
 }
 
 CanvasRenderingContext2D::State::State()
@@ -1907,8 +1933,64 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
     canvas()->didDraw(dirtyRect);
 }
 
+void CanvasRenderingContext2D::setTracksDisplayListReplay(bool tracksDisplayListReplay)
+{
+    if (tracksDisplayListReplay == m_tracksDisplayListReplay)
+        return;
+
+    m_tracksDisplayListReplay = tracksDisplayListReplay;
+    if (!m_tracksDisplayListReplay)
+        contextDisplayListMap().remove(this);
+}
+
+String CanvasRenderingContext2D::displayListAsText(DisplayList::AsTextFlags flags) const
+{
+    if (m_recordingContext)
+        return m_recordingContext->displayList.asText(flags);
+    
+    return String();
+}
+
+String CanvasRenderingContext2D::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
+{
+    auto it = contextDisplayListMap().find(this);
+    if (it != contextDisplayListMap().end()) {
+        TextStream stream;
+        stream << it->value->asText(flags);
+        return stream.release();
+    }
+
+    return String();
+}
+
+void CanvasRenderingContext2D::paintRenderingResultsToCanvas()
+{
+    if (UNLIKELY(m_usesDisplayListDrawing)) {
+        if (!m_recordingContext)
+            return;
+        
+        FloatRect clip(FloatPoint::zero(), canvas()->size());
+        DisplayList::Replayer replayer(*canvas()->drawingContext(), m_recordingContext->displayList);
+
+        if (UNLIKELY(m_tracksDisplayListReplay)) {
+            auto replayList = replayer.replay(clip, m_tracksDisplayListReplay);
+            contextDisplayListMap().add(this, WTFMove(replayList));
+        } else
+            replayer.replay(clip);
+
+        m_recordingContext->displayList.clear();
+    }
+}
+
 GraphicsContext* CanvasRenderingContext2D::drawingContext() const
 {
+    if (UNLIKELY(m_usesDisplayListDrawing)) {
+        if (!m_recordingContext)
+            m_recordingContext = std::make_unique<DisplayListDrawingContext>(FloatRect(FloatPoint::zero(), canvas()->size()));
+
+        return &m_recordingContext->context;
+    }
+
     return canvas()->drawingContext();
 }
 

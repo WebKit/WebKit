@@ -237,6 +237,15 @@ public:
         High
     };
 
+    bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; };
+    void setUsesDisplayListDrawing(bool flag) { m_usesDisplayListDrawing = flag; };
+
+    bool tracksDisplayListReplay() const { return m_tracksDisplayListReplay; }
+    void setTracksDisplayListReplay(bool);
+
+    String displayListAsText(DisplayList::AsTextFlags) const;
+    String replayDisplayListAsText(DisplayList::AsTextFlags) const;
+
 private:
     enum class Direction {
         Inherit,
@@ -320,6 +329,8 @@ private:
     void didDraw(const FloatRect&, unsigned options = CanvasDidDrawApplyAll);
     void didDrawEntireCanvas();
 
+    void paintRenderingResultsToCanvas() override;
+
     GraphicsContext* drawingContext() const;
 
     void unwindStateStack();
@@ -384,13 +395,19 @@ private:
 #endif
 
     Vector<State, 1> m_stateStack;
-    unsigned m_unrealizedSaveCount;
+    unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
 #if ENABLE(DASHBOARD_SUPPORT)
     bool m_usesDashboardCompatibilityMode;
 #endif
+
+    bool m_usesDisplayListDrawing { false };
+    bool m_tracksDisplayListReplay { false };
+    mutable std::unique_ptr<struct DisplayListDrawingContext> m_recordingContext;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::CanvasRenderingContext2D, is2d())
 
 #endif

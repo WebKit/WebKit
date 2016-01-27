@@ -81,4 +81,9 @@ private:
 
 } // namespace WebCore
 
+#define SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::CanvasRenderingContext& context) { return context.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

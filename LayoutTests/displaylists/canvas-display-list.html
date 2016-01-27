@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        function drawCanvas()
+        {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            ctx.fillStyle = "rgb(200,0,0)";
+            ctx.fillRect (10, 10, 55, 50);
+
+            ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+            ctx.fillRect (30, 30, 55, 50);
+        }
+
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var canvas;
+        function doTest()
+        {
+            document.body.offsetWidth;
+            canvas = document.getElementById('canvas');
+            if (window.internals) {
+                internals.setElementUsesDisplayListDrawing(canvas, true);
+                internals.setElementTracksDisplayListReplay(canvas, true);
+            }
+            
+            drawCanvas();
+
+            if (window.testRunner)
+                testRunner.display();
+
+            if (window.internals)
+                document.getElementById('output').textContent = internals.replayDisplayListForElement(canvas);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<canvas id="canvas" width="300" height="200"></canvas>
+<pre id="output"></pre>
+</body>
+</html>

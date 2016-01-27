@@ -57,6 +57,7 @@
 #include "FormController.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -1982,11 +1983,21 @@ void Internals::setElementUsesDisplayListDrawing(Element* element, bool usesDisp
         return;
     }
 
-    if (!element || !element->renderer() || !element->renderer()->hasLayer()) {
+    if (!element || !element->renderer()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
 
+    if (is<HTMLCanvasElement>(*element)) {
+        downcast<HTMLCanvasElement>(*element).setUsesDisplayListDrawing(usesDisplayListDrawing);
+        return;
+    }
+
+    if (!element->renderer()->hasLayer()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    
     RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
     if (!layer->isComposited()) {
         ec = INVALID_ACCESS_ERR;
@@ -2004,7 +2015,17 @@ void Internals::setElementTracksDisplayListReplay(Element* element, bool isTrack
         return;
     }
 
-    if (!element || !element->renderer() || !element->renderer()->hasLayer()) {
+    if (!element || !element->renderer()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (is<HTMLCanvasElement>(*element)) {
+        downcast<HTMLCanvasElement>(*element).setTracksDisplayListReplay(isTrackingReplay);
+        return;
+    }
+
+    if (!element->renderer()->hasLayer()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
@@ -2031,13 +2052,7 @@ String Internals::displayListForElement(Element* element, unsigned flags, Except
         return String();
     }
 
-    if (!element || !element->renderer() || !element->renderer()->hasLayer()) {
-        ec = INVALID_ACCESS_ERR;
-        return String();
-    }
-    
-    RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
-    if (!layer->isComposited()) {
+    if (!element || !element->renderer()) {
         ec = INVALID_ACCESS_ERR;
         return String();
     }
@@ -2045,7 +2060,21 @@ String Internals::displayListForElement(Element* element, unsigned flags, Except
     DisplayList::AsTextFlags displayListFlags = 0;
     if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
         displayListFlags |= DisplayList::AsTextFlag::IncludesPlatformOperations;
-    
+
+    if (is<HTMLCanvasElement>(*element))
+        return downcast<HTMLCanvasElement>(*element).displayListAsText(displayListFlags);
+
+    if (!element->renderer()->hasLayer()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
+    if (!layer->isComposited()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
     return layer->backing()->displayListAsText(displayListFlags);
 }
 
@@ -2062,13 +2091,7 @@ String Internals::replayDisplayListForElement(Element* element, unsigned flags, 
         return String();
     }
 
-    if (!element || !element->renderer() || !element->renderer()->hasLayer()) {
-        ec = INVALID_ACCESS_ERR;
-        return String();
-    }
-    
-    RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
-    if (!layer->isComposited()) {
+    if (!element || !element->renderer()) {
         ec = INVALID_ACCESS_ERR;
         return String();
     }
@@ -2076,7 +2099,21 @@ String Internals::replayDisplayListForElement(Element* element, unsigned flags, 
     DisplayList::AsTextFlags displayListFlags = 0;
     if (flags & DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS)
         displayListFlags |= DisplayList::AsTextFlag::IncludesPlatformOperations;
-    
+
+    if (is<HTMLCanvasElement>(*element))
+        return downcast<HTMLCanvasElement>(*element).replayDisplayListAsText(displayListFlags);
+
+    if (!element->renderer()->hasLayer()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    RenderLayer* layer = downcast<RenderLayerModelObject>(element->renderer())->layer();
+    if (!layer->isComposited()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
     return layer->backing()->replayDisplayListAsText(displayListFlags);
 }
 
