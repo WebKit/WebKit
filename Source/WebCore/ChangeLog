@@ -1,5 +1,12 @@
 2016-01-26  Sam Weinig  <sam@webkit.org>
 
+        Try touching DerivedSources.make to force rebuilding.
+
+        * DerivedSources.make:
+        * page/DOMWindow.idl:
+
+2016-01-26  Sam Weinig  <sam@webkit.org>
+
         Try to force a rebuild.
 
         * page/DOMWindow.idl:

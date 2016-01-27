@@ -1350,3 +1350,4 @@ WebCoreHeaderDetection.h : $(WebCore)/AVFoundationSupport.py DerivedSources.make
 	$(PYTHON) $(WebCore)/AVFoundationSupport.py $(WEBKIT_LIBRARIES) > $@
 
 endif # Windows_NT
+

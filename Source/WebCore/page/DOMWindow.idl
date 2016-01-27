@@ -243,4 +243,3 @@ DOMWindow implements GlobalEventHandlers;
 DOMWindow implements WindowBase64;
 DOMWindow implements WindowEventHandlers;
 DOMWindow implements WindowTimers;
-
