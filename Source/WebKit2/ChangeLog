@@ -1,3 +1,9 @@
+2016-01-27  Dan Bernstein  <mitz@apple.com>
+
+        More trying to fix the build.
+
+        * Configurations/WebKit.xcconfig:
+
 2016-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Remove ENABLE_CURRENTSRC
