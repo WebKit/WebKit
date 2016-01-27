@@ -711,7 +711,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         IntRect oldRect(m_horizontalScrollbar->frameRect());
         IntRect hBarRect(0,
             height() - m_horizontalScrollbar->height(),
-            width() - (m_verticalScrollbar ? m_verticalScrollbar->width() : 0),
+            width() - (m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0),
             m_horizontalScrollbar->height());
         m_horizontalScrollbar->setFrameRect(hBarRect);
         if (!m_scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect())
@@ -733,7 +733,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         IntRect vBarRect(width() - m_verticalScrollbar->width(), 
             topContentInset(),
             m_verticalScrollbar->width(),
-            height() - topContentInset() - (m_horizontalScrollbar ? m_horizontalScrollbar->height() : 0));
+            height() - topContentInset() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0));
         m_verticalScrollbar->setFrameRect(vBarRect);
         if (!m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
             m_verticalScrollbar->invalidate();

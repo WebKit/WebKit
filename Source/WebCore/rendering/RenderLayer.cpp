@@ -2821,12 +2821,13 @@ static LayoutRect cornerRect(const RenderLayer* layer, const LayoutRect& bounds)
 
 IntRect RenderLayer::scrollCornerRect() const
 {
-    // We have a scrollbar corner when a scrollbar is visible and not filling the entire length of the box.
+    // We have a scrollbar corner when a non overlay scrollbar is visible and not filling the entire length of the box.
     // This happens when:
-    // (a) A resizer is present and at least one scrollbar is present
-    // (b) Both scrollbars are present.
-    bool hasHorizontalBar = horizontalScrollbar();
-    bool hasVerticalBar = verticalScrollbar();
+    // (a) A resizer is present and at least one non overlay scrollbar is present
+    // (b) Both non overlay scrollbars are present.
+    // Overlay scrollbars always fill the entire length of the box so we never have scroll corner in that case.
+    bool hasHorizontalBar = m_hBar && !m_hBar->isOverlayScrollbar();
+    bool hasVerticalBar = m_vBar && !m_vBar->isOverlayScrollbar();
     bool hasResizer = renderer().style().resize() != RESIZE_NONE;
     if ((hasHorizontalBar && hasVerticalBar) || (hasResizer && (hasHorizontalBar || hasVerticalBar)))
         return snappedIntRect(cornerRect(this, renderBox()->borderBoxRect()));

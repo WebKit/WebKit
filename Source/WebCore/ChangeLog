@@ -1,5 +1,40 @@
 2016-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Overlay scrollbars should always use the whole contents
+        https://bugs.webkit.org/show_bug.cgi?id=153352
+
+        Reviewed by Michael Catanzaro.
+
+        In case of having both horizontal and vertical scrollbars, the
+        scrollbars respect the scroll corner. That looks good for legacy
+        scrollbars that show the track, but with the overlay indicators
+        it looks weird that the indicator stops so early before the end of
+        the contents, giving the impression that there's something else to
+        scroll. This happens because the scroll corner is transparent, so
+        it's not obvious that's the scroll corner. It also happens with
+        the text areas having a resizer. Legacy scrollbars take into
+        account the resizer, which is good, but I expect overlay
+        scrollbars to be rendered also over the resizer. The resizer takes
+        precedence so you can still click and drag to resize the text area.
+        In the case of main frame scrollbars we are indeed returning an
+        empty rectangle from ScrollView::scrollCornerRect() when using
+        overlay scrollbars, but when calculating the size of the
+        scrollbars we are using the actual width/height instead of the
+        occupied with/height. For other scrollbars
+        RenderLayer::scrollCornerRect() is not checking whether scrollbars
+        are overlay or not and we are always returning a scroll corner
+        rectangle when scrollbars are present.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars): Use the occupied
+        width/height when calculating the space the one scrollbar
+        should leave for the other.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollCornerRect): Return an empty
+        rectangle when using overlay scrollbars.
+
+2016-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         ScrollAnimator is not notified when mouse entered, moved or exited a RenderListBox
         https://bugs.webkit.org/show_bug.cgi?id=153398
 
