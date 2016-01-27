@@ -113,6 +113,7 @@ Controller.prototype = {
         noVideo: 'no-video',
         down: 'down',
         out: 'out',
+        pictureInPictureButton: 'picture-in-picture-button',
     },
     KeyCodes: {
         enter: 13,
@@ -213,6 +214,9 @@ Controller.prototype = {
         this.controlsObserver.observe(this.video, { attributes: true, attributeFilter: ['controls'] });
 
         this.listenFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
+
+        if ('webkitPresentationMode' in this.video)
+            this.listenFor(this.video, 'webkitpresentationmodechanged', this.handlePresentationModeChange);
     },
 
     removeVideoListeners: function()
@@ -242,6 +246,9 @@ Controller.prototype = {
 
         this.stopListeningFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
         this.setShouldListenForPlaybackTargetAvailabilityEvent(false);
+
+        if ('webkitPresentationMode' in this.video)
+            this.stopListeningFor(this.video, 'webkitpresentationmodechanged', this.handlePresentationModeChange);
     },
 
     handleEvent: function(event)
@@ -479,6 +486,7 @@ Controller.prototype = {
         var pictureInPictureButton = this.controls.pictureInPictureButton = document.createElement('button');
         pictureInPictureButton.setAttribute('pseudo', '-webkit-media-controls-picture-in-picture-button');
         pictureInPictureButton.setAttribute('aria-label', this.UIString('Display Picture in Picture'));
+        pictureInPictureButton.classList.add(this.ClassNames.pictureInPictureButton);
         this.listenFor(pictureInPictureButton, 'click', this.handlePictureInPictureButtonClicked);
 
         var inlinePlaybackPlaceholder = this.controls.inlinePlaybackPlaceholder = document.createElement('div');
@@ -584,8 +592,10 @@ Controller.prototype = {
         this.controls.muteBox.appendChild(this.controls.muteButton);
         this.controls.panel.appendChild(this.controls.wirelessTargetPicker);
         this.controls.panel.appendChild(this.controls.captionButton);
-        if (!this.isAudio())
+        if (!this.isAudio()) {
+            this.updatePictureInPictureButton();
             this.controls.panel.appendChild(this.controls.fullscreenButton);
+        }
 
         this.controls.panel.style.removeProperty('left');
         this.controls.panel.style.removeProperty('top');
@@ -785,9 +795,78 @@ Controller.prototype = {
         this.updateCaptionButton();
     },
 
+    presentationMode: function() {
+        if ('webkitPresentationMode' in this.video)
+            return this.video.webkitPresentationMode;
+
+        if (this.isFullScreen())
+            return 'fullscreen';
+
+        return 'inline';
+    },
+
     isFullScreen: function()
     {
-        return this.video.webkitDisplayingFullscreen;
+        if (!this.video.webkitDisplayingFullscreen)
+            return false;
+
+        if ('webkitPresentationMode' in this.video && this.video.webkitPresentationMode === 'picture-in-picture')
+            return false;
+
+        return true;
+    },
+
+    updatePictureInPictureButton: function()
+    {
+        var shouldShowPictureInPictureButton = Controller.gSimulatePictureInPictureAvailable || ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('picture-in-picture'));
+        if (shouldShowPictureInPictureButton) {
+            this.controls.panel.appendChild(this.controls.pictureInPictureButton);
+            this.controls.pictureInPictureButton.classList.remove(this.ClassNames.hidden);
+        } else
+            this.controls.pictureInPictureButton.classList.add(this.ClassNames.hidden);
+    },
+
+    handlePresentationModeChange: function(event)
+    {
+        var presentationMode = this.presentationMode();
+
+        switch (presentationMode) {
+            case 'inline':
+                this.controls.panel.classList.remove(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
+                this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.pictureInPicture);
+
+                this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
+                break;
+            case 'picture-in-picture':
+                this.controls.panel.classList.add(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);
+
+                this.controls.inlinePlaybackPlaceholderTextTop.innerText = this.UIString('This video is playing in Picture in Picture');
+                this.controls.inlinePlaybackPlaceholderTextTop.classList.add(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholderTextBottom.innerText = "";
+                this.controls.inlinePlaybackPlaceholderTextBottom.classList.add(this.ClassNames.pictureInPicture);
+
+                this.controls.pictureInPictureButton.classList.add(this.ClassNames.returnFromPictureInPicture);
+                break;
+            default:
+                this.controls.panel.classList.remove(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.pictureInPicture);
+                this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.pictureInPicture);
+
+                this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
+                break;
+        }
+
+        this.updateControls();
+        this.updateCaptionContainer();
+        this.resetHideControlsTimer();
+        if (presentationMode != 'fullscreen' && this.video.paused && this.controlsAreHidden())
+            this.showControls();
     },
 
     handleFullscreenChange: function(event)
@@ -806,6 +885,9 @@ Controller.prototype = {
             this.controls.fullscreenButton.setAttribute('aria-label', this.UIString('Display Full Screen'));
             this.host.exitedFullscreen();
         }
+
+        if ('webkitPresentationMode' in this.video)
+            this.handlePresentationModeChange(event);
     },
 
     handleShowControlsClick: function(event)
@@ -1520,6 +1602,9 @@ Controller.prototype = {
 
     controlsAlwaysVisible: function()
     {
+        if (this.presentationMode() === 'picture-in-picture')
+            return true;
+
         return this.isAudio() || this.currentPlaybackTargetIsWireless() || this.scrubbing;
     },
 
@@ -1942,6 +2027,13 @@ Controller.prototype = {
     },
 
     handlePictureInPictureButtonClicked: function(event) {
+        if (!('webkitSetPresentationMode' in this.video))
+            return;
+
+        if (this.presentationMode() === 'picture-in-picture')
+            this.video.webkitSetPresentationMode('inline');
+        else
+            this.video.webkitSetPresentationMode('picture-in-picture');
     },
 
     currentPlaybackTargetIsWireless: function() {
@@ -2145,6 +2237,10 @@ Controller.prototype = {
                 object: this.controls.wirelessTargetPicker,
                 styleValues: ["display"],
                 extraProperties: ["hidden"],
+            },
+            {
+                name: "Picture-in-picture Button",
+                object: this.controls.pictureInPictureButton
             },
         ];
 

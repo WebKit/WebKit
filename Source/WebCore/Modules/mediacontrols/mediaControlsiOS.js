@@ -35,22 +35,6 @@ ControllerIOS.prototype = {
         return "ios";
     },
 
-    addVideoListeners: function() {
-        Controller.prototype.addVideoListeners.call(this);
-
-        this.listenFor(this.video, 'webkitbeginfullscreen', this.handleFullscreenChange);
-        this.listenFor(this.video, 'webkitendfullscreen', this.handleFullscreenChange);
-        this.listenFor(this.video, 'webkitpresentationmodechanged', this.handlePresentationModeChange);
-    },
-
-    removeVideoListeners: function() {
-        Controller.prototype.removeVideoListeners.call(this);
-
-        this.stopListeningFor(this.video, 'webkitbeginfullscreen', this.handleFullscreenChange);
-        this.stopListeningFor(this.video, 'webkitendfullscreen', this.handleFullscreenChange);
-        this.stopListeningFor(this.video, 'webkitpresentationmodechanged', this.handlePresentationModeChange);
-    },
-
     createBase: function() {
         Controller.prototype.createBase.call(this);
 
@@ -398,21 +382,6 @@ ControllerIOS.prototype = {
         }
     },
 
-    presentationMode: function() {
-        if ('webkitPresentationMode' in this.video)
-            return this.video.webkitPresentationMode;
-
-        if (this.isFullScreen())
-            return 'fullscreen';
-
-        return 'inline';
-    },
-
-    isFullScreen: function()
-    {
-        return this.video.webkitDisplayingFullscreen && this.presentationMode() != 'picture-in-picture';
-    },
-
     handleFullscreenButtonClicked: function(event) {
         if ('webkitSetPresentationMode' in this.video) {
             if (this.presentationMode() === 'fullscreen')
@@ -444,16 +413,6 @@ ControllerIOS.prototype = {
     handleFullscreenTouchCancel: function(event) {
         this.controls.fullscreenButton.classList.remove('active');
         return true;
-    },
-
-    handlePictureInPictureButtonClicked: function(event) {
-        if (!('webkitSetPresentationMode' in this.video))
-            return;
-
-        if (this.presentationMode() === 'picture-in-picture')
-            this.video.webkitSetPresentationMode('inline');
-        else
-            this.video.webkitSetPresentationMode('picture-in-picture');
     },
 
     handlePictureInPictureTouchStart: function() {
@@ -578,74 +537,23 @@ ControllerIOS.prototype = {
         Controller.prototype.setShouldListenForPlaybackTargetAvailabilityEvent.call(this, shouldListen);
     },
 
-    updatePictureInPictureButton: function()
-    {
-        var shouldShowPictureInPictureButton = Controller.gSimulatePictureInPictureAvailable || ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('picture-in-picture'));
-        if (shouldShowPictureInPictureButton) {
-            this.controls.panel.appendChild(this.controls.pictureInPictureButton);
-            this.controls.pictureInPictureButton.classList.remove(this.ClassNames.hidden);
-        } else
-            this.controls.pictureInPictureButton.classList.add(this.ClassNames.hidden);
-    },
-
     handlePresentationModeChange: function(event)
     {
         var presentationMode = this.presentationMode();
 
         switch (presentationMode) {
             case 'inline':
-                this.controls.panel.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.panelContainer.classList.remove(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
-                this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.pictureInPicture);
-
-                this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
                 break;
             case 'picture-in-picture':
-                this.controls.panel.classList.add(this.ClassNames.pictureInPicture);
                 this.controls.panelContainer.classList.add(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);
-
-                this.controls.inlinePlaybackPlaceholderTextTop.innerText = this.UIString('This video is playing in Picture in Picture');
-                this.controls.inlinePlaybackPlaceholderTextTop.classList.add(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholderTextBottom.innerText = "";
-                this.controls.inlinePlaybackPlaceholderTextBottom.classList.add(this.ClassNames.pictureInPicture);
-
-                this.controls.pictureInPictureButton.classList.add(this.ClassNames.returnFromPictureInPicture);
                 break;
             default:
-                this.controls.panel.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.panelContainer.classList.remove(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.pictureInPicture);
-                this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.pictureInPicture);
-
-                this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
                 break;
         }
 
-        this.updateControls();
-        this.updateCaptionContainer();
-        this.resetHideControlsTimer();
-        if (presentationMode != 'fullscreen' && this.video.paused && this.controlsAreHidden())
-            this.showControls();
-    },
-
-    handleFullscreenChange: function(event)
-    {
-        Controller.prototype.handleFullscreenChange.call(this, event);
-        this.handlePresentationModeChange(event);
-    },
-
-    controlsAlwaysVisible: function()
-    {
-        if (this.presentationMode() === 'picture-in-picture')
-            return true;
-
-        return Controller.prototype.controlsAlwaysVisible.call(this);
+        Controller.prototype.handlePresentationModeChange.call(this, event);
     },
 
     // Due to the bad way we are faking inheritance here, in particular the extends method

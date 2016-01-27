@@ -1,3 +1,61 @@
+2016-01-27  Ada Chan  <adachan@apple.com>
+
+        Move some logic related to the presentation mode button from mediaControlsiOS.js to mediaControlsApple.js
+        https://bugs.webkit.org/show_bug.cgi?id=153476
+
+        Reviewed by Eric Carlson.
+
+        Also, add the necessary styles to support that control in mediaControlsApple.css.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-controls-panel.picture-in-picture):
+        (audio::-webkit-media-controls-wireless-playback-status.picture-in-picture):
+        (audio::-webkit-media-controls-wireless-playback-text-top.picture-in-picture):
+        (audio::-webkit-media-controls-wireless-playback-text-bottom.picture-in-picture):
+        (video::-webkit-media-controls-panel .picture-in-picture-button):
+        Use the same mask image as iOS, but with a different size and a background color specified
+        (since there's another rule that makes buttons within the panel have a transparent
+        background color).
+        (video::-webkit-media-controls-panel .picture-in-picture-button.return-from-picture-in-picture):
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.addVideoListeners):
+        (Controller.prototype.removeVideoListeners):
+        Listen for (and stop listening for) the webkitpresentationmodechanged event if presentation
+        mode is supported for this video element.
+        (Controller.prototype.createControls):
+        Add a class name to the pictureInPictureButton so we can query for it in the stylesheet.
+        (Controller.prototype.configureInlineControls):
+        Call updatePictureInPictureButton().
+        (Controller.prototype.presentationMode):
+        Moved from mediaControlsiOS.js.
+        (Controller.prototype.isFullScreen):
+        Ditto, with a bug fix to not call presentationMode(), since that method calls isFullScreen(),
+        resulting in infinite recursion.
+        (Controller.prototype.updatePictureInPictureButton):
+        Ditto.
+        (Controller.prototype.handlePresentationModeChange):
+        Ditto.
+        (Controller.prototype.handleFullscreenChange):
+        Call handlePresentationModeChanged() if presentation mode is supported for this video element.
+        (Controller.prototype.controlsAlwaysVisible):
+        Ditto.
+        (Controller.prototype.handlePictureInPictureButtonClicked):
+        Ditto.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handlePresentationModeChange):
+        Most logic has been moved to the same method in mediaControlsApple.js, except
+        updating the style of the panelContainer, which doesn't exist in the Mac controls.
+        (ControllerIOS.prototype.addVideoListeners): Deleted.
+        (ControllerIOS.prototype.removeVideoListeners): Deleted.
+        (ControllerIOS.prototype.presentationMode): Deleted.
+        (ControllerIOS.prototype.isFullScreen): Deleted.
+        (ControllerIOS.prototype.handlePictureInPictureButtonClicked): Deleted.
+        (ControllerIOS.prototype.updatePictureInPictureButton): Deleted.
+        (ControllerIOS.prototype.handleFullscreenChange): Deleted.
+        (ControllerIOS.prototype.controlsAlwaysVisible): Deleted.
+        Delete all code that's already handled in the Controller.
+
 2016-01-26  Ada Chan  <adachan@apple.com>
 
         Enable API related to the video fullscreen layer in MediaPlayerPrivateMediaSourceAVFObjC

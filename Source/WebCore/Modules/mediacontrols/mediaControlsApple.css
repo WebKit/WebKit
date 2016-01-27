@@ -106,6 +106,10 @@ video::-webkit-media-controls-panel:hover {
     opacity: 1;
 }
 
+video::-webkit-media-controls-panel.picture-in-picture {
+    pointer-events: none;
+}
+
 audio::-webkit-media-show-controls {
     display: none !important;
 }
@@ -1069,7 +1073,48 @@ audio::-webkit-media-controls-wireless-playback-text-bottom.small {
     display: none;
 }
 
+video::-webkit-media-controls-wireless-playback-status.picture-in-picture,
+audio::-webkit-media-controls-wireless-playback-status.picture-in-picture
+{
+    background-size: 304px auto;
+    background-position: 50% calc(.5 * (100% - 25px));
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 304 150"><g fill="none" stroke="-apple-system-gray" stroke-width="3"><path d="m 172,106 -81,0 c -3.5,0 -6,-2.5 -6,-6 l 0,-89 c 0,-3.5 2.5,-6 6,-6 l 122,0 c 3.5,0 6,2.5 6,6 l 0,57" /><path d="m 233,119 -53,0 c -3,0 -3,-0 -3,-3 l 0,-40 c 0,-3 0,-3 3,-3 l 53,0 c 3,0 3,0 3,3 l 0,40 c 0,3 0,3 -3,3 z" /></g></svg>');
+}
+
+video::-webkit-media-controls-wireless-playback-text-top.picture-in-picture,
+audio::-webkit-media-controls-wireless-playback-text-top.picture-in-picture {
+    top: initial;
+    bottom: 0;
+}
+
+video::-webkit-media-controls-wireless-playback-text-bottom.picture-in-picture,
+audio::-webkit-media-controls-wireless-playback-text-bottom.picture-in-picture {
+    display: none;
+}
+
 video::-webkit-media-controls-wireless-playback-status.hidden,
 audio::-webkit-media-controls-wireless-playback-status.hidden {
     display: none;
+}
+
+video::-webkit-media-controls-panel .picture-in-picture-button {
+    margin-right: 7px;
+    margin-left: 8px;
+    margin-top: 1px;
+    width: 18px;
+    min-width: 18px;
+    height: 14px;
+
+    background-color: rgba(255,255,255,0.45);
+    -webkit-mask-size: 18px 14px;
+    -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAkCAYAAAD2IghRAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAANhJREFUeNrslzEOwjAMRR2UA3AQ7sLKwsTEglg6sTIgLgs7qCZBRbIsWpDayHH1v/SHJmn0ZFutHYiIqX4F+cDMtCCncgseh1JiLJ5lxH+Br2qGZ2Gpa/IjeVMZ1/ur0ndgLdaeydsvF9/7LrYEz7oo+J0X8Kyz2GuT917As04K/uAFPKtR5xov4FnHLuIy+i7AqavxVr1jAh7H/HbRZE3QZGndBvaW1k1Z6VqdHtjzIBELZrHoKIfRzbpUxqY4IOJzLpWAiAMc4AAHOMAB/m9T9Bn1veklwACtBYmnlYBaIQAAAABJRU5ErkJggg==');
+}
+
+video::-webkit-media-controls-panel .picture-in-picture-button.return-from-picture-in-picture {
+    -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAkCAYAAAD2IghRAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAOZJREFUeNpiZGBg+M8w+AEjMuf///8MTAxDFAxZh7Pgi5IBBv+HZYgPS4f/JwJ/GA1xCjMnIfAejf9poHPvfyy5GFvS6KdjyYPLXeAKiFiH/0ZiT6GT46ni8CAg/onEn0WH/EEVh4OAL5rjFwIx81BwOAh4APE3JPGlNHQ8VR0OAs5A/BVJbjUQsw0Fh4OAHRB/RpLPG0wOJwSsoTXnfBolF5o5HARUBqL2pYbDB6bGBDqchYYlAk27cqPt8YFuHVIaxYyjIT6ckwrjaIiPOnzU4aMOH3X4qMNHHU5sowjWmxhqACDAAI3lmdvpn4aTAAAAAElFTkSuQmCC');
+}
+
+video::-webkit-media-controls-panel.picture-in-picture {
+    opacity: 0;
+    pointer-events: none;
 }
