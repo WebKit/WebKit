@@ -1,3 +1,24 @@
+2016-01-26  Chris Dumez  <cdumez@apple.com>
+
+        fast/history/page-cache-webdatabase-no-transaction-db.html flakily crashes
+        https://bugs.webkit.org/show_bug.cgi?id=153525
+
+        Reviewed by Andreas Kling.
+
+        The test was crashing because DatabaseThread::hasPendingDatabaseActivity()
+        was accessing m_openDatabaseSet from the main thread without any locking
+        mechanism. This is an issue because m_openDatabaseSet is altered by the
+        database thread.
+
+        No new tests, already covered by fast/history/page-cache-webdatabase-no-transaction-db.html.
+
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::recordDatabaseOpen):
+        (WebCore::DatabaseThread::recordDatabaseClosed):
+        (WebCore::DatabaseThread::hasPendingDatabaseActivity):
+        * Modules/webdatabase/DatabaseThread.h:
+
 2016-01-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed CMake build fix after r195644.

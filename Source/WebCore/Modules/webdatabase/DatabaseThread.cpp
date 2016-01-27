@@ -117,13 +117,17 @@ void DatabaseThread::databaseThread()
 
     // Close the databases that we ran transactions on. This ensures that if any transactions are still open, they are rolled back and we don't leave the database in an
     // inconsistent or locked state.
-    if (m_openDatabaseSet.size() > 0) {
-        // As the call to close will modify the original set, we must take a copy to iterate over.
-        DatabaseSet openSetCopy;
-        openSetCopy.swap(m_openDatabaseSet);
-        for (auto& openDatabase : openSetCopy)
-            openDatabase->close();
+    DatabaseSet openSetCopy;
+    {
+        LockHolder lock(m_openDatabaseSetMutex);
+        if (m_openDatabaseSet.size() > 0) {
+            // As the call to close will modify the original set, we must take a copy to iterate over.
+            openSetCopy.swap(m_openDatabaseSet);
+        }
     }
+
+    for (auto& openDatabase : openSetCopy)
+        openDatabase->close();
 
     // Detach the thread so its resources are no longer of any concern to anyone else
     detachThread(m_threadID);
@@ -139,6 +143,8 @@ void DatabaseThread::databaseThread()
 
 void DatabaseThread::recordDatabaseOpen(Database* database)
 {
+    LockHolder lock(m_openDatabaseSetMutex);
+
     ASSERT(currentThread() == m_threadID);
     ASSERT(database);
     ASSERT(!m_openDatabaseSet.contains(database));
@@ -147,6 +153,8 @@ void DatabaseThread::recordDatabaseOpen(Database* database)
 
 void DatabaseThread::recordDatabaseClosed(Database* database)
 {
+    LockHolder lock(m_openDatabaseSetMutex);
+
     ASSERT(currentThread() == m_threadID);
     ASSERT(database);
     ASSERT(m_queue.killed() || m_openDatabaseSet.contains(database));
@@ -183,6 +191,7 @@ void DatabaseThread::unscheduleDatabaseTasks(Database* database)
 
 bool DatabaseThread::hasPendingDatabaseActivity() const
 {
+    LockHolder lock(m_openDatabaseSetMutex);
     for (auto& database : m_openDatabaseSet) {
         if (database->hasPendingCreationEvent() || database->hasPendingTransaction())
             return true;
