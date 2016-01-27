@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we properly hittest boxes with reference clip path.</title>
+<style>
+svg { 
+  position: absolute;
+  top: -10000px;
+  left: -10000px;
+}
+
+div {
+  width: 200px;
+  height: 200px;
+  background: green;
+}
+
+.greenbox {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: -1;
+}
+
+.clipbox {
+  -webkit-clip-path: url('#svgreference');
+}
+
+.clipbox:hover ~ .greenbox
+{
+  background: blue;
+}
+</style>
+</head>
+<body>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <clippath id=svgreference><path d="M50 50 L150 50 L150 150 L50 150 Z"></path></clippath>
+</svg>
+<div id=hittestthis class=clipbox></div>
+<div class=greenbox></div>
+<script>
+  if (window.eventSender)
+    eventSender.mouseMoveTo(10, 10);
+</script>
+</body>
+</html>
