@@ -10,7 +10,7 @@ if (window.testRunner)
 var password = document.getElementById("password");
 
 if (window.internals)
-    internals.setShowAutoFillButton(password, true);
+    internals.setShowAutoFillButton(password, "AutoFillButtonTypeCredentials");
 
 function makeFieldDisabledAndNotifyDone()
 {

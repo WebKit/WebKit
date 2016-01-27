@@ -1,3 +1,24 @@
+2016-01-27  Zhuo Li  <zachli@apple.com>
+
+        Need ability to specify alternate image for AutoFill button in input fields.
+        https://bugs.webkit.org/show_bug.cgi?id=153116.
+        rdar://problem/23384854.
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (toAutoFillButtonType): Convert the WebKit AutoFill button type enum to WebCore AutoFill button
+        type enum.
+        (WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType): Added to be able to specify
+        what the AutoFill button type is. None means the AutoFill button is not shown.
+        (WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled): Deprecate this method.
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h: Declare an AutoFill button type enum.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled): None means the AutoFill button is not enabled.
+        (WebKit::InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabledWithButtonType): Use the new parameter to specify
+        what the AutoFill button type is.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h: Ditto.
+
 2016-01-27  Dan Bernstein  <mitz@apple.com>
 
         More trying to fix the build.

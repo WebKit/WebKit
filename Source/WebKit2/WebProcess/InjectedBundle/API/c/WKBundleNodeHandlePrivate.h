@@ -35,6 +35,13 @@
 extern "C" {
 #endif
 
+enum {
+    kWKAutoFillButtonTypeNone,
+    kWKAutoFillButtonTypeCredentials,
+    kWKAutoFillButtonTypeContacts
+};
+typedef uint8_t WKAutoFillButtonType;
+
 WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef context, JSObjectRef object);
 
 /* Convenience Operations */
@@ -55,7 +62,7 @@ WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHan
 WK_EXPORT bool WKBundleNodeHandleGetHTMLInputElementAutoFilled(WKBundleNodeHandleRef htmlInputElementHandle);
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutoFilled(WKBundleNodeHandleRef htmlInputElementHandle, bool filled);
 WK_EXPORT bool WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandle);
-WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandle, bool enabled);
+WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType(WKBundleNodeHandleRef htmlInputElementHandle, WKAutoFillButtonType autoFillButtonType);
 WK_EXPORT WKRect WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds(WKBundleNodeHandleRef htmlInputElementHandle);
 WK_EXPORT bool WKBundleNodeHandleGetHTMLInputElementLastChangeWasUserEdit(WKBundleNodeHandleRef htmlInputElementHandle);
 
@@ -79,6 +86,8 @@ WK_EXPORT WKBundleFrameRef WKBundleNodeHandleCopyHTMLIFrameElementContentFrame(W
 WK_EXPORT bool WKBundleNodeHandleGetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandle);
 /* Deprecated - use WKBundleNodeHandleSetHTMLInputElementAutoFilled(WKBundleNodeHandleRef, bool) */
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandle, bool filled);
+/* Deprecated - use WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef, WKAutoFillButtonType)*/
+WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandle, bool enabled);
 
 #ifdef __cplusplus
 }

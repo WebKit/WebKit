@@ -237,8 +237,8 @@ public:
     bool isAutoFilled() const { return m_isAutoFilled; }
     WEBCORE_EXPORT void setAutoFilled(bool = true);
 
-    bool showAutoFillButton() const { return m_showAutoFillButton; }
-    WEBCORE_EXPORT void setShowAutoFillButton(bool);
+    AutoFillButtonType autoFillButtonType() const { return (AutoFillButtonType)m_autoFillButtonType; }
+    WEBCORE_EXPORT void setShowAutoFillButton(AutoFillButtonType);
 
     FileList* files();
     void setFiles(PassRefPtr<FileList>);
@@ -431,7 +431,7 @@ private:
     bool m_isActivatedSubmit : 1;
     unsigned m_autocomplete : 2; // AutoCompleteSetting
     bool m_isAutoFilled : 1;
-    bool m_showAutoFillButton : 1;
+    unsigned m_autoFillButtonType : 2; // AutoFillButtonType;
 #if ENABLE(DATALIST_ELEMENT)
     bool m_hasNonEmptyList : 1;
 #endif

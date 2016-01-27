@@ -57,6 +57,12 @@ enum MediaControlEvent {
     "previous-track"
 };
 
+enum AutoFillButtonType {
+    "AutoFillButtonTypeNone",
+    "AutoFillButtonTypeContacts",
+    "AutoFillButtonTypeCredentials"
+};
+
 [
     NoInterfaceObject,
 ] interface Internals {
@@ -151,7 +157,7 @@ enum MediaControlEvent {
     [RaisesException] boolean elementShouldAutoComplete(Element inputElement);
     [RaisesException] void setEditingValue(Element inputElement, DOMString value);
     [RaisesException] void setAutofilled(Element inputElement, boolean enabled);
-    [RaisesException] void setShowAutoFillButton(Element inputElement, boolean enabled);
+    [RaisesException] void setShowAutoFillButton(Element inputElement, AutoFillButtonType autoFillButtonType);
     [RaisesException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
 
     [RaisesException] void paintControlTints();

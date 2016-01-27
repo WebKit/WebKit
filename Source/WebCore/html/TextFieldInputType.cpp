@@ -399,6 +399,35 @@ static String limitLength(const String& string, int maxLength)
     return string.left(newLength);
 }
 
+static AtomicString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
+{
+    AtomicString pseudoClassName;
+    switch (autoFillButtonType) {
+    case AutoFillButtonType::Contacts:
+        pseudoClassName = AtomicString("-webkit-contacts-auto-fill-button", AtomicString::ConstructFromLiteral);
+        break;
+    case AutoFillButtonType::Credentials:
+        pseudoClassName = AtomicString("-webkit-credentials-auto-fill-button", AtomicString::ConstructFromLiteral);
+        break;
+    case AutoFillButtonType::None:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return pseudoClassName;
+}
+
+static bool isAutoFillButtonTypeChanged(const AtomicString& attribute, AutoFillButtonType autoFillButtonType)
+{
+    if (attribute == "-webkit-contacts-auto-fill-button" && autoFillButtonType != AutoFillButtonType::Contacts)
+        return true;
+
+    if (attribute == "-webkit-credentials-auto-fill-button" && autoFillButtonType != AutoFillButtonType::Credentials)
+        return true;
+
+    return false;
+}
+
 String TextFieldInputType::sanitizeValue(const String& proposedValue) const
 {
     return limitLength(proposedValue.removeCharacters(isASCIILineBreak), HTMLInputElement::maximumLength);
@@ -587,7 +616,7 @@ void TextFieldInputType::capsLockStateMayHaveChanged()
 
 bool TextFieldInputType::shouldDrawAutoFillButton() const
 {
-    return !element().isDisabledOrReadOnly() && element().showAutoFillButton();
+    return !element().isDisabledOrReadOnly() && element().autoFillButtonType() != AutoFillButtonType::None;
 }
 
 void TextFieldInputType::autoFillButtonElementWasClicked()
@@ -613,12 +642,15 @@ void TextFieldInputType::createContainer()
     element().userAgentShadowRoot()->appendChild(*m_container, IGNORE_EXCEPTION);
 }
 
-void TextFieldInputType::createAutoFillButton()
+void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonType)
 {
     ASSERT(!m_autoFillButton);
 
+    if (autoFillButtonType == AutoFillButtonType::None)
+        return;
+
     m_autoFillButton = AutoFillButtonElement::create(element().document(), *this);
-    m_autoFillButton->setPseudo(AtomicString("-webkit-auto-fill-button", AtomicString::ConstructFromLiteral));
+    m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
     m_container->appendChild(*m_autoFillButton, IGNORE_EXCEPTION);
 }
 
@@ -629,7 +661,12 @@ void TextFieldInputType::updateAutoFillButton()
             createContainer();
 
         if (!m_autoFillButton)
-            createAutoFillButton();
+            createAutoFillButton(element().autoFillButtonType());
+
+        const AtomicString& attribute = m_autoFillButton->fastGetAttribute(pseudoAttr);
+        bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(attribute, element().autoFillButtonType());
+        if (shouldUpdateAutoFillButtonType)
+            m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(element().autoFillButtonType()));
 
         m_autoFillButton->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock, true);
         return;

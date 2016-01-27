@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that we show the correct AutoFill button when AutoFill button type changes. It can only be tested in the test tool.</p>
+<input id="credentials">
+<input id="contacts">
+<script>
+if (window.internals) {
+    internals.setShowAutoFillButton(document.getElementById("credentials"), "AutoFillButtonTypeCredentials");
+    internals.setShowAutoFillButton(document.getElementById("credentials"), "AutoFillButtonTypeContacts");
+
+    internals.setShowAutoFillButton(document.getElementById("contacts"), "AutoFillButtonTypeContacts");
+    internals.setShowAutoFillButton(document.getElementById("contacts"), "AutoFillButtonTypeCredentials");
+}
+</script>
+</body>
+</html>

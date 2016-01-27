@@ -1,3 +1,23 @@
+2016-01-27  Zhuo Li  <zachli@apple.com>
+
+        Need ability to specify alternate image for AutoFill button in input fields.
+        https://bugs.webkit.org/show_bug.cgi?id=153116.
+        rdar://problem/23384854.
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-disabled.html: The test API has
+        another parameter to specify what type the AutoFill button is.
+        * fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly.html: Ditto.
+        * fast/forms/auto-fill-button/input-contacts-auto-fill-button-expected.txt: Added.
+        * fast/forms/auto-fill-button/input-contacts-auto-fill-button.html: Added.
+        * fast/forms/auto-fill-button/input-auto-fill-button.html: Ditto.
+        * fast/forms/auto-fill-button/input-disabled-auto-fill-button.html: Ditto.
+        * fast/forms/auto-fill-button/input-readonly-non-empty-auto-fill-button.html: Ditto.
+        * fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html: Ditto.
+        * fast/forms/auto-fill-button/show-correct-auto-fill-button-when-auto-fill-button-type-changes-expected.html: Added.
+        * fast/forms/auto-fill-button/show-correct-auto-fill-button-when-auto-fill-button-type-changes.html: Added.
+
 2016-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Node.treeRoot

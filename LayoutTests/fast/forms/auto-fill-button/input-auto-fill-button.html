@@ -1,21 +1,21 @@
 <p>This tests that the AutoFill button renders. It can only be tested in the test tool.</p>
-<div id='container'>
-    <input type='text'>
-    <input type='password'>
+<div id="container">
+    <input type="text">
+    <input type="password">
 </div>
 <script>
 
 if (window.internals) {
     var inputs = document.querySelectorAll("input");
     for (var i = 0; i < inputs.length; ++i)
-        window.internals.setShowAutoFillButton(inputs[i], true);
+        window.internals.setShowAutoFillButton(inputs[i], "AutoFillButtonTypeCredentials");
 
     var dynamicInput = document.createElement("input");
-    window.internals.setShowAutoFillButton(dynamicInput, true);
+    window.internals.setShowAutoFillButton(dynamicInput, "AutoFillButtonTypeCredentials");
     document.querySelector("#container").appendChild(dynamicInput);
 
     var dynamicInput2 = document.createElement("input");
-    window.internals.setShowAutoFillButton(dynamicInput2, true);
+    window.internals.setShowAutoFillButton(dynamicInput2, "AutoFillButtonTypeCredentials");
     document.querySelector("#container").appendChild(dynamicInput2);
     dynamicInput2.setAttribute("type", "password");
 }

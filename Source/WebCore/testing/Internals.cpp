@@ -1278,7 +1278,19 @@ void Internals::setAutofilled(Element* element, bool enabled, ExceptionCode& ec)
     downcast<HTMLInputElement>(*element).setAutoFilled(enabled);
 }
 
-void Internals::setShowAutoFillButton(Element* element, bool show, ExceptionCode& ec)
+static AutoFillButtonType stringToAutoFillButtonType(const String& autoFillButtonType)
+{
+    if (autoFillButtonType == "AutoFillButtonTypeNone")
+        return AutoFillButtonType::None;
+    if (autoFillButtonType == "AutoFillButtonTypeCredentials")
+        return AutoFillButtonType::Credentials;
+    if (autoFillButtonType == "AutoFillButtonTypeContacts")
+        return AutoFillButtonType::Contacts;
+    ASSERT_NOT_REACHED();
+    return AutoFillButtonType::None;
+}
+
+void Internals::setShowAutoFillButton(Element* element, const String& autoFillButtonType, ExceptionCode& ec)
 {
     if (!element) {
         ec = INVALID_ACCESS_ERR;
@@ -1290,7 +1302,7 @@ void Internals::setShowAutoFillButton(Element* element, bool show, ExceptionCode
         return;
     }
 
-    downcast<HTMLInputElement>(*element).setShowAutoFillButton(show);
+    downcast<HTMLInputElement>(*element).setShowAutoFillButton(stringToAutoFillButtonType(autoFillButtonType));
 }
 
 

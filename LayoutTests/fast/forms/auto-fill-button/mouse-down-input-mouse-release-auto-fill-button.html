@@ -22,9 +22,9 @@ function runTest()
     if (!window.internals || !window.eventSender)
         return;
 
-    internals.setShowAutoFillButton(password, true);
+    internals.setShowAutoFillButton(password, "AutoFillButtonTypeCredentials");
 
-    var autoFillButton = getElementByPseudoId(internals.shadowRoot(password), "-webkit-auto-fill-button");
+    var autoFillButton = getElementByPseudoId(internals.shadowRoot(password), "-webkit-credentials-auto-fill-button");
     autoFillButton.onclick = checkEventAndDone;
 
     eventSender.mouseMoveTo(password.offsetLeft + 10, password.offsetTop + password.offsetHeight / 2);

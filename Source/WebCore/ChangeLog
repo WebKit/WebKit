@@ -1,3 +1,52 @@
+2016-01-27  Zhuo Li  <zachli@apple.com>
+
+        Need ability to specify alternate image for AutoFill button in input fields.
+        https://bugs.webkit.org/show_bug.cgi?id=153116.
+        rdar://problem/23384854.
+
+        Reviewed by Darin Adler.
+
+        Add a new AutoFill button that can be shown in <input> elements.
+
+        Tests: fast/forms/auto-fill-button/input-contacts-auto-fill-button.html
+               fast/forms/auto-fill-button/show-correct-auto-fill-button-when-auto-fill-button-type-changes.html
+
+        * css/html.css:
+        (input::-webkit-contacts-auto-fill-button):
+        (input::-webkit-contacts-auto-fill-button:hover):
+        (input::-webkit-contacts-auto-fill-button:active):
+        Add default style rules for the Contacts AutoFill button based on the ones used for
+        Manual AutoFill button.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setShowAutoFillButton):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::autoFillButtonType):
+        - Replace the boolean parameter with a new parameter to specify the type of the AutoFill button.
+        - Declare a private variable to keep a record of the type of the current AutoFill
+        button.
+        (WebCore::HTMLInputElement::showAutoFillButton): Deleted.
+
+        * html/HTMLTextFormControlElement.h:
+        Declare enum for AutoFill button type.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::autoFillButtonTypeToAutoFillButtonPseudoClassName):
+        (WebCore::isAutoFillButtonTypeChanged):
+        (WebCore::TextFieldInputType::shouldDrawAutoFillButton): None means the AutoFill button is not
+        enabled.
+        (WebCore::TextFieldInputType::createAutoFillButton): Only create the AutoFill button
+        if the type is expected.
+        (WebCore::TextFieldInputType::updateAutoFillButton):
+        Handle the case where AutoFill button type changes in the text field.
+        * html/TextFieldInputType.h:
+
+        * testing/Internals.cpp:
+        (WebCore::stringToAutoFillButtonType): Convert the string to AutoFill button type.
+        (WebCore::Internals::setShowAutoFillButton): Add a new parameter to specify the type of the AutoFill button.
+        * testing/Internals.h: Ditto.
+        * testing/Internals.idl: Ditto.
+
 2016-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Node.treeRoot

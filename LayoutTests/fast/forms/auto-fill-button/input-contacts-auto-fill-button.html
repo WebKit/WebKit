@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<p>This tests that the Address Book AutoFill button renders. It can only be tested in the test tool.</p>
+<div id="container">
+    <input type="text">
+    <input type="text" name="first_name">
+    <input type="text" name="last_name">
+</div>
+<script>
+
+if (window.internals) {
+    var inputs = document.querySelectorAll("input");
+    for (var i = 0; i < inputs.length; ++i)
+        window.internals.setShowAutoFillButton(inputs[i], "AutoFillButtonTypeContacts");
+
+    var dynamicInput = document.createElement("input");
+    window.internals.setShowAutoFillButton(dynamicInput, "AutoFillButtonTypeContacts");
+    document.querySelector("#container").appendChild(dynamicInput);
+
+    var dynamicInput2 = document.createElement("input");
+    window.internals.setShowAutoFillButton(dynamicInput2, "AutoFillButtonTypeContacts");
+    document.querySelector("#container").appendChild(dynamicInput2);
+    dynamicInput2.setAttribute("name", "address");
+
+    var dynamicInput3 = document.createElement("input");
+    window.internals.setShowAutoFillButton(dynamicInput3, "AutoFillButtonTypeContacts");
+    document.querySelector("#container").appendChild(dynamicInput3);
+    dynamicInput3.setAttribute("name", "phone_number");
+}
+</script>
+</html>

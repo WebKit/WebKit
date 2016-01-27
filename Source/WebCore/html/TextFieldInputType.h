@@ -108,7 +108,7 @@ private:
     bool shouldDrawAutoFillButton() const;
 
     void createContainer();
-    void createAutoFillButton();
+    void createAutoFillButton(AutoFillButtonType);
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;

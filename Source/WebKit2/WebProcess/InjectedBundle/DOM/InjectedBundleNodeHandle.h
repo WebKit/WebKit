@@ -36,6 +36,7 @@
 namespace WebCore {
     class IntRect;
     class Node;
+    enum class AutoFillButtonType : uint8_t;
 }
 
 namespace WebKit {
@@ -68,7 +69,7 @@ public:
     bool isHTMLInputElementAutoFilled() const;
     void setHTMLInputElementAutoFilled(bool);
     bool isHTMLInputElementAutoFillButtonEnabled() const;
-    void setHTMLInputElementAutoFillButtonEnabled(bool);
+    void setHTMLInputElementAutoFillButtonEnabled(WebCore::AutoFillButtonType);
     WebCore::IntRect htmlInputElementAutoFillButtonBounds();
     bool htmlInputElementLastChangeWasUserEdit();
     bool htmlTextAreaElementLastChangeWasUserEdit();

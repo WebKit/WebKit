@@ -33,8 +33,23 @@
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
 #include "WebImage.h"
+#include <WebCore/HTMLTextFormControlElement.h>
 
 using namespace WebKit;
+
+static WebCore::AutoFillButtonType toAutoFillButtonType(WKAutoFillButtonType wkAutoFillButtonType)
+{
+    switch (wkAutoFillButtonType) {
+    case kWKAutoFillButtonTypeNone:
+        return WebCore::AutoFillButtonType::None;
+    case kWKAutoFillButtonTypeContacts:
+        return WebCore::AutoFillButtonType::Contacts;
+    case kWKAutoFillButtonTypeCredentials:
+        return WebCore::AutoFillButtonType::Credentials;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::AutoFillButtonType::None;
+}
 
 WKTypeID WKBundleNodeHandleGetTypeID()
 {
@@ -95,9 +110,9 @@ bool WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHand
     return toImpl(htmlInputElementHandleRef)->isHTMLInputElementAutoFillButtonEnabled();
 }
 
-void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool enabled)
+void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType(WKBundleNodeHandleRef htmlInputElementHandleRef, WKAutoFillButtonType autoFillButtonType)
 {
-    toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFillButtonEnabled(enabled);
+    toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFillButtonEnabled(toAutoFillButtonType(autoFillButtonType));
 }
 
 WKRect WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds(WKBundleNodeHandleRef htmlInputElementHandleRef)
@@ -149,4 +164,12 @@ bool WKBundleNodeHandleGetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlI
 void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool filled)
 {
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFilled(filled);
+}
+
+// Deprecated - use WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType(WKBundleNodeHandleRef, WKAutoFillButtonType).
+void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool enabled)
+{
+    WebCore::AutoFillButtonType autoFillButtonType = enabled ? WebCore::AutoFillButtonType::Credentials : WebCore::AutoFillButtonType::None;
+
+    toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFillButtonEnabled(autoFillButtonType);
 }
