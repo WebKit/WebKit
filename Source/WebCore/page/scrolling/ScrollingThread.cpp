@@ -51,7 +51,7 @@ void ScrollingThread::dispatch(std::function<void ()> function)
     scrollingThread.createThreadIfNeeded();
 
     {
-        std::lock_guard<Lock> lock(singleton().m_functionsMutex);
+        std::lock_guard<Lock> lock(scrollingThread.m_functionsMutex);
         scrollingThread.m_functions.append(function);
     }
 

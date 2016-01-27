@@ -1848,7 +1848,7 @@ IDBClient::IDBConnectionToServer& Page::idbConnection()
 }
 #endif
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
 void Page::setResourceUsageOverlayVisible(bool visible)
 {
     if (!visible) {

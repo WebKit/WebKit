@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
 
 #include "ResourceUsageOverlay.h"
 

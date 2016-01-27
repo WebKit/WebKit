@@ -271,6 +271,7 @@ list(APPEND WebCore_SOURCES
 
     page/cocoa/UserAgent.mm
     page/cocoa/ResourceUsageOverlayCocoa.mm
+    page/cocoa/ResourceUsageOverlayThread.mm
     page/cocoa/SettingsCocoa.mm
 
     page/mac/ChromeMac.mm

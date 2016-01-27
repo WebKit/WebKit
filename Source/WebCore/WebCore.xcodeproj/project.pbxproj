@@ -4158,6 +4158,11 @@
 		A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = A456FA2511AD4A830020B420 /* LabelsNodeList.h */; };
 		A501920E132EBF2E008BFE55 /* Autocapitalize.h in Headers */ = {isa = PBXBuildFile; fileRef = A501920C132EBF2E008BFE55 /* Autocapitalize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A502C5DF13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A502C5DD13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h */; };
+		A5071E851C56D0DC009951BE /* ResourceUsageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E821C56D079009951BE /* ResourceUsageData.h */; };
+		A5071E861C56D0DF009951BE /* ResourceUsageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5071E831C56D079009951BE /* ResourceUsageThread.cpp */; };
+		A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = A5071E841C56D079009951BE /* ResourceUsageThread.h */; };
+		A5071E891C56D4FE009951BE /* ResourceUsageThreadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */; };
+		A5071E8B1C56FB31009951BE /* ResourceUsageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */; };
 		A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */; };
 		A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */; };
 		A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */; };
@@ -11765,6 +11770,11 @@
 		A456FA2511AD4A830020B420 /* LabelsNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelsNodeList.h; sourceTree = "<group>"; };
 		A501920C132EBF2E008BFE55 /* Autocapitalize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Autocapitalize.h; sourceTree = "<group>"; };
 		A502C5DD13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSafeGCActivityCallbackIOS.h; sourceTree = "<group>"; };
+		A5071E821C56D079009951BE /* ResourceUsageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsageData.h; sourceTree = "<group>"; };
+		A5071E831C56D079009951BE /* ResourceUsageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageThread.cpp; sourceTree = "<group>"; };
+		A5071E841C56D079009951BE /* ResourceUsageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsageThread.h; sourceTree = "<group>"; };
+		A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceUsageThreadCocoa.mm; sourceTree = "<group>"; };
+		A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageData.cpp; sourceTree = "<group>"; };
 		A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedDateCache.h; sourceTree = "<group>"; };
 		A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDateCache.mm; sourceTree = "<group>"; };
 		A518225417E2A0D400A9BA1D /* InspectorOverlayPage.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = InspectorOverlayPage.css; sourceTree = "<group>"; };
@@ -17300,6 +17310,7 @@
 			isa = PBXGroup;
 			children = (
 				ADFE2B541BD5F41200DAB457 /* ResourceUsageOverlayCocoa.mm */,
+				A5071E881C56D4FA009951BE /* ResourceUsageThreadCocoa.mm */,
 				A182D5B61BE722620087A7CC /* SettingsCocoa.mm */,
 				26255F0118878E110006E1FD /* UserAgent.h */,
 				5D5975B61963637B00D00878 /* UserAgent.mm */,
@@ -17876,8 +17887,12 @@
 				3772B09516535856000A49CA /* PopupOpeningObserver.h */,
 				B776D43C1104527500BEB0EC /* PrintContext.cpp */,
 				B776D43A1104525D00BEB0EC /* PrintContext.h */,
+				A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */,
+				A5071E821C56D079009951BE /* ResourceUsageData.h */,
 				ADBAD6EC1BCDD95000381325 /* ResourceUsageOverlay.cpp */,
 				ADBAD6ED1BCDD95000381325 /* ResourceUsageOverlay.h */,
+				A5071E831C56D079009951BE /* ResourceUsageThread.cpp */,
+				A5071E841C56D079009951BE /* ResourceUsageThread.h */,
 				BCEC01BA0C274DAC009F4EC9 /* Screen.cpp */,
 				BCEC01BB0C274DAC009F4EC9 /* Screen.h */,
 				BCEC01BC0C274DAC009F4EC9 /* Screen.idl */,
@@ -25947,6 +25962,7 @@
 				1AB5EBD2194A50F30059AC70 /* HTTPHeaderNames.h in Headers */,
 				514C76730CE923A1007EF3CD /* HTTPParsers.h in Headers */,
 				375CD232119D43C800A2A859 /* Hyphenation.h in Headers */,
+				A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */,
 				862F12A018C1DD02005C54AF /* HysteresisActivity.h in Headers */,
 				B275356E0B053814002CE64F /* Icon.h in Headers */,
 				97E4029013A696ED00913D67 /* IconController.h in Headers */,
@@ -26618,6 +26634,7 @@
 				B2FA3E050AB75A6F000E5AC4 /* JSSVGTextElement.h in Headers */,
 				B22362290C3AF04A0008CA9B /* JSSVGTextPathElement.h in Headers */,
 				B2FA3E070AB75A6F000E5AC4 /* JSSVGTextPositioningElement.h in Headers */,
+				A5071E851C56D0DC009951BE /* ResourceUsageData.h in Headers */,
 				B2FA3E090AB75A6F000E5AC4 /* JSSVGTitleElement.h in Headers */,
 				B2FA3E0B0AB75A6F000E5AC4 /* JSSVGTransform.h in Headers */,
 				B2FA3E0D0AB75A6F000E5AC4 /* JSSVGTransformList.h in Headers */,
@@ -28717,6 +28734,7 @@
 				7C1E97271A9F9834007BF0FB /* AutoFillButtonElement.cpp in Sources */,
 				45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */,
 				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
+				A5071E891C56D4FE009951BE /* ResourceUsageThreadCocoa.mm in Sources */,
 				070363E1181A1CDC00C074A5 /* AVAudioCaptureSource.mm in Sources */,
 				070363E3181A1CDC00C074A5 /* AVCaptureDeviceManager.mm in Sources */,
 				070363E5181A1CDC00C074A5 /* AVMediaCaptureSource.mm in Sources */,
@@ -29041,6 +29059,7 @@
 				59A8F1D411A69508001AC34A /* DeviceOrientationController.cpp in Sources */,
 				59D1C10411EB5DCF00B638C8 /* DeviceOrientationData.cpp in Sources */,
 				59A85EA2119D68D900DEF1EF /* DeviceOrientationEvent.cpp in Sources */,
+				A5071E861C56D0DF009951BE /* ResourceUsageThread.cpp in Sources */,
 				267725FC1A5B3AD9003C24DD /* DFA.cpp in Sources */,
 				5C9A7A751AA0F6EA00958ACF /* DFABytecodeCompiler.cpp in Sources */,
 				5C9A7A761AA0F6ED00958ACF /* DFABytecodeInterpreter.cpp in Sources */,
@@ -31629,6 +31648,7 @@
 				49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */,
 				6F995A231A7078B100A735F4 /* WebGLTransformFeedback.cpp in Sources */,
 				0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */,
+				A5071E8B1C56FB31009951BE /* ResourceUsageData.cpp in Sources */,
 				6F995A251A7078B100A735F4 /* WebGLVertexArrayObject.cpp in Sources */,
 				6F222B761AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp in Sources */,
 				77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */,

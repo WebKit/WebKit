@@ -2849,7 +2849,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setAllowsAirPlayForMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::allowsAirPlayForMediaPlaybackKey()));
 #endif
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     settings.setResourceUsageOverlayVisible(store.getBoolValueForKey(WebPreferencesKey::resourceUsageOverlayVisibleKey()));
 #endif
 

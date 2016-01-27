@@ -1,3 +1,17 @@
+2016-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Generalize ResourceUsageData gathering to be used outside of ResourceUsageOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=153509
+        <rdar://problem/24354291>
+
+        Reviewed by Andreas Kling.
+
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::didAllocateBlock):
+        (JSC::Heap::didFreeBlock):
+        Rename the ENABLE flag.
+
 2016-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [B3] Fix control reaches end of non-void function GCC warning after r195139

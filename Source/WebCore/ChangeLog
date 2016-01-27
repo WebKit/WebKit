@@ -1,3 +1,73 @@
+2016-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Generalize ResourceUsageData gathering to be used outside of ResourceUsageOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=153509
+        <rdar://problem/24354291>
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        * page/Page.h:
+        * page/Settings.cpp:
+        * page/Settings.h:
+        * page/ResourceUsageOverlay.cpp:
+        * page/ResourceUsageOverlay.h:
+        Add new files to the build and updated ENABLE flag name.
+
+        * page/ResourceUsageData.cpp: Added.
+        (WebCore::ResourceUsageData::ResourceUsageData):
+        * page/ResourceUsageData.h: Added.
+        (WebCore::MemoryCategoryInfo::MemoryCategoryInfo):
+        Platform agnostic resource data that may be used by multiple clients,
+        such as the ResourceUsageOverlay and later the Inspector.
+
+        * page/ResourceUsageThread.h: Added.
+        * page/ResourceUsageThread.cpp: Added.
+        (WebCore::ResourceUsageThread::ResourceUsageThread):
+        (WebCore::ResourceUsageThread::singleton):
+        (WebCore::ResourceUsageThread::addObserver):
+        (WebCore::ResourceUsageThread::removeObserver):
+        (WebCore::ResourceUsageThread::waitUntilObservers):
+        (WebCore::ResourceUsageThread::notifyObservers):
+        (WebCore::ResourceUsageThread::createThreadIfNeeded):
+        (WebCore::ResourceUsageThread::threadCallback):
+        (WebCore::ResourceUsageThread::threadBody):
+        Platform agnostic resource usage thread that can be used to gather data
+        into a ResourceUsageData struct on a background thread and notify observers
+        on the main thread. Platforms need only implement ResourceUsageThread::platformThreadBody
+        to populate the ResourceUsageData struct with data.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::HistoricMemoryCategoryInfo::HistoricMemoryCategoryInfo):
+        (WebCore::HistoricResourceUsageData::HistoricResourceUsageData):
+        (WebCore::historicUsageData):
+        (WebCore::appendDataToHistory):
+        (WebCore::ResourceUsageOverlay::platformInitialize):
+        (WebCore::ResourceUsageOverlay::platformDestroy):
+        (WebCore::drawMemHistory):
+        (WebCore::drawMemoryPie):
+        (WebCore::ResourceUsageOverlay::platformDraw):
+        Move CPU and memory resource usage calculations to ResourceUsageThread.
+        The overlay adds itself as an observer, and builds its RingBuffer list
+        of data from notifications from the ResourceUsageThread. Renamed
+        some of the fields.
+
+        * page/cocoa/ResourceUsageThreadCocoa.mm: Added.
+        (WebCore::vmPageSize):
+        (WebCore::TagInfo::TagInfo):
+        (WebCore::pagesPerVMTag):
+        (WebCore::cpuUsage):
+        (WebCore::categoryForVMTag):
+        (WebCore::ResourceUsageThread::platformThreadBody):
+        Extracted from ResourceUsageOverlayCocoa.
+
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::dispatch):
+        Drive-by, don't call singleton again, we already have the result.
+
 2016-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Use initializers in HTMLCanvasElement

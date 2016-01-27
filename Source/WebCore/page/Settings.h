@@ -193,7 +193,7 @@ public:
     WEBCORE_EXPORT void setShowTiledScrollingIndicator(bool);
     bool showTiledScrollingIndicator() const { return m_showTiledScrollingIndicator; }
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     bool resourceUsageOverlayVisible() const { return m_resourceUsageOverlayVisible; }
     WEBCORE_EXPORT void setResourceUsageOverlayVisible(bool);
 #endif
@@ -352,7 +352,7 @@ private:
 
     bool m_forcePendingWebGLPolicy : 1;
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     bool m_resourceUsageOverlayVisible { false };
 #endif
 

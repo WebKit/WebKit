@@ -1,3 +1,14 @@
+2016-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Generalize ResourceUsageData gathering to be used outside of ResourceUsageOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=153509
+        <rdar://problem/24354291>
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Platform.h:
+        Rename the ENABLE flag.
+
 2016-01-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Make HashTable iterators STL iterators compatible

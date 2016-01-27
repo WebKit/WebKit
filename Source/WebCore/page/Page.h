@@ -341,7 +341,7 @@ public:
     void dnsPrefetchingStateChanged();
     void storageBlockingStateChanged();
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     void setResourceUsageOverlayVisible(bool);
 #endif
 
@@ -656,7 +656,7 @@ private:
 
     HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;
 #endif
 

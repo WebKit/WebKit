@@ -540,7 +540,7 @@ void Settings::setShowTiledScrollingIndicator(bool enabled)
     m_showTiledScrollingIndicator = enabled;
 }
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
 void Settings::setResourceUsageOverlayVisible(bool visible)
 {
     if (m_resourceUsageOverlayVisible == visible)

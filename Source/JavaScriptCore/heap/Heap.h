@@ -246,7 +246,7 @@ public:
 
     void addLogicallyEmptyWeakBlock(WeakBlock*);
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     size_t blockBytesAllocated() const { return m_blockBytesAllocated; }
 #endif
 
@@ -456,7 +456,7 @@ private:
 
     ParallelHelperClient m_helperClient;
 
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     size_t m_blockBytesAllocated { 0 };
 #endif
 };

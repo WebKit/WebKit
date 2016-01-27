@@ -310,7 +310,7 @@ inline void Heap::unregisterWeakGCMap(void* weakGCMap)
 
 inline void Heap::didAllocateBlock(size_t capacity)
 {
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     m_blockBytesAllocated += capacity;
 #else
     UNUSED_PARAM(capacity);
@@ -319,7 +319,7 @@ inline void Heap::didAllocateBlock(size_t capacity)
 
 inline void Heap::didFreeBlock(size_t capacity)
 {
-#if ENABLE(RESOURCE_USAGE_OVERLAY)
+#if ENABLE(RESOURCE_USAGE)
     m_blockBytesAllocated -= capacity;
 #else
     UNUSED_PARAM(capacity);
