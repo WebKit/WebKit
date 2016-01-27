@@ -28,6 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursorInfo.h"
+#include "IDBGetResult.h"
 #include "IDBSerialization.h"
 #include "Logging.h"
 #include "SQLiteIDBTransaction.h"
@@ -68,7 +69,7 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, const IDBCur
     : m_transaction(&transaction)
     , m_cursorIdentifier(info.identifier())
     , m_objectStoreID(info.objectStoreIdentifier())
-    , m_indexID(info.sourceIdentifier())
+    , m_indexID(info.cursorSource() == IndexedDB::CursorSource::Index ? info.sourceIdentifier() : IDBIndexMetadata::InvalidId)
     , m_cursorDirection(info.cursorDirection())
     , m_keyRange(info.range())
 {
@@ -84,6 +85,17 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, const uint64
     , m_keyRange(range)
 {
     ASSERT(m_objectStoreID);
+}
+
+void SQLiteIDBCursor::currentData(IDBGetResult& result)
+{
+    if (m_completed) {
+        ASSERT(!m_errored);
+        result = { };
+        return;
+    }
+
+    result = { m_currentKey, m_currentPrimaryKey, ThreadSafeDataBuffer::copyVector(m_currentValueBuffer) };
 }
 
 static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)

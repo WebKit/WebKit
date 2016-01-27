@@ -1,3 +1,24 @@
+2016-01-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Cursors are utterly broken in the SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153558
+
+        Reviewed by Alex Christensen.
+
+        No new tests (35 failures now pass, others improve).
+
+        - Fixes incorrect usage of Index cursors when ObjectStore cursors are intended.
+        - Improves the state of getting the cursor value vs. reaching the end of a cursor.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::openCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::SQLiteIDBCursor):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentData):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
         Getting / Setting property on prototype object must throw TypeError

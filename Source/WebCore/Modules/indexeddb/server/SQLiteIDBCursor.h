@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class IDBCursorInfo;
+class IDBGetResult;
 
 namespace IDBServer {
 
@@ -66,6 +67,8 @@ public:
     bool didError() const { return m_errored; }
 
     void objectStoreRecordsChanged();
+
+    void currentData(IDBGetResult&);
 
 private:
     bool establishStatement();

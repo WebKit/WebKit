@@ -1,3 +1,12 @@
+2016-01-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Cursors are utterly broken in the SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153558
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
         Getting / Setting property on prototype object must throw TypeError

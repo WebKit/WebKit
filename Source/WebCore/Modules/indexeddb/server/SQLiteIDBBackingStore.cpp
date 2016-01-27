@@ -1406,7 +1406,7 @@ IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
 
     m_cursors.set(cursor->identifier(), cursor);
 
-    result = { cursor->currentKey(), cursor->currentPrimaryKey(), ThreadSafeDataBuffer::copyVector(cursor->currentValueBuffer()) };
+    cursor->currentData(result);
     return { };
 }
 
@@ -1442,7 +1442,7 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
         }
     }
 
-    result = { cursor->currentKey(), cursor->currentPrimaryKey(), ThreadSafeDataBuffer::copyVector(cursor->currentValueBuffer()) };
+    cursor->currentData(result);
     return { };
 }
 
