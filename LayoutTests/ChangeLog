@@ -1,3 +1,12 @@
+2016-01-26  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Key generator support for SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153427
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Allow canvas to use display-list drawing for testing

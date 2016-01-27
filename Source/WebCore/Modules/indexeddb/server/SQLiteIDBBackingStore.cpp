@@ -1180,19 +1180,126 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
     return { };
 }
 
-IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier&, uint64_t, uint64_t&)
+IDBError SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue(int64_t objectStoreID, uint64_t& outValue)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT currentKey FROM KeyGenerators WHERE objectStoreID = ?;"));
+    if (sql.prepare() != SQLITE_OK
+        || sql.bindInt64(1, objectStoreID) != SQLITE_OK) {
+        LOG_ERROR("Could not retrieve currentKey from KeyGenerators table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Error getting current key generator value from database") };
+    }
+    int result = sql.step();
+    if (result != SQLITE_ROW) {
+        LOG_ERROR("Could not retreive key generator value for object store, but it should be there.");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Error finding current key generator value in database") };
+    }
+
+    int64_t value = sql.getColumnInt64(0);
+    if (value < 0)
+        return { IDBDatabaseException::ConstraintError, "Current key generator value from database is invalid" };
+
+    outValue = value;
+    return { };
 }
 
-IDBError SQLiteIDBBackingStore::revertGeneratedKeyNumber(const IDBResourceIdentifier&, uint64_t, uint64_t)
+IDBError SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue(int64_t objectStoreID, uint64_t value)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO KeyGenerators VALUES (?, ?);"));
+    if (sql.prepare() != SQLITE_OK
+        || sql.bindInt64(1, objectStoreID) != SQLITE_OK
+        || sql.bindInt64(2, value) != SQLITE_OK
+        || sql.step() != SQLITE_DONE) {
+        LOG_ERROR("Could not update key generator value (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        return { IDBDatabaseException::ConstraintError, "Error storing new key generator value in database" };
+    }
+
+    return { };
 }
 
-IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier&, uint64_t, double)
+IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, uint64_t& generatedKey)
 {
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Not implemented") };
+    LOG(IndexedDB, "SQLiteIDBBackingStore::generateKeyNumber");
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    // The IndexedDatabase spec defines the max key generator value as 2^53;
+    static uint64_t maxGeneratorValue = 0x20000000000000;
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to generate key in database without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to generate key in database without an in-progress transaction") };
+    }
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to generate key in a read-only transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to generate key in a read-only transaction") };
+    }
+
+    uint64_t currentValue;
+    auto error = uncheckedGetKeyGeneratorValue(objectStoreID, currentValue);
+    if (!error.isNull())
+        return error;
+
+    if (currentValue > maxGeneratorValue)
+        return { IDBDatabaseException::ConstraintError, "Cannot generate new key value over 2^53 for object store operation" };
+
+    generatedKey = currentValue + 1;
+    return uncheckedSetKeyGeneratorValue(objectStoreID, generatedKey);
+}
+
+IDBError SQLiteIDBBackingStore::revertGeneratedKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, uint64_t newKeyNumber)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::revertGeneratedKeyNumber");
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to revert key generator value in database without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to revert key generator value in database without an in-progress transaction") };
+    }
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to revert key generator value in a read-only transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to revert key generator value in a read-only transaction") };
+    }
+
+    return uncheckedSetKeyGeneratorValue(objectStoreID, newKeyNumber);
+}
+
+IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, double newKeyNumber)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber");
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to update key generator value in database without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to update key generator value in database without an in-progress transaction") };
+    }
+    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+        LOG_ERROR("Attempt to update key generator value in a read-only transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to update key generator value in a read-only transaction") };
+    }
+
+    uint64_t currentValue;
+    auto error = uncheckedGetKeyGeneratorValue(objectStoreID, currentValue);
+    if (!error.isNull())
+        return error;
+
+    if (newKeyNumber <= currentValue)
+        return { };
+
+    uint64_t newKeyInteger(newKeyNumber);
+    if (newKeyInteger <= uint64_t(newKeyNumber))
+        ++newKeyInteger;
+
+    ASSERT(newKeyInteger > uint64_t(newKeyNumber));
+
+    return uncheckedSetKeyGeneratorValue(objectStoreID, newKeyInteger);
 }
 
 IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo& info, IDBGetResult& result)

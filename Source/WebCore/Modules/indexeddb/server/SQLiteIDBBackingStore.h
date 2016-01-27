@@ -89,6 +89,8 @@ private:
     IDBError deleteRecord(SQLiteIDBTransaction&, int64_t objectStoreID, const IDBKeyData&);
     IDBError uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const IDBKeyData& keyValue, const IDBKeyData& indexKey);
     IDBError uncheckedHasIndexRecord(int64_t indexID, const IDBKeyData&, bool& hasRecord);
+    IDBError uncheckedGetKeyGeneratorValue(int64_t objectStoreID, uint64_t& outValue);
+    IDBError uncheckedSetKeyGeneratorValue(int64_t objectStoreID, uint64_t value);
 
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;

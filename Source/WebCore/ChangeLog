@@ -1,3 +1,20 @@
+2016-01-26  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Key generator support for SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153427
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Existing failing tests now pass, others improved).
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::revertGeneratedKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
 2016-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         Allow canvas to use display-list drawing for testing
