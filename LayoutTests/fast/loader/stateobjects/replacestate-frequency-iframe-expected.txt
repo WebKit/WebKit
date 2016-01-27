@@ -1,6 +1,5 @@
 Test should not crash.
 Test does replaceStates both from the main frame and from an iframe and makes sure they both count against state object count limit.
-Click to test replaceState through a user gesture
 Successfully added item: 0
 Successfully added item: 1
 Successfully added item: 2
