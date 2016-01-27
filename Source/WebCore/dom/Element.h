@@ -248,7 +248,7 @@ public:
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
     WEBCORE_EXPORT RefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
 
-    ShadowRoot* bindingShadowRoot() const;
+    ShadowRoot* shadowRootForBindings(JSC::ExecState&) const;
     RefPtr<ShadowRoot> attachShadow(const Dictionary&, ExceptionCode&);
 
     ShadowRoot* userAgentShadowRoot() const;

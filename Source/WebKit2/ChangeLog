@@ -1,3 +1,20 @@
+2016-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add API to access closed shadowRoot in InjectedBundle
+        https://bugs.webkit.org/show_bug.cgi?id=153533
+
+        Reviewed by Antti Koivisto.
+
+        Added WKBundleScriptWorldMakeAllShadowRootsOpen to make all shadow roots open.
+        This is needed to keep supporting certain browser-level features such as autofill.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        (WKBundleScriptWorldMakeAllShadowRootsOpen): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h:
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::InjectedBundleScriptWorld::makeAllShadowRootsOpen): Added.
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+
 2016-01-27  Zhuo Li  <zachli@apple.com>
 
         Need ability to specify alternate image for AutoFill button in input fields.

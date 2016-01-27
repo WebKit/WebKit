@@ -88,4 +88,9 @@ void InjectedBundleScriptWorld::clearWrappers()
     m_world->clearWrappers();
 }
 
+void InjectedBundleScriptWorld::makeAllShadowRootsOpen()
+{
+    m_world->setShadowRootIsAlwaysOpen();
+}
+
 } // namespace WebKit

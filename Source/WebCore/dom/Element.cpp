@@ -1713,13 +1713,16 @@ RefPtr<ShadowRoot> Element::attachShadow(const Dictionary& dictionary, Exception
     return shadowRoot();
 }
 
-ShadowRoot* Element::bindingShadowRoot() const
+ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const
 {
     ShadowRoot* root = shadowRoot();
     if (!root)
         return nullptr;
-    if (root->type() != ShadowRoot::Type::Open)
-        return nullptr;
+
+    if (root->type() != ShadowRoot::Type::Open) {
+        if (!JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->world().shadowRootIsAlwaysOpen())
+            return nullptr;
+    }
     return root;
 }
 

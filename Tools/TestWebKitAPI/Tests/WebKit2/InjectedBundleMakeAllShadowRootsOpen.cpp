@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010,　2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,36 +24,49 @@
  */
 
 #include "config.h"
-#include "WKBundleScriptWorld.h"
 
-#include "InjectedBundleScriptWorld.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
+#if WK_HAVE_C_SPI
 
-using namespace WebKit;
+#include "PlatformUtilities.h"
+#include "PlatformWebView.h"
+#include "Test.h"
+#include <WebKit/WKRetainPtr.h>
 
-WKTypeID WKBundleScriptWorldGetTypeID()
+namespace TestWebKitAPI {
+
+static bool done;
+
+static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
-    return toAPI(InjectedBundleScriptWorld::APIType);
+    ASSERT_NOT_NULL(frame);
+
+    EXPECT_EQ(page, WKFrameGetPage(frame));
+    EXPECT_WK_STREQ("PASS", alertText);
+
+    done = true;
 }
 
-WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld()
+TEST(WebKit2, InjectedBundleMakeAllShadowRootOpenTest)
 {
-    RefPtr<InjectedBundleScriptWorld> world = InjectedBundleScriptWorld::create();
-    return toAPI(world.release().leakRef());
-}
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleMakeAllShadowRootOpenTestPageGroup")));
 
-WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
-{
-    return toAPI(InjectedBundleScriptWorld::normalWorld());
-}
+    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("InjectedBundleMakeAllShadowRootOpenTest", pageGroup.get()));
+    PlatformWebView webView(context.get(), pageGroup.get());
 
-void WKBundleScriptWorldClearWrappers(WKBundleScriptWorldRef scriptWorldRef)
-{
-    toImpl(scriptWorldRef)->clearWrappers();
-}
+    WKPageUIClientV0 uiClient;
+    memset(&uiClient, 0, sizeof(uiClient));
 
-void WKBundleScriptWorldMakeAllShadowRootsOpen(WKBundleScriptWorldRef scriptWorldRef)
-{
-    toImpl(scriptWorldRef)->makeAllShadowRootsOpen();
+    uiClient.base.version = 0;
+    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+
+    WKPageSetPageUIClient(webView.page(), &uiClient.base);
+
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKPageLoadURL(webView.page(), url.get());
+
+    Util::run(&done);
 }
+    
+} // namespace TestWebKitAPI
+
+#endif

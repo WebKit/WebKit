@@ -46,6 +46,9 @@ public:
     void didCreateWindowShell(ScriptController* scriptController) { m_scriptControllersWithWindowShells.add(scriptController); }
     void didDestroyWindowShell(ScriptController* scriptController) { m_scriptControllersWithWindowShells.remove(scriptController); }
 
+    void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
+    bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
+
     // FIXME: can we make this private?
     DOMObjectWrapperMap m_wrappers;
     HashMap<CSSValue*, void*> m_cssValueRoots;
@@ -61,6 +64,7 @@ private:
     JSC::VM& m_vm;
     HashSet<ScriptController*> m_scriptControllersWithWindowShells;
     bool m_isNormal;
+    bool m_shadowRootIsAlwaysOpen { false };
 };
 
 DOMWrapperWorld& normalWorld(JSC::VM&);
