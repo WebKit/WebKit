@@ -144,7 +144,7 @@ static void decodeBase64(DecodeTask& task)
     if (!base64URLDecode(task.encodedData.toStringWithoutCopying(), buffer)) {
         // Didn't work, try unescaping and decoding as base64.
         auto unescapedString = decodeURLEscapeSequences(task.encodedData.toStringWithoutCopying());
-        if (!base64Decode(unescapedString, buffer, Base64IgnoreWhitespace))
+        if (!base64Decode(unescapedString, buffer, Base64IgnoreSpacesAndNewLines))
             return;
     }
     buffer.shrinkToFit();

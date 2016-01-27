@@ -26,8 +26,19 @@ PASS window.atob() threw exception TypeError: Not enough arguments.
 PASS window.atob("") is ""
 PASS window.atob(null) is "ée"
 PASS window.atob(undefined) threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob(" YQ==") threw exception Error: InvalidCharacterError: DOM Exception 5.
-PASS window.atob("YQ==\u000a") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob(" YQ==") is "a"
+PASS window.atob("YQ==\u000a") is "a"
+PASS window.atob("ab\tcd") is "i·"
+PASS window.atob("ab\ncd") is "i·"
+PASS window.atob("ab\fcd") is "i·"
+PASS window.atob("ab cd") is "i·"
+PASS window.atob("ab\t\n\f\r cd") is "i·"
+PASS window.atob(" \t\n\f\r ab\t\n\f\r cd\t\n\f\r ") is "i·"
+PASS window.atob("ab\t\n\f\r =\t\n\f\r =\t\n\f\r ") is "i"
+PASS window.atob("            ") is ""
+PASS window.atob(" abcd===") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob("abcd=== ") threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob("abcd ===") threw exception Error: InvalidCharacterError: DOM Exception 5.
 PASS window.atob("6ek=") is "éé"
 PASS window.atob("6ek") is "éé"
 PASS window.atob("gIE=") is ""

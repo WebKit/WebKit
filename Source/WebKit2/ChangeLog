@@ -1,3 +1,14 @@
+2016-01-27  Chris Dumez  <cdumez@apple.com>
+
+        window.atob() should ignore spaces in input
+        https://bugs.webkit.org/show_bug.cgi?id=153522
+        <rdar://problem/24357822>
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformSave):
+
 2016-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add API to access closed shadowRoot in InjectedBundle

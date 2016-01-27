@@ -310,7 +310,7 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
 
         if (base64Encoded) {
             Vector<char> out;
-            if (!base64Decode(contentCopy, out, Base64FailOnInvalidCharacterOrExcessPadding))
+            if (!base64Decode(contentCopy, out, Base64ValidatePadding))
                 return;
             RetainPtr<NSData> dataContent = adoptNS([[NSData alloc] initWithBytes:out.data() length:out.size()]);
             [dataContent writeToURL:actualURL atomically:YES];

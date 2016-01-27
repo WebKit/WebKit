@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,10 @@ enum Base64EncodePolicy {
     Base64URLPolicy // No padding, no LFs.
 };
 
-enum Base64DecodePolicy {
-    Base64FailOnInvalidCharacterOrExcessPadding,
-    Base64FailOnInvalidCharacter,
-    Base64IgnoreWhitespace,
-    Base64IgnoreInvalidCharacters
+enum Base64DecodeOptions {
+    Base64Default = 0,
+    Base64ValidatePadding = 1 << 0,
+    Base64IgnoreSpacesAndNewLines = 1 << 1,
 };
 
 class SignedOrUnsignedCharVectorAdapter {
@@ -85,9 +84,9 @@ WTF_EXPORT_PRIVATE String base64Encode(const void*, unsigned, Base64EncodePolicy
 String base64Encode(ConstSignedOrUnsignedCharVectorAdapter, Base64EncodePolicy = Base64DoNotInsertLFs);
 String base64Encode(const CString&, Base64EncodePolicy = Base64DoNotInsertLFs);
 
-WTF_EXPORT_PRIVATE bool base64Decode(const String&, SignedOrUnsignedCharVectorAdapter, Base64DecodePolicy = Base64FailOnInvalidCharacter);
-WTF_EXPORT_PRIVATE bool base64Decode(const Vector<char>&, SignedOrUnsignedCharVectorAdapter, Base64DecodePolicy = Base64FailOnInvalidCharacter);
-WTF_EXPORT_PRIVATE bool base64Decode(const char*, unsigned, SignedOrUnsignedCharVectorAdapter, Base64DecodePolicy = Base64FailOnInvalidCharacter);
+WTF_EXPORT_PRIVATE bool base64Decode(const String&, SignedOrUnsignedCharVectorAdapter, unsigned options = Base64Default);
+WTF_EXPORT_PRIVATE bool base64Decode(const Vector<char>&, SignedOrUnsignedCharVectorAdapter, unsigned options = Base64Default);
+WTF_EXPORT_PRIVATE bool base64Decode(const char*, unsigned, SignedOrUnsignedCharVectorAdapter, unsigned options = Base64Default);
 
 inline void base64Encode(ConstSignedOrUnsignedCharVectorAdapter in, Vector<char>& out, Base64EncodePolicy policy)
 {
@@ -151,11 +150,8 @@ inline String base64URLEncode(const CString& in)
 using WTF::Base64EncodePolicy;
 using WTF::Base64DoNotInsertLFs;
 using WTF::Base64InsertLFs;
-using WTF::Base64DecodePolicy;
-using WTF::Base64FailOnInvalidCharacterOrExcessPadding;
-using WTF::Base64FailOnInvalidCharacter;
-using WTF::Base64IgnoreWhitespace;
-using WTF::Base64IgnoreInvalidCharacters;
+using WTF::Base64ValidatePadding;
+using WTF::Base64IgnoreSpacesAndNewLines;
 using WTF::base64Encode;
 using WTF::base64Decode;
 using WTF::base64URLDecode;

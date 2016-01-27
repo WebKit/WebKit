@@ -1,7 +1,7 @@
 /*
    Copyright (C) 2000-2001 Dawit Alemayehu <adawit@kde.org>
    Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-   Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
+   Copyright (C) 2007, 2008, 2013, 2016 Apple Inc. All rights reserved.
    Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
 
    This program is free software; you can redistribute it and/or modify
@@ -182,7 +182,7 @@ void base64URLEncode(const void* data, unsigned len, Vector<char>& out)
 }
 
 template<typename T>
-static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<char>& out, Base64DecodePolicy policy, const char (&decodeMap)[128])
+static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<char>& out, unsigned options, const char (&decodeMap)[128])
 {
     out.clear();
     if (!length)
@@ -192,28 +192,46 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
 
     unsigned equalsSignCount = 0;
     unsigned outLength = 0;
+    bool hadError = false;
     for (unsigned idx = 0; idx < length; ++idx) {
         unsigned ch = data[idx];
         if (ch == '=') {
             ++equalsSignCount;
-            // There should be no padding if length is a multiple of 4, and there
-            // should never be more than 2 padding characters.
-            if (policy == Base64FailOnInvalidCharacterOrExcessPadding && (length % 4 || equalsSignCount > 2))
-                return false;
+            // There should never be more than 2 padding characters.
+            if (options & Base64ValidatePadding && equalsSignCount > 2) {
+                hadError = true;
+                break;
+            }
         } else {
             char decodedCharacter = ch < WTF_ARRAY_LENGTH(decodeMap) ? decodeMap[ch] : nonAlphabet;
             if (decodedCharacter != nonAlphabet) {
-                if (equalsSignCount)
-                    return false;
-                out[outLength] = decodedCharacter;
-                ++outLength;
-            } else if (policy == Base64FailOnInvalidCharacterOrExcessPadding || policy == Base64FailOnInvalidCharacter || (policy == Base64IgnoreWhitespace && !isSpaceOrNewline(ch)))
-                return false;
+                if (equalsSignCount) {
+                    hadError = true;
+                    break;
+                }
+                out[outLength++] = decodedCharacter;
+            } else if (!(options & Base64IgnoreSpacesAndNewLines) || !isSpaceOrNewline(ch)) {
+                hadError = true;
+                break;
+            }
         }
     }
 
+    // Make sure we shrink back the Vector before returning. outLength may be shorter than expected
+    // in case of error or in case of ignored spaces.
+    if (outLength < out.size())
+        out.shrink(outLength);
+
+    if (hadError)
+        return false;
+
     if (!outLength)
         return !equalsSignCount;
+
+    // The should be no padding if length is a multiple of 4.
+    // We use (outLength + equalsSignCount) instead of length because we don't want to account for ignored characters (i.e. spaces).
+    if (options & Base64ValidatePadding && equalsSignCount && (outLength + equalsSignCount) % 4)
+        return false;
 
     // Valid data is (n * 4 + [0,2,3]) characters long.
     if ((outLength % 4) == 1)
@@ -248,15 +266,15 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
     return true;
 }
 
-bool base64Decode(const String& in, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
+bool base64Decode(const String& in, SignedOrUnsignedCharVectorAdapter out, unsigned options)
 {
     unsigned length = in.length();
     if (!length || in.is8Bit())
-        return base64DecodeInternal(in.characters8(), length, out, policy, base64DecMap);
-    return base64DecodeInternal(in.characters16(), length, out, policy, base64DecMap);
+        return base64DecodeInternal(in.characters8(), length, out, options, base64DecMap);
+    return base64DecodeInternal(in.characters16(), length, out, options, base64DecMap);
 }
 
-bool base64Decode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
+bool base64Decode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out, unsigned options)
 {
     out.clear();
 
@@ -264,20 +282,20 @@ bool base64Decode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out,
     if (in.size() > UINT_MAX)
         return false;
 
-    return base64DecodeInternal(reinterpret_cast<const LChar*>(in.data()), in.size(), out, policy, base64DecMap);
+    return base64DecodeInternal(reinterpret_cast<const LChar*>(in.data()), in.size(), out, options, base64DecMap);
 }
 
-bool base64Decode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
+bool base64Decode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdapter out, unsigned options)
 {
-    return base64DecodeInternal(reinterpret_cast<const LChar*>(data), len, out, policy, base64DecMap);
+    return base64DecodeInternal(reinterpret_cast<const LChar*>(data), len, out, options, base64DecMap);
 }
 
 bool base64URLDecode(const String& in, SignedOrUnsignedCharVectorAdapter out)
 {
     unsigned length = in.length();
     if (!length || in.is8Bit())
-        return base64DecodeInternal(in.characters8(), length, out, Base64FailOnInvalidCharacter, base64URLDecMap);
-    return base64DecodeInternal(in.characters16(), length, out, Base64FailOnInvalidCharacter, base64URLDecMap);
+        return base64DecodeInternal(in.characters8(), length, out, Base64Default, base64URLDecMap);
+    return base64DecodeInternal(in.characters16(), length, out, Base64Default, base64URLDecMap);
 }
 
 bool base64URLDecode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out)
@@ -288,12 +306,12 @@ bool base64URLDecode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter o
     if (in.size() > UINT_MAX)
         return false;
 
-    return base64DecodeInternal(reinterpret_cast<const LChar*>(in.data()), in.size(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
+    return base64DecodeInternal(reinterpret_cast<const LChar*>(in.data()), in.size(), out, Base64Default, base64URLDecMap);
 }
 
 bool base64URLDecode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdapter out)
 {
-    return base64DecodeInternal(reinterpret_cast<const LChar*>(data), len, out, Base64FailOnInvalidCharacter, base64URLDecMap);
+    return base64DecodeInternal(reinterpret_cast<const LChar*>(data), len, out, Base64Default, base64URLDecMap);
 }
 
 } // namespace WTF

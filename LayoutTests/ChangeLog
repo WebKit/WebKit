@@ -1,3 +1,17 @@
+2016-01-27  Chris Dumez  <cdumez@apple.com>
+
+        window.atob() should ignore spaces in input
+        https://bugs.webkit.org/show_bug.cgi?id=153522
+        <rdar://problem/24357822>
+
+        Reviewed by Benjamin Poulain.
+
+        Update window.atob() test to cover cases with spaces in
+        input.
+
+        * fast/dom/Window/atob-btoa-expected.txt:
+        * fast/dom/Window/atob-btoa.html:
+
 2016-01-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: SQLite backend doesn't update index records as object records are added.
