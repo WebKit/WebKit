@@ -1,3 +1,9 @@
+2016-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed CMake build fix after r195644.
+
+        * PlatformMac.cmake:
+
 2016-01-26  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Key generator support for SQLite backend.
