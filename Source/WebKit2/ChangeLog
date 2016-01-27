@@ -1,3 +1,9 @@
+2016-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.10.6 release.
+
+        * gtk/NEWS: Add release notes for 2.10.6
+
 2016-01-26  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GTK] WebProcess crashes when quickly attempting many DnD operations

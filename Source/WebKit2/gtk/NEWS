@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 2.10.6
+=================
+
+What's new in WebKitGTK+ 2.10.6?
+
+  - Fix a deadlock in the Web Process when JavaScript garbage collector was running for a web worker
+    thread that made google maps to hang.
+  - Fix media controls displaying without controls attribute.
+  - Fix a Web Process crash when quickly attempting many DnD operations.
+
+=================
 WebKitGTK+ 2.10.5
 =================
 
