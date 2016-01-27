@@ -1,3 +1,17 @@
+2016-01-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r195602.
+        https://bugs.webkit.org/show_bug.cgi?id=153526
+
+        broke more than it fixed (Requested by thorton on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION (r194557): Keyboard shortcuts stop working after
+        the WKWebView is unparented and reparented"
+        https://bugs.webkit.org/show_bug.cgi?id=153492
+        http://trac.webkit.org/changeset/195602
+
 2016-01-26  Anders Carlsson  <andersca@apple.com>
 
         WebKitAdditions should be able to modify derived source rules
