@@ -1,3 +1,13 @@
+2016-01-21  Dave Hyatt  <hyatt@apple.com>
+
+        Elements with overflow and border-radius don't show in multicolumn properly.
+        https://bugs.webkit.org/show_bug.cgi?id=152920
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/border-radius-overflow-columns-expected.html: Added.
+        * fast/multicol/border-radius-overflow-columns.html: Added.
+
 2016-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r168244): Content in horizontal-bt page is offset such that only the end is viewable and there is a white gap at the top
