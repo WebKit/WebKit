@@ -346,7 +346,7 @@ private:
         // We could use a union but ASAN seems to frown upon that.
         purifyArray();
 
-        IntegralType* array = reinterpret_cast<IntegralType*>(typedVector());
+        IntegralType* array = reinterpret_cast_ptr<IntegralType*>(typedVector());
         std::sort(array, array + m_length, sortComparison<IntegralType>);
 
     }
