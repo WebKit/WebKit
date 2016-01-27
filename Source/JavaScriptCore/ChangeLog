@@ -1,5 +1,27 @@
 2016-01-26  Filip Pizlo  <fpizlo@apple.com>
 
+        B3's integer range analysis should know that Mul'ing two sufficiently small numbers will yield a number that still has a meaningful range
+        https://bugs.webkit.org/show_bug.cgi?id=153518
+
+        Reviewed by Benjamin Poulain.
+
+        Octane/encrypt had an addition overflow check that can be proved away by being sufficiently
+        sneaky about the analysis of adds, multiplies, and shifts.
+
+        I almost added these optimizations to the DFG integer range optimization phase. That phase is
+        very complicated. B3's integer range analysis is trivial. So I added it to B3. Eventually
+        we'll want this same machinery in the DFG also.
+
+        8% speed-up on Octane/encrypt.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::dump): Dumping a constant value's name now dumps its value. This makes a huge difference for reading IR.
+        (JSC::B3::Value::cloneImpl):
+        (JSC::B3::Value::deepDump):
+
+2016-01-26  Filip Pizlo  <fpizlo@apple.com>
+
         It should be possible to disable FTL for a range like we disable DFG for a range
         https://bugs.webkit.org/show_bug.cgi?id=153511
 

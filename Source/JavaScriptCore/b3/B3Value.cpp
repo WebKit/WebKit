@@ -111,7 +111,33 @@ void Value::replaceWithPhi()
 
 void Value::dump(PrintStream& out) const
 {
+    bool isConstant = false;
+
+    switch (m_opcode) {
+    case Const32:
+        out.print("$", asInt32(), "(");
+        isConstant = true;
+        break;
+    case Const64:
+        out.print("$", asInt64(), "(");
+        isConstant = true;
+        break;
+    case ConstFloat:
+        out.print("$", asFloat(), "(");
+        isConstant = true;
+        break;
+    case ConstDouble:
+        out.print("$", asDouble(), "(");
+        isConstant = true;
+        break;
+    default:
+        break;
+    }
+    
     out.print(dumpPrefix, m_index);
+
+    if (isConstant)
+        out.print(")");
 }
 
 Value* Value::cloneImpl() const
@@ -127,7 +153,7 @@ void Value::dumpChildren(CommaPrinter& comma, PrintStream& out) const
 
 void Value::deepDump(const Procedure* proc, PrintStream& out) const
 {
-    out.print(m_type, " ", *this, " = ", m_opcode);
+    out.print(m_type, " ", dumpPrefix, m_index, " = ", m_opcode);
 
     out.print("(");
     CommaPrinter comma;

@@ -252,6 +252,102 @@ public:
         }
     }
 
+    template<typename T>
+    IntRange shl(int32_t shiftAmount)
+    {
+        T newMin = static_cast<T>(m_min) << shiftAmount;
+        T newMax = static_cast<T>(m_max) << shiftAmount;
+
+        if ((newMin >> shiftAmount) != static_cast<T>(m_min))
+            newMin = std::numeric_limits<T>::min();
+        if ((newMax >> shiftAmount) != static_cast<T>(m_max))
+            newMax = std::numeric_limits<T>::max();
+
+        return IntRange(newMin, newMax);
+    }
+
+    IntRange shl(int32_t shiftAmount, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return shl<int32_t>(shiftAmount);
+        case Int64:
+            return shl<int64_t>(shiftAmount);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    template<typename T>
+    IntRange add(const IntRange& other)
+    {
+        if (couldOverflowAdd<T>(other))
+            return top<T>();
+        return IntRange(m_min + other.m_min, m_max + other.m_max);
+    }
+
+    IntRange add(const IntRange& other, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return add<int32_t>(other);
+        case Int64:
+            return add<int64_t>(other);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    template<typename T>
+    IntRange sub(const IntRange& other)
+    {
+        if (couldOverflowSub<T>(other))
+            return top<T>();
+        return IntRange(m_min - other.m_max, m_max - other.m_min);
+    }
+
+    IntRange sub(const IntRange& other, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return sub<int32_t>(other);
+        case Int64:
+            return sub<int64_t>(other);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    template<typename T>
+    IntRange mul(const IntRange& other)
+    {
+        if (couldOverflowMul<T>(other))
+            return top<T>();
+        return IntRange(
+            std::min(
+                std::min(m_min * other.m_min, m_min * other.m_max),
+                std::min(m_max * other.m_min, m_max * other.m_max)),
+            std::max(
+                std::max(m_min * other.m_min, m_min * other.m_max),
+                std::max(m_max * other.m_min, m_max * other.m_max)));
+    }
+
+    IntRange mul(const IntRange& other, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return mul<int32_t>(other);
+        case Int64:
+            return mul<int64_t>(other);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
 private:
     int64_t m_min { 0 };
     int64_t m_max { 0 };
@@ -1839,8 +1935,13 @@ private:
         }
     }
 
-    IntRange rangeFor(Value* value)
+    // FIXME: This should really be a forward analysis. Instead, we uses a bounded-search backwards
+    // analysis.
+    IntRange rangeFor(Value* value, unsigned timeToLive = 5)
     {
+        if (!timeToLive)
+            return IntRange::top(value->type());
+        
         switch (value->opcode()) {
         case Const32:
         case Const64: {
@@ -1862,6 +1963,24 @@ private:
             if (value->child(1)->hasInt32())
                 return IntRange::rangeForZShr(value->child(1)->asInt32(), value->type());
             break;
+
+        case Shl:
+            if (value->child(1)->hasInt32())
+                return rangeFor(value->child(0), timeToLive - 1).shl(
+                    value->child(1)->asInt32(), value->type());
+            break;
+
+        case Add:
+            return rangeFor(value->child(0), timeToLive - 1).add(
+                rangeFor(value->child(1), timeToLive - 1), value->type());
+
+        case Sub:
+            return rangeFor(value->child(0), timeToLive - 1).sub(
+                rangeFor(value->child(1), timeToLive - 1), value->type());
+
+        case Mul:
+            return rangeFor(value->child(0), timeToLive - 1).mul(
+                rangeFor(value->child(1), timeToLive - 1), value->type());
 
         default:
             break;
