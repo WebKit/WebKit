@@ -815,10 +815,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_WEB_SOCKETS 1
 #endif
 
-#if !defined(ENABLE_CURRENTSRC)
-#define ENABLE_CURRENTSRC 0
-#endif
-
 #if !defined(ENABLE_WEB_TIMING)
 #define ENABLE_WEB_TIMING 0
 #endif

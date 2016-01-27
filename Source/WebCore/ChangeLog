@@ -1,3 +1,12 @@
+2016-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove ENABLE_CURRENTSRC
+        https://bugs.webkit.org/show_bug.cgi?id=153545
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-01-26  Anders Carlsson  <andersca@apple.com>
 
         Stop echoing echo commands to stdout

@@ -52,7 +52,6 @@ my (
     $canvasProxySupport,
     $channelMessagingSupport,
     $classSyntax,
-    $currentsrcSupport,
     $templateLiteralSyntax,
     $cspNextSupport,
     $css3TextSupport,
@@ -230,9 +229,6 @@ my @features = (
 
     { option => "css-compositing", desc => "Toggle CSS Compositing support",
       define => "ENABLE_CSS_COMPOSITING", default => isAppleWebKit(), value => \$cssCompositingSupport },
-
-    { option => "currentsrc", desc => "Toggle currentSrc attribute support",
-      define => "ENABLE_CURRENTSRC", default => 1, value => \$currentsrcSupport },
 
     { option => "custom-elements", desc => "Toggle custom elements support",
       define => "ENABLE_CUSTOM_ELEMENTS", default => (isAppleMacWebKit() || isIOSWebKit()), value => \$customElementsSupport },

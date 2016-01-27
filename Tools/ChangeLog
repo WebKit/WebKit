@@ -1,3 +1,12 @@
+2016-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove ENABLE_CURRENTSRC
+        https://bugs.webkit.org/show_bug.cgi?id=153545
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2016-01-26  Jason Marcell  <jmarcell@apple.com>
 
         Sort incoming commits via date instead of revision number.
