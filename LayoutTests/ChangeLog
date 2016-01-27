@@ -1,3 +1,13 @@
+2016-01-26  Jer Noble  <jer.noble@apple.com>
+
+        Calling video.controls=true during a scrub operation cancels scrub.
+        https://bugs.webkit.org/show_bug.cgi?id=153494
+
+        Reviewed by Eric Carlson.
+
+        * media/media-controls-drag-timeline-set-controls-property-expected.txt: Added.
+        * media/media-controls-drag-timeline-set-controls-property.html: Added.
+
 2016-01-26  Chris Dumez  <cdumez@apple.com>
 
         fast/history/page-cache-webdatabase-no-transaction-db.html flakily crashes
