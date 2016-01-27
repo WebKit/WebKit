@@ -1,5 +1,18 @@
 2016-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add Node.treeRoot
+        https://bugs.webkit.org/show_bug.cgi?id=153537
+
+        Reviewed by Antti Koivisto.
+
+        Added a testharness.js test for Node.treeRoot. Also rebaselined a test.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt: Rebaselined.
+        * fast/shadow-dom/Node-interface-treeRoot-expected.txt: Added.
+        * fast/shadow-dom/Node-interface-treeRoot.html: Added.
+
+2016-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rename HTMLSlotElement.getDistributedNodes to getAssignedNodes
         https://bugs.webkit.org/show_bug.cgi?id=153534
 

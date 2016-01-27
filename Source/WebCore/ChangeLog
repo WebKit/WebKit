@@ -1,5 +1,22 @@
 2016-01-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add Node.treeRoot
+        https://bugs.webkit.org/show_bug.cgi?id=153537
+
+        Reviewed by Antti Koivisto.
+
+        Exposed highestAncestor as Node.prototype.treeRoot, which was added to shadow DOM spec in
+        https://github.com/w3c/webcomponents/commit/6864a40fe4efa8a737e78512e3c85319ddc5bf8b
+
+        See also:
+        http://w3c.github.io/webcomponents/spec/shadow/#extensions-to-node-interface
+
+        Test: fast/shadow-dom/Node-interface-treeRoot.html
+
+        * dom/Node.idl:
+
+2016-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rename HTMLSlotElement.getDistributedNodes to getAssignedNodes
         https://bugs.webkit.org/show_bug.cgi?id=153534
 
