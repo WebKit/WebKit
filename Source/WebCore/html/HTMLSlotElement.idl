@@ -30,6 +30,6 @@
 ] interface HTMLSlotElement : HTMLElement {
 
     [Reflect] attribute DOMString name;
-    [ImplementedAs=assignedNodes] sequence<Node> getDistributedNodes();
+    [ImplementedAs=assignedNodes] sequence<Node> getAssignedNodes();
 
 };

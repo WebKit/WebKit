@@ -1,3 +1,17 @@
+2016-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename HTMLSlotElement.getDistributedNodes to getAssignedNodes
+        https://bugs.webkit.org/show_bug.cgi?id=153534
+
+        Reviewed by Antti Koivisto.
+
+        Updated the tests to refect the rename. Also added test cases after r192763
+        to assert we don't assign comment and processing instruction nodes to a slot.
+
+        * fast/shadow-dom/HTMLSlotElement-interface-expected.txt:
+        * fast/shadow-dom/HTMLSlotElement-interface.html:
+        * fast/shadow-dom/NonDocumentTypeChildNode-interface-assignedSlot.html:
+
 2016-01-27  Tim Horton  <timothy_horton@apple.com>
 
         Need to be able to specify MIME type for <attachment> without filename or handle

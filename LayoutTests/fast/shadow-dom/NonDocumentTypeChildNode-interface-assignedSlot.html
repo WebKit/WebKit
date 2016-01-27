@@ -58,8 +58,11 @@ test(function () {
     var childTextNode = document.createTextNode('');
     shadowHost.appendChild(childTextNode);
 
-    var commentNode = document.createTextNode('');
+    var commentNode = document.createComment('');
     shadowHost.appendChild(commentNode);
+
+    var processingInstructionNode = document.createProcessingInstruction('target', 'data');
+    shadowHost.appendChild(processingInstructionNode);
 
     var shadowRoot = shadowHost.attachShadow({mode: 'open'});
     var slot = document.createElement('slot');
@@ -67,19 +70,22 @@ test(function () {
 
     assert_equals(childElement.assignedSlot, slot, 'assignedSlot on an element must return the assigned default slot element');
     assert_equals(childTextNode.assignedSlot, slot, 'assignedSlot on a text node must return the assigned default slot element');
-    assert_equals(commentNode.assignedSlot, slot, 'assignedSlot on a comment node must return the assigned default slot element');
+    assert_equals(commentNode.assignedSlot, null, 'assignedSlot on a comment node must always return null');
+    assert_equals(processingInstructionNode.assignedSlot, null, 'assignedSlot on a comment node must always return null');
 
     slot.name = 'foo';
     assert_equals(childElement.assignedSlot, null, 'assignedSlot on an element must null when the element is unassigned from a slot element');
     assert_equals(childTextNode.assignedSlot, null, 'assignedSlot on a text node must null when the node is unassigned from a slot element');
     assert_equals(commentNode.assignedSlot, null, 'assignedSlot on a text node must null when the node is unassigned from a slot element');
+    assert_equals(processingInstructionNode.assignedSlot, null, 'assignedSlot on a text node must null when the node is unassigned from a slot element');
 
     childElement.slot = 'foo';
     assert_equals(childElement.assignedSlot, slot, 'assignedSlot on an element must return the re-assigned slot element');
 
     slot.name = null;
     assert_equals(childTextNode.assignedSlot, slot, 'assignedSlot on a text node must return the re-assigned slot element');
-    assert_equals(commentNode.assignedSlot, slot, 'assignedSlot on a comment node must return the re-assigned slot element');
+    assert_equals(commentNode.assignedSlot, null, 'assignedSlot on a comment node must always return null');
+    assert_equals(processingInstructionNode.assignedSlot, null, 'assignedSlot on a comment node must always return null');
 
 }, 'assignedSlot must return the assigned slot');
 
@@ -94,13 +100,17 @@ test(function () {
     var commentNode = document.createTextNode('');
     shadowHost.appendChild(commentNode);
 
+    var processingInstructionNode = document.createProcessingInstruction('target', 'data');
+    shadowHost.appendChild(processingInstructionNode);
+
     var shadowRoot = shadowHost.attachShadow({mode: 'closed'});
     var slot = document.createElement('slot');
     shadowRoot.appendChild(slot);
 
-    assert_equals(childElement.assignedSlot, null, 'assignedSlot on an element must return the assigned slot element.');
-    assert_equals(childTextNode.assignedSlot, null, 'assignedSlot on a text node must return the assigned slot element.');
-    assert_equals(commentNode.assignedSlot, null, 'assignedSlot on a comment node must return the assigned slot element.');
+    assert_equals(childElement.assignedSlot, null, 'assignedSlot on an element must return null if the slot is inside a closed shadow tree.');
+    assert_equals(childTextNode.assignedSlot, null, 'assignedSlot on a text node must return null if the slot is inside a closed shadow tree.');
+    assert_equals(commentNode.assignedSlot, null, 'assignedSlot on a comment node must always return null.');
+    assert_equals(processingInstructionNode.assignedSlot, null, 'assignedSlot on a processing instruction must always return null.');
 
 }, 'assignedSlot must return null when the assigned slot element is inside a closed shadow tree');
 

@@ -3,7 +3,7 @@
 <head>
 <title>Shadow DOM: HTMLSlotElement interface</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
-<meta name="assert" content="HTMLSlotElement must exist on window with name attribute and getDistributedNodes() method">
+<meta name="assert" content="HTMLSlotElement must exist on window with name attribute and getAssignedNode() method">
 <link rel="help" href="https://w3c.github.io/webcomponents/spec/shadow/#the-slot-element">
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
@@ -35,7 +35,7 @@ test(function () {
 }, '"name" attribute on HTMLSlotElement must reflect "name" attribute');
 
 test(function () {
-    assert_true('getDistributedNodes' in HTMLSlotElement.prototype, '"getDistributedNodes" method must be defined on HTMLSlotElement.prototype');
+    assert_true('getAssignedNodes' in HTMLSlotElement.prototype, '"getAssignedNodes" method must be defined on HTMLSlotElement.prototype');
 
     var shadowHost = document.createElement('div');
     var child = document.createElement('p');
@@ -44,24 +44,24 @@ test(function () {
     var slotElement = document.createElement('slot');
     shadowRoot.appendChild(slotElement);
 
-    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes must return an empty array when there are no nodes in the shadow tree');
+    assert_array_equals(slotElement.getAssignedNodes(), [], 'getAssignedNodes must return an empty array when there are no nodes in the shadow tree');
 
     shadowHost.appendChild(child);
-    assert_array_equals(slotElement.getDistributedNodes(), [child], 'getDistributedNodes on a default slot must return an element without slot element');
+    assert_array_equals(slotElement.getAssignedNodes(), [child], 'getAssignedNodes on a default slot must return an element without slot element');
 
     child.setAttribute('slot', 'foo');
-    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes on a default slot must not return an element with non-empty slot attribute');
+    assert_array_equals(slotElement.getAssignedNodes(), [], 'getAssignedNodes on a default slot must not return an element with non-empty slot attribute');
 
     child.setAttribute('slot', '');
-    assert_array_equals(slotElement.getDistributedNodes(), [child], 'getDistributedNodes on a default slot must return an element with empty slot attribute');
+    assert_array_equals(slotElement.getAssignedNodes(), [child], 'getAssignedNodes on a default slot must return an element with empty slot attribute');
 
     slotElement.setAttribute('name', 'bar');
-    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes on a named slot must not return an element with empty slot attribute');
+    assert_array_equals(slotElement.getAssignedNodes(), [], 'getAssignedNodes on a named slot must not return an element with empty slot attribute');
 
     slotElement.setAttribute('name', '');
-    assert_array_equals(slotElement.getDistributedNodes(), [child], 'getDistributedNodes on an empty name slot must return an element with empty slot attribute');
+    assert_array_equals(slotElement.getAssignedNodes(), [child], 'getAssignedNodes on an empty name slot must return an element with empty slot attribute');
 
-}, 'getDistributedNodes method on HTMLSlotElement must return the list of distributed nodes');
+}, 'getAssignedNodes method on HTMLSlotElement must return the list of distributed nodes');
 
 test(function () {
     var shadowHost = document.createElement('div');
@@ -74,21 +74,21 @@ test(function () {
     var slotElement = document.createElement('slot');
     shadowRoot.appendChild(slotElement);
 
-    assert_array_equals(slotElement.getDistributedNodes(), [p, b], 'getDistributedNodes must return the distributed nodes');
+    assert_array_equals(slotElement.getAssignedNodes(), [p, b], 'getAssignedNodes must return the distributed nodes');
 
     slotElement.name = 'foo';
-    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes must be empty when there are no matching elements for the slot name');
+    assert_array_equals(slotElement.getAssignedNodes(), [], 'getAssignedNodes must be empty when there are no matching elements for the slot name');
 
     b.slot = 'foo';
-    assert_array_equals(slotElement.getDistributedNodes(), [b], 'getDistributedNodes must return the nodes with the matching slot name');
+    assert_array_equals(slotElement.getAssignedNodes(), [b], 'getAssignedNodes must return the nodes with the matching slot name');
 
     p.slot = 'foo';
-    assert_array_equals(slotElement.getDistributedNodes(), [p, b], 'getDistributedNodes must return the nodes with the matching slot name in the tree order');
+    assert_array_equals(slotElement.getAssignedNodes(), [p, b], 'getAssignedNodes must return the nodes with the matching slot name in the tree order');
 
     slotElement.name = null;
-    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes must be empty for a default slot when all elements have "slot" attributes specified');
+    assert_array_equals(slotElement.getAssignedNodes(), [], 'getAssignedNodes must be empty for a default slot when all elements have "slot" attributes specified');
 
-}, 'getDistributedNodes must update when slot and name attributes are modified');
+}, 'getAssignedNodes must update when slot and name attributes are modified');
 
 test(function () {
     var shadowHost = document.createElement('div');
@@ -100,20 +100,24 @@ test(function () {
     slotElement.name = 'foo';
     shadowRoot.appendChild(slotElement);
 
-    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes must be empty when there are no matching elements for the slot name');
+    assert_array_equals(slotElement.getAssignedNodes(), [], 'getAssignedNodes must be empty when there are no matching elements for the slot name');
 
     slotElement.name = null;
-    assert_array_equals(slotElement.getDistributedNodes(), [child], 'getDistributedNodes must be empty when there are no matching elements for the slot name');
+    assert_array_equals(slotElement.getAssignedNodes(), [child], 'getAssignedNodes must be empty when there are no matching elements for the slot name');
 
-}, 'getDistributedNodes must update when a default slot is introduced dynamically by a slot rename');
+}, 'getAssignedNodes must update when a default slot is introduced dynamically by a slot rename');
 
 test(function () {
     var shadowHost = document.createElement('div');
     var p = document.createElement('p');
     var text = document.createTextNode('');
+    var comment = document.createComment('');
+    var processingInstruction = document.createProcessingInstruction('target', 'data');
     var b = document.createElement('b');
     shadowHost.appendChild(p);
     shadowHost.appendChild(text);
+    shadowHost.appendChild(comment);
+    shadowHost.appendChild(processingInstruction);
     shadowHost.appendChild(b);
 
     var shadowRoot = shadowHost.attachShadow({mode: 'open'});
@@ -124,31 +128,31 @@ test(function () {
     var secondSlotElement = document.createElement('slot');
     shadowRoot.appendChild(secondSlotElement);
 
-    assert_array_equals(firstSlotElement.getDistributedNodes(), [p, text, b],
-        'getDistributedNodes on a default slot must return the elements without slot attributes and text nodes');
-    assert_array_equals(secondSlotElement.getDistributedNodes(), [],
-        'getDistributedNodes on the second unnamed slot element must return an empty array');
+    assert_array_equals(firstSlotElement.getAssignedNodes(), [p, text, b],
+        'getAssignedNodes on a default slot must return the elements without slot attributes and text nodes');
+    assert_array_equals(secondSlotElement.getAssignedNodes(), [],
+        'getAssignedNodes on the second unnamed slot element must return an empty array');
 
     shadowRoot.removeChild(firstSlotElement);
-    assert_array_equals(firstSlotElement.getDistributedNodes(), [],
-        'getDistributedNodes on a detached formerly-default slot must return an empty array');
-    assert_array_equals(secondSlotElement.getDistributedNodes(), [p, text, b],
-        'getDistributedNodes on the second unnamed slot element after removing the first must return the elements without slot attributes and text nodes');
+    assert_array_equals(firstSlotElement.getAssignedNodes(), [],
+        'getAssignedNodes on a detached formerly-default slot must return an empty array');
+    assert_array_equals(secondSlotElement.getAssignedNodes(), [p, text, b],
+        'getAssignedNodes on the second unnamed slot element after removing the first must return the elements without slot attributes and text nodes');
 
     shadowRoot.removeChild(secondSlotElement);
     shadowRoot.appendChild(secondSlotElement);
-    assert_array_equals(firstSlotElement.getDistributedNodes(), [],
-        'Removing and re-inserting a default slot must not change the result of getDistributedNodes on a detached slot');
-    assert_array_equals(secondSlotElement.getDistributedNodes(), [p, text, b],
-        'Removing and re-inserting a default slot must not change the result of getDistributedNodes');
+    assert_array_equals(firstSlotElement.getAssignedNodes(), [],
+        'Removing and re-inserting a default slot must not change the result of getAssignedNodes on a detached slot');
+    assert_array_equals(secondSlotElement.getAssignedNodes(), [p, text, b],
+        'Removing and re-inserting a default slot must not change the result of getAssignedNodes');
 
     shadowRoot.insertBefore(firstSlotElement, secondSlotElement);
-    assert_array_equals(firstSlotElement.getDistributedNodes(), [p, text, b],
-        'getDistributedNodes on a newly inserted unnamed slot element must return the elements without slot attributes and text nodes');
-    assert_array_equals(secondSlotElement.getDistributedNodes(), [],
-        'getDistributedNodes on formerly-first but now second unnamed slot element must return an empty array');
+    assert_array_equals(firstSlotElement.getAssignedNodes(), [p, text, b],
+        'getAssignedNodes on a newly inserted unnamed slot element must return the elements without slot attributes and text nodes');
+    assert_array_equals(secondSlotElement.getAssignedNodes(), [],
+        'getAssignedNodes on formerly-first but now second unnamed slot element must return an empty array');
 
-}, 'getDistributedNodes must update when slot elements are inserted or removed');
+}, 'getAssignedNodes must update when slot elements are inserted or removed');
 
 </script>
 </body>
