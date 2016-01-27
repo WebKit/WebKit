@@ -191,4 +191,3 @@ all: $(SANDBOX_PROFILES)
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...
 	$(CC) $(SDK_FLAGS) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" $< > $@
-

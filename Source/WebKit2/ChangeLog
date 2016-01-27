@@ -1,3 +1,9 @@
+2016-01-26  Sam Weinig  <sam@webkit.org>
+
+        Attempt to force a rebuild.
+
+        * DerivedSources.make:
+
 2016-01-26  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r194557): Keyboard shortcuts stop working after the WKWebView is unparented and reparented
