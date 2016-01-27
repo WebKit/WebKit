@@ -838,10 +838,10 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexKey(const IDBIndexInfo& info, c
 {
     if (!info.multiEntry()) {
         auto error = uncheckedPutIndexRecord(info.objectStoreIdentifier(), info.identifier(), key, indexKey.asOneKey());
-        if (!error.isNull()) {
+        if (!error.isNull())
             LOG_ERROR("Unable to put index record for newly created index");
-            return error;
-        }
+
+        return error;
     }
 
     Vector<IDBKeyData> indexKeys = indexKey.multiEntry();
@@ -871,6 +871,8 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexKey(const IDBIndexInfo& info, c
 
 IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyData& keyValue, const WebCore::IDBKeyData& indexKey)
 {
+    LOG(IndexedDB, "SQLiteIDBBackingStore::uncheckedPutIndexRecord - %s, %s", keyValue.loggingString().utf8().data(), indexKey.loggingString().utf8().data());
+
     RefPtr<SharedBuffer> indexKeyBuffer = serializeIDBKeyData(indexKey);
     if (!indexKeyBuffer) {
         LOG_ERROR("Unable to serialize index key to be stored in the database");
@@ -1213,7 +1215,8 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
 IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, uint64_t indexID, IndexedDB::IndexRecordType type, const IDBKeyRangeData& range, IDBGetResult& getResult)
 {
-    LOG(IndexedDB, "SQLiteIDBBackingStore::getIndexRecord");
+    LOG(IndexedDB, "SQLiteIDBBackingStore::getIndexRecord - %s", range.loggingString().utf8().data());
+
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -1229,11 +1232,20 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Cannot open cursor to perform index get in database") };
     }
 
-    if (type == IndexedDB::IndexRecordType::Key)
-        getResult = { cursor->currentPrimaryKey() };
+    if (cursor->didError()) {
+        LOG_ERROR("Cursor failed while looking up index record in database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Cursor failed while looking up index record in database") };
+    }
+
+    if (cursor->didComplete())
+        getResult = { };
     else {
-        getResult = { SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()) };
-        getResult.setKeyData(cursor->currentPrimaryKey());
+        if (type == IndexedDB::IndexRecordType::Key)
+            getResult = { cursor->currentPrimaryKey() };
+        else {
+            getResult = { SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()) };
+            getResult.setKeyData(cursor->currentPrimaryKey());
+        }
     }
 
     return { };
@@ -1412,6 +1424,8 @@ IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
 
 IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBKeyData& key, uint32_t count, IDBGetResult& result)
 {
+    LOG(IndexedDB, "SQLiteIDBBackingStore::iterateCursor");
+
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 

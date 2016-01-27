@@ -64,6 +64,7 @@ public:
     bool advance(uint64_t count);
     bool iterate(const IDBKeyData& targetKey);
 
+    bool didComplete() const { return m_completed; }
     bool didError() const { return m_errored; }
 
     void objectStoreRecordsChanged();

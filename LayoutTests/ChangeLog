@@ -1,5 +1,14 @@
 2016-01-27  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Fix many Index tests.
+        https://bugs.webkit.org/show_bug.cgi?id=153561
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-01-27  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Cursors are utterly broken in the SQLite backend.
         https://bugs.webkit.org/show_bug.cgi?id=153558
 

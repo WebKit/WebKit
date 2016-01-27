@@ -111,7 +111,7 @@ void MemoryIndex::replaceIndexValueStore(std::unique_ptr<IndexValueStore>&& valu
 
 IDBGetResult MemoryIndex::getResultForKeyRange(IndexedDB::IndexRecordType type, const IDBKeyRangeData& range) const
 {
-    LOG(IndexedDB, "MemoryIndex::getResultForKeyRange");
+    LOG(IndexedDB, "MemoryIndex::getResultForKeyRange - %s", range.loggingString().utf8().data());
 
     if (!m_records)
         return { };

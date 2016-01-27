@@ -1,5 +1,26 @@
 2016-01-27  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Fix many Index tests.
+        https://bugs.webkit.org/show_bug.cgi?id=153561
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Many failing tests now pass).
+
+        * Modules/indexeddb/server/MemoryIndex.cpp:
+        (WebCore::IDBServer::MemoryIndex::getResultForKeyRange):
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+        
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        (WebCore::IDBServer::SQLiteIDBCursor::didComplete):
+
+2016-01-27  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Cursors are utterly broken in the SQLite backend.
         https://bugs.webkit.org/show_bug.cgi?id=153558
 
