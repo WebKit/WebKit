@@ -44,6 +44,10 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#import "VideoFullscreenLayerManager.h"
+#endif
+
 #pragma mark - Soft Linking
 
 #import "CoreMediaSoftLink.h"
@@ -146,6 +150,9 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_seeking(false)
     , m_seekCompleted(true)
     , m_loadingProgressed(false)
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    , m_videoFullscreenLayerManager(VideoFullscreenLayerManager::create())
+#endif
 {
     CMTimebaseRef timebase = [m_synchronizer timebase];
     CMNotificationCenterRef nc = CMNotificationCenterGetDefaultLocalCenter();
@@ -296,7 +303,11 @@ PlatformMedia MediaPlayerPrivateMediaSourceAVFObjC::platformMedia() const
 
 PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
 {
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    return m_videoFullscreenLayerManager->videoInlineLayer();
+#else
     return m_sampleBufferDisplayLayer.get();
+#endif
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::play()
@@ -757,6 +768,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer(AVSampleBufferDisplay
 
     // FIXME: move this somewhere appropriate:
     m_player->firstVideoFrameAvailable();
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    m_videoFullscreenLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
+#endif
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer(AVSampleBufferDisplayLayer* displayLayer)
@@ -771,6 +786,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer(AVSampleBufferDisp
 
     m_sampleBufferDisplayLayer = nullptr;
     m_player->client().mediaPlayerRenderingModeChanged(m_player);
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+    m_videoFullscreenLayerManager->didDestroyVideoLayer();
+#endif
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioRenderer* audioRenderer)
@@ -807,6 +826,18 @@ void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
 {
     m_player->characteristicChanged();
 }
+
+#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer)
+{
+    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(FloatRect frame)
+{
+    m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
+}
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
