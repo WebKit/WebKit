@@ -763,7 +763,7 @@ void ScrollAnimatorMac::immediateScrollToPosition(const FloatPoint& newPosition)
         return;
 
     FloatSize delta = adjustedPosition - currentPosition;
-    setCurrentPositionInternal(adjustedPosition);
+    m_currentPosition = adjustedPosition;
     notifyPositionChanged(delta);
     updateActiveScrollSnapIndexForOffset();
 }
@@ -1304,7 +1304,7 @@ void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
         return;
 
     FloatSize adjustedDelta = newPosition - currentPosition;
-    setCurrentPositionInternal(newPosition);
+    m_currentPosition = newPosition;
     notifyPositionChanged(adjustedDelta);
     updateActiveScrollSnapIndexForOffset();
 }

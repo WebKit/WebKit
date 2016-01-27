@@ -1,5 +1,81 @@
 2016-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][EFL] Rename ScrollAnimationNone as ScrollAnimationSmooth
+        https://bugs.webkit.org/show_bug.cgi?id=153481
+
+        Reviewed by Simon Fraser.
+
+        ScrollAnimationNone has always been used by EFL and GTK ports to
+        implement smooth scrolling. I think it should be possible for
+        other scroll animators to implement smooth scrolling or even
+        implement other kind of scroll animations. For example, in the
+        future I would like to have kinetic scrolling implemented for the
+        GTK+ port to match all other GTK+ application and decide at
+        runtime between different animations without having to use a
+        different scroll animator class. So, this patch also moves the
+        smooth scrolling animation implementation to its own class
+        ScrollAnimationSmooth that impements an interface ScrollAnimation
+        that could be used to implement other animations. This will allow
+        the GTK+ port to add its own scroll animator class and still
+        support smooth scrolling sharing the code with the
+        ScrollAnimationSmooth.
+
+        * PlatformEfl.cmake: Add new files to compilation and remove ScrollAnimationNone.
+        * PlatformGTK.cmake: Ditto.
+        * platform/ScrollAnimation.h: Added.
+        (WebCore::ScrollAnimation::serviceAnimation):
+        (WebCore::ScrollAnimation::ScrollAnimation):
+        * platform/ScrollAnimationSmooth.cpp: Added.
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        (WebCore::ScrollAnimationSmooth::scroll):
+        (WebCore::ScrollAnimationSmooth::stop):
+        (WebCore::ScrollAnimationSmooth::updateVisibleLengths):
+        (WebCore::ScrollAnimationSmooth::setCurrentPosition):
+        (WebCore::ScrollAnimationSmooth::serviceAnimation):
+        (WebCore::ScrollAnimationSmooth::~ScrollAnimationSmooth):
+        (WebCore::curveAt):
+        (WebCore::attackCurve):
+        (WebCore::releaseCurve):
+        (WebCore::coastCurve):
+        (WebCore::curveIntegralAt):
+        (WebCore::attackArea):
+        (WebCore::releaseArea):
+        (WebCore::getAnimationParametersForGranularity):
+        (WebCore::ScrollAnimationSmooth::updatePerAxisData):
+        (WebCore::ScrollAnimationSmooth::animateScroll):
+        (WebCore::ScrollAnimationSmooth::animationTimerFired):
+        (WebCore::ScrollAnimationSmooth::startNextTimer):
+        (WebCore::ScrollAnimationSmooth::animationTimerActive):
+        * platform/ScrollAnimationSmooth.h: Added.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimator::setCurrentPosition):
+        (WebCore::ScrollAnimator::updateActiveScrollSnapIndexForOffset):
+        (WebCore::ScrollAnimator::notifyPositionChanged):
+        (WebCore::ScrollAnimator::scrollOffsetOnAxis):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::ScrollAnimator::currentPosition):
+        * platform/ScrollAnimatorNone.cpp: Removed.
+        * platform/ScrollAnimatorNone.h: Removed.
+        * platform/ScrollAnimatorSmooth.cpp: Added.
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimatorSmooth::ScrollAnimatorSmooth):
+        (WebCore::ScrollAnimatorSmooth::~ScrollAnimatorSmooth):
+        (WebCore::ScrollAnimatorSmooth::scroll):
+        (WebCore::ScrollAnimatorSmooth::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorSmooth::cancelAnimations):
+        (WebCore::ScrollAnimatorSmooth::serviceScrollAnimations):
+        (WebCore::ScrollAnimatorSmooth::willEndLiveResize):
+        (WebCore::ScrollAnimatorSmooth::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorSmooth::didAddHorizontalScrollbar):
+        * platform/ScrollAnimatorSmooth.h: Added.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::immediateScrollToPosition):
+        (WebCore::ScrollAnimatorMac::immediateScrollBy):
+
+2016-01-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Overlay scrollbars should always use the whole contents
         https://bugs.webkit.org/show_bug.cgi?id=153352
 

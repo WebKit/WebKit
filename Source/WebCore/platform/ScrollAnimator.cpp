@@ -72,7 +72,7 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity,
     if (currentPosition == newPosition)
         return false;
 
-    setCurrentPositionInternal(newPosition);
+    m_currentPosition = newPosition;
     notifyPositionChanged(newPosition - currentPosition);
     return true;
 }
@@ -81,7 +81,7 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
     FloatPoint newPositon = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
     FloatSize delta = newPositon - currentPosition();
-    setCurrentPositionInternal(newPositon);
+    m_currentPosition = newPositon;
     notifyPositionChanged(delta);
     updateActiveScrollSnapIndexForOffset();
 }
@@ -172,7 +172,7 @@ bool ScrollAnimator::handleTouchEvent(const PlatformTouchEvent&)
 
 void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
 {
-    setCurrentPositionInternal(position);
+    m_currentPosition = position;
     updateActiveScrollSnapIndexForOffset();
 }
 
@@ -180,7 +180,7 @@ void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 {
 #if ENABLE(CSS_SCROLL_SNAP)
     // FIXME: Needs offset/position disambiguation.
-    m_scrollController.setActiveScrollSnapIndicesForOffset(m_currentPosX, m_currentPosY);
+    m_scrollController.setActiveScrollSnapIndicesForOffset(m_currentPosition.x(), m_currentPosition.y());
     if (m_scrollController.activeScrollSnapIndexDidChange()) {
         m_scrollableArea.setCurrentHorizontalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal));
         m_scrollableArea.setCurrentVerticalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
@@ -203,7 +203,7 @@ void ScrollAnimator::updateScrollSnapState()
 
 LayoutUnit ScrollAnimator::scrollOffsetOnAxis(ScrollEventAxis axis) const
 {
-    return axis == ScrollEventAxis::Horizontal ? m_currentPosX : m_currentPosY;
+    return axis == ScrollEventAxis::Horizontal ? m_currentPosition.x() : m_currentPosition.y();
 }
 
 void ScrollAnimator::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
