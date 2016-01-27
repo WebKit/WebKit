@@ -54,18 +54,19 @@ ControllerGtk.prototype = {
         this.controls.enclosure.appendChild(this.controls.panel);
     },
 
-    configureControls: function() {
-        if (this.controls.configured)
-            return;
-
-        this.configureInlineControls();
-        this.controls.configured = true;
-        this.addControls();
+    shouldHaveControls: function()
+    {
+        return this.video.controls || this.isFullScreen();
     },
 
     reconnectControls: function()
     {
-        this.configureControls();
+        Controller.prototype.disconnectControls.apply(this, arguments);
+
+        this.configureInlineControls();
+
+        if (this.shouldHaveControls())
+            this.addControls();
     },
 
     setStatusHidden: function(hidden)
@@ -131,6 +132,13 @@ ControllerGtk.prototype = {
     {
         this.controls.volumeBox.classList.add(this.ClassNames.hiding);
         return true;
+    },
+
+    removeControls: function()
+    {
+        if (this.controls.enclosure.parentNode)
+            this.controls.enclosure.parentNode.removeChild(this.controls.enclosure);
+        this.destroyCaptionMenu();
     },
 
     addControls: function()
