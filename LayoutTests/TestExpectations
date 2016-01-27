@@ -848,6 +848,9 @@ http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-ov
 http/tests/security/contentSecurityPolicy/1.1/scripthash-default-src.html # Needs expected file.
 http/tests/security/contentSecurityPolicy/1.1/stylehash-default-src.html # Needs expected file.
 
+# This test flakily crashes, skip it until the crash is fixed.
+webkit.org/b/153525 fast/history/page-cache-webdatabase-no-transaction-db.html [ Skip ]
+
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.
 loader/stateobjects/pushstate-size-iframe.html [ Slow ]
 loader/stateobjects/pushstate-size.html [ Slow ]
