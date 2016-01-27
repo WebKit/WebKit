@@ -66,7 +66,6 @@ private:
     void addClient(RenderElement&);
     void removeClient(RenderElement&);
 
-private:
     virtual void willBeDestroyed() override final;
     void registerResource();
 

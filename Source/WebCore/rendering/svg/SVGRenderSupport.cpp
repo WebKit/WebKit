@@ -184,9 +184,14 @@ bool SVGRenderSupport::paintInfoIntersectsRepaintRect(const FloatRect& localRepa
     return localTransform.mapRect(localRepaintRect).intersects(paintInfo.rect);
 }
 
-const RenderSVGRoot& SVGRenderSupport::findTreeRootObject(const RenderElement& start)
+RenderSVGRoot* SVGRenderSupport::findTreeRootObject(RenderElement& start)
 {
-    return *lineageOfType<RenderSVGRoot>(start).first();
+    return lineageOfType<RenderSVGRoot>(start).first();
+}
+
+const RenderSVGRoot* SVGRenderSupport::findTreeRootObject(const RenderElement& start)
+{
+    return lineageOfType<RenderSVGRoot>(start).first();
 }
 
 static inline void invalidateResourcesOfChildren(RenderElement& renderer)
@@ -223,6 +228,15 @@ bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
     }
 
     return false;
+}
+
+void SVGRenderSupport::layoutDifferentRootIfNeeded(const RenderElement& renderer)
+{
+    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
+        auto* svgRoot = SVGRenderSupport::findTreeRootObject(renderer);
+        ASSERT(svgRoot);
+        resources->layoutDifferentRootIfNeeded(svgRoot);
+    }
 }
 
 void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout)
@@ -273,6 +287,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
             child->setNeedsLayout(MarkOnlyThis);
 
         if (child->needsLayout()) {
+            layoutDifferentRootIfNeeded(downcast<RenderElement>(*child));
             downcast<RenderElement>(*child).layout();
             // Renderers are responsible for repainting themselves when changing, except
             // for the initial paint to avoid potential double-painting caused by non-sensical "old" bounds.
