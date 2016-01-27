@@ -44,6 +44,7 @@ namespace WebKit {
 
 DragAndDropHandler::DragAndDropHandler(WebPageProxy& page)
     : m_page(page)
+    , m_dragContext(nullptr)
 {
 }
 
@@ -110,13 +111,20 @@ static inline DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction
 
 void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
 {
-    RefPtr<DataObjectGtk> dataObject = adoptRef(dragData.platformData());
-    GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::singleton().targetListForDataObject(dataObject.get()));
+    m_draggingDataObject = adoptRef(dragData.platformData());
+
+    GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::singleton().targetListForDataObject(m_draggingDataObject.get()));
     GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
 
     GdkDragContext* context = gtk_drag_begin(m_page.viewWidget(), targetList.get(), dragOperationToGdkDragActions(dragData.draggingSourceOperationMask()),
         GDK_BUTTON_PRIMARY, currentEvent.get());
-    m_draggingDataObjects.set(context, dataObject.get());
+
+    // WebCore::EventHandler does not support more than one DnD operation at the same time for
+    // a given page, so we should cancel any previous operation whose context we might have
+    // stored, should we receive a new startDrag event before finishing a previous DnD operation.
+    if (m_dragContext)
+        gtk_drag_cancel(m_dragContext.get());
+    m_dragContext = context;
 
     if (dragImage) {
         RefPtr<cairo_surface_t> image(dragImage->createCairoSurface());
@@ -129,14 +137,27 @@ void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<Shareabl
 
 void DragAndDropHandler::fillDragData(GdkDragContext* context, GtkSelectionData* selectionData, unsigned info)
 {
-    if (DataObjectGtk* dataObject = m_draggingDataObjects.get(context))
-        PasteboardHelper::singleton().fillSelectionData(selectionData, info, dataObject);
+    // This can happen when attempting to call finish drag from webkitWebViewBaseDragDataGet()
+    // for a obsolete DnD operation that got previously cancelled in startDrag().
+    if (m_dragContext.get() != context)
+        return;
+
+    ASSERT(m_draggingDataObject);
+    PasteboardHelper::singleton().fillSelectionData(selectionData, info, m_draggingDataObject.get());
 }
 
 void DragAndDropHandler::finishDrag(GdkDragContext* context)
 {
-    if (!m_draggingDataObjects.remove(context))
+    // This can happen when attempting to call finish drag from webkitWebViewBaseDragEnd()
+    // for a obsolete DnD operation that got previously cancelled in startDrag().
+    if (m_dragContext.get() != context)
         return;
+
+    if (!m_draggingDataObject)
+        return;
+
+    m_dragContext = nullptr;
+    m_draggingDataObject = nullptr;
 
     GdkDevice* device = gdk_drag_context_get_device(context);
     int x = 0, y = 0;
