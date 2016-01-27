@@ -112,6 +112,8 @@ private:
 #if PLATFORM(MAC)
     HashMap<String, PluginPolicyMapsByIdentifier> m_hostsToPluginIdentifierData;
     bool pluginLoadClientPolicyForHost(const String&, const WebCore::PluginInfo&, WebCore::PluginLoadClientPolicy&) const;
+    String longestMatchedWildcardHostForHost(const String& host) const;
+    bool replaceHostWithMatchedWildcardHost(String& host, const String& identifier) const;
 #endif // PLATFORM(MAC)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 };

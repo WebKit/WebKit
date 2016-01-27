@@ -297,7 +297,7 @@ inline AtomicString::AtomicString(CFStringRef s)
 
 #ifdef __OBJC__
 inline AtomicString::AtomicString(NSString* s)
-    : m_string(AtomicStringImpl::add((CFStringRef)s))
+    : m_string(AtomicStringImpl::add((__bridge CFStringRef)s))
 {
 }
 #endif

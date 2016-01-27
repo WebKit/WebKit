@@ -67,6 +67,10 @@
 #include <WebCore/URL.h>
 #include <wtf/Atomics.h>
 
+#if PLATFORM(MAC)
+#include "StringUtilities.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -239,29 +243,85 @@ void WebPlatformStrategies::clearPluginClientPolicies()
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #if PLATFORM(MAC)
+
+String WebPlatformStrategies::longestMatchedWildcardHostForHost(const String& host) const
+{
+    String longestMatchedHost;
+
+    for (auto& key : m_hostsToPluginIdentifierData.keys()) {
+        if (key.contains('*') && key != "*" && stringMatchesWildcardString(host, key)) {
+            if (key.length() > longestMatchedHost.length())
+                longestMatchedHost = key;
+            else if (key.length() == longestMatchedHost.length() && codePointCompareLessThan(key, longestMatchedHost))
+                longestMatchedHost = key;
+        }
+    }
+
+    return longestMatchedHost;
+}
+
+bool WebPlatformStrategies::replaceHostWithMatchedWildcardHost(String& host, const String& identifier) const
+{
+    String matchedWildcardHost = longestMatchedWildcardHostForHost(host);
+
+    if (matchedWildcardHost.isNull())
+        return false;
+
+    auto plugInIdentifierData = m_hostsToPluginIdentifierData.find(matchedWildcardHost);
+    if (plugInIdentifierData == m_hostsToPluginIdentifierData.end() || !plugInIdentifierData->value.contains(identifier))
+        return false;
+
+    host = matchedWildcardHost;
+    return true;
+}
+
 bool WebPlatformStrategies::pluginLoadClientPolicyForHost(const String& host, const PluginInfo& info, PluginLoadClientPolicy& policy) const
 {
     String hostToLookUp = host;
-    if (!m_hostsToPluginIdentifierData.contains(hostToLookUp))
-        hostToLookUp = "*";
-    if (!m_hostsToPluginIdentifierData.contains(hostToLookUp))
-        return false;
-
-    PluginPolicyMapsByIdentifier policiesByIdentifier = m_hostsToPluginIdentifierData.get(hostToLookUp);
     String identifier = info.bundleIdentifier;
-    if (!identifier || !policiesByIdentifier.contains(identifier))
+
+    auto policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
+
+    if (!identifier.isNull() && policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end()) {
+        if (!replaceHostWithMatchedWildcardHost(hostToLookUp, identifier))
+            hostToLookUp = "*";
+        policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
+        if (hostToLookUp != "*" && policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end()) {
+            hostToLookUp = "*";
+            policiesByIdentifierIterator = m_hostsToPluginIdentifierData.find(hostToLookUp);
+        }
+    }
+    if (policiesByIdentifierIterator == m_hostsToPluginIdentifierData.end())
+        return false;
+
+    auto& policiesByIdentifier = policiesByIdentifierIterator->value;
+
+    if (!identifier)
         identifier = "*";
-    if (!policiesByIdentifier.contains(identifier))
+
+    auto identifierPolicyIterator = policiesByIdentifier.find(identifier);
+    if (identifier != "*" && identifierPolicyIterator == policiesByIdentifier.end()) {
+        identifier = "*";
+        identifierPolicyIterator = policiesByIdentifier.find(identifier);
+    }
+    if (identifierPolicyIterator == policiesByIdentifier.end())
         return false;
 
-    PluginLoadClientPoliciesByBundleVersion versionsToPolicies = policiesByIdentifier.get(identifier);
+    auto& versionsToPolicies = identifierPolicyIterator->value;
+
     String version = info.versionString;
-    if (!version || !versionsToPolicies.contains(version))
+    if (!version)
         version = "*";
-    if (!versionsToPolicies.contains(version))
+    auto policyIterator = versionsToPolicies.find(version);
+    if (version != "*" && policyIterator == versionsToPolicies.end()) {
+        version = "*";
+        policyIterator = versionsToPolicies.find(version);
+    }
+
+    if (policyIterator == versionsToPolicies.end())
         return false;
 
-    policy = versionsToPolicies.get(version);
+    policy = policyIterator->value;
     return true;
 }
 #endif // PLATFORM(MAC)

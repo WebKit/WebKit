@@ -1,3 +1,17 @@
+2016-01-26  I-Ting Liu  <iting_liu@apple.com>
+
+        Add a test for WebKit::stringMatchesWildcardString.
+        https://bugs.webkit.org/show_bug.cgi?id=153090
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add the file to the project.
+
+        * TestWebKitAPI/Tests/WebKit2/mac/StringUtilities.mm: Added.
+        (TestWebKitAPI::TEST):
+        Test that a string matches another string that may contain wildcard characters.
+
 2016-01-26  Konstantin Tokarev  <annulen@yandex.ru>
 
         [webkitdirs] Removed check for bison, gperf, and flex.

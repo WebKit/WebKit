@@ -30,13 +30,42 @@
 #import "WKStringCF.h"
 #import <WebCore/SoftLinking.h>
 #import <wtf/ObjcRuntimeExtras.h>
-#import <wtf/text/WTFString.h>
+#import <wtf/text/StringBuilder.h>
+#import <yarr/RegularExpression.h>
 
 namespace WebKit {
 
 NSString *nsStringFromWebCoreString(const String& string)
 {
     return string.isEmpty() ? @"" : CFBridgingRelease(WKStringCopyCFString(0, toAPI(string.impl())));
+}
+
+static String wildcardRegexPatternString(const String& string)
+{
+    String metaCharacters = ".|+?()[]{}^$";
+    UChar escapeCharacter = '\\';
+    UChar wildcardCharacter = '*';
+
+    StringBuilder stringBuilder;
+
+    stringBuilder.append('^');
+    for (unsigned i = 0; i < string.length(); i++) {
+        auto character = string[i];
+        if (metaCharacters.contains(character) || character == escapeCharacter)
+            stringBuilder.append(escapeCharacter);
+        else if (character == wildcardCharacter)
+            stringBuilder.append('.');
+
+        stringBuilder.append(character);
+    }
+    stringBuilder.append('$');
+
+    return stringBuilder.toString();
+}
+
+bool stringMatchesWildcardString(const String& string, const String& wildcardString)
+{
+    return JSC::Yarr::RegularExpression(wildcardRegexPatternString(wildcardString), TextCaseInsensitive).match(string) != -1;
 }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
@@ -70,6 +99,13 @@ NSString *formattedPhoneNumberString(NSString *originalPhoneNumber)
         phoneNumberString = CFPhoneNumberCopyUnformattedRepresentation(phoneNumber.get());
 
     return [(NSString *)phoneNumberString autorelease];
+}
+
+#else
+
+NSString *formattedPhoneNumberString(NSString *)
+{
+    return nil;
 }
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)

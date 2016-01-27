@@ -1,3 +1,57 @@
+2016-01-26  I-Ting Liu  <iting_liu@apple.com>
+
+        Implement wildcard matching for plug-in policy host.
+        https://bugs.webkit.org/show_bug.cgi?id=153090
+
+        Reviewed by Darin Adler.
+
+        WebPlatformStrategies decides the plug-in load policy for a host by looking
+        for a matched hostname in the list of plug-in policies sent by Safari. This
+        patch adds support for wildcard matching -- if there's a policy with hostname
+        "*.example.com," the policy for "foo.example.com" would be replaced with that
+        of "*.example.com" if there's no policy for this hostname. If there is more
+        than one wildcard hostname, the host with the longest wildcard hostname will
+        be used.
+
+        This patch adds a helper function in StringUtilites that matches a string to
+        another string, which may contain wildcard ('*') characters.
+
+        * Platform/mac/StringUtilities.h:
+        - Add WebKit::stringMatchesWildcardString.
+        - Remove #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) flag so that
+        the compiler allows exposing StringUtilities.h.
+        - Add #if __OBJC__ to allow the file to be included in WebPltformStrategies.cpp
+
+        * Platform/mac/StringUtilities.mm:
+        (WebKit::stringMatchesWildcardString):
+        Return true if the entire first given String matches the second. The second string 
+        may contain wildcard characters.
+        (WebKit::wildcardRegexPatternString):
+        Return the regex expression from a wildcard string by replacing the wildcard
+        character ('*') with (".*") and escaping regular expression metacharacters.
+        (WebKit::formattedPhoneNumberString):
+        To expose StringUtilities.h for tests, we removed #if ENABLE(TELEPHONE_NUMBER_DETECTION)
+        && PLATFORM(MAC) flag in the header. Add a function that returns nil for
+        #if !(ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)) to fix the removal
+        of the flag in the header file.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Change the file attribute of StringUtilities.h from Project to Private for
+        testing in TestWebKitAPI.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::longestMatchedWildcardHostForHost):
+        Return the wildcard hostname whose matched substring with the host is the longest.
+        (WebKit::WebPlatformStrategies::replaceHostWithMatchedWildcardHost):
+        Replace the look-up host with a matched wildcard host if there is a match and that
+        the matched wildcard host's plug-in identifier is the same as that of the host.
+        (WebKit::WebPlatformStrategies::pluginLoadClientPolicyForHost):
+        Try to replace the look-up host with the wildcard host if there's no policy for
+        the host. Restructure the function to reduce hashmap lookup.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        Declare the methods.
+
 2016-01-26  Anders Carlsson  <andersca@apple.com>
 
         Remove -d flag from make invocation.
