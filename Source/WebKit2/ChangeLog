@@ -1,3 +1,31 @@
+2016-01-26  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r194557): Keyboard shortcuts stop working after the WKWebView is unparented and reparented
+        https://bugs.webkit.org/show_bug.cgi?id=153492
+        <rdar://problem/24138989>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canBecomeFirstResponder]):
+        (-[WKContentView becomeFirstResponder]):
+        (-[WKContentView resignFirstResponder]):
+        When WKWebView is unparented, WKContentView will attempt to resignFirstResponder upwards,
+        first asking WKWebView. After r194557, WKWebView will accept first responder and forward
+        it on to the WKContentView, which will happily accept it again, despite being the view
+        that's trying to resign. This will cause us to completely lose first responder,
+        where it was actually supposed to propagate up above WKWebView to the client.
+
+        Keep track of when WKContentView is resigning first responder, and don't
+        let it become first responder while it is doing so, breaking the cycle.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView canBecomeFirstResponder]):
+        If the WKContentView is currently in the process of resigning first responder status,
+        we shouldn't accept it, because clients expect to receive it.
+
 2016-01-26  I-Ting Liu  <iting_liu@apple.com>
 
         Implement wildcard matching for plug-in policy host.

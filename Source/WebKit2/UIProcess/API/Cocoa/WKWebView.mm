@@ -841,6 +841,8 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 
 - (BOOL)canBecomeFirstResponder
 {
+    if (self._currentContentView == _contentView && [_contentView isResigningFirstResponder])
+        return NO;
     return YES;
 }
 
