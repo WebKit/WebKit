@@ -593,7 +593,13 @@ enum class TextOrientation { Mixed, Upright, Sideways };
 
 enum TextOverflow { TextOverflowClip = 0, TextOverflowEllipsis };
 
-enum EImageRendering { ImageRenderingAuto = 0, ImageRenderingOptimizeSpeed, ImageRenderingOptimizeQuality, ImageRenderingCrispEdges };
+enum EImageRendering {
+    ImageRenderingAuto = 0,
+    ImageRenderingOptimizeSpeed,
+    ImageRenderingOptimizeQuality,
+    ImageRenderingCrispEdges,
+    ImageRenderingPixelated
+};
 
 enum ImageResolutionSource { ImageResolutionSpecified = 0, ImageResolutionFromImage };
 

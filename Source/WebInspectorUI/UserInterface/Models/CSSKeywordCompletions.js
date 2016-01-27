@@ -392,7 +392,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "flex", "inline-flex", "-webkit-grid", "-webkit-inline-grid"
     ],
     "image-rendering": [
-        "auto", "optimizeSpeed", "optimizeQuality", "-webkit-crisp-edges", "-webkit-optimize-contrast"
+        "auto", "optimizeSpeed", "optimizeQuality", "-webkit-crisp-edges", "-webkit-optimize-contrast", "crisp-edges", "pixelated"
     ],
     "alignment-baseline": [
         "baseline", "middle", "auto", "before-edge", "after-edge", "central", "text-before-edge", "text-after-edge",

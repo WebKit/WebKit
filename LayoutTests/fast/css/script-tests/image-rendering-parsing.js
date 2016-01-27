@@ -14,8 +14,10 @@ function testImageRendering(value, computedValue)
 }
 
 testImageRendering('auto', 'auto');
-testImageRendering('-webkit-crisp-edges', '-webkit-crisp-edges');
-testImageRendering('-webkit-optimize-contrast', '-webkit-crisp-edges');
+testImageRendering('crisp-edges', 'crisp-edges');
+testImageRendering('pixelated', 'pixelated');
+testImageRendering('-webkit-crisp-edges', 'crisp-edges');
+testImageRendering('-webkit-optimize-contrast', 'crisp-edges');
 testImageRendering('optimizespeed', 'optimizespeed');
 testImageRendering('optimizequality', 'optimizequality');
 

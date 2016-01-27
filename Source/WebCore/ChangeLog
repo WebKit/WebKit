@@ -1,3 +1,39 @@
+2016-01-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Support CSS3 Images values for the image-rendering property
+        https://bugs.webkit.org/show_bug.cgi?id=153556
+
+        Reviewed by Dean Jackson.
+
+        CSS3 Images has the following values for image-rendering:
+            auto, crisp-edges, pixelated
+
+        The old code supported:
+            optimizeSpeed, optimizeQuality, -webkit-crisp-edges, -webkit-optimize-contrast
+
+        Add support for the new values without prefixes. Map -webkit-crisp-edges to crisp-edges,
+        and -webkit-optimize-contrast to crisp-edges. Support pixelated which behaves like 
+        crisp-edges (a low quality scale).
+
+        The spec says that optimizeQuality should behave like 'auto', but that would be
+        a behavior change since ImageQualityController::shouldPaintAtLowQuality() currently
+        uses it as a trigger to avoid low quality scaling, so don't change that for now.
+
+        No new tests, covered by fast/css/script-tests/image-rendering-parsing.js
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EImageRendering):
+        * css/CSSValueKeywords.in:
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.h: Need another bit.
+
 2016-01-27  Anders Carlsson  <andersca@apple.com>
 
         Add WebKitAdditions extension points to WebCore, WebKit and WebKitLegacy

@@ -84,7 +84,7 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
             page->addRelevantRepaintedObject(this, intersection(replacedContentRect, contentBoxRect));
     }
 
-    bool useLowQualityScale = style().imageRendering() == ImageRenderingCrispEdges || style().imageRendering() == ImageRenderingOptimizeSpeed;
+    bool useLowQualityScale = style().imageRendering() == ImageRenderingCrispEdges || style().imageRendering() == ImageRenderingPixelated || style().imageRendering() == ImageRenderingOptimizeSpeed;
     canvasElement().paint(context, replacedContentRect, useLowQualityScale);
 }
 

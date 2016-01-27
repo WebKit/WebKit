@@ -1050,8 +1050,10 @@ off
 
 // image-rendering
 // auto
-// optimizeSpeed
-optimizeQuality
+// optimizeSpeed (deprecated)
+optimizeQuality // ( deprecated)
+crisp-edges
+pixelated
 -webkit-crisp-edges
 -webkit-optimize-contrast
 

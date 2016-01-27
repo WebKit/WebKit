@@ -4321,16 +4321,19 @@ template<> inline CSSPrimitiveValue::operator EBorderFit() const
     return BorderFitLines;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EImageRendering e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EImageRendering imageRendering)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
-    switch (e) {
+    switch (imageRendering) {
     case ImageRenderingAuto:
         m_value.valueID = CSSValueAuto;
         break;
     case ImageRenderingCrispEdges:
-        m_value.valueID = CSSValueWebkitCrispEdges;
+        m_value.valueID = CSSValueCrispEdges;
+        break;
+    case ImageRenderingPixelated:
+        m_value.valueID = CSSValuePixelated;
         break;
     case ImageRenderingOptimizeSpeed:
         m_value.valueID = CSSValueOptimizespeed;
@@ -4349,8 +4352,11 @@ template<> inline CSSPrimitiveValue::operator EImageRendering() const
     case CSSValueAuto:
         return ImageRenderingAuto;
     case CSSValueWebkitOptimizeContrast:
+    case CSSValueCrispEdges:
     case CSSValueWebkitCrispEdges:
         return ImageRenderingCrispEdges;
+    case CSSValuePixelated:
+        return ImageRenderingPixelated;
     case CSSValueOptimizespeed:
         return ImageRenderingOptimizeSpeed;
     case CSSValueOptimizequality:

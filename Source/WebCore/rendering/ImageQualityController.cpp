@@ -109,9 +109,10 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, R
     switch (object->style().imageRendering()) {
     case ImageRenderingOptimizeSpeed:
     case ImageRenderingCrispEdges:
+    case ImageRenderingPixelated:
         return true;
     case ImageRenderingOptimizeQuality:
-        return false;
+        return false; // FIXME: CSS 3 Images says that optimizeQuality should behave like 'auto', but that prevents authors from overriding this low quality rendering behavior.
     case ImageRenderingAuto:
         break;
     }
