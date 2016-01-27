@@ -1,5 +1,14 @@
 2016-01-27  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: SQLite backend doesn't update index records as object records are added.
+        https://bugs.webkit.org/show_bug.cgi?id=153548
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-01-27  Brady Eidson  <beidson@apple.com>
+
         LayoutTest fast/loader/stateobjects/replacestate-frequency-iframe.html is flaky on El Cap, always times out on Yosemite.
         https://bugs.webkit.org/show_bug.cgi?id=153551
         

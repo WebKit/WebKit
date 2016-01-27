@@ -57,6 +57,7 @@ public:
     IDBIndexInfo* infoForExistingIndex(const String& name);
 
     Vector<String> indexNames() const;
+    const HashMap<uint64_t, IDBIndexInfo>& indexMap() const { return m_indexMap; }
 
     void deleteIndex(const String& indexName);
     void deleteIndex(uint64_t indexIdentifier);

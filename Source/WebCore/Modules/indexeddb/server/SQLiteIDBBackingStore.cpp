@@ -33,6 +33,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBGetResult.h"
 #include "IDBKeyData.h"
+#include "IDBObjectStoreInfo.h"
 #include "IDBSerialization.h"
 #include "IDBTransactionInfo.h"
 #include "IndexKey.h"
@@ -124,6 +125,30 @@ SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
         m_globalObject.clear();
         m_vm = nullptr;
     }
+}
+
+
+void SQLiteIDBBackingStore::initializeVM()
+{
+    if (!m_vm) {
+        ASSERT(!m_globalObject);
+        m_vm = VM::create();
+
+        JSLockHolder locker(m_vm.get());
+        m_globalObject.set(*m_vm, JSGlobalObject::create(*m_vm, JSGlobalObject::createStructure(*m_vm, jsNull())));
+    }
+}
+
+VM& SQLiteIDBBackingStore::vm()
+{
+    initializeVM();
+    return *m_vm;
+}
+
+JSGlobalObject& SQLiteIDBBackingStore::globalObject()
+{
+    initializeVM();
+    return **m_globalObject;
 }
 
 static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
@@ -727,15 +752,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to populate indexes in database") };
     }
 
-    if (!m_vm) {
-        ASSERT(!m_globalObject);
-        m_vm = VM::create();
-    }
-
-    JSLockHolder locker(m_vm.get());
-
-    if (!m_globalObject)
-        m_globalObject.set(*m_vm, JSGlobalObject::create(*m_vm, JSGlobalObject::createStructure(*m_vm, jsNull())));
+    JSLockHolder locker(vm());
 
     while (!cursor->currentKey().isNull()) {
         auto& key = cursor->currentKey();
@@ -817,6 +834,40 @@ IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(int64_t indexID, const I
     return { };
 }
 
+IDBError SQLiteIDBBackingStore::uncheckedPutIndexKey(const IDBIndexInfo& info, const IDBKeyData& key, const IndexKey& indexKey)
+{
+    if (!info.multiEntry()) {
+        auto error = uncheckedPutIndexRecord(info.objectStoreIdentifier(), info.identifier(), key, indexKey.asOneKey());
+        if (!error.isNull()) {
+            LOG_ERROR("Unable to put index record for newly created index");
+            return error;
+        }
+    }
+
+    Vector<IDBKeyData> indexKeys = indexKey.multiEntry();
+
+    if (info.unique()) {
+        bool hasRecord;
+        IDBError error;
+        for (auto& indexKey : indexKeys) {
+            error = uncheckedHasIndexRecord(info.identifier(), indexKey, hasRecord);
+            if (!error.isNull())
+                return error;
+            if (hasRecord)
+                return IDBError(IDBDatabaseException::ConstraintError);
+        }
+    }
+
+    for (auto& indexKey : indexKeys) {
+        auto error = uncheckedPutIndexRecord(info.objectStoreIdentifier(), info.identifier(), key, indexKey);
+        if (!error.isNull()) {
+            LOG_ERROR("Unable to put index record for newly created index");
+            return error;
+        }
+    }
+
+    return { };
+}
 
 IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, int64_t indexID, const WebCore::IDBKeyData& keyValue, const WebCore::IDBKeyData& indexKey)
 {
@@ -1012,9 +1063,39 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
     return { IDBDatabaseException::UnknownError, ASCIILiteral("Currently unable to delete all records in a multi-key range") };
 }
 
-IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
+IDBError SQLiteIDBBackingStore::updateIndexesForAddRecord(const IDBObjectStoreInfo& info, const IDBKeyData& key, const ThreadSafeDataBuffer& value)
 {
-    LOG(IndexedDB, "SQLiteIDBBackingStore::addRecord - key %s, object store %" PRIu64, keyData.loggingString().utf8().data(), objectStoreID);
+    JSLockHolder locker(vm());
+
+    auto jsValue = deserializeIDBValueDataToJSValue(*globalObject().globalExec(), value);
+    if (jsValue.isUndefinedOrNull())
+        return { };
+
+    IDBError error;
+    Vector<std::pair<uint64_t, IndexKey>> changedIndexRecords;
+
+    for (auto& index : info.indexMap().values()) {
+        IndexKey indexKey;
+        generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue, indexKey);
+
+        if (indexKey.isNull())
+            continue;
+
+        error = uncheckedPutIndexKey(index, key, indexKey);
+        if (!error.isNull())
+            break;
+
+        changedIndexRecords.append(std::make_pair(index.identifier(), indexKey));
+    }
+
+    // FIXME: If any of the index puts failed, revert the ones that went through (changedIndexRecords).
+
+    return error;
+}
+
+IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& objectStoreInfo, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::addRecord - key %s, object store %" PRIu64, keyData.loggingString().utf8().data(), objectStoreInfo.identifier());
 
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
@@ -1038,16 +1119,20 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     {
         SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO Records VALUES (?, CAST(? AS TEXT), ?);"));
         if (sql.prepare() != SQLITE_OK
-            || sql.bindInt64(1, objectStoreID) != SQLITE_OK
+            || sql.bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
             || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql.bindBlob(3, value.data()->data(), value.data()->size()) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not put record for object store %" PRIi64 " in Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not put record for object store %" PRIi64 " in Records table (%i) - %s", objectStoreInfo.identifier(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to store record in object store") };
         }
     }
 
-    return { };
+    auto error = updateIndexesForAddRecord(objectStoreInfo, keyData, value);
+
+    // FIXME: If there was an error indexing this record, remove it.
+
+    return error;
 }
 
 IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, const IDBKeyRangeData& keyRange, ThreadSafeDataBuffer& resultValue)

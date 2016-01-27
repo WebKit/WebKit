@@ -1,3 +1,33 @@
+2016-01-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: SQLite backend doesn't update index records as object records are added.
+        https://bugs.webkit.org/show_bug.cgi?id=153548
+
+        Reviewed by Alex Christensen.
+
+        No new tests (4 more tests pass, others improve).
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::addRecord):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::initializeVM):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::vm):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::globalObject):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+
 2016-01-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add API to access closed shadowRoot in InjectedBundle
