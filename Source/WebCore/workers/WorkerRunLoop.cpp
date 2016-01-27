@@ -39,6 +39,10 @@
 #include "WorkerThread.h"
 #include <wtf/CurrentTime.h>
 
+#if PLATFORM(GTK)
+#include <glib.h>
+#endif
+
 namespace WebCore {
 
 class WorkerSharedTimer : public SharedTimer {
@@ -147,6 +151,12 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
 {
     ASSERT(context);
     ASSERT(context->thread().threadID() == currentThread());
+
+#if PLATFORM(GTK)
+    GMainContext* mainContext = g_main_context_get_thread_default();
+    if (g_main_context_pending(mainContext))
+        g_main_context_iteration(mainContext, FALSE);
+#endif
 
     double deadline = MessageQueue<Task>::infiniteTime();
 
