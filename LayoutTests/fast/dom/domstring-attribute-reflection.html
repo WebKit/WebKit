@@ -22,8 +22,8 @@ function testDOMStringReflection(elementName, contentAttributeName, idlAttribute
     shouldBeEqualToString('element.getAttribute("' + contentAttributeName + '")', ' bar\n');
 
     debug('Setting null via the IDL attribute:');
-    shouldBeEqualToString('element.' + idlAttributeName + ' = null; element.' + idlAttributeName, '');
-    shouldBeNull('element.getAttribute("' + contentAttributeName + '")');
+    shouldBeEqualToString('element.' + idlAttributeName + ' = null; element.' + idlAttributeName, 'null');
+    shouldBeEqualToString('element.getAttribute("' + contentAttributeName + '")', 'null');
 
     debug('Setting null via the content attribute:');
     shouldBeEqualToString('element.setAttribute("' + contentAttributeName + '", null); element.' + idlAttributeName, 'null');

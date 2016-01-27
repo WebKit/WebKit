@@ -65,8 +65,8 @@ shouldBe('input.getAttribute("formMethod")', 'null');
 input.setAttribute('formMethod', null);
 shouldBeEqualToString('input.formMethod', 'get');
 input.formTarget = null;
-shouldBeEqualToString('input.formTarget', '');
-shouldBe('input.getAttribute("formTarget")', 'null');
+shouldBeEqualToString('input.formTarget', 'null');
+shouldBeEqualToString('input.getAttribute("formTarget")', 'null');
 input.setAttribute('formTarget', null);
 shouldBeEqualToString('input.formTarget', 'null');
 
@@ -162,8 +162,8 @@ shouldBe('button.getAttribute("formMethod")', 'null');
 button.setAttribute('formMethod', null);
 shouldBeEqualToString('button.formMethod', 'get');
 button.formTarget = null;
-shouldBeEqualToString('button.formTarget', '');
-shouldBe('button.getAttribute("formTarget")', 'null');
+shouldBeEqualToString('button.formTarget', 'null');
+shouldBeEqualToString('button.getAttribute("formTarget")', 'null');
 button.setAttribute('formTarget', null);
 shouldBeEqualToString('button.formTarget', 'null');
 

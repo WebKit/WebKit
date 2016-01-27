@@ -18,6 +18,6 @@
  */
 
 interface HTMLTitleElement : HTMLElement {
-    [TreatNullAs=NullString] attribute DOMString            text;
+    attribute DOMString text;
 };
 

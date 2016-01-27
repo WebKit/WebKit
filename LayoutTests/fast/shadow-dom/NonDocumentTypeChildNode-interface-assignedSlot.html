@@ -82,7 +82,7 @@ test(function () {
     childElement.slot = 'foo';
     assert_equals(childElement.assignedSlot, slot, 'assignedSlot on an element must return the re-assigned slot element');
 
-    slot.name = null;
+    slot.removeAttribute('name');
     assert_equals(childTextNode.assignedSlot, slot, 'assignedSlot on a text node must return the re-assigned slot element');
     assert_equals(commentNode.assignedSlot, null, 'assignedSlot on a comment node must always return null');
     assert_equals(processingInstructionNode.assignedSlot, null, 'assignedSlot on a comment node must always return null');

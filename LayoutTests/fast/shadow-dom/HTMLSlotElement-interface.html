@@ -85,7 +85,7 @@ test(function () {
     p.slot = 'foo';
     assert_array_equals(slotElement.getAssignedNodes(), [p, b], 'getAssignedNodes must return the nodes with the matching slot name in the tree order');
 
-    slotElement.name = null;
+    slotElement.removeAttribute('name');
     assert_array_equals(slotElement.getAssignedNodes(), [], 'getAssignedNodes must be empty for a default slot when all elements have "slot" attributes specified');
 
 }, 'getAssignedNodes must update when slot and name attributes are modified');
@@ -102,7 +102,7 @@ test(function () {
 
     assert_array_equals(slotElement.getAssignedNodes(), [], 'getAssignedNodes must be empty when there are no matching elements for the slot name');
 
-    slotElement.name = null;
+    slotElement.removeAttribute('name');
     assert_array_equals(slotElement.getAssignedNodes(), [child], 'getAssignedNodes must be empty when there are no matching elements for the slot name');
 
 }, 'getAssignedNodes must update when a default slot is introduced dynamically by a slot rename');

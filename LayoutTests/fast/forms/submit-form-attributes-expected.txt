@@ -32,8 +32,8 @@ PASS input.formEnctype is "application/x-www-form-urlencoded"
 PASS input.formMethod is ""
 PASS input.getAttribute("formMethod") is null
 PASS input.formMethod is "get"
-PASS input.formTarget is ""
-PASS input.getAttribute("formTarget") is null
+PASS input.formTarget is "null"
+PASS input.getAttribute("formTarget") is "null"
 PASS input.formTarget is "null"
 
 Setting undefined for input:
@@ -87,8 +87,8 @@ PASS button.formEnctype is "application/x-www-form-urlencoded"
 PASS button.formMethod is ""
 PASS button.getAttribute("formMethod") is null
 PASS button.formMethod is "get"
-PASS button.formTarget is ""
-PASS button.getAttribute("formTarget") is null
+PASS button.formTarget is "null"
+PASS button.getAttribute("formTarget") is "null"
 PASS button.formTarget is "null"
 
 Setting undefined for button:

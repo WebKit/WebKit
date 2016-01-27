@@ -51,7 +51,7 @@ try {
     shadow2.firstChild.name = 'bar';
     forceLayout();
 
-    shadow3.firstChild.name = null;
+    shadow3.firstChild.removeAttribute("name");
     forceLayout();
 
     shadow4.insertBefore(document.createElement('slot'), shadow4.firstChild);

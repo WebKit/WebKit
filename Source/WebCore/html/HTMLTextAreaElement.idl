@@ -34,7 +34,7 @@ interface HTMLTextAreaElement : HTMLElement {
     [Reflect] attribute DOMString wrap;
 
     readonly attribute DOMString type;
-    [TreatNullAs=NullString] attribute DOMString defaultValue;
+    attribute DOMString defaultValue;
     [TreatNullAs=NullString] attribute DOMString value;
     readonly attribute unsigned long textLength;
 

@@ -4085,7 +4085,7 @@ sub JSValueToNative
         if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") and ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString")) {
             return "valueToStringWithUndefinedOrNullCheck(state, $value)"
         }
-        if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") or $signature->extendedAttributes->{"Reflect"}) {
+        if ($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") {
             return "valueToStringWithNullCheck(state, $value)"
         }
         if ($signature->extendedAttributes->{"AtomicString"}) {

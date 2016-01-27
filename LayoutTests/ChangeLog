@@ -1,3 +1,35 @@
+2016-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Settings a reflected DOMString attribute to null should set it to the "null" string rather than the empty string
+        https://bugs.webkit.org/show_bug.cgi?id=153504
+        <rdar://problem/24353072>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing tests as a lot of them were expecting that setting
+        a reflected DOMString attribute to null would set it to the empty
+        string instead of the string "null".
+
+        * fast/dom/domstring-attribute-reflection-expected.txt:
+        * fast/dom/domstring-attribute-reflection.html:
+        * fast/dom/element-attribute-js-null-expected.txt:
+        * fast/dom/element-attribute-js-null.html:
+        * fast/dom/ping-attribute-dom-binding-expected.txt:
+        * fast/dom/ping-attribute-dom-binding.html:
+        * fast/forms/fieldset/fieldset-name-expected.txt:
+        * fast/forms/fieldset/fieldset-name.html:
+        * fast/forms/input-minmax-expected.txt:
+        * fast/forms/input-minmax.html:
+        * fast/forms/input-pattern-expected.txt:
+        * fast/forms/input-pattern.html:
+        * fast/forms/submit-form-attributes-expected.txt:
+        * fast/forms/submit-form-attributes.html:
+        * fast/shadow-dom/HTMLSlotElement-interface.html:
+        * fast/shadow-dom/NonDocumentTypeChildNode-interface-assignedSlot.html:
+        * fast/shadow-dom/shadow-layout-after-slot-changes.html:
+        * svg/dom/svg-element-attribute-js-null-expected.txt:
+        * svg/dom/svg-element-attribute-js-null.xhtml:
+
 2016-01-27  Simon Fraser  <simon.fraser@apple.com>
 
         Support CSS3 Images values for the image-rendering property

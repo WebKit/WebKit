@@ -1,3 +1,54 @@
+2016-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Settings a reflected DOMString attribute to null should set it to the "null" string rather than the empty string
+        https://bugs.webkit.org/show_bug.cgi?id=153504
+        <rdar://problem/24353072>
+
+        Reviewed by Ryosuke Niwa.
+
+        Settings a reflected DOMString attribute to null should set it to the "null"
+        string rather than the empty string:
+        - https://html.spec.whatwg.org/#reflecting-content-attributes-in-idl-attributes
+        - http://heycam.github.io/webidl/#es-DOMString
+        - http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tostring
+
+        Firefox and Chrome match the specification here.
+
+        This is causing a lot of W3C HTML reflection tests to fail on WebKit, e.g.:
+        - http://w3c-test.org/html/dom/reflection-text.html
+
+        No new tests, already covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        Call toString() instead of valueToStringWithNullCheck() for reflected
+        attributes. This way, null gets converted to the string "null", as
+        expected, instead of a null String object.
+
+        * html/HTMLInputElement.idl:
+        Dropping [TreatNullAs=NullString] IDL extended attribute for
+        input.defaultValue, as this is not present in the specification:
+        - https://html.spec.whatwg.org/#htmlinputelement
+
+        Without this change, assigning null to input.defaultValue would not
+        set to to the "null" string, as is expected.
+
+        * html/HTMLTextAreaElement.idl:
+        Dropping [TreatNullAs=NullString] IDL extended attribute for
+        textArea.defaultValue, as this is not present in the specification:
+        - https://html.spec.whatwg.org/#htmltextareaelement
+
+        Without this change, assigning null to textArea.defaultValue would not
+        set to to the "null" string, as is expected.
+
+        * html/HTMLTitleElement.idl:
+        Dropping [TreatNullAs=NullString] IDL extended attribute for
+        title.text, as this is not present in the specification:
+        - https://html.spec.whatwg.org/#htmltitleelement
+
+        Without this change, assigning null to title.text would not
+        set to to the "null" string, as is expected.
+
 2016-01-27  Simon Fraser  <simon.fraser@apple.com>
 
         Support CSS3 Images values for the image-rendering property

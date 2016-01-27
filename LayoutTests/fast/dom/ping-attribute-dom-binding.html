@@ -15,8 +15,8 @@ shouldBeEqualToString('anchor.ping', 'p1');
 anchor.ping = 'p2';
 shouldBeEqualToString('anchor.getAttribute("ping")', 'p2');
 anchor.ping = null;
-shouldBeFalse('anchor.hasAttribute("ping")');
-shouldBeEqualToString('anchor.ping', '');
+shouldBeTrue('anchor.hasAttribute("ping")');
+shouldBeEqualToString('anchor.ping', 'null');
 
 var area = document.createElement('area');
 shouldBeEqualToString('area.ping', '');
@@ -25,8 +25,8 @@ shouldBeEqualToString('area.ping', 'p1');
 area.ping = 'p2';
 shouldBeEqualToString('area.getAttribute("ping")', 'p2');
 area.ping = null;
-shouldBeFalse('area.hasAttribute("ping")');
-shouldBeEqualToString('area.ping', '');
+shouldBeTrue('area.hasAttribute("ping")');
+shouldBeEqualToString('area.ping', 'null');
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

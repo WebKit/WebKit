@@ -20,14 +20,14 @@ shouldBe('fs1.getAttribute("name")', '"1234"');
 // We may need to update below once the specification fixed.
 debug('fs1.name=null');
 fs1.name = null;
-shouldBe('fs1.name', '""');
-shouldBeNull('fs1.getAttribute("name")');
-shouldBeFalse('fs1.hasAttribute("name")');
+shouldBeEqualToString('fs1.name', 'null');
+shouldBeEqualToString('fs1.getAttribute("name")', 'null');
+shouldBeTrue('fs1.hasAttribute("name")');
 
 debug('fs1.name=undefined');
 fs1.name = undefined;
-shouldBe('fs1.name', '"undefined"');
-shouldBe('fs1.getAttribute("name")', '"undefined"');
+shouldBeEqualToString('fs1.name', 'undefined');
+shouldBeEqualToString('fs1.getAttribute("name")', 'undefined');
 shouldBeTrue('fs1.hasAttribute("name")');
 </script>
 <script src="../../../resources/js-test-post.js"></script>

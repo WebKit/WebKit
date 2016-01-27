@@ -23,8 +23,8 @@ shouldBe('input.pattern', '"bar"');
 
 // Null.
 input.pattern = null;
-shouldBe('input.pattern', '""');
-shouldBe('input.getAttribute("pattern")', 'null');
+shouldBeEqualToString('input.pattern', 'null');
+shouldBeEqualToString('input.getAttribute("pattern")', 'null');
 input.setAttribute('pattern', null);
 shouldBe('input.pattern', '"null"');
 

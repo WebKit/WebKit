@@ -36,15 +36,15 @@ shouldBe('input.getAttribute("max")', '""');
 // Null.
 debug('Setting null to min:');
 input.min = null;
-shouldBe('input.min', '""');
-shouldBe('input.getAttribute("min")', 'null');
+shouldBeEqualToString('input.min', 'null');
+shouldBeEqualToString('input.getAttribute("min")', 'null');
 input.setAttribute('min', null);
 shouldBe('input.min', '"null"');
 
 debug('Setting null to max:');
 input.max = null;
-shouldBe('input.max', '""');
-shouldBe('input.getAttribute("max")', 'null');
+shouldBeEqualToString('input.max', 'null');
+shouldBeEqualToString('input.getAttribute("max")', 'null');
 input.setAttribute('max', null);
 shouldBe('input.max', '"null"');
 

@@ -14,12 +14,12 @@ PASS input.getAttribute("max") is "bar"
 PASS input.getAttribute("min") is ""
 PASS input.getAttribute("max") is ""
 Setting null to min:
-PASS input.min is ""
-PASS input.getAttribute("min") is null
+PASS input.min is "null"
+PASS input.getAttribute("min") is "null"
 PASS input.min is "null"
 Setting null to max:
-PASS input.max is ""
-PASS input.getAttribute("max") is null
+PASS input.max is "null"
+PASS input.getAttribute("max") is "null"
 PASS input.max is "null"
 Setting undefined to min:
 PASS input.min is "undefined"

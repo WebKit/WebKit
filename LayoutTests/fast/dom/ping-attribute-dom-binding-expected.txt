@@ -6,13 +6,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS anchor.ping is ""
 PASS anchor.ping is "p1"
 PASS anchor.getAttribute("ping") is "p2"
-PASS anchor.hasAttribute("ping") is false
-PASS anchor.ping is ""
+PASS anchor.hasAttribute("ping") is true
+PASS anchor.ping is "null"
 PASS area.ping is ""
 PASS area.ping is "p1"
 PASS area.getAttribute("ping") is "p2"
-PASS area.hasAttribute("ping") is false
-PASS area.ping is ""
+PASS area.hasAttribute("ping") is true
+PASS area.ping is "null"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -13,9 +13,9 @@ fs1.name=1234
 PASS fs1.name is "1234"
 PASS fs1.getAttribute("name") is "1234"
 fs1.name=null
-PASS fs1.name is ""
-PASS fs1.getAttribute("name") is null
-PASS fs1.hasAttribute("name") is false
+PASS fs1.name is "null"
+PASS fs1.getAttribute("name") is "null"
+PASS fs1.hasAttribute("name") is true
 fs1.name=undefined
 PASS fs1.name is "undefined"
 PASS fs1.getAttribute("name") is "undefined"
