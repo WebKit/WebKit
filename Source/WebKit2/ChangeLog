@@ -1,3 +1,9 @@
+2016-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Remove -d flag from make invocation.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-01-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Generalize ResourceUsageData gathering to be used outside of ResourceUsageOverlay
