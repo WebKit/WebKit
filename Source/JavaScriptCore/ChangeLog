@@ -1,3 +1,15 @@
+2016-01-27  Per Arne Vollan  <peavo@outlook.com>
+
+        [FTL][Win64] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=153555
+
+        Reviewed by Alex Christensen.
+
+        MSVC does not accept preprocessor conditionals in macros.
+
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+
 2016-01-27  Filip Pizlo  <fpizlo@apple.com>
 
         Air::TmpWidth uses a stale pointer into its HashMap after it calls add()

@@ -567,22 +567,26 @@ static void compileStub(
     adjustAndJumpToTarget(jit, exit, exit.m_isExceptionHandler);
     
     LinkBuffer patchBuffer(*vm, jit, codeBlock);
+#if FTL_USES_B3
     exit.m_code = FINALIZE_CODE_IF(
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer,
-#if FTL_USES_B3
         ("FTL OSR exit #%u (%s, %s) from %s, with operands = %s",
             exitID, toCString(exit.m_codeOrigin).data(),
             exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
             toCString(ignoringContext<DumpContext>(exit.m_descriptor->m_values)).data())
+        );
 #else // FTL_USES_B3
+    exit.m_code = FINALIZE_CODE_IF(
+        shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
+        patchBuffer,
         ("FTL OSR exit #%u (%s, %s) from %s, with operands = %s, and record = %s",
             exitID, toCString(exit.m_codeOrigin).data(),
             exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
             toCString(ignoringContext<DumpContext>(exit.m_descriptor->m_values)).data(),
             toCString(*record).data())
-#endif // FTL_USES_B3
         );
+#endif // FTL_USES_B3
 }
 
 extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
