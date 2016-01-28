@@ -1,3 +1,16 @@
+2016-01-27  Zhuo Li  <zachli@apple.com>
+
+        Layout Test fast/forms/auto-fill-button/input-contacts-auto-fill-button.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=153567.
+
+        Unreviewed test gardening.
+
+        Update expected test results for ios-simulator, win, and gtk.
+
+        * platform/gtk/fast/forms/auto-fill-button/input-contacts-auto-fill-button-expected.txt: Added.
+        * platform/ios-simulator/fast/forms/auto-fill-button/input-contacts-auto-fill-button-expected.txt: Added.
+        * platform/win/fast/forms/auto-fill-button/input-contacts-auto-fill-button-expected.txt: Added.
+
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
         Settings a reflected DOMString attribute to null should set it to the "null" string rather than the empty string
