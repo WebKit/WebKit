@@ -8,6 +8,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ApplicationCache').value is ApplicationCache
+PASS Object.getOwnPropertyDescriptor(global, 'ApplicationCache').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplicationCache').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplicationCache').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplicationCache').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').value is Attr
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Attr').hasOwnProperty('set') is false

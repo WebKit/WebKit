@@ -1,5 +1,5 @@
 This test makes sure that various properties on the window object are correctly reconnected after restoring a page from the page cache.
-[object DOMApplicationCache] 
+[object ApplicationCache] 
 [object Console] 
 [object Crypto] 
 [object History] 

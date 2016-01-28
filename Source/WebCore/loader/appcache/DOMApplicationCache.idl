@@ -24,10 +24,10 @@
  */
  
 [
-    NoInterfaceObject,
     EventTarget,
     DoNotCheckConstants,
     GenerateIsReachable=ImplFrame,
+    InterfaceName=ApplicationCache,
 ] interface DOMApplicationCache {
     // update status
     const unsigned short UNCACHED = 0;

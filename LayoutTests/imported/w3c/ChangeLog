@@ -1,5 +1,16 @@
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
+        Expose ApplicationCache on the global Window object
+        https://bugs.webkit.org/show_bug.cgi?id=153578
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline W3C HTML test now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-01-27  Chris Dumez  <cdumez@apple.com>
+
         Getting / Setting property on prototype object must throw TypeError
         https://bugs.webkit.org/show_bug.cgi?id=153547
         <rdar://problem/24370650>
