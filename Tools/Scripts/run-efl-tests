@@ -51,7 +51,7 @@ if ($xvfb_pid == 0) {
     # Manually add this for jhbuildWrapperPrefixIfNeeded().
     push(@ARGV, "--efl");
 
-    my $returnCode = exitStatus(generateBuildSystemFromCMakeProject("Efl", undef, cmakeBasedPortArguments()));
+    my $returnCode = exitStatus(generateBuildSystemFromCMakeProject(undef, cmakeBasedPortArguments()));
     exit($returnCode) if $returnCode;
 
     $returnCode = exitStatus(buildCMakeGeneratedProject("test"));

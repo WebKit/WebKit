@@ -63,7 +63,6 @@ BEGIN {
        &chdirWebKit
        &checkFrameworks
        &cmakeBasedPortArguments
-       &cmakeBasedPortName
        &currentSVNRevision
        &debugSafari
        &executableProductDir
@@ -1929,8 +1928,9 @@ sub cmakeGeneratedBuildfile(@)
 
 sub generateBuildSystemFromCMakeProject
 {
-    my ($port, $prefixPath, @cmakeArgs, $additionalCMakeArgs) = @_;
+    my ($prefixPath, @cmakeArgs, $additionalCMakeArgs) = @_;
     my $config = configuration();
+    my $port = cmakeBasedPortName();
     my $buildPath = File::Spec->catdir(baseProductDir(), $config);
     File::Path::mkpath($buildPath) unless -d $buildPath;
     my $originalWorkingDirectory = getcwd();
@@ -2031,9 +2031,9 @@ sub cleanCMakeGeneratedProject()
     return 0;
 }
 
-sub buildCMakeProjectOrExit($$$$@)
+sub buildCMakeProjectOrExit($$$@)
 {
-    my ($clean, $port, $prefixPath, $makeArgs, @cmakeArgs) = @_;
+    my ($clean, $prefixPath, $makeArgs, @cmakeArgs) = @_;
     my $returnCode;
 
     exit(exitStatus(cleanCMakeGeneratedProject())) if $clean;
@@ -2046,7 +2046,7 @@ sub buildCMakeProjectOrExit($$$$@)
         system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
     }
 
-    $returnCode = exitStatus(generateBuildSystemFromCMakeProject($port, $prefixPath, @cmakeArgs));
+    $returnCode = exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @cmakeArgs));
     exit($returnCode) if $returnCode;
 
     $returnCode = exitStatus(buildCMakeGeneratedProject($makeArgs));

@@ -112,7 +112,7 @@ if (isCMakeBuild()) {
     }
 
     # This call only returns if nothing wrong happened
-    buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, $buildTarget, (cmakeBasedPortArguments(), $cmakeArgs));
+    buildCMakeProjectOrExit(0, undef, $buildTarget, (cmakeBasedPortArguments(), $cmakeArgs));
     writeCongrats();
     exit exitStatus(0);
 }

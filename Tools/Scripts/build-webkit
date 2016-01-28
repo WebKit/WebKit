@@ -246,13 +246,13 @@ if (isCMakeBuild() && !isAnyWindows()) {
     my @featureArgs = cMakeArgsFromFeatures();
     removeCMakeCache(@featureArgs);
 
-    buildCMakeProjectOrExit($clean, cmakeBasedPortName(), $prefixPath, $makeArgs, (cmakeBasedPortArguments(), @featureArgs), $cmakeArgs);
+    buildCMakeProjectOrExit($clean, $prefixPath, $makeArgs, (cmakeBasedPortArguments(), @featureArgs), $cmakeArgs);
 }
 
 my $baseProductDir = baseProductDir();
 if (isAppleWinWebKit() || isWinCairo()) {
     chdirWebKit();
-    if (exitStatus(generateBuildSystemFromCMakeProject(cmakeBasedPortName()))) {
+    if (exitStatus(generateBuildSystemFromCMakeProject())) {
         die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
     }
     chdirWebKit();

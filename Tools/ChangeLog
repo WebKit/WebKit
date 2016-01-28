@@ -1,3 +1,23 @@
+2016-01-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [webkitdirs] Don't pass cmakeBasedPortName around.
+        https://bugs.webkit.org/show_bug.cgi?id=153589
+
+        Reviewed by Darin Adler.
+
+        It should be local function of webkitdirs.pm instead.
+
+        * Scripts/build-jsc: Don't pass cmakeBasedPortName to
+        buildCMakeProjectOrExit().
+        * Scripts/build-webkit: Don't pass cmakeBasedPortName to
+        buildCMakeProjectOrExit() and generateBuildSystemFromCMakeProject().
+        * Scripts/run-efl-tests: Don't pass cmakeBasedPortName to
+        generateBuildSystemFromCMakeProject().
+        * Scripts/webkitdirs.pm: Don't export cmakeBasedPortName.
+        (generateBuildSystemFromCMakeProject): Removed $port argument as we
+        can get it from cmakeBasedPortName().
+        (buildCMakeProjectOrExit): Ditto.
+
 2016-01-28  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GStreamer] Clean up includes and headers related with GStreamerGL
