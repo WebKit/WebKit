@@ -1,3 +1,17 @@
+2016-01-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] B3 Tail Call with Varargs do not restore callee saved registers
+        https://bugs.webkit.org/show_bug.cgi?id=153579
+
+        Reviewed by Michael Saboff.
+
+        We were trashing the callee saved registers in Tail Calls.
+
+        I just copied the code from DFG to fix this :)
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+
 2016-01-27  Filip Pizlo  <fpizlo@apple.com>
 
         B3 IntRange analysis should know more about shifting

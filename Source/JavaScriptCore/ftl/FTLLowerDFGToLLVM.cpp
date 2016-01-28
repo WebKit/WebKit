@@ -5487,6 +5487,7 @@ private:
                 CCallHelpers::Jump done;
                 
                 if (isTailCall) {
+                    jit.emitRestoreCalleeSaves();
                     jit.prepareForTailCallSlow();
                     fastCall = jit.nearTailCall();
                 } else {
@@ -5495,7 +5496,9 @@ private:
                 }
                 
                 slowPath.link(&jit);
-                
+
+                if (isTailCall)
+                    jit.emitRestoreCalleeSaves();
                 jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
                 CCallHelpers::Call slowCall = jit.nearCall();
                 
