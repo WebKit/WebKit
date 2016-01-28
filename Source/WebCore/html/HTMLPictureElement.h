@@ -46,9 +46,12 @@ public:
     
     bool viewportChangeAffectedPicture();
 
+    WeakPtr<HTMLPictureElement> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+
 private:
     HTMLPictureElement(const QualifiedName&, Document&);
     
+    WeakPtrFactory<HTMLPictureElement> m_weakFactory { this };
     Vector<std::unique_ptr<MediaQueryResult>> m_viewportDependentMediaQueryResults;
 
 };
