@@ -1,3 +1,18 @@
+2016-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r190430): Assertion failure in Text::~Text()
+        https://bugs.webkit.org/show_bug.cgi?id=153577
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by destroyRenderTreeIfNeeded exiting early on all HTMLSlotElement as it lacks a render object.
+        Fixed it by explicitly avoiding the early return when child is a HTMLSlotElement.
+
+        Test: fast/shadow-dom/slot-removal-crash-2.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::destroyRenderTreeIfNeeded):
+
 2016-01-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Garbage is displayed when root svg element has mix-blend-mode set

@@ -1,3 +1,15 @@
+2016-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r190430): Assertion failure in Text::~Text()
+        https://bugs.webkit.org/show_bug.cgi?id=153577
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test. The test hits an assertion in debug build without the fix.
+
+        * fast/shadow-dom/slot-removal-crash-2-expected.txt: Added.
+        * fast/shadow-dom/slot-removal-crash-2.html: Added.
+
 2016-01-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Garbage is displayed when root svg element has mix-blend-mode set

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test that removing a slot element with text node does not result in an assertion failure.<br>
+The test passes if WebKit does not hit an assertion.</p>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+
+var x;
+
+function runTest() {
+    var doc = iframe.contentDocument;
+
+    var host = doc.createElement('div');
+    var shadowRoot = host.attachShadow({mode: 'open'});
+    var slot = doc.createElement('slot');
+    slot.textContent = 'hello';
+    shadowRoot.appendChild(slot);
+    doc.body.appendChild(host);
+
+    setTimeout(function () {
+        x = slot.offsetTop;
+        shadowRoot.removeChild(slot);
+    }, 0);
+}
+
+runTest();
+
+setTimeout(function () {
+    iframe.src = 'about:blank';
+    x = document.body.offsetTop;
+    if (window.GCController)
+        GCController.collect();
+
+    document.querySelector('p').innerHTML += '<br>PASS.';
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>

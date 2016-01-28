@@ -35,6 +35,7 @@
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLFormControlsCollection.h"
 #include "HTMLOptionsCollection.h"
+#include "HTMLSlotElement.h"
 #include "HTMLTableRowsCollection.h"
 #include "InlineTextBox.h"
 #include "JSLazyEventListener.h"
@@ -99,7 +100,7 @@ void ContainerNode::removeDetachedChildren()
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
     // FIXME: Get rid of the named flow test.
-    if (!child.renderer() && !child.isNamedFlowContentNode())
+    if (!child.renderer() && !child.isNamedFlowContentNode() && !is<HTMLSlotElement>(child))
         return;
     if (is<Element>(child))
         Style::detachRenderTree(downcast<Element>(child));
