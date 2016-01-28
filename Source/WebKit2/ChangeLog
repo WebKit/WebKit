@@ -1,3 +1,13 @@
+2016-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Update Web Process sandbox profile for audiodeviceclock access
+        https://bugs.webkit.org/show_bug.cgi?id=153571
+        <rdar://problem/24134612>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2016-01-26  Ada Chan  <adachan@apple.com>
 
         Get WebVideoFullscreenManager and related classes to also compile for Mac platform

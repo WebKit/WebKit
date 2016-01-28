@@ -75,7 +75,8 @@
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
     (global-name "com.apple.PowerManagement.control")
-    (global-name "com.apple.accountsd.accountmanager"))
+    (global-name "com.apple.accountsd.accountmanager")
+    (global-name "com.apple.coremedia.audiodeviceclock"))
 
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
