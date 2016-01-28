@@ -4543,11 +4543,11 @@ PASS Storage interface object name
 PASS Storage interface: existence and properties of interface prototype object 
 FAIL Storage interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Storage.prototype does not have own property "constructor" expected property "constructor" missing
 FAIL Storage interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
-FAIL Storage interface: operation key(unsigned long) assert_true: property is not enumerable expected true got false
-FAIL Storage interface: operation getItem(DOMString) assert_true: property is not enumerable expected true got false
-FAIL Storage interface: operation setItem(DOMString,DOMString) assert_true: property is not enumerable expected true got false
-FAIL Storage interface: operation removeItem(DOMString) assert_true: property is not enumerable expected true got false
-FAIL Storage interface: operation clear() assert_true: property is not enumerable expected true got false
+PASS Storage interface: operation key(unsigned long) 
+PASS Storage interface: operation getItem(DOMString) 
+PASS Storage interface: operation setItem(DOMString,DOMString) 
+PASS Storage interface: operation removeItem(DOMString) 
+PASS Storage interface: operation clear() 
 FAIL StorageEvent interface: existence and properties of interface object assert_equals: class string of StorageEvent expected "[object Function]" but got "[object StorageEventConstructor]"
 PASS StorageEvent interface object length 
 PASS StorageEvent interface object name 

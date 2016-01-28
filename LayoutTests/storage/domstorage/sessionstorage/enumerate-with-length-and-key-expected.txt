@@ -2,8 +2,14 @@ This test attempts to enumerate all the keys in sessionStorage with .length + .k
 alpha
 bar
 batman
+clear
 foo
 fu
+getItem
+key
+length
 prototypeTestKey
+removeItem
+setItem
 zeta
 

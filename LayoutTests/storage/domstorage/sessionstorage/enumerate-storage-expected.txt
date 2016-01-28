@@ -2,8 +2,14 @@ This test checks to see that you can enumber a Storage object and get only the k
 alpha
 bar
 batman
+clear
 foo
 fu
+getItem
+key
+length
 prototypeTestKey
+removeItem
+setItem
 zeta
 
