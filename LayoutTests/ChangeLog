@@ -1,5 +1,17 @@
 2016-01-28  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191322. rdar://problem/24190923
+
+    2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+            Don't dump GestureEvent constructor attributes for now
+
+            Rubber-stamped by Alexey Proskuryakov.
+
+            * js/dom/script-tests/global-constructors-attributes.js:
+
+2016-01-28  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r193931. rdar://problem/24190799
 
     2015-12-10  Ryan Haddad  <ryanhaddad@apple.com>

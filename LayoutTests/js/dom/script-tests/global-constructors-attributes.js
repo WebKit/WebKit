@@ -86,7 +86,8 @@ var propertiesToSkip = [
     "webkitIDBKeyRange", 
     "webkitIDBObjectStore", 
     "webkitIDBRequest", 
-    "webkitIDBTransaction" ];
+    "webkitIDBTransaction",
+    "GestureEvent" ];
     
 var global = this;
 var constructorNames = constructorPropertiesOnGlobalObject(global);
