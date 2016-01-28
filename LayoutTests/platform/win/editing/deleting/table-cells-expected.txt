@@ -15,15 +15,15 @@ layer at (0,0) size 800x600
           text run at (0,0) width 361: "This tests deletion of a selection that spans multiple cells. "
           text run at (361,0) width 356: "Just table content should be removed, not table structure."
       RenderBlock {DIV} at (0,34) size 784x28
-        RenderTable {TABLE} at (0,0) size 344x28 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 342x26
-            RenderTableRow {TR} at (0,2) size 342x22
-              RenderTableCell {TD} at (2,2) size 158x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderBlock {DIV} at (2,2) size 154x18
+        RenderTable {TABLE} at (0,0) size 343x28 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 341x26
+            RenderTableRow {TR} at (0,2) size 341x22
+              RenderTableCell {TD} at (2,2) size 157x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 153x18
                   RenderText {#text} at (0,0) size 153x18
                     text run at (0,0) width 153: "These two pieces of text"
-              RenderTableCell {TD} at (161,2) size 179x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderBlock {DIV} at (2,2) size 175x18
+              RenderTableCell {TD} at (161,2) size 178x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 174x18
                   RenderText {#text} at (0,0) size 174x18
                     text run at (0,0) width 174: " should be in different cells."
 caret: position 24 of child 0 {#text} of child 0 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

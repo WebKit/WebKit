@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 133x25
           RenderTableSection {TBODY} at (0,0) size 133x25
             RenderTableRow {TR} at (0,2) size 133x21
-              RenderTableCell {TD} at (2,2) size 19x21 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 18x21 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,0) size 16x20
                   text run at (1,1) width 16: "\x{21D2}"
-              RenderTableCell {TD} at (22,2) size 95x21 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (22,2) size 94x21 [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 92x19
                   text run at (1,2) width 92: "ToDo Content"
               RenderTableCell {TD} at (118,2) size 13x21 [r=0 c=2 rs=1 cs=1]
@@ -25,10 +25,10 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,25) size 41x25
           RenderTableSection {TBODY} at (0,0) size 41x25
             RenderTableRow {TR} at (0,2) size 41x21
-              RenderTableCell {TD} at (2,2) size 19x21 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 18x21 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,0) size 16x20
                   text run at (1,1) width 16: "\x{21D2}"
-              RenderTableCell {TD} at (22,2) size 3x21 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (22,2) size 2x21 [r=0 c=1 rs=1 cs=1]
               RenderTableCell {TD} at (26,2) size 13x21 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,2) size 11x18
                   text run at (1,2) width 11: "\x{21E3}"

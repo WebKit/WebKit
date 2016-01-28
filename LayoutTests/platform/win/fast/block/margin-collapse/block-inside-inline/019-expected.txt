@@ -6,70 +6,70 @@ layer at (0,0) size 800x206
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 230x18
           text run at (0,0) width 230: "There should be no red on this page."
-      RenderTable {TABLE} at (0,34) size 157x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
-        RenderTableSection {TBODY} at (3,3) size 151x100
-          RenderTableRow {TR} at (0,0) size 151x100
-            RenderTableCell {TD} at (0,0) size 51x100 [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (0,0) size 51x0
+      RenderTable {TABLE} at (0,34) size 156x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderTableSection {TBODY} at (3,3) size 150x100
+          RenderTableRow {TR} at (0,0) size 150x100
+            RenderTableCell {TD} at (0,0) size 50x100 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (0,0) size 50x0
                 RenderInline {SPAN} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,0) size 51x55
-                RenderBlock {DIV} at (0,0) size 51x55 [bgcolor=#00FF00]
-                  RenderBlock (anonymous) at (0,0) size 51x0
+              RenderBlock (anonymous) at (0,0) size 50x55
+                RenderBlock {DIV} at (0,0) size 50x55 [bgcolor=#00FF00]
+                  RenderBlock (anonymous) at (0,0) size 50x0
                     RenderInline {SPAN} at (0,0) size 0x0
-                  RenderBlock (anonymous) at (0,0) size 51x50
-                    RenderBlock {DIV} at (0,0) size 51x50 [bgcolor=#00FF00]
-                  RenderBlock (anonymous) at (0,100) size 51x0
-                    RenderInline {SPAN} at (0,0) size 0x0
-                    RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,55) size 51x0
-                RenderInline {SPAN} at (0,0) size 0x0
-                RenderText {#text} at (0,0) size 0x0
-                RenderInline {SPAN} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,55) size 51x45
-                RenderBlock {DIV} at (0,0) size 51x45 [bgcolor=#00FF00]
-              RenderBlock (anonymous) at (0,100) size 51x0
-                RenderInline {SPAN} at (0,0) size 0x0
-                RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (50,0) size 51x100 [r=0 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (0,0) size 51x0
-                RenderInline {SPAN} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,0) size 51x50
-                RenderBlock {DIV} at (0,0) size 51x50 [bgcolor=#00FF00]
-                  RenderBlock (anonymous) at (0,0) size 51x0
-                    RenderInline {SPAN} at (0,0) size 0x0
-                  RenderBlock (anonymous) at (0,0) size 51x50
-                    RenderBlock {DIV} at (0,0) size 51x50 [bgcolor=#00FF00]
-                  RenderBlock (anonymous) at (0,100) size 51x0
+                  RenderBlock (anonymous) at (0,0) size 50x50
+                    RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#00FF00]
+                  RenderBlock (anonymous) at (0,100) size 50x0
                     RenderInline {SPAN} at (0,0) size 0x0
                     RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,50) size 51x0
+              RenderBlock (anonymous) at (0,55) size 50x0
                 RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {SPAN} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,50) size 51x50
-                RenderBlock {DIV} at (0,0) size 51x50 [bgcolor=#00FF00]
-              RenderBlock (anonymous) at (0,100) size 51x0
+              RenderBlock (anonymous) at (0,55) size 50x45
+                RenderBlock {DIV} at (0,0) size 50x45 [bgcolor=#00FF00]
+              RenderBlock (anonymous) at (0,100) size 50x0
                 RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (100,0) size 51x100 [r=0 c=2 rs=1 cs=1]
-              RenderBlock (anonymous) at (0,0) size 51x0
+            RenderTableCell {TD} at (50,0) size 50x100 [r=0 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (0,0) size 50x0
                 RenderInline {SPAN} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,0) size 51x45
-                RenderBlock {DIV} at (0,0) size 51x45 [bgcolor=#00FF00]
-                  RenderBlock (anonymous) at (0,0) size 51x0
+              RenderBlock (anonymous) at (0,0) size 50x50
+                RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#00FF00]
+                  RenderBlock (anonymous) at (0,0) size 50x0
                     RenderInline {SPAN} at (0,0) size 0x0
-                  RenderBlock (anonymous) at (0,0) size 51x50
-                    RenderBlock {DIV} at (0,0) size 51x50 [bgcolor=#00FF00]
-                  RenderBlock (anonymous) at (0,100) size 51x0
+                  RenderBlock (anonymous) at (0,0) size 50x50
+                    RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#00FF00]
+                  RenderBlock (anonymous) at (0,100) size 50x0
                     RenderInline {SPAN} at (0,0) size 0x0
                     RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,45) size 51x0
+              RenderBlock (anonymous) at (0,50) size 50x0
                 RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {SPAN} at (0,0) size 0x0
-              RenderBlock (anonymous) at (0,45) size 51x55
-                RenderBlock {DIV} at (0,0) size 51x55 [bgcolor=#00FF00]
-              RenderBlock (anonymous) at (0,100) size 51x0
+              RenderBlock (anonymous) at (0,50) size 50x50
+                RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#00FF00]
+              RenderBlock (anonymous) at (0,100) size 50x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (100,0) size 50x100 [r=0 c=2 rs=1 cs=1]
+              RenderBlock (anonymous) at (0,0) size 50x0
+                RenderInline {SPAN} at (0,0) size 0x0
+              RenderBlock (anonymous) at (0,0) size 50x45
+                RenderBlock {DIV} at (0,0) size 50x45 [bgcolor=#00FF00]
+                  RenderBlock (anonymous) at (0,0) size 50x0
+                    RenderInline {SPAN} at (0,0) size 0x0
+                  RenderBlock (anonymous) at (0,0) size 50x50
+                    RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#00FF00]
+                  RenderBlock (anonymous) at (0,100) size 50x0
+                    RenderInline {SPAN} at (0,0) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+              RenderBlock (anonymous) at (0,45) size 50x0
+                RenderInline {SPAN} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+                RenderInline {SPAN} at (0,0) size 0x0
+              RenderBlock (anonymous) at (0,45) size 50x55
+                RenderBlock {DIV} at (0,0) size 50x55 [bgcolor=#00FF00]
+              RenderBlock (anonymous) at (0,100) size 50x0
                 RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,156) size 784x18

@@ -39,18 +39,18 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x184
-            RenderTableCell {TD} at (0,105) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,105) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x184 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (4,4) size 762x124 [bgcolor=#FFFF00]
                 RenderBlock {DIV} at (190,0) size 382x54 [bgcolor=#FFFFFF]
-                  RenderBlock {P} at (0,0) size 382x54
+                  RenderBlock {P} at (0,0) size 381x54
                     RenderText {#text} at (0,0) size 326x54
                       text run at (0,0) width 326: "This paragraph should be centered within its yellow"
                       text run at (0,18) width 323: "containing block and its width should be half of the"
                       text run at (0,36) width 109: "containing block."
-                RenderBlock {DIV} at (380,70) size 382x54 [bgcolor=#FFFFFF]
+                RenderBlock {DIV} at (381,70) size 381x54 [bgcolor=#FFFFFF]
                   RenderBlock {P} at (0,0) size 381x54
                     RenderText {#text} at (0,0) size 353x54
                       text run at (0,0) width 353: "This paragraph should be right-aligned within its yellow"

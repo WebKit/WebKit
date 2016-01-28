@@ -12,10 +12,10 @@ layer at (0,0) size 800x600
             text run at (0,0) width 66: "Filler Text"
         RenderText {#text} at (66,0) size 4x18
           text run at (66,0) width 4: " "
-        RenderTable {DIV} at (70,0) size 97x96 [bgcolor=#FFA500]
-          RenderTableSection (anonymous) at (0,0) size 97x96
-            RenderTableRow {DIV} at (0,0) size 97x96
-              RenderTableCell {DIV} at (0,0) size 97x18 [r=0 c=0 rs=1 cs=1]
+        RenderTable {DIV} at (70,0) size 96x96 [bgcolor=#FFA500]
+          RenderTableSection (anonymous) at (0,0) size 96x96
+            RenderTableRow {DIV} at (0,0) size 96x96
+              RenderTableCell {DIV} at (0,0) size 96x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 66x18
                   text run at (0,0) width 66: "Filler Text"
         RenderText {#text} at (0,0) size 0x0

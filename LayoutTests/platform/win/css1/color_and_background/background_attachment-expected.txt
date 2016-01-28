@@ -91,21 +91,21 @@ layer at (0,0) size 785x1194
                 RenderText {#text} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x524
-            RenderTableCell {TD} at (0,274) size 13x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,274) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,5) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x524 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x90
-                RenderText {#text} at (0,0) size 730x90
+                RenderText {#text} at (0,0) size 747x90
                   text run at (0,0) width 730: "This document should have a green grid-pattern line across the top of the page (or at least a tiled background) which"
                   text run at (0,18) width 234: "does NOT scroll with the document. "
-                  text run at (234,18) width 479: "It should, instead, appear to be a fixed pattern past which the content scrolls,"
-                  text run at (0,36) width 268: "even when the end of the page is reached. "
-                  text run at (268,36) width 460: "In addition, the default Test Suite background should NOT appear, as it's"
-                  text run at (0,54) width 280: "been overridden by the styles shown above. "
-                  text run at (280,54) width 428: "I'll have to add a lot of extra text to the page in order to make all this"
-                  text run at (0,72) width 216: "something we can actually check. "
-                  text run at (216,72) width 227: "Don't worry, I'll think of something."
+                  text run at (234,18) width 513: "It should, instead, appear to be a fixed pattern past which the content scrolls, even"
+                  text run at (0,36) width 234: "when the end of the page is reached. "
+                  text run at (234,36) width 494: "In addition, the default Test Suite background should NOT appear, as it's been"
+                  text run at (0,54) width 246: "overridden by the styles shown above. "
+                  text run at (246,54) width 497: "I'll have to add a lot of extra text to the page in order to make all this something"
+                  text run at (0,72) width 147: "we can actually check. "
+                  text run at (147,72) width 227: "Don't worry, I'll think of something."
               RenderBlock {P} at (4,110) size 747x18
                 RenderText {#text} at (0,0) size 508x18
                   text run at (0,0) width 417: "In fact, why not the relevant section from the CSS1 specification? "

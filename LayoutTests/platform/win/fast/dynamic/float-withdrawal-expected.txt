@@ -23,28 +23,28 @@ layer at (0,0) size 800x600
             text run at (298,0) width 20: "not"
         RenderText {#text} at (318,0) size 151x18
           text run at (318,0) width 151: " a checkerboard pattern."
-      RenderTable {TABLE} at (0,68) size 101x300
-        RenderTableSection {TBODY} at (0,0) size 101x300
-          RenderTableRow {TR} at (0,0) size 101x150
-            RenderTableCell {TD} at (0,0) size 51x100 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,68) size 100x300
+        RenderTableSection {TBODY} at (0,0) size 100x300
+          RenderTableRow {TR} at (0,0) size 100x150
+            RenderTableCell {TD} at (0,0) size 50x100 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 50x100
                 RenderBlock {DIV} at (0,0) size 50x50
                   RenderBlock (floating) {DIV} at (0,0) size 50x25
                 RenderBlock {DIV} at (0,50) size 50x50
                   RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#800080]
-            RenderTableCell {TD} at (50,0) size 51x100 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (50,0) size 50x100 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 50x100
                 RenderBlock {DIV} at (0,0) size 50x50
                   RenderBlock (floating) {DIV} at (0,0) size 50x25
                 RenderBlock {DIV} at (0,50) size 50x50
                   RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#800080]
-          RenderTableRow {TR} at (0,150) size 101x150
-            RenderTableCell {TD} at (0,150) size 51x50 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,150) size 100x150
+            RenderTableCell {TD} at (0,150) size 50x50 [r=1 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 50x50
                 RenderBlock {DIV} at (0,0) size 50x0
                   RenderBlock (floating) {DIV} at (0,0) size 50x0
                 RenderBlock {DIV} at (0,0) size 50x50
                   RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#800080]
-            RenderTableCell {TD} at (50,150) size 51x50 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (50,150) size 50x50 [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#800080]
       RenderBlock {DIV} at (0,368) size 784x200

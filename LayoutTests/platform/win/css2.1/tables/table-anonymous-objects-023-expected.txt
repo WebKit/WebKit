@@ -10,17 +10,17 @@ layer at (8,50) size 784x57
   RenderBlock (relative positioned) {div} at (0,34) size 784x57
 layer at (8,50) size 784x57
   RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x57 [color=#FF0000]
-    RenderTable {table} at (1,1) size 148x55 [border: (5px outset #808080)]
-      RenderTableSection {tbody} at (5,5) size 138x45
-        RenderTableRow {tr} at (0,2) size 138x41
-          RenderTableCell {td} at (2,2) size 134x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+    RenderTable {table} at (1,1) size 147x55 [border: (5px outset #808080)]
+      RenderTableSection {tbody} at (5,5) size 137x45
+        RenderTableRow {tr} at (0,2) size 137x41
+          RenderTableCell {td} at (2,2) size 133x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (2,2) size 129x37
               text run at (2,2) width 129: "Some text"
 layer at (8,50) size 149x57
-  RenderBlock (positioned) zI: 2 {div} at (0,0) size 150x57 [color=#008000]
-    RenderTable {table} at (1,1) size 148x55 [border: (5px outset #808080)]
-      RenderTableSection {tbody} at (5,5) size 138x45
-        RenderTableRow {tr} at (0,2) size 138x41
-          RenderTableCell {td} at (2,2) size 134x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+  RenderBlock (positioned) zI: 2 {div} at (0,0) size 149x57 [color=#008000]
+    RenderTable {table} at (1,1) size 147x55 [border: (5px outset #808080)]
+      RenderTableSection {tbody} at (5,5) size 137x45
+        RenderTableRow {tr} at (0,2) size 137x41
+          RenderTableCell {td} at (2,2) size 133x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (2,2) size 129x37
               text run at (2,2) width 129: "Some text"

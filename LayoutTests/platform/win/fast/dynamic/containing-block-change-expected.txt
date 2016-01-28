@@ -17,10 +17,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (146,18) size 128x18
           text run at (146,18) width 128: ". It should not crash."
 layer at (8,60) size 6x6
-  RenderTable {TABLE} at (0,52) size 7x6
-    RenderTableSection {TBODY} at (0,0) size 7x6
-      RenderTableRow {TR} at (0,2) size 7x2
-        RenderTableCell {TD} at (2,2) size 3x2 [r=0 c=0 rs=1 cs=1]
+  RenderTable {TABLE} at (0,52) size 6x6
+    RenderTableSection {TBODY} at (0,0) size 6x6
+      RenderTableRow {TR} at (0,2) size 6x2
+        RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
 layer at (11,63) size 42x36
   RenderBlock (positioned) {DIV} at (3,3) size 42x36
     RenderText {#text} at (0,0) size 42x36

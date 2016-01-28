@@ -11,26 +11,26 @@ layer at (0,0) size 800x246
             text run at (489,0) width 144: "THERE \x{2799}"
         RenderText {#text} at (635,15) size 11x18
           text run at (635,15) width 11: "\"."
-      RenderTable {TABLE} at (0,53) size 311x127
-        RenderTableSection {TBODY} at (0,0) size 311x127
-          RenderTableRow {TR} at (0,2) size 311x39
-            RenderTableCell {TD} at (2,2) size 307x39 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (159,1) size 145x37
-                text run at (159,1) width 145: "THERE \x{2799}"
-          RenderTableRow {TR} at (0,43) size 311x82
-            RenderTableCell {TD} at (2,64) size 149x40 [border: none (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,0) size 145x39
-                text run at (1,1) width 145: "THERE \x{2799}"
-            RenderTableCell {TD} at (152,43) size 157x82 [border: none (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,1) size 153x37
-                RenderText {#text} at (8,0) size 145x37
-                  text run at (8,0) width 145: "THERE \x{2798}"
-              RenderTable {TABLE} at (1,38) size 153x43
-                RenderTableSection {TBODY} at (0,0) size 153x43
-                  RenderTableRow {TR} at (0,2) size 153x39
-                    RenderTableCell {TD} at (2,2) size 149x39 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 145x37
-                        text run at (1,1) width 145: "THERE \x{2799}"
+      RenderTable {TABLE} at (0,53) size 310x127
+        RenderTableSection {TBODY} at (0,0) size 310x127
+          RenderTableRow {TR} at (0,2) size 310x39
+            RenderTableCell {TD} at (2,2) size 306x39 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (159,1) size 144x37
+                text run at (159,1) width 144: "THERE \x{2799}"
+          RenderTableRow {TR} at (0,43) size 310x82
+            RenderTableCell {TD} at (2,64) size 148x40 [border: none (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,0) size 144x39
+                text run at (1,1) width 144: "THERE \x{2799}"
+            RenderTableCell {TD} at (152,43) size 156x82 [border: none (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 152x37
+                RenderText {#text} at (8,0) size 144x37
+                  text run at (8,0) width 144: "THERE \x{2798}"
+              RenderTable {TABLE} at (1,38) size 152x43
+                RenderTableSection {TBODY} at (0,0) size 152x43
+                  RenderTableRow {TR} at (0,2) size 152x39
+                    RenderTableCell {TD} at (2,2) size 148x39 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 144x37
+                        text run at (1,1) width 144: "THERE \x{2799}"
       RenderBlock {P} at (0,196) size 784x18
         RenderText {#text} at (0,0) size 337x18
           text run at (0,0) width 337: "There should be 3 short lines and 2 long lines in total."

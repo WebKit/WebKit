@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x146
-            RenderTableCell {TD} at (0,86) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,86) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x146 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
@@ -48,7 +48,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (4,56) size 762x18
                 RenderBR {BR} at (0,0) size 0x18
               RenderBlock {HR} at (4,82) size 762x2 [border: (1px inset #000000)]
-              RenderImage {IMG} at (750,92) size 16x50
+              RenderImage {IMG} at (751,92) size 15x50
               RenderBlock {P} at (4,100) size 762x36
                 RenderText {#text} at (0,0) size 731x36
                   text run at (0,0) width 608: "This text should be flowing past a tall orange rectangle on the right side of the browser window. "

@@ -43,45 +43,45 @@ layer at (0,0) size 785x961
           text run at (18,0) width 390: "This paragraph should be between both tall orange rectangles."
       RenderBlock (anonymous) at (0,499) size 769x18
         RenderBR {BR} at (18,0) size 0x18
-      RenderTable {TABLE} at (0,517) size 681x428 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 679x426
-          RenderTableRow {TR} at (0,0) size 679x26
-            RenderTableCell {TD} at (0,0) size 679x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,517) size 680x428 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 678x426
+          RenderTableRow {TR} at (0,0) size 678x26
+            RenderTableCell {TD} at (0,0) size 678x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {#text} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 679x400
-            RenderTableCell {TD} at (0,213) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 678x400
+            RenderTableCell {TD} at (0,213) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 667x400 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 666x400 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (4,4) size 15x50
-              RenderBlock {P} at (4,4) size 659x18
+              RenderBlock {P} at (4,4) size 658x18
                 RenderText {#text} at (18,0) size 595x18
                   text run at (18,0) width 595: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
-              RenderBlock (anonymous) at (4,38) size 659x18
+              RenderBlock (anonymous) at (4,38) size 658x18
                 RenderBR {BR} at (18,0) size 0x18
                 RenderImage {IMG} at (0,18) size 15x50
-              RenderBlock {P} at (4,106) size 659x18
+              RenderBlock {P} at (4,106) size 658x18
                 RenderText {#text} at (0,0) size 649x18
                   text run at (0,0) width 649: "This paragraph should appear below the tall orange rectangle above and to the left, and not flow past it."
-              RenderBlock (anonymous) at (4,140) size 659x18
+              RenderBlock (anonymous) at (4,140) size 658x18
                 RenderBR {BR} at (0,0) size 0x18
-                RenderImage {IMG} at (643,18) size 16x50
-              RenderBlock {P} at (4,208) size 659x18
+                RenderImage {IMG} at (643,18) size 15x50
+              RenderBlock {P} at (4,208) size 658x18
                 RenderText {#text} at (0,0) size 658x18
                   text run at (0,0) width 658: "This paragraph should appear below the tall orange rectangle above and to the right, and not flow past it."
-              RenderBlock (anonymous) at (4,242) size 659x18
+              RenderBlock (anonymous) at (4,242) size 658x18
                 RenderBR {BR} at (0,0) size 0x18
                 RenderImage {IMG} at (0,18) size 15x50
-                RenderImage {IMG} at (643,18) size 16x50
-              RenderBlock {P} at (4,310) size 659x18
+                RenderImage {IMG} at (643,18) size 15x50
+              RenderBlock {P} at (4,310) size 658x18
                 RenderText {#text} at (0,0) size 602x18
                   text run at (0,0) width 602: "This paragraph should appear below the two tall orange rectangles, and not flow between them."
               RenderImage {IMG} at (4,344) size 15x50
-              RenderImage {IMG} at (647,344) size 16x50
-              RenderBlock {P} at (4,344) size 659x18
+              RenderImage {IMG} at (647,344) size 15x50
+              RenderBlock {P} at (4,344) size 658x18
                 RenderText {#text} at (18,0) size 390x18
                   text run at (18,0) width 390: "This paragraph should be between both tall orange rectangles."
-              RenderBlock (anonymous) at (4,378) size 659x18
+              RenderBlock (anonymous) at (4,378) size 658x18
                 RenderBR {BR} at (18,0) size 0x18
