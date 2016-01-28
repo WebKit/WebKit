@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WKCACFViewLayerTreeHost.h"
 
+#include "GDIUtilities.h"
 #include "PlatformCALayer.h"
 #include "SoftLinking.h"
+#include <QuartzCore/CACFLayer.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
@@ -120,6 +122,12 @@ void WKCACFViewLayerTreeHost::contextDidChange()
 
 void WKCACFViewLayerTreeHost::initializeContext(void* userData, PlatformCALayer* layer)
 {
+#if HAVE(CACFLAYER_SETCONTENTSSCALE)
+    float scaleFactor = deviceScaleFactorForWindow(nullptr);
+    CACFLayerSetTransform(layer->platformLayer(), CATransform3DMakeScale(scaleFactor, scaleFactor, 1));
+    CACFLayerSetContentsScale(layer->platformLayer(), scaleFactor);
+#endif
+
     WKCACFViewSetContextUserData(m_view.get(), userData);
     WKCACFViewSetLayer(m_view.get(), layer->platformLayer());
     WKCACFViewSetContextDidChangeCallback(m_view.get(), contextDidChangeCallback, this);
