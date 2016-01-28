@@ -1,3 +1,9 @@
+2016-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Fix other builds.
+
+        * Configurations/WebKit.xcconfig:
+
 2016-01-27  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
