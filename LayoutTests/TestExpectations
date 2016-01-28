@@ -573,3 +573,9 @@ loader/stateobjects/pushstate-size-iframe.html [ Slow ]
 loader/stateobjects/pushstate-size.html [ Slow ]
 loader/stateobjects/replacestate-size-iframe.html [ Slow ]
 loader/stateobjects/replacestate-size.html [ Slow ]
+
+# Skip test that rely on ES6.
+inspector/css/matched-style-properties.html [Skip]
+inspector/css/pseudo-element-matches.html [Skip]
+inspector/css/selector-specificity.html [Skip]
+inspector/model/parse-script-syntax-tree.html [Skip]
