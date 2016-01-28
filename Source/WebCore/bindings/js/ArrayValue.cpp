@@ -80,4 +80,20 @@ bool ArrayValue::get(size_t index, Dictionary& value) const
     return true;
 }
 
+bool ArrayValue::get(size_t index, String& value) const
+{
+    if (isUndefinedOrNull())
+        return false;
+
+    JSValue indexedValue = asArray(m_value)->getIndex(m_exec, index);
+    if (indexedValue.isUndefinedOrNull() || !indexedValue.isString())
+        return false;
+
+    value = indexedValue.toWTFString(m_exec);
+    if (m_exec->hadException())
+        return false;
+
+    return true;
+}
+
 } // namespace WebCore

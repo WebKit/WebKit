@@ -1,3 +1,14 @@
+2016-01-28  Anders Carlsson  <andersca@apple.com>
+
+        Add an ArrayValue::get overload that returns a string
+        https://bugs.webkit.org/show_bug.cgi?id=153613
+
+        Reviewed by Tim Horton.
+
+        * bindings/js/ArrayValue.cpp:
+        (WebCore::ArrayValue::get):
+        * bindings/js/ArrayValue.h:
+
 2016-01-28  Chris Dumez  <cdumez@apple.com>
 
         EventHandler IDL attributes should be enumerable

@@ -43,6 +43,7 @@ public:
 
     bool length(size_t&) const;
     bool get(size_t index, Dictionary&) const;
+    bool get(size_t index, String&) const;
 
 private:
     JSC::ExecState* m_exec;
