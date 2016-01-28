@@ -173,6 +173,11 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk')],
      ["-readability/enum_casing"]),
 
+    ([# To use GStreamer GL without conflicts of GL symbols,
+      # we should include gst/gl/gl.h before including OpenGL[ES]Shims
+      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'MediaPlayerPrivateGStreamerBase.cpp')],
+     ["-build/include_order"]),
+
     ([# Header files in ForwardingHeaders have no header guards or
       # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
       os.path.join(os.path.sep, 'ForwardingHeaders')],
@@ -227,7 +232,6 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMEventTarget.cpp'),
       os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMNodeFilter.cpp'),
       os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMXPathNSResolver.cpp'),
-      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'VideoSinkGStreamer1.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'VideoSinkGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'WebKitWebSourceGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'audio', 'gstreamer', 'WebKitWebAudioSourceGStreamer.cpp'),

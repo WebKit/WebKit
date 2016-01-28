@@ -46,26 +46,10 @@
 
 #if USE(GSTREAMER_GL)
 #define GST_USE_UNSTABLE_API
-#include <gst/gl/gstglmemory.h>
-#undef GST_USE_UNSTABLE_API
-#endif
-
-#if GST_CHECK_VERSION(1, 1, 0) && USE(TEXTURE_MAPPER_GL)
-#include "BitmapTextureGL.h"
-#include "BitmapTexturePool.h"
-#include "TextureMapperGL.h"
-#endif
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#include "TextureMapperPlatformLayerBuffer.h"
-#endif
-
-#if USE(GSTREAMER_GL)
-#include "GLContext.h"
-
-#define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
 #undef GST_USE_UNSTABLE_API
 
+#include "GLContext.h"
 #if USE(GLX)
 #include "GLContextGLX.h"
 #include <gst/gl/x11/gstgldisplay_x11.h>
@@ -84,8 +68,17 @@
 // defines None, breaking MediaPlayer::None enum
 #if PLATFORM(X11) && GST_GL_HAVE_PLATFORM_EGL
 #undef None
-#endif
+#endif // PLATFORM(X11) && GST_GL_HAVE_PLATFORM_EGL
 #endif // USE(GSTREAMER_GL)
+
+#if GST_CHECK_VERSION(1, 1, 0) && USE(TEXTURE_MAPPER_GL)
+#include "BitmapTextureGL.h"
+#include "BitmapTexturePool.h"
+#include "TextureMapperGL.h"
+#endif
+#if USE(COORDINATED_GRAPHICS_THREADED)
+#include "TextureMapperPlatformLayerBuffer.h"
+#endif
 
 #if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
 #include <cairo-gl.h>
@@ -166,7 +159,7 @@ private:
     GLuint m_textureID;
     bool m_isValid { false };
 };
-#endif
+#endif // USE(COORDINATED_GRAPHICS_THREADED) && USE(GSTREAMER_GL)
 
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
     : m_player(player)
