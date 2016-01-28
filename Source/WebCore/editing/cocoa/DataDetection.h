@@ -59,6 +59,7 @@ public:
     WEBCORE_EXPORT static NSArray *detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes);
     WEBCORE_EXPORT static bool isDataDetectorLink(Element*);
     WEBCORE_EXPORT static String dataDetectorIdentifier(Element*);
+    WEBCORE_EXPORT static bool shouldCancelDefaultAction(Element*);
 };
 
 } // namespace WebCore

@@ -185,6 +185,7 @@ struct WKAutoCorrectionData {
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsDefault;
 #endif
 - (void)_commitPotentialTapFailed;
+- (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point;
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius;
 
 - (BOOL)_mayDisableDoubleTapGesturesDuringSingleTap;

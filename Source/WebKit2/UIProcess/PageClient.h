@@ -212,6 +212,7 @@ public:
 #if PLATFORM(IOS)
     virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
+    virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) = 0;
 #endif
     
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;

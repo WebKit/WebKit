@@ -677,9 +677,13 @@ void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)
         return;
     }
 
-    if (m_potentialTapNode == nodeRespondingToClick)
-        handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
-    else
+    if (m_potentialTapNode == nodeRespondingToClick) {
+        if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(&downcast<Element>(*nodeRespondingToClick))) {
+            requestPositionInformation(roundedIntPoint(m_potentialTapLocation));
+            commitPotentialTapFailed();
+        } else
+            handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
+    } else
         commitPotentialTapFailed();
 
     m_potentialTapNode = nullptr;

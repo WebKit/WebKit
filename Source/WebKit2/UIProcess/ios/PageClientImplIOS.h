@@ -185,6 +185,7 @@ private:
     virtual void didFinishLoadForMainFrame() override;
     virtual void didFailLoadForMainFrame() override;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
+    virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
 
     virtual void didChangeBackgroundColor() override;
 

@@ -1402,6 +1402,14 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _page->clearSelection();
 }
 
+- (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point
+{
+    // FIXME: we should also take into account whether or not the UI delegate
+    // has handled this notification.
+    if (_hasValidPositionInformation && point == _positionInformation.point && _positionInformation.isDataDetectorLink)
+        [self _showDataDetectorsSheet];
+}
+
 - (void)_positionInformationDidChange:(const InteractionInformationAtPosition&)info
 {
     _positionInformation = info;

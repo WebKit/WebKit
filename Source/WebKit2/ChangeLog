@@ -1,3 +1,35 @@
+2016-01-28  Enrica Casucci  <enrica@apple.com>
+
+        Should avoid navigation for some data detector urls.
+        https://bugs.webkit.org/show_bug.cgi?id=153600
+
+        Reviewed by Tim Horton.
+
+        When a tap is commited, we normally generate a synthetic click if
+        the node responds to click events.
+        This patch adds the logic to prevent that from happening if the node
+        is a data detector link with certain characteristics (calendar event, telephone, etc.).
+        If this is the case, we compute the interaction information as position, send it
+        over to the UI process and notify that we did not handle the tap.
+        The page client is now also notified of this event and can show the data detector sheet if
+        appropriate.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::toolTipChanged):
+        (WebKit::PageClientImpl::didNotHandleTapAsClick):
+        (WebKit::PageClientImpl::decidePolicyForGeolocationPermissionRequest):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView clearSelection]):
+        (-[WKContentView _didNotHandleTapAsClick:]):
+        (-[WKContentView _positionInformationDidChange:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didNotHandleTapAsClick):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::commitPotentialTap):
+
 2016-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Update Web Process sandbox profile for audiodeviceclock access

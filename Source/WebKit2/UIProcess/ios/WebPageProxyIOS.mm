@@ -932,6 +932,7 @@ void WebPageProxy::commitPotentialTapFailed()
 
 void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 {
+    m_pageClient.didNotHandleTapAsClick(point);
     m_uiClient->didNotHandleTapAsClick(point);
 }
 

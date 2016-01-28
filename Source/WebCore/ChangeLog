@@ -1,3 +1,16 @@
+2016-01-28  Enrica Casucci  <enrica@apple.com>
+
+        Should avoid navigation for some data detector urls.
+        https://bugs.webkit.org/show_bug.cgi?id=153600
+
+        Reviewed by Tim Horton.
+
+        Adding helper function to decide whether the default action should be performed.
+
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::shouldCancelDefaultAction):
+
 2016-01-28  Dave Hyatt  <hyatt@apple.com>
 
         Roll out r194555, as it introduced some bad regressions and was not

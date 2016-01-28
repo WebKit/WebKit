@@ -230,6 +230,11 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
     notImplemented();
 }
 
+void PageClientImpl::didNotHandleTapAsClick(const WebCore::IntPoint& point)
+{
+    [m_contentView _didNotHandleTapAsClick:point];
+}
+
 bool PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, API::SecurityOrigin& origin, GeolocationPermissionRequestProxy& request)
 {
     [[wrapper(m_webView->_page->process().processPool()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:origin.securityOrigin() frame:frame request:request view:m_webView];

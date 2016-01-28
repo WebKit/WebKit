@@ -61,6 +61,24 @@ String DataDetection::dataDetectorIdentifier(Element* element)
     return element->getAttribute(dataDetectorsAttributeResultKey);
 }
 
+bool DataDetection::shouldCancelDefaultAction(Element* element)
+{
+#if PLATFORM(MAC)
+    UNUSED_PARAM(element);
+    return false;
+#else
+    // FIXME: We should also compute the DDResultRef and check the result category.
+    if (!is<HTMLAnchorElement>(*element))
+        return false;
+    if (element->getAttribute(dataDetectorsURLScheme) != "true")
+        return false;
+    String type = element->getAttribute(dataDetectorsAttributeTypeKey);
+    if (type == "misc" || type == "calendar-event" || type == "telephone")
+        return true;
+    return false;
+#endif
+}
+
 #if PLATFORM(MAC)
 
 static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition position, RefPtr<Range> contextRange, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
