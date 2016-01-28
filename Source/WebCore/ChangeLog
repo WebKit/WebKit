@@ -1,3 +1,28 @@
+2016-01-27  Nan Wang  <n_wang@apple.com>
+
+        AX: Crash in AccessibilityTableColumn::headerObject
+        https://bugs.webkit.org/show_bug.cgi?id=153553
+        <rdar://problem/23196278>
+
+        Reviewed by Chris Fleizach.
+
+        Webkit was crashing sometimes when we asked for column headers of a table.
+        The columns vector of the table was reset during the iteration when we
+        were asking for the headerObject of each column. The column's addChildren()
+        function calls elementRect() for each child cell and that sometimes causes 
+        the parent table to reset its children.
+        Fixed it by caching the columns vector and moving out the elementRect() logic
+        from AccessibilityTalbeColumn::addChildren().  
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::columnHeaders):
+        (WebCore::AccessibilityTable::rowHeaders):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::elementRect):
+        (WebCore::AccessibilityTableColumn::headerObject):
+        (WebCore::AccessibilityTableColumn::addChildren):
+        * accessibility/AccessibilityTableColumn.h:
+
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
         Settings a reflected DOMString attribute to null should set it to the "null" string rather than the empty string
