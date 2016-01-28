@@ -1723,6 +1723,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'VTTRegion').hasOwnProperty('get') 
 PASS Object.getOwnPropertyDescriptor(global, 'VTTRegion').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'VTTRegion').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'VTTRegion').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').value is ValidityState
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').value is WebKitAnimationEvent
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitAnimationEvent').hasOwnProperty('set') is false

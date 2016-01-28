@@ -1908,6 +1908,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').hasOwnProperty('get') is 
 PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').value is ValidityState
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ValidityState').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'VideoStreamTrack').value is VideoStreamTrack
 PASS Object.getOwnPropertyDescriptor(global, 'VideoStreamTrack').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'VideoStreamTrack').hasOwnProperty('set') is false

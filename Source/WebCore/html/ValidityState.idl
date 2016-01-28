@@ -21,7 +21,6 @@
  */
 
 [
-    NoInterfaceObject,
     SkipVTableValidation
 ] interface ValidityState {
     readonly attribute boolean         valueMissing;

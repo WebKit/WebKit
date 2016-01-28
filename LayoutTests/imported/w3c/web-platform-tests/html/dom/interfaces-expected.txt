@@ -3312,23 +3312,23 @@ FAIL AutocompleteErrorEvent interface object name assert_own_property: self does
 FAIL AutocompleteErrorEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AutocompleteErrorEvent" expected property "AutocompleteErrorEvent" missing
 FAIL AutocompleteErrorEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AutocompleteErrorEvent" expected property "AutocompleteErrorEvent" missing
 FAIL AutocompleteErrorEvent interface: attribute reason assert_own_property: self does not have own property "AutocompleteErrorEvent" expected property "AutocompleteErrorEvent" missing
-FAIL ValidityState interface: existence and properties of interface object assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface object length assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface object name assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute valueMissing assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute typeMismatch assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute patternMismatch assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute tooLong assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute tooShort assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute rangeUnderflow assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute rangeOverflow assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute stepMismatch assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute badInput assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute customError assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState interface: attribute valid assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
-FAIL ValidityState must be primary interface of document.createElement("input").validity assert_own_property: self does not have own property "ValidityState" expected property "ValidityState" missing
+FAIL ValidityState interface: existence and properties of interface object assert_equals: class string of ValidityState expected "[object Function]" but got "[object ValidityStateConstructor]"
+PASS ValidityState interface object length 
+PASS ValidityState interface object name 
+PASS ValidityState interface: existence and properties of interface prototype object 
+FAIL ValidityState interface: existence and properties of interface prototype object's "constructor" property assert_true: ValidityState.prototype.constructor is not writable expected true got false
+FAIL ValidityState interface: attribute valueMissing assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute typeMismatch assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute patternMismatch assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute tooLong assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute tooShort assert_true: The prototype object must have a property "tooShort" expected true got false
+FAIL ValidityState interface: attribute rangeUnderflow assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute rangeOverflow assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute stepMismatch assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute badInput assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute customError assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL ValidityState interface: attribute valid assert_equals: getter must be Function expected "function" but got "undefined"
+PASS ValidityState must be primary interface of document.createElement("input").validity 
 PASS Stringification of document.createElement("input").validity 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "valueMissing" with the proper type (0) 
 PASS ValidityState interface: document.createElement("input").validity must inherit property "typeMismatch" with the proper type (1) 

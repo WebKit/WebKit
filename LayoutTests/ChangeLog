@@ -1,5 +1,23 @@
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
+        Expose ValidityState on the global Window object
+        https://bugs.webkit.org/show_bug.cgi?id=153582
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline test now that ValidityState is exposed on the global Window
+        object.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
+2016-01-27  Chris Dumez  <cdumez@apple.com>
+
         Expose ApplicationCache on the global Window object
         https://bugs.webkit.org/show_bug.cgi?id=153578
 
