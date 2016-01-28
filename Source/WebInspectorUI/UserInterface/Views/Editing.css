@@ -46,6 +46,7 @@
 .editing, .editing * {
     color: black !important;
     text-decoration: none !important;
+    cursor: default !important;
 }
 
 .editing br {
