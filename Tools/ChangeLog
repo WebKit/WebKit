@@ -1,5 +1,27 @@
 2016-01-28  Konstantin Tokarev  <annulen@yandex.ru>
 
+        [webkitdirs] Clarify logic behind is{PortName} functions.
+        https://bugs.webkit.org/show_bug.cgi?id=153554
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitdirs.pm:
+        (determinePortName): Added new function which decides which port are
+        we building based on command line switches and platform defaults.
+        (portName): Added getter for determined $portName.
+        (isEfl): Modified to use portName().
+        (isGtk): Ditto.
+        (isWinCairo): Ditto.
+        (isAppleMacWebKit): Ditto.
+        (isAppleWinWebKit): Ditto.
+        (isIOSWebKit): Ditto.
+        (cmakeBasedPortName): Code replaced with portName() call.
+        (determineIsEfl): Deleted.
+        (determineIsGtk): Deleted.
+        (determineIsWinCairo): Deleted.
+
+2016-01-28  Konstantin Tokarev  <annulen@yandex.ru>
+
         [webkitdirs] Don't pass cmakeBasedPortName around.
         https://bugs.webkit.org/show_bug.cgi?id=153589
 
