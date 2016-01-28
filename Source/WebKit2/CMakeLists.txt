@@ -99,6 +99,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader/cache"
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
+    "${WEBCORE_DIR}/page/csp"
     "${WEBCORE_DIR}/page/scrolling"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"

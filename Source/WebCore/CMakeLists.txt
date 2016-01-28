@@ -64,6 +64,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/mathml"
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
+    "${WEBCORE_DIR}/page/csp"
     "${WEBCORE_DIR}/page/scrolling"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
@@ -1990,7 +1991,6 @@ set(WebCore_SOURCES
     page/BarProp.cpp
     page/CaptionUserPreferences.cpp
     page/Chrome.cpp
-    page/ContentSecurityPolicy.cpp
     page/ContextMenuContext.cpp
     page/ContextMenuController.cpp
     page/Crypto.cpp
@@ -2065,6 +2065,8 @@ set(WebCore_SOURCES
     page/animation/CompositeAnimation.cpp
     page/animation/ImplicitAnimation.cpp
     page/animation/KeyframeAnimation.cpp
+
+    page/csp/ContentSecurityPolicy.cpp
 
     page/scrolling/AxisScrollSnapOffsets.cpp
     page/scrolling/ScrollLatchingState.cpp

@@ -11508,8 +11508,8 @@
 		97C1F552122855CB00EDE615 /* HTMLStackItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLStackItem.h; sourceTree = "<group>"; };
 		97C1F552122855CB00EDE616 /* HTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLToken.h; sourceTree = "<group>"; };
 		97C1F552122855CB00EDE617 /* AtomicHTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicHTMLToken.h; sourceTree = "<group>"; };
-		97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentSecurityPolicy.cpp; sourceTree = "<group>"; };
-		97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentSecurityPolicy.h; sourceTree = "<group>"; };
+		97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicy.cpp; path = csp/ContentSecurityPolicy.cpp; sourceTree = "<group>"; };
+		97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicy.h; path = csp/ContentSecurityPolicy.h; sourceTree = "<group>"; };
 		97D2AD0114B823A60093DF32 /* DOMWindowProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowProperty.cpp; sourceTree = "<group>"; };
 		97D2AD0214B823A60093DF32 /* DOMWindowProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowProperty.h; sourceTree = "<group>"; };
 		97DCE1FF10807C750057D394 /* HistoryController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryController.cpp; sourceTree = "<group>"; };
@@ -17744,6 +17744,7 @@
 			children = (
 				316FE1060E6E1D8400BF6088 /* animation */,
 				5D5975B5196362BE00D00878 /* cocoa */,
+				CE17AD141C58522F005F4799 /* csp */,
 				18A6CD6F0D8F2025001DC3CE /* ios */,
 				93C09A820B064F05005ABD4D /* mac */,
 				1AF62EE114DA22A70041556C /* scrolling */,
@@ -17762,8 +17763,6 @@
 				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
 				14D823500AF92A790004F057 /* Chrome.h */,
 				14D824060AF93AEB0004F057 /* ChromeClient.h */,
-				97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */,
-				97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */,
 				065AD4F20B0C2EDA005A2B1D /* ContextMenuClient.h */,
 				5106D7BB18BDB76F000AB166 /* ContextMenuContext.cpp */,
 				5106D7BC18BDB76F000AB166 /* ContextMenuContext.h */,
@@ -22942,6 +22941,15 @@
 				CDF2B00F1820540600F2B424 /* MockTracks.h */,
 			);
 			path = mediasource;
+			sourceTree = "<group>";
+		};
+		CE17AD141C58522F005F4799 /* csp */ = {
+			isa = PBXGroup;
+			children = (
+				97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */,
+				97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */,
+			);
+			name = csp;
 			sourceTree = "<group>";
 		};
 		CE261694187E6469007955F3 /* ios */ = {
