@@ -6,14 +6,14 @@ layer at (0,0) size 800x172
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 305x18
           text run at (0,0) width 305: "Test passes if the \"Filler Text\" is above the box."
-      RenderTable {DIV} at (0,34) size 97x114
-        RenderBlock {DIV} at (0,0) size 97x18
+      RenderTable {DIV} at (0,34) size 96x114
+        RenderBlock {DIV} at (0,0) size 96x18
           RenderText {#text} at (0,0) size 67x18
             text run at (0,0) width 67: "Filler Text"
-        RenderTableSection (anonymous) at (0,18) size 97x96
-          RenderTableRow {DIV} at (0,0) size 97x48
-            RenderTableCell {DIV} at (0,0) size 49x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {DIV} at (48,0) size 49x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
-          RenderTableRow {DIV} at (0,48) size 97x48
-            RenderTableCell {DIV} at (0,48) size 49x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
-            RenderTableCell {DIV} at (48,48) size 49x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
+        RenderTableSection (anonymous) at (0,18) size 96x96
+          RenderTableRow {DIV} at (0,0) size 96x48
+            RenderTableCell {DIV} at (0,0) size 48x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {DIV} at (48,0) size 48x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {DIV} at (0,48) size 96x48
+            RenderTableCell {DIV} at (0,48) size 48x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {DIV} at (48,48) size 48x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]

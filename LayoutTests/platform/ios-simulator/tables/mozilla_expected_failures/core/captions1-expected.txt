@@ -106,8 +106,8 @@ layer at (0,0) size 800x1141
           text run at (0,0) width 158: "table 5 - table gets wider"
       RenderTable {TABLE} at (5,628) size 138x100 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (10,72) size 128x28 [border: (3px solid #800080)]
-          RenderText {#text} at (30,5) size 48x19
-            text run at (30,5) width 48: "caption"
+          RenderText {#text} at (29,5) size 49x19
+            text run at (29,5) width 49: "caption"
           RenderBlock {INPUT} at (79,6) size 17x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
         RenderTableSection {TBODY} at (10,10) size 118x50
           RenderTableRow {TR} at (0,2) size 118x22

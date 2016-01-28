@@ -12,4 +12,4 @@ layer at (8,52) size 340x340
       RenderBlock {DIV} at (50,50) size 220x220 [border: (10px solid #FFA500)]
       RenderTableSection (anonymous) at (0,320) size 320x0
         RenderTableRow {DIV} at (0,0) size 320x0
-          RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]

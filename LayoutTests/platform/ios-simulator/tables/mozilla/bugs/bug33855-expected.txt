@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (12,3) size 43x14
                     RenderText at (0,0) size 43x14
                       text run at (0,0) width 43: "Move to:"
-              RenderTableCell {TD} at (671,2) size 111x26 [r=0 c=5 rs=1 cs=1]
+              RenderTableCell {TD} at (672,2) size 110x26 [r=0 c=5 rs=1 cs=1]
                 RenderMenuList {SELECT} at (3,3) size 104x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                   RenderBlock (anonymous) at (6,3) size 92x14
                     RenderText at (0,0) size 72x14

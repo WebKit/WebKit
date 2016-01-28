@@ -8,11 +8,11 @@ layer at (0,0) size 800x152
           RenderText {#text} at (0,1) size 528x16
             text run at (0,1) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,18) size 343x118
-        RenderTableSection {TBODY} at (0,0) size 343x118
-          RenderTableRow {TR} at (0,2) size 343x114
-            RenderTableCell {TD} at (2,2) size 339x114 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 337x112 [color=#00FF00] [bgcolor=#008000]
+      RenderTable {TABLE} at (0,18) size 342x118
+        RenderTableSection {TBODY} at (0,0) size 342x118
+          RenderTableRow {TR} at (0,2) size 342x114
+            RenderTableCell {TD} at (2,2) size 338x114 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 336x112 [color=#00FF00] [bgcolor=#008000]
                 RenderText {#text} at (0,0) size 336x112
                   text run at (0,0) width 336: "                     "
                   text run at (0,16) width 336: " xxxx xxxx xxxx xxxx "

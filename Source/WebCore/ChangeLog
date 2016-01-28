@@ -1,3 +1,21 @@
+2016-01-28  Zalan Bujtas  <zalan@apple.com>
+
+        Unexpected content wrapping at http://email.osh.com/H/2/v100000152474feb8ec7c1a1f4bbe5c7c0/HTML
+        https://bugs.webkit.org/show_bug.cgi?id=153430
+
+        Reviewed by Simon Fraser.
+
+        Ensure that min/max preferred and computed widths never shrink while converting LayoutUnit to float and back.
+
+        Test: fast/table/fixed-size-table-with-fixed-size-content.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computePreferredLogicalWidths): Deleted.
+
 2016-01-28  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GStreamer] Clean up includes and headers related with GStreamerGL

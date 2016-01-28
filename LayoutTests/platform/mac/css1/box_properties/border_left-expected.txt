@@ -30,7 +30,7 @@ layer at (0,0) size 785x1028
       RenderTable {TABLE} at (0,290) size 769x107 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x105
           RenderTableRow {TR} at (0,5) size 767x40
-            RenderTableCell {TD} at (5,5) size 757x40 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (5,5) size 758x40 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (3,2) size 730x36
                 text run at (3,2) width 439: "Every cell in this table should have a 2-pixel solid green left border. "
                 text run at (441,2) width 292: "This is also true of the table-testing section in"
@@ -39,7 +39,7 @@ layer at (0,0) size 785x1028
             RenderTableCell {TD} at (5,64) size 192x22 [border: (1px inset #808080) (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,2) size 54x18
                 text run at (3,2) width 54: "Cell one"
-            RenderTableCell {TD} at (201,50) size 561x50 [border: (1px inset #808080) (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (201,50) size 562x50 [border: (1px inset #808080) (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (3,2) size 556x18
                 RenderText {#text} at (0,0) size 55x18
                   text run at (0,0) width 55: "Cell two"
@@ -86,7 +86,7 @@ layer at (0,0) size 785x1028
                 RenderText {#text} at (5,4) size 161x18
                   text run at (5,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x411
-            RenderTableCell {TD} at (0,218) size 14x27 [bgcolor=#C0C0C0] [border: (1px inset #808080) (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,218) size 13x27 [bgcolor=#C0C0C0] [border: (1px inset #808080) (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (5,4) size 4x19
                 text run at (5,5) width 4: " "
             RenderTableCell {TD} at (13,26) size 754x411 [border: (1px inset #808080) (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
@@ -104,7 +104,7 @@ layer at (0,0) size 785x1028
               RenderTable {TABLE} at (5,124) size 745x107 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 743x105
                   RenderTableRow {TR} at (0,5) size 743x40
-                    RenderTableCell {TD} at (5,5) size 733x40 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
+                    RenderTableCell {TD} at (5,5) size 734x40 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
                       RenderText {#text} at (3,2) size 714x36
                         text run at (3,2) width 439: "Every cell in this table should have a 2-pixel solid green left border. "
                         text run at (441,2) width 276: "This is also true of the table-testing section"
@@ -113,7 +113,7 @@ layer at (0,0) size 785x1028
                     RenderTableCell {TD} at (5,64) size 186x22 [border: (1px inset #808080) (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (3,2) size 54x18
                         text run at (3,2) width 54: "Cell one"
-                    RenderTableCell {TD} at (195,50) size 543x50 [border: (1px inset #808080) (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (195,50) size 544x50 [border: (1px inset #808080) (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
                       RenderBlock (anonymous) at (3,2) size 538x18
                         RenderText {#text} at (0,0) size 55x18
                           text run at (0,0) width 55: "Cell two"

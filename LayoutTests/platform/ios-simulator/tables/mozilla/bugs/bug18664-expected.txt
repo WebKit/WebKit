@@ -33,7 +33,7 @@ layer at (70,70) size 173x60
           RenderTableCell {TD} at (11,0) size 151x20 [bgcolor=#FF9900] [r=0 c=1 rs=1 cs=1]
             RenderText {#text} at (0,0) size 122x19
               text run at (0,0) width 122: "Test, test and test..."
-          RenderTableCell {TD} at (161,0) size 12x20 [bgcolor=#666666] [r=0 c=2 rs=1 cs=1]
+          RenderTableCell {TD} at (161,0) size 13x20 [bgcolor=#666666] [r=0 c=2 rs=1 cs=1]
             RenderText {#text} at (0,0) size 4x19
               text run at (0,0) width 4: " "
     RenderTable {TABLE} at (0,40) size 173x20 [bgcolor=#CC6600]
@@ -45,6 +45,6 @@ layer at (70,70) size 173x60
           RenderTableCell {TD} at (57,0) size 59x20 [r=0 c=1 rs=1 cs=1]
             RenderText {#text} at (0,0) size 4x19
               text run at (0,0) width 4: " "
-          RenderTableCell {TD} at (115,0) size 58x20 [r=0 c=2 rs=1 cs=1]
+          RenderTableCell {TD} at (115,0) size 59x20 [r=0 c=2 rs=1 cs=1]
             RenderText {#text} at (0,0) size 4x19
               text run at (0,0) width 4: " "

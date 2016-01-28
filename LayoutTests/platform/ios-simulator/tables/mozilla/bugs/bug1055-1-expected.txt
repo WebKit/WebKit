@@ -120,13 +120,13 @@ layer at (0,0) size 800x2136
             text run at (277,5) width 305: "style=\"border-right: green 10px solid;\""
         RenderText {#text} at (581,0) size 5x19
           text run at (581,0) width 5: "."
-      RenderTable {TABLE} at (0,561) size 477x96 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 475x93
-          RenderTableRow {TR} at (0,5) size 475x24
+      RenderTable {TABLE} at (0,561) size 476x96 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 474x93
+          RenderTableRow {TR} at (0,5) size 474x24
             RenderTableCell {TD} at (5,5) size 465x24 [border: (1px inset #808080) (10px solid #008000) (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 451x19
                 text run at (2,2) width 451: "Every cell in this table should have a 10-pixel solid green right border."
-          RenderTableRow {TR} at (0,34) size 475x54
+          RenderTableRow {TR} at (0,34) size 474x54
             RenderTableCell {TD} at (5,49) size 121x24 [border: (1px inset #808080) (10px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 54x19
                 text run at (2,2) width 54: "Cell one"
@@ -163,13 +163,13 @@ layer at (0,0) size 800x2136
             text run at (277,5) width 305: "style=\"border-right: green 10px solid;\""
         RenderText {#text} at (581,0) size 5x19
           text run at (581,0) width 5: "."
-      RenderTable {TABLE} at (0,728) size 474x86
-        RenderTableSection {TBODY} at (0,0) size 474x85
-          RenderTableRow {TR} at (0,5) size 474x22
+      RenderTable {TABLE} at (0,728) size 473x86
+        RenderTableSection {TBODY} at (0,0) size 473x85
+          RenderTableRow {TR} at (0,5) size 473x22
             RenderTableCell {TD} at (5,5) size 464x22 [border: none (10px solid #008000) none] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 451x19
                 text run at (1,1) width 451: "Every cell in this table should have a 10-pixel solid green right border."
-          RenderTableRow {TR} at (0,32) size 474x48
+          RenderTableRow {TR} at (0,32) size 473x48
             RenderTableCell {TD} at (5,45) size 121x22 [border: none (10px solid #008000) none] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 54x19
                 text run at (1,1) width 54: "Cell one"

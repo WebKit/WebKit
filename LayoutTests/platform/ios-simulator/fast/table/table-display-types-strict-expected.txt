@@ -125,10 +125,10 @@ layer at (0,0) size 800x534
                         RenderTableCell {TD} at (44,2) size 42x22 [r=0 c=1 rs=1 cs=1]
                           RenderText {#text} at (1,1) size 39x19
                             text run at (1,1) width 39: "Cell 4"
-      RenderTable at (0,294) size 303x222
-        RenderTableSection (anonymous) at (0,0) size 303x222
-          RenderTableRow (anonymous) at (0,0) size 303x222
-            RenderTableCell {P} at (0,0) size 303x222 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable at (0,294) size 302x222
+        RenderTableSection (anonymous) at (0,0) size 302x222
+          RenderTableRow (anonymous) at (0,0) size 302x222
+            RenderTableCell {P} at (0,0) size 302x222 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 300x219
                 text run at (1,1) width 259: "Lorem ipsum dolor sit amet, consectetur"
                 text run at (1,21) width 252: "adipisicing elit, sed do eiusmod tempor"

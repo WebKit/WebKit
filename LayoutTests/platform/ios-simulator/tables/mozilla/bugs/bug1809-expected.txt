@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 678x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 4x19
                         text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (695,2) size 77x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (695,2) size 78x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 62x39
                 text run at (2,2) width 44: "This is"
                 text run at (2,22) width 62: "some text"
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 678x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 4x19
                         text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (695,2) size 77x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (695,2) size 78x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 62x39
                 text run at (2,2) width 44: "This is"
                 text run at (2,22) width 62: "some text"

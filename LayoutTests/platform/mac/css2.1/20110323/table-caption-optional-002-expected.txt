@@ -7,26 +7,26 @@ layer at (0,0) size 800x180
         RenderText {#text} at (0,0) size 676x18
           text run at (0,0) width 676: "Test passes if the left square below has \"Filler Text\" directly above it and the square on the right does not."
       RenderBlock {DIV} at (0,34) size 784x122
-        RenderTable {SPAN} at (0,0) size 101x118
-          RenderBlock {SPAN} at (0,0) size 101x18
+        RenderTable {SPAN} at (0,0) size 100x118
+          RenderBlock {SPAN} at (0,0) size 100x18
             RenderText {#text} at (0,0) size 67x18
               text run at (0,0) width 67: "Filler Text"
-          RenderTableSection (anonymous) at (0,18) size 101x100
-            RenderTableRow {SPAN} at (0,0) size 101x50
-              RenderTableCell {SPAN} at (0,0) size 51x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {SPAN} at (50,0) size 51x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
-            RenderTableRow {SPAN} at (0,50) size 101x50
-              RenderTableCell {SPAN} at (0,50) size 51x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
-              RenderTableCell {SPAN} at (50,50) size 51x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
-        RenderText {#text} at (100,104) size 17x18
-          text run at (100,104) width 5: " "
-          text run at (104,104) width 13: "   "
-        RenderTable {SPAN} at (116,18) size 101x100
-          RenderTableSection (anonymous) at (0,0) size 101x100
-            RenderTableRow {SPAN} at (0,0) size 101x50
-              RenderTableCell {SPAN} at (0,0) size 51x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {SPAN} at (50,0) size 51x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
-            RenderTableRow {SPAN} at (0,50) size 101x50
-              RenderTableCell {SPAN} at (0,50) size 51x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
-              RenderTableCell {SPAN} at (50,50) size 51x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
+          RenderTableSection (anonymous) at (0,18) size 100x100
+            RenderTableRow {SPAN} at (0,0) size 100x50
+              RenderTableCell {SPAN} at (0,0) size 50x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (50,0) size 50x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+            RenderTableRow {SPAN} at (0,50) size 100x50
+              RenderTableCell {SPAN} at (0,50) size 50x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (50,50) size 50x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
+        RenderText {#text} at (100,104) size 16x18
+          text run at (100,104) width 4: " "
+          text run at (104,104) width 12: "   "
+        RenderTable {SPAN} at (116,18) size 100x100
+          RenderTableSection (anonymous) at (0,0) size 100x100
+            RenderTableRow {SPAN} at (0,0) size 100x50
+              RenderTableCell {SPAN} at (0,0) size 50x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (50,0) size 50x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+            RenderTableRow {SPAN} at (0,50) size 100x50
+              RenderTableCell {SPAN} at (0,50) size 50x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {SPAN} at (50,50) size 50x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
         RenderText {#text} at (0,0) size 0x0

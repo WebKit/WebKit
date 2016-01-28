@@ -91,7 +91,7 @@ layer at (0,0) size 800x421
                 RenderText {#text} at (1,1) size 32x13
                   text run at (1,1) width 32: "MMM"
               RenderBlock {HR} at (1,68) size 70x3 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (149,36) size 371x150
+      RenderTable {TABLE} at (149,36) size 370x150
         RenderTableSection {TBODY} at (0,0) size 370x150
           RenderTableRow {TR} at (0,2) size 78x150
             RenderTableCell {TD} at (2,2) size 78x72 [r=0 c=0 rs=1 cs=1]

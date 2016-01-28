@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFCCC]
       RenderBlock {CENTER} at (0,0) size 784x134
-        RenderTable {TABLE} at (91,0) size 601x134
-          RenderTableSection {TBODY} at (0,0) size 601x134
-            RenderTableRow {TR} at (0,0) size 601x97
-              RenderTableCell {TD} at (0,0) size 150x40 [r=0 c=0 rs=1 cs=1]
-                RenderBlock {CENTER} at (0,0) size 150x40
-                  RenderInline {IFRAMEX} at (0,0) size 0x39
+        RenderTable {TABLE} at (92,0) size 600x134
+          RenderTableSection {TBODY} at (0,0) size 600x134
+            RenderTableRow {TR} at (0,0) size 600x97
+              RenderTableCell {TD} at (0,0) size 151x40 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {CENTER} at (0,0) size 151x40
+                  RenderInline {IFRAMEX} at (0,0) size 1x39
                     RenderText {#text} at (0,0) size 0x0
-                    RenderBR {BR} at (75,0) size 0x19
-                    RenderBR {BR} at (75,20) size 0x19
+                    RenderBR {BR} at (75,0) size 1x19
+                    RenderBR {BR} at (75,20) size 1x19
               RenderTableCell {TD} at (150,0) size 2x1 [bgcolor=#FFFFFF] [r=0 c=1 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 1x1
                 RenderText {#text} at (0,0) size 0x0
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
                             text run at (347,4) width 47: "MORE"
                           RenderImage {IMG} at (394,1) size 50x18
                         RenderText {#text} at (0,0) size 0x0
-            RenderTableRow {TR} at (0,97) size 601x37
+            RenderTableRow {TR} at (0,97) size 600x37
               RenderTableCell {TD} at (0,97) size 601x37 [r=1 c=0 rs=1 cs=3]
                 RenderBlock (anonymous) at (0,0) size 601x1
                   RenderImage {IMG} at (0,0) size 600x1

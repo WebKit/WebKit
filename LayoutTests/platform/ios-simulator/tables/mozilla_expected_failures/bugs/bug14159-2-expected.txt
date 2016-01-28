@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (349,2) size 48x22 [r=0 c=7 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 46x19
                         text run at (1,1) width 46: "forums"
-                    RenderTableCell {TD} at (398,2) size 70x22 [r=0 c=8 rs=1 cs=1]
+                    RenderTableCell {TD} at (398,2) size 69x22 [r=0 c=8 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 67x19
                         text run at (1,1) width 67: "interviews"
                     RenderTableCell {TD} at (469,2) size 38x22 [r=0 c=9 rs=1 cs=1]

@@ -10,14 +10,12 @@ Table cell
       (children 2
         (GraphicsLayer
           (position 28.00 20.00)
-          (anchor 0.50 0.50)
-          (bounds 253.00 102.00)
+          (bounds 252.00 102.00)
           (drawsContent 1)
         )
         (GraphicsLayer
           (position 28.00 142.00)
-          (anchor 0.50 0.50)
-          (bounds 253.00 102.00)
+          (bounds 252.00 102.00)
           (drawsContent 1)
         )
       )

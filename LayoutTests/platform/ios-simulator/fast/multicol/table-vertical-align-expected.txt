@@ -134,7 +134,7 @@ layer at (8,8) size 384x1307 backgroundClip at (0,0) size 1992x1010 clip at (0,0
               text run at (11,1206) width 108: "This cell has lots"
               text run at (11,1226) width 46: "of text."
             RenderBR {BR} at (56,1241) size 1x0
-          RenderTableCell {TD} at (145,0) size 237x172 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (145,0) size 238x172 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 146x147
               RenderText {#text} at (11,12) size 146x147
                 text run at (11,12) width 146: "Other"
@@ -268,7 +268,7 @@ layer at (8,376) size 384x1293 backgroundClip at (0,0) size 1992x1010 clip at (0
               text run at (11,1180) width 108: "This cell has lots"
               text run at (11,1200) width 46: "of text."
             RenderBR {BR} at (56,1215) size 1x0
-          RenderTableCell {TD} at (145,529) size 237x232 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (145,529) size 238x232 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 146x147
               RenderText {#text} at (11,71) size 146x148
                 text run at (11,72) width 146: "Other"
@@ -402,7 +402,7 @@ layer at (8,702) size 384x1288 backgroundClip at (0,0) size 1992x1010 clip at (0
               text run at (11,1180) width 108: "This cell has lots"
               text run at (11,1200) width 46: "of text."
             RenderBR {BR} at (56,1215) size 1x0
-          RenderTableCell {TD} at (145,1059) size 237x227 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (145,1059) size 238x227 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 146x202
               RenderText {#text} at (11,12) size 146x202
                 text run at (11,12) width 146: "Other"

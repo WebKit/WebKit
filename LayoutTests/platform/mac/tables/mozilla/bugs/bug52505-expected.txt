@@ -12,19 +12,19 @@ layer at (0,0) size 800x110
           RenderBlock (anonymous) at (8,2) size 241x13
             RenderText at (0,0) size 241x13
               text run at (0,0) width 241: "[Step 2] Set cell width to 20px (garbage seen)"
-      RenderTable {TABLE} at (0,40) size 35x54
-        RenderTableSection {TBODY} at (0,0) size 35x54
-          RenderTableRow {TR} at (0,2) size 35x24
-            RenderTableCell {TD} at (2,2) size 15x24 [border: (2px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,40) size 34x54
+        RenderTableSection {TBODY} at (0,0) size 34x54
+          RenderTableRow {TR} at (0,2) size 34x24
+            RenderTableCell {TD} at (2,2) size 14x24 [border: (2px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 8x18
                 text run at (3,3) width 8: "1"
-            RenderTableCell {TD} at (18,2) size 15x24 [border: (2px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (18,2) size 14x24 [border: (2px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (3,3) size 8x18
                 text run at (3,3) width 8: "2"
-          RenderTableRow {TR} at (0,28) size 35x24
-            RenderTableCell {TD} at (2,28) size 15x24 [border: (2px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,28) size 34x24
+            RenderTableCell {TD} at (2,28) size 14x24 [border: (2px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 8x18
                 text run at (3,3) width 8: "2"
-            RenderTableCell {TD} at (18,28) size 15x24 [border: (2px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (18,28) size 14x24 [border: (2px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (3,3) size 8x18
                 text run at (3,3) width 8: "2"

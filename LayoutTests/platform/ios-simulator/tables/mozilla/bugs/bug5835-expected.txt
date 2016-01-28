@@ -14,11 +14,11 @@ layer at (0,0) size 800x736
             RenderTableCell {TD} at (2,2) size 414x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x19
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (417,2) size 199x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (417,2) size 200x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "bar"
           RenderTableRow {TR} at (0,28) size 618x64
-            RenderTableCell {TD} at (2,28) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,28) size 615x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 468x60
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,168) size 784x20
@@ -31,7 +31,7 @@ layer at (0,0) size 800x736
             RenderTableCell {TD} at (2,2) size 413x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x19
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (416,2) size 200x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (416,2) size 201x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "bar"
       RenderBlock {P} at (0,250) size 784x60
@@ -50,11 +50,11 @@ layer at (0,0) size 800x736
             RenderTableCell {TD} at (2,2) size 414x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x19
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (417,2) size 199x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (417,2) size 200x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "bar"
           RenderTableRow {TR} at (0,28) size 618x64
-            RenderTableCell {TD} at (2,28) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,28) size 615x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 600x60
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,474) size 784x20
@@ -66,7 +66,7 @@ layer at (0,0) size 800x736
             RenderTableCell {TD} at (2,2) size 413x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 139x19
                 text run at (2,2) width 139: "foo (single row table)"
-            RenderTableCell {TD} at (416,2) size 200x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (416,2) size 201x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 138x19
                 text run at (2,2) width 138: "bar (single row table)"
       RenderTable {TABLE} at (0,540) size 620x96 [border: (1px outset #808080)]
@@ -75,11 +75,11 @@ layer at (0,0) size 800x736
             RenderTableCell {TD} at (2,2) size 414x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x19
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (417,2) size 199x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (417,2) size 200x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x19
                 text run at (2,2) width 21: "bar"
           RenderTableRow {TR} at (0,28) size 618x64
-            RenderTableCell {TD} at (2,28) size 614x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,28) size 615x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 400x60
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,652) size 784x60

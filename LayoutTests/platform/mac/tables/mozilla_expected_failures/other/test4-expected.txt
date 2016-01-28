@@ -54,7 +54,7 @@ layer at (0,0) size 785x2466
             RenderTableCell {TD} at (2,11) size 397x22 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 27x18
                 text run at (2,2) width 27: "Cell"
-            RenderTableCell {TD} at (400,2) size 365x40 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (400,2) size 366x40 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 340x36
                 text run at (2,2) width 340: "Stuff to test out table cell layout. This should be long"
                 text run at (2,20) width 52: "enough."
@@ -62,7 +62,7 @@ layer at (0,0) size 785x2466
             RenderTableCell {TD} at (2,44) size 31x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x18
                 text run at (2,2) width 27: "Cell"
-            RenderTableCell {TD} at (34,44) size 731x22 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
+            RenderTableCell {TD} at (34,44) size 732x22 [bgcolor=#90EE90] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
               RenderText {#text} at (2,2) size 395x18
                 text run at (2,2) width 395: "Stuff to test out table cell layout. This should be long enough."
           RenderTableRow {TR} at (0,68) size 767x40
@@ -73,7 +73,7 @@ layer at (0,0) size 785x2466
               RenderText {#text} at (2,2) size 340x36
                 text run at (2,2) width 340: "Stuff to test out table cell layout. This should be long"
                 text run at (2,20) width 52: "enough."
-            RenderTableCell {TD} at (400,77) size 365x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (400,77) size 366x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x18
                 text run at (2,2) width 27: "Cell"
       RenderBlock (anonymous) at (0,324) size 769x37
@@ -139,8 +139,8 @@ layer at (0,0) size 785x2466
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 4x18
           text run at (0,18) width 4: " "
-      RenderTable {TABLE} at (0,602) size 253x175 [border: (1px none #808080)]
-        RenderBlock {CAPTION} at (0,120) size 253x54
+      RenderTable {TABLE} at (0,602) size 252x175 [border: (1px none #808080)]
+        RenderBlock {CAPTION} at (0,120) size 252x54
           RenderText {#text} at (9,0) size 244x54
             text run at (9,0) width 234: "Table 4 has this bottom caption. The"
             text run at (4,18) width 244: "table has specified column widths and"
@@ -149,47 +149,47 @@ layer at (0,0) size 785x2466
           RenderTableCol {COL} at (0,0) size 0x0 [border: none (2px dashed #0000FF) none (2px solid #000000)]
           RenderTableCol {COL} at (0,0) size 0x0 [border: none (1px solid #FF0000) none]
           RenderTableCol {COL} at (0,0) size 0x0 [border: none (2px solid #000000) none]
-        RenderTableSection {THEAD} at (1,1) size 251x26 [border: none (6px solid #000000) none]
-          RenderTableRow {TR} at (0,0) size 251x26 [border: (2px solid #000000)]
-            RenderTableCell {TH} at (0,0) size 91x26 [border: (1px none #000000) none (3px none #000000)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {THEAD} at (1,1) size 250x26 [border: none (6px solid #000000) none]
+          RenderTableRow {TR} at (0,0) size 250x26 [border: (2px solid #000000)]
+            RenderTableCell {TH} at (0,0) size 90x26 [border: (1px none #000000) none (3px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (23,3) size 45x18
                 text run at (23,3) width 45: "Player"
-            RenderTableCell {TH} at (90,0) size 81x26 [border: (1px none #000000) none (3px none #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (90,0) size 80x26 [border: (1px none #000000) none (3px none #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (10,3) size 60x18
                 text run at (10,3) width 60: "Ranking"
-            RenderTableCell {TH} at (170,0) size 81x26 [border: (1px none #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TH} at (170,0) size 80x26 [border: (1px none #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (14,3) size 51x18
                 text run at (14,3) width 51: "Record"
-        RenderTableSection {TBODY} at (1,27) size 251x92
-          RenderTableRow {TR} at (0,0) size 251x26 [border: (2px solid #000000)]
-            RenderTableCell {TD} at (0,0) size 91x26 [border: (3px none #000000)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (1,27) size 250x92
+          RenderTableRow {TR} at (0,0) size 250x26 [border: (2px solid #000000)]
+            RenderTableCell {TD} at (0,0) size 90x26 [border: (3px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (3,5) size 76x18
                 text run at (3,5) width 76: "Steve Clark"
-            RenderTableCell {TD} at (90,0) size 81x26 [border: (3px none #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (90,0) size 80x26 [border: (3px none #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (36,5) size 9x18
                 text run at (36,5) width 9: "1"
-            RenderTableCell {TD} at (170,0) size 81x26 [border: (3px none #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (170,0) size 80x26 [border: (3px none #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (25,5) size 30x18
                 text run at (25,5) width 30: "77-0"
-          RenderTableRow {TR} at (0,26) size 251x24 [border: (2px solid #000000)]
-            RenderTableCell {TD} at (0,26) size 91x24 [border: (1px none #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 250x24 [border: (2px solid #000000)]
+            RenderTableCell {TD} at (0,26) size 90x24 [border: (1px none #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 74x18
                 text run at (3,3) width 74: "Cliff Swain"
-            RenderTableCell {TD} at (90,26) size 81x24 [border: (1px none #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (90,26) size 80x24 [border: (1px none #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (36,3) size 9x18
                 text run at (36,3) width 9: "2"
-            RenderTableCell {TD} at (170,26) size 81x24 [border: (1px none #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (170,26) size 80x24 [border: (1px none #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (21,3) size 38x18
                 text run at (21,3) width 38: "67-10"
-          RenderTableRow {TR} at (0,50) size 251x42 [border: (2px solid #000000)]
-            RenderTableCell {TD} at (0,50) size 91x42 [border: (1px none #000000)] [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,50) size 250x42 [border: (2px solid #000000)]
+            RenderTableCell {TD} at (0,50) size 90x42 [border: (1px none #000000)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 43x36
                 text run at (3,3) width 40: "Marty"
                 text run at (3,21) width 43: "Hogan"
-            RenderTableCell {TD} at (90,59) size 81x24 [border: (1px none #000000)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (90,59) size 80x24 [border: (1px none #000000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (36,3) size 9x18
                 text run at (36,3) width 9: "3"
-            RenderTableCell {TD} at (170,59) size 81x24 [border: (1px none #000000)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (170,59) size 80x24 [border: (1px none #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (21,3) size 38x18
                 text run at (21,3) width 38: "57-15"
       RenderBlock (anonymous) at (0,776) size 769x19

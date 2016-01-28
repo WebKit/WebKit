@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 784x64 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x62
           RenderTableRow {TR} at (0,0) size 782x40
-            RenderTableCell {TD} at (0,0) size 782x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 783x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 732x36
                 text run at (2,2) width 162: "The Supreme Court says "
                 text run at (163,2) width 502: "Wisconsin can continue using tuition vouchers to help poor parents send their "
@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,40) size 391x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18
                 text run at (2,2) width 32: "hello"
-            RenderTableCell {TD} at (391,40) size 391x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (391,40) size 392x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18
                 text run at (2,2) width 32: "hello"
       RenderBlock (anonymous) at (0,64) size 784x18
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,82) size 600x42 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 598x40
           RenderTableRow {TR} at (0,0) size 598x40
-            RenderTableCell {TD} at (0,9) size 37x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,9) size 36x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18
                 text run at (2,2) width 32: "hello"
             RenderTableCell {TD} at (36,0) size 562x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]

@@ -18,7 +18,7 @@ layer at (0,0) size 800x298
                 text run at (24,56) width 49: "text in "
                 text run at (72,56) width 121: "the next cell: they"
                 text run at (15,74) width 188: "should be vertically aligned"
-            RenderTableCell {th} at (221,2) size 559x234 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {th} at (221,2) size 560x234 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (40,2) size 529x230
                 text run at (40,2) width 382: "Compare the baseline "
                 text run at (421,2) width 97: "of the"

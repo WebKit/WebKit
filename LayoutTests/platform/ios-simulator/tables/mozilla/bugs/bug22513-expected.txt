@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 130x15
         RenderTableSection {TBODY} at (0,0) size 130x15
           RenderTableRow {TR} at (0,0) size 130x15
-            RenderTableCell {TD} at (0,0) size 16x15 [bgcolor=#FFCC00] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 15x15 [bgcolor=#FFCC00] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 15x15
             RenderTableCell {TD} at (15,0) size 100x15 [bgcolor=#FFCC00] [r=0 c=1 rs=1 cs=1]
-              RenderInline {B} at (0,0) size 63x19
-                RenderInline {FONT} at (0,0) size 63x14
-                  RenderText {#text} at (18,-1) size 63x16
-                    text run at (18,0) width 63: "Downloads"
-            RenderTableCell {TD} at (114,0) size 16x15 [bgcolor=#FFCC00] [r=0 c=2 rs=1 cs=1]
+              RenderInline {B} at (0,0) size 62x19
+                RenderInline {FONT} at (0,0) size 62x14
+                  RenderText {#text} at (19,-1) size 62x16
+                    text run at (19,0) width 62: "Downloads"
+            RenderTableCell {TD} at (115,0) size 15x15 [bgcolor=#FFCC00] [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 15x15

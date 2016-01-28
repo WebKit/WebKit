@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TH} at (10,231) size 377x21 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (167,1) size 43x19
                 text run at (167,1) width 43: "<tt>"
-            RenderTableCell {TH} at (396,231) size 378x21 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (397,231) size 377x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (153,1) size 71x19
                 text run at (153,1) width 71: "<span>"
           RenderTableRow {TR} at (0,262) size 784x18
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 261x16
                   text run at (1,1) width 261: "font-family: Verdana; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (396,262) size 378x18 [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (397,262) size 377x18 [r=2 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 261x16
                 RenderText {#text} at (1,1) size 261x16
                   text run at (1,1) width 261: "font-family: Verdana; font-size: 0.8em;"
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 319x16
                   text run at (1,1) width 319: "font-family: inherit (Verdana); font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (396,290) size 378x18 [r=3 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (397,290) size 377x18 [r=3 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 249x16
                 RenderText {#text} at (1,1) size 249x16
                   text run at (1,1) width 249: "font-family: inherit; font-size: 0.8em;"
@@ -72,7 +72,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 321x19
                   text run at (1,1) width 321: "font-family: Verdana; font-size: 1.0em;"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (396,318) size 378x21 [r=4 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (397,318) size 377x21 [r=4 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 321x19
                 RenderText {#text} at (1,1) size 321x19
                   text run at (1,1) width 321: "font-family: Verdana; font-size: 1.0em;"
@@ -83,7 +83,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,0) size 187x14
                   text run at (1,1) width 187: "default font; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (396,349) size 378x17 [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (397,349) size 377x17 [r=5 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 305x15
                 RenderText {#text} at (1,1) size 305x15
                   text run at (1,1) width 305: "font-family: courier; font-size: 0.8em;"

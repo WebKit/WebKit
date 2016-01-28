@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 469x103
-        RenderTableSection {TBODY} at (0,0) size 469x103
-          RenderTableRow {TR} at (0,0) size 469x1
+      RenderTable {TABLE} at (0,0) size 468x103
+        RenderTableSection {TBODY} at (0,0) size 468x103
+          RenderTableRow {TR} at (0,0) size 468x1
             RenderTableCell {TD} at (0,0) size 19x0 [r=0 c=0 rs=1 cs=3]
             RenderTableCell {TD} at (18,0) size 188x1 [r=0 c=3 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 187x1
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (0,0) size 187x1
             RenderTableCell {TD} at (448,0) size 21x1 [r=0 c=10 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 20x1
-          RenderTableRow {TR} at (0,1) size 469x22
+          RenderTableRow {TR} at (0,1) size 468x22
             RenderTableCell {TD} at (0,1) size 19x22 [r=1 c=0 rs=1 cs=3]
               RenderImage {IMG} at (0,0) size 18x22
             RenderTableCell {TD} at (18,3) size 188x18 [bgcolor=#FFCC00] [r=1 c=3 rs=1 cs=1]
@@ -44,7 +44,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (448,1) size 21x22 [r=1 c=10 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 20x22
-          RenderTableRow {TR} at (0,23) size 469x80
+          RenderTableRow {TR} at (0,23) size 468x80
             RenderTableCell {TD} at (0,54) size 7x18 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "

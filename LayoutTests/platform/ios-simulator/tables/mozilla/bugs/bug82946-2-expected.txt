@@ -6,22 +6,22 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 768x197
         RenderTableSection {TBODY} at (0,0) size 768x197
           RenderTableRow {TR} at (0,2) size 768x143
-            RenderTableCell {TD} at (2,2) size 759x143 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 760x143 [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (1,1) size 506x141
                 RenderTableSection {TBODY} at (0,0) size 506x141
                   RenderTableRow {TR} at (0,2) size 506x137
                     RenderTableCell {TD} at (2,2) size 502x137 [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (1,1) size 220x135
                       RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (762,87) size 4x23 [r=0 c=1 rs=2 cs=1]
+            RenderTableCell {TD} at (763,87) size 4x23 [r=0 c=1 rs=2 cs=1]
               RenderBR {BR} at (1,87) size 0x19
           RenderTableRow {TR} at (0,147) size 768x48
-            RenderTableCell {TD} at (2,147) size 764x48 [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,147) size 765x48 [r=1 c=0 rs=1 cs=2]
               RenderTable {TABLE} at (1,1) size 468x46
                 RenderTableSection {TBODY} at (0,0) size 468x46
                   RenderTableRow {TR} at (0,2) size 468x42
                     RenderTableCell {TD} at (2,22) size 85x2 [r=0 c=0 rs=1 cs=1]
-                    RenderTableCell {TD} at (88,2) size 378x42 [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (88,2) size 379x42 [r=0 c=1 rs=1 cs=1]
                       RenderBlock {P} at (1,1) size 376x40
                         RenderText {#text} at (0,0) size 4x19
                           text run at (0,0) width 4: " "

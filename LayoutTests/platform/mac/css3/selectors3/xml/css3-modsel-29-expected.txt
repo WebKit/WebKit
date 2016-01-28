@@ -119,7 +119,7 @@ layer at (0,0) size 800x504
       RenderTable {table} at (0,164) size 340x76 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 338x74
           RenderTableRow {tr} at (0,2) size 338x22
-            RenderTableCell {td} at (2,2) size 25x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,2) size 24x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x18
                 text run at (2,2) width 20: "1.1"
             RenderTableCell {td} at (28,2) size 67x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
@@ -144,7 +144,7 @@ layer at (0,0) size 800x504
               RenderText {#text} at (2,2) size 63x18
                 text run at (2,2) width 63: "green cell"
           RenderTableRow {tr} at (0,26) size 338x22
-            RenderTableCell {td} at (2,26) size 25x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,26) size 24x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x18
                 text run at (2,2) width 20: "2.1"
             RenderTableCell {td} at (28,26) size 67x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
@@ -169,7 +169,7 @@ layer at (0,0) size 800x504
               RenderText {#text} at (2,2) size 63x18
                 text run at (2,2) width 63: "green cell"
           RenderTableRow {tr} at (0,50) size 338x22
-            RenderTableCell {td} at (2,50) size 25x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,50) size 24x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x18
                 text run at (2,2) width 20: "3.1"
             RenderTableCell {td} at (28,50) size 67x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]

@@ -1,3 +1,5 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 5 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document toDOMRange:range from 2 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 2 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -12,13 +14,13 @@ layer at (0,0) size 800x600
           text run at (0,0) width 347: "This tests InsertParagraphSeparator inside table cells. "
           text run at (346,0) width 279: "'Cell' and 'Two' should be on separate lines."
       RenderBlock {DIV} at (0,36) size 784x50
-        RenderTable {TABLE} at (0,0) size 105x50 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 103x48
-            RenderTableRow {TR} at (0,2) size 103x44
+        RenderTable {TABLE} at (0,0) size 104x50 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 102x48
+            RenderTableRow {TR} at (0,2) size 102x44
               RenderTableCell {TD} at (2,12) size 62x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 58x19
                   text run at (2,2) width 58: "Cell One"
-              RenderTableCell {TD} at (65,2) size 36x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (65,2) size 35x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 31x19
                   text run at (2,2) width 31: "Cell "
                 RenderBR {BR} at (32,17) size 1x0

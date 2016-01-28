@@ -8,33 +8,33 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 80x56
             RenderTableCell {TD} at (0,46) size 31x94 [r=0 c=0 rs=3 cs=1]
               RenderImage {IMG} at (0,0) size 30x93
-            RenderTableCell {TD} at (30,0) size 50x56 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,0) size 51x56 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 25x28
               RenderImage {IMG} at (0,28) size 25x28
           RenderTableRow {TR} at (0,56) size 80x50
-            RenderTableCell {TD} at (30,56) size 50x50 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,56) size 51x50 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 25x25
               RenderImage {IMG} at (0,25) size 25x25
           RenderTableRow {TR} at (0,106) size 80x80
-            RenderTableCell {TD} at (30,106) size 50x80 [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,106) size 51x80 [r=2 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 25x40
               RenderImage {IMG} at (0,40) size 25x40
       RenderBlock (anonymous) at (0,186) size 784x20
         RenderText {#text} at (0,0) size 323x19
           text run at (0,0) width 323: "Here's the same table without the off-by-one error."
-      RenderTable {TABLE} at (0,206) size 80x186
-        RenderTableSection {TBODY} at (0,0) size 80x186
-          RenderTableRow {TR} at (0,0) size 80x56
-            RenderTableCell {TD} at (0,46) size 31x94 [r=0 c=0 rs=3 cs=1]
+      RenderTable {TABLE} at (0,206) size 80x93
+        RenderTableSection {TBODY} at (0,0) size 80x93
+          RenderTableRow {TR} at (0,0) size 80x28
+            RenderTableCell {TD} at (0,0) size 30x93 [r=0 c=0 rs=3 cs=1]
               RenderImage {IMG} at (0,0) size 30x93
-            RenderTableCell {TD} at (30,0) size 50x56 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,0) size 50x28 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 25x28
-              RenderImage {IMG} at (0,28) size 25x28
-          RenderTableRow {TR} at (0,56) size 80x50
-            RenderTableCell {TD} at (30,56) size 50x50 [r=1 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (25,0) size 25x28
+          RenderTableRow {TR} at (0,28) size 80x25
+            RenderTableCell {TD} at (30,28) size 50x25 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 25x25
-              RenderImage {IMG} at (0,25) size 25x25
-          RenderTableRow {TR} at (0,106) size 80x80
-            RenderTableCell {TD} at (30,106) size 50x80 [r=2 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (25,0) size 25x25
+          RenderTableRow {TR} at (0,53) size 80x40
+            RenderTableCell {TD} at (30,53) size 50x40 [r=2 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 25x40
-              RenderImage {IMG} at (0,40) size 25x40
+              RenderImage {IMG} at (25,0) size 25x40

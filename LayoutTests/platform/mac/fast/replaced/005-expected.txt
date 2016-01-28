@@ -6,7 +6,7 @@ layer at (0,0) size 785x680
       RenderTable {TABLE} at (0,0) size 769x214 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 765x210
           RenderTableRow {TR} at (0,0) size 765x210
-            RenderTableCell {TD} at (0,0) size 203x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 202x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 100x100 [bgcolor=#008000]
               RenderImage {IMG} at (101,1) size 100x100 [bgcolor=#008000]
               RenderBR {BR} at (201,87) size 0x18
@@ -18,7 +18,7 @@ layer at (0,0) size 785x680
       RenderTable {TABLE} at (0,214) size 769x214 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 765x210
           RenderTableRow {TR} at (0,0) size 765x210
-            RenderTableCell {TD} at (0,0) size 203x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 202x210 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 200x18
                 RenderImage {IMG} at (1,1) size 100x100 [bgcolor=#008000]
                 RenderImage {IMG} at (101,1) size 100x100 [bgcolor=#008000]

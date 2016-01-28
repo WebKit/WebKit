@@ -9,16 +9,16 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,102) size 800x130 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 796x126
           RenderTableRow {TR} at (0,0) size 796x0
-            RenderTableCell {TD} at (0,0) size 115x126 [bgcolor=#DDDDDD] [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderTable {TABLE} at (1,1) size 113x124 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 111x122
-                  RenderTableRow {TR} at (0,0) size 111x122
-                    RenderTableCell {TD} at (0,0) size 111x122 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 114x126 [bgcolor=#DDDDDD] [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderTable {TABLE} at (1,1) size 112x124 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 110x122
+                  RenderTableRow {TR} at (0,0) size 110x122
+                    RenderTableCell {TD} at (0,0) size 110x122 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (5,1) size 100x100
                       RenderText {#text} at (1,101) size 53x19
                         text run at (1,101) width 53: "HELLO"
           RenderTableRow {TR} at (0,0) size 796x126
-            RenderTableCell {TD} at (114,2) size 328x122 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (114,2) size 327x122 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 321x119
                 text run at (1,1) width 320: "The Zurich football team known as FC Blue Stars"
                 text run at (1,21) width 120: "is one of the city's "

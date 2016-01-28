@@ -3,21 +3,21 @@ layer at (0,0) size 800x965
 layer at (0,0) size 800x965
   RenderBlock {HTML} at (0,0) size 800x965
     RenderBody {BODY} at (8,8) size 784x949
-      RenderTable {TABLE} at (0,0) size 601x265 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 599x263
-          RenderTableRow {TR} at (0,2) size 599x77
-            RenderTableCell {TD} at (2,2) size 595x77 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+      RenderTable {TABLE} at (0,0) size 600x265 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 598x263
+          RenderTableRow {TR} at (0,2) size 598x77
+            RenderTableCell {TD} at (2,2) size 594x77 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
               RenderImage {IMG} at (2,2) size 590x73
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,81) size 599x96
-            RenderTableCell {TD} at (2,81) size 115x44 [bgcolor=#94BD73] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,81) size 598x96
+            RenderTableCell {TD} at (2,81) size 114x44 [bgcolor=#94BD73] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x39
                 text run at (2,2) width 74: "LH column"
                 text run at (2,22) width 40: "image"
-            RenderTableCell {TD} at (118,81) size 21x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (118,81) size 20x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "    "
-            RenderTableCell {TD} at (140,81) size 457x96 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (140,81) size 456x96 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderBlock {P} at (2,2) size 452x20
                 RenderText {#text} at (0,0) size 226x19
                   text run at (0,0) width 226: "HP Peripherals Developer Program"
@@ -27,15 +27,15 @@ layer at (0,0) size 800x965
               RenderBlock {P} at (2,74) size 452x20
                 RenderText {#text} at (0,0) size 70x19
                   text run at (0,0) width 70: "etc., etc. ..."
-          RenderTableRow {TR} at (0,179) size 599x37
-            RenderTableCell {TD} at (2,179) size 595x37 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
+          RenderTableRow {TR} at (0,179) size 598x37
+            RenderTableCell {TD} at (2,179) size 594x37 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
               RenderImage {IMG} at (2,2) size 589x33
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,218) size 599x43
-            RenderTableCell {TD} at (2,218) size 115x43 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,218) size 598x43
+            RenderTableCell {TD} at (2,218) size 114x43 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 110x39
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TH} at (118,227) size 479x25 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
+            RenderTableCell {TH} at (118,227) size 478x25 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderText {#text} at (207,2) size 64x20
                 text run at (207,3) width 64: "text links"
       RenderBlock {HR} at (0,273) size 784x2 [border: (1px inset #000000)]
@@ -46,7 +46,7 @@ layer at (0,0) size 800x965
       RenderTable {TABLE} at (0,327) size 590x189 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 588x187
           RenderTableRow {TR} at (0,2) size 588x24
-            RenderTableCell {TD} at (2,2) size 584x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (2,2) size 585x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
               RenderText {#text} at (2,2) size 129x19
                 text run at (2,2) width 129: "IMG in a colspan=3"
           RenderTableRow {TR} at (0,28) size 588x96
@@ -57,7 +57,7 @@ layer at (0,0) size 800x965
             RenderTableCell {TD} at (114,28) size 21x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "    "
-            RenderTableCell {TD} at (136,28) size 450x96 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (136,28) size 451x96 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderBlock {P} at (2,2) size 446x20
                 RenderText {#text} at (0,0) size 226x19
                   text run at (0,0) width 226: "HP Peripherals Developer Program"
@@ -68,14 +68,14 @@ layer at (0,0) size 800x965
                 RenderText {#text} at (0,0) size 70x19
                   text run at (0,0) width 70: "etc., etc. ..."
           RenderTableRow {TR} at (0,126) size 588x33
-            RenderTableCell {TD} at (2,130) size 584x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (2,130) size 585x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
               RenderText {#text} at (2,2) size 129x20
                 text run at (2,3) width 129: "IMG in a colspan=3"
           RenderTableRow {TR} at (0,161) size 588x24
             RenderTableCell {TD} at (2,161) size 111x24 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 78x19
                 text run at (2,2) width 78: "just an IMG"
-            RenderTableCell {TH} at (114,161) size 472x24 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
+            RenderTableCell {TH} at (114,161) size 473x24 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderText {#text} at (204,2) size 64x19
                 text run at (204,2) width 64: "text links"
       RenderBlock {HR} at (0,524) size 784x2 [border: (1px inset #000000)]
@@ -115,7 +115,7 @@ layer at (0,0) size 800x965
       RenderTable {TABLE} at (0,821) size 590x128 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 588x126
           RenderTableRow {TR} at (0,2) size 588x24
-            RenderTableCell {TD} at (2,2) size 584x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (2,2) size 585x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
               RenderText {#text} at (2,2) size 213x19
                 text run at (2,2) width 213: "text instead of IMG in colspan=3"
           RenderTableRow {TR} at (0,28) size 588x96
@@ -126,7 +126,7 @@ layer at (0,0) size 800x965
             RenderTableCell {TD} at (114,28) size 21x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "    "
-            RenderTableCell {TD} at (136,28) size 450x96 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (136,28) size 451x96 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderBlock {P} at (2,2) size 446x20
                 RenderText {#text} at (0,0) size 226x19
                   text run at (0,0) width 226: "HP Peripherals Developer Program"

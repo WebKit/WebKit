@@ -6,7 +6,7 @@ layer at (0,0) size 800x276
       RenderTable {TABLE} at (0,0) size 608x260
         RenderTableSection {TBODY} at (0,0) size 608x260
           RenderTableRow {TR} at (0,2) size 608x154
-            RenderTableCell {TD} at (2,2) size 605x154 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (2,2) size 604x154 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=3]
               RenderTable {TABLE} at (2,2) size 600x150
                 RenderTableSection {TBODY} at (0,0) size 600x150
                   RenderTableRow {TR} at (0,2) size 600x146
@@ -14,5 +14,5 @@ layer at (0,0) size 800x276
           RenderTableRow {TR} at (0,158) size 608x100
             RenderTableCell {TD} at (2,158) size 113x4 [bgcolor=#008000] [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (116,158) size 376x4 [bgcolor=#0000FF] [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (493,158) size 114x4 [bgcolor=#008000] [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (493,158) size 113x4 [bgcolor=#008000] [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 109x0

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,18) size 784x100
         RenderTableSection {TBODY} at (0,0) size 784x100
           RenderTableRow {TR} at (0,0) size 784x100
-            RenderTableCell {TD} at (0,50) size 1x0 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,50) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock (anonymous) at (0,118) size 784x18
         RenderText {#text} at (0,0) size 328x18
           text run at (0,0) width 328: "This text is 100 pixels lower than the previous line."

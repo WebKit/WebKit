@@ -9,15 +9,15 @@ layer at (0,0) size 800x812
             RenderTableCell {TD} at (0,0) size 75x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 22x19
                 text run at (1,1) width 22: "foo"
-            RenderTableCell {TD} at (74,0) size 708x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (74,0) size 709x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x19
                 text run at (1,1) width 21: "bar"
           RenderTableRow {TR} at (0,22) size 782x772
-            RenderTableCell {TD} at (0,22) size 782x772 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 780x770 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 778x768
-                  RenderTableRow {TR} at (0,2) size 778x764
-                    RenderTableCell {TD} at (2,2) size 774x764 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,22) size 783x772 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 781x770 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 779x768
+                  RenderTableRow {TR} at (0,2) size 779x764
+                    RenderTableCell {TD} at (2,2) size 775x764 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 719x39
                         text run at (2,2) width 719: "When the Whiten house burned down in Renfrew Ontario, the insurer denied liability, asserting that the Plaintiff"
                         text run at (2,22) width 477: "Daphne Whiten was the cause of the fire herself and had committed arson."

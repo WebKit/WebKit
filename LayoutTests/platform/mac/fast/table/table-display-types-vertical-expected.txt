@@ -143,10 +143,10 @@ layer at (0,0) size 785x1238
                       RenderTableCell {TD} at (2,44) size 20x42 [r=0 c=1 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 18x39
                           text run at (1,1) width 39: "Cell 4"
-      RenderTable at (0,588) size 103x633
-        RenderTableSection (anonymous) at (0,0) size 103x632
-          RenderTableRow (anonymous) at (0,0) size 103x632
-            RenderTableCell {P} at (0,0) size 103x632 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable at (0,588) size 102x633
+        RenderTableSection (anonymous) at (0,0) size 102x632
+          RenderTableRow (anonymous) at (0,0) size 102x632
+            RenderTableCell {P} at (0,0) size 102x632 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 100x630
                 text run at (1,1) width 86: "Lorem ipsum"
                 text run at (1,19) width 92: "dolor sit amet,"

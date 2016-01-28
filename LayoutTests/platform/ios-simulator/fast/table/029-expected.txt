@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x42
           RenderTableRow {TR} at (0,0) size 784x42
 layer at (8,8) size 150x42
-  RenderTableCell {TD} at (0,0) size 151x42 [r=0 c=0 rs=1 cs=1]
-    RenderTable {TABLE} at (0,0) size 151x42 [border: (10px outset #808080)]
+  RenderTableCell {TD} at (0,0) size 150x42 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (0,0) size 150x42 [border: (10px outset #808080)]
       RenderTableSection {TBODY} at (10,10) size 130x22
         RenderTableRow {TR} at (0,0) size 130x22
 layer at (18,18) size 130x22 clip at (19,19) size 128x20

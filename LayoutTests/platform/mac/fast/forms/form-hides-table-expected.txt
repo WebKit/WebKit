@@ -41,10 +41,10 @@ layer at (0,0) size 785x658
           RenderBlock (anonymous) at (0,0) size 769x18
             RenderListMarker at (-17,0) size 7x18: bullet
           RenderBlock {FORM} at (0,18) size 769x24
-            RenderTable {TABLE} at (0,0) size 115x24
-              RenderTableSection {TBODY} at (0,0) size 115x24
-                RenderTableRow {TR} at (0,2) size 115x20
-                  RenderTableCell {TD} at (2,2) size 111x20 [r=0 c=0 rs=1 cs=1]
+            RenderTable {TABLE} at (0,0) size 114x24
+              RenderTableSection {TBODY} at (0,0) size 114x24
+                RenderTableRow {TR} at (0,2) size 114x20
+                  RenderTableCell {TD} at (2,2) size 110x20 [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (1,1) size 108x18
                       text run at (1,1) width 108: "display: list-item"
       RenderBlock {DIV} at (0,206) size 769x24

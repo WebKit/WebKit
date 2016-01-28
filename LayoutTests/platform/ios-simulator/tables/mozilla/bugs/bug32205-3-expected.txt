@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
               RenderBR {BR} at (82,284) size 1x0
               RenderText {#text} at (2,22) size 329x19
                 text run at (2,22) width 329: "<table border=\"1\" width=\"100%\" height=\"100%\">"
-            RenderTableCell {TD} at (368,2) size 412x578 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (368,2) size 413x578 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 408x574 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 406x572
                   RenderTableRow {TR} at (0,2) size 406x568

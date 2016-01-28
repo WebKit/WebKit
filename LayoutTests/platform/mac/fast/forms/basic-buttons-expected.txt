@@ -17,7 +17,7 @@ layer at (0,0) size 800x318
       RenderTable {TABLE} at (0,72) size 696x230
         RenderTableSection {TBODY} at (0,0) size 696x230
           RenderTableRow {TR} at (0,0) size 696x20
-            RenderTableCell {TD} at (0,0) size 171x20 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 170x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 44x18
                 text run at (1,1) width 44: "styling"
             RenderTableCell {TD} at (170,0) size 61x20 [r=0 c=1 rs=1 cs=1]
@@ -33,7 +33,7 @@ layer at (0,0) size 800x318
               RenderText {#text} at (1,1) size 168x18
                 text run at (1,1) width 168: "(offsetH,W) (clientH, -W)"
           RenderTableRow {TR} at (0,20) size 696x24
-            RenderTableCell {TD} at (0,22) size 171x20 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,22) size 170x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 56x18
                 text run at (1,1) width 56: "(default)"
             RenderTableCell {TD} at (170,20) size 61x24 [r=1 c=1 rs=1 cs=1]
@@ -52,7 +52,7 @@ layer at (0,0) size 800x318
               RenderText {#text} at (1,1) size 106x18
                 text run at (1,1) width 106: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,44) size 696x24
-            RenderTableCell {TD} at (0,46) size 171x20 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,46) size 170x20 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 68x18
                 text run at (1,1) width 68: "padding: 0"
             RenderTableCell {TD} at (170,45) size 61x22 [r=2 c=1 rs=1 cs=1]
@@ -71,7 +71,7 @@ layer at (0,0) size 800x318
               RenderText {#text} at (1,1) size 106x18
                 text run at (1,1) width 106: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,68) size 696x30
-            RenderTableCell {TD} at (0,73) size 171x20 [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,73) size 170x20 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 90x18
                 text run at (1,1) width 90: "padding: 10%"
             RenderTableCell {TD} at (170,68) size 61x30 [r=3 c=1 rs=1 cs=1]
@@ -90,7 +90,7 @@ layer at (0,0) size 800x318
               RenderText {#text} at (1,1) size 106x18
                 text run at (1,1) width 106: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,98) size 696x24
-            RenderTableCell {TD} at (0,100) size 171x20 [r=4 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,100) size 170x20 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 84x18
                 text run at (1,1) width 84: "padding: 2px"
             RenderTableCell {TD} at (170,98) size 61x24 [r=4 c=1 rs=1 cs=1]
@@ -109,7 +109,7 @@ layer at (0,0) size 800x318
               RenderText {#text} at (1,1) size 106x18
                 text run at (1,1) width 106: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,122) size 696x24
-            RenderTableCell {TD} at (0,124) size 171x20 [r=5 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,124) size 170x20 [r=5 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 168x18
                 text run at (1,1) width 168: "padding: 2px 6px 3px 6px"
             RenderTableCell {TD} at (170,122) size 61x24 [r=5 c=1 rs=1 cs=1]
@@ -128,7 +128,7 @@ layer at (0,0) size 800x318
               RenderText {#text} at (1,1) size 106x18
                 text run at (1,1) width 106: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,146) size 696x25
-            RenderTableCell {TD} at (0,148) size 171x21 [r=6 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,148) size 170x21 [r=6 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 112x19
                 text run at (1,2) width 112: "padding: 3px 7px"
             RenderTableCell {TD} at (170,146) size 61x25 [r=6 c=1 rs=1 cs=1]
@@ -147,7 +147,7 @@ layer at (0,0) size 800x318
               RenderText {#text} at (1,1) size 106x19
                 text run at (1,2) width 106: "(18, 33) (18, 33)"
           RenderTableRow {TR} at (0,171) size 696x59
-            RenderTableCell {TD} at (0,190) size 171x21 [r=7 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,190) size 170x21 [r=7 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 92x19
                 text run at (1,2) width 92: "padding: 20px"
             RenderTableCell {TD} at (170,171) size 61x59 [r=7 c=1 rs=1 cs=1]

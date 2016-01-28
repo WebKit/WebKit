@@ -56,7 +56,7 @@ layer at (0,0) size 800x698
             RenderTableCell {DIV} at (0,0) size 336x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 27x19
                 text run at (0,0) width 27: "Left"
-            RenderTableCell {DIV} at (335,0) size 449x20 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {DIV} at (335,0) size 450x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (412,0) size 37x19
                 text run at (412,0) width 37: "Right"
       RenderBlock {H2} at (0,423) size 784x31

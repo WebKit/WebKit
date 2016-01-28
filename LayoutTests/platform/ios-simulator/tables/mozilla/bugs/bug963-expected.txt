@@ -25,10 +25,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (189,2) size 47x22 [r=0 c=4 rs=1 cs=1]
               RenderText {#text} at (1,1) size 44x19
                 text run at (1,1) width 44: "Search"
-            RenderTableCell {TD} at (237,2) size 88x22 [r=0 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (237,2) size 87x22 [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (1,1) size 85x19
                 text run at (1,1) width 85: "My Netscape"
-            RenderTableCell {TD} at (326,2) size 34x22 [r=0 c=6 rs=1 cs=1]
+            RenderTableCell {TD} at (325,2) size 35x22 [r=0 c=6 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x19
                 text run at (1,1) width 32: "Print"
             RenderTableCell {TD} at (361,2) size 56x22 [r=0 c=7 rs=1 cs=1]

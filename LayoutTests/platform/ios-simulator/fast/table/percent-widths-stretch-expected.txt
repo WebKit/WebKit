@@ -3,40 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x96
   RenderBlock {HTML} at (0,0) size 800x96
     RenderBody {BODY} at (8,8) size 784x80
-      RenderTable {TABLE} at (0,0) size 102x4
-        RenderTableSection {TBODY} at (0,0) size 102x4
-          RenderTableRow {TR} at (0,0) size 102x4
-            RenderTableCell {TD} at (0,0) size 102x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 100x4
+        RenderTableSection {TBODY} at (0,0) size 100x4
+          RenderTableRow {TR} at (0,0) size 100x4
+            RenderTableCell {TD} at (0,0) size 100x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
-      RenderTable {TABLE} at (0,4) size 51x4
-        RenderTableSection {TBODY} at (0,0) size 51x4
-          RenderTableRow {TR} at (0,0) size 51x4
-            RenderTableCell {TD} at (0,0) size 51x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,4) size 50x4
+        RenderTableSection {TBODY} at (0,0) size 50x4
+          RenderTableRow {TR} at (0,0) size 50x4
+            RenderTableCell {TD} at (0,0) size 50x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
       RenderTable {TABLE} at (0,8) size 34x4
         RenderTableSection {TBODY} at (0,0) size 34x4
           RenderTableRow {TR} at (0,0) size 34x4
             RenderTableCell {TD} at (0,0) size 34x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
-      RenderTable {TABLE} at (0,12) size 26x4
-        RenderTableSection {TBODY} at (0,0) size 26x4
-          RenderTableRow {TR} at (0,0) size 26x4
-            RenderTableCell {TD} at (0,0) size 26x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,12) size 25x4
+        RenderTableSection {TBODY} at (0,0) size 25x4
+          RenderTableRow {TR} at (0,0) size 25x4
+            RenderTableCell {TD} at (0,0) size 25x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
-      RenderTable {TABLE} at (0,16) size 21x4
-        RenderTableSection {TBODY} at (0,0) size 21x4
-          RenderTableRow {TR} at (0,0) size 21x4
-            RenderTableCell {TD} at (0,0) size 21x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,16) size 20x4
+        RenderTableSection {TBODY} at (0,0) size 20x4
+          RenderTableRow {TR} at (0,0) size 20x4
+            RenderTableCell {TD} at (0,0) size 20x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
-      RenderTable {TABLE} at (0,20) size 11x4
-        RenderTableSection {TBODY} at (0,0) size 11x4
-          RenderTableRow {TR} at (0,0) size 11x4
-            RenderTableCell {TD} at (0,0) size 11x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,20) size 10x4
+        RenderTableSection {TBODY} at (0,0) size 10x4
+          RenderTableRow {TR} at (0,0) size 10x4
+            RenderTableCell {TD} at (0,0) size 10x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
-      RenderTable {TABLE} at (0,24) size 6x4
-        RenderTableSection {TBODY} at (0,0) size 6x4
-          RenderTableRow {TR} at (0,0) size 6x4
-            RenderTableCell {TD} at (0,0) size 6x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,24) size 5x4
+        RenderTableSection {TBODY} at (0,0) size 5x4
+          RenderTableRow {TR} at (0,0) size 5x4
+            RenderTableCell {TD} at (0,0) size 5x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
       RenderTable {TABLE} at (0,28) size 4x4
         RenderTableSection {TBODY} at (0,0) size 4x4
@@ -48,10 +48,10 @@ layer at (0,0) size 800x96
           RenderTableRow {TR} at (0,0) size 3x4
             RenderTableCell {TD} at (0,0) size 3x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
-      RenderTable {TABLE} at (0,36) size 3x4
-        RenderTableSection {TBODY} at (0,0) size 3x4
-          RenderTableRow {TR} at (0,0) size 3x4
-            RenderTableCell {TD} at (0,0) size 3x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,36) size 2x4
+        RenderTableSection {TBODY} at (0,0) size 2x4
+          RenderTableRow {TR} at (0,0) size 2x4
+            RenderTableCell {TD} at (0,0) size 2x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
       RenderTable {TABLE} at (0,40) size 2x4
         RenderTableSection {TBODY} at (0,0) size 2x4
@@ -93,13 +93,13 @@ layer at (0,0) size 800x96
           RenderTableRow {TR} at (0,0) size 2x4
             RenderTableCell {TD} at (0,0) size 2x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
-      RenderTable {TABLE} at (0,72) size 2x4
-        RenderTableSection {TBODY} at (0,0) size 2x4
-          RenderTableRow {TR} at (0,0) size 2x4
-            RenderTableCell {TD} at (0,0) size 2x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,72) size 1x4
+        RenderTableSection {TBODY} at (0,0) size 1x4
+          RenderTableRow {TR} at (0,0) size 1x4
+            RenderTableCell {TD} at (0,0) size 1x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]
-      RenderTable {TABLE} at (0,76) size 2x4
-        RenderTableSection {TBODY} at (0,0) size 2x4
-          RenderTableRow {TR} at (0,0) size 2x4
-            RenderTableCell {TD} at (0,0) size 2x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,76) size 1x4
+        RenderTableSection {TBODY} at (0,0) size 1x4
+          RenderTableRow {TR} at (0,0) size 1x4
+            RenderTableCell {TD} at (0,0) size 1x4 [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 1x4 [bgcolor=#FFA500]

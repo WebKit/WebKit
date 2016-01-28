@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
                               RenderText {#text} at (3,3) size 66x19
                                 text run at (3,4) width 66: "Directory"
                           RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (129,25) size 466x84 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (129,25) size 467x84 [bgcolor=#CCCCCC] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                   RenderTable {TABLE} at (4,4) size 458x75 [border: (1px outset #808080)]
                     RenderTableSection {TBODY} at (1,1) size 456x73
                       RenderTableRow {TR} at (0,4) size 456x33

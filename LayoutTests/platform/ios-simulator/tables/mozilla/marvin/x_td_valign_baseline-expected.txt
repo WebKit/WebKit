@@ -17,7 +17,7 @@ layer at (0,0) size 800x305
                 text run at (2,42) width 213: "baseline of the first line of text in"
                 text run at (2,62) width 180: "the next cell: they should be"
                 text run at (2,82) width 112: "vertically aligned"
-            RenderTableCell {td} at (221,2) size 559x239 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (221,2) size 560x239 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 533x233
                 text run at (2,3) width 357: "Compare the baseline "
                 text run at (358,3) width 168: "of the first"

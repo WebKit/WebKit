@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,72) size 784x1
         RenderImage {IMG} at (0,0) size 1x1
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,73) size 3x2
-        RenderTableSection {TBODY} at (0,0) size 3x2
-          RenderTableRow {TR} at (0,0) size 3x0
-          RenderTableRow {TR} at (0,0) size 3x2
-            RenderTableCell {TD} at (0,0) size 3x2 [r=1 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,73) size 2x2
+        RenderTableSection {TBODY} at (0,0) size 2x2
+          RenderTableRow {TR} at (0,0) size 2x0
+          RenderTableRow {TR} at (0,0) size 2x2
+            RenderTableCell {TD} at (0,0) size 2x2 [r=1 c=0 rs=1 cs=1]

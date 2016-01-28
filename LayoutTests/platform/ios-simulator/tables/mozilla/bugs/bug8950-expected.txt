@@ -29,17 +29,17 @@ layer at (0,0) size 800x600
                               RenderText {#text} at (2,2) size 20x19
                                 text run at (2,2) width 20: "faz"
                             RenderTableCell {TD} at (28,51) size 596x142 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                              RenderTable {TABLE} at (2,2) size 592x138 [border: (1px outset #808080)]
-                                RenderTableSection {TBODY} at (1,1) size 590x136
-                                  RenderTableRow {TR} at (0,2) size 590x132
-                                    RenderTableCell {TD} at (2,2) size 586x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                              RenderTable {TABLE} at (2,2) size 591x138 [border: (1px outset #808080)]
+                                RenderTableSection {TBODY} at (1,1) size 589x136
+                                  RenderTableRow {TR} at (0,2) size 589x132
+                                    RenderTableCell {TD} at (2,2) size 585x132 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
                                       RenderTable {TABLE} at (2,2) size 581x128 [border: (1px outset #808080)]
                                         RenderTableSection {TBODY} at (1,1) size 579x126
                                           RenderTableRow {TR} at (0,2) size 579x122
                                             RenderTableCell {TD} at (2,2) size 113x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                                               RenderText {#text} at (2,2) size 24x19
                                                 text run at (2,2) width 24: "frip"
-                                            RenderTableCell {TD} at (116,2) size 461x122 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                                            RenderTableCell {TD} at (116,2) size 462x122 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                                               RenderBlock (anonymous) at (2,2) size 457x20
                                                 RenderText {#text} at (158,0) size 140x19
                                                   text run at (158,0) width 140: "Feel free to browse ..."
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
                                                         RenderInline {A} at (0,0) size 52x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 52x19
                                                             text run at (2,2) width 52: "Holiday"
-                                                      RenderTableCell {TD} at (148,2) size 121x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                                                      RenderTableCell {TD} at (148,2) size 122x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                                                         RenderInline {A} at (0,0) size 30x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 30x19
                                                             text run at (2,2) width 30: "Cars"
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
                                                         RenderInline {A} at (0,0) size 41x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 41x19
                                                             text run at (2,2) width 41: "Sports"
-                                                      RenderTableCell {TD} at (148,28) size 121x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                                                      RenderTableCell {TD} at (148,28) size 122x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                                                         RenderInline {A} at (0,0) size 55x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 55x19
                                                             text run at (2,2) width 55: "Animals"
@@ -70,7 +70,7 @@ layer at (0,0) size 800x600
                                                         RenderInline {A} at (0,0) size 71x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 71x19
                                                             text run at (2,2) width 71: "Computers"
-                                                      RenderTableCell {TD} at (148,54) size 121x24 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+                                                      RenderTableCell {TD} at (148,54) size 122x24 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                                                         RenderInline {A} at (0,0) size 58x19 [color=#551A8B]
                                                           RenderText {#text} at (2,2) size 58x19
                                                             text run at (2,2) width 58: "Cartoons"
@@ -103,10 +103,10 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 177: "300px wide for comparison"
       RenderBlock (anonymous) at (0,385) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,405) size 511x50 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 509x48
-          RenderTableRow {TR} at (0,2) size 509x44
-            RenderTableCell {TD} at (2,2) size 505x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,405) size 510x50 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 508x48
+          RenderTableRow {TR} at (0,2) size 508x44
+            RenderTableCell {TD} at (2,2) size 504x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 500x40 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 498x38
                   RenderTableRow {TR} at (0,2) size 498x34

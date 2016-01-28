@@ -48,7 +48,7 @@ layer at (0,0) size 800x600
                   text run at (153,6) width 63: " - updated "
                   text run at (215,6) width 119: "12:15 PM ET Oct 24"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (510,0) size 165x26 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (510,0) size 166x26 [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 104x22
                 RenderTableSection {TBODY} at (0,0) size 104x22
                   RenderTableRow {TR} at (0,0) size 104x22

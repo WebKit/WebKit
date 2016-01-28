@@ -23,7 +23,7 @@ layer at (8,52) size 78x40
       RenderTable at (23,1) size 31x38
         RenderTableSection (anonymous) at (0,0) size 31x38
           RenderTableRow (anonymous) at (0,0) size 31x38
-            RenderTableCell {span} at (0,0) size 17x38 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {span} at (0,0) size 16x38 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,1) size 16x36
                 text run at (0,1) width 16: "b"
             RenderTableCell {span} at (16,0) size 15x38 [r=0 c=1 rs=1 cs=1]

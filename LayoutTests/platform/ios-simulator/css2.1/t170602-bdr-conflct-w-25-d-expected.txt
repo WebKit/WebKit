@@ -12,7 +12,7 @@ layer at (0,0) size 800x240
             RenderTableCell {TD} at (0,15) size 43x28 [border: (3px ridge #00FF00)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 33x20
                 text run at (4,5) width 33: "ridge"
-            RenderTableCell {TD} at (42,14) size 45x30 [border: (3px ridge #00FF00) (5px ridge #FF0000) (3px ridge #00FF00)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (42,14) size 44x30 [border: (3px ridge #00FF00) (5px ridge #FF0000) (3px ridge #00FF00)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (4,4) size 33x19
                 text run at (4,4) width 33: "ridge"
             RenderTableCell {TD} at (86,15) size 42x28 [border: (3px ridge #00FF00)] [r=0 c=2 rs=1 cs=1]
@@ -22,7 +22,7 @@ layer at (0,0) size 800x240
             RenderTableCell {TD} at (0,74) size 43x28 [border: (3px ridge #00FF00) (5px ridge #FF0000) (2px ridge #00FF00)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 33x20
                 text run at (4,5) width 33: "ridge"
-            RenderTableCell {TD} at (42,72) size 45x32 [border: (5px solid #00FF00)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (42,72) size 44x32 [border: (5px solid #00FF00)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 32x19
                 text run at (6,6) width 32: "solid"
             RenderTableCell {TD} at (86,74) size 42x28 [border: (3px ridge #00FF00) (5px ridge #FF0000)] [r=1 c=2 rs=1 cs=1]
@@ -32,7 +32,7 @@ layer at (0,0) size 800x240
             RenderTableCell {TD} at (0,133) size 43x27 [border: (3px ridge #00FF00)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 33x19
                 text run at (4,4) width 33: "ridge"
-            RenderTableCell {TD} at (42,132) size 45x29 [border: (5px ridge #FF0000) (2px ridge #00FF00)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (42,132) size 44x29 [border: (5px ridge #FF0000) (2px ridge #00FF00)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (4,6) size 33x19
                 text run at (4,6) width 33: "ridge"
             RenderTableCell {TD} at (86,133) size 42x27 [border: (3px ridge #00FF00)] [r=2 c=2 rs=1 cs=1]

@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 461x166
-        RenderTableSection {TBODY} at (0,0) size 461x166
-          RenderTableRow {TR} at (0,2) size 461x162
+      RenderTable {TABLE} at (0,0) size 460x166
+        RenderTableSection {TBODY} at (0,0) size 460x166
+          RenderTableRow {TR} at (0,2) size 460x162
             RenderTableCell {TD} at (2,2) size 102x162 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 29x19
                 text run at (1,1) width 29: "The "
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
                   text run at (1,141) width 29: "look"
               RenderText {#text} at (29,141) size 29x19
                 text run at (29,141) width 29: "like."
-            RenderTableCell {TD} at (106,62) size 353x42 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (106,62) size 352x42 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 348x39
                 text run at (1,1) width 348: "This is some filler text. This is some filler text. This is"
                 text run at (1,21) width 253: "some filler text. This is some filler text."

@@ -9,7 +9,7 @@ layer at (0,0) size 800x340
             RenderMathMLOperator {mo} at (0,0) size 47x11
               RenderMathMLBlock (anonymous, flex) at (2,0) size 42x3
                 RenderBlock (anonymous) at (0,0) size 3x3
-                  RenderText at (0,-3) size 3x10
+                  RenderText at (0,-3) size 3x0
                     text run at (0,-3) width 3: "\x{219F}"
         RenderText {#text} at (48,15) size 5x19
           text run at (48,15) width 5: " "
@@ -18,7 +18,7 @@ layer at (0,0) size 800x340
             RenderMathMLOperator {mo} at (0,0) size 47x21
               RenderMathMLBlock (anonymous, flex) at (2,0) size 42x3
                 RenderBlock (anonymous) at (0,0) size 3x3
-                  RenderText at (0,-3) size 3x10
+                  RenderText at (0,-3) size 3x0
                     text run at (0,-3) width 3: "\x{219F}"
         RenderText {#text} at (100,15) size 5x19
           text run at (100,15) width 5: " "
@@ -27,7 +27,7 @@ layer at (0,0) size 800x340
             RenderMathMLOperator {mo} at (0,0) size 47x31
               RenderMathMLBlock (anonymous, flex) at (2,0) size 42x3
                 RenderBlock (anonymous) at (0,0) size 3x3
-                  RenderText at (0,-3) size 3x10
+                  RenderText at (0,-3) size 3x0
                     text run at (0,-3) width 3: "\x{219F}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,51) size 784x155
@@ -36,7 +36,7 @@ layer at (0,0) size 800x340
             RenderMathMLOperator {mo} at (0,0) size 47x150
               RenderMathMLBlock (anonymous, flex) at (2,0) size 42x3
                 RenderBlock (anonymous) at (0,0) size 3x3
-                  RenderText at (0,-3) size 3x10
+                  RenderText at (0,-3) size 3x0
                     text run at (0,-3) width 3: "\x{219F}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,222) size 784x86
@@ -45,6 +45,6 @@ layer at (0,0) size 800x340
             RenderMathMLOperator {mo} at (0,0) size 84x82
               RenderMathMLBlock (anonymous, flex) at (0,0) size 83x12
                 RenderBlock (anonymous) at (0,0) size 11x12
-                  RenderText at (0,6) size 11x10
+                  RenderText at (0,6) size 11x0
                     text run at (0,6) width 11: "\x{2A1B}"
         RenderText {#text} at (0,0) size 0x0

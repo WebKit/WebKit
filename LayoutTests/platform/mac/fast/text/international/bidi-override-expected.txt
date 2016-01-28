@@ -50,9 +50,9 @@ layer at (0,0) size 800x344
             RenderTableCell {TD} at (339,28) size 243x28 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (131,6) size 23x18
                 text run at (131,6) width 23: "abc"
-              RenderInline {SPAN} at (0,0) size 68x18
-                RenderText {#text} at (154,6) size 68x18
-                  text run at (154,6) width 68 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+              RenderInline {SPAN} at (0,0) size 69x18
+                RenderText {#text} at (153,6) size 69x18
+                  text run at (153,6) width 69 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
               RenderText {#text} at (101,6) size 137x18
                 text run at (101,6) width 31 RTL: " \x{5D0}\x{5D1}\x{5D2}"
                 text run at (221,6) width 17: "jkl"
@@ -88,9 +88,9 @@ layer at (0,0) size 800x344
               RenderInline {SPAN} at (0,0) size 107x18
                 RenderText {#text} at (131,6) size 23x18
                   text run at (131,6) width 23: "abc"
-                RenderInline {SPAN} at (0,0) size 68x18
-                  RenderText {#text} at (154,6) size 68x18
-                    text run at (154,6) width 68 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                RenderInline {SPAN} at (0,0) size 69x18
+                  RenderText {#text} at (153,6) size 69x18
+                    text run at (153,6) width 69 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
                 RenderText {#text} at (221,6) size 17x18
                   text run at (221,6) width 17: "jkl"
               RenderText {#text} at (127,6) size 5x18
@@ -122,7 +122,7 @@ layer at (0,0) size 800x344
                 text run at (101,6) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
                 text run at (127,6) width 5 RTL: " "
                 text run at (131,6) width 23: "abc"
-                text run at (154,6) width 68 RTL override: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (153,6) width 69 RTL override: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
                 text run at (221,6) width 17: "\x{202C}jkl"
       RenderBlock {P} at (0,163) size 784x18
         RenderText {#text} at (0,0) size 394x18

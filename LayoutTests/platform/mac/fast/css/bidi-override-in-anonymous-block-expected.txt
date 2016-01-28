@@ -221,20 +221,20 @@ layer at (0,0) size 785x1225
           text run at (0,0) width 505: "Anonymous TABLE, TABLE_ROW, TABLE_ROW_GROUP, TABLE_CELL"
       RenderBlock {DIV} at (0,1126) size 769x76 [border: (1.42px solid #000000)]
         RenderTable at (1,1) size 25x73
-          RenderTableSection (anonymous) at (0,18) size 25x36
-            RenderTableRow {DIV} at (0,0) size 25x18
-              RenderTableCell (anonymous) at (0,0) size 25x18 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,0) size 24x18
-                  text run at (1,0) width 24 RTL override: "abc"
-            RenderTableRow (anonymous) at (0,18) size 25x18
-              RenderTableCell {DIV} at (0,18) size 25x18 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (3,0) size 22x18
-                  text run at (3,0) width 22 RTL override: "def"
-          RenderBlock {DIV} at (0,0) size 25x18
-            RenderText {#text} at (7,0) size 18x18
-              text run at (7,0) width 18 RTL override: "hij"
-          RenderTableSection {DIV} at (0,54) size 25x18
-            RenderTableRow (anonymous) at (0,0) size 25x18
-              RenderTableCell (anonymous) at (0,0) size 25x18 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 25x18
-                  text run at (0,0) width 25 RTL override: "opq"
+          RenderTableSection (anonymous) at (0,18) size 24x36
+            RenderTableRow {DIV} at (0,0) size 24x18
+              RenderTableCell (anonymous) at (0,0) size 24x18 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,0) size 23x18
+                  text run at (1,0) width 23 RTL override: "abc"
+            RenderTableRow (anonymous) at (0,18) size 24x18
+              RenderTableCell {DIV} at (0,18) size 24x18 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (3,0) size 21x18
+                  text run at (3,0) width 21 RTL override: "def"
+          RenderBlock {DIV} at (0,0) size 24x18
+            RenderText {#text} at (7,0) size 17x18
+              text run at (7,0) width 17 RTL override: "hij"
+          RenderTableSection {DIV} at (0,54) size 24x18
+            RenderTableRow (anonymous) at (0,0) size 24x18
+              RenderTableCell (anonymous) at (0,0) size 24x18 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 24x18
+                  text run at (0,0) width 24 RTL override: "opq"

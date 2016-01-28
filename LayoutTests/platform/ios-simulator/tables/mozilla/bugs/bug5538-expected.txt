@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,41) size 600x90
         RenderTableSection {TBODY} at (0,0) size 600x89
           RenderTableRow {TR} at (0,0) size 600x89
-            RenderTableCell {TD} at (0,0) size 129x89 [bgcolor=#336699] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 128x89 [bgcolor=#336699] [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 128x19 [color=#0000EE]
                 RenderImage {IMG} at (0,0) size 128x89
             RenderTableCell {TD} at (128,44) size 472x0 [r=0 c=1 rs=1 cs=1]
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,60) size 600x89
           RenderTableSection {TBODY} at (0,0) size 600x89
             RenderTableRow {TR} at (0,0) size 600x89
-              RenderTableCell {TD} at (0,0) size 129x89 [bgcolor=#336699] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 128x89 [bgcolor=#336699] [r=0 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 128x89
               RenderTableCell {TD} at (128,44) size 472x0 [r=0 c=1 rs=1 cs=1]
         RenderTable {TABLE} at (0,149) size 600x18

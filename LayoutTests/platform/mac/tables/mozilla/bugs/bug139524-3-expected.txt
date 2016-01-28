@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (262,2) size 260x20 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 16x18
                 text run at (1,1) width 16: "05"
-            RenderTableCell {TD} at (523,2) size 259x20 [bgcolor=#FF00FF] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (523,2) size 260x20 [bgcolor=#FF00FF] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 16x18
                 text run at (1,1) width 16: "04"

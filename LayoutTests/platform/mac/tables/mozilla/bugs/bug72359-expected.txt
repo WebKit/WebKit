@@ -8,8 +8,8 @@ layer at (0,0) size 800x62
           RenderTableSection (anonymous) at (0,0) size 153x54
             RenderTableRow (anonymous) at (0,0) size 153x18
               RenderTableCell {cell} at (0,0) size 153x18 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (50,0) size 53x18
-                  text run at (50,0) width 53: "THERE"
+                RenderText {#text} at (50,0) size 52x18
+                  text run at (50,0) width 52: "THERE"
             RenderTableRow {row} at (0,18) size 153x18
               RenderTableCell (anonymous) at (0,18) size 153x18 [r=1 c=0 rs=1 cs=1]
                 RenderTable {table} at (0,0) size 153x18
@@ -26,5 +26,5 @@ layer at (0,0) size 800x62
                           text run at (0,0) width 48: "O RED"
             RenderTableRow (anonymous) at (0,36) size 153x18
               RenderTableCell {cell} at (0,36) size 153x18 [color=#FFFFFF] [bgcolor=#008000] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (30,0) size 93x18
-                  text run at (30,0) width 93: "ANYWHERE"
+                RenderText {#text} at (30,0) size 92x18
+                  text run at (30,0) width 92: "ANYWHERE"

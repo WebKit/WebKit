@@ -9,10 +9,10 @@ layer at (0,0) size 800x72
             RenderTableCell {TD} at (2,2) size 228x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 108x19
                 text run at (2,2) width 108: "R1C1 colspan=0"
-            RenderTableCell {TD} at (231,2) size 513x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (231,2) size 514x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 108x19
                 text run at (2,2) width 108: "R1C2 colspan=0"
           RenderTableRow {TR} at (0,28) size 746x24
-            RenderTableCell {TD} at (2,28) size 742x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,28) size 743x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 108x19
                 text run at (2,2) width 108: "R2C1 colspan=2"

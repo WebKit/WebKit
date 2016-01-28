@@ -48,21 +48,21 @@ layer at (0,0) size 800x600
       RenderText {#text} at (140,146) size 5x18
         text run at (140,146) width 5: " "
       RenderTable {TABLE} at (144,140) size 69x76 [border: (2px solid #FF0000)]
-        RenderTableSection {TBODY} at (2,2) size 65x72
-          RenderTableRow {TR} at (0,0) size 65x18
-            RenderTableCell {TD} at (0,0) size 65x18 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (2,2) size 64x72
+          RenderTableRow {TR} at (0,0) size 64x18
+            RenderTableCell {TD} at (0,0) size 64x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 64x18
                 text run at (0,0) width 64: "All on the"
-          RenderTableRow {TR} at (0,18) size 65x18
-            RenderTableCell {TD} at (0,18) size 65x18 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,18) size 64x18
+            RenderTableCell {TD} at (0,18) size 64x18 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 64x18
                 text run at (0,0) width 64: "All on the"
-          RenderTableRow {TR} at (0,36) size 65x18
-            RenderTableCell {TD} at (0,36) size 65x18 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,36) size 64x18
+            RenderTableCell {TD} at (0,36) size 64x18 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 64x18
                 text run at (0,0) width 64: "All on the"
-          RenderTableRow {TR} at (0,54) size 65x18
-            RenderTableCell {TD} at (0,54) size 65x18 [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,54) size 64x18
+            RenderTableCell {TD} at (0,54) size 64x18 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 64x18
                 text run at (0,0) width 64: "All on the"
       RenderText {#text} at (212,146) size 5x18

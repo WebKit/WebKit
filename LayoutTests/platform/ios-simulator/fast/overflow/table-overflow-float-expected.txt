@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 107x106
-        RenderTableSection {TBODY} at (0,0) size 107x106
-          RenderTableRow {TR} at (0,2) size 107x102
-            RenderTableCell {TD} at (2,2) size 103x102 [bgcolor=#CCCCCC] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 106x106
+        RenderTableSection {TBODY} at (0,0) size 106x106
+          RenderTableRow {TR} at (0,2) size 106x102
+            RenderTableCell {TD} at (2,2) size 102x102 [bgcolor=#CCCCCC] [r=0 c=0 rs=1 cs=1]
       RenderBlock (anonymous) at (0,106) size 784x140
         RenderText {#text} at (0,0) size 780x39
           text run at (0,0) width 780: "Here it is: a gray, one-cell, no-width-specified table, with a 100x100 scrolling (overflow:auto) div inside. In this div, there"

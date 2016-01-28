@@ -9,7 +9,7 @@ layer at (0,0) size 800x238
       RenderTable {TABLE} at (0,34) size 161x180 [border: (2px none #808080)]
         RenderTableSection {TBODY} at (2,2) size 156x175
           RenderTableRow {TR} at (0,0) size 156x58
-            RenderTableCell {TD} at (0,16) size 51x26 [border: (3px dotted #00FF00)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,16) size 50x26 [border: (3px dotted #00FF00)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 40x19
                 text run at (4,5) width 40: "dotted"
             RenderTableCell {TD} at (50,15) size 57x28 [border: (3px dotted #00FF00) (5px dotted #FF0000) (3px dotted #00FF00)] [r=0 c=1 rs=1 cs=1]
@@ -19,7 +19,7 @@ layer at (0,0) size 800x238
               RenderText {#text} at (4,4) size 40x19
                 text run at (4,5) width 40: "dotted"
           RenderTableRow {TR} at (0,58) size 156x60
-            RenderTableCell {TD} at (0,75) size 51x26 [border: (3px dotted #00FF00) (5px dotted #FF0000) (2px dotted #00FF00)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,75) size 50x26 [border: (3px dotted #00FF00) (5px dotted #FF0000) (2px dotted #00FF00)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 40x19
                 text run at (4,5) width 40: "dotted"
             RenderTableCell {TD} at (50,73) size 57x30 [border: (5px dashed #00FF00)] [r=1 c=1 rs=1 cs=1]
@@ -29,7 +29,7 @@ layer at (0,0) size 800x238
               RenderText {#text} at (6,4) size 40x19
                 text run at (6,5) width 40: "dotted"
           RenderTableRow {TR} at (0,118) size 156x57
-            RenderTableCell {TD} at (0,134) size 51x25 [border: (3px dotted #00FF00)] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,134) size 50x25 [border: (3px dotted #00FF00)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 40x18
                 text run at (4,4) width 40: "dotted"
             RenderTableCell {TD} at (50,133) size 57x27 [border: (5px dotted #FF0000) (2px dotted #00FF00)] [r=2 c=1 rs=1 cs=1]

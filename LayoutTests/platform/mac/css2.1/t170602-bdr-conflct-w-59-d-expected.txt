@@ -12,29 +12,29 @@ layer at (0,0) size 800x228
             RenderTableCell {TD} at (0,17) size 39x21 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x19
                 text run at (1,2) width 32: "none"
-            RenderTableCell {TD} at (38,15) size 46x25 [border: none] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (38,15) size 45x25 [border: none] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x18
                 text run at (1,1) width 32: "none"
-            RenderTableCell {TD} at (83,17) size 39x21 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (82,17) size 40x21 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x19
                 text run at (1,2) width 32: "none"
           RenderTableRow {TR} at (0,55) size 122x60
             RenderTableCell {TD} at (0,75) size 39x20 [border: none] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x18
                 text run at (1,1) width 32: "none"
-            RenderTableCell {TD} at (38,70) size 46x30 [border: (5px ridge #00FF00)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (38,70) size 45x30 [border: (5px ridge #00FF00)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 33x18
                 text run at (6,6) width 33: "ridge"
-            RenderTableCell {TD} at (83,75) size 39x20 [border: none] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (82,75) size 40x20 [border: none] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (6,1) size 32x18
                 text run at (6,1) width 32: "none"
           RenderTableRow {TR} at (0,115) size 122x55
             RenderTableCell {TD} at (0,132) size 39x21 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x19
                 text run at (1,2) width 32: "none"
-            RenderTableCell {TD} at (38,130) size 46x25 [border: (5px none #FF0000)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (38,130) size 45x25 [border: (5px none #FF0000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (1,6) size 32x18
                 text run at (1,6) width 32: "none"
-            RenderTableCell {TD} at (83,132) size 39x21 [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (82,132) size 40x21 [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x19
                 text run at (1,2) width 32: "none"

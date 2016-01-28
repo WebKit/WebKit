@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 601x521
-        RenderTableSection {TBODY} at (0,0) size 601x521
-          RenderTableRow {TR} at (0,0) size 601x521
-            RenderTableCell {TD} at (0,0) size 601x521 [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (0,0) size 601x1
+      RenderTable {TABLE} at (0,0) size 600x521
+        RenderTableSection {TBODY} at (0,0) size 600x521
+          RenderTableRow {TR} at (0,0) size 600x521
+            RenderTableCell {TD} at (0,0) size 600x521 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (0,0) size 600x1
                 RenderImage {IMG} at (0,0) size 600x1
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {BLOCKQUOTE} at (40,17) size 521x488
-                RenderBlock {BLOCKQUOTE} at (40,0) size 441x488
-                  RenderBlock (anonymous) at (0,0) size 441x240
-                    RenderTable {TABLE} at (180,0) size 261x317
+              RenderBlock {BLOCKQUOTE} at (40,17) size 520x488
+                RenderBlock {BLOCKQUOTE} at (40,0) size 440x488
+                  RenderBlock (anonymous) at (0,0) size 440x240
+                    RenderTable {TABLE} at (180,0) size 260x317
                       RenderTableSection {TBODY} at (0,0) size 260x317
                         RenderTableRow {TR} at (0,0) size 260x24
                           RenderTableCell {TD} at (0,0) size 6x24 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
                             RenderBR {BR} at (2,2) size 0x19
-                          RenderTableCell {TD} at (5,2) size 255x20 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
+                          RenderTableCell {TD} at (6,2) size 254x20 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
                             RenderInline {FONT} at (0,0) size 245x16
                               RenderInline {B} at (0,0) size 245x16
                                 RenderText {#text} at (2,2) size 245x16
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
                         RenderTableRow {TR} at (0,24) size 260x293
                           RenderTableCell {TD} at (0,158) size 6x25 [bgcolor=#FFFFFF] [r=1 c=0 rs=1 cs=1]
                             RenderBR {BR} at (2,137) size 0x19
-                          RenderTableCell {TD} at (5,24) size 255x293 [r=1 c=1 rs=1 cs=1]
+                          RenderTableCell {TD} at (6,24) size 254x293 [r=1 c=1 rs=1 cs=1]
                             RenderTable {TABLE} at (2,2) size 250x272
                               RenderTableSection {TBODY} at (0,0) size 250x272
                                 RenderTableRow {TR} at (0,0) size 250x17 [bgcolor=#EEEEEE]
@@ -54,7 +54,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 16x13
                                       RenderText {#text} at (16,2) size 16x13
                                         text run at (16,2) width 16: "Pts"
-                                  RenderTableCell {TD} at (223,0) size 27x17 [r=0 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,0) size 28x17 [r=0 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 22x13
                                       RenderText {#text} at (3,2) size 22x13
                                         text run at (3,2) width 22: "PPG"
@@ -83,7 +83,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "2707"
-                                  RenderTableCell {TD} at (223,17) size 27x17 [r=1 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,17) size 28x17 [r=1 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "37.6"
@@ -112,7 +112,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "3033"
-                                  RenderTableCell {TD} at (223,34) size 27x17 [r=2 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,34) size 28x17 [r=2 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "38.4"
@@ -141,7 +141,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "4029"
-                                  RenderTableCell {TD} at (223,51) size 27x17 [r=3 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,51) size 28x17 [r=3 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "50.4"
@@ -170,7 +170,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "3806"
-                                  RenderTableCell {TD} at (223,68) size 27x17 [r=4 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,68) size 28x17 [r=4 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "44.8"
@@ -199,7 +199,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "2948"
-                                  RenderTableCell {TD} at (223,85) size 27x17 [r=5 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,85) size 28x17 [r=5 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "36.9"
@@ -228,7 +228,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "2534"
-                                  RenderTableCell {TD} at (223,102) size 27x17 [r=6 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,102) size 28x17 [r=6 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "34.7"
@@ -257,7 +257,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "2649"
-                                  RenderTableCell {TD} at (223,119) size 27x17 [r=7 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,119) size 28x17 [r=7 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "33.5"
@@ -286,7 +286,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "1956"
-                                  RenderTableCell {TD} at (223,136) size 27x17 [r=8 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,136) size 28x17 [r=8 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "24.1"
@@ -315,7 +315,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "1992"
-                                  RenderTableCell {TD} at (223,153) size 27x17 [r=9 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,153) size 28x17 [r=9 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "24.3"
@@ -344,7 +344,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "1664"
-                                  RenderTableCell {TD} at (223,170) size 27x17 [r=10 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,170) size 28x17 [r=10 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "20.5"
@@ -373,7 +373,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 18x13
                                       RenderText {#text} at (14,2) size 18x13
                                         text run at (14,2) width 18: "328"
-                                  RenderTableCell {TD} at (223,187) size 27x17 [r=11 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,187) size 28x17 [r=11 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "27.3"
@@ -402,7 +402,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "1696"
-                                  RenderTableCell {TD} at (223,204) size 27x17 [r=12 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,204) size 28x17 [r=12 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "20.7"
@@ -431,7 +431,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "1213"
-                                  RenderTableCell {TD} at (223,221) size 27x17 [r=13 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,221) size 28x17 [r=13 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "14.8"
@@ -460,7 +460,7 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 23x13
                                       RenderText {#text} at (9,2) size 23x13
                                         text run at (9,2) width 23: "1084"
-                                  RenderTableCell {TD} at (223,238) size 27x17 [r=14 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,238) size 28x17 [r=14 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "13.2"
@@ -485,11 +485,11 @@ layer at (0,0) size 800x600
                                     RenderInline {FONT} at (0,0) size 29x13
                                       RenderText {#text} at (3,2) size 29x13
                                         text run at (3,2) width 29: "31419"
-                                  RenderTableCell {TD} at (223,255) size 27x17 [r=15 c=6 rs=1 cs=1]
+                                  RenderTableCell {TD} at (223,255) size 28x17 [r=15 c=6 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 21x13
                                       RenderText {#text} at (4,2) size 21x13
                                         text run at (4,2) width 21: "30.1"
-                            RenderBlock {HR} at (2,282) size 251x1 [border: (1px inset #000000) none (1px inset #000000)]
+                            RenderBlock {HR} at (2,282) size 250x1 [border: (1px inset #000000) none (1px inset #000000)]
                     RenderText {#text} at (0,0) size 179x239
                       text run at (0,0) width 167: "Known as ``Wilt the Stilt''"
                       text run at (0,20) width 171: "and ``The Big Dipper,'' the"
@@ -503,18 +503,18 @@ layer at (0,0) size 800x600
                       text run at (0,180) width 179: "scored 31,419 points during"
                       text run at (0,200) width 165: "his career, averaging 30.1"
                       text run at (0,220) width 131: "points for his career."
-                  RenderBlock {P} at (0,256) size 441x60
+                  RenderBlock {P} at (0,256) size 440x60
                     RenderText {#text} at (0,0) size 158x59
                       text run at (0,0) width 158: "He also led the league in"
                       text run at (0,20) width 149: "career rebounding with"
                       text run at (0,40) width 48: "23,924."
-                  RenderBlock {P} at (0,332) size 441x80
+                  RenderBlock {P} at (0,332) size 440x80
                     RenderText {#text} at (0,0) size 440x79
                       text run at (0,0) width 406: "One of only two men named MVP and rookie of the year in the"
                       text run at (0,20) width 439: "same season (1959), he was also MVP in 1966 through 1968. He led"
                       text run at (0,40) width 440: "the NBA in scoring seven straight seasons, 1960 to 1966, and led the"
                       text run at (0,60) width 272: "league in rebounding 11 of his 14 seasons."
-                  RenderBlock {P} at (0,428) size 441x60
+                  RenderBlock {P} at (0,428) size 440x60
                     RenderText {#text} at (0,0) size 439x59
                       text run at (0,0) width 406: "One of his most famous records is the 100 points he scored in a"
                       text run at (0,20) width 439: "single game in the Philadelphia Warriors' 169-147 defeat of the New"

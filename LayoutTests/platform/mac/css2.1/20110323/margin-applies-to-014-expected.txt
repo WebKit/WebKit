@@ -7,9 +7,9 @@ layer at (0,0) size 800x50
         RenderText {#text} at (0,0) size 443x18
           text run at (0,0) width 443: "Test passes if there is space between the blue and orange lines below."
 layer at (8,50) size 340x344
-  RenderBlock (positioned) {DIV} at (8,50) size 341x344 [border: (10px solid #0000FF)]
-    RenderTable {DIV} at (60,60) size 221x220 [border: (10px solid #FFA500)]
-      RenderTableSection (anonymous) at (10,10) size 201x200
-        RenderTableRow {DIV} at (0,0) size 201x200
-          RenderTableCell {DIV} at (0,0) size 201x0 [r=0 c=0 rs=1 cs=1]
+  RenderBlock (positioned) {DIV} at (8,50) size 340x344 [border: (10px solid #0000FF)]
+    RenderTable {DIV} at (60,60) size 220x220 [border: (10px solid #FFA500)]
+      RenderTableSection (anonymous) at (10,10) size 200x200
+        RenderTableRow {DIV} at (0,0) size 200x200
+          RenderTableCell {DIV} at (0,0) size 200x0 [r=0 c=0 rs=1 cs=1]
     RenderText {#text} at (0,0) size 0x0

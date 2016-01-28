@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (101,2) size 103x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 70x19
                 text run at (2,2) width 70: "Messenger"
-            RenderTableCell {TD} at (205,2) size 91x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (206,2) size 91x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x19
                 text run at (2,2) width 56: "Collabra"
           RenderTableRow {TR} at (0,28) size 298x24
@@ -29,6 +29,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (101,28) size 103x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 58x19
                 text run at (2,2) width 58: "Calendar"
-            RenderTableCell {TD} at (205,28) size 91x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (206,28) size 91x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 61x19
                 text run at (2,2) width 61: "Netcaster"

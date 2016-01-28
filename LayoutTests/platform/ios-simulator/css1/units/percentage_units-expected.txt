@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,345) size 784x230 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x228
           RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 783x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
@@ -42,15 +42,15 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,114) size 13x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x200 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 771x200 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (4,4) size 762x136 [bgcolor=#FFFF00]
                 RenderBlock {DIV} at (190,0) size 382x60 [bgcolor=#FFFFFF]
-                  RenderBlock {P} at (0,0) size 382x60
+                  RenderBlock {P} at (0,0) size 381x60
                     RenderText {#text} at (0,0) size 332x59
                       text run at (0,0) width 332: "This paragraph should be centered within its yellow"
                       text run at (0,20) width 330: "containing block and its width should be half of the"
                       text run at (0,40) width 112: "containing block."
-                RenderBlock {DIV} at (380,76) size 382x60 [bgcolor=#FFFFFF]
+                RenderBlock {DIV} at (381,76) size 381x60 [bgcolor=#FFFFFF]
                   RenderBlock {P} at (0,0) size 381x60
                     RenderText {#text} at (0,0) size 361x59
                       text run at (0,0) width 361: "This paragraph should be right-aligned within its yellow"

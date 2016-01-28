@@ -21,9 +21,9 @@ layer at (0,0) size 800x600
           text run at (0,0) width 410: "There should be two 100x100 squares stacked vertically below. "
           text run at (409,0) width 324: "The green square should be above the blue square."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,96) size 105x204
-        RenderTableSection {TBODY} at (0,0) size 105x204
-          RenderTableRow (anonymous) at (0,2) size 105x200
-            RenderTableCell (anonymous) at (2,2) size 101x200 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,96) size 104x204
+        RenderTableSection {TBODY} at (0,0) size 104x204
+          RenderTableRow (anonymous) at (0,2) size 104x200
+            RenderTableCell (anonymous) at (2,2) size 100x200 [r=0 c=0 rs=1 cs=1]
               RenderBlock {TR} at (0,0) size 100x100 [bgcolor=#008000]
               RenderBlock {TR} at (0,100) size 100x100 [bgcolor=#0000FF]

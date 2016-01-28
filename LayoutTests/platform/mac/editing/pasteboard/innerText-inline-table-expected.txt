@@ -10,20 +10,20 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,7) size 32x18
           text run at (0,7) width 32: "hello"
         RenderTable {TABLE} at (31,0) size 15x24
-          RenderTableSection {TBODY} at (0,0) size 15x24
-            RenderTableRow {TR} at (0,2) size 15x20
-              RenderTableCell {TD} at (2,2) size 11x20 [r=0 c=0 rs=1 cs=1]
+          RenderTableSection {TBODY} at (0,0) size 14x24
+            RenderTableRow {TR} at (0,2) size 14x20
+              RenderTableCell {TD} at (2,2) size 10x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 8x18
                   text run at (1,1) width 8: "1"
-        RenderText {#text} at (46,7) size 38x18
-          text run at (46,7) width 38: "world"
+        RenderText {#text} at (45,7) size 39x18
+          text run at (45,7) width 39: "world"
       RenderBlock {DIV} at (0,43) size 784x25
         RenderText {#text} at (0,7) size 26x18
           text run at (0,7) width 26: "foo "
         RenderTable {TABLE} at (25,0) size 15x24
-          RenderTableSection {TBODY} at (0,0) size 15x24
-            RenderTableRow {TR} at (0,2) size 15x20
-              RenderTableCell {TD} at (2,2) size 11x20 [r=0 c=0 rs=1 cs=1]
+          RenderTableSection {TBODY} at (0,0) size 14x24
+            RenderTableRow {TR} at (0,2) size 14x20
+              RenderTableCell {TD} at (2,2) size 10x20 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 8x18
                   text run at (1,1) width 8: "2"
         RenderText {#text} at (39,7) size 25x18

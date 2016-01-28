@@ -74,9 +74,10 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 columnLayout.maxLogicalWidth = std::max<float>(columnLayout.maxLogicalWidth, 1);
 
                 if (cell->colSpan() == 1) {
-                    columnLayout.minLogicalWidth = std::max<float>(cell->minPreferredLogicalWidth(), columnLayout.minLogicalWidth);
-                    if (cell->maxPreferredLogicalWidth() > columnLayout.maxLogicalWidth) {
-                        columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth();
+                    columnLayout.minLogicalWidth = std::max(cell->minPreferredLogicalWidth().ceilToFloat(), columnLayout.minLogicalWidth);
+                    float maxPreferredWidth = cell->maxPreferredLogicalWidth().ceilToFloat();
+                    if (maxPreferredWidth > columnLayout.maxLogicalWidth) {
+                        columnLayout.maxLogicalWidth = maxPreferredWidth;
                         maxContributor = cell;
                     }
 
@@ -394,8 +395,8 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
                     allocatedMinLogicalWidth += columnMinLogicalWidth;
                     allocatedMaxLogicalWidth += columnMaxLogicalWidth;
                 }
-                ASSERT(allocatedMinLogicalWidth <= cellMinLogicalWidth);
-                ASSERT(allocatedMaxLogicalWidth <= cellMaxLogicalWidth);
+                ASSERT(allocatedMinLogicalWidth < cellMinLogicalWidth || WTF::areEssentiallyEqual(allocatedMinLogicalWidth, cellMinLogicalWidth));
+                ASSERT(allocatedMaxLogicalWidth < cellMaxLogicalWidth || WTF::areEssentiallyEqual(allocatedMaxLogicalWidth, cellMaxLogicalWidth));
                 cellMinLogicalWidth -= allocatedMinLogicalWidth;
                 cellMaxLogicalWidth -= allocatedMaxLogicalWidth;
             } else {
@@ -753,10 +754,10 @@ void AutoTableLayout::layout()
         }
     }
 
-    float pos = 0;
+    LayoutUnit pos = 0;
     for (size_t i = 0; i < nEffCols; ++i) {
         m_table->setColumnPosition(i, pos);
-        pos += m_layoutStruct[i].computedLogicalWidth + m_table->hBorderSpacing();
+        pos += LayoutUnit::fromFloatCeil(m_layoutStruct[i].computedLogicalWidth) + m_table->hBorderSpacing();
     }
     m_table->setColumnPosition(m_table->columnPositions().size() - 1, pos);
 }

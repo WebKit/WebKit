@@ -10,13 +10,13 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 640x94 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 638x92
             RenderTableRow {TR} at (0,2) size 638x62
-              RenderTableCell {TD} at (2,2) size 634x62 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderTableCell {TD} at (2,2) size 635x62 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
                 RenderImage {IMG} at (2,2) size 600x58
             RenderTableRow {TR} at (0,66) size 638x24
               RenderTableCell {TD} at (2,66) size 127x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 58x19
                   text run at (2,2) width 58: "MC Visa"
-              RenderTableCell {TD} at (130,66) size 506x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (130,66) size 507x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x19
                   text run at (2,2) width 48: "SLmail"
       RenderBlock {HR} at (0,146) size 130x2 [border: (1px inset #000000)]
@@ -27,13 +27,13 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 640x54 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 638x52
             RenderTableRow {TR} at (0,2) size 638x22
-              RenderTableCell {TD} at (2,2) size 634x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderTableCell {TD} at (2,2) size 635x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
                 RenderImage {IMG} at (2,2) size 190x18
             RenderTableRow {TR} at (0,26) size 638x24
               RenderTableCell {TD} at (2,26) size 127x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 58x19
                   text run at (2,2) width 58: "MC Visa"
-              RenderTableCell {TD} at (130,26) size 506x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (130,26) size 507x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x19
                   text run at (2,2) width 48: "SLmail"
       RenderBlock {HR} at (0,262) size 130x2 [border: (1px inset #000000)]
@@ -44,7 +44,7 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 640x76 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 638x74
             RenderTableRow {TR} at (0,2) size 638x44
-              RenderTableCell {TD} at (2,2) size 634x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderTableCell {TD} at (2,2) size 635x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
                 RenderText {#text} at (2,2) size 612x39
                   text run at (2,2) width 612: "text text text text text text text text text text text text text text text text text text text text text text"
                   text run at (2,22) width 192: "text text text text text text text"
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,48) size 127x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 58x19
                   text run at (2,2) width 58: "MC Visa"
-              RenderTableCell {TD} at (130,48) size 506x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (130,48) size 507x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x19
                   text run at (2,2) width 48: "SLmail"
       RenderBlock {HR} at (0,400) size 130x2 [border: (1px inset #000000)]

@@ -10,7 +10,7 @@ layer at (0,0) size 298x600
               RenderText {#text} at (43,-32) size 122x144
                 text run at (43,-32) width 144: "\x{7B2C}\x{4E00}\x{6BB5}"
                 text run at (111,-32) width 48: "\x{843D}"
-            RenderTableCell {TD} at (2,196) size 274x382 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (2,196) size 274x383 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (16,2) size 242x288
                 text run at (16,2) width 288: "\x{7B2C}\x{4E8C}\x{6BB5}"
                 text run at (151,2) width 96: "\x{843D}"

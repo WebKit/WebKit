@@ -37,7 +37,7 @@ layer at (0,0) size 800x620
       RenderTable {TABLE} at (0,136) size 68x26
         RenderTableSection {TBODY} at (0,0) size 68x26
           RenderTableRow {TR} at (0,2) size 68x22
-            RenderTableCell {TD} at (2,2) size 19x22 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 18x22 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 16x19
                 text run at (1,1) width 16: "no"
             RenderTableCell {TD} at (22,2) size 44x22 [r=0 c=1 rs=1 cs=1]

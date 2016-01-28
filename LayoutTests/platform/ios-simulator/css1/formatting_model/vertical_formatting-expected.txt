@@ -92,7 +92,7 @@ layer at (0,0) size 800x2559
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x1079
-            RenderTableCell {TD} at (0,553) size 13x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,553) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,3) size 4x20
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,28) size 770x1079 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
@@ -139,10 +139,10 @@ layer at (0,0) size 800x2559
                   text run at (0,20) width 346: "and the one above it, since margins do not collapse on"
                   text run at (0,40) width 115: "floating elements."
               RenderBlock {P} at (4,825) size 762x61
-                RenderText {#text} at (380,0) size 368x59
-                  text run at (380,0) width 356: "There should be one centimeter between this paragraph"
-                  text run at (380,20) width 368: "and the (non-floating) one above it, since the float should"
-                  text run at (380,40) width 210: "not effect the paragraph spacing."
+                RenderText {#text} at (381,0) size 368x59
+                  text run at (381,0) width 355: "There should be one centimeter between this paragraph"
+                  text run at (381,20) width 368: "and the (non-floating) one above it, since the float should"
+                  text run at (381,40) width 209: "not effect the paragraph spacing."
               RenderBlock {P} at (4,939) size 762x78
                 RenderText {#text} at (0,0) size 760x39
                   text run at (0,0) width 562: "There should be two centimeters of padding between this paragraph and the one below. "

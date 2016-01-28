@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 156x42
         RenderTableSection {TBODY} at (0,0) size 156x42
           RenderTableRow {TR} at (0,2) size 156x38
-            RenderTableCell {TD} at (2,2) size 51x38 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 50x38 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 48x36
                 text run at (1,1) width 31: "first-"
                 text run at (1,19) width 48: "column"

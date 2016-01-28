@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x542
   RenderBlock {HTML} at (0,0) size 800x542
     RenderBody {BODY} at (8,8) size 784x518 [bgcolor=#999999]
-      RenderTable {TABLE} at (0,0) size 153x64 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 153x36
+      RenderTable {TABLE} at (0,0) size 152x64 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 152x36
           RenderText {#text} at (11,0) size 130x36
             text run at (11,0) width 130: "Table with no width"
             text run at (49,18) width 54: "attribute"
@@ -13,18 +13,18 @@ layer at (0,0) size 800x542
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (1,37) size 151x26
-          RenderTableRow {TR} at (0,2) size 151x22
+        RenderTableSection {TBODY} at (1,37) size 150x26
+          RenderTableRow {TR} at (0,2) size 150x22
             RenderTableCell {TD} at (2,2) size 50x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18
                 text run at (2,2) width 32: "50px"
-            RenderTableCell {TD} at (54,2) size 21x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (54,2) size 20x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x18
                 text run at (2,2) width 16: "1*"
-            RenderTableCell {TD} at (76,2) size 51x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (76,2) size 50x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18
                 text run at (2,2) width 32: "50px"
-            RenderTableCell {TD} at (128,2) size 21x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (128,2) size 20x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x18
                 text run at (2,2) width 16: "3*"
       RenderBlock {P} at (0,80) size 784x18

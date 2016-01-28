@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
                   text run at (27,1) width 51: "PRICE"
             RenderTableCell {TD} at (525,8) size 6x4 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 1x1
-            RenderTableCell {TD} at (530,0) size 68x20 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
+            RenderTableCell {TD} at (530,0) size 69x20 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
               RenderInline {B} at (0,0) size 41x18
                 RenderText {#text} at (13,1) size 41x18
                   text run at (13,1) width 41: "INFO"
@@ -49,9 +49,9 @@ layer at (0,0) size 800x600
                   text run at (34,1) width 44: "$270.00"
             RenderTableCell {TD} at (525,8) size 6x4 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 1x1
-            RenderTableCell {TD} at (530,0) size 68x20 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
+            RenderTableCell {TD} at (530,0) size 69x20 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
               RenderText {#text} at (16,1) size 35x18
                 text run at (16,1) width 35: "More"
           RenderTableRow {TR} at (0,20) size 598x3
-            RenderTableCell {TD} at (0,20) size 598x3 [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=8]
+            RenderTableCell {TD} at (0,20) size 599x3 [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=8]
               RenderImage {IMG} at (1,1) size 1x1
