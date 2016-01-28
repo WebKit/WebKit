@@ -88,6 +88,8 @@ namespace {
 
 bool verbose = false;
 
+// FIXME: This IntRange stuff should be refactored into a general constant propagator. It's weird
+// that it's just sitting here in this file.
 class IntRange {
 public:
     IntRange()
@@ -156,25 +158,6 @@ public:
             return rangeForZShr<int32_t>(shiftAmount);
         case Int64:
             return rangeForZShr<int64_t>(shiftAmount);
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return IntRange();
-        }
-    }
-
-    template<typename T>
-    static IntRange rangeForSShr(int32_t shiftAmount)
-    {
-        return IntRange(top<T>().min() >> shiftAmount, top<T>().max() >> shiftAmount);
-    }
-
-    static IntRange rangeForSShr(int32_t shiftAmount, Type type)
-    {
-        switch (type) {
-        case Int32:
-            return rangeForSShr<int32_t>(shiftAmount);
-        case Int64:
-            return rangeForSShr<int64_t>(shiftAmount);
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return IntRange();
@@ -255,8 +238,8 @@ public:
     template<typename T>
     IntRange shl(int32_t shiftAmount)
     {
-        T newMin = static_cast<T>(m_min) << shiftAmount;
-        T newMax = static_cast<T>(m_max) << shiftAmount;
+        T newMin = static_cast<T>(m_min) << static_cast<T>(shiftAmount);
+        T newMax = static_cast<T>(m_max) << static_cast<T>(shiftAmount);
 
         if ((newMin >> shiftAmount) != static_cast<T>(m_min))
             newMin = std::numeric_limits<T>::min();
@@ -273,6 +256,61 @@ public:
             return shl<int32_t>(shiftAmount);
         case Int64:
             return shl<int64_t>(shiftAmount);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    template<typename T>
+    IntRange sShr(int32_t shiftAmount)
+    {
+        T newMin = static_cast<T>(m_min) >> static_cast<T>(shiftAmount);
+        T newMax = static_cast<T>(m_max) >> static_cast<T>(shiftAmount);
+
+        return IntRange(newMin, newMax);
+    }
+
+    IntRange sShr(int32_t shiftAmount, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return sShr<int32_t>(shiftAmount);
+        case Int64:
+            return sShr<int64_t>(shiftAmount);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return IntRange();
+        }
+    }
+
+    template<typename T>
+    IntRange zShr(int32_t shiftAmount)
+    {
+        // This is an awkward corner case for all of the other logic.
+        if (!shiftAmount)
+            return *this;
+
+        // If the input range may be negative, then all we can say about the output range is that it
+        // will be masked. That's because -1 right shifted just produces that mask.
+        if (m_min < 0)
+            return rangeForZShr<T>(shiftAmount);
+
+        // If the input range is non-negative, then this just brings the range closer to zero.
+        typedef typename std::make_unsigned<T>::type UnsignedT;
+        UnsignedT newMin = static_cast<UnsignedT>(m_min) >> static_cast<UnsignedT>(shiftAmount);
+        UnsignedT newMax = static_cast<UnsignedT>(m_max) >> static_cast<UnsignedT>(shiftAmount);
+        
+        return IntRange(newMin, newMax);
+    }
+
+    IntRange zShr(int32_t shiftAmount, Type type)
+    {
+        switch (type) {
+        case Int32:
+            return zShr<int32_t>(shiftAmount);
+        case Int64:
+            return zShr<int64_t>(shiftAmount);
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return IntRange();
@@ -1955,19 +1993,24 @@ private:
             break;
 
         case SShr:
-            if (value->child(1)->hasInt32())
-                return IntRange::rangeForSShr(value->child(1)->asInt32(), value->type());
+            if (value->child(1)->hasInt32()) {
+                return rangeFor(value->child(0), timeToLive - 1).sShr(
+                    value->child(1)->asInt32(), value->type());
+            }
             break;
 
         case ZShr:
-            if (value->child(1)->hasInt32())
-                return IntRange::rangeForZShr(value->child(1)->asInt32(), value->type());
+            if (value->child(1)->hasInt32()) {
+                return rangeFor(value->child(0), timeToLive - 1).zShr(
+                    value->child(1)->asInt32(), value->type());
+            }
             break;
 
         case Shl:
-            if (value->child(1)->hasInt32())
+            if (value->child(1)->hasInt32()) {
                 return rangeFor(value->child(0), timeToLive - 1).shl(
                     value->child(1)->asInt32(), value->type());
+            }
             break;
 
         case Add:

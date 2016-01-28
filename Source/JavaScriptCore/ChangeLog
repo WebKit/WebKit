@@ -1,3 +1,24 @@
+2016-01-27  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 IntRange analysis should know more about shifting
+        https://bugs.webkit.org/show_bug.cgi?id=153568
+
+        Reviewed by Benjamin Poulain.
+
+        This teaches the IntRange analysis that the result of a right shift is usually better than
+        the worst-case mask based on the shift amount. In fact, you can reach useful conclusions
+        from looking at the IntRange of the input. This helps because Octane/crypto does something
+        like:
+
+            CheckMul((@x & $268435455) >> 14, @y >> 14, ...)
+
+        If you consider just the shifts, then this may overflow. But if you consider that @x is
+        first masked, then the IntRange coming out of the first shift is tight enough to prove that
+        the CheckMul cannot overflow.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+
 2016-01-27  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] adjustFrameAndStackInOSRExitCompilerThunk() can trash values in FTL
