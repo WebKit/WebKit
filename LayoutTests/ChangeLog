@@ -1,3 +1,12 @@
+2016-01-28  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Index uniqueness broken in the SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153596
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-28  Zalan Bujtas  <zalan@apple.com>
 
         [Win] gardening after r195740. (more to follow)

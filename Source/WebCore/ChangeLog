@@ -1,3 +1,22 @@
+2016-01-28  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Index uniqueness broken in the SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153596
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Many failing tests now pass, others improve).
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedHasIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateIndexesForAddRecord): Deleted.
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
 2016-01-08  Jer Noble  <jer.noble@apple.com>
 
         Custom protocol loading through AVFoundation does not support byte-range requests.
