@@ -1,5 +1,17 @@
 2016-01-28  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r194237. rdar://problem/24268438
+
+    2015-12-17  Zalan Bujtas  <zalan@apple.com>
+
+            Unreviewed gardening.
+            rdar://problem/23910755
+
+            * fast/css/pseudo-visited-background-color-on-input-expected.html:
+            * fast/css/pseudo-visited-background-color-on-input.html:
+
+2016-01-28  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r195710. rdar://problem/24337780
 
     2016-01-27  Babak Shafiei  <bshafiei@apple.com>
