@@ -60,8 +60,7 @@ public:
                     if (!phi->children.child(childIdx))
                         break;
                     
-                    phi->variableAccessData()->unify(
-                        phi->children.child(childIdx)->variableAccessData());
+                    phi->children.child(childIdx)->variableAccessData()->unify(phi->variableAccessData());
                 }
             }
         }
@@ -74,6 +73,7 @@ public:
             data->find()->mergeCheckArrayHoistingFailed(data->checkArrayHoistingFailed());
             data->find()->mergeShouldNeverUnbox(data->shouldNeverUnbox());
             data->find()->mergeIsLoadedFrom(data->isLoadedFrom());
+            data->find()->mergeIsProfitableToUnbox(data->isProfitableToUnbox());
         }
         
         m_graph.m_unificationState = GloballyUnified;
