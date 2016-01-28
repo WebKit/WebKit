@@ -35,7 +35,7 @@
     background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
     background-size: 100% 200%;
 
-    height: 26px;
+    height: 24px;
 
     white-space: nowrap;
     overflow: hidden;
@@ -78,7 +78,7 @@ body.window-inactive .tab-bar > .top-border {
 
     padding: 0 6px;
 
-    min-width: 30px;
+    min-width: 24px;
     overflow: hidden;
 
     background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
@@ -102,7 +102,7 @@ body.window-inactive .tab-bar > .top-border {
 }
 
 .tab-bar > .item.pinned {
-    width: 30px;
+    width: 24px;
     flex: none;
     justify-content: center;
 }
