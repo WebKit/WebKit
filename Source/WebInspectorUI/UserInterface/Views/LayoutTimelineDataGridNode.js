@@ -47,7 +47,19 @@ WebInspector.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode exten
 
     get data()
     {
-        return {eventType: this._record.eventType, width: this._record.width, height: this._record.height, area: this._record.width * this._record.height, startTime: this._record.startTime, totalTime: this._record.duration, location: this._record.initiatorCallFrame};
+        if (!this._cachedData) {
+            this._cachedData = {
+                eventType: this._record.eventType,
+                width: this._record.width,
+                height: this._record.height,
+                area: this._record.width * this._record.height,
+                startTime: this._record.startTime,
+                totalTime: this._record.duration,
+                location: this._record.initiatorCallFrame,
+            };
+        }
+
+        return this._cachedData;
     }
 
     createCellContent(columnIdentifier, cell)

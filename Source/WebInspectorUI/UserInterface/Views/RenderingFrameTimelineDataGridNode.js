@@ -47,11 +47,22 @@ WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDa
 
     get data()
     {
-        var scriptTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Script);
-        var layoutTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Layout);
-        var paintTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint);
-        var otherTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Other);
-        return {startTime: this._record.startTime, scriptTime, layoutTime, paintTime, otherTime, totalTime: this._record.duration};
+        if (!this._cachedData) {
+            var scriptTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Script);
+            var layoutTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Layout);
+            var paintTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint);
+            var otherTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Other);
+            this._cachedData = {
+                startTime: this._record.startTime,
+                totalTime: this._record.duration,
+                scriptTime,
+                layoutTime,
+                paintTime,
+                otherTime,
+            };
+        }
+
+        return this._cachedData;
     }
 
     createCellContent(columnIdentifier, cell)

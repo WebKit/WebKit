@@ -1,3 +1,18 @@
+2016-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Avoid recreating Timeline's DataGridNode data multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=153608
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WebInspector.LayoutTimelineDataGridNode.prototype.get data):
+        * UserInterface/Views/RenderingFrameTimelineDataGridNode.js:
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.get data):
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get data):
+        Cache the data when we create it the first time.
+
 2016-01-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Tabs height should be 2px less to match Safari

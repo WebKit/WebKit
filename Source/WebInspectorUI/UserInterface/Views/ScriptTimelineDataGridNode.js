@@ -64,28 +64,32 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
 
     get data()
     {
-        var startTime = this._record.startTime;
-        var duration = this._record.startTime + this._record.duration - startTime;
-        var callFrameOrSourceCodeLocation = this._record.initiatorCallFrame || this._record.sourceCodeLocation;
+        if (!this._cachedData) {
+            var startTime = this._record.startTime;
+            var duration = this._record.startTime + this._record.duration - startTime;
+            var callFrameOrSourceCodeLocation = this._record.initiatorCallFrame || this._record.sourceCodeLocation;
 
-        // COMPATIBILITY (iOS 8): Profiles included per-call information and can be finely partitioned.
-        if (this._record.profile) {
-            var oneRootNode = this._record.profile.topDownRootNodes[0];
-            if (oneRootNode && oneRootNode.calls) {
-                startTime = Math.max(this._rangeStartTime, this._record.startTime);
-                duration = Math.min(this._record.startTime + this._record.duration, this._rangeEndTime) - startTime;
+            // COMPATIBILITY (iOS 8): Profiles included per-call information and can be finely partitioned.
+            if (this._record.profile) {
+                var oneRootNode = this._record.profile.topDownRootNodes[0];
+                if (oneRootNode && oneRootNode.calls) {
+                    startTime = Math.max(this._rangeStartTime, this._record.startTime);
+                    duration = Math.min(this._record.startTime + this._record.duration, this._rangeEndTime) - startTime;
+                }
             }
+
+            this._cachedData = {
+                eventType: this._record.eventType,
+                startTime,
+                selfTime: duration,
+                totalTime: duration,
+                averageTime: duration,
+                callCount: this._record.callCountOrSamples,
+                location: callFrameOrSourceCodeLocation,
+            };
         }
 
-        return {
-            eventType: this._record.eventType,
-            startTime,
-            selfTime: duration,
-            totalTime: duration,
-            averageTime: duration,
-            callCount: this._record.callCountOrSamples,
-            location: callFrameOrSourceCodeLocation
-        };
+        return this._cachedData;
     }
 
     updateRangeTimes(startTime, endTime)
