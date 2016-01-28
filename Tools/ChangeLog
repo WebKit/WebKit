@@ -1,3 +1,15 @@
+2016-01-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r195742.
+
+        Broke EWS
+
+        Reverted changeset:
+
+        "[webkitdirs] Clarify logic behind is{PortName} functions."
+        https://bugs.webkit.org/show_bug.cgi?id=153554
+        http://trac.webkit.org/changeset/195742
+
 2016-01-28  Darin Adler  <darin@apple.com>
 
         Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase

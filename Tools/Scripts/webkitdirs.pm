@@ -94,16 +94,6 @@ BEGIN {
    @EXPORT_OK   = ();
 }
 
-# Ports
-use constant {
-    AppleWin => "AppleWin",
-    GTK      => "GTK",
-    Efl      => "Efl",
-    iOS      => "iOS",
-    Mac      => "Mac",
-    WinCairo => "WinCairo"
-};
-
 use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
 use constant INCLUDE_OPTIONS_FOR_DEBUGGING => 1;
 use constant SIMULATOR_DEVICE_STATE_SHUTDOWN => "1";
@@ -134,9 +124,11 @@ my $osXVersion;
 my $iosVersion;
 my $generateDsym;
 my $isCMakeBuild;
+my $isGtk;
+my $isWinCairo;
 my $isWin64;
+my $isEfl;
 my $isInspectorFrontend;
-my $portName;
 my $shouldTargetWebProcess;
 my $shouldUseXPCServiceForWebProcess;
 my $shouldUseGuardMalloc;
@@ -1032,57 +1024,28 @@ sub checkForArgumentAndRemoveFromArrayRef
     return scalar @indicesToRemove > 0;
 }
 
-sub determinePortName()
+sub determineIsEfl()
 {
-    return if defined $portName;
-
-    my %argToPortName = (
-        efl => Efl,
-        gtk => GTK,
-        wincairo => WinCairo
-    );
-
-    for my $arg (sort keys %argToPortName) {
-        if (checkForArgumentAndRemoveFromARGV("--$arg")) {
-            die "Argument '--$arg' conflicts with selected port '$portName'"
-                if defined $portName;
-
-            $portName = $argToPortName{$arg};
-        }
-    }
-
-    return if defined $portName;
-
-    # Port was not selected via command line, use appropriate default value
-
-    if (isAnyWindows()) {
-        $portName = AppleWin;
-    } elsif (isDarwin()) {
-        determineXcodeSDK();
-        if (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK()) {
-            $portName = iOS;
-        } else {
-            $portName = Mac;
-        }
-    } else {
-        die "Please choose which WebKit port to build";
-    }
-}
-
-sub portName()
-{
-    determinePortName();
-    return $portName;
+    return if defined($isEfl);
+    $isEfl = checkForArgumentAndRemoveFromARGV("--efl");
 }
 
 sub isEfl()
 {
-    return portName() eq Efl;
+    determineIsEfl();
+    return $isEfl;
+}
+
+sub determineIsGtk()
+{
+    return if defined($isGtk);
+    $isGtk = checkForArgumentAndRemoveFromARGV("--gtk");
 }
 
 sub isGtk()
 {
-    return portName() eq GTK;
+    determineIsGtk();
+    return $isGtk;
 }
 
 # Determine if this is debian, ubuntu, linspire, or something similar.
@@ -1098,7 +1061,14 @@ sub isFedoraBased()
 
 sub isWinCairo()
 {
-    return portName() eq WinCairo;
+    determineIsWinCairo();
+    return $isWinCairo;
+}
+
+sub determineIsWinCairo()
+{
+    return if defined($isWinCairo);
+    $isWinCairo = checkForArgumentAndRemoveFromARGV("--wincairo");
 }
 
 sub isWin64()
@@ -1221,12 +1191,12 @@ sub isAppleWebKit()
 
 sub isAppleMacWebKit()
 {
-    return (portName() eq Mac) || isIOSWebKit();
+    return isDarwin() && !isGtk();
 }
 
 sub isAppleWinWebKit()
 {
-    return portName() eq AppleWin;
+    return (isCygwin() || isWindows()) && !isWinCairo() && !isGtk();
 }
 
 sub iOSSimulatorDevicesPath
@@ -1289,7 +1259,8 @@ sub willUseIOSSimulatorSDK()
 
 sub isIOSWebKit()
 {
-    return portName() eq iOS;
+    determineXcodeSDK();
+    return isAppleMacWebKit() && (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK());
 }
 
 sub determineNmPath()
@@ -2090,7 +2061,12 @@ sub cmakeBasedPortArguments()
 
 sub cmakeBasedPortName()
 {
-    return portName();
+    return "Efl" if isEfl();
+    return "GTK" if isGtk();
+    return "Mac" if isAppleMacWebKit();
+    return "WinCairo" if isWinCairo();
+    return "AppleWin" if isAppleWinWebKit();
+    return "";
 }
 
 sub determineIsCMakeBuild()
