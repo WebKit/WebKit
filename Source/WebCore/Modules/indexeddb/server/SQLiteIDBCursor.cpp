@@ -255,6 +255,11 @@ bool SQLiteIDBCursor::advance(uint64_t count)
 {
     bool isUnique = m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate || m_cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate;
 
+    if (m_completed) {
+        LOG_ERROR("Attempt to advance a completed cursor");
+        return false;
+    }
+
     for (uint64_t i = 0; i < count; ++i) {
         if (!isUnique) {
             if (!advanceOnce())
@@ -263,6 +268,9 @@ bool SQLiteIDBCursor::advance(uint64_t count)
             if (!advanceUnique())
                 return false;
         }
+
+        if (m_completed)
+            break;
     }
 
     return true;
@@ -301,11 +309,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
 {
     ASSERT(m_transaction->sqliteTransaction());
     ASSERT(m_statement);
-
-    if (m_completed) {
-        LOG_ERROR("Attempt to advance a completed cursor");
-        return AdvanceResult::Failure;
-    }
+    ASSERT(!m_completed);
 
     int result = m_statement->step();
     if (result == SQLITE_DONE) {

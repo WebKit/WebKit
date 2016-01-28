@@ -1,3 +1,12 @@
+2016-01-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Incorrect handling of iterating cursors to their end.
+        https://bugs.webkit.org/show_bug.cgi?id=153569
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-01-27  Zhuo Li  <zachli@apple.com>
 
         Layout Test fast/forms/auto-fill-button/input-contacts-auto-fill-button.html is failing.

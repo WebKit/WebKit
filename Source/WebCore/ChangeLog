@@ -1,3 +1,16 @@
+2016-01-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Incorrect handling of iterating cursors to their end.
+        https://bugs.webkit.org/show_bug.cgi?id=153569
+
+        Reviewed by Alex Christensen.
+
+        No new tests (3 tests now pass, others are closer to passing).
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::advance):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce):
+
 2016-01-27  Nan Wang  <n_wang@apple.com>
 
         AX: Crash in AccessibilityTableColumn::headerObject
