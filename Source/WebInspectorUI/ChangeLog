@@ -1,3 +1,27 @@
+2016-01-27  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Regression (r195303) - Changes to TreeOutline break styling of lists in Visual sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=153563
+
+        Reviewed by Timothy Hatcher.
+
+        Removed duplicate properties and used new methods of TreeOutline to achieve
+        the desired styling effects.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.visual-style-font-family-list-item > .visual-style-comma-separated-keyword-item-editor):
+        (.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles): Deleted.
+
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection):
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.css:
+        (.item.visual-style-selector-item > .icon):
+        (.item.visual-style-selector-item > .titles):
+        (.item.visual-style-selector-item > .titles > .subtitle):
+        (.item.visual-style-selector-item.selected > .titles > .subtitle):
+        (.item.visual-style-selector-item > .titles > .subtitle::before): Deleted.
+
 2016-01-27  Simon Fraser  <simon.fraser@apple.com>
 
         Support CSS3 Images values for the image-rendering property

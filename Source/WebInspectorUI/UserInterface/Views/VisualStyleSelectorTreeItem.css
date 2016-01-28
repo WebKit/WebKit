@@ -61,7 +61,7 @@ body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-
 .item.visual-style-selector-item > .icon {
     width: 16px;
     height: 16px;
-    margin-left: 4px;
+    margin: 0 3px 0 4px;
 }
 
 .item.visual-style-selector-item.modified > .icon {
@@ -103,10 +103,11 @@ body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-
 
 .item.visual-style-selector-item > .titles {
     flex: 1;
+    top: 0;
+    line-height: inherit;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding: 0 2px 0 3px;
 }
 
 .item.visual-style-selector-item:not(.dom-element-icon) > .titles > .title {
@@ -128,14 +129,11 @@ body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-
     box-shadow: hsla(0, 0%, 0%, 0.15) 0 1px 0, 0 0 0 3px hsla(0, 100%, 100%, 0.3);
 }
 
-.item.visual-style-selector-item > .titles > .subtitle::before {
-    margin-right: 5px;
-    font-size: 11px;
-    /* The extra space at the beginning is necessary to prevent the -webkit-user-modify
-    cursor bar from displaying at the beginning of the em-dash. */
-    content: " \2014"; /* em-dash */
+.item.visual-style-selector-item > .titles > .subtitle {
+    vertical-align: 1px;
+    font-size: 9px;
 }
 
-.item.visual-style-selector-item > .titles > .subtitle {
-    font-size: 9px;
+.item.visual-style-selector-item.selected > .titles > .subtitle {
+    color: inherit;
 }

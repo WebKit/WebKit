@@ -65,10 +65,6 @@
     display: none;
 }
 
-.visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item > .titles {
-    padding-left: 3px;
-}
-
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.visual-style-font-family-list-item.selected:not(.editor-hidden) > .titles > * {
     color: transparent;
 }
@@ -76,12 +72,12 @@
 .visual-style-property-container.comma-separated-keyword-editor > .visual-style-property-value-container > .visual-style-comma-separated-keyword-list > .visual-style-comma-separated-keyword-item.visual-style-font-family-list-item > .visual-style-comma-separated-keyword-item-editor {
     position: absolute;
     top: 0;
-    right: 3px;
+    right: 0;
     bottom: 0;
-    left: 3px;
+    left: 5px;
     margin: 0;
     padding: 0;
-    line-height: 13px;
+    line-height: 17px;
     border: none;
     background-color: transparent;
     font-family: inherit;
