@@ -33,6 +33,7 @@
 #include "DFGCommonData.h"
 #include "DFGJITCode.h"
 #include "FTLJITCode.h"
+#include "RegisterSet.h"
 
 namespace JSC { namespace DFG {
 
@@ -44,22 +45,40 @@ template <typename JITCodeType>
 void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM* vm, JITCode::JITType jitType)
 {
     ASSERT(jitType == JITCode::DFGJIT || jitType == JITCode::FTLJIT);
-    size_t scratchSize = sizeof(void*);
+
     bool isFTLOSRExit = jitType == JITCode::FTLJIT;
+    RegisterSet registersToPreserve;
+    registersToPreserve.set(GPRInfo::regT0);
+    if (isFTLOSRExit) {
+        // FTL can use the scratch registers for values. The code below uses
+        // the scratch registers. We need to preserve them before doing anything.
+        registersToPreserve.merge(RegisterSet::macroScratchRegisters());
+    }
+
+    size_t scratchSize = sizeof(void*) * registersToPreserve.numberOfSetGPRs();
     if (isFTLOSRExit)
         scratchSize += sizeof(void*);
 
     ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(scratchSize);
     char* buffer = static_cast<char*>(scratchBuffer->dataBuffer());
-    jit.storePtr(GPRInfo::regT0, buffer);
+
+    jit.pushToSave(GPRInfo::regT1);
+    jit.move(MacroAssembler::TrustedImmPtr(buffer), GPRInfo::regT1);
+
+    unsigned storeOffset = 0;
+    registersToPreserve.forEach([&](Reg reg) {
+        jit.storePtr(reg.gpr(), MacroAssembler::Address(GPRInfo::regT1, storeOffset));
+        storeOffset += sizeof(void*);
+    });
 
     if (isFTLOSRExit) {
         // FTL OSRExits are entered via the code FTLExitThunkGenerator emits which does
         // pushToSaveImmediateWithoutTouchRegisters with the OSR exit index. We need to load
         // that top value and then push it back when we reset our SP.
-        jit.peek(GPRInfo::regT0);
-        jit.storePtr(GPRInfo::regT0, buffer + sizeof(void*));
+        jit.loadPtr(MacroAssembler::Address(MacroAssembler::stackPointerRegister, MacroAssembler::pushToSaveByteOffset()), GPRInfo::regT0);
+        jit.storePtr(GPRInfo::regT0, MacroAssembler::Address(GPRInfo::regT1, registersToPreserve.numberOfSetGPRs() * sizeof(void*)));
     }
+    jit.popToRestore(GPRInfo::regT1);
 
     // We need to reset FP in the case of an exception.
     jit.loadPtr(vm->addressOfCallFrameForCatch(), GPRInfo::regT0);
@@ -85,14 +104,26 @@ void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM* vm, JITC
     jit.move(GPRInfo::regT0, MacroAssembler::stackPointerRegister);
 
     if (isFTLOSRExit) {
+        // Leave space for saving the OSR Exit Index.
+        jit.subPtr(MacroAssembler::TrustedImm32(MacroAssembler::pushToSaveByteOffset()), MacroAssembler::stackPointerRegister);
+    }
+    jit.pushToSave(GPRInfo::regT1);
+
+    jit.move(MacroAssembler::TrustedImmPtr(buffer), GPRInfo::regT1);
+    if (isFTLOSRExit) {
         // FTL OSRExits are entered via FTLExitThunkGenerator code with does
         // pushToSaveImmediateWithoutTouchRegisters. We need to load that top
         // register and then store it back when we have our SP back to a safe value.
-        jit.loadPtr(buffer + sizeof(void*), GPRInfo::regT0);
-        jit.pushToSave(GPRInfo::regT0);
+        jit.loadPtr(MacroAssembler::Address(GPRInfo::regT1, registersToPreserve.numberOfSetGPRs() * sizeof(void*)), GPRInfo::regT0);
+        jit.storePtr(GPRInfo::regT0, MacroAssembler::Address(MacroAssembler::stackPointerRegister, MacroAssembler::pushToSaveByteOffset()));
     }
 
-    jit.loadPtr(buffer, GPRInfo::regT0);
+    unsigned loadOffset = 0;
+    registersToPreserve.forEach([&](Reg reg) {
+        jit.loadPtr(MacroAssembler::Address(GPRInfo::regT1, loadOffset), reg.gpr());
+        loadOffset += sizeof(void*);
+    });
+    jit.popToRestore(GPRInfo::regT1);
 }
 
 
