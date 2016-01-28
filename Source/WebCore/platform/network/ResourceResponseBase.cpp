@@ -30,6 +30,7 @@
 #include "CacheValidation.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "ParsedContentRange.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -300,6 +301,10 @@ void ResourceResponseBase::updateHeaderParsedState(HTTPHeaderName name)
         m_haveParsedLastModifiedHeader = false;
         break;
 
+    case HTTPHeaderName::ContentRange:
+        m_haveParsedContentRangeHeader = false;
+        break;
+
     default:
         break;
     }
@@ -459,6 +464,27 @@ Optional<std::chrono::system_clock::time_point> ResourceResponseBase::lastModifi
         m_haveParsedLastModifiedHeader = true;
     }
     return m_lastModified;
+}
+
+static ParsedContentRange parseContentRangeInHeader(const HTTPHeaderMap& headers)
+{
+    String contentRangeValue = headers.get(HTTPHeaderName::ContentRange);
+    if (contentRangeValue.isEmpty())
+        return ParsedContentRange();
+
+    return ParsedContentRange(contentRangeValue);
+}
+
+ParsedContentRange& ResourceResponseBase::contentRange() const
+{
+    lazyInit(CommonFieldsOnly);
+
+    if (!m_haveParsedContentRangeHeader) {
+        m_contentRange = parseContentRangeInHeader(m_httpHeaderFields);
+        m_haveParsedContentRangeHeader = true;
+    }
+
+    return m_contentRange;
 }
 
 bool ResourceResponseBase::isAttachment() const

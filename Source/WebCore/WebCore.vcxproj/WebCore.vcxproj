@@ -8886,6 +8886,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\platform\network\ParsedContentRange.cpp" />
     <ClCompile Include="..\platform\network\ParsedContentType.cpp" />
     <ClCompile Include="..\platform\network\ProtectionSpaceBase.cpp" />
     <ClCompile Include="..\platform\network\ProxyServer.cpp" />
@@ -21352,6 +21353,7 @@
     <ClInclude Include="..\platform\network\NetworkingContext.h" />
     <ClInclude Include="..\platform\network\NetworkStateNotifier.h" />
     <ClInclude Include="..\platform\network\NetworkStorageSession.h" />
+    <ClInclude Include="..\platform\network\ParsedContentRange.h" />
     <ClInclude Include="..\platform\network\ParsedContentType.h" />
     <ClInclude Include="..\platform\network\PlatformCookieJar.h" />
     <ClInclude Include="..\platform\network\ProtectionSpace.h" />

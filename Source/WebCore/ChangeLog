@@ -1,3 +1,63 @@
+2016-01-08  Jer Noble  <jer.noble@apple.com>
+
+        Custom protocol loading through AVFoundation does not support byte-range requests.
+        https://bugs.webkit.org/show_bug.cgi?id=152919
+        <rdar://problem/23664657>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/xmlhttprequest/blob-request-byte-range.html
+               TestWebkitAPI/Tests/WebCore/ParsedContentRange.cpp
+
+        When loading data through the AVAssetResourceLoaderDelegateProtocol, AVFoundation will issue
+        requests for specific byte-ranges by adding a "Range:" HTTP header to the NSURLRequest it
+        passes to the delegate.  WebCore ignores this header, loads the entire resource, and replies
+        to the callback with the requested subset of the entire resource.
+
+        For byte-range requests near the end of a resource, this is inefficient, as the entire
+        resource up to, and including, the requested range must be loaded before any data can be
+        returned. Explicitly handle byte-range requests by creating a CachedResourceRequest with the
+        underlying NSURLRequest (which includes the "Range:" header) rather than just the request's
+        URL. BlobResourceHandle must be modified to add the "Content-Range:" response header to the
+        ResourceResponse. 
+
+        To facilitate both generating and parsing the "Content-Range:" header, add a new
+        ParsedContentRange class for use by ResourceResponse and its clients. This class provides
+        methods both for parsing a "Content-Range" header value string, and for generating the
+        header value from elemental values.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+        (WebCore::WebCoreAVFResourceLoader::responseReceived):
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::BlobResourceHandle):
+        (WebCore::BlobResourceHandle::didGetSize):
+        (WebCore::BlobResourceHandle::seek):
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/ParsedContentRange.cpp: Added.
+        (WebCore::areContentRangeValuesValid):
+        (WebCore::parseContentRange):
+        (WebCore::ParsedContentRange::ParsedContentRange):
+        (WebCore::ParsedContentRange::headerValue):
+        * platform/network/ParsedContentRange.h: Added.
+        (WebCore::ParsedContentRange::ParsedContentRange):
+        (WebCore::ParsedContentRange::isValid):
+        (WebCore::ParsedContentRange::firstBytePosition):
+        (WebCore::ParsedContentRange::lastBytePosition):
+        (WebCore::ParsedContentRange::instanceLength):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::updateHeaderParsedState):
+        (WebCore::parseContentRangeInHeader):
+        (WebCore::ResourceResponseBase::contentRange):
+        * platform/network/ResourceResponseBase.h:
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-01-28  Chris Dumez  <cdumez@apple.com>
 
         Storage interface's attributes / operations should be enumerable

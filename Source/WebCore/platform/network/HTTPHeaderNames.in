@@ -49,6 +49,7 @@ Content-Security-Policy
 Content-Security-Policy-Report-Only
 Content-Type
 Content-Transfer-Encoding
+Content-Range
 Cookie
 Cookie2
 Date

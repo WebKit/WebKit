@@ -90,22 +90,25 @@ private:
     void notifyFail(int errorCode);
     void notifyFinish();
 
+    enum { kPositionNotSpecified = -1 };
+
     RefPtr<BlobData> m_blobData;
     bool m_async;
     std::unique_ptr<AsyncFileStream> m_asyncStream; // For asynchronous loading.
     std::unique_ptr<FileStream> m_stream; // For synchronous loading.
     Vector<char> m_buffer;
     Vector<long long> m_itemLengthList;
-    int m_errorCode;
-    bool m_aborted;
-    long long m_rangeOffset;
-    long long m_rangeEnd;
-    long long m_rangeSuffixLength;
-    long long m_totalRemainingSize;
-    long long m_currentItemReadSize;
-    unsigned m_sizeItemCount;
-    unsigned m_readItemCount;
-    bool m_fileOpened;
+    int m_errorCode { 0 };
+    bool m_aborted { false };
+    long long m_rangeOffset { kPositionNotSpecified };
+    long long m_rangeEnd { kPositionNotSpecified };
+    long long m_rangeSuffixLength { kPositionNotSpecified };
+    long long m_totalSize { 0 };
+    long long m_totalRemainingSize { 0 };
+    long long m_currentItemReadSize { 0 };
+    unsigned m_sizeItemCount { 0 };
+    unsigned m_readItemCount { 0 };
+    bool m_fileOpened { false };
 };
 
 } // namespace WebCore

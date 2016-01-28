@@ -38,6 +38,7 @@
 #include "FileSystem.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "ParsedContentRange.h"
 #include "URL.h"
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
@@ -50,7 +51,6 @@
 namespace WebCore {
 
 static const unsigned bufferSize = 512 * 1024;
-static const long long positionNotSpecified = -1;
 
 static const int httpOK = 200;
 static const int httpPartialContent = 206;
@@ -159,16 +159,6 @@ BlobResourceHandle::BlobResourceHandle(BlobData* blobData, const ResourceRequest
     : ResourceHandle(0, request, client, false, false)
     , m_blobData(blobData)
     , m_async(async)
-    , m_errorCode(0)
-    , m_aborted(false)
-    , m_rangeOffset(positionNotSpecified)
-    , m_rangeEnd(positionNotSpecified)
-    , m_rangeSuffixLength(positionNotSpecified)
-    , m_totalRemainingSize(0)
-    , m_currentItemReadSize(0)
-    , m_sizeItemCount(0)
-    , m_readItemCount(0)
-    , m_fileOpened(false)
 {
     if (m_async)
         m_asyncStream = std::make_unique<AsyncFileStream>(*this);
@@ -300,6 +290,7 @@ void BlobResourceHandle::didGetSize(long long size)
     m_itemLengthList.append(size);
 
     // Count the size.
+    m_totalSize += size;
     m_totalRemainingSize += size;
     m_sizeItemCount++;
 
@@ -312,13 +303,13 @@ void BlobResourceHandle::seek()
     ASSERT(isMainThread());
 
     // Convert from the suffix length to the range.
-    if (m_rangeSuffixLength != positionNotSpecified) {
+    if (m_rangeSuffixLength != kPositionNotSpecified) {
         m_rangeOffset = m_totalRemainingSize - m_rangeSuffixLength;
         m_rangeEnd = m_rangeOffset + m_rangeSuffixLength - 1;
     }
 
     // Bail out if the range is not provided.
-    if (m_rangeOffset == positionNotSpecified)
+    if (m_rangeOffset == kPositionNotSpecified)
         return;
 
     // Skip the initial items that are not in the range.
@@ -330,7 +321,7 @@ void BlobResourceHandle::seek()
     m_currentItemReadSize = offset;
 
     // Adjust the total remaining size in order not to go beyond the range.
-    if (m_rangeEnd != positionNotSpecified) {
+    if (m_rangeEnd != kPositionNotSpecified) {
         long long rangeSize = m_rangeEnd - m_rangeOffset + 1;
         if (m_totalRemainingSize > rangeSize)
             m_totalRemainingSize = rangeSize;
@@ -583,10 +574,12 @@ void BlobResourceHandle::notifyResponseOnSuccess()
 {
     ASSERT(isMainThread());
 
-    bool isRangeRequest = m_rangeOffset != positionNotSpecified;
+    bool isRangeRequest = m_rangeOffset != kPositionNotSpecified;
     ResourceResponse response(firstRequest().url(), m_blobData->contentType(), m_totalRemainingSize, String());
     response.setHTTPStatusCode(isRangeRequest ? httpPartialContent : httpOK);
     response.setHTTPStatusText(isRangeRequest ? httpPartialContentText : httpOKText);
+    if (isRangeRequest)
+        response.setHTTPHeaderField(HTTPHeaderName::ContentRange, ParsedContentRange(m_rangeOffset, m_rangeEnd, m_totalSize).headerValue());
     // FIXME: If a resource identified with a blob: URL is a File object, user agents must use that file's name attribute,
     // as if the response had a Content-Disposition header with the filename parameter set to the File's name attribute.
     // Notably, this will affect a name suggested in "File Save As".

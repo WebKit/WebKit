@@ -1,0 +1,45 @@
+<html>
+<body>
+<p>Test an XMLHttpRequest of a Blob URL requesting a byte-range responds appropriately.</p>
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(text)
+{
+    var console = document.getElementById('console');
+    console.appendChild(document.createTextNode(text + '\n'));
+}
+
+function test(expect, actual)
+{
+    var result = eval(actual);
+    if (expect == result)
+        log(`PASS: "${ actual }" == "${ expect }"`);
+    else
+        log(`FAIL: "${ actual }" EXPECT "${ expect }" GOT "${ result }"`);
+}
+
+var array = new Int8Array([0, 1, 2, 3]);
+var blob = new Blob(array);
+var url = URL.createObjectURL(blob);
+
+var req = new XMLHttpRequest;
+req.responseType = 'blob';
+req.open('GET', url);
+req.setRequestHeader('Range', 'bytes=1-2');
+req.onreadystatechange = function() {
+    if (req.readyState == 4) {
+        test(206, 'req.status');
+        test('bytes 1-2/4', 'req.getResponseHeader("Content-Range")');
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+};
+req.send();
+
+</script>
+</body>

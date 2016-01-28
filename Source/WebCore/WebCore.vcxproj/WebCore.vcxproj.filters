@@ -1772,6 +1772,9 @@
     <ClCompile Include="..\platform\network\NetworkStorageSessionStub.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\ParsedContentRange.cpp">
+      <Filter>platform\network</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\network\ParsedContentType.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
@@ -8777,6 +8780,9 @@
       <Filter>platform\network</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\NetworkStorageSession.h">
+      <Filter>platform\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\ParsedContenRange.h">
       <Filter>platform\network</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\ParsedContentType.h">

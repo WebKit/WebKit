@@ -157,6 +157,9 @@
     <ClCompile Include="..\Tests\WebCore\CalculationValue.cpp">
       <Filter>Tests\WebCore</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\WebCore\ParsedContentRange.cpp">
+      <Filter>Tests\WebCore</Filter>
+    </ClCompile>
     <ClCompile Include="..\Tests\WebCore\TimeRanges.cpp">
       <Filter>Tests\WebCore</Filter>
     </ClCompile>

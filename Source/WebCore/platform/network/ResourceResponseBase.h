@@ -30,6 +30,7 @@
 #include "CacheValidation.h"
 #include "CertificateInfo.h"
 #include "HTTPHeaderMap.h"
+#include "ParsedContentRange.h"
 #include "ResourceLoadTiming.h"
 #include "URL.h"
 
@@ -110,6 +111,7 @@ public:
     WEBCORE_EXPORT Optional<std::chrono::microseconds> age() const;
     WEBCORE_EXPORT Optional<std::chrono::system_clock::time_point> expires() const;
     WEBCORE_EXPORT Optional<std::chrono::system_clock::time_point> lastModified() const;
+    ParsedContentRange& contentRange() const;
 
     // This is primarily for testing support. It is not necessarily accurate in all scenarios.
     enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation };
@@ -175,6 +177,7 @@ private:
     mutable Optional<std::chrono::system_clock::time_point> m_date;
     mutable Optional<std::chrono::system_clock::time_point> m_expires;
     mutable Optional<std::chrono::system_clock::time_point> m_lastModified;
+    mutable ParsedContentRange m_contentRange;
     mutable CacheControlDirectives m_cacheControlDirectives;
 
     mutable bool m_haveParsedCacheControlHeader { false };
@@ -182,6 +185,7 @@ private:
     mutable bool m_haveParsedDateHeader { false };
     mutable bool m_haveParsedExpiresHeader { false };
     mutable bool m_haveParsedLastModifiedHeader { false };
+    mutable bool m_haveParsedContentRangeHeader { false };
 
     Source m_source { Source::Unknown };
 };

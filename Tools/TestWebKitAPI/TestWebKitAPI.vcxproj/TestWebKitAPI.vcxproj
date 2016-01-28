@@ -295,6 +295,7 @@
     <ClCompile Include="..\Tests\WebCore\CalculationValue.cpp" />
     <ClCompile Include="..\Tests\WebCore\CSSParser.cpp" />
     <ClCompile Include="..\Tests\WebCore\LayoutUnit.cpp" />
+    <ClCompile Include="..\Tests\WebCore\ParsedContentRange.cpp" />
     <ClCompile Include="..\Tests\WebCore\TimeRanges.cpp" />
     <ClCompile Include="..\Tests\WebCore\URL.cpp" />
     <ClCompile Include="..\Tests\WebCore\win\BitmapImage.cpp">
