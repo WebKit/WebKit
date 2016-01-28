@@ -154,6 +154,7 @@ CFTimeInterval WKCACFViewLayerTreeHost::lastCommitTime() const
 
 void WKCACFViewLayerTreeHost::flushContext()
 {
+    m_viewNeedsUpdate = true;
     WKCACFViewFlushContext(m_view.get());
 }
 
