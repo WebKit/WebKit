@@ -834,7 +834,7 @@ private:
                         if (argType != type)
                             return;
                         
-                        addEdge(arg, otherArg);
+                        this->addEdge(arg, otherArg);
                     });
             });
 
