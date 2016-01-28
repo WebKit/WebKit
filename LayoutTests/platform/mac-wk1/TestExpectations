@@ -461,8 +461,6 @@ storage/indexeddb/key-generator.html [ Failure ]
 storage/indexeddb/modern/cursor-7.html [ Failure ]
 storage/indexeddb/modern/get-keyrange.html [ Failure ]
 storage/indexeddb/modern/index-3.html [ Failure ]
-storage/indexeddb/mozilla/cursor-mutation.html [ Failure ]
-storage/indexeddb/mozilla/cursors.html [ Failure ]
 storage/indexeddb/objectstore-autoincrement.html [ Failure ]
 
 # SQLite backend tests that timeout

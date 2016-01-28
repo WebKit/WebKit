@@ -52,6 +52,8 @@ public:
     SQLiteIDBCursor(SQLiteIDBTransaction&, const IDBCursorInfo&);
     SQLiteIDBCursor(SQLiteIDBTransaction&, uint64_t objectStoreID, uint64_t indexID, const IDBKeyRangeData&);
 
+    ~SQLiteIDBCursor();
+
     const IDBResourceIdentifier& identifier() const { return m_cursorIdentifier; }
     SQLiteIDBTransaction* transaction() const { return m_transaction; }
 
@@ -109,6 +111,8 @@ private:
 
     bool m_completed { false };
     bool m_errored { false };
+
+    bool m_backingStoreCursor { false };
 };
 
 

@@ -33,6 +33,7 @@
 #include "IDBTransactionInfo.h"
 #include "IndexedDB.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -79,6 +80,7 @@ private:
     SQLiteIDBBackingStore& m_backingStore;
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
     HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBCursor>> m_cursors;
+    HashSet<SQLiteIDBCursor*> m_backingStoreCursors;
 };
 
 } // namespace IDBServer

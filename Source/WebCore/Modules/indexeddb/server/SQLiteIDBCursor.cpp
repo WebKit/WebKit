@@ -83,8 +83,15 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, const uint64
     , m_indexID(indexID ? indexID : IDBIndexMetadata::InvalidId)
     , m_cursorDirection(IndexedDB::CursorDirection::Next)
     , m_keyRange(range)
+    , m_backingStoreCursor(true)
 {
     ASSERT(m_objectStoreID);
+}
+
+SQLiteIDBCursor::~SQLiteIDBCursor()
+{
+    if (m_backingStoreCursor)
+        m_transaction->closeCursor(*this);
 }
 
 void SQLiteIDBCursor::currentData(IDBGetResult& result)

@@ -1055,6 +1055,8 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
         }
     }
 
+    transaction->notifyCursorsOfChanges(objectStoreID);
+
     return error;
 }
 
@@ -1143,6 +1145,8 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     auto error = updateAllIndexesForAddRecord(objectStoreInfo, keyData, value);
 
     // FIXME: If there was an error indexing this record, remove it.
+
+    transaction->notifyCursorsOfChanges(objectStoreInfo.identifier());
 
     return error;
 }
