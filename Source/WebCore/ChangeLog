@@ -1,3 +1,11 @@
+2016-01-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix clean CMake build after r195711.
+
+        * PlatformWin.cmake:
+        Copy forwarding headers from the new directory to find ContentSecurityPolicy.h.
+        This should fix EWS issues like the one seen in bug 153573.
+
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
         Expose ValidityState on the global Window object

@@ -209,6 +209,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     loader/archive/cf
 
     page/animation
+    page/csp
     page/scrolling
     page/win
 

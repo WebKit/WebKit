@@ -1,3 +1,10 @@
+2016-01-27  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build after r195722.
+
+        * PlatformMac.cmake:
+        Include new file.
+
 2016-01-27  Dan Bernstein  <mitz@apple.com>
 
         Fix other builds.
