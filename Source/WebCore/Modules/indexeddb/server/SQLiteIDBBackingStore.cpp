@@ -673,6 +673,8 @@ IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
 
 IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID)
 {
+    LOG(IndexedDB, "SQLiteIDBBackingStore::clearObjectStore - object store %" PRIu64, objectStoreID);
+
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
@@ -705,6 +707,8 @@ IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
             return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to delete index records while clearing object store") };
         }
     }
+
+    transaction->notifyCursorsOfChanges(objectStoreID);
 
     return { };
 }

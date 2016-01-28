@@ -281,7 +281,7 @@ void UniqueIDBDatabaseTransaction::iterateCursor(const IDBRequestData& requestDa
 
     RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
     m_databaseConnection->database().iterateCursor(requestData, key, count, [this, protectedThis, requestData](const IDBError& error, const IDBGetResult& result) {
-        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::openCursor (callback)");
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::iterateCursor (callback)");
 
         if (error.isNull())
             m_databaseConnection->connectionToClient().didIterateCursor(IDBResultData::iterateCursorSuccess(requestData.requestIdentifier(), result));

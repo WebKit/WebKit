@@ -1,5 +1,14 @@
 2016-01-28  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Fix several more problems with object store changes during cursor iteration in SQLite backend.
+        https://bugs.webkit.org/show_bug.cgi?id=153616
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-01-28  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: SQLite backend doesn't handle mutation during cursor iteration.
         https://bugs.webkit.org/show_bug.cgi?id=153614
 

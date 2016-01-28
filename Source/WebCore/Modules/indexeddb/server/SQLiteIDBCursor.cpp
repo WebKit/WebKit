@@ -223,10 +223,29 @@ void SQLiteIDBCursor::resetAndRebindStatement()
 
     // Otherwise update the lower key or upper key used for the cursor range.
     // This is so the cursor can pick up where we left off.
-    if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate)
+    // We might also have to change the statement from closed to open so we don't refetch the current key a second time.
+    if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
         m_currentLowerKey = m_currentKey;
-    else
+        if (!m_keyRange.lowerOpen) {
+            m_keyRange.lowerOpen = true;
+            m_keyRange.lowerKey = m_currentLowerKey;
+            m_statement = nullptr;
+            m_currentRecordID = -1;
+        }
+    } else {
         m_currentUpperKey = m_currentKey;
+        if (!m_keyRange.upperOpen) {
+            m_keyRange.upperOpen = true;
+            m_keyRange.upperKey = m_currentUpperKey;
+            m_statement = nullptr;
+            m_currentRecordID = -1;
+        }
+    }
+
+    if (!m_statement && !establishStatement()) {
+        LOG_ERROR("Unable to establish new statement for cursor iteration");
+        return;
+    }
 
     if (m_statement->reset() != SQLITE_OK) {
         LOG_ERROR("Could not reset cursor statement to respond to object store changes");
@@ -238,6 +257,8 @@ void SQLiteIDBCursor::resetAndRebindStatement()
 
 bool SQLiteIDBCursor::bindArguments()
 {
+    LOG(IndexedDB, "Cursor is binding lower key '%s' and upper key '%s'", m_currentLowerKey.loggingString().utf8().data(), m_currentUpperKey.loggingString().utf8().data());
+
     if (m_statement->bindInt64(1, m_boundID) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument (bound ID)");
         return false;
