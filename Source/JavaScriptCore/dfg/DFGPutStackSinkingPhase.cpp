@@ -565,8 +565,6 @@ public:
                 if (!putStacksToSink.contains(node))
                     continue;
                 
-                insertionSet.insertNode(
-                    nodeIndex, SpecNone, KillStack, node->origin, OpInfo(node->stackAccessData()->local.offset()));
                 node->remove();
             }
         }
