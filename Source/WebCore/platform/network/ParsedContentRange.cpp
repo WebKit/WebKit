@@ -121,6 +121,10 @@ ParsedContentRange::ParsedContentRange(int64_t firstBytePosition, int64_t lastBy
     m_isValid = areContentRangeValuesValid(m_firstBytePosition, m_lastBytePosition, m_instanceLength);
 }
 
+#if OS(WINDOWS) && !defined(PRId64)
+#define #define PRId64 "I64d"
+#endif
+
 String ParsedContentRange::headerValue() const
 {
     if (!m_isValid)

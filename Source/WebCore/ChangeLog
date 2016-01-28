@@ -1,3 +1,9 @@
+2016-01-28  Jer Noble  <jer.noble@apple.com>
+
+        Windows build fix; PRId64 formatting macro for int64_t undefined, so provide Windows-specific alternative.
+
+        * platform/network/ParsedContentRange.cpp:
+
 2016-01-28  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [ThreadedCompositor] Fix flickers happening on video when entering/leaving fullscreen.
