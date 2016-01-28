@@ -139,7 +139,7 @@ JSValue JSHistory::pushState(ExecState* exec)
             return jsUndefined();
     }
 
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     impl().stateObjectAdded(historyState.release(), title, url, History::StateObjectType::Push, ec);
     setDOMException(exec, ec);
 
@@ -168,7 +168,7 @@ JSValue JSHistory::replaceState(ExecState* exec)
             return jsUndefined();
     }
 
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     impl().stateObjectAdded(historyState.release(), title, url, History::StateObjectType::Replace, ec);
     setDOMException(exec, ec);
 
