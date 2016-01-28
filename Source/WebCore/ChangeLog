@@ -1,3 +1,56 @@
+2016-01-27  Jer Noble  <jer.noble@apple.com>
+
+        Allow CachedResourceLoader clients to opt out of the MemoryCache.
+        https://bugs.webkit.org/show_bug.cgi?id=153549
+
+        Reviewed by Darin Adler.
+
+        Add a flag to ResourceLoaderOptions which allow loader clients to opt out of having
+        resources stored in the MemoryCache. 
+
+        * loader/ResourceLoaderOptions.h:
+        (WebCore::ResourceLoaderOptions::ResourceLoaderOptions):
+        (WebCore::ResourceLoaderOptions::cachingPolicy):
+
+        Existing clients will have to add the (default) AllowCaching flag when they create a
+        ResourceLoaderOptions object.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::start):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        (WebCore::ResourceLoaderOptions::setCachingPolicy):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+
+        Every time the CachedResource or CachedResourceLoader accesses the MemoryCache, check
+        to see whether the resource or the request have allowed caching before adding resources
+        to, removing resources from, or sourcing resource data from the MemoryCache.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::failBeforeStarting):
+        (WebCore::CachedResource::addClientToSet):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::setDecodedSize):
+        (WebCore::CachedResource::setEncodedSize):
+        (WebCore::CachedResource::didAccessDecodedData):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::allowsCaching):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        (WebCore::CachedResourceLoader::printPreloadStats):
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::allowsCaching):
+
 2016-01-28  Enrica Casucci  <enrica@apple.com>
 
         Should avoid navigation for some data detector urls.
