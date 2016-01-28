@@ -55,6 +55,7 @@ typedef void* RemoteAXObjectRef;
 typedef class _jobject* jobject;
 
 #if PLATFORM(COCOA)
+OBJC_CLASS NSArray;
 OBJC_CLASS NSCachedURLResponse;
 OBJC_CLASS NSView;
 #endif
@@ -173,6 +174,9 @@ namespace WebCore {
         virtual void dispatchDidFailLoad(const ResourceError&) = 0;
         virtual void dispatchDidFinishDocumentLoad() = 0;
         virtual void dispatchDidFinishLoad() = 0;
+#if ENABLE(DATA_DETECTION)
+        virtual void dispatchDidFinishDataDetection(NSArray *detectionResults) = 0;
+#endif
 
         virtual void dispatchDidLayout() { }
         virtual void dispatchDidLayout(LayoutMilestones) { }

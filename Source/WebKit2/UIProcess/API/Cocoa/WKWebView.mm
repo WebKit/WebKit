@@ -3122,6 +3122,10 @@ static int32_t activeOrientation(WKWebView *webView)
     return nil;
 }
 
+- (NSArray *)_dataDetectionResults
+{
+    return [_contentView _dataDetectionResults];
+}
 #endif
 
 - (void)_didRelaunchProcess

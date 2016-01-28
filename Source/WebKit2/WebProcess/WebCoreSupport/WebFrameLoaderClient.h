@@ -81,6 +81,9 @@ private:
     virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier) override;
     virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceError&) override;
     virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) override;
+#if ENABLE(DATA_DETECTION)
+    virtual void dispatchDidFinishDataDetection(NSArray *detectionResults) override;
+#endif
     
     virtual void dispatchDidDispatchOnloadEvents() override;
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() override;

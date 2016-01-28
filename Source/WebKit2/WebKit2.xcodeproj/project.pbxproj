@@ -1692,6 +1692,8 @@
 		C54256BA18BEC18C00DE4179 /* WKFormSelectControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */; };
 		C55CB5B718C269CF00CA81E1 /* WKFormSelectPopover.mm in Sources */ = {isa = PBXBuildFile; fileRef = C57193BA18C149D0002D0F12 /* WKFormSelectPopover.mm */; };
 		C55CB5B818C2A5D600CA81E1 /* WKFormSelectPicker.mm in Sources */ = {isa = PBXBuildFile; fileRef = C57193B918C149D0002D0F12 /* WKFormSelectPicker.mm */; };
+		C55F91701C595F630029E92D /* DataDetectionResult.mm in Sources */ = {isa = PBXBuildFile; fileRef = C55F916D1C595E440029E92D /* DataDetectionResult.mm */; };
+		C55F91711C59676E0029E92D /* DataDetectionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = C55F916C1C595E440029E92D /* DataDetectionResult.h */; };
 		C57193BE18C14A44002D0F12 /* WKFormSelectControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = C57193BD18C14A43002D0F12 /* WKFormSelectControl.mm */; };
 		C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */; };
 		C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C574A57F12E66681002DFE98 /* PasteboardTypes.h */; };
@@ -3935,6 +3937,8 @@
 		C54256B318BEC18B00DE4179 /* WKFormPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormPopover.mm; path = ios/forms/WKFormPopover.mm; sourceTree = "<group>"; };
 		C54256B418BEC18C00DE4179 /* WKFormSelectControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFormSelectControl.h; path = ios/forms/WKFormSelectControl.h; sourceTree = "<group>"; };
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
+		C55F916C1C595E440029E92D /* DataDetectionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectionResult.h; sourceTree = "<group>"; };
+		C55F916D1C595E440029E92D /* DataDetectionResult.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectionResult.mm; sourceTree = "<group>"; };
 		C57193B918C149D0002D0F12 /* WKFormSelectPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormSelectPicker.mm; path = ios/forms/WKFormSelectPicker.mm; sourceTree = "<group>"; };
 		C57193BA18C149D0002D0F12 /* WKFormSelectPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormSelectPopover.mm; path = ios/forms/WKFormSelectPopover.mm; sourceTree = "<group>"; };
 		C57193BD18C14A43002D0F12 /* WKFormSelectControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormSelectControl.mm; path = ios/forms/WKFormSelectControl.mm; sourceTree = "<group>"; };
@@ -5418,6 +5422,8 @@
 				378E1A3B181ED6FF0031007A /* APIObject.mm */,
 				37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */,
 				37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */,
+				C55F916C1C595E440029E92D /* DataDetectionResult.h */,
+				C55F916D1C595E440029E92D /* DataDetectionResult.mm */,
 				1A781AE51C5714DA00FB96DD /* WebKitAdditions.mm */,
 				37C4C0921814B3AF003688B9 /* WKNSArray.h */,
 				37C4C0911814B3AF003688B9 /* WKNSArray.mm */,
@@ -8101,6 +8107,7 @@
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
 				BC574E631267D080006F0F12 /* WebPopupMenuProxy.h in Headers */,
+				C55F91711C59676E0029E92D /* DataDetectionResult.h in Headers */,
 				BC5750971268F3C6006F0F12 /* WebPopupMenuProxyMac.h in Headers */,
 				BCD597FF112B57BE00EC8C23 /* WebPreferences.h in Headers */,
 				7C85FD7C193415A8000177C4 /* WebPreferencesDefinitions.h in Headers */,
@@ -9637,6 +9644,7 @@
 				37716A5A195B910500EE8B1B /* ProcessAssertion.cpp in Sources */,
 				86F9536418FF583C001DB2EF /* ProcessAssertionIOS.mm in Sources */,
 				9395E68C1BF2C35200F49BCE /* _WKPreviewElementInfo.mm in Sources */,
+				C55F91701C595F630029E92D /* DataDetectionResult.mm in Sources */,
 				1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */,
 				BC111B1D112F5FE600337BAB /* ProcessLauncherMac.mm in Sources */,
 				86E67A261910B9D900004AB7 /* ProcessThrottler.cpp in Sources */,

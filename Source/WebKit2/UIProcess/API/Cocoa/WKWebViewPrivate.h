@@ -170,6 +170,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_AVAILABLE(NA, 9_0);
 
 - (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_AVAILABLE(NA, 9_0);
+- (NSArray *)_dataDetectionResults;
 
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;

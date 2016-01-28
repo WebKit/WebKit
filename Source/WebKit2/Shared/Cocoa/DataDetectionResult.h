@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebProcessProxy.h"
+#ifndef DataDetectionResult_h
+#define DataDetectionResult_h
 
-#import "DataDetectionResult.h"
+#if ENABLE(DATA_DETECTION)
 
-#import <WebCore/SearchPopupMenuCocoa.h>
-#import <wtf/cf/TypeCastsCF.h>
+#import "ArgumentCoders.h"
+
+#import <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-#if ENABLE(DATA_DETECTION)
-void WebPageProxy::setDataDetectionResult(const DataDetectionResult& dataDetectionResult)
-{
-    m_dataDetectionResults = dataDetectionResult.results;
-}
-#endif
+struct DataDetectionResult {
+    RetainPtr<NSArray> results;
 
-void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
-{
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
-    }
-
-    WebCore::saveRecentSearches(name, searchItems);
-}
-
-void WebPageProxy::loadRecentSearches(const String& name, Vector<WebCore::RecentSearch>& searchItems)
-{
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
-    }
-
-    searchItems = WebCore::loadRecentSearches(name);
-}
-
-#if ENABLE(CONTENT_FILTERING)
-void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, uint64_t frameID)
-{
-    if (WebFrameProxy* frame = m_process->webFrame(frameID))
-        frame->contentFilterDidBlockLoad(unblockHandler);
-}
-#endif
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, DataDetectionResult&);
+};
 
 }
+
+#endif // ENABLE(DATA_DETECTION)
+
+#endif // DataDetectionResult_h

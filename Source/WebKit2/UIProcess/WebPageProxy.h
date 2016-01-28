@@ -296,6 +296,10 @@ public:
 
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
 
+#if ENABLE(DATA_DETECTION)
+    NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }
+#endif
+        
 #if ENABLE(ASYNC_SCROLLING)
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy.get(); }
 #endif
@@ -517,7 +521,9 @@ public:
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
     void getLookupContextAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
 #endif
-
+#if ENABLE(DATA_DETECTION)
+    void setDataDetectionResult(const DataDetectionResult&);
+#endif
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
@@ -1407,6 +1413,10 @@ private:
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
 #endif // PLATFORM(IOS)
+
+#if ENABLE(DATA_DETECTION)
+    RetainPtr<NSArray> m_dataDetectionResults;
+#endif
 
     void clearLoadDependentCallbacks();
 

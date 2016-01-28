@@ -92,6 +92,9 @@ private:
     virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&) override;
     virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int dataLength) override;
     virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier) override;
+#if ENABLE(DATA_DETECTION)
+    virtual void dispatchDidFinishDataDetection(NSArray *detectionResults) override;
+#endif
     virtual void dispatchDidFailLoading(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceError&) override;
 
     virtual NSCachedURLResponse* willCacheResponse(WebCore::DocumentLoader*, unsigned long identifier, NSCachedURLResponse*) const override;

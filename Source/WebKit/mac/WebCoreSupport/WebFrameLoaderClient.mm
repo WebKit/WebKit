@@ -528,6 +528,10 @@ void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loade
     }
 }
 
+void WebFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *)
+{
+}
+
 void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
 {
     WebView *webView = getWebView(m_webFrame.get());

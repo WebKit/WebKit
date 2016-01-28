@@ -186,6 +186,9 @@ messages -> WebPageProxy {
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
     DidFinishDrawingPagesToPDF(IPC::DataReference pdfData)
 #endif
+#if ENABLE(DATA_DETECTION)
+    SetDataDetectionResult(struct WebKit::DataDetectionResult dataDetectionResult)
+#endif
 #if PLATFORM(GTK)
     PrintFinishedCallback(WebCore::ResourceError error, uint64_t callbackID)
 #endif

@@ -109,6 +109,7 @@
 #include "ViewGestureGeometryCollector.h"
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
+OBJC_CLASS NSArray;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
 OBJC_CLASS WKAccessibilityWebPageObject;
@@ -864,6 +865,10 @@ public:
     bool matchesPrimaryPlugIn(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) const;
     bool plugInIntersectsSearchRect(WebCore::HTMLPlugInImageElement& pluginImageElement);
     bool plugInIsPrimarySize(WebCore::HTMLPlugInImageElement& pluginImageElement, unsigned &pluginArea);
+#endif
+
+#if ENABLE(DATA_DETECTION)
+    void setDataDetectionResults(NSArray *);
 #endif
 
     unsigned extendIncrementalRenderingSuppression();

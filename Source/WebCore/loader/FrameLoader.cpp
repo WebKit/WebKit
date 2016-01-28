@@ -2283,6 +2283,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 if (m_frame.settings().dataDetectorTypes() != DataDetectorTypeNone) {
                     RefPtr<Range> documentRange = makeRange(firstPositionInNode(m_frame.document()->documentElement()), lastPositionInNode(m_frame.document()->documentElement()));
                     m_frame.setDataDetectionResults(DataDetection::detectContentInRange(documentRange, m_frame.settings().dataDetectorTypes()));
+                    if (m_frame.isMainFrame())
+                        m_client.dispatchDidFinishDataDetection(m_frame.dataDetectionResults());
                 }
 #endif
                 m_client.dispatchDidFinishLoad();

@@ -1100,6 +1100,13 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     }
 }
 
+#if ENABLE(DATA_DETECTION)
+- (NSArray *)_dataDetectionResults
+{
+    return _page->dataDetectionResults();
+}
+#endif
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
     CGPoint point = [gestureRecognizer locationInView:self];

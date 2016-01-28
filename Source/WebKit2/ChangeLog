@@ -1,3 +1,55 @@
+2016-01-27  Enrica Casucci  <enrica@apple.com>
+
+        Cache results of data detection in the UI process when load completes.
+        https://bugs.webkit.org/show_bug.cgi?id=153560
+
+        Reviewed by Tim Horton.
+
+        This patch changes when the results of data detections are sent to the
+        UIProcess. Before this change, they were only provided as part of
+        InteractionInformationAtPosition, which is populated when long press
+        gesture is triggered.
+        We need to have the results available if the client wants to allow navigation
+        to a data detector link, in order to allow them to retrieve the full url.
+        With this change, we now send the results as soon as they are computed
+        and keep them in the WebPageProxy object so that they can be fetched when
+        necessary from a WKWebView private interface.
+
+        * Shared/Cocoa/DataDetectionResult.h: Added.
+        * Shared/Cocoa/DataDetectionResult.mm: Added.
+        (WebKit::DataDetectionResult::encode):
+        (WebKit::DataDetectionResult::decode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotLayerContentsForBackForwardListItem:]):
+        (-[WKWebView _dataDetectionResults]):
+        (-[WKWebView _didRelaunchProcess]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setDataDetectionResult):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::websiteDataStore):
+        (WebKit::WebPageProxy::dataDetectionResults):
+        (WebKit::WebPageProxy::scrollingCoordinatorProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+        (-[WKContentView _dataDetectionResults]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDataDetection):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoading):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::setDataDetectionResults):
+        (WebKit::WebPage::willCommitLayerTree):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::shouldExtendIncrementalRenderingSuppression):
+
 2016-01-27  Anders Carlsson  <andersca@apple.com>
 
         Include the right WebKitAdditions files

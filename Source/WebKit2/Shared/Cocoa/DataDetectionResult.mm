@@ -24,47 +24,49 @@
  */
 
 #import "config.h"
-#import "WebProcessProxy.h"
-
 #import "DataDetectionResult.h"
 
-#import <WebCore/SearchPopupMenuCocoa.h>
-#import <wtf/cf/TypeCastsCF.h>
+#import "ArgumentCodersCF.h"
+#import "Arguments.h"
+#import "WebCoreArgumentCoders.h"
+#import <WebCore/DataDetectorsCoreSPI.h>
+#import <WebCore/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)
+SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)
 
 namespace WebKit {
 
 #if ENABLE(DATA_DETECTION)
-void WebPageProxy::setDataDetectionResult(const DataDetectionResult& dataDetectionResult)
-{
-    m_dataDetectionResults = dataDetectionResult.results;
-}
-#endif
 
-void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
+void DataDetectionResult::encode(IPC::ArgumentEncoder& encoder) const
 {
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
+    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+    [archiver setRequiresSecureCoding:YES];
+    [archiver encodeObject:results.get() forKey:@"dataDetectorResults"];
+    [archiver finishEncoding];
+    
+    IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));        
+}
+
+bool DataDetectionResult::decode(IPC::ArgumentDecoder& decoder, DataDetectionResult& result)
+{
+    RetainPtr<CFDataRef> data;
+    if (!IPC::decode(decoder, data))
+        return false;
+    
+    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
+    [unarchiver setRequiresSecureCoding:YES];
+    @try {
+        result.results = [unarchiver decodeObjectOfClasses:[NSSet setWithArray:@[ [NSArray class], getDDScannerResultClass()] ] forKey:@"dataDetectorResults"];
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to decode NSArray of DDScanResult: %@", exception);
+        return false;
     }
-
-    WebCore::saveRecentSearches(name, searchItems);
-}
-
-void WebPageProxy::loadRecentSearches(const String& name, Vector<WebCore::RecentSearch>& searchItems)
-{
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
-    }
-
-    searchItems = WebCore::loadRecentSearches(name);
-}
-
-#if ENABLE(CONTENT_FILTERING)
-void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, uint64_t frameID)
-{
-    if (WebFrameProxy* frame = m_process->webFrame(frameID))
-        frame->contentFilterDidBlockLoad(unblockHandler);
+    
+    [unarchiver finishDecoding];
+    return true;
 }
 #endif
 

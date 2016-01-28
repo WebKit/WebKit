@@ -1,3 +1,16 @@
+2016-01-27  Enrica Casucci  <enrica@apple.com>
+
+        Cache results of data detection in the UI process when load completes.
+        https://bugs.webkit.org/show_bug.cgi?id=153560
+
+        Reviewed by Tim Horton.
+
+        Adding empty implementation for WK1.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidFinishDataDetection):
+
 2016-01-27  Anders Carlsson  <andersca@apple.com>
 
         Add WebKitAdditions extension points to WebCore, WebKit and WebKitLegacy

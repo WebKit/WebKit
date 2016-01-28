@@ -268,6 +268,9 @@ public:
     virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&) override { }
     virtual void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int) override { }
     virtual void dispatchDidFinishLoading(DocumentLoader*, unsigned long) override { }
+#if ENABLE(DATA_DETECTION)
+    virtual void dispatchDidFinishDataDetection(NSArray *) override { }
+#endif
     virtual void dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&) override { }
     virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) override { return false; }
 

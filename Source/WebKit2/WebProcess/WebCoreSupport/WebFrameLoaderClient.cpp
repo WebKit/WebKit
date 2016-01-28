@@ -236,6 +236,16 @@ void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsi
     webPage->injectedBundleResourceLoadClient().didReceiveContentLengthForResource(webPage, m_frame, identifier, dataLength);
 }
 
+#if ENABLE(DATA_DETECTION)
+void WebFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *detectionResults)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+    webPage->setDataDetectionResults(detectionResults);
+}
+#endif
+
 void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier)
 {
     WebPage* webPage = m_frame->page();

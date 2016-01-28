@@ -170,6 +170,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TemporaryChange.h>
 
+#if ENABLE(DATA_DETECTION)
+#include "DataDetectionResult.h"
+#endif
+
 #if ENABLE(MHTML)
 #include <WebCore/MHTMLArchive.h>
 #endif
@@ -2976,6 +2980,15 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_viewportConfiguration.setForceAlwaysUserScalable(store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
 #endif
 }
+
+#if ENABLE(DATA_DETECTION)
+void WebPage::setDataDetectionResults(NSArray *detectionResults)
+{
+    DataDetectionResult dataDetectionResult;
+    dataDetectionResult.results = detectionResults;
+    send(Messages::WebPageProxy::SetDataDetectionResult(dataDetectionResult));
+}
+#endif
 
 #if PLATFORM(COCOA)
 void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
