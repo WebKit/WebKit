@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (2,63) size 618x17
                 RenderText {#text} at (0,0) size 241x17
                   text run at (0,0) width 241: "some normal text after the nested table"
-            RenderTableCell {TD} at (625,24) size 155x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (625,24) size 156x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 145x34
                 text run at (2,2) width 145: "contents of table cell to"
                 text run at (2,19) width 29: "right"
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (2,63) size 618x17
                 RenderText {#text} at (0,0) size 241x17
                   text run at (0,0) width 241: "some normal text after the nested table"
-            RenderTableCell {TD} at (625,24) size 155x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (625,24) size 156x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 145x34
                 text run at (2,2) width 145: "contents of table cell to"
                 text run at (2,19) width 29: "right"
@@ -86,7 +86,7 @@ layer at (0,0) size 800x600
               RenderBlock (anonymous) at (2,91) size 622x17
                 RenderText {#text} at (0,0) size 241x17
                   text run at (0,0) width 241: "some normal text after the nested table"
-            RenderTableCell {TD} at (629,38) size 151x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (629,38) size 152x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 145x34
                 text run at (2,2) width 145: "contents of table cell to"
                 text run at (2,19) width 29: "right"

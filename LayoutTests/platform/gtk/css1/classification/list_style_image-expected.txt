@@ -38,41 +38,41 @@ layer at (0,0) size 800x600
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderText {#text} at (0,0) size 231x17
             text run at (0,0) width 231: "...standard list markers for each item."
-      RenderTable {TABLE} at (0,246) size 294x172 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 292x170
-          RenderTableRow {TR} at (0,0) size 292x25
-            RenderTableCell {TD} at (0,0) size 292x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,246) size 293x172 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 291x170
+          RenderTableRow {TR} at (0,0) size 291x25
+            RenderTableCell {TD} at (0,0) size 291x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,25) size 292x145
-            RenderTableCell {TD} at (0,85) size 13x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,25) size 291x145
+            RenderTableCell {TD} at (0,85) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,25) size 280x145 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {UL} at (4,4) size 272x54
-                RenderListItem {LI} at (40,0) size 232x18
+            RenderTableCell {TD} at (12,25) size 279x145 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {UL} at (4,4) size 271x54
+                RenderListItem {LI} at (40,0) size 231x18
                   RenderListMarker at (-22,0) size 15x15
                   RenderText {#text} at (0,1) size 62x17
                     text run at (0,1) width 62: "This list..."
-                RenderListItem {LI} at (40,18) size 232x18
+                RenderListItem {LI} at (40,18) size 231x18
                   RenderListMarker at (-22,0) size 15x15
                   RenderText {#text} at (0,1) size 113x17
                     text run at (0,1) width 113: "...should feature..."
-                RenderListItem {LI} at (40,36) size 232x18
+                RenderListItem {LI} at (40,36) size 231x18
                   RenderListMarker at (-22,0) size 15x15
                   RenderText {#text} at (0,1) size 146x17
                     text run at (0,1) width 146: "...images for each item."
-              RenderBlock {UL} at (4,74) size 272x51
-                RenderListItem {LI} at (40,0) size 232x17
+              RenderBlock {UL} at (4,74) size 271x51
+                RenderListItem {LI} at (40,0) size 231x17
                   RenderListMarker at (-17,0) size 7x17: bullet
                   RenderText {#text} at (0,0) size 62x17
                     text run at (0,0) width 62: "This list..."
-                RenderListItem {LI} at (40,17) size 232x17
+                RenderListItem {LI} at (40,17) size 231x17
                   RenderListMarker at (-17,0) size 7x17: bullet
                   RenderText {#text} at (0,0) size 113x17
                     text run at (0,0) width 113: "...should feature..."
-                RenderListItem {LI} at (40,34) size 232x17
+                RenderListItem {LI} at (40,34) size 231x17
                   RenderListMarker at (-17,0) size 7x17: bullet
                   RenderText {#text} at (0,0) size 231x17
                     text run at (0,0) width 231: "...standard list markers for each item."

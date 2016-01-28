@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 154x40
-        RenderTableSection {TBODY} at (0,0) size 154x40
-          RenderTableRow {TR} at (0,2) size 154x36
-            RenderTableCell {TD} at (2,2) size 50x36 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 153x40
+        RenderTableSection {TBODY} at (0,0) size 153x40
+          RenderTableRow {TR} at (0,2) size 153x36
+            RenderTableCell {TD} at (2,2) size 49x36 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 47x34
                 text run at (1,1) width 29: "first-"
                 text run at (1,18) width 47: "column"
-            RenderTableCell {TD} at (53,10) size 99x20 [bgcolor=#BBBBBB] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (53,10) size 98x20 [bgcolor=#BBBBBB] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 96x18
                 text run at (1,2) width 96: "second-column"

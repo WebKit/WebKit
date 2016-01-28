@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 127x52 [border: (1px outset #808080)]
-        RenderTableSection {THEAD} at (1,1) size 125x27
-          RenderTableRow {TR} at (0,2) size 125x21
-            RenderTableCell {TH} at (2,3) size 37x21 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 33x17
-                text run at (2,2) width 33: "aaaa"
-            RenderTableCell {TH} at (40,3) size 41x21 [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 37x17
-                text run at (2,2) width 37: "bbbb"
-            RenderTableCell {TH} at (82,3) size 41x21 [border: (1px inset #808080)] [r=0 c=2 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 37x17
-                text run at (2,2) width 37: "dddd"
-          RenderTableRow {TR} at (0,25) size 125x0
-        RenderTableSection {TBODY} at (1,28) size 125x23
-          RenderTableRow {TR} at (0,0) size 125x21
-            RenderTableCell {TD} at (2,0) size 37x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 126x52 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 124x27
+          RenderTableRow {TR} at (0,2) size 124x21
+            RenderTableCell {TH} at (2,3) size 36x21 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 32x17
+                text run at (2,2) width 32: "aaaa"
+            RenderTableCell {TH} at (40,3) size 40x21 [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 36x17
+                text run at (2,2) width 36: "bbbb"
+            RenderTableCell {TH} at (82,3) size 40x21 [border: (1px inset #808080)] [r=0 c=2 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 36x17
+                text run at (2,2) width 36: "dddd"
+          RenderTableRow {TR} at (0,25) size 124x0
+        RenderTableSection {TBODY} at (1,28) size 124x23
+          RenderTableRow {TR} at (0,0) size 124x21
+            RenderTableCell {TD} at (2,0) size 36x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x17
                 text run at (2,2) width 32: "1111"
-            RenderTableCell {TD} at (40,0) size 41x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (40,0) size 40x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x17
                 text run at (2,2) width 32: "2222"
-            RenderTableCell {TD} at (82,0) size 41x21 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (82,0) size 40x21 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x17
                 text run at (2,2) width 32: "5555"

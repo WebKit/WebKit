@@ -12,7 +12,7 @@ layer at (0,0) size 785x759
       RenderTable {TABLE} at (0,62) size 769x19
         RenderTableSection {TBODY} at (0,0) size 769x19
           RenderTableRow {TR} at (0,0) size 769x19
-            RenderTableCell {TD} at (0,0) size 483x19 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 482x19 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 480x17
                 text run at (1,1) width 480: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
             RenderTableCell {TD} at (482,9) size 287x0 [r=0 c=1 rs=1 cs=1]
@@ -28,7 +28,7 @@ layer at (0,0) size 785x759
       RenderTable {TABLE} at (0,176) size 769x36
         RenderTableSection {TBODY} at (0,0) size 769x36
           RenderTableRow {TR} at (0,0) size 769x36
-            RenderTableCell {TD} at (0,0) size 259x36 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 258x36 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 224x17
                 text run at (1,1) width 224: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
               RenderWordBreak {WBR} at (0,0) size 0x0
@@ -48,7 +48,7 @@ layer at (0,0) size 785x759
       RenderTable {TABLE} at (0,307) size 769x36
         RenderTableSection {TBODY} at (0,0) size 769x36
           RenderTableRow {TR} at (0,0) size 769x36
-            RenderTableCell {TD} at (0,0) size 259x36 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 258x36 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderInline {NOBR} at (0,0) size 256x34
                 RenderText {#text} at (1,1) size 224x17
                   text run at (1,1) width 224: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -71,7 +71,7 @@ layer at (0,0) size 785x759
       RenderTable {TABLE} at (0,455) size 769x53
         RenderTableSection {TBODY} at (0,0) size 769x53
           RenderTableRow {TR} at (0,0) size 769x53
-            RenderTableCell {TD} at (0,0) size 195x53 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 194x53 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 168x17
                 text run at (1,1) width 168: "aaaaaaaaaaaaaaaaaaaaaaaa"
               RenderWordBreak {WBR} at (0,0) size 0x0
@@ -97,7 +97,7 @@ layer at (0,0) size 785x759
       RenderTable {TABLE} at (0,620) size 769x53
         RenderTableSection {TBODY} at (0,0) size 769x53
           RenderTableRow {TR} at (0,0) size 769x53
-            RenderTableCell {TD} at (0,0) size 195x53 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 194x53 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderInline {NOBR} at (0,0) size 192x51
                 RenderText {#text} at (1,1) size 168x17
                   text run at (1,1) width 168: "aaaaaaaaaaaaaaaaaaaaaaaa"

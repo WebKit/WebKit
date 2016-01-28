@@ -7,8 +7,8 @@ layer at (0,0) size 800x162
         RenderText {#text} at (0,0) size 357x17
           text run at (0,0) width 357: "Test passes if there is a box with rounded corners below."
       RenderBlock (anonymous) at (0,33) size 784x105
-        RenderTable {DIV} at (0,0) size 103x102 [border: (3px solid #008000)]
-          RenderTableSection (anonymous) at (3,3) size 97x96
-            RenderTableRow {DIV} at (0,0) size 97x96
-              RenderTableCell {DIV} at (0,0) size 97x0 [r=0 c=0 rs=1 cs=1]
+        RenderTable {DIV} at (0,0) size 102x102 [border: (3px solid #008000)]
+          RenderTableSection (anonymous) at (3,3) size 96x96
+            RenderTableRow {DIV} at (0,0) size 96x96
+              RenderTableCell {DIV} at (0,0) size 96x0 [r=0 c=0 rs=1 cs=1]
         RenderText {#text} at (0,0) size 0x0

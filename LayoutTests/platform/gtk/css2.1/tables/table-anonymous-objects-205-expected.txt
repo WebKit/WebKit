@@ -10,21 +10,21 @@ layer at (8,49) size 784x38
   RenderBlock (relative positioned) {div} at (0,33) size 784x38
 layer at (8,49) size 784x38
   RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x38 [color=#FF0000]
-    RenderInline {span} at (0,0) size 77x36
+    RenderInline {span} at (0,0) size 76x36
       RenderText {#text} at (1,1) size 14x36
         text run at (1,1) width 14: "a"
       RenderText {#text} at (15,1) size 8x36
         text run at (15,1) width 8: " "
-      RenderTable at (23,1) size 39x36
-        RenderTableSection (anonymous) at (0,0) size 39x36
-          RenderTableRow (anonymous) at (0,0) size 39x36
-            RenderTableCell {span} at (0,0) size 39x36 [r=0 c=0 rs=1 cs=1]
+      RenderTable at (23,1) size 38x36
+        RenderTableSection (anonymous) at (0,0) size 38x36
+          RenderTableRow (anonymous) at (0,0) size 38x36
+            RenderTableCell {span} at (0,0) size 38x36 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 38x36
                 text run at (0,0) width 38: "bc "
-      RenderTable at (61,1) size 17x36
-        RenderTableSection (anonymous) at (0,0) size 17x36
-          RenderTableRow (anonymous) at (0,0) size 17x36
-            RenderTableCell (anonymous) at (0,0) size 17x36 [r=0 c=0 rs=1 cs=1]
+      RenderTable at (61,1) size 16x36
+        RenderTableSection (anonymous) at (0,0) size 16x36
+          RenderTableRow (anonymous) at (0,0) size 16x36
+            RenderTableCell (anonymous) at (0,0) size 16x36 [r=0 c=0 rs=1 cs=1]
               RenderText at (0,0) size 16x36
                 text run at (0,0) width 16: "d"
     RenderText zI: 1 {#text} at (0,0) size 0x0

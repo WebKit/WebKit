@@ -23,13 +23,13 @@ layer at (0,0) size 785x1488
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {DIV} at (0,78) size 769x0
         RenderBlock {DIV} at (0,0) size 769x0
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {PRE} at (0,91) size 769x15
         RenderText {#text} at (0,0) size 256x15
           text run at (0,0) width 256: "Prepending inline to table-cell:"
@@ -39,14 +39,14 @@ layer at (0,0) size 785x1488
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {DIV} at (0,119) size 769x0
         RenderBlock (anonymous) at (0,0) size 769x0
           RenderInline {DIV} at (0,0) size 0x0
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {PRE} at (0,132) size 769x15
         RenderText {#text} at (0,0) size 288x15
           text run at (0,0) width 288: "Prepending table-cell to table-cell:"
@@ -54,14 +54,14 @@ layer at (0,0) size 785x1488
         RenderTable at (0,0) size 2x0
           RenderTableSection (anonymous) at (0,0) size 2x0
             RenderTableRow (anonymous) at (0,0) size 2x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=1 rs=1 cs=1]
       RenderBlock {DIV} at (0,160) size 769x0
         RenderTable at (0,0) size 2x0
           RenderTableSection (anonymous) at (0,0) size 2x0
             RenderTableRow (anonymous) at (0,0) size 2x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=1 rs=1 cs=1]
       RenderBlock {PRE} at (0,173) size 769x15
         RenderText {#text} at (0,0) size 280x15
           text run at (0,0) width 280: "Prepending table-row to table-cell:"
@@ -70,13 +70,13 @@ layer at (0,0) size 785x1488
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow {DIV} at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=1 c=0 rs=1 cs=1]
       RenderBlock {DIV} at (0,201) size 769x0
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow {DIV} at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=1 c=0 rs=1 cs=1]
       RenderBlock {PRE} at (0,214) size 769x15
         RenderText {#text} at (0,0) size 328x15
           text run at (0,0) width 328: "Prepending table-row-group to table-cell:"
@@ -85,13 +85,13 @@ layer at (0,0) size 785x1488
           RenderTableSection {DIV} at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {DIV} at (0,242) size 769x0
         RenderTable at (0,0) size 1x0
           RenderTableSection {DIV} at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {PRE} at (0,255) size 769x15
         RenderText {#text} at (0,0) size 352x15
           text run at (0,0) width 352: "Prepending table-column-group to table-cell:"
@@ -100,13 +100,13 @@ layer at (0,0) size 785x1488
           RenderTableCol {DIV} at (0,0) size 0x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {DIV} at (0,283) size 769x0
         RenderTable at (0,0) size 1x0
           RenderTableCol {DIV} at (0,0) size 0x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {PRE} at (0,296) size 769x15
         RenderText {#text} at (0,0) size 312x15
           text run at (0,0) width 312: "Prepending table-caption to table-cell:"
@@ -115,13 +115,13 @@ layer at (0,0) size 785x1488
           RenderBlock {DIV} at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {DIV} at (0,324) size 769x0
         RenderTable at (0,0) size 1x0
           RenderBlock {DIV} at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock {PRE} at (0,337) size 769x15
         RenderText {#text} at (0,0) size 240x15
           text run at (0,0) width 240: "Prepending block to table-row:"
@@ -157,13 +157,13 @@ layer at (0,0) size 785x1488
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
             RenderTableRow {DIV} at (0,0) size 1x0
       RenderBlock {DIV} at (0,447) size 769x0
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
             RenderTableRow {DIV} at (0,0) size 1x0
       RenderBlock {PRE} at (0,460) size 769x15
         RenderText {#text} at (0,0) size 272x15
@@ -248,13 +248,13 @@ layer at (0,0) size 785x1488
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
           RenderTableSection {DIV} at (0,0) size 1x0
       RenderBlock {DIV} at (0,734) size 769x0
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
           RenderTableSection {DIV} at (0,0) size 1x0
       RenderBlock {PRE} at (0,747) size 769x15
         RenderText {#text} at (0,0) size 320x15
@@ -333,13 +333,13 @@ layer at (0,0) size 785x1488
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
           RenderTableCol {DIV} at (0,0) size 0x0
       RenderBlock {DIV} at (0,1021) size 769x0
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
           RenderTableCol {DIV} at (0,0) size 0x0
       RenderBlock {PRE} at (0,1034) size 769x15
         RenderText {#text} at (0,0) size 344x15
@@ -418,13 +418,13 @@ layer at (0,0) size 785x1488
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
           RenderBlock {DIV} at (0,0) size 1x0
       RenderBlock {DIV} at (0,1308) size 769x0
         RenderTable at (0,0) size 1x0
           RenderTableSection (anonymous) at (0,0) size 1x0
             RenderTableRow (anonymous) at (0,0) size 1x0
-              RenderTableCell {DIV} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {DIV} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
           RenderBlock {DIV} at (0,0) size 1x0
       RenderBlock {PRE} at (0,1321) size 769x15
         RenderText {#text} at (0,0) size 304x15

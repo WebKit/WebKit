@@ -26,25 +26,25 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x17
 layer at (8,101) size 102x102 clip at (9,102) size 100x85 scrollWidth 133
   RenderBlock {DIV} at (0,93) size 102x102 [border: (1px solid #0000FF)]
-    RenderTable {TABLE} at (1,1) size 7x6
-      RenderTableSection {TBODY} at (0,0) size 7x6
-        RenderTableRow {TR} at (0,2) size 7x2
-          RenderTableCell {TD} at (2,2) size 3x2 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (1,1) size 6x6
+      RenderTableSection {TBODY} at (0,0) size 6x6
+        RenderTableRow {TR} at (0,2) size 6x2
+          RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
 layer at (8,220) size 102x102 clip at (9,221) size 100x85 scrollX 33 scrollWidth 133
   RenderBlock {DIV} at (0,212) size 102x102 [border: (1px solid #0000FF)]
-    RenderTable {TABLE} at (94,1) size 7x6
-      RenderTableSection {TBODY} at (0,0) size 7x6
-        RenderTableRow {TR} at (0,2) size 7x2
-          RenderTableCell {TD} at (2,2) size 3x2 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (95,1) size 6x6
+      RenderTableSection {TBODY} at (0,0) size 6x6
+        RenderTableRow {TR} at (0,2) size 6x2
+          RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
 layer at (8,339) size 102x102 clip at (9,340) size 85x100 scrollHeight 133
   RenderBlock {DIV} at (0,331) size 102x102 [border: (1px solid #0000FF)]
-    RenderTable {TABLE} at (1,1) size 7x6
-      RenderTableSection {TBODY} at (0,0) size 7x6
-        RenderTableRow {TR} at (0,2) size 7x2
-          RenderTableCell {TD} at (2,2) size 3x2 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (1,1) size 6x6
+      RenderTableSection {TBODY} at (0,0) size 6x6
+        RenderTableRow {TR} at (0,2) size 6x2
+          RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
 layer at (82,105) size 60x60 backgroundClip at (9,102) size 100x85 clip at (9,102) size 100x85 outlineClip at (9,102) size 100x85
   RenderBlock (positioned) {DIV} at (70,0) size 60x60 [bgcolor=#C0C0C0]
 layer at (-24,224) size 60x60 backgroundClip at (9,221) size 100x85 clip at (9,221) size 100x85 outlineClip at (9,221) size 100x85
-  RenderBlock (positioned) {DIV} at (-130,0) size 61x60 [bgcolor=#C0C0C0]
+  RenderBlock (positioned) {DIV} at (-130,0) size 60x60 [bgcolor=#C0C0C0]
 layer at (12,413) size 60x60 backgroundClip at (9,340) size 85x100 clip at (9,340) size 85x100 outlineClip at (9,340) size 85x100
   RenderBlock (positioned) {DIV} at (0,70) size 60x60 [bgcolor=#C0C0C0]

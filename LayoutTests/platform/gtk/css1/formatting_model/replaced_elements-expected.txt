@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2323
+layer at (0,0) size 785x2325
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2323
-  RenderBlock {HTML} at (0,0) size 785x2323
-    RenderBody {BODY} at (8,8) size 769x2307 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x2325
+  RenderBlock {HTML} at (0,0) size 785x2325
+    RenderBody {BODY} at (8,8) size 769x2309 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x17
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -41,18 +41,18 @@ layer at (0,0) size 785x2323
           text run at (0,0) width 758: "The above image should be a square resized so its width is 50% of its parent element, and aligned at the right edge of the"
           text run at (0,17) width 100: "parent element: "
           text run at (100,17) width 395: "the document body in the first half, and the table in the second."
-      RenderTable {TABLE} at (0,1248) size 769x1059 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x1057
+      RenderTable {TABLE} at (0,1248) size 769x1061 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x1059
           RenderTableRow {TR} at (0,0) size 767x25
             RenderTableCell {TD} at (0,0) size 767x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,25) size 767x1032
-            RenderTableCell {TD} at (0,528) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,25) size 767x1034
+            RenderTableCell {TD} at (0,529) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,5) width 4: " "
-            RenderTableCell {TD} at (12,25) size 755x1032 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,25) size 755x1034 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18
                 RenderImage {IMG} at (0,0) size 15x15
                 RenderText {#text} at (15,1) size 434x17
@@ -61,18 +61,18 @@ layer at (0,0) size 785x2323
               RenderBlock {P} at (4,69) size 747x17
                 RenderText {#text} at (0,0) size 489x17
                   text run at (0,0) width 489: "The above image should be a 15px square with the same left edge as this text."
-              RenderImage {IMG} at (369,102) size 16x15
+              RenderImage {IMG} at (370,102) size 15x15
               RenderBlock {P} at (4,133) size 747x17
                 RenderText {#text} at (0,0) size 400x17
                   text run at (0,0) width 400: "The above image should be a 15px square aligned at the center."
-              RenderImage {IMG} at (190,166) size 375x373
-              RenderBlock {P} at (4,555) size 747x34
+              RenderImage {IMG} at (190,166) size 375x374
+              RenderBlock {P} at (4,556) size 747x34
                 RenderText {#text} at (0,0) size 722x34
                   text run at (0,0) width 722: "The above image should be a square resized so its width is 50% of the its parent element, and centered horizontally"
                   text run at (0,17) width 167: "within the parent element: "
                   text run at (167,17) width 395: "the document body in the first half, and the table in the second."
-              RenderImage {IMG} at (377,605) size 374x373
-              RenderBlock {P} at (4,994) size 747x34
+              RenderImage {IMG} at (377,606) size 374x374
+              RenderBlock {P} at (4,996) size 747x34
                 RenderText {#text} at (0,0) size 735x34
                   text run at (0,0) width 735: "The above image should be a square resized so its width is 50% of its parent element, and aligned at the right edge of"
                   text run at (0,17) width 123: "the parent element: "

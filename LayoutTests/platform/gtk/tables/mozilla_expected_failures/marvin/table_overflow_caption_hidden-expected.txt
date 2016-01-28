@@ -9,7 +9,7 @@ layer at (0,0) size 800x138
             RenderTableCell {TD} at (2,43) size 98x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x18
                 text run at (2,3) width 21: "foo"
-            RenderTableCell {TD} at (101,43) size 95x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (101,43) size 96x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x18
                 text run at (2,3) width 20: "bar"
 layer at (8,8) size 200x12 scrollWidth 397 scrollHeight 403

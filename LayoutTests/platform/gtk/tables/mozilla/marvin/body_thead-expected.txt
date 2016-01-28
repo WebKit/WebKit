@@ -3,63 +3,63 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 489x124
-        RenderBlock {CAPTION} at (0,0) size 489x17
-          RenderText {#text} at (50,0) size 389x17
-            text run at (50,0) width 389: "Communicator 4.5 Installers for Mac and Windows Platforms"
-        RenderTableSection {THEAD} at (0,17) size 489x23
-          RenderTableRow {TR} at (0,2) size 489x19
-            RenderTableCell {TD} at (2,2) size 191x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 488x124
+        RenderBlock {CAPTION} at (0,0) size 488x17
+          RenderText {#text} at (50,0) size 388x17
+            text run at (50,0) width 388: "Communicator 4.5 Installers for Mac and Windows Platforms"
+        RenderTableSection {THEAD} at (0,17) size 488x23
+          RenderTableRow {TR} at (0,2) size 488x19
+            RenderTableCell {TD} at (2,2) size 190x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 188x17
                 text run at (1,1) width 188: "This is the header information"
-        RenderTableSection {TBODY} at (0,40) size 489x84
-          RenderTableRow {TR} at (0,0) size 489x19
-            RenderTableCell {TH} at (2,8) size 191x3 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TH} at (194,0) size 110x19 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 108x17
-                text run at (1,1) width 108: "Macintosh PPC"
-            RenderTableCell {TH} at (305,0) size 87x19 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 85x17
-                text run at (1,1) width 85: "Windows 95"
-            RenderTableCell {TH} at (393,0) size 94x19 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 92x17
-                text run at (1,1) width 92: "Windows NT"
-          RenderTableRow {TR} at (0,21) size 489x19
-            RenderTableCell {TD} at (2,21) size 191x19 [r=1 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,40) size 488x84
+          RenderTableRow {TR} at (0,0) size 488x19
+            RenderTableCell {TH} at (2,8) size 190x3 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TH} at (194,0) size 109x19 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 107x17
+                text run at (1,1) width 107: "Macintosh PPC"
+            RenderTableCell {TH} at (305,0) size 86x19 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 84x17
+                text run at (1,1) width 84: "Windows 95"
+            RenderTableCell {TH} at (393,0) size 93x19 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 91x17
+                text run at (1,1) width 91: "Windows NT"
+          RenderTableRow {TR} at (0,21) size 488x19
+            RenderTableCell {TD} at (2,21) size 190x19 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 73x17
                 text run at (1,1) width 73: "Base Install"
-            RenderTableCell {TD} at (194,21) size 110x19 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (194,21) size 109x19 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (305,21) size 87x19 [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (305,21) size 86x19 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (393,21) size 94x19 [r=1 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (393,21) size 93x19 [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-          RenderTableRow {TR} at (0,42) size 489x19
-            RenderTableCell {TD} at (2,42) size 191x19 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,42) size 488x19
+            RenderTableCell {TD} at (2,42) size 190x19 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 103x17
                 text run at (1,1) width 103: "Complete Install"
-            RenderTableCell {TD} at (194,42) size 110x19 [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (194,42) size 109x19 [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (305,42) size 87x19 [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (305,42) size 86x19 [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (393,42) size 94x19 [r=2 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (393,42) size 93x19 [r=2 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-          RenderTableRow {TR} at (0,63) size 489x19
-            RenderTableCell {TD} at (2,63) size 191x19 [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,63) size 488x19
+            RenderTableCell {TD} at (2,63) size 190x19 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 114x17
                 text run at (1,1) width 114: "Pro Edition Install"
-            RenderTableCell {TD} at (194,63) size 110x19 [r=3 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (194,63) size 109x19 [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (305,63) size 87x19 [r=3 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (305,63) size 86x19 [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (393,63) size 94x19 [r=3 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (393,63) size 93x19 [r=3 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"

@@ -28,18 +28,18 @@ layer at (0,0) size 800x349
       RenderBlock {P} at (0,264) size 784x18
         RenderText {#text} at (0,0) size 379x17
           text run at (0,0) width 379: "So it would appear that the SPAN attribute is being ignored."
-      RenderTable {TABLE} at (0,297) size 409x26
+      RenderTable {TABLE} at (0,297) size 408x26
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderTableSection {TBODY} at (0,0) size 409x25
-          RenderTableRow {TR} at (0,2) size 409x21
+        RenderTableSection {TBODY} at (0,0) size 408x25
+          RenderTableRow {TR} at (0,2) size 408x21
             RenderTableCell {TD} at (2,2) size 100x21 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x17
                 text run at (2,2) width 31: "col 1"
-            RenderTableCell {TD} at (104,2) size 101x21 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (104,2) size 100x21 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x17
                 text run at (2,2) width 31: "col 2"
-            RenderTableCell {TD} at (206,2) size 201x21 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (206,2) size 200x21 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 31x17
                 text run at (2,2) width 31: "col 3"

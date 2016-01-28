@@ -6,16 +6,16 @@ layer at (0,0) size 800x204
       RenderBlock {P} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 618x17
           text run at (0,0) width 618: "The following square should contain exactly two bands, one yellow, one lime, with no red visible."
-      RenderTable {TABLE} at (0,33) size 107x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
-        RenderTableSection {TBODY} at (3,3) size 101x100
-          RenderTableRow {TR} at (0,0) size 101x100
-            RenderTableCell {TD} at (0,0) size 51x100 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 51x50 [bgcolor=#FF0000]
-                RenderBlock {DIV} at (0,0) size 51x50 [bgcolor=#FFFF00]
-              RenderBlock {DIV} at (0,50) size 51x50 [bgcolor=#00FF00]
-            RenderTableCell {TD} at (50,0) size 51x100 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 51x50 [border: (50px solid #FFFF00) none]
-              RenderBlock {DIV} at (0,50) size 51x50 [border: (50px solid #00FF00) none]
+      RenderTable {TABLE} at (0,33) size 106x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderTableSection {TBODY} at (3,3) size 100x100
+          RenderTableRow {TR} at (0,0) size 100x100
+            RenderTableCell {TD} at (0,0) size 50x100 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FF0000]
+                RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (0,50) size 50x50 [bgcolor=#00FF00]
+            RenderTableCell {TD} at (50,0) size 50x100 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 50x50 [border: (50px solid #FFFF00) none]
+              RenderBlock {DIV} at (0,50) size 50x50 [border: (50px solid #00FF00) none]
       RenderBlock {P} at (0,155) size 784x17
         RenderText {#text} at (0,0) size 259x17
           text run at (0,0) width 259: "This test is meaningless if you don't pass "

@@ -10,14 +10,14 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,33) size 340x40 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 338x38
           RenderTableRow {TR} at (0,0) size 338x19
-            RenderTableCell {TD} at (0,0) size 338x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 339x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 166x17
                 text run at (1,1) width 166: "width=340 (same as table)"
           RenderTableRow {TR} at (0,19) size 338x19
             RenderTableCell {TD} at (0,19) size 82x19 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 69x17
                 text run at (1,1) width 69: "Search for:"
-            RenderTableCell {TD} at (81,19) size 257x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (81,19) size 258x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"
       RenderBlock {P} at (0,89) size 784x17
@@ -27,14 +27,14 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,122) size 340x40 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 338x38
           RenderTableRow {TR} at (0,0) size 338x19
-            RenderTableCell {TD} at (0,0) size 338x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 339x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 111x17
                 text run at (1,1) width 111: "no width attribute"
           RenderTableRow {TR} at (0,19) size 338x19
             RenderTableCell {TD} at (0,19) size 82x19 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 69x17
                 text run at (1,1) width 69: "Search for:"
-            RenderTableCell {TD} at (81,19) size 257x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (81,19) size 258x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"
       RenderBlock {P} at (0,178) size 784x17
@@ -44,14 +44,14 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,211) size 340x40 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 338x38
           RenderTableRow {TR} at (0,0) size 338x19
-            RenderTableCell {TD} at (0,0) size 338x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 339x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 85x17
                 text run at (1,1) width 85: "width=100px"
           RenderTableRow {TR} at (0,19) size 338x19
             RenderTableCell {TD} at (0,19) size 82x19 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 69x17
                 text run at (1,1) width 69: "Search for:"
-            RenderTableCell {TD} at (81,19) size 257x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (81,19) size 258x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"
       RenderBlock {P} at (0,267) size 784x17
@@ -61,14 +61,14 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,300) size 340x40 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 338x38
           RenderTableRow {TR} at (0,0) size 338x19
-            RenderTableCell {TD} at (0,0) size 338x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 339x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 85x17
                 text run at (1,1) width 85: "width=200px"
           RenderTableRow {TR} at (0,19) size 338x19
             RenderTableCell {TD} at (0,19) size 82x19 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 69x17
                 text run at (1,1) width 69: "Search for:"
-            RenderTableCell {TD} at (81,19) size 257x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (81,19) size 258x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"
       RenderBlock {P} at (0,356) size 784x17
@@ -78,13 +78,13 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,389) size 340x40 [bgcolor=#FFFFCC] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 338x38
           RenderTableRow {TR} at (0,0) size 338x19
-            RenderTableCell {TD} at (0,0) size 338x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 339x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 82x17
                 text run at (1,1) width 82: "width=100%"
           RenderTableRow {TR} at (0,19) size 338x19
             RenderTableCell {TD} at (0,19) size 82x19 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 69x17
                 text run at (1,1) width 69: "Search for:"
-            RenderTableCell {TD} at (81,19) size 257x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (81,19) size 258x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 221x17
                 text run at (1,1) width 221: "foo bar baz foo bar baz foo bar baz"

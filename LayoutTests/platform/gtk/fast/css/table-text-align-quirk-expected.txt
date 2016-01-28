@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 541x17
           text run at (0,0) width 541: "The text below should be left-justified since text-align does not inherit in quirks mode."
       RenderBlock {DIV} at (0,17) size 784x25
-        RenderTable {TABLE} at (0,0) size 109x25 [border: (1px solid #000000)]
-          RenderTableSection {TBODY} at (1,1) size 107x23
-            RenderTableRow {TR} at (0,2) size 107x19
-              RenderTableCell {TD} at (2,2) size 103x19 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 108x25 [border: (1px solid #000000)]
+          RenderTableSection {TBODY} at (1,1) size 106x23
+            RenderTableRow {TR} at (0,2) size 106x19
+              RenderTableCell {TD} at (2,2) size 102x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 35x17
                   text run at (1,1) width 35: "hello."

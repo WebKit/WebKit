@@ -132,7 +132,7 @@ layer at (11,274) size 281x34 clip at (12,275) size 279x32
           RenderText {#text} at (70,0) size 44x17
             text run at (70,0) width 44: "button"
 layer at (294,274) size 11x34 clip at (295,275) size 9x32
-  RenderTableCell {TD} at (284,8) size 12x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+  RenderTableCell {TD} at (284,8) size 13x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,3) width 4: " "
 layer at (11,310) size 281x21 clip at (12,311) size 279x19
@@ -140,7 +140,7 @@ layer at (11,310) size 281x21 clip at (12,311) size 279x19
     RenderText {#text} at (2,2) size 4x17
       text run at (2,2) width 4: " "
 layer at (294,310) size 11x21 clip at (295,311) size 9x19
-  RenderTableCell {TD} at (284,38) size 12x21 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+  RenderTableCell {TD} at (284,38) size 13x21 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x17
       text run at (2,2) width 4: " "
 layer at (11,337) size 172x45 clip at (12,338) size 170x43 scrollWidth 216

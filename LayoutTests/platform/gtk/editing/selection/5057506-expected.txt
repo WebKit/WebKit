@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
           text run at (0,51) width 182: "last character, and hit delete. "
           text run at (182,51) width 277: "Afterward, the table should contain 'foobar'."
       RenderBlock {DIV} at (0,84) size 784x44
-        RenderTable {TABLE} at (0,0) size 111x27 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 109x25
-            RenderTableRow {TR} at (0,2) size 109x21
-              RenderTableCell {TD} at (2,2) size 105x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 110x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 108x25
+            RenderTableRow {TR} at (0,2) size 108x21
+              RenderTableCell {TD} at (2,2) size 104x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {SPAN} at (0,0) size 21x17
                   RenderText {#text} at (2,2) size 21x17
                     text run at (2,2) width 21: "foo"

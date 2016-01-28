@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x66
   RenderBlock {HTML} at (0,0) size 800x66
     RenderBody {BODY} at (8,8) size 784x50
-      RenderTable {DIV} at (0,0) size 51x50
-        RenderTableSection {DIV} at (0,0) size 51x0
-        RenderTableSection (anonymous) at (0,0) size 51x50
-          RenderTableRow (anonymous) at (0,0) size 51x50
-            RenderTableCell (anonymous) at (0,0) size 51x50 [r=0 c=0 rs=1 cs=1]
+      RenderTable {DIV} at (0,0) size 50x50
+        RenderTableSection {DIV} at (0,0) size 50x0
+        RenderTableSection (anonymous) at (0,0) size 50x50
+          RenderTableRow (anonymous) at (0,0) size 50x50
+            RenderTableCell (anonymous) at (0,0) size 50x50 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#008000]
-        RenderTableSection {DIV} at (0,50) size 51x0
+        RenderTableSection {DIV} at (0,50) size 50x0

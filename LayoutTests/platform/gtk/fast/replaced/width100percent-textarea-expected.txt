@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,17) size 784x48
         RenderTableSection {TBODY} at (0,0) size 784x48
           RenderTableRow {TR} at (0,1) size 784x46
-            RenderTableCell {TD} at (1,1) size 9x46 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,1) size 9x46 [r=0 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (19,1) size 9x46 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (1,1) size 8x46 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,1) size 8x46 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (19,1) size 8x46 [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (28,14) size 755x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,2) width 4: " "
@@ -21,28 +21,28 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,99) size 784x48
         RenderTableSection {TBODY} at (0,0) size 784x48
           RenderTableRow {TR} at (0,1) size 784x46
-            RenderTableCell {TD} at (1,1) size 9x46 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,1) size 9x46 [r=0 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (19,1) size 9x46 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (1,1) size 8x46 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,1) size 8x46 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (19,1) size 8x46 [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (28,14) size 755x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,2) width 4: " "
 layer at (10,29) size 6x40 clip at (0,0) size 0x0 scrollWidth 11 scrollHeight 55
-  RenderTextControl {TEXTAREA} at (1,3) size 7x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (1,3) size 6x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x51
       RenderText {#text} at (0,0) size 9x51
         text run at (0,0) width 9: "o"
         text run at (0,17) width 9: "n"
         text run at (0,34) width 9: "e"
 layer at (19,29) size 6x40 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 55
-  RenderTextControl {TEXTAREA} at (1,3) size 7x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (1,3) size 6x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x51
       RenderText {#text} at (0,0) size 12x51
         text run at (0,0) width 4: "t"
         text run at (0,17) width 12: "w"
         text run at (0,34) width 9: "o"
 layer at (28,29) size 6x40 clip at (0,0) size 0x0 scrollWidth 11 scrollHeight 89
-  RenderTextControl {TEXTAREA} at (1,3) size 7x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (1,3) size 6x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x85
       RenderText {#text} at (0,0) size 9x85
         text run at (0,0) width 4: "t"
@@ -51,7 +51,7 @@ layer at (28,29) size 6x40 clip at (0,0) size 0x0 scrollWidth 11 scrollHeight 89
         text run at (0,51) width 9: "e"
         text run at (0,68) width 9: "e"
 layer at (10,111) size 6x40 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 225
-  RenderTextControl {TEXTAREA} at (1,3) size 7x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (1,3) size 6x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x221
       RenderText {#text} at (0,0) size 12x221
         text run at (0,0) width 9: "o"
@@ -68,14 +68,14 @@ layer at (10,111) size 6x40 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 2
         text run at (0,187) width 9: "e"
         text run at (0,204) width 9: "e"
 layer at (19,111) size 6x40 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 55
-  RenderTextControl {TEXTAREA} at (1,3) size 7x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (1,3) size 6x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x51
       RenderText {#text} at (0,0) size 12x51
         text run at (0,0) width 4: "t"
         text run at (0,17) width 12: "w"
         text run at (0,34) width 9: "o"
 layer at (28,111) size 6x40 clip at (0,0) size 0x0 scrollWidth 11 scrollHeight 89
-  RenderTextControl {TEXTAREA} at (1,3) size 7x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (1,3) size 6x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x85
       RenderText {#text} at (0,0) size 9x85
         text run at (0,0) width 4: "t"

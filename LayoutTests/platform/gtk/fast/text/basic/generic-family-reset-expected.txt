@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock {H3} at (0,0) size 784x21
         RenderText {#text} at (0,0) size 377x21
           text run at (0,0) width 377: "tt's, font-family inheriting and font-size: a bug"
-      RenderTable {TABLE} at (0,39) size 704x332
-        RenderTableSection {TBODY} at (0,0) size 704x331
-          RenderTableRow {TR} at (0,10) size 704x172
+      RenderTable {TABLE} at (0,39) size 703x332
+        RenderTableSection {TBODY} at (0,0) size 703x331
+          RenderTableRow {TR} at (0,10) size 703x172
             RenderTableCell {TD} at (10,10) size 684x172 [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 259x17
                 text run at (1,1) width 259: "The css in the head of this file is like this:"
@@ -36,14 +36,14 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,154) size 681x17
                 text run at (1,154) width 681: "The two columns below show that inheriting the font does not correctly inherit the font-size for a <tt> block."
               RenderBR {BR} at (682,168) size 0x0
-          RenderTableRow {TR} at (0,192) size 704x19
+          RenderTableRow {TR} at (0,192) size 703x19
             RenderTableCell {TH} at (10,192) size 305x19 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (138,1) size 29x17
                 text run at (138,1) width 29: "<tt>"
             RenderTableCell {TH} at (324,192) size 370x19 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (159,1) size 51x17
                 text run at (159,1) width 51: "<span>"
-          RenderTableRow {TR} at (0,221) size 704x17
+          RenderTableRow {TR} at (0,221) size 703x17
             RenderTableCell {TD} at (10,221) size 305x17 [r=2 c=0 rs=1 cs=1]
               RenderInline {TT} at (0,0) size 211x15
                 RenderText {#text} at (1,1) size 211x15
@@ -54,7 +54,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 211x15
                   text run at (1,1) width 211: "font-family: Verdana; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,248) size 704x17
+          RenderTableRow {TR} at (0,248) size 703x17
             RenderTableCell {TD} at (10,248) size 305x17 [r=3 c=0 rs=1 cs=1]
               RenderInline {TT} at (0,0) size 258x15
                 RenderText {#text} at (1,1) size 258x15
@@ -65,7 +65,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 202x15
                   text run at (1,1) width 202: "font-family: inherit; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,275) size 704x19
+          RenderTableRow {TR} at (0,275) size 703x19
             RenderTableCell {TD} at (10,275) size 305x19 [r=4 c=0 rs=1 cs=1]
               RenderInline {TT} at (0,0) size 245x17
                 RenderText {#text} at (1,1) size 245x17
@@ -76,7 +76,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 245x17
                   text run at (1,1) width 245: "font-family: Verdana; font-size: 1.0em;"
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,304) size 704x17
+          RenderTableRow {TR} at (0,304) size 703x17
             RenderTableCell {TD} at (10,306) size 305x13 [r=5 c=0 rs=1 cs=1]
               RenderInline {TT} at (0,0) size 186x11
                 RenderText {#text} at (1,1) size 186x11

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x121
   RenderBlock {HTML} at (0,0) size 800x121
     RenderBody {BODY} at (8,8) size 784x105
-      RenderTable {TABLE} at (0,0) size 97x33 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 95x31
-          RenderTableRow {TR} at (0,2) size 95x27
-            RenderTableCell {TD} at (2,2) size 91x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 96x33 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 94x31
+          RenderTableRow {TR} at (0,2) size 94x27
+            RenderTableCell {TD} at (2,2) size 90x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 86x23 [border: (3px dotted #00FF00)]
                 RenderText {#text} at (3,3) size 178x17
                   text run at (3,3) width 178: "Truncated? It should not be!"

@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,25) size 782x59
-            RenderTableCell {TD} at (0,42) size 13x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,42) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,25) size 770x59 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
@@ -51,7 +51,6 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 78x37 [border: (10px inset #808000)]
                   RenderText {#text} at (363,17) size 58x17
                     text run at (363,17) width 58: "class two"
-                RenderText {#text} at (431,17) size 713x34
-                  text run at (431,17) width 282: ", which should result in a 10-pixel inset olive"
-                  text run at (0,34) width 49: "border. "
-                  text run at (49,34) width 429: "The line-height of the parent element should not change on any line."
+                RenderText {#text} at (431,17) size 762x34
+                  text run at (431,17) width 331: ", which should result in a 10-pixel inset olive border."
+                  text run at (0,34) width 429: "The line-height of the parent element should not change on any line."

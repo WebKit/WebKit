@@ -230,7 +230,7 @@ AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 8.000000, 346.000000 }
-AXSize: { 770.000000, 27.000000 }
+AXSize: { 769.000000, 27.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Contributions

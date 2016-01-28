@@ -12,10 +12,10 @@ layer at (0,0) size 800x585
       RenderBlock (anonymous) at (74,74) size 600x48
         RenderText {#text} at (0,11) size 54x26
           text run at (0,11) width 54: "Hello"
-      RenderTable {TABLE} at (74,122) size 7x6
-        RenderTableSection {TBODY} at (0,0) size 7x6
-          RenderTableRow {TR} at (0,2) size 7x2
-            RenderTableCell {TD} at (2,2) size 3x2 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (74,122) size 6x6
+        RenderTableSection {TBODY} at (0,0) size 6x6
+          RenderTableRow {TR} at (0,2) size 6x2
+            RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
       RenderBlock (anonymous) at (74,128) size 600x48
         RenderBR {BR} at (0,11) size 0x26
 selection start: position 1 of child 2 {#text} of body

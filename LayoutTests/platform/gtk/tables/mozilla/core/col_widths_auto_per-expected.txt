@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x17
         RenderText {#text} at (0,0) size 373x17
           text run at (0,0) width 373: "auto table - % width single cell has no effect (not so in IE5)"
-      RenderTable {TABLE} at (0,17) size 683x43 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 681x41
-          RenderTableRow {TR} at (0,10) size 681x21
-            RenderTableCell {TD} at (10,10) size 661x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,17) size 682x43 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 680x41
+          RenderTableRow {TR} at (0,10) size 680x21
+            RenderTableCell {TD} at (10,10) size 660x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 62x17
                 text run at (2,2) width 62: "10% 10%"
       RenderBlock (anonymous) at (0,60) size 784x51
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (10,10) size 85x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "1%"
-            RenderTableCell {TD} at (104,10) size 668x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (104,10) size 669x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x17
                 text run at (2,2) width 29: "10%"
       RenderBlock (anonymous) at (0,154) size 784x17

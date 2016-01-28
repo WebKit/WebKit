@@ -8,129 +8,129 @@ layer at (0,0) size 785x1264
           RenderText {#text} at (252,0) size 265x17
             text run at (252,0) width 265: "Build 1999/10/27/08 Win95 - Daily Build"
           RenderBR {BR} at (517,14) size 0x0
-        RenderTable {TABLE} at (73,17) size 623x1105 [border: (10px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 622x17
-            RenderText {#text} at (268,0) size 86x17
-              text run at (268,0) width 86: "January 2000"
-          RenderTableSection {TBODY} at (10,27) size 602x1068
-            RenderTableRow {TR} at (0,0) size 602x411
-              RenderTableCell {TD} at (0,0) size 88x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (74,17) size 621x1105 [border: (10px outset #808080)]
+          RenderBlock {CAPTION} at (0,0) size 621x17
+            RenderText {#text} at (268,0) size 85x17
+              text run at (268,0) width 85: "January 2000"
+          RenderTableSection {TBODY} at (10,27) size 601x1068
+            RenderTableRow {TR} at (0,0) size 601x411
+              RenderTableCell {TD} at (0,0) size 87x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (87,0) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (87,0) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (171,0) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (171,0) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (255,0) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (255,0) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (339,0) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+              RenderTableCell {TD} at (339,0) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (423,0) size 87x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
+              RenderTableCell {TD} at (423,0) size 86x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (509,0) size 93x411 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 89x390 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 89x390
-                    RenderTableRow {TR} at (0,0) size 89x390
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (509,0) size 92x411 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 88x390 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 88x390
+                    RenderTableRow {TR} at (0,0) size 88x390
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "1."
-                      RenderTableCell {TD} at (18,0) size 71x390 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 69x388 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 69x388 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 69x388
-                              RenderTableCell {TD} at (0,0) size 69x388 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 67x68
+                      RenderTableCell {TD} at (18,0) size 70x390 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 68x388 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 68x388 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 68x388
+                              RenderTableCell {TD} at (0,0) size 68x388 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 66x68
                                   RenderText {#text} at (0,0) size 48x68
                                     text run at (0,0) width 27: "Test"
                                     text run at (0,17) width 46: "mozilla"
                                     text run at (0,34) width 48: "one last"
                                     text run at (0,51) width 31: "time."
-                                RenderBlock {P} at (1,85) size 67x51
+                                RenderBlock {P} at (1,85) size 66x51
                                   RenderText {#text} at (0,0) size 37x51
                                     text run at (0,0) width 31: "New"
                                     text run at (0,17) width 37: "Years"
                                     text run at (0,34) width 27: "day."
-                                RenderBlock {P} at (1,152) size 67x17
+                                RenderBlock {P} at (1,152) size 66x17
                                   RenderText {#text} at (0,0) size 47x17
                                     text run at (0,0) width 47: "Y2K!!!"
-                                RenderBlock {P} at (1,185) size 67x51
+                                RenderBlock {P} at (1,185) size 66x51
                                   RenderText {#text} at (0,0) size 60x51
                                     text run at (0,0) width 29: "Find"
                                     text run at (0,17) width 48: "Abacus"
                                     text run at (0,34) width 60: "from attic"
-                                RenderBlock {P} at (1,252) size 67x68
+                                RenderBlock {P} at (1,252) size 66x68
                                   RenderText {#text} at (0,0) size 52x68
                                     text run at (0,0) width 44: "Eat Ice"
                                     text run at (0,17) width 42: "Cream"
                                     text run at (0,34) width 52: "before it"
                                     text run at (0,51) width 33: "melts"
-                                RenderBlock {P} at (1,336) size 67x51
+                                RenderBlock {P} at (1,336) size 66x51
                                   RenderText {#text} at (0,0) size 51x51
                                     text run at (0,0) width 33: "Lock"
                                     text run at (0,17) width 51: "doors &"
                                     text run at (0,34) width 27: "hide"
-                RenderBlock (anonymous) at (2,392) size 89x17
+                RenderBlock (anonymous) at (2,392) size 88x17
                   RenderBR {BR} at (0,0) size 0x17
-            RenderTableRow {TR} at (0,411) size 602x261
-              RenderTableCell {TD} at (0,411) size 88x193 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 84x172 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 84x172
-                    RenderTableRow {TR} at (0,0) size 84x172
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,411) size 601x261
+              RenderTableCell {TD} at (0,411) size 87x193 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 83x172 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 83x172
+                    RenderTableRow {TR} at (0,0) size 83x172
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "2."
-                      RenderTableCell {TD} at (18,0) size 66x172 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 64x170 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 64x170 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 64x170
-                              RenderTableCell {TD} at (0,0) size 64x170 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 62x51
+                      RenderTableCell {TD} at (18,0) size 65x172 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 63x170 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 63x170 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 63x170
+                              RenderTableCell {TD} at (0,0) size 63x170 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 61x51
                                   RenderText {#text} at (0,0) size 61x51
                                     text run at (0,0) width 56: "Look for"
                                     text run at (0,17) width 32: "Y2K"
                                     text run at (0,34) width 61: "survivers."
-                                RenderBlock {P} at (1,68) size 62x34
+                                RenderBlock {P} at (1,68) size 61x34
                                   RenderText {#text} at (0,0) size 57x34
                                     text run at (0,0) width 35: "Build"
                                     text run at (0,17) width 57: "outhouse"
-                                RenderBlock {P} at (1,118) size 62x51
+                                RenderBlock {P} at (1,118) size 61x51
                                   RenderText {#text} at (0,0) size 45x51
                                     text run at (0,0) width 21: "Eat"
                                     text run at (0,17) width 45: "reserve"
                                     text run at (0,34) width 29: "food"
-                RenderBlock (anonymous) at (2,174) size 84x17
+                RenderBlock (anonymous) at (2,174) size 83x17
                   RenderBR {BR} at (0,0) size 0x17
-              RenderTableCell {TD} at (87,411) size 85x76 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 81x72 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 81x72
-                    RenderTableRow {TR} at (0,0) size 81x72
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (87,411) size 84x76 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 80x72 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 80x72
+                    RenderTableRow {TR} at (0,0) size 80x72
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "3."
-                      RenderTableCell {TD} at (18,0) size 63x72 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 61x70 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 61x70 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 61x70
-                              RenderTableCell {TD} at (0,0) size 61x70 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 59x68
+                      RenderTableCell {TD} at (18,0) size 62x72 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 60x70 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 60x70 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 60x70
+                              RenderTableCell {TD} at (0,0) size 60x70 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 58x68
                                   RenderText {#text} at (0,0) size 58x68
                                     text run at (0,0) width 35: "Write"
                                     text run at (0,17) width 47: "letter to"
                                     text run at (0,34) width 45: "electric"
                                     text run at (0,51) width 58: "company"
-              RenderTableCell {TD} at (171,411) size 85x227 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 81x223 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 81x223
-                    RenderTableRow {TR} at (0,0) size 81x223
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (171,411) size 84x227 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 80x223 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 80x223
+                    RenderTableRow {TR} at (0,0) size 80x223
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "4."
-                      RenderTableCell {TD} at (18,0) size 63x223 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (18,0) size 62x223 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
                         RenderTable {TABLE} at (1,1) size 60x221 [color=#000000]
                           RenderTableSection {TBODY} at (0,0) size 60x221 [bgcolor=#FFFF00]
                             RenderTableRow {TR} at (0,0) size 60x221
@@ -152,11 +152,11 @@ layer at (0,0) size 785x1264
                                     text run at (0,0) width 21: "Eat"
                                     text run at (0,17) width 45: "reserve"
                                     text run at (0,34) width 29: "food"
-              RenderTableCell {TD} at (255,411) size 85x160 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (255,411) size 84x160 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                 RenderTable {TABLE} at (2,2) size 80x156 [color=#000000]
                   RenderTableSection {TBODY} at (0,0) size 80x156
                     RenderTableRow {TR} at (0,0) size 80x156
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "5."
                       RenderTableCell {TD} at (18,0) size 62x156 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
@@ -176,14 +176,14 @@ layer at (0,0) size 785x1264
                                     text run at (0,0) width 21: "Eat"
                                     text run at (0,17) width 45: "reserve"
                                     text run at (0,34) width 29: "food"
-              RenderTableCell {TD} at (339,411) size 85x160 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 81x156 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 81x156
-                    RenderTableRow {TR} at (0,0) size 81x156
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (339,411) size 84x160 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 80x156 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 80x156
+                    RenderTableRow {TR} at (0,0) size 80x156
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "6."
-                      RenderTableCell {TD} at (18,0) size 63x156 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (18,0) size 62x156 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
                         RenderTable {TABLE} at (1,1) size 60x154 [color=#000000]
                           RenderTableSection {TBODY} at (0,0) size 60x154 [bgcolor=#FFFF00]
                             RenderTableRow {TR} at (0,0) size 60x154
@@ -200,146 +200,146 @@ layer at (0,0) size 785x1264
                                     text run at (0,0) width 21: "Eat"
                                     text run at (0,17) width 45: "reserve"
                                     text run at (0,34) width 29: "food"
-              RenderTableCell {TD} at (423,411) size 87x227 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 83x223 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 83x223
-                    RenderTableRow {TR} at (0,0) size 83x223
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (423,411) size 86x227 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 82x223 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 82x223
+                    RenderTableRow {TR} at (0,0) size 82x223
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "7."
-                      RenderTableCell {TD} at (18,0) size 65x223 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 63x221 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 63x221 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 63x221
-                              RenderTableCell {TD} at (0,0) size 63x221 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 61x68
+                      RenderTableCell {TD} at (18,0) size 64x223 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 62x221 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 62x221 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 62x221
+                              RenderTableCell {TD} at (0,0) size 62x221 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 60x68
                                   RenderText {#text} at (0,0) size 60x68
                                     text run at (0,0) width 20: "Go"
                                     text run at (0,17) width 47: "internet"
                                     text run at (0,34) width 60: "exploring"
                                     text run at (0,51) width 55: "for food."
-                                RenderBlock {P} at (1,85) size 61x68
+                                RenderBlock {P} at (1,85) size 60x68
                                   RenderText {#text} at (0,0) size 60x68
                                     text run at (0,0) width 48: "Internet"
                                     text run at (0,17) width 60: "exploring"
                                     text run at (0,34) width 44: "doesn't"
                                     text run at (0,51) width 37: "work."
-                                RenderBlock {P} at (1,169) size 61x51
+                                RenderBlock {P} at (1,169) size 60x51
                                   RenderText {#text} at (0,0) size 45x51
                                     text run at (0,0) width 21: "Eat"
                                     text run at (0,17) width 45: "reserve"
                                     text run at (0,34) width 29: "food"
-              RenderTableCell {TD} at (509,411) size 93x261 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 89x257 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 89x257
-                    RenderTableRow {TR} at (0,0) size 89x257
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (509,411) size 92x261 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=1 c=6 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 88x257 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 88x257
+                    RenderTableRow {TR} at (0,0) size 88x257
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "8."
-                      RenderTableCell {TD} at (18,0) size 71x257 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 69x255 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 69x255 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 69x255
-                              RenderTableCell {TD} at (0,0) size 69x255 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 67x85
+                      RenderTableCell {TD} at (18,0) size 70x257 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 68x255 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 68x255 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 68x255
+                              RenderTableCell {TD} at (0,0) size 68x255 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 66x85
                                   RenderText {#text} at (0,0) size 60x85
                                     text run at (0,0) width 20: "Go"
                                     text run at (0,17) width 47: "internet"
                                     text run at (0,34) width 60: "exploring"
                                     text run at (0,51) width 51: "for food"
                                     text run at (0,68) width 38: "again."
-                                RenderBlock {P} at (1,102) size 67x85
+                                RenderBlock {P} at (1,102) size 66x85
                                   RenderText {#text} at (0,0) size 60x85
                                     text run at (0,0) width 48: "Internet"
                                     text run at (0,17) width 60: "exploring"
                                     text run at (0,34) width 44: "doesn't"
                                     text run at (0,51) width 33: "work"
                                     text run at (0,68) width 38: "again."
-                                RenderBlock {P} at (1,203) size 67x51
+                                RenderBlock {P} at (1,203) size 66x51
                                   RenderText {#text} at (0,0) size 45x51
                                     text run at (0,0) width 21: "Eat"
                                     text run at (0,17) width 45: "reserve"
                                     text run at (0,34) width 29: "food"
-            RenderTableRow {TR} at (0,672) size 602x345
-              RenderTableCell {TD} at (0,672) size 88x345 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 84x324 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 84x324
-                    RenderTableRow {TR} at (0,0) size 84x324
-                      RenderTableCell {TD} at (0,0) size 19x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,672) size 601x345
+              RenderTableCell {TD} at (0,672) size 87x345 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 83x324 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 83x324
+                    RenderTableRow {TR} at (0,0) size 83x324
+                      RenderTableCell {TD} at (0,0) size 18x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 16x24
                           text run at (1,1) width 16: "9."
-                      RenderTableCell {TD} at (18,0) size 66x324 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 64x322 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 64x322 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 64x322
-                              RenderTableCell {TD} at (0,0) size 64x322 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 62x68
+                      RenderTableCell {TD} at (18,0) size 65x324 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 63x322 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 63x322 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 63x322
+                              RenderTableCell {TD} at (0,0) size 63x322 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 61x68
                                   RenderText {#text} at (0,0) size 60x68
                                     text run at (0,0) width 20: "Go"
                                     text run at (0,17) width 47: "internet"
                                     text run at (0,34) width 60: "exploring"
                                     text run at (0,51) width 55: "for food."
-                                RenderBlock {P} at (1,85) size 62x85
+                                RenderBlock {P} at (1,85) size 61x85
                                   RenderText {#text} at (0,0) size 60x85
                                     text run at (0,0) width 48: "Internet"
                                     text run at (0,17) width 60: "exploring"
                                     text run at (0,34) width 22: "still"
                                     text run at (0,51) width 44: "doesn't"
                                     text run at (0,68) width 37: "work."
-                                RenderBlock {P} at (1,186) size 62x68
+                                RenderBlock {P} at (1,186) size 61x68
                                   RenderText {#text} at (0,0) size 60x68
                                     text run at (0,0) width 51: "Give up"
                                     text run at (0,17) width 47: "internet"
                                     text run at (0,34) width 60: "exploring"
                                     text run at (0,51) width 55: "for food."
-                                RenderBlock {P} at (1,270) size 62x51
+                                RenderBlock {P} at (1,270) size 61x51
                                   RenderText {#text} at (0,0) size 45x51
                                     text run at (0,0) width 21: "Eat"
                                     text run at (0,17) width 45: "reserve"
                                     text run at (0,34) width 29: "food"
-                RenderBlock (anonymous) at (2,326) size 84x17
+                RenderBlock (anonymous) at (2,326) size 83x17
                   RenderBR {BR} at (0,0) size 0x17
-              RenderTableCell {TD} at (87,672) size 85x277 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 81x273 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 81x273
-                    RenderTableRow {TR} at (0,0) size 81x273
-                      RenderTableCell {TD} at (0,0) size 30x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (87,672) size 84x277 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 80x273 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 80x273
+                    RenderTableRow {TR} at (0,0) size 80x273
+                      RenderTableCell {TD} at (0,0) size 29x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 27x24
                           text run at (1,1) width 27: "10."
-                      RenderTableCell {TD} at (29,0) size 52x273 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 50x271 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 50x271 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 50x271
-                              RenderTableCell {TD} at (0,0) size 50x271 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 48x68
+                      RenderTableCell {TD} at (29,0) size 51x273 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 49x271 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 49x271 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 49x271
+                              RenderTableCell {TD} at (0,0) size 49x271 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 47x68
                                   RenderText {#text} at (0,0) size 41x68
                                     text run at (0,0) width 41: "Power"
                                     text run at (0,17) width 40: "comes"
                                     text run at (0,34) width 30: "back"
                                     text run at (0,51) width 20: "on."
-                                RenderBlock {P} at (1,85) size 48x85
+                                RenderBlock {P} at (1,85) size 47x85
                                   RenderText {#text} at (0,0) size 46x85
                                     text run at (0,0) width 21: "Put"
                                     text run at (0,17) width 35: "trusty"
                                     text run at (0,34) width 43: "abacus"
                                     text run at (0,51) width 46: "back in"
                                     text run at (0,68) width 26: "attic"
-                                RenderBlock {P} at (1,186) size 48x51
+                                RenderBlock {P} at (1,186) size 47x51
                                   RenderText {#text} at (0,0) size 46x51
                                     text run at (0,0) width 32: "Grab"
                                     text run at (0,17) width 32: "latest"
                                     text run at (0,34) width 46: "mozilla"
-                                RenderBlock {P} at (1,253) size 48x17
+                                RenderBlock {P} at (1,253) size 47x17
                                   RenderText {#text} at (0,0) size 39x17
                                     text run at (0,0) width 39: "Test it"
-              RenderTableCell {TD} at (171,672) size 85x92 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 81x88 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 81x88
-                    RenderTableRow {TR} at (0,0) size 81x88
-                      RenderTableCell {TD} at (0,0) size 30x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (171,672) size 84x92 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 80x88 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 80x88
+                    RenderTableRow {TR} at (0,0) size 80x88
+                      RenderTableCell {TD} at (0,0) size 29x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 27x24
                           text run at (1,1) width 27: "11."
-                      RenderTableCell {TD} at (29,0) size 52x88 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (29,0) size 51x88 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
                         RenderTable {TABLE} at (1,1) size 49x86 [color=#000000]
                           RenderTableSection {TBODY} at (0,0) size 49x86 [bgcolor=#FFFF00]
                             RenderTableRow {TR} at (0,0) size 49x86
@@ -352,11 +352,11 @@ layer at (0,0) size 785x1264
                                 RenderBlock {P} at (1,68) size 47x17
                                   RenderText {#text} at (0,0) size 39x17
                                     text run at (0,0) width 39: "Test it"
-              RenderTableCell {TD} at (255,672) size 85x92 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (255,672) size 84x92 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
                 RenderTable {TABLE} at (2,2) size 80x88 [color=#000000]
                   RenderTableSection {TBODY} at (0,0) size 80x88
                     RenderTableRow {TR} at (0,0) size 80x88
-                      RenderTableCell {TD} at (0,0) size 30x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 29x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 27x24
                           text run at (1,1) width 27: "12."
                       RenderTableCell {TD} at (29,0) size 51x88 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
@@ -372,14 +372,14 @@ layer at (0,0) size 785x1264
                                 RenderBlock {P} at (1,68) size 47x17
                                   RenderText {#text} at (0,0) size 39x17
                                     text run at (0,0) width 39: "Test it"
-              RenderTableCell {TD} at (339,672) size 85x92 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=4 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 81x88 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 81x88
-                    RenderTableRow {TR} at (0,0) size 81x88
-                      RenderTableCell {TD} at (0,0) size 30x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (339,672) size 84x92 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=4 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 80x88 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 80x88
+                    RenderTableRow {TR} at (0,0) size 80x88
+                      RenderTableCell {TD} at (0,0) size 29x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 27x24
                           text run at (1,1) width 27: "13."
-                      RenderTableCell {TD} at (29,0) size 52x88 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (29,0) size 51x88 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
                         RenderTable {TABLE} at (1,1) size 49x86 [color=#000000]
                           RenderTableSection {TBODY} at (0,0) size 49x86 [bgcolor=#FFFF00]
                             RenderTableRow {TR} at (0,0) size 49x86
@@ -392,47 +392,47 @@ layer at (0,0) size 785x1264
                                 RenderBlock {P} at (1,68) size 47x17
                                   RenderText {#text} at (0,0) size 39x17
                                     text run at (0,0) width 39: "Test it"
-              RenderTableCell {TD} at (423,672) size 87x92 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=5 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 83x88 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 83x88
-                    RenderTableRow {TR} at (0,0) size 83x88
-                      RenderTableCell {TD} at (0,0) size 30x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (423,672) size 86x92 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=5 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 82x88 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 82x88
+                    RenderTableRow {TR} at (0,0) size 82x88
+                      RenderTableCell {TD} at (0,0) size 29x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 27x24
                           text run at (1,1) width 27: "14."
-                      RenderTableCell {TD} at (29,0) size 54x88 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 52x86 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 52x86 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 52x86
-                              RenderTableCell {TD} at (0,0) size 52x86 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 50x51
+                      RenderTableCell {TD} at (29,0) size 53x88 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 51x86 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 51x86 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 51x86
+                              RenderTableCell {TD} at (0,0) size 51x86 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 49x51
                                   RenderText {#text} at (0,0) size 46x51
                                     text run at (0,0) width 32: "Grab"
                                     text run at (0,17) width 32: "latest"
                                     text run at (0,34) width 46: "mozilla"
-                                RenderBlock {P} at (1,68) size 50x17
+                                RenderBlock {P} at (1,68) size 49x17
                                   RenderText {#text} at (0,0) size 39x17
                                     text run at (0,0) width 39: "Test it"
-              RenderTableCell {TD} at (509,672) size 93x277 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=6 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 89x273 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 89x273
-                    RenderTableRow {TR} at (0,0) size 89x273
-                      RenderTableCell {TD} at (0,0) size 30x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (509,672) size 92x277 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=2 c=6 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 88x273 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 88x273
+                    RenderTableRow {TR} at (0,0) size 88x273
+                      RenderTableCell {TD} at (0,0) size 29x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 27x24
                           text run at (1,1) width 27: "15."
-                      RenderTableCell {TD} at (29,0) size 60x273 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 58x271 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 58x271 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 58x271
-                              RenderTableCell {TD} at (0,0) size 58x271 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
-                                RenderBlock {P} at (1,1) size 56x51
+                      RenderTableCell {TD} at (29,0) size 59x273 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 57x271 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 57x271 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 57x271
+                              RenderTableCell {TD} at (0,0) size 57x271 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                                RenderBlock {P} at (1,1) size 55x51
                                   RenderText {#text} at (0,0) size 46x51
                                     text run at (0,0) width 32: "Grab"
                                     text run at (0,17) width 32: "latest"
                                     text run at (0,34) width 46: "mozilla"
-                                RenderBlock {P} at (1,68) size 56x17
+                                RenderBlock {P} at (1,68) size 55x17
                                   RenderText {#text} at (0,0) size 39x17
                                     text run at (0,0) width 39: "Test it"
-                                RenderBlock {P} at (1,101) size 56x102
+                                RenderBlock {P} at (1,101) size 55x102
                                   RenderText {#text} at (0,0) size 55x102
                                     text run at (0,0) width 48: "Mozilla"
                                     text run at (0,17) width 53: "removes"
@@ -440,64 +440,64 @@ layer at (0,0) size 785x1264
                                     text run at (0,51) width 55: "Warning"
                                     text run at (0,68) width 30: "from"
                                     text run at (0,85) width 53: "FTP site"
-                                RenderBlock {P} at (1,219) size 56x51
+                                RenderBlock {P} at (1,219) size 55x51
                                   RenderText {#text} at (0,0) size 38x51
                                     text run at (0,0) width 28: "This"
                                     text run at (0,17) width 38: "bug is"
                                     text run at (0,34) width 32: "fixed"
-            RenderTableRow {TR} at (0,1017) size 602x30
-              RenderTableCell {TD} at (0,1017) size 88x30 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 84x26 [color=#000000]
-                  RenderTableSection {TBODY} at (0,0) size 84x26
-                    RenderTableRow {TR} at (0,0) size 84x26
-                      RenderTableCell {TD} at (0,0) size 30x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,1017) size 601x30
+              RenderTableCell {TD} at (0,1017) size 87x30 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 83x26 [color=#000000]
+                  RenderTableSection {TBODY} at (0,0) size 83x26
+                    RenderTableRow {TR} at (0,0) size 83x26
+                      RenderTableCell {TD} at (0,0) size 29x26 [color=#FFFF00] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 27x24
                           text run at (1,1) width 27: "16."
-                      RenderTableCell {TD} at (29,0) size 55x21 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
-                        RenderTable {TABLE} at (1,1) size 53x19 [color=#000000]
-                          RenderTableSection {TBODY} at (0,0) size 53x19 [bgcolor=#FFFF00]
-                            RenderTableRow {TR} at (0,0) size 53x19
-                              RenderTableCell {TD} at (0,0) size 53x19 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (29,0) size 54x21 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=1 rs=1 cs=1]
+                        RenderTable {TABLE} at (1,1) size 52x19 [color=#000000]
+                          RenderTableSection {TBODY} at (0,0) size 52x19 [bgcolor=#FFFF00]
+                            RenderTableRow {TR} at (0,0) size 52x19
+                              RenderTableCell {TD} at (0,0) size 52x19 [color=#FFFFFF] [bgcolor=#404080] [r=0 c=0 rs=1 cs=1]
                                 RenderText {#text} at (1,1) size 7x17
                                   text run at (1,1) width 7: "?"
-              RenderTableCell {TD} at (87,1017) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (87,1017) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (171,1017) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (171,1017) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (255,1017) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (255,1017) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (339,1017) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
+              RenderTableCell {TD} at (339,1017) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (423,1017) size 87x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=5 rs=1 cs=1]
+              RenderTableCell {TD} at (423,1017) size 86x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=5 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (509,1017) size 93x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=6 rs=1 cs=1]
+              RenderTableCell {TD} at (509,1017) size 92x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=3 c=6 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-            RenderTableRow {TR} at (0,1047) size 602x21
-              RenderTableCell {TD} at (0,1047) size 88x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,1047) size 601x21
+              RenderTableCell {TD} at (0,1047) size 87x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (87,1047) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (87,1047) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (171,1047) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (171,1047) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (255,1047) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (255,1047) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (339,1047) size 85x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=4 rs=1 cs=1]
+              RenderTableCell {TD} at (339,1047) size 84x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=4 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (423,1047) size 87x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=5 rs=1 cs=1]
+              RenderTableCell {TD} at (423,1047) size 86x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=5 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
-              RenderTableCell {TD} at (509,1047) size 93x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=6 rs=1 cs=1]
+              RenderTableCell {TD} at (509,1047) size 92x21 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=6 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x17
                   text run at (2,2) width 5: "-"
         RenderBlock (anonymous) at (0,1122) size 769x34

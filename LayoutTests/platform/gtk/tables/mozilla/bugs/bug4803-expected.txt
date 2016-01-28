@@ -6,13 +6,13 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x17
         RenderText {#text} at (0,0) size 278x17
           text run at (0,0) width 278: "The vertical grey bar should be 1 pixel wide"
-      RenderTable {TABLE} at (0,17) size 141x34
-        RenderTableSection {TBODY} at (0,0) size 141x34
-          RenderTableRow {TR} at (0,0) size 141x34
-            RenderTableCell {TD} at (0,16) size 2x2 [bgcolor=#999999] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,17) size 140x34
+        RenderTableSection {TBODY} at (0,0) size 140x34
+          RenderTableRow {TR} at (0,0) size 140x34
+            RenderTableCell {TD} at (0,16) size 1x2 [bgcolor=#999999] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 1x2
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (1,0) size 140x34 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (1,0) size 139x34 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 131x34
                 text run at (0,0) width 131: " D A I LY  C H E C"
                 text run at (0,17) width 12: "K"

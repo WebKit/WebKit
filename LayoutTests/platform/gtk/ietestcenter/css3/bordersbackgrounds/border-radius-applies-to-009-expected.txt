@@ -6,7 +6,7 @@ layer at (0,0) size 800x159
       RenderBlock {P} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 412x17
           text run at (0,0) width 412: "Test passes if there is a box with sharp or rounded corners below."
-      RenderTable {DIV} at (0,33) size 103x102 [border: (1px none #000000)]
-        RenderTableSection (anonymous) at (1,1) size 100x99
-          RenderTableRow {DIV} at (0,0) size 100x99 [border: (3px solid #008000)]
-            RenderTableCell {DIV} at (0,0) size 100x3 [border: (2px none #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {DIV} at (0,33) size 102x102 [border: (1px none #000000)]
+        RenderTableSection (anonymous) at (1,1) size 99x99
+          RenderTableRow {DIV} at (0,0) size 99x99 [border: (3px solid #008000)]
+            RenderTableCell {DIV} at (0,0) size 99x3 [border: (2px none #000000)] [r=0 c=0 rs=1 cs=1]

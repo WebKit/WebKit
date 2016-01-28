@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 53x50 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 51x48
-          RenderTableRow {TR} at (0,2) size 51x44
-            RenderTableCell {TD} at (2,2) size 47x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 43x40 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 41x38
-                  RenderTableRow {TR} at (0,2) size 41x34
-                    RenderTableCell {TD} at (2,17) size 5x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                    RenderTableCell {TD} at (8,2) size 25x34 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 52x50 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 50x48
+          RenderTableRow {TR} at (0,2) size 50x44
+            RenderTableCell {TD} at (2,2) size 46x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 42x40 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 40x38
+                  RenderTableRow {TR} at (0,2) size 40x34
+                    RenderTableCell {TD} at (2,17) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (8,2) size 24x34 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                       RenderButton {INPUT} at (4,4) size 16x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                    RenderTableCell {TD} at (34,17) size 5x4 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (34,17) size 4x4 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]

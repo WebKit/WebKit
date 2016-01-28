@@ -65,22 +65,22 @@ layer at (0,0) size 785x972
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,25) size 767x392
-            RenderTableCell {TD} at (0,208) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,208) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,5) width 4: " "
             RenderTableCell {TD} at (12,25) size 755x392 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x17 [bgcolor=#C0C0C0]
-                RenderText {#text} at (543,0) size 204x17
-                  text run at (543,0) width 204: "This element has a class of zero."
+                RenderText {#text} at (544,0) size 203x17
+                  text run at (544,0) width 203: "This element has a class of zero."
               RenderBlock {P} at (4,37) size 699x17 [bgcolor=#00FFFF]
-                RenderText {#text} at (341,0) size 358x17
-                  text run at (341,0) width 358: "This sentence should have a right margin of half an inch."
+                RenderText {#text} at (342,0) size 357x17
+                  text run at (342,0) width 357: "This sentence should have a right margin of half an inch."
               RenderBlock {P} at (4,70) size 722x17 [bgcolor=#00FFFF]
-                RenderText {#text} at (381,0) size 341x17
-                  text run at (381,0) width 341: "This sentence should have a right margin of 25 pixels."
+                RenderText {#text} at (382,0) size 340x17
+                  text run at (382,0) width 340: "This sentence should have a right margin of 25 pixels."
               RenderBlock {P} at (4,103) size 667x17 [bgcolor=#00FFFF]
-                RenderText {#text} at (352,0) size 315x17
-                  text run at (352,0) width 315: "This sentence should have a right margin of 5 em."
+                RenderText {#text} at (353,0) size 314x17
+                  text run at (353,0) width 314: "This sentence should have a right margin of 5 em."
               RenderBlock {P} at (4,136) size 561x34 [bgcolor=#00FFFF]
                 RenderText {#text} at (5,0) size 556x34
                   text run at (5,0) width 556: "This sentence should have a right margin of 25%, which is calculated with respect to the"
@@ -88,23 +88,23 @@ layer at (0,0) size 785x972
               RenderBlock {UL} at (4,186) size 722x102 [bgcolor=#808080]
                 RenderListItem {LI} at (40,0) size 682x34
                   RenderListMarker at (-17,0) size 7x17: bullet
-                  RenderText {#text} at (17,0) size 665x34
-                    text run at (17,0) width 665: "The right margin on this unordered list has been set to 25 pixels, and the background color has been set to"
-                    text run at (649,17) width 33: "gray."
+                  RenderText {#text} at (18,0) size 664x34
+                    text run at (18,0) width 664: "The right margin on this unordered list has been set to 25 pixels, and the background color has been set to"
+                    text run at (650,17) width 32: "gray."
                 RenderListItem {LI} at (40,34) size 657x51 [bgcolor=#FFFFFF]
                   RenderListMarker at (-17,0) size 7x17: bullet
-                  RenderText {#text} at (0,0) size 657x51
-                    text run at (0,0) width 657: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
-                    text run at (27,17) width 61: "checked. "
-                    text run at (87,17) width 570: "This list item has its right margin also set to 25 pixels, which should combine with the list's"
-                    text run at (128,34) width 529: "margin to make 50 pixels of margin, and its background-color has been set to white."
+                  RenderText {#text} at (1,0) size 656x51
+                    text run at (1,0) width 656: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
+                    text run at (28,17) width 60: "checked. "
+                    text run at (88,17) width 569: "This list item has its right margin also set to 25 pixels, which should combine with the list's"
+                    text run at (129,34) width 528: "margin to make 50 pixels of margin, and its background-color has been set to white."
                 RenderListItem {LI} at (40,85) size 682x17
                   RenderListMarker at (-17,0) size 7x17: bullet
-                  RenderText {#text} at (502,0) size 180x17
-                    text run at (502,0) width 180: "This is an unclassed list item"
+                  RenderText {#text} at (503,0) size 179x17
+                    text run at (503,0) width 179: "This is an unclassed list item"
               RenderBlock {P} at (4,304) size 747x17 [bgcolor=#C0C0C0]
-                RenderText {#text} at (543,0) size 204x17
-                  text run at (543,0) width 204: "This element has a class of zero."
+                RenderText {#text} at (544,0) size 203x17
+                  text run at (544,0) width 203: "This element has a class of zero."
               RenderBlock {P} at (4,337) size 757x51 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 737x51
                   text run at (0,0) width 735: "This paragraph has a right margin of -10px, which should cause it to be wider than it might otherwise be, and it has a"

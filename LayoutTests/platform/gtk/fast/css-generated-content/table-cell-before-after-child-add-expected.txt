@@ -6,17 +6,17 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 369x17
           text run at (0,0) width 369: "Should say \x{201C}BEFORE CONTENT AFTER CONTENT\x{201D}"
-      RenderTable {DIV} at (0,33) size 193x17
-        RenderTableSection (anonymous) at (0,0) size 193x17
-          RenderTableRow (anonymous) at (0,0) size 193x17
-            RenderTableCell (anonymous) at (0,0) size 64x17 [r=0 c=0 rs=1 cs=1]
+      RenderTable {DIV} at (0,33) size 192x17
+        RenderTableSection (anonymous) at (0,0) size 192x17
+          RenderTableRow (anonymous) at (0,0) size 192x17
+            RenderTableCell (anonymous) at (0,0) size 63x17 [r=0 c=0 rs=1 cs=1]
               RenderText at (0,0) size 63x17
                 text run at (0,0) width 63: "BEFORE"
-            RenderTableCell (anonymous) at (63,0) size 78x17 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 78x17
+            RenderTableCell (anonymous) at (63,0) size 77x17 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 77x17
                 RenderText {#text} at (0,0) size 77x17
                   text run at (0,0) width 77: "CONTENT"
-            RenderTableCell (anonymous) at (140,0) size 53x17 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell (anonymous) at (140,0) size 52x17 [r=0 c=2 rs=1 cs=1]
               RenderText at (0,0) size 52x17
                 text run at (0,0) width 52: "AFTER"
       RenderBlock (anonymous) at (0,50) size 784x17

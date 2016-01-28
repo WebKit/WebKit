@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFCCC]
       RenderBlock {CENTER} at (0,0) size 784x120
-        RenderTable {TABLE} at (91,0) size 601x120
-          RenderTableSection {TBODY} at (0,0) size 601x120
-            RenderTableRow {TR} at (0,0) size 601x86
+        RenderTable {TABLE} at (92,0) size 600x120
+          RenderTableSection {TBODY} at (0,0) size 600x120
+            RenderTableRow {TR} at (0,0) size 600x86
               RenderTableCell {TD} at (0,0) size 150x34 [r=0 c=0 rs=1 cs=1]
                 RenderBlock {CENTER} at (0,0) size 150x34
                   RenderInline {IFRAMEX} at (0,0) size 0x34
                     RenderText {#text} at (0,0) size 0x0
                     RenderBR {BR} at (75,0) size 0x17
                     RenderBR {BR} at (75,17) size 0x17
-              RenderTableCell {TD} at (150,0) size 2x1 [bgcolor=#FFFFFF] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (150,0) size 1x1 [bgcolor=#FFFFFF] [r=0 c=1 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 1x1
                 RenderText {#text} at (0,0) size 0x0
-              RenderTableCell {TD} at (151,0) size 450x86 [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (151,0) size 449x86 [r=0 c=2 rs=1 cs=1]
                 RenderTable {TABLE} at (0,0) size 449x59
                   RenderTableSection {TBODY} at (0,0) size 449x59
                     RenderTableRow {TR} at (0,2) size 449x55
@@ -38,9 +38,9 @@ layer at (0,0) size 800x600
                             text run at (347,5) width 47: "MORE"
                           RenderImage {IMG} at (394,1) size 50x18
                         RenderText {#text} at (0,0) size 0x0
-            RenderTableRow {TR} at (0,86) size 601x34
-              RenderTableCell {TD} at (0,86) size 601x34 [r=1 c=0 rs=1 cs=3]
-                RenderBlock (anonymous) at (0,0) size 601x1
+            RenderTableRow {TR} at (0,86) size 600x34
+              RenderTableCell {TD} at (0,86) size 600x34 [r=1 c=0 rs=1 cs=3]
+                RenderBlock (anonymous) at (0,0) size 600x1
                   RenderImage {IMG} at (0,0) size 600x1
-                RenderBlock {P} at (0,17) size 601x17
-                  RenderBR {BR} at (300,0) size 1x17
+                RenderBlock {P} at (0,17) size 600x17
+                  RenderBR {BR} at (300,0) size 0x17

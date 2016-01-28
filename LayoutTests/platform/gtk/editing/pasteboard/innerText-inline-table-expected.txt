@@ -9,25 +9,25 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,17) size 784x23
         RenderText {#text} at (0,6) size 31x17
           text run at (0,6) width 31: "hello"
-        RenderTable {TABLE} at (31,0) size 15x23
-          RenderTableSection {TBODY} at (0,0) size 15x23
-            RenderTableRow {TR} at (0,2) size 15x19
-              RenderTableCell {TD} at (2,2) size 11x19 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (31,0) size 14x23
+          RenderTableSection {TBODY} at (0,0) size 14x23
+            RenderTableRow {TR} at (0,2) size 14x19
+              RenderTableCell {TD} at (2,2) size 10x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 8x17
                   text run at (1,1) width 8: "1"
-        RenderText {#text} at (45,6) size 38x17
-          text run at (45,6) width 38: "world"
+        RenderText {#text} at (45,6) size 37x17
+          text run at (45,6) width 37: "world"
       RenderBlock {DIV} at (0,40) size 784x23
         RenderText {#text} at (0,6) size 25x17
           text run at (0,6) width 25: "foo "
-        RenderTable {TABLE} at (25,0) size 15x23
-          RenderTableSection {TBODY} at (0,0) size 15x23
-            RenderTableRow {TR} at (0,2) size 15x19
-              RenderTableCell {TD} at (2,2) size 11x19 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (25,0) size 14x23
+          RenderTableSection {TBODY} at (0,0) size 14x23
+            RenderTableRow {TR} at (0,2) size 14x19
+              RenderTableCell {TD} at (2,2) size 10x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 8x17
                   text run at (1,1) width 8: "2"
-        RenderText {#text} at (39,6) size 25x17
-          text run at (39,6) width 25: " bar"
+        RenderText {#text} at (39,6) size 24x17
+          text run at (39,6) width 24: " bar"
       RenderBlock {UL} at (0,79) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
           RenderBlock {PRE} at (0,0) size 744x18

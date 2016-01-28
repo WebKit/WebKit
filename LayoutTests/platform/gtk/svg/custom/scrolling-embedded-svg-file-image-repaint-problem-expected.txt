@@ -34,27 +34,27 @@ layer at (0,0) size 785x997
             RenderText {#text} at (403,1) size 150x17
               text run at (403,1) width 150: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,64) size 1019x552
-        RenderTableSection {TBODY} at (0,0) size 1019x552
-          RenderTableRow {TR} at (0,0) size 1019x552
-            RenderTableCell {TD} at (0,0) size 1019x552 [r=0 c=0 rs=1 cs=3]
-              RenderTable {TABLE} at (10,10) size 999x532
-                RenderTableSection {TBODY} at (0,0) size 999x532
-                  RenderTableRow {TR} at (0,2) size 999x107
-                    RenderTableCell {TD} at (2,2) size 995x107 [r=0 c=0 rs=1 cs=2]
-                      RenderBlock {H1} at (8,29) size 979x49
+      RenderTable {TABLE} at (0,64) size 1018x552
+        RenderTableSection {TBODY} at (0,0) size 1018x552
+          RenderTableRow {TR} at (0,0) size 1018x552
+            RenderTableCell {TD} at (0,0) size 1018x552 [r=0 c=0 rs=1 cs=3]
+              RenderTable {TABLE} at (10,10) size 998x532
+                RenderTableSection {TBODY} at (0,0) size 998x532
+                  RenderTableRow {TR} at (0,2) size 998x107
+                    RenderTableCell {TD} at (2,2) size 994x107 [r=0 c=0 rs=1 cs=2]
+                      RenderBlock {H1} at (8,29) size 978x49
                         RenderText {#text} at (339,6) size 300x36
                           text run at (339,6) width 300: "render-groups-01-b"
-                  RenderTableRow {TR} at (0,110) size 999x37 [color=#FFFFFF] [bgcolor=#000000]
-                    RenderTableCell {TD} at (2,110) size 497x37 [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (206,9) size 85x17
-                        text run at (206,9) width 85: "SVG Image"
-                    RenderTableCell {TD} at (500,110) size 497x37 [r=1 c=1 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,110) size 998x37 [color=#FFFFFF] [bgcolor=#000000]
+                    RenderTableCell {TD} at (2,110) size 496x37 [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (206,9) size 84x17
+                        text run at (206,9) width 84: "SVG Image"
+                    RenderTableCell {TD} at (500,110) size 496x37 [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (205,9) size 86x17
                         text run at (205,9) width 86: "PNG Image"
-                  RenderTableRow {TR} at (0,148) size 999x382
-                    RenderTableCell {TD} at (2,148) size 497x382 [r=2 c=0 rs=1 cs=1]
-                      RenderEmbeddedObject {EMBED} at (8,8) size 481x360
+                  RenderTableRow {TR} at (0,148) size 998x382
+                    RenderTableCell {TD} at (2,148) size 496x382 [r=2 c=0 rs=1 cs=1]
+                      RenderEmbeddedObject {EMBED} at (8,8) size 480x360
                         layer at (0,0) size 480x360
                           RenderView at (0,0) size 480x360
                         layer at (0,0) size 480x360
@@ -84,7 +84,7 @@ layer at (0,0) size 785x997
                                 chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
                             RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
-                    RenderTableCell {TD} at (500,148) size 497x382 [r=2 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (500,148) size 496x382 [r=2 c=1 rs=1 cs=1]
                       RenderImage {IMG} at (8,8) size 480x360
                       RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (23,627) size 723x314

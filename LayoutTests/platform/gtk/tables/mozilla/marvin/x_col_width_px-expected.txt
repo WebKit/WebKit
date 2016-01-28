@@ -6,16 +6,16 @@ layer at (0,0) size 800x101
       RenderBlock {p} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 116x17
           text run at (0,0) width 116: "COL WIDTH=px"
-      RenderTable {table} at (0,33) size 609x44 [border: (1px outset #808080)]
+      RenderTable {table} at (0,33) size 608x44 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
-        RenderTableSection (anonymous) at (1,1) size 607x42
-          RenderTableRow {tr} at (0,2) size 607x38
+        RenderTableSection (anonymous) at (1,1) size 606x42
+          RenderTableRow {tr} at (0,2) size 606x38
             RenderTableCell {td} at (2,2) size 200x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 170x34
                 text run at (2,2) width 170: "This column should have a"
                 text run at (2,19) width 122: "width of 200 pixels"
-            RenderTableCell {td} at (204,10) size 401x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (204,10) size 400x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 296x18
                 text run at (2,3) width 296: "This column should have a width of 400 pixels"

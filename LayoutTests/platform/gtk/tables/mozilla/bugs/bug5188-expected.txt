@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 625x149
-        RenderTableSection {TBODY} at (0,0) size 625x149
-          RenderTableRow {TR} at (0,2) size 625x60
-            RenderTableCell {TD} at (2,2) size 151x1 [r=0 c=0 rs=2 cs=1]
+      RenderTable {TABLE} at (0,0) size 624x149
+        RenderTableSection {TBODY} at (0,0) size 624x149
+          RenderTableRow {TR} at (0,2) size 624x60
+            RenderTableCell {TD} at (2,2) size 150x1 [r=0 c=0 rs=2 cs=1]
               RenderImage {IMG} at (0,0) size 150x1
             RenderTableCell {TD} at (154,2) size 469x60 [r=0 c=1 rs=1 cs=2]
               RenderImage {IMG} at (0,0) size 468x60
-          RenderTableRow {TR} at (0,64) size 625x83
+          RenderTableRow {TR} at (0,64) size 624x83
             RenderTableCell {TD} at (154,64) size 298x83 [r=1 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 298x83
                 RenderTableSection {TBODY} at (0,0) size 298x83
@@ -30,9 +30,9 @@ layer at (0,0) size 800x600
                         text run at (3,37) width 45: "custom"
                         text run at (3,54) width 94: "WidgetMaster!"
             RenderTableCell {TD} at (453,64) size 170x21 [r=1 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 27x21 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 25x19
-                  RenderTableRow {TR} at (0,0) size 25x19
-                    RenderTableCell {TD} at (0,0) size 25x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 26x21 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 24x19
+                  RenderTableRow {TR} at (0,0) size 24x19
+                    RenderTableCell {TD} at (0,0) size 24x19 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 22x17
                         text run at (1,1) width 22: "cell"

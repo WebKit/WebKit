@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,50) size 784x17
         RenderText {#text} at (0,0) size 268x17
           text run at (0,0) width 268: "You should see a green square and no red."
-      RenderTable {TABLE} at (0,83) size 101x100 [bgcolor=#FF0000]
-        RenderTableSection {TBODY} at (0,0) size 101x100
-          RenderTableRow {TR} at (0,0) size 101x100
-            RenderTableCell {TD} at (0,0) size 101x100 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,83) size 100x100 [bgcolor=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 100x100
+          RenderTableRow {TR} at (0,0) size 100x100
+            RenderTableCell {TD} at (0,0) size 100x100 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 0x0
 layer at (8,91) size 100x100 scrollHeight 200
   RenderBlock {DIV} at (0,0) size 100x100

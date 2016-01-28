@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (136,2) size 140x19 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 68x17
                 text run at (1,1) width 68: "Messenger"
-            RenderTableCell {TD} at (277,2) size 121x19 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (277,2) size 122x19 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 54x17
                 text run at (1,1) width 54: "Collabra"
           RenderTableRow {TR} at (0,23) size 400x19
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (136,23) size 140x19 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x17
                 text run at (1,1) width 57: "Calendar"
-            RenderTableCell {TD} at (277,23) size 121x19 [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (277,23) size 122x19 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 59x17
                 text run at (1,1) width 59: "Netcaster"
       RenderBlock (anonymous) at (0,78) size 784x34
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (102,2) size 105x19 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 68x17
                 text run at (1,1) width 68: "Messenger"
-            RenderTableCell {TD} at (208,2) size 90x19 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (208,2) size 91x19 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 54x17
                 text run at (1,1) width 54: "Collabra"
           RenderTableRow {TR} at (0,23) size 300x19
@@ -53,6 +53,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (102,23) size 105x19 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x17
                 text run at (1,1) width 57: "Calendar"
-            RenderTableCell {TD} at (208,23) size 90x19 [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (208,23) size 91x19 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 59x17
                 text run at (1,1) width 59: "Netcaster"

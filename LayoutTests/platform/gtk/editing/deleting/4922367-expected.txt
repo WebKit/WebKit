@@ -10,13 +10,13 @@ layer at (0,0) size 800x600
           text run at (0,17) width 139: "the caret just before it."
       RenderBlock {DIV} at (0,50) size 784x27
         RenderBlock {DIV} at (0,0) size 784x27
-          RenderTable {TABLE} at (0,0) size 33x27 [border: (1px solid #BBBBBB)]
-            RenderTableSection {TBODY} at (1,1) size 31x25
-              RenderTableRow {TR} at (0,2) size 31x21
-                RenderTableCell {TD} at (2,2) size 13x21 [border: (1px solid #BBBBBB)] [r=0 c=0 rs=1 cs=1]
+          RenderTable {TABLE} at (0,0) size 32x27 [border: (1px solid #BBBBBB)]
+            RenderTableSection {TBODY} at (1,1) size 30x25
+              RenderTableRow {TR} at (0,2) size 30x21
+                RenderTableCell {TD} at (2,2) size 12x21 [border: (1px solid #BBBBBB)] [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (2,2) size 8x17
                     text run at (2,2) width 8: "1"
-                RenderTableCell {TD} at (16,2) size 13x21 [border: (1px solid #BBBBBB)] [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (16,2) size 12x21 [border: (1px solid #BBBBBB)] [r=0 c=1 rs=1 cs=1]
                   RenderText {#text} at (2,2) size 8x17
                     text run at (2,2) width 8: "2"
           RenderBlock (anonymous) at (0,27) size 784x0

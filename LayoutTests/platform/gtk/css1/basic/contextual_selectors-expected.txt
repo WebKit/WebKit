@@ -39,22 +39,22 @@ layer at (0,0) size 800x600
               RenderListMarker at (-17,0) size 7x17: white bullet
               RenderText {#text} at (0,0) size 136x17
                 text run at (0,0) width 136: "This should be green."
-      RenderTable {TABLE} at (0,240) size 723x151 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 721x149
-          RenderTableRow {TR} at (0,0) size 721x25
-            RenderTableCell {TD} at (0,0) size 721x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,240) size 722x151 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 720x149
+          RenderTableRow {TR} at (0,0) size 720x25
+            RenderTableCell {TD} at (0,0) size 720x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,25) size 721x124
-            RenderTableCell {TD} at (0,74) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,25) size 720x124
+            RenderTableCell {TD} at (0,74) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,5) width 4: " "
-            RenderTableCell {TD} at (12,25) size 709x124 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 701x17 [color=#800080]
+            RenderTableCell {TD} at (12,25) size 708x124 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 700x17 [color=#800080]
                 RenderText {#text} at (0,0) size 700x17
                   text run at (0,0) width 700: "This sentence should be navy serif in the first half of the page, but purple and sans-serif in the table."
-              RenderBlock {P} at (4,37) size 701x17 [color=#800080]
+              RenderBlock {P} at (4,37) size 700x17 [color=#800080]
                 RenderText {#text} at (0,0) size 623x17
                   text run at (0,0) width 623: "This sentence should be normal for its section, except for the last word, which should be "
                 RenderInline {EM} at (0,0) size 41x17 [color=#008000]
@@ -62,9 +62,9 @@ layer at (0,0) size 800x600
                     text run at (623,0) width 41: "green"
                 RenderText {#text} at (664,0) size 4x17
                   text run at (664,0) width 4: "."
-              RenderBlock {UL} at (4,70) size 701x34
-                RenderListItem {LI} at (40,0) size 661x34
-                  RenderBlock (anonymous) at (0,0) size 661x17
+              RenderBlock {UL} at (4,70) size 700x34
+                RenderListItem {LI} at (40,0) size 660x34
+                  RenderBlock (anonymous) at (0,0) size 660x17
                     RenderListMarker at (-17,0) size 7x17: bullet
                     RenderInline {EM} at (0,0) size 39x17 [color=#008000]
                       RenderText {#text} at (0,0) size 39x17
@@ -72,8 +72,8 @@ layer at (0,0) size 800x600
                     RenderText {#text} at (39,0) size 399x17
                       text run at (39,0) width 4: " "
                       text run at (43,0) width 395: "The first \"hello\" should be green, but this part should be black."
-                  RenderBlock {UL} at (0,17) size 661x17
-                    RenderListItem {LI} at (40,0) size 621x17 [color=#008000]
+                  RenderBlock {UL} at (0,17) size 660x17
+                    RenderListItem {LI} at (40,0) size 620x17 [color=#008000]
                       RenderListMarker at (-17,0) size 7x17: white bullet
                       RenderText {#text} at (0,0) size 136x17
                         text run at (0,0) width 136: "This should be green."

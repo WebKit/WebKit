@@ -23,22 +23,22 @@ layer at (0,0) size 800x600
             text run at (574,0) width 48: "Normal"
         RenderText {#text} at (622,0) size 4x17
           text run at (622,0) width 4: "."
-      RenderTable {TABLE} at (0,175) size 649x85 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 647x83
-          RenderTableRow {TR} at (0,0) size 647x25
-            RenderTableCell {TD} at (0,0) size 647x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,175) size 648x85 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 646x83
+          RenderTableRow {TR} at (0,0) size 646x25
+            RenderTableCell {TD} at (0,0) size 646x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,25) size 647x58
-            RenderTableCell {TD} at (0,41) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,25) size 646x58
+            RenderTableCell {TD} at (0,41) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,5) width 4: " "
-            RenderTableCell {TD} at (12,25) size 635x58 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 627x17
+            RenderTableCell {TD} at (12,25) size 634x58 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 626x17
                 RenderText {#text} at (0,0) size 268x17
                   text run at (0,0) width 268: "This Paragraph should be in Small Caps."
-              RenderBlock {P} at (4,37) size 627x17
+              RenderBlock {P} at (4,37) size 626x17
                 RenderText {#text} at (0,0) size 574x17
                   text run at (0,0) width 574: "This Paragraph should be in Small Caps, but the Last Word in the Sentence should be "
                 RenderInline {SPAN} at (0,0) size 48x17

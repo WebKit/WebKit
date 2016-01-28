@@ -3,14 +3,14 @@ layer at (0,0) size 808x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
-      RenderTable {TABLE} at (0,0) size 194x33 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 192x31
-          RenderTableRow {TR} at (0,2) size 192x27
-            RenderTableCell {TD} at (2,2) size 188x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 184x23 [bgcolor=#FFA500]
-                RenderTableSection {TBODY} at (0,0) size 184x23
-                  RenderTableRow {TR} at (0,2) size 184x19
-                    RenderTableCell {TD} at (2,2) size 180x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 193x33 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 191x31
+          RenderTableRow {TR} at (0,2) size 191x27
+            RenderTableCell {TD} at (2,2) size 187x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 183x23 [bgcolor=#FFA500]
+                RenderTableSection {TBODY} at (0,0) size 183x23
+                  RenderTableRow {TR} at (0,2) size 183x19
+                    RenderTableCell {TD} at (2,2) size 179x19 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 177x17
                         text run at (1,1) width 177: "nested in auto, width=100%"
       RenderBlock (anonymous) at (0,33) size 784x17
@@ -39,17 +39,17 @@ layer at (0,0) size 800x585
                         text run at (1,1) width 182: "nested in fixed, width=100%"
       RenderBlock (anonymous) at (0,133) size 784x17
         RenderBR {BR} at (0,0) size 0x17
-      RenderTable {TABLE} at (0,150) size 227x33 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 225x31
-          RenderTableRow {TR} at (0,2) size 225x27
-            RenderTableCell {TD} at (2,2) size 188x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 184x23
-                RenderTableSection {TBODY} at (0,0) size 184x23
-                  RenderTableRow {TR} at (0,2) size 184x19
-                    RenderTableCell {TD} at (2,2) size 180x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,150) size 226x33 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 224x31
+          RenderTableRow {TR} at (0,2) size 224x27
+            RenderTableCell {TD} at (2,2) size 187x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 183x23
+                RenderTableSection {TBODY} at (0,0) size 183x23
+                  RenderTableRow {TR} at (0,2) size 183x19
+                    RenderTableCell {TD} at (2,2) size 179x19 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 177x17
                         text run at (1,1) width 177: "nested in auto, width=100%"
-            RenderTableCell {TD} at (191,5) size 32x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (191,5) size 31x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x17
                 text run at (2,2) width 27: "auto"
       RenderBlock (anonymous) at (0,183) size 784x17
@@ -64,7 +64,7 @@ layer at (0,0) size 800x585
                     RenderTableCell {TD} at (2,2) size 337x19 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 179x17
                         text run at (1,1) width 179: "nested in 100%, width=50%"
-            RenderTableCell {TD} at (689,5) size 91x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (689,5) size 92x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,233) size 784x17
@@ -83,6 +83,6 @@ layer at (0,0) size 800x585
                             RenderTableCell {TD} at (2,2) size 130x19 [r=0 c=0 rs=1 cs=1]
                               RenderText {#text} at (1,1) size 45x17
                                 text run at (1,1) width 45: "2n50%"
-            RenderTableCell {TD} at (554,8) size 226x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (554,8) size 227x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "foo"

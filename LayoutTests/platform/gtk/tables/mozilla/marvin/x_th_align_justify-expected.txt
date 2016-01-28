@@ -14,7 +14,7 @@ layer at (0,0) size 800x94
                 text run at (304,19) width 83: "matter how"
                 text run at (2,36) width 385: "long the content becomes (except the last line which"
                 text run at (2,53) width 148: "should be left aligned)"
-            RenderTableCell {th} at (392,27) size 388x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {th} at (392,27) size 389x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 237x18
                 text run at (2,3) width 183: "This cell text should be left "
                 text run at (185,3) width 54: "justified"

@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {B} at (0,0) size 0x0
           RenderInline {FORM} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,0) size 231x23
-        RenderTableSection {TBODY} at (0,0) size 231x23
-          RenderTableRow {TR} at (0,2) size 231x19
-            RenderTableCell {TD} at (2,2) size 223x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 230x23
+        RenderTableSection {TBODY} at (0,0) size 230x23
+          RenderTableRow {TR} at (0,2) size 230x19
+            RenderTableCell {TD} at (2,2) size 222x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 220x17
                 text run at (1,1) width 220: "This test passes if it does not crash."
-            RenderTableCell {TD} at (226,2) size 3x19 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {P} at (1,17) size 1x0
+            RenderTableCell {TD} at (226,2) size 2x19 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {P} at (1,17) size 0x0

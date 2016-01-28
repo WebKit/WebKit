@@ -9,37 +9,37 @@ layer at (0,0) size 800x600
           text run at (579,0) width 204: "There should be five rows in the"
           text run at (0,17) width 261: "table below, before and after the deletion."
       RenderBlock {DIV} at (0,50) size 784x128
-        RenderTable {TABLE} at (0,0) size 110x128 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 108x126
-            RenderTableRow {TR} at (0,2) size 108x29
-              RenderTableCell {TD} at (2,2) size 34x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 109x128 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 107x126
+            RenderTableRow {TR} at (0,2) size 107x29
+              RenderTableCell {TD} at (2,2) size 33x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
-              RenderTableCell {TD} at (37,2) size 33x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (37,2) size 32x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
-              RenderTableCell {TD} at (71,2) size 35x29 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (71,2) size 34x29 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
-            RenderTableRow {TR} at (0,33) size 108x29
-              RenderTableCell {TD} at (2,33) size 34x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,33) size 107x29
+              RenderTableCell {TD} at (2,33) size 33x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (6,6) size 21x17
                   text run at (6,6) width 21: "foo"
-              RenderTableCell {TD} at (37,33) size 33x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (37,33) size 32x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (6,6) size 20x17
                   text run at (6,6) width 20: "bar"
-              RenderTableCell {TD} at (71,33) size 35x29 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (71,33) size 34x29 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (6,6) size 22x17
                   text run at (6,6) width 22: "baz"
-            RenderTableRow {TR} at (0,64) size 108x29
-              RenderTableCell {TD} at (2,64) size 34x29 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,64) size 107x29
+              RenderTableCell {TD} at (2,64) size 33x29 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
-              RenderTableCell {TD} at (37,64) size 33x29 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (37,64) size 32x29 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
-              RenderTableCell {TD} at (71,64) size 35x29 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (71,64) size 34x29 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
-            RenderTableRow {TR} at (0,95) size 108x29
-              RenderTableCell {TD} at (2,95) size 34x29 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,95) size 107x29
+              RenderTableCell {TD} at (2,95) size 33x29 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
-              RenderTableCell {TD} at (37,95) size 33x29 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (37,95) size 32x29 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
-              RenderTableCell {TD} at (71,95) size 35x29 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (71,95) size 34x29 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
                 RenderBR {BR} at (6,6) size 0x17
 caret: position 0 of child 0 {BR} of child 0 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of body

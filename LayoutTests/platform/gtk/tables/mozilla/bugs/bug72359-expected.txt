@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x59
   RenderBlock {html} at (0,0) size 800x59
     RenderBody {body} at (8,8) size 784x0
-      RenderBlock (floating) {float} at (0,0) size 158x51 [bgcolor=#FF0000]
-        RenderTable at (0,0) size 158x51
-          RenderTableSection (anonymous) at (0,0) size 158x51
-            RenderTableRow (anonymous) at (0,0) size 158x17
-              RenderTableCell {cell} at (0,0) size 158x17 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (52,0) size 54x17
-                  text run at (52,0) width 54: "THERE"
-            RenderTableRow {row} at (0,17) size 158x17
-              RenderTableCell (anonymous) at (0,17) size 158x17 [r=1 c=0 rs=1 cs=1]
-                RenderTable {table} at (0,0) size 158x17
-                  RenderTableSection (anonymous) at (0,0) size 158x17
-                    RenderTableRow (anonymous) at (0,0) size 158x17
-                      RenderTableCell {cell} at (0,0) size 83x17 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (0,0) size 83x17
-                          text run at (0,0) width 83: "SHOULD B"
-                      RenderTableCell {cell} at (82,0) size 27x17 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
-                        RenderText {#text} at (0,0) size 27x17
-                          text run at (0,0) width 27: "E N"
-                      RenderTableCell {cell} at (108,0) size 50x17 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=2 rs=1 cs=1]
-                        RenderText {#text} at (0,0) size 50x17
-                          text run at (0,0) width 50: "O RED"
-            RenderTableRow (anonymous) at (0,34) size 158x17
-              RenderTableCell {cell} at (0,34) size 158x17 [color=#FFFFFF] [bgcolor=#008000] [r=2 c=0 rs=1 cs=1]
+      RenderBlock (floating) {float} at (0,0) size 157x51 [bgcolor=#FF0000]
+        RenderTable at (0,0) size 157x51
+          RenderTableSection (anonymous) at (0,0) size 157x51
+            RenderTableRow (anonymous) at (0,0) size 157x17
+              RenderTableCell {cell} at (0,0) size 157x17 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (52,0) size 53x17
+                  text run at (52,0) width 53: "THERE"
+            RenderTableRow {row} at (0,17) size 157x17
+              RenderTableCell (anonymous) at (0,17) size 157x17 [r=1 c=0 rs=1 cs=1]
+                RenderTable {table} at (0,0) size 157x17
+                  RenderTableSection (anonymous) at (0,0) size 157x17
+                    RenderTableRow (anonymous) at (0,0) size 157x17
+                      RenderTableCell {cell} at (0,0) size 82x17 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
+                        RenderText {#text} at (0,0) size 82x17
+                          text run at (0,0) width 82: "SHOULD B"
+                      RenderTableCell {cell} at (82,0) size 26x17 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
+                        RenderText {#text} at (0,0) size 26x17
+                          text run at (0,0) width 26: "E N"
+                      RenderTableCell {cell} at (108,0) size 49x17 [color=#FFFFFF] [bgcolor=#008000] [r=0 c=2 rs=1 cs=1]
+                        RenderText {#text} at (0,0) size 49x17
+                          text run at (0,0) width 49: "O RED"
+            RenderTableRow (anonymous) at (0,34) size 157x17
+              RenderTableCell {cell} at (0,34) size 157x17 [color=#FFFFFF] [bgcolor=#008000] [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (31,0) size 95x17
                   text run at (31,0) width 95: "ANYWHERE"

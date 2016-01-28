@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (153,2) size 150x19 [bgcolor=#DDDDDD] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 12x17
                 text run at (1,1) width 12: "X"
-            RenderTableCell {TD} at (304,2) size 478x19 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (304,2) size 479x19 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 12x17
                 text run at (1,1) width 12: "X"
           RenderTableRow {TR} at (0,23) size 784x138
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
                 text run at (1,52) width 264: "characters long. (I could have used a table"
                 text run at (1,69) width 48: "instead "
                 text run at (49,69) width 119: "but this is simpler)."
-            RenderTableCell {TD} at (304,23) size 478x138 [bgcolor=#9999FF] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (304,23) size 479x138 [bgcolor=#9999FF] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 463x34
                 text run at (1,1) width 463: "Try shrinking this table to ~250px wide. The left hand (gold) column will"
                 text run at (1,18) width 167: "suddenly expand in width."

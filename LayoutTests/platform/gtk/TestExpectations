@@ -634,6 +634,10 @@ webkit.org/b/152620 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailu
 # Requires ENABLE(SAMPLING_PROFILER)
 webkit.org/b/153466 inspector/sampling-profiler [ Skip ]
 
+webkit.org/b/153602 fast/table/003.html [ Failure ]
+webkit.org/b/153602 fast/text/emoji.html [ Failure ]
+webkit.org/b/153602 tables/mozilla_expected_failures/bugs/bug89315.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2014,7 +2018,6 @@ webkit.org/b/128061 svg/zoom/page/zoom-background-images.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
-webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
 # End of subpixel failures.
 
 # Regressions in svg/clip-path

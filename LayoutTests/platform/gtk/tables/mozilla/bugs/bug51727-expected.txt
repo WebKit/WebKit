@@ -14,9 +14,9 @@ layer at (0,0) size 800x101
             RenderText at (0,0) size 189x17
               text run at (0,0) width 189: "(2) Fill cell with short string"
         RenderBR {BR} at (209,36) size 0x17
-      RenderTable {TABLE} at (0,60) size 84x25
-        RenderTableSection {TBODY} at (0,0) size 84x25
-          RenderTableRow {TR} at (0,2) size 84x21
-            RenderTableCell {TD} at (2,2) size 80x21 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,60) size 83x25
+        RenderTableSection {TBODY} at (0,0) size 83x25
+          RenderTableRow {TR} at (0,2) size 83x21
+            RenderTableCell {TD} at (2,2) size 79x21 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 14x17
                 text run at (2,2) width 14: "aa"

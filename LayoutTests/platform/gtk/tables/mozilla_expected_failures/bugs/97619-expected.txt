@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 784x115 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x113
           RenderTableRow {TR} at (0,2) size 782x109
-            RenderTableCell {TD} at (2,2) size 75x109 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 74x109 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 70x68
                 text run at (2,2) width 59: "check for"
                 text run at (2,19) width 55: "handling"
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,133) size 784x146 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x144
           RenderTableRow {TR} at (0,2) size 782x140
-            RenderTableCell {TD} at (2,2) size 25x140 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 24x140 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 16x68
                 text run at (2,2) width 14: "aa"
                 text run at (2,19) width 16: "bb"
@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,297) size 784x47 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x45
           RenderTableRow {TR} at (0,2) size 782x41
-            RenderTableCell {TD} at (2,2) size 214x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 213x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 209x17
                 text run at (2,2) width 209: "checkforhandlingofnowhitespace"
               RenderImage {IMG} at (2,19) size 20x17
@@ -54,7 +54,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,362) size 784x30 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x28
           RenderTableRow {TR} at (0,2) size 782x24
-            RenderTableCell {TD} at (2,2) size 335x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 334x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,5) size 209x17
                 text run at (2,5) width 209: "checkforhandlingofnowhitespace"
               RenderImage {IMG} at (211,2) size 20x17

@@ -46,19 +46,19 @@ layer at (0,0) size 785x891
             text run at (498,3) width 96: "border-style"
         RenderText {#text} at (594,0) size 54x17
           text run at (594,0) width 54: " was set."
-      RenderTable {TABLE} at (0,505) size 671x370 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 669x368
-          RenderTableRow {TR} at (0,0) size 669x25
-            RenderTableCell {TD} at (0,0) size 669x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,505) size 670x370 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 668x368
+          RenderTableRow {TR} at (0,0) size 668x25
+            RenderTableCell {TD} at (0,0) size 668x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,25) size 669x343
-            RenderTableCell {TD} at (0,184) size 13x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,25) size 668x343
+            RenderTableCell {TD} at (0,184) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,25) size 657x343 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 649x18
+            RenderTableCell {TD} at (12,25) size 656x343 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 648x18
                 RenderText {#text} at (0,0) size 157x17
                   text run at (0,0) width 157: "(These will only work if "
                 RenderInline {CODE} at (0,0) size 96x15
@@ -66,22 +66,22 @@ layer at (0,0) size 785x891
                     text run at (157,3) width 96: "border-style"
                 RenderText {#text} at (253,0) size 89x17
                   text run at (253,0) width 89: " is supported.)"
-              RenderBlock {P} at (4,38) size 649x17 [bgcolor=#C0C0C0]
+              RenderBlock {P} at (4,38) size 648x17 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 203x17
                   text run at (0,0) width 203: "This element has a class of zero."
-              RenderBlock {P} at (4,71) size 649x117 [border: (50px solid #000000)]
+              RenderBlock {P} at (4,71) size 648x117 [border: (50px solid #000000)]
                 RenderText {#text} at (50,50) size 394x17
                   text run at (50,50) width 394: "This element should have an overall border width of 50 pixels."
-              RenderBlock {P} at (4,204) size 649x27 [border: (5px solid #000000)]
+              RenderBlock {P} at (4,204) size 648x27 [border: (5px solid #000000)]
                 RenderText {#text} at (5,5) size 343x17
                   text run at (5,5) width 343: "This element should have a thick overall border width."
-              RenderBlock {P} at (4,247) size 649x23 [border: (3px solid #000000)]
+              RenderBlock {P} at (4,247) size 648x23 [border: (3px solid #000000)]
                 RenderText {#text} at (3,3) size 363x17
                   text run at (3,3) width 363: "This element should have a medium overall border width."
-              RenderBlock {P} at (4,286) size 649x19 [border: (1px solid #000000)]
+              RenderBlock {P} at (4,286) size 648x19 [border: (1px solid #000000)]
                 RenderText {#text} at (1,1) size 336x17
                   text run at (1,1) width 336: "This element should have a thin overall border width."
-              RenderBlock {P} at (4,321) size 649x18
+              RenderBlock {P} at (4,321) size 648x18
                 RenderText {#text} at (0,0) size 498x17
                   text run at (0,0) width 498: "This element should have no border and no extra \"padding\" on any side, as no "
                 RenderInline {CODE} at (0,0) size 96x15

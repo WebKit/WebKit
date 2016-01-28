@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x17
         RenderText {#text} at (0,0) size 72x17
           text run at (0,0) width 72: "dom access"
-      RenderTable {TABLE} at (0,17) size 65x33 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 63x31
-          RenderTableRow {TR} at (0,1) size 63x29
-            RenderTableCell {TD} at (1,1) size 61x29 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,17) size 64x33 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 62x31
+          RenderTableRow {TR} at (0,1) size 62x29
+            RenderTableCell {TD} at (1,1) size 60x29 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 48x17
                 text run at (6,6) width 48: "100000"
       RenderBlock (anonymous) at (0,50) size 784x17
         RenderText {#text} at (0,0) size 58x17
           text run at (0,0) width 58: "reference"
-      RenderTable {TABLE} at (0,67) size 65x33 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 63x31
-          RenderTableRow {TR} at (0,1) size 63x29
-            RenderTableCell {TD} at (1,1) size 61x29 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,67) size 64x33 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 62x31
+          RenderTableRow {TR} at (0,1) size 62x29
+            RenderTableCell {TD} at (1,1) size 60x29 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 48x17
                 text run at (6,6) width 48: "100000"

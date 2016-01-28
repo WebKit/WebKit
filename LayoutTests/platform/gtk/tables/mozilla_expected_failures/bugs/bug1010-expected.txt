@@ -81,13 +81,13 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (671,2) size 54x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 33x17
                 text run at (2,2) width 33: "foo 1"
-            RenderTableCell {TD} at (726,2) size 54x21 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (726,2) size 55x21 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 33x17
                 text run at (2,2) width 33: "foo 2"
           RenderTableRow {TR} at (0,25) size 782x218
             RenderTableCell {TD} at (671,123) size 54x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 37x18
                 text run at (2,3) width 37: "Foo 3"
-            RenderTableCell {TD} at (726,123) size 54x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (726,123) size 55x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 37x18
                 text run at (2,3) width 37: "Foo 4"

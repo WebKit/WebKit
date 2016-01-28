@@ -19,6 +19,6 @@ layer at (0,0) size 800x600
                         text run at (2,53) width 268: "of construction bid opportunities, currently"
                         text run at (2,70) width 59: "covering "
                         text run at (61,70) width 59: "13 states!"
-            RenderTableCell {TD} at (326,2) size 310x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (326,2) size 311x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 207x17
                 text run at (2,2) width 207: "Expanded Geographic Coverage"
