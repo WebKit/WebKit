@@ -56,17 +56,8 @@ class String;
 namespace WebCore {
 class IntRect;
 class WebVideoFullscreenModel;
+class WebVideoFullscreenChangeObserver;
     
-class WebVideoFullscreenChangeObserver {
-public:
-    virtual ~WebVideoFullscreenChangeObserver() { };
-    virtual void didSetupFullscreen() = 0;
-    virtual void didEnterFullscreen() = 0;
-    virtual void didExitFullscreen() = 0;
-    virtual void didCleanupFullscreen() = 0;
-    virtual void fullscreenMayReturnToInline() = 0;
-};
-
 class WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit
     : public WebVideoFullscreenInterface
     , public RefCounted<WebVideoFullscreenInterfaceAVKit> {

@@ -38,7 +38,6 @@ namespace WebCore {
 
 bool supportsPictureInPicture();
 
-#if PLATFORM(IOS)
 class TimeRanges;
 
 class WebVideoFullscreenInterface {
@@ -59,7 +58,6 @@ public:
     virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) = 0;
     virtual void setWirelessVideoPlaybackDisabled(bool) = 0;
 };
-#endif
 
 }
 

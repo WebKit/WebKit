@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #import "WebVideoFullscreenModelVideoElement.h"
 
 #import "DOMEventInternal.h"
@@ -44,7 +44,6 @@
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextTrackList.h>
 #import <WebCore/TimeRanges.h>
-#import <WebCore/WebCoreThreadRun.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
@@ -177,7 +176,11 @@ void WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer*
         return;
     
     m_videoFullscreenLayer = videoLayer;
+#if PLATFORM(MAC)
+    [m_videoFullscreenLayer setAnchorPoint:CGPointMake(0, 0)];
+#else
     [m_videoFullscreenLayer setAnchorPoint:CGPointMake(0.5, 0.5)];
+#endif
     [m_videoFullscreenLayer setBounds:m_videoFrame];
     
     if (m_videoElement)

@@ -33,6 +33,7 @@
 #import "QuartzCoreSPI.h"
 #import "SoftLinking.h"
 #import "TimeRanges.h"
+#import "WebVideoFullscreenChangeObserver.h"
 #import "WebVideoFullscreenInterfaceAVKit.h"
 #import "WebVideoFullscreenModelVideoElement.h"
 #import <QuartzCore/CoreAnimation.h>

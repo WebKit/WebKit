@@ -26,18 +26,29 @@
 #ifndef WebVideoFullscreenManagerProxy_h
 #define WebVideoFullscreenManagerProxy_h
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "MessageReceiver.h"
 #include <WebCore/GraphicsLayer.h>
-#include <WebCore/WebVideoFullscreenInterfaceAVKit.h>
+#include <WebCore/PlatformView.h>
+#include <WebCore/WebVideoFullscreenChangeObserver.h>
 #include <WebCore/WebVideoFullscreenModel.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-OBJC_CLASS UIView;
+#if PLATFORM(IOS)
+#include <WebCore/WebVideoFullscreenInterfaceAVKit.h>
+#else
+#include <WebCore/WebVideoFullscreenInterfaceMac.h>
+#endif
+
+#if PLATFORM(IOS)
+typedef WebCore::WebVideoFullscreenInterfaceAVKit PlatformWebVideoFullscreenInterface;
+#else
+typedef WebCore::WebVideoFullscreenInterfaceMac PlatformWebVideoFullscreenInterface;
+#endif
 
 namespace WebKit {
 
@@ -54,8 +65,8 @@ public:
 
     void invalidate() { m_manager = nullptr; }
 
-    UIView *layerHostView() const { return m_layerHostView.get(); }
-    void setLayerHostView(RetainPtr<UIView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
+    PlatformView *layerHostView() const { return m_layerHostView.get(); }
+    void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
 private:
     WebVideoFullscreenModelContext(WebVideoFullscreenManagerProxy& manager, uint64_t contextId)
@@ -92,7 +103,7 @@ private:
 
     WebVideoFullscreenManagerProxy* m_manager;
     uint64_t m_contextId;
-    RetainPtr<UIView *> m_layerHostView;
+    RetainPtr<PlatformView *> m_layerHostView;
 };
 
 class WebVideoFullscreenManagerProxy : public RefCounted<WebVideoFullscreenManagerProxy>, private IPC::MessageReceiver {
@@ -114,11 +125,11 @@ private:
     explicit WebVideoFullscreenManagerProxy(WebPageProxy&);
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
-    typedef std::tuple<RefPtr<WebVideoFullscreenModelContext>, RefPtr<WebCore::WebVideoFullscreenInterfaceAVKit>> ModelInterfaceTuple;
+    typedef std::tuple<RefPtr<WebVideoFullscreenModelContext>, RefPtr<PlatformWebVideoFullscreenInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(uint64_t contextId);
     ModelInterfaceTuple& ensureModelAndInterface(uint64_t contextId);
     WebVideoFullscreenModelContext& ensureModel(uint64_t contextId);
-    WebCore::WebVideoFullscreenInterfaceAVKit& ensureInterface(uint64_t contextId);
+    PlatformWebVideoFullscreenInterface& ensureInterface(uint64_t contextId);
 
     // Messages from WebVideoFullscreenManager
     void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture);
@@ -169,6 +180,6 @@ private:
     
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #endif // WebVideoFullscreenManagerProxy_h

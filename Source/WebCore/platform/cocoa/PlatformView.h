@@ -23,58 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebVideoFullscreenInterfaceMac.h"
+#ifndef PlatformView_h
+#define PlatformView_h
 
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(COCOA)
 
-#import "IntRect.h"
-#import "WebVideoFullscreenChangeObserver.h"
-#import "WebVideoFullscreenModel.h"
-
-namespace WebCore {
-
-WebVideoFullscreenInterfaceMac::~WebVideoFullscreenInterfaceMac()
-{
-}
-
-void WebVideoFullscreenInterfaceMac::setWebVideoFullscreenModel(WebVideoFullscreenModel* model)
-{
-    m_videoFullscreenModel = model;
-}
-
-void WebVideoFullscreenInterfaceMac::setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver* observer)
-{
-    m_fullscreenChangeObserver = observer;
-}
-
-void WebVideoFullscreenInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
-{
-    HTMLMediaElementEnums::VideoFullscreenMode newMode = m_mode | mode;
-    if (m_mode == newMode)
-        return;
-
-    m_mode = newMode;
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->fullscreenModeChanged(m_mode);
-}
-
-void WebVideoFullscreenInterfaceMac::clearMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
-{
-    HTMLMediaElementEnums::VideoFullscreenMode newMode = m_mode & ~mode;
-    if (m_mode == newMode)
-        return;
-
-    m_mode = newMode;
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->fullscreenModeChanged(m_mode);
-}
-
-bool supportsPictureInPicture()
-{
-    return false;
-}
-
-}
+#if PLATFORM(IOS)
+OBJC_CLASS UIView;
+typedef UIView PlatformView;
+#else
+OBJC_CLASS NSView;
+typedef NSView PlatformView;
+#endif
 
 #endif
+
+#endif /* PlatformView_h */

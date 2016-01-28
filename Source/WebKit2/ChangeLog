@@ -1,3 +1,51 @@
+2016-01-26  Ada Chan  <adachan@apple.com>
+
+        Get WebVideoFullscreenManager and related classes to also compile for Mac platform
+        with video presentation mode support.
+        https://bugs.webkit.org/show_bug.cgi?id=153221
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        Enabled also for Mac with video presentation mode support.
+        (-[WKLayerHostView makeBackingLayer]):
+        Make sure this view uses CALayerHost for its layer.
+        (WebKit::WebVideoFullscreenManagerProxy::invalidate):
+        (WebKit::WebVideoFullscreenManagerProxy::createModelAndInterface):
+        (WebKit::WebVideoFullscreenManagerProxy::ensureInterface):
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        Replace WebCore::WebVideoFullscreenInterfaceAVKit with PlatformWebVideoFullscreenInterface.
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame):
+        +[UIWindow _synchronizeDrawingAcrossProcesses] is not available on Mac.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::viewDidLeaveWindow):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        The code that creates m_videoFullscreenManager is now enabled also on Mac with video
+        presentation mode support.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Enable the API related to the video fullscreen layer also on Mac with video presentation
+        mode support.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        The code that creates m_videoFullscreenManager is now enabled also on Mac with video
+        presentation mode support.
+
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        Enabled also for Mac with video presentation mode support.
+        (WebKit::WebVideoFullscreenManager::supportsVideoFullscreen):
+        Return false for now on Mac.
+
 2016-01-28  Darin Adler  <darin@apple.com>
 
         Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase

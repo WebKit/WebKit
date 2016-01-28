@@ -194,6 +194,7 @@
 #include "PDFPlugin.h"
 #include "RemoteLayerTreeTransaction.h"
 #include "WKStringCF.h"
+#include "WebVideoFullscreenManager.h"
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
@@ -205,7 +206,6 @@
 
 #if PLATFORM(IOS)
 #include "RemoteLayerTreeDrawingArea.h"
-#include "WebVideoFullscreenManager.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/CoreTextSPI.h>
 #include <WebCore/Icon.h>
@@ -3046,14 +3046,16 @@ WebInspectorUI* WebPage::inspectorUI()
     return m_inspectorUI.get();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 WebVideoFullscreenManager* WebPage::videoFullscreenManager()
 {
     if (!m_videoFullscreenManager)
         m_videoFullscreenManager = WebVideoFullscreenManager::create(this);
     return m_videoFullscreenManager.get();
 }
+#endif
 
+#if PLATFORM(IOS)
 void WebPage::setAllowsMediaDocumentInlinePlayback(bool allows)
 {
     m_page->setAllowsMediaDocumentInlinePlayback(allows);

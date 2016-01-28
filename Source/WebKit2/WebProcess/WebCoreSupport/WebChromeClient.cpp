@@ -75,7 +75,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "WebVideoFullscreenManager.h"
 #endif
 
@@ -849,7 +849,7 @@ PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Pag
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 bool WebChromeClient::supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode)
 {
     return m_page->videoFullscreenManager()->supportsVideoFullscreen();

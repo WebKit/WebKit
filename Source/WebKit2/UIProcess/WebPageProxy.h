@@ -329,9 +329,11 @@ public:
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy* fullScreenManager();
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<WebVideoFullscreenManagerProxy> videoFullscreenManager();
+#endif
 
+#if PLATFORM(IOS)
     bool allowsMediaDocumentInlinePlayback() const;
     void setAllowsMediaDocumentInlinePlayback(bool);
 #endif
@@ -1535,8 +1537,10 @@ private:
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebFullScreenManagerProxy> m_fullScreenManager;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
+#endif
+#if PLATFORM(IOS)
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
     bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad;
     uint64_t m_firstLayerTreeTransactionIdAfterDidCommitLoad;

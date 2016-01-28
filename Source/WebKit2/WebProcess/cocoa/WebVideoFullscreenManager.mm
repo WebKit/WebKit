@@ -25,7 +25,7 @@
 #import "config.h"
 #import "WebVideoFullscreenManager.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "Attachment.h"
 #import "WebCoreArgumentCoders.h"
@@ -45,7 +45,6 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TimeRanges.h>
-#import <WebCore/WebCoreThreadRun.h>
 #import <mach/mach_port.h>
 
 using namespace WebCore;
@@ -220,7 +219,12 @@ WebVideoFullscreenInterfaceContext& WebVideoFullscreenManager::ensureInterface(u
 
 bool WebVideoFullscreenManager::supportsVideoFullscreen() const
 {
+#if PLATFORM(IOS)
     return Settings::avKitEnabled();
+#else
+    // FIXME 153241: Return false until more of WebVideoFullscreenInterfaceMac has been implemented.
+    return false;
+#endif
 }
 
 void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode)
@@ -558,4 +562,4 @@ void WebVideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, Web
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

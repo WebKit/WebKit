@@ -143,14 +143,11 @@
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "ViewSnapshotStore.h"
+#include "WebVideoFullscreenManagerProxy.h"
+#include "WebVideoFullscreenManagerProxyMessages.h"
 #include <WebCore/MachSendRight.h>
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/TextIndicatorWindow.h>
-#endif
-
-#if PLATFORM(IOS)
-#include "WebVideoFullscreenManagerProxy.h"
-#include "WebVideoFullscreenManagerProxyMessages.h"
 #endif
 
 #if USE(CAIRO)
@@ -470,7 +467,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = WebFullScreenManagerProxy::create(*this, m_pageClient.fullScreenManagerProxyClient());
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
 #endif
 #if ENABLE(VIBRATION)
@@ -705,7 +702,7 @@ void WebPageProxy::reattachToWebProcess()
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = WebFullScreenManagerProxy::create(*this, m_pageClient.fullScreenManagerProxyClient());
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
 #endif
 
@@ -1398,7 +1395,7 @@ void WebPageProxy::viewDidLeaveWindow()
     if (m_colorPicker)
         endColorPicker();
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     // When leaving the current page, close the video fullscreen.
     if (m_videoFullscreenManager)
         m_videoFullscreenManager->requestHideAndExitFullscreen();
@@ -3977,12 +3974,14 @@ WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
 }
 #endif
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 RefPtr<WebVideoFullscreenManagerProxy> WebPageProxy::videoFullscreenManager()
 {
     return m_videoFullscreenManager;
 }
+#endif
 
+#if PLATFORM(IOS)
 bool WebPageProxy::allowsMediaDocumentInlinePlayback() const
 {
     return m_allowsMediaDocumentInlinePlayback;
@@ -5026,12 +5025,14 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_visibleScrollerThumbRect = IntRect();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (m_videoFullscreenManager) {
         m_videoFullscreenManager->invalidate();
         m_videoFullscreenManager = nullptr;
     }
+#endif
 
+#if PLATFORM(IOS)
     m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
     m_dynamicViewportSizeUpdateWaitingForTarget = false;
     m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;

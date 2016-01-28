@@ -249,8 +249,10 @@ public:
     WebInspectorUI* inspectorUI();
     bool isInspectorPage() { return !!m_inspectorUI; }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     WebVideoFullscreenManager* videoFullscreenManager();
+#endif
+#if PLATFORM(IOS)
     void setAllowsMediaDocumentInlinePlayback(bool);
     bool allowsMediaDocumentInlinePlayback() const { return m_allowsMediaDocumentInlinePlayback; }
 #endif
@@ -1281,8 +1283,10 @@ private:
 
     RefPtr<WebInspector> m_inspector;
     RefPtr<WebInspectorUI> m_inspectorUI;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     RefPtr<WebVideoFullscreenManager> m_videoFullscreenManager;
+#endif
+#if PLATFORM(IOS)
     bool m_allowsMediaDocumentInlinePlayback { false };
 #endif
 #if ENABLE(FULLSCREEN_API)

@@ -38,6 +38,7 @@
 #import "RuntimeApplicationChecksIOS.h"
 #import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
+#import "WebVideoFullscreenChangeObserver.h"
 #import "WebVideoFullscreenModel.h"
 #import <AVFoundation/AVTime.h>
 #import <UIKit/UIKit.h>

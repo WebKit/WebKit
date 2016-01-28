@@ -26,10 +26,8 @@
 #import "config.h"
 #import "WebVideoFullscreenManagerProxy.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#import "RemoteLayerTreeDrawingAreaProxy.h"
-#import "UIKitSPI.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "WebVideoFullscreenManagerMessages.h"
@@ -39,15 +37,27 @@
 #import <WebCore/TimeRanges.h>
 #import <WebKitSystemInterface.h>
 
-@interface WKLayerHostView : UIView
+#if PLATFORM(IOS)
+#import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "UIKitSPI.h"
+#endif
+
+@interface WKLayerHostView : PlatformView
 @property (nonatomic, assign) uint32_t contextID;
 @end
 
 @implementation WKLayerHostView
 
+#if PLATFORM(IOS)
 + (Class)layerClass {
     return [CALayerHost class];
 }
+#else
+- (CALayer *)makeBackingLayer
+{
+    return [[CALayerHost alloc] init];
+}
+#endif
 
 - (uint32_t)contextID {
     return [[self layerHost] contextId];
@@ -67,7 +77,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if !HAVE(AVKIT)
+#if PLATFORM(IOS) && !HAVE(AVKIT)
 
 RefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy&)
 {
@@ -259,7 +269,7 @@ void WebVideoFullscreenManagerProxy::invalidate()
 
     for (auto& tuple : m_contextMap.values()) {
         RefPtr<WebVideoFullscreenModelContext> model;
-        RefPtr<WebCore::WebVideoFullscreenInterfaceAVKit> interface;
+        RefPtr<PlatformWebVideoFullscreenInterface> interface;
         std::tie(model, interface) = tuple;
 
         interface->invalidate();
@@ -303,7 +313,7 @@ void WebVideoFullscreenManagerProxy::applicationDidBecomeActive()
 WebVideoFullscreenManagerProxy::ModelInterfaceTuple WebVideoFullscreenManagerProxy::createModelAndInterface(uint64_t contextId)
 {
     Ref<WebVideoFullscreenModelContext> model = WebVideoFullscreenModelContext::create(*this, contextId);
-    Ref<WebCore::WebVideoFullscreenInterfaceAVKit> interface = WebVideoFullscreenInterfaceAVKit::create();
+    Ref<PlatformWebVideoFullscreenInterface> interface = PlatformWebVideoFullscreenInterface::create();
 
     interface->setWebVideoFullscreenModel(&model.get());
     interface->setWebVideoFullscreenChangeObserver(&model.get());
@@ -324,7 +334,7 @@ WebVideoFullscreenModelContext& WebVideoFullscreenManagerProxy::ensureModel(uint
     return *std::get<0>(ensureModelAndInterface(contextId));
 }
 
-WebCore::WebVideoFullscreenInterfaceAVKit& WebVideoFullscreenManagerProxy::ensureInterface(uint64_t contextId)
+PlatformWebVideoFullscreenInterface& WebVideoFullscreenManagerProxy::ensureInterface(uint64_t contextId)
 {
     return *std::get<1>(ensureModelAndInterface(contextId));
 }
@@ -335,13 +345,16 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
 {
     ASSERT(videoLayerID);
     RefPtr<WebVideoFullscreenModelContext> model;
-    RefPtr<WebCore::WebVideoFullscreenInterfaceAVKit> interface;
+    RefPtr<PlatformWebVideoFullscreenInterface> interface;
 
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
     RetainPtr<WKLayerHostView> view = static_cast<WKLayerHostView*>(model->layerHostView());
     if (!view) {
         view = adoptNS([[WKLayerHostView alloc] init]);
+#if PLATFORM(MAC)
+        [view setWantsLayer:YES];
+#endif
         model->setLayerHostView(view);
     }
     [view setContextID:videoLayerID];
@@ -351,8 +364,12 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
         [[view layer] setSublayerTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
     }
 
+#if PLATFORM(IOS)
     UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
     interface->setupFullscreen(*model->layerHostView(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture);
+#else
+    interface->setupFullscreen(*model->layerHostView(), initialRect, videoFullscreenMode, allowsPictureInPicture);
+#endif
 }
 
 void WebVideoFullscreenManagerProxy::resetMediaState(uint64_t contextId)
@@ -549,7 +566,11 @@ void WebVideoFullscreenManagerProxy::didCleanupFullscreen(uint64_t contextId)
 void WebVideoFullscreenManagerProxy::setVideoLayerFrame(uint64_t contextId, WebCore::FloatRect frame)
 {
     @autoreleasepool {
+#if PLATFORM(IOS)
         mach_port_name_t fencePort = [UIWindow _synchronizeDrawingAcrossProcesses];
+#else
+        mach_port_name_t fencePort = 0;
+#endif
 
         m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrameFenced(contextId, frame, IPC::Attachment(fencePort, MACH_MSG_TYPE_MOVE_SEND)), m_page->pageID());
     }
@@ -590,4 +611,4 @@ void WebVideoFullscreenManagerProxy::fullscreenMayReturnToInline(uint64_t contex
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

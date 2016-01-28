@@ -1,3 +1,81 @@
+2016-01-26  Ada Chan  <adachan@apple.com>
+
+        Get WebVideoFullscreenManager and related classes to also compile for Mac platform
+        with video presentation mode support.
+        https://bugs.webkit.org/show_bug.cgi?id=153221
+
+        Reviewed by Eric Carlson.
+
+        No new tests, no actual behavior change with a stub implementation of WebVideoFullscreenInterfaceMac.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add PlatformView.h, WebVideoFullscreenChangeObserver.h, and WebVideoFullscreenInterfaceMac.h.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated):
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction):
+        * html/HTMLMediaElement.h:
+        Enable the code that deals with the video fullscreen layer also for Mac platform with
+        video presentation mode support.
+
+        * platform/cocoa/PlatformView.h:
+        Header file for declaring the view types for each Cocoa platform.
+
+        * platform/cocoa/WebVideoFullscreenChangeObserver.h:
+        (WebCore::WebVideoFullscreenChangeObserver::~WebVideoFullscreenChangeObserver):
+        Interface declaration moved from WebVideoFullscreenInterfaceAVKit.h.
+
+        * platform/cocoa/WebVideoFullscreenInterface.h:
+        Stop guarding the declaration of WebVideoFullscreenInterface to be iOS specific. It is now
+        enabled for iOS and Mac platform with video presentation mode support.
+
+        * platform/cocoa/WebVideoFullscreenModel.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        Enable also for Mac platform with video presentation mode support.
+        (WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer):
+        Set the video fullscreen layer's anchor point to (0, 0) since we are not changing the position of
+        the video layer on Mac.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        Import WebVideoFullscreenChangeObserver.h now that the interface declaration has been moved to that file.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        Move the declaration of WebVideoFullscreenChangeObserver to a separate header.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        Import WebVideoFullscreenChangeObserver.h now that the interface declaration has been moved to that file.
+
+        * platform/mac/WebVideoFullscreenInterfaceMac.h: Added.
+        * platform/mac/WebVideoFullscreenInterfaceMac.mm:
+        (WebCore::WebVideoFullscreenInterfaceMac::~WebVideoFullscreenInterfaceMac):
+        (WebCore::WebVideoFullscreenInterfaceMac::setWebVideoFullscreenModel):
+        (WebCore::WebVideoFullscreenInterfaceMac::setWebVideoFullscreenChangeObserver):
+        (WebCore::WebVideoFullscreenInterfaceMac::resetMediaState):
+        (WebCore::WebVideoFullscreenInterfaceMac::setDuration):
+        (WebCore::WebVideoFullscreenInterfaceMac::setCurrentTime):
+        (WebCore::WebVideoFullscreenInterfaceMac::setBufferedTime):
+        (WebCore::WebVideoFullscreenInterfaceMac::setRate):
+        (WebCore::WebVideoFullscreenInterfaceMac::setVideoDimensions):
+        (WebCore::WebVideoFullscreenInterfaceMac::setSeekableRanges):
+        (WebCore::WebVideoFullscreenInterfaceMac::setCanPlayFastReverse):
+        (WebCore::WebVideoFullscreenInterfaceMac::setAudioMediaSelectionOptions):
+        (WebCore::WebVideoFullscreenInterfaceMac::setLegibleMediaSelectionOptions):
+        (WebCore::WebVideoFullscreenInterfaceMac::setExternalPlayback):
+        (WebCore::WebVideoFullscreenInterfaceMac::setWirelessVideoPlaybackDisabled):
+        (WebCore::WebVideoFullscreenInterfaceMac::setupFullscreen):
+        (WebCore::WebVideoFullscreenInterfaceMac::enterFullscreen):
+        (WebCore::WebVideoFullscreenInterfaceMac::exitFullscreen):
+        (WebCore::WebVideoFullscreenInterfaceMac::cleanupFullscreen):
+        (WebCore::WebVideoFullscreenInterfaceMac::invalidate):
+        (WebCore::WebVideoFullscreenInterfaceMac::requestHideAndExitFullscreen):
+        (WebCore::WebVideoFullscreenInterfaceMac::preparedToReturnToInline):
+        (WebCore::WebVideoFullscreenInterfaceMac::setMode):
+        (WebCore::WebVideoFullscreenInterfaceMac::clearMode):
+        (WebCore::WebVideoFullscreenInterfaceMac::mayAutomaticallyShowVideoPictureInPicture):
+        (WebCore::WebVideoFullscreenInterfaceMac::applicationDidBecomeActive):
+        (WebCore::supportsPictureInPicture):
+        Add a stub implementation of WebVideoFullscreenInterfaceMac.
+
 2016-01-28  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         [SVG] Add support for 'lighter' operator in feComposite

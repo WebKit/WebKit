@@ -108,6 +108,10 @@
 #include "MediaElementAudioSourceNode.h"
 #endif
 
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#include "WebVideoFullscreenInterface.h"
+#endif
+
 #if PLATFORM(IOS)
 #include "RuntimeApplicationChecksIOS.h"
 #include "WebVideoFullscreenInterfaceAVKit.h"
@@ -336,7 +340,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_loadState(WaitingForSource)
     , m_videoFullscreenMode(VideoFullscreenModeNone)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
 #endif
     , m_preload(MediaPlayer::Auto)
@@ -4546,7 +4550,7 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
     }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (!m_player)
         return;
     m_player->setVideoFullscreenFrame(m_videoFullscreenFrame);
@@ -5364,7 +5368,7 @@ PlatformLayer* HTMLMediaElement::platformLayer() const
     return m_player ? m_player->platformLayer() : nullptr;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer)
 {
     m_videoFullscreenLayer = platformLayer;
@@ -6556,7 +6560,7 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
 #endif
     if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
         return true;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (m_videoFullscreenMode == VideoFullscreenModeStandard && supportsPictureInPicture() && isPlaying())
         return true;
 #endif
