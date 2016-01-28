@@ -71,6 +71,16 @@ private:
     PassRefPtr<SerializedScriptValue> stateInternal() const;
 
     RefPtr<SerializedScriptValue> m_lastStateObjectRequested;
+
+    unsigned m_nonUserGestureObjectsAdded { 0 };
+    unsigned m_currentUserGestureObjectsAdded { 0 };
+    double m_currentUserGestureTimestamp { 0 };
+
+    // For the main frame's History object to keep track of all state object usage.
+    uint64_t m_totalStateObjectUsage { 0 };
+
+    // For each individual History object to keep track of the most recent state object added.
+    uint64_t m_mostRecentStateObjectUsage { 0 };
 };
 
 } // namespace WebCore

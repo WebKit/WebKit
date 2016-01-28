@@ -1,0 +1,52 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+function loaded()
+{
+    // Make a 512k character string, which computes as 1mb of payload.
+    var object = "12345678";
+    for (var i = 0; i < 16; ++i)
+        object += object;
+    
+    log("Pushing 59+mb of state objects (but less than 61mb)");
+
+    try {
+        // Push 59+mb of state objects (while the string is exactly 1mb, it counts for a little more than 1mb)
+        for (var i = 1; i < 60; ++i)
+            history.pushState(0, 0, object);
+    } catch (e) {
+        log("Unexpected exception pushing > 59mb but < 60mb of state objects: " + e);  
+    } 
+
+    log("Replace the last 1mb object with a 2mb object, bringing the total to 60+mb");
+    object += object;
+    try {
+        history.replaceState(0, 0, object);
+        log("It fit.");
+    } catch (e) {
+        log("Unexpected exception replacing 1mb with 2mb, bringing the total to 60mb: " + e);  
+    } 
+    
+
+    var iframe = document.createElement('iframe');
+    iframe.src = 'resources/replacestate-iframe.html'
+    document.body.appendChild(iframe);
+}
+
+window.onload = loaded;
+
+</script>
+<body>
+Test should not crash.<br>
+replaceState() in any frame should not always count against the global quota. Instead it should literally replace the most recent state object added from that frame.<br>
+<div id="logger"></div>
+</body>

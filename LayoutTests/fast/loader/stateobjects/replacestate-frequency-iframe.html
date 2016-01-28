@@ -1,0 +1,40 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+window.onload = function()
+{
+    try {
+        for( var i = 0; i < 75; ++i ) {
+            history.replaceState(0, 0, i.toString());
+            log("Successfully added item: " + i);
+        }
+    } catch (e) {
+        log(e);
+    }
+
+    openFrame();
+}
+
+function openFrame()
+{
+    var iframe = document.createElement('iframe');
+    iframe.src = 'resources/replaceState-iframe.html'
+    document.body.appendChild(iframe);
+}
+
+</script>
+<body>
+Test should not crash.<br>
+Test does replaceStates both from the main frame and from an iframe and makes sure they both count against state object count limit.<br>
+<button id="button" onclick="clicked();">Click to test replaceState through a user gesture</button>
+<div id="logger"></div>
+</body>
