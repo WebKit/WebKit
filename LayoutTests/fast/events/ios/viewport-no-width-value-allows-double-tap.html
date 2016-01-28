@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta name="viewport" content="initial-scale=1.0">
+
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.doubleTapAtPoint(15, 400, function() {
+                uiController.uiScriptComplete();
+            });
+        })();
+    </script>
+
+    <script>
+    var scriptCompleted = false;
+    var clickCount = 0;
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function getUIScript() {
+        return document.getElementById("ui-script").text;
+    }
+
+    function runTest() {
+        window.addEventListener("scroll", scrolled, false);
+        if (testRunner.runUIScript)
+            testRunner.runUIScript(getUIScript());
+    }
+    function scrolled() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    </script>
+
+    <style>
+    body {
+        margin: 0;
+    }
+    </style>
+</head>
+
+<body onload="runTest()">
+    <p>Double tapping on the image should scroll.</p>
+    <p>This test is best run in WebKitTestRunner. If you are running this test manually, verify that double tapping on the bottom of the viewport caused a scroll.</p>
+    <img src="thin-gradient.jpg">
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+
+</html>
