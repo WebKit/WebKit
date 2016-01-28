@@ -48,7 +48,7 @@ FAIL Document interface: operation queryCommandState(DOMString) assert_equals: p
 FAIL Document interface: operation queryCommandSupported(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: operation queryCommandValue(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: attribute commands assert_true: The prototype object must have a property "commands" expected true got false
-FAIL Document interface: attribute onreadystatechange assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute onreadystatechange assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute fgColor assert_true: The prototype object must have a property "fgColor" expected true got false
 FAIL Document interface: attribute linkColor assert_true: The prototype object must have a property "linkColor" expected true got false
 FAIL Document interface: attribute vlinkColor assert_true: The prototype object must have a property "vlinkColor" expected true got false
@@ -60,69 +60,69 @@ FAIL Document interface: operation clear() assert_own_property: interface protot
 FAIL Document interface: operation captureEvents() assert_own_property: interface prototype object missing non-static operation expected property "captureEvents" missing
 FAIL Document interface: operation releaseEvents() assert_own_property: interface prototype object missing non-static operation expected property "releaseEvents" missing
 FAIL Document interface: attribute all assert_true: The prototype object must have a property "all" expected true got false
-FAIL Document interface: attribute onabort assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute onabort assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onautocomplete assert_true: The prototype object must have a property "onautocomplete" expected true got false
 FAIL Document interface: attribute onautocompleteerror assert_true: The prototype object must have a property "onautocompleteerror" expected true got false
-FAIL Document interface: attribute onblur assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute onblur assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute oncancel assert_true: The prototype object must have a property "oncancel" expected true got false
-FAIL Document interface: attribute oncanplay assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute oncanplaythrough assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onchange assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onclick assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute oncanplay assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute oncanplaythrough assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onchange assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onclick assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onclose assert_true: The prototype object must have a property "onclose" expected true got false
-FAIL Document interface: attribute oncontextmenu assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute oncontextmenu assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute oncuechange assert_true: The prototype object must have a property "oncuechange" expected true got false
-FAIL Document interface: attribute ondblclick assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute ondrag assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute ondragend assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute ondragenter assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute ondblclick assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute ondrag assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute ondragend assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute ondragenter assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute ondragexit assert_true: The prototype object must have a property "ondragexit" expected true got false
-FAIL Document interface: attribute ondragleave assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute ondragover assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute ondragstart assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute ondrop assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute ondurationchange assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onemptied assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onended assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onerror assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onfocus assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute oninput assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute oninvalid assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onkeydown assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onkeypress assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onkeyup assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onload assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onloadeddata assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onloadedmetadata assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onloadstart assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onmousedown assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onmouseenter assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onmouseleave assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onmousemove assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onmouseout assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onmouseover assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onmouseup assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onmousewheel assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onpause assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onplay assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onplaying assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onprogress assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onratechange assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onreset assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute ondragleave assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute ondragover assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute ondragstart assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute ondrop assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute ondurationchange assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onemptied assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onended assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onerror assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onfocus assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute oninput assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute oninvalid assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onkeydown assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onkeypress assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onkeyup assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onload assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onloadeddata assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onloadedmetadata assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onloadstart assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onmousedown assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onmouseenter assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onmouseleave assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onmousemove assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onmouseout assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onmouseover assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onmouseup assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onmousewheel assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onpause assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onplay assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onplaying assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onprogress assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onratechange assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onreset assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onresize assert_true: The prototype object must have a property "onresize" expected true got false
-FAIL Document interface: attribute onscroll assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onseeked assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onseeking assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onselect assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute onscroll assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onseeked assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onseeking assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onselect assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute onshow assert_true: The prototype object must have a property "onshow" expected true got false
 FAIL Document interface: attribute onsort assert_true: The prototype object must have a property "onsort" expected true got false
-FAIL Document interface: attribute onstalled assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onsubmit assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onsuspend assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute ontimeupdate assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute onstalled assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onsubmit assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onsuspend assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute ontimeupdate assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Document interface: attribute ontoggle assert_true: The prototype object must have a property "ontoggle" expected true got false
-FAIL Document interface: attribute onvolumechange assert_true: property is not enumerable expected true got false
-FAIL Document interface: attribute onwaiting assert_true: property is not enumerable expected true got false
+FAIL Document interface: attribute onvolumechange assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Document interface: attribute onwaiting assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Stringification of iframe.contentDocument assert_equals: class string of iframe.contentDocument expected "[object Document]" but got "[object HTMLDocument]"
 PASS Document interface: iframe.contentDocument must inherit property "implementation" with the proper type (0) 
 PASS Document interface: iframe.contentDocument must inherit property "URL" with the proper type (1) 
@@ -1435,17 +1435,17 @@ FAIL HTMLBodyElement interface: attribute bgColor assert_equals: getter must be 
 FAIL HTMLBodyElement interface: attribute background assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLBodyElement interface: attribute onafterprint assert_true: The prototype object must have a property "onafterprint" expected true got false
 FAIL HTMLBodyElement interface: attribute onbeforeprint assert_true: The prototype object must have a property "onbeforeprint" expected true got false
-FAIL HTMLBodyElement interface: attribute onbeforeunload assert_true: property is not enumerable expected true got false
-FAIL HTMLBodyElement interface: attribute onhashchange assert_true: property is not enumerable expected true got false
+FAIL HTMLBodyElement interface: attribute onbeforeunload assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLBodyElement interface: attribute onhashchange assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLBodyElement interface: attribute onlanguagechange assert_true: The prototype object must have a property "onlanguagechange" expected true got false
-FAIL HTMLBodyElement interface: attribute onmessage assert_true: property is not enumerable expected true got false
-FAIL HTMLBodyElement interface: attribute onoffline assert_true: property is not enumerable expected true got false
-FAIL HTMLBodyElement interface: attribute ononline assert_true: property is not enumerable expected true got false
-FAIL HTMLBodyElement interface: attribute onpagehide assert_true: property is not enumerable expected true got false
-FAIL HTMLBodyElement interface: attribute onpageshow assert_true: property is not enumerable expected true got false
-FAIL HTMLBodyElement interface: attribute onpopstate assert_true: property is not enumerable expected true got false
-FAIL HTMLBodyElement interface: attribute onstorage assert_true: property is not enumerable expected true got false
-FAIL HTMLBodyElement interface: attribute onunload assert_true: property is not enumerable expected true got false
+FAIL HTMLBodyElement interface: attribute onmessage assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLBodyElement interface: attribute onoffline assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLBodyElement interface: attribute ononline assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLBodyElement interface: attribute onpagehide assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLBodyElement interface: attribute onpageshow assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLBodyElement interface: attribute onpopstate assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLBodyElement interface: attribute onstorage assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLBodyElement interface: attribute onunload assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLBodyElement must be primary interface of document.createElement("body") 
 PASS Stringification of document.createElement("body") 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "text" with the proper type (0) 

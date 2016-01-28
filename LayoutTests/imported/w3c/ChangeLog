@@ -1,5 +1,17 @@
 2016-01-28  Chris Dumez  <cdumez@apple.com>
 
+        EventHandler IDL attributes should be enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=153595
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline W3C HTML test now that EventHandler attributes are enumerable,
+        as per the specification.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2016-01-28  Chris Dumez  <cdumez@apple.com>
+
         Storage interface's attributes / operations should be enumerable
         https://bugs.webkit.org/show_bug.cgi?id=153573
 

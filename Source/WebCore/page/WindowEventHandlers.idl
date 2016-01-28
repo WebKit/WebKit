@@ -31,19 +31,19 @@
     // Commented out event handlers are defined by the HTML5 specification but
     // are not yet implemented.
 
-    // [NotEnumerable, WindowEventHandler] attribute EventHandler onafterprint;.
-    // [NotEnumerable, WindowEventHandler] attribute EventHandler onbeforeprint;.
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onbeforeunload;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onhashchange;
-    // [NotEnumerable, WindowEventHandler] attribute EventHandler onlanguagechange;.
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onmessage;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onoffline;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler ononline;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onpagehide;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onpageshow;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onpopstate;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onstorage;
-    [NotEnumerable, WindowEventHandler] attribute EventHandler onunload;
+    // [WindowEventHandler] attribute EventHandler onafterprint;.
+    // [WindowEventHandler] attribute EventHandler onbeforeprint;.
+    [WindowEventHandler] attribute EventHandler onbeforeunload;
+    [WindowEventHandler] attribute EventHandler onhashchange;
+    // [WindowEventHandler] attribute EventHandler onlanguagechange;.
+    [WindowEventHandler] attribute EventHandler onmessage;
+    [WindowEventHandler] attribute EventHandler onoffline;
+    [WindowEventHandler] attribute EventHandler ononline;
+    [WindowEventHandler] attribute EventHandler onpagehide;
+    [WindowEventHandler] attribute EventHandler onpageshow;
+    [WindowEventHandler] attribute EventHandler onpopstate;
+    [WindowEventHandler] attribute EventHandler onstorage;
+    [WindowEventHandler] attribute EventHandler onunload;
 
 
     // Additions that are not yet part of the standard.
