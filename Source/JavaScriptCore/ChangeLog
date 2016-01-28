@@ -1,3 +1,17 @@
+2016-01-28  Filip Pizlo  <fpizlo@apple.com>
+
+        LowerToAir::preferRightForResult() should resolve use count ties by selecting the child that is closest in an idom walk
+        https://bugs.webkit.org/show_bug.cgi?id=153583
+
+        Reviewed by Benjamin Poulain.
+
+        This undoes the AsmBench/n-body regression in r195654 while preserving that revision's
+        Kraken progression.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::LowerToAir):
+        (JSC::B3::Air::LowerToAir::preferRightForResult):
+
 2016-01-28  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] B3 Tail Call with Varargs do not restore callee saved registers

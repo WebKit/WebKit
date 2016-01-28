@@ -39,6 +39,7 @@
 #include "B3CCallValue.h"
 #include "B3CheckSpecial.h"
 #include "B3Commutativity.h"
+#include "B3Dominators.h"
 #include "B3IndexMap.h"
 #include "B3IndexSet.h"
 #include "B3MemoryValue.h"
@@ -75,6 +76,7 @@ public:
         , m_blockToBlock(procedure.size())
         , m_useCounts(procedure)
         , m_phiChildren(procedure)
+        , m_dominators(procedure.dominators())
         , m_procedure(procedure)
         , m_code(procedure.code())
     {
@@ -592,18 +594,22 @@ private:
         if (leftIsPhiWithThis != rightIsPhiWithThis)
             return rightIsPhiWithThis;
 
-        bool leftResult = m_useCounts.numUsingInstructions(left) == 1;
-        bool rightResult = m_useCounts.numUsingInstructions(right) == 1;
-        if (leftResult && rightResult) {
-            // If one operand is not in the block, it could be in a block dominating a loop
-            // containing m_value.
-            if (left->owner == m_value->owner)
-                return false;
-            if (right->owner == m_value->owner)
-                return true;
-        }
+        if (m_useCounts.numUsingInstructions(right) != 1)
+            return false;
+        
+        if (m_useCounts.numUsingInstructions(left) != 1)
+            return true;
 
-        return rightResult;
+        // The use count might be 1 if the variable is live around a loop. We can guarantee that we
+        // pick the the variable that is least likely to suffer this problem if we pick the one that
+        // is closest to us in an idom walk. By convention, we slightly bias this in favor of
+        // returning true.
+
+        // We cannot prefer right if right is further away in an idom walk.
+        if (m_dominators.strictlyDominates(right->owner, left->owner))
+            return false;
+
+        return true;
     }
 
     template<Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble, Air::Opcode opcodeFloat, Commutativity commutativity = NotCommutative>
@@ -2297,6 +2303,7 @@ private:
     UseCounts m_useCounts;
     PhiChildren m_phiChildren;
     BlockWorklist m_fastWorklist;
+    Dominators& m_dominators;
 
     Vector<Vector<Inst, 4>> m_insts;
     Vector<Inst> m_prologue;
