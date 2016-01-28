@@ -1,1 +1,3 @@
+CONSOLE MESSAGE: line 2: The page at https://127.0.0.1:8443/security/originHeader/resources/origin-header-post-to-http.html contains a form which targets an insecure URL http://127.0.0.1:8000/security/originHeader/resources/print-origin.cgi.
+
 HTTP_ORIGIN: https://127.0.0.1:8443

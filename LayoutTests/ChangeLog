@@ -1,5 +1,17 @@
 2016-01-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r195492. rdar://problem/24002217
+
+    2016-01-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaselining http/tests/security/originHeader/origin-header-for-https.html after r195477
+
+            Unreviewed test gardening.
+
+            * http/tests/security/originHeader/origin-header-for-https-expected.txt:
+
+2016-01-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r195477. rdar://problem/24002217
 
     2016-01-21  Sam Weinig  <sam@webkit.org>
