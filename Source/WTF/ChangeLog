@@ -1,3 +1,45 @@
+2016-01-28  Darin Adler  <darin@apple.com>
+
+        Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
+        https://bugs.webkit.org/show_bug.cgi?id=153411
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/text/AtomicString.h: Removed equalIgnoringCase.
+        Added some overloads for equalIgnoringASCIICase and moved the function bodies to
+        bottom of the file to make the function declarations easier to read and scan through.
+        I plan to do this for more of the functions in this class in the future.
+
+        * wtf/text/StringCommon.h: Added overloads for equalIgnoringASCIICase,
+        equalPossiblyIgnoringASCIICase, and a helper named equalIgnoringASCIICaseCommon.
+        Added an overload for equalLettersIgnoringASCIICase.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::equalIgnoringCase): Made the few remaining versions of this function private
+        to this file. Once we get done moving every client that should be using ASCII case
+        instead to new functions, these will almost certainly be deleted.
+        (WTF::equalIgnoringASCIICaseNonNull): Tweaked implementation a tiny bit.
+
+        * wtf/text/StringImpl.h: Sorted forward declarations at the top of the file.
+        Fixed some small formatting mistakes. Removed equalIgnoringCase, but left
+        equalIgnoringCaseNonNull behind for use by CaseFoldingHash until it is replaced
+        with ASCIICaseFoldingHash. Improved equalIgnoringASCIICase implementation.
+        Removed unneeded using for equalIgnoringASCIICase now that StringCommon.h takes
+        care of it.
+
+        * wtf/text/StringView.cpp:
+        (WTF::equalIgnoringASCIICase): Deleted. We no longer pass in the length for this,
+        so the arguments have changed and the implementation is also now in ASCIICommon.h
+        so it's an inline in the header file.
+
+        * wtf/text/StringView.h: Added an overload of equalIgnoringASCIICase,while
+        removing another.
+
+        * wtf/text/WTFString.h: Removed some unneeded forward delcarations. Fixed formatting
+        of the type name NSString *. Improved some comments. Removed equalIgnoringCase.
+        Separated declaration from implementation in a few cases to start making the
+        function declarations easier to read and scan through. I plan to do more in the future.
+
 2016-01-27  Chris Dumez  <cdumez@apple.com>
 
         window.atob() should ignore spaces in input

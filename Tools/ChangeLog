@@ -1,3 +1,23 @@
+2016-01-28  Darin Adler  <darin@apple.com>
+
+        Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
+        https://bugs.webkit.org/show_bug.cgi?id=153411
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/do-webcore-rename: Removed rename of equalIgnoringCase since we
+        have removed the function instead.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST): Updated test since nullptr is now ambiguous since we
+        added overloads for const char*.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::isPressActionSupported): Use equalLettersIgnoringASCIICase.
+        (WTR::AccessibilityUIElement::hasPopup): Ditto.
+        * WebKitTestRunner/cocoa/CrashReporterInfo.mm:
+        (WTR::testPathFromURL): Ditto.
+
 2016-01-28  Konstantin Tokarev  <annulen@yandex.ru>
 
         [webkitdirs] Clarify logic behind is{PortName} functions.

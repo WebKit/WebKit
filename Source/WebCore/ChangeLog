@@ -1,3 +1,247 @@
+2016-01-28  Darin Adler  <darin@apple.com>
+
+        Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
+        https://bugs.webkit.org/show_bug.cgi?id=153411
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: fast/media/media-query-non-ASCII-case-folding.html
+               fast/dom/HTMLAnchorElement/anchor-non-ASCII-case-folding.html
+               fast/xpath/xpath-non-ASCII-case-folding.html
+
+        No tests included that cover the minor behavior changes in Document::setDomain,
+        CSPSource::schemeMatches, CSPSource::hostMatches, OriginAccessEntry::operator==,
+        UserContentURLPattern::matches, UserContentURLPattern::matchesHost,
+        ContentFilterUnblockHandler::canHandleRequest. Would like to add tests for those
+        if possible, but it seems clear all are progressions.
+
+        For background on why this is the right thing to do in almost every case:
+
+        - MIME types are all ASCII and not case sensitive (details in RFC 2045)
+          <http://tools.ietf.org/html/rfc2045>
+        - case insensitive comparisons in HTML are all "ASCII case-insensitive"
+          https://www.w3.org/TR/html/infrastructure.html#ascii-case-insensitive
+        - same for CSS
+
+        * Modules/webdatabase/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::denyBasedOnTableName): Use equalIgnoringASCIICase.
+        No change in behavior since the string we are comparing with is always
+        "__WebKitDatabaseInfoTable__" in practice.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::siblingWithAriaRole): Changed argument type to take a const char*,
+        added some FIXMEs and use equalIgnoringCase. No change in behavior since the
+        strings we are comparing with are "menu" and "menuitem".
+        (WebCore::AccessibilityNodeObject::menuElementForMenuButton): Updated to pass
+        arguments in reverse order.
+        (WebCore::AccessibilityNodeObject::menuItemElementForMenu): Ditto.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceValue): Use equalIgnoringASCIICase.
+        No change in behavior because the property names are all ASCII constants.
+
+        * css/CSSParserValues.h: Removed unused equalIgnoringCase function.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::mediaTypeMatch): Use equalIgnoringASCIICase.
+        Changes behavior: No non-ASCII case folding when matching media types.
+        Covered by new test.
+        (WebCore::MediaQueryEvaluator::mediaTypeMatchSpecific): Use equalIgnoringASCIICase.
+        No change in behavior since the only string this is ever called with is "print".
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::hasFileOfType): Use equalIgnoringASCIICase.
+        No change in behavior because local files will not have content types with
+        non-ASCII characters in them. In the extremely unlikely case that this is incorrect,
+        the change in behavior is a progression.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain): Use equalIgnoringASCIICase.
+        Changes behavior: Domains considered equal because of non-ASCII case folding
+        would get through without an error before, and now will properly throw an exception.
+
+        * dom/Element.cpp:
+        (WebCore::isStyleAttribute): Refactored into a helper function. Use
+        equalLettersIgnoringASCIICase. No change in behavior.
+        (WebCore::Element::synchronizeAttribute): Use isStyleAttribute.
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::findAnchor): Use equalIgnoringASCIICase.
+        Changes behavior: Could go to an anchor and it would be considered a match because
+        of non-ASCII case folding. Covered by new test.
+
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::appendFormData): Use equalIgnoringASCIICase.
+        No change in behavior: comparing with an ASCII literal.
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension): Ditto.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension): Ditto.
+
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::emitRule): Use equalLettersIgnoringASCIICase and
+        StringView to avoid needing a special ruleEqualIgnoringCase function.
+        No change in behavior.
+
+        * inspector/InspectorNodeFinder.cpp:
+        (WebCore::InspectorNodeFinder::matchesElement): Use equalIgnoringASCIICase.
+        Changes behavior, but it's an inspector UI thing, not a web behavior thing,
+        so I don't think a new regression test is needed.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::currentItemShouldBeReplaced): Use
+        equalIgnoringASCIICase. No change in behavior because we are comparing
+        with "about:blank".
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::findPluginMIMETypeFromURL): Use equalIgnoringASCIICase.
+        No change in behavior unless a plug-in claims an extension with non-ASCII
+        characters. I don't think a new regression test is needed.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::shouldLoadResourceFromApplicationCache):
+        Use equalIgnoringASCIICase. No change in behavior because both strings are
+        protocols from URLs and we don't parse non-ASCII characters into protocol strings;
+        non-ASCII are already encoding as punycode.
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest): Ditto.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::isExperimentalDirectiveName): Added. Used by isDirectiveName.
+        Uses equalLettersIgnoringASCIICase. No change in behavior.
+        (WebCore::isDirectiveName): Use equalLettersIgnoringASCIICase.
+        No change in behavior.
+        (WebCore::isSourceListNone): Use equalLettersIgnoringASCIICase. No
+        change in behavior.
+        (WebCore::CSPSource::schemeMatches): Use equalLettersIgnoringASCIICase
+        and equalIgnoringASCIICase. It's all about comparing URL protocols. The
+        old code might have done something strange if someone specified a protocol
+        with a non-ASCII character in it.
+        (WebCore::CSPSource::hostMatches): Use equalIgnoringASCIICase.
+        (WebCore::CSPSourceList::parseSource): Use equalLettersIgnoringASCIICase.
+        No change in behavior.
+        (WebCore::CSPDirectiveList::checkSourceAndReportViolation): Tweaked code
+        to do less unnecessary String allocation.
+        (WebCore::CSPDirectiveList::parseReflectedXSS): Use
+        equalLettersIgnoringASCIICase. No change in behavior.
+        (WebCore::CSPDirectiveList::addDirective): Ditto.
+        (WebCore::ContentSecurityPolicy::reportUnsupportedDirective): Use
+        equalLettersIgnoringASCIICase and remove unneeded global constant strings.
+        No change in behavior.
+        (WebCore::ContentSecurityPolicy::reportDirectiveAsSourceExpression):
+        Tweak code to eliminate unneeded local.
+        (WebCore::ContentSecurityPolicy::reportDuplicateDirective): Ditto.
+        (WebCore::ContentSecurityPolicy::reportInvalidSourceExpression): Use
+        equalLettersIgnoringASCIICase. No change in behavior.
+
+        * page/OriginAccessEntry.h:
+        (WebCore::operator==): Use equalLettersIgnoringASCIICase.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::webkitGetEntriesByName): Use equalLettersIgnoringASCIICase.
+        No change in behavior.
+
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::matches): Use equalIgnoringASCIICase to match
+        schemes.
+        (WebCore::UserContentURLPattern::matchesHost): Use equalIgnoringASCIICase to
+        match host names.
+
+        * platform/URL.cpp:
+        (WebCore::URL::init): Use equalIgnoringASCIICase, and also use StringView to
+        avoid having to allocate a second string just for comparison purposes. Should be
+        better for efficiency with no change in behavior.
+
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::ContentFilterUnblockHandler::canHandleRequest): Use equalIgnoringASCIICase
+        to compare hosts.
+
+        * platform/efl/PlatformSpeechSynthesisProviderEfl.cpp:
+        (WebCore::PlatformSpeechSynthesisProviderEfl::voiceName): Use StringView and
+        equalIgnoringASCIICase to compare language tags. No test needed because there are
+        no language tags with non-ASCII characters in them.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::operator==): Changed to use the equal
+        function from CaseFoldingHash. In a subsequent patch we will change this to be
+        ASCIICaseFoldingHash since font names don't need to compare non-ASCII characters
+        in a case folding manner, but for now preserve behavior.
+        (WebCore::alternateFamilyName): Use equalLettersIgnoringASCIICase to avoid having
+        to use a special familyNameEqualIgnoringCase function. This does mean there will
+        be a null check and a length check that wasn't there before, but the actual
+        comparison function will be tighter. Guessing it will be a wash. Also improved
+        the comments and sorted the Windows cases in with the others. No behavior change.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::operator==): Changed to use the equal function from CaseFoldingHash.
+        Same rationale as above in FontPlatformDataCacheKey.
+
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontCascadeDescription::familiesEqualForTextAutoSizing): Use
+        equalIgnoringASCIICase to compare font family names. Only possible change in
+        behavior would be if actual fonts with non-ASCII names but that were specified
+        with different case in style sheets. Highly unlikely this exists.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsType): Use equalLettersIgnoringASCIICase.
+        No change in behavior.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::keySystemIsSupported): Ditto.
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::isCommonlyUsedGenericFamily): Added.
+        (WebCore::FontCache::createFontPlatformData): Moved code into the
+        isCommonlyUsedGenericFamily helper and used equalIgnoringASCIICase.
+
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Use
+        equalLettersIgnoringASCIICase. No change in behavior.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::adjustedGDIFontWeight): Ditto.
+        (WebCore::FontCache::createFontPlatformData): Ditto.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Ditto.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat): Ditto.
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (-[WebSpeechSynthesisWrapper speakUtterance:]): Use equalIgnoringASCIICase to
+        compare languages. No change in behavior because languages have all-ASCII names.
+
+        * platform/network/CacheValidation.cpp:
+        (WebCore::shouldUpdateHeaderAfterRevalidation): Use equalIgnoringASCIICase.
+        No change in behavior since it's a fixed list of all ASCII headers.
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::isAppendableHeader): Ditto.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest): Use equalIgnoringASCIICase.
+        No change in behavior because HTTP methods are all ASCII letters.
+
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::determineLocale): Use equalIgnoringASCIICase. No change in behavior
+        because locale languages identifiers are all ASCII.
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LCIDFromLocaleInternal): Ditto.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendArabicReplacementSubtable):
+        Use equalIgnoringASCIICase. No change in behavior because Arabic form attribute
+        values are all ASCII.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::uppercaseKnownHTTPMethod): Use equalIgnoringASCIICase.
+        No change in behavior because these are all fixed known ASCII HTTP method names.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::evaluate): Use equalIgnoringASCIICase. Changes behavior
+        if specifying a non-ASCII character. Covered by new test.
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::nodeMatchesBasicTest): Use equalIgnoringASCIICase. Changes
+        behavior if an element local name or XPath predicate has a non-ASCII character.
+        Covered by new test.
+
 2016-01-28  Zalan Bujtas  <zalan@apple.com>
 
         Unexpected content wrapping at http://email.osh.com/H/2/v100000152474feb8ec7c1a1f4bbe5c7c0/HTML

@@ -99,7 +99,7 @@ bool HiddenInputType::isHiddenType() const
 
 bool HiddenInputType::appendFormData(FormDataList& encoding, bool isMultipartForm) const
 {
-    if (equalIgnoringCase(element().name(), "_charset_")) {
+    if (equalIgnoringASCIICase(element().name(), "_charset_")) {
         encoding.appendData(element().name(), String(encoding.encoding().name()));
         return true;
     }

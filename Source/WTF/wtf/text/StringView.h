@@ -162,13 +162,9 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
 bool equal(StringView, StringView);
 bool equal(StringView, const LChar*);
 bool equal(StringView, const char*);
+
 bool equalIgnoringASCIICase(StringView, StringView);
-WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(StringView a, const char* b, unsigned bLength);
-template<unsigned charactersCount>
-bool equalIgnoringASCIICase(StringView a, const char (&b)[charactersCount])
-{
-    return equalIgnoringASCIICase(a, b, charactersCount - 1);
-}
+bool equalIgnoringASCIICase(StringView, const char*);
 
 template<unsigned length> bool equalLettersIgnoringASCIICase(StringView, const char (&lowercaseLetters)[length]);
 
@@ -535,6 +531,11 @@ inline bool equal(StringView a, const char* b)
 }
 
 inline bool equalIgnoringASCIICase(StringView a, StringView b)
+{
+    return equalIgnoringASCIICaseCommon(a, b);
+}
+
+inline bool equalIgnoringASCIICase(StringView a, const char* b)
 {
     return equalIgnoringASCIICaseCommon(a, b);
 }

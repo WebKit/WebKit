@@ -114,7 +114,7 @@ bool UserContentURLPattern::matches(const URL& test) const
     if (m_invalid)
         return false;
 
-    if (!equalIgnoringCase(test.protocol(), m_scheme))
+    if (!equalIgnoringASCIICase(test.protocol(), m_scheme))
         return false;
 
     if (!equalLettersIgnoringASCIICase(m_scheme, "file") && !matchesHost(test))
@@ -126,7 +126,7 @@ bool UserContentURLPattern::matches(const URL& test) const
 bool UserContentURLPattern::matchesHost(const URL& test) const
 {
     const String& host = test.host();
-    if (equalIgnoringCase(host, m_host))
+    if (equalIgnoringASCIICase(host, m_host))
         return true;
 
     if (!m_matchSubdomains)

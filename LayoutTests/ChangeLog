@@ -1,3 +1,20 @@
+2016-01-28  Darin Adler  <darin@apple.com>
+
+        Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
+        https://bugs.webkit.org/show_bug.cgi?id=153411
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/HTMLAnchorElement/anchor-non-ASCII-case-folding-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-non-ASCII-case-folding.html: Added.
+        * fast/dom/HTMLAnchorElement/resources/iframe-with-non-ASCII-matching-anchor.html: Added.
+
+        * fast/media/media-query-non-ASCII-case-folding-expected.txt: Added.
+        * fast/media/media-query-non-ASCII-case-folding.html: Added.
+
+        * fast/xpath/xpath-non-ASCII-case-folding-expected.txt: Added.
+        * fast/xpath/xpath-non-ASCII-case-folding.html: Added.
+
 2016-01-28  Zalan Bujtas  <zalan@apple.com>
 
         Unexpected content wrapping at http://email.osh.com/H/2/v100000152474feb8ec7c1a1f4bbe5c7c0/HTML

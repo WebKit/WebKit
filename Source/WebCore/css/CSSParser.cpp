@@ -1310,7 +1310,7 @@ RefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string)
 
         RefPtr<CSSValue> value;
         for (auto propertyID : { CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody }) {
-            if (equalIgnoringCase(stripped, getValueName(propertyID))) {
+            if (equalIgnoringASCIICase(stripped, getValueName(propertyID))) {
                 value = cssValuePool.createIdentifierValue(propertyID);
                 break;
             }

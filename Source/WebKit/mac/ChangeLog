@@ -1,3 +1,14 @@
+2016-01-28  Darin Adler  <darin@apple.com>
+
+        Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
+        https://bugs.webkit.org/show_bug.cgi?id=153411
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (parameterValue): Use equalIgnoringASCIICase. No behavior change because the
+        only name we ever search for with this is "pluginspage".
+
 2016-01-27  Enrica Casucci  <enrica@apple.com>
 
         Cache results of data detection in the UI process when load completes.

@@ -1,3 +1,27 @@
+2016-01-28  Darin Adler  <darin@apple.com>
+
+        Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
+        https://bugs.webkit.org/show_bug.cgi?id=153411
+
+        Reviewed by Ryosuke Niwa.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::MIMETypeForExtension): Use equalIgnoringASCIICase to compare
+        file extensions.
+        * Plugins/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabase::getPluginPathsInDirectories): Use equalLettersIgnoringASCIICase
+        to compare filenames.
+        * Plugins/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::isPluginBlacklisted): Use equalLettersIgnoringASCIICase to
+        compare DLL filenames.
+        * Plugins/PluginStream.cpp:
+        (WebCore::PluginStream::destroyStream): Use equalLettersIgnoringASCIICase to check HTTP method.
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::setParameters): Use equalLettersIgnoringASCIICase to check
+        plug-in parameter name.
+        * WebView.cpp:
+        (WebView::canHandleRequest): Use URL::protocolIs instead of equalIgnoringCase.
+
 2016-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.createElement should be able to create a custom element

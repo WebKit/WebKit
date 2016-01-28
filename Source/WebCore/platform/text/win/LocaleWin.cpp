@@ -119,8 +119,7 @@ static LCID WINAPI convertLocaleNameToLCID(LPCWSTR name, DWORD)
 
 static LCID LCIDFromLocaleInternal(LCID userDefaultLCID, const String& userDefaultLanguageCode, LocaleNameToLCIDPtr localeNameToLCID, String& locale)
 {
-    String localeLanguageCode = extractLanguageCode(locale);
-    if (equalIgnoringCase(localeLanguageCode, userDefaultLanguageCode))
+    if (equalLettersIgnoringASCIICase(extractLanguageCode(locale), userDefaultLanguageCode))
         return userDefaultLCID;
     return localeNameToLCID(locale.charactersWithNullTermination().data(), 0);
 }

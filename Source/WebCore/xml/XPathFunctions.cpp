@@ -596,7 +596,7 @@ Value FunLang::evaluate() const
 
     String langValue = languageAttribute->value();
     while (true) {
-        if (equalIgnoringCase(langValue, lang))
+        if (equalIgnoringASCIICase(langValue, lang))
             return true;
 
         // Remove suffixes one by one.

@@ -113,7 +113,13 @@ public:
 
     bool operator==(const FontPlatformDataCacheKey& other) const
     {
-        return equalIgnoringCase(m_family, other.m_family) && m_fontDescriptionKey == other.m_fontDescriptionKey;
+        if (m_fontDescriptionKey != other.m_fontDescriptionKey)
+            return false;
+        if (m_family.impl() == other.m_family.impl())
+            return true;
+        if (m_family.isNull() || other.m_family.isNull())
+            return false;
+        return CaseFoldingHash::equal(m_family, other.m_family);
     }
 
     FontDescriptionKey m_fontDescriptionKey;
@@ -142,72 +148,60 @@ static FontPlatformDataCache& fontPlatformDataCache()
     return cache;
 }
 
-static bool familyNameEqualIgnoringCase(const AtomicString& familyName, const char* reference, unsigned length)
+static AtomicString alternateFamilyName(const AtomicString& familyName)
 {
-    ASSERT(length > 0);
-    ASSERT(familyName.length() == length);
-    ASSERT(strlen(reference) == length);
-    const AtomicStringImpl* familyNameImpl = familyName.impl();
-    if (familyNameImpl->is8Bit())
-        return equalIgnoringCase(familyNameImpl->characters8(), reinterpret_cast<const LChar*>(reference), length);
-    return equalIgnoringCase(familyNameImpl->characters16(), reinterpret_cast<const LChar*>(reference), length);
-}
-
-template<size_t length>
-static inline bool familyNameEqualIgnoringCase(const AtomicString& familyName, const char (&reference)[length])
-{
-    return familyNameEqualIgnoringCase(familyName, reference, length - 1);
-}
-
-static const AtomicString alternateFamilyName(const AtomicString& familyName)
-{
-    // Alias Courier and Courier New.
-    // Alias Times and Times New Roman.
-    // Alias Arial and Helvetica.
     switch (familyName.length()) {
     case 5:
-        if (familyNameEqualIgnoringCase(familyName, "Arial"))
+        if (equalLettersIgnoringASCIICase(familyName, "arial"))
             return AtomicString("Helvetica", AtomicString::ConstructFromLiteral);
-        if (familyNameEqualIgnoringCase(familyName, "Times"))
+        if (equalLettersIgnoringASCIICase(familyName, "times"))
             return AtomicString("Times New Roman", AtomicString::ConstructFromLiteral);
         break;
     case 7:
-        if (familyNameEqualIgnoringCase(familyName, "Courier"))
+        if (equalLettersIgnoringASCIICase(familyName, "courier"))
             return AtomicString("Courier New", AtomicString::ConstructFromLiteral);
         break;
+#if OS(WINDOWS)
+    // On Windows, we don't support bitmap fonts, but legacy content expects support.
+    // Thus we allow Times New Roman as an alternative for the bitmap font MS Serif,
+    // even if the webpage does not specify fallback.
+    // FIXME: Seems unlikely this is still needed. If it was really needed, I think we
+    // would need it on other platforms too.
+    case 8:
+        if (equalLettersIgnoringASCIICase(familyName, "ms serif"))
+            return AtomicString("Times New Roman", AtomicString::ConstructFromLiteral);
+        break;
+#endif
     case 9:
-        if (familyNameEqualIgnoringCase(familyName, "Helvetica"))
+        if (equalLettersIgnoringASCIICase(familyName, "helvetica"))
             return AtomicString("Arial", AtomicString::ConstructFromLiteral);
         break;
 #if !OS(WINDOWS)
-    // On Windows, Courier New (truetype font) is always present and
-    // Courier is a bitmap font. So, we don't want to map Courier New to
-    // Courier.
+    // On Windows, Courier New is a TrueType font that is always present and
+    // Courier is a bitmap font that we do not support. So, we don't want to map
+    // Courier New to Courier.
+    // FIXME: Not sure why this is harmful on Windows, since the alternative will
+    // only be tried if Courier New is not found.
     case 11:
-        if (familyNameEqualIgnoringCase(familyName, "Courier New"))
+        if (equalLettersIgnoringASCIICase(familyName, "courier new"))
             return AtomicString("Courier", AtomicString::ConstructFromLiteral);
         break;
-#endif // !OS(WINDOWS)
-    case 15:
-        if (familyNameEqualIgnoringCase(familyName, "Times New Roman"))
-            return AtomicString("Times", AtomicString::ConstructFromLiteral);
-        break;
+#endif
 #if OS(WINDOWS)
-    // On Windows, bitmap fonts are blocked altogether so that we have to 
-    // alias MS Sans Serif (bitmap font) -> Microsoft Sans Serif (truetype font)
+    // On Windows, we don't support bitmap fonts, but legacy content expects support.
+    // Thus we allow Microsoft Sans Serif as an alternative for the bitmap font MS Sans Serif,
+    // even if the webpage does not specify fallback.
+    // FIXME: Seems unlikely this is still needed. If it was really needed, I think we
+    // would need it on other platforms too.
     case 13:
-        if (familyNameEqualIgnoringCase(familyName, "MS Sans Serif"))
+        if (equalLettersIgnoringASCIICase(familyName, "ms sans serif"))
             return AtomicString("Microsoft Sans Serif", AtomicString::ConstructFromLiteral);
         break;
-
-    // Alias MS Serif (bitmap) -> Times New Roman (truetype font). There's no 
-    // 'Microsoft Sans Serif-equivalent' for Serif.
-    case 8:
-        if (familyNameEqualIgnoringCase(familyName, "MS Serif"))
-            return AtomicString("Times New Roman", AtomicString::ConstructFromLiteral);
+#endif
+    case 15:
+        if (equalLettersIgnoringASCIICase(familyName, "times new roman"))
+            return AtomicString("Times", AtomicString::ConstructFromLiteral);
         break;
-#endif // OS(WINDOWS)
-
     }
 
     return nullAtom;

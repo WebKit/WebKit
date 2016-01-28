@@ -61,7 +61,7 @@ private:
 
 inline bool operator==(const OriginAccessEntry& a, const OriginAccessEntry& b)
 {
-    return equalIgnoringCase(a.protocol(), b.protocol()) && equalIgnoringCase(a.host(), b.host()) && a.subdomainSettings() == b.subdomainSettings();
+    return equalIgnoringASCIICase(a.protocol(), b.protocol()) && equalIgnoringASCIICase(a.host(), b.host()) && a.subdomainSettings() == b.subdomainSettings();
 }
 
 inline bool operator!=(const OriginAccessEntry& a, const OriginAccessEntry& b)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,26 +125,39 @@ static const char pluginTypes[] = "plugin-types";
 static const char reflectedXSS[] = "reflected-xss";
 #endif
 
+#if ENABLE(CSP_NEXT)
+
+static inline bool isExperimentalDirectiveName(const String& name)
+{
+    return equalLettersIgnoringASCIICase(name, baseURI)
+        || equalLettersIgnoringASCIICase(name, formAction)
+        || equalLettersIgnoringASCIICase(name, pluginTypes)
+        || equalLettersIgnoringASCIICase(name, reflectedXSS);
+}
+
+#else
+
+static inline bool isExperimentalDirectiveName(const String&)
+{
+    return false;
+}
+
+#endif
+
 bool isDirectiveName(const String& name)
 {
-    return (equalIgnoringCase(name, connectSrc)
-        || equalIgnoringCase(name, defaultSrc)
-        || equalIgnoringCase(name, fontSrc)
-        || equalIgnoringCase(name, frameSrc)
-        || equalIgnoringCase(name, imgSrc)
-        || equalIgnoringCase(name, mediaSrc)
-        || equalIgnoringCase(name, objectSrc)
-        || equalIgnoringCase(name, reportURI)
-        || equalIgnoringCase(name, sandbox)
-        || equalIgnoringCase(name, scriptSrc)
-        || equalIgnoringCase(name, styleSrc)
-#if ENABLE(CSP_NEXT)
-        || equalIgnoringCase(name, baseURI)
-        || equalIgnoringCase(name, formAction)
-        || equalIgnoringCase(name, pluginTypes)
-        || equalIgnoringCase(name, reflectedXSS)
-#endif
-    );
+    return equalLettersIgnoringASCIICase(name, connectSrc)
+        || equalLettersIgnoringASCIICase(name, defaultSrc)
+        || equalLettersIgnoringASCIICase(name, fontSrc)
+        || equalLettersIgnoringASCIICase(name, frameSrc)
+        || equalLettersIgnoringASCIICase(name, imgSrc)
+        || equalLettersIgnoringASCIICase(name, mediaSrc)
+        || equalLettersIgnoringASCIICase(name, objectSrc)
+        || equalLettersIgnoringASCIICase(name, reportURI)
+        || equalLettersIgnoringASCIICase(name, sandbox)
+        || equalLettersIgnoringASCIICase(name, scriptSrc)
+        || equalLettersIgnoringASCIICase(name, styleSrc)
+        || isExperimentalDirectiveName(name);
 }
 
 } // namespace
@@ -190,7 +203,7 @@ static bool isSourceListNone(const String& value)
 
     const UChar* position = begin;
     skipWhile<isSourceCharacter>(position, end);
-    if (!equalIgnoringCase("'none'", begin, position - begin))
+    if (!equalLettersIgnoringASCIICase(begin, position - begin, "'none'"))
         return false;
 
     skipWhile<isASCIISpace>(position, end);
@@ -228,18 +241,18 @@ private:
         if (m_scheme.isEmpty()) {
             String protectedResourceScheme(m_policy->securityOrigin()->protocol());
 #if ENABLE(CSP_NEXT)
-            if (equalIgnoringCase("http", protectedResourceScheme))
+            if (equalLettersIgnoringASCIICase(protectedResourceScheme, "http"))
                 return url.protocolIsInHTTPFamily();
 #endif
-            return equalIgnoringCase(url.protocol(), protectedResourceScheme);
+            return equalIgnoringASCIICase(url.protocol(), protectedResourceScheme);
         }
-        return equalIgnoringCase(url.protocol(), m_scheme);
+        return equalIgnoringASCIICase(url.protocol(), m_scheme);
     }
 
     bool hostMatches(const URL& url) const
     {
         const String& host = url.host();
-        if (equalIgnoringCase(host, m_host))
+        if (equalIgnoringASCIICase(host, m_host))
             return true;
         return m_hostHasWildcard && host.endsWith("." + m_host, false);
 
@@ -393,14 +406,12 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
 //                   / ( [ scheme "://" ] host [ port ] [ path ] )
 //                   / "'self'"
 //
-bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
-                                String& scheme, String& host, int& port, String& path,
-                                bool& hostHasWildcard, bool& portHasWildcard)
+bool CSPSourceList::parseSource(const UChar* begin, const UChar* end, String& scheme, String& host, int& port, String& path, bool& hostHasWildcard, bool& portHasWildcard)
 {
     if (begin == end)
         return false;
 
-    if (equalIgnoringCase("'none'", begin, end - begin))
+    if (equalLettersIgnoringASCIICase(begin, end - begin, "'none'"))
         return false;
 
     if (end - begin == 1 && *begin == '*') {
@@ -408,17 +419,17 @@ bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
         return true;
     }
 
-    if (equalIgnoringCase("'self'", begin, end - begin)) {
+    if (equalLettersIgnoringASCIICase(begin, end - begin, "'self'")) {
         addSourceSelf();
         return true;
     }
 
-    if (equalIgnoringCase("'unsafe-inline'", begin, end - begin)) {
+    if (equalLettersIgnoringASCIICase(begin, end - begin, "'unsafe-inline'")) {
         addSourceUnsafeInline();
         return true;
     }
 
-    if (equalIgnoringCase("'unsafe-eval'", begin, end - begin)) {
+    if (equalLettersIgnoringASCIICase(begin, end - begin, "'unsafe-eval'")) {
         addSourceUnsafeEval();
         return true;
     }
@@ -963,7 +974,7 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
     if (checkSource(directive, url))
         return true;
 
-    String prefix;
+    const char* prefix;
     if (baseURI == effectiveDirective)
         prefix = "Refused to set the document's base URI to '";
     else if (connectSrc == effectiveDirective)
@@ -984,12 +995,14 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
         prefix = "Refused to load the script '";
     else if (styleSrc == effectiveDirective)
         prefix = "Refused to load the stylesheet '";
+    else
+        prefix = "";
 
-    String suffix = String();
+    String suffix;
     if (directive == m_defaultSrc.get())
         suffix = " Note that '" + effectiveDirective + "' was not explicitly set, so 'default-src' is used as a fallback.";
 
-    reportViolation(directive->text(), effectiveDirective, prefix + url.stringCenterEllipsizedToLength() + "' because it violates the following Content Security Policy directive: \"" + directive->text() + "\"." + suffix + "\n", url);
+    reportViolation(directive->text(), effectiveDirective, makeString(prefix, url.stringCenterEllipsizedToLength(), "' because it violates the following Content Security Policy directive: \"", directive->text(), "\".", suffix, '\n'), url);
     return denyIfEnforcingPolicy();
 }
 
@@ -1275,11 +1288,11 @@ void CSPDirectiveList::parseReflectedXSS(const String& name, const String& value
 
     // value1
     //       ^
-    if (equalIgnoringCase("allow", begin, position - begin))
+    if (equalLettersIgnoringASCIICase(begin, position - begin, "allow"))
         m_reflectedXSSDisposition = ContentSecurityPolicy::AllowReflectedXSS;
-    else if (equalIgnoringCase("filter", begin, position - begin))
+    else if (equalLettersIgnoringASCIICase(begin, position - begin, "filter"))
         m_reflectedXSSDisposition = ContentSecurityPolicy::FilterReflectedXSS;
-    else if (equalIgnoringCase("block", begin, position - begin))
+    else if (equalLettersIgnoringASCIICase(begin, position - begin, "block"))
         m_reflectedXSSDisposition = ContentSecurityPolicy::BlockReflectedXSS;
     else {
         m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
@@ -1301,37 +1314,37 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
 {
     ASSERT(!name.isEmpty());
 
-    if (equalIgnoringCase(name, defaultSrc))
+    if (equalLettersIgnoringASCIICase(name, defaultSrc))
         setCSPDirective<SourceListDirective>(name, value, m_defaultSrc);
-    else if (equalIgnoringCase(name, scriptSrc))
+    else if (equalLettersIgnoringASCIICase(name, scriptSrc))
         setCSPDirective<SourceListDirective>(name, value, m_scriptSrc);
-    else if (equalIgnoringCase(name, objectSrc))
+    else if (equalLettersIgnoringASCIICase(name, objectSrc))
         setCSPDirective<SourceListDirective>(name, value, m_objectSrc);
-    else if (equalIgnoringCase(name, frameSrc))
+    else if (equalLettersIgnoringASCIICase(name, frameSrc))
         setCSPDirective<SourceListDirective>(name, value, m_frameSrc);
-    else if (equalIgnoringCase(name, imgSrc))
+    else if (equalLettersIgnoringASCIICase(name, imgSrc))
         setCSPDirective<SourceListDirective>(name, value, m_imgSrc);
-    else if (equalIgnoringCase(name, styleSrc))
+    else if (equalLettersIgnoringASCIICase(name, styleSrc))
         setCSPDirective<SourceListDirective>(name, value, m_styleSrc);
-    else if (equalIgnoringCase(name, fontSrc))
+    else if (equalLettersIgnoringASCIICase(name, fontSrc))
         setCSPDirective<SourceListDirective>(name, value, m_fontSrc);
-    else if (equalIgnoringCase(name, mediaSrc))
+    else if (equalLettersIgnoringASCIICase(name, mediaSrc))
         setCSPDirective<SourceListDirective>(name, value, m_mediaSrc);
-    else if (equalIgnoringCase(name, connectSrc))
+    else if (equalLettersIgnoringASCIICase(name, connectSrc))
         setCSPDirective<SourceListDirective>(name, value, m_connectSrc);
-    else if (equalIgnoringCase(name, sandbox))
+    else if (equalLettersIgnoringASCIICase(name, sandbox))
         applySandboxPolicy(name, value);
-    else if (equalIgnoringCase(name, reportURI))
+    else if (equalLettersIgnoringASCIICase(name, reportURI))
         parseReportURI(name, value);
 #if ENABLE(CSP_NEXT)
     else if (m_policy->experimentalFeaturesEnabled()) {
-        if (equalIgnoringCase(name, baseURI))
+        if (equalLettersIgnoringASCIICase(name, baseURI))
             setCSPDirective<SourceListDirective>(name, value, m_baseURI);
-        else if (equalIgnoringCase(name, formAction))
+        else if (equalLettersIgnoringASCIICase(name, formAction))
             setCSPDirective<SourceListDirective>(name, value, m_formAction);
-        else if (equalIgnoringCase(name, pluginTypes))
+        else if (equalLettersIgnoringASCIICase(name, pluginTypes))
             setCSPDirective<MediaListDirective>(name, value, m_pluginTypes);
-        else if (equalIgnoringCase(name, reflectedXSS))
+        else if (equalLettersIgnoringASCIICase(name, reflectedXSS))
             parseReflectedXSS(name, value);
         else
             m_policy->reportUnsupportedDirective(name);
@@ -1677,36 +1690,27 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
 
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const
 {
-    static NeverDestroyed<String> allow(ASCIILiteral("allow"));
-    static NeverDestroyed<String> options(ASCIILiteral("options"));
-    static NeverDestroyed<String> policyURI(ASCIILiteral("policy-uri"));
-    static NeverDestroyed<String> allowMessage(ASCIILiteral("The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect."));
-    static NeverDestroyed<String> optionsMessage(ASCIILiteral("The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect."));
-    static NeverDestroyed<String> policyURIMessage(ASCIILiteral("The 'policy-uri' directive has been removed from the specification. Please specify a complete policy via the Content-Security-Policy header."));
-
     String message;
-    if (equalIgnoringCase(name, allow))
-        message = allowMessage;
-    else if (equalIgnoringCase(name, options))
-        message = optionsMessage;
-    else if (equalIgnoringCase(name, policyURI))
-        message = policyURIMessage;
+    if (equalLettersIgnoringASCIICase(name, "allow"))
+        message = ASCIILiteral("The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.");
+    else if (equalLettersIgnoringASCIICase(name, "options"))
+        message = ASCIILiteral("The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.");
+    else if (equalLettersIgnoringASCIICase(name, "policy-uri"))
+        message = ASCIILiteral("The 'policy-uri' directive has been removed from the specification. Please specify a complete policy via the Content-Security-Policy header.");
     else
-        message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n");
+        message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n"); // FIXME: Why does this include a newline?
 
     logToConsole(message);
 }
 
 void ContentSecurityPolicy::reportDirectiveAsSourceExpression(const String& directiveName, const String& sourceExpression) const
 {
-    String message = "The Content Security Policy directive '" + directiveName + "' contains '" + sourceExpression + "' as a source expression. Did you mean '" + directiveName + " ...; " + sourceExpression + "...' (note the semicolon)?";
-    logToConsole(message);
+    logToConsole("The Content Security Policy directive '" + directiveName + "' contains '" + sourceExpression + "' as a source expression. Did you mean '" + directiveName + " ...; " + sourceExpression + "...' (note the semicolon)?");
 }
 
 void ContentSecurityPolicy::reportDuplicateDirective(const String& name) const
 {
-    String message = makeString("Ignoring duplicate Content-Security-Policy directive '", name, "'.\n");
-    logToConsole(message);
+    logToConsole(makeString("Ignoring duplicate Content-Security-Policy directive '", name, "'.\n"));
 }
 
 void ContentSecurityPolicy::reportInvalidPluginTypes(const String& pluginType) const
@@ -1752,7 +1756,7 @@ void ContentSecurityPolicy::reportInvalidPathCharacter(const String& directiveNa
 void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiveName, const String& source) const
 {
     String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains an invalid source: '", source, "'. It will be ignored.");
-    if (equalIgnoringCase(source, "'none'"))
+    if (equalLettersIgnoringASCIICase(source, "'none'"))
         message = makeString(message, " Note that 'none' has no effect unless it is the only expression in the source list.");
     logToConsole(message);
 }

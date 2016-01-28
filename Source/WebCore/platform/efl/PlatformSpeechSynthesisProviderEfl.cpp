@@ -74,9 +74,7 @@ String PlatformSpeechSynthesisProviderEfl::voiceName(PassRefPtr<PlatformSpeechSy
         const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& voiceList = m_platformSpeechSynthesizer->voiceList();
         for (const auto& voice : voiceList) {
             // Espeak adds an empty character at the beginning of the language
-            unsigned length = voice->lang().length();
-            String lang = voice->lang().substring(1, length);
-            if (equalIgnoringCase(language, lang))
+            if (equalIgnoringASCIICase(StringView(voice->lang()).substring(1), language))
                 return voice->name();
         }
     }

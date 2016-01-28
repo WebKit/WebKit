@@ -140,21 +140,22 @@ PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByName(const Strin
     RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
 
 #if ENABLE(RESOURCE_TIMING)
-    if (entryType.isNull() || equalIgnoringCase(entryType, "resource"))
+    if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "resource")) {
         for (auto& resource : m_resourceTimingBuffer) {
             if (resource->name() == name)
                 entries->append(resource);
         }
-#endif // ENABLE(RESOURCE_TIMING)
+    }
+#endif
 
 #if ENABLE(USER_TIMING)
     if (m_userTiming) {
-        if (entryType.isNull() || equalIgnoringCase(entryType, "mark"))
+        if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "mark"))
             entries->appendAll(m_userTiming->getMarks(name));
-        if (entryType.isNull() || equalIgnoringCase(entryType, "measure"))
+        if (entryType.isNull() || equalLettersIgnoringASCIICase(entryType, "measure"))
             entries->appendAll(m_userTiming->getMeasures(name));
     }
-#endif // ENABLE(USER_TIMING)
+#endif
 
     entries->sort();
     return entries;

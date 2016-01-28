@@ -173,7 +173,7 @@ static String findPluginMIMETypeFromURL(Page* page, const String& url)
     pluginData.getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
     for (auto& mime : mimes) {
         for (auto& mimeExtension : mime.extensions) {
-            if (equalIgnoringCase(extension, mimeExtension))
+            if (equalIgnoringASCIICase(extension, mimeExtension))
                 return mime.type;
         }
     }

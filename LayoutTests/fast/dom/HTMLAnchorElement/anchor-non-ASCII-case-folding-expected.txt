@@ -1,0 +1,3 @@
+This tests whether clicking on an anchor that only matches because of incorrect non-ASCII case folding will scroll to anchor. If clicking on the link below triggers a scroll, the test fails.
+
+PASS

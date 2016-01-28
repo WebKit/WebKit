@@ -438,19 +438,24 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
     }
 }
 
+static ALWAYS_INLINE bool isStyleAttribute(const Element& element, const AtomicString& attributeLocalName)
+{
+    if (shouldIgnoreAttributeCase(element))
+        return equalLettersIgnoringASCIICase(attributeLocalName, "style");
+    return attributeLocalName == styleAttr.localName();
+}
+
 ALWAYS_INLINE void Element::synchronizeAttribute(const AtomicString& localName) const
 {
     // This version of synchronizeAttribute() is streamlined for the case where you don't have a full QualifiedName,
     // e.g when called from DOM API.
     if (!elementData())
         return;
-    // FIXME: this should be comparing in the ASCII range.
-    if (elementData()->styleAttributeIsDirty() && equalPossiblyIgnoringCase(localName, styleAttr.localName(), shouldIgnoreAttributeCase(*this))) {
+    if (elementData()->styleAttributeIsDirty() && isStyleAttribute(*this, localName)) {
         ASSERT_WITH_SECURITY_IMPLICATION(isStyledElement());
         static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
         return;
     }
-
     if (elementData()->animatedSVGAttributesAreDirty()) {
         // We're not passing a namespace argument on purpose. SVGNames::*Attr are defined w/o namespaces as well.
         ASSERT_WITH_SECURITY_IMPLICATION(isSVGElement());
@@ -2882,7 +2887,6 @@ SpellcheckAttributeState Element::spellcheckAttributeState() const
         return SpellcheckAttributeTrue;
     if (equalLettersIgnoringASCIICase(value, "false"))
         return SpellcheckAttributeFalse;
-
     return SpellcheckAttributeDefault;
 }
 

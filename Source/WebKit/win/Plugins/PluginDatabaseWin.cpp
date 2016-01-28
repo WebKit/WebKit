@@ -94,7 +94,7 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 
             String filename = String(findFileData.cFileName, wcslen(findFileData.cFileName));
             if ((!filename.startsWith("np", false) || !filename.endsWith("dll", false)) &&
-                (!equalIgnoringCase(filename, "Plugin.dll") || !it->endsWith("Shockwave 10", false)))
+                (!equalLettersIgnoringASCIICase(filename, "plugin.dll") || !it->endsWith("Shockwave 10", false)))
                 continue;
 
             String fullPath = *it + "\\" + filename;
@@ -103,9 +103,9 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 
             paths.add(fullPath);
 
-            if (equalIgnoringCase(filename, "npdsplay.dll"))
+            if (equalLettersIgnoringASCIICase(filename, "npdsplay.dll"))
                 oldWMPPluginPath = fullPath;
-            else if (equalIgnoringCase(filename, "np-mswmp.dll"))
+            else if (equalLettersIgnoringASCIICase(filename, "np-mswmp.dll"))
                 newWMPPluginPath = fullPath;
 
         } while (FindNextFileW(hFind, &findFileData) != 0);

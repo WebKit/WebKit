@@ -142,6 +142,7 @@ FontWeight FontCascadeDescription::bolderWeight(void) const
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
+
 bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const
 {
     unsigned thisFamilyCount = familyCount();
@@ -151,12 +152,13 @@ bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDes
         return false;
 
     for (unsigned i = 0; i < thisFamilyCount; ++i) {
-        if (!equalIgnoringCase(familyAt(i), other.familyAt(i)))
+        if (!equalIgnoringASCIICase(familyAt(i), other.familyAt(i)))
             return false;
     }
 
     return true;
 }
+
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)
 
 } // namespace WebCore

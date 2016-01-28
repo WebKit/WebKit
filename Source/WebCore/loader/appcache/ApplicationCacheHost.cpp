@@ -378,7 +378,7 @@ bool ApplicationCacheHost::shouldLoadResourceFromApplicationCache(const Resource
 
     // If the resource is not to be fetched using the HTTP GET mechanism or equivalent, or if its URL has a different
     // <scheme> component than the application cache's manifest, then fetch the resource normally.
-    if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request) || !equalIgnoringCase(request.url().protocol(), cache->manifestResource()->url().protocol()))
+    if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request) || !equalIgnoringASCIICase(request.url().protocol(), cache->manifestResource()->url().protocol()))
         return false;
 
     // If the resource's URL is an master entry, the manifest, an explicit entry, or a fallback entry

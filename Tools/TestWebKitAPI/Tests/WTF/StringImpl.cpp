@@ -140,9 +140,10 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
 TEST(WTF, StringImplEqualIgnoringASCIICaseWithNull)
 {
     RefPtr<StringImpl> reference = StringImpl::createFromLiteral("aBcDeFG");
-    ASSERT_FALSE(equalIgnoringASCIICase(nullptr, reference.get()));
-    ASSERT_FALSE(equalIgnoringASCIICase(reference.get(), nullptr));
-    ASSERT_TRUE(equalIgnoringASCIICase(nullptr, nullptr));
+    StringImpl* nullStringImpl = nullptr;
+    ASSERT_FALSE(equalIgnoringASCIICase(nullStringImpl, reference.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(reference.get(), nullStringImpl));
+    ASSERT_TRUE(equalIgnoringASCIICase(nullStringImpl, nullStringImpl));
 }
 
 TEST(WTF, StringImplEqualIgnoringASCIICaseWithEmpty)

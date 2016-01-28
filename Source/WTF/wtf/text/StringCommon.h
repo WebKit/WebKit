@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,14 @@
 
 namespace WTF {
 
+template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(const CharacterTypeA*, const CharacterTypeB*, unsigned length);
+template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(const CharacterTypeA*, unsigned lengthA, const CharacterTypeB*, unsigned lengthB);
+
+template<typename StringClassA, typename StringClassB> bool equalIgnoringASCIICaseCommon(const StringClassA&, const StringClassB&);
+
 template<typename CharacterType> bool equalLettersIgnoringASCIICase(const CharacterType*, const char* lowercaseLetters, unsigned length);
+template<typename CharacterType, unsigned lowercaseLettersLength> bool equalLettersIgnoringASCIICase(const CharacterType*, unsigned charactersLength, const char (&lowercaseLetters)[lowercaseLettersLength]);
+
 template<typename StringClass, unsigned length> bool equalLettersIgnoringASCIICaseCommon(const StringClass&, const char (&lowercaseLetters)[length]);
 
 template<typename T>
@@ -326,6 +333,11 @@ inline bool equalIgnoringASCIICase(const CharacterTypeA* a, const CharacterTypeB
     return true;
 }
 
+template<typename CharacterTypeA, typename CharacterTypeB> inline bool equalIgnoringASCIICase(const CharacterTypeA* a, unsigned lengthA, const CharacterTypeB* b, unsigned lengthB)
+{
+    return lengthA == lengthB && equalIgnoringASCIICase(a, b, lengthA);
+}
+
 template<typename StringClassA, typename StringClassB>
 bool equalIgnoringASCIICaseCommon(const StringClassA& a, const StringClassB& b)
 {
@@ -344,6 +356,18 @@ bool equalIgnoringASCIICaseCommon(const StringClassA& a, const StringClassB& b)
         return equalIgnoringASCIICase(a.characters16(), b.characters8(), length);
 
     return equalIgnoringASCIICase(a.characters16(), b.characters16(), length);
+}
+
+template<typename StringClassA> bool equalIgnoringASCIICaseCommon(const StringClassA& a, const char* b)
+{
+    unsigned length = a.length();
+    if (length != strlen(b))
+        return false;
+
+    if (a.is8Bit())
+        return equalIgnoringASCIICase(a.characters8(), b, length);
+
+    return equalIgnoringASCIICase(a.characters16(), b, length);
 }
 
 template<typename StringClassA, typename StringClassB>
@@ -559,6 +583,13 @@ template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(const
     return true;
 }
 
+template<typename CharacterType, unsigned lowercaseLettersLength> inline bool equalLettersIgnoringASCIICase(const CharacterType* characters, unsigned charactersLength, const char (&lowercaseLetters)[lowercaseLettersLength])
+{
+    ASSERT(strlen(lowercaseLetters) == lowercaseLettersLength - 1);
+    unsigned lowercaseLettersStringLength = lowercaseLettersLength - 1;
+    return charactersLength == lowercaseLettersStringLength && equalLettersIgnoringASCIICase(characters, lowercaseLetters, lowercaseLettersStringLength);
+}
+
 // This is intentionally not marked inline because it's used often and is not speed-critical enough to want it inlined everywhere.
 template<typename StringClass> bool equalLettersIgnoringASCIICaseCommonWithoutLength(const StringClass& string, const char* lowercaseLetters)
 {
@@ -578,12 +609,14 @@ template<typename StringClass> bool equalLettersIgnoringASCIICaseCommonWithoutLe
 template<typename StringClass, unsigned length> inline bool equalLettersIgnoringASCIICaseCommon(const StringClass& string, const char (&lowercaseLetters)[length])
 {
     // Don't actually use the length; we are choosing code size over speed.
+    ASSERT(strlen(lowercaseLetters) == length - 1);
     const char* pointer = lowercaseLetters;
     return equalLettersIgnoringASCIICaseCommonWithoutLength(string, pointer);
 }
 
 }
 
+using WTF::equalIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICase;
 
 #endif // StringCommon_h

@@ -873,12 +873,13 @@ void MediaPlayerPrivateAVFoundationCF::paint(GraphicsContext& context, const Flo
 }
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
+
 static bool keySystemIsSupported(const String& keySystem)
 {
-    if (equalIgnoringCase(keySystem, "com.apple.fps") || equalIgnoringCase(keySystem, "com.apple.fps.1_0"))
-        return true;
-    return false;
+    return equalLettersIgnoringASCIICase(keySystem, "com.apple.fps")
+        || equalLettersIgnoringASCIICase(keySystem, "com.apple.fps.1_0");
 }
+
 #endif
 
 static const HashSet<String>& avfMIMETypes()

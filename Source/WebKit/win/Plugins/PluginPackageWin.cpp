@@ -71,10 +71,10 @@ bool PluginPackage::isPluginBlacklisted()
 
         if (compareFileVersion(slPluginMinRequired) < 0)
             return true;
-    } else if (equalIgnoringCase(fileName(), "npmozax.dll")) {
+    } else if (equalLettersIgnoringASCIICase(fileName(), "npmozax.dll")) {
         // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
         return true;
-    } else if (equalIgnoringCase(fileName(), "npwpf.dll")) {
+    } else if (equalLettersIgnoringASCIICase(fileName(), "npwpf.dll")) {
         // Bug 57119: Microsoft Windows Presentation Foundation (WPF) plug-in complains about missing xpcom.dll
         return true;
     } else if (name() == "Yahoo Application State Plugin") {

@@ -368,17 +368,17 @@ static bool isAppendableHeader(const String &key)
         "vary",
         "via",
         "warning",
-        "www-authenticate",
-        0
+        "www-authenticate"
     };
 
     // Custom headers start with 'X-', and need no further checking.
     if (key.startsWith("x-", /* caseSensitive */ false))
         return true;
 
-    for (unsigned i = 0; appendableHeaders[i]; ++i)
-        if (equalIgnoringCase(key, appendableHeaders[i]))
+    for (auto& header : appendableHeaders) {
+        if (equalIgnoringASCIICase(key, header))
             return true;
+    }
 
     return false;
 }

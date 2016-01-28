@@ -62,8 +62,8 @@ const char* const headerPrefixesToIgnoreAfterRevalidation[] = {
 
 static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)
 {
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(headersToIgnoreAfterRevalidation); i++) {
-        if (equalIgnoringCase(header, headersToIgnoreAfterRevalidation[i]))
+    for (auto& headerToIgnore : headersToIgnoreAfterRevalidation) {
+        if (equalIgnoringASCIICase(header, headerToIgnore))
             return false;
     }
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(headerPrefixesToIgnoreAfterRevalidation); i++) {

@@ -201,7 +201,11 @@ static bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& 
     if (a.families.size() != b.families.size())
         return false;
     for (unsigned i = 0; i < a.families.size(); ++i) {
-        if (!equalIgnoringCase(a.families[i].impl(), b.families[i].impl()))
+        auto* aImpl = a.families[i].impl();
+        auto* bImpl = b.families[i].impl();
+        if (aImpl == bImpl)
+            continue;
+        if (!aImpl || !bImpl || !CaseFoldingHash::equal(aImpl, bImpl))
             return false;
     }
     return true;

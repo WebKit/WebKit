@@ -316,6 +316,16 @@ static bool areStronglyAliased(const String& familyA, const String& familyB)
     return false;
 }
 
+static inline bool isCommonlyUsedGenericFamily(const String& familyNameString)
+{
+    return equalLettersIgnoringASCIICase(familyNameString, "sans")
+        || equalLettersIgnoringASCIICase(familyNameString, "sans-serif")
+        || equalLettersIgnoringASCIICase(familyNameString, "serif")
+        || equalLettersIgnoringASCIICase(familyNameString, "monospace")
+        || equalLettersIgnoringASCIICase(familyNameString, "fantasy")
+        || equalLettersIgnoringASCIICase(familyNameString, "cursive");
+}
+
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
@@ -368,11 +378,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     // and allow WebCore to give us the next font on the CSS fallback list. The exceptions are if
     // this family name is a commonly-used generic family, or if the families are strongly-aliased.
     // Checking for a strong alias comes last, since it is slow.
-    if (!equalIgnoringCase(familyNameAfterConfiguration, familyNameAfterMatching)
-        && !(equalIgnoringCase(familyNameString, "sans") || equalIgnoringCase(familyNameString, "sans-serif")
-          || equalIgnoringCase(familyNameString, "serif") || equalIgnoringCase(familyNameString, "monospace")
-          || equalIgnoringCase(familyNameString, "fantasy") || equalIgnoringCase(familyNameString, "cursive"))
-        && !areStronglyAliased(familyNameAfterConfiguration, familyNameAfterMatching))
+    if (!equalIgnoringASCIICase(familyNameAfterConfiguration, familyNameAfterMatching) && !isCommonlyUsedGenericFamily(familyNameString) && !areStronglyAliased(familyNameAfterConfiguration, familyNameAfterMatching))
         return nullptr;
 
     // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently

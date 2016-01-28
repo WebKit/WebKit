@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005-2010, 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2010, 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -50,16 +50,20 @@ class LLIntOffsetsExtractor;
 
 namespace WTF {
 
-struct CStringTranslator;
-template<typename CharacterType> struct HashAndCharactersTranslator;
-struct HashAndUTF8CharactersTranslator;
-struct LCharBufferTranslator;
-struct CharBufferFromLiteralDataTranslator;
-struct SubstringTranslator;
-struct UCharBufferTranslator;
-template<typename> class RetainPtr;
 class SymbolImpl;
 class SymbolRegistry;
+
+struct CStringTranslator;
+struct CharBufferFromLiteralDataTranslator;
+struct HashAndUTF8CharactersTranslator;
+struct LCharBufferTranslator;
+struct StringHash;
+struct SubstringTranslator;
+struct UCharBufferTranslator;
+
+template<typename> class RetainPtr;
+
+template<typename> struct HashAndCharactersTranslator;
 
 enum TextCaseSensitivity {
     TextCaseSensitive,
@@ -751,7 +755,7 @@ public:
     RetainPtr<CFStringRef> createCFString();
 #endif
 #ifdef __OBJC__
-    WTF_EXPORT_STRING_API operator NSString*();
+    WTF_EXPORT_STRING_API operator NSString *();
 #endif
 
 #if STRING_STATS
@@ -942,35 +946,18 @@ inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
 WTF_EXPORT_STRING_API bool equal(const StringImpl& a, const StringImpl& b);
 
-WTF_EXPORT_STRING_API bool equalIgnoringCase(const StringImpl*, const StringImpl*);
-WTF_EXPORT_STRING_API bool equalIgnoringCase(const StringImpl*, const LChar*);
-inline bool equalIgnoringCase(const LChar* a, const StringImpl* b) { return equalIgnoringCase(b, a); }
-WTF_EXPORT_STRING_API bool equalIgnoringCase(const LChar*, const LChar*, unsigned);
-WTF_EXPORT_STRING_API bool equalIgnoringCase(const UChar*, const LChar*, unsigned);
-inline bool equalIgnoringCase(const UChar* a, const char* b, unsigned length) { return equalIgnoringCase(a, reinterpret_cast<const LChar*>(b), length); }
-inline bool equalIgnoringCase(const LChar* a, const UChar* b, unsigned length) { return equalIgnoringCase(b, a, length); }
-inline bool equalIgnoringCase(const char* a, const UChar* b, unsigned length) { return equalIgnoringCase(b, reinterpret_cast<const LChar*>(a), length); }
-inline bool equalIgnoringCase(const char* a, const LChar* b, unsigned length) { return equalIgnoringCase(b, reinterpret_cast<const LChar*>(a), length); }
-inline bool equalIgnoringCase(const UChar* a, const UChar* b, int length)
-{
-    ASSERT(length >= 0);
-    return !u_memcasecmp(a, b, length, U_FOLD_CASE_DEFAULT);
-}
-WTF_EXPORT_STRING_API bool equalIgnoringCaseNonNull(const StringImpl*, const StringImpl*);
+// FIXME: Deprecated. Used only by CaseFoldingHash, which itself is soon to be deprecated and removed, replaced by ASCIICaseFoldingHash.
+WTF_EXPORT_STRING_API bool equalCompatibiltyCaselessNonNull(const StringImpl*, const StringImpl*);
 
 WTF_EXPORT_STRING_API bool equalIgnoringNullity(StringImpl*, StringImpl*);
 WTF_EXPORT_STRING_API bool equalIgnoringNullity(const UChar*, size_t length, StringImpl*);
 
-WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl&, const StringImpl&);
+bool equalIgnoringASCIICase(const StringImpl&, const StringImpl&);
 WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl*, const StringImpl*);
-WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl& a, const char* b, unsigned bLength);
-WTF_EXPORT_STRING_API bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
+WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl&, const char*);
+WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl*, const char*);
 
-template<unsigned charactersCount>
-bool equalIgnoringASCIICase(const StringImpl* a, const char (&b)[charactersCount])
-{
-    return a ? equalIgnoringASCIICase(*a, b, charactersCount - 1) : false;
-}
+WTF_EXPORT_STRING_API bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
 
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl&, const char (&lowercaseLetters)[length]);
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl*, const char (&lowercaseLetters)[length]);
@@ -1179,8 +1166,6 @@ inline Ref<StringImpl> StringImpl::isolatedCopy() const
     return create(m_data16, m_length);
 }
 
-struct StringHash;
-
 // StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<StringImpl*> {
@@ -1189,6 +1174,21 @@ template<> struct DefaultHash<StringImpl*> {
 template<> struct DefaultHash<RefPtr<StringImpl>> {
     typedef StringHash Hash;
 };
+
+inline bool equalIgnoringASCIICase(const StringImpl& a, const StringImpl& b)
+{
+    return equalIgnoringASCIICaseCommon(a, b);
+}
+
+inline bool equalIgnoringASCIICase(const StringImpl& a, const char* b)
+{
+    return equalIgnoringASCIICaseCommon(a, b);
+}
+
+inline bool equalIgnoringASCIICase(const StringImpl* a, const char* b)
+{
+    return a && equalIgnoringASCIICase(*a, b);
+}
 
 template<unsigned length> inline bool equalLettersIgnoringASCIICase(const StringImpl& string, const char (&lowercaseLetters)[length])
 {
@@ -1204,7 +1204,6 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(const String
 
 using WTF::StringImpl;
 using WTF::equal;
-using WTF::equalIgnoringASCIICase;
 using WTF::TextCaseSensitivity;
 using WTF::TextCaseSensitive;
 using WTF::TextCaseInsensitive;

@@ -715,7 +715,7 @@ void PluginView::setParameters(const Vector<String>& paramNames, const Vector<St
     m_paramValues = reinterpret_cast<char**>(fastMalloc(sizeof(char*) * size));
 
     for (unsigned i = 0; i < size; i++) {
-        if (m_plugin->quirks().contains(PluginQuirkRemoveWindowlessVideoParam) && equalIgnoringCase(paramNames[i], "windowlessvideo"))
+        if (m_plugin->quirks().contains(PluginQuirkRemoveWindowlessVideoParam) && equalLettersIgnoringASCIICase(paramNames[i], "windowlessvideo"))
             continue;
 
         if (paramNames[i] == "pluginspage")

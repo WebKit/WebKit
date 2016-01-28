@@ -1726,12 +1726,12 @@ static NSMutableArray* kit(const Vector<String>& vector)
     return array;
 }
 
-static String parameterValue(const Vector<String>& paramNames, const Vector<String>& paramValues, const String& name)
+static String parameterValue(const Vector<String>& paramNames, const Vector<String>& paramValues, const char* name)
 {
     size_t size = paramNames.size();
     ASSERT(size == paramValues.size());
     for (size_t i = 0; i < size; ++i) {
-        if (equalIgnoringCase(paramNames[i], name))
+        if (equalIgnoringASCIICase(paramNames[i], name))
             return paramValues[i];
     }
     return String();

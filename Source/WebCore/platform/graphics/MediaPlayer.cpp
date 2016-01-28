@@ -854,7 +854,7 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     // slow connections. <https://bugs.webkit.org/show_bug.cgi?id=86409>
     if (client && client->mediaPlayerNeedsSiteSpecificHacks()) {
         String host = client->mediaPlayerDocumentHost();
-        if ((host.endsWith(".youtube.com", false) || equalIgnoringCase("youtube.com", host))
+        if ((host.endsWith(".youtube.com", false) || equalLettersIgnoringASCIICase(host, "youtube.com"))
             && (parameters.type.startsWith("video/webm", false) || parameters.type.startsWith("video/x-flv", false)))
             return IsNotSupported;
     }

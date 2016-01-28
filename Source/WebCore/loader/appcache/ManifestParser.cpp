@@ -122,7 +122,7 @@ bool parseManifest(const URL& manifestURL, const char* data, int length, Manifes
             if (url.hasFragmentIdentifier())
                 url.removeFragmentIdentifier();
             
-            if (!equalIgnoringCase(url.protocol(), manifestURL.protocol()))
+            if (!equalIgnoringASCIICase(url.protocol(), manifestURL.protocol()))
                 continue;
             
             if (mode == Explicit && manifestURL.protocolIs("https") && !protocolHostAndPortAreEqual(manifestURL, url))

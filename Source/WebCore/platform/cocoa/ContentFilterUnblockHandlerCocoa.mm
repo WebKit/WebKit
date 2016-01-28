@@ -133,7 +133,7 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
 #endif
     }
 
-    bool isUnblockRequest = request.url().protocolIs(ContentFilter::urlScheme()) && equalIgnoringCase(request.url().host(), m_unblockURLHost);
+    bool isUnblockRequest = request.url().protocolIs(ContentFilter::urlScheme()) && equalIgnoringASCIICase(request.url().host(), m_unblockURLHost);
 #if !LOG_DISABLED
     if (isUnblockRequest)
         LOG(ContentFiltering, "ContentFilterUnblockHandler will handle <%s> as an unblock request.\n", request.url().string().ascii().data());

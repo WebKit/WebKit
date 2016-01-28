@@ -105,7 +105,7 @@ bool MediaQueryEvaluator::mediaTypeMatch(const String& mediaTypeToMatch) const
 {
     return mediaTypeToMatch.isEmpty()
         || equalLettersIgnoringASCIICase(mediaTypeToMatch, "all")
-        || equalIgnoringCase(mediaTypeToMatch, m_mediaType);
+        || equalIgnoringASCIICase(mediaTypeToMatch, m_mediaType);
 }
 
 bool MediaQueryEvaluator::mediaTypeMatchSpecific(const char* mediaTypeToMatch) const
@@ -114,7 +114,7 @@ bool MediaQueryEvaluator::mediaTypeMatchSpecific(const char* mediaTypeToMatch) c
     ASSERT(mediaTypeToMatch);
     ASSERT(mediaTypeToMatch[0] != '\0');
     ASSERT(!equalLettersIgnoringASCIICase(StringView(mediaTypeToMatch), "all"));
-    return equalIgnoringCase(mediaTypeToMatch, m_mediaType);
+    return equalIgnoringASCIICase(m_mediaType, mediaTypeToMatch);
 }
 
 static bool applyRestrictor(MediaQuery::Restrictor r, bool value)

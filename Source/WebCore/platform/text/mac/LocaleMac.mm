@@ -60,7 +60,7 @@ static RetainPtr<NSLocale> determineLocale(const String& locale)
     RetainPtr<NSLocale> currentLocale = [NSLocale currentLocale];
     String currentLocaleLanguage = languageFromLocale(String([currentLocale.get() localeIdentifier]));
     String localeLanguage = languageFromLocale(locale);
-    if (equalIgnoringCase(currentLocaleLanguage, localeLanguage))
+    if (equalIgnoringASCIICase(currentLocaleLanguage, localeLanguage))
         return currentLocale;
     // It seems initWithLocaleIdentifier accepts dash-separated locale identifier.
      return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:locale]);

@@ -317,17 +317,17 @@ const gchar* roleToString(AtkObject* object)
 #if ATK_CHECK_VERSION(2, 11, 3)
     if (role == ATK_ROLE_LANDMARK) {
         String xmlRolesValue = getAttributeSetValueForId(object, ObjectAttributeType, "xml-roles");
-        if (equalIgnoringCase(xmlRolesValue, "banner"))
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "banner"))
             return landmarkStringBanner;
-        if (equalIgnoringCase(xmlRolesValue, "complementary"))
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "complementary"))
             return landmarkStringComplementary;
-        if (equalIgnoringCase(xmlRolesValue, "contentinfo"))
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "contentinfo"))
             return landmarkStringContentinfo;
-        if (equalIgnoringCase(xmlRolesValue, "main"))
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "main"))
             return landmarkStringMain;
-        if (equalIgnoringCase(xmlRolesValue, "navigation"))
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "navigation"))
             return landmarkStringNavigation;
-        if (equalIgnoringCase(xmlRolesValue, "search"))
+        if (equalLettersIgnoringASCIICase(xmlRolesValue, "search"))
             return landmarkStringSearch;
     }
 #endif
@@ -1350,7 +1350,7 @@ bool AccessibilityUIElement::isPressActionSupported()
         return false;
 
     const gchar* actionName = atk_action_get_name(ATK_ACTION(m_element.get()), 0);
-    return equalIgnoringCase(actionName, String("press")) || equalIgnoringCase(actionName, String("jump"));
+    return equalLettersIgnoringASCIICase(actionName, "press") || equalLettersIgnoringASCIICase(actionName, "jump");
 }
 
 bool AccessibilityUIElement::isIncrementActionSupported()
@@ -1788,7 +1788,7 @@ bool AccessibilityUIElement::hasPopup() const
         return false;
 
     String hasPopupValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "haspopup");
-    return equalIgnoringCase(hasPopupValue, "true");
+    return equalLettersIgnoringASCIICase(hasPopupValue, "true");
 }
 
 void AccessibilityUIElement::takeFocus()

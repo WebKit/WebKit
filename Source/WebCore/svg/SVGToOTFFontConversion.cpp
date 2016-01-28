@@ -818,7 +818,7 @@ void SVGToOTFFontConverter::appendArabicReplacementSubtable(size_t subtableRecor
     for (auto& pair : m_codepointsToIndicesMap) {
         for (auto glyphIndex : pair.value) {
             auto& glyph = m_glyphs[glyphIndex];
-            if (glyph.glyphElement && equalIgnoringCase(glyph.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), arabicForm))
+            if (glyph.glyphElement && equalIgnoringASCIICase(glyph.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), arabicForm))
                 arabicFinalReplacements.append(std::make_pair(pair.value[0], glyphIndex));
         }
     }

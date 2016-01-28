@@ -110,7 +110,7 @@ namespace WTF {
         
         static inline bool equal(const StringImpl* a, const StringImpl* b)
         {
-            return equalIgnoringCaseNonNull(a, b);
+            return equalCompatibiltyCaselessNonNull(a, b);
         }
 
         static unsigned hash(const RefPtr<StringImpl>& key) 

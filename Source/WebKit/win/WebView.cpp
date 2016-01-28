@@ -1365,16 +1365,12 @@ void WebView::closeWindow()
 
 bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
 {
-    // On the mac there's an about url protocol implementation but CFNetwork doesn't have that.
-    if (equalIgnoringCase(String(request.url().protocol()), "about"))
-        return true;
-
 #if USE(CFNETWORK)
-    if (CFURLProtocolCanHandleRequest(request.cfURLRequest(UpdateHTTPBody)))
+    // On the Mac there's an about URL protocol implementation but Windows CFNetwork doesn't have that.
+    if (request.url().protocolIs("about"))
         return true;
 
-    // FIXME: Mac WebKit calls _representationExistsForURLScheme here
-    return false;
+    return CFURLProtocolCanHandleRequest(request.cfURLRequest(UpdateHTTPBody));
 #else
     return true;
 #endif

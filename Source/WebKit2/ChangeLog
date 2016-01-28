@@ -1,3 +1,23 @@
+2016-01-28  Darin Adler  <darin@apple.com>
+
+        Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
+        https://bugs.webkit.org/show_bug.cgi?id=153411
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringIsEqualToUTF8CStringIgnoringCase): Use equalIgnoringASCIICase.
+        This is a change in behavior for callers who passed non-ASCII letters to
+        this function and expected case insensitive comparison.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::streamDidReceiveResponse): Use equalIgnoringASCIICase.
+        No change in behavior because this is just checking a fixed ASCII MIME type.
+        (WebKit::PDFPlugin::manualStreamDidReceiveResponse): Ditto.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::streamDidReceiveResponse): Ditto.
+        (WebKit::PDFPlugin::manualStreamDidReceiveResponse): Ditto.
+
 2016-01-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build after r195722.

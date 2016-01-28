@@ -3342,7 +3342,7 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
         return;
 
     m_viewportArguments = ViewportArguments(origin);
-    processArguments(features, (void*)&m_viewportArguments, &setViewportFeature);
+    processArguments(features, (void*)&m_viewportArguments, setViewportFeature);
 
     updateViewportArguments();
 }
@@ -3361,6 +3361,7 @@ void Document::updateViewportArguments()
 }
 
 #if PLATFORM(IOS)
+
 // FIXME: Find a better place for this functionality.
 void setParserFeature(const String& key, const String& value, Document* document, void*)
 {
@@ -3371,7 +3372,7 @@ void setParserFeature(const String& key, const String& value, Document* document
 void Document::processFormatDetection(const String& features)
 {
     ASSERT(!features.isNull());
-    processArguments(features, nullptr, &setParserFeature);
+    processArguments(features, nullptr, setParserFeature);
 }
 
 void Document::processWebAppOrientations()
@@ -3379,6 +3380,7 @@ void Document::processWebAppOrientations()
     if (Page* page = this->page())
         page->chrome().client().webAppOrientationsUpdated();
 }
+
 #endif
 
 void Document::processReferrerPolicy(const String& policy)
@@ -4394,7 +4396,7 @@ void Document::setDomain(const String& newDomain, ExceptionCode& ec)
     // assigns its current domain using document.domain, the page will
     // allow other pages loaded on different ports in the same domain that
     // have also assigned to access this page.
-    if (equalIgnoringCase(domain(), newDomain)) {
+    if (equalIgnoringASCIICase(domain(), newDomain)) {
         securityOrigin()->setDomainFromDOM(newDomain);
         return;
     }

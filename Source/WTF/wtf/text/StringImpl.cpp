@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2009, 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -950,7 +950,7 @@ float StringImpl::toFloat(bool* ok)
     return charactersToFloat(characters16(), m_length, ok);
 }
 
-bool equalIgnoringCase(const LChar* a, const LChar* b, unsigned length)
+static inline bool equalCompatibiltyCaseless(const LChar* a, const LChar* b, unsigned length)
 {
     while (length--) {
         if (StringImpl::latin1CaseFoldTable[*a++] != StringImpl::latin1CaseFoldTable[*b++])
@@ -959,13 +959,23 @@ bool equalIgnoringCase(const LChar* a, const LChar* b, unsigned length)
     return true;
 }
 
-bool equalIgnoringCase(const UChar* a, const LChar* b, unsigned length)
+static inline bool equalCompatibiltyCaseless(const UChar* a, const LChar* b, unsigned length)
 {
     while (length--) {
         if (u_foldCase(*a++, U_FOLD_CASE_DEFAULT) != StringImpl::latin1CaseFoldTable[*b++])
             return false;
     }
     return true;
+}
+
+static inline bool equalCompatibiltyCaseless(const LChar* a, const UChar* b, unsigned length)
+{
+    return equalCompatibiltyCaseless(b, a, length);
+}
+
+static inline bool equalCompatibiltyCaseless(const UChar* a, const UChar* b, unsigned length)
+{
+    return !u_memcasecmp(a, b, length, U_FOLD_CASE_DEFAULT);
 }
 
 size_t StringImpl::find(CharacterMatchFunctionPtr matchFunction, unsigned start)
@@ -1072,7 +1082,7 @@ size_t StringImpl::findIgnoringCase(const LChar* matchString, unsigned index)
         const LChar* searchCharacters = characters8() + index;
 
         unsigned i = 0;
-        while (!equalIgnoringCase(searchCharacters + i, matchString, matchLength)) {
+        while (!equalCompatibiltyCaseless(searchCharacters + i, matchString, matchLength)) {
             if (i == delta)
                 return notFound;
             ++i;
@@ -1083,7 +1093,7 @@ size_t StringImpl::findIgnoringCase(const LChar* matchString, unsigned index)
     const UChar* searchCharacters = characters16() + index;
 
     unsigned i = 0;
-    while (!equalIgnoringCase(searchCharacters + i, matchString, matchLength)) {
+    while (!equalCompatibiltyCaseless(searchCharacters + i, matchString, matchLength)) {
         if (i == delta)
             return notFound;
         ++i;
@@ -1147,7 +1157,7 @@ ALWAYS_INLINE static size_t findIgnoringCaseInner(const SearchCharacterType* sea
 
     unsigned i = 0;
     // keep looping until we match
-    while (!equalIgnoringCase(searchCharacters + i, matchCharacters, matchLength)) {
+    while (!equalCompatibiltyCaseless(searchCharacters + i, matchCharacters, matchLength)) {
         if (i == delta)
             return notFound;
         ++i;
@@ -1288,7 +1298,7 @@ ALWAYS_INLINE static size_t reverseFindIgnoringCaseInner(const SearchCharacterTy
     unsigned delta = std::min(index, length - matchLength);
 
     // keep looping until we match
-    while (!equalIgnoringCase(searchCharacters + delta, matchCharacters, matchLength)) {
+    while (!equalCompatibiltyCaseless(searchCharacters + delta, matchCharacters, matchLength)) {
         if (!delta)
             return notFound;
         --delta;
@@ -1334,8 +1344,8 @@ ALWAYS_INLINE static bool equalInner(const StringImpl* stringImpl, unsigned star
         return equal(stringImpl->characters16() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
     }
     if (stringImpl->is8Bit())
-        return equalIgnoringCase(stringImpl->characters8() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
-    return equalIgnoringCase(stringImpl->characters16() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
+        return equalCompatibiltyCaseless(stringImpl->characters8() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
+    return equalCompatibiltyCaseless(stringImpl->characters16() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
 }
 
 ALWAYS_INLINE static bool equalInner(const StringImpl& stringImpl, unsigned startOffset, const StringImpl& matchString)
@@ -1908,73 +1918,10 @@ bool equal(const StringImpl& a, const StringImpl& b)
     return equalCommon(a, b);
 }
 
-bool equalIgnoringCase(const StringImpl* a, const StringImpl* b)
+bool equalCompatibiltyCaselessNonNull(const StringImpl* a, const StringImpl* b)
 {
-    if (a == b)
-        return true;
-    if (!a || !b)
-        return false;
-
-    return CaseFoldingHash::equal(a, b);
-}
-
-bool equalIgnoringCase(const StringImpl* a, const LChar* b)
-{
-    if (!a)
-        return !b;
-    if (!b)
-        return !a;
-
-    unsigned length = a->length();
-
-    // Do a faster loop for the case where all the characters are ASCII.
-    UChar ored = 0;
-    bool equal = true;
-    if (a->is8Bit()) {
-        const LChar* as = a->characters8();
-        for (unsigned i = 0; i != length; ++i) {
-            LChar bc = b[i];
-            if (!bc)
-                return false;
-            UChar ac = as[i];
-            ored |= ac;
-            equal = equal && (toASCIILower(ac) == toASCIILower(bc));
-        }
-        
-        // Do a slower implementation for cases that include non-ASCII characters.
-        if (ored & ~0x7F) {
-            equal = true;
-            for (unsigned i = 0; i != length; ++i)
-                equal = equal && u_foldCase(as[i], U_FOLD_CASE_DEFAULT) == u_foldCase(b[i], U_FOLD_CASE_DEFAULT);
-        }
-        
-        return equal && !b[length];        
-    }
-
-    const UChar* as = a->characters16();
-    for (unsigned i = 0; i != length; ++i) {
-        LChar bc = b[i];
-        if (!bc)
-            return false;
-        UChar ac = as[i];
-        ored |= ac;
-        equal = equal && (toASCIILower(ac) == toASCIILower(bc));
-    }
-
-    // Do a slower implementation for cases that include non-ASCII characters.
-    if (ored & ~0x7F) {
-        equal = true;
-        for (unsigned i = 0; i != length; ++i) {
-            equal = equal && u_foldCase(as[i], U_FOLD_CASE_DEFAULT) == u_foldCase(b[i], U_FOLD_CASE_DEFAULT);
-        }
-    }
-
-    return equal && !b[length];
-}
-
-bool equalIgnoringCaseNonNull(const StringImpl* a, const StringImpl* b)
-{
-    ASSERT(a && b);
+    ASSERT(a);
+    ASSERT(b);
     if (a == b)
         return true;
 
@@ -1984,15 +1931,15 @@ bool equalIgnoringCaseNonNull(const StringImpl* a, const StringImpl* b)
 
     if (a->is8Bit()) {
         if (b->is8Bit())
-            return equalIgnoringCase(a->characters8(), b->characters8(), length);
+            return equalCompatibiltyCaseless(a->characters8(), b->characters8(), length);
 
-        return equalIgnoringCase(b->characters16(), a->characters8(), length);
+        return equalCompatibiltyCaseless(b->characters16(), a->characters8(), length);
     }
 
     if (b->is8Bit())
-        return equalIgnoringCase(a->characters16(), b->characters8(), length);
+        return equalCompatibiltyCaseless(a->characters16(), b->characters8(), length);
 
-    return equalIgnoringCase(a->characters16(), b->characters16(), length);
+    return equalCompatibiltyCaseless(a->characters16(), b->characters16(), length);
 }
 
 bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
@@ -2004,12 +1951,7 @@ bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
     return equal(a, b);
 }
 
-bool equalIgnoringASCIICase(const StringImpl& a, const StringImpl& b)
-{
-    return equalIgnoringASCIICaseCommon(a, b);
-}
-
-bool equalIgnoringASCIICase(const StringImpl* a, const StringImpl*b)
+bool equalIgnoringASCIICase(const StringImpl* a, const StringImpl* b)
 {
     if (a == b)
         return true;
@@ -2018,22 +1960,11 @@ bool equalIgnoringASCIICase(const StringImpl* a, const StringImpl*b)
     return equalIgnoringASCIICaseCommon(*a, *b);
 }
 
-bool equalIgnoringASCIICase(const StringImpl& a, const char* b, unsigned bLength)
-{
-    if (bLength != a.length())
-        return false;
-
-    if (a.is8Bit())
-        return equalIgnoringASCIICase(a.characters8(), b, bLength);
-
-    return equalIgnoringASCIICase(a.characters16(), b, bLength);
-}
-
 bool equalIgnoringASCIICaseNonNull(const StringImpl* a, const StringImpl* b)
 {
     ASSERT(a);
     ASSERT(b);
-    return equalIgnoringASCIICaseCommon(*a, *b);
+    return equalIgnoringASCIICase(*a, *b);
 }
 
 UCharDirection StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)

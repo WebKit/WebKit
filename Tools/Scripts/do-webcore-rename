@@ -128,8 +128,6 @@ my %renamesContemplatedForTheFuture = (
     "runtime_object" => "BridgedObject",
     "objc_runtime" => "ObjCBridge",
 
-    "equalIgnoringCase" => "equalFoldingCase",
-
     "WTF_UNICODE_H" => "Unicode_h",
     "WTF_UNICODE_ICU_H" => "UnicodeICU_h",
     "UnicodeIcu" => "UnicodeICU",

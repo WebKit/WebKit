@@ -436,7 +436,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
 
     if (redirectResponse.httpStatusCode() == 307) {
         String lastHTTPMethod = d->m_lastHTTPMethod;
-        if (!equalIgnoringCase(lastHTTPMethod, request.httpMethod())) {
+        if (!equalIgnoringASCIICase(lastHTTPMethod, request.httpMethod())) {
             request.setHTTPMethod(lastHTTPMethod);
     
             FormData* body = d->m_firstRequest.httpBody();

@@ -248,7 +248,7 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
             const Vector<String>& extensions = mime_it->value;
             bool foundMapping = false;
             for (unsigned i = 0; i < extensions.size(); i++) {
-                if (equalIgnoringCase(extensions[i], extension)) {
+                if (equalIgnoringASCIICase(extensions[i], extension)) {
                     PluginPackage* plugin = (*it).get();
 
                     if (preferredPlugin && PluginPackage::equal(*plugin, *preferredPlugin))

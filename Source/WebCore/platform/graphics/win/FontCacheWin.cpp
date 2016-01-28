@@ -403,8 +403,7 @@ static inline bool isGDIFontWeightBold(LONG gdiFontWeight)
 
 static LONG adjustedGDIFontWeight(LONG gdiFontWeight, const String& family)
 {
-    static AtomicString lucidaStr("Lucida Grande");
-    if (equalIgnoringCase(family, lucidaStr)) {
+    if (equalLettersIgnoringASCIICase(family, "lucida grande")) {
         if (gdiFontWeight == FW_NORMAL)
             return FW_MEDIUM;
         if (gdiFontWeight == FW_BOLD)
@@ -563,10 +562,7 @@ Vector<FontTraitsMask> FontCache::getTraitsInFamily(const AtomicString& familyNa
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
-    bool isLucidaGrande = false;
-    static AtomicString lucidaStr("Lucida Grande");
-    if (equalIgnoringCase(family, lucidaStr))
-        isLucidaGrande = true;
+    bool isLucidaGrande = equalLettersIgnoringASCIICase(family, "lucida grande");
 
     bool useGDI = fontDescription.renderingMode() == FontRenderingMode::Alternate && !isLucidaGrande;
 

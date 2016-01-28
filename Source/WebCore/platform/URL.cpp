@@ -518,7 +518,7 @@ void URL::init(const URL& base, const String& relative, const TextEncoding& enco
             ++p;
         }
         if (*p == ':') {
-            if (p[1] != '/' && equalIgnoringCase(base.protocol(), String(str, p - str)) && base.isHierarchical())
+            if (p[1] != '/' && equalIgnoringASCIICase(base.protocol(), StringView(reinterpret_cast<LChar*>(str), p - str)) && base.isHierarchical())
                 str = p + 1;
             else
                 absolute = true;

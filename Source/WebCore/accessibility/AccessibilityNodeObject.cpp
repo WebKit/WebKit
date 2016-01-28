@@ -1193,15 +1193,16 @@ String AccessibilityNodeObject::ariaAccessibilityDescription() const
     return String();
 }
 
-static Element* siblingWithAriaRole(String role, Node* node)
+static Element* siblingWithAriaRole(Node* node, const char* role)
 {
+    // FIXME: Either we should add a null check here or change the function to take a reference instead of a pointer.
     ContainerNode* parent = node->parentNode();
     if (!parent)
         return nullptr;
 
     for (auto& sibling : childrenOfType<Element>(*parent)) {
-        const AtomicString& siblingAriaRole = sibling.fastGetAttribute(roleAttr);
-        if (equalIgnoringCase(siblingAriaRole, role))
+        // FIXME: Should skip sibling that is the same as the node.
+        if (equalIgnoringASCIICase(sibling.fastGetAttribute(roleAttr), role))
             return &sibling;
     }
 
@@ -1213,7 +1214,7 @@ Element* AccessibilityNodeObject::menuElementForMenuButton() const
     if (ariaRoleAttribute() != MenuButtonRole)
         return nullptr;
 
-    return siblingWithAriaRole("menu", node());
+    return siblingWithAriaRole(node(), "menu");
 }
 
 AccessibilityObject* AccessibilityNodeObject::menuForMenuButton() const
@@ -1228,7 +1229,7 @@ Element* AccessibilityNodeObject::menuItemElementForMenu() const
     if (ariaRoleAttribute() != MenuRole)
         return nullptr;
     
-    return siblingWithAriaRole("menuitem", node());    
+    return siblingWithAriaRole(node(), "menuitem");
 }
 
 AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const

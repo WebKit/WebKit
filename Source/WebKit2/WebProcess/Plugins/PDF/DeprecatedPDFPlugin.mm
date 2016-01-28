@@ -944,7 +944,7 @@ void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t
 
     m_suggestedFilename = suggestedFilename;
 
-    if (equalIgnoringCase(mimeType, postScriptMIMEType))
+    if (equalIgnoringASCIICase(mimeType, postScriptMIMEType))
         m_isPostScript = true;
 }
 
@@ -977,7 +977,7 @@ void PDFPlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t 
 {
     m_suggestedFilename = suggestedFilename;
 
-    if (equalIgnoringCase(mimeType, postScriptMIMEType))
+    if (equalIgnoringASCIICase(mimeType, postScriptMIMEType))
         m_isPostScript = true;
 }
 

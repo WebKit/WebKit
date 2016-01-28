@@ -294,7 +294,7 @@ void PluginStream::destroyStream()
         if (m_loader)
             m_loader->setDefersLoading(true);
         if (!newStreamCalled && m_quirks.contains(PluginQuirkFlashURLNotifyBug) &&
-            equalIgnoringCase(m_resourceRequest.httpMethod(), "POST")) {
+            equalLettersIgnoringASCIICase(m_resourceRequest.httpMethod(), "post")) {
             m_transferMode = NP_NORMAL;
             m_stream.url = "";
             m_stream.notifyData = m_notifyData;
