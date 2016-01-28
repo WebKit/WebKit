@@ -1,3 +1,23 @@
+2016-01-27  Saam barati  <sbarati@apple.com>
+
+        CodeMirror will strip out "\r" from files with "\r\n" as newlines causing our offsets into the file to be incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=153529
+        <rdar://problem/24376799>
+
+        Reviewed by Timothy Hatcher.
+
+        This problem manifested in the type token annotator inserting
+        tokens in the wrong places. Because our offsets are computed
+        based on the resource we get from backend, CodeMirror changing
+        the source text will cause all of our offsets to be incorrect.
+
+        * UserInterface/Views/CodeMirrorEditor.js:
+        (WebInspector.CodeMirrorEditor.create):
+        (WebInspector.CodeMirrorEditor):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.set string.update):
+        (WebInspector.TextEditor.prototype.set string):
+
 2016-01-27  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Regression (r195303) - Changes to TreeOutline break styling of lists in Visual sidebar

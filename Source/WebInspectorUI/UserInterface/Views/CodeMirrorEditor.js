@@ -27,6 +27,9 @@ WebInspector.CodeMirrorEditor = class CodeMirrorEditor
 {
     static create(place, options)
     {
+        if (options.lineSeparator === undefined)
+            options.lineSeparator = "\n";
+
         let codeMirror = new CodeMirror(place, options);
 
         // Set up default controllers that should be present for

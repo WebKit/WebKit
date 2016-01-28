@@ -90,6 +90,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
                 this._codeMirror.removeLineClass(0, "wrap");
 
             this._codeMirror.setValue(newString);
+            console.assert(this.string.length === newString.length, "A lot of our code depends on precise text offsets, so the string should remain the same.");
 
             if (this._initialStringNotSet) {
                 this._codeMirror.clearHistory();
