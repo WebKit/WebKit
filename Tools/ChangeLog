@@ -1,3 +1,12 @@
+2016-01-27  Daniel Bates  <dabates@apple.com>
+
+        Remove WebKitSystemInterface for iOS SDK < 9
+        https://bugs.webkit.org/show_bug.cgi?id=153570
+
+        Reviewed by Andy Estes.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2016-01-27  Jason Marcell  <jmarcell@apple.com>
 
         Fix bugs caused by incorrect usage of "branch" vs. "branchName".

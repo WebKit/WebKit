@@ -156,14 +156,6 @@ if ($wksi) {
     my @librariesToCopy;
     if (isIOSWebKit()) {
         push(@librariesToCopy, (
-            "libWebKitSystemInterfaceIOSDevice8.1.a",
-            "libWebKitSystemInterfaceIOSSimulator8.1.a",
-            "libWebKitSystemInterfaceIOSDevice8.2.a",
-            "libWebKitSystemInterfaceIOSSimulator8.2.a",
-            "libWebKitSystemInterfaceIOSDevice8.3.a",
-            "libWebKitSystemInterfaceIOSSimulator8.3.a",
-            "libWebKitSystemInterfaceIOSDevice8.4.a",
-            "libWebKitSystemInterfaceIOSSimulator8.4.a",
             "libWebKitSystemInterfaceIOSDevice9.0.a",
             "libWebKitSystemInterfaceIOSSimulator9.0.a",
             "libWebKitSystemInterfaceIOSDevice9.2.a",
