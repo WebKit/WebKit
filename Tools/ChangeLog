@@ -1,3 +1,21 @@
+2016-01-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Use isAnyWindows() instead of isCygwin() || isWindows() in Perl scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=153594
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitdirs.pm:
+        (determineNumberOfCPUs):
+        (jscPath):
+        (checkFrameworks):
+        (setupCygwinEnv):
+        (wrapperPrefixIfNeeded):
+        (cmakeGeneratedBuildfile):
+        (generateBuildSystemFromCMakeProject):
+        * Scripts/webkitperl/features.pm:
+        (libraryContainsSymbol):
+
 2016-01-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r195742.

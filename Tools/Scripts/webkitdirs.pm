@@ -396,7 +396,7 @@ sub determineNumberOfCPUs
         if ($numberOfCPUs eq "") {
             $numberOfCPUs = (grep /processor/, `cat /proc/cpuinfo`);
         }
-    } elsif (isWindows() || isCygwin()) {
+    } elsif (isAnyWindows()) {
         # Assumes cygwin
         $numberOfCPUs = `ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w`;
     } elsif (isDarwin() || isBSD()) {
@@ -417,7 +417,7 @@ sub jscPath($)
     my ($productDir) = @_;
     my $jscName = "jsc";
     $jscName .= "_debug"  if configuration() eq "Debug_All";
-    $jscName .= ".exe" if (isWindows() || isCygwin());
+    $jscName .= ".exe" if (isAnyWindows());
     return "$productDir/$jscName" if -e "$productDir/$jscName";
     return "$productDir/JavaScriptCore.framework/Resources/$jscName";
 }
@@ -929,7 +929,7 @@ sub builtDylibPathForName
 # Check to see that all the frameworks are built.
 sub checkFrameworks # FIXME: This is a poor name since only the Mac calls built WebCore a Framework.
 {
-    return if isCygwin() || isWindows();
+    return if isAnyWindows();
     my @frameworks = ("JavaScriptCore", "WebCore");
     push(@frameworks, "WebKit") if isAppleMacWebKit(); # FIXME: This seems wrong, all ports should have a WebKit these days.
     for my $framework (@frameworks) {
@@ -1641,7 +1641,7 @@ sub setupAppleWinEnv()
 
 sub setupCygwinEnv()
 {
-    return if !isCygwin() && !isWindows();
+    return if !isAnyWindows();
     return if $vcBuildPath;
 
     my $programFilesPath = programFilesPath();
@@ -1810,7 +1810,7 @@ sub isCachedArgumentfileOutOfDate($@)
 
 sub wrapperPrefixIfNeeded()
 {
-    if (isWindows() || isCygwin()) {
+    if (isAnyWindows()) {
         return ();
     }
     if (isAppleMacWebKit()) {
@@ -1919,7 +1919,7 @@ sub cmakeGeneratedBuildfile(@)
     my ($willUseNinja) = @_;
     if ($willUseNinja) {
         return File::Spec->catfile(baseProductDir(), configuration(), "build.ninja")
-    } elsif (isWindows() || isCygwin()) {
+    } elsif (isAnyWindows()) {
         return File::Spec->catfile(baseProductDir(), configuration(), "WebKit.sln")
     } else {
         return File::Spec->catfile(baseProductDir(), configuration(), "Makefile")
@@ -1977,7 +1977,7 @@ sub generateBuildSystemFromCMakeProject
     # Compiler options to keep floating point values consistent
     # between 32-bit and 64-bit architectures.
     determineArchitecture();
-    if ($architecture ne "x86_64" && !isARM() && !isCrossCompilation() && !isWindows() && !isCygwin()) {
+    if ($architecture ne "x86_64" && !isARM() && !isCrossCompilation() && !isAnyWindows()) {
         $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . ($ENV{'CXXFLAGS'} || "");
     }
 

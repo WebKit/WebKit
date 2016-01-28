@@ -49,7 +49,7 @@ sub libraryContainsSymbol($$)
 {
     my ($path, $symbol) = @_;
 
-    if (isCygwin() or isWindows()) {
+    if (isAnyWindows()) {
         # FIXME: Implement this for Windows.
         return 0;
     }
