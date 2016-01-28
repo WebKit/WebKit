@@ -737,7 +737,11 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     Optional<int> firstGlyphLeftOverflow;
 
     bool breakNBSP = style.autoWrap() && style.nbspMode() == SPACE;
-    bool breakAll = (style.wordBreak() == BreakAllWordBreak || style.breakWords()) && style.autoWrap();
+    
+    // Note the deliberate omission of word-wrap and overflow-wrap from this breakAll check. Those
+    // do not affect minimum preferred sizes. Note that break-word is a non-standard value for
+    // word-break, but we support it as though it means break-all.
+    bool breakAll = (style.wordBreak() == BreakAllWordBreak || style.wordBreak() == BreakWordBreak) && style.autoWrap();
     bool keepAllWords = style.wordBreak() == KeepAllWordBreak;
     bool isLooseCJKMode = breakIterator.isLooseCJKMode();
 

@@ -1,3 +1,11 @@
+2016-01-28  Dave Hyatt  <hyatt@apple.com>
+
+        Roll out r194555, as it introduced some bad regressions and was not
+        correct.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+
 2016-01-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Index uniqueness broken in the SQLite backend.
