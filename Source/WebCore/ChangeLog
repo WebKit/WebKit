@@ -1,5 +1,33 @@
 2016-01-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r195075. rdar://problem/24302727
+
+    2016-01-14  Daniel Bates  <dabates@apple.com>
+
+            Disallow use of Geolocation service from unique origins
+            https://bugs.webkit.org/show_bug.cgi?id=153102
+            <rdar://problem/23055645>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Tests: fast/dom/Geolocation/dataURL-getCurrentPosition.html
+                   fast/dom/Geolocation/dataURL-watchPosition.html
+                   fast/dom/Geolocation/srcdoc-getCurrentPosition.html
+                   fast/dom/Geolocation/srcdoc-watchPosition.html
+                   http/tests/security/sandboxed-iframe-geolocation-getCurrentPosition.html
+                   http/tests/security/sandboxed-iframe-geolocation-watchPosition.html
+
+            * Modules/geolocation/Geolocation.cpp:
+            (WebCore::Geolocation::securityOrigin): Convenience function to get the SecurityOrigin object
+            associated with this script execution context.
+            (WebCore::Geolocation::startRequest): Notify requester POSITION_UNAVAILABLE when requested
+            from a document with a unique origin.
+            * Modules/geolocation/Geolocation.h:
+            * page/SecurityOrigin.h:
+            (WebCore::SecurityOrigin::canRequestGeolocation): Added.
+
+2016-01-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r194559. rdar://problem/24269083
 
     2016-01-04  Tim Horton  <timothy_horton@apple.com>

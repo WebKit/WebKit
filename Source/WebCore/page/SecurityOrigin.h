@@ -156,6 +156,7 @@ public:
     bool canAccessPluginStorage(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); }
     bool canAccessApplicationCache(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); }
     bool canAccessCookies() const { return !isUnique(); }
+    bool canRequestGeolocation() const { return !isUnique(); }
     Policy canShowNotifications() const;
 
     // The local SecurityOrigin is the most privileged SecurityOrigin.
