@@ -1,3 +1,24 @@
+2016-01-28  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GStreamer] MediaPlayerPrivateGStreamerBase::handleSyncMessage leaks GstContext
+        https://bugs.webkit.org/show_bug.cgi?id=153580
+
+        Reviewed by Philippe Normand.
+
+        When we creates GstContext using gst_context_new it increases refcount itself.
+        And the refcount of GstContext is increased when it is passed to
+        gst_element_set_context, also. Therefore We should unref GstContext after
+        using it to prevent GstContext leaks.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef): Added for GstContext.
+        (WTF::refGPtr<GstContext>): Ditto
+        (WTF::derefGPtr<GstContext>): Ditto
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        Use GRefPtr<GstContext> to handle currect refcounting
+
 2016-01-27  Alex Christensen  <achristensen@webkit.org>
 
         Fix clean CMake build after r195711.

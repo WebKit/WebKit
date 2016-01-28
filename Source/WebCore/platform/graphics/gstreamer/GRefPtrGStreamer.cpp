@@ -103,6 +103,24 @@ template <> void derefGPtr<GstCaps>(GstCaps* ptr)
         gst_caps_unref(ptr);
 }
 
+template <> GRefPtr<GstContext> adoptGRef(GstContext* ptr)
+{
+    ASSERT(!g_object_is_floating(G_OBJECT(ptr)));
+    return GRefPtr<GstContext>(ptr, GRefPtrAdopt);
+}
+
+template <> GstContext* refGPtr<GstContext>(GstContext* ptr)
+{
+    if (ptr)
+        gst_context_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr<GstContext>(GstContext* ptr)
+{
+    if (ptr)
+        gst_context_unref(ptr);
+}
 
 template <> GRefPtr<GstTask> adoptGRef(GstTask* ptr)
 {
