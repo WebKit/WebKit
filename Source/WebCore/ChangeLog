@@ -1,3 +1,34 @@
+2016-01-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Garbage is displayed when root svg element has mix-blend-mode set
+        https://bugs.webkit.org/show_bug.cgi?id=150556
+
+        Reviewed by Darin Adler.
+
+        This bug happens when compositing on a CALayer and drawing on a transparent
+        layer, so it happens with WK2 with <svg style="mix-blend-mode...">. And it
+        can happen with WK1 also with <svg style="opacity=...;mix-blend-mode...">.
+        But in both cases, the SVG root renderer should be the root of the render
+        tree. So it happens only with the stand alone SVG documents.
+
+        SVGRenderContext::prepareToRenderSVGContent() ignores the opacity of
+        the SVG root but it creates a transparent layer for the blend-mode.
+
+        But RenderLayer::beginTransparencyLayers() creates a transparent layer
+        for opacity and it sets the blend-mode also.
+
+        The fix is to begin two transparent layers for the SVG root renderer: one
+        for the opacity and the second for the blend-mode. The opacity transparent
+        layer will be still managed by RenderLayer::beginTransparencyLayers(). While
+        the blend-mode transparent layer will be managed by SVGRenderContext
+        ::prepareToRenderSVGContent().
+
+        Tests: svg/css/mix-blend-mode-background-root.svg
+               svg/css/mix-blend-mode-opacity-root.svg
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+
 2016-01-27  Enrica Casucci  <enrica@apple.com>
 
         Cache results of data detection in the UI process when load completes.

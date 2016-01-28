@@ -1,3 +1,18 @@
+2016-01-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Garbage is displayed when root svg element has mix-blend-mode set
+        https://bugs.webkit.org/show_bug.cgi?id=150556
+
+        Reviewed by Darin Adler.
+
+        Ensure blending the SVG root renderer will be displayed correctly with
+        compositing when the SVG root renderer is the root of the render tree.
+
+        * svg/css/mix-blend-mode-background-root-expected.svg: Added.
+        * svg/css/mix-blend-mode-background-root.svg: Added.
+        * svg/css/mix-blend-mode-opacity-root-expected.svg: Added.
+        * svg/css/mix-blend-mode-opacity-root.svg: Added.
+
 2016-01-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Incorrect handling of iterating cursors to their end.

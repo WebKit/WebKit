@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="background-color:white; mix-blend-mode: difference;">
+    <rect x="20" y="20" width="100" height="100" fill="rgb(255,0,0)"/>
+    <rect x="140" y="20" width="100" height="100" fill="rgb(0,255,0)"/>
+    <rect x="20" y="140" width="100" height="100" fill="rgb(0,0,255)"/>
+    <rect x="140" y="140" width="100" height="100" fill="rgb(255,255,255)"/>
+</svg>
+
