@@ -12,34 +12,34 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (3,57) size 778x50 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
         RenderText {#text} at (9,22) size 224x18
           text run at (9,22) width 224: "This is some XHTML1.1 text with "
-        RenderTable {SPAN} at (233,9) size 41x31
-          RenderTableSection {SPAN} at (0,13) size 41x18
-            RenderTableRow (anonymous) at (0,0) size 41x18
-              RenderTableCell (anonymous) at (0,0) size 41x18 [r=0 c=0 rs=1 cs=1]
+        RenderTable {SPAN} at (233,9) size 40x31
+          RenderTableSection {SPAN} at (0,13) size 40x18
+            RenderTableRow (anonymous) at (0,0) size 40x18
+              RenderTableCell (anonymous) at (0,0) size 40x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,0) size 36x18
                   text run at (2,0) width 36: "Ruby"
-          RenderTableSection {SPAN} at (0,0) size 41x13
-            RenderTableRow (anonymous) at (0,0) size 41x13
-              RenderTableCell (anonymous) at (0,0) size 41x13 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 41x13
-                  text run at (0,0) width 41: "guide text"
-        RenderText {#text} at (273,22) size 57x18
-          text run at (273,22) width 57: " markup."
+          RenderTableSection {SPAN} at (0,0) size 40x13
+            RenderTableRow (anonymous) at (0,0) size 40x13
+              RenderTableCell (anonymous) at (0,0) size 40x13 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 40x13
+                  text run at (0,0) width 40: "guide text"
+        RenderText {#text} at (273,22) size 56x18
+          text run at (273,22) width 56: " markup."
       RenderBlock (anonymous) at (0,109) size 784x19
         RenderBR {BR} at (0,0) size 0x18
       RenderBlock {DIV} at (3,130) size 778x50 [bgcolor=#FFFFDD] [border: (1px solid #000000)]
         RenderText {#text} at (9,22) size 224x18
           text run at (9,22) width 224: "This is some XHTML1.1 text with "
-        RenderTable {RUBY} at (233,9) size 41x31
-          RenderTableSection {RB} at (0,13) size 41x18
-            RenderTableRow (anonymous) at (0,0) size 41x18
-              RenderTableCell (anonymous) at (0,0) size 41x18 [r=0 c=0 rs=1 cs=1]
+        RenderTable {RUBY} at (233,9) size 40x31
+          RenderTableSection {RB} at (0,13) size 40x18
+            RenderTableRow (anonymous) at (0,0) size 40x18
+              RenderTableCell (anonymous) at (0,0) size 40x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,0) size 36x18
                   text run at (2,0) width 36: "Ruby"
-          RenderTableSection {RT} at (0,0) size 41x13
-            RenderTableRow (anonymous) at (0,0) size 41x13
-              RenderTableCell (anonymous) at (0,0) size 41x13 [r=0 c=0 rs=1 cs=1]
+          RenderTableSection {RT} at (0,0) size 40x13
+            RenderTableRow (anonymous) at (0,0) size 40x13
+              RenderTableCell (anonymous) at (0,0) size 40x13 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 40x13
                   text run at (0,0) width 40: "guide text"
-        RenderText {#text} at (273,22) size 57x18
-          text run at (273,22) width 57: " markup."
+        RenderText {#text} at (273,22) size 56x18
+          text run at (273,22) width 56: " markup."

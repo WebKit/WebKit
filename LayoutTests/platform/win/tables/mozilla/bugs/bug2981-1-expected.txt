@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 784x36
         RenderTableSection {TBODY} at (0,0) size 784x36
           RenderTableRow {TR} at (0,0) size 784x36
-            RenderTableCell {TD} at (0,9) size 136x18 [bgcolor=#DDDDDD] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,9) size 135x18 [bgcolor=#DDDDDD] [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 135x18
                 RenderTableSection {TBODY} at (0,0) size 135x18
                   RenderTableRow {TR} at (0,0) size 135x18

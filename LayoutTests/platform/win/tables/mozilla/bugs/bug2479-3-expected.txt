@@ -25,10 +25,10 @@ layer at (0,0) size 785x690
         RenderBlock (anonymous) at (13,13) size 743x18
           RenderText {#text} at (0,0) size 233x18
             text run at (0,0) width 233: "If this paragraph breaks the line here:"
-        RenderTable {SPAN} at (13,31) size 59x18
-          RenderTableSection (anonymous) at (0,0) size 59x18
-            RenderTableRow (anonymous) at (0,0) size 59x18
-              RenderTableCell (anonymous) at (0,0) size 59x18 [r=0 c=0 rs=1 cs=1]
+        RenderTable {SPAN} at (13,31) size 58x18
+          RenderTableSection (anonymous) at (0,0) size 58x18
+            RenderTableRow (anonymous) at (0,0) size 58x18
+              RenderTableCell (anonymous) at (0,0) size 58x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 58x18
                   text run at (0,0) width 58: "and here:"
         RenderBlock (anonymous) at (13,49) size 743x36
@@ -56,7 +56,7 @@ layer at (0,0) size 785x690
             RenderTableCell {DIV} at (0,0) size 328x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 26x18
                 text run at (0,0) width 26: "Left"
-            RenderTableCell {DIV} at (327,0) size 442x18 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {DIV} at (327,0) size 443x18 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (406,0) size 36x18
                 text run at (406,0) width 36: "Right"
       RenderBlock {H2} at (0,400) size 769x29

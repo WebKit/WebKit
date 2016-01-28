@@ -19,22 +19,22 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 502x18
           text run at (0,0) width 502: "The following should look the same (and have identical render tree hierarchies):"
       RenderBlock {P} at (0,68) size 784x36
-        RenderTable {SPAN} at (0,0) size 31x36
-          RenderTableSection (anonymous) at (0,0) size 31x18
-            RenderTableRow (anonymous) at (0,0) size 31x18
-              RenderTableCell (anonymous) at (0,0) size 31x18 [r=0 c=0 rs=1 cs=1]
+        RenderTable {SPAN} at (0,0) size 30x36
+          RenderTableSection (anonymous) at (0,0) size 30x18
+            RenderTableRow (anonymous) at (0,0) size 30x18
+              RenderTableCell (anonymous) at (0,0) size 30x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 30x18
                   text run at (0,0) width 30: "table"
-          RenderBlock (generated) at (0,18) size 31x18
+          RenderBlock (generated) at (0,18) size 30x18
             RenderText at (0,0) size 28x18
               text run at (0,0) width 28: "after"
       RenderBlock {P} at (0,120) size 784x36
-        RenderTable {TABLE} at (0,0) size 31x36
-          RenderTableSection {TBODY} at (0,0) size 31x18
-            RenderTableRow {TR} at (0,0) size 31x18
-              RenderTableCell {TD} at (0,0) size 31x18 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 30x36
+          RenderTableSection {TBODY} at (0,0) size 30x18
+            RenderTableRow {TR} at (0,0) size 30x18
+              RenderTableCell {TD} at (0,0) size 30x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 30x18
                   text run at (0,0) width 30: "table"
-          RenderBlock {CAPTION} at (0,18) size 31x18
-            RenderText {#text} at (1,0) size 29x18
-              text run at (1,0) width 29: "after"
+          RenderBlock {CAPTION} at (0,18) size 30x18
+            RenderText {#text} at (1,0) size 28x18
+              text run at (1,0) width 28: "after"

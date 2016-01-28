@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x91
   RenderBlock {HTML} at (0,0) size 800x91
     RenderBody {BODY} at (8,8) size 784x67
-      RenderTable {TABLE} at (0,0) size 62x33 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 60x31
-          RenderTableRow {TR} at (0,2) size 60x27
-            RenderTableCell {TD} at (2,2) size 56x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 61x33 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 59x31
+          RenderTableRow {TR} at (0,2) size 59x27
+            RenderTableCell {TD} at (2,2) size 55x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderMenuList {SELECT} at (4,4) size 47x19 [bgcolor=#FFFFFF]
                 RenderBlock (anonymous) at (4,2) size 22x15
                   RenderText at (0,0) size 22x15

@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 800x20
         RenderTableSection {TBODY} at (0,0) size 800x20
           RenderTableRow {TR} at (0,0) size 800x20
-            RenderTableCell {TD} at (0,0) size 5x20 [r=0 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (0,0) size 5x20
+            RenderTableCell {TD} at (0,0) size 4x20 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 4x20
             RenderTableCell {TD} at (4,6) size 672x14 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 672x14
-            RenderTableCell {TD} at (675,3) size 106x14 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (676,3) size 105x14 [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 14x14
               RenderImage {IMG} at (14,0) size 14x14
               RenderImage {IMG} at (28,0) size 14x14
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (77,0) size 14x14
               RenderImage {IMG} at (91,0) size 14x14
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (780,6) size 16x14 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (781,6) size 15x14 [r=0 c=3 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 15x14
-            RenderTableCell {TD} at (795,0) size 5x20 [r=0 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (796,0) size 4x20 [r=0 c=4 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 4x20

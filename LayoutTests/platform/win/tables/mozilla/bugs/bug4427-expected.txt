@@ -7,66 +7,66 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 765x36
           text run at (0,0) width 765: "the following is not the bug but is related. Nav put's the images in the 2nd cell on the same line. Border widths of cells are"
           text run at (0,18) width 81: "suspect here."
-      RenderTable {TABLE} at (0,36) size 29x6 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 27x4
-          RenderTableRow {TR} at (0,0) size 27x4
-            RenderTableCell {TD} at (0,0) size 5x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,36) size 28x6 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 26x4
+          RenderTableRow {TR} at (0,0) size 26x4
+            RenderTableCell {TD} at (0,0) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 2x2
-            RenderTableCell {TD} at (4,0) size 23x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (4,0) size 22x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 10x2
               RenderImage {IMG} at (11,1) size 10x2
       RenderBlock (anonymous) at (0,42) size 784x36
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 649x18
           text run at (0,18) width 649: "the following is related to the bug. Nav put's the images in the last cell of the last table on the same line."
-      RenderTable {TABLE} at (0,78) size 701x32
-        RenderTableSection {TBODY} at (0,0) size 701x32
-          RenderTableRow {TR} at (0,0) size 701x32
-            RenderTableCell {TD} at (0,0) size 176x32 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 176x32
-                RenderTableSection {TBODY} at (0,0) size 176x32
-                  RenderTableRow {TR} at (0,0) size 176x2
-                    RenderTableCell {TD} at (0,0) size 176x2 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,78) size 700x32
+        RenderTableSection {TBODY} at (0,0) size 700x32
+          RenderTableRow {TR} at (0,0) size 700x32
+            RenderTableCell {TD} at (0,0) size 175x32 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 175x32
+                RenderTableSection {TBODY} at (0,0) size 175x32
+                  RenderTableRow {TR} at (0,0) size 175x2
+                    RenderTableCell {TD} at (0,0) size 175x2 [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 7x2
-                  RenderTableRow {TR} at (0,2) size 176x29
-                    RenderTableCell {TD} at (0,2) size 176x29 [r=1 c=0 rs=1 cs=8]
+                  RenderTableRow {TR} at (0,2) size 175x29
+                    RenderTableCell {TD} at (0,2) size 175x29 [r=1 c=0 rs=1 cs=8]
                       RenderInline {A} at (0,0) size 156x18 [color=#0000EE]
                         RenderImage {IMG} at (0,0) size 156x29
                       RenderImage {IMG} at (156,0) size 19x29
-                  RenderTableRow {TR} at (0,31) size 176x1
-                    RenderTableCell {TD} at (0,31) size 176x1 [r=2 c=0 rs=1 cs=3]
+                  RenderTableRow {TR} at (0,31) size 175x1
+                    RenderTableCell {TD} at (0,31) size 175x1 [r=2 c=0 rs=1 cs=3]
                       RenderImage {IMG} at (0,0) size 156x1
-            RenderTableCell {TD} at (175,0) size 526x23 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 526x23
-                RenderTableSection {TBODY} at (0,0) size 526x23
-                  RenderTableRow {TR} at (0,0) size 526x2
-                    RenderTableCell {TD} at (0,0) size 21x2 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (175,0) size 525x23 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 525x23
+                RenderTableSection {TBODY} at (0,0) size 525x23
+                  RenderTableRow {TR} at (0,0) size 525x2
+                    RenderTableCell {TD} at (0,0) size 20x2 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 20x2
-                    RenderTableCell {TD} at (20,0) size 21x2 [bgcolor=#FFFFFF] [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (20,0) size 20x2 [bgcolor=#FFFFFF] [r=0 c=1 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 20x2
-                    RenderTableCell {TD} at (40,0) size 21x2 [bgcolor=#FFFFFF] [r=0 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (40,0) size 20x2 [bgcolor=#FFFFFF] [r=0 c=2 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 20x2
-                    RenderTableCell {TD} at (60,0) size 21x2 [bgcolor=#FFFFFF] [r=0 c=3 rs=1 cs=1]
+                    RenderTableCell {TD} at (60,0) size 20x2 [bgcolor=#FFFFFF] [r=0 c=3 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 20x2
-                    RenderTableCell {TD} at (80,0) size 68x2 [bgcolor=#FFFFFF] [r=0 c=4 rs=1 cs=1]
+                    RenderTableCell {TD} at (80,0) size 67x2 [bgcolor=#FFFFFF] [r=0 c=4 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 67x2
-                    RenderTableCell {TD} at (147,0) size 82x2 [bgcolor=#FFFFFF] [r=0 c=5 rs=1 cs=1]
+                    RenderTableCell {TD} at (147,0) size 81x2 [bgcolor=#FFFFFF] [r=0 c=5 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 81x2
-                    RenderTableCell {TD} at (228,0) size 78x2 [bgcolor=#FFFFFF] [r=0 c=6 rs=1 cs=1]
+                    RenderTableCell {TD} at (228,0) size 77x2 [bgcolor=#FFFFFF] [r=0 c=6 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 77x2
-                    RenderTableCell {TD} at (305,0) size 64x2 [bgcolor=#FFFFFF] [r=0 c=7 rs=1 cs=1]
+                    RenderTableCell {TD} at (305,0) size 63x2 [bgcolor=#FFFFFF] [r=0 c=7 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 63x2
-                    RenderTableCell {TD} at (368,0) size 21x2 [bgcolor=#FFFFFF] [r=0 c=8 rs=1 cs=1]
+                    RenderTableCell {TD} at (368,0) size 20x2 [bgcolor=#FFFFFF] [r=0 c=8 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 20x2
-                    RenderTableCell {TD} at (388,0) size 20x2 [bgcolor=#FFFFFF] [r=0 c=9 rs=1 cs=1]
+                    RenderTableCell {TD} at (388,0) size 19x2 [bgcolor=#FFFFFF] [r=0 c=9 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 19x2
-                    RenderTableCell {TD} at (407,0) size 102x2 [bgcolor=#FFFFFF] [r=0 c=10 rs=1 cs=1]
+                    RenderTableCell {TD} at (407,0) size 101x2 [bgcolor=#FFFFFF] [r=0 c=10 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 101x2
-                    RenderTableCell {TD} at (508,0) size 18x2 [r=0 c=11 rs=1 cs=1]
+                    RenderTableCell {TD} at (508,0) size 17x2 [r=0 c=11 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 15x2
                       RenderImage {IMG} at (15,0) size 2x2
-                  RenderTableRow {TR} at (0,2) size 526x21
-                    RenderTableCell {TD} at (0,2) size 526x21 [r=1 c=0 rs=1 cs=12]
+                  RenderTableRow {TR} at (0,2) size 525x21
+                    RenderTableCell {TD} at (0,2) size 525x21 [r=1 c=0 rs=1 cs=12]
                       RenderImage {IMG} at (0,0) size 525x18
                       RenderBR {BR} at (525,18) size 0x0
                       RenderImage {IMG} at (0,18) size 525x1
@@ -74,12 +74,12 @@ layer at (0,0) size 800x600
                       RenderImage {IMG} at (0,19) size 525x2
       RenderBlock (anonymous) at (0,110) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderTable {TABLE} at (0,128) size 428x199 [bgcolor=#CCCCCC] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 426x197
-          RenderTableRow {TR} at (0,1) size 426x76
-            RenderTableCell {TD} at (1,1) size 21x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 17x18
-                text run at (2,2) width 17: "1. "
+      RenderTable {TABLE} at (0,128) size 427x199 [bgcolor=#CCCCCC] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 425x197
+          RenderTableRow {TR} at (0,1) size 425x76
+            RenderTableCell {TD} at (1,1) size 20x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 16x18
+                text run at (2,2) width 16: "1. "
             RenderTableCell {TD} at (22,1) size 230x76 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 67x18
                 text run at (2,2) width 67: "Some One"
@@ -103,17 +103,17 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (56,2) size 39x34
               RenderImage {IMG} at (94,35) size 13x1
               RenderImage {IMG} at (106,2) size 39x34
-          RenderTableRow {TR} at (0,78) size 426x23
-            RenderTableCell {TD} at (1,87) size 21x5 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,78) size 425x23
+            RenderTableCell {TD} at (1,87) size 20x5 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (22,78) size 403x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=3]
               RenderImage {IMG} at (2,2) size 398x1
               RenderBR {BR} at (400,3) size 0x0
               RenderText {#text} at (2,3) size 4x18
                 text run at (2,3) width 4: " "
-          RenderTableRow {TR} at (0,102) size 426x94
-            RenderTableCell {TD} at (1,102) size 21x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 17x18
-                text run at (2,2) width 17: "2. "
+          RenderTableRow {TR} at (0,102) size 425x94
+            RenderTableCell {TD} at (1,102) size 20x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 16x18
+                text run at (2,2) width 16: "2. "
             RenderTableCell {TD} at (22,102) size 230x94 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 175x36
                 text run at (2,2) width 166: "FORECLOSURES AAA"

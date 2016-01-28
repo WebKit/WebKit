@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 107x99 [bgcolor=#ADD8E6]
-        RenderTableSection {TBODY} at (0,0) size 107x99
-          RenderTableRow {TR} at (0,2) size 107x95
-            RenderTableCell {TD} at (2,35) size 103x28 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 106x99 [bgcolor=#ADD8E6]
+        RenderTableSection {TBODY} at (0,0) size 106x99
+          RenderTableRow {TR} at (0,2) size 106x95
+            RenderTableCell {TD} at (2,35) size 102x28 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 50x25 [bgcolor=#90EE90]
