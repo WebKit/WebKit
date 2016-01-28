@@ -1,0 +1,57 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+function loaded()
+{
+    // Make a 512k character string, which computes as 1mb of payload.
+    var object = "12345678";
+    for (var i = 0; i < 16; ++i)
+        object += object;
+    
+    log("The total payload is currently 60+mb. Pushing a 1mb object brings that 61+mb.");
+
+    try {
+        history.pushState(0, 0, object);
+        log("It fit.");
+    } catch (e) {
+        log("Unexpected exception pushing 1mb:" + e);  
+    }
+    
+    log("The total payload is currently 61+mb. Replacing the last 1mb with 2mb brings that to 62+mb.");
+
+    object += object;
+    try {
+        history.replaceState(0, 0, object);
+        log("It fit.");
+    } catch (e) {
+        log("Unexpected exception replacing 1mb with 2mb:" + e);  
+    }
+
+    log("The total payload is currently 62+mb. Replacing the last 2mb with 4mb brings that to 64+mb, and should not fit.");
+
+    object += object;
+    try {
+        history.replaceState(0, 0, object);
+        log("It fit, but should not have.");
+    } catch (e) {
+        log("Expected exception replacing 2mb with 4mb:" + e);  
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = loaded;
+
+</script>
+<body>
+<div id="logger"></div>
+</body>

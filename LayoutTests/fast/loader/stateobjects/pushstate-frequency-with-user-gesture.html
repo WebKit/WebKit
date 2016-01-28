@@ -1,0 +1,51 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+window.onload = function()
+{
+    try {
+        for( var i = 0; i < 100000; ++i ) {
+            history.pushState(0, 0, i);
+            log("Successfully added item: " + i);
+        }
+    } catch (e) {
+        log(e);
+    }
+    
+    var button = document.getElementById("button");
+    eventSender.mouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function clicked()
+{
+    try {
+        for( var i = 0; i < 100000; ++i ) {
+            history.pushState(0, 0, i);
+            log("Successfully added user gesture item: " + i);
+        }
+    } catch (e) {
+        log("User gesture: " + e);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+
+    log("Test complete");
+}
+
+</script>
+<body>
+Test should complete quickly and not crash.<br>
+<button id="button" onclick="clicked();">Click to test pushState through a user gesture</button>
+<div id="logger"></div>
+</body>

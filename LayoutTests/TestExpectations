@@ -567,3 +567,9 @@ webkit.org/b/150183 fast/css/variables/test-suite/failures/159.html [ ImageOnlyF
 webkit.org/b/150183 fast/css/variables/test-suite/failures/161.html [ ImageOnlyFailure ]
 webkit.org/b/150183 fast/css/variables/test-suite/failures/163.html [ ImageOnlyFailure ]
 webkit.org/b/150183 fast/css/variables/test-suite/failures/169.html [ ImageOnlyFailure ]
+
+# These state object tests purposefully stress a resource limit, and take multiple seconds to run.
+loader/stateobjects/pushstate-size-iframe.html [ Slow ]
+loader/stateobjects/pushstate-size.html [ Slow ]
+loader/stateobjects/replacestate-size-iframe.html [ Slow ]
+loader/stateobjects/replacestate-size.html [ Slow ]

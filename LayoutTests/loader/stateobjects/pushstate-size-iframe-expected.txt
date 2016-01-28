@@ -1,0 +1,30 @@
+Test should not crash.
+Test does pushState both from the main frame and from an iframe and makes sure they both count against the main frame document's size limit.
+Click to test pushState through a user gesture
+Parent frame successfully added item: 1 times
+Parent frame successfully added item: 2 times
+Parent frame successfully added item: 3 times
+Parent frame successfully added item: 4 times
+Parent frame successfully added item: 5 times
+Parent frame successfully added item: 6 times
+Parent frame successfully added item: 7 times
+Parent frame successfully added item: 8 times
+Parent frame successfully added item: 9 times
+Parent frame successfully added item: 10 times
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+iFrame successfully added item: 1 times
+iFrame successfully added item: 2 times
+iFrame successfully added item: 3 times
+iFrame successfully added item: 4 times
+iFrame successfully added item: 5 times
+iFrame successfully added item: 6 times
+iFrame successfully added item: 7 times
+iFrame successfully added item: 8 times
+iFrame successfully added item: 9 times
+iFrame successfully added item: 10 times
+Expected exception: Error: QuotaExceededError: DOM Exception 22
+
