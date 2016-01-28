@@ -1,3 +1,9 @@
+2016-01-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build after r195774.
+
+        * platform/network/ParsedContentRange.cpp:
+
 2016-01-28  Anders Carlsson  <andersca@apple.com>
 
         Add an ArrayValue::get overload that returns a string

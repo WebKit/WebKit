@@ -122,7 +122,7 @@ ParsedContentRange::ParsedContentRange(int64_t firstBytePosition, int64_t lastBy
 }
 
 #if OS(WINDOWS) && !defined(PRId64)
-#define #define PRId64 "I64d"
+#define PRId64 "lld"
 #endif
 
 String ParsedContentRange::headerValue() const
