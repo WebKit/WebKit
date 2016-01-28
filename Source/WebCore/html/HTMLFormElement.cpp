@@ -482,9 +482,16 @@ void HTMLFormElement::requestAutocompleteTimerFired()
 
 void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == actionAttr)
+    if (name == actionAttr) {
         m_attributes.parseAction(value);
-    else if (name == targetAttr)
+        
+        if (!m_attributes.action().isEmpty()) {
+            if (Frame* f = document().frame()) {
+                Frame& topFrame = f->tree().top();
+                topFrame.loader().mixedContentChecker().checkFormForMixedContent(topFrame.document()->securityOrigin(), document().completeURL(m_attributes.action()));
+            }
+        }
+    } else if (name == targetAttr)
         m_attributes.setTarget(value);
     else if (name == methodAttr)
         m_attributes.updateMethodType(value);
@@ -497,8 +504,7 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicStri
             document().registerForPageCacheSuspensionCallbacks(this);
         else
             document().unregisterForPageCacheSuspensionCallbacks(this);
-    }
-    else
+    } else
         HTMLElement::parseAttribute(name, value);
 }
 

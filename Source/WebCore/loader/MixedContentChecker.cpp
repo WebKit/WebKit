@@ -88,6 +88,22 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
     return allowed;
 }
 
+void MixedContentChecker::checkFormForMixedContent(SecurityOrigin* securityOrigin, const URL& url) const
+{
+    // Unconditionally allow javascript: URLs as form actions as some pages do this and it does not introduce
+    // a mixed content issue.
+    if (protocolIsJavaScript(url))
+        return;
+
+    if (!isMixedContent(securityOrigin, url))
+        return;
+
+    String message = makeString("The page at ", m_frame.document()->url().stringCenterEllipsizedToLength(), " contains a form which targets an insecure URL ", url.stringCenterEllipsizedToLength(), ".\n");
+    m_frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
+
+    client().didDisplayInsecureContent();
+}
+
 void MixedContentChecker::logWarning(bool allowed, const String& action, const URL& target) const
 {
     const char* errorString = allowed ? " was allowed to " : " was not allowed to ";
