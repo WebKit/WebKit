@@ -48,9 +48,7 @@ public:
 
     int naturalWidth() const;
     int naturalHeight() const;
-#if ENABLE(PICTURE_SIZES)
     const AtomicString& currentSrc() const { return m_currentSrc; }
-#endif
 
     bool isServerMap() const;
 
