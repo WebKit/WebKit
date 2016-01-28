@@ -1,3 +1,22 @@
+2016-01-28  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Make DedicatedWorkerThread::create() an inline template method
+        https://bugs.webkit.org/show_bug.cgi?id=153612
+
+        Reviewed by Andy Estes.
+
+        Make use of variadic template arguments and std::forward() to forward the arguments passed
+        to DedicatedWorkerThread::create() to DedicatedWorkerThread::DedicatedWorkerThread(). This
+        removes the need to duplicate code whenever we modify the parameter types or number of
+        parameters taken by DedicatedWorkerThread::DedicatedWorkerThread().
+
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::create): Deleted.
+        * workers/DedicatedWorkerThread.h: Reorganized listing of member functions such that we
+        group the creation/constructor and destructor functions.
+        (WebCore::DedicatedWorkerThread::create): Modified to be an inline template with variadic
+        parameters that std::forward()s its arguments to DedicatedWorkerThread::DedicatedWorkerThread().
+
 2016-01-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: SQLite backend doesn't handle mutation during cursor iteration.

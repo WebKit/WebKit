@@ -39,9 +39,13 @@ namespace WebCore {
 
     class DedicatedWorkerThread : public WorkerThread {
     public:
-        static Ref<DedicatedWorkerThread> create(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, const SecurityOrigin* topOrigin);
-        WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
+        template<class... Args> static Ref<DedicatedWorkerThread> create(Args&&... args)
+        {
+            return adoptRef(*new DedicatedWorkerThread(std::forward<Args>(args)...));
+        }
         virtual ~DedicatedWorkerThread();
+
+        WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
 
     protected:
         virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) override;
