@@ -1029,9 +1029,33 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
         return { };
     }
 
-    // FIXME: Once cursor support is in place, use a cursor to delete every record in the range.
-    LOG_ERROR("Currently unable to delete all records in a multi-key range");
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Currently unable to delete all records in a multi-key range") };
+    auto cursor = transaction->maybeOpenBackingStoreCursor(objectStoreID, 0, keyRange);
+    if (!cursor) {
+        LOG_ERROR("Cannot open cursor to delete range of records from the database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Cannot open cursor to delete range of records from the database") };
+    }
+
+    Vector<IDBKeyData> keys;
+    while (!cursor->didComplete() && !cursor->didError()) {
+        keys.append(cursor->currentKey());
+        cursor->advance(1);
+    }
+
+    if (cursor->didError()) {
+        LOG_ERROR("Cursor failed while accumulating range of records from the database");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Cursor failed while accumulating range of records from the database") };
+    }
+
+    IDBError error;
+    for (auto& key : keys) {
+        error = deleteRecord(*transaction, objectStoreID, key);
+        if (!error.isNull()) {
+            LOG_ERROR("deleteRange: Error deleting keys in range");
+            break;
+        }
+    }
+
+    return error;
 }
 
 IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(const IDBIndexInfo& info, const IDBKeyData& key, const ThreadSafeDataBuffer& value)
