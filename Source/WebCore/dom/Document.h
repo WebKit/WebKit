@@ -1011,8 +1011,8 @@ public:
     void unregisterForDocumentSuspensionCallbacks(Element*);
 
     void documentWillBecomeInactive();
-    void suspend();
-    void resume();
+    void suspend(ActiveDOMObject::ReasonForSuspension);
+    void resume(ActiveDOMObject::ReasonForSuspension);
 
     void registerForMediaVolumeCallbacks(Element*);
     void unregisterForMediaVolumeCallbacks(Element*);

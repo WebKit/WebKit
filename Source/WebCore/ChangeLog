@@ -1,3 +1,33 @@
+2016-01-28  Antti Koivisto  <antti@apple.com>
+
+        Tab suspension code hits asserts
+             
+
+        Reviewed by Chris Dumez.
+
+        Enabling tab suspension and navigating around in a few tabs hits an assert in
+        ScriptExecutionContext::suspendActiveDOMObject. This is because suspend/resume reasons don't pair properly
+
+        * dom/Document.cpp:
+        (WebCore::Document::documentWillBecomeInactive):
+        (WebCore::Document::suspend):
+        (WebCore::Document::resume):
+
+            Provide the reason as argument.
+
+        * dom/Document.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+
+            No need to call resumeActiveDOMObjects/resumeScriptedAnimationControllerCallbacks explicitly as Document::resume does that.
+
+        (WebCore::CachedFrame::CachedFrame):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        * page/Page.cpp:
+        (WebCore::Page::canTabSuspend):
+        (WebCore::Page::setIsTabSuspended):
+
 2016-01-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix several more problems with object store changes during cursor iteration in SQLite backend.

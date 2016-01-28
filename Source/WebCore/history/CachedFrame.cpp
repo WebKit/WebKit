@@ -92,8 +92,8 @@ void CachedFrameBase::restore()
         m_document->accessSVGExtensions().unpauseAnimations();
 
     frame.animation().resumeAnimationsForDocument(m_document.get());
-    m_document->resumeActiveDOMObjects(ActiveDOMObject::PageCache);
-    m_document->resumeScriptedAnimationControllerCallbacks();
+
+    m_document->resume(ActiveDOMObject::PageCache);
 
     // It is necessary to update any platform script objects after restoring the
     // cached page.
@@ -135,7 +135,6 @@ void CachedFrameBase::restore()
         m_document->page()->chrome().client().needTouchEvents(true);
 #endif
 
-    m_document->resume();
 }
 
 CachedFrame::CachedFrame(Frame& frame)
@@ -161,7 +160,7 @@ CachedFrame::CachedFrame(Frame& frame)
         m_childFrames.append(std::make_unique<CachedFrame>(*child));
 
     // Active DOM objects must be suspended before we cache the frame script data.
-    m_document->suspend();
+    m_document->suspend(ActiveDOMObject::PageCache);
 
     m_cachedFrameScriptData = std::make_unique<ScriptCachedFrameData>(frame);
 

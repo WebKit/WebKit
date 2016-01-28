@@ -4655,7 +4655,7 @@ void Document::documentWillBecomeInactive()
         renderView()->setIsInWindow(false);
 }
 
-void Document::suspend()
+void Document::suspend(ActiveDOMObject::ReasonForSuspension reason)
 {
     if (m_isSuspended)
         return;
@@ -4680,7 +4680,7 @@ void Document::suspend()
     }
 
     suspendScriptedAnimationControllerCallbacks();
-    suspendActiveDOMObjects(ActiveDOMObject::PageCache);
+    suspendActiveDOMObjects(reason);
 
     ASSERT(m_frame);
     m_frame->clearTimers();
@@ -4691,7 +4691,7 @@ void Document::suspend()
     m_isSuspended = true;
 }
 
-void Document::resume()
+void Document::resume(ActiveDOMObject::ReasonForSuspension reason)
 {
     if (!m_isSuspended)
         return;
@@ -4711,7 +4711,7 @@ void Document::resume()
     m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());
     m_frame->animation().resumeAnimationsForDocument(this);
 
-    resumeActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
+    resumeActiveDOMObjects(reason);
     resumeScriptedAnimationControllerCallbacks();
 
     m_visualUpdatesAllowed = true;
