@@ -310,6 +310,10 @@ void FEComposite::platformApplySoftware()
         filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
         filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositeXOR);
         break;
+    case FECOMPOSITE_OPERATOR_LIGHTER:
+        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositePlusLighter);
+        break;
     default:
         break;
     }
@@ -342,6 +346,9 @@ static TextStream& operator<<(TextStream& ts, const CompositeOperationType& type
         break;
     case FECOMPOSITE_OPERATOR_ARITHMETIC:
         ts << "ARITHMETIC";
+        break;
+    case FECOMPOSITE_OPERATOR_LIGHTER:
+        ts << "LIGHTER";
         break;
     }
     return ts;

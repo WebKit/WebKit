@@ -29,8 +29,11 @@
 namespace WebCore {
 
 template<>
+inline unsigned SVGIDLEnumLimits<CompositeOperationType>::highestExposedEnumValue() { return FECOMPOSITE_OPERATOR_ARITHMETIC; }
+
+template<>
 struct SVGPropertyTraits<CompositeOperationType> {
-    static unsigned highestEnumValue() { return FECOMPOSITE_OPERATOR_ARITHMETIC; }
+    static unsigned highestEnumValue() { return FECOMPOSITE_OPERATOR_LIGHTER; }
 
     static String toString(CompositeOperationType type)
     {
@@ -49,6 +52,8 @@ struct SVGPropertyTraits<CompositeOperationType> {
             return "xor";
         case FECOMPOSITE_OPERATOR_ARITHMETIC:
             return "arithmetic";
+        case FECOMPOSITE_OPERATOR_LIGHTER:
+            return "lighter";
         }
 
         ASSERT_NOT_REACHED();
@@ -69,6 +74,8 @@ struct SVGPropertyTraits<CompositeOperationType> {
             return FECOMPOSITE_OPERATOR_XOR;
         if (value == "arithmetic")
             return FECOMPOSITE_OPERATOR_ARITHMETIC;
+        if (value == "lighter")
+            return FECOMPOSITE_OPERATOR_LIGHTER;
         return FECOMPOSITE_OPERATOR_UNKNOWN;
     }
 };

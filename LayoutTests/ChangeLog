@@ -1,3 +1,27 @@
+2016-01-28  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [SVG] Add support for 'lighter' operator in feComposite
+        https://bugs.webkit.org/show_bug.cgi?id=141376
+
+        Reviewed by Darin Adler.
+
+        Add case to support lighter to DOM manipulation test for feComposite.
+        Add a new reftest that tests lighter case and supercedes older
+        pixel test for other modes.
+
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFECompositeElement.js:
+          Test DOM read/write of SVGFEComposite operator property with new
+          lighter mode.
+        * svg/dom/SVGAnimatedEnumeration-SVGFECompositeElement-expected.txt:
+        * svg/filters/feCompositeOpaque.html: Added.
+          A reftest that supersedes svg/filters/feComposite.svg
+          That test used opacity 0.5 which resulted in differing colors
+          across platforms. This makes it very hard to maintain the references
+          but it's probably still useful as a regression test.
+          This new test uses solid colors which result in consistency across
+          platforms and allow a reftest to be used.
+        * svg/filters/feCompositeOpaque-expected.html: Added.
+
 2016-01-28  Darin Adler  <darin@apple.com>
 
         Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase

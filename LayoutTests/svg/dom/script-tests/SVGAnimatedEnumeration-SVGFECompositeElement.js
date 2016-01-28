@@ -16,6 +16,12 @@ shouldBe("feCompositeElement.operator.baseVal", "SVGFECompositeElement.SVG_FECOM
 shouldBeEqualToString("feCompositeElement.getAttribute('operator')", "in");
 
 debug("");
+debug("Switch to 'over'");
+shouldBe("feCompositeElement.operator.baseVal = SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER");
+shouldBe("feCompositeElement.operator.baseVal", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER");
+shouldBeEqualToString("feCompositeElement.getAttribute('operator')", "over");
+
+debug("");
 debug("Switch to 'out'");
 shouldBe("feCompositeElement.operator.baseVal = SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OUT", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OUT");
 shouldBe("feCompositeElement.operator.baseVal", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OUT");
@@ -39,6 +45,11 @@ shouldBe("feCompositeElement.operator.baseVal = SVGFECompositeElement.SVG_FECOMP
 shouldBe("feCompositeElement.operator.baseVal", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC");
 shouldBeEqualToString("feCompositeElement.getAttribute('operator')", "arithmetic");
 
+// Compositing modes added to SVG 2 do not expose their enumeration values through
+// the IDL the way older modes did. Therefore, lighter cannot be selected by
+// setting operator.baseVal and SVG_FECOMPOSITE_OPERATOR_UNKNOWN is returned
+// for all new modes.
+
 debug("");
 debug("Try setting invalid values");
 shouldThrow("feCompositeElement.operator.baseVal = 7");
@@ -54,9 +65,9 @@ shouldBe("feCompositeElement.operator.baseVal", "SVGFECompositeElement.SVG_FECOM
 shouldBeEqualToString("feCompositeElement.getAttribute('operator')", "arithmetic");
 
 debug("");
-debug("Switch to 'over'");
-shouldBe("feCompositeElement.operator.baseVal = SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER");
-shouldBe("feCompositeElement.operator.baseVal", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER");
-shouldBeEqualToString("feCompositeElement.getAttribute('operator')", "over");
+debug("Switch to 'lighter'");
+feCompositeElement.setAttribute('operator', 'lighter');
+shouldBe("feCompositeElement.operator.baseVal", "SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_UNKNOWN");
+shouldBeEqualToString("feCompositeElement.getAttribute('operator')", "lighter");
 
 successfullyParsed = true;

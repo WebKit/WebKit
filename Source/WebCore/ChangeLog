@@ -1,3 +1,36 @@
+2016-01-28  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        [SVG] Add support for 'lighter' operator in feComposite
+        https://bugs.webkit.org/show_bug.cgi?id=141376
+
+        Reviewed by Darin Adler.
+
+        Added new cases where needed to support the lighter (aka 'plus')
+        Porter Duff operator in SVG Filter Effects.
+        https://www.w3.org/TR/filter-effects/#valdef-operator-lighter
+        Note that in the specification, no constant was added to the IDL for
+        the lighter operator. 
+
+        Test: svg/filters/feCompositeOpaque.html
+              svg/dom/script-tests/SVGAnimatedEnumeration-SVGFECompositeElement.js
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::platformApplySoftware):
+          Add case to support lighter.
+        (WebCore::operator<<):
+          Add case to support lighter for text stream operations.
+        * platform/graphics/filters/FEComposite.h:
+          Add case for lighter to CompositeOperationType enum.
+        * svg/SVGFECompositeElement.h:
+        (WebCore::SVGIDLEnumLimits<CompositeOperationType>::highestExposedEnumValue):
+          Higest exposed value is arithmetic - do not expose lighter.
+        (WebCore::SVGPropertyTraits<CompositeOperationType>::highestEnumValue):
+          Highest possible value is now lighter.
+        (WebCore::SVGPropertyTraits<CompositeOperationType>::toString):
+          Add case to support lighter.
+        (WebCore::SVGPropertyTraits<CompositeOperationType>::fromString):
+          Add case to support lighter.
+
 2016-01-28  Darin Adler  <darin@apple.com>
 
         Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
