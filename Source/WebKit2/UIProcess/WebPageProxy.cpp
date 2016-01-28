@@ -477,8 +477,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_vibration = WebVibrationProxy::create(this);
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInitialization.h>)
-#include <WebKitAdditions/WebPageProxyInitialization.h>
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInitialization.cpp>)
+#include <WebKitAdditions/WebPageProxyInitialization.cpp>
 #endif
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
@@ -709,8 +709,8 @@ void WebPageProxy::reattachToWebProcess()
     m_videoFullscreenManager = WebVideoFullscreenManagerProxy::create(*this);
 #endif
 
-#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInitialization.h>)
-#include <WebKitAdditions/WebPageProxyInitialization.h>
+#if defined(__has_include) && __has_include(<WebKitAdditions/WebPageProxyInitialization.cpp>)
+#include <WebKitAdditions/WebPageProxyInitialization.cpp>
 #endif
 
     initializeWebPage();

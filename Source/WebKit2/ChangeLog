@@ -1,3 +1,14 @@
+2016-01-27  Anders Carlsson  <andersca@apple.com>
+
+        Include the right WebKitAdditions files
+        https://bugs.webkit.org/show_bug.cgi?id=153572
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+
 2016-01-27  Daniel Bates  <dabates@apple.com>
 
         Move ContentSecurityPolicy.{cpp, h} to its own directory
