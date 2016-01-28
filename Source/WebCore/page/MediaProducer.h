@@ -38,6 +38,8 @@ public:
         RequiresPlaybackTargetMonitoring = 1 << 3,
         ExternalDeviceAutoPlayCandidate = 1 << 4,
         DidPlayToEnd = 1 << 5,
+        HasPlaybackTargetAvailabilityListener = 1 << 9,
+        HasAudioOrVideo = 1 << 10,
     };
     typedef unsigned MediaStateFlags;
 

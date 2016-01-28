@@ -1,3 +1,23 @@
+2016-01-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Cherry-pick r195592 and parts of r194672 to fix rdar://24154288
+        <rdar://problem/24154288> FaradayDotFour: Do not see AirPlay icon in Vimeo
+
+        Unreviewed.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::mediaProducerStateString): Log a new flag.
+        (WebCore::WebMediaSessionManager::clientStateDidChange): Schedule a client
+          reconfiguration if the 'requires monitoring', 'has listener', or 'has audio or
+          video' flags have changed.
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetMonitoring): Start monitoring if
+          at least one client has a listener and at least one has audio/video.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaState): Set new flags.
+
+        * page/MediaProducer.h: Add new flags.
+
 2016-01-27  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r195609. rdar://problem/24337868
