@@ -1,3 +1,17 @@
+2016-01-28  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [ThreadedCompositor] Fix flickers happening on video when entering/leaving fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=153585
+
+        Reviewed by Michael Catanzaro.
+
+        Video thumbnail flickers where threaded compositor is enabled. This is because
+        a content buffer is not set to a target layer which changes before swapBuffer.
+        This is a very rare case though, it happens where video size changes many times in a short period.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::activateOnCompositingThread):
+
 2016-01-27  Jer Noble  <jer.noble@apple.com>
 
         Allow CachedResourceLoader clients to opt out of the MemoryCache.

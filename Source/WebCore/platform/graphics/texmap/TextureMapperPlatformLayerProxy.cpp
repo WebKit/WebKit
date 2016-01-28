@@ -63,6 +63,9 @@ void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* co
     LockHolder locker(m_lock);
     m_compositor = compositor;
     m_targetLayer = targetLayer;
+    if (m_targetLayer && m_currentBuffer)
+        m_targetLayer->setContentsLayer(m_currentBuffer.get());
+
     m_compositorThreadUpdateTimer = std::make_unique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired);
 }
 
