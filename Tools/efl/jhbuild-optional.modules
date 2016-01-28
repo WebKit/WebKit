@@ -5,8 +5,6 @@
 
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
-  <repository type="git" name="github"
-     href="https://github.com/czechk"/>
 
   <autotools id="at-spi2-core"
           autogenargs="--disable-introspection">
@@ -30,9 +28,5 @@
       <dep package="at-spi2-core"/>
     </dependencies>
   </autotools>
-
-  <autotools id="eail" autogen-sh="autogen.sh">
-    <branch repo="github" module="eail.git" checkoutdir="eail-1.0.0"/>
-</autotools>
 
 </moduleset>

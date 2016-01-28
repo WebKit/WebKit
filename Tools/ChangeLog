@@ -1,3 +1,17 @@
+2016-01-27  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Remove unused accessibility related code
+        https://bugs.webkit.org/show_bug.cgi?id=153543
+
+        Reviewed by Darin Adler.
+
+        Removed reference to EAIL library.
+        It not going to be support anymore. There have been changes in
+        EFL/Elementary in terms of the accessibility and we should
+        follow those.
+
+        * efl/jhbuild-optional.modules:
+
 2016-01-27  Daniel Bates  <dabates@apple.com>
 
         Remove WebKitSystemInterface for iOS SDK < 9
