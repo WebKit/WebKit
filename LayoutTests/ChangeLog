@@ -1,5 +1,18 @@
 2016-01-28  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r193931. rdar://problem/24190799
+
+    2015-12-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaselining fast/text/emoji.html for Yosemite.
+            https://bugs.webkit.org/show_bug.cgi?id=152147
+
+            Unreviewed test gardening.
+
+            * platform/mac-yosemite/fast/text/emoji-expected.txt: Added.
+
+2016-01-28  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r194237. rdar://problem/24268438
 
     2015-12-17  Zalan Bujtas  <zalan@apple.com>
