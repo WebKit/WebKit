@@ -1350,7 +1350,7 @@ bool AccessibilityUIElement::isPressActionSupported()
         return false;
 
     const gchar* actionName = atk_action_get_name(ATK_ACTION(m_element.get()), 0);
-    return equalLettersIgnoringASCIICase(actionName, "press") || equalLettersIgnoringASCIICase(actionName, "jump");
+    return equalLettersIgnoringASCIICase(String(actionName), "press") || equalLettersIgnoringASCIICase(String(actionName), "jump");
 }
 
 bool AccessibilityUIElement::isIncrementActionSupported()

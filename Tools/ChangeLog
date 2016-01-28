@@ -1,3 +1,10 @@
+2016-01-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r195743.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::isPressActionSupported):
+
 2016-01-12  Jer Noble  <jer.noble@apple.com>
 
         Custom protocol loading through AVFoundation does not support byte-range requests.
