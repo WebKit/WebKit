@@ -39,7 +39,7 @@ namespace WebCore {
 
     class DedicatedWorkerThread : public WorkerThread {
     public:
-        template<class... Args> static Ref<DedicatedWorkerThread> create(Args&&... args)
+        template<typename... Args> static Ref<DedicatedWorkerThread> create(Args&&... args)
         {
             return adoptRef(*new DedicatedWorkerThread(std::forward<Args>(args)...));
         }

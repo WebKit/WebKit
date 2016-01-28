@@ -6,7 +6,7 @@
         Reviewed by Andy Estes.
 
         Make use of variadic template arguments and std::forward() to forward the arguments passed
-        to DedicatedWorkerThread::create() to DedicatedWorkerThread::DedicatedWorkerThread(). This
+        from DedicatedWorkerThread::create() to DedicatedWorkerThread::DedicatedWorkerThread(). This
         removes the need to duplicate code whenever we modify the parameter types or number of
         parameters taken by DedicatedWorkerThread::DedicatedWorkerThread().
 
