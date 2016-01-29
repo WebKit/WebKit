@@ -1024,8 +1024,16 @@ Controller.prototype = {
         this.controls.panel.classList.remove(this.ClassNames.show);
     },
 
+    controlsAreAlwaysVisible: function()
+    {
+        return this.controls.panel.classList.contains(this.ClassNames.noVideo);
+    },
+
     controlsAreHidden: function()
     {
+        if (this.controlsAreAlwaysVisible())
+            return false;
+
         var panel = this.controls.panel;
         return (!panel.classList.contains(this.ClassNames.show) || panel.classList.contains(this.ClassNames.hidden))
             && (panel.parentElement.querySelector(':hover') !== panel);

@@ -1,3 +1,22 @@
+2016-01-29  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GStreamer] built-in media player doesn't update
+        https://bugs.webkit.org/show_bug.cgi?id=151816
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The timeline of audio controls in media document is not properly updated since it is assumed
+        that the controls are hidden as soon as playing. However, such full page audio always has
+        opacity : 1 declared by video:-webkit-full-page-media::-webkit-media-controls-panel.no-video.
+        i.e. it is not actually hidden. We can fix this by simply returning false for no-video media
+        in controlsAreHidden();
+
+        Test: media/audio-controls-timeline-in-media-document.html
+
+        * Modules/mediacontrols/mediaControlsBase.js:
+        (Controller.prototype.controlsAreAlwaysVisible):
+        (Controller.prototype.controlsAreHidden):
+
 2016-01-29  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Store lines instead of tracks in GridResolvedPosition

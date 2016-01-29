@@ -1,3 +1,13 @@
+2016-01-29  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GStreamer] built-in media player doesn't update
+        https://bugs.webkit.org/show_bug.cgi?id=151816
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * media/audio-controls-timeline-in-media-document-expected.txt: Added.
+        * media/audio-controls-timeline-in-media-document.html: Added.
+
 2016-01-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: SQLite backend mismanages key generator values.
