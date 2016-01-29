@@ -71,6 +71,9 @@ WebInspector.Setting = class Setting extends WebInspector.Object
 
     set value(value)
     {
+        if (this._value === value)
+            return;
+
         this._value = value;
 
         if (!window.InspectorTest && window.localStorage) {
