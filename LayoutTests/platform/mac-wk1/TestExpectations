@@ -253,9 +253,13 @@ inspector/script-profiler/event-type-API.html
 ########################################
 ### START OF (3) IndexedDB failures with SQLite
 
-# SQLite backend tests with text failures
+# Completes successfully after ~40 seconds in a debug build with logging
 imported/w3c/indexeddb/idbindex-multientry-big.htm [ Failure ]
+
+# Cursor iterates one less time than expected
 storage/indexeddb/cursor-continue-validity.html [ Failure ]
+
+# Integer part of the test iterates 0, 1, 2, Inf, -1, -2, -Inf - Should be in order from -Inf to Inf.
 storage/indexeddb/cursor-primary-key-order.html [ Failure ]
 
 # SQLite backend tests that timeout
