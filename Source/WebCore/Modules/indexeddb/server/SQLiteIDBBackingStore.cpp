@@ -763,7 +763,15 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
 
         IDBError error = updateOneIndexForAddRecord(info, key, valueBuffer);
         if (!error.isNull()) {
-            // FIXME: Remove this newly added index.
+            SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexInfo WHERE id = ? AND objectStoreID = ?;"));
+            if (sql.prepare() != SQLITE_OK
+                || sql.bindInt64(1, info.identifier()) != SQLITE_OK
+                || sql.bindInt64(2, info.objectStoreIdentifier()) != SQLITE_OK
+                || sql.step() != SQLITE_DONE) {
+                LOG_ERROR("Index creation failed due to uniqueness constraint failure, but there was an error deleting the Index record from the database");
+                return { IDBDatabaseException::UnknownError, ASCIILiteral("Index creation failed due to uniqueness constraint failure, but there was an error deleting the Index record from the database") };
+            }
+
             return error;
         }
 
@@ -1090,8 +1098,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
         return { };
 
     IDBError error;
-    Vector<std::pair<uint64_t, IndexKey>> changedIndexRecords;
-
+    bool anyRecordsSucceeded = false;
     for (auto& index : info.indexMap().values()) {
         IndexKey indexKey;
         generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue, indexKey);
@@ -1103,10 +1110,22 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
         if (!error.isNull())
             break;
 
-        changedIndexRecords.append(std::make_pair(index.identifier(), indexKey));
+        anyRecordsSucceeded = true;
     }
 
-    // FIXME: If any of the index puts failed, revert the ones that went through (changedIndexRecords).
+    if (!error.isNull() && anyRecordsSucceeded) {
+        RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(key);
+
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM IndexRecords WHERE objectStoreID = ? AND value = CAST(? AS TEXT);"));
+
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, info.identifier()) != SQLITE_OK
+            || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Adding one Index record failed, but failed to remove all others that previously succeeded");
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Adding one Index record failed, but failed to remove all others that previously succeeded") };
+        }
+    }
 
     return error;
 }
@@ -1148,7 +1167,16 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
 
     auto error = updateAllIndexesForAddRecord(objectStoreInfo, keyData, value);
 
-    // FIXME: If there was an error indexing this record, remove it.
+    if (!error.isNull()) {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
+            || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Indexing new object store record failed, but unable to remove the object store record itself");
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Indexing new object store record failed, but unable to remove the object store record itself") };
+        }
+    }
 
     transaction->notifyCursorsOfChanges(objectStoreInfo.identifier());
 

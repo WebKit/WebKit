@@ -1,3 +1,19 @@
+2016-01-29  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/modern/index-3.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=153661
+
+        Reviewed by Tim Horton.
+
+        No new tests (1 failing test now passes, others get closer).
+
+        When indexing a new record fails due to uniqueness constraints, remove all traces of the record.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+
 2016-01-29  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Check vertex array bounds before permitting a glDrawArrays to execute
