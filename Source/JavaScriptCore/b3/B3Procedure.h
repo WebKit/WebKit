@@ -312,7 +312,7 @@ public:
         const Procedure& m_procedure;
     };
 
-    ValuesCollection values() const { return ValuesCollection(*this); }
+    const ValuesCollection& values() const { return m_valuesCollection; }
 
     void deleteValue(Value*);
 
@@ -382,6 +382,7 @@ private:
     std::unique_ptr<Air::Code> m_code;
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
+    ValuesCollection m_valuesCollection;
 };
 
 } } // namespace JSC::B3

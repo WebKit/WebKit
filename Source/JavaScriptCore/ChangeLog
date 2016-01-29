@@ -1,3 +1,25 @@
+2016-01-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [B3] REGRESSION(r195395): testComplex(64, 128) asserts on Linux with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=153422
+
+        Reviewed by Filip Pizlo.
+
+        Previously proc.values() returns ValuesCollection (Not reference!).
+        values.values takes const ValueCollection&.
+        And later it produces IndexSet<Value>::Iterable<Procedure::ValuesCollection>,
+        it holds const ValueCollection& as its member.
+        But IndexSet<Value>::Iterable<Procedure::ValuesCollection> is just an instance.
+        So after creating this, the lifetime of the ValueCollection const reference finished.
+
+        To fix that, we hold ValuesCollection as a member of Procedure.
+        And change the signature to const ValuesCollection& Procedure::values().
+
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::Procedure):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::values):
+
 2016-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler

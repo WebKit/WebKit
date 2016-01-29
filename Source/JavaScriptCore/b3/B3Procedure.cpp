@@ -46,6 +46,7 @@ Procedure::Procedure()
     , m_lastPhaseName("initial")
     , m_byproducts(std::make_unique<OpaqueByproducts>())
     , m_code(new Air::Code(*this))
+    , m_valuesCollection(*this)
 {
 }
 
