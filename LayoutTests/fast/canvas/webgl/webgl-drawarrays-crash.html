@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/webgl-test-utils.js"> </script>
+    <script>
+    function runTest()
+    {
+        var canvas = document.getElementById('webgl-canvas');
+        var gl = WebGLTestUtils.create3DContext(canvas);
+        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        var program = gl.createProgram();
+        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, 'attribute vec2 pos; void main() { gl_Position = vec4(pos, 0, 1); }');
+        gl.compileShader(vertexShader);
+        gl.shaderSource(fragmentShader, 'precision mediump float; void main() { gl_FragColor = vec4(0,0.8,0,1); }');
+        gl.compileShader(fragmentShader);
+        gl.attachShader(program, vertexShader);
+        gl.shaderSource(vertexShader, 'attribute vec2 pos; void main() { gl_Position = vec4(pos, 0, 1); }');
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        gl.drawArrays(gl.TRIANGLES, 22000, 440000);
+
+        if (window.testRunner)
+          testRunner.notifyDone();
+    }
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
+      testRunner.overridePreference("WebKitWebGLEnabled", "1");
+      testRunner.waitUntilDone();
+    }
+
+    window.onpageshow = runTest;
+    </script>
+</head>
+<body>
+    <div>PASS. You didn't crash.</div>
+    <canvas id="webgl-canvas" width="100px" height="100px"></canvas>
+</body>
+</html>

@@ -1,3 +1,19 @@
+2016-01-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Check vertex array bounds before permitting a glDrawArrays to execute
+        https://bugs.webkit.org/show_bug.cgi?id=153643
+        <rdar://problem/23424456>
+
+        Reviewed by Dean Jackson.
+
+        Tested by fast/canvas/webgl/webgl-drawarrays-crash.html.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateDrawArrays): Make sure that we have at
+        least one buffer bound to a program if a drawArray call with a non-zero range of
+        requested data is being made.
+        (WebCore::WebGLRenderingContextBase::validateDrawElements): Drive-by formatting fix.
+
 2016-01-29  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix logging that overwhelms python with strings of excessive length.
