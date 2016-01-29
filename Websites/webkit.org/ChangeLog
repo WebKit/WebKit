@@ -1,3 +1,12 @@
+2016-01-29  Timothy Hatcher  <timothy@apple.com>
+
+        Add some defintion list styles.
+
+        * wp-content/themes/webkit/style.css:
+        (dl):
+        (dt):
+        (dd):
+
 2016-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should have documentation

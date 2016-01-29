@@ -45,6 +45,15 @@ body {
 ol, ul {
     list-style: none;
 }
+dl {
+    margin: 2rem 0;
+}
+dt {
+    font-weight: bold;
+}
+dd {
+    margin: 0 3rem;
+}
 blockquote, q {
     quotes: none;
 }
