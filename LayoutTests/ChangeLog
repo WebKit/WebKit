@@ -1,5 +1,14 @@
 2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking 3 displaylist tests as flaky on ios-simulator
+        https://bugs.webkit.org/show_bug.cgi?id=153656
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline fast/forms/auto-fill-button/input-contacts-auto-fill-button.html for ios-simulator
         https://bugs.webkit.org/show_bug.cgi?id=153567
 

@@ -2895,3 +2895,8 @@ webkit.org/b/153371 imported/w3c/web-platform-tests/XMLHttpRequest/getresponsehe
 webkit.org/b/152446 http/tests/loading/preload-no-store-frame-src.html [ Failure ]
 
 webkit.org/b/153498 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
+
+# displaylist tests are flaky on ios-simulator wk2
+webkit.org/b/153656 displaylists/canvas-display-list.html [ Pass Failure ]
+webkit.org/b/153656 displaylists/extent-includes-shadow.html [ Pass Failure ]
+webkit.org/b/153656 displaylists/extent-includes-transforms.html [ Pass Failure ]
