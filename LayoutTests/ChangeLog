@@ -1,3 +1,12 @@
+2016-01-28  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Enabled all of the imported IndexedDB tests that pass in the SQLite backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=153623
+
+        Reviewed by Andy Estes.
+
+        * platform/mac-wk1/TestExpectations: TONS of these now pass. List of failing tests is now small.
+
 2016-01-28  Zalan Bujtas  <zalan@apple.com>
 
         [Win] gardening after r195740. (more to follow)
