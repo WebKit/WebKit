@@ -141,8 +141,8 @@ struct GlobalObjectMethodTable {
     typedef bool (*AllowsAccessFromFunctionPtr)(const JSGlobalObject*, ExecState*);
     AllowsAccessFromFunctionPtr allowsAccessFrom;
 
-    typedef bool (*SupportsProfilingFunctionPtr)(const JSGlobalObject*); 
-    SupportsProfilingFunctionPtr supportsProfiling;
+    typedef bool (*SupportsLegacyProfilingFunctionPtr)(const JSGlobalObject*);
+    SupportsLegacyProfilingFunctionPtr supportsLegacyProfiling;
 
     typedef bool (*SupportsRichSourceInfoFunctionPtr)(const JSGlobalObject*);
     SupportsRichSourceInfoFunctionPtr supportsRichSourceInfo;
@@ -360,7 +360,7 @@ public:
     DECLARE_EXPORT_INFO;
 
     bool hasDebugger() const { return m_debugger; }
-    bool hasProfiler() const;
+    bool hasLegacyProfiler() const;
     const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
 
 protected:
@@ -619,7 +619,7 @@ public:
     const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
 
     static bool allowsAccessFrom(const JSGlobalObject*, ExecState*) { return true; }
-    static bool supportsProfiling(const JSGlobalObject*) { return false; }
+    static bool supportsLegacyProfiling(const JSGlobalObject*) { return false; }
     static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
     JS_EXPORT_PRIVATE ExecState* globalExec();

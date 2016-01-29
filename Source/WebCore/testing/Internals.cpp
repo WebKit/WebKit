@@ -372,7 +372,7 @@ void Internals::resetToConsistentState(Page* page)
 
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
-    page->inspectorController().setProfilerEnabled(false);
+    page->inspectorController().setLegacyProfilerEnabled(false);
 #if ENABLE(VIDEO_TRACK)
     page->group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
     page->group().captionPreferences()->setTestingMode(false);
@@ -1839,7 +1839,7 @@ void Internals::closeDummyInspectorFrontend()
     m_inspectorFrontend = nullptr;
 }
 
-void Internals::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)
+void Internals::setLegacyJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)
 {
     Page* page = contextDocument()->frame()->page();
     if (!page) {
@@ -1847,7 +1847,7 @@ void Internals::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)
         return;
     }
 
-    page->inspectorController().setProfilerEnabled(enabled);
+    page->inspectorController().setLegacyProfilerEnabled(enabled);
 }
 
 void Internals::setInspectorIsUnderTest(bool isUnderTest, ExceptionCode& ec)

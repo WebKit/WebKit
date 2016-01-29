@@ -403,22 +403,17 @@ void InspectorController::setIndicating(bool indicating)
 #endif
 }
 
-bool InspectorController::profilerEnabled() const
+bool InspectorController::legacyProfilerEnabled() const
 {
-    return m_instrumentingAgents->persistentInspectorTimelineAgent();
+    return m_legacyProfilerEnabled;
 }
 
-void InspectorController::setProfilerEnabled(bool enable)
+void InspectorController::setLegacyProfilerEnabled(bool enable)
 {
-    ErrorString unused;
+    m_legacyProfilerEnabled = enable;
 
-    if (enable) {
-        m_instrumentingAgents->setPersistentInspectorTimelineAgent(m_timelineAgent);
-        m_timelineAgent->start(unused);
-    } else {
-        m_instrumentingAgents->setPersistentInspectorTimelineAgent(nullptr);
-        m_timelineAgent->stop(unused);
-    }
+    m_instrumentingAgents->setPersistentInspectorTimelineAgent(enable ? m_timelineAgent : nullptr);
+    m_scriptDebugServer.recompileAllJSFunctions();
 }
 
 bool InspectorController::developerExtrasEnabled() const
