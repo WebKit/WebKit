@@ -3,7 +3,7 @@ This test aims to check for rangeOverflow flag with time input fields
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS The value "13:16" doesn't overflow the maximum value "".
+PASS The value "13:16" doesn't overflow the maximum value "null".
 PASS The value "13:16" doesn't overflow the maximum value "".
 PASS The value "13:16" doesn't overflow the maximum value "foo".
 PASS The value "13:16" doesn't overflow the maximum value "13:16".

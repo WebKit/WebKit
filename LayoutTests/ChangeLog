@@ -1,3 +1,21 @@
+2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/forms tests after r195700
+        https://bugs.webkit.org/show_bug.cgi?id=153618
+
+        Unreviewed test gardening.
+
+        * fast/forms/date/ValidityState-rangeOverflow-date-expected.txt:
+        * fast/forms/date/ValidityState-rangeUnderflow-date-expected.txt:
+        * fast/forms/datetimelocal/ValidityState-rangeOverflow-datetimelocal-expected.txt:
+        * fast/forms/datetimelocal/ValidityState-rangeUnderflow-datetimelocal-expected.txt:
+        * fast/forms/month/ValidityState-rangeOverflow-month-expected.txt:
+        * fast/forms/month/ValidityState-rangeUnderflow-month-expected.txt:
+        * fast/forms/time/time-validity-rangeoverflow-expected.txt:
+        * fast/forms/time/time-validity-rangeunderflow-expected.txt:
+        * fast/forms/week/ValidityState-rangeOverflow-week-expected.txt:
+        * fast/forms/week/ValidityState-rangeUnderflow-week-expected.txt:
+
 2016-01-29  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix logging that overwhelms python with strings of excessive length.

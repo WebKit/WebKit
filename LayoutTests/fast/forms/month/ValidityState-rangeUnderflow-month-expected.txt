@@ -3,7 +3,7 @@ This test aims to check for rangeUnderflow flag with month input fields
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS The value "2010-01" doesn't underflow the minimum value "".
+PASS The value "2010-01" doesn't underflow the minimum value "null".
 PASS The value "2010-01" doesn't underflow the minimum value "".
 PASS The value "2010-01" doesn't underflow the minimum value "foo".
 PASS The value "1000-01" doesn't underflow the minimum value "".
