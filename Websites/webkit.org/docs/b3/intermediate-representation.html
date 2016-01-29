@@ -1,0 +1,518 @@
+<html>
+  <head>
+    <title>B3 Intermediate Representation</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <h1><a href="index.html">Bare Bones Backend</a> / B3 Intermediate Representation</h1>
+    <p>B3 IR is a C-like SSA representation of a procedure.  A procedure has a root block at
+      which it starts execution when it is invoked.  A procedure does not have to terminate, but
+      if it does, then it can be either due to a Return, which gracefully returns some value, or
+      by a side-exit at designated instructions.  B3 gives the client a lot of flexibility to
+      implement many different kinds of side-exits.</p>
+    
+    <p>B3 is designed to represent procedures for the purpose of transforming them.  Knowing
+      what transformations are legal requires knowing what a procedure does.  A transformation
+      is valid if it does not change the observable behavior of a procedure.  This document
+      tells you what B3 procedures do by telling you what each construct in B3 IR does.</p>
+    
+    <h2>Procedure</h2>
+
+    <p>The parent object of all things in B3 is the Procedure.  Every time you want to compile
+      something, you start by creating a Procedure.  The lifecycle of a Procedure is
+      usually:</p>
+
+    <ol>
+      <li>Create the Procedure.</li>
+      <li>Populate the Procedure with code.</li>
+      <li>Use either the <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/B3Compilation.h">high-level
+          Compilation API</a> or the
+        <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/B3Generate.h">low-level
+          generation API</a>.</li>
+    </ol>
+
+    <p>The act of compiling the Procedure changes it in-place, making it unsuitable for
+      compiling again.  Always create a new Procedure every time you want to compile
+      something.</p>
+
+    <h2>Types</h2>
+
+    <p>B3 has a trivial type system with only five types:</p>
+
+    <dl>
+      <dt>Void</dt>
+      <dd>Used to say that an instruction does not return a value.</dd>
+
+      <dt>Int32</dt>
+      <dd>32-bit integer.  Integers don't have sign, but operations on them do.</dd>
+
+      <dt>Int64</dt>
+      <dd>64-bit integer.</dd>
+
+      <dt>Float</dt>
+      <dd>32-bit binary floating point number.</dd>
+
+      <dt>Double</dt>
+      <dd>64-bit binary floating point number.</dd>
+    </dl>
+
+    <h2>Values</h2>
+
+    <p>Variables, and the instructions that define them, are represented using the Value object.
+      The Value object has a return type, an opcode, and zero or more children.  Children are
+      references to other Values.  Values also have a unique 32-bit index that is used as the
+      name.  Those values are used as input to the instruction that computes this value.  For
+      example:</p>
+
+    <pre><code>Int32 @3 = Add(@1, @2)</code></pre>
+
+    <p>This represents a single Value instance.  Its index is 3.  It is an Int32.  The opcode is
+      Add, and its children are @1 and @2.</p>
+
+    <p>Values may also have additional meta-data.  We use special subclasses of the B3::Value
+      class for values that need meta-data.  For example, the Load value needs a 32-bit offset
+      for the load.  We use the MemoryValue class for memory-accessing values, which all have
+      such an offset.</p>
+
+    <h2>Stack Slot</h2>
+
+    <p>B3 exposes the concept of stack-allocated data and gives the client a lot of control.
+      You can force stack slots to end up at a particular offset from the frame pointer, though
+      this is very dangerous.  After compilation is done, you can get the selected frame pointer
+      offset from any stack slot.  Usually, you let B3 select where stack slots go, and then use
+      the StackSlot API to get its FP offset after compilation.</p>
+
+    <p>Stack slots are also used for creating non-SSA variables with the intention of having B3
+      convert them into SSA.  There are two kinds of stack lots.</p>
+
+    <dl>
+      <dt>Anonymous</dt>
+      <dd>Anonymous stack slots are used to represent local variables that aren't in SSA form.
+        B3 is allowed to assume that nobody will store to an anonymous stack slot except through
+        Store instructions in the B3 procedure.  B3 is allowed to assume that a Store that does
+        not write to the entire anonymous stack slot leaves the unwritten part in an undefined
+        state.  Usually, anonymous stack slots are allocated to have the same size as the type
+        of variable they are being used to represent.</dd>
+
+      <dt>Locked</dt>
+      <dd>These stack slots are assumed to operate "as if" they were in the heap, in the sense
+        that the may get read or written using operations not visible in B3 IR.</dd>
+    </dl>
+
+    <p>The fixSSA() phase will convert anonymous stack slots to SSA.</p>
+
+    <h2>Control flow</h2>
+
+    <p>B3 represents control flow using basic blocks.  Each basic block may have zero or more
+      predecessors.  Each basic block may have zero or more successors.  The successors are
+      controlled by the basic block's last Value, which must be a ControlValue instance.</p>
+
+    <p>Each basic block contains a Vector&lt;Value*&gt; as the contents of the block.</p>
+
+    <h2>Opcodes</h2>
+
+    <p>This section describes opcodes in the following format:</p>
+
+    <dl>
+      <dt>Int32 Foo(Int64, Double)</dt>
+      <dd>This describes an opcode named Foo that uses Int32 as its return type and takes two
+        children - one of type Int64 and another of type Double.</dd>
+    </dl>
+
+    <p>We sometimes use the wildcard type T to represent polymorphic operations, like "T Add(T,
+      T)".  This means that the value must take two children of the same type and returns a
+      value of that type.  We use the type IntPtr to mean either Int32, or Int64, depending on
+      the platform.</p>
+
+    <h3>Opcode descriptions</h3>
+
+    <dl>
+      <dt>Void Nop()</dt>
+      <dd>The empty value.  Instead of removing Values from basic blocks, most optimizations
+        convert them to Nops.  Various phases run fix-up where all Nops are removed in one pass.
+        It's common to see Nops in intermediate versions of B3 IR during optimizations.  Nops
+        never lead to any code being generated and they do not impede optimizations, so they are
+        usually harmless.  You can convert a Value to a Nop by doing convertToNop().</dd>
+
+      <dt>T Identity(T)</dt>
+      <dd>Returns the passed value.  May be used for any type except Void.  Instead of replacing
+        all uses of a Value with a different Value, most optimizations convert them to Identity.
+        Various phases run fix-up where all uses of Identity are replaced with the Identity's
+        child (transitively, so Identity(Identity(Identity(@x))) is changed to just @x).  Even
+        the instruction selector "sees through" Identity.  You can remove all references to
+        Identity in any value by calling Value::performSubstitution().  You can convert a Value
+        to an Identity by doing convertToIdentity(otherValue).  If the value is Void,
+        convertToIdentity() converts it to a Nop instead.</dd>
+
+      <dt>Int32 Const32(constant)</dt>
+      <dd>32-bit integer constant.  Must use the Const32Value class, which has space for the
+        int32_t constant.</dd>
+
+      <dt>Int64 Const64(constant)</dt>
+      <dd>64-bit integer constant.  Must use the Const64Value class, which has space for the
+        int64_t constant.</dd>
+
+      <dt>Float ConstFloat(constant)</dt>
+      <dd>Float constant.  Must use the ConstFloatValue class, which has space for the float constant.</dd>
+
+      <dt>Double ConstDouble(constant)</dt>
+      <dd>Double constant.  Must use the ConstDoubleValue class, which has space for the double constant.</dd>
+
+      <dt>IntPtr SlotBase(stackSlot)</dt>
+      <dd>Returns a pointer to the base of the given stack slot.  Must use the SlotBaseValue
+        class.</dd>
+
+      <dt>IntPtr|Double ArgumentReg(%register)</dt>
+      <dd>Returns the value that the given register had at the prologue of the procedure.  It
+        returns IntPtr for general-purpose registers and Double for FPRs.  Must use the
+        ArgumentRegValue class.</dd>
+
+      <dt>IntPtr FramePointer()</dt>
+      <dd>Returns the value of the frame pointer register.  B3 procedures alway use a frame
+        pointer ABI, and the frame pointer is always guaranteed to have this value anywhere
+        inside the procedure.</dd>
+
+      <dt>T Add(T, T)</dt>
+      <dd>Works with any type except Void.  For integer types, this represents addition with
+        wrap-around semantics.  For floating point types, this represents addition according to
+        the IEEE 854 spec.  B3 does not have any notion of "fast math".  A transformation over
+        floating point code is valid if the new code produces exactly the same value, bit for
+        bit.</dd>
+
+      <dt>T Sub(T, T)</dt>
+      <dd>Works with any type except Void.  For integer types, this represents subtraction with
+        wrap-around semantics.  For floating point types, this represents subtraction according
+        to the IEEE 854 spec.</dd>
+
+      <dt>T Mul(T, T)</dt>
+      <dd>Works with any type except Void.  For integer types, this represents multiplication
+        with wrap-around semantics.  For floating point types, this represents multiplication
+        according to the IEEE 854 spec.</dd>
+
+      <dt>T Div(T, T)</dt>
+      <dd>Works with any type except Void.  For integer types, this represents signed division
+        with round-to-zero.  Its behavior is undefined for x/0 or -2`^`31/-1.  For floating
+        point types, this represents division according to the IEEE 854 spec.</dd>
+
+      <dt>T Mod(T, T)</dt>
+      <dd>Works with any type except Void.  For integer types, this represents signed modulo.
+        Its behavior is undefined for x%0 or -2`^`31%-1.  For floating point types, this
+        represents modulo according to "fmod()".</dd>
+
+      <dt>T Neg(T)</dt>
+      <dd>Works with any type except Void.  For integer types, this represents twos-complement
+        negation.  For floating point types, this represents negation according to the IEEE
+        spec.</dd>
+
+      <dt>T ChillDiv(T, T)</dt>
+      <dd>Chill division.  Valid for Int32 and Int64.  An operation is said to be chill if it
+        returns a sensible value whenever its non-chill form would have had undefined behavior.
+        ChillDiv turns x/0 into 0 and -2`^`31/-1 into -2`^`31.  This is a separate opcode
+        because it's exactly the semantics of division on ARM64, and it's also exactly the
+        semantics that JavaScript wants for "(x/y)|0".</dd>
+
+      <dt>T ChillMod(T, T)</dt>
+      <dd>Chill modulo.  Valid for Int32 and Int64.  ChllMod turns x%0 into 0 and -2`^`31%-1
+        into 0.</dd>
+
+      <dt>T BitAnd(T, T)</dt>
+      <dd>Bitwise and.  Valid for Int32 and Int64.</dd>
+
+      <dt>T BitOr(T, T)</dt>
+      <dd>Bitwise or.  Valid for Int32 and Int64.</dd>
+
+      <dt>T BitXor(T, T)</dt>
+      <dd>Bitwise xor.  Valid for Int32 and Int64.</dd>
+
+      <dt>T Shl(T, Int32)</dt>
+      <dd>Shift left.  Valid for Int32 and Int64.  The shift amount is always Int32.  Only the
+        low 31 bits of the shift amount are used for Int32.  Only the low 63 bits of the shift
+        amount are used for Int64.</dd>
+
+      <dt>T SShr(T, Int32)</dt>
+      <dd>Shift right with sign extension.  Valid for Int32 and Int64.  The shift amount is
+        always Int32.  Only the low 31 bits of the shift amount are used for Int32.  Only the
+        low 63 bits of the shift amount are used for Int64.</dd>
+
+      <dt>T ZShr(T, Int32)</dt>
+      <dd>Shift right with zero extension.  Valid for Int32 and Int64.  The shift amount is
+        always Int32.  Only the low 31 bits of the shift amount are used for Int32.  Only the
+        low 63 bits of the shift amount are used for Int64.</dd>
+
+      <dt>T Clz(T)</dt>
+      <dd>Count leading zeroes.  Valid for Int32 and Int64.</dd>
+
+      <dt>T Abs(T)</dt>
+      <dd>Absolute value.  Valid for Float and Double.</dd>
+
+      <dt>T Ceil(T)</dt>
+      <dd>Ceiling.  Valid for Float and Double.</dd>
+
+      <dt>T Sqrt(T)</dt>
+      <dd>Square root.  Valid for Float and Double.</dd>
+
+      <dt>U BitwiseCast(T)</dt>
+      <dd>If T is Int32 or Int64, it returns the bitwise-corresponding Float or Double,
+        respectively.  If T is Float or Double, it returns the bitwise-corresponding Int32 or
+        Int64, respectively.</dd>
+
+      <dt>Int32 SExt8(Int32)</dt>
+      <dd>Fills the top 24 bits of the integer with the low byte's sign extension.</dd>
+
+      <dt>Int32 SExt16(Int32)</dt>
+      <dd>Fills the top 16 bits of the integer with the low short's sign extension.</dd>
+
+      <dt>Int64 SExt32(Int32)</dt>
+      <dd>Returns a 64-bit integer such that the low 32 bits are the given Int32 value and the
+        high 32 bits are its sign extension.</dd>
+
+      <dt>Int64 ZExt32(Int32)</dt>
+      <dd>Returns a 64-bit integer such that the low 32 bits are the given Int32 value and the
+        high 32 bits are zero.</dd>
+
+      <dt>Int32 Trunc(Int64)</dt>
+      <dd>Returns the low 32 bits of the 64-bit value.</dd>
+
+      <dt>Double IToD(T)</dt>
+      <dd>Converts the given integer into a double.  Value for Int32 or Int64 inputs.</dd>
+
+      <dt>Double FloatToDouble(Float)</dt>
+      <dd>Converts the given float into a double.</dd>
+
+      <dt>Float DoubleToFloat(Double)</dt>
+      <dd>Converts the given double into a float.</dd>
+
+      <dt>Int32 Equal(T, T)</dt>
+      <dd>Compares the two values.  If they are equal, return 1; else return 0.  Valid for all
+        types except Void.  Integer comparisons simply compare all bits.  Floating point
+        comparisons mostly compare bits, but have some corner cases: positive zero and negative
+        zero are considered equal, and they return false when either value is NaN.</dd>
+
+      <dt>Int32 NotEqual(T, T)</dt>
+      <dd>The opposite of Equal().  NotEqual(@x, @y) yields the same result as BitXor(Equal(@x,
+        @y), 1).</dd>
+
+      <dt>Int32 LessThan(T, T)</dt>
+      <dd>Returns 1 if the left value is less than the right one, 0 otherwise.  Does a signed
+        comparison for integers.  For floating point comparisons, this has the usual caveats
+        with respect to negative zero and NaN.</dd>
+
+      <dt>Int32 GreaterThan(T, T)</dt>
+      <dd>Returns 1 if the left value is greater than the right one, 0 otherwise.  Does a signed
+        comparison for integers.  For floating point comparisons, this has the usual caveats
+        with respect to negative zero and NaN.</dd>
+
+      <dt>Int32 LessEqual(T, T)</dt>
+      <dd>Returns 1 if the left value is less than or equal to the right one, 0 otherwise.  Does
+        a signed comparison for integers.  For floating point comparisons, this has the usual
+        caveats with respect to negative zero and NaN.</dd>
+
+      <dt>Int32 GreaterEqual(T, T)</dt>
+      <dd>Returns 1 if the left value is greater than or equal to the right one, 0 otherwise.
+        Does a signed comparison for integers.  For floating point comparisons, this has the
+        usual caveats with respect to negative zero and NaN.</dd>
+
+      <dt>Int32 Above(T, T)</dt>
+      <dd>Unsigned integer comparison, valid for Int32 and Int64 only.  Returns 1 if the left
+        value is unsigned-greater-than the right one, 0 otherwise.</dd>
+
+      <dt>Int32 Below(T, T)</dt>
+      <dd>Unsigned integer comparison, valid for Int32 and Int64 only.  Returns 1 if the left
+        value is unsigned-less-than the right one, 0 otherwise.</dd>
+
+      <dt>Int32 AboveEqual(T, T)</dt>
+      <dd>Unsigned integer comparison, valid for Int32 and Int64 only.  Returns 1 if the left
+        value is unsigned-greater-than-or-equal the right one, 0 otherwise.</dd>
+
+      <dt>Int32 BelowEqual(T, T)</dt>
+      <dd>Unsigned integer comparison, valid for Int32 and Int64 only.  Returns 1 if the left
+        value is unsigned-less-than-or-equal the right one, 0 otherwise.</dd>
+
+      <dt>Int32 EqualOrUnordered(T, T)</dt>
+      <dd>Floating point comparison, valid for Float and Double only.  Returns 1 if the left
+        value is equal to the right one or if either value is NaN.  Returns 0 otherwise.</dd>
+
+      <dt>T Select(U, T, T)</dt>
+      <dd>Returns either the second child or the third child.  T can be any type except Void.  U
+        can be either Int32 or Int64.  If the first child is non-zero, returns the second child.
+        Otherwise returns the third child.</dd>
+
+      <dt>Int32 Load8Z(IntPtr, offset)</dt>
+      <dd>Loads a byte from the address, which is computed by adding the compile-time 32-bit
+        signed integer offset to the child value.  Zero extends the loaded byte, so the high 24
+        bits are all zero.  Must use the MemoryValue class.</dd>
+
+      <dt>Int32 Load8S(IntPtr, offset)</dt>
+      <dd>Loads a byte from the address, which is computed by adding the compile-time 32-bit
+        signed integer offset to the child value.  Sign extends the loaded byte.  Must use the
+        MemoryValue class.</dd>
+
+      <dt>Int32 Load16Z(IntPtr, offset)</dt>
+      <dd>Loads a 16-bit integer from the address, which is computed by adding the compile-time
+        32-bit signed integer offset to the child value.  Zero extends the loaded 16-bit
+        integer, so the high 16 bits are all zero.  Misaligned loads are not penalized.  Must
+        use the MemoryValue class.</dd>
+
+      <dt>Int32 Load16S(IntPtr, offset)</dt>
+      <dd>Loads a 16-bit integer from the address, which is computed by adding the compile-time
+        32-bit signed integer offset to the child value.  Sign extends the loaded 16-bit
+        integer.  Misaligned loads are not penalized.  Must use the MemoryValue class.</dd>
+
+      <dt>T Load(IntPtr, offset)</dt>
+      <dd>Valid for any type except Void.  Loads a value of that type from the address, which is
+        computed by adding the compile-time 32-bit signed integer offset to the child value.
+        Misaligned loads are not penalized.  Must use the MemoryValue class.</dd>
+
+      <dt>Void Store8(Int32, IntPtr, offset)</dt>
+      <dd>Stores a the low byte of the first child into the address computed by adding the
+        compile-time 32-bit signed integer offset to the second child.  Must use the MemoryValue
+        class.</dd>
+
+      <dt>Void Store16(Int32, IntPtr, offset)</dt>
+      <dd>Stores a the low 16 bits of the first child into the address computed by adding the
+        compile-time 32-bit signed integer offset to the second child.  Misaligned stores are
+        not penalized.  Must use the MemoryValue class.</dd>
+
+      <dt>Void Store(T, IntPtr, offset)</dt>
+      <dd>Stores the value in the first child into the address computed by adding the
+        compile-time 32-bit signed integer offset to the second child.  Misaligned stores are
+        not penalized.  Must use the MemoryValue class.</dd>
+
+      <dt>T1 CCall(IntPtr, [T2, [T3, ...]])</dt>
+      <dd>Performs a C function call to the function pointed to by the first child.  The types
+        that the function takes and the type that it returns are determined by the types of the
+        children and the type of the CCallValue.  Only the first child is mandatory.  Must use
+        the CCallValue class.</dd>
+
+      <dt>T1 Patchpoint([T2, [T3, ...]])</dt>
+      <dd>A Patchpoint is a customizable value.  Patchpoints take zero or more values of any
+        type and return any type.  A Patchpoint's behavior is determined by the generator
+        object.  The generator is a C++ lambda that gets called during code generation.  It gets
+        passed an assembler instance (specifically, CCallHelpers&) and an object describing
+        where to find all of the input values and where to put the result.  Here's an example:
+ 
+        <pre><code>PatchpointValue* patchpoint = block->appendNew&lt;PatchpointValue&gt;(proc, Int32, Origin());
+patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+patchpoint->setGenerator(
+    [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.add32(params[1].gpr(), params[2].gpr(), params[0].gpr());
+    });</code></pre>
+ 
+        <p>This creates a patchpoint that just adds two numbers. The patchpoint is set to return
+          Int32.  The two child values, arg1 and arg2, are passed to the patchpoint with the
+          SomeRegister constraint, which just requests that they get put in appropriate
+          registers (GPR for integer values, FPR for floating point values).  The generator uses
+          the params object to figure out which registers the inputs are in (params[1] and
+          params[2]) and which register to put the result in (params[0]).  Many sophisticated
+          constraints are possible.  You can request that a child gets placed in a specific
+          register.  You can list additional registers that are
+          clobbered - either at the top of the patchpoint (i.e. early) so that the clobbered
+          registers interfere with the inputs, or at the bottom of the patchpoint (i.e. late) so
+          that the clobbered registers interfere with the output.  Patchpoint constraints also
+          allow you to force values onto the call argument area of the stack.  Patchpoints are
+          powerful enough to implement custom calling conventions, inline caches, and
+          side-exits.</p>
+
+        <p>A patchpoint is allowed to "side exit", i.e. abruptly exit from the procedure.  If it
+          wants to do so by returning, it can use Procedure's API for getting the callee-save
+          register layout, unwinding the callee-saves, and then returning.  More likely, the
+          patchpoint will take some exit state as part of its arguments, and it will manipulate
+          the call frame in place to make it look like another execution engine's call frame.
+          This is called OSR, and JavaScriptCore does it a lot.</p>
+ 
+        <p>Must use the PatchpointValue class with the Patchpoint opcode.</p>
+      </dd>
+
+      <dt>T CheckAdd(T, T, [T2, [T3, ...]])</dt>
+      <dd>Checked integer addition.  Works for T = Int32 or T = Int64.  First first two children
+        are mandatory.  Additional children are optional.  All of the Check instructions take a
+        generator and value constraints like a Patchpoint.  In the case of a CheckAdd, the
+        generator runs on the path where the integer addition overflowed.  B3 assumes that
+        CheckAdd will side-exit upon overflow, so the generator must do some kind of
+        termination.  Usually, this is used to implement OSR exits on integer overflow and the
+        optional arguments to CheckAdd will be the OSR exit state.  Must use the CheckValue
+        class.</dd>
+
+      <dt>T CheckSub(T, T, [T2, [T3, ...]])</dt>
+      <dd>Checked integer subtraction.  Works for T = Int32 or T = Int64.  First first two
+        children are mandatory.  Additional children are optional.  All of the Check
+        instructions take a generator and value constraints like a Patchpoint.  In the case of a
+        CheckSub, the generator runs on the path where the integer subtraction overflowed.  B3
+        assumes that CheckSub will side-exit upon overflow, so the generator must do some kind
+        of termination.  Usually, this is used to implement OSR exits on integer overflow and
+        the optional arguments to CheckSub will be the OSR exit state.  You can use CheckSub for
+        checked negation by using zero for the first child.  B3 will select the native negate
+        instruction when you do this.  Must use the CheckValue class.</dd>
+
+      <dt>T CheckMul(T, T, [T2, [T3, ...]])</dt>
+      <dd>Checked integer multiplication.  Works for T = Int32 or T = Int64.  First first two
+        children are mandatory.  Additional children are optional.  All of the Check
+        instructions take a generator and value constraints like a Patchpoint.  In the case of a
+        CheckMul, the generator runs on the path where the integer multiplication overflowed.
+        B3 assumes that CheckMul will side-exit upon overflow, so the generator must do some
+        kind of termination.  Usually, this is used to implement OSR exits on integer overflow
+        and the optional arguments to CheckMul will be the OSR exit state.  Must use the
+        CheckValue class.</dd>
+
+      <dt>Void Check(T, [T2, [T3, ...]])</dt>
+      <dd>Exit check.  Works for T = Int32 or T = Int64.  This branches on the first child.  If
+        the first child is zero, this just falls through.  If it's non-zero, it goes to the exit
+        path generated by the passed generator.  Only the first child is mandatory.  B3 assumes
+        that Check will side-exit when the first child is non-zero, so the generator must do
+        some kind of termination.  Usually, this is used to implement OSR exit checks and the
+        optional arguments to Check will be the OSR exit state.  Check supports efficient
+        compare/branch fusion, so you can Check for fairly sophisticated predicates.  For
+        example, Check(Equal(LessThan(@a, @b), 0)) where @a and @b are doubles will be generated
+        to an instruction that branches to the exit if @a &gt;= @b or if either @a or @b are
+        NaN.  Must use the CheckValue class.</dd>
+
+      <dt>Void Upsilon(T, ^phi)</dt>
+      <dd>B3 uses SSA.  SSA requires that each variable gets assigned to only once anywhere in
+        the procedure.  But that doesn't work if you have a variable that is supposed to be the
+        result of merging two values along control flow.  B3 uses Phi values to represent value
+        merges, just like SSA compilers usually do.  But while other SSA compilers represent the
+        inputs to the Phi by listing the control flow edges from which the Phi gets its values,
+        B3 uses the Upsilon value.  Each Phi behaves as if it has a memory location associated
+        with it.  Executing the Phi behaves like a load from that memory location.
+        Upsilon(@value, ^phi) behaves like a store of @value into the memory location associated
+        with @phi.  We say "^phi" when we mean that we are writing to the memory location
+        associated with the Phi.  Must use the UpsilonValue class.</dd>
+
+      <dt>T Phi()</dt>
+      <dd>Works for any type except Void.  Represents a local memory location large enough to
+        hold T.  Loads from that memory location.  The only way to store to that location is
+        with Upsilon.</dd>
+
+      <dt>Void Jump(takenBlock)</dt>
+      <dd>Jumps to takenBlock.  This is a ControlValue, so it must appear at the end of the
+        basic block.</dd>
+
+      <dt>Void Branch(T, takenBlock, notTakenBlock)</dt>
+      <dd>Works for T = Int32 or T = Int64.  Branches on the child.  If the child is non-zero,
+        it branches to the takenBlock.  Otherwise it branches to the notTakenBlock.  Must use
+        the ControlValue class.  Must appear at the end of the basic block.</dd>
+
+      <dt>Void Switch(T, cases...)</dt>
+      <dd>Works for T = Int32 or T = Int64.  Switches on the child.  Contains a list of switch
+        cases.  Each switch case has an integer constant and a target block.  The switch value
+        also contains a fall-through target in case the child has a value that wasn't mentioned
+        in the cases list.  Must use the SwitchValue class.  Must appear at the end of the basic
+        block.</dd>
+
+      <dt>Void Return(T)</dt>
+      <dd>Works for any type except Void.  Returns the given value and terminates the procedure.
+        This is a ControlValue, but it must have an empty successors list.  Must appear at the
+        end of the basic block.</dd>
+
+      <dt>Void Oops()</dt>
+      <dd>Indicates unreachable code.  This may be implemented as either a trap or as a bare
+        fall-through, since B3 is allowed to assume that this will never be reached.  This is a
+        ControlValue, but it must have an empty successors list.  Must appear at the end of the
+        basic block.  Note that we also use the Oops opcode to mean "no such opcode" in some B3
+        transformations.</dd>
+    </dl>
+
+  </body>
+</html>
+

@@ -1,3 +1,26 @@
+2016-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have documentation
+        https://bugs.webkit.org/show_bug.cgi?id=153658
+
+        Reviewed by Saam Barati.
+
+        Change the documentation to use HTML instead of Markdown.  Markdown has trouble with
+        definition lists.  Things go downhill when you try to add paragraphs or code blocks to
+        a definition.  That's unfortunate since we use definitions for the IR document.
+
+        Since there is no way to use our preferred styling for the IR document without doing a
+        lot of bad hacks, it's best if we just stick to HTML. It looks plain but it's highly
+        practical.
+
+        * docs/b3/assembly-intermediate-representation.html: Added.
+        * docs/b3/bare-bones-backend.md: Removed.
+        * docs/b3/index.html: Added.
+        * docs/b3/intermediate-representation.html: Added.
+        * docs/b3/style.css: Added.
+        (dd):
+        (dd:last-child):
+
 2016-01-29  Timothy Hatcher  <timothy@apple.com>
 
         Add some defintion list styles.

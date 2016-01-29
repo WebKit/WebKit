@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Assembly Intermediate Representation</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <h1><a href="index.html">Bare Bones Backend</a> / Assembly Intermediate Representation</h1>
+    <p>The B3 compiler converts SSA procedures into efficient machine code by first converting
+      them to a form that reveals machine details, like registers. This form is called Assembly
+      Intermediate Representation, or just Air for short.</p>
+
+    <p>Air is designed around JavaScriptCore's existing MacroAssembler. Air has Inst objects,
+      which each describe some method call to the MacroAssembler: an Inst's opcode indicates
+      which method name to use and its args indicate the arguments to pass to that method. We
+      use code generation to create a massive switch statement that turns the reflective Insts
+      into actual calls to MacroAssembler. Consequently, we can "add" new instructions to Air
+      usually by just editing the ​AirOpcode.opcodes file.</p>
+
+    <p><a href="https://bugs.webkit.org/show_bug.cgi?id=153668">FIXME: Add more text here.</a></p>
+  </body>
+</html>
+
