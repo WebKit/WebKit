@@ -32,10 +32,8 @@
     [Reflect, URL] attribute DOMString longDesc;
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString srcset;
-#if ENABLE_PICTURE_SIZES
     [Reflect] attribute DOMString sizes;
     readonly attribute DOMString currentSrc;
-#endif
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute long vspace;
     attribute long width;
