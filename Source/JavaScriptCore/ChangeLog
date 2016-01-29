@@ -1,3 +1,36 @@
+2016-01-29  Andreas Kling  <akling@apple.com>
+
+        Shrink CodeBlock!
+        <https://webkit.org/b/153640>
+
+        Reviewed by Saam Barati.
+
+        Shrink CodeBlock by 112 bytes (from 640 to 528) by employing
+        these sophisticated tricks:
+
+            - Remove members that are not used by anyone.
+            - Don't cache both VM* and Heap* in members.
+            - Reorder members to minimize struct padding.
+            - Use RefCountedArray instead of Vector for arrays that never resize.
+            - Put a not-always-present HashMap in a std::unique_ptr.
+
+        This increases CodeBlock space efficiency by 20%, as we can now
+        fit 30 of them in a MarkedBlock, up from 25.)
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::noticeIncomingCall):
+        (JSC::CodeBlock::resultProfileForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::capabilityLevelState):
+        (JSC::CodeBlock::codeType):
+        (JSC::CodeBlock::ensureResultProfile):
+        (JSC::CodeBlock::heap):
+
 2016-01-29  Saam barati  <sbarati@apple.com>
 
         Exits from exceptions shouldn't jettison code

@@ -1740,13 +1740,18 @@ private:
 CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock& other)
     : JSCell(*vm, structure)
     , m_globalObject(other.m_globalObject)
-    , m_heap(other.m_heap)
     , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
-    , m_isConstructor(other.m_isConstructor)
     , m_shouldAlwaysBeInlined(true)
+#if ENABLE(JIT)
+    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
+#endif
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
+    , m_isConstructor(other.m_isConstructor)
+    , m_isStrictMode(other.m_isStrictMode)
+    , m_needsActivation(other.m_needsActivation)
+    , m_codeType(other.m_codeType)
     , m_unlinkedCode(*other.m_vm, this, other.m_unlinkedCode.get())
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
@@ -1757,12 +1762,10 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_thisRegister(other.m_thisRegister)
     , m_scopeRegister(other.m_scopeRegister)
     , m_lexicalEnvironmentRegister(other.m_lexicalEnvironmentRegister)
-    , m_isStrictMode(other.m_isStrictMode)
-    , m_needsActivation(other.m_needsActivation)
+    , m_hash(other.m_hash)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
     , m_firstLineColumnOffset(other.m_firstLineColumnOffset)
-    , m_codeType(other.m_codeType)
     , m_constantRegisters(other.m_constantRegisters)
     , m_constantsSourceCodeRepresentation(other.m_constantsSourceCodeRepresentation)
     , m_functionDecls(other.m_functionDecls)
@@ -1771,14 +1774,10 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
     , m_creationTime(std::chrono::steady_clock::now())
-    , m_hash(other.m_hash)
-#if ENABLE(JIT)
-    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
-#endif
 {
     m_visitWeaklyHasBeenCalled.store(false, std::memory_order_relaxed);
 
-    ASSERT(m_heap->isDeferred());
+    ASSERT(heap()->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
 
     setNumParameters(other.numParameters());
@@ -1801,20 +1800,25 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
         m_rareData->m_liveCalleeLocalsAtYield = other.m_rareData->m_liveCalleeLocalsAtYield;
     }
     
-    m_heap->m_codeBlocks.add(this);
+    heap()->m_codeBlocks.add(this);
 }
 
 CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock,
     JSScope* scope, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
     : JSCell(*vm, structure)
     , m_globalObject(scope->globalObject()->vm(), this, scope->globalObject())
-    , m_heap(&m_globalObject->vm().heap)
     , m_numCalleeLocals(unlinkedCodeBlock->m_numCalleeLocals)
     , m_numVars(unlinkedCodeBlock->m_numVars)
-    , m_isConstructor(unlinkedCodeBlock->isConstructor())
     , m_shouldAlwaysBeInlined(true)
+#if ENABLE(JIT)
+    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
+#endif
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
+    , m_isConstructor(unlinkedCodeBlock->isConstructor())
+    , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
+    , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
+    , m_codeType(unlinkedCodeBlock->codeType())
     , m_unlinkedCode(m_globalObject->vm(), this, unlinkedCodeBlock)
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
@@ -1824,23 +1828,17 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_thisRegister(unlinkedCodeBlock->thisRegister())
     , m_scopeRegister(unlinkedCodeBlock->scopeRegister())
     , m_lexicalEnvironmentRegister(unlinkedCodeBlock->activationRegister())
-    , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
-    , m_needsActivation(unlinkedCodeBlock->hasActivationRegister() && unlinkedCodeBlock->codeType() == FunctionCode)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_firstLineColumnOffset(firstLineColumnOffset)
-    , m_codeType(unlinkedCodeBlock->codeType())
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
     , m_creationTime(std::chrono::steady_clock::now())
-#if ENABLE(JIT)
-    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
-#endif
 {
     m_visitWeaklyHasBeenCalled.store(false, std::memory_order_relaxed);
 
-    ASSERT(m_heap->isDeferred());
+    ASSERT(heap()->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
 
     ASSERT(m_source);
@@ -1894,7 +1892,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         replaceConstant(unlinkedModuleProgramCodeBlock->moduleEnvironmentSymbolTableConstantRegisterOffset(), clonedSymbolTable);
     }
 
-    m_functionDecls.resizeToFit(unlinkedCodeBlock->numberOfFunctionDecls());
+    m_functionDecls = RefCountedArray<WriteBarrier<FunctionExecutable>>(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         if (vm.typeProfiler() || vm.controlFlowProfiler())
@@ -1902,7 +1900,7 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         m_functionDecls[i].set(*m_vm, this, unlinkedExecutable->link(*m_vm, ownerExecutable->source()));
     }
 
-    m_functionExprs.resizeToFit(unlinkedCodeBlock->numberOfFunctionExprs());
+    m_functionExprs = RefCountedArray<WriteBarrier<FunctionExecutable>>(unlinkedCodeBlock->numberOfFunctionExprs());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionExprs(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         if (vm.typeProfiler() || vm.controlFlowProfiler())
@@ -1958,15 +1956,15 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     // Allocate metadata buffers for the bytecode
     if (size_t size = unlinkedCodeBlock->numberOfLLintCallLinkInfos())
-        m_llintCallLinkInfos.resizeToFit(size);
+        m_llintCallLinkInfos = RefCountedArray<LLIntCallLinkInfo>(size);
     if (size_t size = unlinkedCodeBlock->numberOfArrayProfiles())
         m_arrayProfiles.grow(size);
     if (size_t size = unlinkedCodeBlock->numberOfArrayAllocationProfiles())
-        m_arrayAllocationProfiles.resizeToFit(size);
+        m_arrayAllocationProfiles = RefCountedArray<ArrayAllocationProfile>(size);
     if (size_t size = unlinkedCodeBlock->numberOfValueProfiles())
-        m_valueProfiles.resizeToFit(size);
+        m_valueProfiles = RefCountedArray<ValueProfile>(size);
     if (size_t size = unlinkedCodeBlock->numberOfObjectAllocationProfiles())
-        m_objectAllocationProfiles.resizeToFit(size);
+        m_objectAllocationProfiles = RefCountedArray<ObjectAllocationProfile>(size);
 
 #if ENABLE(JIT)
     setCalleeSaveRegisters(RegisterSet::llintBaselineCalleeSaveRegisters());
@@ -2318,45 +2316,44 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (Options::dumpGeneratedBytecodes())
         dumpBytecode();
     
-    m_heap->m_codeBlocks.add(this);
-    m_heap->reportExtraMemoryAllocated(m_instructions.size() * sizeof(Instruction));
+    heap()->m_codeBlocks.add(this);
+    heap()->reportExtraMemoryAllocated(m_instructions.size() * sizeof(Instruction));
 }
 
 #if ENABLE(WEBASSEMBLY)
 CodeBlock::CodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerExecutable, JSGlobalObject* globalObject)
     : JSCell(*vm, structure)
     , m_globalObject(globalObject->vm(), this, globalObject)
-    , m_heap(&m_globalObject->vm().heap)
     , m_numCalleeLocals(0)
     , m_numVars(0)
-    , m_isConstructor(false)
     , m_shouldAlwaysBeInlined(false)
+#if ENABLE(JIT)
+    , m_capabilityLevelState(DFG::CannotCompile)
+#endif
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
+    , m_isConstructor(false)
+    , m_isStrictMode(false)
+    , m_needsActivation(false)
+    , m_codeType(FunctionCode)
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
     , m_ownerExecutable(m_globalObject->vm(), this, ownerExecutable)
     , m_vm(vm)
-    , m_isStrictMode(false)
-    , m_needsActivation(false)
-    , m_codeType(FunctionCode)
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
     , m_creationTime(std::chrono::steady_clock::now())
-#if ENABLE(JIT)
-    , m_capabilityLevelState(DFG::CannotCompile)
-#endif
 {
-    ASSERT(m_heap->isDeferred());
+    ASSERT(heap()->isDeferred());
 }
 
 void CodeBlock::finishCreation(VM& vm, WebAssemblyExecutable*, JSGlobalObject*)
 {
     Base::finishCreation(vm);
 
-    m_heap->m_codeBlocks.add(this);
+    heap()->m_codeBlocks.add(this);
 }
 #endif
 
@@ -2399,7 +2396,7 @@ void CodeBlock::setNumParameters(int newValue)
 {
     m_numParameters = newValue;
 
-    m_argumentValueProfiles.resizeToFit(newValue);
+    m_argumentValueProfiles = RefCountedArray<ValueProfile>(newValue);
 }
 
 void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
@@ -3295,7 +3292,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     }
 #endif // ENABLE(DFG_JIT)
 
-    DeferGCForAWhile deferGC(*m_heap);
+    DeferGCForAWhile deferGC(*heap());
     
     // We want to accomplish two things here:
     // 1) Make sure that if this CodeBlock is on the stack right now, then if we return to it
@@ -3421,7 +3418,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
     if (!DFG::mightInlineFunction(this))
         return;
 
-    if (!canInline(m_capabilityLevelState))
+    if (!canInline(capabilityLevelState()))
         return;
     
     if (!DFG::isSmallEnoughToInlineCodeInto(callerCodeBlock)) {
@@ -3470,12 +3467,12 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
         return;
     }
     
-    if (callerCodeBlock->m_capabilityLevelState == DFG::CapabilityLevelNotSet) {
+    if (callerCodeBlock->capabilityLevelState() == DFG::CapabilityLevelNotSet) {
         dataLog("In call from ", *callerCodeBlock, " ", callerFrame->codeOrigin(), " to ", *this, ": caller's DFG capability level is not set.\n");
         CRASH();
     }
     
-    if (canCompile(callerCodeBlock->m_capabilityLevelState))
+    if (canCompile(callerCodeBlock->capabilityLevelState()))
         return;
     
     if (Options::verboseCallLink())
@@ -4193,8 +4190,10 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(int bytecodeOffset)
 
 ResultProfile* CodeBlock::resultProfileForBytecodeOffset(int bytecodeOffset)
 {
-    auto iterator = m_bytecodeOffsetToResultProfileIndexMap.find(bytecodeOffset);
-    if (iterator == m_bytecodeOffsetToResultProfileIndexMap.end())
+    if (!m_bytecodeOffsetToResultProfileIndexMap)
+        return nullptr;
+    auto iterator = m_bytecodeOffsetToResultProfileIndexMap->find(bytecodeOffset);
+    if (iterator == m_bytecodeOffsetToResultProfileIndexMap->end())
         return nullptr;
     return &m_resultProfiles[iterator->value];
 }
