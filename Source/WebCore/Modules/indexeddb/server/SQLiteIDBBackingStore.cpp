@@ -1196,13 +1196,19 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to get a record from database without an in-progress transaction") };
     }
 
-    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(IDBKeyData(keyRange.lowerKey));
+    auto key = keyRange.lowerKey;
+    if (key.isNull())
+        key = IDBKeyData::minimum();
+    RefPtr<SharedBuffer> lowerBuffer = serializeIDBKeyData(key);
     if (!lowerBuffer) {
         LOG_ERROR("Unable to serialize lower IDBKey in lookup range");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize lower IDBKey in lookup range") };
     }
 
-    RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(IDBKeyData(keyRange.upperKey));
+    key = keyRange.upperKey;
+    if (key.isNull())
+        key = IDBKeyData::maximum();
+    RefPtr<SharedBuffer> upperBuffer = serializeIDBKeyData(key);
     if (!upperBuffer) {
         LOG_ERROR("Unable to serialize upper IDBKey in lookup range");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to serialize upper IDBKey in lookup range") };
