@@ -1,4 +1,4 @@
-# Copyright (C) 2005-2007, 2010-2015 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2007, 2010-2016 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
@@ -1447,6 +1447,7 @@ sub setUpGuardMallocIfNeeded
 
     if ($shouldUseGuardMalloc) {
         appendToEnvironmentVariableList("DYLD_INSERT_LIBRARIES", "/usr/lib/libgmalloc.dylib");
+        appendToEnvironmentVariableList("__XPC_DYLD_INSERT_LIBRARIES", "/usr/lib/libgmalloc.dylib");
     }
 }
 

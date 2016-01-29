@@ -1,4 +1,4 @@
-// Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+// Copyright (C) 2012-2016 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -23,13 +23,12 @@
 
 #include "BaseXPCService.xcconfig"
 
-WK_XPC_SERVICE_VARIANT = Normal;
 WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE = WebContent-iOS;
 
-PRODUCT_NAME = com.apple.WebKit.WebContent;
+PRODUCT_NAME = com.apple.WebKit.WebContent$(WK_XPC_SERVICE_SUFFIX);
 INFOPLIST_FILE[sdk=iphone*] = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX$(WK_XPC_SERVICE_INFOPLIST_SUFFIX).plist;
 
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(OTHER_LDFLAGS_PLATFORM);
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(OTHER_LDFLAGS_PLATFORM) $(WK_RELOCATABLE_FRAMEWORKS_LDFLAGS);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit $(OTHER_LDFLAGS_SHIM_$(WK_LINK_SHIM));
 OTHER_LDFLAGS_SHIM_YES = $(BUILT_PRODUCTS_DIR)/WebProcessShim.dylib;

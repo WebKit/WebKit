@@ -11,7 +11,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apple.WebKit.WebContent</string>
+	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -51,7 +51,7 @@
 		<key>EnvironmentVariables</key>
 		<dict>
 			<key>DYLD_INSERT_LIBRARIES</key>
-			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Frameworks/WebProcessShim.dylib</string>
+			<string>$(WK_XPC_SERVICE_INSERT_LIBRARIES_DIR)/WebProcessShim.dylib</string>
 		</dict>
 	</dict>
 </dict>

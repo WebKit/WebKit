@@ -1,5 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
-# Copyright (c) 2015, Apple Inc. All rights reserved.
+# Copyright (c) 2015, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -313,6 +313,7 @@ class Driver(object):
 
     def _setup_environ_for_driver(self, environment):
         environment['DYLD_LIBRARY_PATH'] = str(self._port._build_path())
+        environment['__XPC_DYLD_LIBRARY_PATH'] = environment['DYLD_LIBRARY_PATH']
         environment['DYLD_FRAMEWORK_PATH'] = str(self._port._build_path())
         # Use an isolated temp directory that can be deleted after testing (especially important on Mac, as
         # CoreMedia disk cache is in the temp directory).
@@ -322,6 +323,7 @@ class Driver(object):
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = str(self._port.layout_tests_dir())
         environment['ASAN_OPTIONS'] = "allocator_may_return_null=1"
+        environment['__XPC_ASAN_OPTIONS'] = environment['ASAN_OPTIONS']
         if 'WEBKIT_OUTPUTDIR' in os.environ:
             environment['WEBKIT_OUTPUTDIR'] = os.environ['WEBKIT_OUTPUTDIR']
         if self._profiler:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,7 @@ static const char* copyASanDynamicLibraryPath()
 }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
 static RetainPtr<NSString> computeProcessShimPath(const ProcessLauncher::LaunchOptions& launchOptions, NSBundle *webKitBundle)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -135,8 +135,7 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
         environmentVariables.appendValue("DYLD_INSERT_LIBRARIES", asanLibraryPath, ':');
 #endif
 
-#if PLATFORM(MAC)
-    // FIXME: In El Capitan and later, do this only for development builds, because in production, the executables link directly against the shims.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
     if (auto shimPath = computeProcessShimPath(launchOptions, webKitBundle)) {
         // Make sure that the shim library file exists and insert it.
         const char* processShimPath = [shimPath fileSystemRepresentation];
@@ -149,37 +148,24 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
 
 typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, IPC::Connection::Identifier);
 
-static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment)
+static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions)
 {
     switch (launchOptions.processType) {
     case ProcessLauncher::WebProcess:
-        if (forDevelopment)
-            return "com.apple.WebKit.WebContent.Development";
-        return "com.apple.WebKit.WebContent";
+        return "com.apple.WebKit.WebContent" WK_XPC_SERVICE_SUFFIX;
     case ProcessLauncher::NetworkProcess:
-        if (forDevelopment)
-            return "com.apple.WebKit.Networking.Development";
-        return "com.apple.WebKit.Networking";
+        return "com.apple.WebKit.Networking" WK_XPC_SERVICE_SUFFIX;
 #if ENABLE(DATABASE_PROCESS)
     case ProcessLauncher::DatabaseProcess:
-        if (forDevelopment)
-            return "com.apple.WebKit.Databases.Development";
-        return "com.apple.WebKit.Databases";
+        return "com.apple.WebKit.Databases" WK_XPC_SERVICE_SUFFIX;
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::PluginProcess:
         // FIXME: Support plugins that require an executable heap.
-        if (forDevelopment) {
-            if (launchOptions.architecture == CPU_TYPE_X86)
-                return "com.apple.WebKit.Plugin.32.Development";
-            if (launchOptions.architecture == CPU_TYPE_X86_64)
-                return "com.apple.WebKit.Plugin.64.Development";
-        } else {
-            if (launchOptions.architecture == CPU_TYPE_X86)
-                return "com.apple.WebKit.Plugin.32";
-            if (launchOptions.architecture == CPU_TYPE_X86_64)
-                return "com.apple.WebKit.Plugin.64";
-        }
+        if (launchOptions.architecture == CPU_TYPE_X86)
+            return "com.apple.WebKit.Plugin.32" WK_XPC_SERVICE_SUFFIX;
+        if (launchOptions.architecture == CPU_TYPE_X86_64)
+            return "com.apple.WebKit.Plugin.64" WK_XPC_SERVICE_SUFFIX;
 
         ASSERT_NOT_REACHED();
         return 0;
@@ -202,7 +188,7 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction, UUIDHolder* instanceUUID)
 {
     // Create a connection to the WebKit XPC service.
-    auto connection = adoptOSObject(xpc_connection_create(serviceName(launchOptions, forDevelopment), 0));
+    auto connection = adoptOSObject(xpc_connection_create(serviceName(launchOptions), 0));
     xpc_connection_set_oneshot_instance(connection.get(), instanceUUID->uuid);
 
     // Inherit UI process localization. It can be different from child process default localization:
@@ -258,7 +244,6 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
-    xpc_dictionary_set_string(bootstrapMessage.get(), "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] executablePath] fileSystemRepresentation]);
 
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
     mach_port_deallocate(mach_task_self(), listeningPort);
@@ -311,77 +296,12 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     });
 }
 
-static void connectToReExecService(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
-{
-    EnvironmentVariables environmentVariables;
-    addDYLDEnvironmentAdditions(launchOptions, true, environmentVariables);
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (launchOptions.processType == ProcessLauncher::PluginProcess) {
-        // Tagged pointers break video in Flash, see bug 135354.
-        environmentVariables.set("NSStringDisableTagged", "YES");
-    }
-#endif
-
-    // FIXME: This UUID should be stored on the ChildProcessProxy.
-    RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
-
-    // FIXME: It would be nice if we could use OSObjectPtr for this connection as well, but we'd have to be careful
-    // not to introduce any retain cycles in the call to xpc_connection_set_event_handler below.
-    xpc_connection_t reExecConnection = xpc_connection_create(serviceName(launchOptions, true), 0);
-    xpc_connection_set_oneshot_instance(reExecConnection, instanceUUID->uuid);
-
-    // Keep the ProcessLauncher alive while we do the re-execing (balanced in event handler).
-    that->ref();
-
-    // We wait for the connection to tear itself down (indicated via an error event)
-    // to indicate that the service instance re-execed itself, and is now ready to be
-    // connected to.
-    xpc_connection_set_event_handler(reExecConnection, ^(xpc_object_t event) {
-        ASSERT(xpc_get_type(event) == XPC_TYPE_ERROR);
-
-        connectToService(launchOptions, true, that, didFinishLaunchingProcessFunction, instanceUUID.get());
-
-        // Release the connection.
-        xpc_release(reExecConnection);
-
-        // Other end of ref called before we setup the event handler.
-        that->deref();
-    });
-    xpc_connection_resume(reExecConnection);
-
-    xpc_object_t reExecMessage = xpc_dictionary_create(0, 0, 0);
-    xpc_dictionary_set_string(reExecMessage, "message-name", "re-exec");
-
-    xpc_object_t environment = xpc_array_create(0, 0);
-    char** environmentPointer = environmentVariables.environmentPointer();
-    Vector<CString> temps;
-    for (size_t i = 0; environmentPointer[i]; ++i) {
-        CString temp(environmentPointer[i], strlen(environmentPointer[i]));
-        temps.append(temp);
-
-        xpc_array_set_string(environment, XPC_ARRAY_APPEND, temp.data());
-    }
-    xpc_dictionary_set_value(reExecMessage, "environment", environment);
-    xpc_release(environment);
-
-    xpc_dictionary_set_bool(reExecMessage, "executable-heap", launchOptions.executableHeap);
-
-    xpc_connection_send_message(reExecConnection, reExecMessage);
-    xpc_release(reExecMessage);
-}
-
 static void createService(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
-    if (forDevelopment) {
-        connectToReExecService(launchOptions, that, didFinishLaunchingProcessFunction);
-        return;
-    }
-
     // Generate the uuid for the service instance we are about to create.
     // FIXME: This UUID should be stored on the ChildProcessProxy.
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
-    connectToService(launchOptions, false, that, didFinishLaunchingProcessFunction, instanceUUID.get());
+    connectToService(launchOptions, forDevelopment, that, didFinishLaunchingProcessFunction, instanceUUID.get());
 }
 
 static bool tryPreexistingProcess(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)

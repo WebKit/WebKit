@@ -49,7 +49,7 @@
 		<key>EnvironmentVariables</key>
 		<dict>
 			<key>DYLD_INSERT_LIBRARIES</key>
-			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Frameworks/PluginProcessShim.dylib</string>
+			<string>$(WK_XPC_SERVICE_INSERT_LIBRARIES_DIR)/PluginProcessShim.dylib</string>
 			<key>NSStringDisableTagged</key>
 			<string>YES</string>
 		</dict>

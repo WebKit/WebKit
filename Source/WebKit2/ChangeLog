@@ -1,3 +1,107 @@
+2016-01-28  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Use the non-Development variants of XPC services for development
+        https://bugs.webkit.org/show_bug.cgi?id=152545
+
+        Reviewed by Darin Adler.
+
+        The purpose of the Development variants of the WebKit XPC services is to allow the service
+        to link against the development WebKit dylibs rather than the system ones. Instead, we
+        accomplish this here by including dyld environment load commands in the normal services
+        when the WebKit dylibs are expected to be relocated. A new build setting,
+        WK_RELOCATABLE_FRAMEWORKS, controls this.
+
+        To make it easy to identify engineering builds of the services at runtime, they can be
+        given a distinctive suffix. A new build setting, WK_XPC_SERVICE_SUFFIX, controls this.
+
+        * Configurations/DebugRelease.xcconfig: Set WK_RELOCATABLE_FRAMEWORKS to YES and
+          WK_XPC_SERVICE_SUFFIX to ".Development".
+
+        * Configurations/BaseTarget.xcconfig: Make the quoted value of the WK_XPC_SERVICE_SUFFIX
+          build setting available as a preprocessor macro.
+
+        * Configurations/BaseXPCService.xcconfig:
+          - Simplify the definition of INSTALL_PATH now that there are no Development variants.
+          - Define WK_RELOCATABLE_FRAMEWORKS_LDFLAGS when building relocatable frameworks to include
+            -dyld_env options setting DYLD_FRAMEWORK_PATH to point to the directory containing
+            WebKit.framework and DYLD_LIBRARY_PATH to the framework’s Frameworks subdirectory. When
+            not building relocatable frameworks, define WK_RELOCATABLE_FRAMEWORKS_LDFLAGS to include
+            a -headerpad option allowing dyld environment load commands to be added after the fact.
+          - Add WK_RELOCATABLE_FRAMEWORKS_LDFLAGS to OTHER_LDFLAGS.
+          - Define WK_XPC_SERVICE_INSERT_LIBRARIES_DIR when building relocatable frameworks to be
+            the path to the Frameworks subdirectory of the WebKit framework containing the service.
+            When not building relocatable frameworks, define it to the absolute path of the
+            Frameworks subdirectory of the installed WebKit framework.
+
+        * Configurations/DatabaseService.xcconfig: Append WK_XPC_SERVICE_SUFFIX to PRODUCT_NAME,
+          and remove no-longer-used definition of WK_XPC_SERVICE_VARIANT.
+        * Configurations/NetworkService.xcconfig: Append WK_XPC_SERVICE_SUFFIX to PRODUCT_NAME, add
+          WK_RELOCATABLE_FRAMEWORKS_LDFLAGS to OTHER_LDFLAGS, and remove no-longer-used definition
+          of WK_XPC_SERVICE_VARIANT.
+        * Configurations/PluginService.32.xcconfig: Ditto.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Ditto.
+
+        * Configurations/DatabaseService.Development.xcconfig: Removed.
+        * Configurations/NetworkService.Development.xcconfig: Removed.
+        * Configurations/PluginService.32.Development.xcconfig: Removed.
+        * Configurations/PluginService.64.Development.xcconfig: Removed.
+        * Configurations/WebContentService.Development.xcconfig: Removed.
+
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService.Development: Removed.
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService.Development/Info.plist: Removed.
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService/Info.plist: Set
+          CFBundleIdentifier to PRODUCT_NAME in order to include the optional suffix.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development: Removed.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info-OSX.plist: Removed.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info-iOS.plist: Removed.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX-10.9-10.10.plist: Set
+          CFBundleIdentifier to PRODUCT_NAME in order to include the optional suffix. Use
+          WK_XPC_SERVICE_INSERT_LIBRARIES_DIR in the value of DYLD_INSERT_LIBRARIES.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist: Set
+          CFBundleIdentifier to PRODUCT_NAME in order to include the optional suffix.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-iOS.plist: Ditto.
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist: Ditto.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development: Removed.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist: Removed.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development: Removed.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info-OSX.plist: Removed.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info-iOS.plist: Removed.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX-10.9-10.10.plist: Set
+          CFBundleIdentifier to PRODUCT_NAME in order to include the optional suffix. Use
+          WK_XPC_SERVICE_INSERT_LIBRARIES_DIR in the value of DYLD_INSERT_LIBRARIES.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist: Set
+          CFBundleIdentifier to PRODUCT_NAME in order to include the optional suffix.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist: Ditto.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm: Removed.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler): If stdout and stderr file descriptors are included in the
+          bootstrap message, hook them up to the serviceâs stdout and stderr, like the Development
+          services do.
+        (main): Moved code from XPCServiceMain.Development.mm to handle the optional
+          OverrideLanguages array.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::addDYLDEnvironmentAdditions): Addressed a FIXME.
+        (WebKit::serviceName): Removed forDevelopment argument and .Development service names.
+          Added WK_XPC_SERVICE_SUFFIX to the names.
+        (WebKit::connectToService): Updated for removal of forDevelopment argument. Removed
+          "framework-executable-path" key from the bootstrap message, because it was only used in
+          the Development variants.
+        (WebKit::connectToReExecService): Deleted.
+        (WebKit::createService): Removed call to connectToReExecService. Instead pass forDevelopment
+          to connectToService.
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed references to removed files. Removed targets
+          for Development services. Removed Development services from script build phase that copies
+          services into the framework in engineering builds, and made it respect
+          WK_XPC_SERVICE_SUFFIX.
+
 2016-01-28  Enrica Casucci  <enrica@apple.com>
 
         Should avoid navigation for some data detector urls.

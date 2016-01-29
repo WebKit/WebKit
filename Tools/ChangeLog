@@ -1,3 +1,24 @@
+2016-01-28  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Use the non-Development variants of XPC services for development
+        https://bugs.webkit.org/show_bug.cgi?id=152545
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitdirs.pm:
+        (setUpGuardMallocIfNeeded): Ensure that libgmalloc is loaded into XPC services as well.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver): Ensure that the DYLD_LIBRARY_PATH and ASAN_OPTIONS are
+          set in the XPC services as well.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_environ_for_server): Ensure that malloc stack logging for leaks and
+          Guard Malloc are enabled in XPC services as well.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.setup_environ_for_server): Ditto.
+
 2016-01-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r195743.

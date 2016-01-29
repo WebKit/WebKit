@@ -1,5 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
-# Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2012, 2013, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -101,8 +101,10 @@ class MacPort(ApplePort):
         if server_name == self.driver_name():
             if self.get_option('leaks'):
                 env['MallocStackLogging'] = '1'
+                env['__XPC_MallocStackLogging'] = '1'
             if self.get_option('guard_malloc'):
                 self._append_value_colon_separated(env, 'DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
+                self._append_value_colon_separated(env, '__XPC_DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
             self._append_value_colon_separated(env, 'DYLD_INSERT_LIBRARIES', self._build_path("libWebCoreTestShim.dylib"))
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
