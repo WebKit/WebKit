@@ -1,3 +1,16 @@
+2016-01-29  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r194479.
+
+    2016-01-01  Jeff Miller  <jeffm@apple.com>
+
+            Update user-visible copyright strings to include 2016
+            https://bugs.webkit.org/show_bug.cgi?id=152531
+
+            Reviewed by Alexey Proskuryakov.
+
+            * Info.plist:
+
 2016-01-27  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r194559. rdar://problem/24269083
