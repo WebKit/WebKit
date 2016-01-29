@@ -1,4 +1,12 @@
 =================
+WebKitGTK+ 2.10.7
+=================
+
+What's new in WebKitGTK+ 2.10.6?
+
+  - Fix the build with GTK+ < 3.16.
+
+=================
 WebKitGTK+ 2.10.6
 =================
 
