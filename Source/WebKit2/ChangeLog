@@ -1,5 +1,13 @@
 2016-01-29  Enrica Casucci  <enrica@apple.com>
 
+        One more iOS build fix.
+
+        Unreviewed.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+2016-01-29  Enrica Casucci  <enrica@apple.com>
+
         iOS build fix after r195826.
 
         Unreviewed.

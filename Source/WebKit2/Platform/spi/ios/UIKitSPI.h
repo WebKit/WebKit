@@ -241,6 +241,7 @@ typedef enum {
 
 @interface UIGestureRecognizer ()
 - (void)requireOtherGestureToFail:(UIGestureRecognizer *)gestureRecognizer;
+@property(nonatomic, copy) NSArray<NSNumber *> *allowedTouchTypes;
 @end
 
 @interface UILongPressGestureRecognizer ()
