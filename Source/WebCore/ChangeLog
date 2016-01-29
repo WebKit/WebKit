@@ -1,3 +1,11 @@
+2016-01-29  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Windows build fix; one more ResourceLoaderOptions call site which needs to
+        be updated after adding the CachingPolicy parameter.
+
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::startLoading):
+
 2016-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement overlay scrollbars
