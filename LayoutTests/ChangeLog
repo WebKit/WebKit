@@ -149,7 +149,6 @@
         * js/regress/v8-raytrace-with-try-catch-high-frequency-throws-expected.txt: Added.
         * js/regress/v8-raytrace-with-try-catch-high-frequency-throws.html: Added.
 
->>>>>>> .r195836
 2016-01-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed gardening after r195740 (v2).
