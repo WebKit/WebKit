@@ -254,8 +254,6 @@ inspector/script-profiler/event-type-API.html
 ### START OF (3) IndexedDB failures with SQLite
 
 # SQLite backend tests with text failures
-crypto/subtle/rsa-indexeddb-non-exportable.html [ Failure ]
-fast/history/page-cache-indexed-opened-db.html [ Failure ]
 imported/w3c/indexeddb/idbindex-multientry-big.htm [ Failure ]
 storage/indexeddb/cursor-continue-validity.html [ Failure ]
 storage/indexeddb/cursor-primary-key-order.html [ Failure ]
@@ -273,7 +271,6 @@ storage/indexeddb/transaction-coordination-within-database.html [ Skip ]
 
 # SQLite backend tests that crash or ASSERT
 storage/indexeddb/database-odd-names.html [ Skip ]
-storage/indexeddb/dont-wedge.html [ Skip ]
 storage/indexeddb/odd-strings.html [ Skip ]
 
 # SQLite backend tests that wedge the entire testing harness
