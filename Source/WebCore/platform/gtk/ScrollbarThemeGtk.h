@@ -61,10 +61,14 @@ public:
     virtual double initialAutoscrollTimerDelay() override { return 0.20; }
     virtual double autoscrollTimerDelay() override { return 0.02; }
     virtual void themeChanged() override;
+    virtual bool usesOverlayScrollbars() const override { return m_usesOverlayScrollbars; }
+    // When using overlay scrollbars, always invalidate the whole scrollbar when entering/leaving.
+    virtual bool invalidateOnMouseEnterExit() override { return m_usesOverlayScrollbars; }
 
 private:
     void updateThemeProperties();
-    GRefPtr<GtkStyleContext> getOrCreateStyleContext(ScrollbarOrientation = VerticalScrollbar);
+    enum class StyleContextMode { Layout, Paint };
+    GRefPtr<GtkStyleContext> getOrCreateStyleContext(Scrollbar* = nullptr, StyleContextMode = StyleContextMode::Layout);
 
     IntSize buttonSize(Scrollbar&);
 
@@ -83,6 +87,7 @@ private:
     gboolean m_hasForwardButtonEndPart;
     gboolean m_hasBackButtonStartPart;
     gboolean m_hasBackButtonEndPart;
+    bool m_usesOverlayScrollbars { false };
 #endif // GTK_API_VERSION_2
 };
 

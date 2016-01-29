@@ -1,3 +1,116 @@
+2016-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=153405
+
+        Reviewed by Michael Catanzaro.
+
+        Add support for overlay scrollbars to GTK+ platform following the
+        same style and behavior than GtkScrolledWindow. They are only
+        available for GTK+ >= 3.19, but honoring the GTK_OVERLAY_SCROLLING
+        environment variable, so they could be disable at run time, except
+        when threaded compositor is enabled. A new ScrollAnimator class
+        has been added for GTK+ to implement overlay scrollbars and still
+        allow smooth scrolling when available.
+
+        * PlatformGTK.cmake: Add ScrollAnimatorGtk and stop building ScrollAnimatorSmooth.
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::ScrollAnimator::mouseEnteredContentArea):
+        Remove const to allow the ScrollAnimator to be updated.
+        (WebCore::ScrollAnimator::ScrollAnimator::mouseExitedContentArea): Ditto.
+        (WebCore::ScrollAnimator::ScrollAnimator::mouseMovedInContentArea): Ditto.
+        (WebCore::ScrollAnimator::ScrollAnimator::contentAreaDidShow): Ditto.
+        (WebCore::ScrollAnimator::ScrollAnimator::contentAreaDidHide): Ditto.
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::opacity): Get scrollbar opacity.
+        (WebCore::Scrollbar::setOpacity): Set scrollbar opacity.
+        * platform/gtk/ScrollAnimatorGtk.cpp: Added.
+        (WebCore::ScrollAnimator::create): Create a ScrollAnimatorGtk.
+        (WebCore::ScrollAnimatorGtk::ScrollAnimatorGtk):
+        (WebCore::ScrollAnimatorGtk::~ScrollAnimatorGtk):
+        (WebCore::ScrollAnimatorGtk::ensureSmoothScrollingAnimation):
+        Initialize the ScrollAnimationSmooth if it doesn't exist.
+        (WebCore::ScrollAnimatorGtk::scroll): Ensure we have a
+        ScrollAnimationSmooth if smooth scrolling is enabled. This also
+        fixes the problem of having to reload the page after changing the
+        smooth scrolling setting.
+        (WebCore::ScrollAnimatorGtk::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorGtk::willEndLiveResize):
+        (WebCore::ScrollAnimatorGtk::didAddVerticalScrollbar): Register
+        the scrollbar if it's an overlay scrollbar and make it visible
+        without animating it. Start the hide animation.
+        (WebCore::ScrollAnimatorGtk::didAddHorizontalScrollbar): Ditto.
+        (WebCore::ScrollAnimatorGtk::willRemoveVerticalScrollbar):
+        Unregister the scrollbar if it was registered and resrt the
+        animation state if it was the only scrollbar.
+        (WebCore::ScrollAnimatorGtk::willRemoveHorizontalScrollbar): Ditto.
+        (WebCore::ScrollAnimatorGtk::updateOverlayScrollbarsOpacity): Update
+        the scrollbars opacity and invalidate the indicator.
+        (WebCore::easeOutCubic):
+        (WebCore::ScrollAnimatorGtk::overlayScrollbarAnimationTimerFired):
+        Update the scrollbars opacity and schedule a next frame if the
+        animation didn't finish or start the hide animation otherwhise.
+        (WebCore::ScrollAnimatorGtk::showOverlayScrollbars): Start the
+        fade animation to show the scrollbars if needed.
+        (WebCore::ScrollAnimatorGtk::hideOverlayScrollbars): Start the
+        dafe animation to hide the scrollbars if needed.
+        (WebCore::ScrollAnimatorGtk::mouseEnteredContentArea): Call
+        showOverlayScrollbars().
+        (WebCore::ScrollAnimatorGtk::mouseExitedContentArea): Call
+        hideOverlayScrollbars().
+        (WebCore::ScrollAnimatorGtk::mouseMovedInContentArea): Call
+        showOverlayScrollbars().
+        (WebCore::ScrollAnimatorGtk::contentAreaDidShow): Ditto.
+        (WebCore::ScrollAnimatorGtk::contentAreaDidHide): Hide the
+        scrollbars without animations.
+        (WebCore::ScrollAnimatorGtk::notifyContentAreaScrolled): Call
+        showOverlayScrollbars().
+        (WebCore::ScrollAnimatorGtk::lockOverlayScrollbarStateToHidden):
+        Update the lock state and hide or show the scrollbars when locked
+        or unlocked.
+        * platform/gtk/ScrollAnimatorGtk.h: Added.
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::backButtonRect): Pass
+        StyleContextMode to getOrCreateStyleContext depending on the
+        painting parameter.
+        (WebCore::ScrollbarThemeGtk::forwardButtonRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::trackRect): Ditto.
+        (WebCore::ScrollbarThemeGtk::getOrCreateStyleContext): Add
+        StyleContextMode parameter to add the hovering class
+        unconditionally when using overlay scrollbars in layout mode. In
+        paint mode we add the hovering clas only when the scrollbar is
+        hovered. This way we always claim the size of the scrollbar when
+        hovered to be able to show the full scrollbar when the mouse is
+        close enough to the indicator.
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk): Initialize
+        m_usesOverlayScrollbars.
+        (WebCore::ScrollbarThemeGtk::thumbRect): Pass the scrollbar to
+        getOrCreateStyleContext().
+        (WebCore::adjustRectAccordingToMargin): Fix the top margin.
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground): Pass the
+        scrollbar and paint mode to getOrCreateStyleContext().
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground): Ditto.
+        (WebCore::ScrollbarThemeGtk::paintThumb): Adjust the thumb
+        rectangle when overlay scrollbar is not hovered to its current
+        size, since we always claim the size of the scrollbar in hovered
+        mode.
+        (WebCore::ScrollbarThemeGtk::paintButton): Pass the scrollbar and
+        paint mode to getOrCreateStyleContext().
+        (WebCore::ScrollbarThemeGtk::paint): Take the scrollbar opacity
+        into account when rendering overlay scrollbars as indicators. Also
+        get the scrollbar opacity from the GTK+ theme and use a
+        transparency group when the global opacity is not full opaque.
+        (WebCore::ScrollbarThemeGtk::buttonSize): Pass the scrollbar to
+        getOrCreateStyleContext().
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+        (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+
 2016-01-29  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GStreamer] built-in media player doesn't update

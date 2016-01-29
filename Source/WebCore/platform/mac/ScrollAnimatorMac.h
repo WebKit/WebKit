@@ -95,17 +95,17 @@ private:
     
     virtual void notifyPositionChanged(const FloatSize& delta) override;
     virtual void contentAreaWillPaint() const override;
-    virtual void mouseEnteredContentArea() const override;
-    virtual void mouseExitedContentArea() const override;
-    virtual void mouseMovedInContentArea() const override;
+    virtual void mouseEnteredContentArea() override;
+    virtual void mouseExitedContentArea() override;
+    virtual void mouseMovedInContentArea() override;
     virtual void mouseEnteredScrollbar(Scrollbar*) const override;
     virtual void mouseExitedScrollbar(Scrollbar*) const override;
     virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const override;
     virtual void willStartLiveResize() override;
     virtual void contentsResized() const override;
     virtual void willEndLiveResize() override;
-    virtual void contentAreaDidShow() const override;
-    virtual void contentAreaDidHide() const override;
+    virtual void contentAreaDidShow() override;
+    virtual void contentAreaDidHide() override;
     void didBeginScrollGesture() const;
     void didEndScrollGesture() const;
     void mayBeginScrollGesture() const;

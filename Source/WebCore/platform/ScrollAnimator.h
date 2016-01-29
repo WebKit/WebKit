@@ -91,17 +91,17 @@ public:
     virtual void serviceScrollAnimations() { }
 
     virtual void contentAreaWillPaint() const { }
-    virtual void mouseEnteredContentArea() const { }
-    virtual void mouseExitedContentArea() const { }
-    virtual void mouseMovedInContentArea() const { }
+    virtual void mouseEnteredContentArea() { }
+    virtual void mouseExitedContentArea() { }
+    virtual void mouseMovedInContentArea() { }
     virtual void mouseEnteredScrollbar(Scrollbar*) const { }
     virtual void mouseExitedScrollbar(Scrollbar*) const { }
     virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const { }
     virtual void willStartLiveResize() { }
     virtual void contentsResized() const { }
     virtual void willEndLiveResize() { }
-    virtual void contentAreaDidShow() const { }
-    virtual void contentAreaDidHide() const { }
+    virtual void contentAreaDidShow() { }
+    virtual void contentAreaDidHide() { }
 
     virtual void lockOverlayScrollbarStateToHidden(bool) { }
     virtual bool scrollbarsCanBeActive() const { return true; }

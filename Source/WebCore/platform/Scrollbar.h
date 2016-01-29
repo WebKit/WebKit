@@ -130,6 +130,9 @@ public:
     bool isAlphaLocked() const { return m_isAlphaLocked; }
     void setIsAlphaLocked(bool flag) { m_isAlphaLocked = flag; }
 
+    float opacity() const { return m_opacity; }
+    void setOpacity(float opacity) { m_opacity = opacity; }
+
     bool supportsUpdateOnSecondaryThread() const;
 
     WeakPtr<Scrollbar> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
@@ -177,6 +180,8 @@ protected:
     bool m_isAlphaLocked;
 
     bool m_isCustomScrollbar;
+
+    float m_opacity { 1 };
 
 private:
     virtual bool isScrollbar() const override { return true; }
