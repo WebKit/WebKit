@@ -106,7 +106,7 @@ static void registerUserDefaultsIfNeeded()
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitJSCFTLJITEnabledDefaultsKey];
 
 #if PLATFORM(MAC)
-    [registrationDictionary setObject:[NSNumber numberWithBool:NO] forKey:WebKitTabSuspension];
+    [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitTabSuspension];
 #endif
 
 #if ENABLE(NETWORK_CACHE)

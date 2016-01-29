@@ -1,3 +1,14 @@
+2016-01-28  Antti Koivisto  <antti@apple.com>
+
+        Enable background tab suspension by default on OSX
+        https://bugs.webkit.org/show_bug.cgi?id=153629
+        <rdar://problem/24402895>
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+
 2016-01-28  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Use the non-Development variants of XPC services for development
