@@ -307,36 +307,14 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
         dataLogF("Inspector::getRuntimeTypesForVariablesAtOffsets took %lfms\n", end - start);
 }
 
-class TypeRecompiler : public MarkedBlock::VoidFunctor {
-public:
-    inline void visit(JSCell* cell)
-    {
-        if (!cell->inherits(FunctionExecutable::info()))
-            return;
-
-        FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
-        executable->clearCode();
-        executable->clearUnlinkedCodeForRecompilation();
-    }
-    inline IterationStatus operator()(JSCell* cell)
-    {
-        visit(cell);
-        return IterationStatus::Continue;
-    }
-};
-
 static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTypeProfiling)
 {
     bool shouldRecompileFromTypeProfiler = (shouldEnableTypeProfiling ? vm.enableTypeProfiler() : vm.disableTypeProfiler());
     bool shouldRecompileFromControlFlowProfiler = (shouldEnableTypeProfiling ? vm.enableControlFlowProfiler() : vm.disableControlFlowProfiler());
     bool needsToRecompile = shouldRecompileFromTypeProfiler || shouldRecompileFromControlFlowProfiler;
 
-    if (needsToRecompile) {
-        vm.prepareToDiscardCode();
-        TypeRecompiler recompiler;
-        HeapIterationScope iterationScope(vm.heap);
-        vm.heap.objectSpace().forEachLiveCell(iterationScope, recompiler);
-    }
+    if (needsToRecompile)
+        vm.discardAllCode();
 }
 
 void InspectorRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)

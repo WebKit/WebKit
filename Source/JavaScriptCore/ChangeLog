@@ -1,3 +1,23 @@
+2016-01-29  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/23968717.
+
+    2016-01-28  Saam barati  <sbarati@apple.com>
+
+            Inspector should remove cached code when it recompiles due to the Type Profiler being disabled.
+
+            Keeping around cached code is a mistake because we then
+            generate code that depends on the VM having a TypeProfiler
+            when it doesn't. Note that VM::discardAllCode does exactly
+            what we want.
+
+            * inspector/agents/InspectorRuntimeAgent.cpp:
+            (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+            (Inspector::recompileAllJSFunctionsForTypeProfiling):
+            (Inspector::InspectorRuntimeAgent::willDestroyFrontendAndBackend):
+            (Inspector::TypeRecompiler::visit): Deleted.
+            (Inspector::TypeRecompiler::operator()): Deleted.
+
 2016-01-27  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r194559. rdar://problem/24269083
