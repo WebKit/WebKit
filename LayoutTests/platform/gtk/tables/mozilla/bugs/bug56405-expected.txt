@@ -4,10 +4,10 @@ layer at (0,0) size 785x1134
   RenderBlock {HTML} at (0,0) size 785x1134
     RenderBody {BODY} at (8,8) size 769x1118
       RenderTable {TABLE} at (0,0) size 0x1078
-      RenderTable {TABLE} at (0,1078) size 103x23
-        RenderTableSection {TBODY} at (0,0) size 103x23
-          RenderTableRow {TR} at (0,2) size 103x19
-            RenderTableCell {TD} at (2,2) size 99x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,1078) size 102x23
+        RenderTableSection {TBODY} at (0,0) size 102x23
+          RenderTableRow {TR} at (0,2) size 102x19
+            RenderTableCell {TD} at (2,2) size 98x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 96x17
                 text run at (1,1) width 96: "I'm down here!"
       RenderBlock (anonymous) at (0,1101) size 769x17

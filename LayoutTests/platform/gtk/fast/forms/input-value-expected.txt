@@ -18,126 +18,126 @@ layer at (0,0) size 800x600
               RenderTableCell {TH} at (2,2) size 339x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 55x17
                   text run at (1,1) width 55: "test case"
-              RenderTableCell {TH} at (342,2) size 313x19 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TH} at (343,2) size 312x19 [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 89x17
                   text run at (1,1) width 89: "form element"
-              RenderTableCell {TH} at (656,2) size 63x19 [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 61x17
-                  text run at (1,1) width 61: "property"
-              RenderTableCell {TH} at (720,2) size 62x19 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TH} at (657,2) size 62x19 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 60x17
-                  text run at (1,1) width 60: "attribute"
+                  text run at (1,1) width 60: "property"
+              RenderTableCell {TH} at (721,2) size 61x19 [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 59x17
+                  text run at (1,1) width 59: "attribute"
           RenderTableSection {TBODY} at (0,23) size 784x437
             RenderTableRow {TR} at (0,0) size 784x29
               RenderTableCell {TD} at (2,5) size 339x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 207x17
                   text run at (1,1) width 207: "text with value property changed"
-              RenderTableCell {TD} at (342,0) size 313x29 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,0) size 312x29 [r=0 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-              RenderTableCell {TD} at (656,5) size 63x19 [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,5) size 62x19 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
-              RenderTableCell {TD} at (720,5) size 62x19 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,5) size 61x19 [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 40x17
                   text run at (1,1) width 40: "before"
             RenderTableRow {TR} at (0,31) size 784x29
               RenderTableCell {TD} at (2,36) size 339x19 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 244x17
                   text run at (1,1) width 244: "password with value property changed"
-              RenderTableCell {TD} at (342,31) size 313x29 [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,31) size 312x29 [r=1 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                   RenderFlexibleBox {DIV} at (3,3) size 185x17
                     RenderBlock {DIV} at (0,0) size 185x17
-              RenderTableCell {TD} at (656,36) size 63x19 [r=1 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,36) size 62x19 [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
-              RenderTableCell {TD} at (720,36) size 62x19 [r=1 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,36) size 61x19 [r=1 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 40x17
                   text run at (1,1) width 40: "before"
             RenderTableRow {TR} at (0,62) size 784x24
               RenderTableCell {TD} at (2,64) size 339x20 [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 249x18
                   text run at (1,2) width 249: "check box with value property changed"
-              RenderTableCell {TD} at (342,62) size 313x24 [r=2 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,62) size 312x24 [r=2 c=1 rs=1 cs=1]
                 RenderBlock {INPUT} at (3,4) size 16x16
-              RenderTableCell {TD} at (656,64) size 63x20 [r=2 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,64) size 62x20 [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
-              RenderTableCell {TD} at (720,64) size 62x20 [r=2 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,64) size 61x20 [r=2 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
             RenderTableRow {TR} at (0,88) size 784x19
               RenderTableCell {TD} at (2,88) size 339x19 [r=3 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 227x17
                   text run at (1,1) width 227: "hidden with value property changed"
-              RenderTableCell {TD} at (342,96) size 313x3 [r=3 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (656,88) size 63x19 [r=3 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (343,96) size 312x3 [r=3 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (657,88) size 62x19 [r=3 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
-              RenderTableCell {TD} at (720,88) size 62x19 [r=3 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,88) size 61x19 [r=3 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
             RenderTableRow {TR} at (0,109) size 784x32
               RenderTableCell {TD} at (2,115) size 339x20 [r=4 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 224x18
                   text run at (1,2) width 224: "button with value property changed"
-              RenderTableCell {TD} at (342,109) size 313x32 [r=4 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,109) size 312x32 [r=4 c=1 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 47x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 31x17
                     RenderText at (0,0) size 31x17
                       text run at (0,0) width 31: "after"
-              RenderTableCell {TD} at (656,115) size 63x20 [r=4 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,115) size 62x20 [r=4 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
-              RenderTableCell {TD} at (720,115) size 62x20 [r=4 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,115) size 61x20 [r=4 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
             RenderTableRow {TR} at (0,143) size 784x23
               RenderTableCell {TD} at (2,145) size 339x19 [r=5 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 222x17
                   text run at (1,1) width 222: "image with value property changed"
-              RenderTableCell {TD} at (342,143) size 313x23 [r=5 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,143) size 312x23 [r=5 c=1 rs=1 cs=1]
                 RenderImage {INPUT} at (1,1) size 49x21
-              RenderTableCell {TD} at (656,145) size 63x19 [r=5 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,145) size 62x19 [r=5 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
-              RenderTableCell {TD} at (720,145) size 62x19 [r=5 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,145) size 61x19 [r=5 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
             RenderTableRow {TR} at (0,168) size 784x24
               RenderTableCell {TD} at (2,170) size 339x20 [r=6 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 216x18
                   text run at (1,2) width 216: "radio with value property changed"
-              RenderTableCell {TD} at (342,168) size 313x24 [r=6 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,168) size 312x24 [r=6 c=1 rs=1 cs=1]
                 RenderBlock {INPUT} at (3,4) size 16x16
-              RenderTableCell {TD} at (656,170) size 63x20 [r=6 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,170) size 62x20 [r=6 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
-              RenderTableCell {TD} at (720,170) size 62x20 [r=6 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,170) size 61x20 [r=6 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
             RenderTableRow {TR} at (0,194) size 784x29
               RenderTableCell {TD} at (2,199) size 339x19 [r=7 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 205x17
                   text run at (1,1) width 205: "text with value attribute changed"
-              RenderTableCell {TD} at (342,194) size 313x29 [r=7 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,194) size 312x29 [r=7 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-              RenderTableCell {TD} at (656,199) size 63x19 [r=7 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,199) size 62x19 [r=7 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
-              RenderTableCell {TD} at (720,199) size 62x19 [r=7 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,199) size 61x19 [r=7 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x17
                   text run at (1,1) width 28: "after"
             RenderTableRow {TR} at (0,225) size 784x24
               RenderTableCell {TD} at (2,227) size 339x20 [r=8 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 247x18
                   text run at (1,2) width 247: "check box with value attribute changed"
-              RenderTableCell {TD} at (342,225) size 313x24 [r=8 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,225) size 312x24 [r=8 c=1 rs=1 cs=1]
                 RenderBlock {INPUT} at (3,4) size 16x16
-              RenderTableCell {TD} at (656,227) size 63x20 [r=8 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,227) size 62x20 [r=8 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
-              RenderTableCell {TD} at (720,227) size 62x20 [r=8 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,227) size 61x20 [r=8 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
             RenderTableRow {TR} at (0,251) size 784x36
@@ -145,12 +145,12 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 314x34
                   text run at (1,1) width 314: "text with value property changed, then turned into"
                   text run at (1,18) width 65: "check box"
-              RenderTableCell {TD} at (342,257) size 313x24 [r=9 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,257) size 312x24 [r=9 c=1 rs=1 cs=1]
                 RenderBlock {INPUT} at (3,4) size 16x16
-              RenderTableCell {TD} at (656,259) size 63x20 [r=9 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,259) size 62x20 [r=9 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
-              RenderTableCell {TD} at (720,259) size 62x20 [r=9 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,259) size 61x20 [r=9 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
             RenderTableRow {TR} at (0,289) size 784x36
@@ -158,12 +158,12 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 328x34
                   text run at (1,1) width 328: "check box with value property changed, then turned"
                   text run at (1,18) width 51: "into text"
-              RenderTableCell {TD} at (342,292) size 313x30 [r=10 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,292) size 312x30 [r=10 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-              RenderTableCell {TD} at (656,297) size 63x20 [r=10 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,297) size 62x20 [r=10 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
-              RenderTableCell {TD} at (720,297) size 62x20 [r=10 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,297) size 61x20 [r=10 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
             RenderTableRow {TR} at (0,327) size 784x36
@@ -171,12 +171,12 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 312x34
                   text run at (1,1) width 312: "text with value attribute changed, then turned into"
                   text run at (1,18) width 65: "check box"
-              RenderTableCell {TD} at (342,333) size 313x24 [r=11 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,333) size 312x24 [r=11 c=1 rs=1 cs=1]
                 RenderBlock {INPUT} at (3,4) size 16x16
-              RenderTableCell {TD} at (656,335) size 63x20 [r=11 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,335) size 62x20 [r=11 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
-              RenderTableCell {TD} at (720,335) size 62x20 [r=11 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,335) size 61x20 [r=11 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
             RenderTableRow {TR} at (0,365) size 784x36
@@ -184,26 +184,26 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 326x34
                   text run at (1,1) width 326: "check box with value attribute changed, then turned"
                   text run at (1,18) width 51: "into text"
-              RenderTableCell {TD} at (342,368) size 313x30 [r=12 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,368) size 312x30 [r=12 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-              RenderTableCell {TD} at (656,373) size 63x20 [r=12 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (657,373) size 62x20 [r=12 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
-              RenderTableCell {TD} at (720,373) size 62x20 [r=12 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (721,373) size 61x20 [r=12 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,2) width 28: "after"
             RenderTableRow {TR} at (0,403) size 784x32
               RenderTableCell {TD} at (2,409) size 339x20 [r=13 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 204x18
                   text run at (1,2) width 204: "file with value property changed"
-              RenderTableCell {TD} at (342,403) size 313x32 [r=13 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (343,403) size 312x32 [r=13 c=1 rs=1 cs=1]
                 RenderFileUploadControl {INPUT} at (3,3) size 306x26 "(None)"
                   RenderButton {INPUT} at (0,0) size 103x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                     RenderBlock (anonymous) at (8,4) size 87x17
                       RenderText at (0,0) size 87x17
                         text run at (0,0) width 87: "Choose File"
-              RenderTableCell {TD} at (656,418) size 63x2 [r=13 c=2 rs=1 cs=1]
-              RenderTableCell {TD} at (720,409) size 62x20 [r=13 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (657,418) size 62x2 [r=13 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (721,409) size 61x20 [r=13 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 40x18
                   text run at (1,2) width 40: "before"
 layer at (357,130) size 185x17

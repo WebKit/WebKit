@@ -7,10 +7,10 @@ layer at (0,0) size 800x73
       RenderBlock (anonymous) at (0,0) size 784x17
         RenderText {#text} at (0,0) size 191x17
           text run at (0,0) width 191: "the text should be courier 24pt"
-      RenderTable {TABLE} at (0,17) size 81x23
-        RenderTableSection {TBODY} at (0,0) size 81x23
-          RenderTableRow {TR} at (0,2) size 81x19
-            RenderTableCell {TD} at (2,2) size 77x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,17) size 80x23
+        RenderTableSection {TBODY} at (0,0) size 80x23
+          RenderTableRow {TR} at (0,2) size 80x19
+            RenderTableCell {TD} at (2,2) size 76x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 74x17
                 text run at (1,1) width 74: "inside a cell"
       RenderBlock {DIV} at (0,40) size 784x17

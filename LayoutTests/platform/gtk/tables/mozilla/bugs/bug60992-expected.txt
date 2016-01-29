@@ -3,38 +3,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 231x273
-        RenderTableSection {TBODY} at (0,0) size 231x273
-          RenderTableRow {TR} at (0,2) size 231x123
-            RenderTableCell {TD} at (2,2) size 227x123 [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,1) size 225x51
+      RenderTable {TABLE} at (0,0) size 230x273
+        RenderTableSection {TBODY} at (0,0) size 230x273
+          RenderTableRow {TR} at (0,2) size 230x123
+            RenderTableCell {TD} at (2,2) size 226x123 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 224x51
                 RenderText {#text} at (0,0) size 224x17
                   text run at (0,0) width 224: "This cell has the nowrap parameter "
                 RenderBR {BR} at (224,14) size 0x0
                 RenderBR {BR} at (0,17) size 0x17
                 RenderText {#text} at (0,34) size 31x17
                   text run at (0,34) width 31: "<hr>"
-              RenderBlock {HR} at (1,60) size 225x2 [border: (1px inset #000000)]
-              RenderBlock (anonymous) at (1,70) size 225x34
+              RenderBlock {HR} at (1,60) size 224x2 [border: (1px inset #000000)]
+              RenderBlock (anonymous) at (1,70) size 224x34
                 RenderBR {BR} at (0,0) size 0x17
                 RenderText {#text} at (0,17) size 96x17
                   text run at (0,17) width 96: "<hr width=30>"
               RenderBlock {HR} at (97,112) size 32x2 [border: (1px inset #000000)]
-          RenderTableRow {TR} at (0,127) size 231x19
-            RenderTableCell {TD} at (2,127) size 227x19 [bgcolor=#CCCCCC] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,127) size 230x19
+            RenderTableCell {TD} at (2,127) size 226x19 [bgcolor=#CCCCCC] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x17
                 text run at (1,1) width 4: " "
-          RenderTableRow {TR} at (0,148) size 231x123
-            RenderTableCell {TD} at (2,148) size 227x123 [r=2 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,1) size 225x51
+          RenderTableRow {TR} at (0,148) size 230x123
+            RenderTableCell {TD} at (2,148) size 226x123 [r=2 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 224x51
                 RenderText {#text} at (0,0) size 106x17
                   text run at (0,0) width 106: "This cell doesn't "
                 RenderBR {BR} at (106,14) size 0x0
                 RenderBR {BR} at (0,17) size 0x17
                 RenderText {#text} at (0,34) size 31x17
                   text run at (0,34) width 31: "<hr>"
-              RenderBlock {HR} at (1,60) size 225x2 [border: (1px inset #000000)]
-              RenderBlock (anonymous) at (1,70) size 225x34
+              RenderBlock {HR} at (1,60) size 224x2 [border: (1px inset #000000)]
+              RenderBlock (anonymous) at (1,70) size 224x34
                 RenderBR {BR} at (0,0) size 0x17
                 RenderText {#text} at (0,17) size 96x17
                   text run at (0,17) width 96: "<hr width=30>"

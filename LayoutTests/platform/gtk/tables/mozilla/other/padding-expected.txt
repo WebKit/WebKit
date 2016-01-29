@@ -6,99 +6,99 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x17
         RenderText {#text} at (0,0) size 268x17
           text run at (0,0) width 268: "This table should have cell padding of 5px"
-      RenderTable {TABLE} at (0,17) size 113x66 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 111x64
-          RenderTableRow {TR} at (0,2) size 111x29
-            RenderTableCell {TD} at (2,2) size 49x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,17) size 112x66 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 110x64
+          RenderTableRow {TR} at (0,2) size 110x29
+            RenderTableCell {TD} at (2,2) size 48x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,2) size 57x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,2) size 56x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
-          RenderTableRow {TR} at (0,33) size 111x29
-            RenderTableCell {TD} at (2,33) size 49x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,33) size 110x29
+            RenderTableCell {TD} at (2,33) size 48x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,33) size 57x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,33) size 56x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
       RenderBlock (anonymous) at (0,83) size 784x34
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,17) size 268x17
           text run at (0,17) width 268: "This table should have cell padding of 5px"
-      RenderTable {TABLE} at (0,117) size 113x66 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 111x64
-          RenderTableRow {TR} at (0,2) size 111x29
-            RenderTableCell {TD} at (2,2) size 49x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,117) size 112x66 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 110x64
+          RenderTableRow {TR} at (0,2) size 110x29
+            RenderTableCell {TD} at (2,2) size 48x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,2) size 57x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,2) size 56x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
-          RenderTableRow {TR} at (0,33) size 111x29
-            RenderTableCell {TD} at (2,33) size 49x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,33) size 110x29
+            RenderTableCell {TD} at (2,33) size 48x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,33) size 57x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,33) size 56x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
       RenderBlock (anonymous) at (0,183) size 784x34
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,17) size 268x17
           text run at (0,17) width 268: "This table should have cell padding of 5px"
-      RenderTable {TABLE} at (0,217) size 113x66 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 111x64
-          RenderTableRow {TR} at (0,2) size 111x29
-            RenderTableCell {TD} at (2,2) size 49x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,217) size 112x66 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 110x64
+          RenderTableRow {TR} at (0,2) size 110x29
+            RenderTableCell {TD} at (2,2) size 48x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,2) size 57x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,2) size 56x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
-          RenderTableRow {TR} at (0,33) size 111x29
-            RenderTableCell {TD} at (2,33) size 49x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,33) size 110x29
+            RenderTableCell {TD} at (2,33) size 48x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,33) size 57x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,33) size 56x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
       RenderBlock (anonymous) at (0,283) size 784x34
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,17) size 531x17
           text run at (0,17) width 531: "This table should have cell padding of 5px except the 1st cell's left padding will be 0"
-      RenderTable {TABLE} at (0,317) size 113x66 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 111x64
-          RenderTableRow {TR} at (0,2) size 111x29
-            RenderTableCell {TD} at (2,2) size 49x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,317) size 112x66 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 110x64
+          RenderTableRow {TR} at (0,2) size 110x29
+            RenderTableCell {TD} at (2,2) size 48x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,6) size 36x17
                 text run at (1,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,2) size 57x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,2) size 56x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
-          RenderTableRow {TR} at (0,33) size 111x29
-            RenderTableCell {TD} at (2,33) size 49x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,33) size 110x29
+            RenderTableCell {TD} at (2,33) size 48x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,33) size 57x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,33) size 56x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
       RenderBlock (anonymous) at (0,383) size 784x34
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,17) size 542x17
           text run at (0,17) width 542: "This table should have cell padding of 5px except the last cell's left padding will be 30"
-      RenderTable {TABLE} at (0,417) size 138x66 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 136x64
-          RenderTableRow {TR} at (0,2) size 136x29
-            RenderTableCell {TD} at (2,2) size 49x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,417) size 137x66 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 135x64
+          RenderTableRow {TR} at (0,2) size 135x29
+            RenderTableCell {TD} at (2,2) size 48x29 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,2) size 82x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,2) size 81x29 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (6,6) size 44x17
                 text run at (6,6) width 44: "BBBB"
-          RenderTableRow {TR} at (0,33) size 136x29
-            RenderTableCell {TD} at (2,33) size 49x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,33) size 135x29
+            RenderTableCell {TD} at (2,33) size 48x29 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (6,6) size 36x17
                 text run at (6,6) width 36: "AAA"
-            RenderTableCell {TD} at (52,33) size 82x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,33) size 81x29 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (31,6) size 44x17
                 text run at (31,6) width 44: "BBBB"

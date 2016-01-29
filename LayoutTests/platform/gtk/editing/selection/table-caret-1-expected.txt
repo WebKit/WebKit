@@ -13,18 +13,18 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x17
           RenderText {#text} at (0,0) size 21x17
             text run at (0,0) width 21: "foo"
-        RenderTable {TABLE} at (0,17) size 52x73 [border: (1px solid #999999)]
-          RenderTableSection {TBODY} at (1,1) size 50x71
-            RenderTableRow {TR} at (0,2) size 50x21
-              RenderTableCell {TD} at (2,2) size 46x21 [border: (1px solid #999999)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,17) size 51x73 [border: (1px solid #999999)]
+          RenderTableSection {TBODY} at (1,1) size 49x71
+            RenderTableRow {TR} at (0,2) size 49x21
+              RenderTableCell {TD} at (2,2) size 45x21 [border: (1px solid #999999)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 22x17
                   text run at (2,2) width 22: "this"
-            RenderTableRow {TR} at (0,25) size 50x21
-              RenderTableCell {TD} at (2,25) size 46x21 [border: (1px solid #999999)] [r=1 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,25) size 49x21
+              RenderTableCell {TD} at (2,25) size 45x21 [border: (1px solid #999999)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 10x17
                   text run at (2,2) width 10: "is"
-            RenderTableRow {TR} at (0,48) size 50x21
-              RenderTableCell {TD} at (2,48) size 46x21 [border: (1px solid #999999)] [r=2 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,48) size 49x21
+              RenderTableCell {TD} at (2,48) size 45x21 [border: (1px solid #999999)] [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 41x17
                   text run at (2,2) width 41: "a table"
         RenderBlock (anonymous) at (0,90) size 784x17

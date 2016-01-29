@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 247x145 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 245x143
-          RenderTableRow {TR} at (0,2) size 245x50
-            RenderTableCell {TD} at (2,2) size 241x50 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderBlock {H2} at (2,2) size 237x26
+      RenderTable {TABLE} at (0,0) size 246x145 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 244x143
+          RenderTableRow {TR} at (0,2) size 244x50
+            RenderTableCell {TD} at (2,2) size 240x50 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderBlock {H2} at (2,2) size 236x26
                 RenderText {#text} at (0,0) size 175x26
                   text run at (0,0) width 175: "Personal Friends"
-          RenderTableRow {TR} at (0,53) size 245x88
-            RenderTableCell {TD} at (2,53) size 184x88 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 180x0
+          RenderTableRow {TR} at (0,53) size 244x88
+            RenderTableCell {TD} at (2,53) size 183x88 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 179x0
                 RenderInline {FONT} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (2,2) size 180x17
+              RenderBlock {P} at (2,2) size 179x17
                 RenderText {#text} at (0,0) size 179x17
                   text run at (0,0) width 179: "Alisha - Password-Protected"
-              RenderBlock {P} at (2,35) size 180x17
+              RenderBlock {P} at (2,35) size 179x17
                 RenderText {#text} at (0,0) size 45x17
                   text run at (0,0) width 45: "Arlesia"
-              RenderBlock {P} at (2,68) size 180x17
+              RenderBlock {P} at (2,68) size 179x17
                 RenderText {#text} at (0,0) size 36x17
                   text run at (0,0) width 36: "Asale"
-            RenderTableCell {TD} at (187,53) size 56x88 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (2,2) size 52x17
+            RenderTableCell {TD} at (187,53) size 55x88 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (2,2) size 51x17
                 RenderText {#text} at (0,0) size 34x17
                   text run at (0,0) width 34: "Ernie"
-              RenderBlock {P} at (2,35) size 52x17
+              RenderBlock {P} at (2,35) size 51x17
                 RenderText {#text} at (0,0) size 51x17
                   text run at (0,0) width 51: "Melanie"
-              RenderBlock {P} at (2,68) size 52x17
+              RenderBlock {P} at (2,68) size 51x17
                 RenderText {#text} at (0,0) size 48x17
                   text run at (0,0) width 48: "Tamara"

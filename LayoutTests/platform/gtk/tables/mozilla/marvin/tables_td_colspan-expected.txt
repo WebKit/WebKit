@@ -8,28 +8,28 @@ layer at (0,0) size 800x600
           text run at (0,0) width 600: "This table uses a COLSPAN attribute in the TD tag. The COLSPAN attribute has a value of 6."
         RenderBR {BR} at (600,14) size 0x0
         RenderBR {BR} at (0,17) size 0x17
-      RenderTable {TABLE} at (0,34) size 347x50 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 345x48
-          RenderTableRow {TR} at (0,2) size 345x21
-            RenderTableCell {TD} at (2,2) size 341x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=6]
+      RenderTable {TABLE} at (0,34) size 346x50 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 344x48
+          RenderTableRow {TR} at (0,2) size 344x21
+            RenderTableCell {TD} at (2,2) size 340x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=6]
               RenderText {#text} at (2,2) size 256x17
                 text run at (2,2) width 256: "Netscape Communicator 4.0.6 Platforms"
-          RenderTableRow {TR} at (0,25) size 345x21
-            RenderTableCell {TD} at (2,25) size 61x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,25) size 344x21
+            RenderTableCell {TD} at (2,25) size 60x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x17
                 text run at (2,2) width 56: "Mac 68k"
-            RenderTableCell {TD} at (64,25) size 78x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (64,25) size 77x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 73x17
                 text run at (2,2) width 73: "Power Mac"
-            RenderTableCell {TD} at (143,25) size 56x21 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (143,25) size 55x21 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 51x17
                 text run at (2,2) width 51: "Win 3.1"
-            RenderTableCell {TD} at (200,25) size 52x21 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (200,25) size 51x21 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 47x17
                 text run at (2,2) width 47: "Win 95"
-            RenderTableCell {TD} at (253,25) size 52x21 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (253,25) size 51x21 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
               RenderText {#text} at (2,2) size 47x17
                 text run at (2,2) width 47: "Win 98"
-            RenderTableCell {TD} at (306,25) size 37x21 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
+            RenderTableCell {TD} at (306,25) size 36x21 [border: (1px inset #808080)] [r=1 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x17
                 text run at (2,2) width 32: "Unix"

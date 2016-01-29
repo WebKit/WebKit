@@ -6,20 +6,20 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 600x85
         RenderTableSection {TBODY} at (0,0) size 600x85
           RenderTableRow {TR} at (0,0) size 600x85
-            RenderTableCell {TD} at (0,5) size 119x75 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 119x74 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 117x72
-                  RenderTableRow {TR} at (0,0) size 117x53
-                    RenderTableCell {TD} at (0,0) size 117x53 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,5) size 118x75 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 118x74 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 116x72
+                  RenderTableRow {TR} at (0,0) size 116x53
+                    RenderTableCell {TD} at (0,0) size 116x53 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
                       RenderText {#text} at (1,1) size 114x51
                         text run at (1,1) width 42: "R1C1,"
                         text run at (1,18) width 92: "COLSPAN=2"
                         text run at (1,35) width 114: "WIDTH=\"100%\""
-                  RenderTableRow {TR} at (0,53) size 117x19
+                  RenderTableRow {TR} at (0,53) size 116x19
                     RenderTableCell {TD} at (0,53) size 58x19 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 38x17
                         text run at (1,1) width 38: "R2C1"
-                    RenderTableCell {TD} at (58,53) size 59x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (58,53) size 58x19 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 38x17
                         text run at (1,1) width 38: "R2C2"
             RenderTableCell {TD} at (118,0) size 482x85 [r=0 c=1 rs=1 cs=1]

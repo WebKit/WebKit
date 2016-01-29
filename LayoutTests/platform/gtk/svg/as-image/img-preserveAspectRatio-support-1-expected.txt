@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x495
   RenderBlock {HTML} at (0,0) size 800x495
     RenderBody {BODY} at (8,8) size 784x479
-      RenderTable {TABLE} at (0,0) size 671x479
-        RenderTableSection {TBODY} at (0,0) size 671x479
-          RenderTableRow {TR} at (0,2) size 671x19
-            RenderTableCell {TH} at (2,2) size 94x19 [bgcolor=#DDDD99] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (9,1) size 76x17
-                text run at (9,1) width 76: "viewBox?"
-            RenderTableCell {TH} at (97,2) size 164x19 [bgcolor=#DDDD99] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 162x17
-                text run at (1,1) width 162: "preserve\x{AD}Aspect\x{AD}Ratio"
-            RenderTableCell {TH} at (262,2) size 203x19 [bgcolor=#DDDD99] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (78,1) size 47x17
-                text run at (78,1) width 47: "<img>"
-            RenderTableCell {TH} at (466,2) size 203x19 [bgcolor=#DDDD99] [r=0 c=3 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 670x479
+        RenderTableSection {TBODY} at (0,0) size 670x479
+          RenderTableRow {TR} at (0,2) size 670x19
+            RenderTableCell {TH} at (2,2) size 93x19 [bgcolor=#DDDD99] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (9,1) size 75x17
+                text run at (9,1) width 75: "viewBox?"
+            RenderTableCell {TH} at (97,2) size 163x19 [bgcolor=#DDDD99] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 161x17
+                text run at (1,1) width 161: "preserve\x{AD}Aspect\x{AD}Ratio"
+            RenderTableCell {TH} at (262,2) size 202x19 [bgcolor=#DDDD99] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (78,1) size 46x17
+                text run at (78,1) width 46: "<img>"
+            RenderTableCell {TH} at (466,2) size 202x19 [bgcolor=#DDDD99] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (68,1) size 66x17
                 text run at (68,1) width 66: "<object>"
-          RenderTableRow {TR} at (0,23) size 671x55
-            RenderTableCell {TH} at (2,126) size 94x20 [bgcolor=#DDDD99] [r=1 c=0 rs=4 cs=1]
-              RenderText {#text} at (1,1) size 92x18
-                text run at (1,2) width 92: "No viewBox"
-            RenderTableCell {TH} at (97,49) size 164x3 [bgcolor=#DDDD99] [r=1 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (262,23) size 203x55 [r=1 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,23) size 670x55
+            RenderTableCell {TH} at (2,126) size 93x20 [bgcolor=#DDDD99] [r=1 c=0 rs=4 cs=1]
+              RenderText {#text} at (1,1) size 91x18
+                text run at (1,2) width 91: "No viewBox"
+            RenderTableCell {TH} at (97,49) size 163x3 [bgcolor=#DDDD99] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (262,23) size 202x55 [r=1 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (466,23) size 203x55 [r=1 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (466,23) size 202x55 [r=1 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 200x50 [border: (1px dashed #008000)]
                 layer at (0,0) size 192x42
                   RenderView at (0,0) size 192x42
@@ -34,14 +34,14 @@ layer at (0,0) size 800x495
                   RenderSVGRoot {svg} at (0,0) size 192x42
                     RenderSVGEllipse {circle} at (0,0) size 192x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,80) size 671x55
-            RenderTableCell {TH} at (97,98) size 164x19 [bgcolor=#DDDD99] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (62,1) size 40x17
-                text run at (62,1) width 40: "none"
-            RenderTableCell {TD} at (262,80) size 203x55 [r=2 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,80) size 670x55
+            RenderTableCell {TH} at (97,98) size 163x19 [bgcolor=#DDDD99] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (62,1) size 39x17
+                text run at (62,1) width 39: "none"
+            RenderTableCell {TD} at (262,80) size 202x55 [r=2 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (466,80) size 203x55 [r=2 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (466,80) size 202x55 [r=2 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 200x50 [border: (1px dashed #008000)]
                 layer at (0,0) size 192x42
                   RenderView at (0,0) size 192x42
@@ -51,14 +51,14 @@ layer at (0,0) size 800x495
                     RenderSVGContainer {g} at (0,0) size 192x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
                       RenderSVGPath {path} at (0,0) size 192x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,137) size 671x55
-            RenderTableCell {TH} at (97,155) size 164x19 [bgcolor=#DDDD99] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (63,1) size 38x17
-                text run at (63,1) width 38: "meet"
-            RenderTableCell {TD} at (262,137) size 203x55 [r=3 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,137) size 670x55
+            RenderTableCell {TH} at (97,155) size 163x19 [bgcolor=#DDDD99] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (63,1) size 37x17
+                text run at (63,1) width 37: "meet"
+            RenderTableCell {TD} at (262,137) size 202x55 [r=3 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (466,137) size 203x55 [r=3 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (466,137) size 202x55 [r=3 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 200x50 [border: (1px dashed #008000)]
                 layer at (0,0) size 192x42
                   RenderView at (0,0) size 192x42
@@ -68,14 +68,14 @@ layer at (0,0) size 800x495
                     RenderSVGContainer {g} at (0,0) size 192x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
                       RenderSVGPath {path} at (0,0) size 192x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,194) size 671x55
-            RenderTableCell {TH} at (97,212) size 164x19 [bgcolor=#DDDD99] [r=4 c=1 rs=1 cs=1]
-              RenderText {#text} at (64,1) size 36x17
-                text run at (64,1) width 36: "slice"
-            RenderTableCell {TD} at (262,194) size 203x55 [r=4 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,194) size 670x55
+            RenderTableCell {TH} at (97,212) size 163x19 [bgcolor=#DDDD99] [r=4 c=1 rs=1 cs=1]
+              RenderText {#text} at (64,1) size 35x17
+                text run at (64,1) width 35: "slice"
+            RenderTableCell {TD} at (262,194) size 202x55 [r=4 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (466,194) size 203x55 [r=4 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (466,194) size 202x55 [r=4 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 200x50 [border: (1px dashed #008000)]
                 layer at (0,0) size 192x42
                   RenderView at (0,0) size 192x42
@@ -85,15 +85,15 @@ layer at (0,0) size 800x495
                     RenderSVGContainer {g} at (0,0) size 192x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
                       RenderSVGPath {path} at (0,0) size 192x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,251) size 671x55
-            RenderTableCell {TH} at (2,354) size 94x20 [bgcolor=#DDDD99] [r=5 c=0 rs=4 cs=1]
-              RenderText {#text} at (14,1) size 66x18
-                text run at (14,2) width 66: "viewBox"
-            RenderTableCell {TH} at (97,277) size 164x3 [bgcolor=#DDDD99] [r=5 c=1 rs=1 cs=1]
-            RenderTableCell {TD} at (262,251) size 203x55 [r=5 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,251) size 670x55
+            RenderTableCell {TH} at (2,354) size 93x20 [bgcolor=#DDDD99] [r=5 c=0 rs=4 cs=1]
+              RenderText {#text} at (14,1) size 65x18
+                text run at (14,2) width 65: "viewBox"
+            RenderTableCell {TH} at (97,277) size 163x3 [bgcolor=#DDDD99] [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (262,251) size 202x55 [r=5 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (466,251) size 203x55 [r=5 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (466,251) size 202x55 [r=5 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 200x50 [border: (1px dashed #008000)]
                 layer at (0,0) size 192x42
                   RenderView at (0,0) size 192x42
@@ -103,14 +103,14 @@ layer at (0,0) size 800x495
                     RenderSVGContainer {g} at (74,0) size 32x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
                       RenderSVGPath {path} at (74,0) size 32x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,308) size 671x55
-            RenderTableCell {TH} at (97,326) size 164x19 [bgcolor=#DDDD99] [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (62,1) size 40x17
-                text run at (62,1) width 40: "none"
-            RenderTableCell {TD} at (262,308) size 203x55 [r=6 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,308) size 670x55
+            RenderTableCell {TH} at (97,326) size 163x19 [bgcolor=#DDDD99] [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (62,1) size 39x17
+                text run at (62,1) width 39: "none"
+            RenderTableCell {TD} at (262,308) size 202x55 [r=6 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (466,308) size 203x55 [r=6 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (466,308) size 202x55 [r=6 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 200x50 [border: (1px dashed #008000)]
                 layer at (0,0) size 192x42
                   RenderView at (0,0) size 192x42
@@ -120,14 +120,14 @@ layer at (0,0) size 800x495
                     RenderSVGContainer {g} at (0,0) size 140x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
                       RenderSVGPath {path} at (0,0) size 140x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,365) size 671x55
-            RenderTableCell {TH} at (97,383) size 164x19 [bgcolor=#DDDD99] [r=7 c=1 rs=1 cs=1]
-              RenderText {#text} at (63,1) size 38x17
-                text run at (63,1) width 38: "meet"
-            RenderTableCell {TD} at (262,365) size 203x55 [r=7 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,365) size 670x55
+            RenderTableCell {TH} at (97,383) size 163x19 [bgcolor=#DDDD99] [r=7 c=1 rs=1 cs=1]
+              RenderText {#text} at (63,1) size 37x17
+                text run at (63,1) width 37: "meet"
+            RenderTableCell {TD} at (262,365) size 202x55 [r=7 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (466,365) size 203x55 [r=7 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (466,365) size 202x55 [r=7 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 200x50 [border: (1px dashed #008000)]
                 layer at (0,0) size 192x42
                   RenderView at (0,0) size 192x42
@@ -137,14 +137,14 @@ layer at (0,0) size 800x495
                     RenderSVGContainer {g} at (74,0) size 32x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-162.36,-403.29)}]
                       RenderSVGPath {path} at (74,0) size 32x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [data="M 525.714 585.219 C 525.714 685.419 444.486 766.648 344.286 766.648 C 244.085 766.648 162.857 685.419 162.857 585.219 C 162.857 485.019 244.085 403.791 344.286 403.791 C 444.486 403.791 525.714 485.019 525.714 585.219 Z"]
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,422) size 671x55
-            RenderTableCell {TH} at (97,440) size 164x19 [bgcolor=#DDDD99] [r=8 c=1 rs=1 cs=1]
-              RenderText {#text} at (64,1) size 36x17
-                text run at (64,1) width 36: "slice"
-            RenderTableCell {TD} at (262,422) size 203x55 [r=8 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,422) size 670x55
+            RenderTableCell {TH} at (97,440) size 163x19 [bgcolor=#DDDD99] [r=8 c=1 rs=1 cs=1]
+              RenderText {#text} at (64,1) size 35x17
+                text run at (64,1) width 35: "slice"
+            RenderTableCell {TD} at (262,422) size 202x55 [r=8 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 200x50 [border: (2px dashed #800000)]
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (466,422) size 203x55 [r=8 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (466,422) size 202x55 [r=8 c=3 rs=1 cs=1]
               RenderEmbeddedObject {OBJECT} at (1,1) size 200x50 [border: (1px dashed #008000)]
                 layer at (0,0) size 192x42
                   RenderView at (0,0) size 192x42

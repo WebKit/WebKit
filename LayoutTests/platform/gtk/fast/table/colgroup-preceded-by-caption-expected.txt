@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x130
   RenderBlock {HTML} at (0,0) size 800x130
     RenderBody {BODY} at (8,8) size 784x114
-      RenderTable {TABLE} at (0,0) size 272x57
-        RenderBlock {CAPTION} at (0,0) size 272x34
+      RenderTable {TABLE} at (0,0) size 271x57
+        RenderBlock {CAPTION} at (0,0) size 271x34
           RenderText {#text} at (30,0) size 211x34
             text run at (30,0) width 211: "The next line should have yellow"
-            text run at (96,17) width 80: "background."
+            text run at (96,17) width 79: "background."
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00]
-        RenderTableSection {TBODY} at (0,34) size 272x23
-          RenderTableRow {TR} at (0,2) size 272x19
-            RenderTableCell {TD} at (2,2) size 268x19 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,34) size 271x23
+          RenderTableRow {TR} at (0,2) size 271x19
+            RenderTableCell {TD} at (2,2) size 267x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 265x17
                 text run at (1,1) width 265: "This line should have yellow background."
-      RenderTable {TABLE} at (0,57) size 272x57
-        RenderBlock {CAPTION} at (0,0) size 272x34
+      RenderTable {TABLE} at (0,57) size 271x57
+        RenderBlock {CAPTION} at (0,0) size 271x34
           RenderText {#text} at (30,0) size 211x34
             text run at (30,0) width 211: "The next line should have yellow"
-            text run at (96,17) width 80: "background."
+            text run at (96,17) width 79: "background."
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00]
-        RenderTableSection {TBODY} at (0,34) size 272x23
-          RenderTableRow {TR} at (0,2) size 272x19
-            RenderTableCell {TD} at (2,2) size 268x19 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,34) size 271x23
+          RenderTableRow {TR} at (0,2) size 271x19
+            RenderTableCell {TD} at (2,2) size 267x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 265x17
                 text run at (1,1) width 265: "This line should have yellow background."

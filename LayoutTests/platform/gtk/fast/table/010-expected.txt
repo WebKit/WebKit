@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x0
-      RenderTable {TABLE} at (0,0) size 105x23
-        RenderTableSection {TBODY} at (0,0) size 105x23
-          RenderTableRow {TR} at (0,2) size 105x19
-            RenderTableCell {TD} at (2,2) size 38x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 104x23
+        RenderTableSection {TBODY} at (0,0) size 104x23
+          RenderTableRow {TR} at (0,2) size 104x19
+            RenderTableCell {TD} at (2,2) size 37x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 35x17
                 text run at (1,1) width 35: "Hello"
-            RenderTableCell {TD} at (41,2) size 62x19 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (41,2) size 61x19 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 59x17
                 text run at (1,1) width 59: "Goodbye"

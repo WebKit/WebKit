@@ -6,19 +6,19 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 375x17
           text run at (0,0) width 375: "300xp height value set on THEAD, TBODY, and TFOOT"
-      RenderTable {TABLE} at (0,33) size 251x73 [border: (1px outset #808080)]
-        RenderTableSection {THEAD} at (1,1) size 249x25
-          RenderTableRow {TR} at (0,2) size 249x21
-            RenderTableCell {TH} at (2,2) size 245x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 241x17
-                text run at (2,2) width 241: "This THEAD should be 300px high"
-        RenderTableSection {TFOOT} at (1,49) size 249x23
-          RenderTableRow {TR} at (0,0) size 249x21
-            RenderTableCell {TD} at (2,0) size 245x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,33) size 250x73 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 248x25
+          RenderTableRow {TR} at (0,2) size 248x21
+            RenderTableCell {TH} at (2,2) size 244x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 240x17
+                text run at (2,2) width 240: "This THEAD should be 300px high"
+        RenderTableSection {TFOOT} at (1,49) size 248x23
+          RenderTableRow {TR} at (0,0) size 248x21
+            RenderTableCell {TD} at (2,0) size 244x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 226x17
                 text run at (2,2) width 226: "This TFOOT should be 300px high"
-        RenderTableSection {TBODY} at (1,26) size 249x23
-          RenderTableRow {TR} at (0,0) size 249x21
-            RenderTableCell {TD} at (2,0) size 245x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (1,26) size 248x23
+          RenderTableRow {TR} at (0,0) size 248x21
+            RenderTableCell {TD} at (2,0) size 244x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 234x17
                 text run at (2,2) width 234: "This TBODY should be 300px hight"

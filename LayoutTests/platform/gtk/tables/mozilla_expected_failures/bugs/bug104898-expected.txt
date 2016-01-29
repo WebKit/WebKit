@@ -4,13 +4,13 @@ layer at (0,0) size 800x403
   RenderBlock {HTML} at (0,0) size 800x403
     RenderBody {BODY} at (8,16) size 784x371
       RenderBlock {P} at (0,0) size 784x6 [border: (3px solid #800080)]
-      RenderTable {TABLE} at (0,22) size 134x69 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 134x23 [border: (3px solid #FFA500)]
+      RenderTable {TABLE} at (0,22) size 133x69 [border: (3px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 133x23 [border: (3px solid #FFA500)]
           RenderText {#text} at (55,3) size 23x17
             text run at (55,3) width 23: "cap"
-        RenderTableSection {TBODY} at (35,26) size 64x40
-          RenderTableRow {TR} at (0,2) size 64x36
-            RenderTableCell {TD} at (2,2) size 60x36 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (35,26) size 63x40
+          RenderTableRow {TR} at (0,2) size 63x36
+            RenderTableCell {TD} at (2,2) size 59x36 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x17
                 text run at (1,1) width 57: "Centered"
               RenderBR {BR} at (58,1) size 0x17
@@ -19,12 +19,12 @@ layer at (0,0) size 800x403
       RenderBlock {P} at (0,107) size 784x6 [border: (3px solid #800080)]
       RenderBlock {P} at (0,129) size 784x6 [border: (3px solid #800080)]
       RenderTable {TABLE} at (325,151) size 134x69 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 134x23 [border: (3px solid #FFA500)]
+        RenderBlock {CAPTION} at (0,0) size 133x23 [border: (3px solid #FFA500)]
           RenderText {#text} at (55,3) size 23x17
             text run at (55,3) width 23: "cap"
-        RenderTableSection {TBODY} at (35,26) size 64x40
-          RenderTableRow {TR} at (0,2) size 64x36
-            RenderTableCell {TD} at (2,2) size 60x36 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (35,26) size 63x40
+          RenderTableRow {TR} at (0,2) size 63x36
+            RenderTableCell {TD} at (2,2) size 59x36 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x17
                 text run at (1,1) width 57: "Centered"
               RenderBR {BR} at (58,1) size 0x17
@@ -32,13 +32,13 @@ layer at (0,0) size 800x403
                 text run at (1,18) width 45: "SHIFT"
       RenderBlock {P} at (0,236) size 784x6 [border: (3px solid #800080)]
       RenderBlock {P} at (0,258) size 784x6 [border: (3px solid #800080)]
-      RenderTable {TABLE} at (0,280) size 134x69 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 134x23 [border: (3px solid #FFA500)]
+      RenderTable {TABLE} at (0,280) size 133x69 [border: (3px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 133x23 [border: (3px solid #FFA500)]
           RenderText {#text} at (55,3) size 23x17
             text run at (55,3) width 23: "cap"
-        RenderTableSection {TBODY} at (35,26) size 64x40
-          RenderTableRow {TR} at (0,2) size 64x36
-            RenderTableCell {TD} at (2,2) size 60x36 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (35,26) size 63x40
+          RenderTableRow {TR} at (0,2) size 63x36
+            RenderTableCell {TD} at (2,2) size 59x36 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x17
                 text run at (1,1) width 57: "Centered"
               RenderBR {BR} at (58,1) size 0x17

@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x17
         RenderText {#text} at (0,0) size 229x17
           text run at (0,0) width 229: "There should be text below this line:"
-      RenderTable at (0,17) size 119x17
-        RenderTableSection (anonymous) at (0,0) size 119x17
-          RenderTableRow {DIV} at (0,0) size 119x17
-            RenderTableCell (anonymous) at (0,0) size 119x17 [r=0 c=0 rs=1 cs=1]
+      RenderTable at (0,17) size 118x17
+        RenderTableSection (anonymous) at (0,0) size 118x17
+          RenderTableRow {DIV} at (0,0) size 118x17
+            RenderTableCell (anonymous) at (0,0) size 118x17 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 118x17
                 text run at (0,0) width 118: "Second line of text"

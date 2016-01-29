@@ -11,20 +11,20 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,50) size 784x50
         RenderBlock {BLOCKQUOTE} at (40,0) size 744x50
           RenderBlock {BLOCKQUOTE} at (40,0) size 704x50
-            RenderTable {TABLE} at (0,0) size 84x50 [border: (1px outset #808080)]
-              RenderTableSection {TBODY} at (1,1) size 82x48
-                RenderTableRow {TR} at (0,2) size 82x21
-                  RenderTableCell {TD} at (2,2) size 42x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTable {TABLE} at (0,0) size 83x50 [border: (1px outset #808080)]
+              RenderTableSection {TBODY} at (1,1) size 81x48
+                RenderTableRow {TR} at (0,2) size 81x21
+                  RenderTableCell {TD} at (2,2) size 41x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 27x17
                       text run at (2,2) width 27: "One"
-                  RenderTableCell {TD} at (45,2) size 35x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (45,2) size 34x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 30x17
                       text run at (2,2) width 30: "Two"
-                RenderTableRow {TR} at (0,25) size 82x21
-                  RenderTableCell {TD} at (2,25) size 42x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderTableRow {TR} at (0,25) size 81x21
+                  RenderTableCell {TD} at (2,25) size 41x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 37x17
                       text run at (2,2) width 37: "Three"
-                  RenderTableCell {TD} at (45,25) size 35x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (45,25) size 34x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 30x17
                       text run at (2,2) width 30: "Four"
         RenderBlock (anonymous) at (0,50) size 784x0

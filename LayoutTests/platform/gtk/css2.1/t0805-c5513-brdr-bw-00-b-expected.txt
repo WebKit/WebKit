@@ -6,18 +6,18 @@ layer at (0,0) size 800x120
       RenderBlock {P} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 463x17
           text run at (0,0) width 463: "The three boxes below should have progressively thinner bottom borders."
-      RenderTable {TABLE} at (0,33) size 67x63 [color=#000080]
-        RenderTableSection {TBODY} at (0,0) size 67x63
-          RenderTableRow {TR} at (0,2) size 67x59
-            RenderTableCell {TD} at (2,2) size 21x59 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {P} at (1,17) size 19x25 [border: (3px solid #000080) (5px solid #000080) (3px solid #000080)]
+      RenderTable {TABLE} at (0,33) size 66x63 [color=#000080]
+        RenderTableSection {TBODY} at (0,0) size 66x63
+          RenderTableRow {TR} at (0,2) size 66x59
+            RenderTableCell {TD} at (2,2) size 20x59 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (1,17) size 18x25 [border: (3px solid #000080) (5px solid #000080) (3px solid #000080)]
                 RenderText {#text} at (3,3) size 12x17
                   text run at (3,3) width 12: "A"
-            RenderTableCell {TD} at (24,2) size 20x57 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {P} at (1,17) size 18x23 [border: (3px solid #000080)]
+            RenderTableCell {TD} at (24,2) size 19x57 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {P} at (1,17) size 17x23 [border: (3px solid #000080)]
                 RenderText {#text} at (3,3) size 11x17
                   text run at (3,3) width 11: "B"
-            RenderTableCell {TD} at (45,2) size 20x55 [r=0 c=2 rs=1 cs=1]
-              RenderBlock {P} at (1,17) size 18x21 [border: (3px solid #000080) (1px solid #000080) (3px solid #000080)]
+            RenderTableCell {TD} at (45,2) size 19x55 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {P} at (1,17) size 17x21 [border: (3px solid #000080) (1px solid #000080) (3px solid #000080)]
                 RenderText {#text} at (3,3) size 11x17
                   text run at (3,3) width 11: "C"

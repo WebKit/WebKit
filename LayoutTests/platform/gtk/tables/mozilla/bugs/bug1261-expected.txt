@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (245,2) size 537x45 [bgcolor=#000000] [border: (5px outset #808080)]
-        RenderTableSection {TBODY} at (5,5) size 527x35
-          RenderTableRow {TR} at (0,0) size 527x35
-            RenderTableCell {TD} at (0,0) size 527x35 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 523x31 [border: (5px outset #808080)]
-                RenderTableSection {TBODY} at (5,5) size 513x21
-                  RenderTableRow {TR} at (0,0) size 513x21
-                    RenderTableCell {TD} at (0,0) size 513x21 [bgcolor=#FFFFCC] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 509x17
-                        text run at (2,2) width 509: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxQ"
+      RenderTable {TABLE} at (246,2) size 536x45 [bgcolor=#000000] [border: (5px outset #808080)]
+        RenderTableSection {TBODY} at (5,5) size 526x35
+          RenderTableRow {TR} at (0,0) size 526x35
+            RenderTableCell {TD} at (0,0) size 526x35 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 522x31 [border: (5px outset #808080)]
+                RenderTableSection {TBODY} at (5,5) size 512x21
+                  RenderTableRow {TR} at (0,0) size 512x21
+                    RenderTableCell {TD} at (0,0) size 512x21 [bgcolor=#FFFFCC] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 508x17
+                        text run at (2,2) width 508: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxQ"

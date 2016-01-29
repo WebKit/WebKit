@@ -21,62 +21,62 @@ layer at (0,0) size 800x439
           text run at (0,0) width 745: "Type something in the text field. Resize the window. The text field should not jump down. Delete what you typed and"
           text run at (0,17) width 320: "resize the window. The text field should not move."
       RenderBlock {FORM} at (0,100) size 784x307
-        RenderTable {DL} at (0,0) size 221x27
-          RenderTableSection (anonymous) at (0,0) size 221x27
-            RenderTableRow {DIV} at (0,0) size 221x27
-              RenderTableCell {DT} at (0,5) size 26x17 [r=0 c=0 rs=1 cs=1]
+        RenderTable {DL} at (0,0) size 220x27
+          RenderTableSection (anonymous) at (0,0) size 220x27
+            RenderTableRow {DIV} at (0,0) size 220x27
+              RenderTableCell {DT} at (0,5) size 25x17 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x17
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,0) size 196x27 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {DD} at (25,0) size 195x27 [r=0 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderBlock {HR} at (0,43) size 784x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,61) size 784x34
           RenderText {#text} at (0,0) size 781x34
             text run at (0,0) width 781: "And here's more. There should not be a difference in distance between the labels, nor any difference in distance between the"
             text run at (0,17) width 65: "text fields."
-        RenderTable {DL} at (0,111) size 235x196
-          RenderTableSection (anonymous) at (0,0) size 235x196
-            RenderTableRow {DIV} at (0,0) size 235x27
-              RenderTableCell {DT} at (0,5) size 26x17 [r=0 c=0 rs=1 cs=1]
+        RenderTable {DL} at (0,111) size 234x196
+          RenderTableSection (anonymous) at (0,0) size 234x196
+            RenderTableRow {DIV} at (0,0) size 234x27
+              RenderTableCell {DT} at (0,5) size 25x17 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x17
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,0) size 210x27 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {DD} at (25,0) size 209x27 [r=0 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableRow {DIV} at (0,27) size 235x27
-              RenderTableCell {DT} at (0,32) size 26x17 [r=1 c=0 rs=1 cs=1]
+            RenderTableRow {DIV} at (0,27) size 234x27
+              RenderTableCell {DT} at (0,32) size 25x17 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x17
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,27) size 210x27 [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {DD} at (25,27) size 209x27 [r=1 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableRow {DIV} at (0,54) size 235x27
-              RenderTableCell {DT} at (0,59) size 26x17 [r=2 c=0 rs=1 cs=1]
+            RenderTableRow {DIV} at (0,54) size 234x27
+              RenderTableCell {DT} at (0,59) size 25x17 [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x17
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,54) size 210x27 [r=2 c=1 rs=1 cs=1]
+              RenderTableCell {DD} at (25,54) size 209x27 [r=2 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableRow {DIV} at (0,81) size 235x27
-              RenderTableCell {DT} at (0,86) size 26x17 [r=3 c=0 rs=1 cs=1]
+            RenderTableRow {DIV} at (0,81) size 234x27
+              RenderTableCell {DT} at (0,86) size 25x17 [r=3 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x17
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,81) size 210x27 [r=3 c=1 rs=1 cs=1]
+              RenderTableCell {DD} at (25,81) size 209x27 [r=3 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableRow {DIV} at (0,108) size 235x27
-              RenderTableCell {DT} at (0,113) size 26x17 [r=4 c=0 rs=1 cs=1]
+            RenderTableRow {DIV} at (0,108) size 234x27
+              RenderTableCell {DT} at (0,113) size 25x17 [r=4 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x17
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,108) size 210x27 [r=4 c=1 rs=1 cs=1]
+              RenderTableCell {DD} at (25,108) size 209x27 [r=4 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableRow {DIV} at (0,135) size 235x27
-              RenderTableCell {DT} at (0,140) size 26x17 [r=5 c=0 rs=1 cs=1]
+            RenderTableRow {DIV} at (0,135) size 234x27
+              RenderTableCell {DT} at (0,140) size 25x17 [r=5 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x17
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,135) size 210x27 [r=5 c=1 rs=1 cs=1]
+              RenderTableCell {DD} at (25,135) size 209x27 [r=5 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderTableRow {DIV} at (0,162) size 235x34
-              RenderTableCell {DT} at (0,179) size 26x17 [r=6 c=0 rs=1 cs=1]
+            RenderTableRow {DIV} at (0,162) size 234x34
+              RenderTableCell {DT} at (0,179) size 25x17 [r=6 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x17
                   text run at (0,0) width 25: "Foo"
-              RenderTableCell {DD} at (25,162) size 210x34 [r=6 c=1 rs=1 cs=1]
+              RenderTableCell {DD} at (25,162) size 209x34 [r=6 c=1 rs=1 cs=1]
                 RenderBlock {DIV} at (0,0) size 209x34
                   RenderBR {BR} at (0,0) size 0x17
                   RenderText {#text} at (0,17) size 209x17

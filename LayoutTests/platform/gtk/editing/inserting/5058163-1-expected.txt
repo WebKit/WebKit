@@ -7,20 +7,20 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 759x17
           text run at (0,0) width 759: "This tests for a bug where hitting return between two tables would add a new paragraph at the end of the editable region."
       RenderBlock {DIV} at (0,33) size 784x84
-        RenderTable {TABLE} at (0,0) size 476x25 [border: (1px solid #AAAAAA)]
-          RenderTableSection {TBODY} at (1,1) size 474x23
-            RenderTableRow {TR} at (0,2) size 474x19
-              RenderTableCell {TD} at (2,2) size 470x19 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 475x25 [border: (1px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (1,1) size 473x23
+            RenderTableRow {TR} at (0,2) size 473x19
+              RenderTableCell {TD} at (2,2) size 469x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 467x17
                   text run at (1,1) width 467: "There should be two empty paragraphs after this table and before the next."
         RenderBlock {DIV} at (0,25) size 784x17
           RenderBR {BR} at (0,0) size 0x17
         RenderBlock (anonymous) at (0,42) size 784x17
           RenderBR {BR} at (0,0) size 0x17
-        RenderTable {TABLE} at (0,59) size 277x25 [border: (1px solid #AAAAAA)]
-          RenderTableSection {TBODY} at (1,1) size 275x23
-            RenderTableRow {TR} at (0,2) size 275x19
-              RenderTableCell {TD} at (2,2) size 271x19 [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,59) size 276x25 [border: (1px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (1,1) size 274x23
+            RenderTableRow {TR} at (0,2) size 274x19
+              RenderTableCell {TD} at (2,2) size 270x19 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 268x17
                   text run at (1,1) width 268: "And the caret should be in the second one."
 caret: position 0 of child 2 {BR} of child 2 {DIV} of body

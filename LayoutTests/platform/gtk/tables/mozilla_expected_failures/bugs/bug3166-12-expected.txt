@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 157x64 [border: (3px solid #008000)]
-        RenderTableSection {TBODY} at (3,3) size 151x58
-          RenderTableRow {TR} at (0,2) size 151x54
-            RenderTableCell {TD} at (2,2) size 147x54 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 145x52 [border: (3px solid #008000)]
+      RenderTable {TABLE} at (0,0) size 156x64 [border: (3px solid #008000)]
+        RenderTableSection {TBODY} at (3,3) size 150x58
+          RenderTableRow {TR} at (0,2) size 150x54
+            RenderTableCell {TD} at (2,2) size 146x54 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 144x52 [border: (3px solid #008000)]
                 RenderBlock {CAPTION} at (0,0) size 78x23 [border: (3px solid #FFA500)]
                   RenderText {#text} at (28,3) size 22x17
                     text run at (28,3) width 22: "cap"
-                RenderTableSection {TBODY} at (3,26) size 139x23
-                  RenderTableRow {TR} at (0,2) size 139x19
-                    RenderTableCell {TD} at (2,2) size 135x19 [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (3,26) size 138x23
+                  RenderTableRow {TR} at (0,2) size 138x19
+                    RenderTableCell {TD} at (2,2) size 134x19 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 132x17
                         text run at (1,1) width 132: "table cell foo and bar"

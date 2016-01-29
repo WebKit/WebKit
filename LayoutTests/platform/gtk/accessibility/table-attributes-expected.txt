@@ -11,7 +11,7 @@ South	3333	1111	2222
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 234.000000, 26.000000 }
+AXPosition: { 235.000000, 26.000000 }
 AXSize: { 144.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
@@ -30,7 +30,7 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 234.000000, 26.000000 }
+AXPosition: { 235.000000, 26.000000 }
 AXSize: { 144.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
@@ -49,8 +49,8 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 377.000000, 26.000000 }
-AXSize: { 71.000000, 63.000000 }
+AXPosition: { 378.000000, 26.000000 }
+AXSize: { 70.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All<\n>Genders
@@ -111,7 +111,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
-AXSize: { 144.000000, 63.000000 }
+AXSize: { 143.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -130,7 +130,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
-AXSize: { 144.000000, 63.000000 }
+AXSize: { 143.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -149,7 +149,7 @@ AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 89.000000 }
-AXSize: { 91.000000, 58.000000 }
+AXSize: { 90.000000, 58.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All Regions
@@ -168,7 +168,7 @@ AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 89.000000 }
-AXSize: { 91.000000, 58.000000 }
+AXSize: { 90.000000, 58.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All Regions
@@ -199,7 +199,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
-AXSize: { 144.000000, 63.000000 }
+AXSize: { 143.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -218,7 +218,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
-AXSize: { 144.000000, 63.000000 }
+AXSize: { 143.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -237,7 +237,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 370.000000, 26.000000 }
-AXSize: { 70.000000, 63.000000 }
+AXSize: { 69.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All<\n>Genders
@@ -294,7 +294,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
-AXSize: { 144.000000, 63.000000 }
+AXSize: { 143.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -313,7 +313,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
-AXSize: { 144.000000, 63.000000 }
+AXSize: { 143.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -332,7 +332,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 370.000000, 26.000000 }
-AXSize: { 70.000000, 63.000000 }
+AXSize: { 69.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All<\n>Genders
@@ -370,7 +370,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 491.000000, 55.000000 }
-AXSize: { 68.000000, 34.000000 }
+AXSize: { 67.000000, 34.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Females
@@ -389,7 +389,7 @@ AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 89.000000 }
-AXSize: { 91.000000, 58.000000 }
+AXSize: { 90.000000, 58.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All Regions
@@ -408,7 +408,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 317.000000, 89.000000 }
-AXSize: { 54.000000, 29.000000 }
+AXSize: { 53.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: North
@@ -427,7 +427,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 370.000000, 89.000000 }
-AXSize: { 70.000000, 29.000000 }
+AXSize: { 69.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 3333
@@ -465,7 +465,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 491.000000, 89.000000 }
-AXSize: { 68.000000, 29.000000 }
+AXSize: { 67.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 2222
@@ -484,7 +484,7 @@ AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 89.000000 }
-AXSize: { 91.000000, 58.000000 }
+AXSize: { 90.000000, 58.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All Regions
@@ -503,7 +503,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 317.000000, 118.000000 }
-AXSize: { 54.000000, 29.000000 }
+AXSize: { 53.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: South
@@ -522,7 +522,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 370.000000, 118.000000 }
-AXSize: { 70.000000, 29.000000 }
+AXSize: { 69.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 3333
@@ -560,7 +560,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 491.000000, 118.000000 }
-AXSize: { 68.000000, 29.000000 }
+AXSize: { 67.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 2222

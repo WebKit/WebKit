@@ -6,19 +6,19 @@ layer at (0,0) size 800x472
       RenderBlock {P} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 504x17
           text run at (0,0) width 504: "The following two columns should be pixel perfect identical with no red visible."
-      RenderTable {TABLE} at (0,33) size 79x374 [border: (3px solid #000000)]
-        RenderTableSection {TBODY} at (3,3) size 73x368
-          RenderTableRow {TR} at (0,0) size 73x368
-            RenderTableCell {TD} at (0,0) size 37x368 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (36,0) size 37x368 [bgcolor=#FFA500] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,50) size 37x268 [bgcolor=#0000FF]
-                RenderBlock {DIV} at (0,0) size 37x56 [bgcolor=#FFFF00]
+      RenderTable {TABLE} at (0,33) size 78x374 [border: (3px solid #000000)]
+        RenderTableSection {TBODY} at (3,3) size 72x368
+          RenderTableRow {TR} at (0,0) size 72x368
+            RenderTableCell {TD} at (0,0) size 36x368 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (36,0) size 36x368 [bgcolor=#FFA500] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,50) size 36x268 [bgcolor=#0000FF]
+                RenderBlock {DIV} at (0,0) size 36x56 [bgcolor=#FFFF00]
                   RenderText {#text} at (0,0) size 36x56
                     text run at (0,0) width 36: "A"
-                RenderBlock {DIV} at (0,106) size 37x56 [bgcolor=#00FF00]
+                RenderBlock {DIV} at (0,106) size 36x56 [bgcolor=#00FF00]
                   RenderText {#text} at (0,0) size 33x56
                     text run at (0,0) width 33: "B"
-                RenderBlock {DIV} at (0,212) size 37x56 [bgcolor=#00FFFF]
+                RenderBlock {DIV} at (0,212) size 36x56 [bgcolor=#00FFFF]
                   RenderText {#text} at (0,0) size 33x56
                     text run at (0,0) width 33: "C"
       RenderBlock {P} at (0,423) size 784x17
@@ -30,23 +30,23 @@ layer at (0,0) size 800x472
         RenderText {#text} at (308,0) size 4x17
           text run at (308,0) width 4: "."
 layer at (11,102) size 36x268
-  RenderBlock (relative positioned) {DIV} at (0,50) size 37x268 [bgcolor=#0000FF]
+  RenderBlock (relative positioned) {DIV} at (0,50) size 36x268 [bgcolor=#0000FF]
 layer at (11,102) size 36x56
-  RenderBlock (relative positioned) {DIV} at (0,0) size 37x56 [bgcolor=#FF0000]
+  RenderBlock (relative positioned) {DIV} at (0,0) size 36x56 [bgcolor=#FF0000]
 layer at (11,102) size 36x56
-  RenderBlock (relative positioned) {DIV} at (0,0) size 37x56
+  RenderBlock (relative positioned) {DIV} at (0,0) size 36x56
 layer at (11,102) size 36x56
-  RenderBlock (relative positioned) {DIV} at (0,0) size 37x56 [bgcolor=#FFFF00]
+  RenderBlock (relative positioned) {DIV} at (0,0) size 36x56 [bgcolor=#FFFF00]
     RenderText {#text} at (0,0) size 36x56
       text run at (0,0) width 36: "A"
 layer at (11,208) size 36x56
-  RenderBlock (relative positioned) {DIV} at (0,106) size 37x56 [bgcolor=#FF0000]
+  RenderBlock (relative positioned) {DIV} at (0,106) size 36x56 [bgcolor=#FF0000]
 layer at (11,208) size 36x56
-  RenderBlock (relative positioned) {DIV} at (0,0) size 37x56 [bgcolor=#00FF00]
-    RenderBlock (anonymous) at (0,0) size 37x56
+  RenderBlock (relative positioned) {DIV} at (0,0) size 36x56 [bgcolor=#00FF00]
+    RenderBlock (anonymous) at (0,0) size 36x56
       RenderText {#text} at (0,0) size 33x56
         text run at (0,0) width 33: "B"
 layer at (11,314) size 36x56
-  RenderBlock (relative positioned) {DIV} at (0,212) size 37x56 [bgcolor=#00FFFF]
+  RenderBlock (relative positioned) {DIV} at (0,212) size 36x56 [bgcolor=#00FFFF]
     RenderText {#text} at (0,0) size 33x56
       text run at (0,0) width 33: "C"

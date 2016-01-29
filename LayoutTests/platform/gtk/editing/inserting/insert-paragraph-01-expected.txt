@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,50) size 784x44
         RenderBlock (anonymous) at (0,0) size 784x17
           RenderBR {BR} at (0,0) size 0x17
-        RenderTable {TABLE} at (0,17) size 32x27 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 30x25
-            RenderTableRow {TR} at (0,2) size 30x21
-              RenderTableCell {TD} at (2,2) size 26x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,17) size 31x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 29x25
+            RenderTableRow {TR} at (0,2) size 29x21
+              RenderTableCell {TD} at (2,2) size 25x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 21x17
                   text run at (2,2) width 21: "foo"
 caret: position 0 of child 1 {TABLE} of child 2 {DIV} of body

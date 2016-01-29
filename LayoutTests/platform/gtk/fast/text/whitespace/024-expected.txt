@@ -31,8 +31,8 @@ layer at (0,0) size 785x1170
       RenderTable {TABLE} at (0,219) size 769x172
         RenderTableSection {TBODY} at (0,0) size 769x171
           RenderTableRow {TR} at (0,2) size 769x167
-            RenderTableCell {TD} at (2,2) size 178x167 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (1,1) size 176x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
+            RenderTableCell {TD} at (2,2) size 177x167 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {PRE} at (1,1) size 175x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {#text} at (7,8) size 97x30
                   text run at (7,8) width 97: "        2003"
                   text run at (103,8) width 1: " "
@@ -66,8 +66,8 @@ layer at (0,0) size 785x1170
       RenderTable {TABLE} at (0,473) size 769x172
         RenderTableSection {TBODY} at (0,0) size 769x171
           RenderTableRow {TR} at (0,2) size 769x167
-            RenderTableCell {TD} at (2,2) size 178x167 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (1,1) size 176x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
+            RenderTableCell {TD} at (2,2) size 177x167 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {PRE} at (1,1) size 175x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {#text} at (7,8) size 97x30
                   text run at (7,8) width 97: "        2003"
                   text run at (103,8) width 1: " "
@@ -107,8 +107,8 @@ layer at (0,0) size 785x1170
       RenderTable {TABLE} at (0,726) size 769x157
         RenderTableSection {TBODY} at (0,0) size 769x156
           RenderTableRow {TR} at (0,2) size 769x152
-            RenderTableCell {TD} at (2,2) size 178x152 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (1,1) size 176x150 [bgcolor=#CCCC99] [border: (1px solid #000000)]
+            RenderTableCell {TD} at (2,2) size 177x152 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {PRE} at (1,1) size 175x150 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderText {#text} at (7,8) size 97x15
                   text run at (7,8) width 97: "        2003"
                   text run at (103,8) width 1: " "
@@ -142,8 +142,8 @@ layer at (0,0) size 785x1170
       RenderTable {TABLE} at (0,965) size 769x172
         RenderTableSection {TBODY} at (0,0) size 769x171
           RenderTableRow {TR} at (0,2) size 769x167
-            RenderTableCell {TD} at (2,2) size 178x167 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {PRE} at (1,1) size 176x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
+            RenderTableCell {TD} at (2,2) size 177x167 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {PRE} at (1,1) size 175x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
                 RenderInline {SPAN} at (0,0) size 97x15
                   RenderText {#text} at (7,8) size 97x15
                     text run at (7,8) width 97: "        2003"

@@ -75,25 +75,25 @@ layer at (0,0) size 800x516
           RenderListItem {TABLE} at (33,18) size 692x44 [border: (1px dashed #000000)]
             RenderBlock (anonymous) at (1,1) size 690x17
               RenderListMarker at (-20,0) size 15x17: "a"
-            RenderTable at (1,18) size 194x25
-              RenderTableSection {TBODY} at (0,0) size 194x25
-                RenderTableRow {TR} at (0,2) size 194x21
-                  RenderTableCell {TD} at (2,2) size 95x21 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTable at (1,18) size 193x25
+              RenderTableSection {TBODY} at (0,0) size 193x25
+                RenderTableRow {TR} at (0,2) size 193x21
+                  RenderTableCell {TD} at (2,2) size 94x21 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 90x17
                       text run at (2,2) width 90: "Table Cell A1"
-                  RenderTableCell {TD} at (98,2) size 94x21 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (98,2) size 93x21 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 89x17
                       text run at (2,2) width 89: "Table Cell B1"
           RenderListItem {TABLE} at (33,62) size 692x44 [border: (1px dashed #000000)]
             RenderBlock (anonymous) at (1,1) size 690x17
               RenderListMarker at (-21,0) size 16x17: "b"
-            RenderTable at (1,18) size 218x25
-              RenderTableSection {TBODY} at (0,0) size 218x25
-                RenderTableRow {TR} at (0,2) size 218x21
-                  RenderTableCell {TD} at (2,2) size 107x21 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTable at (1,18) size 217x25
+              RenderTableSection {TBODY} at (0,0) size 217x25
+                RenderTableRow {TR} at (0,2) size 217x21
+                  RenderTableCell {TD} at (2,2) size 106x21 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 102x17
                       text run at (2,2) width 102: "Table 2 Cell A1"
-                  RenderTableCell {TD} at (110,2) size 106x21 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (110,2) size 105x21 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 101x17
                       text run at (2,2) width 101: "Table 2 Cell B1"
         RenderListItem {DIV} at (33,389) size 726x19 [border: (1px solid #000000)]

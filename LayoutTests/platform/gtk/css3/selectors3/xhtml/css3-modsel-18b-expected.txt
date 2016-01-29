@@ -14,23 +14,23 @@ layer at (0,0) size 800x284
         RenderBlock {p} at (0,50) size 784x17
           RenderText {#text} at (0,0) size 59x17
             text run at (0,0) width 59: "This text."
-        RenderTable {table} at (0,83) size 112x99
-          RenderTableSection (anonymous) at (0,0) size 112x99
-            RenderTableRow {tr} at (0,2) size 112x74
-              RenderTableCell {td} at (2,2) size 108x74 [r=0 c=0 rs=1 cs=1]
-                RenderTable {table} at (1,1) size 106x72
-                  RenderTableSection (anonymous) at (0,0) size 106x72
-                    RenderTableRow {tr} at (0,2) size 106x68
-                      RenderTableCell {td} at (2,2) size 102x68 [r=0 c=0 rs=1 cs=1]
-                        RenderBlock {dl} at (1,17) size 100x34
-                          RenderBlock {dt} at (0,0) size 100x17
+        RenderTable {table} at (0,83) size 111x99
+          RenderTableSection (anonymous) at (0,0) size 111x99
+            RenderTableRow {tr} at (0,2) size 111x74
+              RenderTableCell {td} at (2,2) size 107x74 [r=0 c=0 rs=1 cs=1]
+                RenderTable {table} at (1,1) size 105x72
+                  RenderTableSection (anonymous) at (0,0) size 105x72
+                    RenderTableRow {tr} at (0,2) size 105x68
+                      RenderTableCell {td} at (2,2) size 101x68 [r=0 c=0 rs=1 cs=1]
+                        RenderBlock {dl} at (1,17) size 99x34
+                          RenderBlock {dt} at (0,0) size 99x17
                             RenderText {#text} at (0,0) size 59x17
                               text run at (0,0) width 59: "This text."
-                          RenderBlock {dd} at (40,17) size 60x17
+                          RenderBlock {dd} at (40,17) size 59x17
                             RenderText {#text} at (0,0) size 59x17
                               text run at (0,0) width 59: "This text."
-            RenderTableRow {tr} at (0,78) size 112x19
-              RenderTableCell {td} at (2,78) size 108x19 [r=1 c=0 rs=1 cs=1]
+            RenderTableRow {tr} at (0,78) size 111x19
+              RenderTableCell {td} at (2,78) size 107x19 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 59x17
                   text run at (1,1) width 59: "This text."
         RenderBlock {p} at (0,198) size 784x21

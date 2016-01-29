@@ -19,14 +19,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (31,0) size 46x17
           text run at (31,0) width 46: "content"
       RenderBlock {DIV} at (0,91) size 784x18
-        RenderTable at (0,0) size 32x17
-          RenderTableSection (anonymous) at (0,0) size 32x17
-            RenderTableRow (anonymous) at (0,0) size 32x17
-              RenderTableCell (anonymous) at (0,0) size 32x17 [r=0 c=0 rs=1 cs=1]
+        RenderTable at (0,0) size 31x17
+          RenderTableSection (anonymous) at (0,0) size 31x17
+            RenderTableRow (anonymous) at (0,0) size 31x17
+              RenderTableCell (anonymous) at (0,0) size 31x17 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 31x17
                   text run at (0,0) width 31: "Test:"
-        RenderText {#text} at (31,0) size 47x17
-          text run at (31,0) width 47: "content"
+        RenderText {#text} at (31,0) size 46x17
+          text run at (31,0) width 46: "content"
       RenderBlock {H1} at (0,129) size 784x37
         RenderText {#text} at (0,0) size 92x36
           text run at (0,0) width 92: "Inlines"
@@ -45,13 +45,13 @@ layer at (0,0) size 800x600
           RenderText {#text} at (31,17) size 46x17
             text run at (31,17) width 46: "content"
         RenderBR {BR} at (77,31) size 0x0
-        RenderInline {SPAN} at (0,0) size 78x17
-          RenderTable at (0,34) size 32x17
-            RenderTableSection (anonymous) at (0,0) size 32x17
-              RenderTableRow (anonymous) at (0,0) size 32x17
-                RenderTableCell (anonymous) at (0,0) size 32x17 [r=0 c=0 rs=1 cs=1]
+        RenderInline {SPAN} at (0,0) size 77x17
+          RenderTable at (0,34) size 31x17
+            RenderTableSection (anonymous) at (0,0) size 31x17
+              RenderTableRow (anonymous) at (0,0) size 31x17
+                RenderTableCell (anonymous) at (0,0) size 31x17 [r=0 c=0 rs=1 cs=1]
                   RenderText at (0,0) size 31x17
                     text run at (0,0) width 31: "Test:"
-          RenderText {#text} at (31,34) size 47x17
-            text run at (31,34) width 47: "content"
-        RenderBR {BR} at (77,48) size 1x0
+          RenderText {#text} at (31,34) size 46x17
+            text run at (31,34) width 46: "content"
+        RenderBR {BR} at (77,48) size 0x0

@@ -10,13 +10,13 @@ layer at (8,49) size 784x38
   RenderBlock (relative positioned) {div} at (0,33) size 784x38
 layer at (8,49) size 784x38
   RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x38 [color=#FF0000]
-    RenderTable at (1,1) size 77x36
-      RenderTableSection (anonymous) at (0,0) size 77x36
-        RenderTableRow (anonymous) at (0,0) size 77x36
-          RenderTableCell {span} at (0,0) size 39x36 [r=0 c=0 rs=1 cs=1]
+    RenderTable at (1,1) size 76x36
+      RenderTableSection (anonymous) at (0,0) size 76x36
+        RenderTableRow (anonymous) at (0,0) size 76x36
+          RenderTableCell {span} at (0,0) size 38x36 [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (0,0) size 38x36
               text run at (0,0) width 38: "a b"
-          RenderTableCell {span} at (38,0) size 39x36 [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {span} at (38,0) size 38x36 [r=0 c=1 rs=1 cs=1]
             RenderText {#text} at (0,0) size 38x36
               text run at (0,0) width 38: "c d"
 layer at (8,49) size 78x38

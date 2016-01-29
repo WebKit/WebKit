@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 450x17
           text run at (0,0) width 450: "This tests for a crash when pasting content into a link inside a table cell."
       RenderBlock {DIV} at (0,33) size 784x27
-        RenderTable {TABLE} at (0,0) size 147x27 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 145x25
-            RenderTableRow {TR} at (0,2) size 145x21
-              RenderTableCell {TD} at (2,2) size 141x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,0) size 146x27 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 144x25
+            RenderTableRow {TR} at (0,2) size 144x21
+              RenderTableCell {TD} at (2,2) size 140x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 136x17 [color=#0000EE]
                   RenderText {#text} at (2,2) size 136x17
                     text run at (2,2) width 136: "This should be a link."

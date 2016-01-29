@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {FORM} at (0,0) size 784x89
-        RenderTable {TABLE} at (0,0) size 343x89 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 341x87
-            RenderTableRow {TR} at (0,2) size 341x83
-              RenderTableCell {TD} at (2,2) size 337x83 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderTable {TABLE} at (2,2) size 333x79 [border: (2px outset #808080)]
-                  RenderTableSection {TBODY} at (2,2) size 329x75
-                    RenderTableRow {TR} at (0,2) size 329x38
+        RenderTable {TABLE} at (0,0) size 342x89 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 340x87
+            RenderTableRow {TR} at (0,2) size 340x83
+              RenderTableCell {TD} at (2,2) size 336x83 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderTable {TABLE} at (2,2) size 332x79 [border: (2px outset #808080)]
+                  RenderTableSection {TBODY} at (2,2) size 328x75
+                    RenderTableRow {TR} at (0,2) size 328x38
                       RenderTableCell {TD} at (2,2) size 94x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (2,2) size 56x34
                           text run at (2,2) width 53: "Member"
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                       RenderTableCell {TD} at (97,5) size 224x32 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                         RenderTextControl {INPUT} at (4,4) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                         RenderText {#text} at (0,0) size 0x0
-                    RenderTableRow {TR} at (0,42) size 329x31
+                    RenderTableRow {TR} at (0,42) size 328x31
                       RenderTableCell {TD} at (2,47) size 94x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                         RenderText {#text} at (2,2) size 30x17
                           text run at (2,2) width 30: "PIN:"

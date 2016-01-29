@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 50x128
-        RenderTableSection {TBODY} at (0,0) size 50x128
-          RenderTableRow {TR} at (0,2) size 50x19
-            RenderTableCell {TD} at (2,2) size 46x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 49x128
+        RenderTableSection {TBODY} at (0,0) size 49x128
+          RenderTableRow {TR} at (0,2) size 49x19
+            RenderTableCell {TD} at (2,2) size 45x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 43x17
                 text run at (1,1) width 43: "Row 0"
-          RenderTableRow {TR} at (0,23) size 50x19
-            RenderTableCell {TD} at (2,23) size 46x19 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,23) size 49x19
+            RenderTableCell {TD} at (2,23) size 45x19 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 43x17
                 text run at (1,1) width 43: "Row 1"
-          RenderTableRow {TR} at (0,44) size 50x19
-            RenderTableCell {TD} at (2,44) size 46x19 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,44) size 49x19
+            RenderTableCell {TD} at (2,44) size 45x19 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 43x17
                 text run at (1,1) width 43: "Row 2"
-          RenderTableRow {TR} at (0,65) size 50x19
-            RenderTableCell {TD} at (2,65) size 46x19 [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,65) size 49x19
+            RenderTableCell {TD} at (2,65) size 45x19 [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 43x17
                 text run at (1,1) width 43: "Row 3"
-          RenderTableRow {TR} at (0,86) size 50x19
-            RenderTableCell {TD} at (2,86) size 46x19 [r=4 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,86) size 49x19
+            RenderTableCell {TD} at (2,86) size 45x19 [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 43x17
                 text run at (1,1) width 43: "Row 4"
-          RenderTableRow {TR} at (0,107) size 50x19
-            RenderTableCell {TD} at (2,107) size 46x19 [r=5 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,107) size 49x19
+            RenderTableCell {TD} at (2,107) size 45x19 [r=5 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 43x17
                 text run at (1,1) width 43: "Row 5"
       RenderBlock (anonymous) at (0,128) size 784x30

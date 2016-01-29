@@ -6,7 +6,7 @@ layer at (0,0) size 785x1556
       RenderTable {TABLE} at (0,0) size 769x289
         RenderTableSection {TBODY} at (0,0) size 769x289
           RenderTableRow {TR} at (0,0) size 769x289
-            RenderTableCell {TD} at (0,0) size 49x289 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 48x289 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 48x289
                 text run at (0,0) width 48: "XXXX"
                 text run at (0,17) width 48: "XXXX"
@@ -32,7 +32,7 @@ layer at (0,0) size 785x1556
       RenderTable {TABLE} at (0,306) size 769x293 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x291
           RenderTableRow {TR} at (0,0) size 767x291
-            RenderTableCell {TD} at (0,0) size 51x291 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 50x291 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 48x289
                 text run at (1,1) width 48: "XXXX"
                 text run at (1,18) width 48: "XXXX"
@@ -58,7 +58,7 @@ layer at (0,0) size 785x1556
       RenderTable {TABLE} at (0,616) size 769x295 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x293
           RenderTableRow {TR} at (0,0) size 767x293
-            RenderTableCell {TD} at (0,0) size 53x293 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 52x293 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 48x289
                 text run at (2,2) width 48: "XXXX"
                 text run at (2,19) width 48: "XXXX"
@@ -84,7 +84,7 @@ layer at (0,0) size 785x1556
       RenderTable {TABLE} at (0,928) size 769x289
         RenderTableSection {TBODY} at (0,0) size 769x289
           RenderTableRow {TR} at (0,0) size 769x289
-            RenderTableCell {TD} at (0,0) size 49x289 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 48x289 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 48x289
                 text run at (0,0) width 48: "XXXX"
                 text run at (0,17) width 48: "XXXX"
@@ -103,7 +103,7 @@ layer at (0,0) size 785x1556
                 text run at (0,238) width 48: "XXXX"
                 text run at (0,255) width 48: "XXXX"
                 text run at (0,272) width 48: "XXXX"
-            RenderTableCell {TD} at (48,0) size 49x289 [bgcolor=#FFA500] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (48,0) size 48x289 [bgcolor=#FFA500] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 48x289
                 text run at (0,0) width 48: "XXXX"
                 text run at (0,17) width 48: "XXXX"
@@ -129,7 +129,7 @@ layer at (0,0) size 785x1556
       RenderTable {TABLE} at (0,1234) size 769x289
         RenderTableSection {TBODY} at (0,0) size 769x289
           RenderTableRow {TR} at (0,0) size 769x289
-            RenderTableCell {TD} at (0,0) size 49x289 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 48x289 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 48x289
                 text run at (0,0) width 48: "XXXX"
                 text run at (0,17) width 48: "XXXX"

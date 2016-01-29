@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 400x29
           RenderTableRow {TR} at (0,2) size 400x25
             RenderTableCell {TD} at (2,2) size 396x25 [color=#800080] [bgcolor=#008000] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 346x23 [color=#FFFFFF]
-                RenderTableSection {TBODY} at (0,0) size 346x23
-                  RenderTableRow {TR} at (0,2) size 346x19
-                    RenderTableCell {TD} at (2,2) size 342x19 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 345x23 [color=#FFFFFF]
+                RenderTableSection {TBODY} at (0,0) size 345x23
+                  RenderTableRow {TR} at (0,2) size 345x19
+                    RenderTableCell {TD} at (2,2) size 341x19 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 339x17
                         text run at (1,1) width 339: "This text should be white, since we're in quirks mode."

@@ -5,10 +5,10 @@ layer at (0,0) size 800x136
     RenderBody {BODY} at (0,0) size 800x136
 layer at (0,0) size 266x136 clip at (3,3) size 260x130 scrollHeight 144
   RenderBlock {DIV} at (0,0) size 266x136 [border: (3px solid #008000)]
-    RenderTable {TABLE} at (16,3) size 65x144
-      RenderTableSection {TBODY} at (0,0) size 65x144
-        RenderTableRow {TR} at (0,0) size 65x144
-          RenderTableCell {TD} at (0,0) size 65x144 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (16,3) size 64x144
+      RenderTableSection {TBODY} at (0,0) size 64x144
+        RenderTableRow {TR} at (0,0) size 64x144
+          RenderTableCell {TD} at (0,0) size 64x144 [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (0,-1) size 64x132
               text run at (0,-1) width 64: "This____"
               text run at (0,12) width 64: "text____"

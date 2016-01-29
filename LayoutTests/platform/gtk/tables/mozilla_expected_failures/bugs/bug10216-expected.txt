@@ -6,28 +6,28 @@ layer at (0,0) size 785x677
       RenderBlock {H1} at (0,0) size 769x36
         RenderText {#text} at (0,0) size 434x36
           text run at (0,0) width 434: "caption element: align attribute"
-      RenderTable {TABLE} at (0,57) size 77x153 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 77x102
-          RenderText {#text} at (4,0) size 69x102
-            text run at (4,0) width 69: "The table's"
-            text run at (13,17) width 51: "caption,"
-            text run at (14,34) width 49: "with no"
+      RenderTable {TABLE} at (0,57) size 76x153 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 76x102
+          RenderText {#text} at (4,0) size 68x102
+            text run at (4,0) width 68: "The table's"
+            text run at (13,17) width 50: "caption,"
+            text run at (14,34) width 48: "with no"
             text run at (20,51) width 36: "align."
             text run at (7,68) width 62: "Default is"
-            text run at (19,85) width 39: "\"top\"."
-        RenderTableSection {TBODY} at (1,103) size 75x48
-          RenderTableRow {TR} at (0,2) size 75x21
-            RenderTableCell {TD} at (2,2) size 35x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            text run at (19,85) width 38: "\"top\"."
+        RenderTableSection {TBODY} at (1,103) size 74x48
+          RenderTableRow {TR} at (0,2) size 74x21
+            RenderTableCell {TD} at (2,2) size 34x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x17
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (38,2) size 35x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (38,2) size 34x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x17
                 text run at (2,2) width 30: "Data"
-          RenderTableRow {TR} at (0,25) size 75x21
-            RenderTableCell {TD} at (2,25) size 35x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,25) size 74x21
+            RenderTableCell {TD} at (2,25) size 34x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x17
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (38,25) size 35x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (38,25) size 34x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x17
                 text run at (2,2) width 30: "Data"
       RenderTable {TABLE} at (0,209) size 78x119 [border: (1px outset #808080)]

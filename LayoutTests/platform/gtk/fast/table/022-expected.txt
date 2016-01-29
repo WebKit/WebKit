@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 346x24
-        RenderTableSection {TBODY} at (0,0) size 346x24
-          RenderTableRow {TR} at (0,2) size 346x2
-            RenderTableCell {TD} at (2,2) size 132x2 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (135,2) size 209x2 [r=0 c=1 rs=1 cs=1]
-          RenderTableRow {TR} at (0,6) size 346x16
-            RenderTableCell {TD} at (2,6) size 132x16 [r=1 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 345x24
+        RenderTableSection {TBODY} at (0,0) size 345x24
+          RenderTableRow {TR} at (0,2) size 345x2
+            RenderTableCell {TD} at (2,2) size 131x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (135,2) size 208x2 [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,6) size 345x16
+            RenderTableCell {TD} at (2,6) size 131x16 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 129x14
                 text run at (1,1) width 129: "[this should not overlap]"
-            RenderTableCell {TD} at (135,6) size 209x16 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (135,6) size 208x16 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 206x14
                 text run at (1,1) width 206: "[with this, since the table is auto width]"
       RenderTable {TABLE} at (0,24) size 600x24

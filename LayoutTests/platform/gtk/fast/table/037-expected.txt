@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x56
   RenderBlock {html} at (0,0) size 800x56
     RenderBody {body} at (8,8) size 784x40
-      RenderTable {table} at (0,0) size 83x23
-        RenderTableSection (anonymous) at (0,0) size 83x23
-          RenderTableRow {tr} at (0,2) size 83x19
-            RenderTableCell {td} at (2,2) size 79x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {table} at (0,0) size 82x23
+        RenderTableSection (anonymous) at (0,0) size 82x23
+          RenderTableRow {tr} at (0,2) size 82x19
+            RenderTableCell {td} at (2,2) size 78x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 76x17
                 text run at (1,1) width 76: "Hello world"
       RenderBlock (anonymous) at (0,23) size 784x17

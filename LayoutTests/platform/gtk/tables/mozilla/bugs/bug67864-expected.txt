@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 64x114
-        RenderBlock {CAPTION} at (0,0) size 64x91
-          RenderTable {TABLE} at (0,0) size 64x91
-            RenderTableSection {TBODY} at (0,0) size 64x91
-              RenderTableRow {TR} at (0,2) size 64x87
-                RenderTableCell {TD} at (2,2) size 60x87 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 63x114
+        RenderBlock {CAPTION} at (0,0) size 63x91
+          RenderTable {TABLE} at (0,0) size 63x91
+            RenderTableSection {TBODY} at (0,0) size 63x91
+              RenderTableRow {TR} at (0,2) size 63x87
+                RenderTableCell {TD} at (2,2) size 59x87 [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (1,1) size 52x85
                     text run at (1,1) width 52: "Another"
                     text run at (1,18) width 30: "table"
                     text run at (1,35) width 37: "inside"
                     text run at (1,52) width 19: "the"
                     text run at (1,69) width 46: "caption"
-        RenderTableSection {TBODY} at (0,91) size 64x23
-          RenderTableRow {TR} at (0,2) size 64x19
-            RenderTableCell {TD} at (2,2) size 60x19 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (0,91) size 63x23
+          RenderTableRow {TR} at (0,2) size 63x19
+            RenderTableCell {TD} at (2,2) size 59x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 57x17
                 text run at (1,1) width 57: "First row"

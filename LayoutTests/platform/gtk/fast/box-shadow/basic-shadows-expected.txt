@@ -19,56 +19,56 @@ layer at (0,0) size 785x662
           text run at (10,10) width 29: "50%"
           text run at (10,27) width 69: "transparent"
           text run at (10,44) width 87: "black shadow"
-      RenderTable {TABLE} at (0,270) size 185x255
-        RenderTableSection {TBODY} at (0,0) size 185x255
-          RenderTableRow {TR} at (0,10) size 185x39
-            RenderTableCell {TD} at (10,10) size 49x39 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,270) size 184x255
+        RenderTableSection {TBODY} at (0,0) size 184x255
+          RenderTableRow {TR} at (0,10) size 184x39
+            RenderTableCell {TD} at (10,10) size 48x39 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (68,10) size 49x39 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (68,10) size 48x39 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (126,10) size 49x39 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (126,10) size 48x39 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-          RenderTableRow {TR} at (0,59) size 185x39
-            RenderTableCell {TD} at (10,59) size 49x39 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,59) size 184x39
+            RenderTableCell {TD} at (10,59) size 48x39 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (68,59) size 49x39 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (68,59) size 48x39 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (126,59) size 49x39 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (126,59) size 48x39 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-          RenderTableRow {TR} at (0,108) size 185x39
-            RenderTableCell {TD} at (10,108) size 49x39 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,108) size 184x39
+            RenderTableCell {TD} at (10,108) size 48x39 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (68,108) size 49x39 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (68,108) size 48x39 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (126,108) size 49x39 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (126,108) size 48x39 [border: (1px solid #000000)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-          RenderTableRow {TR} at (0,157) size 185x39
-            RenderTableCell {TD} at (10,157) size 49x39 [border: (1px solid #000000)] [r=3 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,157) size 184x39
+            RenderTableCell {TD} at (10,157) size 48x39 [border: (1px solid #000000)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (68,157) size 49x39 [border: (1px solid #000000)] [r=3 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (68,157) size 48x39 [border: (1px solid #000000)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (126,157) size 49x39 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (126,157) size 48x39 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-          RenderTableRow {TR} at (0,206) size 185x39
-            RenderTableCell {TD} at (10,206) size 49x39 [border: (1px solid #000000)] [r=4 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,206) size 184x39
+            RenderTableCell {TD} at (10,206) size 48x39 [border: (1px solid #000000)] [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (68,206) size 49x39 [border: (1px solid #000000)] [r=4 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (68,206) size 48x39 [border: (1px solid #000000)] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
-            RenderTableCell {TD} at (126,206) size 49x39 [border: (1px solid #000000)] [r=4 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (126,206) size 48x39 [border: (1px solid #000000)] [r=4 c=2 rs=1 cs=1]
               RenderText {#text} at (11,11) size 26x17
                 text run at (11,11) width 26: "Cell"
       RenderBlock {P} at (0,541) size 769x34

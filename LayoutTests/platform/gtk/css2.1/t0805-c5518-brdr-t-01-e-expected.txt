@@ -12,26 +12,26 @@ layer at (0,0) size 800x279
         RenderText {#text} at (543,0) size 776x34
           text run at (543,0) width 233: "\". (So there should be 8 blue lines on"
           text run at (0,17) width 65: "this page.)"
-      RenderTable {TABLE} at (0,50) size 137x73
-        RenderTableSection {TBODY} at (0,0) size 137x73
-          RenderTableRow {TR} at (0,2) size 137x21
-            RenderTableCell {TD} at (2,2) size 133x21 [border: (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (36,3) size 61x17
-                text run at (36,3) width 61: "HERE \x{21E7}"
-          RenderTableRow {TR} at (0,25) size 137x46
-            RenderTableCell {TD} at (2,37) size 63x22 [border: (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,3) size 61x18
-                text run at (1,4) width 61: "HERE \x{21E7}"
-            RenderTableCell {TD} at (66,25) size 69x46 [border: (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,3) size 67x17
-                RenderText {#text} at (3,0) size 61x17
-                  text run at (3,0) width 61: "HERE \x{21E7}"
-              RenderTable {TABLE} at (1,20) size 67x25
-                RenderTableSection {TBODY} at (0,0) size 67x25
-                  RenderTableRow {TR} at (0,2) size 67x21
-                    RenderTableCell {TD} at (2,2) size 63x21 [border: (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,3) size 61x17
-                        text run at (1,3) width 61: "HERE \x{21E7}"
+      RenderTable {TABLE} at (0,50) size 136x73
+        RenderTableSection {TBODY} at (0,0) size 136x73
+          RenderTableRow {TR} at (0,2) size 136x21
+            RenderTableCell {TD} at (2,2) size 132x21 [border: (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
+              RenderText {#text} at (36,3) size 60x17
+                text run at (36,3) width 60: "HERE \x{21E7}"
+          RenderTableRow {TR} at (0,25) size 136x46
+            RenderTableCell {TD} at (2,37) size 62x22 [border: (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,3) size 60x18
+                text run at (1,4) width 60: "HERE \x{21E7}"
+            RenderTableCell {TD} at (66,25) size 68x46 [border: (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,3) size 66x17
+                RenderText {#text} at (3,0) size 60x17
+                  text run at (3,0) width 60: "HERE \x{21E7}"
+              RenderTable {TABLE} at (1,20) size 66x25
+                RenderTableSection {TBODY} at (0,0) size 66x25
+                  RenderTableRow {TR} at (0,2) size 66x21
+                    RenderTableCell {TD} at (2,2) size 62x21 [border: (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,3) size 60x17
+                        text run at (1,3) width 60: "HERE \x{21E7}"
       RenderBlock {UL} at (0,139) size 784x108
         RenderListItem {LI} at (40,0) size 744x70 [border: (2px solid #0000FF) none]
           RenderBlock (anonymous) at (0,2) size 744x17

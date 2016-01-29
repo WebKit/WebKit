@@ -13,7 +13,7 @@ South	3333	1111	2222
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 234.000000, 26.000000 }
+AXPosition: { 235.000000, 26.000000 }
 AXSize: { 144.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
@@ -54,7 +54,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 227.000000, 26.000000 }
-AXSize: { 144.000000, 63.000000 }
+AXSize: { 143.000000, 63.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -74,7 +74,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 370.000000, 89.000000 }
-AXSize: { 70.000000, 29.000000 }
+AXSize: { 69.000000, 29.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 3333

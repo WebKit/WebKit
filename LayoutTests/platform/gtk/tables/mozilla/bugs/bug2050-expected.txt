@@ -7,21 +7,21 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 318x17
           text run at (0,0) width 318: "If the text is too low, then it is probably Bug 6920."
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,17) size 272x60 [bgcolor=#FFCC00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 270x58
-          RenderTableRow {TR} at (0,2) size 270x54
-            RenderTableCell {TD} at (2,2) size 266x54 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DL} at (2,2) size 262x34
-                RenderBlock (anonymous) at (0,0) size 262x0
+      RenderTable {TABLE} at (0,17) size 271x60 [bgcolor=#FFCC00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 269x58
+          RenderTableRow {TR} at (0,2) size 269x54
+            RenderTableCell {TD} at (2,2) size 265x54 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DL} at (2,2) size 261x34
+                RenderBlock (anonymous) at (0,0) size 261x0
                   RenderInline {FONT} at (0,0) size 0x0
                     RenderText {#text} at (0,0) size 0x0
-                RenderBlock (anonymous) at (0,0) size 262x17
-                  RenderBlock {DT} at (0,0) size 262x17
+                RenderBlock (anonymous) at (0,0) size 261x17
+                  RenderBlock {DT} at (0,0) size 261x17
                     RenderText {#text} at (0,0) size 25x17
                       text run at (0,0) width 25: "Baz"
-                RenderBlock (anonymous) at (0,17) size 262x0
+                RenderBlock (anonymous) at (0,17) size 261x0
                   RenderInline {FONT} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-                RenderBlock {DD} at (40,17) size 222x17
+                RenderBlock {DD} at (40,17) size 221x17
                   RenderText {#text} at (0,0) size 221x17
                     text run at (0,0) width 221: "foo foo foo foo foo foo foo foo foo"

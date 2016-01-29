@@ -6,17 +6,17 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 563x17
           text run at (0,0) width 563: "You should see three rows below labeled \"row 1\", \"row 2\", \"row 3\", from top to bottom."
-      RenderTable {TABLE} at (0,33) size 44x65
-        RenderTableSection {TBODY} at (0,0) size 44x65
-          RenderTableRow {TR} at (0,2) size 44x19
-            RenderTableCell {TD} at (2,2) size 40x19 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,33) size 43x65
+        RenderTableSection {TBODY} at (0,0) size 43x65
+          RenderTableRow {TR} at (0,2) size 43x19
+            RenderTableCell {TD} at (2,2) size 39x19 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 37x17
                 text run at (1,1) width 37: "row 1"
-          RenderTableRow {TR} at (0,23) size 44x19
-            RenderTableCell {TD} at (2,23) size 40x19 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,23) size 43x19
+            RenderTableCell {TD} at (2,23) size 39x19 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 37x17
                 text run at (1,1) width 37: "row 2"
-          RenderTableRow {TR} at (0,44) size 44x19
-            RenderTableCell {TD} at (2,44) size 40x19 [r=2 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,44) size 43x19
+            RenderTableCell {TD} at (2,44) size 39x19 [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 37x17
                 text run at (1,1) width 37: "row 3"
