@@ -294,6 +294,14 @@ typedef enum {
 - (CADisplay *)_display;
 @end
 
+typedef enum {
+    UITouchTypeDirect
+} UITouchType;
+
+@interface UITouch ()
+@property(nonatomic,readonly) UITouchType type;
+@end
+
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
