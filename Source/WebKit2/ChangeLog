@@ -1,3 +1,11 @@
+2016-01-29  Dan Bernstein  <mitz@apple.com>
+
+        Don’t use the “.Development” suffix for engineering builds targeting iOS devices, because the XPC cache is only aware of the unsuffixed service identifiers.
+
+        Reviewed by Chris Dumez.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2016-01-29  Enrica Casucci  <enrica@apple.com>
 
         One more iOS build fix.
