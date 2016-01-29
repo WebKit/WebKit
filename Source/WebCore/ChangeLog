@@ -1,3 +1,21 @@
+2016-01-28  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: SQLite backend mismanages key generator values.
+        https://bugs.webkit.org/show_bug.cgi?id=153625
+
+        Reviewed by Andy Estes.
+
+        No new tests (Many failing tests pass, a few get closer).
+
+        There's mixed assumptions about whether the value stored is the current value or the next value.
+
+        Fixing those assumptions fixes tests.
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber): Store/retrieve the correct value.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::revertGeneratedKeyNumber): Ditto.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber): Ditto.
+
 2016-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorTimelineAgent doesn't need to recompile functions because it now uses the sampling profiler

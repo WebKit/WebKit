@@ -1356,7 +1356,7 @@ IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
     if (!error.isNull())
         return error;
 
-    if (currentValue > maxGeneratorValue)
+    if (currentValue + 1 > maxGeneratorValue)
         return { IDBDatabaseException::ConstraintError, "Cannot generate new key value over 2^53 for object store operation" };
 
     generatedKey = currentValue + 1;
@@ -1365,7 +1365,7 @@ IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
 
 IDBError SQLiteIDBBackingStore::revertGeneratedKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, uint64_t newKeyNumber)
 {
-    LOG(IndexedDB, "SQLiteIDBBackingStore::revertGeneratedKeyNumber");
+    LOG(IndexedDB, "SQLiteIDBBackingStore::revertGeneratedKeyNumber - object store %" PRIu64 ", reverted number %" PRIu64, objectStoreID, newKeyNumber);
 
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
@@ -1380,7 +1380,8 @@ IDBError SQLiteIDBBackingStore::revertGeneratedKeyNumber(const IDBResourceIdenti
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to revert key generator value in a read-only transaction") };
     }
 
-    return uncheckedSetKeyGeneratorValue(objectStoreID, newKeyNumber);
+    ASSERT(newKeyNumber);
+    return uncheckedSetKeyGeneratorValue(objectStoreID, newKeyNumber - 1);
 }
 
 IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, double newKeyNumber)
@@ -1414,7 +1415,7 @@ IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceI
 
     ASSERT(newKeyInteger > uint64_t(newKeyNumber));
 
-    return uncheckedSetKeyGeneratorValue(objectStoreID, newKeyInteger);
+    return uncheckedSetKeyGeneratorValue(objectStoreID, newKeyInteger - 1);
 }
 
 IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo& info, IDBGetResult& result)
