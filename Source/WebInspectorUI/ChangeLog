@@ -1,3 +1,18 @@
+2016-01-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Duplicate tab-types being saved to setting, causing duplicate tabs to be opened
+        https://bugs.webkit.org/show_bug.cgi?id=153659
+        <rdar://problem/24413157>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._rememberOpenTabs):
+        De-duplicate the setting when building the list of tabs for existing
+        cases where the setting has duplicates and de-duplicate storing into
+        the setting, which was causing the issue to begin with.
+
 2016-01-29  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add font-variant-* to the visual styles sidebar
