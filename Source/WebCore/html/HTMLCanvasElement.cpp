@@ -403,7 +403,7 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 }
 
 
-void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, bool useLowQualityScale)
+void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
     // Clear the dirty rect
     m_dirtyRect = FloatRect();
@@ -426,9 +426,9 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, boo
 #if ENABLE(CSS_IMAGE_ORIENTATION)
                 orientationDescription.setImageOrientationEnum(renderer()->style().imageOrientation());
 #endif 
-                context.drawImage(*m_presentedImage, snappedIntRect(r), ImagePaintingOptions(orientationDescription, useLowQualityScale));
+                context.drawImage(*m_presentedImage, snappedIntRect(r), ImagePaintingOptions(orientationDescription));
             } else
-                context.drawImageBuffer(*imageBuffer, snappedIntRect(r), useLowQualityScale);
+                context.drawImageBuffer(*imageBuffer, snappedIntRect(r));
         }
     }
 

@@ -102,14 +102,6 @@ enum StrokeStyle {
     WavyStroke,
 };
 
-enum InterpolationQuality {
-    InterpolationDefault,
-    InterpolationNone,
-    InterpolationLow,
-    InterpolationMedium,
-    InterpolationHigh
-};
-
 namespace DisplayList {
 class Recorder;
 }
@@ -194,34 +186,36 @@ struct GraphicsContextState {
 };
 
 struct ImagePaintingOptions {
-    ImagePaintingOptions(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), bool useLowQualityScale = false)
+    ImagePaintingOptions(CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), InterpolationQuality interpolationQuality = InterpolationDefault)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
         , m_orientationDescription(orientationDescription)
-        , m_useLowQualityScale(useLowQualityScale)
+        , m_interpolationQuality(interpolationQuality)
     {
     }
 
-    ImagePaintingOptions(ImageOrientationDescription orientationDescription, bool useLowQualityScale = false, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
+    ImagePaintingOptions(ImageOrientationDescription orientationDescription, InterpolationQuality interpolationQuality = InterpolationDefault, CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
         , m_orientationDescription(orientationDescription)
-        , m_useLowQualityScale(useLowQualityScale)
+        , m_interpolationQuality(interpolationQuality)
     {
     }
 
-    ImagePaintingOptions(bool useLowQualityScale, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
+    ImagePaintingOptions(InterpolationQuality interpolationQuality, ImageOrientationDescription orientationDescription = ImageOrientationDescription(), CompositeOperator compositeOperator = CompositeSourceOver, BlendMode blendMode = BlendModeNormal)
         : m_compositeOperator(compositeOperator)
         , m_blendMode(blendMode)
         , m_orientationDescription(orientationDescription)
-        , m_useLowQualityScale(useLowQualityScale)
+        , m_interpolationQuality(interpolationQuality)
     {
     }
+    
+    bool usesDefaultInterpolation() const { return m_interpolationQuality == InterpolationDefault; }
 
     CompositeOperator m_compositeOperator;
     BlendMode m_blendMode;
     ImageOrientationDescription m_orientationDescription;
-    bool m_useLowQualityScale;
+    InterpolationQuality m_interpolationQuality;
 };
 
 struct GraphicsContextStateChange {
@@ -655,6 +649,34 @@ public:
 private:
     GraphicsContext& m_context;
     bool m_saveAndRestore;
+};
+
+class InterpolationQualityMaintainer {
+public:
+    explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, InterpolationQuality interpolationQualityToUse)
+        : m_graphicsContext(graphicsContext)
+        , m_currentInterpolationQuality(graphicsContext.imageInterpolationQuality())
+        , m_interpolationQualityChanged(interpolationQualityToUse != InterpolationDefault && m_currentInterpolationQuality != interpolationQualityToUse)
+    {
+        if (m_interpolationQualityChanged)
+            m_graphicsContext.setImageInterpolationQuality(interpolationQualityToUse);
+    }
+
+    explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, Optional<InterpolationQuality> interpolationQuality)
+        : InterpolationQualityMaintainer(graphicsContext, interpolationQuality ? interpolationQuality.value() : graphicsContext.imageInterpolationQuality())
+    {
+    }
+
+    ~InterpolationQualityMaintainer()
+    {
+        if (m_interpolationQualityChanged)
+            m_graphicsContext.setImageInterpolationQuality(m_currentInterpolationQuality);
+    }
+
+private:
+    GraphicsContext& m_graphicsContext;
+    InterpolationQuality m_currentInterpolationQuality;
+    bool m_interpolationQualityChanged;
 };
 
 } // namespace WebCore

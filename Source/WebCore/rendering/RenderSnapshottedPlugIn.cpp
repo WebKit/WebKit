@@ -135,13 +135,9 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
     if (alignedRect.width() <= 0 || alignedRect.height() <= 0)
         return;
 
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, *image, image, alignedRect.size());
-
-    ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-    orientationDescription.setImageOrientationEnum(style().imageOrientation());
-#endif
-    context.drawImage(*image, alignedRect, ImagePaintingOptions(orientationDescription, useLowQualityScaling));
+    InterpolationQuality interpolation = chooseInterpolationQuality(context, *image, image, alignedRect.size());
+    ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
+    context.drawImage(*image, alignedRect, ImagePaintingOptions(orientationDescription, interpolation));
 }
 
 CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const

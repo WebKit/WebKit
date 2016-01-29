@@ -161,11 +161,6 @@ void RenderBoxModelObject::suspendAnimations(double time)
     layer()->backing()->suspendAnimations(time);
 }
 
-bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size)
-{
-    return view().imageQualityController().shouldPaintAtLowQuality(context, this, image, layer, size);
-}
-
 RenderBoxModelObject::RenderBoxModelObject(Element& element, Ref<RenderStyle>&& style, BaseTypeFlags baseTypeFlags)
     : RenderLayerModelObject(element, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
@@ -594,6 +589,11 @@ static void applyBoxShadowForBackground(GraphicsContext& context, RenderStyle* s
         context.setLegacyShadow(shadowOffset, boxShadow->radius(), boxShadow->color());
 }
 
+InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size)
+{
+    return view().imageQualityController().chooseInterpolationQuality(context, this, image, layer, size);
+}
+
 void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const IntRect& maskRect, InlineFlowBox* box, const LayoutRect& scrolledPaintRect)
 {
     GraphicsContext& maskImageContext = maskImage->context();
@@ -834,8 +834,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (!geometry.destRect().isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : this, geometry.tileSize()))) {
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             context.setDrawLuminanceMask(bgLayer->maskSourceType() == MaskLuminance);
-            bool useLowQualityScaling = shouldPaintAtLowQuality(context, *image, bgLayer, geometry.tileSize());
-            context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
+
+            InterpolationQuality interpolation = chooseInterpolationQuality(context, *image, bgLayer, geometry.tileSize());
+            context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), interpolation));
         }
     }
 

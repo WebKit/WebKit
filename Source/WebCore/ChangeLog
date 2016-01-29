@@ -1,3 +1,65 @@
+2016-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        image-rendering: -webkit-optimize-contrast not working for background images
+        https://bugs.webkit.org/show_bug.cgi?id=97991
+
+        Reviewed by Darin Adler.
+        
+        Don't equate "pixelated" and "crisp-edges" values for image-rendering with low
+        quality scaling; they should map to InterpolationNone, not InterpolationLow.
+        
+        To support this change ImageQualityController to return a InterpolationQuality
+        from the renamed chooseInterpolationQuality(). If the returned value is not
+        InterpolationDefault, set the GraphicsContext image interpolation when drawing
+        images and image buffers.
+        
+        Remove the redundant "useLowQualityScale" from 
+
+        Test: fast/images/image-rendering-interpolation.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * html/HTMLCanvasElement.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::drawImageBuffer):
+        (WebCore::GraphicsContext::drawConsumingImageBuffer):
+        (WebCore::InterpolationQualityMaintainer::InterpolationQualityMaintainer): Deleted.
+        (WebCore::InterpolationQualityMaintainer::~InterpolationQualityMaintainer): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::ImagePaintingOptions::ImagePaintingOptions):
+        (WebCore::ImagePaintingOptions::usesDefaultInterpolation):
+        (WebCore::InterpolationQualityMaintainer::InterpolationQualityMaintainer):
+        (WebCore::InterpolationQualityMaintainer::~InterpolationQualityMaintainer):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::drawConsuming):
+        (WebCore::ImageBuffer::draw):
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::interpolationQualityFromStyle):
+        (WebCore::ImageQualityController::chooseInterpolationQuality):
+        (WebCore::ImageQualityController::ImageQualityController): Deleted.
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality): Deleted.
+        * rendering/ImageQualityController.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::chooseInterpolationQuality):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::shouldPaintAtLowQuality): Deleted.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintSnapshotImage):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot):
+        * rendering/style/RenderStyle.h:
+
 2016-01-29  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/modern/index-3.html fails.

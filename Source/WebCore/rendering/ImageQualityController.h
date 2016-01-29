@@ -26,24 +26,28 @@
 #ifndef ImageQualityController_h
 #define ImageQualityController_h
 
+#include "GraphicsTypes.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
-class Frame;
 class GraphicsContext;
 class Image;
 class LayoutSize;
 class RenderBoxModelObject;
 class RenderView;
+class RenderStyle;
 
 class ImageQualityController {
     WTF_MAKE_NONCOPYABLE(ImageQualityController); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ImageQualityController(const RenderView&);
 
-    bool shouldPaintAtLowQuality(GraphicsContext&, RenderBoxModelObject*, Image&, const void* layer, const LayoutSize&);
+    static Optional<InterpolationQuality> interpolationQualityFromStyle(const RenderStyle&);
+    InterpolationQuality chooseInterpolationQuality(GraphicsContext&, RenderBoxModelObject*, Image&, const void* layer, const LayoutSize&);
+
     void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(&renderer); }
 
 private:
@@ -59,8 +63,8 @@ private:
     const RenderView& m_renderView;
     ObjectLayerSizeMap m_objectLayerSizeMap;
     Timer m_timer;
-    bool m_animatedResizeIsActive;
-    bool m_liveResizeOptimizationIsActive;
+    bool m_animatedResizeIsActive { false };
+    bool m_liveResizeOptimizationIsActive { false };
 };
 
 } // namespace

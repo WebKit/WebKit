@@ -75,6 +75,14 @@ enum GradientSpreadMethod {
     SpreadMethodRepeat
 };
 
+enum InterpolationQuality {
+    InterpolationDefault,
+    InterpolationNone,
+    InterpolationLow,
+    InterpolationMedium,
+    InterpolationHigh
+};
+
 enum LineCap { ButtCap, RoundCap, SquareCap };
 
 enum LineJoin { MiterJoin, RoundJoin, BevelJoin };

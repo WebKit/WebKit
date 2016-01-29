@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
+#include "ImageQualityController.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderView.h"
@@ -84,8 +85,8 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
             page->addRelevantRepaintedObject(this, intersection(replacedContentRect, contentBoxRect));
     }
 
-    bool useLowQualityScale = style().imageRendering() == ImageRenderingCrispEdges || style().imageRendering() == ImageRenderingPixelated || style().imageRendering() == ImageRenderingOptimizeSpeed;
-    canvasElement().paint(context, replacedContentRect, useLowQualityScale);
+    InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
+    canvasElement().paint(context, replacedContentRect);
 }
 
 void RenderHTMLCanvas::canvasSizeChanged()

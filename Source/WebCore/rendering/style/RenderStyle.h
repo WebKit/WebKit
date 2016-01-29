@@ -1163,9 +1163,14 @@ public:
     bool isFlippedLinesWritingMode() const { return WebCore::isFlippedLinesWritingMode(writingMode()); }
     bool isFlippedBlocksWritingMode() const { return WebCore::isFlippedWritingMode(writingMode()); }
 
+    ImageOrientationEnum imageOrientation() const
+    {
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    ImageOrientationEnum imageOrientation() const { return static_cast<ImageOrientationEnum>(rareInheritedData->m_imageOrientation); }
+        return static_cast<ImageOrientationEnum>(rareInheritedData->m_imageOrientation);
+#else
+        return DefaultImageOrientation;
 #endif
+    }
 
     EImageRendering imageRendering() const { return static_cast<EImageRendering>(rareInheritedData->m_imageRendering); }
 

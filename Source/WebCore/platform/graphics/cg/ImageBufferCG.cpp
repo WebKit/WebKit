@@ -264,11 +264,11 @@ RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior
     return image;
 }
 
-void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
+void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode)
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (!imageBuffer->m_data.surface) {
-        imageBuffer->draw(destContext, destRect, srcRect, op, blendMode, useLowQualityScale);
+        imageBuffer->draw(destContext, destRect, srcRect, op, blendMode);
         return;
     }
     
@@ -283,11 +283,11 @@ void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, Graphi
     adjustedSrcRect.scale(resolutionScale, resolutionScale);
     destContext.drawNativeImage(image.get(), backingStoreSize, destRect, adjustedSrcRect, op, blendMode);
 #else
-    imageBuffer->draw(destContext, destRect, srcRect, op, blendMode, useLowQualityScale);
+    imageBuffer->draw(destContext, destRect, srcRect, op, blendMode);
 #endif
 }
 
-void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, bool)
+void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode)
 {
     RetainPtr<CGImageRef> image;
     if (&destContext == &context() || destContext.isAcceleratedContext())

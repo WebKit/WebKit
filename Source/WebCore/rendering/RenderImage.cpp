@@ -547,14 +547,13 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
 
     HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
     CompositeOperator compositeOperator = imageElement ? imageElement->compositeOperator() : CompositeSourceOver;
+
+    // FIXME: Document when image != img.get().
     Image* image = imageResource().image().get();
-    bool useLowQualityScaling = image && shouldPaintAtLowQuality(context, *image, image, LayoutSize(rect.size()));
-    ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-    orientationDescription.setImageOrientationEnum(style().imageOrientation());
-#endif
-    context.drawImage(*img, rect,
-        ImagePaintingOptions(compositeOperator, BlendModeNormal, orientationDescription, useLowQualityScaling));
+    InterpolationQuality interpolation = image ? chooseInterpolationQuality(context, *image, image, LayoutSize(rect.size())) : InterpolationDefault;
+
+    ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
+    context.drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, orientationDescription, interpolation));
 }
 
 bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const

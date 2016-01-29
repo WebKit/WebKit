@@ -109,7 +109,7 @@ public:
     void didDraw(const FloatRect&);
     void notifyObserversCanvasChanged(const FloatRect&);
 
-    void paint(GraphicsContext&, const LayoutRect&, bool useLowQualityScale = false);
+    void paint(GraphicsContext&, const LayoutRect&);
 
     GraphicsContext* drawingContext() const;
     GraphicsContext* existingDrawingContext() const;

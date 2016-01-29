@@ -935,10 +935,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
     if (!element.renderer())
         return;
 
-    ImageOrientationDescription orientationDescription(element.renderer()->shouldRespectImageOrientation());
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-    orientationDescription.setImageOrientationEnum(element.renderer()->style().imageOrientation());
-#endif
+    ImageOrientationDescription orientationDescription(element.renderer()->shouldRespectImageOrientation(), element.renderer()->style().imageOrientation());
 
     Image* image = getImage(element);
     if (image && image->size().height() * image->size().width() <= MaxOriginalImageArea

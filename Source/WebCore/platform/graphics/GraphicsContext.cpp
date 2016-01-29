@@ -77,30 +77,6 @@ private:
     unsigned m_offset;
 };
 
-class InterpolationQualityMaintainer {
-public:
-    explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, InterpolationQuality interpolationQualityToUse)
-        : m_graphicsContext(graphicsContext)
-        , m_currentInterpolationQuality(graphicsContext.imageInterpolationQuality())
-        , m_interpolationQualityChanged(m_currentInterpolationQuality != interpolationQualityToUse)
-    {
-        if (m_interpolationQualityChanged)
-            m_graphicsContext.setImageInterpolationQuality(interpolationQualityToUse);
-    }
-
-    ~InterpolationQualityMaintainer()
-    {
-        if (m_interpolationQualityChanged)
-            m_graphicsContext.setImageInterpolationQuality(m_currentInterpolationQuality);
-    }
-
-private:
-    GraphicsContext& m_graphicsContext;
-    InterpolationQuality m_currentInterpolationQuality;
-    bool m_interpolationQualityChanged;
-};
-
-
 #define CHECK_FOR_CHANGED_PROPERTY(flag, property) \
     if ((m_changeFlags & GraphicsContextState::flag) && (m_state.property != state.property)) \
         changeFlags |= GraphicsContextState::flag;
@@ -767,7 +743,7 @@ void GraphicsContext::drawImage(Image& image, const FloatRect& destination, cons
         return;
     }
 
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_interpolationQuality);
     image.draw(*this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_orientationDescription);
 }
 
@@ -781,7 +757,7 @@ void GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination,
         return;
     }
 
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_interpolationQuality);
     image.drawTiled(*this, destination, source, tileSize, spacing, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode);
 }
 
@@ -802,7 +778,7 @@ void GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination,
         return;
     }
 
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_interpolationQuality);
     image.drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions.m_compositeOperator);
 }
 
@@ -821,8 +797,8 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
     if (paintingDisabled())
         return;
 
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
-    image.draw(*this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_interpolationQuality);
+    image.draw(*this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
@@ -846,9 +822,8 @@ void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> imag
     if (paintingDisabled() || !image)
         return;
     
-    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
-
-    ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_interpolationQuality);
+    ImageBuffer::drawConsuming(WTFMove(image), *this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode);
 }
 
 void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)

@@ -40,8 +40,6 @@ static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 ImageQualityController::ImageQualityController(const RenderView& renderView)
     : m_renderView(renderView)
     , m_timer(*this, &ImageQualityController::highQualityRepaintTimerFired)
-    , m_animatedResizeIsActive(false)
-    , m_liveResizeOptimizationIsActive(false)
 {
 }
 
@@ -99,23 +97,30 @@ void ImageQualityController::restartTimer()
     m_timer.startOneShot(cLowQualityTimeThreshold);
 }
 
-bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, RenderBoxModelObject* object, Image& image, const void *layer, const LayoutSize& size)
+Optional<InterpolationQuality> ImageQualityController::interpolationQualityFromStyle(const RenderStyle& style)
 {
-    // If the image is not a bitmap image, then none of this is relevant and we just paint at high
-    // quality.
-    if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
-        return false;
-
-    switch (object->style().imageRendering()) {
+    switch (style.imageRendering()) {
     case ImageRenderingOptimizeSpeed:
+        return InterpolationLow;
     case ImageRenderingCrispEdges:
     case ImageRenderingPixelated:
-        return true;
+        return InterpolationNone;
     case ImageRenderingOptimizeQuality:
-        return false; // FIXME: CSS 3 Images says that optimizeQuality should behave like 'auto', but that prevents authors from overriding this low quality rendering behavior.
+        return InterpolationDefault; // FIXME: CSS 3 Images says that optimizeQuality should behave like 'auto', but that prevents authors from overriding this low quality rendering behavior.
     case ImageRenderingAuto:
         break;
     }
+    return Nullopt;
+}
+
+InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, RenderBoxModelObject* object, Image& image, const void *layer, const LayoutSize& size)
+{
+    // If the image is not a bitmap image, then none of this is relevant and we just paint at high quality.
+    if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
+        return InterpolationDefault;
+
+    if (Optional<InterpolationQuality> styleInterpolation = interpolationQualityFromStyle(object->style()))
+        return styleInterpolation.value();
 
     // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
     // is actually being scaled.
@@ -141,10 +146,10 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, R
             set(object, innerMap, layer, size);
             restartTimer();
             m_liveResizeOptimizationIsActive = true;
-            return true;
+            return InterpolationLow;
         }
         if (m_liveResizeOptimizationIsActive)
-            return false;
+            return InterpolationDefault;
     }
 
     const AffineTransform& currentTransform = context.getCTM();
@@ -152,21 +157,21 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, R
     if (!contextIsScaled && size == imageSize) {
         // There is no scale in effect. If we had a scale in effect before, we can just remove this object from the list.
         removeLayer(object, innerMap, layer);
-        return false;
+        return InterpolationDefault;
     }
 
     // There is no need to hash scaled images that always use low quality mode when the page demands it. This is the iChat case.
     if (m_renderView.frame().page()->inLowQualityImageInterpolationMode()) {
         double totalPixels = static_cast<double>(image.width()) * static_cast<double>(image.height());
         if (totalPixels > cInterpolationCutoff)
-            return true;
+            return InterpolationLow;
     }
 
     // If an animated resize is active, paint in low quality and kick the timer ahead.
     if (m_animatedResizeIsActive) {
         set(object, innerMap, layer, size);
         restartTimer();
-        return true;
+        return InterpolationLow;
     }
     // If this is the first time resizing this image, or its size is the
     // same as the last resize, draw at high res, but record the paint
@@ -174,13 +179,13 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, R
     if (isFirstResize || oldSize == size) {
         restartTimer();
         set(object, innerMap, layer, size);
-        return false;
+        return InterpolationDefault;
     }
     // If the timer is no longer active, draw at high quality and don't
     // set the timer.
     if (!m_timer.isActive()) {
         removeLayer(object, innerMap, layer);
-        return false;
+        return InterpolationDefault;
     }
     // This object has been resized to two different sizes while the timer
     // is active, so draw at low quality, set the flag for animated resizes and
@@ -188,7 +193,7 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, R
     set(object, innerMap, layer, size);
     m_animatedResizeIsActive = true;
     restartTimer();
-    return true;
+    return InterpolationLow;
 }
 
 }

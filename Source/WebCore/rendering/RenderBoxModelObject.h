@@ -251,7 +251,7 @@ protected:
     RoundedRect backgroundRoundedRectAdjustedForBleedAvoidance(const GraphicsContext&, const LayoutRect&, BackgroundBleedAvoidance, InlineFlowBox*, const LayoutSize&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
     LayoutRect borderInnerRectAdjustedForBleedAvoidance(const GraphicsContext&, const LayoutRect&, BackgroundBleedAvoidance) const;
 
-    bool shouldPaintAtLowQuality(GraphicsContext&, Image&, const void*, const LayoutSize&);
+    InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&);
 
     RenderBoxModelObject* continuation() const;
     void setContinuation(RenderBoxModelObject*);

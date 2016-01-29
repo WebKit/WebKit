@@ -1,3 +1,13 @@
+2016-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        image-rendering: -webkit-optimize-contrast not working for background images
+        https://bugs.webkit.org/show_bug.cgi?id=97991
+
+        Reviewed by Darin Adler.
+
+        * fast/images/image-rendering-interpolation-expected.html: Added.
+        * fast/images/image-rendering-interpolation.html: Added.
+
 2016-01-29  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/modern/index-3.html fails.
