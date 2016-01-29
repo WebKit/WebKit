@@ -1,3 +1,13 @@
+2016-01-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Attempt to fix the Windows build after r195799
+
+        Unreviewed build fix.
+
+        * WebInspector.cpp:
+        (WebInspector::isJavaScriptProfilingEnabled):
+        (WebInspector::setJavaScriptProfilingEnabled):
+
 2016-01-28  Darin Adler  <darin@apple.com>
 
         Remove equalIgnoringCase since all callers really wanted equalIgnoringASCIICase
