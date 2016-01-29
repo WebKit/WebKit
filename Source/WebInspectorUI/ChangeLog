@@ -1,3 +1,19 @@
+2016-01-29  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Provide a way to clear the network panel
+        https://bugs.webkit.org/show_bug.cgi?id=153632
+        <rdar://problem/23317773>
+
+        Reviewed by Timothy Hatcher.
+
+        Added a navigation item to the Network tab that resets the network grid's content.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        (WebInspector.NetworkGridContentView.prototype.get navigationItems):
+        (WebInspector.NetworkGridContentView.prototype._clearNetworkItems):
+
 2016-01-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: WebInspector.Setting should not access localStorage if the value did not change

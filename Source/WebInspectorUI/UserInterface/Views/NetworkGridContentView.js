@@ -92,6 +92,9 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
         networkTimeline.addEventListener(WebInspector.Timeline.Event.Reset, this._networkTimelineReset, this);
 
+        this._clearNetworkItemsNavigationItem = new WebInspector.ButtonNavigationItem("clear-network-items", WebInspector.UIString("Clear Network Items"), "Images/NavigationItemTrash.svg", 15, 15);
+        this._clearNetworkItemsNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearNetworkItems, this);
+
         this._pendingRecords = [];
     }
 
@@ -115,6 +118,11 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     get zeroTime()
     {
         return WebInspector.timelineManager.persistentNetworkTimeline.startTime;
+    }
+
+    get navigationItems()
+    {
+        return [this._clearNetworkItemsNavigationItem];
     }
 
     shown()
@@ -221,5 +229,9 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     _dataGridNodeSelected(event)
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+    }
+
+    _clearNetworkItems(event) {
+        this.reset();
     }
 };
