@@ -1,3 +1,21 @@
+2016-01-29  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] WebProcess crashes when quickly attempting many DnD operations
+        https://bugs.webkit.org/show_bug.cgi?id=138468
+
+        Reviewed by Michael Catanzaro.
+
+        Guard all the new DnD-related code under GTK_CHECK_VERSION #if's to
+        make sure we don't bump the required version of GTK+ up to 3.16, and
+        it's buildable again with GTK+ >= 3.6.
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::DragAndDropHandler):
+        (WebKit::DragAndDropHandler::startDrag):
+        (WebKit::DragAndDropHandler::fillDragData):
+        (WebKit::DragAndDropHandler::finishDrag):
+        * UIProcess/gtk/DragAndDropHandler.h:
+
 2016-01-28  Antti Koivisto  <antti@apple.com>
 
         Enable background tab suspension by default on OSX
