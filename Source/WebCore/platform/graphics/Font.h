@@ -112,7 +112,7 @@ public:
 
     PassRefPtr<Font> variantFont(const FontDescription& description, FontVariant variant) const
     {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000)
         ASSERT(variant != SmallCapsVariant);
 #endif
         switch (variant) {
