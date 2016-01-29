@@ -76,6 +76,7 @@ my $webkitLibrariesDir = $ENV{'WEBKIT_LIBRARIES'} || File::Spec->catdir($sourceD
 my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
 my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
 my $ua = LWP::UserAgent->new();
+$ua->env_proxy;
 
 print "Checking Last-Modified date of $zipFile...\n";
 

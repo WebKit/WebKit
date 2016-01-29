@@ -1,3 +1,19 @@
+2016-01-29  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        update-webkit-dependency fails to fetch updates through firewall on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=153619
+
+        Reviewed by Myles C. Maxfield.
+
+        On Windows, when a firewall is present we need to read proxy settings
+        from environment variables.
+
+        This patch relies on the following environment variables being set:
+        HTTP_PROXY
+        HTTPS_PROXY
+
+        * Scripts/update-webkit-dependency:
+
 2016-01-28  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Use the non-Development variants of XPC services for development
