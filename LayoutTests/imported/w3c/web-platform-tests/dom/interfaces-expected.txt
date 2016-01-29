@@ -1576,5 +1576,5 @@ PASS DOMSettableTokenList interface object length
 PASS DOMSettableTokenList interface object name 
 PASS DOMSettableTokenList interface: existence and properties of interface prototype object 
 FAIL DOMSettableTokenList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: DOMSettableTokenList.prototype does not have own property "constructor" expected property "constructor" missing
-FAIL DOMSettableTokenList interface: attribute value assert_true: The prototype object must have a property "value" expected true got false
+FAIL DOMSettableTokenList interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 

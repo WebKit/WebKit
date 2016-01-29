@@ -128,7 +128,7 @@ PASS Document interface: iframe.contentDocument must inherit property "implement
 PASS Document interface: iframe.contentDocument must inherit property "URL" with the proper type (1) 
 PASS Document interface: iframe.contentDocument must inherit property "documentURI" with the proper type (2) 
 PASS Document interface: iframe.contentDocument must inherit property "origin" with the proper type (3) 
-FAIL Document interface: iframe.contentDocument must inherit property "compatMode" with the proper type (4) assert_inherits: property "compatMode" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "compatMode" with the proper type (4) 
 PASS Document interface: iframe.contentDocument must inherit property "characterSet" with the proper type (5) 
 PASS Document interface: iframe.contentDocument must inherit property "charset" with the proper type (6) 
 PASS Document interface: iframe.contentDocument must inherit property "inputEncoding" with the proper type (7) 
@@ -205,15 +205,15 @@ PASS Document interface: iframe.contentDocument must inherit property "cookie" w
 PASS Document interface: iframe.contentDocument must inherit property "lastModified" with the proper type (38) 
 PASS Document interface: iframe.contentDocument must inherit property "readyState" with the proper type (39) 
 PASS Document interface: iframe.contentDocument must inherit property "title" with the proper type (41) 
-FAIL Document interface: iframe.contentDocument must inherit property "dir" with the proper type (42) assert_inherits: property "dir" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "dir" with the proper type (42) 
 PASS Document interface: iframe.contentDocument must inherit property "body" with the proper type (43) 
 PASS Document interface: iframe.contentDocument must inherit property "head" with the proper type (44) 
 PASS Document interface: iframe.contentDocument must inherit property "images" with the proper type (45) 
-FAIL Document interface: iframe.contentDocument must inherit property "embeds" with the proper type (46) assert_inherits: property "embeds" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "plugins" with the proper type (47) assert_inherits: property "plugins" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "embeds" with the proper type (46) 
+PASS Document interface: iframe.contentDocument must inherit property "plugins" with the proper type (47) 
 PASS Document interface: iframe.contentDocument must inherit property "links" with the proper type (48) 
 PASS Document interface: iframe.contentDocument must inherit property "forms" with the proper type (49) 
-FAIL Document interface: iframe.contentDocument must inherit property "scripts" with the proper type (50) assert_inherits: property "scripts" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "scripts" with the proper type (50) 
 PASS Document interface: iframe.contentDocument must inherit property "getElementsByName" with the proper type (51) 
 FAIL Document interface: calling getElementsByName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -234,7 +234,7 @@ PASS Document interface: calling writeln(DOMString) on iframe.contentDocument wi
 PASS Document interface: iframe.contentDocument must inherit property "defaultView" with the proper type (60) 
 PASS Document interface: iframe.contentDocument must inherit property "activeElement" with the proper type (61) 
 PASS Document interface: iframe.contentDocument must inherit property "hasFocus" with the proper type (62) 
-FAIL Document interface: iframe.contentDocument must inherit property "designMode" with the proper type (63) assert_inherits: property "designMode" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "designMode" with the proper type (63) 
 PASS Document interface: iframe.contentDocument must inherit property "execCommand" with the proper type (64) 
 FAIL Document interface: calling execCommand(DOMString,boolean,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -261,11 +261,11 @@ FAIL Document interface: calling queryCommandValue(DOMString) on iframe.contentD
 }" did not throw
 FAIL Document interface: iframe.contentDocument must inherit property "commands" with the proper type (70) assert_inherits: property "commands" not found in prototype chain
 PASS Document interface: iframe.contentDocument must inherit property "onreadystatechange" with the proper type (71) 
-FAIL Document interface: iframe.contentDocument must inherit property "fgColor" with the proper type (72) assert_inherits: property "fgColor" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "linkColor" with the proper type (73) assert_inherits: property "linkColor" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "vlinkColor" with the proper type (74) assert_inherits: property "vlinkColor" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "alinkColor" with the proper type (75) assert_inherits: property "alinkColor" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "bgColor" with the proper type (76) assert_inherits: property "bgColor" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "fgColor" with the proper type (72) 
+PASS Document interface: iframe.contentDocument must inherit property "linkColor" with the proper type (73) 
+PASS Document interface: iframe.contentDocument must inherit property "vlinkColor" with the proper type (74) 
+PASS Document interface: iframe.contentDocument must inherit property "alinkColor" with the proper type (75) 
+PASS Document interface: iframe.contentDocument must inherit property "bgColor" with the proper type (76) 
 PASS Document interface: iframe.contentDocument must inherit property "anchors" with the proper type (77) 
 PASS Document interface: iframe.contentDocument must inherit property "applets" with the proper type (78) 
 PASS Document interface: iframe.contentDocument must inherit property "clear" with the proper type (79) 
@@ -792,7 +792,7 @@ PASS RadioNodeList interface object length
 PASS RadioNodeList interface object name 
 PASS RadioNodeList interface: existence and properties of interface prototype object 
 FAIL RadioNodeList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: RadioNodeList.prototype does not have own property "constructor" expected property "constructor" missing
-FAIL RadioNodeList interface: attribute value assert_true: The prototype object must have a property "value" expected true got false
+FAIL RadioNodeList interface: attribute value assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOptionsCollection interface: existence and properties of interface object assert_equals: class string of HTMLOptionsCollection expected "[object Function]" but got "[object HTMLOptionsCollectionConstructor]"
 PASS HTMLOptionsCollection interface object length 
 PASS HTMLOptionsCollection interface object name 
@@ -801,7 +801,7 @@ FAIL HTMLOptionsCollection interface: existence and properties of interface prot
 FAIL HTMLOptionsCollection interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS HTMLOptionsCollection interface: operation add([object Object],[object Object],[object Object],[object Object]) 
 FAIL HTMLOptionsCollection interface: operation remove(long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL HTMLOptionsCollection interface: attribute selectedIndex assert_true: The prototype object must have a property "selectedIndex" expected true got false
+FAIL HTMLOptionsCollection interface: attribute selectedIndex assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLOptionsCollection must be primary interface of document.createElement("select").options assert_equals: wrong typeof object expected "function" but got "object"
 FAIL Stringification of document.createElement("select").options assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLOptionsCollection interface: document.createElement("select").options must inherit property "length" with the proper type (0) assert_equals: wrong typeof object expected "function" but got "object"
@@ -2311,17 +2311,17 @@ FAIL TextTrackList interface: existence and properties of interface prototype ob
 FAIL TextTrackList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: TextTrackList.prototype does not have own property "constructor" expected property "constructor" missing
 FAIL TextTrackList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS TextTrackList interface: operation getTrackById(DOMString) 
-FAIL TextTrackList interface: attribute onchange assert_true: The prototype object must have a property "onchange" expected true got false
-FAIL TextTrackList interface: attribute onaddtrack assert_true: The prototype object must have a property "onaddtrack" expected true got false
-FAIL TextTrackList interface: attribute onremovetrack assert_true: The prototype object must have a property "onremovetrack" expected true got false
+FAIL TextTrackList interface: attribute onchange assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL TextTrackList interface: attribute onaddtrack assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL TextTrackList interface: attribute onremovetrack assert_equals: getter must be Function expected "function" but got "undefined"
 PASS TextTrackList must be primary interface of document.createElement("video").textTracks 
 PASS Stringification of document.createElement("video").textTracks 
 FAIL TextTrackList interface: document.createElement("video").textTracks must inherit property "length" with the proper type (0) assert_inherits: property "length" found on object expected in prototype chain
 PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "getTrackById" with the proper type (2) 
 PASS TextTrackList interface: calling getTrackById(DOMString) on document.createElement("video").textTracks with too few arguments must throw TypeError 
-FAIL TextTrackList interface: document.createElement("video").textTracks must inherit property "onchange" with the proper type (3) assert_inherits: property "onchange" found on object expected in prototype chain
-FAIL TextTrackList interface: document.createElement("video").textTracks must inherit property "onaddtrack" with the proper type (4) assert_inherits: property "onaddtrack" found on object expected in prototype chain
-FAIL TextTrackList interface: document.createElement("video").textTracks must inherit property "onremovetrack" with the proper type (5) assert_inherits: property "onremovetrack" found on object expected in prototype chain
+PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "onchange" with the proper type (3) 
+PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "onaddtrack" with the proper type (4) 
+PASS TextTrackList interface: document.createElement("video").textTracks must inherit property "onremovetrack" with the proper type (5) 
 PASS EventTarget interface: document.createElement("video").textTracks must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on document.createElement("video").textTracks with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
@@ -2751,16 +2751,16 @@ PASS HTMLFormElement interface object length
 PASS HTMLFormElement interface object name 
 PASS HTMLFormElement interface: existence and properties of interface prototype object 
 FAIL HTMLFormElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLFormElement.prototype does not have own property "constructor" expected property "constructor" missing
-FAIL HTMLFormElement interface: attribute acceptCharset assert_true: The prototype object must have a property "acceptCharset" expected true got false
-FAIL HTMLFormElement interface: attribute action assert_true: The prototype object must have a property "action" expected true got false
-FAIL HTMLFormElement interface: attribute autocomplete assert_true: The prototype object must have a property "autocomplete" expected true got false
-FAIL HTMLFormElement interface: attribute enctype assert_true: The prototype object must have a property "enctype" expected true got false
-FAIL HTMLFormElement interface: attribute encoding assert_true: The prototype object must have a property "encoding" expected true got false
-FAIL HTMLFormElement interface: attribute method assert_true: The prototype object must have a property "method" expected true got false
-FAIL HTMLFormElement interface: attribute name assert_true: The prototype object must have a property "name" expected true got false
-FAIL HTMLFormElement interface: attribute noValidate assert_true: The prototype object must have a property "noValidate" expected true got false
-FAIL HTMLFormElement interface: attribute target assert_true: The prototype object must have a property "target" expected true got false
-FAIL HTMLFormElement interface: attribute elements assert_true: The prototype object must have a property "elements" expected true got false
+FAIL HTMLFormElement interface: attribute acceptCharset assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute action assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute autocomplete assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute enctype assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute encoding assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute method assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute noValidate assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute target assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFormElement interface: attribute elements assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFormElement interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS HTMLFormElement interface: operation submit() 
 PASS HTMLFormElement interface: operation reset() 
@@ -2769,16 +2769,16 @@ FAIL HTMLFormElement interface: operation reportValidity() assert_own_property: 
 FAIL HTMLFormElement interface: operation requestAutocomplete() assert_own_property: interface prototype object missing non-static operation expected property "requestAutocomplete" missing
 PASS HTMLFormElement must be primary interface of document.createElement("form") 
 PASS Stringification of document.createElement("form") 
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "acceptCharset" with the proper type (0) assert_inherits: property "acceptCharset" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "action" with the proper type (1) assert_inherits: property "action" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "autocomplete" with the proper type (2) assert_inherits: property "autocomplete" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "enctype" with the proper type (3) assert_inherits: property "enctype" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "encoding" with the proper type (4) assert_inherits: property "encoding" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "method" with the proper type (5) assert_inherits: property "method" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "name" with the proper type (6) assert_inherits: property "name" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "noValidate" with the proper type (7) assert_inherits: property "noValidate" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "target" with the proper type (8) assert_inherits: property "target" found on object expected in prototype chain
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "elements" with the proper type (9) assert_inherits: property "elements" found on object expected in prototype chain
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "acceptCharset" with the proper type (0) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "action" with the proper type (1) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "autocomplete" with the proper type (2) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "enctype" with the proper type (3) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "encoding" with the proper type (4) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "method" with the proper type (5) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "name" with the proper type (6) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "noValidate" with the proper type (7) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "target" with the proper type (8) 
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "elements" with the proper type (9) 
 FAIL HTMLFormElement interface: document.createElement("form") must inherit property "length" with the proper type (10) assert_inherits: property "length" found on object expected in prototype chain
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "submit" with the proper type (13) 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "reset" with the proper type (14) 
@@ -4320,9 +4320,9 @@ PASS Plugin interface object length
 PASS Plugin interface object name 
 PASS Plugin interface: existence and properties of interface prototype object 
 FAIL Plugin interface: existence and properties of interface prototype object's "constructor" property assert_own_property: Plugin.prototype does not have own property "constructor" expected property "constructor" missing
-FAIL Plugin interface: attribute name assert_true: The prototype object must have a property "name" expected true got false
-FAIL Plugin interface: attribute description assert_true: The prototype object must have a property "description" expected true got false
-FAIL Plugin interface: attribute filename assert_true: The prototype object must have a property "filename" expected true got false
+FAIL Plugin interface: attribute name assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Plugin interface: attribute description assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL Plugin interface: attribute filename assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL Plugin interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 FAIL Plugin interface: operation item(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Plugin interface: operation namedItem(DOMString) assert_equals: property has wrong .length expected 1 but got 0
@@ -4631,38 +4631,38 @@ PASS HTMLFrameSetElement interface object length
 PASS HTMLFrameSetElement interface object name 
 PASS HTMLFrameSetElement interface: existence and properties of interface prototype object 
 FAIL HTMLFrameSetElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: HTMLFrameSetElement.prototype does not have own property "constructor" expected property "constructor" missing
-FAIL HTMLFrameSetElement interface: attribute cols assert_true: The prototype object must have a property "cols" expected true got false
-FAIL HTMLFrameSetElement interface: attribute rows assert_true: The prototype object must have a property "rows" expected true got false
+FAIL HTMLFrameSetElement interface: attribute cols assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute rows assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFrameSetElement interface: attribute onafterprint assert_true: The prototype object must have a property "onafterprint" expected true got false
 FAIL HTMLFrameSetElement interface: attribute onbeforeprint assert_true: The prototype object must have a property "onbeforeprint" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onbeforeunload assert_true: The prototype object must have a property "onbeforeunload" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onhashchange assert_true: The prototype object must have a property "onhashchange" expected true got false
+FAIL HTMLFrameSetElement interface: attribute onbeforeunload assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute onhashchange assert_equals: getter must be Function expected "function" but got "undefined"
 FAIL HTMLFrameSetElement interface: attribute onlanguagechange assert_true: The prototype object must have a property "onlanguagechange" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onmessage assert_true: The prototype object must have a property "onmessage" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onoffline assert_true: The prototype object must have a property "onoffline" expected true got false
-FAIL HTMLFrameSetElement interface: attribute ononline assert_true: The prototype object must have a property "ononline" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onpagehide assert_true: The prototype object must have a property "onpagehide" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onpageshow assert_true: The prototype object must have a property "onpageshow" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onpopstate assert_true: The prototype object must have a property "onpopstate" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onstorage assert_true: The prototype object must have a property "onstorage" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onunload assert_true: The prototype object must have a property "onunload" expected true got false
+FAIL HTMLFrameSetElement interface: attribute onmessage assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute onoffline assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute ononline assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute onpagehide assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute onpageshow assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute onpopstate assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute onstorage assert_equals: getter must be Function expected "function" but got "undefined"
+FAIL HTMLFrameSetElement interface: attribute onunload assert_equals: getter must be Function expected "function" but got "undefined"
 PASS HTMLFrameSetElement must be primary interface of document.createElement("frameset") 
 PASS Stringification of document.createElement("frameset") 
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "cols" with the proper type (0) assert_inherits: property "cols" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "rows" with the proper type (1) assert_inherits: property "rows" found on object expected in prototype chain
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "cols" with the proper type (0) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "rows" with the proper type (1) 
 FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onafterprint" with the proper type (2) assert_inherits: property "onafterprint" not found in prototype chain
 FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onbeforeprint" with the proper type (3) assert_inherits: property "onbeforeprint" not found in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onbeforeunload" with the proper type (4) assert_inherits: property "onbeforeunload" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onhashchange" with the proper type (5) assert_inherits: property "onhashchange" found on object expected in prototype chain
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onbeforeunload" with the proper type (4) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onhashchange" with the proper type (5) 
 FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onlanguagechange" with the proper type (6) assert_inherits: property "onlanguagechange" not found in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onmessage" with the proper type (7) assert_inherits: property "onmessage" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onoffline" with the proper type (8) assert_inherits: property "onoffline" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "ononline" with the proper type (9) assert_inherits: property "ononline" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onpagehide" with the proper type (10) assert_inherits: property "onpagehide" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onpageshow" with the proper type (11) assert_inherits: property "onpageshow" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onpopstate" with the proper type (12) assert_inherits: property "onpopstate" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onstorage" with the proper type (13) assert_inherits: property "onstorage" found on object expected in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onunload" with the proper type (14) assert_inherits: property "onunload" found on object expected in prototype chain
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onmessage" with the proper type (7) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onoffline" with the proper type (8) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "ononline" with the proper type (9) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onpagehide" with the proper type (10) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onpageshow" with the proper type (11) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onpopstate" with the proper type (12) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onstorage" with the proper type (13) 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onunload" with the proper type (14) 
 FAIL HTMLFrameElement interface: existence and properties of interface object assert_equals: class string of HTMLFrameElement expected "[object Function]" but got "[object HTMLFrameElementConstructor]"
 PASS HTMLFrameElement interface object length 
 PASS HTMLFrameElement interface object name 
