@@ -120,9 +120,6 @@ private:
                 m_state.clobber(arg);
             });
 
-        // FIXME: This needs a story for floats and doubles.
-        // https://bugs.webkit.org/show_bug.cgi?id=153197
-
         switch (inst.opcode) {
         case Move:
             if (inst.args[0].isSomeImm()) {
@@ -159,6 +156,26 @@ private:
                     m_state.addAlias(SlotConst(inst.args[1].stackSlot(), static_cast<int32_t>(*constant)));
                 m_state.addAlias(
                     RegSlot(inst.args[0].reg(), inst.args[1].stackSlot(), RegSlot::Match32));
+            }
+            break;
+
+        case MoveFloat:
+            if (isSpillSlot(inst.args[0]) && inst.args[1].isReg()) {
+                m_state.addAlias(
+                    RegSlot(inst.args[1].reg(), inst.args[0].stackSlot(), RegSlot::Match32));
+            } else if (inst.args[0].isReg() && isSpillSlot(inst.args[1])) {
+                m_state.addAlias(
+                    RegSlot(inst.args[0].reg(), inst.args[1].stackSlot(), RegSlot::Match32));
+            }
+            break;
+
+        case MoveDouble:
+            if (isSpillSlot(inst.args[0]) && inst.args[1].isReg()) {
+                m_state.addAlias(
+                    RegSlot(inst.args[1].reg(), inst.args[0].stackSlot(), RegSlot::AllBits));
+            } else if (inst.args[0].isReg() && isSpillSlot(inst.args[1])) {
+                m_state.addAlias(
+                    RegSlot(inst.args[0].reg(), inst.args[1].stackSlot(), RegSlot::AllBits));
             }
             break;
 
